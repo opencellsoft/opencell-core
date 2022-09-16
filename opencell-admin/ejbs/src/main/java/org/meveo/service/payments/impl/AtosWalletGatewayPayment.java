@@ -70,8 +70,8 @@ import com.worldline.sips.util.SealCalculator;
 @PaymentGatewayClass
 public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
     private static final String WALLET_URL_PROPERTY = "atos.api.walletUrl";
-    private static final String OFFICE_URL_PROPERTY = "atos.api.officeUrl";
     private static final String WALLET_HOSTED_CHECK_OUT_URL_PROPERTY = "atos.api.walletUrl.hostedCheckOut";
+    private static final String OFFICE_URL_PROPERTY = "atos.api.officeUrl";
     private static final String WALLET_ORDER_URI_PROPERTY = "atos.api.wallet.order.uri";
     private static final String WALLET_CREDIT_HOLDER_URI_PROPERTY = "atos.api.wallet.credit.uri";
 
@@ -252,22 +252,28 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 	private String[] getErreurCodeAndMsg(WalletOrderResponse response) {
 		Map<Object, Object> mapErrorCodeAndMsg = new HashMap<Object, Object>();
 		Provider provider = ((ProviderService) EjbUtils.getServiceInterface(ProviderService.class.getSimpleName())).getProvider();
-		log.info("WalletOrderResponse AuthorisationId:{}  AcquirerResponseCode:{}  ComplementaryCode:{}  ResponseCode:{}",response.getAuthorisationId(),response.getAcquirerResponseCode(),response.getComplementaryCode(),response.getResponseCode());
+		log.info("WalletOrderResponse AuthorisationId:{}  AcquirerResponseCode:{}  ComplementaryCode:{}  ResponseCode:{}", response.getAuthorisationId(),
+				response.getAcquirerResponseCode(), response.getComplementaryCode(), response.getResponseCode());
 		String[] codeAndMsg = { "notFound", "notFound" };
-		
+
+		String prefixCodeError = "";
 		if (!StringUtils.isBlank(response.getAcquirerResponseCode())) {
-			codeAndMsg[0] = response.getAcquirerResponseCode();
-			mapErrorCodeAndMsg = (Map<Object, Object>) provider.getCfValue(CF_PRV_ACQUIRER_CODE_WLSIPS);			
+			codeAndMsg[0] = "" + response.getAcquirerResponseCode();
+			prefixCodeError = "A";
+			mapErrorCodeAndMsg = (Map<Object, Object>) provider.getCfValue(CF_PRV_ACQUIRER_CODE_WLSIPS);
 		} else {
-			if (!StringUtils.isBlank(response.getComplementaryCode()) && !"0".equals(response.getComplementaryCode())) {
-				codeAndMsg[0] = response.getComplementaryCode();
-				mapErrorCodeAndMsg = (Map<Object, Object>) provider.getCfValue(CF_PRV_COMPL_CODE_WLSIPS);				
-			} else {
+			if (StringUtils.isBlank(response.getComplementaryCode()) || "0".equals(response.getComplementaryCode()) || "00".equals(response.getComplementaryCode())) {
 				codeAndMsg[0] = response.getResponseCode();
-				mapErrorCodeAndMsg = (Map<Object, Object>) provider.getCfValue(CF_PRV_RESPONSE_CODE_WLSIPS);				
+				prefixCodeError = "R";
+				mapErrorCodeAndMsg = (Map<Object, Object>) provider.getCfValue(CF_PRV_RESPONSE_CODE_WLSIPS);
+			} else {
+				codeAndMsg[0] = response.getComplementaryCode();
+				prefixCodeError = "C";
+				mapErrorCodeAndMsg = (Map<Object, Object>) provider.getCfValue(CF_PRV_COMPL_CODE_WLSIPS);
 			}
 		}
 		codeAndMsg[1] = (String) mapErrorCodeAndMsg.get(codeAndMsg[0]);
+		codeAndMsg[0] = prefixCodeError + codeAndMsg[0];
 		return codeAndMsg;
 	}
 
@@ -286,6 +292,14 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         CustomerAccount ca = customerAccountService().findById(hostedCheckoutInput.getCustomerAccountId());
 
         String merchantWalletId = ca.getId() + "_" + (ca.getCardPaymentMethods(false).size() + 1);
+        
+        String transactionReference = System.currentTimeMillis()+"R"+((int )(Math.random() * 1000 + 1))+"CA"+ca.getId();
+        
+        if(hostedCheckoutInput.isOneShotPayment()) {
+        	transactionReference = "oneShot"+transactionReference;
+		}
+        
+        
 
         String data ="amount="+hostedCheckoutInput.getAmount()+
         		"|authenticationData.authentAmount="+hostedCheckoutInput.getAuthenticationAmount()+
@@ -293,7 +307,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         		"|merchantId="+paymentGateway.getMarchandId() +
         		"|normalReturnUrl="+returnUrl+
         		"|orderChannel="+OrderChannel.INTERNET.name()+
-        		"|transactionReference="+System.currentTimeMillis()+"R"+((int )(Math.random() * 1000 + 1))+"CA"+ca.getId()+
+        		"|transactionReference="+transactionReference+
         		"|paymentPattern="+PaymentPattern.RECURRING_1.name()+
                 "|normalReturnUrl=" + returnUrl +
                 "|merchantSessionId=" + hostedCheckoutInput.getCustomerAccountId() +
@@ -360,7 +374,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 		}
 		request.setInterfaceVersion(interfaceVersion);
 		request.setKeyVersion(paymentGateway.getWebhooksKeyId());
-		request.setTransactionReference(System.currentTimeMillis() + "R" + ((int) (Math.random() * 1000 + 1)) + "CA" + paymentMethod.getCustomerAccount().getId());
+		request.setTransactionReference(amount+"T"+System.currentTimeMillis() + "R" + (int) (Math.random() * 1000000 + 1) + "CA" + paymentMethod.getCustomerAccount().getId());
 		if (!StringUtils.isBlank(paymentMethod.getToken3DsId()) && isPayment) {
 			request.setInitialSchemeTransactionIdentifier(paymentMethod.getToken3DsId());
 		}
@@ -467,6 +481,8 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         log.error(message, e);
         paymentResponseDto.setErrorMessage(message);
         paymentResponseDto.setPaymentStatus(PaymentStatusEnum.ERROR);
+        paymentResponseDto.setPaymentID(paymentResponseDto.getPaymentID());
+        paymentResponseDto.setTransactionId(paymentResponseDto.getTransactionId());
     }
 
     private RequestConfig getRequestConfig() {

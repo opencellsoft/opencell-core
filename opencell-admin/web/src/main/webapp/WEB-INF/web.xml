@@ -26,10 +26,15 @@
 		<param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
 		<param-value>true</param-value>
 	</context-param>
+	<!--
+	This parameter enables the JavaServer Faces implementation to treat empty strings as null. but
+	submitting null or empty values will cause the previous model value to be restored to the input field
+	Fixed in INTRD-5002
 	<context-param>
 		<param-name>javax.faces.INTERPRET_EMPTY_STRING_SUBMITTED_VALUES_AS_NULL</param-name>
 		<param-value>true</param-value>
 	</context-param>
+	-->
 	<context-param>
 		<param-name>primefaces.FONT_AWESOME</param-name>
 		<param-value>true</param-value>

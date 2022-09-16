@@ -732,7 +732,7 @@ public class BillingAccountApi extends AccountEntityApi {
      */
     private void createOrUpdatePaymentMethodInCA(BillingAccountDto postData, BillingAccount billingAccount) throws MeveoApiException, BusinessException {
 
-        if (postData.getPaymentMethod() == null) {
+        if (postData.getPaymentMethodType() == null) {
             return;
         }
 
@@ -782,7 +782,7 @@ public class BillingAccountApi extends AccountEntityApi {
 
         if (!found) {
             PaymentMethod paymentMethodFromDto = null;
-            if (postData.getPaymentMethodType() == PaymentMethodEnum.CHECK || postData.getPaymentMethodType() == PaymentMethodEnum.WIRETRANSFER) {
+            if (postData.getPaymentMethodType().isSimple()) {
                 paymentMethodFromDto = (new PaymentMethodDto(postData.getPaymentMethodType())).fromDto(customerAccount, null, currentUser);
             } else if (postData.getPaymentMethodType() == PaymentMethodEnum.DIRECTDEBIT) {
                 paymentMethodFromDto = (new PaymentMethodDto(postData.getPaymentMethodType(), postData.getBankCoordinates(), null, null)).fromDto(customerAccount, null, currentUser);
