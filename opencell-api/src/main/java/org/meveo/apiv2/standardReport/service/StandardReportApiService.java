@@ -46,7 +46,6 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
 							   String invoiceNumber, Integer stepInDays, Integer numberOfPeriods, String tradingCurrency) {
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(),
                 limit.intValue(), null, null, fetchFields, orderBy, sort);
-		Seller seller = findSellerByCode(sellerCode);
         if(invoiceNumber != null && invoiceService.findByInvoiceNumber(invoiceNumber) == null) {
 			throw new NotFoundException("Invoice number : " + invoiceNumber + " does not exits");
 		}
@@ -66,7 +65,7 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
 		}
 
 		try {
-			return recordedInvoiceService.getAgedReceivables(customerAccountCode, seller, startDate, startDueDate, endDueDate,
+			return recordedInvoiceService.getAgedReceivables(customerAccountCode, sellerCode, startDate, startDueDate, endDueDate,
 					paginationConfiguration, stepInDays, numberOfPeriods, invoiceNumber, customerAccountDescription, sellerDescription, tradingCurrency);
 		} catch (Exception exception) {
 			throw new BusinessApiException("Error occurred when listing aged balance report : " + exception.getMessage());

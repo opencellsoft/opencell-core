@@ -71,10 +71,6 @@ public class StandardReportApiServiceTest {
         invoice = new Invoice();
         invoice.setInvoiceNumber("INV_10000");
 
-        Seller seller = new Seller();
-        seller.setCode("SELLER_CODE");
-
-        when(sellerService.findByCode("SELLER_CODE")).thenReturn(seller);
         when(invoiceService.findByInvoiceNumber("INV_10000")).thenReturn(invoice);
 
     }
@@ -106,7 +102,7 @@ public class StandardReportApiServiceTest {
                 "CA_DESCRIPTION", "SELLER_DESCRIPTION", "SELLER_CODE", new Date(), "EUR"};
         result.add(agedReceivable);
     	
-    	when(recordedInvoiceService.getAgedReceivables(any(String.class), any(Seller.class), any(), isNull(), isNull(), any(PaginationConfiguration.class), isNull(), isNull(), isNull(), isNull(), isNull(), isNull())).thenReturn(result);
+    	when(recordedInvoiceService.getAgedReceivables(any(String.class), any(String.class), any(), isNull(), isNull(), any(PaginationConfiguration.class), isNull(), isNull(), isNull(), isNull(), isNull(), isNull())).thenReturn(result);
     	
     	List<Object[]> testResult = standardReportApiService.list(0L, 50L, null, null, "CA_CODE", startDate, null, null, null, null, "SELLER_CODE", null, null, null, null);
     	
