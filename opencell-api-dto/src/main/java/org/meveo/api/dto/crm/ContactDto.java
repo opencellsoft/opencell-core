@@ -35,14 +35,14 @@ import org.meveo.api.dto.account.NameDto;
 import org.meveo.api.dto.response.TitleDto;
 import org.meveo.model.communication.CommunicationPolicy;
 import org.meveo.model.communication.contact.Contact;
+import org.meveo.model.crm.Customer;
+import org.meveo.model.intcrm.AddressBookContact;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.meveo.model.crm.Customer;
-import org.meveo.model.intcrm.AddressBookContact;
 
 public class ContactDto extends BusinessEntityDto {
 
@@ -136,7 +136,7 @@ public class ContactDto extends BusinessEntityDto {
 
     private Set<String> tags = new HashSet<String>();
 
-    private String contactCategoryCode;
+    private Set<String> contactCategoryCodes;
 
     public ContactDto() {
 
@@ -542,15 +542,16 @@ public class ContactDto extends BusinessEntityDto {
         return AddressBookContacts;
     }
 
-    public String getContactCategoryCode() {
-		return contactCategoryCode;
-	}
-
-	public void setContactCategoryCode(String contactCategoryCode) {
-		this.contactCategoryCode = contactCategoryCode;
-	}
-
 	public void setAddressBookContacts(Set<AddressBookContactDto> addressBookContacts) {
         AddressBookContacts = addressBookContacts;
     }
+
+	public Set<String> getContactCategoryCodes() {
+		return contactCategoryCodes;
+	}
+
+	public void setContactCategoryCodes(Set<String> contactCategoryCodes) {
+		this.contactCategoryCodes = contactCategoryCodes;
+	}
+
 }
