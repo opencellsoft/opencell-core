@@ -6230,6 +6230,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         if (input.getInvoiceDate() != null) {
             toUpdate.setInvoiceDate(input.getInvoiceDate());
+            refreshConvertedAmounts(toUpdate, toUpdate.getTradingCurrency().getExchangeRate(input.getInvoiceDate()).getExchangeRate(), new Date());
         }
 
         //if the dueDate == null, it will be calculated at the level of the method invoiceService.calculateInvoice(updateInvoice)
