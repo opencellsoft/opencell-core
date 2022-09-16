@@ -14344,5 +14344,33 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
         <renameColumn tableName="cpq_price_plan_matrix_line" oldColumnName="price_without_tax" newColumnName="value"/>
     </changeSet>
+    
+    <changeSet id="#INTRD-9854-20220915-contact-category-many-to-many" author="a.rouaguebe">
+    	<dropForeignKeyConstraint baseTableName="com_contact" constraintName="contact_ contact_category_id_fk" />
+    	<dropColumn tableName="com_contact" columnName="contact_category_id" />
+    	
+    	<createTable tableName="com_contact_category_contact">
+            <column name="contact_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="contact_category_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+    	</createTable>
+    	
+    	<addUniqueConstraint columnNames="contact_id,contact_category_id" constraintName="com_contact_category_contact_pk" tableName="com_contact_category_contact" />
+    	
+        <addForeignKeyConstraint constraintName="contact_category_id_fk"
+                                 baseColumnNames="contact_category_id"
+                                 baseTableName="com_contact_category_contact"
+                                 referencedTableName="com_contact_category"
+                                 referencedColumnNames="id" />
+
+		<addForeignKeyConstraint constraintName="contact_id_fk"
+                                 baseColumnNames="contact_id"
+                                 baseTableName="com_contact_category_contact"
+                                 referencedTableName="com_contact"
+                                 referencedColumnNames="id" />
+    </changeSet>
 
 </databaseChangeLog>

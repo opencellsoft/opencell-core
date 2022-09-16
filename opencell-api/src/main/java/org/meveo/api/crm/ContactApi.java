@@ -330,16 +330,15 @@ public class ContactApi extends BaseApi {
             }
         }
 
-        if(postData.getContactCategoryCode() != null) {
-        	if(StringUtils.isBlank(postData.getContactCategoryCode())) {
-            	contact.setContactCategory(null);
-            } else {
-            	ContactCategory contactCategory = contactCategoryService.findByCode(postData.getContactCategoryCode());
-            	if(contactCategory == null) {
-            		throw new EntityDoesNotExistsException(ContactCategory.class, postData.getContactCategoryCode());
-            	}
-            	contact.setContactCategory(contactCategory);
-            }
+        if(postData.getContactCategoryCodes() != null) {
+        	contact.getContactCategories().clear();
+        	postData.getContactCategoryCodes().forEach(ccCode -> {
+        		var cc = contactCategoryService.findByCode(ccCode);
+        		if(cc == null) {
+        			throw new EntityDoesNotExistsException(ContactCategory.class, ccCode);
+        		}
+        		contact.getContactCategories().add(cc);
+        	});
         }
     }
 
