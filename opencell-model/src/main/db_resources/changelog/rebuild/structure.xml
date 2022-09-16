@@ -5274,7 +5274,10 @@
                 <constraints nullable="false" />
             </column>
             <column name="default_starting_date_of_plan" type="varchar(255)" />
-             <column name="activate_cascading_discounts" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="activate_cascading_discounts" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="rgaa_message" type="varchar(500)" >
+                <constraints nullable="true"/>
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-250">
@@ -18608,6 +18611,7 @@
 	<changeSet id="#INTRD-9581_20200907" author="TarikFA." />
 	<changeSet id="INTRD-9535-20220908" author="Abdelkader.bouazza" />
     <changeSet id="#INTRD-9684-20220909" author="khalidHORRI"/>
+	<changeSet id="#INTRD-9786-20220915" author="HichamHANINE"/>
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

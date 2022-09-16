@@ -734,4 +734,18 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
     	return duplicate;
     }
 
+    /**
+     * Find entity by code - strict match.
+     *
+     * @param code Code to match
+     * @return A single entity matching code
+     */
+    @Override
+    public PricePlanMatrix findByCode(String code) {
+        PricePlanMatrix pp =  super.findByCode(code);
+        if(pp != null && chargeTemplateService != null) {
+            pp.setChargeTemplate(chargeTemplateService.findByCode(pp.getEventCode()));
+        }
+        return pp;
+    }
 }

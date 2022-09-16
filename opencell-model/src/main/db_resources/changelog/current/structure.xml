@@ -14373,4 +14373,12 @@ order by date_trunc('month', i.invoice_date) DESC
                                  referencedColumnNames="id" />
     </changeSet>
 
+    <changeSet id="#INTRD-9786-20220915" author="HichamHANINE">
+        <addColumn tableName="crm_provider">
+            <column name="rgaa_message" type="varchar(500)" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>
