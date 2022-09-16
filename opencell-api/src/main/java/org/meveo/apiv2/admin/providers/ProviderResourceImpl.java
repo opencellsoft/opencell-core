@@ -206,6 +206,11 @@ public class ProviderResourceImpl implements ProviderResource {
         if (provider.getPaymentMethods() != null) {
             providerByCode.setPaymentMethods(provider.getPaymentMethods().stream().filter(StringUtils::isNotBlank).map(PaymentMethodEnum::valueOf).collect(Collectors.toList()));
         }
+        
+        if (provider.getRgaaMessage() != null) {
+            providerByCode.setRgaaMessage(providerUpdateInfos.getRgaaMessage());
+        }
+        
         providerService.update(providerByCode);
         return Response.ok().entity("{\"actionStatus\":{\"status\":\"SUCCESS\"}}").build();
     }
