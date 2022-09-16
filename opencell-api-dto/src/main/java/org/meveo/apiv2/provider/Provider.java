@@ -48,7 +48,8 @@ public interface Provider {
     @Nullable String getEmail();
     @Nullable Integer getMaximumDelay();
     @Nullable Integer getMaximumDeferralPerInvoice();
-
+    @Nullable String getRgaaMessage();
+    
     @Nullable
     Map<String, Long> getCurrency();
 
@@ -183,6 +184,9 @@ public interface Provider {
         
         if (this.getMaximumDeferralPerInvoice() != null) {
             provider.setMaximumDeferralPerInvoice(this.getMaximumDeferralPerInvoice());
+        }
+        if (this.getRgaaMessage() != null) {
+            provider.setRgaaMessage(this.getRgaaMessage());
         }
         
         if (this.getInvoiceConfiguration() != null) {
