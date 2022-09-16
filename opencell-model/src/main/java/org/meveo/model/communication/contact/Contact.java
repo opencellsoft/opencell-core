@@ -17,6 +17,7 @@
  */
 package org.meveo.model.communication.contact;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,6 +30,8 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -267,9 +270,9 @@ public class Contact extends BusinessCFEntity implements ISearchable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "contact", cascade = CascadeType.ALL)
     private List<AddressBookContact> addressBookContacts;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "contact_category_id")
-    private ContactCategory contactCategory; 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "com_contact_category_contact", joinColumns = @JoinColumn(name = "contact_id"), inverseJoinColumns = @JoinColumn(name = "contact_category_id"))
+    private List<ContactCategory> contactCategories = new ArrayList<>(); 
 
     public String getAssistantName() {
         return assistantName;
@@ -546,12 +549,12 @@ public class Contact extends BusinessCFEntity implements ISearchable {
         this.addressBookContacts = addressBookContacts;
     }
 
-	public ContactCategory getContactCategory() {
-		return contactCategory;
+	public List<ContactCategory> getContactCategories() {
+		return contactCategories;
 	}
 
-	public void setContactCategory(ContactCategory contactCategory) {
-		this.contactCategory = contactCategory;
+	public void setContactCategories(List<ContactCategory> contactCategories) {
+		this.contactCategories = contactCategories;
 	}
 
 }
