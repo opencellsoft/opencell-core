@@ -308,7 +308,7 @@
 										value="#{cfValueHolder.newValues[cft.code.concat('_').concat(column.code)]}"
 										placeholder="#{column.label}" label="#{column.label}"
 										size="30" maxlength="50" validatorMessage="matrix separator character '|' may not be used">
-											<f:validateRegex  pattern="[^|]+"/>
+											<f:validateRegex  pattern="^$|[^|]+"/>
 										</p:inputText>
 								</c:if>
 
