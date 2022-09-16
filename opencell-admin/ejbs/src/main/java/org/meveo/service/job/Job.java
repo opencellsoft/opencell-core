@@ -86,7 +86,7 @@ public abstract class Job {
     /**
      * Custom field for a applyBilingRules.
      */
-    public static final String CF_APPLY_BILING_RULES = "applyBilingRules";
+    public static final String CF_APPLY_BILLING_RULES = "applyBillingRules";
     
     /**
      * What initiated/launched Job
