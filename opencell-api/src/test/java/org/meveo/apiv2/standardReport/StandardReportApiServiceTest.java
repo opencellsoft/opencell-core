@@ -27,9 +27,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
-import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -40,12 +38,6 @@ public class StandardReportApiServiceTest {
 
     @InjectMocks
     private StandardReportApiService standardReportApiService;
-
-    @Mock
-    private CustomerAccountService customerAccountService;
-
-    @Mock
-    private SellerService sellerService;
 
     @Mock
     private InvoiceService invoiceService;
