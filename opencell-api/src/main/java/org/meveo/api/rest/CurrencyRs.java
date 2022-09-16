@@ -32,7 +32,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.CurrencyDto;
 import org.meveo.api.dto.billing.ExchangeRateDto;

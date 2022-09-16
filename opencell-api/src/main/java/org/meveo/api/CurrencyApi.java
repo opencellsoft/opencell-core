@@ -68,7 +68,6 @@ import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.Currency;
-import org.meveo.model.bi.FlatFile;
 import org.meveo.model.billing.ExchangeRate;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
@@ -87,7 +86,7 @@ import org.meveo.service.crm.impl.ProviderService;
 @Stateless
 public class CurrencyApi extends BaseApi {
 
-    @Inject
+	@Inject
     private CurrencyService currencyService;
 
     @Inject
@@ -109,6 +108,7 @@ public class CurrencyApi extends BaseApi {
     private FilesApi filesApi;
     
     private static final String EXCHANGE_RATE_DIR = "imports/exchangeRate/";
+    private static final String LINE = "Line ";
 
     public String getProviderRootDir() {
         return paramBeanFactory.getDefaultChrootDir();
@@ -353,7 +353,34 @@ public class CurrencyApi extends BaseApi {
         Date fromDate = exchangeRate.getFromDate();
         Date toDate = postData.getFromDate();
         
-        if (postData.getExchangeRate() != null) {            
+        checkExchangeRateDto(postData, exchangeRate);
+
+        // Check if fromDate = new Date()
+        if (postData.getFromDate().compareTo(setTimeToZero(new Date())) == 0) {
+            exchangeRate.setCurrentRate(true);
+            // set isCurrentRate to false for all other ExchangeRate of the same TradingCurrency
+            TradingCurrency tradingCurrency = tradingCurrencyService.findById(exchangeRate.getTradingCurrency().getId(), Arrays.asList("exchangeRates"));
+            for (ExchangeRate er : tradingCurrency.getExchangeRates()) {
+                if (!er.getId().equals(id)) {
+                    er.setCurrentRate(false);
+                    exchangeRateService.update(er);
+                }
+            }
+
+            // Update tradingCurrency fields
+            tradingCurrency.setCurrentRate(postData.getExchangeRate());
+            tradingCurrency.setCurrentRateFromDate(postData.getFromDate());
+            tradingCurrency.setCurrentRateUpdater(currentUser.getUserName());
+            tradingCurrencyService.update(tradingCurrency);
+        }
+        exchangeRate.setFromDate(postData.getFromDate());
+        exchangeRate.setExchangeRate(postData.getExchangeRate());
+        exchangeRateService.update(exchangeRate);
+        auditLogUpdateExchangeRate(exchangeRate, fromRate, toRate, fromDate, toDate, source);
+    }
+
+	private void checkExchangeRateDto(ExchangeRateDto postData, ExchangeRate exchangeRate) {
+		if (postData.getExchangeRate() != null) {            
             if (postData.getExchangeRate().compareTo(BigDecimal.ZERO) <= 0) {
                 throw new MeveoApiException(resourceMessages.getString("error.exchangeRate.exchangeRate.incorrect"));
             }
@@ -387,30 +414,7 @@ public class CurrencyApi extends BaseApi {
         if (postData.getFromDate().before(setTimeToZero(new Date()))) {
             throw new BusinessApiException(resourceMessages.getString("The date must not be in the past"));
         }
-
-        // Check if fromDate = new Date()
-        if (postData.getFromDate().compareTo(setTimeToZero(new Date())) == 0) {
-            exchangeRate.setCurrentRate(true);
-            // set isCurrentRate to false for all other ExchangeRate of the same TradingCurrency
-            TradingCurrency tradingCurrency = tradingCurrencyService.findById(exchangeRate.getTradingCurrency().getId(), Arrays.asList("exchangeRates"));
-            for (ExchangeRate er : tradingCurrency.getExchangeRates()) {
-                if (!er.getId().equals(id)) {
-                    er.setCurrentRate(false);
-                    exchangeRateService.update(er);
-                }
-            }
-
-            // Update tradingCurrency fields
-            tradingCurrency.setCurrentRate(postData.getExchangeRate());
-            tradingCurrency.setCurrentRateFromDate(postData.getFromDate());
-            tradingCurrency.setCurrentRateUpdater(currentUser.getUserName());
-            tradingCurrencyService.update(tradingCurrency);
-        }
-        exchangeRate.setFromDate(postData.getFromDate());
-        exchangeRate.setExchangeRate(postData.getExchangeRate());
-        exchangeRateService.update(exchangeRate);
-        auditLogUpdateExchangeRate(exchangeRate, fromRate, toRate, fromDate, toDate, source);
-    }
+	}
     
     private void auditLogUpdateExchangeRate(ExchangeRate exchangeRate,
             BigDecimal fromRate, BigDecimal toRate,
@@ -464,13 +468,12 @@ public class CurrencyApi extends BaseApi {
             throw new MissingParameterException("filename");
         }
 
-        Set<String> notMatchedCurrencySombols = new HashSet();
-        List<String> errorMessages = new ArrayList();
-        List<String> warningMessages = new ArrayList();
+        Set<String> notMatchedCurrencySombols = new HashSet<>();
+        List<String> errorMessages = new ArrayList<>();
+        List<String> warningMessages = new ArrayList<>();
 
         warningMessages.add("No error, all rates are created or updated by importing.");
         
-        //try {
         String exchangeRateDir = getProviderRootDir() + File.separator + EXCHANGE_RATE_DIR;
         Path path = Paths.get(exchangeRateDir);
         try {
@@ -503,7 +506,6 @@ public class CurrencyApi extends BaseApi {
 
             String lineRead;
             while ((lineRead = lnr.readLine()) != null) {
-                //String firstLine = lnr.readLine();
                 String[] split = lineRead.split(",");
 
                 if(split.length != 3) {
@@ -533,36 +535,25 @@ public class CurrencyApi extends BaseApi {
         String dateExchangerate = split[1];
         String rateExchangerate = split[2];
         
-        Currency currency = currencyService.findByCode(currencyCodeExchangerate);
-        if(currency == null) {
-        	errorMessages.add(resourceMessages.getString("error.importExchangeRate.valide.iso.currency"));
-        }
+        findAndCheckValues(errorMessages, currencyCodeExchangerate, dateExchangerate, rateExchangerate);
 
-        if(!isValidDateFormat(dateExchangerate)) {
-        	errorMessages.add(resourceMessages.getString("error.importExchangeRate.valide.dateFormat"));
-        }
-        
-        if(!isValidRateDecimal(rateExchangerate)) {
-        	errorMessages.add(resourceMessages.getString("error.importExchangeRate.valide.rateFormat"));
-        }
-
-        	TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(currencyCodeExchangerate);
-        	if(tradingCurrency == null) {
-        		notMatchedCurrencySombols.add(currencyCodeExchangerate);
-        	} else if(errorMessages.isEmpty()){
-    	        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    	        Date convertedDateExchangerate = new Date();
-				try {
-					convertedDateExchangerate = sdf.parse(dateExchangerate);
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
+    	TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(currencyCodeExchangerate);
+    	if(tradingCurrency == null) {
+    		notMatchedCurrencySombols.add(currencyCodeExchangerate);
+    	} else if(errorMessages.isEmpty()){
+	        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	        Date convertedDateExchangerate = new Date();
+			try {
+				convertedDateExchangerate = sdf.parse(dateExchangerate);
+			} catch (ParseException e) {
+	        	errorMessages.add(resourceMessages.getString("error.importExchangeRate.valide.dateFormat"));
+			}
 
                 // User cannot set a rate in a paste date
     	        
                 if (convertedDateExchangerate.before(DateUtils.setTimeToZero(new Date()))) {
                 	warningMessages.set(0, "No error. ");
-                	warningMessages.add("Line "+ lnr.getLineNumber() +" (" + dateExchangerate + ") is ignored.");
+                	warningMessages.add(LINE+ lnr.getLineNumber() +" (" + dateExchangerate + ") is ignored.");
                 }else{
         		//update rate si date in future
     	        ExchangeRate exchangeRate = exchangeRateService.findByFromDate(convertedDateExchangerate, tradingCurrency.getId());
@@ -575,17 +566,33 @@ public class CurrencyApi extends BaseApi {
     	        		
     	        		updateExchangeRate(exchangeRate.getId(), exchangeRateDto, "IMPORT");
     	        		
-    	        		warningMessages.add("Line "+ lnr.getLineNumber() +" is updated, is rounded to " + rateExchangerate);
+    	        		warningMessages.add(LINE+ lnr.getLineNumber() +" is updated, is rounded to " + rateExchangerate);
     	        	}
     	        }else {
     	        	ExchangeRate newExchangeRate = exchangeRateService.createCurrentRateWithImpotFile(convertedDateExchangerate, new BigDecimal(rateExchangerate), tradingCurrency);
     	            auditLogCreateExchangeRate(newExchangeRate, "IMPORT");
     	            
-	        		warningMessages.add("Line "+ lnr.getLineNumber() +" is created");
+	        		warningMessages.add(LINE+ lnr.getLineNumber() +" is created");
     	        }
             }   
     	}
     }
+
+	private void findAndCheckValues(List<String> errorMessages, String currencyCodeExchangerate,
+			String dateExchangerate, String rateExchangerate) {
+		Currency currency = currencyService.findByCode(currencyCodeExchangerate);
+        if(currency == null) {
+        	errorMessages.add(resourceMessages.getString("error.importExchangeRate.valide.iso.currency"));
+        }
+
+        if(!isValidDateFormat(dateExchangerate)) {
+        	errorMessages.add(resourceMessages.getString("error.importExchangeRate.valide.dateFormat"));
+        }
+        
+        if(!isValidRateDecimal(rateExchangerate)) {
+        	errorMessages.add(resourceMessages.getString("error.importExchangeRate.valide.rateFormat"));
+        }
+	}
     
     private boolean isValidDateFormat(String date) {
         boolean valid = false;
