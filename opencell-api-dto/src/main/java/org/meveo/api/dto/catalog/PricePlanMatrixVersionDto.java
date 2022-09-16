@@ -3,6 +3,7 @@ package org.meveo.api.dto.catalog;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.cpq.enums.PriceVersionTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -65,6 +66,9 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
     @Schema(description = "The priority")
     protected int priority=0;
 
+    @Schema(description = "The price version type, can be PERCENTAGE or FIXED.")
+    private PriceVersionTypeEnum priceVersionType;
+
     private Set<PricePlanMatrixColumnDto> columns;
 
     private Set<PricePlanMatrixLineDto> lines;
@@ -96,6 +100,7 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
                     .map(PricePlanMatrixColumnDto::new)
                     .collect(Collectors.toSet());
         }
+        setPriceVersionType(pricePlanMatrixVersion.getPriceVersionType());
     }
 
     public String getPricePlanMatrixCode() {
@@ -229,6 +234,12 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
 	public void setId(Long id) {
 		this.id = id;
 	}
-    
-    
+
+    public PriceVersionTypeEnum getPriceVersionType() {
+        return priceVersionType;
+    }
+
+    public void setPriceVersionType(PriceVersionTypeEnum priceVersionType) {
+        this.priceVersionType = priceVersionType;
+    }
 }
