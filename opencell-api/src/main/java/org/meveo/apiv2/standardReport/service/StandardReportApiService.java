@@ -2,7 +2,6 @@ package org.meveo.apiv2.standardReport.service;
 
 import static java.util.Arrays.asList;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -128,17 +127,5 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
 	public Long getCountAgedReceivables(String customerAccountCode) {
 		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
         return recordedInvoiceService.getCountAgedReceivables(customerAccount);
-	}
-
-	private Seller findSellerByCode(String sellerCode) {
-		if (StringUtils.isNotBlank(sellerCode)) {
-			Seller seller = sellerService.findByCode(sellerCode);
-			if (seller == null) {
-				throw new NotFoundException("Seller with code " + sellerCode + DOESNOT_EXIST_ERROR_MESSAGE);
-			}
-			return seller;
-		}
-
-		return null;
 	}
 }
