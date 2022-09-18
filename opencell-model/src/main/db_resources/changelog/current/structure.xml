@@ -14293,7 +14293,7 @@ order by date_trunc('month', i.invoice_date) DESC
 								 baseTableName="billing_wallet_operation" 
 								 referencedColumnNames="id"/>
 	</changeSet>
-    <changeSet id="INTRD-9535-20220908" author="Abdelkader.bouazza">
+    <changeSet id="INTRD-9535-20220908" author="Abdelkader.bouazza" failOnError="false">
         <addColumn tableName="crm_address_book">
             <column name="customer_id" type="bigint"/>
         </addColumn>

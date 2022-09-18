@@ -152,7 +152,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
      * @param jobExecutionResult Job execution result
      */
     private void convertWoToRTBatch(List<WalletOperation> walletOperations, JobExecutionResultImpl jobExecutionResult) {
-        Boolean isApplyBillingRules = (Boolean) this.getParamOrCFValue(jobExecutionResult.getJobInstance(), Job.CF_APPLY_BILING_RULES);
+        Boolean isApplyBillingRules = (Boolean) this.getParamOrCFValue(jobExecutionResult.getJobInstance(), Job.CF_APPLY_BILLING_RULES);
 
         List<RatedTransaction> lstRatedTransaction = ratedTransactionService.createRatedTransactionsInBatch(walletOperations);
         if (isApplyBillingRules) {

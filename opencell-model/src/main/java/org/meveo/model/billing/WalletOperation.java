@@ -617,20 +617,20 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     @Transient
     private boolean overrodePrice;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rules_contract_id")
     private Contract rulesContract;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "price_plan_matrix_version_id")
     private PricePlanMatrixVersion pricePlanMatrixVersion;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "price_plan_matrix_line_id")
     private PricePlanMatrixLine pricePlanMatrixLine;
     
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contract_id")
     private Contract contract;
     
