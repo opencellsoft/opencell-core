@@ -282,7 +282,6 @@
             <template ref="InvoiceCategory" />
             <template ref="BillingCycle" />
             <template ref="SubscriptionTerminationReason" />
-            <template ref="UserHierarchyLevel" />
         </groupedTemplates>
     </template>
 
