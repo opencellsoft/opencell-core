@@ -9635,6 +9635,27 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="gui_position" value="tab:Configuration:0;field:2"/>
         </insert>
     </changeSet>
+
+	<changeSet id="#INTRD-9858_20220916_sd_template" author="a.rouaguebe">
+		<insert tableName="finance_settings">
+			<column name="id" valueSequenceNext="finance_settings_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" valueComputed="${uuid_function}" />
+			<column name="use_security_deposit" value="1" />
+		</insert>
+		<insert tableName="security_deposit_templat">
+			<column name="id"
+				valueSequenceNext="security_deposit_templat_seq" />
+			<column name="template_name" value="DEFAULT_SD_TEMPLATE" />
+			<column name="code" valueComputed="${uuid_function}" />
+			<column name="status" value="ACTIVE" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="version" valueNumeric="0" />
+			<column name="creator" value="applicationInitializer"></column>
+		</insert>
+	</changeSet>
 	
 	<changeSet id="#INTRD-6484" author="hichamElHaloui"/>
 	<changeSet id="#INTRD-6668_20220421" author="TarikRabeh" />
