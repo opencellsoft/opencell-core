@@ -126,7 +126,7 @@ public class IEntityExportIdentifierConverter implements Converter {
 
         String[] exportIdentifiers = exportImportConfig.getExportIdsForClass(baseClass);
 
-        writer.addAttribute("id", ((IEntity) object).getId().toString());
+        writer.addAttribute("idEntity", ((IEntity) object).getId().toString());
         // Append class name when serializing an abstract or inheritance class' implementation
         if (Modifier.isAbstract(baseClass.getModifiers()) || baseClass.isAnnotationPresent(Inheritance.class) || baseClass.getSuperclass().isAnnotationPresent(Inheritance.class)) {
             writer.addAttribute("class", baseClass.getCanonicalName());
