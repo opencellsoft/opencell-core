@@ -3434,6 +3434,1511 @@ INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, cr
 	<changeSet id="#4082_20190404" author="SaidRamli"/>
 	<changeSet id="#5308_20200618 - Add script" author="AndriusKarpavicius"/>
 
+    <changeSet id="#OUTRD-49_20220913-scripts" author="HamzaBiadi">
+        <!-- SCRIPTS -->
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
+            <column name="code" value="org.meveo.service.script.CustomerImportScript" />
+            <column name="script">
+                <![CDATA[
+package org.meveo.service.script;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.account.CustomerApi;
+import org.meveo.api.dto.account.CustomerDto;
+import org.meveo.api.dto.account.NameDto;
+import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.CustomerCategory;
+import org.meveo.service.crm.impl.CustomerCategoryService;
+import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.script.GenericMassImportScript;
+
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Stream;
+
+
+public class CustomerImportScript extends GenericMassImportScript {
+
+    private static final String RECORD_VARIABLE_NAME = "record";
+    private static final String ENTITY = "CUSTOMER";
+    private static final String ENTITY_NAME = "Customer";
+
+    public enum CustomerActionEnum {
+        CREATE, UPDATE, DELETE
+    }
+
+    private final CustomerCategoryService customerCategoryService = (CustomerCategoryService) getServiceInterface(
+            "CustomerCategoryService");
+    private final CustomerService customerService = (CustomerService) getServiceInterface("CustomerService");
+    private final CustomerApi customerApi = (CustomerApi) getServiceInterface(CustomerApi.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> context) throws BusinessException {
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> recordMap = (Map<String, Object>) context.get(RECORD_VARIABLE_NAME);
+            if (recordMap != null && !recordMap.isEmpty()) {
+                // VALIDATE ENTITY
+                String ocEntity = (String) recordMap.get("OC_ENTITY");
+                if (!ENTITY.equals(ocEntity)) {
+                    throw new ValidationException("value of OC_ENTITY is not correct: " + ocEntity);
+                }
+                // VALIDATE ACTION
+                String ocAction = (String) recordMap.get("OC_ACTION");
+                if (Stream.of(CustomerActionEnum.values()).noneMatch(e -> e.toString().equals(ocAction))) {
+                    throw new ValidationException("value of OC_ACTION is not correct: " + ocAction);
+                }
+
+                CustomerActionEnum action = CustomerActionEnum.valueOf(ocAction);
+
+                CustomerDto customerDto = validateAndGetCustomer(action, recordMap);
+
+                if (CustomerActionEnum.DELETE.equals(action)) {
+                    customerApi.remove(customerDto.getCode());
+                } else {
+                    setCustomerValues(recordMap, customerDto);
+                    if (CustomerActionEnum.CREATE.equals(action)) {
+                        Customer customer = customerApi.create(customerDto);
+
+                        this.setCFValues(recordMap, customer, ENTITY_NAME);
+                    } else if (CustomerActionEnum.UPDATE.equals(action)) {
+                        customerApi.update(customerDto);
+                    }
+
+                }
+            }
+        } catch (Exception exception) {
+            throw new BusinessException(exception);
+        }
+    }
+
+    private CustomerDto validateAndGetCustomer(CustomerActionEnum action, Map<String, Object> recordMap) {
+        CustomerDto customerDto;
+
+        String customerCode = (String) recordMap.get("OC_CUSTOMER_CODE");
+        if (customerCode.isEmpty()) {
+            throw new ValidationException("customer_code is required");
+        }
+        Customer customer = customerService.findByCode(customerCode);
+
+        // For update and delete : check if there is a record
+        if (!CustomerActionEnum.CREATE.equals(action)) {
+            if (customer == null) {
+                throw new ValidationException("no customer found for customer_code: '" + customerCode + "'");
+            }
+            customerDto = customerApi.find(customerCode);
+            // Create action : check if there is no record
+        } else {
+            customerDto = new CustomerDto();
+            String ocCustomerCategory = (String) recordMap.get("OC_CU_CATEGORY");
+            CustomerCategory customerCategory = customerCategoryService.findByCode(ocCustomerCategory);
+            if (customerCategory == null) {
+                throw new ValidationException("no customer category found for code: '" + ocCustomerCategory + "'");
+            }
+        }
+        return customerDto;
+    }
+
+    private void setCustomerValues(Map<String, Object> recordMap, CustomerDto customerDto) {
+        customerDto.setCode((String) recordMap.get("OC_CUSTOMER_CODE"));
+        customerDto.setDescription((String) recordMap.get("OC_CUSTOMER_DESCRIPTION"));
+        customerDto.setRegistrationNo((String) recordMap.get("OC_CU_REGISTRATION"));
+        customerDto.setVatNo((String) recordMap.get("OC_CU_TVANUMBER"));
+        customerDto.setSeller((String) recordMap.get("OC_CUSTOMER_SELLER"));
+        customerDto.setCustomerCategory((String) recordMap.get("OC_CU_CATEGORY"));
+        customerDto.setIsCompany(Objects.equals(recordMap.get("OC_CU_IS_COMPANY"), "X"));
+        NameDto nameDto = new NameDto();
+        nameDto.setTitle((String) recordMap.get("OC_CU_TITLE"));
+        nameDto.setFirstName((String) recordMap.get("OC_CU_FIRST_NAME"));
+        nameDto.setLastName((String) recordMap.get("OC_CU_LAST_NAME"));
+        customerDto.setName(nameDto);
+    }
+}
+
+				]]>
+            </column>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="opencell.admin" />
+            <column name="version" valueNumeric="0" />
+            <column name="src_type" value="JAVA" />
+        </insert>
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
+            <column name="code" value="org.meveo.service.script.CustomerAccountImportScript" />
+            <column name="script">
+                <![CDATA[
+package org.meveo.service.script;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.account.CustomerAccountApi;
+import org.meveo.api.dto.account.CustomerAccountDto;
+import org.meveo.model.crm.Customer;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.script.GenericMassImportScript;
+
+import java.util.Map;
+import java.util.stream.Stream;
+
+
+public class CustomerAccountImportScript extends GenericMassImportScript {
+
+    private static final String RECORD_VARIABLE_NAME = "record";
+    private static final String ENTITY = "CUSTOMER_ACCOUNT";
+    private static final String ENTITY_NAME = "CustomerAccount";
+
+    public enum CustomerAccountActionEnum {
+        CREATE, UPDATE, DELETE
+    }
+
+    private final CustomerService customerService = (CustomerService) getServiceInterface("CustomerService");
+    private final CustomerAccountApi customerAccountApi = (CustomerAccountApi) getServiceInterface(CustomerAccountApi.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> context) throws BusinessException {
+
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> recordMap = (Map<String, Object>) context.get(RECORD_VARIABLE_NAME);
+            if (recordMap != null && !recordMap.isEmpty()) {
+                // VALIDATE ENTITY
+                String ocEntity = (String) recordMap.get("OC_ENTITY");
+                if (!ENTITY.equals(ocEntity)) {
+                    throw new ValidationException("value of OC_ENTITY is not correct: " + ocEntity);
+                }
+                // VALIDATE ACTION
+                String ocAction = (String) recordMap.get("OC_ACTION");
+                if (Stream.of(CustomerAccountActionEnum.values()).noneMatch(e -> e.toString().equals(ocAction))) {
+                    throw new ValidationException("value of OC_ACTION is not correct: " + ocAction);
+                }
+
+                CustomerAccountActionEnum action = CustomerAccountActionEnum.valueOf(ocAction);
+
+                CustomerAccountDto customerAccountDto = validateAndGetCustomerAccount(action, recordMap);
+
+                if (CustomerAccountActionEnum.DELETE.equals(action)) {
+                    customerAccountApi.remove(customerAccountDto.getCode());
+                } else {
+                    setCustomerAccountValues(recordMap, customerAccountDto);
+                    if (CustomerAccountActionEnum.CREATE.equals(action)) {
+                        CustomerAccount customerAccount = customerAccountApi.create(customerAccountDto);
+
+                        this.setCFValues(recordMap, customerAccount, ENTITY_NAME);
+                    } else if (CustomerAccountActionEnum.UPDATE.equals(action)) {
+                        customerAccountApi.update(customerAccountDto);
+                    }
+
+                }
+            }
+        } catch (Exception exception) {
+            throw new BusinessException(exception);
+        }
+    }
+
+    private CustomerAccountDto validateAndGetCustomerAccount(CustomerAccountActionEnum action, Map<String, Object> recordMap) throws Exception {
+        CustomerAccountDto customerAccountDto;
+
+        String customerAccountCode = (String) recordMap.get("OC_CUSTOMERACCOUNT_CODE");
+        if (customerAccountCode.isEmpty()) {
+            throw new ValidationException("customer_account_code is required");
+        }
+
+        String customerCode = (String) recordMap.get("OC_CUSTOMER_CODE");
+        if (customerCode.isEmpty()) {
+            throw new ValidationException("customer_code is required");
+        }
+        Customer customer = customerService.findByCode(customerCode);
+
+        // For update and delete : check if there is a record
+        if (!CustomerAccountActionEnum.CREATE.equals(action)) {
+            if (customer == null) {
+                throw new ValidationException("no customer found for customer_code: '" + customerCode + "'");
+            }
+            customerAccountDto = customerAccountApi.find(customerAccountCode, false);
+            // Create action : check if there is no record
+        } else {
+            customerAccountDto = new CustomerAccountDto();
+        }
+        return customerAccountDto;
+    }
+
+    private void setCustomerAccountValues(Map<String, Object> recordMap, CustomerAccountDto customerAccountDto) {
+        customerAccountDto.setCustomer((String) recordMap.get("OC_CUSTOMER_CODE"));
+        customerAccountDto.setCode((String) recordMap.get("OC_CUSTOMERACCOUNT_CODE"));
+        customerAccountDto.setCurrency((String) recordMap.get("OC_CUSTOMERACCOUNT_CURRENCY"));
+        customerAccountDto.setCreditCategory((String) recordMap.get("OC_CUSTOMERACCOUNT_CREDCAT"));
+        customerAccountDto.setLanguage((String) recordMap.get("OC_CUSTOMERACCOUNT_LANG"));
+    }
+}
+
+				]]>
+            </column>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="opencell.admin" />
+            <column name="version" valueNumeric="0" />
+            <column name="src_type" value="JAVA" />
+        </insert>
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
+            <column name="code" value="org.meveo.service.script.PaymentMethodImportScript" />
+            <column name="script">
+                <![CDATA[
+package org.meveo.service.script;
+
+import org.apache.commons.lang3.StringUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.dto.account.BankCoordinatesDto;
+import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.api.payment.PaymentMethodApi;
+import org.meveo.model.payments.CreditCardTypeEnum;
+import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.service.payments.impl.PaymentMethodService;
+import org.meveo.service.script.GenericMassImportScript;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Stream;
+
+
+public class PaymentMethodImportScript extends GenericMassImportScript {
+
+    private static final String DATE_FORMAT_PATTERN = "dd/MM/yyyy";
+    private static final String RECORD_VARIABLE_NAME = "record";
+    private static final String ENTITY = "PAYMENT_METHOD";
+    private static final String ENTITY_NAME = "PaymentMethod";
+
+    public enum PaymentMethodActionEnum {
+        CREATE, UPDATE, DELETE
+    }
+
+    private final PaymentMethodService paymentMethodService = (PaymentMethodService) getServiceInterface("PaymentMethodService");
+    private final PaymentMethodApi paymentMethodApi = (PaymentMethodApi) getServiceInterface(PaymentMethodApi.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> context) throws BusinessException {
+
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> recordMap = (Map<String, Object>) context.get(RECORD_VARIABLE_NAME);
+            if (recordMap != null && !recordMap.isEmpty()) {
+                // VALIDATE ENTITY
+                String ocEntity = (String) recordMap.get("OC_ENTITY");
+                if (!ENTITY.equals(ocEntity)) {
+                    throw new ValidationException("value of OC_ENTITY is not correct: " + ocEntity);
+                }
+                // VALIDATE ACTION
+                String ocAction = (String) recordMap.get("OC_ACTION");
+                if (Stream.of(PaymentMethodActionEnum.values()).noneMatch(e -> e.toString().equals(ocAction))) {
+                    throw new ValidationException("value of OC_ACTION is not correct: " + ocAction);
+                }
+
+                PaymentMethodActionEnum action = PaymentMethodActionEnum.valueOf(ocAction);
+
+                PaymentMethodDto paymentMethodDto = validateAndGetPaymentMethod(recordMap);
+
+
+                if (action == PaymentMethodActionEnum.CREATE &&
+                        PaymentMethodEnum.valueOf((String) recordMap.get("OC_PMT_TYPE")) != PaymentMethodEnum.CARD) {
+                    setPaymentMethodValues(recordMap, paymentMethodDto);
+                    Long paymentMethodId = paymentMethodApi.create(paymentMethodDto);
+                    PaymentMethod paymentMethod = paymentMethodService.findById(paymentMethodId);
+                    this.setCFValues(recordMap, paymentMethod, ENTITY_NAME);
+                }
+            }
+        } catch (Exception exception) {
+            throw new BusinessException(exception);
+        }
+    }
+
+    private PaymentMethodDto validateAndGetPaymentMethod(Map<String, Object> recordMap) {
+        PaymentMethodDto paymentMethodDto = new PaymentMethodDto();
+
+        String customerAccountCode = (String) recordMap.get("OC_PMT_CA");
+        if (customerAccountCode.isEmpty()) {
+            throw new ValidationException("customer_account_code is required");
+        }
+
+        return paymentMethodDto;
+    }
+
+    private void setPaymentMethodValues(Map<String, Object> recordMap, PaymentMethodDto paymentMethodDto) throws ParseException {
+        PaymentMethodEnum ocPaymentMethodType = PaymentMethodEnum.valueOf((String) recordMap.get("OC_PMT_TYPE"));
+        paymentMethodDto.setPaymentMethodType(ocPaymentMethodType);
+        paymentMethodDto.setPreferred(Objects.equals(recordMap.get("OC_PMT_PREFERRED"), "X"));
+        paymentMethodDto.setAlias((String) recordMap.get("OC_PMT_ALIAS"));
+        paymentMethodDto.setCustomerAccountCode((String) recordMap.get("OC_PMT_CA"));
+        if (!((String) recordMap.get("OC_PMT_cardType")).isEmpty()) {
+            paymentMethodDto.setCardType(CreditCardTypeEnum.valueOf((String) recordMap.get("OC_PMT_cardType")));
+        }
+        if (!((String) recordMap.get("OC_PMT_monthExpiration")).isEmpty()) {
+            paymentMethodDto.setMonthExpiration(Integer.parseInt((String) recordMap.get("OC_PMT_monthExpiration")));
+        }
+        if (!((String) recordMap.get("OC_PMT_yearExpiration")).isEmpty()) {
+            paymentMethodDto.setYearExpiration(Integer.parseInt((String) recordMap.get("OC_PMT_yearExpiration")));
+        }
+        paymentMethodDto.setTokenId((String) recordMap.get("OC_PMT_tokenId"));
+        paymentMethodDto.setCardNumber((String) recordMap.get("OC_PMT_cardNumber"));
+        paymentMethodDto.setIssueNumber((String) recordMap.get("OC_PMT_issueNumber"));
+        paymentMethodDto.setUserId((String) recordMap.get("OC_PMT_userId"));
+        paymentMethodDto.setEmail((String) recordMap.get("OC_PMT_email"));
+        if (!((String) recordMap.get("OC_PMT_referenceDocumentCode")).isEmpty()) {
+            paymentMethodDto.setReferenceDocumentCode((String) recordMap.get("OC_PMT_referenceDocumentCode"));
+        }
+
+        if (ocPaymentMethodType == PaymentMethodEnum.DIRECTDEBIT) {
+            BankCoordinatesDto bankCoordinatesDto = new BankCoordinatesDto();
+            bankCoordinatesDto.setBankCode((String) recordMap.get("OC_PMT_bankCode"));
+            bankCoordinatesDto.setBranchCode((String) recordMap.get("OC_PMT_branchCode"));
+            bankCoordinatesDto.setAccountNumber((String) recordMap.get("OC_PMT_accountNumber"));
+            bankCoordinatesDto.setKey((String) recordMap.get("OC_PMT_key"));
+            bankCoordinatesDto.setIban((String) recordMap.get("OC_PMT_iban"));
+            bankCoordinatesDto.setBic((String) recordMap.get("OC_PMT_bic"));
+            bankCoordinatesDto.setAccountOwner((String) recordMap.get("OC_PMT_accountOwner"));
+            bankCoordinatesDto.setBankName((String) recordMap.get("OC_PMT_bankName"));
+            bankCoordinatesDto.setBankId((String) recordMap.get("OC_PMT_bankId"));
+            bankCoordinatesDto.setIssuerNumber((String) recordMap.get("OC_PMT_issuerNumber"));
+            bankCoordinatesDto.setIssuerName((String) recordMap.get("OC_PMT_issuerName"));
+            bankCoordinatesDto.setIcs((String) recordMap.get("OC_PMT_ics"));
+            paymentMethodDto.setBankCoordinates(bankCoordinatesDto);
+        }
+
+        paymentMethodDto.setMandateIdentification((String) recordMap.get("OC_PMT_mandateIdentification"));
+
+        DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
+        String ocPaymentMethodMandateDate = (String) recordMap.get("OC_PMT_mandateDate");
+        Date mandateDate = StringUtils.isEmpty(ocPaymentMethodMandateDate) ? null : dateFormat.parse(ocPaymentMethodMandateDate);
+        paymentMethodDto.setMandateDate(mandateDate);
+    }
+}
+
+				]]>
+            </column>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="opencell.admin" />
+            <column name="version" valueNumeric="0" />
+            <column name="src_type" value="JAVA" />
+        </insert>
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
+            <column name="code" value="org.meveo.service.script.BillingAccountImportScript" />
+            <column name="script">
+                <![CDATA[
+package org.meveo.service.script;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.account.BillingAccountApi;
+import org.meveo.api.dto.account.AddressDto;
+import org.meveo.api.dto.account.BillingAccountDto;
+import org.meveo.api.dto.account.NameDto;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.service.script.GenericMassImportScript;
+
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Stream;
+
+
+public class BillingAccountImportScript extends GenericMassImportScript {
+
+    private static final String RECORD_VARIABLE_NAME = "record";
+    private static final String ENTITY = "BILLING_ACCOUNT";
+    private static final String ENTITY_NAME = "BillingAccount";
+
+    public enum BillingAccountActionEnum {
+        CREATE, UPDATE, DELETE
+    }
+
+    private final BillingAccountApi billingAccountApi = (BillingAccountApi) getServiceInterface(BillingAccountApi.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> context) throws BusinessException {
+
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> recordMap = (Map<String, Object>) context.get(RECORD_VARIABLE_NAME);
+            if (recordMap != null && !recordMap.isEmpty()) {
+                // VALIDATE ENTITY
+                String ocEntity = (String) recordMap.get("OC_ENTITY");
+                if (!ENTITY.equals(ocEntity)) {
+                    throw new ValidationException("value of OC_ENTITY is not correct: " + ocEntity);
+                }
+                // VALIDATE ACTION
+                String ocAction = (String) recordMap.get("OC_ACTION");
+                if (Stream.of(BillingAccountActionEnum.values()).noneMatch(e -> e.toString().equals(ocAction))) {
+                    throw new ValidationException("value of OC_ACTION is not correct: " + ocAction);
+                }
+
+                BillingAccountActionEnum action = BillingAccountActionEnum.valueOf(ocAction);
+
+                BillingAccountDto billingAccountDto = validateAndGetBillingAccount(recordMap);
+
+                if (BillingAccountActionEnum.CREATE.equals(action)) {
+                    setBillingAccountValues(recordMap, billingAccountDto);
+                    BillingAccount billingAccount = billingAccountApi.create(billingAccountDto);
+                    this.setCFValues(recordMap, billingAccount, ENTITY_NAME);
+                }
+            }
+        } catch (Exception exception) {
+            throw new BusinessException(exception);
+        }
+    }
+
+    private BillingAccountDto validateAndGetBillingAccount(Map<String, Object> recordMap) {
+        BillingAccountDto billingAccountDto;
+
+        String customerAccountCode = (String) recordMap.get("OC_CUSTOMERACCOUNT_CODE");
+        if (customerAccountCode.isEmpty()) {
+            throw new ValidationException("customer_account_code is required");
+        }
+
+        String billingAccountCode = (String) recordMap.get("OC_BILLINGACCOUNT_CODE");
+        if (billingAccountCode.isEmpty()) {
+            throw new ValidationException("billing_account_code is required");
+        }
+
+        billingAccountDto = new BillingAccountDto();
+
+        return billingAccountDto;
+    }
+
+    private void setBillingAccountValues(Map<String, Object> recordMap, BillingAccountDto billingAccountDto) {
+        billingAccountDto.setCustomerAccount((String) recordMap.get("OC_CUSTOMERACCOUNT_CODE"));
+        billingAccountDto.setCode((String) recordMap.get("OC_BILLINGACCOUNT_CODE"));
+        billingAccountDto.setDescription((String) recordMap.get("OC_BILLINGACCOUNT_DESCRIPTION"));
+        billingAccountDto.setBillingCycle((String) recordMap.get("OC_BILLINGACCOUNT_BC"));
+        billingAccountDto.setCountry((String) recordMap.get("OC_BILLINGACCOUNT_COUNTRY"));
+        billingAccountDto.setLanguage((String) recordMap.get("OC_BILLINGACCOUNT_LANGUAGE"));
+        billingAccountDto.setTradingCurrency((String) recordMap.get("OC_BILLINGACCOUNT_CURRENCY"));
+        billingAccountDto.setTaxCategoryCode((String) recordMap.get("OC_BILLINGACCOUNT_TAXCAT"));
+        billingAccountDto.setRegistrationNo((String) recordMap.get("OC_BA_REGISTRATION"));
+        billingAccountDto.setVatNo((String) recordMap.get("OC_BA_TVANUMBER"));
+
+        NameDto name = new NameDto();
+        name.setTitle((String) recordMap.get("OC_BA_TITLE"));
+        name.setFirstName((String) recordMap.get("OC_BA_FNAME"));
+        name.setLastName((String) recordMap.get("OC_BA_LNAME"));
+        billingAccountDto.setName(name);
+
+        billingAccountDto.setIsCompany(Objects.equals(recordMap.get("OC_BA_ORGANIZATION"), "X"));
+        billingAccountDto.setElectronicBilling(Objects.equals(recordMap.get("OC_BA_EBILL"), "X"));
+        billingAccountDto.setEmail((String) recordMap.get("OC_BA_EBILLEMAIL"));
+        billingAccountDto.setCcedEmails((String) recordMap.get("OC_BA_EBILLEMAILS"));
+
+        AddressDto addressDto = new AddressDto();
+        addressDto.setAddress1((String) recordMap.get("OC_BA_ADDRESS"));
+        addressDto.setZipCode((String) recordMap.get("OC_BA_ZIPCODE"));
+        addressDto.setCity((String) recordMap.get("OC_BA_CITY"));
+        addressDto.setState((String) recordMap.get("OC_BA_STATE"));
+        addressDto.setCountry((String) recordMap.get("OC_BA_COUNTRY"));
+        billingAccountDto.setAddress(addressDto);
+    }
+}
+
+				]]>
+            </column>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="opencell.admin" />
+            <column name="version" valueNumeric="0" />
+            <column name="src_type" value="JAVA" />
+        </insert>
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
+            <column name="code" value="org.meveo.service.script.UserAccountImportScript" />
+            <column name="script">
+                <![CDATA[
+package org.meveo.service.script;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.account.UserAccountApi;
+import org.meveo.api.dto.account.NameDto;
+import org.meveo.api.dto.account.UserAccountDto;
+import org.meveo.model.billing.UserAccount;
+
+import java.text.ParseException;
+import java.util.Map;
+import java.util.stream.Stream;
+
+
+public class UserAccountImportScript extends GenericMassImportScript {
+
+    private static final String RECORD_VARIABLE_NAME = "record";
+    private static final String ENTITY = "USER_ACCOUNT";
+    private static final String ENTITY_NAME = "UserAccount";
+
+    public enum UserAccountActionEnum {
+        CREATE, UPDATE, DELETE
+    }
+
+    private final UserAccountApi userAccountApi = (UserAccountApi) getServiceInterface(UserAccountApi.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> context) throws BusinessException {
+
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> recordMap = (Map<String, Object>) context.get(RECORD_VARIABLE_NAME);
+            if (recordMap != null && !recordMap.isEmpty()) {
+                // VALIDATE ENTITY
+                String OC_ENTITY = (String) recordMap.get("OC_ENTITY");
+                if (!ENTITY.equals(OC_ENTITY)) {
+                    throw new ValidationException("value of OC_ENTITY is not correct: " + OC_ENTITY);
+                }
+                // VALIDATE ACTION
+                String OC_ACTION = (String) recordMap.get("OC_ACTION");
+                if (Stream.of(UserAccountActionEnum.values()).noneMatch(e -> e.toString().equals(OC_ACTION))) {
+                    throw new ValidationException("value of OC_ACTION is not correct: " + OC_ACTION);
+                }
+
+                UserAccountActionEnum action = UserAccountActionEnum.valueOf(OC_ACTION);
+
+                UserAccountDto userAccountDto = validateAndGetCustomer(action, recordMap);
+
+                if (UserAccountActionEnum.CREATE.equals(action)) {
+                    setAccessValues(recordMap, userAccountDto);
+                    UserAccount userAccount = userAccountApi.create(userAccountDto);
+                    this.setCFValues(recordMap, userAccount, ENTITY_NAME);
+                }
+            }
+        } catch (Exception exception) {
+            throw new BusinessException(exception);
+        }
+    }
+
+    private UserAccountDto validateAndGetCustomer(UserAccountActionEnum action, Map<String, Object> recordMap) throws Exception {
+        UserAccountDto userAccountDto = null;
+
+        String billingAccountCode = (String) recordMap.get("OC_BILLINGACCOUNT_CODE");
+        if (billingAccountCode.isEmpty()) {
+            throw new ValidationException("billing_account_code is required");
+        }
+
+        String userAccountCode = (String) recordMap.get("OC_USERACCOUNT_CODE");
+        if (userAccountCode.isEmpty()) {
+            throw new ValidationException("user_account_code is required");
+        }
+
+        userAccountDto = new UserAccountDto();
+
+        return userAccountDto;
+    }
+
+    private void setAccessValues(Map<String, Object> recordMap, UserAccountDto userAccountDto) throws ParseException {
+        userAccountDto.setBillingAccount((String) recordMap.get("OC_BILLINGACCOUNT_CODE"));
+        userAccountDto.setCode((String) recordMap.get("OC_USERACCOUNT_CODE"));
+      	String ocParentUACode = (String) recordMap.get("OC_PARENT_UA_CODE");
+        if(!ocParentUACode.isEmpty()) {
+            userAccountDto.setParentUserAccountCode(ocParentUACode);
+        }
+        userAccountDto.setDescription((String) recordMap.get("OC_USERACCOUNT_ DESCRIPTION"));
+        userAccountDto.setRegistrationNo((String) recordMap.get("OC_UA_REGISTRATION"));
+        userAccountDto.setVatNo((String) recordMap.get("OC_UA_TVANUMBER"));
+
+        NameDto name = new NameDto();
+        name.setTitle((String) recordMap.get("OC_UA_TITLE"));
+        name.setFirstName((String) recordMap.get("OC_UA_FNAME"));
+        name.setLastName((String) recordMap.get("OC_UA_LNAME"));
+        userAccountDto.setName(name);
+
+        userAccountDto.setIsCompany((String) recordMap.get("OC_UA_ORGANIZATION") == "X");
+    }
+}
+
+				]]>
+            </column>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="opencell.admin" />
+            <column name="version" valueNumeric="0" />
+            <column name="src_type" value="JAVA" />
+        </insert>
+        <!-- Job notification script -->
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
+            <column name="code" value="org.meveo.service.script.CustomerJobNotification" />
+            <column name="script">
+                <![CDATA[
+package org.meveo.service.script;
+
+import org.joda.time.DateTime;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.UserApi;
+import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.job.JobInstanceInfoDto;
+import org.meveo.api.job.JobApi;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.service.communication.impl.EmailSender;
+import org.meveo.service.communication.impl.EmailTemplateService;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
+
+public class CustomerJobNotification extends Script {
+    private static final String USER_CODE = "user";
+    private static final String FROM_EMAIL = "noreply@itnewvision.oc-sb.eu";
+
+    private static final String MASS_IMPORT_SUCCESS_EMAIL = "MASS_IMPORT_SUCCESS_EMAIL";
+    private static final String MASS_IMPORT_FAILURE_EMAIL = "MASS_IMPORT_FAILURE_EMAIL";
+    private static final String MASS_IMPORT_ISSUES_EMAIL = "MASS_IMPORT_ISSUES_EMAIL";
+
+    private static final String CUSTOMER_JOB_CODE = "massImportCustomerJob";
+    private static final String CUSTOMER_ACCOUNT_JOB_CODE = "massImportCustomerAccountJob";
+    private static final String PAYMENT_METHOD_JOB_CODE = "massImportPaymentMethodJob";
+    private static final String BILLING_ACCOUNT_JOB_CODE = "massImportBillingAccountJob";
+    private static final String USER_ACCOUNT_JOB_CODE = "massImportUserAccountJob";
+
+    private final transient JobApi jobApi = (JobApi) getServiceInterface(JobApi.class.getSimpleName());
+    private final transient UserApi userApi = (UserApi) getServiceInterface(UserApi.class.getSimpleName());
+
+    private final transient EmailSender emailSender = (EmailSender) getServiceInterface(EmailSender.class.getSimpleName());
+    private final transient EmailTemplateService emailTemplateService = (EmailTemplateService) getServiceInterface(EmailTemplateService.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> methodContext) throws BusinessException {
+        try {
+            String category = (String) methodContext.get("category");
+            JobExecutionResultImpl jobExecutionResult = (JobExecutionResultImpl) methodContext.get("entityOrEvent");
+            JobResultStatusEnum jobStatus = getJobResultStatus(jobExecutionResult);
+            String userName = (String) jobExecutionResult.getJobInstance().getCfValues().getValues().get(USER_CODE);
+
+            if (category == null || !category.equals("customer") || userName == null) return;
+            executeNextJob(jobExecutionResult);
+
+            // if there are no rows to process, we don't send a notification
+            if(jobExecutionResult.getNbItemsToProcess() == 0) return;
+
+            String subject;
+            String contentHtml;
+            Map<Object, Object> params = new HashMap<>();
+            EmailTemplate emailTemplate;
+
+            switch (jobStatus) {
+                case SUCCESS:
+                    emailTemplate = emailTemplateService.findByCode(MASS_IMPORT_SUCCESS_EMAIL);
+                    DateTime startDateTime = new DateTime(jobExecutionResult.getStartDate());
+                    params.put("date", startDateTime.toLocalDate());
+                    params.put("time", startDateTime.toLocalTime());
+                    params.put("job", jobExecutionResult.getJobInstance().getCode());
+                    contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
+                    subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
+                    break;
+                case FAILURE:
+                    emailTemplate = emailTemplateService.findByCode(MASS_IMPORT_FAILURE_EMAIL);
+                    params.put("job", jobExecutionResult.getJobInstance().getCode());
+                    contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
+                    subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
+                    break;
+                default:
+                    emailTemplate = emailTemplateService.findByCode(MASS_IMPORT_ISSUES_EMAIL);
+                    params.put("job", jobExecutionResult.getJobInstance().getCode());
+                    contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
+                    subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
+                    break;
+            }
+
+            List<String> toEmails = List.of(userApi.find(userName).getEmail());
+            emailSender.send(FROM_EMAIL, null, toEmails, subject, null, contentHtml);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void executeNextJob(JobExecutionResultImpl jobExecutionResult) {
+        String nextJobCode;
+        switch (jobExecutionResult.getJobInstance().getCode()) {
+            case CUSTOMER_JOB_CODE:
+                nextJobCode = CUSTOMER_ACCOUNT_JOB_CODE;
+                break;
+            case CUSTOMER_ACCOUNT_JOB_CODE:
+                nextJobCode = PAYMENT_METHOD_JOB_CODE;
+                break;
+            case PAYMENT_METHOD_JOB_CODE:
+                nextJobCode = BILLING_ACCOUNT_JOB_CODE;
+                break;
+            case BILLING_ACCOUNT_JOB_CODE:
+                nextJobCode = USER_ACCOUNT_JOB_CODE;
+                break;
+            default:
+                return;
+        }
+        JobInstanceInfoDto jobInstanceInfoDto = new JobInstanceInfoDto();
+        jobInstanceInfoDto.setCode(nextJobCode);
+        CustomFieldsDto customFields = new CustomFieldsDto();
+        CustomFieldDto customFieldDto = new CustomFieldDto();
+        customFieldDto.setCode(USER_CODE);
+        customFieldDto.setStringValue((String) jobExecutionResult.getJobInstance().getCfValues().getValues().get(USER_CODE));
+        customFields.setCustomField(List.of(customFieldDto));
+        jobInstanceInfoDto.setCustomFields(customFields);
+
+        jobApi.executeJob(jobInstanceInfoDto);
+    }
+
+    private JobResultStatusEnum getJobResultStatus(JobExecutionResultImpl jobExecutionResult) {
+        if(jobExecutionResult.getNbItemsToProcess() == 0)
+            return JobResultStatusEnum.NULL;
+        else if (jobExecutionResult.getNbItemsProcessedWithError() + 1 == jobExecutionResult.getNbItemsToProcess())
+            return JobResultStatusEnum.FAILURE;
+        else if(jobExecutionResult.getNbItemsCorrectlyProcessed() < jobExecutionResult.getNbItemsToProcess())
+            return JobResultStatusEnum.PARTIAL_SUCCESS;
+        else return JobResultStatusEnum.SUCCESS;
+    }
+
+    private enum JobResultStatusEnum {
+        SUCCESS,
+        FAILURE,
+        PARTIAL_SUCCESS,
+        NULL
+    }
+}
+
+				]]>
+            </column>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="opencell.admin" />
+            <column name="version" valueNumeric="0" />
+            <column name="src_type" value="JAVA" />
+        </insert>
+    </changeSet>
+    <changeSet id="#OUTRD-49-SUB_20220914-scripts" author="HamzaBiadi">
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
+            <column name="code" value="org.meveo.service.script.SubscriptionMassImportScript" />
+            <column name="script">
+                <![CDATA[
+package org.meveo.service.script;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.EnumUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.billing.SubscriptionApi;
+import org.meveo.api.dto.billing.SubscriptionDto;
+import org.meveo.api.dto.billing.SubscriptionRenewalDto;
+import org.meveo.model.billing.*;
+import org.meveo.service.script.GenericMassImportScript;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+import java.util.stream.Stream;
+
+
+public class SubscriptionMassImportScript extends GenericMassImportScript {
+
+    private static final String DATE_FORMAT_PATTERN = "dd/MM/yyyy";
+    private static final String RECORD_VARIABLE_NAME = "record";
+    private static final String ENTITY = "SUBSCRIPTION";
+    private static final String ENTITY_NAME = "Subscription";
+
+    public enum SubscriptionActionEnum {
+        CREATE, UPDATE, SUSPEND, RESUME, ACTIVATE, TERMINATE
+    }
+
+    private final SubscriptionApi subscriptionApi = (SubscriptionApi) getServiceInterface(SubscriptionApi.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> context) throws BusinessException {
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> recordMap = (Map<String, Object>) context.get(RECORD_VARIABLE_NAME);
+            if (recordMap != null && !recordMap.isEmpty()) {
+                // VALIDATE ENTITY
+                String OC_ENTITY = (String) recordMap.get("OC_ENTITY");
+                if (!ENTITY.equals(OC_ENTITY)) {
+                    throw new ValidationException("value of OC_ENTITY is not correct: " + OC_ENTITY);
+                }
+                // VALIDATE ACTION
+                String OC_ACTION = (String) recordMap.get("OC_ACTION");
+                if (Stream.of(SubscriptionActionEnum.values()).noneMatch(e -> e.toString().equals(OC_ACTION))) {
+                    throw new ValidationException("value of OC_ACTION is not correct: " + OC_ACTION);
+                }
+
+                SubscriptionActionEnum action = SubscriptionActionEnum.valueOf(OC_ACTION);
+
+                SubscriptionDto subscriptionDto = validateAndGetSubscription(action, recordMap);
+
+                if (SubscriptionActionEnum.CREATE.equals(action)) {
+                    setSubscriptionValues(recordMap, subscriptionDto);
+                    Subscription subscription = subscriptionApi.create(subscriptionDto);
+                    this.setCFValues(recordMap, subscription, ENTITY_NAME);
+                }
+            }
+        } catch (Exception exception) {
+            throw new BusinessException(exception);
+        }
+    }
+
+    private SubscriptionDto validateAndGetSubscription(SubscriptionActionEnum action, Map<String, Object> recordMap) {
+        SubscriptionDto subscriptionDto = null;
+
+        String subscriptionCode = (String) recordMap.get("OC_SUBSCRIPTION_CODE");
+        if (subscriptionCode.isEmpty()) {
+            throw new ValidationException("subscription_code is required");
+        }
+
+        String useraccountCode = (String) recordMap.get("OC_USERACCOUNT_CODE");
+        if (useraccountCode.isEmpty()) {
+            throw new ValidationException("useraccount_code is required");
+        }
+
+        subscriptionDto = new SubscriptionDto();
+
+        return subscriptionDto;
+    }
+
+    private void setSubscriptionValues(Map<String, Object> recordMap, SubscriptionDto subscriptionDto) throws ParseException {
+        DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
+
+
+        String OC_subscription_date = (String) recordMap.get("OC_SUBSCRIPTION_DATE");
+        String OC_endagreement_date = (String) recordMap.get("OC_ENDAGREEMENTDATE");
+        String OC_termination_date = (String) recordMap.get("OC_TERMINATIONDATE");
+
+        String OC_sub_inittermtype = (String) recordMap.get("OC_SUB_INITTERMTYPE");
+        String OC_sub_durationtype = (String) recordMap.get("OC_SUB_DURATIONTYPE");
+        Integer OC_sub_inittermlength = ((String) recordMap.get("OC_SUB_INITTERMLENGTH")).isEmpty() ? null
+                : Integer.parseInt( (String) recordMap.get("OC_SUB_INITTERMLENGTH"));
+
+        String OC_sub_inittermunit = (String) recordMap.get("OC_SUB_INITTERMUNIT");
+        String OC_sub_endtermaction = (String) recordMap.get("OC_SUB_ENDTERMACTION");
+
+        Date subscriptionDate = StringUtils.isEmpty(OC_subscription_date) ? null : dateFormat.parse(OC_subscription_date);
+        Date endagreementDate = StringUtils.isEmpty(OC_endagreement_date) ? null : dateFormat.parse(OC_endagreement_date);
+        Date terminationDate = StringUtils.isEmpty(OC_termination_date) ? null : dateFormat.parse(OC_termination_date);
+
+        SubscriptionRenewal.InitialTermTypeEnum initialTermTypeEnum = (!EnumUtils.isValidEnum(SubscriptionRenewal.InitialTermTypeEnum.class, OC_sub_inittermtype)) ? null
+                : SubscriptionRenewal.InitialTermTypeEnum.valueOf(OC_sub_inittermtype);
+        SubscriptionRenewal.RenewalPeriodUnitEnum renewalPeriodUnit = (!EnumUtils.isValidEnum(SubscriptionRenewal.RenewalPeriodUnitEnum.class, OC_sub_durationtype)) ? null
+                : SubscriptionRenewal.RenewalPeriodUnitEnum.valueOf(OC_sub_durationtype);
+
+        SubscriptionRenewal.RenewalPeriodUnitEnum initialyActiveForUnit = (!EnumUtils.isValidEnum(SubscriptionRenewal.RenewalPeriodUnitEnum.class, OC_sub_inittermunit)) ? null
+                : SubscriptionRenewal.RenewalPeriodUnitEnum.valueOf(OC_sub_inittermunit);
+        SubscriptionRenewal.EndOfTermActionEnum endOfTermAction = (!EnumUtils.isValidEnum(SubscriptionRenewal.EndOfTermActionEnum.class, OC_sub_endtermaction)) ? null
+                : SubscriptionRenewal.EndOfTermActionEnum.valueOf(OC_sub_endtermaction);
+        String terminationReason = StringUtils.isEmpty((String) recordMap.get("OC_SUB_TERMINATIONREASON")) ? null : ((String) recordMap.get("OC_SUB_TERMINATIONREASON"));
+
+        SubscriptionRenewalDto subscriptionRenewalDto = new SubscriptionRenewalDto();
+        subscriptionRenewalDto.setInitialTermType(initialTermTypeEnum);
+        subscriptionRenewalDto.setRenewForUnit(renewalPeriodUnit);
+        subscriptionRenewalDto.setInitialyActiveFor(OC_sub_inittermlength);
+        subscriptionRenewalDto.setInitialyActiveForUnit(initialyActiveForUnit);
+        subscriptionRenewalDto.setEndOfTermAction(endOfTermAction);
+        subscriptionRenewalDto.setTerminationReasonCode(terminationReason);
+
+        subscriptionDto.setUserAccount((String) recordMap.get("OC_USERACCOUNT_CODE"));
+        subscriptionDto.setCode((String) recordMap.get("OC_SUBSCRIPTION_CODE"));
+        subscriptionDto.setStatus(SubscriptionStatusEnum.valueOf((String) recordMap.get("OC_STATUS")));
+        subscriptionDto.setDescription((String) recordMap.get("OC_SUBSCRIPTION_DESCRIPTION"));
+        subscriptionDto.setOfferTemplate((String) recordMap.get("OC_OFFER_CODE"));
+        subscriptionDto.setSeller((String) recordMap.get("OC_SELLER_CODE"));
+        subscriptionDto.setSubscriptionDate(subscriptionDate);
+        subscriptionDto.setEndAgreementDate(endagreementDate);
+        subscriptionDto.setTerminationDate(terminationDate);
+        subscriptionDto.setBillingCycle((String) recordMap.get("OC_SUB_BC"));
+
+        subscriptionDto.setRenewalRule(subscriptionRenewalDto);
+        subscriptionDto.setElectronicBilling(recordMap.get("OC_SUB_EBILL").toString().equals("X"));
+        subscriptionDto.setEmail((String) recordMap.get("OC_SUB_EBILLEMAIL"));
+        subscriptionDto.setCcedEmails((String) recordMap.get("OC_SUB_EBILLEMAILS"));
+
+    }
+}
+
+				]]>
+            </column>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="opencell.admin" />
+            <column name="version" valueNumeric="0" />
+            <column name="src_type" value="JAVA" />
+        </insert>
+
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
+            <column name="code" value="org.meveo.service.script.ServiceInstanceImportScript" />
+            <column name="script">
+                <![CDATA[
+package org.meveo.service.script;
+
+import org.apache.commons.lang3.StringUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.billing.SubscriptionApi;
+import org.meveo.api.dto.cpq.ProductToInstantiateDto;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
+import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.script.GenericMassImportScript;
+
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+
+public class ServiceInstanceImportScript extends GenericMassImportScript {
+
+    private static final String DATE_FORMAT_PATTERN = "dd/MM/yyyy";
+    private static final String RECORD_VARIABLE_NAME = "record";
+    private static final String ENTITY = "SERVICE_INSTANCE";
+    private static final String ENTITY_NAME = "ServiceInstance";
+
+    public enum ServiceInstanceActionEnum {
+        CREATE, UPDATE, DELETE
+    }
+
+    private final ServiceInstanceService serviceInstanceService = (ServiceInstanceService) getServiceInterface("ServiceInstanceService");
+    private final SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface("SubscriptionService");
+    private final SubscriptionApi subscriptionApi = (SubscriptionApi) getServiceInterface(SubscriptionApi.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> context) throws BusinessException {
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> recordMap = (Map<String, Object>) context.get(RECORD_VARIABLE_NAME);
+            if (recordMap != null && !recordMap.isEmpty()) {
+                // VALIDATE ENTITY
+                String OC_ENTITY = (String) recordMap.get("OC_ENTITY");
+                if (!ENTITY.equals(OC_ENTITY)) {
+                    throw new ValidationException("value of OC_ENTITY is not correct: " + OC_ENTITY);
+                }
+                // VALIDATE ACTION
+                String OC_ACTION = (String) recordMap.get("OC_ACTION");
+                if (Stream.of(ServiceInstanceActionEnum.values()).noneMatch(e -> e.toString().equals(OC_ACTION))) {
+                    throw new ValidationException("value of OC_ACTION is not correct: " + OC_ACTION);
+                }
+
+                ServiceInstanceActionEnum action = ServiceInstanceActionEnum.valueOf(OC_ACTION);
+
+                ServiceInstance serviceInstance = validateAndGetServiceInstance(action, recordMap);
+
+                if (ServiceInstanceActionEnum.CREATE.equals(action)) {
+                    setServiceInstanceValues(recordMap, serviceInstance);
+                    serviceInstanceService.create(serviceInstance);
+                    this.setCFValues(recordMap, serviceInstance, ENTITY_NAME);
+                }
+            }
+        } catch (Exception exception) {
+            throw new BusinessException(exception);
+        }
+    }
+
+    private ServiceInstance validateAndGetServiceInstance(ServiceInstanceActionEnum action, Map<String, Object> recordMap) {
+        ServiceInstance serviceInstance = null;
+
+        String OC_subscription_code = (String) recordMap.get("OC_SUBSCRIPTION_CODE");
+        if (OC_subscription_code.isEmpty()) {
+            throw new ValidationException("subscription_code is required");
+        }
+
+        String OC_si_code = (String) recordMap.get("OC_SI_CODE");
+        if (OC_si_code.isEmpty()) {
+            throw new ValidationException("serviceinstance_code is required");
+        }
+
+        serviceInstance = new ServiceInstance();
+        Subscription subscription = subscriptionService.findByCode(OC_subscription_code);
+        if (subscription == null) {
+            throw new ValidationException("no subscription found for code: '" + OC_subscription_code + "'");
+        }
+
+        return serviceInstance;
+    }
+
+    private void setServiceInstanceValues(Map<String, Object> recordMap, ServiceInstance serviceInstance) throws ParseException {
+        String OC_subscription_code = (String) recordMap.get("OC_SUBSCRIPTION_CODE");
+        Subscription subscription = subscriptionService.findByCode(OC_subscription_code);
+
+        serviceInstance.setCode((String) recordMap.get("OC_SI_CODE"));
+        serviceInstance.setSubscription(subscription);
+        serviceInstance.setDescription((String) recordMap.get("OC_SI_DESC"));
+
+        // Instantiate products
+        DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
+        String OC_product_deliv_dt = (String) recordMap.get("OC_PRODUCT_DELIV_DT");
+        Date deliveryDate = StringUtils.isEmpty(OC_product_deliv_dt) ? null : dateFormat.parse(OC_product_deliv_dt);
+
+        ProductToInstantiateDto productToInstantiateDto = new ProductToInstantiateDto();
+        productToInstantiateDto.setProductCode((String) recordMap.get("OC_PRODUCT_CODE"));
+        productToInstantiateDto.setQuantity(new BigDecimal((String) recordMap.get("OC_PRODUCT_QTY")));
+        productToInstantiateDto.setDeliveryDate(deliveryDate);
+
+        List<ProductToInstantiateDto> products = new ArrayList<>();
+        products.add(productToInstantiateDto);
+
+        subscriptionApi.instanciateProduct(OC_subscription_code, products);
+
+    }
+
+}
+
+				]]>
+            </column>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="opencell.admin" />
+            <column name="version" valueNumeric="0" />
+            <column name="src_type" value="JAVA" />
+        </insert>
+
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
+            <column name="code" value="org.meveo.service.script.AttributeInstanceImportScript" />
+            <column name="script">
+                <![CDATA[
+package org.meveo.service.script;
+
+
+import org.apache.commons.lang3.StringUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.billing.SubscriptionApi;
+import org.meveo.api.dto.billing.AttributeInstanceDto;
+import org.meveo.api.dto.billing.ServiceToUpdateDto;
+import org.meveo.api.dto.billing.UpdateServicesRequestDto;
+import org.meveo.model.billing.AttributeInstance;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
+import org.meveo.service.billing.impl.AttributeInstanceService;
+import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.cpq.AttributeService;
+import org.meveo.service.script.GenericMassImportScript;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.stream.Stream;
+
+
+public class AttributeInstanceImportScript extends GenericMassImportScript {
+    private static final String DATE_FORMAT_PATTERN = "dd/MM/yyyy";
+    private static final String RECORD_VARIABLE_NAME = "record";
+    private static final String ENTITY = "ATTRIBUTE_INSTANCE";
+    private static final String ENTITY_NAME = "AttributeInstance";
+
+    public enum AttributeInstanceActionEnum {
+        CREATE, UPDATE, DELETE
+    }
+
+    private final AttributeInstanceService attributeInstanceService = (AttributeInstanceService) getServiceInterface("AttributeInstanceService");
+    private final AttributeService attributeService = (AttributeService) getServiceInterface("AttributeService");
+    private final SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface("SubscriptionService");
+    private final ServiceInstanceService serviceInstanceService = (ServiceInstanceService) getServiceInterface("ServiceInstanceService");
+
+    private final SubscriptionApi subscriptionApi = (SubscriptionApi) getServiceInterface(SubscriptionApi.class.getSimpleName());
+
+
+    @Override
+    public void execute(Map<String, Object> context) throws BusinessException {
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> recordMap = (Map<String, Object>) context.get(RECORD_VARIABLE_NAME);
+            if (recordMap != null && !recordMap.isEmpty()) {
+                // VALIDATE ENTITY
+                String OC_ENTITY = (String) recordMap.get("OC_ENTITY");
+                if (!ENTITY.equals(OC_ENTITY)) {
+                    throw new ValidationException("value of OC_ENTITY is not correct: " + OC_ENTITY);
+                }
+                // VALIDATE ACTION
+                String OC_ACTION = (String) recordMap.get("OC_ACTION");
+                if (Stream.of(AttributeInstanceActionEnum.values()).noneMatch(e -> e.toString().equals(OC_ACTION))) {
+                    throw new ValidationException("value of OC_ACTION is not correct: " + OC_ACTION);
+                }
+
+                AttributeInstanceActionEnum action = AttributeInstanceActionEnum.valueOf(OC_ACTION);
+
+                AttributeInstanceDto attributeInstanceDto = validateAndGetAttributeInstance(action, recordMap);
+
+                AttributeInstance attributeInstance = new AttributeInstance();
+
+                if (AttributeInstanceActionEnum.CREATE.equals(action)) {
+                    setAttributeInstanceValues(recordMap, attributeInstanceDto, attributeInstance);
+                    this.setCFValues(recordMap, attributeInstance, ENTITY_NAME);
+                }
+            }
+        } catch (Exception exception) {
+            throw new BusinessException(exception);
+        }
+    }
+
+
+    private AttributeInstanceDto validateAndGetAttributeInstance(AttributeInstanceActionEnum action, Map<String, Object> recordMap) {
+        AttributeInstanceDto attributeInstanceDto = null;
+
+        String OC_subscription_code = (String) recordMap.get("OC_SUBSCRIPTION_CODE");
+        if (OC_subscription_code.isEmpty()) {
+            throw new ValidationException("subscription_code is required");
+        }
+
+        String OC_si_code = (String) recordMap.get("OC_SERVICE_INSTANCE_CODE");
+        if (OC_si_code.isEmpty()) {
+            throw new ValidationException("serviceinstance_code is required");
+        }
+
+        attributeInstanceDto = new AttributeInstanceDto();
+        Subscription subscription = subscriptionService.findByCode(OC_subscription_code);
+        if (subscription == null) {
+            throw new ValidationException("no subscription found for code: '" + OC_subscription_code + "'");
+        }
+
+        ServiceInstance serviceInstance = serviceInstanceService.findByCode(OC_si_code);
+        if (serviceInstance == null) {
+            throw new ValidationException("no service instance found for code: '" + OC_si_code + "'");
+        }
+
+        return attributeInstanceDto;
+    }
+
+
+    private void setAttributeInstanceValues(Map<String, Object> recordMap, AttributeInstanceDto attributeInstanceDto, AttributeInstance attributeInstance) throws ParseException {
+        DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
+
+        Attribute attribute = attributeService.findByCode((String) recordMap.get("OC_SI_ATTRIB_CODE"));
+        AttributeTypeEnum type = attribute.getAttributeType();
+
+
+        attributeInstanceDto.setAttributeCode((String) recordMap.get("OC_SI_ATTRIB_CODE"));
+        attributeInstance.setAttribute(attribute);
+
+        switch (type) {
+            case TEXT:
+                attributeInstanceDto.setStringValue((String) recordMap.get("OC_SI_ATTRIB_VALUE"));
+                attributeInstance.setStringValue((String) recordMap.get("OC_SI_ATTRIB_VALUE"));
+                break;
+            case DATE:
+                attributeInstanceDto.setDateValue(StringUtils.isEmpty((String) recordMap.get("OC_SI_ATTRIB_VALUE")) ? null
+                        : dateFormat.parse((String) recordMap.get("OC_SI_ATTRIB_VALUE")));
+                attributeInstance.setDateValue(StringUtils.isEmpty((String) recordMap.get("OC_SI_ATTRIB_VALUE")) ? null
+                        : dateFormat.parse((String) recordMap.get("OC_SI_ATTRIB_VALUE")));
+                break;
+            case BOOLEAN:
+                attributeInstanceDto.setBooleanValue((recordMap.get("OC_SI_ATTRIB_VALUE")).equals("X"));
+                attributeInstance.setBooleanValue((recordMap.get("OC_SI_ATTRIB_VALUE")).equals("X"));
+                break;
+            case INTEGER:
+                attributeInstanceDto.setDoubleValue(Double.valueOf((String) recordMap.get("OC_SI_ATTRIB_VALUE")));
+                attributeInstance.setDoubleValue(Double.valueOf((String) recordMap.get("OC_SI_ATTRIB_VALUE")));
+                break;
+        }
+
+        // ATTRIBUTE INSTANTIIATION
+        UpdateServicesRequestDto requestDto = new UpdateServicesRequestDto();
+        ServiceInstance serviceInstance = serviceInstanceService.findByCode((String) recordMap.get("OC_SERVICE_INSTANCE_CODE"));
+        requestDto.setSubscriptionCode((String) recordMap.get("OC_SUBSCRIPTION_CODE"));
+        ServiceToUpdateDto serviceDto = new ServiceToUpdateDto();
+        serviceDto.setId(serviceInstance.getId());
+        serviceDto.setCode(serviceInstance.getCode());
+
+        requestDto.addService(serviceDto);
+
+        requestDto.setAttributeInstances(new ArrayList<>());
+        requestDto.getAttributeInstances().add(attributeInstanceDto);
+
+        subscriptionApi.updateServiceInstance(requestDto);
+
+    }
+
+}
+
+				]]>
+            </column>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="opencell.admin" />
+            <column name="version" valueNumeric="0" />
+            <column name="src_type" value="JAVA" />
+        </insert>
+
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
+            <column name="code" value="org.meveo.service.script.AccessPointImportScript" />
+            <column name="script">
+                <![CDATA[
+package org.meveo.service.script;
+
+import org.apache.commons.lang3.StringUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.account.AccessApi;
+import org.meveo.api.dto.account.AccessDto;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.mediation.Access;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.script.GenericMassImportScript;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+import java.util.stream.Stream;
+
+public class AccessPointImportScript extends GenericMassImportScript {
+
+    private static final String DATE_FORMAT_PATTERN = "dd/MM/yyyy";
+    private static final String RECORD_VARIABLE_NAME = "record";
+    private static final String ENTITY = "ACCESS_POINT";
+    private static final String ENTITY_NAME = "Access";
+
+    public enum AccessPointActionEnum {
+        CREATE, UPDATE, DELETE
+    }
+
+
+    private final SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface("SubscriptionService");
+    private final AccessApi accessApi = (AccessApi) getServiceInterface(AccessApi.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> context) throws BusinessException {
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> recordMap = (Map<String, Object>) context.get(RECORD_VARIABLE_NAME);
+            if (recordMap != null && !recordMap.isEmpty()) {
+                // VALIDATE ENTITY
+                String OC_ENTITY = (String) recordMap.get("OC_ENTITY");
+                if (!ENTITY.equals(OC_ENTITY)) {
+                    throw new ValidationException("value of OC_ENTITY is not correct: " + OC_ENTITY);
+                }
+                // VALIDATE ACTION
+                String OC_ACTION = (String) recordMap.get("OC_ACTION");
+                if (Stream.of(AccessPointActionEnum.values()).noneMatch(e -> e.toString().equals(OC_ACTION))) {
+                    throw new ValidationException("value of OC_ACTION is not correct: " + OC_ACTION);
+                }
+
+                AccessPointActionEnum action = AccessPointActionEnum.valueOf(OC_ACTION);
+
+                AccessDto accessDto = validateAndGetAccessPoint(action, recordMap);
+
+                if (AccessPointActionEnum.CREATE.equals(action)) {
+                    setAccessValues(recordMap, accessDto);
+                    Access access = accessApi.create(accessDto);
+                    this.setCFValues(recordMap, access, ENTITY_NAME);
+                }
+            }
+        } catch (Exception exception) {
+            throw new BusinessException(exception);
+        }
+    }
+
+
+    private AccessDto validateAndGetAccessPoint(AccessPointActionEnum action, Map<String, Object> recordMap) {
+        AccessDto accessDto = null;
+
+        String OC_subscription_code = (String) recordMap.get("OC_SUBSCRIPTION_CODE");
+        if (OC_subscription_code.isEmpty()) {
+            throw new ValidationException("subscription_code is required");
+        }
+
+        accessDto = new AccessDto();
+        Subscription subscription = subscriptionService.findByCode(OC_subscription_code);
+        if (subscription == null) {
+            throw new ValidationException("no subscription found for code: '" + OC_subscription_code + "'");
+        }
+
+        return accessDto;
+    }
+
+
+    private void setAccessValues(Map<String, Object> recordMap, AccessDto accessDto) throws ParseException {
+        DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
+        String OC_accessPoint_startDate = (String) recordMap.get("OC_ACCESSPOINT_STARTDATE");
+        String OC_accessPoint_endDate = (String) recordMap.get("OC_ACCESSPOINT_ENDDATE");
+        Date startDate = StringUtils.isEmpty(OC_accessPoint_startDate) ? null : dateFormat.parse(OC_accessPoint_startDate);
+        Date endDate = StringUtils.isEmpty(OC_accessPoint_endDate) ? null : dateFormat.parse(OC_accessPoint_endDate);
+
+        accessDto.setSubscription((String) recordMap.get("OC_SUBSCRIPTION_CODE"));
+        accessDto.setCode((String) recordMap.get("OC_ACCESSPOINT_CODE"));
+        accessDto.setEndDate(endDate);
+        accessDto.setStartDate(startDate);
+
+    }
+}
+
+				]]>
+            </column>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="opencell.admin" />
+            <column name="version" valueNumeric="0" />
+            <column name="src_type" value="JAVA" />
+        </insert>
+
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
+            <column name="code" value="org.meveo.service.script.SubscriptionJobNotification" />
+            <column name="script">
+                <![CDATA[
+package org.meveo.service.script;
+
+import org.joda.time.DateTime;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.UserApi;
+import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.job.JobInstanceInfoDto;
+import org.meveo.api.job.JobApi;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.service.communication.impl.EmailSender;
+import org.meveo.service.communication.impl.EmailTemplateService;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
+
+public class SubscriptionJobNotification extends Script {
+    private static final String USER_CODE = "user";
+    private static final String FROM_EMAIL = "noreply@itnewvision.oc-sb.eu";
+
+    private static final String MASS_IMPORT_SUCCESS_EMAIL = "MASS_IMPORT_SUCCESS_EMAIL";
+    private static final String MASS_IMPORT_FAILURE_EMAIL = "MASS_IMPORT_FAILURE_EMAIL";
+    private static final String MASS_IMPORT_ISSUES_EMAIL = "MASS_IMPORT_ISSUES_EMAIL";
+
+    private static final String CUSTOMER_JOB_CODE = "massImportSubscriptionJob";
+    private static final String CUSTOMER_ACCOUNT_JOB_CODE = "massImportServiceInstanceJob";
+    private static final String PAYMENT_METHOD_JOB_CODE = "massImportAttributeInstance";
+    private static final String BILLING_ACCOUNT_JOB_CODE = "importBillingAccountJob";
+    private static final String USER_ACCOUNT_JOB_CODE = "importUserAccountJob";
+
+    private final transient JobApi jobApi = (JobApi) getServiceInterface(JobApi.class.getSimpleName());
+    private final transient UserApi userApi = (UserApi) getServiceInterface(UserApi.class.getSimpleName());
+
+    private final transient EmailSender emailSender = (EmailSender) getServiceInterface(EmailSender.class.getSimpleName());
+    private final transient EmailTemplateService emailTemplateService = (EmailTemplateService) getServiceInterface(EmailTemplateService.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> methodContext) throws BusinessException {
+        try {
+            String category = (String) methodContext.get("category");
+            JobExecutionResultImpl jobExecutionResult = (JobExecutionResultImpl) methodContext.get("entityOrEvent");
+            JobResultStatusEnum jobStatus = getJobResultStatus(jobExecutionResult);
+            String userName = (String) jobExecutionResult.getJobInstance().getCfValues().getValues().get(USER_CODE);
+
+            if (category == null || !category.equals("customer") || userName == null) return;
+            executeNextJob(jobExecutionResult);
+
+            // if there are no rows to process, we don't send a notification
+            if(jobExecutionResult.getNbItemsToProcess() == 0) return;
+
+            String subject;
+            String contentHtml;
+            Map<Object, Object> params = new HashMap<>();
+            EmailTemplate emailTemplate;
+
+            switch (jobStatus) {
+                case SUCCESS:
+                    emailTemplate = emailTemplateService.findByCode(MASS_IMPORT_SUCCESS_EMAIL);
+                    DateTime startDateTime = new DateTime(jobExecutionResult.getStartDate());
+                    params.put("date", startDateTime.toLocalDate());
+                    params.put("time", startDateTime.toLocalTime());
+                    params.put("job", jobExecutionResult.getJobInstance().getCode());
+                    contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
+                    subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
+                    break;
+                case FAILURE:
+                    emailTemplate = emailTemplateService.findByCode(MASS_IMPORT_FAILURE_EMAIL);
+                    params.put("job", jobExecutionResult.getJobInstance().getCode());
+                    contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
+                    subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
+                    break;
+                default:
+                    emailTemplate = emailTemplateService.findByCode(MASS_IMPORT_ISSUES_EMAIL);
+                    params.put("job", jobExecutionResult.getJobInstance().getCode());
+                    contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
+                    subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
+                    break;
+            }
+
+            List<String> toEmails = List.of(userApi.find(userName).getEmail());
+            emailSender.send(FROM_EMAIL, null, toEmails, subject, null, contentHtml);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void executeNextJob(JobExecutionResultImpl jobExecutionResult) {
+        String nextJobCode;
+        switch (jobExecutionResult.getJobInstance().getCode()) {
+            case CUSTOMER_JOB_CODE:
+                nextJobCode = CUSTOMER_ACCOUNT_JOB_CODE;
+                break;
+            case CUSTOMER_ACCOUNT_JOB_CODE:
+                nextJobCode = PAYMENT_METHOD_JOB_CODE;
+                break;
+            case PAYMENT_METHOD_JOB_CODE:
+                nextJobCode = BILLING_ACCOUNT_JOB_CODE;
+                break;
+            case BILLING_ACCOUNT_JOB_CODE:
+                nextJobCode = USER_ACCOUNT_JOB_CODE;
+                break;
+            default:
+                return;
+        }
+        JobInstanceInfoDto jobInstanceInfoDto = new JobInstanceInfoDto();
+        jobInstanceInfoDto.setCode(nextJobCode);
+        CustomFieldsDto customFields = new CustomFieldsDto();
+        CustomFieldDto customFieldDto = new CustomFieldDto();
+        customFieldDto.setCode(USER_CODE);
+        customFieldDto.setStringValue((String) jobExecutionResult.getJobInstance().getCfValues().getValues().get(USER_CODE));
+        customFields.setCustomField(List.of(customFieldDto));
+        jobInstanceInfoDto.setCustomFields(customFields);
+
+        jobApi.executeJob(jobInstanceInfoDto);
+    }
+
+    private JobResultStatusEnum getJobResultStatus(JobExecutionResultImpl jobExecutionResult) {
+        if(jobExecutionResult.getNbItemsToProcess() == 0)
+            return JobResultStatusEnum.NULL;
+        else if (jobExecutionResult.getNbItemsProcessedWithError() + 1 == jobExecutionResult.getNbItemsToProcess())
+            return JobResultStatusEnum.FAILURE;
+        else if(jobExecutionResult.getNbItemsCorrectlyProcessed() < jobExecutionResult.getNbItemsToProcess())
+            return JobResultStatusEnum.PARTIAL_SUCCESS;
+        else return JobResultStatusEnum.SUCCESS;
+    }
+
+    private enum JobResultStatusEnum {
+        SUCCESS,
+        FAILURE,
+        PARTIAL_SUCCESS,
+        NULL
+    }
+}
+
+				]]>
+            </column>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="opencell.admin" />
+            <column name="version" valueNumeric="0" />
+            <column name="src_type" value="JAVA" />
+        </insert>
+    </changeSet>
+
        <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data-scripts" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data-scripts.xml'</sql>
