@@ -37,6 +37,5 @@ public class ConcurrencyLockInterceptor implements Serializable {
         }
 
         return MethodCallingUtils.executeFunctionLocked(lockBy, () -> ctx.proceed());
-
     }
 }
