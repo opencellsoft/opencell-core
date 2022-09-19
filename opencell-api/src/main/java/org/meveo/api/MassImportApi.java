@@ -159,7 +159,7 @@ public class MassImportApi {
                 if(fileTypeDto != null && fileTypeDto.getFileType() != ImportTypesEnum.UNKNOWN) {
                     String toPath = getProviderRootDir() + File.separator
                             + ImportTypesEnum.valueOf(fileTypeDto.getFileType().toString()).path + File.separator + file.getName();
-
+                    Files.createDirectories(Paths.get(toPath));
                     Files.move(Paths.get(file.getPath()), Paths.get(toPath), StandardCopyOption.REPLACE_EXISTING);
                 }
 
