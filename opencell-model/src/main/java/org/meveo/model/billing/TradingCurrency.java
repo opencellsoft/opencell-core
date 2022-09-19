@@ -206,9 +206,7 @@ public class TradingCurrency extends EnableEntity {
         if (ratesList == null || ratesList.isEmpty()) {
             return null;
         }
-        Collections.sort(ratesList, (o1, o2) -> o2.getFromDate().compareTo(o1.getFromDate()));
-
-        return ratesList.stream().filter(rate -> (rate.getFromDate().toInstant().isBefore(invoiceDate.toInstant())) ||
-                (rate.getFromDate().toInstant().equals(invoiceDate.toInstant()))).findFirst().orElse(null);
+        return ratesList.stream().sorted(Comparator.comparing(ExchangeRate::getFromDate).reversed()).filter(rate -> (
+                (rate.getFromDate().toInstant().equals(invoiceDate.toInstant())) || rate.getFromDate().toInstant().isBefore(invoiceDate.toInstant()))).findFirst().orElse(null);
     }
 }

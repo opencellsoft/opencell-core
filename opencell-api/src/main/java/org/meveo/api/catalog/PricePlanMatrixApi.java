@@ -123,11 +123,12 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         handleMissingParametersAndValidate(postData);
 
         // search for eventCode
-        if (chargeTemplateServiceAll.findByCode(postData.getEventCode()) == null && 
-        		discountPlanItemService.findByCode(postData.getEventCode()) == null && 
-        				contractItemService.findByCode(postData.getEventCode()) == null) {
-            throw new EntityDoesNotExistsException("No event code exist");
-        }
+        //disable the control on event code because PPM are now linked to chargetemplate, discountPla, , contractItem by a direct relationship
+//        if (chargeTemplateServiceAll.findByCode(postData.getEventCode()) == null && 
+//        		discountPlanItemService.findByCode(postData.getEventCode()) == null && 
+//        				contractItemService.findByCode(postData.getEventCode()) == null) {
+//            throw new EntityDoesNotExistsException("No event code exist");
+//        }
 
         if (pricePlanMatrixService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(PricePlanMatrix.class, postData.getCode());
