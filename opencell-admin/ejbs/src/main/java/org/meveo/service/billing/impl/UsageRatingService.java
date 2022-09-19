@@ -334,7 +334,7 @@ public class UsageRatingService implements Serializable {
             usageRatingServiceNewTX.rejectEDR(edrId, e);
             throw e;
 
-        } catch (BusinessException e) {
+        } catch (Exception e) {
             log.error("Failed to rate EDR {}: {}", edrId, e.getMessage(), e);
             usageRatingServiceNewTX.rejectEDR(edrId, e);
             throw e;
@@ -480,7 +480,7 @@ public class UsageRatingService implements Serializable {
             log.trace("Failed to rate EDR {}: {}", edr, e.getRejectionReason());
             throw e;
 
-        } catch (BusinessException e) {
+        } catch (Exception e) {
             log.error("Failed to rate EDR {}: {}", edr, e.getMessage(), e);
             throw e;
         }
@@ -508,7 +508,7 @@ public class UsageRatingService implements Serializable {
                 } catch (RatingException e) {
                     log.trace("Failed to rate EDR {}: {}", edr, e.getRejectionReason());
 
-                } catch (BusinessException e) {
+                } catch (Exception e) {
                     log.error("Failed to rate EDR {}: {}", edr, e.getMessage(), e);
                 }
             }
