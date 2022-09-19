@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.*;
@@ -141,9 +142,10 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 					}
 				});
 			}
-
+			
+			Set<Attribute> matchedAttributes = matchedAttributesMapping.stream().map(AttributeMapping::getAttribute).collect(Collectors.toSet());
 			//fullMatch
-			if(aml.getAttributesMapping().size() >= matchedAttributesMapping.size() && (matchedAttributesMapping.size() == attributes.keySet().size())) {
+			if(aml.getAttributesMapping().size() >= matchedAttributesMapping.size() && (matchedAttributes.size() == attributes.keySet().size())) {
 				attributeMappingLineMatch.addFullMatch(aml);
 			}else{
 				if (!(aml.getAttributesMapping().size() > 0 && matchedAttributesMapping.size() == 0)) {
