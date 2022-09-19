@@ -17321,9 +17321,9 @@
 								 baseTableName="billing_wallet_operation" 
 								 referencedColumnNames="id"/>
 		
-		<addForeignKeyConstraint constraintName="price_plan_matrix_line_fk" 
-								 referencedTableName="cpq_price_plan_matrix_line" 
-								 baseColumnNames="price_plan_matrix_line_id" 
+		<addForeignKeyConstraint constraintName="price_plan_matrix_version_fk"
+								 referencedTableName="cpq_price_plan_version"
+								 baseColumnNames="price_plan_matrix_version_id" 
 								 baseTableName="billing_wallet_operation" 
 								 referencedColumnNames="id"/>
 		
@@ -18615,6 +18615,7 @@
     <changeSet id="#INTRD-9804-20220915" author="khalidHORRI"/>
 	<changeSet id="#INTRD-9871_20220919" author="TarikFA." />
 
+    <changeSet id="INTRD-9860-20220919" author="abdelkader.BOUAZZA">
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

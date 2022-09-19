@@ -14384,5 +14384,13 @@ order by date_trunc('month', i.invoice_date) DESC
     <changeSet id="#INTRD-9804-20220915" author="khalidHORRI">
         <modifyDataType tableName="cpq_contract_item" columnName="rate" newDataType="${type.float}"/>
     </changeSet>
+    <changeSet id="INTRD-9860-20220919" author="abdelkader.BOUAZZA">
+        <dropForeignKeyConstraint baseTableName="billing_wallet_operation" constraintName="price_plan_matrix_line_fk"/>
+        <addForeignKeyConstraint constraintName="price_plan_matrix_version_fk"
+                                 referencedTableName="cpq_price_plan_version"
+                                 baseColumnNames="price_plan_matrix_version_id"
+                                 baseTableName="billing_wallet_operation"
+                                 referencedColumnNames="id"/>
+    </changeSet>
 
 </databaseChangeLog>
