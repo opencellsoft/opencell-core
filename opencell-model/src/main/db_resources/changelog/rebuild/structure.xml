@@ -11650,7 +11650,7 @@
                 <constraints nullable="true" />
             </column>
             <column name="description" type="varchar(255)" />
-            <column name="use_security_deposit" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="use_security_deposit" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="max_amount_security_deposit" type="numeric(23, 12)"  />
             <column name="max_amount_consumer" type="numeric(23, 12)"  />
             <column name="auto_refund" type="${type.boolean}" defaultValueNumeric="0" />
