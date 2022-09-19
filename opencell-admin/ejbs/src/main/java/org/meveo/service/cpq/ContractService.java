@@ -7,6 +7,7 @@ import javax.persistence.FlushModeType;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.contract.Contract;
@@ -29,7 +30,7 @@ public class ContractService extends BusinessService<Contract>  {
 	private final static Logger LOGGER = LoggerFactory.getLogger(ContractService.class);
 	
 	private final static String CONTRACT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE = "status of the contract (%s) is %s, it can not be updated nor removed";
-	private final static String CONTRACT_CAN_NOT_CHANGE_THE_STATUS = "contract (%s) can not change the status beacause it not draft";
+	private final static String CONTRACT_CAN_NOT_CHANGE_THE_STATUS_ACTIVE_TO = "Status transition from ACTIVE to %s is not allowed";
 	
 	
 	public ContractService() {
@@ -92,17 +93,19 @@ public class ContractService extends BusinessService<Contract>  {
 	 * @throws ContractException
 	 */
 	public Contract updateStatus(Contract contract, ContractStatusEnum status){
-		if(contract.getStatus().equals(ContractStatusEnum.DRAFT)) {
-			if(ContractStatusEnum.ACTIVE.equals(status) && contract.getContractItems().isEmpty()){
-				 throw new BusinessException("Activate is forbidden if not any Contract Line");
-			}
-			contract.setStatus(status);
-			return  update(contract);
-		}else if (ContractStatusEnum.ACTIVE.equals(contract.getStatus())) {
-			contract.setStatus(ContractStatusEnum.CLOSED);
-			return  update(contract);
+		if(ContractStatusEnum.DRAFT.equals(contract.getStatus()) 
+				&& ContractStatusEnum.ACTIVE.equals(status) 
+				&& contract.getContractItems().isEmpty()) {
+				 throw new BusinessApiException("Activate is forbidden if not any Contract Line");
 		}
-		throw new BusinessException(String.format(CONTRACT_CAN_NOT_CHANGE_THE_STATUS, contract.getCode()));
+
+		if (ContractStatusEnum.ACTIVE.equals(contract.getStatus()) 
+				&& (ContractStatusEnum.ACTIVE.equals(status) || ContractStatusEnum.DRAFT.equals(status))) {
+			 throw new BusinessApiException(String.format(CONTRACT_CAN_NOT_CHANGE_THE_STATUS_ACTIVE_TO, status));
+		}
+
+		contract.setStatus(status);
+		return  update(contract);
 	}
 	
 	@SuppressWarnings("unchecked")
