@@ -17323,7 +17323,7 @@
 		
 		<addForeignKeyConstraint constraintName="price_plan_matrix_line_fk" 
 								 referencedTableName="cpq_price_plan_matrix_line" 
-								 baseColumnNames="price_plan_matrix_version_id" 
+								 baseColumnNames="price_plan_matrix_line_id" 
 								 baseTableName="billing_wallet_operation" 
 								 referencedColumnNames="id"/>
 		
