@@ -17,9 +17,14 @@
  */
 package org.meveo.service.generic.wf;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
+import org.meveo.api.dto.generic.wf.GenericWorkflowDto;
+import org.meveo.api.dto.generic.wf.WFStatusDto;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WFStatus;
 import org.meveo.service.base.BusinessService;
@@ -52,5 +57,22 @@ public class WFStatusService extends BusinessService<WFStatus> {
             return null;
         }
         return wfStatus;
+    }
+    
+    public void updateStatusByGenericWorkflow(GenericWorkflowDto genericWorkflowDto, GenericWorkflow genericWorkflow) {
+        deleteByGenericWorkflow(genericWorkflow.getId());        
+        genericWorkflow.getStatuses().clear();        
+        List<WFStatus> wFStatusAdd = new ArrayList<WFStatus>();
+        for (WFStatusDto wfStatusDto : genericWorkflowDto.getStatuses()) {
+            WFStatus wfStatus = wfStatusDto.toWFStatus();          
+            wfStatus.setGenericWorkflow(genericWorkflow);
+            create(wfStatus);
+            wFStatusAdd.add(wfStatus);
+        }
+        genericWorkflow.getStatuses().addAll(wFStatusAdd);
+    }
+    
+    public void deleteByGenericWorkflow(Long genericWorkflowId) {
+        getEntityManager().createNamedQuery("WFStatus.deleteByGenericWorkflow").setParameter("genericWorkflowId", genericWorkflowId).executeUpdate();
     }
 }
