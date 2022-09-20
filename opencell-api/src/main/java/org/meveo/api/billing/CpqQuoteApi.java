@@ -1752,6 +1752,7 @@ public class CpqQuoteApi extends BaseApi {
             quoteVersion.getQuoteArticleLines().removeAll(articleToRemove);
             articleToRemove.forEach(article -> article.setQuoteVersion(null));
             quoteVersionService.update(quoteVersion);
+            quoteVersionService.commit();
         }
     }
 
