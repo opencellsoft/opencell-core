@@ -8127,7 +8127,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</insert>
 	</changeSet>
 
-	<changeSet id="#INTRD-8903_19012022" author="TarikRabeh">
+	<changeSet id="#INTRD-9839_19012022" author="TarikRabeh">
         <update tableName="dwh_report_extract">
             <column name="sql_query" >
                 <![CDATA[SELECT
