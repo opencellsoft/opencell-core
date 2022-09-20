@@ -184,6 +184,9 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
         
         genericWorkflow = genericWorkflowService.update(genericWorkflow);
         
+        // Update Status 
+        wfStatusService.updateStatusByGenericWorkflow(genericWorkflowDto, genericWorkflow);        
+      
         // Update Transitions
         List<GWFTransition> listUpdate = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(genericWorkflowDto.getTransitions())) {
@@ -199,7 +202,7 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
 
 
         List<GWFTransition> gwfTransitionsToRemove = new ArrayList<>();
-       genericWorkflow.getTransitions().forEach(gwtTransaction -> {
+        genericWorkflow.getTransitions().forEach(gwtTransaction -> {
     	   for (GWFTransitionDto gwfTransitionDto : genericWorkflowDto.getTransitions()) {  
     		   if(gwtTransaction.getFromStatus().equalsIgnoreCase(gwfTransitionDto.getFromStatus()) && 
        				gwtTransaction.getToStatus().equalsIgnoreCase(gwfTransitionDto.getToStatus())) {
