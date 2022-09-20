@@ -9,6 +9,7 @@ import static org.meveo.model.billing.BillingProcessTypesEnum.FULL_AUTOMATIC;
 import static org.meveo.model.billing.BillingRunStatusEnum.*;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -41,6 +42,7 @@ import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoicesToNumberInfo;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.ServiceSingleton;
+import org.meveo.model.scripts.ScriptInstance;
 
 @Stateless
 public class InvoicingJobV2Bean extends BaseJobBean {
@@ -84,6 +86,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                 filters.put("inList id", billingRunIds);
             }
             PaginationConfiguration paginationConfiguration = new PaginationConfiguration(filters);
+            paginationConfiguration.setFetchFields(Arrays.asList("billingCycle", "billingCycle.billingRunValidationScript"));
             List<BillingRun> billingRuns = billingRunService.list(paginationConfiguration);
             if (billingRuns.isEmpty()) {
                 List<String> errors = List.of("No valid billing run with status=INVOICE_LINES_CREATED found");
@@ -94,7 +97,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                     if(billingRun.isExceptionalBR() && addExceptionalInvoiceLineIds(billingRun) == 0) {
                         result.setReport("Exceptional Billing filters returning no invoice line to process");
                     }
-                    executeBillingRun(billingRun, jobInstance, result);
+                    executeBillingRun(billingRun, jobInstance, result, billingRun.getBillingCycle().getBillingRunValidationScript());
                     initAmounts();
                 }
                 result.setNbItemsCorrectlyProcessed(billingRuns.size());
@@ -133,7 +136,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         return billingRun.getExceptionalILIds().size();
     }
 
-    private void executeBillingRun(BillingRun billingRun, JobInstance jobInstance, JobExecutionResultImpl result) {
+    private void executeBillingRun(BillingRun billingRun, JobInstance jobInstance, JobExecutionResultImpl result, ScriptInstance billingRunValidationScript) {
         if(billingRun.getStatus() == INVOICE_LINES_CREATED
                 && (billingRun.getProcessType() == AUTOMATIC || billingRun.getProcessType() == FULL_AUTOMATIC)) {
             billingRun.setStatus(PREVALIDATED);
@@ -150,6 +153,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         if(billingRun.getStatus() == DRAFT_INVOICES && billingRun.getProcessType() == FULL_AUTOMATIC) {
             billingRun.setStatus(POSTVALIDATED);
         }
+        billingRun.getBillingCycle().setBillingRunValidationScript(billingRunValidationScript);
         if(!billingRunService.isBillingRunValid(billingRun)) {
             billingRun.setStatus(REJECTED);
         }
