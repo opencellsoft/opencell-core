@@ -11720,6 +11720,7 @@
             <column name="service_instance_id" type="bigint"/>
 			<column name="refund_reason" type="varchar(255)"/>
 			<column name="cancel_reason" type="varchar(255)"/>
+			<column name="sd_invoice_id" type="bigint"/>
 		</createTable>
 
 		<createTable tableName="security_deposit_transaction">
@@ -16234,6 +16235,12 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
 
     </changeSet>
+    
+    <changeSet id="#INTRD-9946_20220920-rebuild-str-fk" author="HichamHANINE">
+		<addForeignKeyConstraint baseColumnNames="sd_invoice_id" baseTableName="security_deposit" constraintName="fk_security_deposit_invoice"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
+    </changeSet>
 
     <changeSet id="#INTRD-4654_20220203-rebuild-str-fk" author="HanineHicham">
 		<addForeignKeyConstraint baseColumnNames="security_deposit_id" baseTableName="security_deposit_transaction"
@@ -18615,6 +18622,7 @@
     <changeSet id="#INTRD-9804-20220915" author="khalidHORRI"/>
 	<changeSet id="#INTRD-9871_20220919" author="TarikFA." />
 	<changeSet id="#INTRD-9839_20220919" author="TarikRabeh" />
+	<changeSet id="#INTRD-9946_20220920" author="HichamHANINE" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
