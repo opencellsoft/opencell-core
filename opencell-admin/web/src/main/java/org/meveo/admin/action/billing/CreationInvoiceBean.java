@@ -258,6 +258,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                     entity.setBillingAccount(rootInvoice.getBillingAccount());
                     entity.setSeller(rootInvoice.getSeller());
                     entity.setSubscription(subscriptionService.refreshOrRetrieve(rootInvoice.getSubscription()));
+                    entity.setPaymentMethod(rootInvoice.getPaymentMethod());
+                    entity.setPaymentMethodType(rootInvoice.getPaymentMethodType());
                     entity.getLinkedInvoices().add(rootInvoice);
                     
                     try {
