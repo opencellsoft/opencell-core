@@ -18,7 +18,6 @@
 
 package org.meveo.api.rest.billing.impl;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.billing.InvoicingApi;
 import org.meveo.api.dto.ActionStatus;
@@ -38,6 +37,7 @@ import org.meveo.api.rest.billing.InvoicingRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.apiv2.billing.WalletOperationRerate;
 import org.meveo.apiv2.generic.core.GenericRequestMapper;
+import org.meveo.apiv2.generic.services.GenericApiAlteringService;
 import org.meveo.apiv2.generic.services.GenericApiLoadService;
 import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
@@ -49,7 +49,8 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -62,6 +63,9 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
 
     @Inject
     private GenericApiLoadService loadService;
+
+    @Inject
+    private GenericApiAlteringService genericAlteringService;
 
     @Override
     public ActionStatus createBillingRun(CreateBillingRunDto createBillingRunDto) {
@@ -321,13 +325,17 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
         paginationConfiguration.setFetchFields(new ArrayList<>());
         paginationConfiguration.getFetchFields().add("id");
 
+        Map<String, Object> toUpdateFields = new HashMap<>();
+        toUpdateFields.put("status", WalletOperationStatusEnum.TO_RERATE);
+        toUpdateFields.put("updated", new Date());
+
+        int updated = genericAlteringService.massUpdate(WalletOperation.class.getSimpleName(),
+                WalletOperation.class.getSimpleName(),
+                toUpdateFields, filters);
+
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-        List<Map<String, Object>> results = loadService.findAggregatedPaginatedRecords(WalletOperation.class, paginationConfiguration, null);
-
-        if (CollectionUtils.isNotEmpty(results)) {
-            invoicingApi.markeWOToRerate(results);
-            result.setMessage(results.size() + " Wallet operations updated to status 'TO_RERATE'");
+        if (updated > 0) {
+            result.setMessage(updated + " Wallet operations updated to status 'TO_RERATE'");
         } else {
             result.setMessage("No Wallet operations found to update");
         }

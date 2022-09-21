@@ -19,7 +19,6 @@ package org.meveo.service.billing.impl;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
-import static java.math.RoundingMode.*;
 import static java.util.Arrays.asList;
 import static java.util.Set.of;
 import static java.util.stream.Collectors.toList;
@@ -72,7 +71,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.LockMode;
@@ -6568,30 +6566,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
         return fileName;
-    }
-
-    public void markeWOToRerate(List<Map<String, Object>> results) {
-        if (CollectionUtils.isEmpty(results)) {
-            return;
-        }
-
-        List<Long> woIds = new ArrayList<>(results.size());
-
-        results.forEach(map -> woIds.add((Long) map.get("id")));
-
-        List<List<Long>> partitions = ListUtils.partition(woIds, 10000);
-
-        log.info("Update WalletOperation state to {} : To process='{}' - Paritition number='{}' - Partition count ='{}'",
-                WalletOperationStatusEnum.TO_RERATE, woIds.size(), partitions.size(), 10000);
-
-        partitions.forEach(partition -> {
-                    log.info("\t Update WalletOperation state : Process partition with size={}", partition.size());
-                    getEntityManager().createNamedQuery("WalletOperation.updateStatus")
-                            .setParameter("WO_IDS", partition)
-                            .setParameter("STATUS", WalletOperationStatusEnum.TO_RERATE)
-                            .executeUpdate();
-                }
-        );
     }
 
 }

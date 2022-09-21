@@ -21,6 +21,7 @@ import static org.meveo.service.base.PersistenceService.FROM_JSON_FUNCTION;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -1420,6 +1421,36 @@ public class QueryBuilder {
     public List find(EntityManager em) {
         Query query = getQuery(em);
         return query.getResultList();
+    }
+
+    public String getQueryAsString(EntityManager em) {
+         applyOrdering(paginationSortAlias);
+
+        String query = toStringQuery();
+        // applyPagination(result);
+
+        for (Map.Entry<String, Object> e : params.entrySet()) {
+            // result.setParameter(e.getKey(), e.getValue());
+            query = query.replaceAll(":" + e.getKey(), paramToString(e.getValue()));
+        }
+        return query;
+    }
+
+    public static String paramToString(Object param) {
+        if (param instanceof Collection) {
+            StringBuilder params = new StringBuilder();
+            ((Collection<?>) param).forEach(v -> {
+                params.append("'").append(v).append("',");
+            });
+            params.setLength(params.length() - 1);
+            return params.toString();
+        } else if (param instanceof String || param instanceof Enum) {
+            return "'" + param + "'";
+        } else if (param instanceof Date) {
+            return "'" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(param) + "'";
+        } else {
+            return param.toString();
+        }
     }
 
     /**

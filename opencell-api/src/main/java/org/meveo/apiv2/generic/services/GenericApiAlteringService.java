@@ -27,15 +27,18 @@ import javax.ws.rs.NotFoundException;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.hibernate.collection.internal.PersistentBag;
 import org.hibernate.collection.internal.PersistentSet;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.TaxApi;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldValueDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EntityReferenceDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.apiv2.generic.core.GenericHelper;
 import org.meveo.apiv2.generic.core.mapper.JsonGenericMapper;
 import org.meveo.commons.utils.EjbUtils;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.ICustomFieldEntity;
@@ -56,6 +59,9 @@ public class GenericApiAlteringService {
 
     @Inject
     private GenericApiPersistenceDelegate persistenceDelegate;
+
+    @Inject
+    private GenericApiLoadService genericApiLoadService;
 
     @Inject
     @MeveoJpa
@@ -102,6 +108,29 @@ public class GenericApiAlteringService {
             if (!forbiddenFieldsToUpdate.contains(key))
                 FetchOrSetField(key, readValueMap, parsedEntity, fetchedEntity);
         });
+    }
+
+    public int massUpdate(String updatedEntityName, String filteredEntityName, Map<String, Object> updatedFields, Map<String, Object> filters) {
+        Class<?> updatedEntityClass = GenericHelper.getEntityClass(updatedEntityName);
+        Class<?> filteredEntityClass = GenericHelper.getEntityClass(filteredEntityName);
+
+        PaginationConfiguration paginationConfiguration = new PaginationConfiguration("id", PagingAndFiltering.SortOrder.ASCENDING);
+        paginationConfiguration.setFilters(filters);
+        paginationConfiguration.setFetchFields(new ArrayList<>());
+        paginationConfiguration.getFetchFields().add("id");
+        // Prepare filter filterQuery
+        String filterQuery = genericApiLoadService.findAggregatedPaginatedRecordsAsString(filteredEntityClass, paginationConfiguration, null);
+
+        // Build update filterQuery
+        StringBuilder updateQuery = new StringBuilder("UPDATE ").append(updatedEntityClass.getName()).append(" a SET");
+        updatedFields.forEach((s, o) ->
+            updateQuery.append(" a.").append(s).append("=").append(QueryBuilder.paramToString(o)).append(",")
+        );
+        updateQuery.setLength(updateQuery.length() - 1);
+        updateQuery.append(" WHERE a.id in (").append(filterQuery).append(")");
+
+        return entityManagerWrapper.getEntityManager().createQuery(updateQuery.toString()).executeUpdate();
+
     }
 
     private void FetchOrSetField(String fieldName, Map<String, Object> readValueMap, Object parsedEntity, Object fetchedEntity) {
