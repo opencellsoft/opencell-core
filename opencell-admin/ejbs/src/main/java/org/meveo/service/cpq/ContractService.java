@@ -1,8 +1,12 @@
 package org.meveo.service.cpq;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.FlushModeType;
 import javax.persistence.NoResultException;
 
@@ -10,13 +14,18 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.contract.Contract;
+import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.cpq.enums.ContractAccountLevel;
 import org.meveo.model.cpq.enums.ContractStatusEnum;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +37,10 @@ import org.slf4j.LoggerFactory;
 public class ContractService extends BusinessService<Contract>  {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ContractService.class);
-	
+
+	@Inject
+	private PricePlanMatrixVersionService pricePlanMatrixVersionService;
+
 	private final static String CONTRACT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE = "status of the contract (%s) is %s, it can not be updated nor removed";
 	private final static String CONTRACT_CAN_NOT_CHANGE_THE_STATUS_ACTIVE_TO = "Status transition from ACTIVE to %s is not allowed";
 	
@@ -93,16 +105,51 @@ public class ContractService extends BusinessService<Contract>  {
 	 * @throws ContractException
 	 */
 	public Contract updateStatus(Contract contract, ContractStatusEnum status){
-		if(ContractStatusEnum.DRAFT.equals(contract.getStatus()) 
-				&& ContractStatusEnum.ACTIVE.equals(status) 
+		if(ContractStatusEnum.DRAFT.equals(contract.getStatus())
+				&& ContractStatusEnum.ACTIVE.equals(status)
 				&& contract.getContractItems().isEmpty()) {
 				 throw new BusinessApiException("Activate is forbidden if not any Contract Line");
 		}
+		if(ContractStatusEnum.DRAFT.equals(contract.getStatus())
+				&& ContractStatusEnum.ACTIVE.equals(status)) {
+			List<PricePlanMatrix> pricePlans = contract.getContractItems().stream().map(ContractItem::getPricePlan).collect(Collectors.toList());
+			List<PricePlanMatrixVersion> pricePlanVersions = pricePlanMatrixVersionService.findByPricePlans(pricePlans);
+			if (pricePlanVersions.isEmpty()) {
+				log.error("At any given time during the duration of the framework agreement, a price should be applicable, please check your price version dates");
+				throw new BusinessApiException(
+						"At any given time during the duration of the framework agreement, a price should be applicable, please check your price version dates");
+			}
+			List<PricePlanMatrixVersion> draftPricePlanVersions = pricePlanVersions.stream().filter(pricePlanMatrixVersion -> VersionStatusEnum.DRAFT.equals(pricePlanMatrixVersion.getStatus())).collect(Collectors.toList());
+			if (!draftPricePlanVersions.isEmpty()){
+				log.error("All contract lines should have all price versions published to activate the framework agreement");
+				throw new BusinessApiException("All contract lines should have all price versions published to activate the framework agreement");
+			}
+			List<PricePlanMatrixVersion> endDatePricePlanVersions = pricePlanVersions.stream().filter(pricePlanMatrixVersion -> pricePlanMatrixVersion.getValidity().getTo() == null).collect(Collectors.toList());
+			if (endDatePricePlanVersions.isEmpty()){
+				pricePlanVersions.sort(Comparator.comparing(PricePlanMatrixVersion::getValidity));
+				PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanVersions.get(0);
+				if (pricePlanMatrixVersion.getValidity().getFrom().compareTo(contract.getBeginDate()) != 0){
+					log.error("At any given time during the duration of the framework agreement, a price should be applicable, please check your price version dates");
+					throw new BusinessApiException(
+							"At any given time during the duration of the framework agreement, a price should be applicable, please check your price version dates");
 
-		if (ContractStatusEnum.ACTIVE.equals(contract.getStatus()) 
+				}
+				pricePlanVersions.sort((p1,p2) -> p1.getValidity().compareFieldTo(p2.getValidity()));
+				pricePlanMatrixVersion = pricePlanVersions.get(pricePlanVersions.size()-1);
+				if (pricePlanMatrixVersion.getValidity().getTo().compareTo(contract.getEndDate()) != 0){
+					log.error("At any given time during the duration of the framework agreement, a price should be applicable, please check your price version dates");
+					throw new BusinessApiException(
+							"At any given time during the duration of the framework agreement, a price should be applicable, please check your price version dates");
+
+				}
+			}
+		}
+
+		if (ContractStatusEnum.ACTIVE.equals(contract.getStatus())
 				&& (ContractStatusEnum.ACTIVE.equals(status) || ContractStatusEnum.DRAFT.equals(status))) {
 			 throw new BusinessApiException(String.format(CONTRACT_CAN_NOT_CHANGE_THE_STATUS_ACTIVE_TO, status));
 		}
+
 
 		contract.setStatus(status);
 		return  update(contract);
