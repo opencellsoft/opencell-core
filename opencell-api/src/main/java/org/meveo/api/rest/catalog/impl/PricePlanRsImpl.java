@@ -158,7 +158,11 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            pricePlanApi.createOrUpdate(postData);
+            PricePlanMatrix pricePlanMatrix = pricePlanApi.createOrUpdate(postData);
+            if(pricePlanMatrix != null) {
+        		result.setEntityId(pricePlanMatrix.getId());
+        		result.setEntityCode(pricePlanMatrix.getCode());
+        	}
         } catch (Exception e) {
             processException(e, result);
         }

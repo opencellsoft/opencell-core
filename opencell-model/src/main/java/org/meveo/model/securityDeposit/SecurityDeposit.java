@@ -7,10 +7,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -19,6 +21,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.cpq.Product;
@@ -93,6 +96,18 @@ public class SecurityDeposit extends BusinessCFEntity {
     @Column(name = "cancel_reason")
     private String cancelReason;
     
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sd_invoice_id")
+    private Invoice securityDepositInvoice;
+    
+    public Invoice getSecurityDepositInvoice() {
+        return securityDepositInvoice;
+    }
+
+    public void setSecurityDepositInvoice(Invoice securityDepositInvoice) {
+        this.securityDepositInvoice = securityDepositInvoice;
+    }
+
     public SecurityDepositTemplate getTemplate() {
         return template;
     }

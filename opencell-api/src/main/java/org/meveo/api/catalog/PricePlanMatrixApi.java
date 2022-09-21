@@ -271,13 +271,6 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
 
         handleMissingParametersAndValidate(postData);
 
-        // search for eventCode
-        if (chargeTemplateServiceAll.findByCode(postData.getEventCode()) == null && 
-        		discountPlanItemService.findByCode(postData.getEventCode()) == null && 
-				contractItemService.findByCode(postData.getEventCode()) == null) {
-            throw new EntityDoesNotExistsException("No event code exist");
-        }
-
         // search for price plan
         PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(postData.getCode());
         if (pricePlanMatrix == null) {
