@@ -109,7 +109,7 @@ public class GenericApiLoadService {
 
     public String findAggregatedPaginatedRecordsAsString(Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFieldsAlias) {
         return nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig, null)
-                .addPaginationConfiguration(searchConfig, "a").getQueryAsString(nativePersistenceService.getEntityManager());
+                .addPaginationConfiguration(searchConfig, "a").getQueryAsString();
     }
 
 	public int getAggregatedRecordsCount(Class entityClass, PaginationConfiguration searchConfig) {

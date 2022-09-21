@@ -1423,14 +1423,12 @@ public class QueryBuilder {
         return query.getResultList();
     }
 
-    public String getQueryAsString(EntityManager em) {
-         applyOrdering(paginationSortAlias);
+    public String getQueryAsString() {
+        applyOrdering(paginationSortAlias);
 
         String query = toStringQuery();
-        // applyPagination(result);
 
         for (Map.Entry<String, Object> e : params.entrySet()) {
-            // result.setParameter(e.getKey(), e.getValue());
             query = query.replaceAll(":" + e.getKey(), paramToString(e.getValue()));
         }
         return query;
