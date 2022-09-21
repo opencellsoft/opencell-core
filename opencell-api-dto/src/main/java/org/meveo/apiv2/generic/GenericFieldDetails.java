@@ -20,5 +20,7 @@ public interface GenericFieldDetails {
     String getTransformation();
     @Nullable
     @Value.Default default Map<String, String> getMappings(){ return Collections.emptyMap();}
+    @Nullable
+    String getFormula();
 
 }

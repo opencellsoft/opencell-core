@@ -50,7 +50,7 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
 @Stateless
-public class CsvGenericExportManager {
+public class GenericFileExportManager {
 	
 	@Inject
     private ParamBeanFactory paramBeanFactory;
@@ -61,9 +61,12 @@ public class CsvGenericExportManager {
 
     public String export(String entityName, List<Map<String, Object>> mapResult, String fileType, Map<String, GenericFieldDetails> fieldDetails){
     	log.debug("Save directory "+paramBeanFactory.getChrootDir());
-    	saveDirectory = paramBeanFactory.getChrootDir() + File.separator + PATH_STRING_FOLDER;
+    	DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendValue(YEAR, 4, 10, SignStyle.EXCEEDS_PAD).appendValue(MONTH_OF_YEAR, 2).appendValue(DAY_OF_MONTH, 2)
+        		.appendLiteral('-').appendValue(HOUR_OF_DAY, 2).appendValue(MINUTE_OF_HOUR, 2).appendValue(SECOND_OF_MINUTE, 2).toFormatter();
+        String time = LocalDateTime.now().format(formatter);
+    	saveDirectory = paramBeanFactory.getChrootDir() + File.separator + PATH_STRING_FOLDER + entityName + File.separator +time.substring(0,8) + File.separator;
         if (mapResult != null && !mapResult.isEmpty()) {        	
-            Path filePath = saveAsRecord(entityName, mapResult, fileType, fieldDetails);
+            Path filePath = saveAsRecord(entityName, mapResult, fileType, fieldDetails, time);
             return filePath == null? null : filePath.toString();
         }
         return null;
@@ -74,15 +77,14 @@ public class CsvGenericExportManager {
      * @param fileName
      * @param records
      * @param fileType
+     * @param time 
      * @return
      */
-    private Path saveAsRecord(String fileName, List<Map<String, Object>> records, String fileType, Map<String, GenericFieldDetails> fieldDetails) {
+    private Path saveAsRecord(String fileName, List<Map<String, Object>> records, String fileType, Map<String, GenericFieldDetails> fieldDetails, String time) {
         String extensionFile = ".csv";
-        DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendValue(YEAR, 4, 10, SignStyle.EXCEEDS_PAD).appendValue(MONTH_OF_YEAR, 2).appendValue(DAY_OF_MONTH, 2)
-        		.appendLiteral('-').appendValue(HOUR_OF_DAY, 2).appendValue(MINUTE_OF_HOUR, 2).appendValue(SECOND_OF_MINUTE, 2).toFormatter();
         
         try {
-        	String time = LocalDateTime.now().format(formatter);
+        	
         	//CSV
             if(fileType.equals("CSV")) {
                 if(!Files.exists(Path.of(saveDirectory))){
@@ -132,7 +134,7 @@ public class CsvGenericExportManager {
 				//Header
 				//csv.appendValue(translations.getOrDefault(entry.getKey(), entry.getKey()));
                 GenericFieldDetails fieldDetail = fieldDetails.get(entry.getKey());
-                csv.appendValue(fieldDetail==null ? entry.getKey() : fieldDetail.getHeader());
+				csv.appendValue(extractValue(entry.getKey(), fieldDetail));
 			}
 			break;
 		}
@@ -174,7 +176,7 @@ public class CsvGenericExportManager {
 	    		    cell = rowHeader.createCell(column);
 	    		    // cell.setCellValue(translations.getOrDefault(entry.getKey(), entry.getKey()));
                     GenericFieldDetails fieldDetail = fieldDetails.get(entry.getKey());
-                    cell.setCellValue(fieldDetail==null ? entry.getKey() : fieldDetail.getHeader());
+                    cell.setCellValue(extractValue(entry.getKey(), fieldDetail));
 	    		    column++;
 	    		}
 	    	}
@@ -214,7 +216,7 @@ public class CsvGenericExportManager {
         columns.forEach(column -> {
             PdfPCell header = new PdfPCell();
             GenericFieldDetails fieldDetail = fieldDetails.get(column);
-            header.setPhrase(new Phrase(fieldDetail==null ? column : fieldDetail.getHeader()));
+            header.setPhrase(new Phrase(extractValue(column, fieldDetail)));
             table.addCell(header);
         });
     }
@@ -257,4 +259,9 @@ public class CsvGenericExportManager {
         return value.toString();
 
     }
+    
+    private String extractValue(String key, GenericFieldDetails fieldDetail) {
+		return fieldDetail == null ? key : fieldDetail.getHeader() != null ? fieldDetail.getHeader() : fieldDetail.getName();
+	}
+    
 }

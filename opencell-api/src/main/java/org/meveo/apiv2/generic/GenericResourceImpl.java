@@ -1,5 +1,19 @@
 package org.meveo.apiv2.generic;
 
+import static org.meveo.apiv2.generic.services.PersistenceServiceHelper.getPersistenceService;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Link;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.apiv2.GenericOpencellRestful;
@@ -11,20 +25,6 @@ import org.meveo.apiv2.generic.services.GenericApiAlteringService;
 import org.meveo.apiv2.generic.services.GenericApiLoadService;
 import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
 import org.meveo.util.Inflector;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Link;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import static org.meveo.apiv2.generic.services.PersistenceServiceHelper.getPersistenceService;
 
 @Stateless
 public class GenericResourceImpl implements GenericResource {
@@ -175,7 +175,7 @@ public class GenericResourceImpl implements GenericResource {
             
         }
         if(!fileFormat.equals("CSV") && !fileFormat.equals("EXCEL") && !fileFormat.equalsIgnoreCase("pdf")){
-            throw new BadRequestException("format of the price plan matrix version can be only equals (CSV or EXCEL).");
+            throw new BadRequestException("Accepted formats for export are (CSV, pdf or EXCEL).");
         }
         Class entityClass = GenericHelper.getEntityClass(entityName);
         GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
