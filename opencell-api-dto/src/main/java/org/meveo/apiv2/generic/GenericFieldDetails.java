@@ -12,7 +12,7 @@ import java.util.Map;
 @JsonDeserialize(as = ImmutableGenericFieldDetails.class)
 public interface GenericFieldDetails {
 
-    @Nullable
+    
     String getName();
     @Nullable
     String getHeader();
