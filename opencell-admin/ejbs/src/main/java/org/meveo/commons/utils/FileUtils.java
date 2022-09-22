@@ -44,6 +44,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.meveo.admin.storage.StorageFactory;
 import org.meveo.model.shared.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -471,7 +472,7 @@ public final class FileUtils {
                 if (!fileout.exists()) {
                     (new File(fileout.getParent())).mkdirs();
                 }
-                try (OutputStream fos = new FileOutputStream(fileout); BufferedOutputStream bos = new BufferedOutputStream(fos)) {
+                try (OutputStream fos = StorageFactory.getOutputStream(fileout); BufferedOutputStream bos = new BufferedOutputStream(fos)) {
                     int b = -1;
                     while ((b = bis.read()) != -1) {
                         bos.write(b);
