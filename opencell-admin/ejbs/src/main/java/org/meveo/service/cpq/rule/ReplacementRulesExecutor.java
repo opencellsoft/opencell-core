@@ -81,10 +81,11 @@ public class ReplacementRulesExecutor {
              break;
 
         }
-        log.info("matchedCommercialRuleLine {}, TargetAttributeValue={}",matchedCommercialRuleLine!=null?matchedCommercialRuleLine.getId()+"-"+matchedCommercialRuleLine.getSourceProductCode():null,commercialRuleHeader.getTargetAttributeValue());
         if (matchedCommercialRuleLine!=null && StringUtils.isBlank(commercialRuleHeader.getTargetAttributeValue())) {
-        	CommercialRuleLineCommand command = new CommercialRuleLineCommandFactory(commercialRuleHeader, selectedAttributes, selectedSourceAttributes).create(matchedCommercialRuleLine.getOperator(), isQuoteScope);
-        	command.replace(matchedCommercialRuleLine);
+        	Object sourceAttribute=selectedAttributes.getSelectedAttributesMap().get(matchedCommercialRuleLine.getSourceAttribute().getCode());
+        	 log.info("matchedCommercialRuleLine {}, sourceAttribute={}",matchedCommercialRuleLine.getId()+"-"+matchedCommercialRuleLine.getSourceProductCode(),sourceAttribute);
+            selectedAttributes.getSelectedAttributesMap().put(commercialRuleHeader.getTargetAttribute().getCode(),sourceAttribute );
+            
         }else if (canReplace || matchedCommercialRuleLine!=null) {
         	selectedAttributes.setCanReplace(true);
             selectedAttributes.getSelectedAttributesMap().put(commercialRuleHeader.getTargetAttribute().getCode(), commercialRuleHeader.getTargetAttributeValue());
