@@ -26,6 +26,7 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.admin.FileDto;
 import org.meveo.api.dto.admin.FileRequestDto;
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
@@ -57,6 +58,7 @@ import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 @Stateless
 public class FilesApi extends BaseApi {
 
+    public static final String FILE_DOES_NOT_EXISTS = "File does not exists: ";
     @Inject
     private FlatFileValidator flatFileValidator;
 
@@ -102,7 +104,7 @@ public class FilesApi extends BaseApi {
         }
         String prefix =  getProviderRootDir().replace("./","");
         if(dir.contains("../") && !dir.contains(prefix)){
-            throw new BusinessApiException("File does not exists: " + dir);
+            throw new BusinessApiException(FILE_DOES_NOT_EXISTS + dir);
         }
         if(dir.startsWith("../")){
             dir =  dir.replace("../","");
@@ -130,7 +132,7 @@ public class FilesApi extends BaseApi {
         filePath = normalizePath(filePath);
         File file = new File(getProviderRootDir() + File.separator + filePath);
         if (!file.exists()) {
-            throw new BusinessApiException("File does not exists: " + file.getPath());
+            throw new BusinessApiException(FILE_DOES_NOT_EXISTS + file.getPath());
         }
 
         try {
@@ -208,16 +210,19 @@ public class FilesApi extends BaseApi {
      * @throws  MeveoApiException
      */
     public void uploadFileBase64(FileRequestDto postData) throws MeveoApiException {
-        if (postData == null || StringUtils.isBlank(postData.getFilepath())) {
+        if (postData == null){
+           throw new InvalidParameterException("Body request is empty");
+        }
+        if (StringUtils.isBlank(postData.getFilepath())) {
             missingParameters.add("filepath");
         }
-        if (postData == null || StringUtils.isBlank(postData.getContent())) {
+        if (StringUtils.isBlank(postData.getContent())) {
             missingParameters.add("content");
         }
 
         handleMissingParametersAndValidate(postData);
 
-        assert postData != null;
+
         String filepath = getProviderRootDir() + File.separator + normalizePath(postData.getFilepath());
         File file = new File(filepath);
         FileOutputStream fop = null;
@@ -281,7 +286,7 @@ public class FilesApi extends BaseApi {
                 throw new BusinessApiException("Error suppressing file: " + filename + ". " + e.getMessage());
             }
         } else {
-            throw new BusinessApiException("File does not exists: " + filename);
+            throw new BusinessApiException(FILE_DOES_NOT_EXISTS + filename);
         }
     }
 
@@ -308,7 +313,7 @@ public class FilesApi extends BaseApi {
     public void downloadFile(String filePath, HttpServletResponse response) throws BusinessApiException {
         File file = new File(getProviderRootDir() + File.separator + normalizePath(filePath));
         if (!file.exists()) {
-            throw new BusinessApiException("File does not exists: " + file.getPath());
+            throw new BusinessApiException(FILE_DOES_NOT_EXISTS + file.getPath());
         }
 
         try (FileInputStream fis = new FileInputStream(file)) {
