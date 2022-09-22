@@ -116,7 +116,7 @@ public class FilesApi extends BaseApi {
 
     public List<FileDto> listFiles(String dir) throws BusinessApiException {
         if (!StringUtils.isBlank(dir)) {
-            dir = getProviderRootDir() + File.separator + dir;
+            dir = getProviderRootDir() + File.separator + normalizePath(dir);
         } else {
             dir = getProviderRootDir();
         }
@@ -141,14 +141,40 @@ public class FilesApi extends BaseApi {
         return result;
     }
 
+    /**
+     * Remove any directory above the provider directory root
+     * @param dir
+     * @return
+     */
+    private String normalizePath(String dir) {
+        String prefix =  getProviderRootDir().replace("./","");
+        if(dir.contains("../") && !dir.contains(prefix)){
+            throw new BusinessApiException("File does not exists: " + dir);
+        }
+        if(dir.startsWith("../")){
+            dir =  dir.replace("../","");
+            dir = normalizePath(dir);
+        }
+        if(dir.contains(prefix)) {
+            String[] parts = dir.split(prefix);
+            if(parts.length>1) {
+                dir = parts[1];
+            } else {
+                dir = "";
+            }
+        }
+        return dir;
+    }
+
     public void createDir(String dir) throws BusinessApiException {
-        File file = new File(getProviderRootDir() + File.separator + dir);
+        File file = new File(getProviderRootDir() + File.separator + normalizePath(dir));
         if (!file.exists()) {
             file.mkdirs();
         }
     }
 
     public void zipFile(String filePath) throws BusinessApiException {
+        filePath = normalizePath(filePath);
         File file = new File(getProviderRootDir() + File.separator + filePath);
         if (!file.exists()) {
             throw new BusinessApiException("File does not exists: " + file.getPath());
@@ -166,6 +192,7 @@ public class FilesApi extends BaseApi {
      * @throws BusinessApiException business exception.
      */
     public void zipDir(String dir) throws BusinessApiException {
+        dir = normalizePath(dir);
         File file = new File(getProviderRootDir() + File.separator + (isLocalDir(dir) ? "" : dir));
         if (!file.exists()) {
             throw new BusinessApiException("Directory does not exists: " + file.getPath());
@@ -193,7 +220,7 @@ public class FilesApi extends BaseApi {
      * @throws BusinessApiException business api exeption.
      */
     public FlatFile uploadFile(byte[] data, String filename, String fileFormat) throws BusinessApiException {
-        File file = new File(getProviderRootDir() + File.separator + filename);
+        File file = new File(getProviderRootDir() + File.separator + normalizePath(filename));
         try (FileOutputStream fop = new FileOutputStream(file)){
 //            if (!file.exists()) {
 //                file.createNewFile();
@@ -237,7 +264,7 @@ public class FilesApi extends BaseApi {
 
         handleMissingParametersAndValidate(postData);
 
-        String filepath = getProviderRootDir() + File.separator + postData.getFilepath();
+        String filepath = getProviderRootDir() + File.separator + normalizePath(postData.getFilepath());
         File file = new File(filepath);
         FileOutputStream fop = null;
         try {
@@ -272,7 +299,7 @@ public class FilesApi extends BaseApi {
             throw new BusinessApiException("filePath is required ! ");
         }
 
-        File file = new File(getProviderRootDir() + File.separator + filePath);
+        File file = new File(getProviderRootDir() + File.separator + normalizePath(filePath));
         if (!FileUtils.isValidZip(file)) {
             suppressFile(filePath);
             throw new BusinessApiException("The zipped file is invalid ! ");
@@ -290,7 +317,7 @@ public class FilesApi extends BaseApi {
     }
 
     public void suppressFile(String filePath) throws BusinessApiException {
-        String filename = getProviderRootDir() + File.separator + filePath;
+        String filename = getProviderRootDir() + File.separator + normalizePath(filePath);
         File file = new File(filename);
 
         if (file.exists()) {
@@ -305,7 +332,7 @@ public class FilesApi extends BaseApi {
     }
 
     public void suppressDir(String dir) throws BusinessApiException {
-        String filename = getProviderRootDir() + File.separator + dir;
+        String filename = getProviderRootDir() + File.separator + normalizePath(dir);
         File file = new File(filename);
 
         if (file.exists()) {
@@ -325,7 +352,7 @@ public class FilesApi extends BaseApi {
      * @throws BusinessApiException business exception.
      */
     public void downloadFile(String filePath, HttpServletResponse response) throws BusinessApiException {
-        File file = new File(getProviderRootDir() + File.separator + filePath);
+        File file = new File(getProviderRootDir() + File.separator + normalizePath(filePath));
         if (!file.exists()) {
             throw new BusinessApiException("File does not exists: " + file.getPath());
         }
