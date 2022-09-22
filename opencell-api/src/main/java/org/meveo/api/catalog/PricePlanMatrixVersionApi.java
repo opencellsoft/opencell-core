@@ -162,8 +162,11 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
     }
 
     private void checkPricePlanMatrixVersionValidityPerContract(PricePlanMatrixVersionDto pricePlanMatrixVersionDto) {
-        PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixVersionDto.getPricePlanMatrixCode(), pricePlanMatrixVersionDto.getVersion());
-        if(pricePlanMatrixVersion== null){
+        PricePlanMatrixVersion pricePlanMatrixVersion = null;
+        if (pricePlanMatrixVersionDto.getVersion() != null) {
+            pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixVersionDto.getPricePlanMatrixCode(), pricePlanMatrixVersionDto.getVersion());
+        }
+        if (pricePlanMatrixVersion == null) {
             return;
         }
         List<ContractItem> contractItems = pricePlanMatrixVersion.getPricePlanMatrix().getContractItems();
