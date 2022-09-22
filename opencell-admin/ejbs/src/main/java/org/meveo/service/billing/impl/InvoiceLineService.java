@@ -56,6 +56,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.billing.InvoiceLineTaxModeEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.MinAmountData;
 import org.meveo.model.billing.MinAmountForAccounts;
 import org.meveo.model.billing.MinAmountsResult;
@@ -727,7 +728,16 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             invoiceLine.setTax(findTaxByTaxRateAndAccountingCode(resource.getTaxRate(), resource.getTaxAccountingCode()));
             invoiceLine.setTaxRate(resource.getTaxRate());
         }
-
+        
+        if(invoiceLine.getInvoice()!=null) {
+            InvoiceType invoiceType = invoiceLine.getInvoice().getInvoiceType();
+            String invoiceTypeCode = invoiceType.getCode();
+            String accountingArticleCode = accountingArticle.getCode();
+            if("SECURITY_DEPOSIT".equals(invoiceTypeCode) && !"ART_SECURITY_DEPOSIT".equals(accountingArticleCode)) {
+                throw new BusinessException("accountingArticleCode should be 'ART_SECURITY_DEPOSIT'");
+            }
+        }
+        
         return invoiceLine;
     }
 
