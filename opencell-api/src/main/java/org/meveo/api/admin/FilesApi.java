@@ -205,7 +205,7 @@ public class FilesApi extends BaseApi {
      * Allows to upload a base64 file
      *
      * @param postData contains filename and the base64 data to upload
-     * @throws MeveoApiException
+     * @throws  MeveoApiException
      */
     public void uploadFileBase64(FileRequestDto postData) throws MeveoApiException {
         if (postData == null || StringUtils.isBlank(postData.getFilepath())) {
@@ -217,6 +217,7 @@ public class FilesApi extends BaseApi {
 
         handleMissingParametersAndValidate(postData);
 
+        assert postData != null;
         String filepath = getProviderRootDir() + File.separator + normalizePath(postData.getFilepath());
         File file = new File(filepath);
         FileOutputStream fop = null;
