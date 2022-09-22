@@ -1,17 +1,22 @@
 package org.meveo.service.cpq.rule;
 
+import org.jfree.util.Log;
 import org.meveo.api.dto.cpq.ProductContextDTO;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.cpq.enums.RuleTypeEnum;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
 import org.meveo.model.cpq.trade.CommercialRuleItem;
 import org.meveo.model.cpq.trade.CommercialRuleLine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 
 public class ReplacementRulesExecutor {
+	
+	protected Logger log = LoggerFactory.getLogger(getClass());
 
     private boolean isQuoteScope;
 
@@ -71,11 +76,12 @@ public class ReplacementRulesExecutor {
             case OR:
              matchedCommercialRuleLine = item.getCommercialRuleLines()
                         .stream()
-                        .filter(commercialRuleLine -> new CommercialRuleLineCommandFactory(commercialRuleHeader, selectedAttributes, selectedSourceAttributes).create(commercialRuleLine.getOperator(), isQuoteScope).execute(commercialRuleLine)).findAny()
+                        .filter(commercialRuleLine -> new CommercialRuleLineCommandFactory(commercialRuleHeader, selectedAttributes, selectedSourceAttributes).create(commercialRuleLine.getOperator(), isQuoteScope).execute(commercialRuleLine)).findFirst()
                         .orElse(null);
              break;
 
         }
+        log.info("matchedCommercialRuleLine {}, TargetAttributeValue={}",matchedCommercialRuleLine!=null?matchedCommercialRuleLine.getId()+"-"+matchedCommercialRuleLine.getSourceProductCode():null,commercialRuleHeader.getTargetAttributeValue());
         if (matchedCommercialRuleLine!=null && StringUtils.isBlank(commercialRuleHeader.getTargetAttributeValue())) {
         	CommercialRuleLineCommand command = new CommercialRuleLineCommandFactory(commercialRuleHeader, selectedAttributes, selectedSourceAttributes).create(matchedCommercialRuleLine.getOperator(), isQuoteScope);
         	command.replace(matchedCommercialRuleLine);
