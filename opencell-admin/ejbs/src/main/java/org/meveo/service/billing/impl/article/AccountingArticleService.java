@@ -67,20 +67,20 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		String param2 = ofNullable(walletOperation).map(WalletOperation::getParameter2).orElse(null);
 		String param3 = ofNullable(walletOperation).map(WalletOperation::getParameter3).orElse(null);
 		articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate, offer, null, null, null);
+		if(articleMappingLines.isEmpty() && chargeTemplate != null && product != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate, null, null, null, null);
+		}
 		if(articleMappingLines.isEmpty() && chargeTemplate != null) {
 			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, chargeTemplate, null, null, null, null);
+		}
+		if(articleMappingLines.isEmpty() && offer != null && product != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(product, null, offer, null, null, null);
 		}
 		if(articleMappingLines.isEmpty() && product != null) {
 			articleMappingLines = articleMappingLineService.findByProductAndCharge(product, null, null, null, null, null);
 		}
 		if(articleMappingLines.isEmpty() && offer != null) {
 			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, null, offer, null, null, null);
-		}
-		if(articleMappingLines.isEmpty() && offer != null && product != null) {
-			articleMappingLines = articleMappingLineService.findByProductAndCharge(product, null, offer, null, null, null);
-		}
-		if(articleMappingLines.isEmpty() && chargeTemplate != null && product != null) {
-			articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate, null, null, null, null);
 		}
 		if(articleMappingLines.isEmpty() && walletOperation != null && walletOperation.getParameter1() != null) {
 			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, null, null, param1, null, null);
@@ -504,7 +504,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			String convertedValueStr = convertedValue != null ? String.valueOf(convertedValue) : null;
 			switch (operator) {
 				case EQUAL:
-					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr).compareTo(Double.valueOf(sourceAttributeValue)) == 0) {
 							return true;
 						}
@@ -513,7 +513,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 						return true;
 					break;
 				case NOT_EQUAL:
-					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr).compareTo(Double.valueOf(sourceAttributeValue)) != 0) {
 							return true;
 						}
@@ -522,26 +522,26 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 						return true;
 					break;
 				case LESS_THAN:
-					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr) < Double.valueOf(sourceAttributeValue))
 							return true;
 					}
 					break;
 				case LESS_THAN_OR_EQUAL:
-					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr) <= Double.valueOf(sourceAttributeValue))
 							return true;
 					}
 					break;
 				case GREATER_THAN:
-					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr) > Double.valueOf(sourceAttributeValue))
 							return true;
 					}
 					break;
 
 				case GREATER_THAN_OR_EQUAL:
-					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr) >= Double.valueOf(sourceAttributeValue))
 							return true;
 					}
