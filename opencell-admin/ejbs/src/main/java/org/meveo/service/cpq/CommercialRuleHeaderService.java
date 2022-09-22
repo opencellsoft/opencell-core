@@ -378,6 +378,13 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     			if (Double.valueOf(convertedValueStr)>=Double.valueOf(sourceAttributeValue))
     				return true;	
     			}
+    		case CONTAINS:
+    			
+    			List<String> values = convertedValueStr!=null?Arrays.asList(convertedValueStr.split(";")):new ArrayList<String>();
+				if (values.contains(sourceAttributeValue.trim())){
+					return true;
+				}
+    			break;	
     		}
     	}
     	return false;
