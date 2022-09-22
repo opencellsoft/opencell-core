@@ -97,6 +97,9 @@ public class FilesApi extends BaseApi {
      * @return
      */
     private String normalizePath(String dir) {
+        if(dir == null){
+            throw new BusinessApiException("Invalid parameter, file or directory is null");
+        }
         String prefix =  getProviderRootDir().replace("./","");
         if(dir.contains("../") && !dir.contains(prefix)){
             throw new BusinessApiException("File does not exists: " + dir);
