@@ -183,7 +183,9 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
         }
         
         genericWorkflow = genericWorkflowService.update(genericWorkflow);
-        
+        // Update Status 
+        wfStatusService.updateStatusByGenericWorkflow(genericWorkflowDto, genericWorkflow);        
+      
         // Update Transitions
         List<GWFTransition> listUpdate = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(genericWorkflowDto.getTransitions())) {
