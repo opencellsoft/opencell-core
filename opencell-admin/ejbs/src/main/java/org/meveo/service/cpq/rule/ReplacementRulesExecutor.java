@@ -1,6 +1,7 @@
 package org.meveo.service.cpq.rule;
 
 import org.meveo.api.dto.cpq.ProductContextDTO;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.cpq.enums.RuleTypeEnum;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
 import org.meveo.model.cpq.trade.CommercialRuleItem;
@@ -72,9 +73,10 @@ public class ReplacementRulesExecutor {
                         .stream()
                         .filter(commercialRuleLine -> new CommercialRuleLineCommandFactory(commercialRuleHeader, selectedAttributes, selectedSourceAttributes).create(commercialRuleLine.getOperator(), isQuoteScope).execute(commercialRuleLine)).findAny()
                         .orElse(null);
+             break;
 
         }
-        if (matchedCommercialRuleLine!=null && commercialRuleHeader.getTargetAttributeValue() == null) {
+        if (matchedCommercialRuleLine!=null && StringUtils.isBlank(commercialRuleHeader.getTargetAttributeValue())) {
         	CommercialRuleLineCommand command = new CommercialRuleLineCommandFactory(commercialRuleHeader, selectedAttributes, selectedSourceAttributes).create(matchedCommercialRuleLine.getOperator(), isQuoteScope);
         	command.replace(matchedCommercialRuleLine);
         }else if (canReplace || matchedCommercialRuleLine!=null) {
@@ -86,7 +88,7 @@ public class ReplacementRulesExecutor {
     private void executeLine(CommercialRuleHeader commercialRuleHeader, CommercialRuleLine commercialRuleLine, SelectedAttributes selectedAttributes, List<SelectedAttributes> selectedSourceAttributes) {
         CommercialRuleLineCommand command = new CommercialRuleLineCommandFactory(commercialRuleHeader, selectedAttributes, selectedSourceAttributes).create(commercialRuleLine.getOperator(), isQuoteScope);
         boolean match = command.execute(commercialRuleLine);
-        if (match && commercialRuleHeader.getTargetAttributeValue() == null)
+        if (match && StringUtils.isBlank(commercialRuleHeader.getTargetAttributeValue()))
             command.replace(commercialRuleLine);
         else if (match) {
         	selectedAttributes.setCanReplace(true);
