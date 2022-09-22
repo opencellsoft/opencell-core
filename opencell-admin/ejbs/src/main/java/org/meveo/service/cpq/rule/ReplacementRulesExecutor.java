@@ -1,5 +1,6 @@
 package org.meveo.service.cpq.rule;
 
+import org.meveo.api.dto.cpq.ProductContextDTO;
 import org.meveo.model.cpq.enums.RuleTypeEnum;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
 import org.meveo.model.cpq.trade.CommercialRuleItem;
@@ -58,7 +59,8 @@ public class ReplacementRulesExecutor {
 
     private void executeLines(CommercialRuleHeader commercialRuleHeader, CommercialRuleItem item, SelectedAttributes selectedAttributes, List<SelectedAttributes> selectedSourceAttributes) {
         boolean canReplace = false;
-
+        CommercialRuleLine matchedCommercialRuleLine=null;
+        
         switch (item.getOperator()) {
             case AND:
                 canReplace = item.getCommercialRuleLines()
@@ -66,13 +68,16 @@ public class ReplacementRulesExecutor {
                         .allMatch(commercialRuleLine -> new CommercialRuleLineCommandFactory(commercialRuleHeader, selectedAttributes, selectedSourceAttributes).create(commercialRuleLine.getOperator(), isQuoteScope).execute(commercialRuleLine));
                 break;
             case OR:
-                canReplace = item.getCommercialRuleLines()
+             matchedCommercialRuleLine = item.getCommercialRuleLines()
                         .stream()
-                        .anyMatch(commercialRuleLine -> new CommercialRuleLineCommandFactory(commercialRuleHeader, selectedAttributes, selectedSourceAttributes).create(commercialRuleLine.getOperator(), isQuoteScope).execute(commercialRuleLine));
-
+                        .filter(commercialRuleLine -> new CommercialRuleLineCommandFactory(commercialRuleHeader, selectedAttributes, selectedSourceAttributes).create(commercialRuleLine.getOperator(), isQuoteScope).execute(commercialRuleLine)).findAny()
+                        .orElse(null);
 
         }
-        if (canReplace) {
+        if (matchedCommercialRuleLine!=null && commercialRuleHeader.getTargetAttributeValue() == null) {
+        	CommercialRuleLineCommand command = new CommercialRuleLineCommandFactory(commercialRuleHeader, selectedAttributes, selectedSourceAttributes).create(matchedCommercialRuleLine.getOperator(), isQuoteScope);
+        	command.replace(matchedCommercialRuleLine);
+        }else if (canReplace || matchedCommercialRuleLine!=null) {
         	selectedAttributes.setCanReplace(true);
             selectedAttributes.getSelectedAttributesMap().put(commercialRuleHeader.getTargetAttribute().getCode(), commercialRuleHeader.getTargetAttributeValue());
         }
