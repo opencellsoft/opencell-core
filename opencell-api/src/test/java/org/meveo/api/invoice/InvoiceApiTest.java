@@ -59,6 +59,7 @@ public class InvoiceApiTest {
             String invNumber = invoiceApi.validateInvoice(invoiceId, false, true);
             Assert.assertEquals("INV_NUMB1", invNumber);
         } catch (Exception e) {
+            Assert.fail("Error during validate invoice : " + e.getMessage());
         }
     }
 }
