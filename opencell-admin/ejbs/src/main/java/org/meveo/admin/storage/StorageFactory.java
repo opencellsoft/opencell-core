@@ -70,7 +70,7 @@ public class StorageFactory {
     private static final String S3 = "S3";
 
     /** Logger. */
-    protected static Logger logger = LoggerFactory.getLogger(StorageFactory.class);
+    protected static Logger log = LoggerFactory.getLogger(StorageFactory.class);
 
     public void init() {
         ParamBean tmpParamBean = ParamBeanFactory.getAppScopeInstance();
@@ -106,7 +106,7 @@ public class StorageFactory {
             boolean validParameters = false;
 
             try {
-                logger.info("check configuration parameters of S3 bucket");
+                log.info("check configuration parameters of S3 bucket");
 
                 client.headBucket(HeadBucketRequest.builder()
                         .bucket(bucketName)
@@ -115,19 +115,19 @@ public class StorageFactory {
                 validParameters = true;
             }
             catch (NoSuchBucketException e) {
-                logger.error("NoSuchBucketException exception message : {}", e.getMessage());
+                log.error("NoSuchBucketException exception message : {}", e.getMessage());
             }
             catch (S3Exception e) {
-                logger.error("S3Exception exception message : {}", e.getMessage());
-                logger.error("Failed to connect to S3 repository. Check all your S3 configuration parameters : region {}, " +
+                log.error("S3Exception exception message : {}", e.getMessage());
+                log.error("Failed to connect to S3 repository. Check all your S3 configuration parameters : region {}, " +
                         " endpointUrl {}, accessKeyId, and secretAccessKey", region, endpointUrl);
             }
 
             if (validParameters) {
-                logger.info("S3 parameters are correctly configured");
+                log.info("S3 parameters are correctly configured");
             }
             else {
-                logger.info("S3 parameters are not correctly configured");
+                log.info("S3 parameters are not correctly configured");
             }
 
             s3FileSystem = new S3FileSystem(new S3FileSystemProvider(), accessKeyId, client, endpointUrl);
@@ -148,7 +148,7 @@ public class StorageFactory {
                 return new FileInputStream(fileName);
             }
             catch (FileNotFoundException e) {
-                logger.error("file not found : " + e.getMessage(), e);
+                log.error("file not found : {} ", e.getMessage());
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
@@ -162,7 +162,7 @@ public class StorageFactory {
                 return inStream;
             }
             catch (IOException e) {
-                logger.error("error message : " + e.getMessage(), e);
+                log.error("IOException message in getInputStream(String) : {}", e.getMessage());
             }
         }
 
@@ -174,19 +174,15 @@ public class StorageFactory {
             return new ByteArrayInputStream(bytes);
         }
         else if (storageType.equalsIgnoreCase(S3)) {
-            InputStream inStream;
-
             Path objectPath = getObjectPath("");
 
-            try {
-                inStream = s3FileSystem.provider().newInputStream(objectPath);
-
+            try (InputStream inStream = s3FileSystem.provider().newInputStream(objectPath)) {
                 inStream.read(bytes);
 
                 return inStream;
             }
             catch (IOException e) {
-                logger.error("error message : " + e.getMessage(), e);
+                log.error("IOException message in getInputStream(byte) : {}", e.getMessage());
             }
         }
 
@@ -199,7 +195,7 @@ public class StorageFactory {
                 return new FileReader(file);
             }
             catch (FileNotFoundException e) {
-                logger.error("File not found exception : " + e.getMessage(), e);
+                log.error("File not found exception in getReader: {}", e.getMessage());
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
@@ -217,7 +213,7 @@ public class StorageFactory {
                 return inputStreamReader;
             }
             catch (IOException e) {
-                logger.error("error message : " + e.getMessage(), e);
+                log.error("IOException message in getReader : {}", e.getMessage());
             }
         }
 
@@ -230,7 +226,7 @@ public class StorageFactory {
                 return new FileReader(file);
             }
             catch (FileNotFoundException e) {
-                logger.error("File not found exception : " + e.getMessage(), e);
+                log.error("File not found exception : {}", e.getMessage());
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
@@ -248,7 +244,7 @@ public class StorageFactory {
                 return inputStreamReader;
             }
             catch (IOException e) {
-                logger.error("error message : " + e.getMessage(), e);
+                log.error("IOException message in getReader : {}", e.getMessage());
             }
         }
 
@@ -261,7 +257,7 @@ public class StorageFactory {
                 return new FileWriter(file);
             }
             catch (IOException e) {
-                logger.error("IO exception : " + e.getMessage(), e);
+                log.error("IO exception : {}", e.getMessage());
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
@@ -279,7 +275,7 @@ public class StorageFactory {
                 return outputStreamWriter;
             }
             catch (IOException e) {
-                logger.error("error message : " + e.getMessage(), e);
+                log.error("IOException message in getWriter : {}", e.getMessage());
             }
         }
 
@@ -292,7 +288,7 @@ public class StorageFactory {
                 return new FileWriter(file);
             }
             catch (IOException e) {
-                logger.error("File not found exception : " + e.getMessage(), e);
+                log.error("File not found exception : {}", e.getMessage());
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
@@ -310,7 +306,7 @@ public class StorageFactory {
                 return outputStreamWriter;
             }
             catch (IOException e) {
-                logger.error("error message : " + e.getMessage(), e);
+                log.error("IOException message in getWriter : {}", e.getMessage());
             }
         }
 
@@ -330,7 +326,7 @@ public class StorageFactory {
                 s3FileSystem.provider().delete(objectPath);
             }
             catch (IOException e) {
-                logger.error("IOException message : " + e.getMessage(), e);
+                log.error("IOException message : {}", e.getMessage());
             }
         }
     }
@@ -383,7 +379,7 @@ public class StorageFactory {
                 file.createNewFile();
             }
             catch (IOException e) {
-                logger.error("IO Exception : " + e.getMessage(), e);
+                log.error("IO Exception : {}", e.getMessage());
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
@@ -398,7 +394,7 @@ public class StorageFactory {
                 outStream.close();
             }
             catch (IOException e) {
-                logger.error("error message : " + e.getMessage(), e);
+                log.error("IOException message in createNewFile : {}", e.getMessage());
             }
         }
     }
@@ -409,7 +405,7 @@ public class StorageFactory {
                 return new PrintWriter(file);
             }
             catch (FileNotFoundException e) {
-                logger.error("file not found : " + e.getMessage(), e);
+                log.error("file not found in getPrintWriter : {}", e.getMessage());
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
@@ -419,15 +415,13 @@ public class StorageFactory {
             Path objectPath = getObjectPath(fileName);
 
             try {
-//                printWriter = new PrintWriter(new BufferedWriter(
-//                        new OutputStreamWriter(s3FileSystem.provider().newOutputStream(objectPath), StandardCharsets.US_ASCII)));
                 printWriter = new PrintWriter(
                         new OutputStreamWriter(s3FileSystem.provider().newOutputStream(objectPath), StandardCharsets.US_ASCII));
 
                 return printWriter;
             }
             catch (IOException e) {
-                logger.error("error message : " + e.getMessage(), e);
+                log.error("IOException message in getPrintWriter : {}", e.getMessage());
             }
         }
 
@@ -440,12 +434,11 @@ public class StorageFactory {
                 return new FileInputStream(file);
             }
             catch (FileNotFoundException e) {
-                logger.error("file not found : " + e.getMessage(), e);
+                log.error("file not found in getInputStream : {}", e.getMessage());
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
             InputStream inStream;
-//            String fileName = bucketName + file.getPath().substring(1).replace("\\", "/");
             String fullObjectKey = formatFullObjectKey(file.getPath());
             Path objectPath = getObjectPath(fullObjectKey);
 
@@ -455,7 +448,7 @@ public class StorageFactory {
                 return inStream;
             }
             catch (IOException e) {
-                logger.error("error message : " + e.getMessage(), e);
+                log.error("IOException message in getInputStream(File) : {}", e.getMessage());
             }
         }
 
@@ -475,7 +468,7 @@ public class StorageFactory {
                 s3FileSystem.provider().createDirectory(objectPath);
             }
             catch (IOException e) {
-                logger.error("IOException message : " + e.getMessage(), e);
+                log.error("IOException message : {}", e.getMessage());
             }
         }
 
@@ -487,7 +480,7 @@ public class StorageFactory {
                 return new FileOutputStream(file);
             }
             catch (FileNotFoundException e) {
-                logger.error("file not found : " + e.getMessage(), e);
+                log.error("file not found : {}", e.getMessage());
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
@@ -502,7 +495,7 @@ public class StorageFactory {
                 return outStream;
             }
             catch (IOException e) {
-                logger.error("error message : " + e.getMessage(), e);
+                log.error("IOException message in getOutputStream : {}", e.getMessage());
             }
         }
 
@@ -515,12 +508,11 @@ public class StorageFactory {
                 return new FileOutputStream(fileName);
             }
             catch (FileNotFoundException e) {
-                logger.error("file not found : " + e.getMessage(), e);
+                log.error("file not found : {}", e.getMessage());
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
             OutputStream outStream;
-//            fileName = bucketName + fileName.substring(1).replace("\\", "/");
             String fullObjectKey = formatFullObjectKey(fileName);
 
             Path bucketPath = getObjectPath(fullObjectKey);
@@ -531,7 +523,7 @@ public class StorageFactory {
                 return outStream;
             }
             catch (IOException e) {
-                logger.error("error message : " + e.getMessage(), e);
+                log.error("IOException message in getOutputStream : {}", e.getMessage());
             }
         }
 
@@ -544,7 +536,7 @@ public class StorageFactory {
                 Files.write(path, bytes, options);
             }
             catch (IOException e) {
-                logger.error("IOException exception : " + e.getMessage(), e);
+                log.error("IOException exception : {}", e.getMessage());
             }
         }
         else if (storageType.equals(S3)) {
@@ -561,7 +553,7 @@ public class StorageFactory {
                 outStream.close();
             }
             catch (IOException e) {
-                logger.error("error message : " + e.getMessage(), e);
+                log.error("IOException message in write : {}", e.getMessage());
             }
 
         }
@@ -573,12 +565,11 @@ public class StorageFactory {
                 return db.parse(file);
             }
             catch (SAXException | IOException e) {
-                logger.error("error message : " + e.getMessage(), e);
+                log.error("IOException or SAXException message in parse : {}", e.getMessage());
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
             InputStream inStream;
-//            String fileName = bucketName + file.getPath().substring(1).replace("\\", "/");
             String fullObjectKey = formatFullObjectKey(file.getPath());
 
             Path objectPath = getObjectPath(fullObjectKey);
@@ -589,7 +580,7 @@ public class StorageFactory {
                 return db.parse(inStream);
             }
             catch (IOException | SAXException e) {
-                logger.error("error message : " + e.getMessage(), e);
+                log.error("IOException or SAXException message in parse : {}", e.getMessage());
             }
         }
 
@@ -602,7 +593,7 @@ public class StorageFactory {
                 marshaller.marshal(obj, file);
             }
             catch (JAXBException e) {
-                logger.error("marshaller exception : " + e.getMessage(), e);
+                log.error("marshaller exception : {}", e.getMessage());
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
@@ -619,7 +610,7 @@ public class StorageFactory {
                 outStream.close();
             }
             catch (JAXBException | IOException e) {
-                logger.error("IO Exception or JAXBException in marshal method : " + e.getMessage(), e);
+                log.error("IO Exception or JAXBException in marshal method : {}", e.getMessage());
             }
         }
     }
@@ -667,7 +658,7 @@ public class StorageFactory {
                 JasperExportManager.exportReportToPdfFile(jasperPrint, fileName);
             }
             catch (JRException e) {
-                logger.error("failed to generate PDF file : " + e.getMessage(), e);
+                log.error("failed to generate PDF file : {}", e.getMessage());
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
@@ -679,7 +670,7 @@ public class StorageFactory {
                 JasperExportManager.exportReportToPdfStream(jasperPrint, outStream);
             }
             catch (IOException | JRException e) {
-                logger.error("error message : " + e.getMessage(), e);
+                log.error("error message : {}", e.getMessage());
             }
         }
     }
