@@ -1834,7 +1834,6 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="adm_role_pkey" />
             </column>
             <column name="version" type="int4" />
-            <column name="role_description" type="varchar(255)" />
             <column name="role_name" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
@@ -1892,20 +1891,13 @@
                 <constraints nullable="false" />
             </column>
             <column name="updated" type="datetime" />
-            <column name="email" type="varchar(100)" />
-            <column name="firstname" type="varchar(100)" />
-            <column name="lastname" type="varchar(100)" />
             <column name="username" type="varchar(50)" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="title_id" type="bigint" />
-            <column name="hierarchy_level_id" type="bigint" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="last_login_date" type="datetime" />
-            <column name="crm_address_book_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-144">
@@ -12955,10 +12947,6 @@
         <addForeignKeyConstraint baseColumnNames="billing_account_id" baseTableName="billing_counter" constraintName="fk_f3e8vebhfnmyikf3xwui2eqn5" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-724">
-        <addForeignKeyConstraint baseColumnNames="title_id" baseTableName="adm_user" constraintName="fk_f3ptnqm19vwtactrn9asu7kex" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-726">
         <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="rating_edr" constraintName="fk_f5tulmo519cm4il45bhborgq1" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
@@ -13633,10 +13621,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1130">
         <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="hierarchy_entity" constraintName="fk_hierarchy_entity_hierarchy_entity" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="hierarchy_entity" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1131">
-        <addForeignKeyConstraint baseColumnNames="hierarchy_level_id" baseTableName="adm_user" constraintName="fk_hierarchy_level_adm_user_hierarchy_entity" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="hierarchy_entity" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1135">
         <addForeignKeyConstraint baseColumnNames="transition_id" baseTableName="wf_transition_decision_rule" constraintName="fk_transition_id_wf_transition" deferrable="false" initiallyDeferred="false"
@@ -16586,7 +16570,6 @@
        <sql>CREATE INDEX cat_serv_sub_wallet_template_srvsubtmp_index ON ${db.schema.adapted} cat_serv_sub_wallet_template(Service_sub_templt_id);</sql>
         <sql>CREATE INDEX billing_wallet_ua_index ON ${db.schema.adapted} billing_wallet (user_account_id);</sql>
         <sql>CREATE INDEX cat_ofr_srv_tmpl_ofrtmpl_id_index ON ${db.schema.adapted}cat_offer_serv_templates(offer_template_id);</sql>
-        <sql>CREATE INDEX adm_user_title_index ON ${db.schema.adapted}adm_user(title_id);</sql>
         <sql>CREATE INDEX cat_chrg_edr_chtmpl_index ON ${db.schema.adapted}cat_chrg_edr(charge_tmpl_id);</sql>
         <sql>CREATE INDEX cat_chrg_edr_trigg_edr_index ON ${db.schema.adapted}cat_chrg_edr(trigg_edr_id);</sql>
         <sql>CREATE INDEX cat_price_plan_event_c_index ON ${db.schema.adapted}cat_price_plan_matrix(event_code)</sql>
