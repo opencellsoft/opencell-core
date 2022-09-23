@@ -135,7 +135,6 @@ public class PricePlanMatrixVersion extends AuditableEntity {
         this.currentVersion = 1;
         this.label = copy.label;
         this.statusDate = new Date();
-        this.validity = copy.validity;
         this.isMatrix = copy.isMatrix;
         this.price = copy.price;
         this.priceEL = copy.priceEL;
