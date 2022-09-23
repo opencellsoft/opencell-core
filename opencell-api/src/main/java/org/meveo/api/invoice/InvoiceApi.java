@@ -563,18 +563,20 @@ public class InvoiceApi extends BaseApi {
         invoice = invoiceService.refreshOrRetrieve(invoice);
         
         //Create SD
-        SecurityDeposit sd = new SecurityDeposit();        
-        SecurityDepositTemplate defaultSDTemplate = securityDepositTemplateService.getDefaultSDTemplate();
-        sd.setTemplate(defaultSDTemplate);
-        Long count = securityDepositService.countPerTemplate(defaultSDTemplate);
-        String securityDepositName = defaultSDTemplate.getTemplateName();
-        sd.setCode(securityDepositName + "-" + count);
-        sd.setAmount(invoice.getAmountWithoutTax());
-        sd.setStatus(SecurityDepositStatusEnum.NEW);
-        sd.setCustomerAccount(invoice.getBillingAccount().getCustomerAccount());
-        sd.setCurrency(invoice.getTradingCurrency().getCurrency());
-        sd.setSecurityDepositInvoice(invoice);
-        securityDepositService.create(sd);
+        if (invoice.getInvoiceType() != null && "SECURITY_DEPOSIT".equals(invoice.getInvoiceType().getCode())) {
+            SecurityDepositTemplate defaultSDTemplate = securityDepositTemplateService.getDefaultSDTemplate();
+            SecurityDeposit sd = new SecurityDeposit();            
+            sd.setTemplate(defaultSDTemplate);
+            Long count = securityDepositService.countPerTemplate(defaultSDTemplate);
+            String securityDepositName = defaultSDTemplate.getTemplateName();
+            sd.setCode(securityDepositName + "-" + count);
+            sd.setAmount(invoice.getAmountWithoutTax());
+            sd.setStatus(SecurityDepositStatusEnum.VALIDATED);
+            sd.setCustomerAccount(invoice.getBillingAccount().getCustomerAccount());
+            sd.setCurrency(invoice.getTradingCurrency().getCurrency());
+            sd.setSecurityDepositInvoice(invoice);
+            securityDepositService.create(sd);
+        }        
         
         if(invoice.getDueDate().after(today) && invoice.getStatus() == VALIDATED){
             updatePaymentStatus(invoice, today, PENDING);

@@ -99,7 +99,7 @@ public class SecurityDepositTemplateService extends BusinessService<SecurityDepo
         try {
             return (SecurityDepositTemplate) getEntityManager().createNamedQuery("SecurityDepositTemplate.findByTemplateName").setParameter("templateName", templateName).getSingleResult();
         } catch (NoResultException e) {
-            log.warn("cannot find SecurityDepositTemplate with TemplateName = " + templateName, e.getMessage());
+            log.warn("cannot find SecurityDepositTemplate with TemplateName {} - erreur : {}", templateName, e.getMessage());
             throw new BusinessException("cannot find SecurityDepositTemplate with TemplateName = " + templateName);
         }
     }
