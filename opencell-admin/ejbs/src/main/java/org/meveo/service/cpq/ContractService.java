@@ -116,8 +116,6 @@ public class ContractService extends BusinessService<Contract>  {
 			List<PricePlanMatrixVersion> pricePlanVersions = pricePlanMatrixVersionService.findByPricePlans(pricePlans);
 			if (pricePlanVersions.isEmpty()) {
 				log.error("At any given time during the duration of the framework agreement, a price should be applicable, please check your price version dates");
-				throw new BusinessApiException(
-						"At any given time during the duration of the framework agreement, a price should be applicable, please check your price version dates");
 			}
 			List<PricePlanMatrixVersion> draftPricePlanVersions = pricePlanVersions.stream().filter(pricePlanMatrixVersion -> VersionStatusEnum.DRAFT.equals(pricePlanMatrixVersion.getStatus())).collect(Collectors.toList());
 			if (!draftPricePlanVersions.isEmpty()){
@@ -125,7 +123,7 @@ public class ContractService extends BusinessService<Contract>  {
 				throw new BusinessApiException("All contract lines should have all price versions published to activate the framework agreement");
 			}
 			List<PricePlanMatrixVersion> endDatePricePlanVersions = pricePlanVersions.stream().filter(pricePlanMatrixVersion -> pricePlanMatrixVersion.getValidity().getTo() == null).collect(Collectors.toList());
-			if (endDatePricePlanVersions.isEmpty()){
+			if (endDatePricePlanVersions.isEmpty() && !pricePlanVersions.isEmpty()){
 				pricePlanVersions.sort(Comparator.comparing(PricePlanMatrixVersion::getValidity));
 				PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanVersions.get(0);
 				if (pricePlanMatrixVersion.getValidity().getFrom().compareTo(contract.getBeginDate()) != 0){
