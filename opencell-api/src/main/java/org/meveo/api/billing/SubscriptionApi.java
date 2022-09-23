@@ -80,7 +80,6 @@ import java.util.*;
 import java.util.Calendar;
 import java.util.stream.Collectors;
 
-import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.meveo.commons.utils.StringUtils.isNotBlank;
 
 /**
@@ -2583,6 +2582,9 @@ public class SubscriptionApi extends BaseApi {
             if (subscriptionTerminationReason == null) {
                 throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, subscriptionPatchDto.getTerminationReason());
             }
+            if (!Boolean.TRUE.equals(subscriptionTerminationReason.getUseForOfferChange())) {
+                throw new InvalidParameterException(String.format("Termination reason %s isn't marked to be used for offer change", subscriptionTerminationReason.getCode()));
+            }
             Subscription terminateSubscription = subscriptionService.terminateSubscription(lastVersionSubscription, effectiveDate, subscriptionTerminationReason, lastVersionSubscription.getOrderNumber());
             isImmediateTerminationOldSub = SubscriptionStatusEnum.RESILIATED == terminateSubscription.getStatus();
         }
@@ -2707,16 +2709,16 @@ public class SubscriptionApi extends BaseApi {
 
         lastSubscription.setToValidity(null);
         subscriptionService.subscriptionReactivation(lastSubscription, lastSubscription.getSubscriptionDate());
-        reactivateServices(lastSubscription, actualSubscription.getValidity().getFrom());
+        reactivateServices(lastSubscription);
         if(lastSubscription.getInitialSubscriptionRenewal() != null)
             subscriptionService.cancelSubscriptionTermination(lastSubscription);
         versionRemovedEvent.fire(lastSubscription);
     }
 
-    private void reactivateServices(Subscription lastSubscription, Date changeOfferDate) {
+    private void reactivateServices(Subscription lastSubscription) {
         for(ServiceInstance serviceInstance : lastSubscription.getServiceInstances()){
-            if (serviceInstance.getTerminationDate() != null
-                    && !serviceInstance.getTerminationDate().before(changeOfferDate)) {
+            if (serviceInstance.getSubscriptionTerminationReason() != null
+                && Boolean.TRUE.equals(serviceInstance.getSubscriptionTerminationReason().getUseForOfferChange())) {
                 serviceInstanceService.serviceReactivation(serviceInstance, serviceInstance.getSubscriptionDate(), true, true);
             }
         }

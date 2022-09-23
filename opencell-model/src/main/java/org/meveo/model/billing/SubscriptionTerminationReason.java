@@ -82,6 +82,13 @@ public class SubscriptionTerminationReason extends BusinessEntity implements ISe
     private boolean applyTerminationCharges;
 
     /**
+     * if this termination reason could be used for offers changes.
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "use_for_offer_change")
+    private Boolean useForOfferChange;
+
+    /**
      * Override termination prorata setting of the charge, default value is NO_OVERRIDE.
      */
     @Enumerated(EnumType.STRING)
@@ -125,6 +132,14 @@ public class SubscriptionTerminationReason extends BusinessEntity implements ISe
 
     public void setApplyTerminationCharges(boolean applyTerminationCharges) {
         this.applyTerminationCharges = applyTerminationCharges;
+    }
+
+    public Boolean getUseForOfferChange() {
+        return useForOfferChange;
+    }
+
+    public void setUseForOfferChange(Boolean useForOfferChange) {
+        this.useForOfferChange = useForOfferChange;
     }
 
     /**
