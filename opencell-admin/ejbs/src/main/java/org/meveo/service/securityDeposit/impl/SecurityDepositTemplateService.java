@@ -4,6 +4,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.model.securityDeposit.SecurityTemplateStatusEnum;
@@ -13,6 +14,8 @@ import org.meveo.service.base.BusinessService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
+
 import java.util.Date;
 import java.util.Set;
 
@@ -90,6 +93,18 @@ public class SecurityDepositTemplateService extends BusinessService<SecurityDepo
         if(financeSettings.getMaxAmountPerSecurityDeposit() != null && securityDepositTemplate.getMaxAmount() != null
         && financeSettings.getMaxAmountPerSecurityDeposit().compareTo(securityDepositTemplate.getMaxAmount()) < 0 )
             throw new InvalidParameterException("max amount cannot exceed thr max amount per SD configured at FinanceSettings");
-
+    }
+    
+    public SecurityDepositTemplate findByTemplateName(String templateName) {
+        try {
+            return (SecurityDepositTemplate) getEntityManager().createNamedQuery("RatedTransaction.findByWalletOperationId").setParameter("templateName", templateName).getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("No ratedTransaction found with the given walletOperation.id. {}", e.getMessage());
+            throw new BusinessException("cannot activate an archived security deposit template");
+        }
+    }
+    
+    public SecurityDepositTemplate getDefaultSDTemplate() {
+        return findByTemplateName("DEFAULT_SD_TEMPLATE");
     }
 }

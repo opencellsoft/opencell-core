@@ -90,6 +90,9 @@ import org.meveo.model.payments.PaymentHistory;
 import org.meveo.model.payments.PaymentScheduleInstance;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.WriteOff;
+import org.meveo.model.securityDeposit.SecurityDeposit;
+import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
+import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
@@ -102,6 +105,8 @@ import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.generic.wf.WorkflowInstanceService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.securityDeposit.impl.SecurityDepositService;
+import org.meveo.service.securityDeposit.impl.SecurityDepositTemplateService;
 import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 /**
@@ -161,7 +166,13 @@ public class InvoiceApi extends BaseApi {
 
     @Inject
     private DiscountPlanService discountPlanService;
-
+    
+    @Inject
+    private SecurityDepositTemplateService securityDepositTemplateService;
+    
+    @Inject
+    private SecurityDepositService securityDepositService;
+    
     /**
      * Create an invoice based on the DTO object data and current user
      *
@@ -547,8 +558,24 @@ public class InvoiceApi extends BaseApi {
         if(brGenerateAO || generateAO) {
             invoiceService.generateRecordedInvoiceAO(invoiceId);
         }
+
         Date today = new Date();
         invoice = invoiceService.refreshOrRetrieve(invoice);
+        
+        //Create SD
+        SecurityDeposit sd = new SecurityDeposit();        
+        SecurityDepositTemplate defaultSDTemplate = securityDepositTemplateService.getDefaultSDTemplate();
+        sd.setTemplate(defaultSDTemplate);
+        Long count = securityDepositService.countPerTemplate(defaultSDTemplate);
+        String securityDepositName = defaultSDTemplate.getTemplateName();
+        sd.setCode(securityDepositName + "-" + count);
+        sd.setAmount(invoice.getAmountWithoutTax());
+        sd.setStatus(SecurityDepositStatusEnum.NEW);
+        sd.setCustomerAccount(invoice.getBillingAccount().getCustomerAccount());
+        sd.setCurrency(invoice.getTradingCurrency().getCurrency());
+        sd.setSecurityDepositInvoice(invoice);
+        securityDepositService.create(sd);
+        
         if(invoice.getDueDate().after(today) && invoice.getStatus() == VALIDATED){
             updatePaymentStatus(invoice, today, PENDING);
         }else if(invoice.getDueDate().before(today) && invoice.getStatus() == VALIDATED) {
