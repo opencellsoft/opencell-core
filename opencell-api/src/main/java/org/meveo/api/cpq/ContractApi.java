@@ -119,17 +119,19 @@ public class ContractApi extends BaseApi{
 		contract.setDescription(dto.getDescription());
 		changeAccountLevel(dto, contract);
 		try {
-			populateCustomFields(dto.getCustomFields(), contract, true);
-			contractService.create(contract);
+            populateCustomFields(dto.getCustomFields(), contract, true);
+            contractService.create(contract);
             // add billing rules
             List<BillingRule> lstBillingRule = new ArrayList<BillingRule>();
-            for (BillingRuleDto brDto : dto.getBillingRules()) {
-                BillingRule br = billingRuleMapper.toEntity(brDto);
-                br.setContract(contract);
-                billingRuleService.create(br);
-                lstBillingRule.add(br);            
-            }
-            contract.setBillingRules(lstBillingRule);
+            if (dto.getBillingRules() != null) {
+                for (BillingRuleDto brDto : dto.getBillingRules()) {
+                    BillingRule br = billingRuleMapper.toEntity(brDto);
+                    br.setContract(contract);
+                    billingRuleService.create(br);
+                    lstBillingRule.add(br);            
+                } 
+                contract.setBillingRules(lstBillingRule);
+            }            
         }catch(BusinessException e) {
 			throw new MeveoApiException(e);
 		}
