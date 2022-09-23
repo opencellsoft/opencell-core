@@ -42,6 +42,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -152,21 +153,12 @@ public class FilesApi extends BaseApi {
         if(dir == null){
             throw new BusinessApiException("Invalid parameter, file or directory is null");
         }
+        File dirFile = new File(getProviderRootDir()+File.separator+dir);
+        Path path = dirFile.toPath();
+        path= path.normalize();
         String prefix =  getProviderRootDir().replace("./","");
-        if(dir.contains("../") && !dir.contains(prefix)){
+        if(!path.toString().contains(prefix)){
             throw new BusinessApiException(FILE_DOES_NOT_EXISTS + dir);
-        }
-        if(dir.startsWith("../")){
-            dir =  dir.replace("../","");
-            dir = normalizePath(dir);
-        }
-        if(dir.contains(prefix)) {
-            String[] parts = dir.split(prefix);
-            if(parts.length>1) {
-                dir = parts[1];
-            } else {
-                dir = "";
-            }
         }
         return dir;
     }
