@@ -239,4 +239,8 @@ public class GWFTransitionApi extends BaseApi {
         }
         return action;
     }
+
+    public void remove(GWFTransition wfTransition) {
+        gwfTransitionService.remove(wfTransition);
+    }
 }
