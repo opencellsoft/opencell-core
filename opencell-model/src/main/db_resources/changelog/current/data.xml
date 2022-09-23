@@ -8355,6 +8355,7 @@ public class CustomerAccountImportScript extends GenericMassImportScript {
         customerAccountDto.setCustomer((String) recordMap.get("OC_CUSTOMER_CODE"));
         customerAccountDto.setCode((String) recordMap.get("OC_CUSTOMERACCOUNT_CODE"));
         customerAccountDto.setCurrency((String) recordMap.get("OC_CUSTOMERACCOUNT_CURRENCY"));
+        customerAccountDto.setDueDateDelayEL((String) recordMap.get("OC_CUSTOMERACCOUNT_PAYTERM"));
         customerAccountDto.setCreditCategory((String) recordMap.get("OC_CUSTOMERACCOUNT_CREDCAT"));
         customerAccountDto.setLanguage((String) recordMap.get("OC_CUSTOMERACCOUNT_LANG"));
     }
