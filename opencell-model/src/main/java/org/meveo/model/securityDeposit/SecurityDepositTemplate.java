@@ -23,7 +23,7 @@ import org.meveo.model.admin.Currency;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "security_deposit_templat_seq"), })
 @NamedQueries({
-    @NamedQuery(name = "SecurityDepositTemplate.findByTemplateName", query = "SELECT sdt FROM SecurityDepositTemplate sdt where sdt.templateName==:templateName")
+    @NamedQuery(name = "SecurityDepositTemplate.findByTemplateName", query = "SELECT sdt FROM SecurityDepositTemplate sdt where sdt.templateName=:templateName")
 })
 public class SecurityDepositTemplate extends BusinessEntity {
 

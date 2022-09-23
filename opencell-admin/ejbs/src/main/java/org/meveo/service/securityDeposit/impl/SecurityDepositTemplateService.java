@@ -97,10 +97,10 @@ public class SecurityDepositTemplateService extends BusinessService<SecurityDepo
     
     public SecurityDepositTemplate findByTemplateName(String templateName) {
         try {
-            return (SecurityDepositTemplate) getEntityManager().createNamedQuery("RatedTransaction.findByWalletOperationId").setParameter("templateName", templateName).getSingleResult();
+            return (SecurityDepositTemplate) getEntityManager().createNamedQuery("SecurityDepositTemplate.findByTemplateName").setParameter("templateName", templateName).getSingleResult();
         } catch (NoResultException e) {
-            log.warn("No ratedTransaction found with the given walletOperation.id. {}", e.getMessage());
-            throw new BusinessException("cannot activate an archived security deposit template");
+            log.warn("cannot find SecurityDepositTemplate with TemplateName = " + templateName, e.getMessage());
+            throw new BusinessException("cannot find SecurityDepositTemplate with TemplateName = " + templateName);
         }
     }
     
