@@ -1838,14 +1838,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         if (userAccountsTag != null) {
             detail.appendChild(userAccountsTag);
         }
-        if (invoiceLines != null && !invoiceLines.isEmpty()) {
-            Element lines = doc.createElement("lines");
-            for (InvoiceLine invoiceLine : invoiceLines) {
-                ofNullable(createILSection(doc, invoice, invoiceLine, invoiceDateFormat,
-                        invoiceDateTimeFormat, invoiceConfiguration, invoiceLanguageCode)).ifPresent(lines::appendChild);
-            }
-            detail.appendChild(lines);
-        }
         return detail;
     }
 
