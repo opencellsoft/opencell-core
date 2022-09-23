@@ -71,6 +71,11 @@ public class TerminationReasonDto extends BusinessEntityDto {
     private boolean reimburseOneshots;
 
     /**
+     * if this termination reason could be used for offers changes.
+     */
+    private Boolean useForOfferChange;
+
+    /**
      * Instantiates a new termination reason dto.
      */
     public TerminationReasonDto() {
@@ -90,6 +95,7 @@ public class TerminationReasonDto extends BusinessEntityDto {
         applyTerminationCharges = subscriptionTerminationReason.isApplyTerminationCharges();
         overrideProrata = subscriptionTerminationReason.getOverrideProrata();
         reimburseOneshots = subscriptionTerminationReason.isReimburseOneshots();
+        useForOfferChange = subscriptionTerminationReason.getUseForOfferChange();
     }
 
     /**
@@ -190,9 +196,17 @@ public class TerminationReasonDto extends BusinessEntityDto {
         this.reimburseOneshots = reimburseOneshots;
     }
 
+    public Boolean getUseForOfferChange() {
+        return useForOfferChange;
+    }
+
+    public void setUseForOfferChange(Boolean useForOfferChange) {
+        this.useForOfferChange = useForOfferChange;
+    }
+
     @Override
     public String toString() {
         return "TerminationReasonDto [code=" + getCode() + ", description=" + getDescription() + ", applyAgreement=" + applyAgreement + ", applyAgreementImmediately=" + applyAgreementImmediately + ", applyReimbursment=" + applyReimbursment
-                + ", applyTerminationCharges=" + applyTerminationCharges + "]";
+                + ", applyTerminationCharges=" + applyTerminationCharges+ ", useForOfferChange=" + useForOfferChange + "]";
     }
 }

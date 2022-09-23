@@ -3395,4 +3395,11 @@ END $$;]]>
         </addColumn>
     </changeSet>
 
+    <changeSet id="#INTRD-9997_23092022" author="Mounir_BOUKAYOUA">
+        <addColumn tableName="billing_subscrip_termin_reason">
+            <column name="use_for_offer_change" type="${type.boolean}">
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
