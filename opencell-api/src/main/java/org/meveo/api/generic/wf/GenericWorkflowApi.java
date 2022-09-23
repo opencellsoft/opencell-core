@@ -145,7 +145,6 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
 
     @Override
     public GenericWorkflow update(GenericWorkflowDto genericWorkflowDto) throws MeveoApiException, BusinessException {
-
         validateDto(genericWorkflowDto, true);
 
         GenericWorkflow genericWorkflow = genericWorkflowService.findByCode(genericWorkflowDto.getCode(), Arrays.asList("transitions"));
@@ -183,46 +182,20 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
             }
         }
         
-        genericWorkflow = genericWorkflowService.update(genericWorkflow);
-        
         // Update Status 
         wfStatusService.updateStatusByGenericWorkflow(genericWorkflowDto, genericWorkflow);        
-      
-        // Update Transitions
-        List<GWFTransition> listUpdate = new ArrayList<>();
-        if (CollectionUtils.isNotEmpty(genericWorkflowDto.getTransitions())) {
-            for (GWFTransitionDto gwfTransitionDto : genericWorkflowDto.getTransitions()) {
-                if (gwfTransitionDto.getUuid() != null) {
-                    GWFTransition gwfTransition = gwfTransitionApi.findTransitionByUUID(gwfTransitionDto.getUuid());
-                    if (gwfTransition != null) {
-                        listUpdate.add(gwfTransition);
-                    }
-                }
+     
+        // Update Transitions 
+        for (GWFTransition wfTransition : genericWorkflow.getTransitions()) {              
+            gwfTransitionApi.remove(wfTransition);
+        }
+        if (genericWorkflowDto.getTransitions() != null && !genericWorkflowDto.getTransitions().isEmpty()) {            
+            for (GWFTransitionDto wfTransitionDto : genericWorkflowDto.getTransitions()) {              
+                gwfTransitionApi.create(genericWorkflow, wfTransitionDto);
             }
         }
-
-
-        List<GWFTransition> gwfTransitionsToRemove = new ArrayList<>();
-        genericWorkflow.getTransitions().forEach(gwtTransaction -> {
-    	   for (GWFTransitionDto gwfTransitionDto : genericWorkflowDto.getTransitions()) {  
-    		   if(gwtTransaction.getFromStatus().equalsIgnoreCase(gwfTransitionDto.getFromStatus()) && 
-       				gwtTransaction.getToStatus().equalsIgnoreCase(gwfTransitionDto.getToStatus())) {
-    			   gwfTransitionsToRemove.add(gwtTransaction);
-                   gwfTransitionService.remove(gwtTransaction);
-       			break;
-       		}
-    	   }
-        });
-        genericWorkflow.getTransitions().removeAll(gwfTransitionsToRemove);
-       
         
-        if (genericWorkflowDto.getTransitions() != null && !genericWorkflowDto.getTransitions().isEmpty()) {           
-            for (GWFTransitionDto gwfTransitionDto : genericWorkflowDto.getTransitions()) {  
-            	gwfTransitionDto.setWorkFlowCode(genericWorkflow.getCode());             
-                gwfTransitionApi.createOrUpdate(genericWorkflow, gwfTransitionDto);               
-            }
-        }
-
+        genericWorkflow = genericWorkflowService.update(genericWorkflow);
         return genericWorkflow;
     }
 
