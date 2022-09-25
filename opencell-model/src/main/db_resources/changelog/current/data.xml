@@ -8162,5 +8162,26 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <where>code='SALES_JOURNAL'</where>
         </update>
     </changeSet>
+    
+    <changeSet id="#INTRD-10047_20220926_default_sd_template" author="a.rouaguebe">
+		<insert tableName="security_deposit_templat">
+			<column name="id" valueSequenceNext="security_deposit_templat_seq" />
+			<column name="template_name" value="DEFAULT_SD_TEMPLATE" />
+			<column name="code" valueComputed="${uuid_function}" />
+			<column name="status" value="ACTIVE" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="version" valueNumeric="0" />
+			<column name="creator" value="applicationInitializer"></column>
+		</insert>
+		<modifySql dbms="postgresql">
+			<append value=" on conflict do nothing"/>
+		</modifySql>
+		<modifySql dbms="mysql">
+			<replace replace="INSERT" with="INSERT IGNORE"/>
+		</modifySql>
+		<modifySql dbms="oracle">
+			<replace replace="INSERT" with="INSERT /*+ ignore_row_on_dupkey_index(security_deposit_templat, uk_security_deposit_template_name) */"/>
+		</modifySql>
+    </changeSet>
 
 </databaseChangeLog>
