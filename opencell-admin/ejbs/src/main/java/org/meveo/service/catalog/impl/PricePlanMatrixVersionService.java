@@ -601,6 +601,16 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         return null;
     }
 
+    public List<PricePlanMatrixVersion> findByPricePlan(PricePlanMatrix pricePlan) {
+       return this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.findByPricePlan", entityClass)
+                .setParameter("priceplan", pricePlan).getResultList();
+    }
+
+    public List<PricePlanMatrixVersion> findByPricePlans(List<PricePlanMatrix> pricePlans) {
+        return this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.findByPricePlans", entityClass)
+                .setParameter("priceplans", pricePlans).getResultList();
+    }
+
     class CSVPricePlanExportManager {
         private final String PATH_STRING_FOLDER = "exports" + File.separator + "priceplan_versions";
         private final String saveDirectory;

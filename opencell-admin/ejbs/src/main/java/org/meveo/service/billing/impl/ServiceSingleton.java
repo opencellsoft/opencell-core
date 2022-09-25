@@ -26,11 +26,7 @@ import org.meveo.event.qualifier.InvoiceNumberAssigned;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.CustomGenericEntityCode;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceSequence;
-import org.meveo.model.billing.InvoiceStatusEnum;
-import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.InvoiceTypeSellerSequence;
+import org.meveo.model.billing.*;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.crm.Customer;
@@ -61,6 +57,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -426,13 +423,26 @@ public class ServiceSingleton {
     		throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
     	}
         if(refreshExchangeRate && invoice.canBeRefreshed()) {
-            invoiceService.refreshConvertedAmounts(invoice, invoice.getTradingCurrency().getCurrentRate(),
+            invoiceService.refreshConvertedAmounts(invoice, getExchangeRate(invoice),
                     invoice.getTradingCurrency().getCurrentRateFromDate());
         }
     	invoice.setStatus(InvoiceStatusEnum.VALIDATED);
     	return assignInvoiceNumber(invoice, true);
     }
 
+    private BigDecimal getExchangeRate(Invoice invoice) {
+
+        BigDecimal exchangeRateToApply = null;
+
+        if (invoice.getTradingCurrency() != null) {
+
+            ExchangeRate calculatedExchangeRate = invoice.getTradingCurrency().getExchangeRate(invoice.getInvoiceDate());
+
+            exchangeRateToApply = calculatedExchangeRate != null ? calculatedExchangeRate.getExchangeRate() : invoice.getTradingCurrency().getCurrentRate();
+
+        }
+        return exchangeRateToApply;
+    }
 
     public CpqQuote assignCpqQuoteNumber(CpqQuote cpqQuote) {
         InvoiceType invoiceType = invoiceTypeService.retrieveIfNotManaged(cpqQuote.getOrderInvoiceType());

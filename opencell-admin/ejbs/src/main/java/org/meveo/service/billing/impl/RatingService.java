@@ -679,6 +679,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
                         } else {
                             unitPriceWithoutTax = contractItem.getAmountWithoutTax();
+                            bareWalletOperation.setContract(contract);
                         }
                     }
 

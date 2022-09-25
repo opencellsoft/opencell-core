@@ -14155,59 +14155,32 @@ order by date_trunc('month', i.invoice_date) DESC
         <sql>
         	update ${db.schema.adapted}cpq_quote set sales_person_name = adm_user.username from ${db.schema.adapted}adm_user
 			where lower(cpq_quote.creator) = lower(adm_user.username)
-			and (cpq_quote.sales_person_name is null or cpq_quote.sales_person_name = '')
-			and (adm_user.firstname IS NULL or adm_user.firstname = '') and (adm_user.lastname is null or adm_user.lastname = '');
+			and (cpq_quote.sales_person_name is null or cpq_quote.sales_person_name = '');
 		</sql>
 		<sql>
 			update ${db.schema.adapted}cpq_quote set sales_person_name = adm_user.username from ${db.schema.adapted}adm_user
 			where lower(cpq_quote.creator) = lower(adm_user.username)
-			and (cpq_quote.sales_person_name is null or cpq_quote.sales_person_name = '')
-			and (adm_user.firstname IS not NULL or adm_user.firstname != '') and (adm_user.lastname is null  or adm_user.lastname = '');
-		</sql>
-		<sql>
-			update ${db.schema.adapted}cpq_quote set sales_person_name = adm_user.firstname || ' ' || adm_user.lastname from ${db.schema.adapted}adm_user
-			where lower(cpq_quote.creator) = lower(adm_user.username)
-			and (cpq_quote.sales_person_name is null or cpq_quote.sales_person_name = '')
-			and adm_user.firstname != ''
-			and adm_user.lastname != '';
+			and (cpq_quote.sales_person_name is null or cpq_quote.sales_person_name = '');
 		</sql>
 		<sql>
 			update ${db.schema.adapted}cpq_commercial_order set sales_person_name = adm_user.username from ${db.schema.adapted}adm_user
 			where lower(cpq_commercial_order.creator) = lower(adm_user.username)
-			and (cpq_commercial_order.sales_person_name is null or cpq_commercial_order.sales_person_name = '')
-			and (adm_user.firstname IS NULL or adm_user.firstname = '') and (adm_user.lastname is null or adm_user.lastname = '');
+			and (cpq_commercial_order.sales_person_name is null or cpq_commercial_order.sales_person_name = '');
 		</sql>
 		<sql>
 			update ${db.schema.adapted}cpq_commercial_order set sales_person_name = adm_user.username from ${db.schema.adapted}adm_user
 			where lower(cpq_commercial_order.creator) = lower(adm_user.username)
-			and (cpq_commercial_order.sales_person_name is null or cpq_commercial_order.sales_person_name = '')
-			and (adm_user.firstname IS not NULL or adm_user.firstname != '') and (adm_user.lastname is null  or adm_user.lastname = '');
-		</sql>
-		<sql>
-			update ${db.schema.adapted}cpq_commercial_order set sales_person_name = adm_user.firstname || ' ' || adm_user.lastname from ${db.schema.adapted}adm_user
-			where lower(cpq_commercial_order.creator) = lower(adm_user.username)
-			and (cpq_commercial_order.sales_person_name is null or cpq_commercial_order.sales_person_name = '')
-			and adm_user.firstname != ''
-			and adm_user.lastname != '';
+			and (cpq_commercial_order.sales_person_name is null or cpq_commercial_order.sales_person_name = '');
 		</sql>
 		<sql>
 			update ${db.schema.adapted}billing_subscription set sales_person_name = adm_user.username from ${db.schema.adapted}adm_user
 			where lower(billing_subscription.creator) = lower(adm_user.username)
-			and (billing_subscription.sales_person_name is null or billing_subscription.sales_person_name = '')
-			and (adm_user.firstname IS NULL or adm_user.firstname = '') and (adm_user.lastname is null or adm_user.lastname = '');
+			and (billing_subscription.sales_person_name is null or billing_subscription.sales_person_name = '');
 		</sql>
 		<sql>
 			update ${db.schema.adapted}billing_subscription set sales_person_name = adm_user.username from ${db.schema.adapted}adm_user
 			where lower(billing_subscription.creator) = lower(adm_user.username)
-			and (billing_subscription.sales_person_name is null or billing_subscription.sales_person_name = '')
-			and (adm_user.firstname IS not NULL or adm_user.firstname != '') and (adm_user.lastname is null  or adm_user.lastname = '');
-		</sql>
-		<sql>
-			update ${db.schema.adapted}billing_subscription set sales_person_name = adm_user.firstname || ' ' || adm_user.lastname from ${db.schema.adapted}adm_user
-			where lower(billing_subscription.creator) = lower(adm_user.username)
-			and (billing_subscription.sales_person_name is null or billing_subscription.sales_person_name = '')
-			and adm_user.firstname != ''
-			and adm_user.lastname != '';
+			and (billing_subscription.sales_person_name is null or billing_subscription.sales_person_name = '');
 		</sql>
 	</changeSet>
     <changeSet id="#INTRD-9383-20220830" author="Abdelkader.Bouazza">
@@ -14368,6 +14341,15 @@ order by date_trunc('month', i.invoice_date) DESC
                 <constraints nullable="true"/>
             </column>
         </addColumn>
+    </changeSet>
+    
+    <changeSet id="#INTRD-9946_20220920" author="HichamHANINE">
+        <addColumn tableName="security_deposit">
+            <column name="sd_invoice_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="sd_invoice_id" baseTableName="security_deposit" constraintName="fk_security_deposit_invoice"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
     </changeSet>
     
 	<changeSet id="#INTRD-9871_20220919" author="TarikFA.">
