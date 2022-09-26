@@ -710,9 +710,12 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			
 			log.info("hostedCheckoutInput.isOneShotPayment(): "+ hostedCheckoutInput.isOneShotPayment());
 			
-			if(hostedCheckoutInput.isOneShotPayment()) {
-				timeMillisWithcustomerAccountId = "oneShot_"+timeMillisWithcustomerAccountId;
-			}
+            boolean isRequiresApproval = "true".equalsIgnoreCase(paramBean().getProperty("ingenico.HostedCheckout.saveCard.RequiresApproval", "true"));
+            
+            if(hostedCheckoutInput.isOneShotPayment()) {
+                timeMillisWithcustomerAccountId = "oneShot_"+timeMillisWithcustomerAccountId;
+                isRequiresApproval = "true".equalsIgnoreCase(paramBean().getProperty("ingenico.HostedCheckout.oneShot.RequiresApproval", "false"));
+            }
 
 			String redirectionUrl;
 
@@ -749,7 +752,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			order.setReferences(orderReferences);
 
 			CardPaymentMethodSpecificInputBase cardPaymentMethodSpecificInputBase = new CardPaymentMethodSpecificInputBase();
-			cardPaymentMethodSpecificInputBase.setRequiresApproval(true);
+			cardPaymentMethodSpecificInputBase.setRequiresApproval(isRequiresApproval);
 			cardPaymentMethodSpecificInputBase.setAuthorizationMode(hostedCheckoutInput.getAuthorizationMode());
 			cardPaymentMethodSpecificInputBase.setTokenize(true);
 			
