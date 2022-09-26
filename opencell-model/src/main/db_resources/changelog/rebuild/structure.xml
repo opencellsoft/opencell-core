@@ -4299,6 +4299,7 @@
             <column name="offer_template_id" type="bigint"/>
             <column name="is_model" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="offer_model_id" type="bigint"/>
+            <column name="generate_quote_edr_per_product" type="${type.boolean}" defaultValueNumeric="0"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-217">
@@ -18606,6 +18607,7 @@
 	<changeSet id="#INTRD-9871_20220919" author="TarikFA." />
 	<changeSet id="#INTRD-9839_20220919" author="TarikRabeh" />
 	<changeSet id="#INTRD-9946_20220920" author="HichamHANINE" />
+    <changeSet id="#INTRD-10097_202000926" author="TarikFA." />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
