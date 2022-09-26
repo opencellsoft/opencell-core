@@ -255,11 +255,16 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 
 	@Override
 	public Response quoteQuotation(String quoteCode, int quoteVersion) {
+		GetQuoteVersionDtoResponse result = new GetQuoteVersionDtoResponse();
 		try {
-		          return Response.ok(cpqQuoteApi.quoteQuotation(quoteCode, quoteVersion)).build();
-	        } catch (MeveoApiException e) {
-			       return errorResponse(e, new GetQuoteVersionDtoResponse().getActionStatus());
-	        }
+			result = cpqQuoteApi.quoteQuotation(quoteCode, quoteVersion);
+		} catch (MeveoApiException e) {
+			return errorResponse(e, new GetQuoteVersionDtoResponse().getActionStatus());
+		} catch (Exception e) {
+			processException(e, new ActionStatus()); // this declaration rise the suitable exception
+		}
+		return Response.ok(result).build();
+		
 	}
 
 	@Override
