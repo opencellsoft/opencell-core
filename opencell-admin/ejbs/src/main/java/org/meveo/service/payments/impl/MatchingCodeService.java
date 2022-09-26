@@ -277,10 +277,11 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.PPAID);
                     }
                     invoice.setPaymentStatusDate(new Date());
+
+                    // INTRD-9400 - Check and update Matched SecurityDeposit  
+                    updateMatchedSecurityDeposit(amountToMatch, accountOperation, invoice);
                 }
                 
-                // INTRD-9400 - Check and update Matched SecurityDeposit  
-                updateMatchedSecurityDeposit(amountToMatch, accountOperation, invoice);
             }
 
             if(0 != amountToMatch.longValue()) {
@@ -320,6 +321,13 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
     }
 
+    /**
+     * Update SecurityDeposit related to a DEB_SD AO
+     * 
+     * @param amountToMatch
+     * @param accountOperation
+     * @param invoice
+     */
 	private void updateMatchedSecurityDeposit(BigDecimal amountToMatch, AccountOperation accountOperation, Invoice invoice) {
 		
 		if(!"DEB_SD".equals(accountOperation.getCode())) {
