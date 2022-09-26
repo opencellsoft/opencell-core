@@ -27,6 +27,7 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.admin.FileDto;
 import org.meveo.api.dto.admin.FileRequestDto;
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.FileUtils;
@@ -158,7 +159,7 @@ public class FilesApi extends BaseApi {
         path= path.normalize();
         String prefix =  getProviderRootDir().replace("./","");
         if(!path.toString().contains(prefix)){
-            throw new BusinessApiException(FILE_DOES_NOT_EXISTS + dir);
+            throw new EntityDoesNotExistsException(FILE_DOES_NOT_EXISTS + dir);
         }
         return dir;
     }
