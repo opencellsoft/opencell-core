@@ -1828,10 +1828,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * @return DOM element
      */
     protected Element createDetailsSection(Document doc, Invoice invoice, List<RatedTransaction> ratedTransactions, boolean isVirtual, InvoiceConfiguration invoiceConfiguration, List<InvoiceLine> invoiceLines) {
-        ParamBean paramBean = paramBeanFactory.getInstance();
-        String invoiceDateFormat = paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN);
-        String invoiceDateTimeFormat = paramBean.getProperty("invoice.dateTimeFormat", DEFAULT_DATE_TIME_PATTERN);
-        String invoiceLanguageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
         Element detail = doc.createElement("detail");
         Element userAccountsTag = ratedTransactions != null ? createUserAccountsSection(doc, invoice, ratedTransactions, isVirtual, invoiceConfiguration)
                 :  createUserAccountsSectionIL(doc, invoice, invoiceLines, isVirtual, invoiceConfiguration);
