@@ -9689,6 +9689,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="#INTRD-8507_20220715" author="ZBariki" />
 	<changeSet id="#INTRD-8700_20220728" author="ZBariki" />
 	<changeSet id="#INTRD-8946_20220804" author="aelmalki" />
+	<changeSet id="#INTRD-10047_20220926_default_sd_template" author="a.rouaguebe" />
 	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
