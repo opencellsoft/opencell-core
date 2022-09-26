@@ -34,7 +34,8 @@ import org.meveo.model.payments.CustomerAccount;
 @NamedQueries({
     @NamedQuery(name = "SecurityDeposit.sumAmountPerClient", query = "SELECT SUM(s.amount) FROM SecurityDeposit s WHERE s.customerAccount=:customerAccount"),
     @NamedQuery(name = "SecurityDeposit.countPerTemplate", query = "SELECT COUNT(s.id) FROM SecurityDeposit s WHERE s.template=:template"),
-    @NamedQuery(name = "SecurityDeposit.securityDepositsToRefundIds", query = "SELECT s.id FROM SecurityDeposit s WHERE (s.validityDate <:sysDate or (s.validityPeriodUnit IS NOT NULL and s.validityPeriod IS NOT NULL)) and (s.status = 'LOCKED' or s.status = 'UNLOCKED' or s.status = 'HOLD')")
+    @NamedQuery(name = "SecurityDeposit.securityDepositsToRefundIds", query = "SELECT s.id FROM SecurityDeposit s WHERE (s.validityDate <:sysDate or (s.validityPeriodUnit IS NOT NULL and s.validityPeriod IS NOT NULL)) and (s.status = 'LOCKED' or s.status = 'UNLOCKED' or s.status = 'HOLD')"),
+    @NamedQuery(name = "SecurityDeposit.securityDepositsByInvoiceId", query = "SELECT s FROM SecurityDeposit s WHERE s.securityDepositInvoice.id = :invoiceId")
 })
 public class SecurityDeposit extends BusinessCFEntity {
 
