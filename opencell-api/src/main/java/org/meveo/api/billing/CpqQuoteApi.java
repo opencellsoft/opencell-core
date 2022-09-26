@@ -1464,8 +1464,6 @@ public class CpqQuoteApi extends BaseApi {
 
         for (BigDecimal taux: pricesPerTaux.keySet()) {
 
-//            Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = pricesPerTaux.get(taux).stream()
-//                    .collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
         	 Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = pricesPerTaux.get(taux).stream()
         			 							.collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
             log.debug("quoteQuotation pricesPerType size={}",pricesPerType.size());
@@ -1623,8 +1621,16 @@ public class CpqQuoteApi extends BaseApi {
             	quoteArticleLine=createQuoteArticleLine(wo, quoteOffer.getQuoteVersion());
             	quoteArticleLines.put(accountingArticleCode, quoteArticleLine);
             }else {
-            	quoteArticleLine=quoteArticleLines.get(accountingArticleCode);
-                quoteArticleLine.setQuantity(quoteArticleLine.getQuantity().add(wo.getQuantity()));
+                quoteArticleLine=quoteArticleLines.get(accountingArticleCode);
+            	var isGroupedBy = quoteArticleLine.getQuoteProduct() != null && 
+            	                      wo.getServiceInstance() != null && 
+            	                      quoteArticleLine.getQuoteProduct().getId() == wo.getServiceInstance().getId();
+            	if(isGroupedBy)
+            	    quoteArticleLine.setQuantity(quoteArticleLine.getQuantity().add(wo.getQuantity()));
+            	else {
+            	    quoteArticleLine=createQuoteArticleLine(wo, quoteOffer.getQuoteVersion());
+                    quoteArticleLines.put(accountingArticleCode, quoteArticleLine);
+            	}
             }
             QuotePrice quotePrice = new QuotePrice();
             quotePrice.setPriceTypeEnum(PriceTypeEnum.getPriceTypeEnum(wo.getChargeInstance()));
