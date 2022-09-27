@@ -1,0 +1,1881 @@
+{
+	"info": {
+		"_postman_id": "e81f9bde-a7a8-48c2-b94f-d61845739e44",
+		"name": "INTRD-10012 File API can only access files from the provider's data folder",
+		"description": "# Introduction\r\n\r\nThis configuration file is designed to be a basis for all configurations provided by Opencell.\r\nIt merely contains most common general settings and a catalog of services implementing various rating models.\r\n\r\n# Configuring Opencell\r\n\r\nThere are 2 main ways for configuring ***Opencell***:\r\n* GUI (*Administration GUI* and *Marketing Manager*)\r\n* API (all Opencell configuration and operations can be performed using our extensive API library)\r\n\r\nThe most flexible way is using APIs which currently are available as **Rest** and **Soap**.\r\nThe **Soap** API are deprecated, so will won't mention them anymore.\r\n\r\n## Tools\r\n\r\nAny tools able to send HTTP requests will do.\r\nOne could even just script *curl* calls using shell script.\r\nBut of course, a more user friendly tool will make things easier.\r\n\r\nHere at ***Opencell***, we prefer **Postman** (https://getpostman.com):\r\n* it has a modern, friendly interface\r\n* Sets of API request can be organized into collections, themselves structured into a folder tree.\r\n* Collections can be exported as _JSON_ files or shared with other team members using collaboration features (payed version)\r\n* it allows to uses variables at different levels (collection, environement, global) and to execute *Javascript* scripts before and after executing API calls which allows great flexibility and API response testing.\r\n\r\n\r\n\r\n# Configuration documentation guidelines\r\n\r\nIn order to document our configuration, we make full used of the internal documentation capabilities of the Markdown fields on Postman Objects\r\n\r\n## Default template for *Collection* documentation\r\n\r\n## Default template for *Folder* documentation\r\n\r\n## Default template for *Request* documentation\r\n\r\n\r\n\r\n# Tips & guidelines\r\n\r\nHere follow a few tips for understanding this collection.\r\n\r\n## Collection pre-request script\r\n\r\n```javascript\r\npm.globals.set(\"timestamp.iso\", (new Date()).toISOString());\r\npm.globals.set(\"request.label\", pm.info.requestName);\r\n\r\nvar parts = pm.info.requestName.split(\"|\");\r\n\r\nfor(let i=0; i<parts.length; i++) {\r\n    pm.globals.set(\"request.label.\"+i, parts[i]);\r\n}\r\n```\r\n\r\n## Configuration guidelines\r\n\r\n## Entities\r\n\r\n<entity>_<project_code>_XXX\r\n\r\n### Custom Fields\r\n\r\nCF_<entity>_<project_code>_ XXX\r\n\r\n<entity> will be discarded for inherited\r\n\r\n#### Custom field visibility\r\n\r\nSE_<entity>_<project_code>_<markers>_XXX\r\n\r\n<markers> are used in CFT.applicableOnEl to show CFT on entities\r\n\r\n\r\n## Entity abbreviation\r\n\r\n| code  | entity                        |\r\n|:-----:|:------------------------------|\r\n|   P   | Provider                      |\r\n|   S   | Seller                        |\r\n|   C   | Customer                      |\r\n|  CA   | Customer Account              |\r\n|  BA   | Billing Account               |\r\n|  UA   | User Account                  |\r\n|  SU   | Subscription                  |\r\n|  AP   | Access Point                  |\r\n|  OF   | Offer Template                |\r\n|  SE   | Service Template and Instance |\r\n|  CH   | Charge Template               |\r\n|  PP   | Price Plan                    |\r\n|  CN   | Counter                       |\r\n| ICAT  | Invoice Category              |\r\n| ISCAT | Invoice SubCategory           |\r\n|  CAL  | Calendar                      |\r\n|  BC   | Billing Cycle                 |\r\n",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2033042"
+	},
+	"item": [
+		{
+			"name": "Tests",
+			"item": [
+				{
+					"name": "Files",
+					"item": [
+						{
+							"name": "List files",
+							"item": [
+								{
+									"name": "list files out of provider dir",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"var parts = pm.variables.get(\"request.label\").split(\"|\");",
+													"var index = pm.globals.get(\"index\");",
+													"",
+													"if (typeof index === 'undefined') {",
+													"    console.log(\"index global variable is undefined -> setting to \\\"00\\\"\");",
+													"    pm.globals.set(\"index\", \"00\");",
+													"    index = \"00\";",
+													"}",
+													"",
+													"var prefix = pm.variables.get(\"seller.code\") + \"-\";",
+													"var suffix = \" \" + prefix + index;",
+													"",
+													"switch (parts.length) {",
+													"    case 1:",
+													"        pm.globals.set(\"account.code\", prefix + parts[0]);",
+													"        pm.globals.set(\"account.description\", parts[0] + suffix);",
+													"        pm.globals.set(\"account.firstname\", \"\");",
+													"        pm.globals.set(\"account.lastname\", \"\");",
+													"        break;",
+													"    case 2:",
+													"        pm.globals.set(\"account.code\", prefix + parts[0]);",
+													"        pm.globals.set(\"account.description\", parts[1] + suffix);",
+													"        pm.globals.set(\"account.firstname\", \"\");",
+													"        pm.globals.set(\"account.lastname\", \"\");",
+													"        break;",
+													"    case 3:",
+													"        pm.globals.set(\"account.code\", prefix + parts[0]);",
+													"        pm.globals.set(\"account.description\", parts[1] + \" \" + parts[2] + suffix);",
+													"        pm.globals.set(\"account.firstname\", parts[1]);",
+													"        pm.globals.set(\"account.lastname\", parts[2]);",
+													"        break;",
+													"    case 4:",
+													"        pm.globals.set(\"account.code\", prefix + parts[0]);",
+													"        pm.globals.set(\"account.description\", parts[1] + suffix);",
+													"        pm.globals.set(\"account.firstname\", parts[2]);",
+													"        pm.globals.set(\"account.lastname\", parts[3]);",
+													"        break;",
+													"}",
+													"",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files?dir=../../opencelldata/Test",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files"
+											],
+											"query": [
+												{
+													"key": "dir",
+													"value": "../../opencelldata/Test"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "list files out of provider dir",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"var parts = pm.variables.get(\"request.label\").split(\"|\");",
+													"var index = pm.globals.get(\"index\");",
+													"",
+													"if (typeof index === 'undefined') {",
+													"    console.log(\"index global variable is undefined -> setting to \\\"00\\\"\");",
+													"    pm.globals.set(\"index\", \"00\");",
+													"    index = \"00\";",
+													"}",
+													"",
+													"var prefix = pm.variables.get(\"seller.code\") + \"-\";",
+													"var suffix = \" \" + prefix + index;",
+													"",
+													"switch (parts.length) {",
+													"    case 1:",
+													"        pm.globals.set(\"account.code\", prefix + parts[0]);",
+													"        pm.globals.set(\"account.description\", parts[0] + suffix);",
+													"        pm.globals.set(\"account.firstname\", \"\");",
+													"        pm.globals.set(\"account.lastname\", \"\");",
+													"        break;",
+													"    case 2:",
+													"        pm.globals.set(\"account.code\", prefix + parts[0]);",
+													"        pm.globals.set(\"account.description\", parts[1] + suffix);",
+													"        pm.globals.set(\"account.firstname\", \"\");",
+													"        pm.globals.set(\"account.lastname\", \"\");",
+													"        break;",
+													"    case 3:",
+													"        pm.globals.set(\"account.code\", prefix + parts[0]);",
+													"        pm.globals.set(\"account.description\", parts[1] + \" \" + parts[2] + suffix);",
+													"        pm.globals.set(\"account.firstname\", parts[1]);",
+													"        pm.globals.set(\"account.lastname\", parts[2]);",
+													"        break;",
+													"    case 4:",
+													"        pm.globals.set(\"account.code\", prefix + parts[0]);",
+													"        pm.globals.set(\"account.description\", parts[1] + suffix);",
+													"        pm.globals.set(\"account.firstname\", parts[2]);",
+													"        pm.globals.set(\"account.lastname\", parts[3]);",
+													"        break;",
+													"}",
+													"",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files?dir=../../",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files"
+											],
+											"query": [
+												{
+													"key": "dir",
+													"value": "../../"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "List system files",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"var parts = pm.variables.get(\"request.label\").split(\"|\");",
+													"var index = pm.globals.get(\"index\");",
+													"",
+													"if (typeof index === 'undefined') {",
+													"    console.log(\"index global variable is undefined -> setting to \\\"00\\\"\");",
+													"    pm.globals.set(\"index\", \"00\");",
+													"    index = \"00\";",
+													"}",
+													"",
+													"var prefix = pm.variables.get(\"seller.code\") + \"-\";",
+													"var suffix = \" \" + prefix + index;",
+													"",
+													"switch (parts.length) {",
+													"    case 1:",
+													"        pm.globals.set(\"account.code\", prefix + parts[0]);",
+													"        pm.globals.set(\"account.description\", parts[0] + suffix);",
+													"        pm.globals.set(\"account.firstname\", \"\");",
+													"        pm.globals.set(\"account.lastname\", \"\");",
+													"        break;",
+													"    case 2:",
+													"        pm.globals.set(\"account.code\", prefix + parts[0]);",
+													"        pm.globals.set(\"account.description\", parts[1] + suffix);",
+													"        pm.globals.set(\"account.firstname\", \"\");",
+													"        pm.globals.set(\"account.lastname\", \"\");",
+													"        break;",
+													"    case 3:",
+													"        pm.globals.set(\"account.code\", prefix + parts[0]);",
+													"        pm.globals.set(\"account.description\", parts[1] + \" \" + parts[2] + suffix);",
+													"        pm.globals.set(\"account.firstname\", parts[1]);",
+													"        pm.globals.set(\"account.lastname\", parts[2]);",
+													"        break;",
+													"    case 4:",
+													"        pm.globals.set(\"account.code\", prefix + parts[0]);",
+													"        pm.globals.set(\"account.description\", parts[1] + suffix);",
+													"        pm.globals.set(\"account.firstname\", parts[2]);",
+													"        pm.globals.set(\"account.lastname\", parts[3]);",
+													"        break;",
+													"}",
+													"",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"List system files\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.message).to.contains(\"File does not exists\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files?dir=.../../../../etc",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files"
+											],
+											"query": [
+												{
+													"key": "dir",
+													"value": ".../../../../etc"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "List system files",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"var parts = pm.variables.get(\"request.label\").split(\"|\");",
+													"var index = pm.globals.get(\"index\");",
+													"",
+													"if (typeof index === 'undefined') {",
+													"    console.log(\"index global variable is undefined -> setting to \\\"00\\\"\");",
+													"    pm.globals.set(\"index\", \"00\");",
+													"    index = \"00\";",
+													"}",
+													"",
+													"var prefix = pm.variables.get(\"seller.code\") + \"-\";",
+													"var suffix = \" \" + prefix + index;",
+													"",
+													"switch (parts.length) {",
+													"    case 1:",
+													"        pm.globals.set(\"account.code\", prefix + parts[0]);",
+													"        pm.globals.set(\"account.description\", parts[0] + suffix);",
+													"        pm.globals.set(\"account.firstname\", \"\");",
+													"        pm.globals.set(\"account.lastname\", \"\");",
+													"        break;",
+													"    case 2:",
+													"        pm.globals.set(\"account.code\", prefix + parts[0]);",
+													"        pm.globals.set(\"account.description\", parts[1] + suffix);",
+													"        pm.globals.set(\"account.firstname\", \"\");",
+													"        pm.globals.set(\"account.lastname\", \"\");",
+													"        break;",
+													"    case 3:",
+													"        pm.globals.set(\"account.code\", prefix + parts[0]);",
+													"        pm.globals.set(\"account.description\", parts[1] + \" \" + parts[2] + suffix);",
+													"        pm.globals.set(\"account.firstname\", parts[1]);",
+													"        pm.globals.set(\"account.lastname\", parts[2]);",
+													"        break;",
+													"    case 4:",
+													"        pm.globals.set(\"account.code\", prefix + parts[0]);",
+													"        pm.globals.set(\"account.description\", parts[1] + suffix);",
+													"        pm.globals.set(\"account.firstname\", parts[2]);",
+													"        pm.globals.set(\"account.lastname\", parts[3]);",
+													"        break;",
+													"}",
+													"",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"List system files\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.message).to.contains(\"File does not exists\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files?dir=.../../../../etc/password",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files"
+											],
+											"query": [
+												{
+													"key": "dir",
+													"value": ".../../../../etc/password"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "List opencelldata files",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"List system files\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.message).to.contains(\"File does not exists\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files?dir=../../../../opt/jboss/opencelldata",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files"
+											],
+											"query": [
+												{
+													"key": "dir",
+													"value": "../../../../opt/jboss/opencelldata"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "List opencelldata files| Test",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"List system files\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.message).to.contains(\"File does not exists\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files?dir=../../../../opt/jboss/opencelldata/Test",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files"
+											],
+											"query": [
+												{
+													"key": "dir",
+													"value": "../../../../opt/jboss/opencelldata/Test"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "List provider root",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"List system files\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.status).to.contains(\"SUCCESS\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files?dir=../../bin/opencelldata/default",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files"
+											],
+											"query": [
+												{
+													"key": "dir",
+													"value": "../../bin/opencelldata/default"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Read file out of provider dir",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"List system files\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.message).to.contains(\"File does not exists\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files?dir=../opencelldata/Test/Test.txt",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files"
+											],
+											"query": [
+												{
+													"key": "dir",
+													"value": "../opencelldata/Test/Test.txt"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Read file not found in provider dir",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"List system files\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.message).to.contains(\"File does not exists\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files?dir=../../../../opt/jboss/opencelldata/default/teste.txt",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files"
+											],
+											"query": [
+												{
+													"key": "dir",
+													"value": "../../../../opt/jboss/opencelldata/default/teste.txt"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Read file in provider dir",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"List system files\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.message).to.contains(\"File does not exists\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files?dir=../../../../opt/jboss/opencelldata/default/invoices/pdf",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files"
+											],
+											"query": [
+												{
+													"key": "dir",
+													"value": "../../../../opt/jboss/opencelldata/default/invoices/pdf"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Read file in provider dir",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"List system files\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.message).to.contains(\"File does not exists\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files?dir=invoices/pdf",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files"
+											],
+											"query": [
+												{
+													"key": "dir",
+													"value": "invoices/pdf"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Read file in provider dir 2",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"List system files\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.message).to.contains(\"File does not exists\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files?dir=./opencelldata/default/invoices/pdf",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files"
+											],
+											"query": [
+												{
+													"key": "dir",
+													"value": "./opencelldata/default/invoices/pdf"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Create dir",
+							"item": [
+								{
+									"name": "Create Dir in system files",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"File does not exists\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.message).to.contains(\"File does not exists\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "../../",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files/createDir",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files",
+												"createDir"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create Dir in privider dir",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"SUCCESS\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.status).to.contains(\"SUCCESS\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "../../../../opt/jboss/opencelldata/{{provider.dir}}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files/createDir",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files",
+												"createDir"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create Dir in privider dir 2",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"SUCCESS\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.status).to.contains(\"SUCCESS\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "../../../../opt/jboss/opencelldata/{{provider.dir}}/test",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files/createDir",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files",
+												"createDir"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create Dir in privider dir 3",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"SUCCESS\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.status).to.contains(\"SUCCESS\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "/opencelldata/{{provider.dir}}/test_1",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files/createDir",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files",
+												"createDir"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create Dir in privider dir 4",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"SUCCESS\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.status).to.contains(\"SUCCESS\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{{provider.dir}}/test_2",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files/createDir",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files",
+												"createDir"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create Dir out privider dir 4",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"File does not exists\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.message).to.contains(\"File does not exists\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "../opencelldata/test/test",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files/createDir",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files",
+												"createDir"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "upload",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"PP_CH_BUILD_RUN_RECURRING_1\",\n    \"eventCode\": \"Contract_line_REC_1\",\n    \"priority\": 0\n}\n",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files/upload",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files",
+												"upload"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "uploadFileBase64",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"PP_CH_BUILD_RUN_RECURRING_1\",\n    \"eventCode\": \"Contract_line_REC_1\",\n    \"priority\": 0\n}\n",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files/uploadFileBase64",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files",
+												"uploadFileBase64"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "uploadZippedFileBase64",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"PP_CH_BUILD_RUN_RECURRING_1\",\n    \"eventCode\": \"Contract_line_REC_1\",\n    \"priority\": 0\n}\n",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files/uploadZippedFileBase64",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files",
+												"uploadZippedFileBase64"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "downloadFile",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"PP_CH_BUILD_RUN_RECURRING_1\",\n    \"eventCode\": \"Contract_line_REC_1\",\n    \"priority\": 0\n}\n",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files/downloadFile",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files",
+												"downloadFile"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Zip",
+							"item": [
+								{
+									"name": "zipDirectory in provider dir",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "../../opencelldata/{{provider.dir}}/invoices/pdf",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files/zipDirectory",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files",
+												"zipDirectory"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "zipDirectory out provider dir",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"List system files\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.message).to.contains(\"File does not exists\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "../../opencelldata/invoices/pdf",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files/zipDirectory",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files",
+												"zipDirectory"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Zip File in provider dir",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "../../opencelldata/{{provider.dir}}/jasper/default/pdf/invoice.jrxml",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files/zipFile",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files",
+												"zipFile"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Zip File out provider dir",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"List system files\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.message).to.contains(\"File does not exists\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "../../etc/password",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files/zipFile",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files",
+												"zipFile"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Remove",
+							"item": [
+								{
+									"name": "suppressFile",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "../../opencelldata/{{provider.dir}}/test/test.txt",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files/suppressFile",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files",
+												"suppressFile"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "suppressFile out of provider dir",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"List system files\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.message).to.contains(\"File does not exists\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "../../etc/password",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files/suppressFile",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files",
+												"suppressFile"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "suppressDirectory out of provider dir",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"List system files\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.message).to.contains(\"File does not exists\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "../opencelldata/Test",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/files/suppressDirectory",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"files",
+												"suppressDirectory"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "tokenType",
+				"value": "",
+				"type": "string"
+			},
+			{
+				"key": "accessToken",
+				"value": "{{access_token}}",
+				"type": "string"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Initialize variables",
+					"var now=new Date();",
+					"var now_addXXdays=new Date();",
+					"pm.globals.set(\"timestamp.iso\", now.toISOString());",
+					"pm.globals.set(\"request.label\", pm.info.requestName);",
+					"pm.globals.set(\"provider.dir\", \"default\");",
+					"",
+					"",
+					"now_addXXdays.setDate(now.getDate() - 15);",
+					"pm.environment.set(\"timestamp.iso.remove.15days\", now_addXXdays.toISOString());",
+					"",
+					"var now_addXXdays=new Date();",
+					"now_addXXdays.setDate(now.getDate() - 1);",
+					"pm.environment.set(\"timestamp.iso.remove.1days\", now_addXXdays.toISOString());",
+					"",
+					"var now_addXXdays=new Date();",
+					"now_addXXdays.setDate(now.getDate() + 30);",
+					"pm.environment.set(\"timestamp.iso.add.10days\", now_addXXdays.toISOString());",
+					"// add a 30 day",
+					"",
+					"var now_addXXdays=new Date();",
+					"now_addXXdays.setDate(now.getDate() + 30);",
+					"pm.environment.set(\"timestamp.iso.add.30days\", now_addXXdays.toISOString());",
+					"// add a 60 day",
+					"",
+					"var now_addXXdays=new Date();",
+					"now_addXXdays.setDate(now.getDate() + 60);",
+					"pm.environment.set(\"timestamp.iso.add.60days\", now_addXXdays.toISOString());",
+					"",
+					"var parts = pm.info.requestName.split(\"|\");",
+					"",
+					"for(let i=0; i<parts.length; i++) {",
+					"    pm.globals.set(\"wait\", 0);",
+					"    pm.globals.set(\"request.label.\"+i, parts[i]);",
+					"",
+					"    if(parts[i].indexOf(\"=\") != -1 ){",
+					"        propName = parts[i].split(\"=\")[0].trim();",
+					"        propValue = parts[i].split(\"=\")[1];",
+					"        pm.globals.set(propName, propValue);",
+					"    }",
+					"}",
+					"",
+					"// Manage token auth",
+					"var token = pm.variables.get(\"access_token\");",
+					"//console.log(\"token=\"+token);",
+					"",
+					"if(!token || token === \"\" ) {",
+					"    console.log(\"token is not defined\");",
+					"    // Set some environment variables to use in the access token request. ",
+					"    var client_id = pm.environment.get(\"client.id\");",
+					"    var client_secret = pm.environment.get(\"client.secret\");",
+					"    var opencell_url = pm.environment.get(\"opencell.base\");",
+					"    //can use an external token url",
+					"     ",
+					"    var keycloak_token_url = pm.environment.get(\"opencell.auth.url\");",
+					"    console.log(\"opencell.auth.url: \"+ keycloak_token_url);",
+					"    ",
+					"    if(!keycloak_token_url || keycloak_token_url === \"\" ) {",
+					"        pm.globals.set(\"opencell.auth.url\", opencell_url + '/auth/realms/opencell/protocol/openid-connect/token');",
+					"        console.log(\"opencell.auth.url: \"+ keycloak_token_url);",
+					"    }",
+					"    ",
+					"",
+					"",
+					"    var username = pm.environment.get(\"opencell.username\");",
+					"    var password = pm.environment.get(\"opencell.password\");",
+					"    var CryptoJS = require(\"crypto-js\")",
+					"    // Encrypt the Client ID and Secret in base64 ",
+					"    var rawStr = CryptoJS.enc.Utf8.parse(client_id + ':' + client_secret)",
+					"    var client_cred = CryptoJS.enc.Base64.stringify(rawStr)",
+					"    // Now let's get a new oauth2 access_token and set it in a variable ",
+					"",
+					"    pm.sendRequest(",
+					"        { ",
+					"            url: 'http://localhost:8180/auth/realms/opencell/protocol/openid-connect/token', ",
+					"           //      url: opencell_url + '/auth/realms/opencell/protocol/openid-connect/token', ",
+					"            method: 'POST', ",
+					"            header: ",
+					"            { ",
+					"                //'Authorization': 'Basic ' + client_cred, ",
+					"                'Cache-Control': 'no-cache', ",
+					"                'Content-Type': 'application/x-www-form-urlencoded' ",
+					"            }, body: ",
+					"            { ",
+					"                mode: 'urlencoded', ",
+					"                urlencoded: ",
+					"                [",
+					"                    { ",
+					"                        key: \"client_id\", ",
+					"                        value: client_id ",
+					"                    }, ",
+					"                    { ",
+					"                        key: \"username\", ",
+					"                        value: username ",
+					"                    },",
+					"                    { ",
+					"                        key: \"password\", ",
+					"                        value: password ",
+					"                    },",
+					"                    { ",
+					"                        key: \"grant_type\", ",
+					"                        value: \"password\" ",
+					"                    },",
+					"                    { ",
+					"                        key: \"client_secret\", ",
+					"                        value: client_secret",
+					"                    },",
+					"                ] ",
+					"            } ",
+					"        }, ",
+					"        function (err, response) { ",
+					"           // console.log(\"AUTH_RETURN_CODE\", err);",
+					"           // console.log(\"AUTH_RESPONSE\", response);",
+					"            const jsonResponse = response.json();",
+					"            console.log(\"Saving token to variables\")",
+					"            pm.variables.set(\"access_token\", jsonResponse.access_token); ",
+					"            pm.variables.set(\"test\", jsonResponse.access_token); ",
+					"        }",
+					"        );",
+					"} else{",
+					"    //console.log(\"token already exists\");",
+					"}",
+					"",
+					"// Setup Function library",
+					"utils = {",
+					"  sleep: function(seconds) {",
+					"    console.log(\"Waiting for \" + pm.variables.get(\"request.label.0\") + \" for \" + seconds + \" seconds...\");",
+					"    setTimeout(function () { }, seconds * 1000);",
+					"  }",
+					"};",
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"var wait = pm.variables.get(\"wait\");",
+					"if (wait > 0) {",
+					"    // utils.sleep(wait); doesn't seem to work",
+					"    console.log(\"Waiting for \" + pm.variables.get(\"request.label.0\") + \" for \" + wait + \" seconds...\");",
+					"    setTimeout(function () { }, wait * 1000);",
+					"}",
+					"",
+					"if (pm.response.code == 401) {",
+					"    console.log(\"Unauthorized[401] : access_token may be invalid -> deleting token. Please retry...\");",
+					"    pm.variables.unset(\"access_token\");",
+					"    console.log(\"Jumping to \" + pm.info.requestName);",
+					"    postman.setNextRequest(pm.info.requestName);",
+					"} else {",
+					"    tests[\"is.success\"] = (pm.response.code == 200 || pm.response.code == 204 || pm.response.code == 201);",
+					"}",
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "provider.code",
+			"value": "DEMO"
+		},
+		{
+			"key": "template.code",
+			"value": "BASE"
+		},
+		{
+			"key": "template.label",
+			"value": "Démo OPENSOFT"
+		},
+		{
+			"key": "seller.code",
+			"value": "OPENSOFT"
+		},
+		{
+			"key": "offer.code",
+			"value": "OF"
+		},
+		{
+			"key": "project.code",
+			"value": "Basic-001"
+		},
+		{
+			"key": "project.description",
+			"value": "Basic Offer\n"
+		},
+		{
+			"key": "project.type",
+			"value": "Demo"
+		},
+		{
+			"key": "project.version",
+			"value": "10.0.3"
+		},
+		{
+			"key": "offer_label",
+			"value": "Basic Offer"
+		},
+		{
+			"key": "SE_OSS Label",
+			"value": "One-shot Training Service"
+		},
+		{
+			"key": "SE_OST Label",
+			"value": "One-shot termination service"
+		},
+		{
+			"key": "SE_REC_ADV Label",
+			"value": "Recurring Advance Service"
+		},
+		{
+			"key": "SE_USG  Label",
+			"value": "Unit Professional Service"
+		},
+		{
+			"key": "SE_USG_FREE Label",
+			"value": "Free Usage Service"
+		},
+		{
+			"key": "SE_USG_BAND Label",
+			"value": "Band Usage Service"
+		},
+		{
+			"key": "SE_USG_TIER Label",
+			"value": "Tier Usage Service"
+		},
+		{
+			"key": "SE_USG_VOLUME Label",
+			"value": "Volume Usage Service"
+		},
+		{
+			"key": "PR_PRD Label",
+			"value": "Product "
+		},
+		{
+			"key": "ICAT_PRD Label",
+			"value": "Product"
+		},
+		{
+			"key": "ICAT_REC Label",
+			"value": "Recurring License"
+		},
+		{
+			"key": "ICAT_OSH Label",
+			"value": "Certified Training Course"
+		},
+		{
+			"key": "ICAT_USG Label",
+			"value": "Usage"
+		},
+		{
+			"key": "discount_label",
+			"value": "Discount"
+		},
+		{
+			"key": "ppmOsVersion",
+			"value": ""
+		},
+		{
+			"key": "offerOneId}",
+			"value": ""
+		},
+		{
+			"key": "orderTwoNumber",
+			"value": ""
+		},
+		{
+			"key": "versionId",
+			"value": ""
+		},
+		{
+			"key": "ppVersionId",
+			"value": ""
+		},
+		{
+			"key": "subscriptionDate",
+			"value": ""
+		}
+	]
+}
