@@ -289,7 +289,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     private String DATE_PATERN = "yyyy.MM.dd";
 
     /** map used to store temporary jasper report. */
-    private Map<String, JasperReport> jasperReportMap = new HashMap<>();
+    private static Map<String, JasperReport> jasperReportMap = new HashMap<>();
 
     /**
      * Description translation map.
@@ -1328,17 +1328,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             log.debug("Jasper template used: {}", jasperFile.getCanonicalPath());
 
             reportTemplate = new FileInputStream(jasperFile);
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            Document xmlDocument = db.parse(invoiceXmlFile);
-            xmlDocument.getDocumentElement().normalize();
-            Node invoiceNode = xmlDocument.getElementsByTagName(INVOICE_TAG_NAME).item(0);
-            Transformer trans = TransformerFactory.newInstance().newTransformer();
-            trans.setOutputProperty(OutputKeys.INDENT, "yes");
-            StringWriter writer = new StringWriter();
-            trans.transform(new DOMSource(xmlDocument), new StreamResult(writer));
 
-            JRXmlDataSource dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes(StandardCharsets.UTF_8)), "/invoice");
+            JRXmlDataSource dataSource = new JRXmlDataSource(invoiceXmlFile);
 
             String fileKey = jasperFile.getPath() + jasperFile.lastModified();
             JasperReport jasperReport = jasperReportMap.get(fileKey);
@@ -1362,7 +1353,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             log.info("PDF file '{}' produced for invoice {}", pdfFullFilename, invoice.getInvoiceNumberOrTemporaryNumber());
 
-        } catch (IOException | JRException | TransformerException | ParserConfigurationException | SAXException e) {
+        } catch (IOException | JRException e) {
             throw new BusinessException("Failed to generate a PDF file for " + pdfFilename, e);
         } finally {
             IOUtils.closeQuietly(reportTemplate);
@@ -3956,5 +3947,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public void detachAOFromInvoice(AccountOperation ao) {
         getEntityManager().createNamedQuery("Invoice.detachAOFromInvoice").setParameter("ri", ao).executeUpdate();
+    }
+    
+    /**
+     * Clear cached Jasper reports
+     */
+    public static void clearJasperReportCache() {
+        jasperReportMap.clear();
     }
 }

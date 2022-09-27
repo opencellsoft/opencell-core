@@ -363,8 +363,13 @@
             <artifactId>javax.el</artifactId>
             <version>3.0.0</version>
             <scope>test</scope>
-
         </dependency>
+
+        <dependency>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports-fonts</artifactId>
+        </dependency>
+        
         <dependency>
             <groupId>net.sf.jasperreports</groupId>
             <artifactId>jasperreports</artifactId>

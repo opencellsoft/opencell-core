@@ -119,6 +119,8 @@ public class PDFInvoiceGenerationJobBean extends BaseJobBean {
             log.error("Failed to generate PDF invoices", e);
             result.registerError(e.getMessage());
         }
+        
+        InvoiceService.clearJasperReportCache();
     }
 
     private List<Long> fetchInvoiceIdsToProcess(InvoicesToProcessEnum invoicesToProcessEnum, Long billingRunId) {
