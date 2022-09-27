@@ -144,7 +144,7 @@ public interface RatedTransactionRs extends IBaseRs {
 											implementation= ActionStatus.class
 											)
 								)
-				)}
+				),@ApiResponse(responseCode = "403", description = "Only rated transactions in statuses OPEN, REJECTED, CANCELED can be cancelled")}
 	)
     ActionStatus cancelRatedTransactions(PagingAndFiltering pagingAndFiltering);
 }
