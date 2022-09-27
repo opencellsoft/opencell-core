@@ -1914,7 +1914,9 @@ public class CpqQuoteApi extends BaseApi {
 					}
 				}
 			
-			
+			if(subscription.getOffer() != null && subscription.getOffer().isGenerateQuoteEdrPerProduct()) {
+		        createEDR(edrQuantity, subscription, attributes, walletOperations);
+			}
 			
 			//applicable only for oneshot other	
             walletOperations.addAll(discountPlanService.calculateDiscountplanItems(new ArrayList<>(productEligibleFixedDiscountItems), subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), serviceInstance.getQuantity(), null,
@@ -1924,7 +1926,26 @@ public class CpqQuoteApi extends BaseApi {
         }
         
 
-		if (edrQuantity>0) {
+        createEDR(edrQuantity, subscription, attributes, walletOperations);
+
+
+        var offerFixedDiscountWalletOperation = discountPlanService.calculateDiscountplanItems(new ArrayList<>(offerEligibleFixedDiscountItems), subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), new BigDecimal(1d), null,
+        		subscription.getOffer().getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), null, subscription, subscription.getOffer().getDescription(), true, null, null, DiscountPlanTypeEnum.OFFER);
+        offerQuotePrices.addAll(createFixedDiscountQuotePrices(offerFixedDiscountWalletOperation, quoteOffer.getQuoteVersion(), quoteOffer,billingAccount,PriceLevelEnum.OFFER));
+
+    }
+        List<WalletOperation>  sortedWalletOperations = walletOperations.stream()
+        		  .filter(w->w.getDiscountPlan()==null)
+        		  .collect(Collectors.toList());
+         sortedWalletOperations.addAll(walletOperations.stream()
+          		  .filter(w->w.getDiscountPlan()!=null)
+             		  .collect(Collectors.toList()));
+    
+    quoteEligibleFixedDiscountItems.addAll(offerEligibleFixedDiscountItems);
+    return sortedWalletOperations;
+}
+    private void createEDR(Double edrQuantity, Subscription subscription, Map<String, Object> attributes, List<WalletOperation> walletOperations) {
+    	if (edrQuantity != null && edrQuantity>0) {
 			EDR edr = new EDR();
 			try {
 
@@ -1970,23 +1991,7 @@ public class CpqQuoteApi extends BaseApi {
 
 			}
 		}
-
-
-        var offerFixedDiscountWalletOperation = discountPlanService.calculateDiscountplanItems(new ArrayList<>(offerEligibleFixedDiscountItems), subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), new BigDecimal(1d), null,
-        		subscription.getOffer().getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), null, subscription, subscription.getOffer().getDescription(), true, null, null, DiscountPlanTypeEnum.OFFER);
-        offerQuotePrices.addAll(createFixedDiscountQuotePrices(offerFixedDiscountWalletOperation, quoteOffer.getQuoteVersion(), quoteOffer,billingAccount,PriceLevelEnum.OFFER));
-
     }
-        List<WalletOperation>  sortedWalletOperations = walletOperations.stream()
-        		  .filter(w->w.getDiscountPlan()==null)
-        		  .collect(Collectors.toList());
-         sortedWalletOperations.addAll(walletOperations.stream()
-          		  .filter(w->w.getDiscountPlan()!=null)
-             		  .collect(Collectors.toList()));
-    
-    quoteEligibleFixedDiscountItems.addAll(offerEligibleFixedDiscountItems);
-    return sortedWalletOperations;
-}
     private List<QuotePrice> createFixedDiscountQuotePrices( List<WalletOperation> fixedDiscountWalletOperation,QuoteVersion quoteVersion, QuoteOffer quoteOffer,BillingAccount billingAccount,PriceLevelEnum priceLevelEnum) {
     	List<QuotePrice> discountQuotePrices=new ArrayList<QuotePrice>();
     	for (WalletOperation wo : fixedDiscountWalletOperation) {
