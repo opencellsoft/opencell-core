@@ -423,7 +423,9 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	        throw new BusinessApiException("Error when creating adjustment");
         }
 	    
-	    return adjInvoice;
+	    adjInvoice = invoiceService.findById(adjInvoice.getId(), asList("invoiceLines", "invoiceType", "invoiceType.occTemplate", "linkedInvoices"));
+
+        return adjInvoice;
 	}
 
 	public Long quarantineInvoice(Invoice invoice, QuarantineBillingRunDto quarantineBillingRunDto) {       
