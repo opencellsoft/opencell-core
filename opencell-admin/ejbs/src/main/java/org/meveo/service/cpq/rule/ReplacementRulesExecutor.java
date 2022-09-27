@@ -85,6 +85,7 @@ public class ReplacementRulesExecutor {
         	Object sourceAttribute=selectedAttributes.getSelectedAttributesMap().get(matchedCommercialRuleLine.getSourceAttribute().getCode());
         	 log.info("matchedCommercialRuleLine {}, sourceAttribute={}",matchedCommercialRuleLine.getId()+"-"+matchedCommercialRuleLine.getSourceProductCode(),sourceAttribute);
             selectedAttributes.getSelectedAttributesMap().put(commercialRuleHeader.getTargetAttribute().getCode(),sourceAttribute );
+            selectedAttributes.setCanReplace(true);
             
         }else if (canReplace || matchedCommercialRuleLine!=null) {
         	selectedAttributes.setCanReplace(true);

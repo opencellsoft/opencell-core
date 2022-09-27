@@ -32,6 +32,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.cpq.ProductContextDTO;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.cache.CommercialRulesContainerProvider;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
@@ -86,6 +87,8 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 
     @Inject
     private CommercialRulesContainerProvider commercialRulesContainerProvider;
+    
+    private String multiValuesAttributeSeparator = paramBeanFactory.getInstance().getProperty("attribute.multivalues.separator", ";");
 
     @Override
     public void create(CommercialRuleHeader entity) throws BusinessException {
@@ -309,7 +312,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                                 Object groupedAttributeValue = entry.getValue();
                                 String convertedValue = String.valueOf(groupedAttributeValue);
                                 if (groupedAttributeCode.equals(line.getSourceGroupedAttributes().getCode())) {
-                                    List<String> values = Arrays.asList(convertedValue.split(";"));
+                                    List<String> values = Arrays.asList(convertedValue.split(multiValuesAttributeSeparator));
                                     if ((isPreRequisite && !values.contains(line.getSourceGroupedAttributeValue()))
                                             || !isPreRequisite && values.contains(line.getSourceGroupedAttributeValue())) {
                                         if (continueProcess.isFalse()) {
@@ -380,7 +383,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     			}
     		case CONTAINS:
     			
-    			List<String> values = convertedValueStr!=null?Arrays.asList(convertedValueStr.split(";")):new ArrayList<String>();
+    			List<String> values = convertedValueStr!=null?Arrays.asList(convertedValueStr.split(multiValuesAttributeSeparator)):new ArrayList<String>();
 				if (values.contains(sourceAttributeValue.trim())){
 					return true;
 				}
@@ -402,7 +405,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     				switch (line.getSourceAttribute().getAttributeType()) {
     				case LIST_MULTIPLE_TEXT:
     				case LIST_MULTIPLE_NUMERIC:
-    					List<String> values = attributeValue!=null?Arrays.asList(String.valueOf(attributeValue).split(";")):new ArrayList<String>();
+    					List<String> values = attributeValue!=null?Arrays.asList(String.valueOf(attributeValue).split(multiValuesAttributeSeparator)):new ArrayList<String>();
     					if ((isPreRequisite && !values.contains(line.getSourceAttributeValue()))
     							|| !isPreRequisite && values.contains(line.getSourceAttributeValue())) {
     						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, values.contains(line.getSourceAttributeValue())));

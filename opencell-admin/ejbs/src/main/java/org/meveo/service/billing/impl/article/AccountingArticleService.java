@@ -40,6 +40,9 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 	
 	@Inject private ArticleMappingLineService articleMappingLineService;
 	@Inject private AttributeService attributeService;
+	
+	 private String multiValuesAttributeSeparator = paramBeanFactory.getInstance().getProperty("attribute.multivalues.separator", ";");
+
 
 	public Optional<AccountingArticle> getAccountingArticle(Product product, Map<String, Object> attributes) throws BusinessException {
 		return getAccountingArticle(product, null, attributes);
@@ -167,19 +170,19 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 				case LIST_NUMERIC:
 				case LIST_MULTIPLE_TEXT:
 				case LIST_MULTIPLE_NUMERIC:
-					List<String> source = Arrays.asList(attributeMapping.getAttributeValue().split(";"));
+					List<String> source = Arrays.asList(attributeMapping.getAttributeValue().split(multiValuesAttributeSeparator));
 					List<Object> input;
 					if (value instanceof Collection) {
 						input = (List) value;
 					} else {
-						input = Arrays.asList(value.toString().split(";"));
+						input = Arrays.asList(value.toString().split(multiValuesAttributeSeparator));
 					}
 
 					return valueCompareCollection(attributeMapping.getOperator(), source, input);
 				case EXPRESSION_LANGUAGE:
 					Object result = attributeService.evaluateElExpressionAttribute(value.toString(), product, null, null, Object.class);
 					if (value instanceof Collection) {
-						List<String> sourceEL = Arrays.asList(attributeMapping.getAttributeValue().split(";"));
+						List<String> sourceEL = Arrays.asList(attributeMapping.getAttributeValue().split(multiValuesAttributeSeparator));
 						List<Object> inputEL = (List) value;
 						return valueCompareCollection(attributeMapping.getOperator(), sourceEL, inputEL);
 					}
