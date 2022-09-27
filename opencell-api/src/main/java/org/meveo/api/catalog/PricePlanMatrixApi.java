@@ -45,6 +45,7 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.cpq.enums.PriceVersionTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
@@ -502,7 +503,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
     }
 
     @Transactional
-    public PricePlanMatrixDto duplicatePricePlan(String pricePlanMatrixCode, String pricePlanMatrixNewCode, int version) {
+    public PricePlanMatrixDto duplicatePricePlan(String pricePlanMatrixCode, String pricePlanMatrixNewCode, int version, String priceVersionType) {
     	PricePlanMatrix ppm = loadEntityByCode(pricePlanMatrixService, pricePlanMatrixCode, PricePlanMatrix.class);
     	if(!StringUtils.isEmpty(pricePlanMatrixNewCode) && pricePlanMatrixService.findByCode(pricePlanMatrixNewCode) != null)
     		throw new EntityAlreadyExistsException(PricePlanMatrix.class, pricePlanMatrixNewCode);
@@ -512,7 +513,11 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
     		if(ppmv == null)
     			throw new MeveoApiException("No version exist for price plan matrix code : " + pricePlanMatrixCode);
     	}
-    	PricePlanMatrix duplicate = pricePlanMatrixService.duplicatePricePlanMatrix(ppm, ppmv, pricePlanMatrixNewCode);
+        PriceVersionTypeEnum priceVersionTypeEnum = null;
+        if(!StringUtils.isBlank(priceVersionType)) {
+            priceVersionTypeEnum = PriceVersionTypeEnum.valueOf(priceVersionType);
+        }
+    	PricePlanMatrix duplicate = pricePlanMatrixService.duplicatePricePlanMatrix(ppm, ppmv, pricePlanMatrixNewCode, priceVersionTypeEnum);
     	return new PricePlanMatrixDto(pricePlanMatrixService.findById(duplicate.getId()), null);
     }
 

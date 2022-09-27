@@ -51,6 +51,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.cpq.enums.PriceVersionTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.BusinessService;
@@ -715,7 +716,7 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         return new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
     }
 
-    public PricePlanMatrix duplicatePricePlanMatrix(PricePlanMatrix pricePlanMatrix, PricePlanMatrixVersion pricePlanMatrixVersion, String pricePlanMatrixNewCode) {
+    public PricePlanMatrix duplicatePricePlanMatrix(PricePlanMatrix pricePlanMatrix, PricePlanMatrixVersion pricePlanMatrixVersion, String pricePlanMatrixNewCode, PriceVersionTypeEnum priceVersionType) {
     	detach(pricePlanMatrix);
     	
     	var duplicate = new PricePlanMatrix(pricePlanMatrix);
@@ -728,7 +729,7 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
     	duplicate.setVersion(0);
     	duplicate.setVersions(new ArrayList<>());
     	create(duplicate);
-    	var duplicateVersion = pricePlanMatrixVersionService.duplicate(pricePlanMatrixVersion, null);
+    	var duplicateVersion = pricePlanMatrixVersionService.duplicate(pricePlanMatrixVersion, null, priceVersionType);
     	duplicateVersion.setPricePlanMatrix(duplicate);
     	duplicate.getVersions().add(duplicateVersion);
     	return duplicate;
