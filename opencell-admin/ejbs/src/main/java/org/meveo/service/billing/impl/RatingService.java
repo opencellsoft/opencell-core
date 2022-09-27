@@ -126,6 +126,7 @@ import org.meveo.service.script.catalog.TriggeredEdrScript;
 import org.meveo.service.script.catalog.TriggeredEdrScriptInterface;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
+import org.meveo.model.billing.DiscountPlanInstanceStatusEnum;
 
 /**
  * Rate charges such as {@link org.meveo.model.catalog.OneShotChargeTemplate}, {@link org.meveo.model.catalog.RecurringChargeTemplate} and {@link org.meveo.model.catalog.UsageChargeTemplate}. Generate the
@@ -1432,7 +1433,12 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     	List<DiscountPlanItem>  fixedDiscountPlanItems = new ArrayList<DiscountPlanItem>();
     	if(!discountPlanInstances.isEmpty()) {
     		DiscountPlan discountPlan =null;
+    		Date operationDate=walletOperation.getOperationDate()!=null?walletOperation.getOperationDate():new Date();
     		for(DiscountPlanInstance discountPlanInstance: discountPlanInstances) {
+    			
+    			if (!discountPlanInstance.isEffective(operationDate) || discountPlanInstance.getStatus().equals(DiscountPlanInstanceStatusEnum.EXPIRED)) {
+                    continue;
+                }
     			discountPlan=discountPlanInstance.getDiscountPlan();
 
     			applicableDiscountPlanItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan, walletOperation.getSubscription(), walletOperation, accountingArticle,DiscountPlanItemTypeEnum.PERCENTAGE, walletOperation.getOperationDate()));
