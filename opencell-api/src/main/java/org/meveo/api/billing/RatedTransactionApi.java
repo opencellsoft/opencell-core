@@ -123,7 +123,7 @@ public class RatedTransactionApi extends BaseApi {
 
         List<RatedTransaction> ratedTransactions = getRatedTransactionsFromPaginationConfig(pagingAndFiltering);
 
-        if (!canRatedTransactionsBeCancelled(ratedTransactions)) {
+        if (!canCancelRatedTransactions(ratedTransactions)) {
             throw new ActionForbiddenException("Only rated transactions in statuses OPEN, REJECTED, CANCELED can be cancelled");
         }
 
@@ -143,7 +143,7 @@ public class RatedTransactionApi extends BaseApi {
         return ratedTransactionService.list(paginationConfig);
     }
 
-    private boolean canRatedTransactionsBeCancelled(List<RatedTransaction> ratedTransactions) {
+    private boolean canCancelRatedTransactions(List<RatedTransaction> ratedTransactions) {
 
         return ratedTransactions.stream().allMatch(ratedTransaction ->
                 (ratedTransaction.getStatus().equals(RatedTransactionStatusEnum.OPEN)) ||
