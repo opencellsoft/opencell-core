@@ -14,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -127,7 +128,7 @@ public class GenericApiAlteringService {
             updateQuery.append(" a.").append(s).append("=").append(QueryBuilder.paramToString(o)).append(",")
         );
         updateQuery.setLength(updateQuery.length() - 1);
-        updateQuery.append(" WHERE a.id in (").append(filterQuery).append(")");
+        updateQuery.append(" FROM (").append(filterQuery).append(") ").append(filteredEntityName).append("_").append(new Random().nextInt(2));
 
         return entityManagerWrapper.getEntityManager().createQuery(updateQuery.toString()).executeUpdate();
 
