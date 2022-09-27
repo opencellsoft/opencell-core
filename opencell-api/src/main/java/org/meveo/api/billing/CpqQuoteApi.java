@@ -30,17 +30,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import javax.persistence.EntityTransaction;
 import javax.print.attribute.standard.Media;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
-import org.hibernate.Hibernate;
-import org.hibernate.Session;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.NoTaxException;
@@ -115,7 +110,6 @@ import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.settings.GlobalSettings;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.model.tax.TaxClass;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.AttributeInstanceService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -1602,8 +1596,8 @@ public class CpqQuoteApi extends BaseApi {
         List<WalletOperation> walletOperations = quoteRating(subscription,quoteOffer,quoteEligibleFixedDiscountItems, offerQuotePrices,true);
         List<QuotePrice> productQuotePrices = new ArrayList<>();
         QuoteArticleLine quoteArticleLine = null;
-        Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<String, QuoteArticleLine>();
-        
+        Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<>();
+
 //        Map<Long, BigDecimal> quoteProductTotalAmount =new HashMap<Long, BigDecimal>();;
 //        for(QuoteArticleLine overrodeLine : quoteOffer.getQuoteVersion().getQuoteArticleLines()){
 //            if(overrodeLine.getQuoteProduct().getQuoteOffer().getId().equals(quoteOffer.getId())) {
@@ -1779,10 +1773,10 @@ public class CpqQuoteApi extends BaseApi {
     public List<WalletOperation> quoteRating(Subscription subscription, QuoteOffer quoteOffer, Set<DiscountPlanItem> quoteEligibleFixedDiscountItems,List<QuotePrice> offerQuotePrices,boolean isVirtual) throws BusinessException {
 
         List<WalletOperation> walletOperations = new ArrayList<>();
-        Set<DiscountPlanItem> productEligibleFixedDiscountItems =null;
-        Set<DiscountPlanItem> offerEligibleFixedDiscountItems = new HashSet<DiscountPlanItem>();
-        BillingAccount billingAccount = null;
-        AccountingArticle usageArticle =null;
+        Set<DiscountPlanItem> productEligibleFixedDiscountItems;
+        Set<DiscountPlanItem> offerEligibleFixedDiscountItems = new HashSet<>();
+        BillingAccount billingAccount;
+        AccountingArticle usageArticle;
         
         Map<AccountingArticle, List<QuoteArticleLine>> overrodeArticle = quoteOffer.getQuoteVersion().getQuoteArticleLines()
                 .stream()
@@ -1793,13 +1787,13 @@ public class CpqQuoteApi extends BaseApi {
         if (subscription != null) {
 
             billingAccount = subscription.getUserAccount().getBillingAccount();
-            Map<String, Object> attributes = new HashMap<String, Object>();
+            Map<String, Object> attributes = new HashMap<>();
             
             // Add Service charges
             Double edrQuantity = 0d;
             for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
             	
-                 productEligibleFixedDiscountItems = new HashSet<DiscountPlanItem>();
+                 productEligibleFixedDiscountItems = new HashSet<>();
             	Set<AttributeValue> attributeValues = serviceInstance.getAttributeInstances()
                         .stream()
                         .map(attributeInstance -> attributeInstanceService.getAttributeValue(attributeInstance,serviceInstance, subscription))
@@ -1894,16 +1888,14 @@ public class CpqQuoteApi extends BaseApi {
 								try {
 									edrQuantity = Double.parseDouble(quantityValue.toString());
 								} catch (NumberFormatException exp) {
-									throw new MissingParameterException(
-											"The attribute " + chargetemplate.getUsageQuantityAttribute().getCode()
-													+ " for the usage charge " + usageCharge.getCode());
+									log.warn("The following parameters are required or contain invalid values: The attribute {} for the usage charge {}",
+                                            chargetemplate.getUsageQuantityAttribute().getCode(), usageCharge.getCode());
 								}
 							} else if (quantityValue != null && quantityValue instanceof Double) {
 								edrQuantity = (Double) quantityValue;
 							} else {
-								throw new MissingParameterException(
-										"The attribute " + chargetemplate.getUsageQuantityAttribute().getCode()
-												+ " for the usage charge " + usageCharge.getCode());
+                                log.warn("The following parameters are required or contain invalid values: The attribute {} for the usage charge {} ",
+                                        chargetemplate.getUsageQuantityAttribute().getCode(), usageCharge.getCode());
 							}
 							if (edrQuantity > 0) {
 								quantityFound=true;
