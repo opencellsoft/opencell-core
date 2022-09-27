@@ -921,6 +921,10 @@ public class EntityExportImportService implements Serializable {
             xstream.useAttributeFor(ExportTemplate.class, "name");
             xstream.useAttributeFor(ExportTemplate.class, "entityToExport");
             xstream.useAttributeFor(ExportTemplate.class, "canDeleteAfterExport");
+            xstream.allowTypesByWildcard(new String[] {
+                "org.meveo.export.**",
+                "org.meveo.model.**"
+            });
             ExportTemplate importTemplate = null;
             while (reader.hasMoreChildren()) {
                 reader.moveDown();
@@ -1026,7 +1030,11 @@ public class EntityExportImportService implements Serializable {
 
         xstream.registerConverter(entityExportIdentifierConverter, XStream.PRIORITY_NORMAL);
         xstream.registerConverter(iEntityClassConverter, XStream.PRIORITY_LOW);
-
+        xstream.allowTypesByWildcard(new String[] {
+            "org.meveo.export.**",
+            "org.meveo.model.**"
+        });
+        
         ExportImportStatistics importStats = new ExportImportStatistics();
         int totalEntitiesCount = 0;
         try {
