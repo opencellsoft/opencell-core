@@ -31,10 +31,13 @@ import org.meveo.api.security.filter.ListFilter;
 import org.meveo.apiv2.cpq.contracts.BillingRuleDto;
 import org.meveo.apiv2.cpq.mapper.BillingRuleMapper;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.contract.BillingRule;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.contract.ContractItem;
@@ -48,6 +51,7 @@ import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.cpq.BillingRuleService;
 import org.meveo.service.cpq.ContractItemService;
@@ -88,6 +92,8 @@ public class ContractApi extends BaseApi{
 	private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
 	@Inject
 	private BillingRuleService billingRuleService;
+	@Inject
+	private PricePlanMatrixVersionService pricePlanMatrixVersionService;
 	
 	private BillingRuleMapper billingRuleMapper = new BillingRuleMapper();
 	
@@ -95,7 +101,8 @@ public class ContractApi extends BaseApi{
 	private static final String CONTRACt_STAT_DIFF_TO_DRAFT = "Only Draft status of contract can be edit";
 
 	private static final String DEFAULT_SORT_ORDER_ID = "id";
-	
+
+
 	public Long CreateContract(ContractDto dto) {
 		// check mandatory param
 		checkParams(dto);
@@ -121,6 +128,17 @@ public class ContractApi extends BaseApi{
 		try {
 			populateCustomFields(dto.getCustomFields(), contract, true);
 			contractService.create(contract);
+			// add billing rules
+            List<BillingRule> lstBillingRule = new ArrayList<BillingRule>();
+            if (dto.getBillingRules() != null) {
+                for (BillingRuleDto brDto : dto.getBillingRules()) {
+                    BillingRule br = billingRuleMapper.toEntity(brDto);
+                    br.setContract(contract);
+                    billingRuleService.create(br);
+                    lstBillingRule.add(br);            
+                } 
+                contract.setBillingRules(lstBillingRule);
+            }            
 		}catch(BusinessException e) {
 			throw new MeveoApiException(e);
 		}
@@ -250,8 +268,13 @@ public class ContractApi extends BaseApi{
 	}
 
 	public void updateStatus(String contractCode, ContractStatusEnum contractStatus){
-		Contract contract = loadEntityByCode(contractService, contractCode, Contract.class);
-		contractService.updateStatus(contract, contractStatus);
+		try {
+			Contract contract = loadEntityByCode(contractService, contractCode, Contract.class);
+			contractService.updateStatus(contract, contractStatus);
+		} catch (Exception e){
+			log.error(e.getMessage(),e);
+			throw new MeveoApiException(e);
+		}
 	}
 
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
@@ -340,9 +363,8 @@ public class ContractApi extends BaseApi{
     }
     
     public void updateContractLine(ContractItemDto contractItemDto) {
-    	if(Strings.isEmpty(contractItemDto.getCode()))
-			missingParameters.add("code");
-    	handleMissingParameters();
+
+		checkParams(contractItemDto);
     	final ContractItem item = contractItemService.findByCode(contractItemDto.getCode());
     	if(item == null)
     		throw new EntityDoesNotExistsException(ContractItem.class, contractItemDto.getCode());
@@ -384,8 +406,33 @@ public class ContractApi extends BaseApi{
     	}
     	
     }
-    
-    public void deleteContractLine(String contractItemCode) {
+
+	private void checkPricePlanPeriod(ContractItemDto contractItemDto) {
+		if (contractItemDto.getPricePlanCode() == null){
+			return;
+		}
+		PricePlanMatrix pricePlan = pricePlanMatrixService.findByCode(contractItemDto.getPricePlanCode());
+		List<PricePlanMatrixVersion> pricePlanMatrixVersions = pricePlanMatrixVersionService.findByPricePlan(pricePlan);
+		Contract contract = contractService.findByCode(contractItemDto.getContractCode());
+		if (pricePlanMatrixVersions == null || pricePlanMatrixVersions.isEmpty()){
+			return;
+		}
+		for(PricePlanMatrixVersion pricePlanMatrixVersion : pricePlanMatrixVersions) {
+			DatePeriod period = pricePlanMatrixVersion.getValidity();
+
+			if (period != null && period.getFrom() != null && period.getFrom().compareTo(contract.getBeginDate())<0) {
+				log.error("Price plan's period should not be before contract's start date");
+				throw new MeveoApiException("Price plan's period should not be before contract's start date");
+			}
+			if (period != null && period.getTo() != null && period.getTo().compareTo(contract.getEndDate())>0) {
+				log.error("Price plan's period should not be after contract's end date");
+				throw new MeveoApiException("Price plan's period should not be after contract's end date");
+			}
+		}
+
+	}
+
+	public void deleteContractLine(String contractItemCode) {
     	if(Strings.isEmpty(contractItemCode))
     		missingParameters.add("contractCode");
     	handleMissingParameters();
@@ -408,7 +455,9 @@ public class ContractApi extends BaseApi{
     		missingParameters.add("contractCode");
     	if(Strings.isEmpty(contractItemDto.getCode()))
 			missingParameters.add("code");
-    		
+		if(Strings.isEmpty(contractItemDto.getChargeTemplateCode()))
+			missingParameters.add("chargeTemplateCode");
+		checkPricePlanPeriod(contractItemDto);
     	handleMissingParameters();
 	}
 	

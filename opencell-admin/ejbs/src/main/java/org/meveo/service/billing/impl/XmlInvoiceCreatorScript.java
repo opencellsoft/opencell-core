@@ -54,6 +54,7 @@ import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.crm.impl.AccountEntitySearchService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
@@ -65,6 +66,7 @@ import org.xml.sax.SAXException;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -175,6 +177,8 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     protected static String DEFAULT_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
 
     protected Logger log = LoggerFactory.getLogger(getClass());
+    @Inject
+    private AccountEntitySearchService accountEntitySearchService;
 
     /**
      * Create XML invoice and store its content in a file. Note: Just creates a file - does not update invoice with file information
@@ -663,7 +667,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             }
         }
     }
-
     /**
      * Create invoice/header/[Seller,customer,customerAccount,billingAccount, userAccount]/address DOM element
      *
@@ -676,6 +679,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
         Element addressTag = doc.createElement("address");
         Element address1 = doc.createElement("address1");
+        account = accountEntitySearchService.retrieveIfNotManaged(account);
         if (account.getAddress() != null && account.getAddress().getAddress1() != null) {
             Text adress1Txt = this.createTextNode(doc, account.getAddress().getAddress1());
             address1.appendChild(adress1Txt);
@@ -1824,23 +1828,11 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * @return DOM element
      */
     protected Element createDetailsSection(Document doc, Invoice invoice, List<RatedTransaction> ratedTransactions, boolean isVirtual, InvoiceConfiguration invoiceConfiguration, List<InvoiceLine> invoiceLines) {
-        ParamBean paramBean = paramBeanFactory.getInstance();
-        String invoiceDateFormat = paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN);
-        String invoiceDateTimeFormat = paramBean.getProperty("invoice.dateTimeFormat", DEFAULT_DATE_TIME_PATTERN);
-        String invoiceLanguageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
         Element detail = doc.createElement("detail");
         Element userAccountsTag = ratedTransactions != null ? createUserAccountsSection(doc, invoice, ratedTransactions, isVirtual, invoiceConfiguration)
                 :  createUserAccountsSectionIL(doc, invoice, invoiceLines, isVirtual, invoiceConfiguration);
         if (userAccountsTag != null) {
             detail.appendChild(userAccountsTag);
-        }
-        if (invoiceLines != null && !invoiceLines.isEmpty()) {
-            Element lines = doc.createElement("lines");
-            for (InvoiceLine invoiceLine : invoiceLines) {
-                ofNullable(createILSection(doc, invoice, invoiceLine, invoiceDateFormat,
-                        invoiceDateTimeFormat, invoiceConfiguration, invoiceLanguageCode)).ifPresent(lines::appendChild);
-            }
-            detail.appendChild(lines);
         }
         return detail;
     }

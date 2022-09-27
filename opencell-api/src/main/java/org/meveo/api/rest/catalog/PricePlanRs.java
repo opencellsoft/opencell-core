@@ -484,6 +484,6 @@ public interface PricePlanRs extends IBaseRs {
             })
     Response duplicatePricePlan(@Parameter(description = "The price plan matrix code", required = true)  @PathParam("pricePlanMatrixCode") String pricePlanMatrixCode,
     							@Parameter(description = "The price plan matrix new code", required = true) @QueryParam("pricePlanMatrixNewCode") String pricePlanMatrixNewCode,
-    							@Parameter(description = "The price plan matrix version to be duplicated", required = true)  @PathParam("pricePlanMatrixVersion") int pricePlanMatrixVersion);
+    							@Parameter(description = "The price plan matrix version to be duplicated", required = true)  @PathParam("pricePlanMatrixVersion") int pricePlanMatrixVersion, @QueryParam("priceVersionType") String priceVersionType);
     
 }

@@ -66,4 +66,51 @@ public class StringUtilsTest {
         assertThat(notBlank).isTrue();
 
     }
+
+    @Test
+    public void should_compute_next_alphabet_sequence() {
+        String current;
+        CharSequence nextSequence;
+        //Given
+        current = "AZ";
+        //When
+        nextSequence = StringUtils.computeNextAlphabetSequence(current);
+        //Then
+        assertThat(nextSequence).isEqualTo("BA");
+
+        //Given
+        current = "AA";
+        //When
+        nextSequence = StringUtils.computeNextAlphabetSequence(current);
+        //Then
+        assertThat(nextSequence).isEqualTo("AB");
+
+        //Given
+        current = "AZZ";
+        //When
+        nextSequence = StringUtils.computeNextAlphabetSequence(current);
+        //Then
+        assertThat(nextSequence).isEqualTo("BAA");
+
+        //Given
+        current = "BBA";
+        //When
+        nextSequence = StringUtils.computeNextAlphabetSequence(current);
+        //Then
+        assertThat(nextSequence).isEqualTo("BBB");
+
+        //Given
+        current = "BZA";
+        //When
+        nextSequence = StringUtils.computeNextAlphabetSequence(current);
+        //Then
+        assertThat(nextSequence).isEqualTo("BZB");
+
+        //Given
+        current = "ZZZ";
+        //When
+        nextSequence = StringUtils.computeNextAlphabetSequence(current);
+        //Then
+        assertThat(nextSequence).isEqualTo("ZZZA");
+    }
 }

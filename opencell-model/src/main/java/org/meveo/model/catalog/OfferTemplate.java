@@ -203,6 +203,11 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     private OfferTemplate offerModel;
     
 
+    @Type(type = "numeric_boolean")
+    @Column(name = "generate_quote_edr_per_product")
+    private boolean generateQuoteEdrPerProduct;
+    
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "offerTemplate", orphanRemoval = true)
     private List<OfferTemplateAttribute> offerAttributes = new ArrayList<>();
 
@@ -615,6 +620,14 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 	public void setOfferAttributes(List<OfferTemplateAttribute> offerAttributes) {
 		this.offerAttributes = offerAttributes;
 	}
+
+    public boolean isGenerateQuoteEdrPerProduct() {
+        return generateQuoteEdrPerProduct;
+    }
+
+    public void setGenerateQuoteEdrPerProduct(boolean generateQuoteEdrPerProduct) {
+        this.generateQuoteEdrPerProduct = generateQuoteEdrPerProduct;
+    }
     
     
     
