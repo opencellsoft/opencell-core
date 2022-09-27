@@ -441,7 +441,9 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	    catch (Exception e) {
 	        throw new BusinessApiException("Error when creating adjustment");
         }
-	    
+
+	    adjInvoice = invoiceService.findById(adjInvoice.getId(), asList("invoiceLines", "invoiceType", "invoiceType.occTemplate", "linkedInvoices"));
+
 	    return adjInvoice;
 	}
 
