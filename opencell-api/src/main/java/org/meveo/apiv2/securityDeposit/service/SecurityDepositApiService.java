@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +20,6 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.cpq.Product;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.model.securityDeposit.SecurityDeposit;
@@ -28,7 +28,6 @@ import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.cpq.ProductService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositService;
@@ -53,9 +52,6 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
 
     @Inject
     private SubscriptionService subscriptionService;
-
-    @Inject
-    private ProductService productService;
 
     @Inject
     private ServiceInstanceService serviceInstanceService;
@@ -100,6 +96,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         return empty();
     }
 
+    @Transactional
     public Optional<SecurityDeposit> instantiate(SecurityDeposit securityDepositInput) {
 
         // Check FinanceSettings.useSecurityDeposit
@@ -195,6 +192,9 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
 
         if (securityDepositInput.getCustomerAccount() != null) {
             CustomerAccount customerAccount = customerAccountService.tryToFindByCodeOrId(securityDepositInput.getCustomerAccount());
+            if(securityDepositInput.getCurrency() == null) {
+            	securityDepositInput.setCurrency(customerAccount.getTradingCurrency().getCurrency());
+            }
             securityDepositInput.setCustomerAccount(customerAccount);
         }
 
