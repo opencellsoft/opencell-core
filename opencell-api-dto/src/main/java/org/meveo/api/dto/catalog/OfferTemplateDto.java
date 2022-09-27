@@ -196,6 +196,7 @@ public class OfferTemplateDto extends ProductOfferingDto {
         
         if(offerTemplate.getOfferModel() != null)
         	offerModelCode = offerTemplate.getOfferModel().getCode();
+        this.generateQuoteEdrPerProduct = offerTemplate.isGenerateQuoteEdrPerProduct();
     }
 
     @Override
