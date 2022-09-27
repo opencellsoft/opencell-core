@@ -9940,8 +9940,6 @@ public class SubscriptionJobNotification extends Script {
 
 	<changeSet id="#OUTRD-63-SUB_20220926-scripts" author="IlhamChafik">
 		<update tableName="meveo_script_instance">
-			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
-			<column name="code" value="org.meveo.service.script.CustomerAccountImportScript" />
 			<column name="script">
 				<![CDATA[
 package org.meveo.service.script;
@@ -10052,10 +10050,7 @@ public class CustomerAccountImportScript extends GenericMassImportScript {
 
 				]]>
 			</column>
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="creator" value="opencell.admin" />
-			<column name="version" valueNumeric="0" />
-			<column name="src_type" value="JAVA" />
+			<where>code='org.meveo.service.script.CustomerAccountImportScript'</where>
 		</update>
 	</changeSet>
 </databaseChangeLog>
