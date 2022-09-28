@@ -30,17 +30,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import javax.persistence.EntityTransaction;
 import javax.print.attribute.standard.Media;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
-import org.hibernate.Hibernate;
-import org.hibernate.Session;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.NoTaxException;
@@ -115,7 +110,6 @@ import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.settings.GlobalSettings;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.model.tax.TaxClass;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.AttributeInstanceService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -1602,8 +1596,8 @@ public class CpqQuoteApi extends BaseApi {
         List<WalletOperation> walletOperations = quoteRating(subscription,quoteOffer,quoteEligibleFixedDiscountItems, offerQuotePrices,true);
         List<QuotePrice> productQuotePrices = new ArrayList<>();
         QuoteArticleLine quoteArticleLine = null;
-        Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<String, QuoteArticleLine>();
-        
+        Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<>();
+
 //        Map<Long, BigDecimal> quoteProductTotalAmount =new HashMap<Long, BigDecimal>();;
 //        for(QuoteArticleLine overrodeLine : quoteOffer.getQuoteVersion().getQuoteArticleLines()){
 //            if(overrodeLine.getQuoteProduct().getQuoteOffer().getId().equals(quoteOffer.getId())) {
@@ -1779,10 +1773,10 @@ public class CpqQuoteApi extends BaseApi {
     public List<WalletOperation> quoteRating(Subscription subscription, QuoteOffer quoteOffer, Set<DiscountPlanItem> quoteEligibleFixedDiscountItems,List<QuotePrice> offerQuotePrices,boolean isVirtual) throws BusinessException {
 
         List<WalletOperation> walletOperations = new ArrayList<>();
-        Set<DiscountPlanItem> productEligibleFixedDiscountItems =null;
-        Set<DiscountPlanItem> offerEligibleFixedDiscountItems = new HashSet<DiscountPlanItem>();
-        BillingAccount billingAccount = null;
-        AccountingArticle usageArticle =null;
+        Set<DiscountPlanItem> productEligibleFixedDiscountItems;
+        Set<DiscountPlanItem> offerEligibleFixedDiscountItems = new HashSet<>();
+        BillingAccount billingAccount;
+        AccountingArticle usageArticle;
         
         Map<AccountingArticle, List<QuoteArticleLine>> overrodeArticle = quoteOffer.getQuoteVersion().getQuoteArticleLines()
                 .stream()
@@ -1793,13 +1787,13 @@ public class CpqQuoteApi extends BaseApi {
         if (subscription != null) {
 
             billingAccount = subscription.getUserAccount().getBillingAccount();
-            Map<String, Object> attributes = new HashMap<String, Object>();
+            Map<String, Object> attributes = new HashMap<>();
             
             // Add Service charges
             Double edrQuantity = 0d;
             for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
             	
-                 productEligibleFixedDiscountItems = new HashSet<DiscountPlanItem>();
+                 productEligibleFixedDiscountItems = new HashSet<>();
             	Set<AttributeValue> attributeValues = serviceInstance.getAttributeInstances()
                         .stream()
                         .map(attributeInstance -> attributeInstanceService.getAttributeValue(attributeInstance,serviceInstance, subscription))
@@ -1894,16 +1888,14 @@ public class CpqQuoteApi extends BaseApi {
 								try {
 									edrQuantity = Double.parseDouble(quantityValue.toString());
 								} catch (NumberFormatException exp) {
-									throw new MissingParameterException(
-											"The attribute " + chargetemplate.getUsageQuantityAttribute().getCode()
-													+ " for the usage charge " + usageCharge.getCode());
+									log.warn("The following parameters are required or contain invalid values: The attribute {} for the usage charge {}",
+                                            chargetemplate.getUsageQuantityAttribute().getCode(), usageCharge.getCode());
 								}
 							} else if (quantityValue != null && quantityValue instanceof Double) {
 								edrQuantity = (Double) quantityValue;
 							} else {
-								throw new MissingParameterException(
-										"The attribute " + chargetemplate.getUsageQuantityAttribute().getCode()
-												+ " for the usage charge " + usageCharge.getCode());
+                                log.warn("The following parameters are required or contain invalid values: The attribute {} for the usage charge {} ",
+                                        chargetemplate.getUsageQuantityAttribute().getCode(), usageCharge.getCode());
 							}
 							if (edrQuantity > 0) {
 								quantityFound=true;
@@ -1914,7 +1906,9 @@ public class CpqQuoteApi extends BaseApi {
 					}
 				}
 			
-			
+			if(subscription.getOffer() != null && subscription.getOffer().isGenerateQuoteEdrPerProduct()) {
+		        createEDR(edrQuantity, subscription, attributes, walletOperations);
+			}
 			
 			//applicable only for oneshot other	
             walletOperations.addAll(discountPlanService.calculateDiscountplanItems(new ArrayList<>(productEligibleFixedDiscountItems), subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), serviceInstance.getQuantity(), null,
@@ -1924,7 +1918,26 @@ public class CpqQuoteApi extends BaseApi {
         }
         
 
-		if (edrQuantity>0) {
+        createEDR(edrQuantity, subscription, attributes, walletOperations);
+
+
+        var offerFixedDiscountWalletOperation = discountPlanService.calculateDiscountplanItems(new ArrayList<>(offerEligibleFixedDiscountItems), subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), new BigDecimal(1d), null,
+        		subscription.getOffer().getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), null, subscription, subscription.getOffer().getDescription(), true, null, null, DiscountPlanTypeEnum.OFFER);
+        offerQuotePrices.addAll(createFixedDiscountQuotePrices(offerFixedDiscountWalletOperation, quoteOffer.getQuoteVersion(), quoteOffer,billingAccount,PriceLevelEnum.OFFER));
+
+    }
+        List<WalletOperation>  sortedWalletOperations = walletOperations.stream()
+        		  .filter(w->w.getDiscountPlan()==null)
+        		  .collect(Collectors.toList());
+         sortedWalletOperations.addAll(walletOperations.stream()
+          		  .filter(w->w.getDiscountPlan()!=null)
+             		  .collect(Collectors.toList()));
+    
+    quoteEligibleFixedDiscountItems.addAll(offerEligibleFixedDiscountItems);
+    return sortedWalletOperations;
+}
+    private void createEDR(Double edrQuantity, Subscription subscription, Map<String, Object> attributes, List<WalletOperation> walletOperations) {
+    	if (edrQuantity != null && edrQuantity>0) {
 			EDR edr = new EDR();
 			try {
 
@@ -1970,23 +1983,7 @@ public class CpqQuoteApi extends BaseApi {
 
 			}
 		}
-
-
-        var offerFixedDiscountWalletOperation = discountPlanService.calculateDiscountplanItems(new ArrayList<>(offerEligibleFixedDiscountItems), subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), new BigDecimal(1d), null,
-        		subscription.getOffer().getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), null, subscription, subscription.getOffer().getDescription(), true, null, null, DiscountPlanTypeEnum.OFFER);
-        offerQuotePrices.addAll(createFixedDiscountQuotePrices(offerFixedDiscountWalletOperation, quoteOffer.getQuoteVersion(), quoteOffer,billingAccount,PriceLevelEnum.OFFER));
-
     }
-        List<WalletOperation>  sortedWalletOperations = walletOperations.stream()
-        		  .filter(w->w.getDiscountPlan()==null)
-        		  .collect(Collectors.toList());
-         sortedWalletOperations.addAll(walletOperations.stream()
-          		  .filter(w->w.getDiscountPlan()!=null)
-             		  .collect(Collectors.toList()));
-    
-    quoteEligibleFixedDiscountItems.addAll(offerEligibleFixedDiscountItems);
-    return sortedWalletOperations;
-}
     private List<QuotePrice> createFixedDiscountQuotePrices( List<WalletOperation> fixedDiscountWalletOperation,QuoteVersion quoteVersion, QuoteOffer quoteOffer,BillingAccount billingAccount,PriceLevelEnum priceLevelEnum) {
     	List<QuotePrice> discountQuotePrices=new ArrayList<QuotePrice>();
     	for (WalletOperation wo : fixedDiscountWalletOperation) {

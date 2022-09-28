@@ -69,7 +69,7 @@ import org.meveo.security.keycloak.CurrentUserProvider;
 public class QueryBuilder {
 
     public static final String INNER_JOINS = "{innerJoins}";
-    protected StringBuffer q;
+    protected StringBuilder q;
 
     protected String alias;
 
@@ -198,7 +198,7 @@ public class QueryBuilder {
      * @param alias Alias of a main table
      */
     public QueryBuilder(String sql, String alias) {
-        q = new StringBuffer(sql);
+        q = new StringBuilder(sql);
         this.alias = alias;
         params = new HashMap<String, Object>();
         hasOneOrMoreCriteria = false;
@@ -207,6 +207,7 @@ public class QueryBuilder {
         }
         inOrClause = false;
         nbCriteriaInOrClause = 0;
+        addInnerJoinTag(q);
     }
 
     /**
@@ -215,7 +216,7 @@ public class QueryBuilder {
      * @param qb Query builder.
      */
     public QueryBuilder(QueryBuilder qb) {
-        this.q = new StringBuffer(qb.q);
+        this.q = new StringBuilder(qb.q);
         this.alias = qb.alias;
         this.params = new HashMap<String, Object>(qb.params);
         this.hasOneOrMoreCriteria = qb.hasOneOrMoreCriteria;
@@ -327,7 +328,7 @@ public class QueryBuilder {
 	/**
      * @return string buffer for SQL
      */
-    public StringBuffer getSqlStringBuffer() {
+    public StringBuilder getSqlStringBuffer() {
         return q;
     }
 
@@ -520,7 +521,7 @@ public class QueryBuilder {
             return this;
         }
 
-        StringBuffer sql = new StringBuffer();
+        StringBuilder sql = new StringBuilder();
         String param = convertFieldToParam(field);
         Object nvalue = value;
 
@@ -700,7 +701,7 @@ public class QueryBuilder {
             v = "%" + v;
         }
 
-        StringBuffer sql = new StringBuffer();
+        StringBuilder sql = new StringBuilder();
 
         if (caseInsensitive && (value instanceof String)) {
             sql.append("lower(" + field + ")");
@@ -1273,7 +1274,7 @@ public class QueryBuilder {
         return result;
     }
 
-    public void setQ(StringBuffer q) {
+    public void setQ(StringBuilder q) {
         this.q = q;
     }
 
