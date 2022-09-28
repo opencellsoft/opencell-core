@@ -293,6 +293,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         EntityManager em = getEntityManager();
         boolean eventsEnabled = areEventsEnabled(NotificationEventTypeEnum.CREATED);
         List<RatedTransaction> lstRatedTransaction = new ArrayList<RatedTransaction>();
+        boolean cftEndPeriodEnabled = customFieldTemplateService.areCFTEndPeriodEventsEnabled(new RatedTransaction());
+
         String providerCode = currentUser.getProviderCode();
         final String schemaPrefix = providerCode != null ? EntityManagerProvider.convertToSchemaName(providerCode) + "." : "";
 
@@ -309,7 +311,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 getAccountingArticle(walletOperation).ifPresent(ratedTransaction::setAccountingArticle);
             }
 
-            customFieldInstanceService.scheduleEndPeriodEvents(ratedTransaction);
+            if (cftEndPeriodEnabled) {
+                customFieldInstanceService.scheduleEndPeriodEvents(ratedTransaction);
+            }
 
             em.persist(ratedTransaction);
             
@@ -1008,16 +1012,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     .filter(rt -> entityToInvoice instanceof BillingAccount && rt.getBillingAccount().getId().equals(entityToInvoice.getId()))
                     .collect(toList());
         } else if (entityToInvoice instanceof Subscription) {
-        	 query = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceBySubscription", RatedTransaction.class).setParameter("subscriptionId", entityToInvoice.getId());
+            query = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceBySubscription", RatedTransaction.class).setParameter("subscriptionId", entityToInvoice.getId());
 
         } else if (entityToInvoice instanceof BillingAccount) {
             query = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccount", RatedTransaction.class).setParameter("billingAccountId", entityToInvoice.getId());
 
         } else if (entityToInvoice instanceof Order) {
-        	 query = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumber", RatedTransaction.class).setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber());
+            query = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumber", RatedTransaction.class).setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber());
         }
-        if(query!=null) {
-        	if(rtPageSize!=null) {
+        if (query != null) {
+            if (rtPageSize != null) {
         		query.setMaxResults(rtPageSize);
         	}
         	return query.setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setParameter("invoiceUpToDate", invoiceUpToDate).setHint("org.hibernate.readOnly", true).getResultList();
@@ -1448,9 +1452,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         Map<String, Object> chargeInstanceCriterions = ImmutableMap.of("code", chargeInstanceCode, "serviceInstance", serviceInstance, "subscription", subscription, "status", InstanceStatusEnum.ACTIVE);
         ChargeInstance chargeInstance = (ChargeInstance) tryToFindByEntityClassAndMap(ChargeInstance.class, chargeInstanceCriterions);
 
-        AccountingArticle accountingArticle=accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance);
-		TaxInfo taxInfo = taxMappingService.determineTax(chargeInstance, new Date(), accountingArticle);
-		TaxClass taxClass = taxInfo.taxClass;
+        AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance);
+        TaxInfo taxInfo = taxMappingService.determineTax(chargeInstance, new Date(), accountingArticle);
+        TaxClass taxClass = taxInfo.taxClass;
 
         final BigDecimal taxPercent = taxInfo.tax.getPercent();
 		BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(unitAmountWithoutTax, unitAmountWithoutTax,
@@ -1581,23 +1585,23 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
 	public void linkRTWithInvoiceLine(Map<Long, List<Long>> iLIdsRtIdsCorrespondence) {
-		for (Map.Entry<Long, List<Long>> entry : iLIdsRtIdsCorrespondence.entrySet()) {
-			final List<Long> ratedTransactionsIDs = entry.getValue();
-			final Long invoiceLineID = entry.getKey();
-			linkRTsToIL(ratedTransactionsIDs, invoiceLineID);
-		}
-	}
+        for (Map.Entry<Long, List<Long>> entry : iLIdsRtIdsCorrespondence.entrySet()) {
+            final List<Long> ratedTransactionsIDs = entry.getValue();
+            final Long invoiceLineID = entry.getKey();
+            linkRTsToIL(ratedTransactionsIDs, invoiceLineID);
+        }
+    }
 
-	public void linkRTsToIL(final List<Long> ratedTransactionsIDs, final Long invoiceLineID) {
-		if (ratedTransactionsIDs.size() > SHORT_MAX_VALUE) {
-			SubListCreator<Long> subLists = new SubListCreator<>(ratedTransactionsIDs, (1 + (ratedTransactionsIDs.size() / SHORT_MAX_VALUE)));
-			while (subLists.isHasNext()) {
-				linkRTsWithILByIds(invoiceLineID, subLists.getNextWorkSet());
-			}
-		} else {
-			linkRTsWithILByIds(invoiceLineID, ratedTransactionsIDs);
-		}
-	}
+    public void linkRTsToIL(final List<Long> ratedTransactionsIDs, final Long invoiceLineID) {
+        if (ratedTransactionsIDs.size() > SHORT_MAX_VALUE) {
+            SubListCreator<Long> subLists = new SubListCreator<>(ratedTransactionsIDs, (1 + (ratedTransactionsIDs.size() / SHORT_MAX_VALUE)));
+            while (subLists.isHasNext()) {
+                linkRTsWithILByIds(invoiceLineID, subLists.getNextWorkSet());
+            }
+        } else {
+            linkRTsWithILByIds(invoiceLineID, ratedTransactionsIDs);
+        }
+    }
 
 	private void linkRTsWithILByIds( Long invoiceLineId, final List<Long> ids) {
 		getEntityManager().createNamedQuery("RatedTransaction.linkRTWithInvoiceLine")
@@ -1658,7 +1662,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return groupedRTsWithAggregation;
 	}
 
-    private  Map<String, Object> buildParams(BillingRun billingRun, Date lastTransactionDate) {
+    private Map<String, Object> buildParams(BillingRun billingRun, Date lastTransactionDate) {
         Map<String, Object> params = new HashMap<>();
         params.put("firstTransactionDate", new Date(0));
         params.put("lastTransactionDate", lastTransactionDate);
@@ -1667,7 +1671,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     private String getEntityCondition(IBillableEntity be, Map<String, Object> params) {
-        String entityCondition= "";
+        String entityCondition = "";
         if (be instanceof Subscription) {
             params.put("entityKey", be.getId());
             entityCondition = " rt.subscription.id=:entityKey";
@@ -1682,9 +1686,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     private String getUsageDateAggregation(AggregationConfiguration aggregationConfiguration) {
-    	return getUsageDateAggregation(aggregationConfiguration, " rt.usageDate ");
+        return getUsageDateAggregation(aggregationConfiguration, " rt.usageDate ");
     }
-    
+
     private String getUsageDateAggregation(AggregationConfiguration aggregationConfiguration, String usageDateColumn) {
         switch (aggregationConfiguration.getDateAggregationOption()) {
         case MONTH_OF_USAGE_DATE:
@@ -1868,5 +1872,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
            return code;
         }
         return null;       
+    }
+    
+    /**
+     * Bridge discount RatedTransactions with discounted Rated transaction
+     * 
+     * @param minId A range of Rated transactions to process - Minimum id
+     * @param maxId A range of Rated transactions to process - Maximum id
+     */
+    public void bridgeDiscountRTs(Long minId, Long maxId) {
+
+        getEntityManager().createNamedQuery("WalletOperation.massUpdateWithRTInfoFromPendingTable" + (EntityManagerProvider.isDBOracle() ? "Oracle" : "")).setParameter("minId", minId).setParameter("maxId", maxId)
+            .executeUpdate();
     }
 }
