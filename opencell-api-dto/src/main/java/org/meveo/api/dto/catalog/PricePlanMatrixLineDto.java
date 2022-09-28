@@ -5,13 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.catalog.PricePlanMatrixLine;
@@ -65,7 +62,7 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 		this.value = pricePlanMatrixLine.getValue();
 		this.description = pricePlanMatrixLine.getDescription();
 		this.priority = pricePlanMatrixLine.getPriority();
-		this.priceEL = pricePlanMatrixLine.getPriceEL();
+		this.priceEL = pricePlanMatrixLine.getValueEL();
 		this.pricePlanMatrixCode = pricePlanMatrixLine.getPricePlanMatrixVersion().getPricePlanMatrix().getCode();
 		this.pricePlanMatrixVersion = pricePlanMatrixLine.getPricePlanMatrixVersion().getCurrentVersion();
 		pricePlanMatrixValues = pricePlanMatrixLine.getPricePlanMatrixValues()
