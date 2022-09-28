@@ -516,7 +516,7 @@ public class CurrencyApi extends BaseApi {
             }
 
         } catch (Exception e) {
-        	throw new BusinessApiException("error during file writing.");
+        	throw new BusinessApiException(e.getMessage());
         }
         
     	if(errorMessages.isEmpty() && !notMatchedCurrencySombols.isEmpty()) {
@@ -524,7 +524,7 @@ public class CurrencyApi extends BaseApi {
     	}
     	
         if(!errorMessages.isEmpty()) {
-            throw new BusinessApiException(errorMessages.toString());
+            throw new BusinessApiException(errorMessages.toString().replace("[","").replace("]",""));
         }
         
         return warningMessages;
