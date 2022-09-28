@@ -121,8 +121,7 @@ import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 import org.meveo.model.IJPAVersionedEntity;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.ProductOffering;
+import org.meveo.model.catalog.*;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.crm.Provider;
@@ -652,14 +651,8 @@ public class EntityExportImportService implements Serializable {
                 xstream.useAttributeFor(ExportTemplate.class, "name");
                 xstream.useAttributeFor(ExportTemplate.class, "entityToExport");
                 xstream.useAttributeFor(ExportTemplate.class, "canDeleteAfterExport");
-                xstream.omitField(ExportTemplate.class, "parameters");
-                xstream.omitField(ExportTemplate.class, "relatedEntities");
 
-                //status for the OfferTemplate should be by default IN_DESIGN
-                xstream.omitField(OfferTemplate.class, "lifeCycleStatus");
-				xstream.omitField(ProductOffering.class, "lifeCycleStatus");
-                //status for the OfferTemplate should be by default DRAFT
-				xstream.omitField(Product.class, "status");
+                omitXstreamFields(xstream);
 
                 // Add custom converters
                 xstream.registerConverter(new IEntityHibernateProxyConverter(exportImportConfig), XStream.PRIORITY_VERY_HIGH);
@@ -678,7 +671,6 @@ public class EntityExportImportService implements Serializable {
                 // Indicate marshaling strategy to use - maintains references even when marshaling one object at a time
                 xstream.setMarshallingStrategy(new ReusingReferenceByIdMarshallingStrategy());
                 xstream.aliasSystemAttribute(REFERENCE_ID_ATTRIBUTE, "code");
-                xstream.setMode(XStream.NO_REFERENCES);
 
                 if (pagesProcessedByXstream > -1) {
                     writer.endNode();
@@ -744,12 +736,25 @@ public class EntityExportImportService implements Serializable {
         log.info("Serialized {} entities from export template {}", totalEntityCount, exportTemplate.getName());
     }
 
+    /**
+     * Omit Xstream fields
+     * @param xstream
+     */
+    private static void omitXstreamFields(XStream xstream) {
+        xstream.omitField(ExportTemplate.class, "parameters");
+        xstream.omitField(ExportTemplate.class, "relatedEntities");
+        //status for the OfferTemplate should be by default IN_DESIGN
+        xstream.omitField(OfferTemplate.class, "lifeCycleStatus");
+        xstream.omitField(ProductOffering.class, "lifeCycleStatus");
+        //status for the OfferTemplate should be by default DRAFT
+        xstream.omitField(Product.class, "status");
+    }
 
 
     /**
      * Import entities from xml stream.
      * 
-     * @param fileToImport File contains contains a template that was used to export data and serialized data. Can be in a ziped or unzipped format
+     * @param fileToImport File contains a template that was used to export data and serialized data. Can be in a ziped or unzipped format
      * @param filename A name of a file being imported
      * @param preserveId Should Ids of entities be preserved when importing instead of using sequence values for ID generation (DOES NOT WORK)
      * @param ignoreNotFoundFK Should import fail if any FK was not found
@@ -2066,7 +2071,7 @@ public class EntityExportImportService implements Serializable {
 
             }
 
-        } else {
+        } else if(exportTemplate.getEntityToExport() != null){
 
             // Construct a query to retrieve entities to export by selection criteria. OR examine selection criteria - could be that top export entity matches search criteria for
             // related entities (e.g. exporting provider and related info and some provider is search criteria, but also it matches the top entity)
@@ -2134,7 +2139,7 @@ public class EntityExportImportService implements Serializable {
         retrievedEntities.principalEntities = entities;
 
         // Nothing found, so just return an empty map
-        if (entities.isEmpty()) {
+        if (entities == null || entities.isEmpty()) {
             return retrievedEntities;
         }
 
