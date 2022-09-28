@@ -48,8 +48,8 @@ public class PricePlanMatrixLine extends AuditableEntity {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "price_el")
-    private String priceEL;
+    @Column(name = "value_el")
+    private String valueEL;
 
     @Deprecated
 	@Column(name = "value", precision = NB_PRECISION, scale = NB_DECIMALS, insertable = false, updatable = false)
@@ -84,7 +84,7 @@ public class PricePlanMatrixLine extends AuditableEntity {
         this.priceWithoutTax = copy.priceWithoutTax;
         this.pricePlanMatrixValues = new HashSet<PricePlanMatrixValue>();
         this.priority = copy.priority;
-        this.priceEL = copy.priceEL;
+        this.valueEL = copy.valueEL;
         this.value = copy.value;
     }
 
@@ -135,12 +135,12 @@ public class PricePlanMatrixLine extends AuditableEntity {
                 .allMatch(v -> v.matchWithAllValues());
     }
 
-    public String getPriceEL() {
-        return priceEL;
+    public String getValueEL() {
+        return valueEL;
     }
 
-    public void setPriceEL(String priceEL) {
-        this.priceEL = priceEL;
+    public void setValueEL(String priceEL) {
+        this.valueEL = priceEL;
     }
     
     public boolean match(Set<AttributeValue> attributeValues) {
@@ -164,7 +164,7 @@ public class PricePlanMatrixLine extends AuditableEntity {
         return Objects.equals(getPricePlanMatrixVersion(), that.getPricePlanMatrixVersion()) &&
                 Objects.equals(getDescription(), that.getDescription()) &&
                 Objects.equals(getValue(), that.getValue()) &&
-                Objects.equals(getPriceEL(), that.getPriceEL()) &&             
+                Objects.equals(getValueEL(), that.getValueEL()) &&
                 Objects.equals(getPriority(), that.getPriority());
     }
 
