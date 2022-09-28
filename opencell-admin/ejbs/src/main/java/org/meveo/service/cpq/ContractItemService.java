@@ -12,6 +12,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.contract.Contract;

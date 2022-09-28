@@ -95,8 +95,8 @@ public class RatedTransactionsJob extends Job {
         result.put(CF_BATCH_SIZE, buildCF(CF_BATCH_SIZE, "jobExecution.batchSize", CustomFieldTypeEnum.LONG, 
             "tab:Configuration:0;fieldGroup:Configuration:0;field:2", "10000", true, null, null));
         
-        result.put(CF_APPLY_BILING_RULES, buildCF(CF_APPLY_BILING_RULES, "jobExecution.applyBillingRules", 
-            CustomFieldTypeEnum.BOOLEAN, "tab:Configuration:0;fieldGroup:Configuration:0;field:3", "false", true, null, null));//HHAN
+        result.put(CF_APPLY_BILLING_RULES, buildCF(CF_APPLY_BILLING_RULES, "Apply billing rules", 
+            CustomFieldTypeEnum.BOOLEAN, "tab:Configuration:0;fieldGroup:Configuration:0;field:3", "false", true, null, null));
         
         // aggregations
         result.put("woAggregationSettings", buildCF("woAggregationSettings", "jobExecution.woAggregationSettings", 

@@ -68,6 +68,7 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.DiscountPlanInstance;
+import org.meveo.model.billing.DiscountPlanInstanceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.ProductInstance;
@@ -665,7 +666,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                                 try {
                                     final WalletOperation tmpWalletOperation = bareWalletOperation;
                                     PricePlanMatrixLine pricePlanMatrixLine = methodCallingUtils.callCallableInNewTx( () -> pricePlanMatrixVersionService.loadPrices(ppmVersion, tmpWalletOperation));
-                                    unitPriceWithoutTax = pricePlanMatrixLine.getPriceWithoutTax();
+                                    unitPriceWithoutTax = pricePlanMatrixLine.getValue();
                                     bareWalletOperation.setContract(contract);
                                     bareWalletOperation.setPriceplan(pricePlanMatrix);
                                     bareWalletOperation.setPricePlanMatrixVersion(ppmVersion);
@@ -679,6 +680,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
                         } else {
                             unitPriceWithoutTax = contractItem.getAmountWithoutTax();
+                            bareWalletOperation.setContract(contract);
                         }
                     }
 
@@ -708,7 +710,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                             PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getPublishedVersionValideForDate(pricePlanMatrix.getCode(), bareWalletOperation.getServiceInstance(), bareWalletOperation.getOperationDate());
                             if (ppmVersion != null) {
                                 PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, bareWalletOperation);
-                                BigDecimal discountRate= pricePlanMatrixLine.getPriceWithoutTax();
+                                BigDecimal discountRate= pricePlanMatrixLine.getValue();
                                 if(discountRate!=null && discountRate.compareTo(BigDecimal.ZERO) > 0 ){
                                     BigDecimal amount = unitPriceWithoutTax.abs().multiply(discountRate.divide(HUNDRED));
                                     if (amount != null && unitPriceWithoutTax.compareTo(amount) > 0)
@@ -822,7 +824,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         ServiceInstance serviceInstance = wo.getServiceInstance();
 
         PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getPublishedVersionValideForDate(pricePlan.getCode(), serviceInstance, wo.getOperationDate());
-
         if (ppmVersion != null) {
             wo.setPricePlanMatrixVersion(ppmVersion);
             if (!ppmVersion.isMatrix()) {
@@ -841,7 +842,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, wo);
                 if(pricePlanMatrixLine!=null) {
                     wo.setPricePlanMatrixLine(pricePlanMatrixLine);
-                	priceWithoutTax = pricePlanMatrixLine.getPriceWithoutTax();
+                	priceWithoutTax = pricePlanMatrixLine.getValue();
                     String amountEL = ppmVersion.getPriceEL();
                     String amountELPricePlanMatrixLine = pricePlanMatrixLine.getPriceEL();
                     if (!StringUtils.isBlank(amountEL)) {
@@ -1459,10 +1460,15 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     	List<DiscountPlanItem>  fixedDiscountPlanItems = new ArrayList<DiscountPlanItem>();
     	if(!discountPlanInstances.isEmpty()) {
     		DiscountPlan discountPlan =null;
+    		Date operationDate=walletOperation.getOperationDate()!=null?walletOperation.getOperationDate():new Date();
     		for(DiscountPlanInstance discountPlanInstance: discountPlanInstances) {
+    			
+    			if (!discountPlanInstance.isEffective(operationDate) || discountPlanInstance.getStatus().equals(DiscountPlanInstanceStatusEnum.EXPIRED)) {
+                    continue;
+                }
     			discountPlan=discountPlanInstance.getDiscountPlan();
 
-    			applicableDiscountPlanItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan, walletOperation.getSubscription(), walletOperation, accountingArticle,DiscountPlanItemTypeEnum.PERCENTAGE, walletOperation.getOperationDate()));
+    			applicableDiscountPlanItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan, walletOperation.getSubscription(), walletOperation, accountingArticle,DiscountPlanItemTypeEnum.PERCENTAGE, operationDate));
     			fixedDiscountPlanItems.addAll(
     					discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan, 
     							walletOperation.getSubscription(), walletOperation, walletOperation.getAccountingArticle(), DiscountPlanItemTypeEnum.FIXED, walletOperation.getOperationDate()));

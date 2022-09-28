@@ -35,6 +35,7 @@ import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
@@ -81,6 +82,8 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
     /** The payment method service. */
     @Inject
     private PaymentMethodService paymentMethodService;
+
+    private boolean isCheckIbanUnicityEnabled = true;
 
     /**
      * Checks if is customer account with id exists.
@@ -623,6 +626,10 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
     private void validatePaymentMethod(PaymentMethod preferredPaymentMethod, List<DDPaymentMethod> ddPaymentMethods) {
         if (preferredPaymentMethod == null) {
             throw new BusinessException("CustomerAccount does not have a preferred payment method");
+        }
+        isCheckIbanUnicityEnabled = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("iban.unique.check.enabled", "true"));
+        if(!isCheckIbanUnicityEnabled){
+            return;
         }
         for (DDPaymentMethod ddPaymentMethod : ddPaymentMethods) {
             if(ddPaymentMethods.stream()

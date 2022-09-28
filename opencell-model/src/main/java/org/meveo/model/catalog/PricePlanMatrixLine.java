@@ -163,13 +163,13 @@ public class PricePlanMatrixLine extends AuditableEntity {
         PricePlanMatrixLine that = (PricePlanMatrixLine) o;
         return Objects.equals(getPricePlanMatrixVersion(), that.getPricePlanMatrixVersion()) &&
                 Objects.equals(getDescription(), that.getDescription()) &&
-                Objects.equals(getPriceWithoutTax(), that.getPriceWithoutTax()) &&
+                Objects.equals(getValue(), that.getValue()) &&
                 Objects.equals(getPriceEL(), that.getPriceEL()) &&             
                 Objects.equals(getPriority(), that.getPriority());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getPricePlanMatrixVersion(), getDescription(), getPriceWithoutTax(), getPriority());
+        return Objects.hash(super.hashCode(), getPricePlanMatrixVersion(), getDescription(), getValue(), getPriority());
     }
 }

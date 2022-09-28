@@ -52,6 +52,7 @@ public class ContactRsImpl extends BaseRs implements ContactRs {
 
 		try {
 			Contact contact = contactApi.create(postData);
+			result.setEntityId(contact.getId());
 			if (StringUtils.isBlank(postData.getCode())) {
 				result.setEntityCode(contact.getCode());
 			}
@@ -78,6 +79,7 @@ public class ContactRsImpl extends BaseRs implements ContactRs {
 		ActionStatus result = new ActionStatus();
 		try {
 			Contact contact = contactApi.createOrUpdate(postData);
+			result.setEntityId(contact.getId());
 			if (StringUtils.isBlank(postData.getCode())) {
 				result.setEntityCode(contact.getCode());
 			}
