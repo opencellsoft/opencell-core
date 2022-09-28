@@ -22,9 +22,11 @@ import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.Entity;
+import javax.persistence.Query;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.NotFoundException;
 
+import com.vladmihalcea.hibernate.query.SQLExtractor;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.hibernate.collection.internal.PersistentBag;
 import org.hibernate.collection.internal.PersistentSet;
@@ -120,7 +122,10 @@ public class GenericApiAlteringService {
         paginationConfiguration.setFetchFields(new ArrayList<>());
         paginationConfiguration.getFetchFields().add("id");
         // Prepare filter filterQuery
-        String filterQuery = genericApiLoadService.findAggregatedPaginatedRecordsAsString(filteredEntityClass, paginationConfiguration, null);
+        Query filterQuery = genericApiLoadService.findAggregatedPaginatedRecordsAsQuery(filteredEntityClass, paginationConfiguration);
+
+        // Convert filter query to SQL
+        String filterQuerySql = SQLExtractor.from(filterQuery);
 
         // Build update filterQuery
         StringBuilder updateQuery = new StringBuilder("UPDATE ").append(updatedEntityClass.getName()).append(" a SET");
@@ -128,7 +133,7 @@ public class GenericApiAlteringService {
             updateQuery.append(" a.").append(s).append("=").append(QueryBuilder.paramToString(o)).append(",")
         );
         updateQuery.setLength(updateQuery.length() - 1);
-        updateQuery.append(" FROM (").append(filterQuery).append(") ").append(filteredEntityName).append("_").append(new Random().nextInt(2));
+        updateQuery.append(" FROM (").append(filterQuerySql).append(") ").append(filteredEntityName).append("_").append(new Random().nextInt(2));
 
         return entityManagerWrapper.getEntityManager().createQuery(updateQuery.toString()).executeUpdate();
 
