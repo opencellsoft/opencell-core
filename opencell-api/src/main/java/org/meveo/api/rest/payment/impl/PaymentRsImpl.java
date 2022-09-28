@@ -34,6 +34,7 @@ import org.meveo.api.dto.payment.DDRequestBuilderDto;
 import org.meveo.api.dto.payment.DDRequestBuilderResponseDto;
 import org.meveo.api.dto.payment.GatewayPaymentNamesEnum;
 import org.meveo.api.dto.payment.HostedCheckoutInput;
+import org.meveo.api.dto.payment.HostedCheckoutStatusResponseDto;
 import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentGatewayDto;
@@ -638,7 +639,20 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         PaymentHostedCheckoutResponseDto result = new PaymentHostedCheckoutResponseDto();
         try {
             result = paymentMethodApi.getHostedCheckoutUrl(hostedCheckoutInput);
-        } catch (BusinessException e) {
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+    
+    @Override
+    public HostedCheckoutStatusResponseDto getHostedCheckoutStatus(String id,String customerAccountCode, String sellerCode) {
+       
+        HostedCheckoutStatusResponseDto result = new HostedCheckoutStatusResponseDto();
+        try {
+            result = paymentMethodApi.getHostedCheckoutStatus(id, customerAccountCode, sellerCode);
+        } catch (Exception e) {
             processException(e, result);
         }
 
