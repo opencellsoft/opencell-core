@@ -9,8 +9,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+@Stateless
 public class ContainLineCommand implements CommercialRuleLineCommand {
 	
 	 @Inject
@@ -19,8 +21,6 @@ public class ContainLineCommand implements CommercialRuleLineCommand {
     private final CommercialRuleHeader commercialRuleHeader;
     private final SelectedAttributes selectedAttributes;
     private final List<SelectedAttributes> selectedSourceAttributes;
-    private String multiValuesAttributeSeparator = paramBeanFactory.getInstance().getProperty("attribute.multivalues.separator", ";");
-
 
     public ContainLineCommand(CommercialRuleHeader commercialRuleHeader, SelectedAttributes selectedAttributes, List<SelectedAttributes> selectedSourceAttributes) {
         this.commercialRuleHeader = commercialRuleHeader;
@@ -30,6 +30,7 @@ public class ContainLineCommand implements CommercialRuleLineCommand {
 
     @Override
     public boolean execute(CommercialRuleLine commercialRuleLine) {
+    	String multiValuesAttributeSeparator = paramBeanFactory.getInstance().getProperty("attribute.multivalues.separator", ";");
         Optional<SelectedAttributes> exist = getSelectedSourceAttributeWitchMatchWithRuleLine(this.selectedSourceAttributes, commercialRuleLine);
         String convertedValueStr=exist.isPresent()?String.valueOf(exist.get().getSelectedAttributesMap().get(commercialRuleLine.getSourceAttribute().getCode())):null;
         List<String> values = convertedValueStr!=null?Arrays.asList(convertedValueStr.split(multiValuesAttributeSeparator)):new ArrayList<String>();

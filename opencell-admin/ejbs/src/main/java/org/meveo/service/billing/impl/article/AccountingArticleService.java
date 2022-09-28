@@ -22,6 +22,7 @@ import org.meveo.model.tax.TaxClass;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.cpq.AttributeService;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -43,7 +44,13 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 	@Inject private ArticleMappingLineService articleMappingLineService;
 	@Inject private AttributeService attributeService;
 	
-	 private String multiValuesAttributeSeparator = paramBeanFactory.getInstance().getProperty("attribute.multivalues.separator", ";");
+	 
+    private String multiValuesAttributeSeparator = ";";
+    
+    @PostConstruct
+    private void init() {
+    	multiValuesAttributeSeparator = paramBeanFactory.getInstance().getProperty("attribute.multivalues.separator", ";");
+    }
 
 
 	public Optional<AccountingArticle> getAccountingArticle(Product product, Map<String, Object> attributes) throws BusinessException {

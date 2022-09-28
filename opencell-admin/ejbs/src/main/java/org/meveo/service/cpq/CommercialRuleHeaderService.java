@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
@@ -33,6 +34,7 @@ import org.meveo.api.dto.cpq.ProductContextDTO;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.cache.CommercialRulesContainerProvider;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
@@ -88,7 +90,12 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     @Inject
     private CommercialRulesContainerProvider commercialRulesContainerProvider;
     
-    private String multiValuesAttributeSeparator = paramBeanFactory.getInstance().getProperty("attribute.multivalues.separator", ";");
+    private String multiValuesAttributeSeparator = ";";
+    
+    @PostConstruct
+    private void init() {
+    	multiValuesAttributeSeparator = paramBeanFactory.getInstance().getProperty("attribute.multivalues.separator", ";");
+    }
 
     @Override
     public void create(CommercialRuleHeader entity) throws BusinessException {
