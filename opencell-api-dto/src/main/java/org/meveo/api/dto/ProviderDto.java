@@ -202,6 +202,7 @@ public class ProviderDto extends AuditableEntityDto {
             prepaidReservationExpirationDelayinMillisec = provider.getPrepaidReservationExpirationDelayinMillisec();
             discountAccountingCode = provider.getDiscountAccountingCode();
             email = provider.getEmail();
+            cdrDeduplicationKeyEL=provider.getCdrDeduplicationKeyEL();
 
             this.setEnterprise(provider.isEntreprise());
             this.setLevelDuplication(provider.isLevelDuplication());
