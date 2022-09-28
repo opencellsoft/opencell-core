@@ -36,13 +36,13 @@ public class StartupListener {
     private Logger log;
     
     @Inject
-    private JobExecutionResultService JobExecutionResultService;
+    private JobExecutionResultService jobExecutionResultService;
 
     @PostConstruct
     private void init() {
         log.info("Thank you for running Opencell Community code. For Commercial Grade Support, please purchase an Opencell subscription from https://opencellsoft.com/");
 
-        JobExecutionResultService.getEntityManager().createNamedQuery("JobExecutionResult.cancelAllRunningJobs").executeUpdate();
+        jobExecutionResultService.getEntityManager().createNamedQuery("JobExecutionResult.cancelAllRunningJobs").executeUpdate();
         
         
 
