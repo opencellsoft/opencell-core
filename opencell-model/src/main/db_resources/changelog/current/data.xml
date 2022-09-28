@@ -10121,7 +10121,7 @@ public class CustomerJobNotification extends Script {
 
 
             String jobCode = jobExecutionResult.getJobInstance().getCode();
-            params.put("entityName", EntityNameEnum.valueOf(jobCode));
+            params.put("entityName", EntityNameEnum.valueOf(jobCode).entity);
             switch (jobStatus) {
                 case SUCCESS:
                     emailTemplate = emailTemplateService.findByCode(MASS_IMPORT_SUCCESS_EMAIL);
@@ -10279,7 +10279,7 @@ public class SubscriptionJobNotification extends Script {
             EmailTemplate emailTemplate;
 
             String jobCode = jobExecutionResult.getJobInstance().getCode();
-            params.put("entityName", EntityNameEnum.valueOf(jobCode));
+            params.put("entityName", EntityNameEnum.valueOf(jobCode).entity);
             switch (jobStatus) {
                 case SUCCESS:
                     emailTemplate = emailTemplateService.findByCode(MASS_IMPORT_SUCCESS_EMAIL);
