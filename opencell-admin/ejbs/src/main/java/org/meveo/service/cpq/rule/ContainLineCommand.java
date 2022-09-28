@@ -1,22 +1,17 @@
 package org.meveo.service.cpq.rule;
 
-import org.meveo.commons.utils.ParamBeanFactory;
-import org.meveo.model.cpq.trade.CommercialRuleHeader;
-import org.meveo.model.cpq.trade.CommercialRuleLine;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.cpq.trade.CommercialRuleHeader;
+import org.meveo.model.cpq.trade.CommercialRuleLine;
 
-@Stateless
+
 public class ContainLineCommand implements CommercialRuleLineCommand {
-	
-	 @Inject
-	 private ParamBeanFactory paramBeanFactory;
+
 
     private final CommercialRuleHeader commercialRuleHeader;
     private final SelectedAttributes selectedAttributes;
@@ -27,10 +22,11 @@ public class ContainLineCommand implements CommercialRuleLineCommand {
         this.selectedAttributes = selectedAttributes;
         this.selectedSourceAttributes = selectedSourceAttributes;
     }
+    
 
-    @Override
+	@Override
     public boolean execute(CommercialRuleLine commercialRuleLine) {
-    	String multiValuesAttributeSeparator = paramBeanFactory.getInstance().getProperty("attribute.multivalues.separator", ";");
+    	String multiValuesAttributeSeparator = ParamBean.getInstance().getProperty("attribute.multivalues.separator", ";");
         Optional<SelectedAttributes> exist = getSelectedSourceAttributeWitchMatchWithRuleLine(this.selectedSourceAttributes, commercialRuleLine);
         String convertedValueStr=exist.isPresent()?String.valueOf(exist.get().getSelectedAttributesMap().get(commercialRuleLine.getSourceAttribute().getCode())):null;
         List<String> values = convertedValueStr!=null?Arrays.asList(convertedValueStr.split(multiValuesAttributeSeparator)):new ArrayList<String>();
