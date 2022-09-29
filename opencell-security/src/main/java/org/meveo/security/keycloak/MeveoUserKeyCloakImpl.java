@@ -205,8 +205,9 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
         if (securityContext.getCallerPrincipal() instanceof KeycloakPrincipal) {
             KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) securityContext.getCallerPrincipal();
             KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
-            if (keycloakSecurityContext.getToken().getOtherClaims() != null) {
-                return (String) keycloakSecurityContext.getToken().getOtherClaims().get(CLAIM_PROVIDER);
+            Map<String, Object> otherClaims = keycloakSecurityContext.getToken().getOtherClaims();
+            if (otherClaims != null) {
+                return (String) otherClaims.get(CLAIM_PROVIDER);
             }
 
         }
