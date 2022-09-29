@@ -18554,6 +18554,7 @@
     <changeSet id="#INTRD-9583-20220906-br-generateao" author="a.rouaguebe" />
 	<changeSet id="#INTRD-9581_20200907" author="TarikFA." />
 	<changeSet id="INTRD-9535-20220908" author="Abdelkader.bouazza" />
+	<changeSet id="#INTRD-10135_28092022" author="Mbarek-Ay"/>
 	
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
