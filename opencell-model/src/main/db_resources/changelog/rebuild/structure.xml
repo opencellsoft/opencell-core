@@ -10713,7 +10713,7 @@
 
             <column name="ppm_version_id" type="bigint" />
             <column name="priority" type="int4" defaultValueNumeric="0"/>
-			<column name="price_el" type="varchar(255)" />
+			<column name="value_el" type="varchar(255)" />
             <column name="description" type="varchar(255)"/>
             <column name="value" type="numeric(23, 12)" />
         </createTable>
@@ -18607,6 +18607,7 @@
 	<changeSet id="#INTRD-9839_20220919" author="TarikRabeh" />
 	<changeSet id="#INTRD-9946_20220920" author="HichamHANINE" />
     <changeSet id="#INTRD-10097_202000926" author="TarikFA." />
+    <changeSet id="#INTRD-10188_20220928" author="MehdiBOURRAS"/>
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
