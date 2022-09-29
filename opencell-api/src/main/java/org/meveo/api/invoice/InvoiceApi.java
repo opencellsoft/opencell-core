@@ -80,6 +80,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.*;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.communication.email.MailingTypeEnum;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.generic.wf.WorkflowInstance;
@@ -107,6 +108,7 @@ import org.meveo.service.generic.wf.WorkflowInstanceService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositTemplateService;
+import org.meveo.util.ApplicationProvider;
 import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 /**
@@ -173,6 +175,9 @@ public class InvoiceApi extends BaseApi {
     @Inject
     private SecurityDepositService securityDepositService;
     
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
     /**
      * Create an invoice based on the DTO object data and current user
      *
@@ -565,17 +570,8 @@ public class InvoiceApi extends BaseApi {
         //Create SD
         if (invoice.getInvoiceType() != null && "SECURITY_DEPOSIT".equals(invoice.getInvoiceType().getCode())) {
             SecurityDepositTemplate defaultSDTemplate = securityDepositTemplateService.getDefaultSDTemplate();
-            SecurityDeposit sd = new SecurityDeposit();            
-            sd.setTemplate(defaultSDTemplate);
             Long count = securityDepositService.countPerTemplate(defaultSDTemplate);
-            String securityDepositName = defaultSDTemplate.getTemplateName();
-            sd.setCode(securityDepositName + "-" + count);
-            sd.setAmount(invoice.getAmountWithoutTax());
-            sd.setStatus(SecurityDepositStatusEnum.VALIDATED);
-            sd.setCustomerAccount(invoice.getBillingAccount().getCustomerAccount());
-            sd.setCurrency(invoice.getTradingCurrency().getCurrency());
-            sd.setSecurityDepositInvoice(invoice);
-            securityDepositService.create(sd);
+            securityDepositService.createSD(invoice, defaultSDTemplate, count);
         }        
         
         if(invoice.getDueDate().after(today) && invoice.getStatus() == VALIDATED){
@@ -585,6 +581,8 @@ public class InvoiceApi extends BaseApi {
         }
         return invoice.getInvoiceNumber();
     }
+
+    
 
     private void updatePaymentStatus(Invoice invoice, Date today, InvoicePaymentStatusEnum pending) {
         log.info("[Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 
