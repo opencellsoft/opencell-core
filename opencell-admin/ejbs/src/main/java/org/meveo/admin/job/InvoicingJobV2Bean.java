@@ -169,7 +169,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
             	if(billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
                     billingRun.setStatus(POSTVALIDATED);
             	}else if(billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC && prevalidatedAutomaticPrevBRStatus) {
-                    billingRun.setStatus(DRAFT_INVOICES);
+                    billingRun.setStatus(VALIDATED);
             	} else {
                     billingRun.setStatus(POSTVALIDATED);
             	}
