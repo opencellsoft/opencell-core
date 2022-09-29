@@ -69,6 +69,7 @@ import org.meveo.model.billing.*;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.filter.Filter;
+import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.model.payments.CardPaymentMethod;
@@ -1417,9 +1418,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	               Set<BillingRunList> billingRunLists = new HashSet<>();
 	               billingRunLists.addAll(billingRun.getBillingRunLists());
 	               quarantineBillingRun.setBillingRunLists(billingRunLists );
-	               List<JobExecutionResultImpl> billingRunJobExecutions = new ArrayList<JobExecutionResultImpl>();
-                   billingRunJobExecutions.addAll(billingRun.getJobExecutions());                   
-                   quarantineBillingRun.setJobExecutions(billingRunJobExecutions);
 	               quarantineBillingRun.setBillableBillingAccounts(new ArrayList<>());
 	               quarantineBillingRun.setBillingAccountNumber(null);
 	               quarantineBillingRun.setRejectedBillingAccounts(null);
