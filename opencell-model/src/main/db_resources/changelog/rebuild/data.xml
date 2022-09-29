@@ -9654,6 +9654,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="version" valueNumeric="0" />
 			<column name="creator" value="applicationInitializer"></column>
+			<column name="currency_id" valueComputed="(SELECT currency_id from crm_provider where id = 1)"></column>
 		</insert>
 	</changeSet>
 	
@@ -9690,6 +9691,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="#INTRD-8700_20220728" author="ZBariki" />
 	<changeSet id="#INTRD-8946_20220804" author="aelmalki" />
 	<changeSet id="#INTRD-10047_20220926_default_sd_template" author="a.rouaguebe" />
+	<changeSet id="#INTRD-10247_20220928_default_currency_sd_template" author="a.rouaguebe" />
 	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
