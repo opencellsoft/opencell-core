@@ -13984,4 +13984,7 @@ order by date_trunc('month', i.invoice_date) DESC
         <modifyDataType tableName="edr_versioning_rule" columnName="is_new_version_el" newDataType="varchar(2000)"/>
     </changeSet>
 
+    <changeSet id="#INTRD-4681_20220929" author="AndriusKarpavicius">
+        <sql>update ${db.schema.adapted}adm_secured_entity set entity_class = reverse(split_part(reverse(entity_class),'.',1))</sql>
+    </changeSet>
 </databaseChangeLog>
