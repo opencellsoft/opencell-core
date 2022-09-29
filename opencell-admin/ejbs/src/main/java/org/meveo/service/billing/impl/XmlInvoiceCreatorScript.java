@@ -22,6 +22,7 @@ import static java.util.Optional.ofNullable;
 import static org.meveo.commons.utils.NumberUtils.toPlainString;
 import static org.meveo.commons.utils.StringUtils.getDefaultIfNull;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.storage.StorageFactory;
 import org.meveo.commons.utils.InvoiceCategoryComparatorUtils;
@@ -91,6 +92,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.Set;
 
 /**
@@ -261,6 +264,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Element invoiceTag = rtBillingProcess ? createInvoiceSection(doc, invoice, isVirtual, isInvoiceAdjustment, docBuilder)
                 : createInvoiceSectionIL(doc, invoice, isVirtual, isInvoiceAdjustment, docBuilder);
         doc.appendChild(invoiceTag);
+        
         return doc;
     }
 
@@ -1375,9 +1379,26 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         ofNullable(invoice.getOpenOrderNumber()).ifPresent(oon -> invoiceTag.setAttribute("openOrderNumber", oon));
         ofNullable(invoice.getExternalRef()).ifPresent(externalRef
                 -> invoiceTag.setAttribute("externalReference", externalRef));
+        var allLinkedInvoices = new ArrayList<Invoice>();
         if (isInvoiceAdjustment) {
             Set<Invoice> linkedInvoices = invoice.getLinkedInvoices();
             invoiceTag.setAttribute("adjustedInvoiceNumber", getLinkedInvoicesnumberAsString(new ArrayList<>(linkedInvoices)));
+        }else {
+            var allexistedAdjCode = invoiceTypeService.getListAdjustementCode();
+            for (String adjCode : allexistedAdjCode) {
+                var invoiceType = invoiceTypeService.findByCode(adjCode);
+                if(invoiceType != null) {
+                    invoiceService.findInvoicesByType(invoiceType, invoice.getBillingAccount()).stream()
+                            .filter(inv -> CollectionUtils.isNotEmpty(inv.getLinkedInvoices()))
+                            .forEach(inv -> {
+                               var isRelatedInvoiceExist = inv.getLinkedInvoices().stream()
+                                                                                 .anyMatch(adj -> adj.getId() == invoice.getId());
+                               if(isRelatedInvoiceExist)
+                                   allLinkedInvoices.add(inv);
+                            });
+                    
+                }
+            }
         }
         BillingCycle billingCycle = null;
         Invoice linkedInvoice = invoiceService.getLinkedInvoice(invoice);
@@ -1398,6 +1419,13 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Element amountTag = createAmountSection(doc, invoice, invoiceConfiguration);
         if (amountTag != null) {
             invoiceTag.appendChild(amountTag);
+        }
+
+        if(CollectionUtils.isNotEmpty(allLinkedInvoices)) {
+           Element amounts =  createAmountLinkedAdjInvoice(allLinkedInvoices, doc, invoiceConfiguration);
+           if(amounts != null) {
+               invoiceTag.appendChild(amounts);
+           }
         }
         if (invoiceConfiguration.isDisplayOrders()) {
             Element ordersTag = createOrdersSection(doc, invoice, invoiceConfiguration, docBuilder);
@@ -1679,6 +1707,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         return ordersTag;
     }
 
+   
     /**
      * Create invoice/amount DOM element
      *
@@ -1714,6 +1743,17 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         return amount;
     }
 
+    protected Element createAmountLinkedAdjInvoice(List<Invoice> linkedInvoices, Document doc, InvoiceConfiguration invoiceConfiguration) {
+
+        Element amounts = doc.createElement("amounts");
+        for (Invoice linkedInvoice : linkedInvoices) {
+            Element amount = createAmountSection(doc, linkedInvoice, invoiceConfiguration);
+            if(amount != null)
+                amounts.appendChild(amount);
+        }
+        
+        return amounts;
+    }
     /**
      * Create invoice/header DOM element
      *
