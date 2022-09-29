@@ -7,7 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -88,11 +90,15 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 					}
 				});
 			}
+			
+			Set<Attribute> matchedAttributes = matchedAttributesMapping.stream().map(AttributeMapping::getAttribute).collect(Collectors.toSet());
 			//fullMatch
-			if(aml.getAttributesMapping().size() >= matchedAttributesMapping.size() && (matchedAttributesMapping.size() == attributes.keySet().size())) {
+			if(aml.getAttributesMapping().size() >= matchedAttributesMapping.size() && (matchedAttributes.size() == attributes.keySet().size())) {
 				attributeMappingLineMatch.addFullMatch(aml);
 			}else{
-				attributeMappingLineMatch.addPartialMatch(aml, matchedAttributesMapping.size());
+				if (!(aml.getAttributesMapping().size() > 0 && matchedAttributesMapping.size() == 0)) {
+					attributeMappingLineMatch.addPartialMatch(aml, matchedAttributesMapping.size());
+				}
 			}
 			
 		});
@@ -227,7 +233,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			String convertedValueStr = convertedValue != null ? String.valueOf(convertedValue) : null;
 			switch (operator) {
 				case EQUAL:
-					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr).compareTo(Double.valueOf(sourceAttributeValue)) == 0) {
 							return true;
 						}
@@ -236,7 +242,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 						return true;
 					break;
 				case NOT_EQUAL:
-					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr).compareTo(Double.valueOf(sourceAttributeValue)) != 0) {
 							return true;
 						}
@@ -245,25 +251,25 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 						return true;
 					break;
 				case LESS_THAN:
-					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr) < Double.valueOf(sourceAttributeValue))
 							return true;
 					}
 					break;
 				case LESS_THAN_OR_EQUAL:
-					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr) <= Double.valueOf(sourceAttributeValue))
 							return true;
 					}
 					break;
 				case GREATER_THAN:
-					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr) > Double.valueOf(sourceAttributeValue))
 							return true;
 					}
 					break;
 				case GREATER_THAN_OR_EQUAL:
-					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr) >= Double.valueOf(sourceAttributeValue))
 							return true;
 					}

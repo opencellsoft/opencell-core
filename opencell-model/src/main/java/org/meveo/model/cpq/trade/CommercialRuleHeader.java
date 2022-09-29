@@ -2,6 +2,7 @@ package org.meveo.model.cpq.trade;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -329,4 +330,30 @@ public class CommercialRuleHeader extends BusinessEntity {
 	public void setScopeType(ScopeTypeEnum scopeType) {
 		this.scopeType = scopeType;
 	}
+	public boolean isTargetOfferAttribute() {
+		return targetProduct == null;
+	}
+
+	public String getTargetOfferTemplateCode() {
+		return targetOfferTemplate != null ? targetOfferTemplate.getCode() : null;
+	}
+
+	public String getTargetProductCode() {
+		return targetProduct != null ? targetProduct.getCode() : null;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		if (!super.equals(o)) return false;
+		CommercialRuleHeader that = (CommercialRuleHeader) o;
+		return id.equals(that.id) && code.equals(that.code);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), id, code);
+	}
 }
+

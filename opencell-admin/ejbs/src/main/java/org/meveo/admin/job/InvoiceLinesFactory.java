@@ -35,6 +35,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
+import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
@@ -61,6 +62,7 @@ public class InvoiceLinesFactory {
 
     private TaxService taxService = (TaxService) getServiceInterface(TaxService.class.getSimpleName());
     private Logger log = LoggerFactory.getLogger(this.getClass());
+    
 
     /**
      * @param record        map of ratedTransaction
@@ -69,21 +71,22 @@ public class InvoiceLinesFactory {
      * @param billingRun
      * @return new InvoiceLine
      */
-    public InvoiceLine create(Map<String, Object> record, AggregationConfiguration configuration, JobExecutionResultImpl result, Provider appProvider, BillingRun billingRun) throws BusinessException {
+    public InvoiceLine create(Map<String, Object> record,  AggregationConfiguration configuration, JobExecutionResultImpl result, Provider appProvider, BillingRun billingRun) throws BusinessException {
         InvoiceLine invoiceLine = initInvoiceLine(record, result, appProvider, billingRun, configuration);
         return invoiceLine;
     }
 
     private InvoiceLine initInvoiceLine(Map<String, Object> record, JobExecutionResultImpl report, Provider appProvider, BillingRun billingRun, AggregationConfiguration configuration) {
         InvoiceLine invoiceLine = new InvoiceLine();
-        ofNullable(record.get("billing_account__id")).ifPresent(id -> invoiceLine.setBillingAccount(billingAccountService.getEntityManager().getReference(BillingAccount.class, id)));
-        ofNullable(record.get("billing_run_id")).ifPresent(id -> invoiceLine.setBillingRun(billingRunService.getEntityManager().getReference(BillingRun.class, id)));
-        ofNullable(record.get("service_instance_id")).ifPresent(id -> invoiceLine.setServiceInstance(instanceService.getEntityManager().getReference(ServiceInstance.class, id)));
-        ofNullable(record.get("offer_id")).ifPresent(id -> invoiceLine.setOfferTemplate(offerTemplateService.getEntityManager().getReference(OfferTemplate.class, id)));
-        ofNullable(record.get("order_id")).ifPresent(id -> invoiceLine.setCommercialOrder(commercialOrderService.getEntityManager().getReference(CommercialOrder.class, id)));
-        ofNullable(record.get("product_version_id")).ifPresent(id -> invoiceLine.setProductVersion(productVersionService.getEntityManager().getReference(ProductVersion.class, id)));
-        ofNullable(record.get("order_lot_id")).ifPresent(id -> invoiceLine.setOrderLot(orderLotService.getEntityManager().getReference(OrderLot.class, id)));
-        ofNullable(record.get("tax_id")).ifPresent(id -> invoiceLine.setTax(taxService.getEntityManager().getReference(Tax.class, id)));
+        ofNullable(record.get("billing_account__id")).ifPresent(id -> invoiceLine.setBillingAccount(billingAccountService.getEntityManager().getReference(BillingAccount.class, ((Number)id).longValue())));
+        ofNullable(record.get("billing_run_id")).ifPresent(id -> invoiceLine.setBillingRun(billingRunService.getEntityManager().getReference(BillingRun.class, ((Number)id).longValue())));
+        ofNullable(record.get("service_instance_id")).ifPresent(id -> invoiceLine.setServiceInstance(instanceService.getEntityManager().getReference(ServiceInstance.class, ((Number)id).longValue())));
+        ofNullable(record.get("offer_id")).ifPresent(id -> invoiceLine.setOfferTemplate(offerTemplateService.getEntityManager().getReference(OfferTemplate.class, ((Number)id).longValue())));
+        ofNullable(record.get("order_id")).ifPresent(id -> invoiceLine.setCommercialOrder(commercialOrderService.getEntityManager().getReference(CommercialOrder.class, ((Number)id).longValue())));
+        ofNullable(record.get("product_version_id")).ifPresent(id -> invoiceLine.setProductVersion(productVersionService.getEntityManager().getReference(ProductVersion.class, ((Number)id).longValue())));
+        ofNullable(record.get("order_lot_id")).ifPresent(id -> invoiceLine.setOrderLot(orderLotService.getEntityManager().getReference(OrderLot.class, ((Number)id).longValue())));
+        ofNullable(record.get("tax_id")).ifPresent(id -> invoiceLine.setTax(taxService.getEntityManager().getReference(Tax.class, ((Number)id).longValue())));
+        ofNullable(record.get("article_id")).ifPresent(id -> invoiceLine.setAccountingArticle(accountingArticleService.getEntityManager().getReference(AccountingArticle.class, (Number)id)));
 
         Date usageDate = getUsageDate(record.get("usage_date"), configuration.getDateAggregationOption());
         invoiceLine.setValueDate(usageDate);
@@ -119,7 +122,7 @@ public class InvoiceLinesFactory {
             }
         }
         invoiceLine.setValidity(validity);
-
+        invoiceLine.setLabel(invoiceLine.getAccountingArticle()!=null?invoiceLine.getAccountingArticle().getDescription() : (String) record.get("label"));
         if (record.get("charge_instance_id") != null && invoiceLine.getAccountingArticle() == null) {
         	ChargeInstance chargeInstance = (ChargeInstance) chargeInstanceService.findById((Long) record.get("charge_instance_id"));
             ServiceInstance serviceInstance = invoiceLine.getServiceInstance();

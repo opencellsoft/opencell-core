@@ -855,6 +855,9 @@ public class CustomerApi extends AccountEntityApi {
 
     public void anonymizeGdpr(String customerCode) throws BusinessException {
         Customer entity = customerService.findByCode(customerCode);
+        if(entity == null) {
+        	throw new EntityDoesNotExistsException(Customer.class, customerCode);
+        }
         gdprService.anonymize(entity);
     }
 

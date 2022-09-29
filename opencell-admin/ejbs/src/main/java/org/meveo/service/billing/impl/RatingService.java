@@ -50,6 +50,7 @@ import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
@@ -95,6 +96,7 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
@@ -171,6 +173,8 @@ public class RatingService extends PersistenceService<WalletOperation> {
     @Inject
     private RecurringChargeInstanceService recurringChargeInstanceService;
     
+    @Inject
+    private AccountingArticleService accountingArticleService;
     
     @Inject
     private RecurringChargeTemplateService recurringChargeTemplateService;
@@ -520,6 +524,9 @@ public class RatingService extends PersistenceService<WalletOperation> {
             throws BusinessException, RatingException {
 
         ChargeInstance chargeInstance = bareWalletOperation.getChargeInstance();
+        
+        AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance);
+        bareWalletOperation.setAccountingArticle(accountingArticle);
 
         // Let charge template's rating script handle all the rating
         if (chargeInstance != null && chargeInstance.getChargeTemplate().getRatingScript() != null) {

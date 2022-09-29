@@ -671,12 +671,13 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             invoiceLine = linesFactory.create(record, configuration, result, appProvider, billingRun);
             basicStatistics.addToAmountWithTax(invoiceLine.getAmountWithTax());
             basicStatistics.addToAmountWithoutTax(invoiceLine.getAmountWithoutTax());
+            basicStatistics.addToAmountTax(invoiceLine.getAmountTax());
             create(invoiceLine);
             commit();
             associatedRtIds = stream(((String) record.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
-            basicStatistics.setCount(associatedRtIds.size());
             ratedTransactionService.linkRTsToIL(associatedRtIds, invoiceLine.getId());
         }
+        basicStatistics.setCount(associatedRtIds == null? 0 : associatedRtIds.size());
         return basicStatistics;
     }
 
