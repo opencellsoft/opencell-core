@@ -328,11 +328,16 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-
+            
+            <dependency>
+                <groupId>net.sf.jasperreports</groupId>
+                <artifactId>jasperreports-fonts</artifactId>
+                <version>6.20.0</version>
+            </dependency>
             <dependency>
                 <groupId>net.sf.jasperreports</groupId>
                 <artifactId>jasperreports</artifactId>
-                <version>6.19.1</version>
+                <version>6.20.0</version>
             </dependency>
 
             <dependency>
@@ -876,7 +881,7 @@
                 <dependency>
                     <groupId>org.postgresql</groupId>
                     <artifactId>postgresql</artifactId>
-                    <version>42.2.13</version>
+                    <version>42.5.0</version>
                     <scope>provided</scope>
                 </dependency>
                 <dependency>
@@ -946,7 +951,7 @@
                 <dependency>
                     <groupId>org.postgresql</groupId>
                     <artifactId>postgresql</artifactId>
-                    <version>9.2-1002-jdbc4</version>
+                    <version>42.5.0</version>
                 </dependency>
                 <dependency>
                     <groupId>org.liquibase.ext</groupId>
@@ -978,7 +983,7 @@
                 <dependency>
                     <groupId>org.postgresql</groupId>
                     <artifactId>postgresql</artifactId>
-                    <version>9.2-1002-jdbc4</version>
+                    <version>42.5.0</version>
                 </dependency>
                 <dependency>
                     <groupId>org.liquibase.ext</groupId>

@@ -12122,25 +12122,6 @@ order by date_trunc('month', i.invoice_date) DESC
         </createTable>
     </changeSet>
 
-    <changeSet id="#20220326_M540_178" author="Mbarek-Ay">
-
-        <createTable tableName="cpq_assigned_attributes">
-            <column name="attribute_id" type="bigint" >
-                <constraints nullable="false"/>
-            </column>
-            <column name="assigned_attribute_id" type="bigint" >
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-
-        <addPrimaryKey columnNames="attribute_id,assigned_attribute_id" tableName="cpq_assigned_attributes"/>
-
-        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_assigned_attributes" constraintName="fk_cpq_assigned_attributes_attribute_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
-        <addForeignKeyConstraint baseColumnNames="assigned_attribute_id" baseTableName="cpq_assigned_attributes" constraintName="fk_cpq_assigned_attributes_assigned_attribute_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
-  </changeSet>
-
     <changeSet id="#INTRD-6160-20220401" author="HichamELHALOUI">
         <dropForeignKeyConstraint baseTableName="ar_occ_template" constraintName="fk_commission_accounting_code_id"/>
         <renameColumn tableName="ar_occ_template" newColumnName="contra_accounting_code2_id" oldColumnName="commission_accounting_code_id"
@@ -13267,13 +13248,13 @@ order by date_trunc('month', i.invoice_date) DESC
     		<column name="priority" type="int4" >
     			<constraints nullable="false" />
     		</column>
-    		<column name="criterial_el" type="text" >
+    		<column name="criterial_el" type="varchar(2000)" >
     			<constraints nullable="false" />
     		</column>
-    		<column name="key_el" type="text" >
+    		<column name="key_el" type="varchar(2000)" >
     			<constraints nullable="false" />
     		</column>
-    		<column name="is_new_version_el" type="text" >
+    		<column name="is_new_version_el" type="varchar(2000)" >
     			<constraints nullable="false" />
     		</column>
     		<column name="mediation_setting_id" type="bigint" >
@@ -13997,7 +13978,10 @@ order by date_trunc('month', i.invoice_date) DESC
         </dropColumn>
     </changeSet>
 
-    
-    
+    <changeSet id="#INTRD-8158_20220915" author="AndriusKarpavicius" >
+        <modifyDataType tableName="edr_versioning_rule" columnName="criterial_el" newDataType="varchar(2000)"/>
+        <modifyDataType tableName="edr_versioning_rule" columnName="key_el" newDataType="varchar(2000)"/>
+        <modifyDataType tableName="edr_versioning_rule" columnName="is_new_version_el" newDataType="varchar(2000)"/>
+    </changeSet>
 
 </databaseChangeLog>

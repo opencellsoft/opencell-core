@@ -89,18 +89,20 @@
             <column name="version" valueNumeric="0" />
 
             <column name="created" valueDate="2015-03-19 00:04:19.68" />
-            <column name="code" value="120.121.21.2" />
-            <column name="chart_of_account_type" value="ASSETS" />
+            <column name="code" value="165000000" />
+            <column name="chart_of_account_type" value="LIABILITIES" />
             <column name="chart_of_account_view_type" value="REGULAR" />
+            <column name="description" value="Deposits and sureties received" />
         </insert>
         <insert tableName="billing_accounting_code">
             <column name="id" valueNumeric="-2" />
             <column name="version" valueNumeric="0" />
 
             <column name="created" valueDate="2015-03-19 00:04:19.68" />
-            <column name="code" value="120.121.21.4" />
-            <column name="chart_of_account_type" value="ASSETS" />
+            <column name="code" value="701010000" />
+            <column name="chart_of_account_type" value="REVENUE" />
             <column name="chart_of_account_view_type" value="REGULAR" />
+            <column name="description" value="Gross Revenue" />
         </insert>
         <insert tableName="billing_accounting_code">
             <column name="id" valueNumeric="-3" />
@@ -327,17 +329,6 @@
             <column name="description" value="Revenue"></column>
             <column name="chart_of_account_type" value="REVENUE"></column>
             <column name="chart_of_account_view_type" value="VIEW"></column>
-        </insert>
-        <insert tableName="billing_accounting_code">
-            <column name="id" valueNumeric="-28" />
-            <column name="version" valueNumeric="0" />
-
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="code" value="701010000"></column>
-            <column name="description" value="Gross Revenue"></column>
-            <column name="chart_of_account_type" value="REVENUE"></column>
-            <column name="chart_of_account_view_type" value="REGULAR"></column>
         </insert>
         <insert tableName="billing_accounting_code">
             <column name="id" valueNumeric="-29" />
@@ -2432,16 +2423,6 @@
     </changeSet>
     
 	<changeSet id="INTRD-4724_20220201" author="TarikRabeh">
-		<insert tableName="billing_accounting_code">
-			<column name="id" valueNumeric="-36" />
-			<column name="version" valueNumeric="0" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="creator" value="opencell.admin" />
-			<column name="code" value="165000000" />
-			<column name="description" value="Deposits and sureties received"></column>
-			<column name="chart_of_account_type" value="LIABILITIES" />
-			<column name="chart_of_account_view_type" value="REGULAR" />
-		</insert>
 		<insert tableName="ar_occ_template">
 			<column name="id" valueNumeric="-51" />
 			<column name="version" valueNumeric="0" />
@@ -2460,7 +2441,7 @@
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="opencell.admin" />
-			<column name="accounting_code_id" valueNumeric="-36" />
+			<column name="accounting_code_id" valueNumeric="-2" />
 			<column name="account_code_client_side" valueNumeric="41100000" />
 			<column name="code" value="DEB_SD" />
 			<column name="description" value="Debit for Security deposit transfer" />
@@ -2472,7 +2453,7 @@
 			<column name="id" valueNumeric="-53" />
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
-			<column name="accounting_code_id" valueNumeric="-36" />
+			<column name="accounting_code_id" valueNumeric="-2" />
 			<column name="account_code_client_side" valueNumeric="512010000" />
 			<column name="code" value="REF_SD" />
 			<column name="description" value="Refund of Security deposit transfer" />
@@ -2525,7 +2506,7 @@
 			<column name="version" valueNumeric="0" />
 			<column name="code" value="ART_SECURITY_DEPOSIT"/>
 			<column name="tax_class_id" value="-3"/>
-			<column name="accounting_code_id" value="-36"/>
+			<column name="accounting_code_id" value="-2"/>
 			<column name="invoice_sub_category_id" value="-4"/>
 			<column name="invoice_type_id" value="-6"/>
 			<column name="description" value="Article Security Deposit"/>

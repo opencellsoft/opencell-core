@@ -876,6 +876,7 @@ public class CpqQuoteApi extends BaseApi {
             	quoteVersionDto.setContractCode(version.getContract().getCode());
             }
             quoteVersionDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(version));
+            quoteVersionDto.setPrices(calculateTotalsPerQuote(version, PriceLevelEnum.PRODUCT));
             result.addQuoteVersion(quoteVersionDto);
         }
         return result;
@@ -1374,6 +1375,14 @@ public class CpqQuoteApi extends BaseApi {
         try {
             cpqQuoteService.update(cpqQuote);
             cpqQuoteStatusUpdatedEvent.fire(cpqQuote);
+            if (cpqQuote.getStatus().equalsIgnoreCase(QuoteStatusEnum.REJECTED.toString())) {
+                List<QuoteVersion> quoteVersions = quoteVersionService.findByQuoteIdAndStatusActive(cpqQuote.getId());                
+                for (QuoteVersion quoteVersion: quoteVersions) {
+                    quoteVersion.setStatus(VersionStatusEnum.CLOSED);
+                    quoteVersion.setStatusDate(new Date());
+                    quoteVersionService.update(quoteVersion);
+                }
+            }
         } catch (BusinessApiException e) {
             throw new MeveoApiException(e);
         }
@@ -1442,8 +1451,6 @@ public class CpqQuoteApi extends BaseApi {
 
         for (BigDecimal taux: pricesPerTaux.keySet()) {
 
-//            Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = pricesPerTaux.get(taux).stream()
-//                    .collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
         	 Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = pricesPerTaux.get(taux).stream()
         			 							.collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
             log.debug("quoteQuotation pricesPerType size={}",pricesPerType.size());
@@ -1467,7 +1474,7 @@ public class CpqQuoteApi extends BaseApi {
         QuoteVersion updatedQuoteVersion=quoteVersionService.findById(quoteVersion.getId());
         GetQuoteVersionDtoResponse response = new GetQuoteVersionDtoResponse(updatedQuoteVersion, true, true, true,true);
         response.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(updatedQuoteVersion)); 
-        response.setPrices(calculateTotalsPerQuote(updatedQuoteVersion));
+        response.setPrices(calculateTotalsPerQuote(updatedQuoteVersion, PriceLevelEnum.QUOTE));
         return response;
     }
 
@@ -1557,8 +1564,16 @@ public class CpqQuoteApi extends BaseApi {
             	quoteArticleLine=createQuoteArticleLine(wo, quoteOffer.getQuoteVersion());
             	quoteArticleLines.put(accountingArticleCode, quoteArticleLine);
             }else {
-            	quoteArticleLine=quoteArticleLines.get(accountingArticleCode);
-                quoteArticleLine.setQuantity(quoteArticleLine.getQuantity().add(wo.getQuantity()));
+                quoteArticleLine=quoteArticleLines.get(accountingArticleCode);
+            	var isGroupedBy = quoteArticleLine.getQuoteProduct() != null && 
+            	                      wo.getServiceInstance() != null && 
+            	                      quoteArticleLine.getQuoteProduct().getId() == wo.getServiceInstance().getId();
+            	if(isGroupedBy)
+            	    quoteArticleLine.setQuantity(quoteArticleLine.getQuantity().add(wo.getQuantity()));
+            	else {
+            	    quoteArticleLine=createQuoteArticleLine(wo, quoteOffer.getQuoteVersion());
+                    quoteArticleLines.put(accountingArticleCode, quoteArticleLine);
+            	}
             }
             QuotePrice quotePrice = new QuotePrice();
             quotePrice.setPriceTypeEnum(PriceTypeEnum.getPriceTypeEnum(wo.getChargeInstance()));
@@ -2380,9 +2395,9 @@ public class CpqQuoteApi extends BaseApi {
 
     	}
     
-	private List<TaxPricesDto> calculateTotalsPerQuote(QuoteVersion quoteVersion) {
+	private List<TaxPricesDto> calculateTotalsPerQuote(QuoteVersion quoteVersion, PriceLevelEnum priceLevelEnum) {
 		log.debug("calculateTotalsPerQuote1 quotePrices size={}",quoteVersion.getQuotePrices().size());
-		List<QuotePrice> quotePrices =quotePriceService.loadByQuoteVersionAndPriceLevel(quoteVersion, PriceLevelEnum.QUOTE);
+		List<QuotePrice> quotePrices =quotePriceService.loadByQuoteVersionAndPriceLevel(quoteVersion, priceLevelEnum);
 		log.debug("calculateTotalsPerQuote quotePrices size={}",quotePrices.size());
 		List<TaxPricesDto> taxPricesDtos =new ArrayList<>();
 		Map<BigDecimal, List<QuotePrice>> pricesPerTax = quotePrices.stream()

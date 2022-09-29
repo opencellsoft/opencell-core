@@ -156,7 +156,7 @@ public class EncryptionFactory {
             return completePrefix + SEPARATOR
                     + Base64.getEncoder().encodeToString(cipher.doFinal(clearText.getBytes()));
         } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException e) {
-            e.printStackTrace();
+            log.error("Error while encrypting: " + e.getMessage(), e);
         }
         return null;
     }
@@ -193,7 +193,7 @@ public class EncryptionFactory {
                 }
             }
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException | NoSuchPaddingException | NoSuchAlgorithmException e) {
-            log.error("Error while encrypting: " + e.getLocalizedMessage(), e);
+            log.error("Error while decrypting: " + e.getLocalizedMessage(), e);
             return ON_ERROR_RETURN;
         }
 

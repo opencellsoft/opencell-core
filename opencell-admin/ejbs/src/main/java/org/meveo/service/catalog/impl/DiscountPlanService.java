@@ -38,6 +38,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IDiscountable;
 import org.meveo.model.admin.Seller;
@@ -279,10 +280,9 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     	return discountWalletOperations;
     }
     
-    public void setDiscountPlanSequence(DiscountPlan discountPlan)
-    {
+    public void setDiscountPlanSequence(DiscountPlan discountPlan){
     	if(discountPlan.getSequence()==null) {
-    		BigInteger sequence =(BigInteger) getEntityManager().createNativeQuery("select nextval('discount_plan_sequence_seq')").getSingleResult();
+    		BigInteger sequence =(BigInteger) getEntityManager().createNativeQuery(EntityManagerProvider.isDBOracle()?"SELECT discount_plan_sequence_seq.nextval FROM dual" : "select nextval('discount_plan_sequence_seq')" ).getSingleResult();
             discountPlan.setSequence(sequence.intValue());
     	}
         
