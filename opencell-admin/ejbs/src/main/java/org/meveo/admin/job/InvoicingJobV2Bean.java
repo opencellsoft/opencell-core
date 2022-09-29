@@ -27,7 +27,9 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.InvoiceLine;
@@ -137,6 +139,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
     }
 
     private void executeBillingRun(BillingRun billingRun, JobInstance jobInstance, JobExecutionResultImpl result, ScriptInstance billingRunValidationScript) {
+    	boolean prevalidatedAutomaticPrevBRStatus = false;
         if(billingRun.getStatus() == INVOICE_LINES_CREATED
                 && (billingRun.getProcessType() == AUTOMATIC || billingRun.getProcessType() == FULL_AUTOMATIC)) {
             billingRun.setStatus(PREVALIDATED);
@@ -149,6 +152,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
             billingRun.setPrAmountWithoutTax(amountWithoutTax);
             billingRun.setPrAmountTax(amountTax);
             billingRun.setStatus(DRAFT_INVOICES);
+            prevalidatedAutomaticPrevBRStatus = true;
         }
         if(billingRun.getStatus() == DRAFT_INVOICES && billingRun.getProcessType() == FULL_AUTOMATIC) {
             billingRun.setStatus(POSTVALIDATED);
@@ -156,6 +160,21 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         billingRun.getBillingCycle().setBillingRunValidationScript(billingRunValidationScript);
         if(!billingRunService.isBillingRunValid(billingRun)) {
             billingRun.setStatus(REJECTED);
+        }
+		if ((billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC || billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC) 
+        		&& (BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus()) 
+        				|| BillingRunStatusEnum.DRAFT_INVOICES.equals(billingRun.getStatus())
+        				|| BillingRunStatusEnum.REJECTED.equals(billingRun.getStatus()))) {
+            billingRunService.applyAutomaticValidationActions(billingRun);
+            if(billingRunService.isBillingRunValid(billingRun)) {
+            	if(billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
+                    billingRun.setStatus(POSTVALIDATED);
+            	}else if(billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC && prevalidatedAutomaticPrevBRStatus) {
+                    billingRun.setStatus(VALIDATED);
+            	} else {
+                    billingRun.setStatus(POSTVALIDATED);
+            	}
+            }
         }
         if(billingRun.getStatus() == POSTVALIDATED) {
             assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, result);
