@@ -95,7 +95,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
 
         PricePlanMatrixLine pricePlanMatrixLine = new PricePlanMatrixLine();
         pricePlanMatrixLine.setPricePlanMatrixVersion(pricePlanMatrixVersion);
-        pricePlanMatrixLine.setValueEL(dtoData.getPriceEL() != null ? dtoData.getPriceEL() : dtoData.getValueEL());
+        pricePlanMatrixLine.setValueEL(dtoData.getValueEL() != null ? dtoData.getValueEL() : dtoData.getPriceEL());
         pricePlanMatrixLine.setPriority(dtoData.getPriority());
         pricePlanMatrixLine.setDescription(dtoData.getDescription());
         pricePlanMatrixLine.setPricePlanMatrixValues(getPricePlanMatrixValues(dtoData, pricePlanMatrixLine));
@@ -310,7 +310,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
             PricePlanMatrixLine pricePlanMatrixLine = new PricePlanMatrixLine();
             pricePlanMatrixLine.setPriceWithoutTax(pricePlanMatrixLineDto.getPriceWithoutTax());
             pricePlanMatrixLine.setPriority(pricePlanMatrixLineDto.getPriority());
-            pricePlanMatrixLine.setValueEL(pricePlanMatrixLineDto.getPriceEL() != null ? pricePlanMatrixLineDto.getPriceEL() : pricePlanMatrixLineDto.getValueEL());
+            pricePlanMatrixLine.setValueEL(pricePlanMatrixLineDto.getValueEL() != null ? pricePlanMatrixLineDto.getValueEL() : pricePlanMatrixLineDto.getPriceEL());
             pricePlanMatrixLine.setPricePlanMatrixVersion(ppmVersion);
             pricePlanMatrixLine.setDescription(pricePlanMatrixLineDto.getDescription());
             BigDecimal value = pricePlanMatrixLineDto.getValue() != null? pricePlanMatrixLineDto.getValue():pricePlanMatrixLineDto.getPriceWithoutTax();
@@ -373,7 +373,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
 
         pricePlanMatrixLineUpdate.setPriceWithoutTax(pricePlanMatrixLineDto.getPriceWithoutTax());
         pricePlanMatrixLineUpdate.setPriority(pricePlanMatrixLineDto.getPriority());
-        pricePlanMatrixLineUpdate.setValueEL(pricePlanMatrixLineDto.getPriceEL() != null ? pricePlanMatrixLineDto.getPriceEL() : pricePlanMatrixLineDto.getValueEL());
+        pricePlanMatrixLineUpdate.setValueEL(pricePlanMatrixLineDto.getValueEL() != null ? pricePlanMatrixLineDto.getValueEL() : pricePlanMatrixLineDto.getPriceEL());
         pricePlanMatrixLineUpdate.setPricePlanMatrixVersion(ppmVersion);
         pricePlanMatrixLineUpdate.setDescription(pricePlanMatrixLineDto.getDescription());
         BigDecimal value = pricePlanMatrixLineDto.getValue() != null? pricePlanMatrixLineDto.getValue():pricePlanMatrixLineDto.getPriceWithoutTax();
