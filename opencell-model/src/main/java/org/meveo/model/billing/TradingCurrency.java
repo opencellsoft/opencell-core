@@ -18,9 +18,7 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -200,5 +198,15 @@ public class TradingCurrency extends EnableEntity {
     @Override
     public String toString() {
         return String.format("TradingCurrency [currency=%s, id=%s]", currency, id);
+    }
+
+    public ExchangeRate getExchangeRate(Date invoiceDate) {
+
+        List<ExchangeRate> ratesList = getExchangeRates();
+        if (ratesList == null || ratesList.isEmpty()) {
+            return null;
+        }
+        return ratesList.stream().sorted(Comparator.comparing(ExchangeRate::getFromDate).reversed()).filter(rate -> (
+                (rate.getFromDate().toInstant().equals(invoiceDate.toInstant())) || rate.getFromDate().toInstant().isBefore(invoiceDate.toInstant()))).findFirst().orElse(null);
     }
 }

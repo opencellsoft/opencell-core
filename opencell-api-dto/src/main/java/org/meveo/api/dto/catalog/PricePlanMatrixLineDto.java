@@ -5,12 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 
@@ -28,10 +27,14 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 	private Long ppmLineId;
 
     @Schema(description = "The price without tax")
-    @NotNull
     @PositiveOrZero
-    @XmlAttribute(required = true)
+	@Deprecated
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private BigDecimal priceWithoutTax;
+
+	@Schema(description = "The value of price without tax or a discount")
+	@PositiveOrZero
+	private BigDecimal value;
 
     @Schema(description = "The price plan matrix code")
 	private String pricePlanMatrixCode;
@@ -55,10 +58,11 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 
 	public PricePlanMatrixLineDto(PricePlanMatrixLine pricePlanMatrixLine) {
 		this.ppmLineId = pricePlanMatrixLine.getId();
-		this.priceWithoutTax = pricePlanMatrixLine.getPriceWithoutTax();
+		this.priceWithoutTax = pricePlanMatrixLine.getValue();
+		this.value = pricePlanMatrixLine.getValue();
 		this.description = pricePlanMatrixLine.getDescription();
 		this.priority = pricePlanMatrixLine.getPriority();
-		this.priceEL = pricePlanMatrixLine.getPriceEL();
+		this.priceEL = pricePlanMatrixLine.getValueEL();
 		this.pricePlanMatrixCode = pricePlanMatrixLine.getPricePlanMatrixVersion().getPricePlanMatrix().getCode();
 		this.pricePlanMatrixVersion = pricePlanMatrixLine.getPricePlanMatrixVersion().getCurrentVersion();
 		pricePlanMatrixValues = pricePlanMatrixLine.getPricePlanMatrixValues()
@@ -82,11 +86,11 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 	}
 
 
-
+	@Deprecated
 	public BigDecimal getPriceWithoutTax() {
 		return priceWithoutTax;
 	}
-
+	@Deprecated
 	public void setPriceWithoutTax(BigDecimal priceWithoutTax) {
 		this.priceWithoutTax = priceWithoutTax;
 	}
@@ -143,6 +147,13 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 
     public void setPriceEL(String priceEL) {
         this.priceEL = priceEL;
-    }    
-	
+    }
+
+	public BigDecimal getValue() {
+		return value;
+	}
+
+	public void setValue(BigDecimal value) {
+		this.value = value;
+	}
 }

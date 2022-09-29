@@ -24,7 +24,7 @@ public class FinanceSettings extends BusinessEntity {
 
     @Type(type = "numeric_boolean")
     @Column(name = "use_security_deposit")
-    private boolean useSecurityDeposit = false;
+    private boolean useSecurityDeposit = true;
 
     @Column(name = "max_amount_security_deposit", precision = NB_PRECISION, scale = NB_DECIMALS)
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)

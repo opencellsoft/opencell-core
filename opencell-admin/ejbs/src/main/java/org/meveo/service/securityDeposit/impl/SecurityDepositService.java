@@ -245,6 +245,14 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
                 .getResultList();
     }
 
+    public Optional<SecurityDeposit> getSecurityDepositByInvoiceId(Long invoiceId) {
+        List<SecurityDeposit> resultList = getEntityManager()
+                .createNamedQuery("SecurityDeposit.securityDepositsByInvoiceId", SecurityDeposit.class)
+                .setParameter("invoiceId", invoiceId)
+                .getResultList();
+		return !resultList.isEmpty() ? Optional.ofNullable(resultList.get(0)) : Optional.empty();
+    }
+
     public List<SecurityDeposit> checkPeriod(List<Long> securityDeposits) {
         List<SecurityDeposit> securityDepositsToRefund = new ArrayList<SecurityDeposit>();
         for (Long securityDepositId : securityDeposits) {

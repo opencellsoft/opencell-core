@@ -19,6 +19,7 @@ package org.meveo.service.billing.impl;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
+import static java.math.RoundingMode.*;
 import static java.util.Arrays.asList;
 import static java.util.Set.of;
 import static java.util.stream.Collectors.toList;
@@ -122,45 +123,7 @@ import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.Amounts;
-import org.meveo.model.billing.ApplyMinimumModeEnum;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.BillingEntityTypeEnum;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.CategoryInvoiceAgregate;
-import org.meveo.model.billing.DiscountPlanInstance;
-import org.meveo.model.billing.DiscountPlanInstanceStatusEnum;
-import org.meveo.model.billing.IInvoiceable;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceAgregate;
-import org.meveo.model.billing.InvoiceCategory;
-import org.meveo.model.billing.InvoiceLine;
-import org.meveo.model.billing.InvoiceLineStatusEnum;
-import org.meveo.model.billing.InvoiceLineTaxModeEnum;
-import org.meveo.model.billing.InvoiceLinesGroup;
-import org.meveo.model.billing.InvoiceModeEnum;
-import org.meveo.model.billing.InvoicePaymentStatusEnum;
-import org.meveo.model.billing.InvoiceProcessTypeEnum;
-import org.meveo.model.billing.InvoiceStatusEnum;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.InvoiceTypeSellerSequence;
-import org.meveo.model.billing.InvoiceValidationStatusEnum;
-import org.meveo.model.billing.MinAmountForAccounts;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.RatedTransactionGroup;
-import org.meveo.model.billing.RatedTransactionStatusEnum;
-import org.meveo.model.billing.ReferenceDateEnum;
-import org.meveo.model.billing.SubCategoryInvoiceAgregate;
-import org.meveo.model.billing.SubcategoryInvoiceAgregateAmount;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.TaxInvoiceAgregate;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletInstance;
-import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
@@ -393,7 +356,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * map used to store temporary jasper report.
      */
-    private Map<String, JasperReport> jasperReportMap = new HashMap<>();
+    private static Map<String, JasperReport> jasperReportMap = new HashMap<>();
 
     /**
      * Description translation map.
@@ -1542,17 +1505,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             log.debug("Jasper template used: {}", jasperFile.getCanonicalPath());
 
             reportTemplate = StorageFactory.getInputStream(jasperFile);
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            Document xmlDocument = StorageFactory.parse(db, invoiceXmlFile);
-            xmlDocument.getDocumentElement().normalize();
-            Node invoiceNode = xmlDocument.getElementsByTagName(INVOICE_TAG_NAME).item(0);
-            Transformer trans = TransformerFactory.newInstance().newTransformer();
-            trans.setOutputProperty(OutputKeys.INDENT, "yes");
-            StringWriter writer = new StringWriter();
-            trans.transform(new DOMSource(xmlDocument), new StreamResult(writer));
 
-            JRXmlDataSource dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes(StandardCharsets.UTF_8)), "/invoice");
+            JRXmlDataSource dataSource = new JRXmlDataSource(invoiceXmlFile);
 
             String fileKey = jasperFile.getPath() + jasperFile.lastModified();
             JasperReport jasperReport = jasperReportMap.get(fileKey);
@@ -1579,7 +1533,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             log.info("PDF file '{}' produced for invoice {}", pdfFullFilename, invoice.getInvoiceNumberOrTemporaryNumber());
 
-        } catch (IOException | JRException | TransformerException | ParserConfigurationException e) {
+        } catch (IOException | JRException e) {
             throw new BusinessException("Failed to generate a PDF file for " + pdfFilename, e);
         } catch(Throwable e) {
             throw new BusinessException("Failed to generate a PDF file for " + pdfFilename, e);
@@ -6230,6 +6184,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         if (input.getInvoiceDate() != null) {
             toUpdate.setInvoiceDate(input.getInvoiceDate());
+
+            BigDecimal currentRate = null;
+            if (toUpdate.getTradingCurrency() != null) {
+                ExchangeRate exchangeRate = toUpdate.getTradingCurrency().getExchangeRate(input.getInvoiceDate());
+                if (exchangeRate != null) {
+                    currentRate = exchangeRate.getExchangeRate();
+                }
+            }
+            BigDecimal lastAppliedRate = currentRate != null ? currentRate : ONE;
+
+            toUpdate.setLastAppliedRate(lastAppliedRate);
+            toUpdate.setLastAppliedRateDate(new Date());
+
+            refreshInvoiceLineAndAggregateAmounts(toUpdate);
         }
 
         //if the dueDate == null, it will be calculated at the level of the method invoiceService.calculateInvoice(updateInvoice)
@@ -6568,4 +6536,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return fileName;
     }
 
+    /**
+     * Clear cached Jasper reports
+     */
+    public static void clearJasperReportCache() {
+        jasperReportMap.clear();
+    }
 }

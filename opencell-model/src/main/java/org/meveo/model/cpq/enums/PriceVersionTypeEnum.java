@@ -1,9 +1,5 @@
 package org.meveo.model.cpq.enums;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
-
 /**
  * 
  * @author Khalid HORRI.
@@ -17,7 +13,7 @@ public enum PriceVersionTypeEnum {
 	/**
 	 * A discount percentage.
 	 */
-	POURCENTAGE("POURCENTAGE");
+	PERCENTAGE("PERCENTAGE");
 
 
 	private PriceVersionTypeEnum(String value) {

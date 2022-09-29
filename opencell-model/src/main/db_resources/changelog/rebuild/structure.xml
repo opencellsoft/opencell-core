@@ -1834,7 +1834,6 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="adm_role_pkey" />
             </column>
             <column name="version" type="int4" />
-            <column name="role_description" type="varchar(255)" />
             <column name="role_name" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
@@ -1892,20 +1891,13 @@
                 <constraints nullable="false" />
             </column>
             <column name="updated" type="datetime" />
-            <column name="email" type="varchar(100)" />
-            <column name="firstname" type="varchar(100)" />
-            <column name="lastname" type="varchar(100)" />
             <column name="username" type="varchar(50)" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="title_id" type="bigint" />
-            <column name="hierarchy_level_id" type="bigint" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="last_login_date" type="datetime" />
-            <column name="crm_address_book_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-144">
@@ -4307,6 +4299,7 @@
             <column name="offer_template_id" type="bigint"/>
             <column name="is_model" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="offer_model_id" type="bigint"/>
+            <column name="generate_quote_edr_per_product" type="${type.boolean}" defaultValueNumeric="0"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-217">
@@ -4703,7 +4696,6 @@
             <column name="reference" type="varchar(80)" />
             <column name="comment" type="varchar(2000)" />
             <column name="entreprise" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="contact_category_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-233">
@@ -5275,7 +5267,10 @@
                 <constraints nullable="false" />
             </column>
             <column name="default_starting_date_of_plan" type="varchar(255)" />
-             <column name="activate_cascading_discounts" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="activate_cascading_discounts" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="rgaa_message" type="varchar(500)" >
+                <constraints nullable="true"/>
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-250">
@@ -9387,7 +9382,7 @@
             <column name="price_plan_id" type="bigint" />
             <column name="charge_template_id" type="bigint" />
             <column name="service_template_id" type="bigint" />
-            <column name="rate" type="int4" />
+            <column name="rate" type="${type.float}" />
             <column name="amount_without_tax" type="numeric(23, 12)" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
                 <constraints nullable="false" unique="true"/>
@@ -10718,7 +10713,7 @@
 
             <column name="ppm_version_id" type="bigint" />
             <column name="priority" type="int4" defaultValueNumeric="0"/>
-			<column name="price_el" type="varchar(255)" />
+			<column name="value_el" type="varchar(255)" />
             <column name="description" type="varchar(255)"/>
             <column name="value" type="numeric(23, 12)" />
         </createTable>
@@ -11648,7 +11643,7 @@
                 <constraints nullable="true" />
             </column>
             <column name="description" type="varchar(255)" />
-            <column name="use_security_deposit" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="use_security_deposit" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="max_amount_security_deposit" type="numeric(23, 12)"  />
             <column name="max_amount_consumer" type="numeric(23, 12)"  />
             <column name="auto_refund" type="${type.boolean}" defaultValueNumeric="0" />
@@ -11718,6 +11713,7 @@
             <column name="service_instance_id" type="bigint"/>
 			<column name="refund_reason" type="varchar(255)"/>
 			<column name="cancel_reason" type="varchar(255)"/>
+			<column name="sd_invoice_id" type="bigint"/>
 		</createTable>
 
 		<createTable tableName="security_deposit_transaction">
@@ -12952,10 +12948,6 @@
         <addForeignKeyConstraint baseColumnNames="billing_account_id" baseTableName="billing_counter" constraintName="fk_f3e8vebhfnmyikf3xwui2eqn5" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-724">
-        <addForeignKeyConstraint baseColumnNames="title_id" baseTableName="adm_user" constraintName="fk_f3ptnqm19vwtactrn9asu7kex" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-726">
         <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="rating_edr" constraintName="fk_f5tulmo519cm4il45bhborgq1" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
@@ -13630,10 +13622,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1130">
         <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="hierarchy_entity" constraintName="fk_hierarchy_entity_hierarchy_entity" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="hierarchy_entity" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1131">
-        <addForeignKeyConstraint baseColumnNames="hierarchy_level_id" baseTableName="adm_user" constraintName="fk_hierarchy_level_adm_user_hierarchy_entity" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="hierarchy_entity" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1135">
         <addForeignKeyConstraint baseColumnNames="transition_id" baseTableName="wf_transition_decision_rule" constraintName="fk_transition_id_wf_transition" deferrable="false" initiallyDeferred="false"
@@ -16232,6 +16220,12 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
 
     </changeSet>
+    
+    <changeSet id="#INTRD-9946_20220920-rebuild-str-fk" author="HichamHANINE">
+		<addForeignKeyConstraint baseColumnNames="sd_invoice_id" baseTableName="security_deposit" constraintName="fk_security_deposit_invoice"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
+    </changeSet>
 
     <changeSet id="#INTRD-4654_20220203-rebuild-str-fk" author="HanineHicham">
 		<addForeignKeyConstraint baseColumnNames="security_deposit_id" baseTableName="security_deposit_transaction"
@@ -16577,7 +16571,6 @@
        <sql>CREATE INDEX cat_serv_sub_wallet_template_srvsubtmp_index ON ${db.schema.adapted} cat_serv_sub_wallet_template(Service_sub_templt_id);</sql>
         <sql>CREATE INDEX billing_wallet_ua_index ON ${db.schema.adapted} billing_wallet (user_account_id);</sql>
         <sql>CREATE INDEX cat_ofr_srv_tmpl_ofrtmpl_id_index ON ${db.schema.adapted}cat_offer_serv_templates(offer_template_id);</sql>
-        <sql>CREATE INDEX adm_user_title_index ON ${db.schema.adapted}adm_user(title_id);</sql>
         <sql>CREATE INDEX cat_chrg_edr_chtmpl_index ON ${db.schema.adapted}cat_chrg_edr(charge_tmpl_id);</sql>
         <sql>CREATE INDEX cat_chrg_edr_trigg_edr_index ON ${db.schema.adapted}cat_chrg_edr(trigg_edr_id);</sql>
         <sql>CREATE INDEX cat_price_plan_event_c_index ON ${db.schema.adapted}cat_price_plan_matrix(event_code)</sql>
@@ -17321,7 +17314,7 @@
 		
 		<addForeignKeyConstraint constraintName="price_plan_matrix_line_fk" 
 								 referencedTableName="cpq_price_plan_matrix_line" 
-								 baseColumnNames="price_plan_matrix_version_id" 
+								 baseColumnNames="price_plan_matrix_line_id" 
 								 baseTableName="billing_wallet_operation" 
 								 referencedColumnNames="id"/>
 		
@@ -17353,14 +17346,33 @@
             </column>
             <column name="cf_values" type="${type.json}" />
         </createTable>
-        <addUniqueConstraint columnNames="code" constraintName="uk_com_contact_category_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="com_contact_category" />
+    </changeSet>
 
-        <addForeignKeyConstraint constraintName="contact_ contact_category_id_fk"
+    <changeSet id="#INTRD-9854-20220915-contact-category-many-to-many" author="a.rouaguebe">
+    	<createTable tableName="com_contact_category_contact">
+            <column name="contact_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="contact_category_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+    	</createTable>
+
+    	<addUniqueConstraint columnNames="contact_id,contact_category_id" constraintName="com_contact_category_contact_pk" tableName="com_contact_category_contact" />
+
+        <addForeignKeyConstraint constraintName="contact_category_id_fk"
                                  baseColumnNames="contact_category_id"
-                                 baseTableName="com_contact"
+                                 baseTableName="com_contact_category_contact"
                                  referencedTableName="com_contact_category"
                                  referencedColumnNames="id" />
+
+		<addForeignKeyConstraint constraintName="contact_id_fk"
+                                 baseColumnNames="contact_id"
+                                 baseTableName="com_contact_category_contact"
+                                 referencedTableName="com_contact"
+                                 referencedColumnNames="id" />
     </changeSet>
+
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
@@ -18440,7 +18452,6 @@
 	<changeSet id="#INTRD-5846-24032022" author="TarikRabeh" />
     <changeSet id="#INTRD-5994-20220328" author="HichamELHALOUI" />
     <changeSet id="#INTRD-5908-20220330" author="AmineBENAICHA" />
-    <changeSet id="#20220326_M540_178" author="Mbarek-Ay"/>
     <changeSet id="#INTRD-6160-20220401" author="HichamELHALOUI" />
     <changeSet id="#INTRD-6136-20220406" author="HatimOUDAD" />
     <changeSet id="#INTRD-6298_20220405" author="aelmalki" />
@@ -18590,6 +18601,13 @@
 	<changeSet id="#INTRD-9581_20200907" author="TarikFA." />
 	<changeSet id="INTRD-9535-20220908" author="Abdelkader.bouazza" />
     <changeSet id="#INTRD-9684-20220909" author="khalidHORRI"/>
+	<changeSet id="#INTRD-9786-20220915" author="HichamHANINE"/>
+    <changeSet id="#INTRD-9804-20220915" author="khalidHORRI"/>
+	<changeSet id="#INTRD-9871_20220919" author="TarikFA." />
+	<changeSet id="#INTRD-9839_20220919" author="TarikRabeh" />
+	<changeSet id="#INTRD-9946_20220920" author="HichamHANINE" />
+    <changeSet id="#INTRD-10097_202000926" author="TarikFA." />
+    <changeSet id="#INTRD-10188_20220928" author="MehdiBOURRAS"/>
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

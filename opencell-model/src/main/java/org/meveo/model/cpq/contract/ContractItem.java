@@ -15,6 +15,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
+import javax.validation.constraints.PositiveOrZero;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -94,7 +95,7 @@ public class ContractItem extends EnableBusinessCFEntity {
 	 * rate 
 	 */
 	@Column(name = "rate")
-	private int rate;
+	private Double rate;
 	
 
     /**
@@ -211,7 +212,7 @@ public class ContractItem extends EnableBusinessCFEntity {
 	/**
 	 * @return the rate
 	 */
-	public int getRate() {
+	public Double getRate() {
 		return rate;
 	}
 
@@ -219,7 +220,7 @@ public class ContractItem extends EnableBusinessCFEntity {
 	/**
 	 * @param rate the rate to set
 	 */
-	public void setRate(int rate) {
+	public void setRate(Double rate) {
 		this.rate = rate;
 	}
 
