@@ -24,7 +24,6 @@ import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.NotFoundException;
 
-import com.vladmihalcea.hibernate.query.SQLExtractor;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.hibernate.collection.internal.PersistentBag;
 import org.hibernate.collection.internal.PersistentSet;
