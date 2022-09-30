@@ -4068,6 +4068,7 @@
             <column name="offer_template_id" type="bigint"/>
             <column name="is_model" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="offer_model_id" type="bigint"/>
+            <column name="generate_quote_edr_per_product" type="${type.boolean}" defaultValueNumeric="0"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-217">
@@ -16027,6 +16028,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#20220519_M540_7341" author="Mbarek-Ay"/>
     <changeSet id="#INTRD-6364_20220519" author="aelmalki" />
 	<changeSet id="#INTRD-9232_20220819" author="aelmalki" />
+	<changeSet id="#INTRD-10097_202000926" author="TarikFA." />
     
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

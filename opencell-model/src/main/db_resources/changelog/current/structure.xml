@@ -9604,4 +9604,11 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
     </changeSet>
     
+    
+    <changeSet id="#INTRD-10097_202000926" author="TarikFA.">
+    	<addColumn tableName="cat_offer_template">
+            <column name="generate_quote_edr_per_product" type="${type.boolean}" defaultValueNumeric="0"/>
+    	</addColumn>
+    </changeSet>
+    
 </databaseChangeLog>
