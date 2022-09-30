@@ -6554,6 +6554,9 @@
 		        <constraints nullable="false" />
 		    </column>
 		    <column name="invoice_validation_script_id" type="bigint"/>
+		    <column name="exclude_from_aged_trial_balance" type="${type.boolean}" defaultValueNumeric="0">
+		    	<constraints nullable="false" />
+		    </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-318">
@@ -18609,6 +18612,7 @@
     <changeSet id="#INTRD-10097_202000926" author="TarikFA." />
     <changeSet id="#INTRD-10188_20220928" author="MehdiBOURRAS"/>
     <changeSet id="#INTRD-10135_28092022" author="Mbarek-Ay"/>
+    <changeSet id="#INTRD-9796_30092022_exclude_aged_balance" author="a.rouaguebe" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
