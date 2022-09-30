@@ -1623,8 +1623,10 @@ public class CpqQuoteApi extends BaseApi {
             
                 offerEligibleFixedDiscountItems.addAll(productEligibleFixedDiscountItems);
             }
-
-            createEDR(edrQuantity, subscription, attributes, walletOperations);
+            if(subscription.getOffer() != null && !subscription.getOffer().isGenerateQuoteEdrPerProduct()) {
+            	createEDR(edrQuantity, subscription, attributes, walletOperations);
+            }
+            
 
 
             var offerFixedDiscountWalletOperation = discountPlanService.calculateDiscountplanItems(new ArrayList<>(offerEligibleFixedDiscountItems), subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), new BigDecimal(1d), null,
