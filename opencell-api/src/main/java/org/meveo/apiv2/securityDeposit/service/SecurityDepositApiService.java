@@ -18,6 +18,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.payments.CustomerAccount;
@@ -26,6 +27,7 @@ import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.service.admin.impl.CurrencyService;
+import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.crm.impl.ProviderService;
@@ -50,7 +52,10 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
 
     @Inject
     private CustomerAccountService customerAccountService;
-
+    
+    @Inject
+    private BillingAccountService billingAccountService;
+    
     @Inject
     private SubscriptionService subscriptionService;
 
@@ -204,6 +209,11 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         if (securityDepositInput.getCustomerAccount() != null) {
             CustomerAccount customerAccount = customerAccountService.tryToFindByCodeOrId(securityDepositInput.getCustomerAccount());
             securityDepositInput.setCustomerAccount(customerAccount);
+        }
+
+        if (securityDepositInput.getBillingAccount() != null) {
+            BillingAccount billingAccount = billingAccountService.tryToFindByCodeOrId(securityDepositInput.getBillingAccount());
+            securityDepositInput.setBillingAccount(billingAccount);
         }
 
         if (securityDepositInput.getSubscription() != null) {

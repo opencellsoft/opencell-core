@@ -8,6 +8,7 @@ import org.meveo.apiv2.securityDeposit.SecurityDepositInput;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.payments.CustomerAccount;
@@ -65,6 +66,12 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
             customerAccount.setId(resource.getCustomerAccount().getId());
             customerAccount.setCode(resource.getCustomerAccount().getCode());
             securityDeposit.setCustomerAccount(customerAccount);
+        }
+        if (resource.getBillingAccount() != null) {
+            BillingAccount billingAccount = new BillingAccount();
+            billingAccount.setId(resource.getBillingAccount().getId());
+            billingAccount.setCode(resource.getBillingAccount().getCode());
+            securityDeposit.setBillingAccount(billingAccount);
         }
         securityDeposit.setValidityDate(resource.getValidityDate());
         securityDeposit.setValidityPeriod(resource.getValidityPeriod());

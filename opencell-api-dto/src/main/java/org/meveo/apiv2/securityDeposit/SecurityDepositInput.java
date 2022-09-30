@@ -30,6 +30,9 @@ public interface SecurityDepositInput extends Resource {
     Resource getCurrency();
 
     @NotNull
+    Resource getBillingAccount();
+    
+    @Nullable
     Resource getCustomerAccount();
 
     @Nullable
