@@ -14329,6 +14329,15 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
     
+    <changeSet id="#INTRD-10283_20220930" author="HichamHANINE">
+        <addColumn tableName="security_deposit">
+            <column name="billing_account_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="billing_account_id" baseTableName="security_deposit"
+			constraintName="fk_billing_account_security_deposit" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+    </changeSet>
+    
     <changeSet id="#INTRD-9946_20220920" author="HichamHANINE">
         <addColumn tableName="security_deposit">
             <column name="sd_invoice_id" type="bigint" />

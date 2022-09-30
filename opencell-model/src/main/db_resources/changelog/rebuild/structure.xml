@@ -11717,6 +11717,7 @@
 			<column name="refund_reason" type="varchar(255)"/>
 			<column name="cancel_reason" type="varchar(255)"/>
 			<column name="sd_invoice_id" type="bigint"/>
+			<column name="billing_account_id" type="bigint"/>
 		</createTable>
 
 		<createTable tableName="security_deposit_transaction">
@@ -16224,10 +16225,16 @@
 
     </changeSet>
     
+    <changeSet id="#INTRD-10283_20220930-rebuild-str-fk" author="HichamHANINE">
+    	<addForeignKeyConstraint baseColumnNames="billing_account_id" baseTableName="security_deposit"
+			constraintName="fk_billing_account_security_deposit" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+    </changeSet>
+    
     <changeSet id="#INTRD-9946_20220920-rebuild-str-fk" author="HichamHANINE">
 		<addForeignKeyConstraint baseColumnNames="sd_invoice_id" baseTableName="security_deposit" constraintName="fk_security_deposit_invoice"
-                                 deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
+	        deferrable="false" initiallyDeferred="false"
+	        onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
     </changeSet>
 
     <changeSet id="#INTRD-4654_20220203-rebuild-str-fk" author="HanineHicham">
@@ -18613,6 +18620,7 @@
     <changeSet id="#INTRD-10188_20220928" author="MehdiBOURRAS"/>
     <changeSet id="#INTRD-10135_28092022" author="Mbarek-Ay"/>
     <changeSet id="#INTRD-9796_30092022_exclude_aged_balance" author="a.rouaguebe" />
+	<changeSet id="#INTRD-10283_20220930" author="HichamHANINE" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
