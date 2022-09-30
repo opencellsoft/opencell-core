@@ -97,7 +97,8 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                     if(billingRun.isExceptionalBR() && addExceptionalInvoiceLineIds(billingRun) == 0) {
                         result.setReport("Exceptional Billing filters returning no invoice line to process");
                     }
-                    executeBillingRun(billingRun, jobInstance, result, billingRun.getBillingCycle().getBillingRunValidationScript());
+                    executeBillingRun(billingRun, jobInstance, result,
+                            billingRun.getBillingCycle() != null ? billingRun.getBillingCycle().getBillingRunValidationScript() : null);
                     initAmounts();
                 }
                 result.setNbItemsCorrectlyProcessed(billingRuns.size());
@@ -136,7 +137,8 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         return billingRun.getExceptionalILIds().size();
     }
 
-    private void executeBillingRun(BillingRun billingRun, JobInstance jobInstance, JobExecutionResultImpl result, ScriptInstance billingRunValidationScript) {
+    private void executeBillingRun(BillingRun billingRun, JobInstance jobInstance,
+                                   JobExecutionResultImpl result, ScriptInstance billingRunValidationScript) {
     	boolean prevalidatedAutomaticPrevBRStatus = false;
         if(billingRun.getStatus() == INVOICE_LINES_CREATED
                 && (billingRun.getProcessType() == AUTOMATIC || billingRun.getProcessType() == FULL_AUTOMATIC)) {
@@ -155,7 +157,9 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         if(billingRun.getStatus() == DRAFT_INVOICES && billingRun.getProcessType() == FULL_AUTOMATIC) {
             billingRun.setStatus(POSTVALIDATED);
         }
-        billingRun.getBillingCycle().setBillingRunValidationScript(billingRunValidationScript);
+        if(billingRunValidationScript != null && billingRun.getBillingCycle() != null) {
+            billingRun.getBillingCycle().setBillingRunValidationScript(billingRunValidationScript);
+        }
         if(!billingRunService.isBillingRunValid(billingRun)) {
             billingRun.setStatus(REJECTED);
         }
