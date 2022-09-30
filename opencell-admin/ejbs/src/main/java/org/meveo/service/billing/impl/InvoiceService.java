@@ -1343,6 +1343,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         }
                     }
                 }
+                update(invoice);
+                commit();
             }
         }
     }
