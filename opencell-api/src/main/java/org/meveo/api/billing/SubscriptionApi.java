@@ -428,7 +428,7 @@ public class SubscriptionApi extends BaseApi {
 
         handleMissingParametersAndValidate(postData);
 
-        Subscription subscription = Optional.of(postData.getId())
+        Subscription subscription = Optional.ofNullable(postData.getId())
 				.map(id -> subscriptionService.findById(id))
 				.orElse(subscriptionService.findByCodeAndValidityDate(postData.getCode(), postData.getValidityDate()));
         if (subscription == null) {
