@@ -14419,6 +14419,14 @@ order by date_trunc('month', i.invoice_date) DESC
                                  
 		<addColumn tableName="billing_invoice">
             <column name= "invoice_balance" type="numeric(23, 12)" />
+        </addColumn>
+	</changeSet>
+
+	<changeSet id="#INTRD-9796_30092022_exclude_aged_balance" author="a.rouaguebe">
+		<addColumn tableName="billing_invoice_type">
+			<column name="exclude_from_aged_trial_balance" type="${type.boolean}" defaultValueNumeric="0">
+		    	<constraints nullable="false" />
+			</column>
 		</addColumn>
 	</changeSet>
 
