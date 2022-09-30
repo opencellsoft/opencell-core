@@ -646,7 +646,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		} else {
             invoiceLine.setAmountWithoutTax(invoiceLine.getUnitPrice().multiply(resource.getQuantity()));
             invoiceLine.setAmountWithTax(NumberUtils.computeTax(invoiceLine.getAmountWithoutTax(),
-                    invoiceLine.getTaxRate(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()));
+                    invoiceLine.getTaxRate(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()).add(invoiceLine.getAmountWithoutTax()));
         }
 
 		if(resource.getServiceInstanceCode()!=null) {

@@ -1375,7 +1375,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         MeveoUser lastCurrentUser = currentUser.unProxy();
         while (subListCreator.isHasNext()) {
             asyncReturns.add(createAggregatesAndInvoiceAsyncWithIL(subListCreator.getNextWorkSet(),
-                    billingRun, jobInstanceId, null, lastCurrentUser, billingRun.isSkipValidationScript()));
+                    billingRun, jobInstanceId, null, lastCurrentUser, !billingRun.isSkipValidationScript()));
             try {
                 Thread.sleep(waitingMillis);
             } catch (InterruptedException e) {
