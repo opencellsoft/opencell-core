@@ -35,6 +35,8 @@ import org.meveo.api.dto.SequenceDto;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class InvoiceTypeDto.
  *
@@ -113,6 +115,12 @@ public class InvoiceTypeDto extends BusinessEntityDto {
     private String emailTemplateCode;
 
     /**
+     * Exclude this invoiceType from Aged Balance
+     */
+    @Schema(description = "Exclude from Aged Trial Balance")
+    private Boolean excludeFromAgedTrialBalance;
+
+    /**
      * Instantiates a new invoice type dto.
      */
     public InvoiceTypeDto() {
@@ -149,6 +157,7 @@ public class InvoiceTypeDto extends BusinessEntityDto {
         this.emailTemplateCode = invoiceType.getEmailTemplate() != null ? invoiceType.getEmailTemplate().getCode() : null;
         customFields = customFieldInstances;
         this.useSelfSequence = invoiceType.isUseSelfSequence();
+        this.excludeFromAgedTrialBalance = invoiceType.isExcludeFromAgedTrialBalance();
     }
 
     /**
@@ -450,5 +459,23 @@ public class InvoiceTypeDto extends BusinessEntityDto {
 	 */
 	public void setInvoiceValidationScriptCode(String invoiceValidationScriptCode) {
 		this.invoiceValidationScriptCode = invoiceValidationScriptCode;
+	}
+
+	/**
+	 * Gets if this invoiceType is excluded for aged balance
+	 * 
+	 * @return
+	 */
+	public Boolean getExcludeFromAgedTrialBalance() {
+		return excludeFromAgedTrialBalance;
+	}
+
+	/**
+	 * Sets if this invoiceType is excluded for aged balance
+	 * 
+	 * @param excludeFromAgedTrialBalance
+	 */
+	public void setExcludeFromAgedTrialBalance(Boolean excludeFromAgedTrialBalance) {
+		this.excludeFromAgedTrialBalance = excludeFromAgedTrialBalance;
 	}
 }
