@@ -1338,6 +1338,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             invoice.setRejectReason((String) methodContext.get(Script.INVOICE_VALIDATION_REASON));
                         }
                     }
+                    update(invoice);
+                    commit();
                 }
             }
         }
