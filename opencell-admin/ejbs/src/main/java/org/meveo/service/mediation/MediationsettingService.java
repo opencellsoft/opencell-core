@@ -85,6 +85,8 @@ public class MediationsettingService extends PersistenceService<MediationSetting
     	var edrIterate = edrs.iterator();
     	while(edrIterate.hasNext()) {
     		var edr = edrIterate.next();
+    		if(edr.getId() == null)
+    		    edrService.create(edr);
     		var  errorMessage = "Error evaluating %s  [id= %d, \"%s\"] for CDR: [%s] : %s";
         	var edrVersionRuleOption = mediationSettings.get(0).getRules().stream()
 					.sorted(sortByPriority)
@@ -195,7 +197,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
         	}
         	
 		}
-    	return isRated;
+    	return isVirtual;
     	
     }
     
