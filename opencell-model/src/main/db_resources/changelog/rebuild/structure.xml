@@ -2968,6 +2968,7 @@
             <column name="converted_amount_without_tax_before_discount" type="numeric(23, 12)" />
             <column name="payment_plan_id" type="bigint" />
             <column name="open_order_number" type="varchar(255)" />
+            <column name= "invoice_balance" type="numeric(23, 12)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -17375,6 +17376,33 @@
                                  referencedTableName="com_contact"
                                  referencedColumnNames="id" />
     </changeSet>
+    
+    
+	<changeSet id="#INTRD-10163_20220930_build" author="TarikFA.">
+		<createSequence sequenceName="billing_invoice_advance_mapping_seq" startValue="1"/>
+		<createTable tableName="billing_invoice_advance_mapping">
+			 <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="advance_mapping_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name= "advance_invoice_id" type="bigint" />
+            <column name= "invoice_id" type="bigint" />
+            <column name= "amount" type="numeric(23, 12)" />
+		</createTable>
+		
+        <addForeignKeyConstraint baseTableName="billing_invoice_advance_mapping" 
+        						baseColumnNames="advance_invoice_id"
+                                 constraintName="advance_invoice_id_fk"
+                                 referencedTableName="billing_invoice"
+                                 referencedColumnNames="id"/>
+                                 
+        <addForeignKeyConstraint baseTableName="billing_invoice_advance_mapping" 
+        						baseColumnNames="invoice_id"
+                                 constraintName="invoice_id_fk"
+                                 referencedTableName="billing_invoice"
+                                 referencedColumnNames="id"/>
+                                 
+	</changeSet>
 
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
@@ -18612,6 +18640,7 @@
     <changeSet id="#INTRD-10097_202000926" author="TarikFA." />
     <changeSet id="#INTRD-10188_20220928" author="MehdiBOURRAS"/>
     <changeSet id="#INTRD-10135_28092022" author="Mbarek-Ay"/>
+	<changeSet id="#INTRD-10163_20220930" author="TarikFA." />
     <changeSet id="#INTRD-9796_30092022_exclude_aged_balance" author="a.rouaguebe" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
