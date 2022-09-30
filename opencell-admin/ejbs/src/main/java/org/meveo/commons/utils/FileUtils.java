@@ -463,6 +463,9 @@ public final class FileUtils {
             File fileout = null;
             while ((entry = zis.getNextEntry()) != null) {
                 fileout = new File(folder + File.separator + entry.getName());
+                if (!fileout.getCanonicalPath().startsWith(folder)) {
+                    throw new IOException("Entry is outside of the target directory");
+                }
                 if (entry.isDirectory()) {
                     if (!fileout.exists()) {
                         fileout.mkdirs();
