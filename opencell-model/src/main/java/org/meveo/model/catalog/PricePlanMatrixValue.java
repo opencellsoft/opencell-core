@@ -18,11 +18,9 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.ExportIdentifier;
 import org.meveo.model.cpq.AttributeValue;
 
 @Entity
-@ExportIdentifier({ "code" })
 @Table(name = "cpq_price_plan_matrix_value")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_price_plan_matrix_value_sq"), })

@@ -45,8 +45,8 @@ public class OfferComponent extends BaseEntity {
 	@JoinColumn(name = "offer_template_id", nullable = false)
 	@NotNull
 	private OfferTemplate offerTemplate;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
+
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "product_id")
 	private Product product;
 	
