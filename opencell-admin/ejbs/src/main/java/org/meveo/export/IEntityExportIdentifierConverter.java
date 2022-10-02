@@ -230,6 +230,8 @@ public class IEntityExportIdentifierConverter implements Converter {
                     continue;
 
                     // Other attributes are used as found
+                } if(attrName.equals("idEntity")) {
+                    parameters.put("id", attrValue);
                 } else {
                     parameters.put(attrName, attrValue);
                 }
