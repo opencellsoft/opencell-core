@@ -253,7 +253,6 @@ public class EntityExportImportService implements Serializable {
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private void loadExportImportTemplateDefinitions() {
-
         exportImportTemplates = new TreeMap<String, ExportTemplate>();
 
         // Retrieve complex export template definitions from configuration xml file
@@ -266,15 +265,17 @@ public class EntityExportImportService implements Serializable {
         xstream.useAttributeFor(ExportTemplate.class, "name");
         xstream.useAttributeFor(ExportTemplate.class, "entityToExport");
         xstream.useAttributeFor(ExportTemplate.class, "canDeleteAfterExport");
-
-        xstream.setMode(XStream.NO_REFERENCES);
-        xstream.allowTypes(new Class[] {
-                java.util.List.class,
-                org.meveo.export.ExportTemplate.class,
-                org.meveo.export.RelatedEntityToExport.class
+        xstream.allowTypesByWildcard(new String[] {
+                "org.meveo.export.**",
+                "org.meveo.model.**"
         });
+        List<ExportTemplate> templatesFromXml = null;
 
-        List<ExportTemplate> templatesFromXml = (List<ExportTemplate>) xstream.fromXML(this.getClass().getClassLoader().getResourceAsStream("exportImportTemplates.xml"));
+        try {
+            templatesFromXml = (List<ExportTemplate>) xstream.fromXML(this.getClass().getClassLoader().getResourceAsStream("exportImportTemplates.xml"));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
 
         for (ExportTemplate exportTemplate : templatesFromXml) {
             supplementExportTemplateWithAutomaticInfo(exportTemplate);
@@ -291,7 +292,6 @@ public class EntityExportImportService implements Serializable {
         Set<Class<? extends IEntity>> classes = reflections.getSubTypesOf(IEntity.class);
 
         for (Class clazz : classes) {
-
             // Do not overwrite previously loaded definitions from configuration file.
             if (!clazz.isAnnotationPresent(Entity.class) || !IEntity.class.isAssignableFrom(clazz) || exportImportTemplates.containsKey(clazz.getSimpleName())) {
                 continue;
@@ -314,12 +314,9 @@ public class EntityExportImportService implements Serializable {
             }
 
             ExportTemplate exportTemplate = new ExportTemplate();
-
             exportTemplate.setName(clazz.getSimpleName());
             exportTemplate.setEntityToExport(clazz);
-
             supplementExportTemplateWithAutomaticInfo(exportTemplate);
-
             exportImportTemplates.put(exportTemplate.getName(), exportTemplate);
         }
 
@@ -337,12 +334,11 @@ public class EntityExportImportService implements Serializable {
 
     /**
      * Add information that can be deducted automatically from a class to be exported
-     * 
+     *
      * @param exportTemplate Export template to supplement with information
      */
     @SuppressWarnings("rawtypes")
     private void supplementExportTemplateWithAutomaticInfo(ExportTemplate exportTemplate) {
-
         // Skip if it is a grouped template, as it holds references to templates defined separatelly
         Class clazz = exportTemplate.getEntityToExport();
         if (clazz == null) {
@@ -363,12 +359,12 @@ public class EntityExportImportService implements Serializable {
 
     /**
      * Recursively replace references to other templates
-     * 
+     *
      * @param exportTemplate Contains the templates that will be exported.
      */
     private void replaceReferencesToTemplates(ExportTemplate exportTemplate) {
-
         List<ExportTemplate> groupedTemplates = exportTemplate.getGroupedTemplates();
+
         for (int i = groupedTemplates.size() - 1; i >= 0; i--) {
             ExportTemplate groupedTemplate = groupedTemplates.get(i);
             if (groupedTemplate.getRef() != null) {
@@ -377,7 +373,9 @@ public class EntityExportImportService implements Serializable {
                     log.error("Not found reference to {} export/import template", groupedTemplate.getRef());
                     continue;
                 }
+
                 groupedTemplates.remove(i);
+
                 if (templateReferenced.isGroupedTemplate()) {
                     replaceReferencesToTemplates(templateReferenced);
                     groupedTemplates.addAll(i, templateReferenced.getGroupedTemplates());
@@ -390,7 +388,7 @@ public class EntityExportImportService implements Serializable {
 
     /**
      * Obtain entity manager for import operations in case want to import to another DB
-     * 
+     *
      * @return
      */
     private EntityManager getEntityManagerForImport() {
@@ -403,7 +401,7 @@ public class EntityExportImportService implements Serializable {
 
     /**
      * Export entities matching given export templates
-     * 
+     *
      * @param exportTemplates A list of export templates
      * @param parameters Entity export (select) criteria
      * @return Export statistics
@@ -412,16 +410,18 @@ public class EntityExportImportService implements Serializable {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public Future<ExportImportStatistics> exportEntities(Collection<ExportTemplate> exportTemplates, Map<String, Object> parameters) {
         ExportImportStatistics exportStats = new ExportImportStatistics();
+
         for (ExportTemplate exportTemplate : exportTemplates) {
             ExportImportStatistics exportStatsSingle = exportEntitiesInternal(exportTemplate, parameters, null, null);
             exportStats.mergeStatistics(exportStatsSingle);
         }
+
         return new AsyncResult<>(exportStats);
     }
 
     /**
      * Export entities matching a given export template
-     * 
+     *
      * @param exportTemplate Export template
      * @param parameters Entity export (select) criteria
      * @param dataModelToExport Entities to export that are already filtered in a data model. Supports export of non-grouped export templates only. dataModelToExport and
@@ -432,17 +432,14 @@ public class EntityExportImportService implements Serializable {
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public Future<ExportImportStatistics> exportEntities(ExportTemplate exportTemplate, Map<String, Object> parameters,
-                                                         DataModel<? extends IEntity> dataModelToExport,
-            List<? extends IEntity> selectedEntitiesToExport) {
-
+                                                         DataModel<? extends IEntity> dataModelToExport, List<? extends IEntity> selectedEntitiesToExport) {
         ExportImportStatistics exportStats = exportEntitiesInternal(exportTemplate, parameters, dataModelToExport, selectedEntitiesToExport);
-
         return new AsyncResult<>(exportStats);
     }
 
     /**
      * Export entities matching a given export template.
-     * 
+     *
      * @param exportTemplate Export template
      * @param parameters Entity export (select) criteria
      * @param dataModelToExport Entities to export that are already filtered in a data model. Supports export of non-grouped export templates only. dataModelToExport and
@@ -528,7 +525,6 @@ public class EntityExportImportService implements Serializable {
                 String remoteExecutionId = uploadFileToRemoteMeveoInstance(filename, (MeveoInstance) parameters.get(EXPORT_PARAM_REMOTE_INSTANCE));
                 exportStats.setRemoteImportExecutionId(remoteExecutionId);
             }
-
         } catch (RemoteAuthenticationException e) {
             log.error("Failed to authenticate to a remote Meveo instance {}: {}", ((MeveoInstance) parameters.get(EXPORT_PARAM_REMOTE_INSTANCE)).getCode(), e.getMessage());
             exportStats.setErrorMessageKey("export.remoteImportFailedAuth");
@@ -566,14 +562,13 @@ public class EntityExportImportService implements Serializable {
 
     /**
      * Remove entities after an export.
-     * 
+     *
      * @param exportStats Export statistics, including entities to remove
      */
     @JpaAmpNewTx
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void removeEntitiesAfterExport(ExportImportStatistics exportStats) {
-
         EntityManager emForRemove = getEntityManager();
 
         for (Entry<Class, List<Long>> removeInfo : exportStats.getEntitiesToRemove().entrySet()) {
@@ -588,13 +583,13 @@ public class EntityExportImportService implements Serializable {
                 }
             }
         }
-        exportStats.getEntitiesToRemove().clear();
 
+        exportStats.getEntitiesToRemove().clear();
     }
 
     /**
      * Export entities matching a given export template.
-     * 
+     *
      * @param exportTemplate Export template
      * @param parameters Entity export (select) criteria
      * @param dataModelToExport Entities to export that are already filtered in a data model. Supports export of non-grouped export templates only. dataModelToExport and
@@ -607,10 +602,6 @@ public class EntityExportImportService implements Serializable {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void serializeEntities(ExportTemplate exportTemplate, Map<String, Object> parameters, DataModel<? extends IEntity> dataModelToExport,
             List<? extends IEntity> selectedEntitiesToExport, ExportImportStatistics exportStats, HierarchicalStreamWriter writer) {
-
-        log.info("Serializing entities from export template {} and data model {} or selected entities {}", exportTemplate.getName(), dataModelToExport != null,
-            (selectedEntitiesToExport != null && !selectedEntitiesToExport.isEmpty()));
-
         // Get entities to export including related entities grouped by a template name
         RetrievedEntities retrievedEntities = getEntitiesToExport(exportTemplate, parameters, dataModelToExport, selectedEntitiesToExport, 0, PAGE_SIZE);
         if (retrievedEntities.isEmpty()) {
@@ -636,7 +627,6 @@ public class EntityExportImportService implements Serializable {
 
         // Serialize entities to XML
         while (!principalEntities.isEmpty()) {
-
             // Start a new "data" node every EXPORT_PAGE_SIZE pages of export. If found also export related entities every EXPORT_PAGE_SIZE pages of export
             if (pagesProcessedByXstream == -1 || pagesProcessedByXstream >= EXPORT_PAGE_SIZE) {
 
@@ -651,9 +641,7 @@ public class EntityExportImportService implements Serializable {
                 xstream.useAttributeFor(ExportTemplate.class, "name");
                 xstream.useAttributeFor(ExportTemplate.class, "entityToExport");
                 xstream.useAttributeFor(ExportTemplate.class, "canDeleteAfterExport");
-
                 omitXstreamFields(xstream);
-
                 // Add custom converters
                 xstream.registerConverter(new IEntityHibernateProxyConverter(exportImportConfig), XStream.PRIORITY_VERY_HIGH);
                 xstream.registerConverter(new IEntityExportIdentifierConverter(exportImportConfig), XStream.PRIORITY_NORMAL);
@@ -663,20 +651,19 @@ public class EntityExportImportService implements Serializable {
                 xstream.registerConverter(new HibernatePersistentSortedSetConverter(xstream.getMapper()));
                 xstream.registerConverter(new IEntityClassConverter(xstream.getMapper(), xstream.getReflectionProvider(), true, null), XStream.PRIORITY_LOW);
                 xstream.registerConverter(new DefaultStatusConverter(xstream.getMapper(), xstream.getReflectionProvider()));
-
                 xstream.processAnnotations(ScriptInstance.class);
                 // Indicate XStream to omit certain attributes except ones matching the classes to be exported fully (except the root class)
                 applyAttributesToOmit(xstream, exportTemplate.getClassesToExportAsFull());
-
                 // Indicate marshaling strategy to use - maintains references even when marshaling one object at a time
                 xstream.setMarshallingStrategy(new ReusingReferenceByIdMarshallingStrategy());
-                xstream.aliasSystemAttribute(REFERENCE_ID_ATTRIBUTE, "code");
+                //xstream.aliasSystemAttribute(REFERENCE_ID_ATTRIBUTE, "id");
 
                 if (pagesProcessedByXstream > -1) {
                     writer.endNode();
                     writer.flush();
                     log.trace("Serialized {} records from export template {}", totalEntityCount, exportTemplate.getName());
                 }
+
                 // Write out an export template node at the start of serialization or every EXPORT_PAGE_SIZE pages of export
                 if (pagesProcessedByXstream == -1 || (pagesProcessedByXstream > -1 && !relatedEntitiesByTemplate.isEmpty())) { // by removing pagesProcessedByXstream > -1, related
                                                                                                                                // entities will be exported first on the first page
@@ -698,16 +685,20 @@ public class EntityExportImportService implements Serializable {
 
                 xstream.marshal(entity, writer);
             }
+
             exportStats.updateSummary(exportTemplate.getEntityToExport(), principalEntities.size());
+
             if (parameters.containsKey(EXPORT_PARAM_DELETE) && (Boolean) parameters.get(EXPORT_PARAM_DELETE)) {
                 exportStats.trackEntitiesToDelete(principalEntities);
             }
+
             totalEntityCount += principalEntities.size();
 
             // Exit if less records than a page size were found in last iteration
             if (principalEntities.size() < PAGE_SIZE) {
                 break;
             }
+
             writer.flush();
 
             // Retrieve a new page with related entities and add related entities to the existing related entities map, so they can be serialized together
@@ -718,6 +709,7 @@ public class EntityExportImportService implements Serializable {
                 principalEntities = retrievedEntities.principalEntities;
                 retrievedEntities.copyRelatedEntitiesToMap(relatedEntitiesByTemplate);
             }
+
             from += PAGE_SIZE;
             pagesProcessedByXstream++;
         }
@@ -753,7 +745,7 @@ public class EntityExportImportService implements Serializable {
 
     /**
      * Import entities from xml stream.
-     * 
+     *
      * @param fileToImport File contains a template that was used to export data and serialized data. Can be in a ziped or unzipped format
      * @param filename A name of a file being imported
      * @param preserveId Should Ids of entities be preserved when importing instead of using sequence values for ID generation (DOES NOT WORK)
@@ -765,13 +757,12 @@ public class EntityExportImportService implements Serializable {
     @SuppressWarnings({ "deprecation" })
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public Future<ExportImportStatistics> importEntities(File fileToImport, String filename, boolean preserveId, boolean preserveCode, boolean ignoreNotFoundFK, Provider forceToProvider, boolean checkForStatus) {
-
         forceToProvider = appProvider;
         log.info("Importing file {} and forcing to provider {}", filename, forceToProvider);
         ExportImportStatistics importStatsTotal = new ExportImportStatistics();
         HierarchicalStreamReader reader = null;
-        try {
 
+        try {
             @SuppressWarnings("resource")
             InputStream inputStream = new FileInputStream(fileToImport);
 
@@ -823,13 +814,18 @@ public class EntityExportImportService implements Serializable {
             xstream.useAttributeFor(ExportTemplate.class, "name");
             xstream.useAttributeFor(ExportTemplate.class, "entityToExport");
             xstream.useAttributeFor(ExportTemplate.class, "canDeleteAfterExport");
+            xstream.allowTypesByWildcard(new String[] {
+                    "org.meveo.export.**",
+                    "org.meveo.model.**"
+            });
             ExportTemplate importTemplate = null;
+
             while (reader.hasMoreChildren()) {
                 reader.moveDown();
                 String nodeName = reader.getNodeName();
+
                 if (nodeName.equals("exportTemplate")) {
                     importTemplate = (ExportTemplate) xstream.unmarshal(reader);
-
                 } else if (nodeName.equals("data")) {
                     try {
                         ExportImportStatistics importStats = entityExportImportService.importEntities(importTemplate, reader, preserveId, preserveCode, ignoreNotFoundFK, forceToProvider, checkForStatus);
@@ -839,19 +835,18 @@ public class EntityExportImportService implements Serializable {
                         break;
                     }
                 }
+
                 reader.moveUp();
             }
 
             reader.close();
             reader = null;
             refreshCaches();
-
             log.info("Finished importing file {} ", filename);
 
         } catch (Exception e) {
             log.error("Failed to import a file {} ", filename, e);
             importStatsTotal.setException(e);
-
         } finally {
             try {
                 if (reader != null) {
@@ -868,13 +863,12 @@ public class EntityExportImportService implements Serializable {
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public ExportImportStatistics importEntitiesSynchronously(File fileToImport, String filename, boolean preserveId, boolean preserveCode, boolean ignoreNotFoundFK, boolean checkForStatus) throws StatusChangeViolationException {
-
         Provider forceToProvider = appProvider;
         log.info("Importing file {} and forcing to provider {}", filename, forceToProvider);
         ExportImportStatistics importStatsTotal = new ExportImportStatistics();
         HierarchicalStreamReader reader = null;
-        try {
 
+        try {
             @SuppressWarnings("resource")
             InputStream inputStream = new FileInputStream(fileToImport);
 
@@ -927,16 +921,16 @@ public class EntityExportImportService implements Serializable {
             xstream.useAttributeFor(ExportTemplate.class, "entityToExport");
             xstream.useAttributeFor(ExportTemplate.class, "canDeleteAfterExport");
             xstream.allowTypesByWildcard(new String[] {
-                "org.meveo.export.**",
-                "org.meveo.model.**"
+                    "org.meveo.export.**",
+                    "org.meveo.model.**"
             });
             ExportTemplate importTemplate = null;
+
             while (reader.hasMoreChildren()) {
                 reader.moveDown();
                 String nodeName = reader.getNodeName();
                 if (nodeName.equals("exportTemplate")) {
                     importTemplate = (ExportTemplate) xstream.unmarshal(reader);
-
                 } else if (nodeName.equals("data")) {
                     try {
                         ExportImportStatistics importStats = entityExportImportService.importEntities(importTemplate, reader, preserveId, preserveCode, ignoreNotFoundFK, forceToProvider, checkForStatus);
@@ -956,11 +950,9 @@ public class EntityExportImportService implements Serializable {
             refreshCaches();
 
             log.info("Finished importing file {} ", filename);
-
         } catch (Exception e) {
             log.error("Failed to import a file {} ", filename, e);
             importStatsTotal.setException(e);
-
         } finally {
             try {
                 if (reader != null) {
@@ -971,22 +963,18 @@ public class EntityExportImportService implements Serializable {
             }
         }
 
-        if(importStatsTotal.getException() != null && ! (importStatsTotal.getException() instanceof StatusChangeViolationException))
-        {
+        if(importStatsTotal.getException() != null && ! (importStatsTotal.getException() instanceof StatusChangeViolationException)) {
             throw new BusinessException("An error occur during import, please check your file and try again");
-        }
-        else if(importStatsTotal.getException() != null && importStatsTotal.getException() instanceof StatusChangeViolationException)
-        {
+        } else if(importStatsTotal.getException() != null && importStatsTotal.getException() instanceof StatusChangeViolationException) {
             throw ((StatusChangeViolationException)importStatsTotal.getException());
         }
-
 
         return importStatsTotal;
     }
 
     /**
      * Import entities
-     * 
+     *
      * @param exportTemplate Export template used to export data
      * @param reader Reader of serialized data input stream
      * @param preserveId Should Ids of entities be preserved when importing instead of using sequence values for ID generation (DOES NOT WORK)
@@ -999,11 +987,8 @@ public class EntityExportImportService implements Serializable {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public ExportImportStatistics importEntities(ExportTemplate exportTemplate, HierarchicalStreamReader reader, boolean preserveId, boolean preserveCode, boolean ignoreNotFoundFK,
             Provider forceToProvider, boolean checkForStatus) throws StatusChangeViolationException {
-
         log.info("Importing entities from template {} ignore not found FK={}, forcing import to a provider {}", exportTemplate.getName(), ignoreNotFoundFK, forceToProvider);
-
         final Set<String> ignoredFields = new HashSet<String>();
-
         XStream xstream = new XStream() {
             protected MapperWrapper wrapMapper(MapperWrapper next) {
                 return new MapperWrapper(next) {
@@ -1026,26 +1011,23 @@ public class EntityExportImportService implements Serializable {
         };
 
         xstream.setMarshallingStrategy(new ReusingReferenceByIdMarshallingStrategy());
-        xstream.aliasSystemAttribute(REFERENCE_ID_ATTRIBUTE, "code");
+        xstream.allowTypesByWildcard(new String[] {
+                "org.meveo.export.**",
+                "org.meveo.model.**"
+        });
 
         ExportImportConfig exportImportConfig = new ExportImportConfig(exportTemplate, exportIdMapping);
         IEntityClassConverter iEntityClassConverter = new IEntityClassConverter(xstream.getMapper(), xstream.getReflectionProvider(), preserveId, currentUser);
         IEntityExportIdentifierConverter entityExportIdentifierConverter = new IEntityExportIdentifierConverter(exportImportConfig, getEntityManagerForImport(), preserveId,
             ignoreNotFoundFK, forceToProvider, iEntityClassConverter);
-
         xstream.registerConverter(entityExportIdentifierConverter, XStream.PRIORITY_NORMAL);
         xstream.registerConverter(iEntityClassConverter, XStream.PRIORITY_LOW);
-        xstream.allowTypesByWildcard(new String[] {
-            "org.meveo.export.**",
-            "org.meveo.model.**"
-        });
-        
         ExportImportStatistics importStats = new ExportImportStatistics();
         int totalEntitiesCount = 0;
+
         try {
             while (reader.hasMoreChildren()) {
                 reader.moveDown();
-
                 // This was a solution to large data amount processing with JPA transaction on each entity deserialisation, but it gives issues with references between the objects
                 // entityExportImportService.deserializeEntity(xstream, reader, preserveId, importStats, false, forceToProvider);
                 deserializeEntity(xstream, reader, preserveId, preserveCode, importStats, false, forceToProvider, checkForStatus);
@@ -1053,12 +1035,9 @@ public class EntityExportImportService implements Serializable {
 
                 reader.moveUp();
             }
-
-        } catch (StatusChangeViolationException exception)
-        {
+        } catch (StatusChangeViolationException exception) {
             throw exception;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Failed to import entities from {} export emplate. Imported {} entities", exportTemplate.getName(), totalEntitiesCount, e);
             throw new RuntimeException("Failed to import entities from " + exportTemplate.getName() + " export template. " + e.getMessage(), e);
         }
@@ -1068,13 +1047,12 @@ public class EntityExportImportService implements Serializable {
         }
 
         log.info("Imported {} entities from {} export template ", totalEntitiesCount, exportTemplate.getName());
-
         return importStats;
     }
 
     /**
      * Save entities to a target DB
-     * 
+     *
      * @param entities Entities to save
      * @param lookupById Should a lookup of existing entity in DB be done by ID or by attributes
      * @param forceToProvider Ignore provider specified in an entity and force provider value to this value
@@ -1082,25 +1060,27 @@ public class EntityExportImportService implements Serializable {
      *        OfferServiceTemplate
      */
     private ExportImportStatistics saveEntitiesToTarget(List<? extends IEntity> entities, boolean lookupById, boolean lookupByCode, Provider forceToProvider, IEntity parentEntity, boolean checkForStatus ) throws StatusChangeViolationException {
-
         ExportImportStatistics importStats = new ExportImportStatistics();
 
         for (IEntity entityToSave : entities) {
-
             saveEntityToTarget(entityToSave, lookupById, false, importStats, lookupByCode, forceToProvider, parentEntity, checkForStatus);
         }
+
         return importStats;
     }
 
     public String generateEntitiesList(ExportTemplate template) {
         String path = paramBeanFactory.getChrootDir();
+
         if (!path.endsWith(File.separator)) {
             path = path + File.separator;
         }
+
         String shortFilename = template.getName() + DateUtils.formatDateWithPattern(new Date(), "_yyyy-MM-dd_HH-mm-ss");
         path = path + "exports";
         String filename = path + File.separator + shortFilename + ".csv";
         RetrievedEntities entities  = getEntitiesToExport(template, null, null, null, 0, PAGE_SIZE);
+
         try (PrintWriter writer = new PrintWriter(filename)) {
             FileUtils.forceMkdir(new File(path));
 
@@ -1116,7 +1096,7 @@ public class EntityExportImportService implements Serializable {
     }
     /**
      * Deserialize an entity and save it to a target DB in a new transaction
-     * 
+     *
      * @param xstream Xstream instance
      * @param reader Reader
      * @param lookupById Should a lookup of existing entity in DB be done by ID or by attributes
@@ -1128,33 +1108,28 @@ public class EntityExportImportService implements Serializable {
     // @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private void deserializeEntity(XStream xstream, HierarchicalStreamReader reader, boolean lookupById, boolean lookupByCode, ExportImportStatistics importStats, boolean updateExistingOnly,
             Provider forceToProvider, boolean checkForStatus) throws StatusChangeViolationException {
-
+        log.info("------ deserializeEntity ------");
         // This was a solution to large data amount processing with JPA transaction on each entity deserialisation, but it gives issues with references between the objects
         // //Pass entity manager to converters
         // DataHolder dataHolder = xstream.newDataHolder();
         // dataHolder.put("em", getEntityManagerForImport());
-
         IEntity entityToSave = (IEntity) xstream.unmarshal(reader);// , null, dataHolder);
         saveEntityToTarget(entityToSave, lookupById, lookupByCode, importStats, updateExistingOnly, forceToProvider, null, checkForStatus);
     }
 
     private void checkForStatus(IEntity entity) throws StatusChangeViolationException {
         try {
-
             for (Field field : entity.getClass().getDeclaredFields()) {
                 if ("status".equalsIgnoreCase(field.getName())) {
-
                     field.setAccessible(true);
 
-
-                    if("active".equalsIgnoreCase(field.get(entity).toString()))
-                    {
+                    if("active".equalsIgnoreCase(field.get(entity).toString())) {
                         throw new StatusChangeViolationException("This may have an impact on quotes , subscriptions and other objects");
                     }
+
                     field.setAccessible(false);
                 }
             }
-
         } catch (IllegalAccessException e) {
             log.error("cannot check status for {}", entity);
         }
@@ -1162,13 +1137,13 @@ public class EntityExportImportService implements Serializable {
 
     /**
      * Save entity to a target DB
-     * 
+     *
      * OneToMany and OneToOne with no cascading are saved after the main entity is saved in saveEntityToTarget() > extractNonCascadedEntities()
-     * 
+     *
      * OneToMany and OneToOne that cascade are saved before the main entity is saved in saveNonManagedFields()
-     * 
+     *
      * ManyToOne are saved before the main entity is saved in saveNonManagedFields()
-     * 
+     *
      * @param entityToSave Entity to save
      * @param lookupById Should a lookup of existing entity in DB be done by ID or by attributes
      * @param importStats Import statistics
@@ -1181,7 +1156,6 @@ public class EntityExportImportService implements Serializable {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private IEntity saveEntityToTarget(IEntity entityToSave, boolean lookupById, boolean lookupByCode, ExportImportStatistics importStats, boolean updateExistingOnly, Provider forceToProvider,
             IEntity parentEntity, boolean checkForStatus) throws StatusChangeViolationException {
-
         log.debug("Saving with preserveId={} entity {} ", lookupById, entityToSave);
 
         // Check if entity to be saved is a provider entity but were told to force importing to a given provider - just replace a code
@@ -1198,7 +1172,6 @@ public class EntityExportImportService implements Serializable {
 
         if (entityFound == null && updateExistingOnly) {
             log.debug("No existing entity was found. Entity will be saved by other means (cascading probably).");
-
             // Still try to save not-managed fields in case entity contains other entities deeper down. Occurs in case when two independent entities are joined by an intermediate
             // entity. E.g. OfferTemplate>OffserServiceTemplates>ServiceTempate
             saveNotManagedFields(entityToSave, lookupById, lookupByCode, importStats, forceToProvider, parentEntity, checkForStatus);
@@ -1206,26 +1179,26 @@ public class EntityExportImportService implements Serializable {
         }
 
         if (entityFound == null) {
+            log.info("Entity is null");
             // Clear version field
             if (IJPAVersionedEntity.class.isAssignableFrom(entityToSave.getClass())) {
+                log.info("Entity to Save: {}", entityToSave.getClass());
                 ((IJPAVersionedEntity) entityToSave).setVersion(null);
             }
 
             saveNotManagedFields(entityToSave, lookupById, lookupByCode, importStats, forceToProvider, parentEntity, checkForStatus);
             getEntityManagerForImport().persist(entityToSave);
 
-            log.debug("Entity saved: {}", entityToSave);
-
+            log.info("Entity saved: {}", entityToSave);
         } else {
+            if(checkForStatus) {
+                log.info("Check for status", entityFound.getId());
+                checkForStatus(entityFound);
+            }
 
-            if(checkForStatus)
-        {
-            checkForStatus(entityFound);
-        }
-            log.debug("Existing entity found with ID {}. Entity will be updated.", entityFound.getId());
+            log.info("Existing entity found with ID {}. Entity will be updated.", entityFound.getId());
             updateEntityFoundInDB(entityFound, entityToSave, lookupById, lookupByCode, importStats, forceToProvider, parentEntity, checkForStatus);
-
-            log.debug("Entity saved: {}", entityFound);
+            log.info("Entity saved: {}", entityFound);
         }
 
         List extractedRelatedEntities = extractNonCascadedEntities(entityToSave);
@@ -1236,27 +1209,26 @@ public class EntityExportImportService implements Serializable {
 
         // Update statistics
         importStats.updateSummary(entityToSave.getClass(), 1);
-
         return entityFound == null ? entityToSave : entityFound;
     }
 
     private IEntity identifyEntity(IEntity entityToSave, boolean lookupById, boolean lookupByCode) {
-
+        log.info("------ identifyEntity ------");
         if (lookupById && entityToSave.getId() != null) {
            IEntity entityFound = getEntityManagerForImport().find(entityToSave.getClass(), entityToSave.getId());
            if(entityFound != null ) return  entityFound;
-       }
-         if(lookupByCode)
-       {
+        }
+
+        if(lookupByCode) {
            IEntity entityFound = findEntityByCode(entityToSave);
            if(entityFound != null ) return  entityFound;
-       }
+        }
+
         if(entityToSave.getClass().getDeclaredAnnotation(ExportIdentifier.class) != null){
            String[] exportIds = entityToSave.getClass().getDeclaredAnnotation(ExportIdentifier.class).value();
            IEntity entityFound = findEntityByAttributes(entityToSave, exportIds );
            if(entityFound != null ) return  entityFound;
-       }
-       else {
+       } else {
          return findEntityByAttributes(entityToSave, exportIdMapping.get(entityToSave.getClass()));
        }
 
@@ -1265,14 +1237,15 @@ public class EntityExportImportService implements Serializable {
 
     /**
      * Extract entities referred from a given entity that would not be persisted when a given entity is saved
-     * 
+     *
      * @param entityToSave Entity to analyse
      * @return A list of entities to save
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private List extractNonCascadedEntities(IEntity entityToSave) {
-
+        log.info("------ extractNonCascadedEntities ------");
         List<Field> fields = nonCascadableFields.get(entityToSave.getClass());
+
         if (fields == null) {
             return null;
         }
@@ -1318,7 +1291,7 @@ public class EntityExportImportService implements Serializable {
 
     /**
      * Copy data from deserialized entity to an entity from DB field by field
-     * 
+     *
      * @param entityFromDB Entity found in DB
      * @param entityDeserialized Entity deserialised
      * @param lookupById Should a lookup of existing entity in DB be done by ID or by attributes
@@ -1331,7 +1304,6 @@ public class EntityExportImportService implements Serializable {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private void updateEntityFoundInDB(IEntity entityFromDB, IEntity entityDeserialized, boolean lookupById , boolean lookupByCode, ExportImportStatistics importStats, Provider forceToProvider,
             IEntity parentEntity, boolean checkForStatus) {
-
         if (HibernateProxy.class.isAssignableFrom(entityFromDB.getClass())) {
             entityFromDB = (IEntity) ((HibernateProxy) entityFromDB).getHibernateLazyInitializer().getImplementation();
         }
@@ -1340,18 +1312,17 @@ public class EntityExportImportService implements Serializable {
         // THIS WORKS ONLY WHEN ENTITY IS CREATED. When entity is updated it is irrelevant as em.update returns a new entity instance, and if entity was referred from other
         // importing entities, they contain a reference to an old entity instance. See saveNonManagedField()
         entityDeserialized.setId((Long) entityFromDB.getId());
-        log.trace("Deserialized entity updated with id {}", entityFromDB.getId());
+        log.info("Deserialized entity updated with id {}", entityFromDB.getId());
 
         if (IJPAVersionedEntity.class.isAssignableFrom(entityDeserialized.getClass())) {
             ((IJPAVersionedEntity) entityDeserialized).setVersion(((IJPAVersionedEntity) entityFromDB).getVersion());
-            log.trace("Deserialized entity updated with version {}", ((IJPAVersionedEntity) entityFromDB).getVersion());
+            log.info("Deserialized entity updated with version {}", ((IJPAVersionedEntity) entityFromDB).getVersion());
         }
 
         // Copy data from deserialized entity to an entity from DB field by field
         Class clazz = entityDeserialized.getClass();
         Class cls = clazz;
         while (!Object.class.equals(cls) && cls != null) {
-
             for (Field field : cls.getDeclaredFields()) {
                 try {
                     // Do not overwrite id, version and static fields
@@ -1374,7 +1345,6 @@ public class EntityExportImportService implements Serializable {
                                 || ArrayUtils.contains(oneToManyAnotation.cascade(), CascadeType.PERSIST))) {
                             continue;
                         }
-
                         // Extract @oneToOne fields that do not cascade
                     } else if (field.isAnnotationPresent(OneToOne.class)) {
                         OneToOne oneToOneAnotation = field.getAnnotation(OneToOne.class);
@@ -1408,7 +1378,7 @@ public class EntityExportImportService implements Serializable {
                         } else {
                             FieldUtils.writeField(field, entityFromDB, sourceValue, true);
                         }
-                        log.trace("Populating map field {}.{} with {}", clazz.getSimpleName(), field.getName(), sourceValue);
+                        log.info("Populating map field {}.{} with {}", clazz.getSimpleName(), field.getName(), sourceValue);
 
                     } else if (Set.class.isAssignableFrom(field.getType())) {
                         Set targetValue = (Set) FieldUtils.readField(field, entityFromDB, true);
@@ -1420,7 +1390,7 @@ public class EntityExportImportService implements Serializable {
                         } else {
                             FieldUtils.writeField(field, entityFromDB, sourceValue, true);
                         }
-                        log.trace("Populating set field {}.{} with {}", clazz.getSimpleName(), field.getName(), sourceValue);
+                        log.info("Populating set field {}.{} with {}", clazz.getSimpleName(), field.getName(), sourceValue);
 
                     } else if (List.class.isAssignableFrom(field.getType())) {
                         List targetValue = (List) FieldUtils.readField(field, entityFromDB, true);
@@ -1433,11 +1403,11 @@ public class EntityExportImportService implements Serializable {
                             FieldUtils.writeField(field, entityFromDB, sourceValue, true);
                         }
 
-                        log.trace("Populating list field {}.{} with {}", clazz.getSimpleName(), field.getName(), sourceValue);
+                        log.info("Populating list field {}.{} with {}", clazz.getSimpleName(), field.getName(), sourceValue);
 
                     } else {
 
-                        log.trace("Setting field {}.{} to {} ", clazz.getSimpleName(), field.getName(), sourceValue);
+                        log.info("Setting field {}.{} to {} ", clazz.getSimpleName(), field.getName(), sourceValue);
                         FieldUtils.writeField(field, entityFromDB, sourceValue, true);
                     }
 
@@ -1447,14 +1417,12 @@ public class EntityExportImportService implements Serializable {
             }
             cls = cls.getSuperclass();
         }
-
         // entityFromDB = emTarget.merge(entityFromDB);
-
     }
 
     /**
      * Determine if fields that are entity type fields are managed, and if they are not managed yet - save them first
-     * 
+     *
      * @param entityDeserialized Entity deserialised
      * @param lookupById Should a lookup of existing entity in DB be done by ID or by attributes
      * @param importStats Import statistics
@@ -1464,15 +1432,14 @@ public class EntityExportImportService implements Serializable {
      */
     @SuppressWarnings({ "rawtypes" })
     private void saveNotManagedFields(IEntity entityDeserialized, boolean lookupById , boolean lookupByCode, ExportImportStatistics importStats, Provider forceToProvider, IEntity parentEntity, boolean checkForStatus) {
-
         Class clazz = entityDeserialized.getClass();
-
-        log.trace("Saving not-managed fields for {}", clazz.getName());
-
+        log.info("Saving not-managed fields for {}", clazz.getName());
         Class cls = clazz;
-        while (!Object.class.equals(cls) && cls != null) {
 
+        while (!Object.class.equals(cls) && cls != null) {
+            log.info("saveNotManagedFields class: {}", cls);
             for (Field field : cls.getDeclaredFields()) {
+                log.info("saveNotManagedFields field: {}", field.getName());
                 try {
                     // Do not overwrite id, version and static fields
                     if (field.isAnnotationPresent(Id.class) || field.isAnnotationPresent(Version.class) || Modifier.isStatic(field.getModifiers())) {
@@ -1480,7 +1447,6 @@ public class EntityExportImportService implements Serializable {
                     }
 
                     saveNotManagedField(null, entityDeserialized, field, lookupById, lookupByCode, importStats, clazz, forceToProvider, parentEntity, checkForStatus);
-
                 } catch (IllegalAccessException | IllegalArgumentException | StatusChangeViolationException e) {
                     throw new RuntimeException("Failed to access field " + clazz.getName() + "." + field.getName(), e);
                 }
@@ -1491,7 +1457,7 @@ public class EntityExportImportService implements Serializable {
 
     /**
      * Determine if field is an entity type field, and if it is not managed yet - save it first. TODO fix here as when lookupById, id value would be filled already
-     * 
+     *
      * @param fieldValue Field value. If not passed - a lookup in entity by a field will be done.
      * @param entity Entity to obtain field value from if one is not provided. Also used to update the value if it was saved (after merge)
      * @param field Field definition
@@ -1506,7 +1472,7 @@ public class EntityExportImportService implements Serializable {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private Object saveNotManagedField(Object fieldValue, IEntity entity, Field field, boolean lookupById, boolean lookupByCode, ExportImportStatistics importStats, Class clazz,
             Provider forceToProvider, IEntity parentEntity, boolean checkForStatus) throws IllegalAccessException, StatusChangeViolationException {
-
+        log.info("------ saveNotManagedField ------");
         // If field value was not passed - get it from an entity
         if (fieldValue == null) {
             fieldValue = FieldUtils.readField(field, entity, true);
@@ -1516,7 +1482,7 @@ public class EntityExportImportService implements Serializable {
         }
 
         if (parentEntity != null && fieldValue.equals(parentEntity)) {
-            log.trace("Not-managed field {}.{} is same as parent entity. Will be skipped.", clazz.getSimpleName(), field.getName());
+            log.info("Not-managed field {}.{} is same as parent entity. Will be skipped.", clazz.getSimpleName(), field.getName());
             return fieldValue;
         }
 
@@ -1569,7 +1535,7 @@ public class EntityExportImportService implements Serializable {
                 isManaged = getEntityManager().contains((IEntity) singleValue);// ((IEntity) singleValue).getId() != null;
                 if (!isManaged) {
 
-                    log.debug("Persisting non-managed map's child field {}.{}'s (cascaded={}, id={}) value {}", clazz.getSimpleName(), field.getName(), isCascadedField,
+                    log.info("Persisting non-managed map's child field {}.{}'s (cascaded={}, id={}) value {}", clazz.getSimpleName(), field.getName(), isCascadedField,
                         ((IEntity) singleValue).getId(), singleValue);
 
                     if (((IEntity) singleValue).getId() != null) {
@@ -1599,7 +1565,6 @@ public class EntityExportImportService implements Serializable {
                     log.trace("Persisting non-managed map's child field {}.{}. Value is already managed.", clazz.getSimpleName(), field.getName());
                 }
             }
-
         } else if (Collection.class.isAssignableFrom(field.getType())) {
             Collection collectionValue = (Collection) fieldValue;
             Object[] collectionValues = collectionValue.toArray();
@@ -1625,7 +1590,6 @@ public class EntityExportImportService implements Serializable {
                             // collectionValue.add( getEntityManager().find(fieldValue.getClass(), ((IEntity) singleValue).getId()));
                             collectionValue.add(getEntityManager().getReference(singleValue.getClass(), ((IEntity) singleValue).getId()));
                         }
-
                     } else {
                         collectionValue.add(saveEntityToTarget((IEntity) singleValue, lookupById, lookupByCode, importStats, isCascadedField, forceToProvider, entity, checkForStatus));
                     }
@@ -1667,9 +1631,7 @@ public class EntityExportImportService implements Serializable {
                         // Update field value in an entity with a new value
                         FieldUtils.writeField(field, entity, fieldValue, true);
                     }
-
                 } else {
-
                     fieldValue = saveEntityToTarget((IEntity) fieldValue, lookupById, lookupByCode, importStats, isCascadedField, forceToProvider, entity, checkForStatus);
                     // Update field value in an entity with a new value
                     FieldUtils.writeField(field, entity, fieldValue, true);
@@ -1694,12 +1656,11 @@ public class EntityExportImportService implements Serializable {
 
     /**
      * Find an entity in target db by attributes
-     * 
+     *
      * @param entityToSave Entity to match
      * @return Entity found in target DB
      */
     private IEntity findEntityByAttributes(IEntity entityToSave, String[] attributes) {
-
         if (attributes == null) {
             return null;
         }
@@ -1717,6 +1678,7 @@ public class EntityExportImportService implements Serializable {
                     if (attrValue instanceof IEntity && ((IEntity) attrValue).isTransient()) {
                         return null;
                     }
+
                     parameters.put(attributeName, attrValue);
                 }
             } catch (IllegalAccessException | IllegalArgumentException e) {
@@ -1735,68 +1697,62 @@ public class EntityExportImportService implements Serializable {
             firstWhere = false;
         }
         Query query = getEntityManagerForImport().createQuery(sql.toString());
+
         for (Entry<String, Object> param : parameters.entrySet()) {
             query.setParameter(param.getKey().replace('.', '_'), param.getValue());
         }
+
         try {
             IEntity entity = (IEntity) query.getSingleResult();
             log.trace("Found entity {} id={} with attributes {}. Entity will be updated.", entity.getClass().getName(), entity.getId(), parameters);
             return entity;
 
         } catch (NoResultException | NonUniqueResultException e) {
-            log.debug("Entity {} not found matching attributes: {}, sql {}. Reason:{} Entity will be inserted.", entityToSave.getClass().getName(), parameters, sql,
-                e.getClass().getName());
+            log.debug("Entity {} not found matching attributes: {}, sql {}. Reason:{} Entity will be inserted.", entityToSave.getClass().getName(), parameters, sql, e.getClass().getName());
             return null;
-
         } catch (Exception e) {
             log.error("Failed to search for entity {} with attributes: {}, sql {}", entityToSave.getClass().getName(), parameters, sql, e);
             throw new RuntimeException(e);
         }
     }
 
-
     private IEntity findEntityByCode(IEntity entityToSave) {
-
         try {
             String code = (String) getAttributeValue(entityToSave, "code");
+
             if (code != null) {
                 String sql = String.format("select o from %s o where  code= '%s'", entityToSave.getClass().getName(), code);
                 Query query = getEntityManagerForImport().createQuery(sql);
                 IEntity entity = (IEntity) query.getSingleResult();
                 log.trace("Found entity {} id={} with code {}. Entity will be updated.", entity.getClass().getName(), entity.getId(), code);
                 return entity;
-            }else {
+            } else {
                 return null;
             }
-
         } catch (IllegalAccessException | IllegalArgumentException e) {
             log.debug("Entity {} doesnt have  code attribute ", entityToSave.getClass().getName());
             return null;
-
         } catch (NoResultException | NonUniqueResultException e) {
-            log.debug("Entity {} not found with code: Reason:{} Entity will be inserted.", entityToSave.getClass().getName(),
-                    e.getClass().getName());
+            log.debug("Entity {} not found with code: Reason:{} Entity will be inserted.", entityToSave.getClass().getName(), e.getClass().getName());
             return null;
-
         } catch (Exception e) {
             log.error("Failed to search for entity {} with code", entityToSave.getClass().getName(), e);
             throw new RuntimeException(e);
         }
-
     }
 
     /**
      * Get an attribute value. Handles composed attribute cases (e.g. provider.code)
-     * 
+     *
      * @param object Object to get attribute value from
      * @param attributeName Attribute name. Can be a composed attribute name
      * @return Attribute value
      * @throws IllegalAccessException
      */
     private Object getAttributeValue(Object object, String attributeName) throws IllegalAccessException {
-
         Object value = object;
         StringTokenizer tokenizer = new StringTokenizer(attributeName, ".");
+
         while (tokenizer.hasMoreElements()) {
             String attrName = tokenizer.nextToken();
             value = FieldUtils.readField(value, attrName, true);
@@ -1806,18 +1762,18 @@ public class EntityExportImportService implements Serializable {
                 return null;
             }
         }
+
         return value;
     }
 
     /**
      * Determine what attributes are treated as identifiers for export for an entity. Such information is provided by @ExportIdentifier annotation on an entity.
-     * 
+     *
      * @return A map with such format: <Entity class, an array of entity attribute names>
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private void loadExportIdentifierMappings() {
         Map<Class<? extends IEntity>, String[]> exportIdMap = new HashMap<Class<? extends IEntity>, String[]>();
-
         Reflections reflections = new Reflections("org.meveo.model");
         Set<Class<? extends IEntity>> classes = reflections.getSubTypesOf(IEntity.class);
 
@@ -1829,34 +1785,30 @@ public class EntityExportImportService implements Serializable {
             if (clazz.isAnnotationPresent(ExportIdentifier.class)) {
                 exportIdMap.put(clazz, ((ExportIdentifier) clazz.getAnnotation(ExportIdentifier.class)).value());
             }
-
         }
+
         exportIdMapping = exportIdMap;
     }
 
     /**
      * Determine what attributes should be omitted for export for an entity. Attributes annotated with @OneToMany annotation should be omitted.
-     * 
+     *
      * @return A map of <classname.fieldname,array of [Class, attribute name]>
      */
     @SuppressWarnings({ "rawtypes" })
     private void loadAtributesToOmit() {
         Map<String, Object[]> attributesToOmitLocal = new HashMap<String, Object[]>();
-
         Reflections reflections = new Reflections("org.meveo.model");
         Set<Class<? extends IEntity>> classes = reflections.getSubTypesOf(IEntity.class);
 
         for (Class clazz : classes) {
-
             if (clazz.isInterface() || clazz.isAnnotation() || !IEntity.class.isAssignableFrom(clazz)) {
                 continue;
             }
 
             Class cls = clazz;
             while (!Object.class.equals(cls) && cls != null) {
-
                 for (Field field : cls.getDeclaredFields()) {
-
                     if (field.isAnnotationPresent(Transient.class) || field.isAnnotationPresent(Lob.class)) {
                         attributesToOmitLocal.put(clazz.getName() + "." + field.getName(), new Object[] { clazz, field });
 
@@ -1881,14 +1833,12 @@ public class EntityExportImportService implements Serializable {
 
     /**
      * Identify fields in classes that contain a list of related entities (@OneToMany and @OneToOne), but are not cascaded
-     * 
+     *
      * @return A map of <Class, List of non-cascaded fields>
      */
     @SuppressWarnings("rawtypes")
     private void loadNonCascadableFields() {
-
         Map<Class, List<Field>> nonCascadableFieldsLocal = new HashMap<Class, List<Field>>();
-
         Reflections reflections = new Reflections("org.meveo.model");
         Set<Class<? extends IEntity>> classes = reflections.getSubTypesOf(IEntity.class);
 
@@ -1896,9 +1846,10 @@ public class EntityExportImportService implements Serializable {
             if (clazz.isInterface() || clazz.isAnnotation() || !IEntity.class.isAssignableFrom(clazz)) {
                 continue;
             }
-            List<Field> classNonCascadableFields = new ArrayList<Field>();
 
+            List<Field> classNonCascadableFields = new ArrayList<Field>();
             Class cls = clazz;
+
             while (!Object.class.equals(cls) && cls != null) {
                 for (Field field : cls.getDeclaredFields()) {
 
@@ -1927,16 +1878,18 @@ public class EntityExportImportService implements Serializable {
 
                 cls = cls.getSuperclass();
             }
+
             if (!classNonCascadableFields.isEmpty()) {
                 nonCascadableFieldsLocal.put(clazz, classNonCascadableFields);
             }
         }
+
         nonCascadableFields = nonCascadableFieldsLocal;
     }
 
     /**
      * Check if parameterized class contains a non-transient field of given type
-     * 
+     *
      * @param type Parameterized type to examine
      * @param classToMatch Class type to match
      * @return
@@ -1955,6 +1908,7 @@ public class EntityExportImportService implements Serializable {
                 }
             }
         }
+
         if (classToCheck != null) {
             for (Field field : classToCheck.getDeclaredFields()) {
                 if (!field.isAnnotationPresent(Transient.class) && IEntity.class.isAssignableFrom(field.getDeclaringClass()) && field.getType().isAssignableFrom(classToMatch)) {
@@ -1967,7 +1921,7 @@ public class EntityExportImportService implements Serializable {
 
     /**
      * Check if class field is of type - including List<>, Map<>, Set<> and potentially other parameterized classes
-     * 
+     *
      * @param field Field to analyse
      * @param typesToCheck Class to match
      * @return True is field is of type classToMatch or is parameterized with classToMatch class (e.g. List<classToMatch>
@@ -1984,7 +1938,7 @@ public class EntityExportImportService implements Serializable {
 
     /**
      * Check if class field is of type - including List<>, Map<>, Set<> and potentially other parameterized classes
-     * 
+     *
      * @param field Field to analyse
      * @param typeToCheck Class to match
      * @return True is field is of type classToMatch or is parameterized with classToMatch class (e.g. List<classToMatch>
@@ -2011,7 +1965,7 @@ public class EntityExportImportService implements Serializable {
 
     /**
      * Specify Xstream what attributes to omit.
-     * 
+     *
      * @param xstream Instance to apply to
      * @param typesNotToOmit Types not to omit
      * @param typesNotToOmit
@@ -2032,7 +1986,7 @@ public class EntityExportImportService implements Serializable {
 
     /**
      * Obtain a list of entities to export in paginated form to be able to handle large amount of data
-     * 
+     *
      * @param exportTemplate Export template
      * @param from Starting record index
      * @param pageSize Page size
@@ -2045,9 +1999,7 @@ public class EntityExportImportService implements Serializable {
     @SuppressWarnings({ "unchecked" })
     private RetrievedEntities getEntitiesToExport(ExportTemplate exportTemplate, Map<String, Object> parameters, DataModel<? extends IEntity> dataModelToExport,
             List<? extends IEntity> selectedEntitiesToExport, int from, int pageSize) {
-
         RetrievedEntities retrievedEntities = new RetrievedEntities();
-
         List<IEntity> entities = null;
 
         // A list of entities was passed
@@ -2063,7 +2015,6 @@ public class EntityExportImportService implements Serializable {
             for (IEntity entity : entitiesLocal) {
                 entities.add(emLocal.find(PersistenceUtils.getClassForHibernateObject(entity), entity.getId()));
             }
-
             // Retrieve next pageSize number of entities from iterator
         } else if (dataModelToExport != null) {
             if (from >= dataModelToExport.getRowCount()) {
@@ -2076,11 +2027,8 @@ public class EntityExportImportService implements Serializable {
             } else {
                 List<? extends IEntity> modelData = (List<? extends IEntity>) dataModelToExport.getWrappedData();
                 entities = (List<IEntity>) modelData.subList(from, Math.min(from + pageSize, modelData.size()));
-
             }
-
-        } else if(exportTemplate.getEntityToExport() != null){
-
+        } else {
             // Construct a query to retrieve entities to export by selection criteria. OR examine selection criteria - could be that top export entity matches search criteria for
             // related entities (e.g. exporting provider and related info and some provider is search criteria, but also it matches the top entity)
             StringBuilder sql = new StringBuilder("select e from " + exportTemplate.getEntityToExport().getName() + " e  ");
@@ -2147,7 +2095,7 @@ public class EntityExportImportService implements Serializable {
         retrievedEntities.principalEntities = entities;
 
         // Nothing found, so just return an empty map
-        if (entities == null || entities.isEmpty()) {
+        if (entities.isEmpty()) {
             return retrievedEntities;
         }
 
@@ -2182,7 +2130,7 @@ public class EntityExportImportService implements Serializable {
 
     /**
      * Resolve path to entities to check for related entities
-     * 
+     *
      * @param exportTemplateName Export template name
      * @param entity Entity to use for path resolution
      * @param pathToEntityRelatedTo Path to resolve. Contains a field path similar to EL. Need to evaluate one field at a time as it can return a list of values. E.g. in
@@ -2202,7 +2150,7 @@ public class EntityExportImportService implements Serializable {
 
     /**
      * Resolve path to entities to check for related entities
-     * 
+     *
      * @param entity Object to use for path resolution
      * @param pathToEntityRelatedTo Path to resolve. Contains a field path similar to EL. Need to evaluate one field at a time as it can return a list of values. E.g. in
      *        "offerTemplate.offerServiceTemplates.serviceTemplate.serviceRecurringCharges.chargeTemplate" offerServiceTemplates and serviceRecurringCharges will return a list of
@@ -2257,7 +2205,7 @@ public class EntityExportImportService implements Serializable {
 
     /**
      * Retrieve related entities for a given entity
-     * 
+     *
      * @param exportTemplateName Export template name
      * @param relatedEntityInfo Related entity information
      * @param entity Entity related to
@@ -2309,7 +2257,7 @@ public class EntityExportImportService implements Serializable {
 
     /**
      * Resolve EL expressions in a given string
-     * 
+     *
      * @param stringToAnalyze String to analyze for EL expressions
      * @param elContext EL variables
      * @return String with EL replaced by values
@@ -2360,9 +2308,9 @@ public class EntityExportImportService implements Serializable {
     /**
      * A writer extending PrettyPrintWriter to handle issue when "class" attribute is added twice - once by Xstream's AbstractReflectionConverter.doMarshal() and second time by
      * IEntityExportIdentifierConverter
-     * 
+     *
      * @author Andrius Karpavicius
-     * 
+     *
      */
     private class EntityExportWriter extends PrettyPrintWriter {
 
@@ -2437,7 +2385,7 @@ public class EntityExportImportService implements Serializable {
 
     /**
      * Actualize contents of export file to a current version of data model. Contents are actualized by xslt transformation.
-     * 
+     *
      * @param sourceFile File to actualize
      * @param sourceFilename A name of a file to actualize - passes separately as file might be saved as temp files along the way
      * @param sourceVersion Version in a source file
@@ -2499,7 +2447,7 @@ public class EntityExportImportService implements Serializable {
 
     /**
      * Get applicable export model version upgrade changesets. Changeset is applicable when it's version is higher than the sourceVersion value
-     * 
+     *
      * @param sourceVersion Version to upgrade
      * @return A map of changesets with version changeset number as a key and changeset file as a value
      */
@@ -2534,7 +2482,7 @@ public class EntityExportImportService implements Serializable {
 
     /**
      * Upload file to a remote meveo instance
-     * 
+     *
      * @param filename Path to a file to upload
      * @param remoteInstance Remote meveo instance
      * @throws Exception
@@ -2586,7 +2534,7 @@ public class EntityExportImportService implements Serializable {
 
     /**
      * Check status and get results of file upload to a remote meveo instance.
-     * 
+     *
      * @param executionId Import in remote meveo instance execution id
      * @param remoteInstance Remote meveo instance
      * @return import export response
@@ -2631,7 +2579,7 @@ public class EntityExportImportService implements Serializable {
 
     /**
      * Get export template for a particular class.
-     * 
+     *
      * @param clazz Class
      * @return Export/import template definition
      */
@@ -2664,7 +2612,7 @@ public class EntityExportImportService implements Serializable {
 
     /**
      * Get export template by name?
-     * 
+     *
      * @param templateName Template name
      * @return Export/import template definition
      */
@@ -2680,7 +2628,7 @@ public class EntityExportImportService implements Serializable {
 
     /**
      * Get export template by name.
-     * 
+     *
      * @param relatedEntityInfo Related entity to be exported.
      * @return Export/import template definition
      */
