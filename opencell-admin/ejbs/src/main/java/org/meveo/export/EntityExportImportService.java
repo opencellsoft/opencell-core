@@ -269,13 +269,9 @@ public class EntityExportImportService implements Serializable {
                 "org.meveo.export.**",
                 "org.meveo.model.**"
         });
-        List<ExportTemplate> templatesFromXml = null;
 
-        try {
-            templatesFromXml = (List<ExportTemplate>) xstream.fromXML(this.getClass().getClassLoader().getResourceAsStream("exportImportTemplates.xml"));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        List<ExportTemplate> templatesFromXml = null;
+        templatesFromXml = (List<ExportTemplate>) xstream.fromXML(this.getClass().getClassLoader().getResourceAsStream("exportImportTemplates.xml"));
 
         for (ExportTemplate exportTemplate : templatesFromXml) {
             supplementExportTemplateWithAutomaticInfo(exportTemplate);
