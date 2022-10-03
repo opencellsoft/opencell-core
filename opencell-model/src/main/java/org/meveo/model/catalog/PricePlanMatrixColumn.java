@@ -79,7 +79,7 @@ public class PricePlanMatrixColumn extends BusinessEntity {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST})
+    @OneToOne(cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "attribute_id")
     private Attribute attribute;
 
