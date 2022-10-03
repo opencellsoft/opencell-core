@@ -21,6 +21,8 @@ public interface GenericFieldDetails {
     @Nullable
     @Value.Default default Map<String, String> getMappings(){ return Collections.emptyMap();}
     @Nullable
+    String getFormulaInputs();
+    @Nullable
     String getFormula();
 
 }

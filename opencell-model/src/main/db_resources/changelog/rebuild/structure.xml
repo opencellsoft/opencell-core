@@ -2968,6 +2968,7 @@
             <column name="converted_amount_without_tax_before_discount" type="numeric(23, 12)" />
             <column name="payment_plan_id" type="bigint" />
             <column name="open_order_number" type="varchar(255)" />
+            <column name= "invoice_balance" type="numeric(23, 12)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -6554,6 +6555,9 @@
 		        <constraints nullable="false" />
 		    </column>
 		    <column name="invoice_validation_script_id" type="bigint"/>
+		    <column name="exclude_from_aged_trial_balance" type="${type.boolean}" defaultValueNumeric="0">
+		    	<constraints nullable="false" />
+		    </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-318">
@@ -10713,7 +10717,7 @@
 
             <column name="ppm_version_id" type="bigint" />
             <column name="priority" type="int4" defaultValueNumeric="0"/>
-			<column name="price_el" type="varchar(255)" />
+			<column name="value_el" type="varchar(255)" />
             <column name="description" type="varchar(255)"/>
             <column name="value" type="numeric(23, 12)" />
         </createTable>
@@ -11714,6 +11718,7 @@
 			<column name="refund_reason" type="varchar(255)"/>
 			<column name="cancel_reason" type="varchar(255)"/>
 			<column name="sd_invoice_id" type="bigint"/>
+			<column name="billing_account_id" type="bigint"/>
 		</createTable>
 
 		<createTable tableName="security_deposit_transaction">
@@ -16221,10 +16226,16 @@
 
     </changeSet>
     
+    <changeSet id="#INTRD-10283_20220930-rebuild-str-fk" author="HichamHANINE">
+    	<addForeignKeyConstraint baseColumnNames="billing_account_id" baseTableName="security_deposit"
+			constraintName="fk_billing_account_security_deposit" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+    </changeSet>
+    
     <changeSet id="#INTRD-9946_20220920-rebuild-str-fk" author="HichamHANINE">
 		<addForeignKeyConstraint baseColumnNames="sd_invoice_id" baseTableName="security_deposit" constraintName="fk_security_deposit_invoice"
-                                 deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
+	        deferrable="false" initiallyDeferred="false"
+	        onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
     </changeSet>
 
     <changeSet id="#INTRD-4654_20220203-rebuild-str-fk" author="HanineHicham">
@@ -17372,6 +17383,33 @@
                                  referencedTableName="com_contact"
                                  referencedColumnNames="id" />
     </changeSet>
+    
+    
+	<changeSet id="#INTRD-10163_20220930_build" author="TarikFA.">
+		<createSequence sequenceName="billing_invoice_advance_mapping_seq" startValue="1"/>
+		<createTable tableName="billing_invoice_advance_mapping">
+			 <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="advance_mapping_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name= "advance_invoice_id" type="bigint" />
+            <column name= "invoice_id" type="bigint" />
+            <column name= "amount" type="numeric(23, 12)" />
+		</createTable>
+		
+        <addForeignKeyConstraint baseTableName="billing_invoice_advance_mapping" 
+        						baseColumnNames="advance_invoice_id"
+                                 constraintName="advance_invoice_id_fk"
+                                 referencedTableName="billing_invoice"
+                                 referencedColumnNames="id"/>
+                                 
+        <addForeignKeyConstraint baseTableName="billing_invoice_advance_mapping" 
+        						baseColumnNames="invoice_id"
+                                 constraintName="invoice_id_fk"
+                                 referencedTableName="billing_invoice"
+                                 referencedColumnNames="id"/>
+                                 
+	</changeSet>
 
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
@@ -18607,6 +18645,11 @@
 	<changeSet id="#INTRD-9839_20220919" author="TarikRabeh" />
 	<changeSet id="#INTRD-9946_20220920" author="HichamHANINE" />
     <changeSet id="#INTRD-10097_202000926" author="TarikFA." />
+    <changeSet id="#INTRD-10188_20220928" author="MehdiBOURRAS"/>
+    <changeSet id="#INTRD-10135_28092022" author="Mbarek-Ay"/>
+	<changeSet id="#INTRD-10163_20220930" author="TarikFA." />
+    <changeSet id="#INTRD-9796_30092022_exclude_aged_balance" author="a.rouaguebe" />
+	<changeSet id="#INTRD-10283_20220930" author="HichamHANINE" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

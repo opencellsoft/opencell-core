@@ -27,13 +27,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.Query;
 import javax.ws.rs.core.Response;
@@ -844,7 +841,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     wo.setPricePlanMatrixLine(pricePlanMatrixLine);
                 	priceWithoutTax = pricePlanMatrixLine.getValue();
                     String amountEL = ppmVersion.getPriceEL();
-                    String amountELPricePlanMatrixLine = pricePlanMatrixLine.getPriceEL();
+                    String amountELPricePlanMatrixLine = pricePlanMatrixLine.getValueEL();
                     if (!StringUtils.isBlank(amountEL)) {
                         priceWithoutTax = priceWithoutTax.add(evaluateAmountExpression(amountEL, wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax));
                     }

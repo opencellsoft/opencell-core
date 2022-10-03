@@ -10,8 +10,10 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.apiv2.securityDeposit.SecurityDepositCreditInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositPaymentInput;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.*;
 import org.meveo.model.securityDeposit.*;
 import org.meveo.model.shared.DateUtils;
@@ -19,6 +21,7 @@ import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.*;
 
 import javax.ejb.Stateless;
@@ -57,7 +60,9 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
     @Inject
     private RefundService refundService;
 
-
+    @Inject
+    private ProviderService providerService;
+    
     @Inject
     private RecordedInvoiceService recordedInvoiceService;
 
@@ -237,6 +242,8 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         securityDepositTransaction.setAccountOperation(accountOperation);
         securityDepositTransactionService.create(securityDepositTransaction);
     }
+    
+    
 
     public List<Long> getSecurityDepositsToRefundIds() {
         return getEntityManager()
@@ -246,10 +253,11 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
     }
 
     public Optional<SecurityDeposit> getSecurityDepositByInvoiceId(Long invoiceId) {
-        return Optional.ofNullable(getEntityManager()
+        List<SecurityDeposit> resultList = getEntityManager()
                 .createNamedQuery("SecurityDeposit.securityDepositsByInvoiceId", SecurityDeposit.class)
                 .setParameter("invoiceId", invoiceId)
-                .getSingleResult());
+                .getResultList();
+		return !resultList.isEmpty() ? Optional.ofNullable(resultList.get(0)) : Optional.empty();
     }
 
     public List<SecurityDeposit> checkPeriod(List<Long> securityDeposits) {
@@ -416,5 +424,20 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         return recordedInvoice;
     }
 
+    public void createSD(Invoice invoice, SecurityDepositTemplate defaultSDTemplate, Long count) {
+        SecurityDeposit sd = new SecurityDeposit();            
+        sd.setTemplate(defaultSDTemplate);        
+        String securityDepositName = defaultSDTemplate.getTemplateName();
+        sd.setCode(securityDepositName + "-" + count);
+        sd.setAmount(invoice.getAmountWithoutTax());
+        sd.setStatus(SecurityDepositStatusEnum.VALIDATED);
+        sd.setCustomerAccount(invoice.getBillingAccount().getCustomerAccount());
+        if (providerService.getProvider().getCode() != null) {
+            Provider provider = providerService.findByCode(providerService.getProvider().getCode());
+            sd.setCurrency(provider.getCurrency()); 
+        }
+        sd.setSecurityDepositInvoice(invoice);
+        create(sd);
+    }
 
 }

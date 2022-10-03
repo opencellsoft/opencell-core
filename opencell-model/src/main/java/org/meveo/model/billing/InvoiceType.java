@@ -133,6 +133,13 @@ public class InvoiceType extends BusinessCFEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "mailing_type")
     private MailingTypeEnum mailingType;
+
+    /**
+     * Exclude this invoiceType from Aged Balance
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "exclude_from_aged_trial_balance")
+    private boolean excludeFromAgedTrialBalance = false;
     
     /**
      * executed for each invoice, Will raise an exception if the invoice is invalid. Context will contain billingRun and invoice.
@@ -336,7 +343,25 @@ public class InvoiceType extends BusinessCFEntity {
         this.mailingType = mailingType;
     }
 
-    public boolean isInvoiceAccountable() {
+	/**
+	 * Gets if this invoiceType is excluded for aged balance
+	 * 
+	 * @return
+	 */
+	public boolean isExcludeFromAgedTrialBalance() {
+		return excludeFromAgedTrialBalance;
+	}
+
+	/**
+	 * Sets if this invoiceType is excluded for aged balance
+	 * 
+	 * @param excludeFromAgedTrialBalance
+	 */
+	public void setExcludeFromAgedTrialBalance(boolean excludeFromAgedTrialBalance) {
+		this.excludeFromAgedTrialBalance = excludeFromAgedTrialBalance;
+	}
+
+	public boolean isInvoiceAccountable() {
 		return invoiceAccountable;
 	}
 
