@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.FlushModeType;
 import javax.persistence.Query;
 import javax.ws.rs.NotFoundException;
 
@@ -70,7 +71,7 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 			queryBuilder.addCriterionEntity("am.parameter3", parameter3);
 		}
 		Query query = queryBuilder.getQuery(getEntityManager());
-		return query.getResultList();
+		return query.setFlushMode(FlushModeType.COMMIT).getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
