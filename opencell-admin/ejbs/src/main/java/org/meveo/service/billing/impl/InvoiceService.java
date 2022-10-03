@@ -1509,7 +1509,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             reportTemplate = StorageFactory.getInputStream(jasperFile);
 
             JRXmlDataSource dataSource = new JRXmlDataSource(invoiceXmlFile);
-                
+
             String fileKey = jasperFile.getPath() + jasperFile.lastModified();
             JasperReport jasperReport = jasperReportMap.get(fileKey);
             if (jasperReport == null) {
@@ -1519,13 +1519,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             DefaultJasperReportsContext context = DefaultJasperReportsContext.getInstance();
             JRPropertiesUtil.getInstance(context).setProperty("net.sf.jasperreports.xpath.executer.factory", "net.sf.jasperreports.engine.util.xml.JaxenXPathExecuterFactory");
-            
+
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
             OutputStream outStream = StorageFactory.getOutputStream(pdfFullFilename);
             JasperExportManager.exportReportToPdfStream(jasperPrint, outStream);
             outStream.close();
-            
+
             if ("true".equals(paramBeanFactory.getInstance().getProperty("invoice.pdf.addWaterMark", "true"))) {
                 if (invoice.getInvoiceType().getCode().equals(paramBeanFactory.getInstance().getProperty("invoiceType.draft.code", "DRAFT")) || (invoice.isDraft() != null && invoice.isDraft())) {
                     PdfWaterMark.add(pdfFullFilename, paramBean.getProperty("invoice.pdf.waterMark", "PROFORMA"), null);

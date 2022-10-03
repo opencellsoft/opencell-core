@@ -64,7 +64,6 @@ public class GenericRequestMapper {
     	return result;
     }
 	   
-    @VisibleForTesting
     public Map<String, Object> evaluateFilters(Map<String, Object> filters, Class<? extends IEntity> entity) {
         return Stream.of(filters.keySet().toArray())
                 .map(key -> {
