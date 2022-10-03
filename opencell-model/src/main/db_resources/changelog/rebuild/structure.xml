@@ -6583,7 +6583,7 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-321">
         <createTable tableName="adm_secured_entity">
          	<column name="id" type="bigint">
-                <constraints nullable="false" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_secured_entity_pkey" />
             </column>
             <column name="entity_code" type="varchar(255)">
                 <constraints nullable="false" />
@@ -6599,7 +6599,6 @@
             <column name="entity_id" type="bigint"/>
             <column name="permission" type="varchar(6)"/>
         </createTable>
-        <addPrimaryKey columnNames="user_name, entity_code, entity_class" constraintName="adm_secured_entity_pkey" tableName="adm_secured_entity" />
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-322">
@@ -18404,6 +18403,7 @@
     <changeSet id="#INTRD-8158_20220915" author="AndriusKarpavicius" />
     <changeSet id="#INTRD-10135_28092022" author="Mbarek-Ay"/>
     <changeSet id="#INTRD-4681_20220929" author="AndriusKarpavicius" />
+    <changeSet id="#INTRD-10274_20221003" author="AndriusKarpavicius" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

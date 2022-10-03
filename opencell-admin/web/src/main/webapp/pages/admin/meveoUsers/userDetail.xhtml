@@ -117,12 +117,12 @@
 											</p:selectOneMenu>
 										</hftl:decorateFormField>
 										<hftl:decorateFormField fieldId="codeSearchField" label="#{messages['BusinessEntity.code']}" rendered="#{userBean.selectedAccountBean != null}">
-											<p:inputText id="codeSearchField" value="#{userBean.selectedAccountBean.filters['code']}" size="20" maxlength="40" disabled="false" />
+											<p:inputText id="codeSearchField" value="#{userBean.securedEntityFilter['code']}" size="20" maxlength="40" disabled="false" />
 										</hftl:decorateFormField>
 									</p:outputPanel>
 									<h:panelGroup layout="block" styleClass="search-panel-actions" rendered="#{userBean.selectedAccountBean != null}">
-										<p:commandButton id="buttonSearch" value="#{messages['commons.search']}" update="@form" />
-										<p:commandButton id="buttonClear" action="#{userBean.selectedAccountBean.clean}" value="#{messages['commons.clean']}"
+										<p:commandButton id="buttonSearch" value="#{messages['commons.search']}" action="#{userBean.filterAccounts}" process="codeSearchField @this" update="@form" />
+										<p:commandButton id="buttonClear" action="#{userBean.cleanAccountsFilter}" process="@this" value="#{messages['commons.clean']}"
 											update=":userFormId:tabView:securedEntitiesDialogForm" />
 									</h:panelGroup>
 								</h:panelGroup>

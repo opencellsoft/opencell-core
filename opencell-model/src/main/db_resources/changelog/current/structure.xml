@@ -14021,4 +14021,11 @@ order by date_trunc('month', i.invoice_date) DESC
     <changeSet id="#INTRD-4681_20220929" author="AndriusKarpavicius">
         <sql>update ${db.schema.adapted}adm_secured_entity set entity_class = reverse(split_part(reverse(entity_class),'.',1))</sql>
     </changeSet>
+    
+    <changeSet id="#INTRD-10274_20221003" author="AndriusKarpavicius">
+        <dropPrimaryKey tableName="adm_secured_entity" constraintName="adm_secured_entity_pkey"/>
+        <dropNotNullConstraint tableName="adm_secured_entity" columnName="user_name"/>
+        <addPrimaryKey columnNames="id" tableName="adm_secured_entity"/>
+    </changeSet>
+    
 </databaseChangeLog>
