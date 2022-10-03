@@ -14017,5 +14017,10 @@ order by date_trunc('month', i.invoice_date) DESC
         <update tableName="cpq_attribute"><column name="el_value" value="#{edr.getDecimalParam4()}"/><where>id=-34</where></update>
         <update tableName="cpq_attribute"><column name="el_value" value="#{edr.getDecimalParam5()}"/><where>id=-35</where></update>
 	</changeSet>
-
+	
+	<changeSet id="#INTRD-10097_202000926" author="TarikFA.">
+		<addColumn tableName="cat_offer_template">
+			<column name="generate_quote_edr_per_product" type="${type.boolean}" defaultValueNumeric="0"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
