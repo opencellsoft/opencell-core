@@ -8184,4 +8184,11 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</modifySql>
     </changeSet>
 
+	<changeSet id="#INTRD-10247_20220928_default_currency_sd_template" author="a.rouaguebe">
+		<update tableName="security_deposit_templat">
+			<column name="currency_id" valueComputed="(SELECT currency_id from crm_provider where id = 1)"></column>
+			<where>template_name = 'DEFAULT_SD_TEMPLATE'</where>
+		</update>
+	</changeSet>
+
 </databaseChangeLog>

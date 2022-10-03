@@ -53,6 +53,9 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
     @Schema(description = "The Price EL")
     private String priceEL;
 
+	@Schema(description = "The EL Value")
+	private String valueEL;
+
 	public PricePlanMatrixLineDto() {
 	}
 
@@ -63,6 +66,7 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 		this.description = pricePlanMatrixLine.getDescription();
 		this.priority = pricePlanMatrixLine.getPriority();
 		this.priceEL = pricePlanMatrixLine.getValueEL();
+		this.valueEL = pricePlanMatrixLine.getValueEL();
 		this.pricePlanMatrixCode = pricePlanMatrixLine.getPricePlanMatrixVersion().getPricePlanMatrix().getCode();
 		this.pricePlanMatrixVersion = pricePlanMatrixLine.getPricePlanMatrixVersion().getCurrentVersion();
 		pricePlanMatrixValues = pricePlanMatrixLine.getPricePlanMatrixValues()
@@ -148,6 +152,14 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
     public void setPriceEL(String priceEL) {
         this.priceEL = priceEL;
     }
+
+	public String getValueEL() {
+		return valueEL;
+	}
+
+	public void setValueEL(String valueEL) {
+		this.valueEL = valueEL;
+	}
 
 	public BigDecimal getValue() {
 		return value;
