@@ -388,11 +388,6 @@
         </dependency>
         <dependency>
             <groupId>net.sf.jasperreports</groupId>
-            <artifactId>jasperreports-fonts</artifactId>
-        </dependency>
-        
-        <dependency>
-            <groupId>net.sf.jasperreports</groupId>
             <artifactId>jasperreports</artifactId>
             <scope>compile</scope>
             <exclusions>
@@ -667,12 +662,12 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
-
+        
         <dependency>
             <groupId>com.worldline-solutions</groupId>
             <artifactId>onlinepayments-sdk-java</artifactId>
             <version>${version.worldline.onlinepayments-sdk}</version>
-        </dependency>
+        </dependency>        
 
         <dependency>
             <groupId>org.keycloak</groupId>

@@ -389,7 +389,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * map used to store temporary jasper report.
      */
-    private static Map<String, JasperReport> jasperReportMap = new HashMap<>();
+    private Map<String, JasperReport> jasperReportMap = new HashMap<>();
 
     /**
      * Description translation map.
@@ -1594,9 +1594,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
             log.debug("Jasper template used: {}", jasperFile.getCanonicalPath());
 
             reportTemplate = StorageFactory.getInputStream(jasperFile);
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document xmlDocument = StorageFactory.parse(db, invoiceXmlFile);
+            xmlDocument.getDocumentElement().normalize();
+            Node invoiceNode = xmlDocument.getElementsByTagName(INVOICE_TAG_NAME).item(0);
+            Transformer trans = TransformerFactory.newInstance().newTransformer();
+            trans.setOutputProperty(OutputKeys.INDENT, "yes");
+            StringWriter writer = new StringWriter();
+            trans.transform(new DOMSource(xmlDocument), new StreamResult(writer));
 
-            JRXmlDataSource dataSource = new JRXmlDataSource(invoiceXmlFile);
-                
+            JRXmlDataSource dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes(StandardCharsets.UTF_8)), "/invoice");
+
             String fileKey = jasperFile.getPath() + jasperFile.lastModified();
             JasperReport jasperReport = jasperReportMap.get(fileKey);
             if (jasperReport == null) {
@@ -1606,13 +1615,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             DefaultJasperReportsContext context = DefaultJasperReportsContext.getInstance();
             JRPropertiesUtil.getInstance(context).setProperty("net.sf.jasperreports.xpath.executer.factory", "net.sf.jasperreports.engine.util.xml.JaxenXPathExecuterFactory");
-            
+
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
             OutputStream outStream = StorageFactory.getOutputStream(pdfFullFilename);
             JasperExportManager.exportReportToPdfStream(jasperPrint, outStream);
             outStream.close();
-            
+
             if ("true".equals(paramBeanFactory.getInstance().getProperty("invoice.pdf.addWaterMark", "true"))) {
                 if (invoice.getInvoiceType().getCode().equals(paramBeanFactory.getInstance().getProperty("invoiceType.draft.code", "DRAFT")) || (invoice.isDraft() != null && invoice.isDraft())) {
                     PdfWaterMark.add(pdfFullFilename, paramBean.getProperty("invoice.pdf.waterMark", "PROFORMA"), null);
@@ -1622,7 +1631,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             log.info("PDF file '{}' produced for invoice {}", pdfFullFilename, invoice.getInvoiceNumberOrTemporaryNumber());
 
-        } catch (IOException | JRException e) {
+        } catch (IOException | JRException | TransformerException | ParserConfigurationException e) {
             throw new BusinessException("Failed to generate a PDF file for " + pdfFilename, e);
         } catch(Throwable e) {
             throw new BusinessException("Failed to generate a PDF file for " + pdfFilename, e);
@@ -6433,10 +6442,4 @@ public class InvoiceService extends PersistenceService<Invoice> {
         entity.setPaymentStatus(newInvoicePaymentStatusEnum);
     }
 
-    /**
-     * Clear cached Jasper reports
-     */
-    public static void clearJasperReportCache() {
-        jasperReportMap.clear();
-    }
 }
