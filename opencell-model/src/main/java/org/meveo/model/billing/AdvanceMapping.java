@@ -28,6 +28,16 @@ public class AdvanceMapping extends BaseEntity {
     @JoinColumn(name = "invoice_id")
     private Invoice invoice;
 
+    public AdvanceMapping(Invoice advanceInvoice, Invoice invoice, BigDecimal amount) {
+        super();
+        this.advanceInvoice = advanceInvoice;
+        this.invoice = invoice;
+        this.amount = amount;
+    }
+
+    public AdvanceMapping() {
+    }
+
     @Column(name = "amount", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amount;
 

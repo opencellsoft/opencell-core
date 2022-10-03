@@ -200,14 +200,6 @@ OrderAdvancementScript extends ModuleScript {
 
 
     }
-    private AccountingArticle getDefaultAccountingArticle() {
-        String articleCode = ParamBean.getInstance().getProperty("accountingArticle.advancePayment.defautl.code", "ADV-STD");
-
-        AccountingArticle accountingArticle = accountingArticleService.findByCode(articleCode);
-        if (accountingArticle == null)
-            throw new EntityDoesNotExistsException(AccountingArticle.class, articleCode);
-        return accountingArticle;
-    }
 
 
     private InvoiceLine createInvoiceLine(CommercialOrder commercialOrder, AccountingArticle accountingArticle,ProductVersion productVersion, OrderOffer orderOffer, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate,Long discountedInvoiceLineId) {

@@ -3642,6 +3642,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Subscription subscription = invoice.getSubscription();
         BillingAccount billingAccount = invoice.getBillingAccount();
         CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+        
+        applyAdvanceInvoice(invoice, checkAdvanceInvoice(invoice));
 
         boolean isEnterprise = appProvider.isEntreprise();
         String languageCode = billingAccount.getTradingLanguage().getLanguageCode();
@@ -6254,6 +6256,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if(invoiceResource.getDiscount() == null && toUpdate.getDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
             toUpdate.setDiscountAmount(BigDecimal.ZERO);
         }
+        
+        if(toUpdate.getInvoiceType() != null && invoiceTypeService.getListAdjustementCode().contains(toUpdate.getInvoiceType().getCode())) {
+            var hasInvoiceLineAdj = toUpdate.getInvoiceLines().stream().anyMatch(in -> in.getAccountingArticle().getCode().equalsIgnoreCase("ADV-STD"));
+            if(!hasInvoiceLineAdj) {
+                throw new BusinessApiException("The invoice type of advanced must have an accounting article ADV-STD");
+            }
+            toUpdate.setInvoiceBalance(toUpdate.getAmountWithTax());
+        }
 
         return update(toUpdate);
     }
@@ -6544,4 +6554,79 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public static void clearJasperReportCache() {
         jasperReportMap.clear();
     }
+    
+    private List<Invoice> checkAdvanceInvoice(Invoice invoice) {
+        var invoicesAdv = invoice.getBillingAccount().getInvoices().stream()
+                                                                    .filter(inv -> inv.getInvoiceType() != null)
+                                                                    .filter(inv -> invoiceTypeService.getListAdjustementCode().contains(inv.getInvoiceType().getCode()))
+                                                                    .filter(inv -> inv.getInvoiceBalance().compareTo(BigDecimal.ZERO) > 0)
+                                                                    .collect(Collectors.toList());
+        Collections.sort(invoicesAdv, (inv1, inv2) -> inv1.getId().compareTo(inv2.getId()));
+        return invoicesAdv;
+    }
+    
+    private void appendAdvanceInvoiceLine(Invoice invoice, BigDecimal invoiceLineAmount) {
+        var invoiceLine = new InvoiceLine();
+        var accountingArticleAdv = accountingArticleService.findByCode("ADV-STD");
+        if(accountingArticleAdv == null)
+            throw new EntityDoesNotExistsException(AccountingArticle.class, "ADV-STD");
+        
+        invoiceLine.setAccountingArticle(accountingArticleAdv);
+        invoiceLine.setAmountTax(invoiceLineAmount.negate());
+        invoiceLine.setAmountWithoutTax(invoiceLineAmount.negate());
+        invoiceLine.setAmountTax(BigDecimal.ZERO);
+        invoiceLine.setInvoice(invoice);
+        invoiceLine.setBillingAccount(invoice.getBillingAccount());
+        invoiceLine.setStatus(InvoiceLineStatusEnum.BILLED);
+        
+        invoiceLinesService.create(invoiceLine);
+        
+        calculateInvoice(invoice);
+        
+    }
+    
+    public void applyAdvanceInvoice(Invoice invoice, List<Invoice> advInvoices) {
+        if(advInvoices != null) {
+            for (Invoice inv : advInvoices) {
+                BigDecimal remainingAmount = inv.getAmountWithTax();
+                BigDecimal amount = BigDecimal.ZERO;
+                
+                for(Invoice adv : advInvoices){
+                    amount = BigDecimal.ZERO;
+                    if(adv.getInvoiceBalance().compareTo(remainingAmount) >= 1){
+                        amount=remainingAmount;
+                        adv.setInvoiceBalance( adv.getInvoiceBalance().subtract(remainingAmount));
+                        remainingAmount = BigDecimal.ZERO;
+                    }else{
+                        amount = adv.getInvoiceBalance();
+                        remainingAmount=remainingAmount.subtract(adv.getInvoiceBalance());
+                        adv.setInvoiceBalance(BigDecimal.ZERO);
+                    }
+                    var advanceMapping= new AdvanceMapping(inv ,invoice,amount);
+                    inv.getAdvanceMappingList().add(advanceMapping);
+                    if(remainingAmount == BigDecimal.ZERO)
+                        break;
+                }
+                
+                appendAdvanceInvoiceLine(invoice, inv.getAmountWithTax().subtract(remainingAmount));
+            };
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }
