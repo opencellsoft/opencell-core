@@ -14,10 +14,14 @@ import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.EntityNotAllowedException;
 import org.meveo.apiv2.ordering.services.ApiService;
+import org.meveo.commons.utils.ListUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.payments.CustomerAccount;
@@ -26,6 +30,7 @@ import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.service.admin.impl.CurrencyService;
+import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.crm.impl.ProviderService;
@@ -33,6 +38,8 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositTemplateService;
+
+import com.paypal.api.payments.Invoices;
 
 public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
 
@@ -56,6 +63,9 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
 
     @Inject
     private ServiceInstanceService serviceInstanceService;
+
+    @Inject
+    private InvoiceService invoiceService;
 
     @Inject
     private ProviderService providerService;
@@ -114,6 +124,29 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         }
         linkRealEntities(securityDepositInput);        
 
+        if(securityDepositInput.getSecurityDepositInvoice() != null) {
+        	Invoice invoice = invoiceService.findById(securityDepositInput.getSecurityDepositInvoice().getId());
+        	if(invoice == null) {
+        		throw new EntityDoesNotExistsException(Invoice.class, securityDepositInput.getSecurityDepositInvoice().getId());
+        	}
+        	
+        	if(!"SECURITY_DEPOSIT".equals(invoice.getInvoiceType().getCode())) {
+        		throw new BusinessApiException("Linked invoice should be a SECURITY_DEPOSIT");
+        	}
+
+        	if(!invoice.getBillingAccount().getCustomerAccount().getCustomer().getId().equals(securityDepositInput.getCustomerAccount().getCustomer().getId())) {
+        		throw new BusinessApiException("Linked invoice should have the same Customer as the Security Deposit");
+        	}
+
+        	if(ListUtils.isEmtyCollection(invoice.getInvoiceLines())) {
+        		throw new BusinessApiException("Linked invoice should have invoice lines");
+        	}
+
+        	if(invoice.getAmountWithoutTax() == null) {
+        		throw new BusinessApiException("Linked invoice cannot have amountWithoutTax null");
+        	}
+        }
+        
         // Check Maximum amount per Security deposit
         BigDecimal maxAmountPerSecurityDeposit = financeSettings.getMaxAmountPerSecurityDeposit();
         if (maxAmountPerSecurityDeposit != null && securityDepositAmount.compareTo(maxAmountPerSecurityDeposit) > 0) {
