@@ -93,8 +93,9 @@ public class QueryBuilder {
     static final String FROM = "from ";
 
     public static final String  JOIN_AS = " as ";
-    
-    private static Set<String> joinAlias = new TreeSet<String>();
+
+//    private static Set<String> joinAlias = new TreeSet<String>();
+    private static Set<String> joinAlias = Collections.synchronizedSet(new TreeSet<>());
 
     public Class<?> getEntityClass() {
         return clazz;
