@@ -295,7 +295,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
                     throw new MeveoApiException(resourceMessages.getString("error.pricePlanMatrixVersion.overlapPeriodWithVersion") + ppmv.getCurrentVersion());
 	        	}
 			 });
-            return new GetPricePlanVersionResponseDto(pricePlanMatrixVersionService.duplicate(pricePlanMatrixVersion, validity, PriceVersionTypeEnum.FIXED));
+            return new GetPricePlanVersionResponseDto(pricePlanMatrixVersionService.duplicate(pricePlanMatrixVersion, pricePlanMatrixVersion.getPricePlanMatrix(),validity, pricePlanMatrixVersion.getPriceVersionType(),false));
         } catch (BusinessException e) {
             throw new MeveoApiException(e);
         }
