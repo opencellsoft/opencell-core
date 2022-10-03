@@ -20,47 +20,9 @@ package org.meveo.model.rating;
 
 public enum EDRStatusEnum {
 
-	OPEN(1, "edrStatus.open"), RATED(2, "edrStatus.rated"), REJECTED(3, "edrStatus.rejected"), MEDIATING(4, "edrStatus.mediating"), 
-	AGGREGATED(5, "edrStatus.aggregated"), DUPLICATED(6, "edrStatus.duplicated"),CANCELLED(7, "edrStatus.cancelled");
-
-    private Integer id;
-    private String label;
-
-    private EDRStatusEnum(Integer id, String label) {
-        this.id = id;
-        this.label = label;
-    }
+    OPEN, RATED, REJECTED, MEDIATING, AGGREGATED, DUPLICATED, CANCELLED;
 
     public String getLabel() {
-        return label;
+        return this.getClass().getSimpleName() + "." + this.name();
     }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public static EDRStatusEnum getValue(Integer id) {
-        if (id != null) {
-            for (EDRStatusEnum status : values()) {
-                if (id.equals(status.getId())) {
-                    return status;
-                }
-            }
-        }
-        return null;
-    }
-    public static EDRStatusEnum getByLabel(String label) {
-        if (label != null) {
-            for (EDRStatusEnum status : values()) {
-                if (label.equals(status.getLabel())) {
-                    return status;
-                }
-            }
-        }
-        return null;
-    }
-    public String toString() {
-        return name();
-    }
-
 }

@@ -257,7 +257,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public RatedTransaction createRatedTransactionNewTx(WalletOperation walletOperation, boolean isVirtual) throws BusinessException {
-    	return createRatedTransaction(walletOperation, isVirtual);
+        return createRatedTransaction(walletOperation, isVirtual);
     }
 
     /**
@@ -293,6 +293,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         EntityManager em = getEntityManager();
         boolean eventsEnabled = areEventsEnabled(NotificationEventTypeEnum.CREATED);
         List<RatedTransaction> lstRatedTransaction = new ArrayList<RatedTransaction>();
+
         boolean cftEndPeriodEnabled = customFieldTemplateService.areCFTEndPeriodEventsEnabled(new RatedTransaction());
 
         String providerCode = currentUser.getProviderCode();
@@ -307,14 +308,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 em.clear();
             }
             RatedTransaction ratedTransaction = new RatedTransaction(walletOperation);                      
-            if(ratedTransaction.getAccountingArticle() == null) {
-                getAccountingArticle(walletOperation).ifPresent(ratedTransaction::setAccountingArticle);
-            }
 
             if (cftEndPeriodEnabled) {
                 customFieldInstanceService.scheduleEndPeriodEvents(ratedTransaction);
             }
-
             em.persist(ratedTransaction);
             
             lstRatedTransaction.add(ratedTransaction);
@@ -1005,10 +1002,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @SuppressWarnings("unchecked")
     public List<RatedTransaction> listRTsToInvoice(IBillableEntity entityToInvoice, Date firstTransactionDate, Date lastTransactionDate,
                                                    Date invoiceUpToDate, Filter ratedTransactionFilter, Integer rtPageSize) throws BusinessException {
-    	TypedQuery<RatedTransaction> query = null;
+        TypedQuery<RatedTransaction> query = null;
         if (ratedTransactionFilter != null) {
             final List<RatedTransaction> filteredListAsObjects = (List<RatedTransaction>) filterService.filteredListAsObjects(ratedTransactionFilter, null);
-			return filteredListAsObjects.stream()
+            return filteredListAsObjects.stream()
                     .filter(rt -> entityToInvoice instanceof BillingAccount && rt.getBillingAccount().getId().equals(entityToInvoice.getId()))
                     .collect(toList());
         } else if (entityToInvoice instanceof Subscription) {
@@ -1022,9 +1019,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
         if (query != null) {
             if (rtPageSize != null) {
-        		query.setMaxResults(rtPageSize);
-        	}
-        	return query.setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setParameter("invoiceUpToDate", invoiceUpToDate).setHint("org.hibernate.readOnly", true).getResultList();
+                query.setMaxResults(rtPageSize);
+            }
+            return query.setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setParameter("invoiceUpToDate", invoiceUpToDate).setHint("org.hibernate.readOnly", true).getResultList();
         }
         return new ArrayList<>();
     }
@@ -1417,8 +1414,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param quantity
      * @return
      */
-	public RatedTransaction createRatedTransaction(String billingAccountCode, String userAccountCode,
-			String subscriptionCode, String serviceInstanceCode, String chargeInstanceCode, Date usageDate,
+    public RatedTransaction createRatedTransaction(String billingAccountCode, String userAccountCode,
+            String subscriptionCode, String serviceInstanceCode, String chargeInstanceCode, Date usageDate,
             BigDecimal unitAmountWithoutTax, BigDecimal quantity) {
 
         String errors = "";
@@ -1439,8 +1436,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
         usageDate = usageDate == null ? new Date() : usageDate;
 
-		BillingAccount billingAccount = (BillingAccount) tryToFindByEntityClassAndCode(BillingAccount.class,
-				billingAccountCode);
+        BillingAccount billingAccount = (BillingAccount) tryToFindByEntityClassAndCode(BillingAccount.class,
+                billingAccountCode);
 
         UserAccount userAccount = userAccountCode != null ? (UserAccount) tryToFindByEntityClassAndCode(UserAccount.class, userAccountCode) : billingAccount.getUsersAccounts().get(0);
 
@@ -1457,17 +1454,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         TaxClass taxClass = taxInfo.taxClass;
 
         final BigDecimal taxPercent = taxInfo.tax.getPercent();
-		BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(unitAmountWithoutTax, unitAmountWithoutTax,
-				taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+        BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(unitAmountWithoutTax, unitAmountWithoutTax,
+                taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
         BigDecimal AmountWithoutTax = unitAmountWithoutTax.multiply(quantity);
-		BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(AmountWithoutTax, AmountWithoutTax, taxPercent,
-				appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
-		RatedTransaction rt = new RatedTransaction(usageDate, unitAmounts[0], unitAmounts[1], unitAmounts[2], quantity,
-				amounts[0], amounts[1], amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount, userAccount,
-				null, null, null, null, null, null, subscription, null, null, null, subscription.getOffer(), null,
-				serviceInstance.getCode(), serviceInstance.getCode(), null, null, subscription.getSeller(), taxInfo.tax,
-				taxPercent, serviceInstance, taxClass, null, RatedTransactionTypeEnum.MANUAL, chargeInstance, null);
-		rt.setAccountingArticle(accountingArticle);
+        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(AmountWithoutTax, AmountWithoutTax, taxPercent,
+                appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+        RatedTransaction rt = new RatedTransaction(usageDate, unitAmounts[0], unitAmounts[1], unitAmounts[2], quantity,
+                amounts[0], amounts[1], amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount, userAccount,
+                null, null, null, null, null, null, subscription, null, null, null, subscription.getOffer(), null,
+                serviceInstance.getCode(), serviceInstance.getCode(), null, null, subscription.getSeller(), taxInfo.tax,
+                taxPercent, serviceInstance, taxClass, null, RatedTransactionTypeEnum.MANUAL, chargeInstance, null);
+        rt.setAccountingArticle(accountingArticle);
         create(rt);
         return rt;
     }
@@ -1478,13 +1475,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param quantity
      * @return
      */
-	public void updateRatedTransaction(RatedTransaction ratedTransaction, BigDecimal unitAmountWithoutTax,
-			BigDecimal quantity) {
-		BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(unitAmountWithoutTax, unitAmountWithoutTax,
-				ratedTransaction.getTaxPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+    public void updateRatedTransaction(RatedTransaction ratedTransaction, BigDecimal unitAmountWithoutTax,
+            BigDecimal quantity) {
+        BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(unitAmountWithoutTax, unitAmountWithoutTax,
+                ratedTransaction.getTaxPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
         BigDecimal AmountWithoutTax = unitAmountWithoutTax.multiply(quantity);
-		BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(AmountWithoutTax, AmountWithoutTax, ratedTransaction.getTaxPercent(),
-				appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(AmountWithoutTax, AmountWithoutTax, ratedTransaction.getTaxPercent(),
+                appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
         ratedTransaction.setUnitAmountWithoutTax(unitAmounts[0]);
         ratedTransaction.setUnitAmountWithTax(unitAmounts[1]);
         ratedTransaction.setUnitAmountTax(unitAmounts[2]);
@@ -1566,7 +1563,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 + "              sum(rt.amount_without_tax) as sum_without_tax, sum(rt.amount_with_tax) as sum_with_tax,"
                 + "              sum(rt.amount_with_tax) / sum(rt.quantity) as unit_price,"
                 + "              rt.offer_id, rt.service_instance_id, "
-                + 				 usageDateAggregation + " as usage_date, min(rt.start_date) as start_date, "
+                +                usageDateAggregation + " as usage_date, min(rt.start_date) as start_date, "
                 + "              max(rt.end_date) as end_date, rt.order_number, rt.tax_percent, rt.tax_id, "
                 + "              rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id, rt.accounting_article_id ,rt. discounted_Ratedtransaction_id "
                 + "    FROM billing_rated_transaction rt WHERE id in (:ids) "
@@ -1584,7 +1581,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     .executeUpdate();
     }
 
-	public void linkRTWithInvoiceLine(Map<Long, List<Long>> iLIdsRtIdsCorrespondence) {
+    public void linkRTWithInvoiceLine(Map<Long, List<Long>> iLIdsRtIdsCorrespondence) {
         for (Map.Entry<Long, List<Long>> entry : iLIdsRtIdsCorrespondence.entrySet()) {
             final List<Long> ratedTransactionsIDs = entry.getValue();
             final Long invoiceLineID = entry.getKey();
@@ -1603,25 +1600,26 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
     }
 
-	private void linkRTsWithILByIds( Long invoiceLineId, final List<Long> ids) {
-		getEntityManager().createNamedQuery("RatedTransaction.linkRTWithInvoiceLine")
-		        .setParameter("il", invoiceLineId)
-		        .setParameter("ids", ids).executeUpdate();
-	}
+    private void linkRTsWithILByIds( Long invoiceLineId, final List<Long> ids) {
+        getEntityManager().createNamedQuery("RatedTransaction.linkRTWithInvoiceLine")
+                .setParameter("il", invoiceLineId)
+                .setParameter("ids", ids).executeUpdate();
+    }
 
-	/**
-	 * @param aggregationConfiguration
-	 * @param be
-	 * @param lastTransactionDate
-	 * @param invoiceDate
-	 * @param filter
-	 * @return
-	 */
-	public List<Map<String, Object>> getGroupedRTsWithAggregation(AggregationConfiguration aggregationConfiguration,
-			BillingRun billingRun, IBillableEntity be, Date lastTransactionDate, Date invoiceDate, Filter filter) {
+    /**
+     * @param aggregationConfiguration
+     * @param be
+     * @param lastTransactionDate
+     * @param invoiceDate
+     * @param filter
+     * @return
+     */
+    public List<Map<String, Object>> getGroupedRTsWithAggregation(AggregationConfiguration aggregationConfiguration,
+            BillingRun billingRun, IBillableEntity be, Date lastTransactionDate, Date invoiceDate, Filter filter) {
 
         if (filter != null) {
-            //TODO #MEL use of filter must be reviewed
+
+            // TODO #MEL use of filter must be reviewed
             List<RatedTransaction> ratedTransactions = (List<RatedTransaction>) filterService.filteredListAsObjects(filter, null);
             List<Long> ratedTransactionIds = null;
             if (billingRun.isExceptionalBR()) {
@@ -1660,7 +1658,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         List<Map<String, Object>> groupedRTsWithAggregation = getSelectQueryAsMap(query, params);
         groupedRTsWithAggregation.addAll(getGroupedRTsWithoutAggregation(billingRun, be, lastTransactionDate));
         return groupedRTsWithAggregation;
-	}
+    }
 
     private Map<String, Object> buildParams(BillingRun billingRun, Date lastTransactionDate) {
         Map<String, Object> params = new HashMap<>();
@@ -1882,7 +1880,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public void bridgeDiscountRTs(Long minId, Long maxId) {
 
-        getEntityManager().createNamedQuery("WalletOperation.massUpdateWithRTInfoFromPendingTable" + (EntityManagerProvider.isDBOracle() ? "Oracle" : "")).setParameter("minId", minId).setParameter("maxId", maxId)
+        getEntityManager().createNamedQuery("RatedTransaction.massUpdateWithDiscountedRT" + (EntityManagerProvider.isDBOracle() ? "Oracle" : "")).setParameter("minId", minId).setParameter("maxId", maxId)
             .executeUpdate();
     }
 }
