@@ -121,8 +121,8 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
         Object[] convertSummary = (Object[]) emWrapper.getEntityManager().createNamedQuery("WalletOperation.getConvertToRTsSummary").getSingleResult();
 
         Long nrOfRecords = (Long) convertSummary[0];
-        maxId = (Long) convertSummary[1];
-        minId = (Long) convertSummary[2];
+        maxId = convertSummary[1] != null ? (Long) convertSummary[1] : null;
+        minId = convertSummary[2] != null ? (Long) convertSummary[2] : null;
 
         if (nrOfRecords.intValue() == 0) {
             return Optional.empty();
@@ -165,7 +165,9 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
         scrollableResults.close();
         statelessSession.close();
 
-        ratedTransactionService.bridgeDiscountRTs(minId, maxId);
+        if (minId != null && maxId != null) {
+            ratedTransactionService.bridgeDiscountRTs(minId, maxId);
+        }
     }
 
     @Override
