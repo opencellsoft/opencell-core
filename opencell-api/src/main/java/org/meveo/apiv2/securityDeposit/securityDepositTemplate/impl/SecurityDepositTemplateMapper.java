@@ -3,6 +3,7 @@ package org.meveo.apiv2.securityDeposit.securityDepositTemplate.impl;
 import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.apiv2.ordering.ResourceMapper;
 import org.meveo.apiv2.securityDeposit.ImmutableSecurityDepositTemplate;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
@@ -33,12 +34,14 @@ public class SecurityDepositTemplateMapper extends ResourceMapper<org.meveo.apiv
     protected SecurityDepositTemplate toEntity(SecurityDepositTemplate securityDepositTemplate, org.meveo.apiv2.securityDeposit.SecurityDepositTemplate resource) {
         securityDepositTemplate.setTemplateName(resource.getTemplateName());
 
-        if(resource.getCurrency() != null)
+        if(resource.getCurrency() != null && (resource.getCurrency().getId() != null || resource.getCurrency().getCode() != null))
         {
             Currency currency = new Currency();
             currency.setId(resource.getCurrency().getId());
             currency.setCurrencyCode(resource.getCurrency().getCode());
             securityDepositTemplate.setCurrency(currency);
+        } else if(resource.getCurrency() != null && StringUtils.isBlank(resource.getCurrency().getId()) && StringUtils.isBlank(resource.getCurrency().getCode())) {
+        	securityDepositTemplate.setCurrency(null);
         }
 
         securityDepositTemplate.setAllowValidityDate(resource.getAllowValidityDate());
