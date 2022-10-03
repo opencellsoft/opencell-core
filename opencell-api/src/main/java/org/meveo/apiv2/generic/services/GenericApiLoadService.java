@@ -23,6 +23,7 @@ import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.Query;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -111,6 +112,11 @@ public class GenericApiLoadService {
 				.addPaginationConfiguration(searchConfig, "a").find(nativePersistenceService.getEntityManager()).stream().map(ObjectArrays -> Arrays.asList(ObjectArrays)).collect(toList());
 		return list.stream().map(line -> addResultLine(line, genericFieldsAlias != null ? genericFieldsAlias.iterator() : searchConfig.getFetchFields().iterator())).collect(toList());
 	}
+
+    public String findAggregatedPaginatedRecordsAsString(Class entityClass, PaginationConfiguration searchConfig) {
+        return nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig, null)
+                .addPaginationConfiguration(searchConfig, "a").getQueryAsString();
+    }
 
 	public int getAggregatedRecordsCount(Class entityClass, PaginationConfiguration searchConfig) {
 		return nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig, null)
