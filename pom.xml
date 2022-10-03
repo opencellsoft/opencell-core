@@ -876,7 +876,7 @@
                 <dependency>
                     <groupId>org.postgresql</groupId>
                     <artifactId>postgresql</artifactId>
-                    <version>42.5.0</version>
+                    <version>42.2.13</version>
                     <scope>provided</scope>
                 </dependency>
                 <dependency>
@@ -946,7 +946,7 @@
                 <dependency>
                     <groupId>org.postgresql</groupId>
                     <artifactId>postgresql</artifactId>
-                    <version>42.5.0</version>
+                    <version>9.2-1002-jdbc4</version>
                 </dependency>
                 <dependency>
                     <groupId>org.liquibase.ext</groupId>
@@ -978,7 +978,7 @@
                 <dependency>
                     <groupId>org.postgresql</groupId>
                     <artifactId>postgresql</artifactId>
-                    <version>42.5.0</version>
+                    <version>9.2-1002-jdbc4</version>
                 </dependency>
                 <dependency>
                     <groupId>org.liquibase.ext</groupId>
