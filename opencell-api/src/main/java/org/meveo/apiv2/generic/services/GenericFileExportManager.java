@@ -133,14 +133,18 @@ public class GenericFileExportManager {
      */
 	private void writeCsvFile(List<Map<String, Object>> records, File csvFile, Map<String, GenericFieldDetails> fieldDetails, List<String> ordredColumn) throws IOException {
 		CsvBuilder csv = new CsvBuilder();
-        csv.appendValues(ordredColumn.toArray(new String[0]));
-		csv.startNewLine();                 		    
-		//Cell
-		records.forEach(record -> {
-            ordredColumn.stream().forEach(s -> csv.appendValue(applyTransformation(fieldDetails.get(s), record.get(s))));
-            csv.startNewLine();
+        ordredColumn.forEach(field -> {
+            GenericFieldDetails fieldDetail = fieldDetails.get(field);
+            csv.appendValue(extractValue(field, fieldDetail));
         });
-		
+        csv.startNewLine();
+        for (Map<String, Object> item : records) {
+            ordredColumn.forEach(field ->
+                    csv.appendValue(applyTransformation(fieldDetails.get(field), item.get(field)))
+            );
+            csv.startNewLine();
+        }
+
 		try (FileOutputStream fop = new FileOutputStream(csvFile, true)) {
 			fop.write(csv.toString().getBytes());
 			fop.flush();

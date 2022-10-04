@@ -125,7 +125,7 @@ public class GenericApiLoadService {
 	private Map<String, Object> addResultLine(List<Object> line, Iterator<String> iterator) {
 	    return line.stream()
 	            .flatMap(array -> array instanceof Object[] ? flatten((Object[])array) : Stream.of(array))
-	            .filter(l -> !Objects.isNull(l))
+                .map(l -> Objects.isNull(l) ? "" : l)
 	            .collect(toMap(x -> iterator.next(), Function.identity(), (existing, replacement) -> existing, LinkedHashMap::new));
 	}
     private static Stream<Object> flatten(Object[] array) {

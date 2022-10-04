@@ -72,9 +72,10 @@ public class SecuredBusinessEntityMethodInterceptorTest {
     /**
      * Sets up a mocked current user with secured entities
      * 
+     * @param considerSellerAsParent Shall Seller be considered as a a parent for entity hierarchy traversal
      * @param securedEntities A list of secured entities. A repeated set of two items - Secured entity class and it's code
      */
-    private void setUpCurrentUser(Object... entitiesAllowed) {
+    private void setUpCurrentUser(boolean considerSellerAsParent, Object... entitiesAllowed) {
 
         List<SecuredEntity> securedEntities = new ArrayList<>(entitiesAllowed.length / 2);
 
@@ -83,6 +84,9 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         }
 
         Mockito.when(securedBusinessEntityService.getSecuredEntitiesForCurentUser()).thenReturn(securedEntities);
+
+        Mockito.when(paramBeanFactory.getInstance()).thenReturn(paramBean);
+        Mockito.when(paramBean.getPropertyAsBoolean(eq("accessible.entity.allows.access.childs.seller"), anyBoolean())).thenReturn(considerSellerAsParent);
     }
 
     @Test
@@ -91,7 +95,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext();
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class);
 
-        setUpCurrentUser(Customer.class.getSimpleName(), "cust1");
+        setUpCurrentUser(false, Customer.class.getSimpleName(), "cust1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -107,7 +111,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
 
         InvocationContext methodContext = getMethodContext();
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", Customer.class, false);
-        setUpCurrentUser();
+        setUpCurrentUser(false);
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
         PagingAndFiltering criteria = (PagingAndFiltering) methodContext.getParameters()[1];
@@ -120,7 +124,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", Customer.class, false);
 
-        setUpCurrentUser(Customer.class.getSimpleName(), "cust1");
+        setUpCurrentUser(false, Customer.class.getSimpleName(), "cust1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -137,7 +141,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", Customer.class, true);
 
-        setUpCurrentUser(Customer.class.getSimpleName(), "cust1");
+        setUpCurrentUser(false, Customer.class.getSimpleName(), "cust1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -155,7 +159,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("code", "cust1");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", Customer.class, false);
 
-        setUpCurrentUser(Customer.class.getSimpleName(), "cust1");
+        setUpCurrentUser(false, Customer.class.getSimpleName(), "cust1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -171,7 +175,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("code", "cust1");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", Customer.class, true);
 
-        setUpCurrentUser(Customer.class.getSimpleName(), "cust1");
+        setUpCurrentUser(false, Customer.class.getSimpleName(), "cust1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -189,7 +193,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("code", "will throw exception as not match single permited customer");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", Customer.class, false);
 
-        setUpCurrentUser(Customer.class.getSimpleName(), "cust1");
+        setUpCurrentUser(false, Customer.class.getSimpleName(), "cust1");
 
         assertThatThrownBy(() -> {
             securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
@@ -203,7 +207,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", UserAccount.class, false);
 
-        setUpCurrentUser(BillingAccount.class.getSimpleName(), "ba1");
+        setUpCurrentUser(false, BillingAccount.class.getSimpleName(), "ba1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -219,7 +223,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", UserAccount.class, false);
 
-        setUpCurrentUser(CustomerAccount.class.getSimpleName(), "ca1");
+        setUpCurrentUser(false, CustomerAccount.class.getSimpleName(), "ca1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -235,7 +239,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", UserAccount.class, false);
 
-        setUpCurrentUser(Customer.class.getSimpleName(), "cust1");
+        setUpCurrentUser(false, Customer.class.getSimpleName(), "cust1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -246,34 +250,45 @@ public class SecuredBusinessEntityMethodInterceptorTest {
     }
 
     @Test
-    public void testSinglePropertyParentAllowedEntityClassUA_SELLER() throws Exception {
-
-        Mockito.when(paramBeanFactory.getInstance()).thenReturn(paramBean);
-        Mockito.when(paramBean.getPropertyAsBoolean(eq("accessible.entity.allows.access.childs.seller"), anyBoolean())).thenReturn(true);
+    @SuppressWarnings("unchecked")
+    public void testSinglePropertyParentAllowedEntityClassUA_SELLER_sellerIsNotConsideredAsParent() throws Exception {
 
         InvocationContext methodContext = getMethodContext("description", "test");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", UserAccount.class, false);
 
-        setUpCurrentUser(Seller.class.getSimpleName(), "seller1");
+        setUpCurrentUser(false, Seller.class.getSimpleName(), "seller1");
+
+        assertThatThrownBy(() -> {
+            securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
+        }).isExactlyInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testSinglePropertyParentAllowedEntityClassUA_SELLER() throws Exception {
+
+        InvocationContext methodContext = getMethodContext("description", "test");
+        SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", UserAccount.class, false);
+
+        setUpCurrentUser(true, Seller.class.getSimpleName(), "seller1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
         PagingAndFiltering criteria = (PagingAndFiltering) methodContext.getParameters()[1];
         assertThat(criteria.getFilters().get("description")).isEqualTo("test");
-        assertThat(criteria.getFilters().get("billingAccount.customerAccount.customer.seller.code")).isEqualTo("seller1");
+        assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).size()).isEqualTo(2);
+        assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).get("billingAccount.customerAccount.customer.seller.code")).isEqualTo("seller1");
+        assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).get("billingAccount.customerAccount.customer.seller.seller.code")).isEqualTo("seller1");
         assertThat(criteria.getFilters().size()).isEqualTo(2);
     }
 
     @Test
     public void testSinglePropertyParentAllowedEntityClassUA_SELLER_AccessDenied() throws Exception {
 
-        when(paramBeanFactory.getInstance()).thenReturn(paramBean);
-        when(paramBean.getPropertyAsBoolean(eq("accessible.entity.allows.access.childs.seller"), anyBoolean())).thenReturn(false);
-
         InvocationContext methodContext = getMethodContext("description", "test");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", UserAccount.class, false);
 
-        setUpCurrentUser(Seller.class.getSimpleName(), "seller1");
+        setUpCurrentUser(false, Seller.class.getSimpleName(), "seller1");
 
         assertThatThrownBy(() -> {
             securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
@@ -286,7 +301,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", BillingAccount.class, false);
 
-        setUpCurrentUser(Customer.class.getSimpleName(), "cust1");
+        setUpCurrentUser(false, Customer.class.getSimpleName(), "cust1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -302,7 +317,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("code", "test");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", BillingAccount.class, false);
 
-        setUpCurrentUser(UserAccount.class.getSimpleName(), "ua1");
+        setUpCurrentUser(false, UserAccount.class.getSimpleName(), "ua1");
 
         assertThatThrownBy(() -> {
             securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
@@ -317,7 +332,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", BillingAccount.class, false);
 
-        setUpCurrentUser(Customer.class.getSimpleName(), "cust1", Customer.class.getSimpleName(), "cust2", Customer.class.getSimpleName(), "cust3");
+        setUpCurrentUser(false, Customer.class.getSimpleName(), "cust1", Customer.class.getSimpleName(), "cust2", Customer.class.getSimpleName(), "cust3");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -337,7 +352,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test", "code", "keep me");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", BillingAccount.class, false);
 
-        setUpCurrentUser(Customer.class.getSimpleName(), "cust1", Customer.class.getSimpleName(), "cust2", Customer.class.getSimpleName(), "cust3");
+        setUpCurrentUser(false, Customer.class.getSimpleName(), "cust1", Customer.class.getSimpleName(), "cust2", Customer.class.getSimpleName(), "cust3");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -358,7 +373,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test", "inList code", "cust1,cust2,cust3");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", Customer.class, false);
 
-        setUpCurrentUser(Customer.class.getSimpleName(), "cust1", Customer.class.getSimpleName(), "cust2");
+        setUpCurrentUser(false, Customer.class.getSimpleName(), "cust1", Customer.class.getSimpleName(), "cust2");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -377,7 +392,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test", "inList code", "cust1,cust2,cust3");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", Customer.class, false);
 
-        setUpCurrentUser(Customer.class.getSimpleName(), "cust1");
+        setUpCurrentUser(false, Customer.class.getSimpleName(), "cust1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -394,7 +409,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test", "inList code", "cust1,cust2,cust3");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", Customer.class, false);
 
-        setUpCurrentUser(Customer.class.getSimpleName(), "cust4");
+        setUpCurrentUser(false, Customer.class.getSimpleName(), "cust4");
 
         assertThatThrownBy(() -> {
             securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
@@ -409,7 +424,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", BillingAccount.class, false);
 
-        setUpCurrentUser(Customer.class.getSimpleName(), "cust1", UserAccount.class.getSimpleName(), "ua1", BillingAccount.class.getSimpleName(), "ba1");
+        setUpCurrentUser(false, Customer.class.getSimpleName(), "cust1", UserAccount.class.getSimpleName(), "ua1", BillingAccount.class.getSimpleName(), "ba1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -423,38 +438,31 @@ public class SecuredBusinessEntityMethodInterceptorTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testMultiplePropertiesMultipleParentAllowedEntityClass() throws Exception {
-
-        Mockito.when(paramBeanFactory.getInstance()).thenReturn(paramBean);
-        Mockito.when(paramBean.getPropertyAsBoolean(eq("accessible.entity.allows.access.childs.seller"), anyBoolean())).thenReturn(true);
+    public void testMultiplePropertiesMultipleParentAllowedEntityClass_sellerIsNotConsideredAsParent() throws Exception {
 
         InvocationContext methodContext = getMethodContext("description", "test");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "seller", Seller.class, false, "userAccount", UserAccount.class, false);
 
-        setUpCurrentUser(Customer.class.getSimpleName(), "cust1", Seller.class.getSimpleName(), "seller1");
+        setUpCurrentUser(false, Customer.class.getSimpleName(), "cust1", Seller.class.getSimpleName(), "seller1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
         PagingAndFiltering criteria = (PagingAndFiltering) methodContext.getParameters()[1];
         assertThat(criteria.getFilters().get("description")).isEqualTo("test");
-        assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).size()).isEqualTo(3);
+        assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).size()).isEqualTo(2);
         assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).get("seller.code")).isEqualTo("seller1");
         assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).get("userAccount.billingAccount.customerAccount.customer.code")).isEqualTo("cust1");
-        assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).get("userAccount.billingAccount.customerAccount.customer.seller.code")).isEqualTo("seller1");
         assertThat(criteria.getFilters().size()).isEqualTo(2);
     }
-
+    
     @SuppressWarnings("unchecked")
     @Test
-    public void testMultiplePropertiesMultipleParentAllowedEntityClass_AllowNull() throws Exception {
-
-        Mockito.when(paramBeanFactory.getInstance()).thenReturn(paramBean);
-        Mockito.when(paramBean.getPropertyAsBoolean(eq("accessible.entity.allows.access.childs.seller"), anyBoolean())).thenReturn(true);
+    public void testMultiplePropertiesMultipleParentAllowedEntityClass() throws Exception {
 
         InvocationContext methodContext = getMethodContext("description", "test");
-        SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "seller", Seller.class, true, "userAccount", UserAccount.class, true);
+        SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "seller", Seller.class, false, "userAccount", UserAccount.class, false);
 
-        setUpCurrentUser(Customer.class.getSimpleName(), "cust1", Seller.class.getSimpleName(), "seller1");
+        setUpCurrentUser(true, Customer.class.getSimpleName(), "cust1", Seller.class.getSimpleName(), "seller1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -462,8 +470,32 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         assertThat(criteria.getFilters().get("description")).isEqualTo("test");
         assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).size()).isEqualTo(5);
         assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).get("seller.code")).isEqualTo("seller1");
+        assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).get("seller.seller.code")).isEqualTo("seller1");
         assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).get("userAccount.billingAccount.customerAccount.customer.code")).isEqualTo("cust1");
         assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).get("userAccount.billingAccount.customerAccount.customer.seller.code")).isEqualTo("seller1");
+        assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).get("userAccount.billingAccount.customerAccount.customer.seller.seller.code")).isEqualTo("seller1");
+        assertThat(criteria.getFilters().size()).isEqualTo(2);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testMultiplePropertiesMultipleParentAllowedEntityClass_AllowNull() throws Exception {
+
+        InvocationContext methodContext = getMethodContext("description", "test");
+        SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "seller", Seller.class, true, "userAccount", UserAccount.class, true);
+
+        setUpCurrentUser(true, Customer.class.getSimpleName(), "cust1", Seller.class.getSimpleName(), "seller1");
+
+        securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
+
+        PagingAndFiltering criteria = (PagingAndFiltering) methodContext.getParameters()[1];
+        assertThat(criteria.getFilters().get("description")).isEqualTo("test");
+        assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).size()).isEqualTo(7);
+        assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).get("seller.code")).isEqualTo("seller1");
+        assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).get("seller.seller.code")).isEqualTo("seller1");
+        assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).get("userAccount.billingAccount.customerAccount.customer.code")).isEqualTo("cust1");
+        assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).get("userAccount.billingAccount.customerAccount.customer.seller.code")).isEqualTo("seller1");
+        assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).get("userAccount.billingAccount.customerAccount.customer.seller.seller.code")).isEqualTo("seller1");
         assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).get("AND_secured seller")).isEqualTo("IS_NULL");
         assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).get("AND_secured userAccount")).isEqualTo("IS_NULL");
         assertThat(criteria.getFilters().size()).isEqualTo(2);
@@ -473,23 +505,22 @@ public class SecuredBusinessEntityMethodInterceptorTest {
     @Test
     public void testMultiplePropertiesMultipleParentAllowedEntityClassWithExistingCriteria() throws Exception {
 
-        Mockito.when(paramBeanFactory.getInstance()).thenReturn(paramBean);
-        Mockito.when(paramBean.getPropertyAsBoolean(eq("accessible.entity.allows.access.childs.seller"), anyBoolean())).thenReturn(true);
-
         InvocationContext methodContext = getMethodContext("description", "test", "seller.code", "keep me");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "seller", Seller.class, false, "userAccount", UserAccount.class, false);
 
-        setUpCurrentUser(Customer.class.getSimpleName(), "cust1", Seller.class.getSimpleName(), "seller1");
+        setUpCurrentUser(true, Customer.class.getSimpleName(), "cust1", Seller.class.getSimpleName(), "seller1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
         PagingAndFiltering criteria = (PagingAndFiltering) methodContext.getParameters()[1];
         assertThat(criteria.getFilters().get("description")).isEqualTo("test");
         assertThat(criteria.getFilters().get("seller.code")).isEqualTo("keep me");
-        assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).size()).isEqualTo(3);
+        assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).size()).isEqualTo(5);
         assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).get("seller.code")).isEqualTo("seller1");
+        assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).get("seller.seller.code")).isEqualTo("seller1");
         assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).get("userAccount.billingAccount.customerAccount.customer.code")).isEqualTo("cust1");
         assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).get("userAccount.billingAccount.customerAccount.customer.seller.code")).isEqualTo("seller1");
+        assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).get("userAccount.billingAccount.customerAccount.customer.seller.seller.code")).isEqualTo("seller1");
         assertThat(criteria.getFilters().size()).isEqualTo(3);
     }
 
@@ -497,13 +528,10 @@ public class SecuredBusinessEntityMethodInterceptorTest {
     @Test
     public void testMultiplePropertiesMultipleParentAllowedEntityClassWithExistingCriteria_SellerDisabled() throws Exception {
 
-        Mockito.when(paramBeanFactory.getInstance()).thenReturn(paramBean);
-        Mockito.when(paramBean.getPropertyAsBoolean(eq("accessible.entity.allows.access.childs.seller"), anyBoolean())).thenReturn(false);
-
         InvocationContext methodContext = getMethodContext("description", "test", "seller.code", "keep me");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "seller", Seller.class, false, "userAccount", UserAccount.class, false);
 
-        setUpCurrentUser(Customer.class.getSimpleName(), "cust1", Seller.class.getSimpleName(), "seller1");
+        setUpCurrentUser(false, Customer.class.getSimpleName(), "cust1", Seller.class.getSimpleName(), "seller1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
