@@ -91,8 +91,6 @@ import org.meveo.model.payments.PaymentHistory;
 import org.meveo.model.payments.PaymentScheduleInstance;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.WriteOff;
-import org.meveo.model.securityDeposit.SecurityDeposit;
-import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -552,6 +550,25 @@ public class InvoiceApi extends BaseApi {
     @TransactionAttribute
     public String validateInvoice(Long invoiceId, boolean generateAO, boolean refreshExchangeRate) throws MissingParameterException,
             EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
+    	return validateInvoice(invoiceId, generateAO, refreshExchangeRate, true);
+    }
+    
+    /**
+     * 
+     * @param invoiceId invoice id
+     * @param generateAO generate AO, default value false
+     * @param refreshExchangeRate refresh exchange rate
+     *
+     * @return invoice number.
+     * @throws MissingParameterException missing parameter exception
+     * @throws EntityDoesNotExistsException entity does not exist exception
+     * @throws BusinessException business exception
+     * @throws InvoiceExistException Invoice already exists exception
+     * @throws ImportInvoiceException Failed to import invoice exception
+     */
+    @TransactionAttribute
+    public String validateInvoice(Long invoiceId, boolean generateAO, boolean refreshExchangeRate, boolean createSD) throws MissingParameterException,
+            EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
         if (StringUtils.isBlank(invoiceId)) {
             missingParameters.add("invoiceId");
         }
@@ -568,11 +585,11 @@ public class InvoiceApi extends BaseApi {
         invoice = invoiceService.refreshOrRetrieve(invoice);
         
         //Create SD
-        if (invoice.getInvoiceType() != null && "SECURITY_DEPOSIT".equals(invoice.getInvoiceType().getCode())) {
+        if (invoice.getInvoiceType() != null && "SECURITY_DEPOSIT".equals(invoice.getInvoiceType().getCode()) && createSD) {
             SecurityDepositTemplate defaultSDTemplate = securityDepositTemplateService.getDefaultSDTemplate();
             Long count = securityDepositService.countPerTemplate(defaultSDTemplate);
             securityDepositService.createSD(invoice, defaultSDTemplate, count);
-        }        
+        }
         
         if(invoice.getDueDate().after(today) && invoice.getStatus() == VALIDATED){
             updatePaymentStatus(invoice, today, PENDING);
