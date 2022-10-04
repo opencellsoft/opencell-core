@@ -8126,6 +8126,501 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="uuid" value="OpenOrderStatusJob_Job" />
 		</insert>
 	</changeSet>
+	<changeSet id="#scripts_20220929" author="MohamedChaouki">
+		<!-- SCRIPTS -->
+		<insert tableName="meveo_script_instance">
+			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+			<column name="code" value="org.meveo.service.script.CdrFlatFileImportScript" />
+			<column name="script">
+				<![CDATA[
+package org.meveo.service.script;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.rating.CDR;
+import org.meveo.service.medina.impl.CDRService;
+
+import java.io.*;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+
+public class CdrFlatFileImportScript extends Script {
+
+    private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ssXXX";
+    private final ParamBeanFactory paramBeanFactory = (ParamBeanFactory) getServiceInterface(ParamBeanFactory.class.getSimpleName());
+    private final CDRService cdrService = (CDRService) getServiceInterface(CDRService.class.getSimpleName());
+
+    public static boolean elementExisted(Map<String, String> context, String[] header, String[] body, String element) {
+        return ArrayUtils.indexOf(header, context.get(element)) >= 0
+                && ArrayUtils.indexOf(header, context.get(element)) < body.length;
+    }
+
+    @Override
+    public void execute(Map<String, Object> contextMethod) throws BusinessException {
+        DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
+        JobExecutionResultImpl jobExecutionResult = (JobExecutionResultImpl) contextMethod.get("JobExecutionResult");
+        Map<String, String> context = (Map<String, String>) jobExecutionResult.getJobInstance().getCfValues().getValues().get("mapping");
+        String pathFile = (String) jobExecutionResult.getJobInstance().getCfValues().getValues().get("pathFile");
+
+        CDR cdr;
+        try {
+            String rootPathFile = getProviderRootDir() + File.separator + pathFile;
+            File file = new File(rootPathFile.replace("input", "reject") + ".rejected");
+            if (!file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
+            }
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter rejectFile = new FileWriter(rootPathFile.replace("input", "reject") + ".rejected");
+            BufferedReader br = new BufferedReader(new FileReader(rootPathFile));
+            String line = "";
+            String splitBy = ";";
+            String[] header = br.readLine().split(splitBy);
+            while ((line = br.readLine()) != null) {
+                cdr = new CDR();
+                String[] body = line.split(splitBy);
+
+                Date dateEvent = elementExisted(context, header, body, "eventDate") && !body[ArrayUtils.indexOf(header, context.get("eventDate"))].isEmpty() ? StringUtils.isEmpty(body[ArrayUtils.indexOf(header, context.get("eventDate"))]) ? null : dateFormat.parse(body[ArrayUtils.indexOf(header, context.get("eventDate"))]) : null;
+                String ac = elementExisted(context, header, body, "accessCode") && !body[ArrayUtils.indexOf(header, context.get("accessCode"))].isEmpty() ? body[ArrayUtils.indexOf(header, context.get("accessCode"))] : null;
+                BigDecimal quantity = elementExisted(context, header, body, "quantity") && !body[ArrayUtils.indexOf(header, context.get("quantity"))].isEmpty() ? new BigDecimal(body[ArrayUtils.indexOf(header, context.get("quantity"))]) : null;
+                String parameter1 = elementExisted(context, header, body, "parameter1") && !body[ArrayUtils.indexOf(header, context.get("parameter1"))].isEmpty() ? body[ArrayUtils.indexOf(header, context.get("parameter1"))] : null;
+                String parameter2 = elementExisted(context, header, body, "parameter2") && !body[ArrayUtils.indexOf(header, context.get("parameter2"))].isEmpty() ? body[ArrayUtils.indexOf(header, context.get("parameter2"))] : null;
+                String parameter3 = elementExisted(context, header, body, "parameter3") && !body[ArrayUtils.indexOf(header, context.get("parameter3"))].isEmpty() ? body[ArrayUtils.indexOf(header, context.get("parameter3"))] : null;
+                String parameter4 = elementExisted(context, header, body, "parameter4") && !body[ArrayUtils.indexOf(header, context.get("parameter4"))].isEmpty() ? body[ArrayUtils.indexOf(header, context.get("parameter4"))] : null;
+                String parameter5 = elementExisted(context, header, body, "parameter5") && !body[ArrayUtils.indexOf(header, context.get("parameter5"))].isEmpty() ? body[ArrayUtils.indexOf(header, context.get("parameter5"))] : null;
+                String parameter6 = elementExisted(context, header, body, "parameter6") && !body[ArrayUtils.indexOf(header, context.get("parameter6"))].isEmpty() ? body[ArrayUtils.indexOf(header, context.get("parameter6"))] : null;
+                String parameter7 = elementExisted(context, header, body, "parameter7") && !body[ArrayUtils.indexOf(header, context.get("parameter7"))].isEmpty() ? body[ArrayUtils.indexOf(header, context.get("parameter7"))] : null;
+                String parameter8 = elementExisted(context, header, body, "parameter8") && !body[ArrayUtils.indexOf(header, context.get("parameter8"))].isEmpty() ? body[ArrayUtils.indexOf(header, context.get("parameter8"))] : null;
+                String parameter9 = elementExisted(context, header, body, "parameter9") && !body[ArrayUtils.indexOf(header, context.get("parameter9"))].isEmpty() ? body[ArrayUtils.indexOf(header, context.get("parameter9"))] : null;
+                Date dateParam1 = elementExisted(context, header, body, "dateParam1") && !body[ArrayUtils.indexOf(header, context.get("dateParam1"))].isEmpty() ? StringUtils.isEmpty(body[ArrayUtils.indexOf(header, context.get("dateParam1"))]) ? null : dateFormat.parse(body[ArrayUtils.indexOf(header, context.get("dateParam1"))]) : null;
+                Date dateParam2 = elementExisted(context, header, body, "dateParam2") && !body[ArrayUtils.indexOf(header, context.get("dateParam2"))].isEmpty() ? StringUtils.isEmpty(body[ArrayUtils.indexOf(header, context.get("dateParam2"))]) ? null : dateFormat.parse(body[ArrayUtils.indexOf(header, context.get("dateParam2"))]) : null;
+                Date dateParam3 = elementExisted(context, header, body, "dateParam3") && !body[ArrayUtils.indexOf(header, context.get("dateParam3"))].isEmpty() ? StringUtils.isEmpty(body[ArrayUtils.indexOf(header, context.get("dateParam3"))]) ? null : dateFormat.parse(body[ArrayUtils.indexOf(header, context.get("dateParam3"))]) : null;
+                Date dateParam4 = elementExisted(context, header, body, "dateParam4") && !body[ArrayUtils.indexOf(header, context.get("dateParam4"))].isEmpty() ? StringUtils.isEmpty(body[ArrayUtils.indexOf(header, context.get("dateParam4"))]) ? null : dateFormat.parse(body[ArrayUtils.indexOf(header, context.get("dateParam4"))]) : null;
+                Date dateParam5 = elementExisted(context, header, body, "dateParam5") && !body[ArrayUtils.indexOf(header, context.get("dateParam5"))].isEmpty() ? StringUtils.isEmpty(body[ArrayUtils.indexOf(header, context.get("dateParam5"))]) ? null : dateFormat.parse(body[ArrayUtils.indexOf(header, context.get("dateParam5"))]) : null;
+
+                BigDecimal decimalParam1 = elementExisted(context, header, body, "decimalParam1") && !body[ArrayUtils.indexOf(header, context.get("decimalParam1"))].isEmpty() ? new BigDecimal(body[ArrayUtils.indexOf(header, context.get("decimalParam1"))]) : null;
+                BigDecimal decimalParam2 = elementExisted(context, header, body, "decimalParam2") && !body[ArrayUtils.indexOf(header, context.get("decimalParam2"))].isEmpty() ? new BigDecimal(body[ArrayUtils.indexOf(header, context.get("decimalParam2"))]) : null;
+                BigDecimal decimalParam3 = elementExisted(context, header, body, "decimalParam3") && !body[ArrayUtils.indexOf(header, context.get("decimalParam3"))].isEmpty() ? new BigDecimal(body[ArrayUtils.indexOf(header, context.get("decimalParam3"))]) : null;
+                BigDecimal decimalParam4 = elementExisted(context, header, body, "decimalParam4") && !body[ArrayUtils.indexOf(header, context.get("decimalParam4"))].isEmpty() ? new BigDecimal(body[ArrayUtils.indexOf(header, context.get("decimalParam4"))]) : null;
+                BigDecimal decimalParam5 = elementExisted(context, header, body, "decimalParam5") && !body[ArrayUtils.indexOf(header, context.get("decimalParam5"))].isEmpty() ? new BigDecimal(body[ArrayUtils.indexOf(header, context.get("decimalParam5"))]) : null;
+
+                cdr.setEventDate(dateEvent);
+                cdr.setAccessCode(ac);
+                cdr.setQuantity(quantity);
+                cdr.setParameter1(parameter1);
+                cdr.setParameter2(parameter2);
+                cdr.setParameter3(parameter3);
+                cdr.setParameter4(parameter4);
+                cdr.setParameter5(parameter5);
+                cdr.setParameter6(parameter6);
+                cdr.setParameter7(parameter7);
+                cdr.setParameter8(parameter8);
+                cdr.setParameter9(parameter9);
+                cdr.setDateParam1(dateParam1);
+                cdr.setDateParam2(dateParam2);
+                cdr.setDateParam3(dateParam3);
+                cdr.setDateParam4(dateParam4);
+                cdr.setDateParam5(dateParam5);
+                cdr.setDecimalParam1(decimalParam1);
+                cdr.setDecimalParam2(decimalParam2);
+                cdr.setDecimalParam3(decimalParam3);
+                cdr.setDecimalParam4(decimalParam4);
+                cdr.setDecimalParam5(decimalParam5);
+                if (cdr.getEventDate() != null && cdr.getQuantity() != null && cdr.getAccessCode() != null && cdr.getParameter1() != null)
+                    cdrService.create(cdr);
+                else {
+                    validateCdr(line, cdr, context, rejectFile);
+                }
+
+            }
+            rejectFile.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void validateCdr(String line, CDR cdr, Map<String, String> context, FileWriter file) throws IOException {
+        if (cdr.getEventDate() == null) file.write(line + " => " + context.get("eventDate") + " is required\n");
+        else if (cdr.getQuantity() == null) file.write(line + " => " + context.get("quantity") + " is required\n");
+        else if (cdr.getAccessCode() == null) file.write(line + " => " + context.get("accessCode") + " is required\n");
+        else if (cdr.getParameter1() == null) file.write(line + " => " + context.get("parameter1") + " is required\n");
+
+    }
+
+
+    public String getProviderRootDir() {
+        return paramBeanFactory.getDefaultChrootDir();
+    }
+
+}
+				]]>
+			</column>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="version" valueNumeric="0" />
+			<column name="src_type" value="JAVA" />
+		</insert>
+		<insert tableName="meveo_script_instance">
+			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+			<column name="code" value="org.meveo.service.script.CdrJsonImportScript" />
+			<column name="script">
+				<![CDATA[
+package org.meveo.service.script;
+
+import org.apache.commons.lang3.StringUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.rating.CDR;
+import org.meveo.service.medina.impl.CDRService;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
+
+public class CdrJsonImportScript extends Script {
+
+    private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ssXXX";
+    private final ParamBeanFactory paramBeanFactory = (ParamBeanFactory) getServiceInterface(ParamBeanFactory.class.getSimpleName());
+    private final CDRService cdrService = (CDRService) getServiceInterface(CDRService.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> contextMethod) throws BusinessException {
+        DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
+        JSONParser parser = new JSONParser();
+        JobExecutionResultImpl jobExecutionResult = (JobExecutionResultImpl) contextMethod.get("JobExecutionResult");
+        Map<String, String> context = (Map<String, String>) jobExecutionResult.getJobInstance().getCfValues().getValues().get("mapping");
+        String pathFile = (String) jobExecutionResult.getJobInstance().getCfValues().getValues().get("pathFile");
+        CDR cdr;
+        try {
+            String rootPathFile = getProviderRootDir() + File.separator + pathFile;
+            File file = new File(rootPathFile.replace("input", "reject") + ".rejected");
+            if (!file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
+            }
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter rejectFile = new FileWriter(rootPathFile.replace("input", "reject") + ".rejected");
+            Object obj = parser.parse(new FileReader(rootPathFile));
+            JSONArray subjects = (JSONArray) obj;
+            Iterator iterator = subjects.iterator();
+            while (iterator.hasNext()) {
+                cdr = new CDR();
+                JSONObject jsonObject = (JSONObject) iterator.next();
+                Date dateEvent = StringUtils.isEmpty((String) jsonObject.get(context.get("eventDate"))) ? null : dateFormat.parse((String) jsonObject.get(context.get("eventDate")));
+                String ac = (String) jsonObject.get(context.get("accessCode"));
+                BigDecimal quantity = new BigDecimal(String.valueOf(jsonObject.get(context.get("quantity"))));
+                String parameter1 = (String) jsonObject.get(context.get("parameter1"));
+                String parameter2 = (String) jsonObject.get(context.get("parameter2"));
+                String parameter3 = (String) jsonObject.get(context.get("parameter3"));
+                String parameter4 = (String) jsonObject.get(context.get("parameter4"));
+                String parameter5 = (String) jsonObject.get(context.get("parameter5"));
+                String parameter6 = (String) jsonObject.get(context.get("parameter6"));
+                String parameter7 = (String) jsonObject.get(context.get("parameter7"));
+                String parameter8 = (String) jsonObject.get(context.get("parameter8"));
+                String parameter9 = (String) jsonObject.get(context.get("parameter9"));
+                Date dateParam1 = StringUtils.isEmpty((String) jsonObject.get(context.get("dateParam1"))) ? null : dateFormat.parse((String) jsonObject.get(context.get("dateParam1")));
+                Date dateParam2 = StringUtils.isEmpty((String) jsonObject.get(context.get("dateParam2"))) ? null : dateFormat.parse((String) jsonObject.get(context.get("dateParam2")));
+                Date dateParam3 = StringUtils.isEmpty((String) jsonObject.get(context.get("dateParam3"))) ? null : dateFormat.parse((String) jsonObject.get(context.get("dateParam3")));
+                Date dateParam4 = StringUtils.isEmpty((String) jsonObject.get(context.get("dateParam4"))) ? null : dateFormat.parse((String) jsonObject.get(context.get("dateParam4")));
+                Date dateParam5 = StringUtils.isEmpty((String) jsonObject.get(context.get("dateParam5"))) ? null : dateFormat.parse((String) jsonObject.get(context.get("dateParam5")));
+                BigDecimal decimalParam1 = StringUtils.isEmpty((String) jsonObject.get(context.get("decimalParam1"))) ? null : new BigDecimal(String.valueOf(jsonObject.get(context.get("decimalParam1"))));
+                BigDecimal decimalParam2 = StringUtils.isEmpty((String) jsonObject.get(context.get("decimalParam2"))) ? null : new BigDecimal(String.valueOf(jsonObject.get(context.get("decimalParam2"))));
+                BigDecimal decimalParam3 = StringUtils.isEmpty((String) jsonObject.get(context.get("decimalParam3"))) ? null : new BigDecimal(String.valueOf(jsonObject.get(context.get("decimalParam3"))));
+                BigDecimal decimalParam4 = StringUtils.isEmpty((String) jsonObject.get(context.get("decimalParam4"))) ? null : new BigDecimal(String.valueOf(jsonObject.get(context.get("decimalParam4"))));
+                BigDecimal decimalParam5 = StringUtils.isEmpty((String) jsonObject.get(context.get("decimalParam5"))) ? null : new BigDecimal(String.valueOf(jsonObject.get(context.get("decimalParam5"))));
+
+                String extraParam = String.valueOf(jsonObject);
+                cdr.setEventDate(dateEvent);
+                cdr.setAccessCode(ac);
+                cdr.setQuantity(quantity);
+                cdr.setParameter1(parameter1);
+                cdr.setParameter2(parameter2);
+                cdr.setParameter3(parameter3);
+                cdr.setParameter4(parameter4);
+                cdr.setParameter5(parameter5);
+                cdr.setParameter6(parameter6);
+                cdr.setParameter7(parameter7);
+                cdr.setParameter8(parameter8);
+                cdr.setParameter9(parameter9);
+                cdr.setDateParam1(dateParam1);
+                cdr.setDateParam2(dateParam2);
+                cdr.setDateParam3(dateParam3);
+                cdr.setDateParam4(dateParam4);
+                cdr.setDateParam5(dateParam5);
+                cdr.setDecimalParam1(decimalParam1);
+                cdr.setDecimalParam2(decimalParam2);
+                cdr.setDecimalParam3(decimalParam3);
+                cdr.setDecimalParam4(decimalParam4);
+                cdr.setDecimalParam5(decimalParam5);
+                cdr.setExtraParameter(extraParam);
+                if (cdr.getEventDate() != null && cdr.getQuantity() != null && cdr.getAccessCode() != null && cdr.getParameter1() != null)
+                    cdrService.create(cdr);
+                else {
+                    validateCdr(jsonObject, cdr, context, rejectFile);
+                }
+            }
+            rejectFile.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void validateCdr(JSONObject line, CDR cdr, Map<String, String> context, FileWriter file) throws IOException {
+        if (cdr.getEventDate() == null) file.write(line + " => " + context.get("eventDate") + " is required\n");
+        else if (cdr.getQuantity() == null) file.write(line + " => " + context.get("quantity") + " is required\n");
+        else if (cdr.getAccessCode() == null) file.write(line + " => " + context.get("accessCode") + " is required\n");
+        else if (cdr.getParameter1() == null) file.write(line + " => " + context.get("parameter1") + " is required\n");
+
+    }
+
+    public String getProviderRootDir() {
+        return paramBeanFactory.getDefaultChrootDir();
+    }
+}
+				]]>
+			</column>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="version" valueNumeric="0" />
+			<column name="src_type" value="JAVA" />
+		</insert>
+		<insert tableName="meveo_script_instance">
+			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+			<column name="code" value="org.meveo.service.script.CdrCsvImportScript" />
+			<column name="script">
+				<![CDATA[
+package org.meveo.service.script;
+
+import org.apache.commons.lang3.StringUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.model.rating.CDR;
+import org.meveo.service.medina.impl.CDRService;
+
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+
+public class CdrCsvImportScript extends GenericMassImportScript {
+
+    private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ssXXX";
+    private static final String RECORD_VARIABLE_NAME = "record";
+    private static final String ENTITY = "CDR";
+    private static final String ENTITY_NAME = "Cdr";
+    private final CDRService cdrService = (CDRService) getServiceInterface(CDRService.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> context) throws BusinessException {
+        try {
+            @SuppressWarnings("unchecked") Map<String, Object> recordMap = (Map<String, Object>) context.get(RECORD_VARIABLE_NAME);
+            if (recordMap != null && !recordMap.isEmpty()) {
+                CdrActionEnum action = CdrActionEnum.CREATE;
+
+                CDR cdrDto = validateAndGetCdr(action, recordMap);
+
+
+                if (CdrActionEnum.CREATE.equals(action)) {
+                    setCdrValues(recordMap, cdrDto);
+                    cdrService.create(cdrDto);
+
+                }
+            }
+        } catch (Exception exception) {
+            throw new BusinessException(exception);
+        }
+    }
+
+    private CDR validateAndGetCdr(CdrActionEnum action, Map<String, Object> recordMap) {
+        CDR cdr = null;
+
+        String ocDate = (String) recordMap.get("OC_CDR_DATE");
+        if (ocDate.isEmpty()) {
+            throw new ValidationException("OC_CDR_DATE is required");
+        }
+        String ocQantity = (String) recordMap.get("OC_QANTITY");
+        if (ocQantity.isEmpty()) {
+            throw new ValidationException("OC_QANTITY is required");
+        }
+        String ocAp = (String) recordMap.get("OC_AC");
+        if (ocAp.isEmpty()) {
+            throw new ValidationException("OC_AC is required");
+        }
+        String ocParametre1 = (String) recordMap.get("OC_PARAMETER_1");
+        if (ocParametre1.isEmpty()) {
+            throw new ValidationException("OC_PARAMETER_1 is required");
+        }
+
+        cdr = new CDR();
+
+        return cdr;
+    }
+
+    private void setCdrValues(Map<String, Object> recordMap, CDR cdr) throws ParseException {
+        DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
+
+        String OC_cdr_date = (String) recordMap.get("OC_CDR_DATE");
+        String OC_quantity = (String) recordMap.get("OC_QANTITY");
+        String OC_ac = (String) recordMap.get("OC_AC");
+
+        Date cdrDate = StringUtils.isEmpty(OC_cdr_date) ? null : dateFormat.parse(OC_cdr_date);
+        BigDecimal cdrQuantity = OC_quantity.isEmpty() ? null : new BigDecimal(OC_quantity);
+
+
+        String OC_date_param_1 = (String) recordMap.get("OC_DATE_PARAM_1");
+        String OC_date_param_2 = (String) recordMap.get("OC_DATE_PARAM_2");
+        String OC_date_param_3 = (String) recordMap.get("OC_DATE_PARAM_3");
+        String OC_date_param_4 = (String) recordMap.get("OC_DATE_PARAM_4");
+        String OC_date_param_5 = (String) recordMap.get("OC_DATE_PARAM_5");
+
+        Date cdrDateParam1 = StringUtils.isEmpty(OC_date_param_1) ? null : dateFormat.parse(OC_date_param_1);
+        Date cdrDateParam2 = StringUtils.isEmpty(OC_date_param_2) ? null : dateFormat.parse(OC_date_param_2);
+        Date cdrDateParam3 = StringUtils.isEmpty(OC_date_param_3) ? null : dateFormat.parse(OC_date_param_3);
+        Date cdrDateParam4 = StringUtils.isEmpty(OC_date_param_4) ? null : dateFormat.parse(OC_date_param_4);
+        Date cdrDateParam5 = StringUtils.isEmpty(OC_date_param_5) ? null : dateFormat.parse(OC_date_param_5);
+
+        String OC_decimal_param_1 = (String) recordMap.get("OC_DECIMAL_PARAM_1");
+        String OC_decimal_param_2 = (String) recordMap.get("OC_DECIMAL_PARAM_2");
+        String OC_decimal_param_3 = (String) recordMap.get("OC_DECIMAL_PARAM_3");
+        String OC_decimal_param_4 = (String) recordMap.get("OC_DECIMAL_PARAM_4");
+        String OC_decimal_param_5 = (String) recordMap.get("OC_DECIMAL_PARAM_5");
+
+        BigDecimal cdrDecimalParam1 = OC_decimal_param_1.isEmpty() ? null : new BigDecimal(OC_decimal_param_1);
+        BigDecimal cdrDecimalParam2 = OC_decimal_param_2.isEmpty() ? null : new BigDecimal(OC_decimal_param_2);
+        BigDecimal cdrDecimalParam3 = OC_decimal_param_3.isEmpty() ? null : new BigDecimal(OC_decimal_param_3);
+        BigDecimal cdrDecimalParam4 = OC_decimal_param_4.isEmpty() ? null : new BigDecimal(OC_decimal_param_4);
+        BigDecimal cdrDecimalParam5 = OC_decimal_param_5.isEmpty() ? null : new BigDecimal(OC_decimal_param_5);
+
+        cdr.setEventDate(cdrDate);
+        cdr.setQuantity(cdrQuantity);
+        cdr.setAccessCode(OC_ac);
+
+        cdr.setParameter1((String) recordMap.get("OC_PARAMETER_1"));
+        cdr.setParameter2((String) recordMap.get("OC_PARAMETER_2"));
+        cdr.setParameter3((String) recordMap.get("OC_PARAMETER_3"));
+        cdr.setParameter4((String) recordMap.get("OC_PARAMETER_4"));
+        cdr.setParameter5((String) recordMap.get("OC_PARAMETER_5"));
+        cdr.setParameter6((String) recordMap.get("OC_PARAMETER_6"));
+        cdr.setParameter7((String) recordMap.get("OC_PARAMETER_7"));
+        cdr.setParameter8((String) recordMap.get("OC_PARAMETER_8"));
+        cdr.setParameter9((String) recordMap.get("OC_PARAMETER_9"));
+
+        cdr.setDateParam1(cdrDateParam1);
+        cdr.setDateParam2(cdrDateParam2);
+        cdr.setDateParam3(cdrDateParam3);
+        cdr.setDateParam4(cdrDateParam4);
+        cdr.setDateParam5(cdrDateParam5);
+
+        cdr.setDecimalParam1(cdrDecimalParam1);
+        cdr.setDecimalParam2(cdrDecimalParam2);
+        cdr.setDecimalParam3(cdrDecimalParam3);
+        cdr.setDecimalParam4(cdrDecimalParam4);
+        cdr.setDecimalParam5(cdrDecimalParam5);
+
+        cdr.setExtraParameter((String) recordMap.get("OC_EXTRA_PARAM"));
+
+    }
+
+    public enum CdrActionEnum {CREATE, UPDATE, SUSPEND, RESUME, ACTIVATE, TERMINATE}
+}
+
+
+				]]>
+			</column>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="version" valueNumeric="0" />
+			<column name="src_type" value="JAVA" />
+		</insert>
+	</changeSet>
+	<changeSet id="#jobs_20220930" author="MohamedChaouki">
+		<!-- JOBS -->
+		<insert tableName="meveo_job_instance">
+			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="1" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="job_category" value="MEDIATION" />
+			<column name="job_template" value="FlatFileProcessingJob" />
+			<column name="code" value="CsvImportCDR" />
+			<column name="creator" value="opencell.admin" />
+			<column name="job_speed" value="NORMAL" />
+			<column name="single_node" valueNumeric="1" />
+			<column name="verbose_report" valueNumeric="1" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="cf_values">
+				<![CDATA[
+				{"nbRuns": [{"long": 1}], "oneFilePerJob": [{"boolean": false}], "waitingMillis": [{"long": 0}], "FlatFileProcessingJob_inputDir": [{"string": "/imports/cdr/csv/input"}], "FlatFileProcessingJob_outputDir": [{"string": "/imports/cdr/csv/output"}], "FlatFileProcessingJob_rejectDir": [{"string": "/imports/cdr/csv/reject"}], "FlatFileProcessingJob_archiveDir": [{"string": "/imports/cdr/csv/archive"}], "FlatFileProcessingJob_errorAction": [{"string": "CONTINUE"}], "FlatFileProcessingJob_mappingConf": [{"string": "<beanio\r\n        xmlns=\"http://www.beanio.org/2012/03\"\r\n        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n        xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n    <stream name=\"record\" format=\"csv\">\r\n        <parser>\r\n            <property name=\"delimiter\" value=\";\" />\r\n            <property name=\"comments\" value=\"END\" />\r\n            <property name=\"multilineEnabled\" value=\"true\" />\r\n        </parser>\r\n  <record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n  <field name=\"OC_CDR_DATE\" ignore=\"true\"/>\r\n  <field name=\"OC_QANTITY\" ignore=\"true\"/>\r\n  <field name=\"OC_AC\" ignore=\"true\"/>\r\n  <field name=\"OC_PARAMETER_1\" ignore=\"true\"/>\r\n <field name=\"OC_PARAMETER_2\" ignore=\"true\"/>\r\n  <field name=\"OC_PARAMETER_3\" ignore=\"true\"/>\r\n <field name=\"OC_PARAMETER_4\" ignore=\"true\"/>\r\n   <field name=\"OC_PARAMETER_5\" ignore=\"true\"/>\r\n  <field name=\"OC_PARAMETER_6\" ignore=\"true\"/>\r\n  <field name=\"OC_PARAMETER_7\" ignore=\"true\"/>\r\n  <field name=\"OC_PARAMETER_8\" ignore=\"true\"/>\r\n   <field name=\"OC_PARAMETER_9\" ignore=\"true\"/>\r\n  <field name=\"OC_DATE_PARAM_1\" ignore=\"true\"/>\r\n   <field name=\"OC_DATE_PARAM_2\" ignore=\"true\"/>\r\n  <field name=\"OC_DATE_PARAM_3\" ignore=\"true\"/>\r\n   <field name=\"OC_DATE_PARAM_4\" ignore=\"true\"/>\r\n  <field name=\"OC_DATE_PARAM_5\" ignore=\"true\"/>\r\n  <field name=\"OC_DECIMAL_PARAM_1\" ignore=\"true\"/>\r\n  <field name=\"OC_DECIMAL_PARAM_2\" ignore=\"true\"/>\r\n   <field name=\"OC_DECIMAL_PARAM_3\" ignore=\"true\"/>\r\n   <field name=\"OC_DECIMAL_PARAM_4\" ignore=\"true\"/>\r\n   <field name=\"OC_DECIMAL_PARAM_5\" ignore=\"true\"/>\r\n  <field name=\"OC_EXTRA_PARAM\" ignore=\"true\"/>\r\n  </record>\r\n  <record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n  <field name=\"OC_CDR_DATE\" required=\"true\"/>\r\n  <field name=\"OC_QANTITY\" required=\"true\"/>\r\n  <field name=\"OC_AC\" required=\"true\"/>\r\n   <field name=\"OC_PARAMETER_1\"/>\r\n  <field name=\"OC_PARAMETER_2\"/>\r\n  <field name=\"OC_PARAMETER_3\" />\r\n   <field name=\"OC_PARAMETER_4\" />\r\n  <field name=\"OC_PARAMETER_5\" />\r\n  <field name=\"OC_PARAMETER_6\" />\r\n  <field name=\"OC_PARAMETER_7\" />\r\n <field name=\"OC_PARAMETER_8\" />\r\n <field name=\"OC_PARAMETER_9\" />\r\n  <field name=\"OC_DATE_PARAM_1\"/>\r\n  <field name=\"OC_DATE_PARAM_2\"/>\r\n <field name=\"OC_DATE_PARAM_3\" />\r\n  <field name=\"OC_DATE_PARAM_4\" />\r\n  <field name=\"OC_DATE_PARAM_5\" />\r\n   <field name=\"OC_DECIMAL_PARAM_1\"/>\r\n  <field name=\"OC_DECIMAL_PARAM_2\"/>\r\n <field name=\"OC_DECIMAL_PARAM_3\" />\r\n <field name=\"OC_DECIMAL_PARAM_4\" />\r\n  <field name=\"OC_DECIMAL_PARAM_5\" />\r\n  <field name=\"OC_EXTRA_PARAM\" />\r\n  </record>\r\n  </stream>\r\n  </beanio>\r\n"}], "FlatFileProcessingJob_scriptsFlow": [{"string": "org.meveo.service.script.CdrCsvImportScript"}], "FlatFileProcessingJob_formatTransfo": [{"string": "None"}], "FlatFileProcessingJob_originFilename": [{"string": "origin_filename"}], "FlatFileProcessingJob_nbLinesToProcess": [{"long": 1}], "FlatFileProcessingJob_fileNameExtension": [{"string": "csv"}], "FlatFileProcessingJob_recordVariableName": [{"string": "record"}]}
+				]]>
+			</column>
+		</insert>
+		<insert tableName="meveo_job_instance">
+			<column name="id" valueNumeric="-60" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="updated" valueDate="null" />
+			<column name="uuid" value="FlatFileImportCDR" />
+			<column name="code" value="FlatFileImportCDR" />
+			<column name="description" value="FlatFileImportCDR" />
+			<column name="job_category" value="MEDIATION" />
+			<column name="job_template" value="ScriptingJob" />
+			<column name="parametres" valueNumeric="null" />
+			<column name="creator" value="opencell.admin" />
+			<column name="updater" value="null" />
+			<column name="timerentity_id" value="null" />
+			<column name="cf_values">
+				<![CDATA[
+            		{"ScriptingJob_script":[{"entity":{"classname":"org.meveo.model.scripts.ScriptInstance","code":"org.meveo.service.script.CdrFlatFileImportScript","id":-30}}],"ScriptingJob_TransactionType":[{"string":"REQUIRES_NEW"}]}
+            	]]>
+			</column>
+		</insert>
+		<insert tableName="meveo_job_instance">
+			<column name="id" valueNumeric="-61" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="updated" valueDate="null" />
+			<column name="uuid" value="JsonImportCDR" />
+			<column name="code" value="JsonImportCDR" />
+			<column name="description" value="JsonImportCDR" />
+			<column name="job_category" value="MEDIATION" />
+			<column name="job_template" value="ScriptingJob" />
+			<column name="parametres" valueNumeric="null" />
+			<column name="creator" value="opencell.admin" />
+			<column name="updater" value="null" />
+			<column name="timerentity_id" value="null" />
+			<column name="cf_values">
+				<![CDATA[
+            		{"ScriptingJob_script":[{"entity":{"classname":"org.meveo.model.scripts.ScriptInstance","code":"org.meveo.service.script.CdrJsonImportScript","id":-30}}],"ScriptingJob_TransactionType":[{"string":"REQUIRES_NEW"}]}
+            	]]>
+			</column>
+		</insert>
+
+	</changeSet>
 
 	<changeSet id="#OUTRD-49_20220913-scripts" author="HamzaBiadi">
 		<!-- SCRIPTS -->
