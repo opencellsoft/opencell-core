@@ -9,6 +9,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.payments.CustomerAccount;
@@ -106,7 +107,12 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
         }
         if(resource.getCancelReason() != null) {
             securityDeposit.setCancelReason(resource.getCancelReason());
-        }        
+        }
+        if(resource.getLinkedInvoice() != null) {
+        	Invoice invoice = new Invoice();
+        	invoice.setId(resource.getLinkedInvoice().getId());
+        	securityDeposit.setSecurityDepositInvoice(invoice);
+        }
         return securityDeposit;
     }
 
