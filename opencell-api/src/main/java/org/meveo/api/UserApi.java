@@ -91,6 +91,9 @@ public class UserApi extends BaseApi {
             if (StringUtils.isBlank(postData.getEmail())) {
                 missingParameters.add("email");
             }
+            if (isRequiredRoles && (postData.getRoles() == null || postData.getRoles().isEmpty())) {
+                missingParameters.add("userRole");
+            }
 
             handleMissingParameters();
 
