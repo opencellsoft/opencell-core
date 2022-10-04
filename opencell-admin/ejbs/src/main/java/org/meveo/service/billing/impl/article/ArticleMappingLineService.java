@@ -28,6 +28,7 @@ import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.enums.RuleOperatorEnum;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
 
 @Stateless
 public class ArticleMappingLineService extends BusinessService<ArticleMappingLine> {
@@ -38,6 +39,9 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 	@Inject
 	private ArticleMappingService articleMappingService;
 
+	@Inject
+	private OfferTemplateService offerTemplateService;
+
 	private static final String DEFAULT_ARTICLE_MAPPING_CODE = "DEFAULT_ARTICLE_MAPPING";
 
 	@SuppressWarnings("unchecked")
@@ -45,6 +49,7 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 														   OfferTemplate offer, String parameter1,
 														   String parameter2, String parameter3) {
 		QueryBuilder queryBuilder = new QueryBuilder(ArticleMappingLine.class, "am", asList("product", "chargeTemplate"));
+		offer = offerTemplateService.refreshOrRetrieve(offer);
 		if(product != null)
 			queryBuilder.addCriterionEntity("am.product.code", product.getCode());
 		if(chargeTemplate != null)
