@@ -5,6 +5,7 @@ import org.meveo.apiv2.models.Resource;
 import org.meveo.apiv2.ordering.ResourceMapper;
 import org.meveo.apiv2.securityDeposit.ImmutableSecurityDepositInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositInput;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Currency;
@@ -59,7 +60,10 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
             currency.setId(resource.getCurrency().getId());
             currency.setCurrencyCode(resource.getCurrency().getCode());
             securityDeposit.setCurrency(currency);
+        } else if(resource.getCurrency() != null && StringUtils.isBlank(resource.getCurrency().getId()) && StringUtils.isBlank(resource.getCurrency().getCode())) {
+        	securityDeposit.setCurrency(null);
         }
+
         if (resource.getCustomerAccount() != null) {
             CustomerAccount customerAccount = new CustomerAccount();
             customerAccount.setId(resource.getCustomerAccount().getId());
