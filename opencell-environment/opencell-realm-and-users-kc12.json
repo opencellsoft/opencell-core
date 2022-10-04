@@ -105,7 +105,6 @@
               "administrateur"
             ],
             "opencell-portal": [
-              "PORTAL_USER",
               "ADMIN"
             ]
           }
@@ -2116,7 +2115,6 @@
                 "administrateur"
               ],
               "opencell-portal": [
-                "PORTAL_USER",
                 "ADMIN"
               ]
             }
@@ -2813,8 +2811,16 @@
             "client": {
               "opencell-portal": [
                 "QUERY_MANAGER",
+                "PORTAL_USER",
+                "MENU_QUOTES",
+                "ADVANCED_USER",
+                "QUERY_USER",
                 "FINANCE_MANAGER",
-                "PORTAL_USER"
+                "CFO",
+                "C_CARE",
+                "SALES",
+                "PRODUCT/ADV",
+                "MARKETING_MANAGER"
               ]
             }
           },
@@ -9146,6 +9152,9 @@
               },
               {
                 "name": "PUT"
+              },
+              {
+                "name": "PATCH"
               }
             ]
           },
@@ -14963,13 +14972,13 @@
           },
           {
             "id": "c766f724-7362-4b4a-b9bd-cc184709e61b",
-            "name": "Api V1 Configuration - System - update",
+            "name": "Api V1 Configuration - System - all",
             "type": "scope",
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
               "resources": "[\"Api V1 Configuration - System\"]",
-              "scopes": "[\"PUT\"]",
+              "scopes": "[\"POST\",\"PUT\",\"GET\",\"DELETE\"]",
               "applyPolicies": "[\"Role apiSuperAdminManagement\"]"
             }
           },
@@ -15004,7 +15013,7 @@
             "decisionStrategy": "AFFIRMATIVE",
             "config": {
               "resources": "[\"Api V1 Billing - Invoices and AO\"]",
-              "scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
+              "scopes": "[\"PUT\",\"DELETE\",\"POST\",\"PATCH\"]",
               "applyPolicies": "[\"Role apiCreateInvoice\",\"Role apiBillingManagement\"]"
             }
           },

@@ -1,9 +1,10 @@
 {
 	"info": {
-		"_postman_id": "b51c0b8f-8e52-4ba0-b4b6-29ac54907547",
+		"_postman_id": "436540c5-0d60-4b6f-8add-774f0dbdaa4f",
 		"name": "OPENCELL_PERF_TESTS_SUITE_Hassnaa",
 		"description": "# Introduction\r\n\r\nThis configuration file is designed to be a basis for all configurations provided by Opencell.\r\nIt merely contains most common general settings and a catalog of services implementing various rating models.\r\n\r\n# Configuring Opencell\r\n\r\nThere are 2 main ways for configuring ***Opencell***:\r\n* GUI (*Administration GUI* and *Marketing Manager*)\r\n* API (all Opencell configuration and operations can be performed using our extensive API library)\r\n\r\nThe most flexible way is using APIs which currently are available as **Rest** and **Soap**.\r\nThe **Soap** API are deprecated, so will won't mention them anymore.\r\n\r\n## Tools\r\n\r\nAny tools able to send HTTP requests will do.\r\nOne could even just script *curl* calls using shell script.\r\nBut of course, a more user friendly tool will make things easier.\r\n\r\nHere at ***Opencell***, we prefer **Postman** (https://getpostman.com):\r\n* it has a modern, friendly interface\r\n* Sets of API request can be organized into collections, themselves structured into a folder tree.\r\n* Collections can be exported as _JSON_ files or shared with other team members using collaboration features (payed version)\r\n* it allows to uses variables at different levels (collection, environement, global) and to execute *Javascript* scripts before and after executing API calls which allows great flexibility and API response testing.\r\n\r\n\r\n\r\n# Configuration documentation guidelines\r\n\r\nIn order to document our configuration, we make full used of the internal documentation capabilities of the Markdown fields on Postman Objects\r\n\r\n## Default template for *Collection* documentation\r\n\r\n## Default template for *Folder* documentation\r\n\r\n## Default template for *Request* documentation\r\n\r\n\r\n\r\n# Tips & guidelines\r\n\r\nHere follow a few tips for understanding this collection.\r\n\r\n## Collection pre-request script\r\n\r\n```javascript\r\npm.globals.set(\"timestamp.iso\", (new Date()).toISOString());\r\npm.globals.set(\"request.label\", pm.info.requestName);\r\n\r\nvar parts = pm.info.requestName.split(\"|\");\r\n\r\nfor(let i=0; i<parts.length; i++) {\r\n    pm.globals.set(\"request.label.\"+i, parts[i]);\r\n}\r\n```\r\n\r\n## Configuration guidelines\r\n\r\n## Entities\r\n\r\n<entity>_<project_code>_XXX\r\n\r\n### Custom Fields\r\n\r\nCF_<entity>_<project_code>_ XXX\r\n\r\n<entity> will be discarded for inherited\r\n\r\n#### Custom field visibility\r\n\r\nSE_<entity>_<project_code>_<markers>_XXX\r\n\r\n<markers> are used in CFT.applicableOnEl to show CFT on entities\r\n\r\n\r\n## Entity abbreviation\r\n\r\n| code  | entity                        |\r\n|:-----:|:------------------------------|\r\n|   P   | Provider                      |\r\n|   S   | Seller                        |\r\n|   C   | Customer                      |\r\n|  CA   | Customer Account              |\r\n|  BA   | Billing Account               |\r\n|  UA   | User Account                  |\r\n|  SU   | Subscription                  |\r\n|  AP   | Access Point                  |\r\n|  OF   | Offer Template                |\r\n|  SE   | Service Template and Instance |\r\n|  CH   | Charge Template               |\r\n|  PP   | Price Plan                    |\r\n|  CN   | Counter                       |\r\n| ICAT  | Invoice Category              |\r\n| ISCAT | Invoice SubCategory           |\r\n|  CAL  | Calendar                      |\r\n|  BC   | Billing Cycle                 |\r\n",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10527021"
 	},
 	"item": [
 		{
@@ -21,7 +22,6 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "d2f206f1-4116-4b1e-bfd9-141eb06aaa1d",
 												"exec": [
 													"var jsonData = JSON.parse(responseBody);",
 													"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
@@ -84,8 +84,7 @@
 									},
 									"response": []
 								}
-							],
-							"_postman_isSubFolder": true
+							]
 						},
 						{
 							"name": "Languages",
@@ -96,7 +95,6 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "5140deb0-c583-41be-948d-0a79bd7e829c",
 												"exec": [
 													"var jsonData = JSON.parse(responseBody);",
 													"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
@@ -165,7 +163,6 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "5140deb0-c583-41be-948d-0a79bd7e829c",
 												"exec": [
 													"var jsonData = JSON.parse(responseBody);",
 													"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
@@ -228,8 +225,7 @@
 									},
 									"response": []
 								}
-							],
-							"_postman_isSubFolder": true
+							]
 						},
 						{
 							"name": "Countries",
@@ -240,7 +236,6 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "ccc7e566-4ef2-4a04-90e9-80a0653fb5c5",
 												"exec": [
 													"var jsonData = JSON.parse(responseBody);",
 													"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
@@ -309,7 +304,6 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "ccc7e566-4ef2-4a04-90e9-80a0653fb5c5",
 												"exec": [
 													"var jsonData = JSON.parse(responseBody);",
 													"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
@@ -372,11 +366,9 @@
 									},
 									"response": []
 								}
-							],
-							"_postman_isSubFolder": true
+							]
 						}
-					],
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "Settings",
@@ -472,8 +464,7 @@
 											},
 											"response": []
 										}
-									],
-									"_postman_isSubFolder": true
+									]
 								},
 								{
 									"name": "Update Provider",
@@ -540,8 +531,7 @@
 									},
 									"response": []
 								}
-							],
-							"_postman_isSubFolder": true
+							]
 						},
 						{
 							"name": "Calendars",
@@ -827,8 +817,7 @@
 									},
 									"response": []
 								}
-							],
-							"_postman_isSubFolder": true
+							]
 						},
 						{
 							"name": "Taxes",
@@ -841,7 +830,6 @@
 											"event": [
 												{
 													"script": {
-														"id": "0b8ffe64-ddc2-4569-8c44-044aa690dc76",
 														"exec": [
 															""
 														],
@@ -880,7 +868,6 @@
 											"event": [
 												{
 													"script": {
-														"id": "2894c88f-adc2-41fa-90fe-4ef5af22bd9b",
 														"exec": [
 															""
 														],
@@ -919,7 +906,6 @@
 											"event": [
 												{
 													"script": {
-														"id": "d51de140-22f9-4786-bac2-e6bf2ddce29a",
 														"exec": [
 															""
 														],
@@ -953,8 +939,7 @@
 											},
 											"response": []
 										}
-									],
-									"_postman_isSubFolder": true
+									]
 								},
 								{
 									"name": "Tax categories (account)",
@@ -1035,8 +1020,7 @@
 											},
 											"response": []
 										}
-									],
-									"_postman_isSubFolder": true
+									]
 								},
 								{
 									"name": "Tax classes (charge)",
@@ -1155,8 +1139,7 @@
 											},
 											"response": []
 										}
-									],
-									"_postman_isSubFolder": true
+									]
 								},
 								{
 									"name": "Tax Assignement",
@@ -1167,7 +1150,6 @@
 												{
 													"listen": "prerequest",
 													"script": {
-														"id": "f2fc36da-c61b-4871-892e-e8ee04a3fe7d",
 														"exec": [
 															""
 														],
@@ -1205,7 +1187,6 @@
 												{
 													"listen": "prerequest",
 													"script": {
-														"id": "e9c4f92e-c310-417a-866e-df9c6437e95e",
 														"exec": [
 															""
 														],
@@ -1243,7 +1224,6 @@
 												{
 													"listen": "prerequest",
 													"script": {
-														"id": "fcbd0e8d-9b0b-48b3-be10-44ecd9b2604a",
 														"exec": [
 															""
 														],
@@ -1280,7 +1260,6 @@
 											"event": [
 												{
 													"script": {
-														"id": "6a6bc5df-368f-4b1e-9244-5c48ef32f749",
 														"exec": [
 															""
 														],
@@ -1319,7 +1298,6 @@
 												{
 													"listen": "prerequest",
 													"script": {
-														"id": "9cdd1a79-f099-49dd-bb02-cacde9617c46",
 														"exec": [
 															""
 														],
@@ -1371,11 +1349,9 @@
 												]
 											}
 										}
-									],
-									"_postman_isSubFolder": true
+									]
 								}
-							],
-							"_postman_isSubFolder": true
+							]
 						},
 						{
 							"name": "Account",
@@ -1498,7 +1474,6 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "a1d20e73-f2d5-4fb4-a31b-f0e443f0fd17",
 												"exec": [
 													"var jsonData = JSON.parse(responseBody);",
 													"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
@@ -1562,8 +1537,7 @@
 									},
 									"response": []
 								}
-							],
-							"_postman_isSubFolder": true
+							]
 						},
 						{
 							"name": "Invoice",
@@ -1841,8 +1815,7 @@
 											},
 											"response": []
 										}
-									],
-									"_postman_isSubFolder": true
+									]
 								},
 								{
 									"name": "Invoice Type",
@@ -1876,11 +1849,9 @@
 											},
 											"response": []
 										}
-									],
-									"_postman_isSubFolder": true
+									]
 								}
-							],
-							"_postman_isSubFolder": true
+							]
 						},
 						{
 							"name": "Termination reasons",
@@ -1993,8 +1964,7 @@
 									},
 									"response": []
 								}
-							],
-							"_postman_isSubFolder": true
+							]
 						},
 						{
 							"name": "Notifications Access Sub creation",
@@ -2006,7 +1976,9 @@
 											"listen": "test",
 											"script": {
 												"exec": [
-													"if( pm.response.code == 200 ) { tests[\"is.compiled\"] = JSON.parse(responseBody).compilationErrors.length === 0; }"
+													"if( pm.response.code == 200 ) { \r",
+													"    tests[\"is.compiled\"] = JSON.parse(responseBody).compilationErrors==null ||JSON.parse(responseBody).compilationErrors.length === 0; \r",
+													"    }"
 												],
 												"type": "text/javascript"
 											}
@@ -2086,8 +2058,7 @@
 										]
 									}
 								}
-							],
-							"_postman_isSubFolder": true
+							]
 						},
 						{
 							"name": "Channels",
@@ -2320,8 +2291,7 @@
 									},
 									"response": []
 								}
-							],
-							"_postman_isSubFolder": true
+							]
 						},
 						{
 							"name": "Billing cycles",
@@ -2488,15 +2458,134 @@
 									},
 									"response": []
 								}
-							],
-							"_postman_isSubFolder": true
+							]
 						}
-					],
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "Catalog",
 					"item": [
+						{
+							"name": "Counters",
+							"item": [
+								{
+									"name": "Counter1",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"counter_1\",\n    \"description\": \"First counter\",\n    \"disabled\": false,\n    \"calendar\": \"CAL_MONTHLY_1ST\",\n    \"type\": \"USAGE\",\n    \"ceiling\": 80000,\n    \"counterLevel\": \"BA\",\n    \"notificationLevels\": \"50\",\n    \"accumulator\": false\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/catalog/counterTemplate/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"catalog",
+												"counterTemplate",
+												"createOrUpdate"
+											]
+										},
+										"description": "\"validFrom\": 1546297200000,\r\n    \"validTo\": 1640991600000,"
+									},
+									"response": []
+								},
+								{
+									"name": "Counter2",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"counter_2\",\n    \"description\": \"Second counter\",\n    \"disabled\": false,\n    \"calendar\": \"CAL_MONTHLY_1ST\",\n    \"type\": \"USAGE\",\n    \"ceiling\": 1000000,\n    \"counterLevel\": \"UA\",\n    \"accumulator\": false\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/catalog/counterTemplate/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"catalog",
+												"counterTemplate",
+												"createOrUpdate"
+											]
+										},
+										"description": "\"validFrom\": 1546297200000,\r\n    \"validTo\": 1640991600000,"
+									},
+									"response": []
+								},
+								{
+									"name": "Accumulator counter single value",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"acum_counter_single_value\",\n    \"description\": \"Accumulator counter, single value\",\n    \"disabled\": false,\n    \"calendar\": \"CAL_MONTHLY_1ST\",\n    \"type\": \"USAGE\",\n    \"counterLevel\": \"BA\",\n    \"notificationLevels\": \"50\",\n    \"accumulator\": true,\n    \"accumulatorType\": \"SINGLE_VALUE\"\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/catalog/counterTemplate/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"catalog",
+												"counterTemplate",
+												"createOrUpdate"
+											]
+										},
+										"description": "\"validFrom\": 1546297200000,\r\n    \"validTo\": 1640991600000,"
+									},
+									"response": []
+								},
+								{
+									"name": "Accumulator counter multi value",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"acum_counter_multi_value\",\n    \"description\": \"Accumulator counter, multiple values\",\n    \"disabled\": false,\n    \"calendar\": \"CAL_MONTHLY_1ST\",\n    \"type\": \"USAGE\",\n    \"counterLevel\": \"BA\",\n    \"accumulator\": true,\n    \"accumulatorType\": \"MULTI_VALUE\",\n    \"keyEl\": \"#{op.code}\",\n    \"valueEl\": \"#{op.amountWithoutTax}\"\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/catalog/counterTemplate/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"catalog",
+												"counterTemplate",
+												"createOrUpdate"
+											]
+										},
+										"description": "\"validFrom\": 1546297200000,\r\n    \"validTo\": 1640991600000,"
+									},
+									"response": []
+								}
+							]
+						},
 						{
 							"name": "OfferTemplateCategory",
 							"item": [
@@ -2612,8 +2701,7 @@
 									},
 									"response": []
 								}
-							],
-							"_postman_isSubFolder": true
+							]
 						},
 						{
 							"name": "Custom Fields",
@@ -2795,7 +2883,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"code\": \"CF_SE_BUILD_DOUBLE_VERSION\",\n    \"description\": \"A versioned BUILD double on Service\",\n    \"fieldType\": \"DOUBLE\",\n    \"appliesTo\": \"ServiceInstance\",\n    \"useInheritedAsDefaultValue\": true,\n    \"defaultValue\": \"2.0\",\n    \"storageType\": \"SINGLE\",\n    \"valueRequired\": false,\n    \"versionable\": true,\n    \"triggerEndPeriodEvent\": false,\n    \"allowEdit\": true,\n    \"hideOnNew\": false,\n    \"cacheValue\": false,\n    \"guiPosition\": \"tab:Configuration:0;fieldGroup:Build;field:1\"\n}"
+													"raw": "{\n    \"code\": \"CF_SE_BUILD_DOUBLE_VERSION\",\n    \"description\": \"A versioned BUILD double on Service\",\n    \"fieldType\": \"DOUBLE\",\n    \"appliesTo\": \"ServiceInstance\",\n    \"useInheritedAsDefaultValue\": false,\n    \"defaultValue\": \"2.0\",\n    \"storageType\": \"SINGLE\",\n    \"valueRequired\": false,\n    \"versionable\": true,\n    \"triggerEndPeriodEvent\": false,\n    \"allowEdit\": true,\n    \"hideOnNew\": false,\n    \"cacheValue\": false,\n    \"guiPosition\": \"tab:Configuration:0;fieldGroup:Build;field:1\"\n}"
 												},
 												"url": {
 													"raw": "{{opencell.url}}/customFieldTemplate/createOrUpdate",
@@ -2849,7 +2937,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"code\": \"CF_SE_RUN_DOUBLE_VERSION\",\n    \"description\": \"A versioned RUN double on Service\",\n    \"fieldType\": \"DOUBLE\",\n    \"appliesTo\": \"ServiceInstance\",\n    \"useInheritedAsDefaultValue\": true,\n    \"defaultValue\": \"2.0\",\n    \"storageType\": \"SINGLE\",\n    \"valueRequired\": false,\n    \"versionable\": true,\n    \"triggerEndPeriodEvent\": false,\n    \"allowEdit\": true,\n    \"hideOnNew\": false,\n    \"cacheValue\": false,\n    \"guiPosition\": \"tab:Configuration:0;fieldGroup:Run;field:3\"\n}"
+													"raw": "{\n    \"code\": \"CF_SE_RUN_DOUBLE_VERSION\",\n    \"description\": \"A versioned RUN double on Service\",\n    \"fieldType\": \"DOUBLE\",\n    \"appliesTo\": \"ServiceInstance\",\n    \"useInheritedAsDefaultValue\": false,\n    \"defaultValue\": \"2.0\",\n    \"storageType\": \"SINGLE\",\n    \"valueRequired\": false,\n    \"versionable\": true,\n    \"triggerEndPeriodEvent\": false,\n    \"allowEdit\": true,\n    \"hideOnNew\": false,\n    \"cacheValue\": false,\n    \"guiPosition\": \"tab:Configuration:0;fieldGroup:Run;field:3\"\n}"
 												},
 												"url": {
 													"raw": "{{opencell.url}}/customFieldTemplate/createOrUpdate",
@@ -2930,7 +3018,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"code\": \"CF_SE_BUILD_RUN_SITUATION\",\n    \"description\": \"Build or Run Situation \",\n    \"disabled\": false,\n    \"fieldType\": \"STRING\",\n    \"accountLevel\": \"ServiceInstance\",\n    \"appliesTo\": \"ServiceInstance\",\n    \"useInheritedAsDefaultValue\": true,\n    \"storageType\": \"SINGLE\",\n    \"valueRequired\": false,\n    \"uniqueConstraint\": false,\n    \"versionable\": true,\n    \"triggerEndPeriodEvent\": false,\n    \"allowEdit\": true,\n    \"hideOnNew\": false,\n    \"maxValue\": 50,\n    \"guiPosition\": \"tab:Configuration:0;fieldGroup:General:0;field:2\"\n}\n}"
+													"raw": "{\n    \"code\": \"CF_SE_BUILD_RUN_SITUATION\",\n    \"description\": \"Build or Run Situation \",\n    \"disabled\": false,\n    \"fieldType\": \"STRING\",\n    \"accountLevel\": \"ServiceInstance\",\n    \"appliesTo\": \"ServiceInstance\",\n    \"useInheritedAsDefaultValue\": false,\n    \"storageType\": \"SINGLE\",\n    \"valueRequired\": false,\n    \"uniqueConstraint\": false,\n    \"versionable\": true,\n    \"triggerEndPeriodEvent\": false,\n    \"allowEdit\": true,\n    \"hideOnNew\": false,\n    \"maxValue\": 50,\n    \"guiPosition\": \"tab:Configuration:0;fieldGroup:General:0;field:2\"\n}\n}"
 												},
 												"url": {
 													"raw": "{{opencell.url}}/customFieldTemplate/createOrUpdate",
@@ -2972,8 +3060,7 @@
 											},
 											"response": []
 										}
-									],
-									"_postman_isSubFolder": true
+									]
 								},
 								{
 									"name": "OfferTemplate",
@@ -3005,8 +3092,7 @@
 											},
 											"response": []
 										}
-									],
-									"_postman_isSubFolder": true
+									]
 								},
 								{
 									"name": "ProductTemplate",
@@ -3038,8 +3124,7 @@
 											},
 											"response": []
 										}
-									],
-									"_postman_isSubFolder": true
+									]
 								},
 								{
 									"name": "WalletOperation",
@@ -3125,11 +3210,9 @@
 											},
 											"response": []
 										}
-									],
-									"_postman_isSubFolder": true
+									]
 								}
-							],
-							"_postman_isSubFolder": true
+							]
 						},
 						{
 							"name": "Charges",
@@ -3146,7 +3229,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"code\": \"CH_PRD\",\n    \"description\": \"Product\",\n    \"invoiceSubCategory\": \"ISCAT_PRD\",\n    \"taxClassCode\": \"NORMAL\",\n    \"disabled\": false,\n    \"unitNbDecimal\": 4,\n    \"roundingModeDtoEnum\": \"NEAREST\",\n    \"triggeredEdrs\": null\n}"
+											"raw": "{\n    \"code\": \"CH_PRD\",\n    \"description\": \"Product\",\n    \"invoiceSubCategory\": \"ISCAT_PRD\",\n    \"taxClassCode\": \"NORMAL\",\n    \"disabled\": false,\n    \"unitNbDecimal\": 4,\n    \"roundingModeDtoEnum\": \"NEAREST\",\n    \"triggeredEdrs\": null,\n    \"status\":\"ACTIVE\"\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/catalogManagement/productChargeTemplate/createOrUpdate",
@@ -3174,7 +3257,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"code\": \"{{code}}\",\n    \"description\": \"{{desc}}\",\n    \"invoiceSubCategory\": \"ISCAT_REC\",\n    \"taxClassCode\": \"NORMAL\",\n    \"disabled\": false,\n    \"unitNbDecimal\": 4,\n    \"roundingModeDtoEnum\": \"NEAREST\",\n    \"calendar\": \"CAL_MONTHLY_1ST\",\n    \"durationTermInMonth\": null,\n    \"subscriptionProrata\": true,\n    \"terminationProrata\": true,\n    \"applyInAdvance\": true,\n    \"filterExpression\": \"\",\n    \"triggeredEdrs\": null\n}"
+											"raw": "{\n    \"code\": \"{{code}}\",\n    \"description\": \"{{desc}}\",\n    \"invoiceSubCategory\": \"ISCAT_REC\",\n    \"taxClassCode\": \"NORMAL\",\n    \"disabled\": false,\n    \"unitNbDecimal\": 4,\n    \"roundingModeDtoEnum\": \"NEAREST\",\n    \"calendar\": \"CAL_MONTHLY_1ST\",\n    \"durationTermInMonth\": null,\n    \"subscriptionProrata\": true,\n    \"terminationProrata\": true,\n    \"applyInAdvance\": true,\n    \"filterExpression\": \"\",\n    \"triggeredEdrs\": null,\n    \"status\":\"ACTIVE\"\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/catalog/recurringChargeTemplate/createOrUpdate",
@@ -3202,7 +3285,35 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"code\": \"{{request.label.1}}\",\n    \"description\": \"{{request.label.2}}\",\n    \"invoiceSubCategory\": \"ISCAT_USG\",\n    \"taxClassCode\": \"NORMAL\",\n    \"disabled\": false,\n    \"amountEditable\": true,\n    \"inputUnitDescription\": \"unit\",\n    \"ratingUnitDescription\": \"unit\",\n    \"unitMultiplicator\": 1,\n    \"unitNbDecimal\": 6,\n    \"roundingModeDtoEnum\": \"NEAREST\",\n    \"filterParam1\": \"UNIT\",\n    \"priority\": 10\n}"
+											"raw": "{\n    \"code\": \"{{request.label.1}}\",\n    \"description\": \"{{request.label.2}}\",\n    \"invoiceSubCategory\": \"ISCAT_USG\",\n    \"taxClassCode\": \"NORMAL\",\n    \"disabled\": false,\n    \"amountEditable\": true,\n    \"inputUnitDescription\": \"unit\",\n    \"ratingUnitDescription\": \"unit\",\n    \"unitMultiplicator\": 1,\n    \"unitNbDecimal\": 6,\n    \"roundingModeDtoEnum\": \"NEAREST\",\n    \"filterParam1\": \"UNIT\",\n    \"priority\": 10,\n    \"status\":\"ACTIVE\"\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/catalog/usageChargeTemplate/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"catalog",
+												"usageChargeTemplate",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "charge|CH_USG_UNIT_2|Professional services second",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"{{request.label.1}}\",\n    \"description\": \"{{request.label.2}}\",\n    \"invoiceSubCategory\": \"ISCAT_USG\",\n    \"taxClassCode\": \"NORMAL\",\n    \"disabled\": false,\n    \"amountEditable\": true,\n    \"inputUnitDescription\": \"unit\",\n    \"ratingUnitDescription\": \"unit\",\n    \"unitMultiplicator\": 1,\n    \"unitNbDecimal\": 6,\n    \"roundingModeDtoEnum\": \"NEAREST\",\n    \"filterParam1\": \"UNIT\",\n    \"priority\": 10,\n    \"status\":\"ACTIVE\"\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/catalog/usageChargeTemplate/createOrUpdate",
@@ -3230,7 +3341,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"code\": \"{{request.label.1}}\",\n    \"description\": \"{{request.label.2}}\",\n    \"oneShotChargeTemplateType\": \"SUBSCRIPTION\",\n    \"immediateInvoicing\": false,\n    \"invoiceSubCategory\": \"ISCAT_OSS\",\n    \"taxClassCode\": \"REDUCED\",\n    \"disabled\": false,\n    \"amountEditable\": true,\n    \"unitNbDecimal\": 4,\n    \"roundingModeDtoEnum\": \"NEAREST\"\n}"
+											"raw": "{\n    \"code\": \"{{request.label.1}}\",\n    \"description\": \"{{request.label.2}}\",\n    \"oneShotChargeTemplateType\": \"SUBSCRIPTION\",\n    \"immediateInvoicing\": false,\n    \"invoiceSubCategory\": \"ISCAT_OSS\",\n    \"taxClassCode\": \"REDUCED\",\n    \"disabled\": false,\n    \"amountEditable\": true,\n    \"unitNbDecimal\": 4,\n    \"roundingModeDtoEnum\": \"NEAREST\",\n    \"status\":\"ACTIVE\"\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/catalog/oneShotChargeTemplate/createOrUpdate",
@@ -3258,7 +3369,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"code\": \"{{request.label.1}}\",\n    \"description\": \"One Shot Termination\",\n    \"oneShotChargeTemplateType\": \"TERMINATION\",\n    \"immediateInvoicing\": false,\n    \"invoiceSubCategory\": \"ISCAT_OST\",\n    \"taxClassCode\": \"NORMAL\",\n    \"disabled\": false,\n    \"amountEditable\": true,\n    \"unitNbDecimal\": 4,\n    \"roundingModeDtoEnum\": \"NEAREST\"\n}"
+											"raw": "{\n    \"code\": \"{{request.label.1}}\",\n    \"description\": \"One Shot Termination\",\n    \"oneShotChargeTemplateType\": \"TERMINATION\",\n    \"immediateInvoicing\": false,\n    \"invoiceSubCategory\": \"ISCAT_OST\",\n    \"taxClassCode\": \"NORMAL\",\n    \"disabled\": false,\n    \"amountEditable\": true,\n    \"unitNbDecimal\": 4,\n    \"roundingModeDtoEnum\": \"NEAREST\",\n    \"status\":\"ACTIVE\"\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/catalog/oneShotChargeTemplate/createOrUpdate",
@@ -3286,7 +3397,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"code\": \"{{request.label.1}}\",\n    \"description\": \"One Shot Other\",\n    \"oneShotChargeTemplateType\": \"OTHER\",\n    \"immediateInvoicing\": false,\n    \"invoiceSubCategory\": \"ISCAT_OSO\",\n    \"taxClassCode\": \"NORMAL\",\n    \"disabled\": false,\n    \"amountEditable\": true,\n    \"unitNbDecimal\": 4,\n    \"roundingModeDtoEnum\": \"NEAREST\"\n}"
+											"raw": "{\n    \"code\": \"{{request.label.1}}\",\n    \"description\": \"One Shot Other\",\n    \"oneShotChargeTemplateType\": \"OTHER\",\n    \"immediateInvoicing\": false,\n    \"invoiceSubCategory\": \"ISCAT_OSO\",\n    \"taxClassCode\": \"NORMAL\",\n    \"disabled\": false,\n    \"amountEditable\": true,\n    \"unitNbDecimal\": 4,\n    \"roundingModeDtoEnum\": \"NEAREST\",\n    \"status\":\"ACTIVE\"\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/catalog/oneShotChargeTemplate/createOrUpdate",
@@ -3302,8 +3413,7 @@
 									},
 									"response": []
 								}
-							],
-							"_postman_isSubFolder": true
+							]
 						},
 						{
 							"name": "Price Plans",
@@ -3447,9 +3557,36 @@
 										}
 									},
 									"response": []
+								},
+								{
+									"name": "PP_USG_UNIT_2",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"PP_USG_UNIT_2\",\n    \"eventCode\": \"CH_USG_UNIT_2\",\n    \"amountWithoutTax\": 10,\n    \"amountWithTax\": 1,\n    \"amountWithoutTaxEL\": \"#{ mv:getInheritedCFValue(serviceInstance, 'CF_SE_USG_DOUBLE') }\",\n    \"woDescriptionEL\": null\n}\n"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/catalog/pricePlan/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"catalog",
+												"pricePlan",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
 								}
-							],
-							"_postman_isSubFolder": true
+							]
 						},
 						{
 							"name": "Services",
@@ -3464,10 +3601,6 @@
 												"value": "application/json"
 											}
 										],
-										"body": {
-											"mode": "raw",
-											"raw": ""
-										},
 										"url": {
 											"raw": "{{opencell.url}}/provider/",
 											"host": [
@@ -3487,7 +3620,6 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "9f4e535b-0c68-45ea-b790-62102c3545b5",
 												"exec": [
 													""
 												],
@@ -3505,7 +3637,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"code\": \"{{code}}\",\n    \"description\": \"{{desc}}\",\n    \"customFields\": {\n        \"customField\": [\n            {\n                \"code\": \"CF_SE_OSS_DOUBLE\",\n                \"doubleValue\": 1\n            },\n            {\n                \"code\": \"CF_SE_OST_DOUBLE\",\n                \"doubleValue\": 1\n            },\n            {\n                \"code\": \"CF_SE_DOUBLE\",\n                \"doubleValue\": 8.5\n            },\n            {\n                \"code\": \"CF_SE_USG_DOUBLE\",\n                \"doubleValue\": 0.57\n            },\n            {\n                \"code\": \"CF_SE_BUILD_RUN_SITUATION\",\n                \"valuePeriodStartDate\": \"2010-04-19\",\n                \"valuePeriodEndDate\": \"2020-05-19\",\n                \"valuePeriodPriority\": 1,\n                \"stringValue\": \"BUILD\"\n            },\n            {\n                \"code\": \"CF_SE_BUILD_RUN_SITUATION\",\n                \"valuePeriodStartDate\": \"2020-05-20\",\n                \"valuePeriodEndDate\": \"2030-05-19\",\n                \"valuePeriodPriority\": 2,\n                \"stringValue\": \"RUN\"\n            },\n            {\n                \"code\": \"CF_SE_BUILD_DOUBLE_VERSION\",\n                \"valuePeriodPriority\": 1,\n                \"valuePeriodStartDate\": \"2010-04-19\",\n                \"valuePeriodEndDate\": \"2030-04-19\",\n                \"doubleValue\": 5\n            },\n            {\n                \"code\": \"CF_SE_RUN_DOUBLE_VERSION\",\n                \"valuePeriodPriority\": 1,\n                \"valuePeriodStartDate\": \"2010-04-19\",\n                \"valuePeriodEndDate\": \"2030-04-19\",\n                \"doubleValue\": 8\n            }\n        ]\n    },\n    \"imageBase64\": null,\n    \"imagePath\": null,\n    \"invoicingCalendar\": null,\n    \"longDescription\": null,\n    \"mandatory\": true,\n    \"serviceChargeTemplateSubscriptions\": {\n        \"serviceChargeTemplateSubscription\": [\n            {\n                \"code\": \"CH_OSS\",\n                \"wallets\": null\n            }\n        ]\n    },\n    \"serviceChargeTemplateTerminations\": {\n        \"serviceChargeTemplateTermination\": [\n            {\n                \"code\": \"CH_OST\",\n                \"wallets\": null\n            }\n        ]\n    },\n    \"serviceChargeTemplateUsages\": {\n        \"serviceChargeTemplateUsage\": [\n            {\n                \"code\": \"CH_USG_UNIT\",\n                \"wallets\": null,\n                \"counterTemplate\": null,\n                \"accumulatorCounterTemplates\": null\n            }\n        ]\n    },\n    \"serviceChargeTemplateRecurrings\": {\n        \"serviceChargeTemplateRecurring\": [\n            {\n                \"code\": \"CH_REC_BUILD_RUN_ADV\",\n                \"wallets\": null\n            }\n        ]\n    },\n    \"somCode\": null\n}"
+											"raw": "{\n    \"code\": \"{{code}}\",\n    \"description\": \"{{desc}}\",\n    \"customFields\": {\n        \"customField\": [\n            {\n                \"code\": \"CF_SE_OSS_DOUBLE\",\n                \"doubleValue\": 1\n            },\n            {\n                \"code\": \"CF_SE_OST_DOUBLE\",\n                \"doubleValue\": 1\n            },\n            {\n                \"code\": \"CF_SE_DOUBLE\",\n                \"doubleValue\": 8.5\n            },\n            {\n                \"code\": \"CF_SE_USG_DOUBLE\",\n                \"doubleValue\": 0.57\n            },\n            {\n                \"code\": \"CF_SE_BUILD_RUN_SITUATION\",\n                \"valuePeriodStartDate\": \"2010-04-19\",\n                \"valuePeriodEndDate\": \"2020-05-19\",\n                \"valuePeriodPriority\": 1,\n                \"stringValue\": \"BUILD\"\n            },\n            {\n                \"code\": \"CF_SE_BUILD_RUN_SITUATION\",\n                \"valuePeriodStartDate\": \"2020-05-20\",\n                \"valuePeriodEndDate\": \"2030-05-19\",\n                \"valuePeriodPriority\": 2,\n                \"stringValue\": \"RUN\"\n            },\n            {\n                \"code\": \"CF_SE_BUILD_DOUBLE_VERSION\",\n                \"valuePeriodPriority\": 1,\n                \"valuePeriodStartDate\": \"2010-04-19\",\n                \"valuePeriodEndDate\": \"2030-04-19\",\n                \"doubleValue\": 5\n            },\n            {\n                \"code\": \"CF_SE_RUN_DOUBLE_VERSION\",\n                \"valuePeriodPriority\": 1,\n                \"valuePeriodStartDate\": \"2010-04-19\",\n                \"valuePeriodEndDate\": \"2030-04-19\",\n                \"doubleValue\": 8\n            }\n        ]\n    },\n    \"imageBase64\": null,\n    \"imagePath\": null,\n    \"invoicingCalendar\": null,\n    \"longDescription\": null,\n    \"mandatory\": true,\n    \"serviceChargeTemplateSubscriptions\": {\n        \"serviceChargeTemplateSubscription\": [\n            {\n                \"code\": \"CH_OSS\",\n                \"wallets\": null\n            }\n        ]\n    },\n    \"serviceChargeTemplateTerminations\": {\n        \"serviceChargeTemplateTermination\": [\n            {\n                \"code\": \"CH_OST\",\n                \"wallets\": null\n            }\n        ]\n    },\n    \"serviceChargeTemplateUsages\": {\n        \"serviceChargeTemplateUsage\": [\n            {\n                \"code\": \"CH_USG_UNIT\",\n                    \"wallets\": null,\n                    \"accumulatorCounterTemplates\": {\n                        \"counterTemplate\": [\n                            \"acum_counter_single_value\"\n                        ]\n                    },\n                    \"counterTemplate\": \"counter_1\"\n            }\n        ]\n    },\n    \"serviceChargeTemplateRecurrings\": {\n        \"serviceChargeTemplateRecurring\": [\n            {\n                \"code\": \"CH_REC_BUILD_RUN_ADV\",\n                \"wallets\": null\n            }\n        ]\n    },\n    \"somCode\": null\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/catalog/serviceTemplate/createOrUpdate",
@@ -3556,8 +3688,7 @@
 										]
 									}
 								}
-							],
-							"_postman_isSubFolder": true
+							]
 						},
 						{
 							"name": "Products and Bundles",
@@ -3590,8 +3721,7 @@
 									},
 									"response": []
 								}
-							],
-							"_postman_isSubFolder": true
+							]
 						},
 						{
 							"name": "Offers",
@@ -3608,7 +3738,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"code\": \"OF_BASIC\",\n    \"name\": \"{{name}}\",\n    \"description\": \"{{name}} {{code}} {{$timestamp}}\",\n    \"languageDescriptions\": [\n        {\n            \"languageCode\": \"ENG\",\n            \"description\": \"{{name}} OF_BASIC EN\"\n        },\n        {\n            \"languageCode\": \"FRA\",\n            \"description\": \"{{name}} OF_BASIC FR\"\n        }\n    ],\n    \"longDescription\": \"{{name}} OF_BASIC long {{$timestamp}}\",\n    \"longDescriptionsTranslated\": [\n        {\n            \"languageCode\": \"ENG\",\n            \"description\": \"{{name}} OF_BASIC long EN\"\n        },\n        {\n            \"languageCode\": \"FRA\",\n            \"description\": \"{{name}} OF_BASIC long FR\"\n        }\n    ],\n    \"disabled\": false,\n    \"lifeCycleStatus\": \"ACTIVE\",\n    \"bomCode\": null,\n    \"offerTemplateCategory\": [\n        {\n            \"code\": \"OCAT_ROOT\"\n        }\n    ],\n    \"channel\": [\n        {\n            \"code\": \"EMAIL\"\n        },\n        {\n            \"code\": \"RETAIL\"\n        },\n        {\n            \"code\": \"WEB\"\n        }\n    ],\n    \"seller\": [\n        \"OPENCELL\",\n        \"SELLER_LVL1\",\n        \"SELLER_LVL2\"\n    ],\n    \"customerCategory\": [\n        {\n            \"code\": \"PROSPECT\"\n        },\n        {\n            \"code\": \"CLIENT\"\n        }\n    ],\n    \"offerProductTemplate\": [\n        {\n            \"productTemplate\": {\n                \"code\": \"PR_PRD\"\n            }\n        }\n    ],\n    \"offerServiceTemplate\": [\n        {{offer.services}}\n    ],\n    \"customFields\": {\n        \"customField\": [\n            {\n                \"code\": \"CF_OF_STRING\",\n                \"stringValue\": \"From OfferTemplate {{code}}\"\n            }\n        ]\n    },\n    \"imagePath\": \".png\",\n    \"imageBase64\": \"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\"\n}"
+											"raw": "{\n    \"code\": \"OF_BASIC\",\n    \"name\": \"{{name}}\",\n    \"description\": \"{{name}} {{code}} {{$timestamp}}\",\n    \"validFrom\": \"{{$timestamp}}\",\n    \"languageDescriptions\": [\n        {\n            \"languageCode\": \"ENG\",\n            \"description\": \"{{name}} OF_BASIC EN\"\n        },\n        {\n            \"languageCode\": \"FRA\",\n            \"description\": \"{{name}} OF_BASIC FR\"\n        }\n    ],\n    \"longDescription\": \"{{name}} OF_BASIC long {{$timestamp}}\",\n    \"longDescriptionsTranslated\": [\n        {\n            \"languageCode\": \"ENG\",\n            \"description\": \"{{name}} OF_BASIC long EN\"\n        },\n        {\n            \"languageCode\": \"FRA\",\n            \"description\": \"{{name}} OF_BASIC long FR\"\n        }\n    ],\n    \"disabled\": false,\n    \"lifeCycleStatus\": \"ACTIVE\",\n    \"bomCode\": null,\n    \"offerTemplateCategory\": [\n        {\n            \"code\": \"OCAT_ROOT\"\n        }\n    ],\n    \"channel\": [\n        {\n            \"code\": \"EMAIL\"\n        },\n        {\n            \"code\": \"RETAIL\"\n        },\n        {\n            \"code\": \"WEB\"\n        }\n    ],\n    \"seller\": [\n        \"OPENCELL\",\n        \"SELLER_LVL1\",\n        \"SELLER_LVL2\"\n    ],\n    \"customerCategory\": [\n        {\n            \"code\": \"PROSPECT\"\n        },\n        {\n            \"code\": \"CLIENT\"\n        }\n    ],\n    \"offerProductTemplate\": [\n        {\n            \"productTemplate\": {\n                \"code\": \"PR_PRD\"\n            }\n        }\n    ],\n    \"offerServiceTemplate\": [\n        {{offer.services}}\n    ],\n    \"customFields\": {\n        \"customField\": [\n            {\n                \"code\": \"CF_OF_STRING\",\n                \"stringValue\": \"From OfferTemplate {{code}}\"\n            }\n        ]\n    },\n    \"imagePath\": \".png\",\n    \"imageBase64\": \"iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAIppAACKaQGxZbMyAAAAB3RJTUUH4wMdCgAGXSMW/QAAIahJREFUeNrtnXecVNXduJ97p+3sbJ+tlF16R6ogRYqIosaWRIMaW6KxJfraojEmokFji2LJL7ZorDEJxvjj1dgARaRIEZAquMDC9t3ZNjM79Z73j5kFVBi237mz5/l8xuXjzNz53nvPc885957zPYoQQiCRSI6KqncAEkk8IwWRSGJg1juAREWEQmgBP1oggBbwE/K4CbmbCHnchD3uyN/mZkQ4hAgGEeEwWjgEgKKaUMxmVLMZRTWhJtkxOxyYHamYHA7MKamYU1JRbTZUa/Rlsei9ywmJFKQjCEG4uZmQ102wzoWvspzmgyU0HyzBV11BoLaGgKuGQG0NIY8bEQoiQqGIDNG/CA2EQAgBQoAAFFAUFVQFFOWwMCYzijnyb5M9GWumE6szB6szG5szB1tePvbehdh79cGWV4DZkYIp2YGiyoZCe1FkJ731aH4fgToX3pJ9eIp34y7ejad4N979xQRctYR9zYSbvWh+f6SwKwooEP0PiqJ8e4NHvBeT750iEf1fUaGif1vEMSXZsWRmkdy3H46Bg0kZMBjHgMEkFw3AmuXEnOyIxCY5LlKQGIR9zQRqqnHv2Unj9q9o3LaFxh1f4a+uJORxo/l9RC/30fKmtL7QdxXR03m4RhKoVismRwqWjExSBg4hfdQY0kaMIXXYSJIK+mBOTpbCHAMpyBEITSPU2IBn3zfUb/wC17pVNGzdRKCmmpC7CaGFQVEjNYHeIrR5545oxilgsjuwZjlJGz6azPGTyBg/idRhI7FmOlFMJr2jjRukIEIQbKinadc2qlcspXbVCjzFuwk21KEFA0cIYSAZWrnfLcIoqoo5LR1H0QCyJk0la8oMMsZOxJadg2Lq2d3UHitIyOuhafuWqBSf0rRrO8H6OoSmRTq1iSbE8RACITQQYE5JJbloANnTZ5E7+3TSTxiPJS295x0TepggIhSiuewgNZ8vp2rp+9StX0OgtrrnSnEsWmoXwJKeQfrIMeTOPYucmafi6D+oR91S7hGCaH4/jTu/onzJv6n8+D28JXvR/H4pRWsQInIBMVuw9+5D7qzTKDjrfNLHTsTsSNE7ui4noQUJuZtwrV1J2ZLF1Hy2HH9VBUIIFFXBUB3sOEFoGgDWzCyyTjqZ3udeSPb0WVgysvQOrctISEFC7iZqV6/gwD9eoXbVpwQb6iNSKPKBWacQrVXMKSlkjJtE3wsvJWf26VgzE0+UhBIk7PVQs3I5B/756hFiyGZUlxEVxZTsIHPCZArnX0HunNMxp6brHVmnkRCCaMEA9ZvWs/+V56la+l8pRnfTUqM4UnBOn03RpVfhnDIDU5Jd78g6jLEFEYKm3TspeeNFype8ha+yPDGfWRiFqCjWTCf5886h6IprSBtxgqHHghlWkGBDHWX/+Sf7/vYM7j27iAxGMu6JSCiit4kdRf0pvPhn9LnwUmw5eXpH1S4MJ4gIh3CtXUXx809Q89kywj6foa9QiYzQNFSLhazJ0xlwzU1kT5uFarXpHVabMJQggdoaSt54kX0vP4uvvFT2MwyC0MJYs3IovOhy+l15PUn5vfQOqdUYQhChadRtWMuepx6i5rPlaMGArDWMhtBANZE1aSqDfnUH2dNmGmKcV9wLEvJ4OPivV/nmL4/TXFoiO+EGR2hhknIL6PfzGyi69CosaRl6hxSTuBbEW7KPb/78KKVv/52Q1ytrjQRBaBqqzUbBmecx+KbfkDJoqN4hHZP4FEQIatd8xq6H76Vu/epopLLWSCiixS599DiG/voesmecGpcXwLgTRAsGKF/yFrse/QPekmIUVU7eSWSEFsZe0IfBN/2G3j++OO4eLsaVIKGmRvb97RmKn32CQL0rLq8oks4nMq4rlX6XX8PA627BkpGpd0iHiBtBArXV7PrTQg7+45XIXG8pR89CCBSzhd7n/YShdyyIm1vBcSFIc+kBdj5wN+Xv/juSCkf2N3om0UwweXPPYvjdD+DoP0jviPQXxL17J9vvu5PqTz86nCpH0rMRGs4pMxmx4GHSRpygayi6CtK0cxtbf38LtatWyP6G5FsITSNz/GRGLXyM9BPG6xaHboI07tjKtrtvpnbtSimH5KgITSNj3ImM+sNjZIydqEsMugjSuGMrW397E64vVkk5JDERmkbGmAmM/uOTutQk3V46PcV72H7PbVIOSatQVJX6zRvY9vtbadq5rdt/v1tLaPPBErbf92tqV8s+h6T1KKqKa/0att17O559xd36291WSv01Vey4/7dULX1f3qmStBlFVald+Qk7Fv4GX2V5t/1utwgS8rjZ88SDVPz3P922Y5IERFGo/PBdvn5sIaHGhm75yS4XRAsG2ffi/6Pkzb/Jh4CSjiM0She/TvELT6EF/F3+c10riBCUvfNPip9dRLi5Wcoh6TiKghYIsPeFpyl96+9HWTulc+lSQVzrV7P78QcI1NfJTrmk81AUgo0N7H7ij9Su/qxLf6rLSm3zgf3sevhePPuLpRySTkdRVbwHS9j1yAI8+77pst/pkpIb8rjZ/eRDuORT8u9zxMpPQtOOeIUR4ehLa3lF3mtZx7CrmxNGQ1FV6tavYfcTDxJyN3XJb3T+rHkhKF38OqX/+YccfPitxTkFqAomWxJqkh3VakW12jDZkzE7HKgWG4o5cjpEOIwWDBBu9hL2etD8frSAn7Dfh+bzHb7ZoShyjj5QvuQt0kePo/+V13X6seh0Qeo2ruWbZxcRbu6hc8iFhtAiFwZzsiOymGafIhwDBmHvW4S9V1+ScvOxOnOwZGSgWm0oJlM0hVH0eB2qXcKIYJBgYwOB2hr81ZU0lx2g+WAJnr178JbsJeCqjSwPF5WmxwmjKIR9zex97gnSR44ha/K0zt18Z47F8ldXsfmWq6la/mHPkiMqhWq1YsvOJXXYSDLGTiRtxAmkDh2B1ZmD2eFAMXfOwjMiHCbs9RBsqMezdzcNW7dQ/+UXNG7djK+ynLCvObp8dM85B0LTyJlxCmMX/RVbbn6nbbfTBBFamD1PPcLuRQ8gwiESfv2NloVlTCZsuflkTphM9vTZZE2air13YWRxmW68koebvfgqy6nfsJaazz/B9cXnNJceQAsEekyCPUVVGXTTnQy+8c5OW4i00wRxrV3Jl7+8guaWjIeJyqGU/8mkDR9N3tyzyJk1l5RBQzHZk/WODgAtEKC5tITqFUupeP8dGjZtINjYkPCiCE0jKa+AcU+9hHPqzE7ZZqcIEnDVsvnmq6lc+l7iZiGJLnJpTkkjc+JJ9PnRxWRPPwVbdk5cF7pgQx2uL1ZT9p9/UL1iKYG6GhQlcUURWpjcWacz9okXsDpzOry9ThFk71//zI77f4sIBhLywAtNw5RkJ/PEKRT99Cqyp8/Gkp6hd1htItzspW79Gg68+Teqln8YWUPFpJJwTWEhUCwWht15HwOuvrHD5bHDgjTt2s6Gay/BvXtn4jWthABVJW3YKPpdcS15887GmunUO6oOEfZ6qF7xMfteegbXF6sSMs+x0DRSBg5hwrNvkDpsZIe21SFBtGCA7ffewf6Xn024mkNoGjZnNn0uuJSiy64muW+/hNpHf3UVBxe/xv5XnsN7YH/i3R4WgqJLr2bEgoc7tORChwSp+WwZX/7ycgKu2sQ5uNGHm5njJzPoxjvInj4b1WrVO6qu2VVNo37TOr55+lGqPvkw2kROkNpECCyZWYx78iVyZs1t92bafTRCHjf7X30ef011wsjRsiBl0WW/YOxTL5F7yukJKwdEbotmjp/MCX96hsE33oklM/vQUs+GR1EI1Naw/9XnOzQMpd2CVH/yEdUrliZM+1VoGvaC3gy/636G33U/yX2L9A6p27BmOhl4w22MfvApUocMTxhJFFWl5vPlVC//sN3baFfpDtTVUvLaC4SaGhOi9hCaRtrw0Yx+6M8UXnoVpuT4eJ7RnagWCwVnnseYx57DOWVGYgyMVBRCTU3sf/2vkW5Ae45Le75UvewDXOtXJ0TtITSNrMnTGPOnZ8g95fSE2KeOkDF2ImMe/Qv5Z5wbufgZXJSWEb9Vy95v1/fbXBqC9S4OLn6dsNdr/NpDCHJmzeWEB5/WNXtfvJFcNIBRf3iM3j+cHxmyYWRJFIVws5eDi18nWOdq89fbLEj1px9Tt2Gt8a+0QpAz6zRGLXyclMHD9I4m7rDlFTDi7gfpc8FPDS+JoqrUbVxL1acftfm7bSrloaZGDr71BiGP29C1h9A0nNNmMfK+P+HoN1DvcOIWqzObYXfcR6/zfmLs5SgUhbDHQ+niNwi2MRtKm/batW41devXGLr2iCRFnsTIBQ/j6C/lOB7W7ByG3XkfeXPPSoBaZA1161a36XutLulawE/5ksUEG+oNW3u0DEEY/rs/kjpslN7hGIak/F4Mv+t+siZNNe4tYEUh2NBA2ZLFaP7WpwtqtSCN27+i+rNlKKpx5bA5cxj66wVknThV73AMh2PAIIbddT8pA4cYVhJFVahZuYzGHV+1+jutE0QIKj96F39luTGHIgiByZbEgGtuIn/e2XpHY1gyJ0xmyC13Y83IMmZzS1HxV1ZQ+dG7rY6/VaXdV1VB1bIPEMKYVw4hBHmn/YDCS36OYur8PBU9ifwzz6Po8l9EE0wYTxIhNKqWfYCvqqJVn2+VIK61n+Pesysy0cZgCE0jdegIBt14h+HmcMQjqsVCvyuvJ2fmqZHkFAZDUVTce3biWtO6hHPHLfGa30flR+8S9nqM1zkXAktaGoNuuJ204bJT3lnYsnMY9Ktfk9y3yHj9EUUh7PVS+dF7kdWUj8NxBfHs34tr3SrjyRGl1zkXkn/meXqHkXBkjp9Ev8uviYx2Nlp/RFFwrVuNZ//x1xo5riCu1SvwV5Qb7tmH0DRShgyn38+ux5SUpHc4iYei0ueCS3FOnWm4vqmiqvgry1uV1zdmqY9Mz1yKFgzovU9tQwhMNhtFl15N6pDhekeTsFid2Qy46pdYs7INV4towQA1K5ZGug4xiCmIZ18x9Zs3GO7Zh9A0Mk+cSq+zf6x3KAmPc+osCs48Dx1XE28XiqpQv3nDcZd0iylI3frVBGqqjfXsQwjMKSkUXnQlVme23tEkPKrVSt/5V2Dv1cdYHXZFJVBTTd362ENPjlnyNb8P17pVaMGuX8WnM4nM75hOzuz2z0OWtI30UWMpOPP8SOIHA6EF/ZEyHuNu1jEF8VVWUL9pg/Fqj9Q0CudfgSUtQ+9oegyK2UyfCy7BbrTbvopK/aYNMRcFPWbpb9j6Jf7KckNdFYSmkTVpKtknn6J3KD2O1GGjyJ93jqHKi6Io+CvLadi66ZifObYgmzcaa96HEJiS7PQ6+0eYU9P0jqbHoZhMFJz1Q2zZuca5o6UohDxuGjZvPOZHjipIqKmRhi3H/lI8IkRkSEn2yXP0DqXHkjZyDM5ps4zVzAIavvoykoDkKBxVEF95aWTslYFu7yomM3nzziEpv5feofRYTElJFLTU4AapRRRFwb17J76KsqO+f1RBGndsJVDvwjCJjYVGUm4eeXPm6R1JjyfrxCmkDRtpnFpEUQjU1x1zjshRBWn6eruhspYITZAxfjKOAYP1DqXHY83KJnvGqcYZmqQohL0emnZtP+rb39uLsNdL085tR6yuGt8voWmoVis5M06NmwVsejo5M+ZgzXJG1k2MgzLSmjLUtHNbpFL4Dt+bPRTyugk21JGUX2CIq4DQBPaC3jinztA7FEmU1KEjcE6ZQe2aldE1SOIboWkEG+oIed3fy6r5vezuWjBA88ESRChkjC6IADUpCXuvvp22Lp2kgwiBv7oymuBD72BaE2/kYae9TyGq5dvJyjt1lVuJJNGI//pPItERKYhEEgMpiEQSAymIRBIDKYhEEgMpiEQSAymIRBIDKYhEEgMpiEQSAymIRBIDKYhEEgMpiEQSAymIRBIDKYhEEgMpiEQSAymIRBIDKYhEEgMpiEQSAymIRBIDKYhEEgMpiEQSAymIRBIDKYhEEgMpiEQSAymIRBIDKYhEEgMpiEQSAymIRBIDKYhEEgMpiEQSAymIRBIDKYhEEgMpiEQSAymIRBIDKYhEEgMpiEQSAymIRBIDKYhEEgMpiEQSAymIRBIDKYhEEgMpiEQSAymIRBIDKYhEEgPzsd5oLj1A09c7QAi9Y2w9QpDcbwApA4foHUmPxFdRRtPOrQjNQGVGUUgdMhx7775HffuYgnj27mHL7dcRcjehKIreu9EqhBYme9psxjz+PJb0DL3D6VGIUIi9LzzN/tdeME55EQJzSipjF73QdkFSBg3Fkp6Br7wURTVGS0wIQc3nn1CzcjkFZ52vdzg9isadWyn/37cINTUap7xoGvbefUkZNPSYnznmnlidOWSMOxEQoCiGeCmqSsjdxMHFrxFqatT7+PcYRDhM6b/fpLn0AIrJpHs5aPULQea4SdicOcfct2MKolosZE2aimqzG6ofoqgqtatXUPXJh3qH0mNo+OpLyt/9N8JA5QQhUG12MidNRbFYjvmxmHVh1sQpJOX3MtaOKwohdxP7X34Wf1Wl3tEkPGGfj/2vPh+pPQzStIJIczwpvxdZE0+K+bmYe2Tv3ZfM8ZMMVYNApBap2/AFZe/8U+9QEp6alcuofH+JYTrmhxCCzAmTjtk5byGmIKotiezps1BtNsBIkihowQAlb7xI065tegeTsPirK9n71z8TaHBF2/RGQaDabGRPm41qS4r5yePWiVmTp2PvXWise9tEahH3nl0UP/ckYa9X73ASDqGFKXnjJVxrPkNRTXqH08bYBfbehWRNnnbczx5XkOS+RTinzjBcM6uF8nffpvy//9E7jISj7otVlLz2AlowqHcobUcInFNnkNyn6LgfPa4gitlC7inzMKekGk+SaIe9+JlFNO3arnc0CYO/qoLdTz9Cs4GekR0i+nAwb84ZMe9etdCqvcucMJnUoSMQmqb37rUZRVVp3PEVux9/gGCdS+9wDI/m91P83BPUrlxuPDmIPBxMHTaSzAmTW/X5Vu2hLTuXvNPPRjGbW/PxuENRFCo+XMK+l59FhEJ6h2Noypb8i5I3XkKEw3qH0i4Us5m8036ANcbDwSNp9SUgb84Z2Hv1NWQtgqIgggH2vvhnyt9723hNxTjBtWYluxc9SLCxwWB3rSIITcPeqw95c85o9XdaLYhj4BByZszBWLd7j0BRCbhq2fXQPdSs+lTvaAxH065tbF/4Gzz7vjFk0yqCIGfGqTjaMNq71XuqWiwUnPNjrJnZhr0CK6qKZ/9edtx/F43btugdjmFoLjvAjvt/S/2m9caVQwismU4Kzv4Rais65y20aW8zx0/COW2mMZtZURRVpWHLl2xbcHtkvoskJr7KcnYsvIvqTz4yrhxEmlfOqTMjI0PaQJv22GRPpvd5P8GcmmbYWgQOD2jcdvfNuHdLSY6Fr7KcHX/4DeXvvo1hm9YQubWbmkbv8+djSna06attviQ4p84ka9JUQ9ciEJGkZtWnbP3drXI4ylFoLj/I9vvuoGzJYtA0wHid8haEppF14lScU2e2+bttFsSSlk7h/CsMX4tAVJKVy9ly23W4vvhc73DiBvfunWz9zU2UL3krIocB71gdQgjMqan0nX8ZlrT0Nn+9XY3K7JNPwTllhuFrEYiO/P1yHVtuv57KD5YgNGPe3+8s6tavYcvt11H58XvRA2RgOYj2PU6aQc6MU9v1/XYJYk5No/CiKyLzvg1ei0B0YOM3X/PVXTex78W/EHI36R1St6P5/ZT++0023/ILXOvXGLpDfgghsKRnUHjRlZEWTzto91HIPvkUcuecYazJVDFQVBVfZTk7H/o92xfcjnd/sd4hdRv+miq+XvQAW393M+7i3YkhB5FJUbmnzCP75Nnt3oYiOlDCXetWs/HaS/BVlifMQW2pETPGTWLg9beQM2supiS73lF1za6GQ9StX8Oepx+l5rOlkeEjBm9SHd45DVtuPuP/8hpZk44/rP1YdKhUZ447kV7nXmC82WSxiE7or9u4hs23XsOOhXfh2btH76g6HV9FGbuffJgvf3kFVcs/iPQnE+k8otDrnAvb/Nzje1vpSA0C4P7mazZeewmNO7YmTi3SgohkdEkbPorCi39G/pnnYcvJ0zuqDhFqaqBq2Qfse/k56jeuRQuFEu68CU0jbdhIxj/zesyUPq2hw4IAlLzxItvuuQ3N50uwq1AEoWmoVhuZ4ybS9+KfkXvKPKyZWXqH1SbCXg+uL1ax/5XnqPl8OSGP23AzAVuFEKi2JEYueJjCn17V4c11iiDBxga23HYt5e+9nZgHHUAIhKZhSnaQOX4Svc69gNzZp5GU3zuuLwqBulpqV6+g7J1/UbvqUwJ1tSiKGtcxdwShhck//RzGPPZcp2TX7BRBAOo2rOXLGy7De7Ak4arsbxEVRbXZSB0ygvx555Azay4pg4ZGZl3GAZrfh2dfMTUrl1Pxwf+nYfPGSApZNXHFgMOZEsc9/TJZJ07plG12miBoGsXPP8nOhxcgAoGEPhERIqIoqgmrM5v0E8aTO+s0sk6aTnLffpgdKd16DMLNXnzlpdStX0P1iqW41q3GX1mGFgwmvBgACIFisTD09nsYcM3/dNpFuvMEAYL1Ljbfei0VHyxJ7Frku7TUKhYL1uxc0oaNJH3sRNJHjiF1yHCs2bmYkh1tGmYd8+fCYcJeD4E6F57ir2nYuon6zRtp3LoJf1UF4WhfsCedA6GFyZv7A8Y89izWTGenbbdTBQGo37SeL391JZ69e3rUCTqE0CIpkhQFs8OBJT0Te98iHP0GklzYH3uvPtjy8rE5c7CkZ6DaklBMpuhVPnq8osKJcBgRDBBsbCDgqsFXVYGvvBTvgX14936DZ38xwToXIXfTodu0yqG8sz0HoWk4+g1g3FMvkTGuY7d1v0unCwJw4M2X2bbgdsIed487Wd9CiMhIg5aXqmKy2VBtSahWG6rNhsmejDnZgWq1opgjNYwIh9GCfsLNzYS9HjS/Dy0QIOzzofl9hx/o9VAhvnuMTckORtzzEIUXXdnpx6JLsjD0Ou9CGrdtZt/Lz3bLMYpbWgrwEWiBAFogAPCdYTri8JQL5dB/optRvr1NgybP6BIUhd4/vIje58/vkgtFl7SBTEl2Blx3C9nTZiXEiN9O5TvLNRx+mSJNLZMp8u8j3vt2yn5JC0LTyDppOoNuuBWTPblLfqPLOgn2Xn0Yese9pAwaKiWRdDpC03D0H8SwO+7F3ooMie2lS3vRGWMnMvS232F1ZktJJJ2G0DSsmVkMvfVuMiec1PENxqDLbzPlzzuXQdffhjnZkRBzRyQ6IwQmu50B195MwVk/7PKf63JBFLOZokuvpujSqyOdSymJpL0IgWIyUTj/SvpdcW2rcut2lG55UGFKTmbgDbfR65wfy46mpEPkn3keg266IzJSoRvotid51iwnw+78A3mn/UDWIpI2IzSNnNmnM/yuhdiyc7vtd7v1UXdSQW9G/P5BcmaeKjvtklYjNI3sqTMZueDhLr1jdTS6fSxIcmF/Rix4BOdUY2dolHQPkZxWUxh576M4Bgzu9t/XZbBUyqChjFr4ONnT5YNEybFpSfg2auEiUoeP0iUG3UYTpg4Zzqj7nyBnxhwpieR7RPJZTWfUA4tIG3mCbnHoOtw2ZeAQRt2/iLy5Z0WPiuy8SyIDO3NmnsroB54kbfhoXaPpktG8bcVXfpCdD/6esnf+lVipZyRtIzriOX/euQz/7UKSC/vrHVF8CAIQcNXw9eMPcODNvxFubu6Zc0l6MkKgWq30/tHFDL3tHmy58ZE9Jm4EAQh53Ox/5Tm++ctjBFy1UpIegtA0LGlp9P/5L+l/9Y3tSjLdVcSVIABaMEjFe2+z65F7o8t9JWiWFAlwONHCkP+5i94/nI9qS9I7pG8Rd4IAIASudavY9ch9uNauPJTATZJAHErxOpGhty8ge/rsuDzH8SlIlObSA+x5+hFK33qdkNcrm1wJgtA0TElJFPzgRwy+8U4cAwbpHdIxiWtBINIvObj4dfY+9wSe/XvlHGyDI7Qw9oI+9L/qVxRe3P5lCbqLuBcEACGo37yB3U8+SPXyj9CCAVmbGA2hgWrCedLJDL7pTrImT0cxxX//0hiCRAm4ail5/a/sf/V5mssOytrEEERSGNly8ii86EqKLr+GpLwCvYNqNYYSBCJrWtRvWk/xM4uoWv4hYZ98ZhKvRJLpWXFOOZmB195M1pQZnZY8r7swnCAtBBsbKHvnn+x76Rnce3ZG04BKUeKCaJFK7jeAwkt+Tt8LforVmaN3VO3CsIIAIASevXso+ftLlL79D3wVZbLZpSfRjJBWZzYFZ55P0WW/IHXYSENfuIwtSBQtGKRh03r2vfws1Z98SKDeldAp/uOOqBjmlFSyp8+m6LJf4Dxpetw99GsPCSFIC+FmL661n1PyxovUfLaMYGNDz8hsrhctYjhSyJo0jb7zLyNn5ty4v3XbFhJKkBZC7iZqPv+E0rfeiCwaI2uUzqVFjNQ0siaeRJ8f/5Sc2ad1yoI18UZCCtJCyOOhbsMayt5+k+pPP8ZfXYkQQvZT2knLxDZrlhPnlBn0Pn8+zikzElKMFhJakBY0v4+GbVuo/PB/qVr2Ae49u9D8Ptn8ag0ta5+YLdgL+5E7+zTyzziXjDETMCU79I6uy+kRgrQgtDC+inJqVnxMxftLqN+8gUBtNSIclrIcScuyDYA1I5P00ePInTOPnNmn4yga0KOyy/coQY4k5HHj2fM11Z9+RNWnH+HetYNgQ93h5yk9TRYhECLShDI7UnH0G0j2jDnkzjqNtNFjsKSm97xjQg8W5BBCEGioo2nnNmpXr8C19nOadm4lUOdChIKgqInZZzlicR9FVbGkZ5BcNICsk6bjnHwy6WPGY8vONcR4qa5ECnIkQhBsasS9Zyf1G9dRv3k9DV9twldRRsjdFBlwZ1RhjlztSgFzcgpWZw6pQ0eQOWEymRMmkzp0BJaMrB4vxZFIQWKg+X34a6pp2rmVxu1f0fT1dpp2bosK40YL+CIfVNSoL3EgTvR0Hrn0m2q1YnKkYM1ykjJgCGkjRpM2ehxpI0Zjy8nHnJysf9xxihSkDWh+P8GGOjz7i3Hv2YV3/168JXvxFO+Jri7bTLi5GS3gPzwL8ojl1L67HNt3l1o7OkcszXbE/4uctZb3In9VqxU1yY4pyR5tMvXH0W8gjoFDSBk4BEf/QVgyMiNLUUghWoUUpCMIQdjvJ+xpwl9Tha+8FF95Gc3lpfgqygi4qgm4agm4aiMr0YaCiFAoskhn9C9C+85in0ScUVQUtWWpNhOK2YxiMqOaTShmC6ZkB9bMLKxZTqxZ2STlFZBU0PvQy5aTh9mRgsmeLJtMHUAK0kWIUAgt4D+0aGfI6ybU2EDI4yHs9RDyugl7vRFhQsGINOEQwBFCmFDNZtQkO2ZHCuZkB6ZkB+bUNMypaZGVcq3WyF+DDSM3ClIQiSQGxh2HLJF0A1IQiSQG/wdOQ+3UXoD7WwAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxOS0wNC0wNVQxMjoxMzoyOCswMjowMEsKfJQAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTktMDMtMjlUMDk6MDA6MDYrMDE6MDBTp+W0AAAAAElFTkSuQmCC\"\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/catalog/offerTemplate/createOrUpdate",
@@ -3625,13 +3755,11 @@
 									},
 									"response": []
 								}
-							],
-							"_postman_isSubFolder": true
+							]
 						},
 						{
 							"name": "Offers update",
-							"item": [],
-							"_postman_isSubFolder": true
+							"item": []
 						},
 						{
 							"name": "Discount plan",
@@ -3648,7 +3776,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"code\": \"{{request.label.1}}\",\r\n    \"description\": \"Discount plan {{request.label.1}}\",\r\n    \"defaultDuration\": null,\r\n    \"durationUnit\": null,\r\n    \"startDate\": null,\r\n    \"endDate\": null,\r\n    \"customFields\": null\r\n}"
+											"raw": "{\r\n    \"code\": \"{{request.label.1}}\",\r\n    \"description\": \"Discount plan {{request.label.1}}\",\r\n    \"discountPlanType\":\"INVOICE\"\r\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/catalog/discountPlan/createOrUpdate",
@@ -3692,11 +3820,9 @@
 									},
 									"response": []
 								}
-							],
-							"_postman_isSubFolder": true
+							]
 						}
-					],
-					"_postman_isSubFolder": true
+					]
 				}
 			]
 		},
@@ -3825,9 +3951,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f9283368-26cd-4f41-953e-0dab224397be",
 								"exec": [
-									"if( pm.response.code == 200 ) { tests[\"is.compiled\"] = JSON.parse(responseBody).compilationErrors.length === 0; }"
+									"if( pm.response.code == 200 ) { \r",
+									"    tests[\"is.compiled\"] = JSON.parse(responseBody).compilationErrors==null ||JSON.parse(responseBody).compilationErrors.length === 0; \r",
+									"    }"
 								],
 								"type": "text/javascript"
 							}
@@ -3864,9 +3991,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ce15f68e-fd44-404b-a534-840b6e9d90f0",
 								"exec": [
-									"if( pm.response.code == 200 ) { tests[\"is.compiled\"] = JSON.parse(responseBody).compilationErrors.length === 0; }"
+									"if( pm.response.code == 200 ) { \r",
+									"    tests[\"is.compiled\"] = JSON.parse(responseBody).compilationErrors==null ||JSON.parse(responseBody).compilationErrors.length === 0; \r",
+									"    }"
 								],
 								"type": "text/javascript"
 							}
@@ -3903,7 +4031,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "69f7b2a1-f283-4f7f-903e-528a7de31952",
 								"exec": [
 									""
 								],
@@ -3980,7 +4107,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "1a3c5de4-d4c0-4b61-9b4d-86cd50db9cca",
 								"exec": [
 									""
 								],
@@ -4019,7 +4145,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "3440b262-a66b-4b99-8859-3419ebbaff5e",
 								"exec": [
 									""
 								],
@@ -4058,7 +4183,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "da2c1f8e-af13-46ab-96ff-f5981980ac5b",
 								"exec": [
 									""
 								],
@@ -4135,7 +4259,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a21bbdf1-03a9-437f-85e9-aa408298a67b",
 								"exec": [
 									""
 								],
@@ -4174,7 +4297,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "5d9f0af4-e9cf-499b-8c5e-b98665d9cb41",
 								"exec": [
 									""
 								],
@@ -4213,7 +4335,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "86a56159-702d-4444-a194-f414d5d34901",
 								"exec": [
 									""
 								],
@@ -4252,7 +4373,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "86a56159-702d-4444-a194-f414d5d34901",
 								"exec": [
 									""
 								],
@@ -4291,7 +4411,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "7f5cd727-9541-4efc-9620-8697047b112b",
 								"exec": [
 									""
 								],
@@ -4330,7 +4449,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "74e4e9b9-abf6-4842-b655-737a61851705",
 								"exec": [
 									""
 								],
@@ -4369,7 +4487,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "9735fec0-f99f-4323-99fe-59036c4638d9",
 								"exec": [
 									""
 								],
@@ -4531,97 +4648,81 @@
 	],
 	"variable": [
 		{
-			"id": "7a87e31c-a203-48c7-8599-2b65b9cfda9c",
 			"key": "provider.code",
 			"value": "DEMO",
 			"type": "string"
 		},
 		{
-			"id": "4cef96b9-ff22-4423-a54e-a8a2f107aa7c",
 			"key": "template.code",
 			"value": "BASE",
 			"type": "string"
 		},
 		{
-			"id": "643e497a-ee62-4e8f-b24d-9a4ef194770d",
 			"key": "template.label",
 			"value": "Démo Opencell",
 			"type": "string"
 		},
 		{
-			"id": "88cde1f7-08bd-4d21-b97c-44a7a8f6e33c",
 			"key": "seller.code",
 			"value": "OPENCELL",
 			"type": "string"
 		},
 		{
-			"id": "d57ccb40-d1eb-45b5-a479-cd15e1ba3e77",
 			"key": "offer.code",
 			"value": "OF",
 			"type": "string"
 		},
 		{
-			"id": "20845e04-5450-4fb2-98de-dbe0ba200792",
 			"key": "project.code",
 			"value": "Basic-001",
 			"type": "string"
 		},
 		{
-			"id": "dc8efe20-5ef5-420a-97e1-1b58849b4870",
 			"key": "project.description",
 			"value": "Basic Offer for Base Conf",
 			"type": "string"
 		},
 		{
-			"id": "fec4a16f-5837-4df6-a5e6-f3106bbab8f7",
 			"key": "project.type",
 			"value": "Setup",
 			"type": "string"
 		},
 		{
-			"id": "c2e6a053-f014-45b0-b66e-066616ddac09",
 			"key": "project.version",
 			"value": "9.4+",
 			"type": "string"
 		},
 		{
-			"id": "84615a3c-7b70-42f0-9522-fa131f8739e6",
 			"key": "NB_cust",
 			"value": "20000",
 			"type": "string"
 		},
 		{
-			"id": "8a1d477c-11c2-4777-a845-bf90786daf11",
 			"key": "NB_SUBS",
 			"value": "1",
 			"type": "string"
 		},
 		{
-			"id": "4c67f133-4a1d-4064-9e48-fdb6f2921ee0",
 			"key": "CDRs_per_cust",
 			"value": "1",
 			"type": "string"
 		},
 		{
-			"id": "a1e2b564-2519-43de-bede-a2961192bbf7",
 			"key": "NB_Files",
 			"value": "6",
 			"type": "string"
 		},
 		{
-			"id": "76f824c1-1713-4e69-9f2d-908ea0eb95bd",
 			"key": "FROM",
 			"value": "1",
 			"type": "string"
 		},
 		{
-			"id": "58f6e449-550f-4f81-9d3d-1e83ec29cea8",
 			"key": "EMAIL1",
 			"value": "\"mohamedali.hammal@opencellsoft.com\"",
 			"type": "string"
 		},
 		{
-			"id": "afbd00c0-dcdb-410b-b708-ecf7889e56f4",
 			"key": "DAYS",
 			"value": "1",
 			"type": "string"
