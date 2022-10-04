@@ -10,7 +10,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${serviceInstance.getActivationDate()}"></column>
+        	<column name="el_value" value="#{serviceInstance.getActivationDate()}"></column>
         	<column name="uuid" value="product activation date" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-1"></column>
@@ -23,7 +23,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${serviceInstance.getQuantity()}"></column>
+        	<column name="el_value" value="#{serviceInstance.getQuantity()}"></column>
         	<column name="uuid" value="product quantity" />
         	<column name="attribute_type" value="NUMERIC"></column>
         	<column name="id" valueNumeric="-2"></column>
@@ -36,7 +36,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${edr.getEventDate()}"></column>
+        	<column name="el_value" value="#{edr.getEventDate()}"></column>
         	<column name="uuid" value="usage date" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-3"></column>
@@ -49,7 +49,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${edr.getQuantity()}"></column>
+        	<column name="el_value" value="#{edr.getQuantity()}"></column>
         	<column name="uuid" value="usage quantity" />
         	<column name="attribute_type" value="NUMERIC"></column>
         	<column name="id" valueNumeric="-4"></column>
@@ -62,7 +62,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${sub.getRenewalDate()}"></column>
+        	<column name="el_value" value="#{sub.getRenewalDate()}"></column>
         	<column name="uuid" value="renewal date" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-5"></column>
@@ -75,7 +75,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${serviceInstance.getDeliveryDate()}"></column>
+        	<column name="el_value" value="#{serviceInstance.getDeliveryDate()}"></column>
         	<column name="uuid" value="delivery date" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-6"></column>
@@ -88,7 +88,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${quote.getValidationDate()}"></column>
+        	<column name="el_value" value="#{quote.getValidationDate()}"></column>
         	<column name="uuid" value="quote validation date" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-7"></column>
@@ -101,7 +101,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${sub.getSubscriptionDate()}"></column>
+        	<column name="el_value" value="#{sub.getSubscriptionDate()}"></column>
         	<column name="uuid" value="subscription date" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-8"></column>
@@ -114,9 +114,9 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${sub.getSubscriptionMonthsAge()}"></column>
+        	<column name="el_value" value="#{sub.getSubscriptionMonthsAge()}"></column>
         	<column name="uuid" value="subscription age months" />
-        	<column name="attribute_type" value="INTEGER"></column>
+        	<column name="attribute_type" value="NUMERIC"></column>
         	<column name="id" valueNumeric="-9"></column>
         	<column name="code" value="subscription_age_months"></column>
         	<column name="description" value="Subscription age months"></column>
@@ -127,9 +127,9 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${sub.getSubscriptionDaysAge()}"></column>
+        	<column name="el_value" value="#{sub.getSubscriptionDaysAge()}"></column>
         	<column name="uuid" value="subscription age days" />
-        	<column name="attribute_type" value="INTEGER"></column>
+        	<column name="attribute_type" value="NUMERIC"></column>
         	<column name="id" valueNumeric="-10"></column>
         	<column name="code" value="subscription_age_days"></column>
         	<column name="description" value="Subscription age days"></column>
@@ -140,7 +140,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${edr.getParameter1()}"></column>
+        	<column name="el_value" value="#{edr.getParameter1()}"></column>
         	<column name="uuid" value="EDR text parameter 1" />
         	<column name="attribute_type" value="TEXT"></column>
         	<column name="id" valueNumeric="-11"></column>
@@ -153,7 +153,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${edr.getParameter2()}"></column>
+        	<column name="el_value" value="#{edr.getParameter2()}"></column>
         	<column name="uuid" value="EDR text parameter 2" />
         	<column name="attribute_type" value="TEXT"></column>
         	<column name="id" valueNumeric="-12"></column>
@@ -166,7 +166,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${edr.getParameter3()}"></column>
+        	<column name="el_value" value="#{edr.getParameter3()}"></column>
         	<column name="uuid" value="EDR text parameter 3" />
         	<column name="attribute_type" value="TEXT"></column>
         	<column name="id" valueNumeric="-13"></column>
@@ -179,7 +179,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${edr.getParameter4()}"></column>
+        	<column name="el_value" value="#{edr.getParameter4()}"></column>
         	<column name="uuid" value="EDR text parameter 4" />
         	<column name="attribute_type" value="TEXT"></column>
         	<column name="id" valueNumeric="-14"></column>
@@ -192,7 +192,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${edr.getParameter5()}"></column>
+        	<column name="el_value" value="#{edr.getParameter5()}"></column>
         	<column name="uuid" value="EDR text parameter 5" />
         	<column name="attribute_type" value="TEXT"></column>
         	<column name="id" valueNumeric="-15"></column>
@@ -205,7 +205,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${edr.getParameter6()}"></column>
+        	<column name="el_value" value="#{edr.getParameter6()}"></column>
         	<column name="uuid" value="EDR text parameter 6" />
         	<column name="attribute_type" value="TEXT"></column>
         	<column name="id" valueNumeric="-16"></column>
@@ -218,7 +218,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${edr.getParameter7()}"></column>
+        	<column name="el_value" value="#{edr.getParameter7()}"></column>
         	<column name="uuid" value="EDR text parameter 7" />
         	<column name="attribute_type" value="TEXT"></column>
         	<column name="id" valueNumeric="-17"></column>
@@ -231,7 +231,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${edr.getParameter8()}"></column>
+        	<column name="el_value" value="#{edr.getParameter8()}"></column>
         	<column name="uuid" value="EDR text parameter 8" />
         	<column name="attribute_type" value="TEXT"></column>
         	<column name="id" valueNumeric="-18"></column>
@@ -244,7 +244,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${edr.getParameter9()}"></column>
+        	<column name="el_value" value="#{edr.getParameter9()}"></column>
         	<column name="uuid" value="EDR text parameter 9" />
         	<column name="attribute_type" value="TEXT"></column>
         	<column name="id" valueNumeric="-19"></column>
@@ -257,7 +257,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${edr.getDateParam1()}"></column>
+        	<column name="el_value" value="#{edr.getDateParam1()}"></column>
         	<column name="uuid" value="EDR date parameter 1" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-21"></column>
@@ -270,7 +270,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${edr.getDateParam2()}"></column>
+        	<column name="el_value" value="#{edr.getDateParam2()}"></column>
         	<column name="uuid" value="EDR date parameter 2" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-22"></column>
@@ -283,7 +283,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${edr.getDateParam3()}"></column>
+        	<column name="el_value" value="#{edr.getDateParam3()}"></column>
         	<column name="uuid" value="EDR date parameter 3" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-23"></column>
@@ -296,7 +296,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${edr.getDateParam4()}"></column>
+        	<column name="el_value" value="#{edr.getDateParam4()}"></column>
         	<column name="uuid" value="EDR date parameter 4" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-24"></column>
@@ -309,7 +309,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${edr.getDateParam5()}"></column>
+        	<column name="el_value" value="#{edr.getDateParam5()}"></column>
         	<column name="uuid" value="EDR date parameter 5" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-25"></column>
@@ -322,7 +322,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${edr.getDecimalParam1()}"></column>
+        	<column name="el_value" value="#{edr.getDecimalParam1()}"></column>
         	<column name="uuid" value="EDR numeric parameter 1" />
         	<column name="attribute_type" value="NUMERIC"></column>
         	<column name="id" valueNumeric="-31"></column>
@@ -335,7 +335,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${edr.getDecimalParam2()}"></column>
+        	<column name="el_value" value="#{edr.getDecimalParam2()}"></column>
         	<column name="uuid" value="EDR numeric parameter 2" />
         	<column name="attribute_type" value="NUMERIC"></column>
         	<column name="id" valueNumeric="-32"></column>
@@ -348,7 +348,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${edr.getDecimalParam3()}"></column>
+        	<column name="el_value" value="#{edr.getDecimalParam3()}"></column>
         	<column name="uuid" value="EDR numeric parameter 3" />
         	<column name="attribute_type" value="NUMERIC"></column>
         	<column name="id" valueNumeric="-33"></column>
@@ -361,7 +361,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${edr.getDecimalParam4()}"></column>
+        	<column name="el_value" value="#{edr.getDecimalParam4()}"></column>
         	<column name="uuid" value="EDR numeric parameter 4" />
         	<column name="attribute_type" value="NUMERIC"></column>
         	<column name="id" valueNumeric="-34"></column>
@@ -374,7 +374,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${edr.getDecimalParam5()}"></column>
+        	<column name="el_value" value="#{edr.getDecimalParam5()}"></column>
         	<column name="uuid" value="EDR numeric parameter 5" />
         	<column name="attribute_type" value="NUMERIC"></column>
         	<column name="id" valueNumeric="-35"></column>
@@ -9654,6 +9654,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="version" valueNumeric="0" />
 			<column name="creator" value="applicationInitializer"></column>
+			<column name="currency_id" valueComputed="(SELECT currency_id from crm_provider where id = 1)"></column>
 		</insert>
 	</changeSet>
 	
@@ -9690,6 +9691,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="#INTRD-8700_20220728" author="ZBariki" />
 	<changeSet id="#INTRD-8946_20220804" author="aelmalki" />
 	<changeSet id="#INTRD-10047_20220926_default_sd_template" author="a.rouaguebe" />
+	<changeSet id="#INTRD-10247_20220928_default_currency_sd_template" author="a.rouaguebe" />
 	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

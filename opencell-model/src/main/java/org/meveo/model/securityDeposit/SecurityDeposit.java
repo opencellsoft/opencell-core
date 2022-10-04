@@ -21,6 +21,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -101,6 +102,18 @@ public class SecurityDeposit extends BusinessCFEntity {
     @JoinColumn(name = "sd_invoice_id")
     private Invoice securityDepositInvoice;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_account_id", nullable = false)
+    private BillingAccount billingAccount;
+    
+    public BillingAccount getBillingAccount() {
+        return billingAccount;
+    }
+
+    public void setBillingAccount(BillingAccount billingAccount) {
+        this.billingAccount = billingAccount;
+    }
+
     public Invoice getSecurityDepositInvoice() {
         return securityDepositInvoice;
     }

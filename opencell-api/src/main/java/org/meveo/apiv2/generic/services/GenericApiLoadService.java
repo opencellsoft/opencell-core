@@ -17,11 +17,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.Query;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -111,6 +113,11 @@ public class GenericApiLoadService {
 		return list.stream().map(line -> addResultLine(line, genericFieldsAlias != null ? genericFieldsAlias.iterator() : searchConfig.getFetchFields().iterator())).collect(toList());
 	}
 
+    public String findAggregatedPaginatedRecordsAsString(Class entityClass, PaginationConfiguration searchConfig) {
+        return nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig, null)
+                .addPaginationConfiguration(searchConfig, "a").getQueryAsString();
+    }
+
 	public int getAggregatedRecordsCount(Class entityClass, PaginationConfiguration searchConfig) {
 		return nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig, null)
 				.find(nativePersistenceService.getEntityManager()).size();
@@ -118,7 +125,7 @@ public class GenericApiLoadService {
 	private Map<String, Object> addResultLine(List<Object> line, Iterator<String> iterator) {
 	    return line.stream()
 	            .flatMap(array -> array instanceof Object[] ? flatten((Object[])array) : Stream.of(array))
-	            .map(l -> Objects.isNull(l) ? "" : l)
+                .map(l -> Objects.isNull(l) ? "" : l)
 	            .collect(toMap(x -> iterator.next(), Function.identity(), (existing, replacement) -> existing, LinkedHashMap::new));
 	}
     private static Stream<Object> flatten(Object[] array) {
@@ -188,23 +195,44 @@ public class GenericApiLoadService {
 		if (CollectionUtils.isNotEmpty(genericFields)) {
 			searchConfig.setFetchFields(new ArrayList<>(genericFields));
 		} else if (CollectionUtils.isNotEmpty(genericFieldDetails)) {
-			searchConfig.setFetchFields(genericFieldDetails.stream().filter(x -> StringUtils.isEmpty(x.getFormula())).map(x -> nameOrHeader(x)).collect(toList()));
-			fieldDetails = genericFieldDetails.stream().collect(toMap(x -> nameOrHeader(x), Function.identity()));
+			searchConfig.setFetchFields(genericFieldDetails.stream()
+                    .filter(x -> StringUtils.isEmpty(x.getFormula()))
+                    .map(x -> nameOrHeader(x))
+                    .collect(toList()));
+            searchConfig.getFetchFields()
+                    .addAll(genericFieldDetails.stream()
+                    .filter(x -> !StringUtils.isEmpty(x.getFormulaInputs()))
+                    .map(x -> Arrays.asList(x.getFormulaInputs().split(",")))
+                    .flatMap(List::stream)
+                    .map(String::trim)
+                    .collect(Collectors.toList()));
+			fieldDetails = genericFieldDetails.stream()
+                    .collect(toMap(x -> nameOrHeader(x), Function.identity()));
 		}
 
 		List<List<Object>> list = (List<List<Object>>) nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig, null)
-				.find(nativePersistenceService.getEntityManager()).stream().map(ObjectArrays -> Arrays.asList(ObjectArrays)).collect(toList());
+				.find(nativePersistenceService.getEntityManager()).stream()
+                .map(ObjectArrays -> Arrays.asList(ObjectArrays))
+                .collect(toList());
 
-		List<GenericFieldDetails> formulaFields = fieldDetails.values().stream().filter(x -> !StringUtils.isEmpty(x.getFormula())).collect(toList());
+		List<GenericFieldDetails> formulaFields = fieldDetails.values().stream()
+                .filter(x -> !StringUtils.isEmpty(x.getFormula()))
+                .collect(toList());
 
-		Function<List<Object>, Map<String, Object>> originalLine = line -> {
-			Map<String, Object> resultLine = addResultLine(line, searchConfig.getFetchFields().iterator());
-			Map<Object, Object> vals = new TreeMap<>(resultLine);
-			formulaFields.stream().forEach(x -> resultLine.put(nameOrHeader(x), ValueExpressionWrapper.evaluateExpression(x.getFormula(), vals, Object.class)));
-			return resultLine;
+        Map<String, GenericFieldDetails> finalFieldDetails = fieldDetails;
+        Function<List<Object>, Map<String, Object>> originalLine = line -> {
+            Map<String, Object> resultLines = new HashMap<>();
+			Map<String, Object> inputs = addResultLine(line, searchConfig.getFetchFields().iterator());
+			Map<Object, Object> vals = new TreeMap<>(inputs);
+			formulaFields.stream()
+                    .forEach(x -> resultLines.put(nameOrHeader(x), ValueExpressionWrapper.evaluateExpression(x.getFormula(), vals, Object.class)));
+            finalFieldDetails.keySet().stream()
+                    .filter(key -> Objects.isNull(finalFieldDetails.get(key).getFormula()))
+                    .forEach(key -> resultLines.put(nameOrHeader(finalFieldDetails.get(key)), inputs.get(key)));
+			return resultLines;
 		};
 
-		return genericExportManager.export(entityName, list.stream().map(originalLine).collect(toList()), fileFormat, fieldDetails);
+		return genericExportManager.export(entityName, list.stream().map(originalLine).collect(toList()), fileFormat, fieldDetails, genericFieldDetails.stream().map(GenericFieldDetails::getName).collect(Collectors.toList()));
 	}
 
 	private String nameOrHeader(GenericFieldDetails x) {

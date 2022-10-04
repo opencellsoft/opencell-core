@@ -194,7 +194,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                 else if (newFrom.compareTo(oldFrom) > 0 && newTo != null && oldTo != null && newTo.compareTo(oldTo) < 0) {
                     pv.setValidity(new DatePeriod(oldFrom, newFrom));
                     update(pv);
-                    PricePlanMatrixVersion duplicatedPv = duplicate(pv, new DatePeriod(newTo, oldTo), VersionStatusEnum.PUBLISHED, PriceVersionTypeEnum.FIXED);
+                    PricePlanMatrixVersion duplicatedPv = duplicate(pv, pricePlanMatrix, new DatePeriod(newTo, oldTo), VersionStatusEnum.PUBLISHED, PriceVersionTypeEnum.FIXED, true);
                     lastCurrentVersion = duplicatedPv.getCurrentVersion();
                 } else {
                     boolean validityHasChanged = false;
@@ -340,16 +340,17 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         return update(pricePlanMatrixVersion, "CHANGE_STATUS");
     }
 
-    public PricePlanMatrixVersion duplicate(PricePlanMatrixVersion pricePlanMatrixVersion, DatePeriod validity, PriceVersionTypeEnum priceVersionType) {
-        return duplicate(pricePlanMatrixVersion, validity, null, priceVersionType);
+    public PricePlanMatrixVersion duplicate(PricePlanMatrixVersion pricePlanMatrixVersion, PricePlanMatrix pricePlanMatrix, DatePeriod validity, PriceVersionTypeEnum priceVersionType, boolean setNewVersion) {
+        return duplicate(pricePlanMatrixVersion, pricePlanMatrix, validity, null, priceVersionType, setNewVersion);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public PricePlanMatrixVersion duplicate(PricePlanMatrixVersion pricePlanMatrixVersion, DatePeriod validity, VersionStatusEnum status, PriceVersionTypeEnum priceVersionType) {
+    public PricePlanMatrixVersion duplicate(PricePlanMatrixVersion pricePlanMatrixVersion, PricePlanMatrix pricePlanMatrix, DatePeriod validity, VersionStatusEnum status, PriceVersionTypeEnum priceVersionType, boolean setNewVersion) {
         var columns = new HashSet<>(pricePlanMatrixVersion.getColumns());
         var lines = new HashSet<>(pricePlanMatrixVersion.getLines());
 
         PricePlanMatrixVersion duplicate = new PricePlanMatrixVersion(pricePlanMatrixVersion);
+        duplicate.setPricePlanMatrix(pricePlanMatrix);
         if (validity != null) {
             duplicate.setValidity(validity);
         }
@@ -359,7 +360,12 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         if(priceVersionType != null){
             duplicate.setPriceVersionType(priceVersionType);
         }
-        duplicate.setCurrentVersion(getLastVersion(pricePlanMatrixVersion.getPricePlanMatrix()) + 1);
+        if(!setNewVersion) {
+            Integer lastVersion = getLastVersion(pricePlanMatrixVersion.getPricePlanMatrix());
+            duplicate.setCurrentVersion(lastVersion + 1);
+        }else {
+            duplicate.setCurrentVersion(1);
+        }
         try {
             this.create(duplicate);
         } catch (BusinessException e) {

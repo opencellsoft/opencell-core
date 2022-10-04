@@ -29,16 +29,17 @@ public class SecurityDepositTemplateService extends BusinessService<SecurityDepo
     private FinanceSettingsService financeSettingsService;
 
     @Inject
-    private AuditLogService auditLogService;
-
-    @Inject
     private ProviderService providerService;
 
+    @Inject
+    private AuditLogService auditLogService;
+
     @Override public void create(SecurityDepositTemplate entity) throws BusinessException {
-        entity.setCurrency(findCurrencyByIdOrCode(entity));
-        if(entity.getCurrency() == null) {
-        	entity.setCurrency(providerService.getProvider().getCurrency());
+        Currency currency = findCurrencyByIdOrCode(entity);
+        if(currency == null) {
+        	currency = providerService.getProvider().getCurrency();
         }
+		entity.setCurrency(currency);
         checkParameters(entity);
         super.create(entity);
         auditLogService.trackOperation("UPDATE", new Date(), entity, entity.getCode());
@@ -47,10 +48,11 @@ public class SecurityDepositTemplateService extends BusinessService<SecurityDepo
     @Override
     public SecurityDepositTemplate update(SecurityDepositTemplate entity) throws BusinessException {
 
-        entity.setCurrency(findCurrencyByIdOrCode(entity));
-        if(entity.getCurrency() == null) {
-        	entity.setCurrency(providerService.getProvider().getCurrency());
+    	Currency currency = findCurrencyByIdOrCode(entity);
+        if(currency == null) {
+        	currency = providerService.getProvider().getCurrency();
         }
+		entity.setCurrency(currency);
         checkParameters(entity);
         SecurityDepositTemplate updatedSecurityDepositTemplate =  super.update(entity);
         auditLogService.trackOperation("UPDATE", new Date(), updatedSecurityDepositTemplate, updatedSecurityDepositTemplate.getCode());

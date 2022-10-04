@@ -99,7 +99,8 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                     if(billingRun.isExceptionalBR() && addExceptionalInvoiceLineIds(billingRun) == 0) {
                         result.setReport("Exceptional Billing filters returning no invoice line to process");
                     }
-                    executeBillingRun(billingRun, jobInstance, result, billingRun.getBillingCycle().getBillingRunValidationScript());
+                    executeBillingRun(billingRun, jobInstance, result,
+                            billingRun.getBillingCycle() != null ? billingRun.getBillingCycle().getBillingRunValidationScript() : null);
                     initAmounts();
                 }
             }
@@ -157,7 +158,9 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         if(billingRun.getStatus() == DRAFT_INVOICES && billingRun.getProcessType() == FULL_AUTOMATIC) {
             billingRun.setStatus(POSTVALIDATED);
         }
-        billingRun.getBillingCycle().setBillingRunValidationScript(billingRunValidationScript);
+        if(billingRunValidationScript != null && billingRun.getBillingCycle() != null) {
+            billingRun.getBillingCycle().setBillingRunValidationScript(billingRunValidationScript);
+        }
         if(!billingRunService.isBillingRunValid(billingRun)) {
             billingRun.setStatus(REJECTED);
         }
@@ -171,7 +174,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
             	if(billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
                     billingRun.setStatus(POSTVALIDATED);
             	}else if(billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC && prevalidatedAutomaticPrevBRStatus) {
-                    billingRun.setStatus(DRAFT_INVOICES);
+                    billingRun.setStatus(VALIDATED);
             	} else {
                     billingRun.setStatus(POSTVALIDATED);
             	}
