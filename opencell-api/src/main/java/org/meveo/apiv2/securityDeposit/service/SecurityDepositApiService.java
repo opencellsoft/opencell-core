@@ -22,6 +22,7 @@ import org.meveo.commons.utils.ListUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.payments.CustomerAccount;
@@ -129,9 +130,13 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         	if(invoice == null) {
         		throw new EntityDoesNotExistsException(Invoice.class, securityDepositInput.getSecurityDepositInvoice().getId());
         	}
-        	
+
         	if(!"SECURITY_DEPOSIT".equals(invoice.getInvoiceType().getCode())) {
         		throw new BusinessApiException("Linked invoice should be a SECURITY_DEPOSIT");
+        	}
+
+        	if(invoice.getStatus() != InvoiceStatusEnum.NEW && invoice.getStatus() != InvoiceStatusEnum.DRAFT) {
+        		throw new BusinessApiException("Linked invoice status should be NEW or DRAFT");
         	}
 
         	if(!invoice.getBillingAccount().getCustomerAccount().getCustomer().getId().equals(securityDepositInput.getCustomerAccount().getCustomer().getId())) {
@@ -145,6 +150,8 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         	if(invoice.getAmountWithoutTax() == null) {
         		throw new BusinessApiException("Linked invoice cannot have amountWithoutTax null");
         	}
+
+        	securityDepositInput.setSecurityDepositInvoice(invoice);
         }
         
         // Check Maximum amount per Security deposit

@@ -110,7 +110,7 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
         }
         if(resource.getLinkedInvoice() != null) {
         	Invoice invoice = new Invoice();
-        	invoice.setId(resource.getId());
+        	invoice.setId(resource.getLinkedInvoice().getId());
         	securityDeposit.setSecurityDepositInvoice(invoice);
         }
         return securityDeposit;
