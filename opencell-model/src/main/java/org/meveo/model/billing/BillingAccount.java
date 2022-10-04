@@ -54,7 +54,6 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICounterEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -81,7 +80,6 @@ import org.meveo.model.tax.TaxCategory;
 @Cacheable
 @WorkflowedEntity
 @CustomFieldEntity(cftCodePrefix = "BillingAccount", inheritCFValuesFrom = "customerAccount")
-@ExportIdentifier({ "code" })
 @Table(name = "billing_billing_account")
 @DiscriminatorValue(value = "ACCT_BA")
 @NamedQueries({ @NamedQuery(name = "BillingAccount.listIdsByBillingRunId", query = "SELECT b.id FROM BillingAccount b where b.billingRun.id=:billingRunId order by b.id"),

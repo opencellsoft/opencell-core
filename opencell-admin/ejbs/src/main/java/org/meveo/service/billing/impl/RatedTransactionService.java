@@ -1694,7 +1694,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public void bridgeDiscountRTs(Long minId, Long maxId) {
 
-        getEntityManager().createNamedQuery("WalletOperation.massUpdateWithRTInfoFromPendingTable" + (EntityManagerProvider.isDBOracle() ? "Oracle" : "")).setParameter("minId", minId).setParameter("maxId", maxId)
+        getEntityManager().createNamedQuery("RatedTransaction.massUpdateWithDiscountedRT" + (EntityManagerProvider.isDBOracle() ? "Oracle" : "")).setParameter("minId", minId).setParameter("maxId", maxId)
             .executeUpdate();
     }
 }
