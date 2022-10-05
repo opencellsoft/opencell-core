@@ -33,6 +33,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 
 /**
@@ -41,6 +42,7 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
  */
 @SuppressWarnings("serial")
 @Entity
+@ExportIdentifier({"pricePlanMatrix.code", "currentVersion"})
 @Table(name = "cpq_price_plan_version", uniqueConstraints = @UniqueConstraint(columnNames = { "ppm_id", "current_version" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_price_plan_version_seq") })
