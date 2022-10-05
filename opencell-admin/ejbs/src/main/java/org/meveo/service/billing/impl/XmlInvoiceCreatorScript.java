@@ -1071,7 +1071,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * @return True if user account match
      */
     private boolean isValidCategoryInvoiceAgregate(final UserAccount userAccount, final CategoryInvoiceAgregate categoryInvoiceAgregate) {
-        if (userAccount == null) {
+        if (userAccount == null || categoryInvoiceAgregate.getUserAccount()==null) {
             return categoryInvoiceAgregate.getUserAccount() == null;
         } else {
             Long uaId = userAccount.getId();
