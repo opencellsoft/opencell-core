@@ -11156,7 +11156,7 @@ public class BillingAccountImportScript extends GenericMassImportScript {
         try {
             billingAccountDto.setSubscriptionDate(StringUtils.isEmpty(subscriptionDate) ? null : dateFormat.parse(subscriptionDate));
         } catch(ParseException e) {
-            throw new ValidationException("ncorrect date format for the subscription date");
+            throw new ValidationException("Incorrect date format for subscription date");
         }
         billingAccountDto.setRegistrationNo((String) recordMap.get("OC_BA_REGISTRATION"));
         billingAccountDto.setVatNo((String) recordMap.get("OC_BA_TVANUMBER"));
