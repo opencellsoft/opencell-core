@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -95,7 +96,7 @@ public class QueryBuilder {
     public static final String  JOIN_AS = " as ";
 
 //    private static Set<String> joinAlias = new TreeSet<String>();
-    private static Set<String> joinAlias = Collections.synchronizedSet(new TreeSet<>());
+    private static Set<String> joinAlias = ConcurrentHashMap.newKeySet();
 
     public Class<?> getEntityClass() {
         return clazz;
