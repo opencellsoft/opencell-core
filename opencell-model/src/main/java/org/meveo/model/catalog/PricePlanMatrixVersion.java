@@ -41,8 +41,8 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
  * @version 10.0
  */
 @SuppressWarnings("serial")
-@ExportIdentifier({"pricePlanMatrix", "currentVersion"})
 @Entity
+@ExportIdentifier({"pricePlanMatrix.code", "currentVersion"})
 @Table(name = "cpq_price_plan_version", uniqueConstraints = @UniqueConstraint(columnNames = { "ppm_id", "current_version" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_price_plan_version_seq") })
@@ -302,8 +302,6 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (!super.equals(obj))
-            return false;
         if (!(obj instanceof PricePlanMatrixVersion))
             return false;
         PricePlanMatrixVersion other = (PricePlanMatrixVersion) obj;

@@ -50,7 +50,12 @@ public class AuditLogService extends PersistenceService<AuditLog> {
     }
 
     public <T extends BaseEntity> void trackOperation(String operationType, Date operationDate, T entity, String origine, List<String> fields) {
-        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'at' HH:mm:ss");
+        String parameters = getDefaultMessage(operationType, operationDate, entity, origine, fields);
+        trackOperation(operationType, operationDate, entity, origine, parameters);
+    }
+
+	public <T extends BaseEntity> String getDefaultMessage(String operationType, Date operationDate, T entity, String origine, List<String> fields) {
+		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'at' HH:mm:ss");
         StringBuilder parameters = new StringBuilder()
                 .append(formatter.format(operationDate))
                 .append(" - ").append(getActor()).append(" - ")
@@ -58,9 +63,8 @@ public class AuditLogService extends PersistenceService<AuditLog> {
                 .append(" to ").append(entity.getClass().getSimpleName())
                 .append(" with ").append(origine)
                 .append(fields != null && !fields.isEmpty() ? ", fields (" + String.join(",", fields) + ")" : "");
-
-        trackOperation(operationType, operationDate, entity, origine, parameters.toString());
-    }
+		return parameters.toString();
+	}
 
     public <T extends BaseEntity> void trackOperation(String operationType, Date operationDate, T entity, String source, String parameters) {
         String actor = getActor();

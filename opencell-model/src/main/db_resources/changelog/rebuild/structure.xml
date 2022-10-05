@@ -4307,6 +4307,7 @@
             <column name="offer_template_id" type="bigint"/>
             <column name="is_model" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="offer_model_id" type="bigint"/>
+            <column name="generate_quote_edr_per_product" type="${type.boolean}" defaultValueNumeric="0"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-217">
@@ -7519,6 +7520,7 @@
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
+            <column name="customer_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-365">
@@ -16476,6 +16478,11 @@
                                  constraintName="address_book_contact_contact_fk"
                                  referencedTableName="com_contact"
                                  referencedColumnNames="id"/>
+        <addForeignKeyConstraint constraintName="address_book_crm_customer_id_fk"
+                                 baseColumnNames="customer_id"
+                                 baseTableName="crm_address_book"
+                                 referencedTableName="crm_customer"
+                                 referencedColumnNames="id" />
     </changeSet>
     <!-- end fk -->
 
@@ -18533,8 +18540,6 @@
     <changeSet id="#INTRD-9232_20220819" author="aelmalki" />
     <changeSet  id="#INTRD-7950_20220816" author="Abdelkader.Bouazza" />
     <changeSet id="#INTRD-9451_20220902" author="KhalidHORRI" />
-
-
 	<changeSet id="#INTRD-86_20220815" author="AbdellatifBARI" />
 	<changeSet id="#INTRD-7301_20220820_order" author="zelmeliani" />
 	<changeSet id="#INTRD-7301_20220820_subscription" author="zelmeliani" />
@@ -18547,7 +18552,24 @@
     <changeSet id="#INTRD-9383-20220905" author="Abdelkader.Bouazza" />
     <changeSet id="#INTRD-9583-20220906-br-generateao" author="a.rouaguebe" />
 	<changeSet id="#INTRD-9581_20200907" author="TarikFA." />
+	<changeSet id="INTRD-9535-20220908" author="Abdelkader.bouazza" />
+	<changeSet id="#INTRD-10135_28092022" author="Mbarek-Ay"/>
+    <changeSet id="#20210623-INTRD-277-quoteValidationScript" author="TarikFA." />
+	<changeSet id="#20210623-INTRD-277-orderAdvacementScript" author="TarikFA." />
+	<changeSet id="#FIX-INTRD-634_20210706" author="AkadidAbdelmounaim" />
+	<changeSet id="#FIX2-INTRD-634_20210706" author="AkadidAbdelmounaim" />
+	<changeSet id="INTRD-2547-2480-2482-2478_20211021" author="khalidHORRI" />
+	<changeSet id="INTRD-2511-1_20211029" author="Mohammed_ElAzzouzi" />
+	<changeSet id="INTRD-2511-2_20211029" author="Mohammed_ElAzzouzi" />
+	<changeSet id="#FIX-INTRD-2601_20211102-changeset" author="AbdelmounaimAkadid" />
+	<changeSet id="#INTRD-3250part2_20211123" author="AmineBENAICHA" />
+	<changeSet id="#INTRD-5380_2022_02_28" author="ZBariki" />
+	<changeSet id="#INTRD-5533_2022_03_07" author="ZBariki" />
+	<changeSet id="#INTRD-4590-20220308" author="HatimOUDAD" />
+    <changeSet id="#INTRD-8158_20220915" author="AndriusKarpavicius" />
+	<changeSet id="#INTRD-10097_202000926" author="TarikFA." />
 	
+    
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

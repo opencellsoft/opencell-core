@@ -1467,8 +1467,6 @@ public class CpqQuoteApi extends BaseApi {
 
         for (BigDecimal taux: pricesPerTaux.keySet()) {
 
-//            Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = pricesPerTaux.get(taux).stream()
-//                    .collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
         	 Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = pricesPerTaux.get(taux).stream()
         			 							.collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
             log.debug("quoteQuotation pricesPerType size={}",pricesPerType.size());
@@ -1582,8 +1580,16 @@ public class CpqQuoteApi extends BaseApi {
             	quoteArticleLine=createQuoteArticleLine(wo, quoteOffer.getQuoteVersion());
             	quoteArticleLines.put(accountingArticleCode, quoteArticleLine);
             }else {
-            	quoteArticleLine=quoteArticleLines.get(accountingArticleCode);
-                quoteArticleLine.setQuantity(quoteArticleLine.getQuantity().add(wo.getQuantity()));
+                quoteArticleLine=quoteArticleLines.get(accountingArticleCode);
+            	var isGroupedBy = quoteArticleLine.getQuoteProduct() != null && 
+            	                      wo.getServiceInstance() != null && 
+            	                      quoteArticleLine.getQuoteProduct().getId() == wo.getServiceInstance().getId();
+            	if(isGroupedBy)
+            	    quoteArticleLine.setQuantity(quoteArticleLine.getQuantity().add(wo.getQuantity()));
+            	else {
+            	    quoteArticleLine=createQuoteArticleLine(wo, quoteOffer.getQuoteVersion());
+                    quoteArticleLines.put(accountingArticleCode, quoteArticleLine);
+            	}
             }
             QuotePrice quotePrice = new QuotePrice();
             quotePrice.setPriceTypeEnum(PriceTypeEnum.getPriceTypeEnum(wo.getChargeInstance()));
@@ -1865,7 +1871,9 @@ public class CpqQuoteApi extends BaseApi {
 						
 					}
 				}
-			
+				if(subscription.getOffer() != null && subscription.getOffer().isGenerateQuoteEdrPerProduct()) {
+				    createEDR(edrQuantity, subscription, attributes, walletOperations);
+				}
 			
 			
 			//applicable only for oneshot other	
@@ -1874,55 +1882,6 @@ public class CpqQuoteApi extends BaseApi {
         
             offerEligibleFixedDiscountItems.addAll(productEligibleFixedDiscountItems);
         }
-        
-
-		if (edrQuantity>0) {
-			EDR edr = new EDR();
-			try {
-
-				edr.setAccessCode(null);
-				edr.setEventDate(new Date());
-				edr.setSubscription(subscription);
-				edr.setStatus(EDRStatusEnum.OPEN);
-				edr.setCreated(new Date());
-				edr.setOriginBatch("QUOTE");
-				edr.setOriginRecord(System.currentTimeMillis() + "");
-				edr.setQuantity(new BigDecimal(edrQuantity));
-				Object param1 = attributes.get("EDR_text_parameter_1");
-				if (param1 != null) {
-					edr.setParameter1(param1.toString());
-				}
-				Object param2 = attributes.get("EDR_text_parameter_2");
-				if (param2 != null) {
-					edr.setParameter2(param2.toString());
-				}
-				Object param3 = attributes.get("EDR_text_parameter_3");
-				if (param3 != null) {
-					edr.setParameter3(param3.toString());
-				}
-				RatingResult localRatingResult = usageRatingService.rateVirtualEDR(edr);
-				List<WalletOperation> walletOperationsFromEdr = localRatingResult.getWalletOperations();
-				log.debug("walletOperationsFromEdr count={}",walletOperationsFromEdr.size());
-				if (walletOperationsFromEdr != null) {
-					for (WalletOperation walletOperation : walletOperationsFromEdr) {
-						log.debug("walletOperationsFromEdr code={},UnitAmountWithoutTax={}",walletOperation.getCode(),walletOperation.getUnitAmountWithoutTax());
-						if ((walletOperation.getUnitAmountWithoutTax() != null )
-								|| (walletOperation.getUnitAmountWithTax() != null))
-						walletOperations.add(walletOperation);
-					}
-				} 
-
-			} catch (RatingException e) {
-				log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getRejectionReason());
-				throw new BusinessApiException(e.getMessage());
-
-			} catch (BusinessException e) {
-				log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getMessage(), e);
-				throw new BusinessApiException(e.getMessage());
-
-			}
-		}
-
 
         var offerFixedDiscountWalletOperation = discountPlanService.calculateDiscountplanItems(new ArrayList<>(offerEligibleFixedDiscountItems), subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), new BigDecimal(1d), null,
         		subscription.getOffer().getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), null, subscription, subscription.getOffer().getDescription(), true, null, null, DiscountPlanTypeEnum.OFFER);
@@ -1939,6 +1898,54 @@ public class CpqQuoteApi extends BaseApi {
     quoteEligibleFixedDiscountItems.addAll(offerEligibleFixedDiscountItems);
     return sortedWalletOperations;
 }
+    private void createEDR(Double edrQuantity, Subscription subscription, Map<String, Object> attributes, List<WalletOperation> walletOperations) {
+        if (edrQuantity != null && edrQuantity>0) {
+            EDR edr = new EDR();
+            try {
+
+                edr.setAccessCode(null);
+                edr.setEventDate(new Date());
+                edr.setSubscription(subscription);
+                edr.setStatus(EDRStatusEnum.OPEN);
+                edr.setCreated(new Date());
+                edr.setOriginBatch("QUOTE");
+                edr.setOriginRecord(System.currentTimeMillis() + "");
+                edr.setQuantity(new BigDecimal(edrQuantity));
+                Object param1 = attributes.get("EDR_text_parameter_1");
+                if (param1 != null) {
+                    edr.setParameter1(param1.toString());
+                }
+                Object param2 = attributes.get("EDR_text_parameter_2");
+                if (param2 != null) {
+                    edr.setParameter2(param2.toString());
+                }
+                Object param3 = attributes.get("EDR_text_parameter_3");
+                if (param3 != null) {
+                    edr.setParameter3(param3.toString());
+                }
+                RatingResult localRatingResult = usageRatingService.rateVirtualEDR(edr);
+                List<WalletOperation> walletOperationsFromEdr = localRatingResult.getWalletOperations();
+                log.debug("walletOperationsFromEdr count={}",walletOperationsFromEdr.size());
+                if (walletOperationsFromEdr != null) {
+                    for (WalletOperation walletOperation : walletOperationsFromEdr) {
+                        log.debug("walletOperationsFromEdr code={},UnitAmountWithoutTax={}",walletOperation.getCode(),walletOperation.getUnitAmountWithoutTax());
+                        if ((walletOperation.getUnitAmountWithoutTax() != null )
+                                || (walletOperation.getUnitAmountWithTax() != null))
+                        walletOperations.add(walletOperation);
+                    }
+                } 
+
+            } catch (RatingException e) {
+                log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getRejectionReason());
+                throw new BusinessApiException(e.getMessage());
+
+            } catch (BusinessException e) {
+                log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getMessage(), e);
+                throw new BusinessApiException(e.getMessage());
+
+            }
+        }
+    }
     private List<QuotePrice> createFixedDiscountQuotePrices( List<WalletOperation> fixedDiscountWalletOperation,QuoteVersion quoteVersion, QuoteOffer quoteOffer,BillingAccount billingAccount,PriceLevelEnum priceLevelEnum) {
     	List<QuotePrice> discountQuotePrices=new ArrayList<QuotePrice>();
     	for (WalletOperation wo : fixedDiscountWalletOperation) {
