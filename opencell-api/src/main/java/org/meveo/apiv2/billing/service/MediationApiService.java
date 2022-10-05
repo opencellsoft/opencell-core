@@ -352,7 +352,9 @@ public class MediationApiService {
                                 if (ratingResult.getRatingException() != null) {
                                     throw ratingResult.getRatingException();
                                 }
-
+                                if (ratingResult.getWalletOperations() != null) {
+                                    walletOperations.addAll(ratingResult.getWalletOperations());
+                                }
                                 // For STOP_ON_FIRST_FAIL or PROCESS_ALL model if no rollback is needed (no additional unforeseen data can be created/updated during rating)
                                 // when rating fails, error is not thrown but is simply handled
                             } else if (noNeedToRollback) {
