@@ -106,12 +106,7 @@ public class ContractService extends BusinessService<Contract>  {
 	 */
 	public Contract updateStatus(Contract contract, ContractStatusEnum status){
 		if(ContractStatusEnum.DRAFT.equals(contract.getStatus())
-				&& ContractStatusEnum.ACTIVE.equals(status)
-				&& contract.getContractItems().isEmpty()) {
-				 throw new BusinessApiException("Activate is forbidden if not any Contract Line");
-		}
-		if(ContractStatusEnum.DRAFT.equals(contract.getStatus())
-				&& ContractStatusEnum.ACTIVE.equals(status)) {
+				&& ContractStatusEnum.ACTIVE.equals(status) && !contract.getContractItems().isEmpty()) {
 			List<PricePlanMatrix> pricePlans = contract.getContractItems().stream().map(ContractItem::getPricePlan).collect(Collectors.toList());
 			List<PricePlanMatrixVersion> pricePlanVersions = pricePlanMatrixVersionService.findByPricePlans(pricePlans);
 			if (pricePlanVersions.isEmpty()) {
