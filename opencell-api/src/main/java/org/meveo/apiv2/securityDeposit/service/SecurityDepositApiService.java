@@ -130,37 +130,6 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         }
         linkRealEntities(securityDepositInput);        
 
-        if(securityDepositInput.getSecurityDepositInvoice() != null) {
-        	Invoice invoice = invoiceService.findById(securityDepositInput.getSecurityDepositInvoice().getId());
-        	if(invoice == null) {
-        		throw new EntityDoesNotExistsException(Invoice.class, securityDepositInput.getSecurityDepositInvoice().getId());
-        	}
-
-        	if(!"SECURITY_DEPOSIT".equals(invoice.getInvoiceType().getCode())) {
-        		throw new BusinessApiException("Linked invoice should be a SECURITY_DEPOSIT");
-        	}
-
-        	if(invoice.getStatus() != InvoiceStatusEnum.NEW && invoice.getStatus() != InvoiceStatusEnum.DRAFT) {
-        		throw new BusinessApiException("Linked invoice status should be NEW or DRAFT");
-        	}
-
-        	if(!invoice.getBillingAccount().getCustomerAccount().getCustomer().getId().equals(securityDepositInput.getCustomerAccount().getCustomer().getId())) {
-        		throw new BusinessApiException("Linked invoice should have the same Customer as the Security Deposit");
-        	}
-
-        	if(ListUtils.isEmtyCollection(invoice.getInvoiceLines())) {
-        		throw new BusinessApiException("Linked invoice should have invoice lines");
-        	}
-
-        	if(invoice.getAmountWithoutTax() == null) {
-        		throw new BusinessApiException("Linked invoice cannot have amountWithoutTax null");
-        	}
-
-        	securityDepositInput.setSecurityDepositInvoice(invoice);
-        	securityDepositInput.setAmount(invoice.getAmountWithoutTax());
-        	invoiceApi.validateInvoice(invoice.getId(), true, false, false);
-        }
-        
         // Check Maximum amount per Security deposit
         BigDecimal maxAmountPerSecurityDeposit = financeSettings.getMaxAmountPerSecurityDeposit();
         if (maxAmountPerSecurityDeposit != null && securityDepositAmount.compareTo(maxAmountPerSecurityDeposit) > 0) {
@@ -220,6 +189,39 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         }
 
         securityDepositService.create(securityDepositInput);
+        
+        if(securityDepositInput.getSecurityDepositInvoice() != null) {
+        	Invoice invoice = invoiceService.findById(securityDepositInput.getSecurityDepositInvoice().getId());
+        	if(invoice == null) {
+        		throw new EntityDoesNotExistsException(Invoice.class, securityDepositInput.getSecurityDepositInvoice().getId());
+        	}
+
+        	if(!"SECURITY_DEPOSIT".equals(invoice.getInvoiceType().getCode())) {
+        		throw new BusinessApiException("Linked invoice should be a SECURITY_DEPOSIT");
+        	}
+
+        	if(invoice.getStatus() != InvoiceStatusEnum.NEW && invoice.getStatus() != InvoiceStatusEnum.DRAFT) {
+        		throw new BusinessApiException("Linked invoice status should be NEW or DRAFT");
+        	}
+
+        	if(!invoice.getBillingAccount().getCustomerAccount().getCustomer().getId().equals(securityDepositInput.getCustomerAccount().getCustomer().getId())) {
+        		throw new BusinessApiException("Linked invoice should have the same Customer as the Security Deposit");
+        	}
+
+        	if(ListUtils.isEmtyCollection(invoice.getInvoiceLines())) {
+        		throw new BusinessApiException("Linked invoice should have invoice lines");
+        	}
+
+        	if(invoice.getAmountWithoutTax() == null) {
+        		throw new BusinessApiException("Linked invoice cannot have amountWithoutTax null");
+        	}
+
+        	securityDepositInput.setSecurityDepositInvoice(invoice);
+        	securityDepositInput.setAmount(invoice.getAmountWithoutTax());
+        	invoiceApi.validateInvoice(invoice.getId(), true, false, false);
+        	
+        	securityDepositService.update(securityDepositInput);
+        }
 
         // Increment template.NumberOfInstantiation after each instantiation
         Integer numberOfInstantiation = template.getNumberOfInstantiation() != null ? template.getNumberOfInstantiation() : 0;
