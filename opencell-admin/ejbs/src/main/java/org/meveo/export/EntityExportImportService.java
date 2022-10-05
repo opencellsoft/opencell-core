@@ -640,7 +640,7 @@ public class EntityExportImportService implements Serializable {
                 omitXstreamFields(xstream);
                 // Add custom converters
                 xstream.registerConverter(new IEntityHibernateProxyConverter(exportImportConfig), XStream.PRIORITY_VERY_HIGH);
-                xstream.registerConverter(new IEntityExportIdentifierConverter(exportImportConfig), XStream.PRIORITY_NORMAL);
+                //xstream.registerConverter(new IEntityExportIdentifierConverter(exportImportConfig), XStream.PRIORITY_NORMAL);
                 xstream.registerConverter(new HibernatePersistentCollectionConverter(xstream.getMapper()));
                 xstream.registerConverter(new HibernatePersistentMapConverter(xstream.getMapper()));
                 xstream.registerConverter(new HibernatePersistentSortedMapConverter(xstream.getMapper()));
