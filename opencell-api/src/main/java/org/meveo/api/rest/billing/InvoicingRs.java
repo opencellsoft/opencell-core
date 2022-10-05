@@ -27,7 +27,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import io.swagger.v3.oas.annotations.Parameter;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.billing.CancelBillingRunRequestDto;
 import org.meveo.api.dto.billing.CreateBillingRunDto;
@@ -45,7 +44,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.meveo.apiv2.billing.WalletOperationRerate;
 
 @Path("/billing/invoicing")
 @Tag(name = "Invoicing", description = "@%Invoicing")
@@ -438,19 +436,5 @@ public interface InvoicingRs extends IBaseRs {
 				)}
 	)
     ActionStatus canceledInvoices(@PathParam("billingRunId") Long billingRunId);
-
-	/**
-	 * Mark WalletOperations to rerate
-	 */
-	@PUT
-	@Path("/walletOperation/markToRerate")
-	@Operation(
-			summary = "Mark WalletOperations to rerate",
-			description = "Mark WalletOperations to rerate",
-			operationId = "PUT_Invoicing_walletOperation_markToRerate",
-			responses = {@ApiResponse(description = "Number of updated WO ", content = @Content(schema = @Schema(implementation = ActionStatus.class)))}
-	)
-	ActionStatus markWOToRerate(@Parameter(description = "WO advanced filter for rerate", required = true) WalletOperationRerate rerate);
-
 
 }
