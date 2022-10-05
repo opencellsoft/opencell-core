@@ -387,14 +387,20 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     			if(StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
     			if (Double.valueOf(convertedValueStr)>=Double.valueOf(sourceAttributeValue))
     				return true;	
-    			}
+    			}break;
     		case CONTAINS:
     			
     			List<String> values = convertedValueStr!=null?Arrays.asList(convertedValueStr.split(multiValuesAttributeSeparator)):new ArrayList<String>();
 				if (values.contains(sourceAttributeValue.trim())){
 					return true;
 				}
-    			break;	
+    			break;
+             case NOT_CONTAINS:
+    			List<String> listValues = convertedValueStr!=null?Arrays.asList(convertedValueStr.split(multiValuesAttributeSeparator)):new ArrayList<String>();
+				if (!listValues.contains(sourceAttributeValue.trim())){
+					return true;
+				}break;
+    			
     		}
     	}
     	return false;
