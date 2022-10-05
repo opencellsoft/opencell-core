@@ -46,6 +46,11 @@ public class TerminationReasonDto extends BusinessEntityDto {
     private boolean applyAgreement;
 
     /**
+     * The apply agreement immediately.
+     */
+    private boolean invoiceAgreementImmediately;
+
+    /**
      * The apply reimbursment.
      */
     private boolean applyReimbursment;
@@ -80,6 +85,7 @@ public class TerminationReasonDto extends BusinessEntityDto {
     public TerminationReasonDto(SubscriptionTerminationReason subscriptionTerminationReason) {
         super(subscriptionTerminationReason);
         applyAgreement = subscriptionTerminationReason.isApplyAgreement();
+        invoiceAgreementImmediately = subscriptionTerminationReason.isInvoiceAgreementImmediately();
         applyReimbursment = subscriptionTerminationReason.isApplyReimbursment();
         applyTerminationCharges = subscriptionTerminationReason.isApplyTerminationCharges();
         overrideProrata = subscriptionTerminationReason.getOverrideProrata();
@@ -102,6 +108,14 @@ public class TerminationReasonDto extends BusinessEntityDto {
      */
     public void setApplyAgreement(boolean applyAgreement) {
         this.applyAgreement = applyAgreement;
+    }
+
+    public boolean isInvoiceAgreementImmediately() {
+        return invoiceAgreementImmediately;
+    }
+
+    public void setInvoiceAgreementImmediately(boolean invoiceAgreementImmediately) {
+        this.invoiceAgreementImmediately = invoiceAgreementImmediately;
     }
 
     /**
@@ -178,7 +192,7 @@ public class TerminationReasonDto extends BusinessEntityDto {
 
     @Override
     public String toString() {
-        return "TerminationReasonDto [code=" + getCode() + ", description=" + getDescription() + ", applyAgreement=" + applyAgreement + ", applyReimbursment=" + applyReimbursment
+        return "TerminationReasonDto [code=" + getCode() + ", description=" + getDescription() + ", applyAgreement=" + applyAgreement + ", invoiceAgreementImmediately=" + invoiceAgreementImmediately + ", applyReimbursment=" + applyReimbursment
                 + ", applyTerminationCharges=" + applyTerminationCharges + "]";
     }
 }

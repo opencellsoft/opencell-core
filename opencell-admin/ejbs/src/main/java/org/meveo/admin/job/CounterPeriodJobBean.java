@@ -41,62 +41,64 @@ import org.slf4j.Logger;
 
 /**
  * The Class CounterPeriodJobBean.
+ * 
  * @author Mbarek-Ay
  */
 @Stateless
 public class CounterPeriodJobBean extends BaseJobBean {
 
-	@Inject
-	private Logger log;
- 
-	@Inject	
-	private CounterInstanceService counterInstanceService;
-	
-	@Inject	
-	private CounterTemplateService counterTemplateService;
+    @Inject
+    private Logger log;
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	@TransactionAttribute(TransactionAttributeType.NEVER)
-	
-	private List<CounterInstance> getCounterInstances() {
-		List<CounterTemplate> counterTemplates= counterTemplateService.listAll();
-		List<CounterInstance> counterInstances=new ArrayList<CounterInstance>();
-		if(!counterTemplates.isEmpty()) {
-			for(CounterTemplate counterTemplate : counterTemplates) {
-				counterInstances.addAll(counterInstanceService.findByCounterAndActiveService(counterTemplate.getCode()));
-			}
-		}
-		return counterInstances;
-	}
-	
-	public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-		log.debug("Running with parameter={}", jobInstance.getParametres()); 
+    @Inject
+    private CounterInstanceService counterInstanceService;
 
-		Date applicationDate = (Date) this.getParamOrCFValue(jobInstance, "applicationDate");
+    @Inject
+    private CounterTemplateService counterTemplateService;
 
-		try {
-			List<CounterInstance> counterInstances=getCounterInstances();
-			if(!counterInstances.isEmpty()) {
-				for(CounterInstance counterInstance : counterInstances) {
-					//accumulator chargeInstance
-					for(ChargeInstance chargeInstance : counterInstance.getChargeInstances()) {
-					counterInstanceService.getOrCreateCounterPeriod(counterInstance,applicationDate!=null?applicationDate:new Date(),
-							counterInstance.getServiceInstance().getSubscriptionDate(),chargeInstance);
-					}
-					//UsageChargeInstances
-					for(ChargeInstance chargeInstance : counterInstance.getUsageChargeInstances()) {
-						counterInstanceService.getOrCreateCounterPeriod(counterInstance,applicationDate!=null?applicationDate:new Date(),
-						counterInstance.getServiceInstance().getSubscriptionDate(),chargeInstance);
-				}
-				}
-			}
-		}catch(Exception e) {
-			log.error("Failed to get or create counterPeriod", e);
-			result.registerError(e.getMessage());
-			result.addReport(e.getMessage());
-		}
+    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+    @TransactionAttribute(TransactionAttributeType.NEVER)
 
-	} 
+    private List<Long> getCounterInstances() {
+        List<CounterTemplate> counterTemplates = counterTemplateService.listAll();
+        List<Long> counterInstances = new ArrayList<Long>();
+        if (!counterTemplates.isEmpty()) {
+            for (CounterTemplate counterTemplate : counterTemplates) {
+                counterInstances.addAll(counterInstanceService.findByCounterAndAccount(counterTemplate.getCode(), counterTemplate.getCounterLevel()));
+            }
+        }
+        return counterInstances;
+    }
+
+    public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
+        log.debug("Running with parameter={}", jobInstance.getParametres());
+
+        Date applicationDate = (Date) this.getParamOrCFValue(jobInstance, "applicationDate");
+
+        try {
+            List<Long> counterInstances = getCounterInstances();
+            if (!counterInstances.isEmpty()) {
+                for (Long id : counterInstances) {
+                    CounterInstance counterInstance = counterInstanceService.findById(id);
+
+                    // accumulator chargeInstance
+                    for (ChargeInstance chargeInstance : counterInstance.getChargeInstances()) {
+                        counterInstanceService.createCounterPeriodIfMissing(counterInstance, applicationDate != null ? applicationDate : new Date(), counterInstance.getServiceInstance().getSubscriptionDate(),
+                            chargeInstance);
+                    }
+                    // UsageChargeInstances
+                    for (ChargeInstance chargeInstance : counterInstance.getUsageChargeInstances()) {
+                        counterInstanceService.createCounterPeriodIfMissing(counterInstance, applicationDate != null ? applicationDate : new Date(), counterInstance.getServiceInstance().getSubscriptionDate(),
+                            chargeInstance);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("Failed to get or create counterPeriod", e);
+            result.registerError(e.getMessage());
+            result.addReport(e.getMessage());
+        }
+
+    }
 
 }

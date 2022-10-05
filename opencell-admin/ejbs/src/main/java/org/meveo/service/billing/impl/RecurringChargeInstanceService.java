@@ -346,7 +346,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                         "Can not determine a next charge period for charge instance " + recurringChargeInstance.getId() + " and subscription date " + recurringChargeInstance.getSubscriptionDate());
                 }
                 recurringChargeInstance.setChargeDate(recurringChargeInstance.getSubscriptionDate());
-                recurringChargeInstance.setNextChargeDate(isApplyInAdvance && !recurringChargeInstance.getSubscriptionDate().after(period.getFrom()) ? recurringChargeInstance.getSubscriptionDate() : nextChargeDate);
+                recurringChargeInstance.setNextChargeDate(isApplyInAdvance && ( recurringChargeInstance.getSubscriptionDate().after(new Date()) || !recurringChargeInstance.getSubscriptionDate().after(period.getFrom())) ? recurringChargeInstance.getSubscriptionDate() : nextChargeDate);
                 chargeWasUpdated = true;
 
                 log.debug("Initializing recurring charge nextChargeDate to {} for chargeInstance id {} chargeCode {}, quantity {}, subscriptionDate {}", recurringChargeInstance.getNextChargeDate(),
@@ -523,13 +523,16 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
     /**
      * Apply missing recurring charges from the last charge date to the end agreement date
      *
-     * @param chargeInstance charge Instance
      * @param recurringChargeTemplate recurringCharge Template
+     * @param chargeInstance charge Instance
      * @param endAgreementDate end agreement date
+     * @param invoiceAgreementImmediately
+     * @param terminationDate
      * @throws BusinessException Business exception
      * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public RecurringChargeInstance applyRecuringChargeToEndAgreementDate(RecurringChargeInstance chargeInstance, Date endAgreementDate) throws BusinessException, RatingException {
+    public RecurringChargeInstance applyRecuringChargeToEndAgreementDate(RecurringChargeInstance chargeInstance, Date endAgreementDate,
+                                                                         boolean invoiceAgreementImmediately, Date terminationDate) throws BusinessException, RatingException {
 
         boolean chargeWasUpdated = true;
 
@@ -548,6 +551,14 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
         if (chargeWasUpdated || !wos.isEmpty()) {
             chargeInstance = updateNoCheck(chargeInstance);
+        }
+        //INTRD-4424: if invoiceAgreementImmediately then the agreement charges rating
+        // should appear in the next invoice following the sub's termination date
+        if (invoiceAgreementImmediately && !wos.isEmpty()) {
+            for (WalletOperation wo : wos) {
+                wo.setOperationDate(terminationDate);
+                walletOperationService.updateNoCheck(wo);
+            }
         }
 
         return chargeInstance;

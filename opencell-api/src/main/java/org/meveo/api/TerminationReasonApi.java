@@ -64,6 +64,7 @@ public class TerminationReasonApi extends BaseApi {
         subscriptionTerminationReason.setCode(postData.getCode());
         subscriptionTerminationReason.setDescription(postData.getDescription());
         subscriptionTerminationReason.setApplyAgreement(postData.isApplyAgreement());
+        subscriptionTerminationReason.setInvoiceAgreementImmediately(postData.isInvoiceAgreementImmediately());
         subscriptionTerminationReason.setApplyReimbursment(postData.isApplyReimbursment());
         subscriptionTerminationReason.setApplyTerminationCharges(postData.isApplyTerminationCharges());
         subscriptionTerminationReason.setOverrideProrata(postData.getOverrideProrata());
@@ -96,6 +97,7 @@ public class TerminationReasonApi extends BaseApi {
         subscriptionTerminationReason.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         subscriptionTerminationReason.setDescription(postData.getDescription());
         subscriptionTerminationReason.setApplyAgreement(postData.isApplyAgreement());
+        subscriptionTerminationReason.setInvoiceAgreementImmediately(postData.isInvoiceAgreementImmediately());
         subscriptionTerminationReason.setApplyReimbursment(postData.isApplyReimbursment());
         subscriptionTerminationReason.setApplyTerminationCharges(postData.isApplyTerminationCharges());
         subscriptionTerminationReason.setOverrideProrata(postData.getOverrideProrata());
