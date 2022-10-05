@@ -28,7 +28,7 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
                 .template(createResource(entity.getTemplate()))
                 .currency(createResource(entity.getCurrency()))
                 .customerAccount(createResource(entity.getCustomerAccount()))
-                .billingAccount(createResource(entity.getBillingAccount()))
+                .billingAccount(entity.getBillingAccount() != null ? createResource(entity.getBillingAccount()): null)
                 .validityDate(entity.getValidityDate())
                 .validityPeriod(entity.getValidityPeriod())
                 .validityPeriodUnit(entity.getValidityPeriodUnit())
