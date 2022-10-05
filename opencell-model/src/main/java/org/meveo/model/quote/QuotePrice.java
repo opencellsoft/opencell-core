@@ -34,8 +34,9 @@ import org.meveo.model.cpq.offer.QuoteOffer;
         @Parameter(name = "sequence_name", value = "cpq_quote_price_seq"), })
 @NamedQueries({
 	@NamedQuery(name="QuotePrice.removeByQuoteVersionAndPriceLevel", query = "delete from QuotePrice qp where qp.quoteVersion = :quoteVersion and qp.priceLevelEnum = :priceLevelEnum"),
+	@NamedQuery(name="QuotePrice.loadByQuoteVersionAndPriceLevel", query = "select qp from QuotePrice qp where qp.quoteVersion = :quoteVersion and qp.priceLevelEnum = :priceLevelEnum"),
 	@NamedQuery(name="QuotePrice.removeByQuoteOfferAndPriceLevel", query = "delete from QuotePrice qp where qp.quoteOffer.id = :quoteOfferId and qp.priceLevelEnum = :priceLevelEnum"),
-	@NamedQuery(name="QuotePrice.loadByQuoteOfferAndArticleCodeAndPriceLevel", query = "from QuotePrice qp where qp.quoteOffer.id = :quoteOfferId and qp.priceLevelEnum = :priceLevelEnum and qp.quoteArticleLine.accountingArticle.code = :accountingArticleCode")
+	@NamedQuery(name="QuotePrice.loadByQuoteOfferAndArticleCodeAndPriceLevel", query = "select qp from QuotePrice qp where qp.quoteOffer.id = :quoteOfferId and qp.priceLevelEnum = :priceLevelEnum and qp.quoteArticleLine.accountingArticle.code = :accountingArticleCode")
 })
 public class QuotePrice extends AuditableEntity {
 
@@ -67,6 +68,13 @@ public class QuotePrice extends AuditableEntity {
 		this.quantity = copy.quantity;
 		this.discountedQuotePrice = copy.discountedQuotePrice;
 		this.discountPlan=copy.discountPlan;
+		this.discountPlanItem=copy.discountPlanItem;
+		this.discountPlanType=copy.discountPlanType;
+		this.discountValue=copy.discountValue;
+		this.applyDiscountsOnOverridenPrice=copy.getApplyDiscountsOnOverridenPrice();
+		this.overchargedUnitAmountWithoutTax=copy.getOverchargedUnitAmountWithoutTax();
+		this.discountedAmount=copy.getDiscountedAmount();
+		this.sequence=copy.getSequence();
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -152,6 +160,25 @@ public class QuotePrice extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discount_plan_item_id")
     private DiscountPlanItem discountPlanItem;
+    
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "apply_discounts_on_overriden_price")
+    private Boolean applyDiscountsOnOverridenPrice;
+    
+    @Column(name = "overcharged_unit_amount_without_tax")
+  	private BigDecimal overchargedUnitAmountWithoutTax;
+    
+    /**The amount after discount**/
+    @Column(name = "discounted_amount")
+   	private BigDecimal discountedAmount;
+    
+    /**
+	 * 
+	 *filled only for price lines related to applied discounts, and contains the application sequence composed by the concatenation of the DP sequence and DPI sequence
+	 */
+	@Column(name = "sequence")
+	private Integer sequence;
 	
 	public QuoteArticleLine getQuoteArticleLine() {
 		return quoteArticleLine;
@@ -336,6 +363,40 @@ public class QuotePrice extends AuditableEntity {
 	public void setDiscountPlanItem(DiscountPlanItem discountPlanItem) {
 		this.discountPlanItem = discountPlanItem;
 	}
+
+	public Boolean getApplyDiscountsOnOverridenPrice() {
+		return applyDiscountsOnOverridenPrice;
+	}
+
+	public void setApplyDiscountsOnOverridenPrice(Boolean applyDiscountsOnOverridenPrice) {
+		this.applyDiscountsOnOverridenPrice = applyDiscountsOnOverridenPrice;
+	}
+
+	public BigDecimal getOverchargedUnitAmountWithoutTax() {
+		return overchargedUnitAmountWithoutTax;
+	}
+
+	public void setOverchargedUnitAmountWithoutTax(BigDecimal overchargedUnitAmountWithoutTax) {
+		this.overchargedUnitAmountWithoutTax = overchargedUnitAmountWithoutTax;
+	}
+
+	public BigDecimal getDiscountedAmount() {
+		return discountedAmount;
+	}
+
+	public void setDiscountedAmount(BigDecimal discountedAmount) {
+		this.discountedAmount = discountedAmount;
+	}
+
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
+	
+	
 
 	
 	

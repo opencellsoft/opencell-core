@@ -46,8 +46,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
@@ -247,6 +249,23 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	@Column(name = "expression_el", length = 2000)
 	@Size(max = 2000)
 	private String expressionEl;
+	
+	@Type(type = "numeric_boolean")
+	@Column(name = "applicable_on_overridden_price")
+	private Boolean applicableOnOverriddenPrice;
+	
+	/**
+	 *determines whether the discount plan is applicable on the gross or discounted amount
+	 */
+	@Type(type = "numeric_boolean")
+	@Column(name = "applicable_on_discounted_price")
+	private Boolean applicableOnDiscountedPrice;
+	
+	/**
+	 *determines whether the discount plan is applicable on the gross or discounted amount
+	 */
+	@Column(name = "sequence")
+	private Integer sequence;
 
 	public DiscountPlan() {}
 	
@@ -265,6 +284,8 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 		this.setCfValues(dp.getCfValues());
 		this.setCfAccumulatedValues(dp.getCfAccumulatedValues());
 		this.setDiscountPlanItems(new ArrayList<>(dp.getDiscountPlanItems()));
+		this.sequence=dp.getSequence();
+		this.applicableOnDiscountedPrice=dp.getApplicableOnDiscountedPrice();
 	}
 	
 	public boolean isValid() {
@@ -465,6 +486,30 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
         }
         return (date.compareTo(startDate) >= 0) && (date.before(endDate));
     }
+
+	public Boolean getApplicableOnOverriddenPrice() {
+		return applicableOnOverriddenPrice;
+	}
+
+	public void setApplicableOnOverriddenPrice(Boolean applicableOnOverriddenPrice) {
+		this.applicableOnOverriddenPrice = applicableOnOverriddenPrice;
+	}
+
+	public Boolean getApplicableOnDiscountedPrice() {
+		return applicableOnDiscountedPrice;
+	}
+
+	public void setApplicableOnDiscountedPrice(Boolean applicableOnDiscountedPrice) {
+		this.applicableOnDiscountedPrice = applicableOnDiscountedPrice;
+	}
+
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
 
 
 

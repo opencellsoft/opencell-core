@@ -227,6 +227,10 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     @Column(name = "invoice_rounding", nullable = false)
     @NotNull
     private int invoiceRounding = 2;
+    
+    @Type(type = "numeric_boolean")
+ 	@Column(name = "activate_cascading_discounts ")
+ 	private boolean activateCascadingDiscounts=true;
 
     /**
      * The Maximum Delay
@@ -876,4 +880,14 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     public void setFunctionalCurrencyFlag(boolean functionalCurrencyFlag) {
         this.functionalCurrencyFlag = functionalCurrencyFlag;
     }
+
+	public boolean isActivateCascadingDiscounts() {
+		return activateCascadingDiscounts;
+	}
+
+	public void setActivateCascadingDiscounts(boolean activateCascadingDiscounts) {
+		this.activateCascadingDiscounts = activateCascadingDiscounts;
+	}
+    
+    
 }
