@@ -550,7 +550,7 @@ public class InvoiceApi extends BaseApi {
      * @throws ImportInvoiceException Failed to import invoice exception
      */
     @TransactionAttribute
-    public String validateInvoice(Long invoiceId, boolean generateAO, boolean refreshExchangeRate) throws MissingParameterException,
+    public String validateInvoice(Long invoiceId, boolean generateAO, boolean refreshExchangeRate, boolean createSD) throws MissingParameterException,
             EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
         if (StringUtils.isBlank(invoiceId)) {
             missingParameters.add("invoiceId");
@@ -568,11 +568,11 @@ public class InvoiceApi extends BaseApi {
         invoice = invoiceService.refreshOrRetrieve(invoice);
         
         //Create SD
-        if (invoice.getInvoiceType() != null && "SECURITY_DEPOSIT".equals(invoice.getInvoiceType().getCode())) {
+        if (invoice.getInvoiceType() != null && "SECURITY_DEPOSIT".equals(invoice.getInvoiceType().getCode()) && createSD) {
             SecurityDepositTemplate defaultSDTemplate = securityDepositTemplateService.getDefaultSDTemplate();
             Long count = securityDepositService.countPerTemplate(defaultSDTemplate);
             securityDepositService.createSD(invoice, defaultSDTemplate, count);
-        }        
+        }
         
         if(invoice.getDueDate().after(today) && invoice.getStatus() == VALIDATED){
             updatePaymentStatus(invoice, today, PENDING);
@@ -581,8 +581,6 @@ public class InvoiceApi extends BaseApi {
         }
         return invoice.getInvoiceNumber();
     }
-
-    
 
     private void updatePaymentStatus(Invoice invoice, Date today, InvoicePaymentStatusEnum pending) {
         log.info("[Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 

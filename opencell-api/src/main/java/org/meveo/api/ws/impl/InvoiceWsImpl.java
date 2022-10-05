@@ -166,7 +166,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
     public ActionStatus validateInvoice(Long invoiceId) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            result.setMessage(invoiceApi.validateInvoice(invoiceId, false, false));
+            result.setMessage(invoiceApi.validateInvoice(invoiceId, false, false, false));
         } catch (Exception e) {
             super.processException(e, result);
         }

@@ -9,6 +9,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -27,6 +28,7 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
                 .template(createResource(entity.getTemplate()))
                 .currency(createResource(entity.getCurrency()))
                 .customerAccount(createResource(entity.getCustomerAccount()))
+                .billingAccount(createResource(entity.getBillingAccount()))
                 .validityDate(entity.getValidityDate())
                 .validityPeriod(entity.getValidityPeriod())
                 .validityPeriodUnit(entity.getValidityPeriodUnit())
@@ -70,6 +72,12 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
             customerAccount.setId(resource.getCustomerAccount().getId());
             customerAccount.setCode(resource.getCustomerAccount().getCode());
             securityDeposit.setCustomerAccount(customerAccount);
+        }
+        if (resource.getBillingAccount() != null) {
+            BillingAccount billingAccount = new BillingAccount();
+            billingAccount.setId(resource.getBillingAccount().getId());
+            billingAccount.setCode(resource.getBillingAccount().getCode());
+            securityDeposit.setBillingAccount(billingAccount);
         }
         securityDeposit.setValidityDate(resource.getValidityDate());
         securityDeposit.setValidityPeriod(resource.getValidityPeriod());
