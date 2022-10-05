@@ -47,7 +47,7 @@ public class ServiceToActivateDto implements Serializable {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -3815026205495621916L;
 
-    @JsonIgnore
+    @XmlAttribute
     private Long id;
 
     /** The code. */

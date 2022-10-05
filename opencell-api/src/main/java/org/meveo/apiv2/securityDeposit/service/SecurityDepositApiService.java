@@ -14,9 +14,13 @@ import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ImportInvoiceException;
+import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.EntityNotAllowedException;
+import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.commons.utils.ListUtils;
 import org.meveo.model.BaseEntity;
@@ -39,8 +43,6 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositTemplateService;
-
-import com.paypal.api.payments.Invoices;
 
 public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
 
@@ -70,6 +72,9 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
 
     @Inject
     private ProviderService providerService;
+
+    @Inject
+    private InvoiceApi invoiceApi;
     
     @Override
     public List<SecurityDeposit> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -112,7 +117,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
     }
 
     @Transactional
-    public Optional<SecurityDeposit> instantiate(SecurityDeposit securityDepositInput) {
+    public Optional<SecurityDeposit> instantiate(SecurityDeposit securityDepositInput) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
 
         // Check FinanceSettings.useSecurityDeposit
         FinanceSettings financeSettings = financeSettingsService.findLastOne();
@@ -152,6 +157,8 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         	}
 
         	securityDepositInput.setSecurityDepositInvoice(invoice);
+        	securityDepositInput.setAmount(invoice.getAmountWithoutTax());
+        	invoiceApi.validateInvoice(invoice.getId(), true, false, false);
         }
         
         // Check Maximum amount per Security deposit
