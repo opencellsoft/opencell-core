@@ -140,6 +140,7 @@ public class ContractService extends BusinessService<Contract>  {
 				}
 			}
 			else {
+			    pricePlanVersions.sort(Comparator.comparing(PricePlanMatrixVersion::getValidity));
 			    if(pricePlanVersions.size() > 0) {
 			        for (int i=0; i < pricePlanVersions.size() - 1; i++) {
 	                    Date ppvValidityTo = pricePlanVersions.get(i).getValidity().getTo();
@@ -147,8 +148,7 @@ public class ContractService extends BusinessService<Contract>  {
 	                    Date ppvValidityToNextDay = DateUtils.addDaysToDate(ppvValidityTo, 1);
 	                    if (ppvValidityTo.compareTo(ppvNextValidityFrom) != 0 && ppvValidityToNextDay.compareTo(ppvNextValidityFrom) != 0){
 	                        log.error("At any given time during the duration of the framework agreement, a price should be applicable, please check your price version dates");
-	                        throw new BusinessApiException(
-	                                "At any given time during the duration of the framework agreement, a price should be applicable, please check your price version dates");
+	                        throw new BusinessApiException("At any given time during the duration of the framework agreement, a price should be applicable, please check your price version dates");
 	                    }
 	                }
 			    }                
