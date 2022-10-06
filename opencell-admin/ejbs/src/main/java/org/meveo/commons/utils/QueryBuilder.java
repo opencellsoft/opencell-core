@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -93,10 +92,9 @@ public class QueryBuilder {
 
     static final String FROM = "from ";
 
-    public static final String  JOIN_AS = " as ";
+    public final String  JOIN_AS = " as ";
 
-//    private static Set<String> joinAlias = new TreeSet<String>();
-    private static Set<String> joinAlias = ConcurrentHashMap.newKeySet();
+    private Set<String> joinAlias = new TreeSet<>();
 
     public Class<?> getEntityClass() {
         return clazz;
@@ -221,7 +219,7 @@ public class QueryBuilder {
      * @param fetchFields Additional (list/map type) fields to fetch
      */
     public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields) {
-        this(getInitQuery(clazz, alias, fetchFields), alias);
+        this((new QueryBuilder()).getInitQuery(clazz, alias, fetchFields), alias);
         this.clazz = clazz;
     }
 
@@ -274,7 +272,7 @@ public class QueryBuilder {
      * @param fetchFields list of field need to be fetched.
      * @return SQL query.
      */
-    private static String getInitQuery(Class<?> clazz, String alias, List<String> fetchFields) {
+    private String getInitQuery(Class<?> clazz, String alias, List<String> fetchFields) {
         StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
         if (fetchFields != null && !fetchFields.isEmpty()) {
             for (String fetchField : fetchFields) {
@@ -293,7 +291,7 @@ public class QueryBuilder {
 	 * @param fetchField
 	 * @return
 	 */
-	private static String getJoinAlias(String alias, String fetchField, boolean checkExisting) {
+	private String getJoinAlias(String alias, String fetchField, boolean checkExisting) {
 		String result = alias+"_"+fetchField.replaceAll("\\.", "_");
 		if(checkExisting) {
 			if(joinAlias.contains(result)) {
