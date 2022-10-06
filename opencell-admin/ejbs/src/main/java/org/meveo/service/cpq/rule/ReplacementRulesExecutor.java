@@ -1,15 +1,22 @@
 package org.meveo.service.cpq.rule;
 
+import org.jfree.util.Log;
+import org.meveo.api.dto.cpq.ProductContextDTO;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.cpq.enums.RuleTypeEnum;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
 import org.meveo.model.cpq.trade.CommercialRuleItem;
 import org.meveo.model.cpq.trade.CommercialRuleLine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 
 public class ReplacementRulesExecutor {
+	
+	protected Logger log = LoggerFactory.getLogger(getClass());
 
     private boolean isQuoteScope;
 
@@ -58,7 +65,8 @@ public class ReplacementRulesExecutor {
 
     private void executeLines(CommercialRuleHeader commercialRuleHeader, CommercialRuleItem item, SelectedAttributes selectedAttributes, List<SelectedAttributes> selectedSourceAttributes) {
         boolean canReplace = false;
-
+        CommercialRuleLine matchedCommercialRuleLine=null;
+        
         switch (item.getOperator()) {
             case AND:
                 canReplace = item.getCommercialRuleLines()
@@ -66,13 +74,20 @@ public class ReplacementRulesExecutor {
                         .allMatch(commercialRuleLine -> new CommercialRuleLineCommandFactory(commercialRuleHeader, selectedAttributes, selectedSourceAttributes).create(commercialRuleLine.getOperator(), isQuoteScope).execute(commercialRuleLine));
                 break;
             case OR:
-                canReplace = item.getCommercialRuleLines()
+             matchedCommercialRuleLine = item.getCommercialRuleLines()
                         .stream()
-                        .anyMatch(commercialRuleLine -> new CommercialRuleLineCommandFactory(commercialRuleHeader, selectedAttributes, selectedSourceAttributes).create(commercialRuleLine.getOperator(), isQuoteScope).execute(commercialRuleLine));
-
+                        .filter(commercialRuleLine -> new CommercialRuleLineCommandFactory(commercialRuleHeader, selectedAttributes, selectedSourceAttributes).create(commercialRuleLine.getOperator(), isQuoteScope).execute(commercialRuleLine)).findFirst()
+                        .orElse(null);
+             break;
 
         }
-        if (canReplace) {
+        if (matchedCommercialRuleLine!=null && StringUtils.isBlank(commercialRuleHeader.getTargetAttributeValue())) {
+        	Object sourceAttribute=selectedAttributes.getSelectedAttributesMap().get(matchedCommercialRuleLine.getSourceAttribute().getCode());
+        	 log.info("matchedCommercialRuleLine {}, sourceAttribute={}",matchedCommercialRuleLine.getId()+"-"+matchedCommercialRuleLine.getSourceProductCode(),sourceAttribute);
+            selectedAttributes.getSelectedAttributesMap().put(commercialRuleHeader.getTargetAttribute().getCode(),sourceAttribute );
+            selectedAttributes.setCanReplace(true);
+            
+        }else if (canReplace || matchedCommercialRuleLine!=null) {
         	selectedAttributes.setCanReplace(true);
             selectedAttributes.getSelectedAttributesMap().put(commercialRuleHeader.getTargetAttribute().getCode(), commercialRuleHeader.getTargetAttributeValue());
         }
@@ -81,7 +96,7 @@ public class ReplacementRulesExecutor {
     private void executeLine(CommercialRuleHeader commercialRuleHeader, CommercialRuleLine commercialRuleLine, SelectedAttributes selectedAttributes, List<SelectedAttributes> selectedSourceAttributes) {
         CommercialRuleLineCommand command = new CommercialRuleLineCommandFactory(commercialRuleHeader, selectedAttributes, selectedSourceAttributes).create(commercialRuleLine.getOperator(), isQuoteScope);
         boolean match = command.execute(commercialRuleLine);
-        if (match && commercialRuleHeader.getTargetAttributeValue() == null)
+        if (match && StringUtils.isBlank(commercialRuleHeader.getTargetAttributeValue()))
             command.replace(commercialRuleLine);
         else if (match) {
         	selectedAttributes.setCanReplace(true);
