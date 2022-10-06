@@ -140,16 +140,18 @@ public class ContractService extends BusinessService<Contract>  {
 				}
 			}
 			else {
-                for (int i=0; i < pricePlanVersions.size() - 1; i++) {
-                    Date toDatePPV1 = pricePlanVersions.get(i).getValidity().getTo();
-                    Date fromDatePPV2 = pricePlanVersions.get(i+1).getValidity().getFrom();
-                    Date toDatePPV1Next = DateUtils.addDaysToDate(toDatePPV1, 1);
-                    if (toDatePPV1.compareTo(fromDatePPV2) != 0 && toDatePPV1Next.compareTo(fromDatePPV2) != 0){
-                        log.error("At any given time during the duration of the framework agreement, a price should be applicable, please check your price version dates");
-                        throw new BusinessApiException(
-                                "At any given time during the duration of the framework agreement, a price should be applicable, please check your price version dates");
-                    }
-                }
+			    if(pricePlanVersions.size() > 0) {
+			        for (int i=0; i < pricePlanVersions.size() - 1; i++) {
+	                    Date ppvValidityTo = pricePlanVersions.get(i).getValidity().getTo();
+	                    Date ppvNextValidityFrom = pricePlanVersions.get(i+1).getValidity().getFrom();
+	                    Date ppvValidityToNextDay = DateUtils.addDaysToDate(ppvValidityTo, 1);
+	                    if (ppvValidityTo.compareTo(ppvNextValidityFrom) != 0 && ppvValidityToNextDay.compareTo(ppvNextValidityFrom) != 0){
+	                        log.error("At any given time during the duration of the framework agreement, a price should be applicable, please check your price version dates");
+	                        throw new BusinessApiException(
+	                                "At any given time during the duration of the framework agreement, a price should be applicable, please check your price version dates");
+	                    }
+	                }
+			    }                
             }
 		}
 
