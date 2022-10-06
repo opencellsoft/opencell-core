@@ -1,18 +1,23 @@
 package org.meveo.service.mediation;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.interceptor.ConcurrencyLock;
 import org.meveo.model.RatingResult;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.WalletOperation;
@@ -43,6 +48,8 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 	@Inject
 	private UsageRatingService usageRatingService;
 	
+    private final static Map<String, EDR> EdrCache =  Collections.synchronizedMap(new HashMap<String, EDR>());
+	
 	public String getEventKeyFromEdrVersionRule(EDR edr) {
 		var mediationSettings = this.list();
 		if(CollectionUtils.isNotEmpty(mediationSettings) && mediationSettings.size() > 1)
@@ -71,43 +78,94 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 					return null;
 				}).get();
 	}
-	
+
+	public String getKeyEventEl(List<EDR> edrs, CDR cdr) {
+        List<MediationSetting> mediationSettings = this.list();
+        if(CollectionUtils.isNotEmpty(mediationSettings) && mediationSettings.size() > 1) {
+            throw new BusinessException("More than one Mediation setting is found");
+        }
+        if(CollectionUtils.isEmpty(mediationSettings)) {
+            return null;
+        }
+
+        if(!mediationSettings.get(0).isEnableEdrVersioning()) {
+            return null;
+        }
+        Comparator<EdrVersioningRule> sortByPriority = (EdrVersioningRule edrV1, EdrVersioningRule edrV2) -> edrV1.getPriority().compareTo(edrV2.getPriority()); 
+        for (EDR edr : edrs) {
+            Optional<EdrVersioningRule> edrVersionRuleOption = mediationSettings.get(0).getRules().stream()
+                    .sorted(sortByPriority)
+                    .filter(edrVersion -> {
+                        Boolean eval = (Boolean) evaluateEdrVersion(edrVersion.getId(), edrVersion.getCriteriaEL(),edr, cdr, "", Boolean.class, null); 
+                        return eval == null ? false : eval;
+                    })
+                    .findFirst();
+            if(edrVersionRuleOption.isPresent()) {
+                EdrVersioningRule edrVersionRule = edrVersionRuleOption.get();
+                return  (String) evaluateEdrVersion(edrVersionRule.getId(), edrVersionRule.getKeyEL(),edr, cdr, "" , String.class, null);
+            }
+        }
+        return null;
+	}
 	
     @SuppressWarnings("unchecked")
-	public void applyEdrVersioningRule(List<EDR> edrs, CDR cdr){
-    	var mediationSettings = this.list();
-    	if(CollectionUtils.isNotEmpty(mediationSettings) && mediationSettings.size() > 1)
+    @ConcurrencyLock
+	public  void applyEdrVersioningRule(String eventKey, List<EDR> edrs, CDR cdr){
+        List<MediationSetting> mediationSettings = this.list();
+    	if(CollectionUtils.isNotEmpty(mediationSettings) && mediationSettings.size() > 1) {
     		throw new BusinessException("More than one Mediation setting is found");
-    	if(CollectionUtils.isEmpty(mediationSettings)) return ;
-    	if(!mediationSettings.get(0).isEnableEdrVersioning()) return;
+    	}
+    	if(CollectionUtils.isEmpty(mediationSettings)) {
+    	    return;
+    	}
+    	if(!mediationSettings.get(0).isEnableEdrVersioning()) {
+    	    return;
+    	}
+    	// sort edr rule by priority
     	Comparator<EdrVersioningRule> sortByPriority = (EdrVersioningRule edrV1, EdrVersioningRule edrV2) -> edrV1.getPriority().compareTo(edrV2.getPriority()); 
     	var edrIterate = edrs.iterator();
     	while(edrIterate.hasNext()) {
     		var edr = edrIterate.next();
-    		if(edr.getId() == null)
-    		    edrService.create(edr);
-    		var  errorMessage = "Error evaluating %s  [id= %d, \"%s\"] for CDR: [%s] : %s";
-        	var edrVersionRuleOption = mediationSettings.get(0).getRules().stream()
+            if(edr.getId() == null)
+                edrService.create(edr);
+    		String  errorMessage = "Error evaluating %s  [id= %d, \"%s\"] for CDR: [%s] : %s";
+    		//for each edr rule check if the first criteria EL is true
+        	Optional<EdrVersioningRule> edrVersionRuleOption = mediationSettings.get(0).getRules().stream()
 					.sorted(sortByPriority)
 					.filter(edrVersion -> {
-						var errorMsg = String.format(errorMessage, "criteriaEL", edrVersion.getId(), edrVersion.getCriteriaEL(), cdr, "%s");
-						var eval = (Boolean) evaluateEdrVersion(edrVersion.getId(), edrVersion.getCriteriaEL(),edr, cdr, errorMsg, Boolean.class, edrIterate); 
+						String errorMsg = String.format(errorMessage, "criteriaEL", edrVersion.getId(), edrVersion.getCriteriaEL(), cdr, "%s");
+						Boolean eval = (Boolean) evaluateEdrVersion(edrVersion.getId(), edrVersion.getCriteriaEL(),edr, cdr, errorMsg, Boolean.class, edrIterate); 
 						return eval == null ? false : eval;
 					})
 					.findFirst();
         	if(edrVersionRuleOption.isPresent()) {
-        		var edrVersionRule = edrVersionRuleOption.get();
-				var errorMsg = String.format(errorMessage, "eventKeyEl", edrVersionRule.getId(), edrVersionRule.getCriteriaEL(), cdr, "%s");
+        		EdrVersioningRule edrVersionRule = edrVersionRuleOption.get();
+				String errorMsg = String.format(errorMessage, "eventKeyEl", edrVersionRule.getId(), edrVersionRule.getCriteriaEL(), cdr, "%s");
+				//evaluate the event key for versioning this EDR
         		String keyEvent =  (String) evaluateEdrVersion(edrVersionRule.getId(), edrVersionRule.getKeyEL(),edr, cdr, errorMsg , String.class, edrIterate);
         		if(StringUtils.isNotEmpty(keyEvent) && edr.getRejectReason() == null) { // test si cdr est rejete
 					edr.setEventKey(keyEvent);		
     				errorMsg = String.format(errorMessage, "isNewVersionEL", edrVersionRule.getId(), edrVersionRule.getCriteriaEL(), cdr, "%s");
-    				var previousEdrs = this.findByEventKey(keyEvent);
-    				if(CollectionUtils.isEmpty(previousEdrs)) {
-    					edr.setEventVersion(1);
-    					continue;
-    				}
-					var previousEdr = previousEdrs.get(0);
+    				var previousEdrs = this.findByEventKey(keyEvent); // get EDR by key event 
+    				synchronized (EdrCache) { // prevent concurrency access
+                        if(CollectionUtils.isEmpty(previousEdrs)) {
+                            if(EdrCache.get(keyEvent) != null) {
+                                previousEdrs.add(EdrCache.get(keyEvent));
+                            }else {
+                                edr.setEventVersion(1);
+                                getEntityManager().flush();
+                                EdrCache.put(keyEvent, edr);
+                                continue;
+                            }
+                        }
+                    }
+					EDR previousEdr = previousEdrs.get(0);
+					if(edr.equals(previousEdr)) {
+                        if(edr.getId() != null)
+                            edrService.remove(edr);
+					    continue;
+					}
+					//evaluate the version if it true that means a new version of EDR will be created
         			boolean isNewVersion = (boolean) evaluateEdrVersion(edrVersionRule.getId(), edrVersionRule.getIsNewVersionEL(),edr, cdr, errorMsg, Boolean.class, previousEdr, edrIterate);    				
         			if(isNewVersion) {
         				 // liste des edr versioning 
@@ -117,68 +175,67 @@ public class MediationsettingService extends PersistenceService<MediationSetting
         					edr.setEventVersion(previousEdr.getEventVersion() + 1);
     					}else { // for status RATED
     						// check if  wallet operation related to EDR is treated
-    						var wos = (List<WalletOperation>) walletOperationService.getEntityManager().createQuery("from WalletOperation wo where wo.edr.id=:edrId and  wo.status in ('TREATED', 'TO_RERATE', 'OPEN', 'SCHEDULED' )")
-    																	.setParameter("edrId", previousEdr.getId())
-    																	.getResultList();
-    							var billedTransaction = wos.stream().anyMatch(wo -> wo.getRatedTransaction() != null && wo.getRatedTransaction().getStatus() ==  RatedTransactionStatusEnum.BILLED);
-    							if(billedTransaction) {
-    								cdr.setStatus(CDRStatusEnum.DISCARDED);
-    								cdr.setRejectReason("EDR[id="+previousEdr.getId()+", eventKey="+keyEvent+"] has already been invoiced");
-    								if(edr.getId() != null)
-    									edrService.remove(edr);
-    								edrIterate.remove();
-    								continue;
-    							}else { // find all wallet operation that have a status OPEN 
-									edr.setStatus(EDRStatusEnum.RATED);
-									edr.setEventVersion(previousEdr.getEventVersion() + 1);
-									previousEdr.setStatus(EDRStatusEnum.CANCELLED);
-									previousEdr.setRejectReason("Received new version EDR[id=" + edr.getId() + "]");
-									wos.forEach(wo -> {
-									    RatingResult rating = usageRatingService.rateUsage(edr, true, false, 0, 0, null, false);
-									    if(rating.getWalletOperations().size() == 0 ) {
-									        throw new BusinessException("Error while rating new Edr version : "  + edr.getEventVersion());
-									    }
-									    WalletOperation woToRetate = rating.getWalletOperations().get(0);
-										wo.setStatus(WalletOperationStatusEnum.TO_RERATE);
-										wo.setEdr(edr);
-										wo.setAccountingArticle(woToRetate.getAccountingArticle());
-										wo.setAccountingCode(woToRetate.getAccountingCode());
-										wo.setAmountTax(woToRetate.getAmountTax());
-										wo.setAmountWithoutTax(woToRetate.getAmountWithoutTax());
-										wo.setAmountWithTax(woToRetate.getAmountWithTax());
-										wo.setBillingAccount(woToRetate.getBillingAccount());
-										wo.setChargeInstance(woToRetate.getChargeInstance());
-										wo.setChargeMode(woToRetate.getChargeMode());
-										wo.setParameter1(woToRetate.getParameter1());
-										wo.setParameter2(woToRetate.getParameter2());
-										wo.setParameter3(woToRetate.getParameter3());
-										wo.setParameterExtra(woToRetate.getParameterExtra());
-										wo.setTax(woToRetate.getTax());
-										wo.setTaxClass(woToRetate.getTaxClass());
-										wo.setTaxPercent(woToRetate.getTaxPercent());
-										wo.setUnitAmountTax(woToRetate.getUnitAmountTax());
-										wo.setUnitAmountWithTax(woToRetate.getUnitAmountWithTax());
-										wo.setUnitAmountWithTax(woToRetate.getUnitAmountWithTax());
-										wo.setSubscriptionDate(woToRetate.getSubscriptionDate());
-										wo.setInvoiceSubCategory(woToRetate.getInvoiceSubCategory());
-										wo.setUserAccount(woToRetate.getUserAccount());
-										wo.setType(woToRetate.getType());
-										wo.setSubscription(woToRetate.getSubscription());
-										wo.setCurrency(woToRetate.getCurrency());
-										wo.setCounter(woToRetate.getCounter());
-										wo.setDescription(woToRetate.getDescription());
-										wo.setInputUnitDescription(woToRetate.getInputUnitDescription());
-										wo.setInputUnitOfMeasure(woToRetate.getInputUnitOfMeasure());
-										wo.setInputQuantity(woToRetate.getInputQuantity());
-										wo.setQuantity(woToRetate.getQuantity());
-										walletOperationService.update(wo);
-										if(wo.getRatedTransaction() != null) {
-											wo.getRatedTransaction().setStatus(RatedTransactionStatusEnum.CANCELED);
-											ratedTransactionService.update(wo.getRatedTransaction());
-										}
-									});
-								
-								}
+    					        List<WalletOperation> wos = (List<WalletOperation>) walletOperationService.getEntityManager().createQuery("from WalletOperation wo where wo.edr.id=:edrId and  wo.status in ('TREATED', 'TO_RERATE', 'OPEN', 'SCHEDULED' )")
+                                											.setParameter("edrId", previousEdr.getId())
+                                											.getResultList();
+                                	var billedTransaction = wos.stream().anyMatch(wo -> wo.getRatedTransaction() != null && wo.getRatedTransaction().getStatus() ==  RatedTransactionStatusEnum.BILLED);
+                                	if(billedTransaction) {
+                                		cdr.setStatus(CDRStatusEnum.DISCARDED);
+                                		cdr.setRejectReason("EDR[id="+previousEdr.getId()+", eventKey="+keyEvent+"] has already been invoiced");
+                                		if(edr.getId() != null)
+                                			edrService.remove(edr);
+                                		edrIterate.remove();
+                                	}else { // find all wallet operation that have a status OPEN 
+                                		edr.setStatus(EDRStatusEnum.RATED);
+                                		edr.setEventVersion(previousEdr.getEventVersion() + 1);
+                                		previousEdr.setStatus(EDRStatusEnum.CANCELLED);
+                                		previousEdr.setRejectReason("Received new version EDR[id=" + edr.getId() + "]");
+                                		wos.forEach(wo -> {
+                                		    RatingResult rating = usageRatingService.rateUsage(edr, true, false, 0, 0, null, false);
+                                		    if(rating.getWalletOperations().size() == 0 ) {
+                                		        throw new BusinessException("Error while rating new Edr version : "  + edr.getEventVersion());
+                                		    }
+                                		    WalletOperation woToRetate = rating.getWalletOperations().get(0);
+                                			wo.setStatus(WalletOperationStatusEnum.TO_RERATE);
+                                			wo.setEdr(edr);
+                                			wo.setAccountingArticle(woToRetate.getAccountingArticle());
+                                			wo.setAccountingCode(woToRetate.getAccountingCode());
+                                			wo.setAmountTax(woToRetate.getAmountTax());
+                                			wo.setAmountWithoutTax(woToRetate.getAmountWithoutTax());
+                                			wo.setAmountWithTax(woToRetate.getAmountWithTax());
+                                			wo.setBillingAccount(woToRetate.getBillingAccount());
+                                			wo.setChargeInstance(woToRetate.getChargeInstance());
+                                			wo.setChargeMode(woToRetate.getChargeMode());
+                                			wo.setParameter1(woToRetate.getParameter1());
+                                			wo.setParameter2(woToRetate.getParameter2());
+                                			wo.setParameter3(woToRetate.getParameter3());
+                                			wo.setParameterExtra(woToRetate.getParameterExtra());
+                                			wo.setTax(woToRetate.getTax());
+                                			wo.setTaxClass(woToRetate.getTaxClass());
+                                			wo.setTaxPercent(woToRetate.getTaxPercent());
+                                			wo.setUnitAmountTax(woToRetate.getUnitAmountTax());
+                                			wo.setUnitAmountWithTax(woToRetate.getUnitAmountWithTax());
+                                			wo.setUnitAmountWithTax(woToRetate.getUnitAmountWithTax());
+                                			wo.setSubscriptionDate(woToRetate.getSubscriptionDate());
+                                			wo.setInvoiceSubCategory(woToRetate.getInvoiceSubCategory());
+                                			wo.setUserAccount(woToRetate.getUserAccount());
+                                			wo.setType(woToRetate.getType());
+                                			wo.setSubscription(woToRetate.getSubscription());
+                                			wo.setCurrency(woToRetate.getCurrency());
+                                			wo.setCounter(woToRetate.getCounter());
+                                			wo.setDescription(woToRetate.getDescription());
+                                			wo.setInputUnitDescription(woToRetate.getInputUnitDescription());
+                                			wo.setInputUnitOfMeasure(woToRetate.getInputUnitOfMeasure());
+                                			wo.setInputQuantity(woToRetate.getInputQuantity());
+                                			wo.setQuantity(woToRetate.getQuantity());
+                                			walletOperationService.update(wo);
+                                			if(wo.getRatedTransaction() != null) {
+                                				wo.getRatedTransaction().setStatus(RatedTransactionStatusEnum.CANCELED);
+                                				ratedTransactionService.getEntityManager().merge(wo.getRatedTransaction());
+                                			}
+                                		});
+                                	
+                                	}
     						}
         			}else {
 						cdr.setStatus(CDRStatusEnum.DISCARDED);
@@ -191,7 +248,6 @@ public class MediationsettingService extends PersistenceService<MediationSetting
         		}
         		
         	}
-        	
 		}
     }
     
@@ -210,7 +266,8 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 			if(edr.getId() != null) {
 				edrService.remove(edr);
 		}
-			edrIterate.remove();
+			if(edrIterate != null)
+			    edrIterate.remove();
 		}
     	return evaluted;
     }
@@ -225,5 +282,9 @@ public class MediationsettingService extends PersistenceService<MediationSetting
     @SuppressWarnings("unchecked")
 	public List<EDR> findByEventKey(String eventKey) {
     	return getEntityManager().createNamedQuery("EDR.findEDREventVersioning").setParameter("eventKey", eventKey).setMaxResults(1).getResultList();
+    }
+    
+    public void clearEdrCach() {
+        EdrCache.clear();
     }
 }

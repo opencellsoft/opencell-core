@@ -9,7 +9,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -203,6 +202,7 @@ public class MediationApiService {
         final Map<String, List<CounterPeriod>> counterUpdates = new HashMap<String, List<CounterPeriod>>();
 
         counterInstanceService.reestablishCounterTracking(virtualCounters, counterUpdates);
+        mediationsettingService.clearEdrCach();
 
         for (int k = 0; k < nbThreads; k++) {
 
@@ -302,13 +302,15 @@ public class MediationApiService {
 
                     List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
                     edrs = cdrParser.convertCdrToEdr(cdr, accessPoints);
+                    String eventKey = mediationsettingService.getKeyEventEl(edrs, cdr);
                     if (!isVirtual) {
                         if (isDuplicateCheckOn) {
                             cdrParser.deduplicate(cdr);
                         }
                         cdrParsingService.createEdrs(edrs, cdr);
                     }
-                    mediationsettingService.applyEdrVersioningRule(edrs, cdr);
+                    mediationsettingService.applyEdrVersioningRule(eventKey, edrs, cdr);
+                    
                     // Convert CDR to EDR and create a reservation
                     if (reserve) {
 
