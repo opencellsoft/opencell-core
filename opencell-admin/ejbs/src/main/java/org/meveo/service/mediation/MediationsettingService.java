@@ -130,7 +130,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
                 edrService.create(edr);
     		String  errorMessage = "Error evaluating %s  [id= %d, \"%s\"] for CDR: [%s] : %s";
     		//for each edr rule check if the first criteria EL is true
-        	Optional<EdrVersioningRule> edrVersionRuleOption = mediationSettings.get(0).getRules().stream()
+    		Optional<EdrVersioningRule> edrVersionRuleOption = mediationSettings.get(0).getRules().stream()
 					.sorted(sortByPriority)
 					.filter(edrVersion -> {
 						String errorMsg = String.format(errorMessage, "criteriaEL", edrVersion.getId(), edrVersion.getCriteriaEL(), cdr, "%s");
@@ -249,6 +249,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
         		
         	}
 		}
+    	
     }
     
     private Object evaluateEdrVersion(Long idEdrVersion, String expression, EDR edr, CDR cdr, String msg, Class<?> result, EDR previousEdr, Iterator<EDR> edrIterate) {
