@@ -3,7 +3,7 @@ package org.meveo.service.billing.impl;
 import static java.lang.Boolean.FALSE;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
-import static java.util.Optional.*;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -57,6 +56,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.billing.InvoiceLineTaxModeEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.MinAmountData;
 import org.meveo.model.billing.MinAmountForAccounts;
 import org.meveo.model.billing.MinAmountsResult;
@@ -644,7 +644,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         } else {
             invoiceLine.setAmountWithoutTax(invoiceLine.getUnitPrice().multiply(resource.getQuantity()));
             invoiceLine.setAmountWithTax(NumberUtils.computeTax(invoiceLine.getAmountWithoutTax(),
-                    invoiceLine.getTaxRate(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()));
+                    invoiceLine.getTaxRate(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()).add(invoiceLine.getAmountWithoutTax()));
         }
 
 		if(resource.getServiceInstanceCode()!=null) {
@@ -728,7 +728,16 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             invoiceLine.setTax(findTaxByTaxRateAndAccountingCode(resource.getTaxRate(), resource.getTaxAccountingCode()));
             invoiceLine.setTaxRate(resource.getTaxRate());
         }
-
+        
+        if(invoiceLine.getInvoice()!=null) {
+            InvoiceType invoiceType = invoiceLine.getInvoice().getInvoiceType();
+            String invoiceTypeCode = invoiceType.getCode();
+            String accountingArticleCode = accountingArticle.getCode();
+            if("SECURITY_DEPOSIT".equals(invoiceTypeCode) && !"ART_SECURITY_DEPOSIT".equals(accountingArticleCode)) {
+                throw new BusinessException("accountingArticleCode should be 'ART_SECURITY_DEPOSIT'");
+            }
+        }
+        
         return invoiceLine;
     }
 

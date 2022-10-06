@@ -8,6 +8,7 @@ import org.meveo.apiv2.securityDeposit.SecurityDepositInput;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.payments.CustomerAccount;
@@ -41,10 +42,14 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
 
     @Override
     protected SecurityDeposit toEntity(SecurityDepositInput resource) {
-        return toEntity(new SecurityDeposit(), resource);
+        return toEntity(new SecurityDeposit(), resource, true);
+    }
+    
+    protected SecurityDeposit toEntity(SecurityDeposit securityDeposit, SecurityDepositInput resource) {
+    	return this.toEntity(securityDeposit, resource, false);
     }
 
-    protected SecurityDeposit toEntity(SecurityDeposit securityDeposit, SecurityDepositInput resource) {
+    private SecurityDeposit toEntity(SecurityDeposit securityDeposit, SecurityDepositInput resource, boolean createMode) {
         securityDeposit.setId(resource.getId());
         securityDeposit.setCode(resource.getCode());
         securityDeposit.setDescription(resource.getDescription());
@@ -54,11 +59,15 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
             template.setCode(resource.getTemplate().getCode());
             securityDeposit.setTemplate(template);
         }
-        if (resource.getCurrency() != null && resource.getCurrency().getId() != null) {
+        if (resource.getCurrency() != null && (resource.getCurrency().getId() != null || resource.getCurrency().getCode() != null)) {
             Currency currency = new Currency();
             currency.setId(resource.getCurrency().getId());
+            currency.setCurrencyCode(resource.getCurrency().getCode());
             securityDeposit.setCurrency(currency);
+        } else {
+        	securityDeposit.setCurrency(null);
         }
+
         if (resource.getCustomerAccount() != null) {
             CustomerAccount customerAccount = new CustomerAccount();
             customerAccount.setId(resource.getCustomerAccount().getId());
@@ -101,7 +110,13 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
         }
         if(resource.getCancelReason() != null) {
             securityDeposit.setCancelReason(resource.getCancelReason());
-        }        
+        }
+        // Set linked invoice only for new SD
+        if(createMode && resource.getLinkedInvoice() != null) {
+        	Invoice invoice = new Invoice();
+        	invoice.setId(resource.getLinkedInvoice().getId());
+        	securityDeposit.setSecurityDepositInvoice(invoice);
+        }
         return securityDeposit;
     }
 

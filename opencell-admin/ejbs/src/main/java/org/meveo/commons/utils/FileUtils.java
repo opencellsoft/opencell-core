@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.zip.CRC32;
@@ -44,6 +45,9 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.meveo.admin.job.FlatFileProcessingJob;
+import org.meveo.admin.storage.StorageFactory;
+import org.meveo.model.report.query.SortOrderEnum;
 import org.meveo.model.shared.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -471,15 +475,16 @@ public final class FileUtils {
                 if (!fileout.exists()) {
                     (new File(fileout.getParent())).mkdirs();
                 }
-                try (OutputStream fos = new FileOutputStream(fileout); BufferedOutputStream bos = new BufferedOutputStream(fos)) {
-                    int b = -1;
-                    while ((b = bis.read()) != -1) {
-                        bos.write(b);
+                try (OutputStream fos = StorageFactory.getOutputStream(fileout)) {
+                    assert fos != null;
+                    try (BufferedOutputStream bos = new BufferedOutputStream(fos)) {
+                        int b = -1;
+                        while ((b = bis.read()) != -1) {
+                            bos.write(b);
+                        }
+                        bos.flush();
+                        fos.flush();
                     }
-                    bos.flush();
-                    fos.flush();
-                } catch (Exception ex) {
-                    throw ex;
                 }
             }
         } catch (Exception e) {
@@ -679,9 +684,10 @@ public final class FileUtils {
      * @param sourceDirectory the source directory
      * @param extensions the extensions
      * @param fileNameFilter the file name key
+     * @param processingOrder the processing order
      * @return the files for parsing
      */
-    public static File[] listFilesByNameFilter(String sourceDirectory, ArrayList<String> extensions, String fileNameFilter) {
+    public static File[] listFilesByNameFilter(String sourceDirectory, ArrayList<String> extensions, String fileNameFilter, String processingOrder) {
 
         File sourceDir = new File(sourceDirectory);
         if (!sourceDir.exists() || !sourceDir.isDirectory()) {
@@ -727,7 +733,9 @@ public final class FileUtils {
         if (files == null || files.length == 0) {
             return null;
         }
-
+        if (FlatFileProcessingJob.ALPHABETIC_FILE_NAME_ORDER.equals(processingOrder)) {
+            Arrays.sort(files, (a, b) -> a.getName().compareTo(b.getName()));
+        }
         return files;
 
     }

@@ -1,10 +1,10 @@
 package org.meveo.api.catalog;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -26,6 +26,8 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.cpq.contract.ContractItem;
+import org.meveo.model.cpq.enums.PriceVersionTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
@@ -151,15 +153,51 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
                 }
         	}
         }
+        checkPricePlanMatrixVersionValidityPerContract(pricePlanMatrixVersionDto);
 
         handleMissingParametersAndValidate(pricePlanMatrixVersionDto);
         return pricePlanMatrixCode;
+    }
+
+    private void checkPricePlanMatrixVersionValidityPerContract(PricePlanMatrixVersionDto pricePlanMatrixVersionDto) {
+        PricePlanMatrixVersion pricePlanMatrixVersion = null;
+        if (pricePlanMatrixVersionDto.getVersion() != null) {
+            pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixVersionDto.getPricePlanMatrixCode(), pricePlanMatrixVersionDto.getVersion());
+        }
+        if (pricePlanMatrixVersion == null) {
+            return;
+        }
+        List<ContractItem> contractItems = pricePlanMatrixVersion.getPricePlanMatrix().getContractItems();
+        if (contractItems != null && !contractItems.isEmpty()){
+            DatePeriod period = pricePlanMatrixVersionDto.getValidity();
+            for(ContractItem contractItem : contractItems){
+                if (period != null && period.getFrom() != null && period.getFrom().before(contractItem.getContract().getBeginDate())){
+                    log.error("Price plan's period should not be before contract's start date");
+                    throw new MeveoApiException("Price plan's period should not be before contract's start date");
+                }
+                if (period != null && period.getTo() != null && period.getTo().after(contractItem.getContract().getEndDate())){
+                    log.error("Price plan's period should not be after contract's end date");
+                    throw new MeveoApiException("Price plan's period should not be after contract's end date");
+                }
+            }
+
+        }
     }
 
     private PricePlanMatrixVersion populatePricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion, PricePlanMatrixVersionDto pricePlanMatrixVersionDto, VersionStatusEnum status, Date statusTime) {
         PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(pricePlanMatrixVersionDto.getPricePlanMatrixCode());
         if (pricePlanMatrix == null) {
             throw new EntityDoesNotExistsException(PricePlanMatrix.class, pricePlanMatrixVersionDto.getPricePlanMatrixCode());
+        }
+
+        if (pricePlanMatrix.getChargeTemplate() != null && PriceVersionTypeEnum.PERCENTAGE.equals(pricePlanMatrixVersionDto.getPriceVersionType())){
+            log.error("The priceVersionType property should not be percentage, The price plan is linked to the charge: "+pricePlanMatrix.getChargeTemplate().getCode());
+            throw new MeveoApiException("The priceVersionType property should not be percentage, The price plan is linked to the charge: "+pricePlanMatrix.getChargeTemplate().getCode());
+        }
+        Boolean isMatrix = pricePlanMatrixVersionDto.getMatrix() != null && pricePlanMatrixVersionDto.getMatrix();
+        if (!isMatrix && PriceVersionTypeEnum.PERCENTAGE.equals(pricePlanMatrixVersionDto.getPriceVersionType())){
+            log.error("The priceVersionType property should not be percentage, The isMatrix property is false");
+            throw new MeveoApiException("The priceVersionType property should not be percentage, The isMatrix property is false");
         }
         pricePlanMatrixVersion.setPricePlanMatrix(pricePlanMatrix);
         if(pricePlanMatrixVersion.getId() == null) {
@@ -188,6 +226,9 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         pricePlanMatrixVersion.setLabel(pricePlanMatrixVersionDto.getLabel());
         pricePlanMatrixVersion.setPriority(pricePlanMatrixVersionDto.getPriority());
         pricePlanMatrix.getVersions().add(pricePlanMatrixVersion);
+        if(!StringUtils.isBlank(pricePlanMatrixVersionDto.getPriceVersionType())) {
+            pricePlanMatrixVersion.setPriceVersionType(pricePlanMatrixVersionDto.getPriceVersionType());
+        }
         return pricePlanMatrixVersion;
     }
 
@@ -234,7 +275,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
              if(from==null){
                  PricePlanMatrixVersion pricePlanMatrixVersionPublished = pricePlanMatrixVersionService.getLastPublishedVersion(pricePlanMatrixCode);
                  if (pricePlanMatrixVersionPublished != null) {
-                     Date endDate=pricePlanMatrixVersion.getValidity().getTo();
+                     Date endDate= Optional.ofNullable(pricePlanMatrixVersion.getValidity()).map(DatePeriod::getTo).orElse(null);
                      if(endDate==null) {
                         throw new MeveoApiException(resourceMessages.getString("error.pricePlanMatrixVersion.overlapPeriod"));
                      }
@@ -252,7 +293,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
                     throw new MeveoApiException(resourceMessages.getString("error.pricePlanMatrixVersion.overlapPeriodWithVersion") + ppmv.getCurrentVersion());
 	        	}
 			 });
-            return new GetPricePlanVersionResponseDto(pricePlanMatrixVersionService.duplicate(pricePlanMatrixVersion, validity));
+            return new GetPricePlanVersionResponseDto(pricePlanMatrixVersionService.duplicate(pricePlanMatrixVersion, pricePlanMatrixVersion.getPricePlanMatrix(),validity, pricePlanMatrixVersion.getPriceVersionType(),false));
         } catch (BusinessException e) {
             throw new MeveoApiException(e);
         }

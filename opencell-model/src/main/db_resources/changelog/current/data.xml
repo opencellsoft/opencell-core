@@ -8127,6 +8127,70 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</insert>
 	</changeSet>
 
+	<changeSet id="#INTRD-9839_19012022" author="TarikRabeh">
+        <update tableName="dwh_report_extract">
+            <column name="sql_query" >
+                <![CDATA[SELECT
+				    TO_CHAR(ao.invoice_date,'MM') AS "Mois",
+				    TO_CHAR(ao.invoice_date,'DD/MM/YYYY') AS "Date facture",
+				    text('HG') AS "Code comptable",
+				    ae.code AS "Client facturé",
+				    text('MAI') AS "Type article",
+				    split_part(bac.code, ',', 6) AS "Famille statistique",
+				    split_part(bac.code, ',', 2) AS "Article",
+				    trim(TO_CHAR(ia.amount_without_tax,'9999990D00')) AS "Montant HT",
+				    trim(TO_CHAR(ia.quantity,'9999990')) AS "Qté facturée",
+				    ao.reference AS "No facture",
+				    ao.description AS "Catégorie facture",
+				    ao.code AS "Type de pièce",
+				    text('VEN') AS "Journal"
+				FROM
+				    ar_customer_account ae
+				INNER JOIN ar_account_operation ao ON ao.customer_account_id = ae.id
+				INNER JOIN billing_invoice i ON i.invoice_number = ao.reference
+				INNER JOIN billing_invoice_agregate ia ON (ia.invoice_id = i.id AND type = 'F')
+				LEFT JOIN billing_accounting_code bac ON bac.id = ia.accounting_code_id
+				WHERE :START_DATE<>:END_DATE
+				AND ao.invoice_date >= to_date('01/' || TO_CHAR(CURRENT_DATE,'MM/YYYY'),'DD/MM/YYYY') + interval '-12 month'
+				AND ao.invoice_date <= to_date('01/' || TO_CHAR(CURRENT_DATE,'MM/YYYY'),'DD/MM/YYYY') + interval '0 month'
+				ORDER BY
+				    ae.code,
+				    ao.code,
+				    split_part(bac.code, ',', 6),
+				    split_part(bac.code, ',', 2)
+			    ]]></column>
+            <where>code='SALES_JOURNAL'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="#INTRD-10047_20220926_default_sd_template" author="a.rouaguebe">
+		<insert tableName="security_deposit_templat">
+			<column name="id" valueSequenceNext="security_deposit_templat_seq" />
+			<column name="template_name" value="DEFAULT_SD_TEMPLATE" />
+			<column name="code" valueComputed="${uuid_function}" />
+			<column name="status" value="ACTIVE" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="version" valueNumeric="0" />
+			<column name="creator" value="applicationInitializer"></column>
+		</insert>
+		<modifySql dbms="postgresql">
+			<append value=" on conflict do nothing"/>
+		</modifySql>
+		<modifySql dbms="mysql">
+			<replace replace="INSERT" with="INSERT IGNORE"/>
+		</modifySql>
+		<modifySql dbms="oracle">
+			<replace replace="INSERT" with="INSERT /*+ ignore_row_on_dupkey_index(security_deposit_templat, uk_security_deposit_template_name) */"/>
+		</modifySql>
+    </changeSet>
+
+	<changeSet id="#INTRD-10247_20220928_default_currency_sd_template" author="a.rouaguebe">
+		<update tableName="security_deposit_templat">
+			<column name="currency_id" valueComputed="(SELECT currency_id from crm_provider where id = 1)"></column>
+			<where>template_name = 'DEFAULT_SD_TEMPLATE'</where>
+		</update>
+	</changeSet>
+
 	<changeSet id="#OUTRD-49_20220913-scripts" author="HamzaBiadi">
 		<!-- SCRIPTS -->
 		<insert tableName="meveo_script_instance">
@@ -10642,7 +10706,7 @@ public class ImportJobNotification extends Script {
 			<column name="params_key" value="category"/>
 		</insert>
 	</changeSet>
-	
+
 	<changeSet id="#OUTRD-66_20221003" author="Ilham-Chafik">
 		<update tableName="meveo_script_instance">
 			<column name="script">
@@ -10785,7 +10849,7 @@ public class PaymentMethodImportScript extends GenericMassImportScript {
 			<where>code='org.meveo.service.script.PaymentMethodImportScript'</where>
 		</update>
 	</changeSet>
-	
+
 	<changeSet id="#OUTRD-69_20221003-scripts" author="Ilham-Chafik">
 		<update tableName="meveo_script_instance">
 			<column name="script">

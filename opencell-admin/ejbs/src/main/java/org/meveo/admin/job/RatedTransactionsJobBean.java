@@ -18,12 +18,9 @@
 
 package org.meveo.admin.job;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -34,7 +31,6 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.StatelessSession;
-import org.hibernate.query.Query;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.jpa.EntityManagerWrapper;
@@ -69,8 +65,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
 
     @Inject
     private WalletOperationAggregationSettingsService walletOperationAggregationSettingsService;
-    
-    private  List<Long> ids = new ArrayList<Long>();
+
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
@@ -79,10 +74,14 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
     private StatelessSession statelessSession;
     private ScrollableResults scrollableResults;
 
+    private Long minId = null;
+    private Long maxId = null;
+    private Long nrOfRecords = null;
+
     @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::convertWoToRTBatch, this::hasMore, this::fillDiscountedRT);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::convertWoToRTBatch, this::hasMore, this::closeResultsetAndBindRTs);
     }
 
     /**
@@ -91,8 +90,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
      * @param jobExecutionResult Job execution result
      * @return An iterator over a list of Wallet operation Ids to convert to Rated transactions
      */
-    @SuppressWarnings("unchecked")
-	private Optional<Iterator<WalletOperation>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
+    private Optional<Iterator<WalletOperation>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
 
         JobInstance jobInstance = jobExecutionResult.getJobInstance();
 
@@ -122,23 +120,17 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
 
         Object[] convertSummary = (Object[]) emWrapper.getEntityManager().createNamedQuery("WalletOperation.getConvertToRTsSummary").getSingleResult();
 
-        Long nrOfRecords = (Long) convertSummary[0];
-        Long maxId = (Long) convertSummary[1];
+        nrOfRecords = (Long) convertSummary[0];
+        maxId = (Long) convertSummary[1];
+        minId = (Long) convertSummary[2];
 
         if (nrOfRecords.intValue() == 0) {
             return Optional.empty();
         }
-        
-
 
         statelessSession = emWrapper.getEntityManager().unwrap(Session.class).getSessionFactory().openStatelessSession();
         scrollableResults = statelessSession.createNamedQuery("WalletOperation.listConvertToRTs").setParameter("maxId", maxId).setReadOnly(true).setCacheable(false).setMaxResults(processNrInJobRun)
-                .setFetchSize(fetchSize).scroll(ScrollMode.FORWARD_ONLY);
-        
-        ids.clear();
-        Query query = statelessSession.createNamedQuery("WalletOperation.listConvertToRTs").setParameter("maxId", maxId).setCacheable(false).setMaxResults(processNrInJobRun)
-                .setFetchSize(fetchSize);
-        ids = ((List<WalletOperation>) query.getResultList()).stream().filter(obj -> Objects.nonNull(obj)).map(obj -> ((WalletOperation) obj).getId()).collect(Collectors.toList());
+            .setFetchSize(fetchSize).scroll(ScrollMode.FORWARD_ONLY);
 
         hasMore = nrOfRecords >= processNrInJobRun;
 
@@ -152,51 +144,30 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
      * @param jobExecutionResult Job execution result
      */
     private void convertWoToRTBatch(List<WalletOperation> walletOperations, JobExecutionResultImpl jobExecutionResult) {
-        Boolean isApplyBillingRules = (Boolean) this.getParamOrCFValue(jobExecutionResult.getJobInstance(), Job.CF_APPLY_BILING_RULES);
+        Boolean isApplyBillingRules = (Boolean) this.getParamOrCFValue(jobExecutionResult.getJobInstance(), Job.CF_APPLY_BILLING_RULES);
 
         List<RatedTransaction> lstRatedTransaction = ratedTransactionService.createRatedTransactionsInBatch(walletOperations);
         if (isApplyBillingRules) {
             ratedTransactionService.applyInvoicingRules(lstRatedTransaction);
         }
     }
-    
-
-    /**
-     * Convert a single Wallet operation to a Rated transaction
-     * 
-     * @param woId Wallet operation id to convert
-     * @param jobExecutionResult Job execution result
-     */
-    private void fillDiscountedRT(JobExecutionResultImpl jobExecutionResult) {
-    	List<WalletOperation> discountWO=walletOperationService.getDiscountWalletOperation(ids);
-    	for(WalletOperation walletOperation:discountWO) {
-    		
-    		log.debug("createRatedTransaction walletOperation={}",walletOperation.getDiscountedWalletOperation());
-        	RatedTransaction discountedRatedTransaction = ratedTransactionService.findByWalletOperationId(walletOperation.getDiscountedWalletOperation());
-        	
-        	if(discountedRatedTransaction!=null) {
-        		log.debug("createRatedTransaction discountedRatedTransaction={}",discountedRatedTransaction.getId());
-        		RatedTransaction discountRatedTransaction = ratedTransactionService.findByWalletOperationId(walletOperation.getId());
-            	
-        		discountRatedTransaction.setDiscountedRatedTransaction(discountedRatedTransaction.getId());
-        		discountRatedTransaction.setDiscountPlan(walletOperation.getDiscountPlan());
-        		discountRatedTransaction.setDiscountPlanItem(walletOperation.getDiscountPlanItem());
-        		discountRatedTransaction.setDiscountPlanType(walletOperation.getDiscountPlanType());
-        		discountRatedTransaction.setDiscountValue(walletOperation.getDiscountValue());
-        		discountRatedTransaction.setSequence(walletOperation.getSequence());
-        		ratedTransactionService.update(discountRatedTransaction);
-        	}
-    		
-    	}
-    }
 
     private boolean hasMore(JobInstance jobInstance) {
         return hasMore;
     }
 
-    private void closeResultset(JobExecutionResultImpl jobExecutionResult) {
+    /**
+     * Close data resultset and bridge discount Rated transactions
+     * 
+     * @param jobExecutionResult
+     */
+    private void closeResultsetAndBindRTs(JobExecutionResultImpl jobExecutionResult) {
         scrollableResults.close();
         statelessSession.close();
+
+        if (nrOfRecords.intValue() > 0) {
+            ratedTransactionService.bridgeDiscountRTs(minId, maxId);
+        }
     }
 
     @Override

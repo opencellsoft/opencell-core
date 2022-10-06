@@ -19,9 +19,11 @@ package org.meveo.service.payments.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -50,8 +52,13 @@ import org.meveo.model.payments.PaymentScheduleInstanceItem;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.Refund;
 import org.meveo.model.payments.WriteOff;
+import org.meveo.model.securityDeposit.SecurityDeposit;
+import org.meveo.model.securityDeposit.SecurityDepositOperationEnum;
+import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
+import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.securityDeposit.impl.SecurityDepositService;
 
 /**
  * MatchingCode service implementation.
@@ -81,6 +88,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
     private PaymentPlanService paymentPlanService;
 
     @Inject
+    private SecurityDepositService securityDepositService;
+
+    @Inject
     @Updated
     private Event<BaseEntity> entityUpdatedEventProducer;
 
@@ -102,6 +112,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         boolean fullMatch = false;
         boolean withWriteOff = false;
         boolean withRefund = false;
+        boolean isToTriggerCollectionPlanLevelsJob = false;
         List<PaymentScheduleInstanceItem> listPaymentScheduleInstanceItem = new ArrayList<PaymentScheduleInstanceItem>();
 
         // For PaymentPlan, new AO OOC PPL_CREATION shall match all debit one, and recreate new AOS DEBIT OCC PPL_INSTALLMENT recording to the number of installment of Plan
@@ -178,7 +189,10 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         log.info("matching - [Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 
                                 invoice.getPaymentStatus() + " - newPaymentStatus : " + InvoicePaymentStatusEnum.PAID + "]");
                         invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.PAID);
-                        invoiceService.triggersCollectionPlanLevelsJob(invoice);
+                        if (InvoicePaymentStatusEnum.PAID == invoice.getPaymentStatus()) {
+                            isToTriggerCollectionPlanLevelsJob = true;
+                        }
+
                     } else if (!fullMatch) {
                         log.info("matching - [Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 
                                 invoice.getPaymentStatus() + " - newPaymentStatus : " + InvoicePaymentStatusEnum.PPAID + "]");
@@ -186,6 +200,8 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                     } 
                     invoice.setPaymentStatusDate(new Date());
                     entityUpdatedEventProducer.fire(invoice);
+
+                    updateMatchedSecurityDeposit(amountToMatch, accountOperation, invoice);
                 }
             }
 
@@ -252,14 +268,20 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         log.info("matching- [Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 
                                 invoice.getPaymentStatus() + " - newPaymentStatus : " + InvoicePaymentStatusEnum.PAID + "]");
                         invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.PAID);
-                        invoiceService.triggersCollectionPlanLevelsJob(invoice);
+                        if (InvoicePaymentStatusEnum.PAID == invoice.getPaymentStatus()) {
+                            isToTriggerCollectionPlanLevelsJob = true;
+                        }
                     } else if(!fullMatch) {
                         log.info("matching- [Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 
                                 invoice.getPaymentStatus() + " - newPaymentStatus : " + InvoicePaymentStatusEnum.PPAID + "]");
                         invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.PPAID);
                     }
                     invoice.setPaymentStatusDate(new Date());
+
+                    // INTRD-9400 - Check and update Matched SecurityDeposit  
+                    updateMatchedSecurityDeposit(amountToMatch, accountOperation, invoice);
                 }
+                
             }
 
             if(0 != amountToMatch.longValue()) {
@@ -274,6 +296,10 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 accountOperation.getMatchingAmounts().add(matchingAmount);
                 matchingCode.getMatchingAmounts().add(matchingAmount);
             }
+        }
+
+        if (isToTriggerCollectionPlanLevelsJob) {
+            invoiceService.triggersCollectionPlanLevelsJob();
         }
 
         matchingCode.setMatchingAmountDebit(amount);
@@ -294,6 +320,43 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 .collect(Collectors.toList()));
 
     }
+
+    /**
+     * Update SecurityDeposit related to a DEB_SD AO
+     * 
+     * @param amountToMatch
+     * @param accountOperation
+     * @param invoice
+     */
+	private void updateMatchedSecurityDeposit(BigDecimal amountToMatch, AccountOperation accountOperation, Invoice invoice) {
+		
+		if(!"DEB_SD".equals(accountOperation.getCode())) {
+			return;
+		}
+
+		Optional<SecurityDeposit> osd = securityDepositService.getSecurityDepositByInvoiceId(invoice.getId());
+		if(osd.isPresent() && osd.map(SecurityDeposit::getTemplate).isPresent()) {
+			SecurityDeposit securityDeposit = osd.get();
+			SecurityDepositTemplate securityDepositTemplate = osd.map(SecurityDeposit::getTemplate).get();
+			// Check that max Amount is not reached
+			if(securityDepositTemplate.getMaxAmount() != null && securityDepositTemplate.getMaxAmount().compareTo(securityDeposit.getCurrentBalance().add(amountToMatch)) < 0) {
+				throw new BusinessException("The current balance + amount to credit must be less than or equal to the maximum amount of the Template");
+			}
+			securityDeposit.setCurrentBalance(Optional.ofNullable(securityDeposit.getCurrentBalance()).orElse(BigDecimal.ZERO).add(amountToMatch));
+			// Update SD.Amount for NEW and HOLD SecurityDeposit
+			if(Arrays.asList(SecurityDepositStatusEnum.NEW, SecurityDepositStatusEnum.HOLD, SecurityDepositStatusEnum.VALIDATED).contains(securityDeposit.getStatus())) {
+				securityDeposit.setAmount(securityDeposit.getAmount().subtract(amountToMatch));
+				if(BigDecimal.ZERO.compareTo(securityDeposit.getAmount()) >= 0) {
+					securityDeposit.setAmount(null);
+					securityDeposit.setStatus(SecurityDepositStatusEnum.LOCKED);
+				} else {
+					securityDeposit.setStatus(SecurityDepositStatusEnum.HOLD);
+				}
+			}
+			// Create SD Transaction
+			securityDepositService.createSecurityDepositTransaction(securityDeposit, amountToMatch, SecurityDepositOperationEnum.CREDIT_SECURITY_DEPOSIT, OperationCategoryEnum.CREDIT, accountOperation);
+		}
+	}
 
     /**
      * @param aoID account operation id

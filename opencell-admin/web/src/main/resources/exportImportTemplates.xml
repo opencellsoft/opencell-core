@@ -208,9 +208,9 @@
         </relatedEntities>
         <groupedTemplates>
             <template ref="Catalog's custom field templates"/>
-        </groupedTemplates>        
-    </template>   
-    
+        </groupedTemplates>
+    </template>
+
     <template name="Catalog's custom field templates" entityToExport="org.meveo.model.crm.CustomFieldTemplate">
         <filters>
             <entry>
@@ -231,14 +231,14 @@
             </entry>
         </filters>
     </template>
-        
+
     <template name="ProductTemplate" entityToExport="org.meveo.model.catalog.ProductTemplate">
         <classesToExportAsFull>
             <java-class>org.meveo.model.catalog.ProductChargeTemplate</java-class>
             <java-class>org.meveo.model.catalog.BusinessProductModel</java-class>
         </classesToExportAsFull>
     </template>
-    
+
     <template name="BundleTemplate" entityToExport="org.meveo.model.catalog.BundleTemplate">
         <classesToExportAsFull>
             <java-class>org.meveo.model.catalog.ProductChargeTemplate</java-class>
@@ -266,7 +266,7 @@
             <template ref="Provider" />
             <template ref="ProviderContact" />
             <template ref="OCCTemplate" />
-            <template ref="ScriptInstance" />     
+            <template ref="ScriptInstance" />
             <template ref="InvoiceType" />
             <template ref="Seller" />
             <template ref="Title" />
@@ -282,7 +282,6 @@
             <template ref="InvoiceCategory" />
             <template ref="BillingCycle" />
             <template ref="SubscriptionTerminationReason" />
-            <template ref="UserHierarchyLevel" />
         </groupedTemplates>
     </template>
 
@@ -298,14 +297,14 @@
             <template ref="Configuration" />
             <template ref="WalletTemplate" />
             <template ref="TriggeredEDRTemplate" />
-            <template ref="CounterTemplate" />  
-            <template ref="OfferTemplateCategory" /> 
-            <template ref="ProductTemplate" /> 
+            <template ref="CounterTemplate" />
+            <template ref="OfferTemplateCategory" />
+            <template ref="ProductTemplate" />
             <template ref="BundleTemplate" />
-            <template ref="ChargeTemplate" />       
-            <template ref="MeveoModule" />           
-            <template ref="ServiceTemplate" />   
-            <template ref="OfferTemplate" />   
+            <template ref="ChargeTemplate" />
+            <template ref="MeveoModule" />
+            <template ref="ServiceTemplate" />
+            <template ref="OfferTemplate" />
             <template ref="PricePlanMatrix" />
             <template ref="DiscountPlan" />
         </groupedTemplates>
@@ -381,12 +380,13 @@
             <java-class>org.meveo.model.billing.ChargeInstance</java-class>
             <java-class>org.meveo.model.billing.WalletInstance</java-class>
         </classesToExportAsFull>
-    </template>  
+    </template>
     <template name="CustomerAccount" entityToExport="org.meveo.model.payments.CustomerAccount">
         <classesToExportAsFull>
             <java-class>org.meveo.model.payments.PaymentMethod</java-class>
         </classesToExportAsFull>
     </template>
+
     <template name="CpqOffer" entityToExport="org.meveo.model.catalog.OfferTemplate">
         <exportAllClassesAsFull>true</exportAllClassesAsFull>
         <classesToExportAsFull>
@@ -404,6 +404,7 @@
             <java-class>org.meveo.model.cpq.OfferTemplateAttribute</java-class>
             <java-class>org.meveo.model.cpq.tags.Tag</java-class>
             <java-class>org.meveo.model.cpq.trade.CommercialRuleHeader</java-class>
+            <java-class>org.meveo.model.catalog.PricePlanMatrix</java-class>
             <java-class>org.meveo.model.catalog.PricePlanMatrixColumn</java-class>
             <java-class>org.meveo.model.catalog.PricePlanMatrixVersion</java-class>
             <java-class>org.meveo.model.catalog.PricePlanMatrixLine</java-class>
@@ -413,37 +414,6 @@
         <relatedEntities>
             <relatedEntity pathToEntityRelatedTo="businessOfferModel">
                 <entityClass>org.meveo.model.catalog.BusinessOfferModel</entityClass>
-            </relatedEntity>
-            <relatedEntity>
-                <entityClass>org.meveo.model.catalog.PricePlanMatrix</entityClass>
-                <selection>
-                    select pp from PricePlanMatrix pp where pp.eventCode in
-                    (
-                    select sctr.chargeTemplate.code from ServiceChargeTemplateRecurring sctr where
-                    sctr.serviceTemplate in
-                    (select ost.serviceTemplate from OfferTemplate o join o.offerServiceTemplates ost where o=:offerTemplate)
-                    ) or
-                    pp.eventCode in (
-                    select scts.chargeTemplate.code from ServiceChargeTemplateSubscription scts where scts.serviceTemplate in
-                    (select ost.serviceTemplate from
-                    OfferTemplate o join o.offerServiceTemplates ost where o=:offerTemplate)
-                    ) or pp.eventCode in (
-                    select sctt.chargeTemplate.code from
-                    ServiceChargeTemplateTermination sctt where sctt.serviceTemplate in
-                    (select ost.serviceTemplate from OfferTemplate o join o.offerServiceTemplates ost where
-                    o=:offerTemplate)
-                    ) or pp.eventCode in (
-                    select sctu.chargeTemplate.code from ServiceChargeTemplateUsage sctu where sctu.serviceTemplate
-                    in
-                    (select ost.serviceTemplate from OfferTemplate o join o.offerServiceTemplates ost where o=:offerTemplate)
-                    )
-                </selection>
-                <parameters>
-                    <entry>
-                        <string>offerTemplate</string>
-                        <string>#{entity}</string>
-                    </entry>
-                </parameters>
             </relatedEntity>
             <relatedEntity>
                 <entityClass>org.meveo.model.cpq.Product</entityClass>
@@ -462,7 +432,7 @@
                 <entityClass>org.meveo.model.catalog.ProductChargeTemplateMapping</entityClass>
                 <selection>
                     select pctm from ProductChargeTemplateMapping pctm
-                    	where pctm.product.id in (select offc.product.id from OfferComponent offc where  offc.offerTemplate.id = :offerTemplateId)
+                    where pctm.product.id in (select offc.product.id from OfferComponent offc where  offc.offerTemplate.id = :offerTemplateId)
                 </selection>
                 <parameters>
                     <entry>
@@ -475,73 +445,8 @@
                 <entityClass>org.meveo.model.catalog.ChargeTemplate</entityClass>
                 <selection>
                     select ct from ChargeTemplate ct
-                    	left join ProductChargeTemplateMapping pctm on pctm.chargeTemplate = ct
-                    	where pctm.product.id in (select offc.product.id from OfferComponent offc where  offc.offerTemplate.id = :offerTemplateId)
-                </selection>
-                <parameters>
-                    <entry>
-                        <string>offerTemplateId</string>
-                        <string>#{entity.id}</string>
-                    </entry>
-                </parameters>
-            </relatedEntity>
-            <relatedEntity>
-                <entityClass>org.meveo.model.catalog.PricePlanMatrix</entityClass>
-                <selection>
-                    select ppm from PricePlanMatrix ppm
-                    	left join ChargeTemplate ct on ct.code = ppm.eventCode
-                    	left join ProductChargeTemplateMapping pctm on pctm.chargeTemplate = ct
-                    	where pctm.product.id in (select offc.product.id from OfferComponent offc where  offc.offerTemplate.id = :offerTemplateId)
-                </selection>
-                <parameters>
-                    <entry>
-                        <string>offerTemplateId</string>
-                        <string>#{entity.id}</string>
-                    </entry>
-                </parameters>
-            </relatedEntity>
-            <relatedEntity>
-                <entityClass>org.meveo.model.catalog.PricePlanMatrixVersion</entityClass>
-                <selection>
-                    select ppmv from PricePlanMatrixVersion ppmv 
-                    	left join ppmv.pricePlanMatrix ppm on ppm = ppmv.pricePlanMatrix
-                    	left join ChargeTemplate ct on ct.code = ppm.eventCode
-                    	left join ProductChargeTemplateMapping pctm on pctm.chargeTemplate = ct 
-                    	where pctm.product.id in (select offc.product.id from OfferComponent offc where  offc.offerTemplate.id = :offerTemplateId)
-                </selection>
-                <parameters>
-                    <entry>
-                        <string>offerTemplateId</string>
-                        <string>#{entity.id}</string>
-                    </entry>
-                </parameters>
-            </relatedEntity>
-            <relatedEntity>
-                <entityClass>org.meveo.model.catalog.PricePlanMatrixColumn</entityClass>
-                <selection>
-                    select ppmc from PricePlanMatrixColumn ppmc 
-                    	left join ppmc.pricePlanMatrixVersion ppmv on ppmv = ppmc.pricePlanMatrixVersion
-                    	left join ppmv.pricePlanMatrix ppm on ppm = ppmv.pricePlanMatrix
-                    	left join ChargeTemplate ct on ct.code = ppm.eventCode
-                    	left join ProductChargeTemplateMapping pctm on pctm.chargeTemplate = ct 
-                    	where pctm.product.id in (select offc.product.id from OfferComponent offc where  offc.offerTemplate.id = :offerTemplateId)
-                </selection>
-                <parameters>
-                    <entry>
-                        <string>offerTemplateId</string>
-                        <string>#{entity.id}</string>
-                    </entry>
-                </parameters>
-            </relatedEntity>
-            <relatedEntity>
-                <entityClass>org.meveo.model.catalog.PricePlanMatrixLine</entityClass>
-                <selection>
-                    select ppml from PricePlanMatrixLine ppml 
-                    	left join ppml.pricePlanMatrixVersion ppmv on ppmv = ppml.pricePlanMatrixVersion
-                    	left join ppmv.pricePlanMatrix ppm on ppm = ppmv.pricePlanMatrix
-                    	left join ChargeTemplate ct on ct.code = ppm.eventCode
-                    	left join ProductChargeTemplateMapping pctm on pctm.chargeTemplate = ct 
-                    	where pctm.product.id in (select offc.product.id from OfferComponent offc where  offc.offerTemplate.id = :offerTemplateId)
+                    left join ProductChargeTemplateMapping pctm on pctm.chargeTemplate = ct
+                    where pctm.product.id in (select offc.product.id from OfferComponent offc where  offc.offerTemplate.id = :offerTemplateId)
                 </selection>
                 <parameters>
                     <entry>
@@ -553,27 +458,27 @@
             <relatedEntity>
                 <entityClass>org.meveo.model.catalog.PricePlanMatrixValue</entityClass>
                 <selection>
-                    select ppmvalue from PricePlanMatrixValue ppmvalue 
-                    	where 
-                    	ppmvalue.pricePlanMatrixColumn.id in 
-                    	(
-	                    	select ppmc.id from PricePlanMatrixColumn ppmc 
-	                    	left join ppmc.pricePlanMatrixVersion ppmv on ppmv = ppmc.pricePlanMatrixVersion
-	                    	left join ppmv.pricePlanMatrix ppm on ppm = ppmv.pricePlanMatrix
-	                    	left join ChargeTemplate ct on ct.code = ppm.eventCode
-	                    	left join ProductChargeTemplateMapping pctm on pctm.chargeTemplate = ct 
-	                    	where pctm.product.id in (select offc.product.id from OfferComponent offc where  offc.offerTemplate.id = :offerTemplateId)
-                    	)
-                    	and
-                    	ppmvalue.pricePlanMatrixLine.id in 
-                    	(
-	                    	select ppml.id from PricePlanMatrixLine ppml 
-	                    	left join ppml.pricePlanMatrixVersion ppmv on ppmv = ppml.pricePlanMatrixVersion
-	                    	left join ppmv.pricePlanMatrix ppm on ppm = ppmv.pricePlanMatrix
-	                    	left join ChargeTemplate ct on ct.code = ppm.eventCode
-	                    	left join ProductChargeTemplateMapping pctm on pctm.chargeTemplate = ct 
-	                    	where pctm.product.id in (select offc.product.id from OfferComponent offc where  offc.offerTemplate.id = :offerTemplateId)
-						)
+                    select ppmvalue from PricePlanMatrixValue ppmvalue
+                    where
+                    ppmvalue.pricePlanMatrixColumn.id in
+                    (
+                    select ppmc.id from PricePlanMatrixColumn ppmc
+                    left join ppmc.pricePlanMatrixVersion ppmv on ppmv = ppmc.pricePlanMatrixVersion
+                    left join ppmv.pricePlanMatrix ppm on ppm = ppmv.pricePlanMatrix
+                    left join ChargeTemplate ct on ct.code = ppm.eventCode
+                    left join ProductChargeTemplateMapping pctm on pctm.chargeTemplate = ct
+                    where pctm.product.id in (select offc.product.id from OfferComponent offc where  offc.offerTemplate.id = :offerTemplateId)
+                    )
+                    and
+                    ppmvalue.pricePlanMatrixLine.id in
+                    (
+                    select ppml.id from PricePlanMatrixLine ppml
+                    left join ppml.pricePlanMatrixVersion ppmv on ppmv = ppml.pricePlanMatrixVersion
+                    left join ppmv.pricePlanMatrix ppm on ppm = ppmv.pricePlanMatrix
+                    left join ChargeTemplate ct on ct.code = ppm.eventCode
+                    left join ProductChargeTemplateMapping pctm on pctm.chargeTemplate = ct
+                    where pctm.product.id in (select offc.product.id from OfferComponent offc where  offc.offerTemplate.id = :offerTemplateId)
+                    )
                 </selection>
                 <parameters>
                     <entry>
@@ -611,11 +516,11 @@
             <relatedEntity>
                 <entityClass>org.meveo.model.catalog.PricePlanMatrixVersion</entityClass>
                 <selection>
-                    select ppmv from PricePlanMatrixVersion ppmv 
-                    	left join ppmv.pricePlanMatrix ppm on ppm = ppmv.pricePlanMatrix
-                    	left join ChargeTemplate ct on ct.code = ppm.eventCode
-                    	left join ProductChargeTemplateMapping pctm on pctm.chargeTemplate = ct 
-                    	where pctm.product.id = :productId
+                    select ppmv from PricePlanMatrixVersion ppmv
+                    left join ppmv.pricePlanMatrix ppm on ppm = ppmv.pricePlanMatrix
+                    left join ChargeTemplate ct on ct.code = ppm.eventCode
+                    left join ProductChargeTemplateMapping pctm on pctm.chargeTemplate = ct
+                    where pctm.product.id = :productId
                 </selection>
                 <parameters>
                     <entry>
@@ -627,12 +532,12 @@
             <relatedEntity>
                 <entityClass>org.meveo.model.catalog.PricePlanMatrixColumn</entityClass>
                 <selection>
-                    select ppmc from PricePlanMatrixColumn ppmc 
-                    	left join ppmc.pricePlanMatrixVersion ppmv on ppmv = ppmc.pricePlanMatrixVersion
-                    	left join ppmv.pricePlanMatrix ppm on ppm = ppmv.pricePlanMatrix
-                    	left join ChargeTemplate ct on ct.code = ppm.eventCode
-                    	left join ProductChargeTemplateMapping pctm on pctm.chargeTemplate = ct 
-                    	where pctm.product.id = :productId
+                    select ppmc from PricePlanMatrixColumn ppmc
+                    left join ppmc.pricePlanMatrixVersion ppmv on ppmv = ppmc.pricePlanMatrixVersion
+                    left join ppmv.pricePlanMatrix ppm on ppm = ppmv.pricePlanMatrix
+                    left join ChargeTemplate ct on ct.code = ppm.eventCode
+                    left join ProductChargeTemplateMapping pctm on pctm.chargeTemplate = ct
+                    where pctm.product.id = :productId
                 </selection>
                 <parameters>
                     <entry>
@@ -644,12 +549,12 @@
             <relatedEntity>
                 <entityClass>org.meveo.model.catalog.PricePlanMatrixLine</entityClass>
                 <selection>
-                    select ppml from PricePlanMatrixLine ppml 
-                    	left join ppml.pricePlanMatrixVersion ppmv on ppmv = ppml.pricePlanMatrixVersion
-                    	left join ppmv.pricePlanMatrix ppm on ppm = ppmv.pricePlanMatrix
-                    	left join ChargeTemplate ct on ct.code = ppm.eventCode
-                    	left join ProductChargeTemplateMapping pctm on pctm.chargeTemplate = ct 
-                    	where pctm.product.id = :productId
+                    select ppml from PricePlanMatrixLine ppml
+                    left join ppml.pricePlanMatrixVersion ppmv on ppmv = ppml.pricePlanMatrixVersion
+                    left join ppmv.pricePlanMatrix ppm on ppm = ppmv.pricePlanMatrix
+                    left join ChargeTemplate ct on ct.code = ppm.eventCode
+                    left join ProductChargeTemplateMapping pctm on pctm.chargeTemplate = ct
+                    where pctm.product.id = :productId
                 </selection>
                 <parameters>
                     <entry>
@@ -661,27 +566,27 @@
             <relatedEntity>
                 <entityClass>org.meveo.model.catalog.PricePlanMatrixValue</entityClass>
                 <selection>
-                    select ppmvalue from PricePlanMatrixValue ppmvalue 
-                    	where 
-                    	ppmvalue.pricePlanMatrixColumn.id in 
-                    	(
-	                    	select ppmc.id from PricePlanMatrixColumn ppmc 
-	                    	left join ppmc.pricePlanMatrixVersion ppmv on ppmv = ppmc.pricePlanMatrixVersion
-	                    	left join ppmv.pricePlanMatrix ppm on ppm = ppmv.pricePlanMatrix
-	                    	left join ChargeTemplate ct on ct.code = ppm.eventCode
-	                    	left join ProductChargeTemplateMapping pctm on pctm.chargeTemplate = ct 
-	                    	where pctm.product.id = :productId
-                    	)
-                    	and
-                    	ppmvalue.pricePlanMatrixLine.id in 
-                    	(
-	                    	select ppml.id from PricePlanMatrixLine ppml 
-	                    	left join ppml.pricePlanMatrixVersion ppmv on ppmv = ppml.pricePlanMatrixVersion
-	                    	left join ppmv.pricePlanMatrix ppm on ppm = ppmv.pricePlanMatrix
-	                    	left join ChargeTemplate ct on ct.code = ppm.eventCode
-	                    	left join ProductChargeTemplateMapping pctm on pctm.chargeTemplate = ct 
-	                    	where pctm.product.id = :productId
-						)
+                    select ppmvalue from PricePlanMatrixValue ppmvalue
+                    where
+                    ppmvalue.pricePlanMatrixColumn.id in
+                    (
+                    select ppmc.id from PricePlanMatrixColumn ppmc
+                    left join ppmc.pricePlanMatrixVersion ppmv on ppmv = ppmc.pricePlanMatrixVersion
+                    left join ppmv.pricePlanMatrix ppm on ppm = ppmv.pricePlanMatrix
+                    left join ChargeTemplate ct on ct.code = ppm.eventCode
+                    left join ProductChargeTemplateMapping pctm on pctm.chargeTemplate = ct
+                    where pctm.product.id = :productId
+                    )
+                    and
+                    ppmvalue.pricePlanMatrixLine.id in
+                    (
+                    select ppml.id from PricePlanMatrixLine ppml
+                    left join ppml.pricePlanMatrixVersion ppmv on ppmv = ppml.pricePlanMatrixVersion
+                    left join ppmv.pricePlanMatrix ppm on ppm = ppmv.pricePlanMatrix
+                    left join ChargeTemplate ct on ct.code = ppm.eventCode
+                    left join ProductChargeTemplateMapping pctm on pctm.chargeTemplate = ct
+                    where pctm.product.id = :productId
+                    )
                 </selection>
                 <parameters>
                     <entry>
@@ -690,7 +595,7 @@
                     </entry>
                 </parameters>
             </relatedEntity>
-        </relatedEntities>        
+        </relatedEntities>
     </template>
 
 </list>

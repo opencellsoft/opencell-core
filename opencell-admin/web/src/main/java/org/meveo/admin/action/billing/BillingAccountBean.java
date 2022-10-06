@@ -48,18 +48,21 @@ import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.ThresholdOptionsEnum;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.PaymentMethodService;
 import org.omnifaces.util.Faces;
@@ -102,6 +105,12 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
     @Inject
     private PaymentMethodService paymentMethodService;
+
+    @Inject
+    private TradingCurrencyService tradingCurrencyService;
+    
+    @Inject
+    private ProviderService providerService;
 
     /** Selected billing account in exceptionelInvoicing page. */
     private ListItemsSelector<BillingAccount> itemSelector;
@@ -176,6 +185,17 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
             entity.setPaymentMethod(paymentMethodService.findById(entity.getPaymentMethod().getId()));
         }
         try {
+        	
+        	if(entity.getTradingCurrency() == null) {
+            	if(entity.getCustomerAccount().getTradingCurrency() != null) {
+            		entity.setTradingCurrency(entity.getCustomerAccount().getTradingCurrency());
+                }else {
+                	if(providerService.getProvider().getCurrency() != null) {
+                        TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(providerService.getProvider().getCurrency().getCurrencyCode());
+                        entity.setTradingCurrency(tradingCurrency);
+                	}
+                }
+            }
 
             if (entity.isTransient()) {
                 billingAccountService.initBillingAccount(entity);

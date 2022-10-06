@@ -106,23 +106,10 @@
           "client": {
             "opencell-web": [
               "apiAdministrateur",
-              "administrateur",
-              "apiSuperAdministrateur",
-              "inboundAccess"
+              "administrateur"
             ],
             "opencell-portal": [
-              "PORTAL_USER",
-              "ADMIN",
-              "QUERY_MANAGER",
-              "MENU_QUOTES",
-              "ADVANCED_USER",
-              "QUERY_USER",
-              "FINANCE_MANAGER",
-              "CFO",
-              "C_CARE",
-              "SALES",
-              "PRODUCT/ADV",
-              "MARKETING_MANAGER"
+              "ADMIN"
             ]
           }
         },
@@ -2132,7 +2119,6 @@
                 "administrateur"
               ],
               "opencell-portal": [
-                "PORTAL_USER",
                 "ADMIN"
               ]
             }
@@ -15346,13 +15332,13 @@
           },
           {
             "id": "c766f724-7362-4b4a-b9bd-cc184709e61b",
-            "name": "Api V1 Configuration - System - update",
+            "name": "Api V1 Configuration - System - all",
             "type": "scope",
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
               "resources": "[\"Api V1 Configuration - System\"]",
-              "scopes": "[\"PUT\"]",
+              "scopes": "[\"POST\",\"PUT\",\"GET\",\"DELETE\"]",
               "applyPolicies": "[\"Role apiSuperAdminManagement\"]"
             }
           },

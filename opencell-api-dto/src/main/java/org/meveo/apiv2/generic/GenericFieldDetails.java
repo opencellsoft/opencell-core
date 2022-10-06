@@ -12,7 +12,7 @@ import java.util.Map;
 @JsonDeserialize(as = ImmutableGenericFieldDetails.class)
 public interface GenericFieldDetails {
 
-    @Nullable
+    
     String getName();
     @Nullable
     String getHeader();
@@ -20,5 +20,9 @@ public interface GenericFieldDetails {
     String getTransformation();
     @Nullable
     @Value.Default default Map<String, String> getMappings(){ return Collections.emptyMap();}
+    @Nullable
+    String getFormulaInputs();
+    @Nullable
+    String getFormula();
 
 }
