@@ -1,5 +1,7 @@
 package org.meveo.service.billing.impl.article;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,6 +13,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -24,8 +27,8 @@ import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleMappingLine;
 import org.meveo.model.article.AttributeMapping;
 import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValue;
@@ -36,13 +39,19 @@ import org.meveo.model.tax.TaxClass;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.cpq.AttributeService;
 
-import static java.util.stream.Collectors.toList;
-
 @Stateless
 public class AccountingArticleService extends BusinessService<AccountingArticle> {
 	
 	@Inject private ArticleMappingLineService articleMappingLineService;
 	@Inject private AttributeService attributeService;
+	
+	 
+    private String multiValuesAttributeSeparator = ";";
+    
+    @PostConstruct
+    private void init() {
+    	multiValuesAttributeSeparator = paramBeanFactory.getInstance().getProperty("attribute.multivalues.separator", ";");
+    }
 
 	public Optional<AccountingArticle> getAccountingArticle(Product product, Map<String, Object> attributes) throws BusinessException {
 		return getAccountingArticle(product, null, attributes);
@@ -170,18 +179,18 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 				case LIST_NUMERIC:
 				case LIST_MULTIPLE_TEXT:
 				case LIST_MULTIPLE_NUMERIC:
-					List<String> source = Arrays.asList(attributeMapping.getAttributeValue().split(";"));
+					List<String> source = Arrays.asList(attributeMapping.getAttributeValue().split(multiValuesAttributeSeparator));
 					List<Object> input;
 					if (value instanceof Collection) {
 						input = (List) value;
 					} else {
-						input = Arrays.asList(value.toString().split(";"));
+						input = Arrays.asList(value.toString().split(multiValuesAttributeSeparator));
 					}
 					return valueCompareCollection(attributeMapping.getOperator(), source, input);
 				case EXPRESSION_LANGUAGE:
 					Object result = attributeService.evaluateElExpressionAttribute(value.toString(), product, null, null, Object.class);
 					if (value instanceof Collection) {
-						List<String> sourceEL = Arrays.asList(attributeMapping.getAttributeValue().split(";"));
+						List<String> sourceEL = Arrays.asList(attributeMapping.getAttributeValue().split(multiValuesAttributeSeparator));
 						List<Object> inputEL = (List) value;
 						return valueCompareCollection(attributeMapping.getOperator(), sourceEL, inputEL);
 					}

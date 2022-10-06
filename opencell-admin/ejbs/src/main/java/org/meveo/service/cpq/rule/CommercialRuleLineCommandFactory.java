@@ -37,7 +37,9 @@ public class CommercialRuleLineCommandFactory {
                 return new LessThanCommand(commercialRuleHeader, selectedAttributes, sourceSelectedAttributes);
             case LESS_THAN_OR_EQUAL:
                 return new LessThanOrEqualCommand(commercialRuleHeader, selectedAttributes, sourceSelectedAttributes); 
-                
+            case CONTAINS:
+                return new ContainLineCommand(commercialRuleHeader, selectedAttributes, sourceSelectedAttributes);    
+               
 
             default: {
                 log.warn("Only Exist operator can be applied on commercial rules of type replacement");
