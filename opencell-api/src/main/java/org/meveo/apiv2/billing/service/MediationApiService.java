@@ -36,6 +36,7 @@ import javax.validation.ConstraintViolationException;
 import javax.ws.rs.BadRequestException;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.MediationJobBean;
@@ -66,13 +67,16 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.billing.impl.CounterInstanceService;
+import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.ReservationService;
 import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.mediation.MediationsettingService;
+import org.meveo.service.medina.impl.CDRAlreadyProcessedException;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CDRService;
+import org.meveo.service.medina.impl.DuplicateException;
 import org.meveo.service.medina.impl.ICdrCsvReader;
 import org.meveo.service.medina.impl.ICdrParser;
 import org.meveo.service.medina.impl.ICdrReader;
@@ -121,6 +125,9 @@ public class MediationApiService {
 
     @Inject
     private MethodCallingUtils methodCallingUtils;
+    
+    @Inject
+    private EdrService edrService;
 
     @Resource
     private TimerService timerService;
@@ -141,6 +148,50 @@ public class MediationApiService {
 
         validate(postData);
         return processCdrList(postData.getCdrs(), postData.getMode(), false, false, false, false, null, false, false, true, false, ipAddress, false);
+    }
+    
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public List<CDR> processCdrList(List<Long> cdrIds) throws CDRAlreadyProcessedException {
+        List<CDR> cdrs = cdrService.findByIds(cdrIds);
+        for (CDR cdr : cdrs) {
+            if (!StringUtils.isBlank(cdr.getRejectReason())) {
+                cdr.setStatus(CDRStatusEnum.ERROR);
+                rejectededCdrEventProducer.fire(cdr);
+                cdrService.createOrUpdateCdr(cdr);
+            } else if (cdr.getStatus() == CDRStatusEnum.PROCESSED) {
+                throw new CDRAlreadyProcessedException("CDR id="+cdr.getId()+" is already processed");
+            } else {
+                try {
+                    List<Access> accessPoints = cdrParsingService.accessPointLookup(cdr);
+                    List<EDR> edrs = cdrParsingService.convertCdrToEdr(cdr, accessPoints);
+    
+                    if (EdrService.isDuplicateCheckOn() && edrService.isDuplicateFound(cdr.getOriginBatch(), cdr.getOriginRecord())) {
+                         throw new DuplicateException(cdr);
+                    }
+                    
+                    for (EDR edr : edrs) {
+                        edrService.create(edr);
+                        cdr.setHeaderEDR(edr);
+                        cdr.setStatus(CDRStatusEnum.PROCESSED);
+                        cdrService.update(cdr);
+                    }
+                    
+                    mediationsettingService.applyEdrVersioningRule(edrs, cdr);
+                    if (!StringUtils.isBlank(cdr.getRejectReason())) {
+                        cdr.setStatus(cdr.getStatus());
+                        rejectededCdrEventProducer.fire(cdr);
+                        cdrService.createOrUpdateCdr(cdr);
+                    }
+                } catch(Exception ex) {
+                    cdr.setStatus(CDRStatusEnum.ERROR);
+                    cdr.setRejectReason(ex.getMessage());
+                    rejectededCdrEventProducer.fire(cdr);
+                    cdrService.createOrUpdateCdr(cdr);
+                }
+            }
+        }
+        return cdrs;
     }
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
