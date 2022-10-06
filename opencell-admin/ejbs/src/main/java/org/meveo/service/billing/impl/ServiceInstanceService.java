@@ -512,8 +512,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
 
         checkServiceAssociatedWithOffer(serviceInstance);
-        
+
+        SubscriptionStatusEnum lastStatus = subscription.getStatus();
         subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
+        auditableFieldService.createFieldHistory(subscription, AuditableFieldNameEnum.STATUS.getFieldName(),
+                AuditChangeTypeEnum.STATUS, lastStatus.toString(), subscription.getStatus().toString());
+
 
         if (serviceInstance.getSubscriptionDate() == null) {
             serviceInstance.setSubscriptionDate(new Date());
@@ -587,10 +591,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             usageChargeInstanceService.activateUsageChargeInstance(usageChargeInstance);
             instanciateCounterPeriods(usageChargeInstance);
         }
-        
 
+
+        InstanceStatusEnum serviceLastStatus = serviceInstance.getStatus();
         serviceInstance.setStatus(InstanceStatusEnum.ACTIVE);
         serviceInstance = update(serviceInstance);
+        auditableFieldService.createFieldHistory(serviceInstance, AuditableFieldNameEnum.STATUS.getFieldName(),
+                AuditChangeTypeEnum.STATUS, serviceLastStatus.toString(), serviceInstance.getStatus().toString());
 
         // execute subscription script
         if (serviceInstance.getServiceTemplate() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
