@@ -194,7 +194,6 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         }
         securityDepositInput.setCode(securityDepositName + "-" + count);
         securityDepositInput.setStatus(SecurityDepositStatusEnum.NEW);
-        //securityDepositInput.setAmount(invoice.getAmountWithoutTax());//HHAN
         
         // Check validity dates
         if (financeSettings.isAutoRefund() && template.isAllowValidityDate() && template.isAllowValidityPeriod()) {
