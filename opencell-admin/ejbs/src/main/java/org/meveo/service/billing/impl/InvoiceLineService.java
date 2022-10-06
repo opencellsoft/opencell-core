@@ -85,6 +85,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.order.Order;
 import org.meveo.model.ordering.OpenOrder;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.settings.OpenOrderSetting;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
@@ -187,7 +188,31 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         createInvoiceLineWithInvoice(entity, invoice, false);
     }
 
-    public void createInvoiceLineWithInvoice(InvoiceLine entity, Invoice invoice, boolean isDuplicated) throws BusinessException {
+    public InvoiceLine createInvoiceLineWithInvoiceAndSD(SecurityDeposit securityDepositInput, Invoice invoice, InvoiceLine invoiceLine) throws BusinessException {
+        AccountingArticle accountingArticle = accountingArticleService.findByCode("ART_SECURITY_DEPOSIT");
+        Boolean isExonerated = securityDepositInput.getBillingAccount().isExoneratedFromtaxes();
+        if (isExonerated == null) {
+            isExonerated = billingAccountService.isExonerated(securityDepositInput.getBillingAccount());
+        }
+        TaxInfo recalculatedTaxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), 
+            securityDepositInput.getBillingAccount().getCustomerAccount().getCustomer().getSeller(), 
+            securityDepositInput.getBillingAccount(), null, new Date(), null, isExonerated, false, invoiceLine.getTax());
+        invoiceLine.setTax(recalculatedTaxInfo.tax);
+        invoiceLine.setTaxRate(recalculatedTaxInfo.tax.getPercent());          
+        invoiceLine.setTaxMode(InvoiceLineTaxModeEnum.ARTICLE);          
+        invoiceLine.setAccountingArticle(accountingArticle);
+        invoiceLine.setDiscountPlan(null);
+        invoiceLine.setAmountTax(securityDepositInput.getAmount());
+        invoiceLine.setAmountWithTax(securityDepositInput.getAmount());
+        invoiceLine.setAmountWithoutTax(securityDepositInput.getAmount());
+        invoiceLine.setUnitPrice(securityDepositInput.getAmount());
+        invoiceLine.setInvoice(invoice);        
+        invoiceLine.setQuantity(new BigDecimal("1"));
+        invoiceLine.setLabel("");
+        return createInvoiceLineWithInvoice(invoiceLine, invoice, false);
+    }
+    
+    public InvoiceLine createInvoiceLineWithInvoice(InvoiceLine entity, Invoice invoice, boolean isDuplicated) throws BusinessException {
         AccountingArticle accountingArticle=entity.getAccountingArticle();
         Date date=new Date();
         if(entity.getValueDate()!=null) {
@@ -212,6 +237,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         if(!isDuplicated && entity.getDiscountPlan() != null) {
         	addDiscountPlanInvoice(entity.getDiscountPlan(), entity, billingAccount,invoice, accountingArticle, seller);
         }
+		
+		return entity;
     }
     
     private void addDiscountPlanInvoice(DiscountPlan discount, InvoiceLine entity, BillingAccount billingAccount, Invoice invoice, AccountingArticle accountingArticle, Seller seller) {

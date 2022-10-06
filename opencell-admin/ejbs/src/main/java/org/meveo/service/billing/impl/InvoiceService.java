@@ -146,6 +146,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.base.NativePersistenceService;
@@ -5086,6 +5087,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return invoice;
     }
 
+	public Invoice createBasicInvoiceFromSD(SecurityDeposit securityDepositInput) {
+        InvoiceType advType = (InvoiceType) tryToFindByEntityClassAndCode(InvoiceType.class, "SECURITY_DEPOSIT");
+        Invoice invoice = initBasicInvoiceInvoice(securityDepositInput.getAmount(), new Date(), null, securityDepositInput.getBillingAccount(), advType, "");
+        invoice.updateAudit(currentUser);
+        getEntityManager().persist(invoice);
+        postCreate(invoice);
+        return invoice;
+    }
+    
     /**
      * Initialize a new Invoice from Basic Invoice
      * @param amountWithTax Amount With Tax

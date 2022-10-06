@@ -429,9 +429,10 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         sd.setTemplate(defaultSDTemplate);        
         String securityDepositName = defaultSDTemplate.getTemplateName();
         sd.setCode(securityDepositName + "-" + count);
-        sd.setAmount(invoice.getAmountWithTax());
+        sd.setAmount(invoice.getAmountWithoutTax());
         sd.setStatus(SecurityDepositStatusEnum.VALIDATED);
         sd.setCustomerAccount(invoice.getBillingAccount().getCustomerAccount());
+        sd.setBillingAccount(invoice.getBillingAccount());
         if (providerService.getProvider().getCode() != null) {
             Provider provider = providerService.findByCode(providerService.getProvider().getCode());
             sd.setCurrency(provider.getCurrency()); 
