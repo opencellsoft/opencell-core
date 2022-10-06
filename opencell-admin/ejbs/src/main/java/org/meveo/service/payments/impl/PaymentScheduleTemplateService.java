@@ -110,7 +110,7 @@ public class PaymentScheduleTemplateService extends BusinessService<PaymentSched
                 if (res instanceof BigDecimal) {
                     result = (BigDecimal) res;
                 } else if (res instanceof Number) {
-                    result = new BigDecimal(((Number) res).doubleValue());
+                    result = BigDecimal.valueOf(((Number) res).doubleValue());
                 } else if (res instanceof String) {
                     result = new BigDecimal(((String) res));
                 } else {
