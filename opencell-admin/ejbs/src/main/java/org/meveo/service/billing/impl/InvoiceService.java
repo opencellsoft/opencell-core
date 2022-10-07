@@ -5089,6 +5089,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 	public Invoice createBasicInvoiceFromSD(SecurityDeposit securityDepositInput) {
         InvoiceType advType = (InvoiceType) tryToFindByEntityClassAndCode(InvoiceType.class, "SECURITY_DEPOSIT");
+        if(advType == null) {
+            throw new EntityDoesNotExistsException(InvoiceType.class, "ART_SECURITY_DEPOSIT");
+        }
         Invoice invoice = initBasicInvoiceInvoice(securityDepositInput.getAmount(), new Date(), null, securityDepositInput.getBillingAccount(), advType, "");
         invoice.updateAudit(currentUser);
         getEntityManager().persist(invoice);

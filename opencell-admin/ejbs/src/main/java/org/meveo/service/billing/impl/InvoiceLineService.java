@@ -35,6 +35,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.admin.job.InvoiceLinesFactory;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
@@ -190,6 +191,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     public InvoiceLine createInvoiceLineWithInvoiceAndSD(SecurityDeposit securityDepositInput, Invoice invoice, InvoiceLine invoiceLine) throws BusinessException {
         AccountingArticle accountingArticle = accountingArticleService.findByCode("ART_SECURITY_DEPOSIT");
+        if(accountingArticle == null) {
+            throw new EntityDoesNotExistsException(AccountingArticle.class, "ART_SECURITY_DEPOSIT");
+        }
         Boolean isExonerated = securityDepositInput.getBillingAccount().isExoneratedFromtaxes();
         if (isExonerated == null) {
             isExonerated = billingAccountService.isExonerated(securityDepositInput.getBillingAccount());
