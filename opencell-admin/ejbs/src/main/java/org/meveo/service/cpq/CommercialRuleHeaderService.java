@@ -92,10 +92,6 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     
     private String multiValuesAttributeSeparator = ";";
     
-    @PostConstruct
-    private void init() {
-    	multiValuesAttributeSeparator = paramBeanFactory.getInstance().getProperty("attribute.multivalues.separator", ";");
-    }
 
     @Override
     public void create(CommercialRuleHeader entity) throws BusinessException {
@@ -311,7 +307,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                                 	 break;
                                  }
                         }   
-                        
+                        multiValuesAttributeSeparator = paramBeanFactory.getInstance().getProperty("attribute.multivalues.separator", ";");
                         if (line.getSourceGroupedAttributes() != null && productContext != null && productContext.getSelectedGroupedAttributes() != null) {
                             LinkedHashMap<String, Object> selectedGroupedAttributes = productContext.getSelectedGroupedAttributes();
                             for (Entry<String, Object> entry : selectedGroupedAttributes.entrySet()) {
@@ -389,13 +385,14 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     				return true;	
     			}break;
     		case CONTAINS:
-    			
+    			multiValuesAttributeSeparator = paramBeanFactory.getInstance().getProperty("attribute.multivalues.separator", ";");
     			List<String> values = convertedValueStr!=null?Arrays.asList(convertedValueStr.split(multiValuesAttributeSeparator)):new ArrayList<String>();
 				if (values.contains(sourceAttributeValue.trim())){
 					return true;
 				}
     			break;
              case NOT_CONTAINS:
+            	 multiValuesAttributeSeparator = paramBeanFactory.getInstance().getProperty("attribute.multivalues.separator", ";"); 
     			List<String> listValues = convertedValueStr!=null?Arrays.asList(convertedValueStr.split(multiValuesAttributeSeparator)):new ArrayList<String>();
 				if (!listValues.contains(sourceAttributeValue.trim())){
 					return true;
@@ -418,6 +415,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     				switch (line.getSourceAttribute().getAttributeType()) {
     				case LIST_MULTIPLE_TEXT:
     				case LIST_MULTIPLE_NUMERIC:
+    					multiValuesAttributeSeparator = paramBeanFactory.getInstance().getProperty("attribute.multivalues.separator", ";");
     					List<String> values = attributeValue!=null?Arrays.asList(String.valueOf(attributeValue).split(multiValuesAttributeSeparator)):new ArrayList<String>();
     					if ((isPreRequisite && !values.contains(line.getSourceAttributeValue()))
     							|| !isPreRequisite && values.contains(line.getSourceAttributeValue())) {
