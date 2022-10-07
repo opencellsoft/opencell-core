@@ -1,6 +1,5 @@
 package org.meveo.model.catalog;
 
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,7 +28,7 @@ import org.meveo.model.cpq.Product;
 
 @SuppressWarnings("serial")
 @Entity
-@ExportIdentifier({ "code" })
+@ExportIdentifier({ "code", "pricePlanMatrixVersion.currentVersion" })
 @Table(name = "cpq_price_plan_matrix_column")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_price_plan_matrix_column_sq"), })
@@ -82,7 +81,7 @@ public class PricePlanMatrixColumn extends BusinessEntity {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "attribute_id")
     private Attribute attribute;
 

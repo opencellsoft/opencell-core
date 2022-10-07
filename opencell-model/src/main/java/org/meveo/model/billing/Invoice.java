@@ -702,6 +702,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Size(max = 255)
 	private String openOrderNumber;
 
+    @Column(name = "invoice_balance", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal invoiceBalance;
+    
+
+    @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
+    private List<AdvanceMapping> advanceMappingList;
+    
+
     public Invoice() {
 	}
 

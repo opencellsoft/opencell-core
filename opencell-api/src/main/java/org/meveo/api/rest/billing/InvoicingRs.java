@@ -437,5 +437,4 @@ public interface InvoicingRs extends IBaseRs {
 	)
     ActionStatus canceledInvoices(@PathParam("billingRunId") Long billingRunId);
 
-
 }

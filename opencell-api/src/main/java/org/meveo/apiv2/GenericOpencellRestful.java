@@ -89,6 +89,7 @@ import org.meveo.apiv2.ordering.resource.product.ProductResourceImpl;
 import org.meveo.apiv2.payments.resource.PaymentPlanResourceImpl;
 import org.meveo.apiv2.price.search.SearchPriceLineByAttributeResourceImpl;
 import org.meveo.apiv2.quote.impl.QuoteOfferResourceImpl;
+import org.meveo.apiv2.rating.impl.WalletOperationResourceImpl;
 import org.meveo.apiv2.refund.RefundResourceImpl;
 import org.meveo.apiv2.report.query.impl.ReportQueryResourceImpl;
 import org.meveo.apiv2.securityDeposit.financeSettings.impl.FinanceSettingsResourceImpl;
@@ -154,7 +155,7 @@ public class GenericOpencellRestful extends Application {
                 OpenOrderTemplateResourceImpl.class, AccountingResourceImpl.class, PaymentPlanResourceImpl.class, MediationSettingResourceImpl.class,
                 OpenOrderQuoteResourceImpl.class, CpqQuoteResourceImpl.class, CommercialOrderResourceImpl.class,
                 SearchPriceLineByAttributeResourceImpl.class, InvoiceLinesResourceImpl.class, CpqContractResourceImpl.class, OpenOrderResourceImpl.class,
-                ContactCategoryResourceImpl.class)
+                ContactCategoryResourceImpl.class, WalletOperationResourceImpl.class)
                 .collect(Collectors.toSet());
         if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
             resources.add(GenericApiLoggingFilter.class);
@@ -186,12 +187,12 @@ public class GenericOpencellRestful extends Application {
                     VERSION_INFO.add(versionInfo);
                 } catch (ParseException | IOException e) {
                     log.warn(e.toString());
-                    log.error("error = {}", e);
+                    log.error("error = {}", e.getMessage(), e);
                 }
             });
         } catch (IOException e) {
             log.warn("There was a problem loading version information");
-            log.error("error = {}", e);
+            log.error("error = {}", e.getMessage(), e);
         }
     }
 

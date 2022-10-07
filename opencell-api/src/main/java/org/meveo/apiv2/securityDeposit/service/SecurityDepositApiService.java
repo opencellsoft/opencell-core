@@ -14,10 +14,19 @@ import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ImportInvoiceException;
+import org.meveo.admin.exception.InvoiceExistException;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.apiv2.ordering.services.ApiService;
+import org.meveo.commons.utils.ListUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.payments.CustomerAccount;
@@ -26,8 +35,10 @@ import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.service.admin.impl.CurrencyService;
+import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositService;
@@ -55,6 +66,15 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
 
     @Inject
     private ServiceInstanceService serviceInstanceService;
+
+    @Inject
+    private InvoiceService invoiceService;
+
+    @Inject
+    private ProviderService providerService;
+
+    @Inject
+    private InvoiceApi invoiceApi;
     
     @Override
     public List<SecurityDeposit> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -97,7 +117,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
     }
 
     @Transactional
-    public Optional<SecurityDeposit> instantiate(SecurityDeposit securityDepositInput) {
+    public Optional<SecurityDeposit> instantiate(SecurityDeposit securityDepositInput) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
 
         // Check FinanceSettings.useSecurityDeposit
         FinanceSettings financeSettings = financeSettingsService.findLastOne();
@@ -169,6 +189,39 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         }
 
         securityDepositService.create(securityDepositInput);
+        
+        if(securityDepositInput.getSecurityDepositInvoice() != null) {
+        	Invoice invoice = invoiceService.findById(securityDepositInput.getSecurityDepositInvoice().getId());
+        	if(invoice == null) {
+        		throw new EntityDoesNotExistsException(Invoice.class, securityDepositInput.getSecurityDepositInvoice().getId());
+        	}
+
+        	if(!"SECURITY_DEPOSIT".equals(invoice.getInvoiceType().getCode())) {
+        		throw new BusinessApiException("Linked invoice should be a SECURITY_DEPOSIT");
+        	}
+
+        	if(invoice.getStatus() != InvoiceStatusEnum.NEW && invoice.getStatus() != InvoiceStatusEnum.DRAFT) {
+        		throw new BusinessApiException("Linked invoice status should be NEW or DRAFT");
+        	}
+
+        	if(!invoice.getBillingAccount().getCustomerAccount().getCustomer().getId().equals(securityDepositInput.getCustomerAccount().getCustomer().getId())) {
+        		throw new BusinessApiException("Linked invoice should have the same Customer as the Security Deposit");
+        	}
+
+        	if(ListUtils.isEmtyCollection(invoice.getInvoiceLines())) {
+        		throw new BusinessApiException("Linked invoice should have invoice lines");
+        	}
+
+        	if(invoice.getAmountWithoutTax() == null) {
+        		throw new BusinessApiException("Linked invoice cannot have amountWithoutTax null");
+        	}
+
+        	securityDepositInput.setSecurityDepositInvoice(invoice);
+        	securityDepositInput.setAmount(invoice.getAmountWithoutTax());
+        	invoiceApi.validateInvoice(invoice.getId(), true, false, false);
+        	
+        	securityDepositService.update(securityDepositInput);
+        }
 
         // Increment template.NumberOfInstantiation after each instantiation
         Integer numberOfInstantiation = template.getNumberOfInstantiation() != null ? template.getNumberOfInstantiation() : 0;
@@ -185,16 +238,20 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         }
 
         if (securityDepositInput.getCurrency() != null) {
-            Currency currency = currencyService.findById(securityDepositInput.getCurrency().getId());
+            Currency currency = currencyService.tryToFindByCodeOrId(securityDepositInput.getCurrency());
             validateNotNull(securityDepositInput.getCurrency(), currency);
             securityDepositInput.setCurrency(currency);
         }
 
+        if(securityDepositInput.getCurrency() == null) {
+        	Currency defaultCurrency = Optional.ofNullable(securityDepositInput.getTemplate())
+        										.map(SecurityDepositTemplate::getCurrency)
+        										.orElse(providerService.getProvider().getCurrency());
+        	securityDepositInput.setCurrency(defaultCurrency);
+        }
+
         if (securityDepositInput.getCustomerAccount() != null) {
             CustomerAccount customerAccount = customerAccountService.tryToFindByCodeOrId(securityDepositInput.getCustomerAccount());
-            if(securityDepositInput.getCurrency() == null) {
-            	securityDepositInput.setCurrency(customerAccount.getTradingCurrency().getCurrency());
-            }
             securityDepositInput.setCustomerAccount(customerAccount);
         }
 

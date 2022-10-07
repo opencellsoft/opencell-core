@@ -11,6 +11,7 @@ import org.meveo.model.securityDeposit.SecurityTemplateStatusEnum;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.crm.impl.ProviderService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -28,10 +29,17 @@ public class SecurityDepositTemplateService extends BusinessService<SecurityDepo
     private FinanceSettingsService financeSettingsService;
 
     @Inject
+    private ProviderService providerService;
+
+    @Inject
     private AuditLogService auditLogService;
 
     @Override public void create(SecurityDepositTemplate entity) throws BusinessException {
-        entity.setCurrency(findCurrencyByIdOrCode(entity));
+        Currency currency = findCurrencyByIdOrCode(entity);
+        if(currency == null) {
+        	currency = providerService.getProvider().getCurrency();
+        }
+		entity.setCurrency(currency);
         checkParameters(entity);
         super.create(entity);
         auditLogService.trackOperation("UPDATE", new Date(), entity, entity.getCode());
@@ -40,7 +48,11 @@ public class SecurityDepositTemplateService extends BusinessService<SecurityDepo
     @Override
     public SecurityDepositTemplate update(SecurityDepositTemplate entity) throws BusinessException {
 
-        entity.setCurrency(findCurrencyByIdOrCode(entity));
+    	Currency currency = findCurrencyByIdOrCode(entity);
+        if(currency == null) {
+        	currency = providerService.getProvider().getCurrency();
+        }
+		entity.setCurrency(currency);
         checkParameters(entity);
         SecurityDepositTemplate updatedSecurityDepositTemplate =  super.update(entity);
         auditLogService.trackOperation("UPDATE", new Date(), updatedSecurityDepositTemplate, updatedSecurityDepositTemplate.getCode());

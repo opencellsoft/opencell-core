@@ -1421,7 +1421,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 	               Set<BillingRunList> billingRunLists = new HashSet<>();
 	               billingRunLists.addAll(billingRun.getBillingRunLists());
-	               quarantineBillingRun.setBillingRunLists(billingRunLists );
+                   quarantineBillingRun.setBillingRunLists(billingRunLists);
+                   List<JobExecutionResultImpl> billingRunJobExecutions = new ArrayList<JobExecutionResultImpl>();
+                   billingRunJobExecutions.addAll(billingRun.getJobExecutions());                   
+                   quarantineBillingRun.setJobExecutions(billingRunJobExecutions);
 	               quarantineBillingRun.setBillableBillingAccounts(new ArrayList<>());
 	               quarantineBillingRun.setBillingAccountNumber(null);
 	               quarantineBillingRun.setRejectedBillingAccounts(null);
