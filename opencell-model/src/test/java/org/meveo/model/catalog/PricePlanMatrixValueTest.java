@@ -1,19 +1,38 @@
 package org.meveo.model.catalog;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class PricePlanMatrixValueTest {
+	 
+	
+	 @Mock
+     private ParamBean paramBean;
+	 
+	 @Before
+	 public void setUp() {
+		 Mockito.when(paramBean.getProperty("attribute.multivalues.separator", ";")).thenReturn(";");
+
+	 }
 
     @Test
     public void string_values_matches_if_equals() {
+    	
         Attribute stringAttribute = createAttribute("string_attribute", AttributeTypeEnum.TEXT);
 
         QuoteAttribute monthlyQuoteAttribute = new QuoteAttribute();
@@ -27,13 +46,13 @@ public class PricePlanMatrixValueTest {
         monthlyValue.setStringValue("Monthly");
 
 
-        //assertThat(monthlyValue.match(Set.of(monthlyQuoteAttribute))).isTrue();
+       assertThat(monthlyValue.match(Set.of(monthlyQuoteAttribute))).isTrue();
 
         QuoteAttribute annuallyQuoteAttribute = new QuoteAttribute();
         annuallyQuoteAttribute.setAttribute(stringAttribute);
         annuallyQuoteAttribute.setStringValue("Annually");
 
-       // assertThat(monthlyValue.match(Set.of(annuallyQuoteAttribute))).isFalse();
+       assertThat(monthlyValue.match(Set.of(annuallyQuoteAttribute))).isFalse();
 
     }
 
@@ -51,7 +70,7 @@ public class PricePlanMatrixValueTest {
         monthlyValue.setPricePlanMatrixColumn(bcColumn);
         monthlyValue.setStringValue("Monthly");
 
-        //assertThat(monthlyValue.match(Set.of(monthlyQuoteAttribute))).isTrue();
+        assertThat(monthlyValue.match(Set.of(monthlyQuoteAttribute))).isTrue();
     }
 
     private PricePlanMatrixColumn createColumn(Attribute attribute, ColumnTypeEnum columnType) {
