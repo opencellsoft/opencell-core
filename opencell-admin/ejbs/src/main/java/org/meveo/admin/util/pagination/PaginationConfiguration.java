@@ -70,6 +70,11 @@ public class PaginationConfiguration implements Serializable {
     private JoinType joinType;
 
     /**
+     * Operator to use when building where statement
+     */
+    private FilterOperatorEnum filterOperator = FilterOperatorEnum.AND;
+
+    /**
      * 
      * @param sortField Field to sort by
      * @param sortOrder Sort order
@@ -105,6 +110,9 @@ public class PaginationConfiguration implements Serializable {
         }
 
         this.ordering = sortValues.size() > 0 ? sortValues.toArray() : null;
+        if (filters != null) {
+        	this.filterOperator = (FilterOperatorEnum) filters.getOrDefault("$operator", FilterOperatorEnum.AND);
+        }
     }
 
     public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, Set<String> groupBy, Set<String> having, JoinType joinType, Object... sortFieldsAndOrder) {
@@ -124,24 +132,9 @@ public class PaginationConfiguration implements Serializable {
      * @param sortFieldsAndOrder Sort field and order repeated multiple times
      */
     public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, Set<String> groupBy, Set<String> having, Object... sortFieldsAndOrder) {
-        this.firstRow = firstRow;
-        this.numberOfRows = numberOfRows;
-        this.filters = filters;
-        this.fullTextFilter = fullTextFilter;
-        this.fetchFields = fetchFields;
+        this(firstRow, numberOfRows, filters, fullTextFilter, fetchFields, sortFieldsAndOrder);
         this.groupBy = groupBy;
         this.having = having;
-
-        List<Object> sortValues = new ArrayList<Object>();
-        for (int i = 0; i < sortFieldsAndOrder.length; i = i + 2) {
-            if (sortFieldsAndOrder[i] == null) {
-                continue;
-            }
-            sortValues.add(sortFieldsAndOrder[i]);
-            sortValues.add(sortFieldsAndOrder[i + 1] == null ? SortOrder.ASCENDING : sortFieldsAndOrder[i + 1]);
-        }
-
-        this.ordering = sortValues.size() > 0 ? sortValues.toArray() : null;
     }
 
     /**
@@ -287,5 +280,13 @@ public class PaginationConfiguration implements Serializable {
 
 	public void setJoinType(JoinType joinType) {
 		this.joinType = joinType;
+	}
+
+	public FilterOperatorEnum getFilterOperator() {
+		return filterOperator;
+	}
+
+	public void setFilterOperator(FilterOperatorEnum filterOperator) {
+		this.filterOperator = filterOperator;
 	}
 }
