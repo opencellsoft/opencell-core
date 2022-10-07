@@ -125,10 +125,10 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
     }
 
     private Resource createResource(BaseEntity baseEntity) {
-        return baseEntity != null ? ImmutableResource.builder().id(baseEntity.getId()).build() : ImmutableResource.builder().build();
+        return baseEntity != null ? ImmutableResource.builder().id(baseEntity.getId()).build() : null;
     }
     
     private Resource createResource(BusinessEntity businessEntity) {
-        return businessEntity != null ? ImmutableResource.builder().id(businessEntity.getId()).code(businessEntity.getCode()).build() : null;
+        return businessEntity != null ? ImmutableResource.builder().id(businessEntity.getId()).code(businessEntity.getCode()).build() : ImmutableResource.builder().build();
     }
 }
