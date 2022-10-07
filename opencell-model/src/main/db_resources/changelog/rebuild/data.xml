@@ -9668,7 +9668,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="#INTRD-8507_20220715" author="ZBariki" />
 	<changeSet id="#INTRD-8700_20220728" author="ZBariki" />
 	<changeSet id="#INTRD-8946_20220804" author="aelmalki" />
-	<changeSet id="#scripts_20220929" author="MohamedChaouki">
+	<changeSet id="#OUTRD-3_20221006-scripts" author="MohamedChaouki">
 		<!-- SCRIPTS -->
 		<insert tableName="meveo_script_instance">
 			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
@@ -9688,6 +9688,7 @@ import org.meveo.service.medina.impl.CDRService;
 import java.io.*;
 import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
@@ -9728,8 +9729,20 @@ public class CdrFlatFileImportScript extends Script {
             while ((line = br.readLine()) != null) {
                 cdr = new CDR();
                 String[] body = line.split(splitBy);
-
-                Date dateEvent = elementExisted(context, header, body, "eventDate") && !body[ArrayUtils.indexOf(header, context.get("eventDate"))].isEmpty() ? StringUtils.isEmpty(body[ArrayUtils.indexOf(header, context.get("eventDate"))]) ? null : dateFormat.parse(body[ArrayUtils.indexOf(header, context.get("eventDate"))]) : null;
+                Date dateEvent = null;
+                Date dateParam1 = null;
+                Date dateParam2 = null;
+                Date dateParam3 = null;
+                Date dateParam4 = null;
+                Date dateParam5 = null;
+                boolean reject = false;
+                try {
+                    dateEvent = elementExisted(context, header, body, "eventDate") && !body[ArrayUtils.indexOf(header, context.get("eventDate"))].isEmpty() ? StringUtils.isEmpty(body[ArrayUtils.indexOf(header, context.get("eventDate"))]) ? null : dateFormat.parse(body[ArrayUtils.indexOf(header, context.get("eventDate"))]) : null;
+                } catch (ParseException e) {
+                    if (!reject)
+                        rejectFile.write(line + " => Incorrect format date for cdr " + context.get("eventDate") + " \n");
+                    reject = true;
+                }
                 String ac = elementExisted(context, header, body, "accessCode") && !body[ArrayUtils.indexOf(header, context.get("accessCode"))].isEmpty() ? body[ArrayUtils.indexOf(header, context.get("accessCode"))] : null;
                 BigDecimal quantity = elementExisted(context, header, body, "quantity") && !body[ArrayUtils.indexOf(header, context.get("quantity"))].isEmpty() ? new BigDecimal(body[ArrayUtils.indexOf(header, context.get("quantity"))]) : null;
                 String parameter1 = elementExisted(context, header, body, "parameter1") && !body[ArrayUtils.indexOf(header, context.get("parameter1"))].isEmpty() ? body[ArrayUtils.indexOf(header, context.get("parameter1"))] : null;
@@ -9741,11 +9754,41 @@ public class CdrFlatFileImportScript extends Script {
                 String parameter7 = elementExisted(context, header, body, "parameter7") && !body[ArrayUtils.indexOf(header, context.get("parameter7"))].isEmpty() ? body[ArrayUtils.indexOf(header, context.get("parameter7"))] : null;
                 String parameter8 = elementExisted(context, header, body, "parameter8") && !body[ArrayUtils.indexOf(header, context.get("parameter8"))].isEmpty() ? body[ArrayUtils.indexOf(header, context.get("parameter8"))] : null;
                 String parameter9 = elementExisted(context, header, body, "parameter9") && !body[ArrayUtils.indexOf(header, context.get("parameter9"))].isEmpty() ? body[ArrayUtils.indexOf(header, context.get("parameter9"))] : null;
-                Date dateParam1 = elementExisted(context, header, body, "dateParam1") && !body[ArrayUtils.indexOf(header, context.get("dateParam1"))].isEmpty() ? StringUtils.isEmpty(body[ArrayUtils.indexOf(header, context.get("dateParam1"))]) ? null : dateFormat.parse(body[ArrayUtils.indexOf(header, context.get("dateParam1"))]) : null;
-                Date dateParam2 = elementExisted(context, header, body, "dateParam2") && !body[ArrayUtils.indexOf(header, context.get("dateParam2"))].isEmpty() ? StringUtils.isEmpty(body[ArrayUtils.indexOf(header, context.get("dateParam2"))]) ? null : dateFormat.parse(body[ArrayUtils.indexOf(header, context.get("dateParam2"))]) : null;
-                Date dateParam3 = elementExisted(context, header, body, "dateParam3") && !body[ArrayUtils.indexOf(header, context.get("dateParam3"))].isEmpty() ? StringUtils.isEmpty(body[ArrayUtils.indexOf(header, context.get("dateParam3"))]) ? null : dateFormat.parse(body[ArrayUtils.indexOf(header, context.get("dateParam3"))]) : null;
-                Date dateParam4 = elementExisted(context, header, body, "dateParam4") && !body[ArrayUtils.indexOf(header, context.get("dateParam4"))].isEmpty() ? StringUtils.isEmpty(body[ArrayUtils.indexOf(header, context.get("dateParam4"))]) ? null : dateFormat.parse(body[ArrayUtils.indexOf(header, context.get("dateParam4"))]) : null;
-                Date dateParam5 = elementExisted(context, header, body, "dateParam5") && !body[ArrayUtils.indexOf(header, context.get("dateParam5"))].isEmpty() ? StringUtils.isEmpty(body[ArrayUtils.indexOf(header, context.get("dateParam5"))]) ? null : dateFormat.parse(body[ArrayUtils.indexOf(header, context.get("dateParam5"))]) : null;
+                try {
+                    dateParam1 = elementExisted(context, header, body, "dateParam1") && !body[ArrayUtils.indexOf(header, context.get("dateParam1"))].isEmpty() ? StringUtils.isEmpty(body[ArrayUtils.indexOf(header, context.get("dateParam1"))]) ? null : dateFormat.parse(body[ArrayUtils.indexOf(header, context.get("dateParam1"))]) : null;
+                } catch (ParseException e) {
+                    if (!reject)
+                        rejectFile.write(line + " => Incorrect format date for cdr " + context.get("dateParam1") + " \n");
+                    reject = true;
+                }
+                try {
+                    dateParam2 = elementExisted(context, header, body, "dateParam2") && !body[ArrayUtils.indexOf(header, context.get("dateParam2"))].isEmpty() ? StringUtils.isEmpty(body[ArrayUtils.indexOf(header, context.get("dateParam2"))]) ? null : dateFormat.parse(body[ArrayUtils.indexOf(header, context.get("dateParam2"))]) : null;
+                } catch (ParseException e) {
+                    if (!reject)
+                        rejectFile.write(line + " => Incorrect format date for cdr " + context.get("dateParam2") + " \n");
+                    reject = true;
+                }
+                try {
+                    dateParam3 = elementExisted(context, header, body, "dateParam3") && !body[ArrayUtils.indexOf(header, context.get("dateParam3"))].isEmpty() ? StringUtils.isEmpty(body[ArrayUtils.indexOf(header, context.get("dateParam3"))]) ? null : dateFormat.parse(body[ArrayUtils.indexOf(header, context.get("dateParam3"))]) : null;
+                } catch (ParseException e) {
+                    if (!reject)
+                        rejectFile.write(line + " => Incorrect format date for cdr " + context.get("dateParam3") + " \n");
+                    reject = true;
+                }
+                try {
+                    dateParam4 = elementExisted(context, header, body, "dateParam4") && !body[ArrayUtils.indexOf(header, context.get("dateParam4"))].isEmpty() ? StringUtils.isEmpty(body[ArrayUtils.indexOf(header, context.get("dateParam4"))]) ? null : dateFormat.parse(body[ArrayUtils.indexOf(header, context.get("dateParam4"))]) : null;
+                } catch (ParseException e) {
+                    if (!reject)
+                        rejectFile.write(line + " => Incorrect format date for cdr " + context.get("dateParam4") + " \n");
+                    reject = true;
+                }
+                try {
+                    dateParam5 = elementExisted(context, header, body, "dateParam5") && !body[ArrayUtils.indexOf(header, context.get("dateParam5"))].isEmpty() ? StringUtils.isEmpty(body[ArrayUtils.indexOf(header, context.get("dateParam5"))]) ? null : dateFormat.parse(body[ArrayUtils.indexOf(header, context.get("dateParam5"))]) : null;
+                } catch (ParseException e) {
+                    if (!reject)
+                        rejectFile.write(line + " => Incorrect format date for cdr " + context.get("dateParam5") + " \n");
+                    reject = true;
+                }
 
                 BigDecimal decimalParam1 = elementExisted(context, header, body, "decimalParam1") && !body[ArrayUtils.indexOf(header, context.get("decimalParam1"))].isEmpty() ? new BigDecimal(body[ArrayUtils.indexOf(header, context.get("decimalParam1"))]) : null;
                 BigDecimal decimalParam2 = elementExisted(context, header, body, "decimalParam2") && !body[ArrayUtils.indexOf(header, context.get("decimalParam2"))].isEmpty() ? new BigDecimal(body[ArrayUtils.indexOf(header, context.get("decimalParam2"))]) : null;
@@ -9775,9 +9818,9 @@ public class CdrFlatFileImportScript extends Script {
                 cdr.setDecimalParam3(decimalParam3);
                 cdr.setDecimalParam4(decimalParam4);
                 cdr.setDecimalParam5(decimalParam5);
-                if (cdr.getEventDate() != null && cdr.getQuantity() != null && cdr.getAccessCode() != null && cdr.getParameter1() != null)
+                if (!reject && cdr.getEventDate() != null && cdr.getQuantity() != null && cdr.getAccessCode() != null && cdr.getParameter1() != null)
                     cdrService.create(cdr);
-                else {
+                else if (!reject) {
                     validateCdr(line, cdr, context, rejectFile);
                 }
 
@@ -9833,6 +9876,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
@@ -9868,7 +9912,22 @@ public class CdrJsonImportScript extends Script {
             while (iterator.hasNext()) {
                 cdr = new CDR();
                 JSONObject jsonObject = (JSONObject) iterator.next();
-                Date dateEvent = StringUtils.isEmpty((String) jsonObject.get(context.get("eventDate"))) ? null : dateFormat.parse((String) jsonObject.get(context.get("eventDate")));
+
+                Date dateEvent = null;
+                Date dateParam1 = null;
+                Date dateParam2 = null;
+                Date dateParam3 = null;
+                Date dateParam4 = null;
+                Date dateParam5 = null;
+                boolean reject = false;
+                try {
+                    dateEvent = StringUtils.isEmpty((String) jsonObject.get(context.get("eventDate"))) ? null : dateFormat.parse((String) jsonObject.get(context.get("eventDate")));
+                } catch (ParseException e) {
+                    if (!reject)
+                        rejectFile.write(jsonObject + " => Incorrect format date for cdr " + context.get("eventDate") + " \n");
+                    reject = true;
+                }
+
                 String ac = (String) jsonObject.get(context.get("accessCode"));
                 BigDecimal quantity = new BigDecimal(String.valueOf(jsonObject.get(context.get("quantity"))));
                 String parameter1 = (String) jsonObject.get(context.get("parameter1"));
@@ -9880,11 +9939,42 @@ public class CdrJsonImportScript extends Script {
                 String parameter7 = (String) jsonObject.get(context.get("parameter7"));
                 String parameter8 = (String) jsonObject.get(context.get("parameter8"));
                 String parameter9 = (String) jsonObject.get(context.get("parameter9"));
-                Date dateParam1 = StringUtils.isEmpty((String) jsonObject.get(context.get("dateParam1"))) ? null : dateFormat.parse((String) jsonObject.get(context.get("dateParam1")));
-                Date dateParam2 = StringUtils.isEmpty((String) jsonObject.get(context.get("dateParam2"))) ? null : dateFormat.parse((String) jsonObject.get(context.get("dateParam2")));
-                Date dateParam3 = StringUtils.isEmpty((String) jsonObject.get(context.get("dateParam3"))) ? null : dateFormat.parse((String) jsonObject.get(context.get("dateParam3")));
-                Date dateParam4 = StringUtils.isEmpty((String) jsonObject.get(context.get("dateParam4"))) ? null : dateFormat.parse((String) jsonObject.get(context.get("dateParam4")));
-                Date dateParam5 = StringUtils.isEmpty((String) jsonObject.get(context.get("dateParam5"))) ? null : dateFormat.parse((String) jsonObject.get(context.get("dateParam5")));
+
+                try {
+                    dateParam1 = StringUtils.isEmpty((String) jsonObject.get(context.get("dateParam1"))) ? null : dateFormat.parse((String) jsonObject.get(context.get("dateParam1")));
+                } catch (ParseException e) {
+                    if (!reject)
+                        rejectFile.write(jsonObject + " => Incorrect format date for cdr " + context.get("dateParam1") + " \n");
+                    reject = true;
+                }
+                try {
+                    dateParam2 = StringUtils.isEmpty((String) jsonObject.get(context.get("dateParam2"))) ? null : dateFormat.parse((String) jsonObject.get(context.get("dateParam2")));
+                } catch (ParseException e) {
+                    if (!reject)
+                        rejectFile.write(jsonObject + " => Incorrect format date for cdr " + context.get("dateParam2") + " \n");
+                    reject = true;
+                }
+                try {
+                    dateParam3 = StringUtils.isEmpty((String) jsonObject.get(context.get("dateParam3"))) ? null : dateFormat.parse((String) jsonObject.get(context.get("dateParam3")));
+                } catch (ParseException e) {
+                    if (!reject)
+                        rejectFile.write(jsonObject + " => Incorrect format date for cdr " + context.get("dateParam3") + " \n");
+                    reject = true;
+                }
+                try {
+                    dateParam4 = StringUtils.isEmpty((String) jsonObject.get(context.get("dateParam4"))) ? null : dateFormat.parse((String) jsonObject.get(context.get("dateParam4")));
+                } catch (ParseException e) {
+                    if (!reject)
+                        rejectFile.write(jsonObject + " => Incorrect format date for cdr " + context.get("dateParam4") + " \n");
+                    reject = true;
+                }
+                try {
+                    dateParam5 = StringUtils.isEmpty((String) jsonObject.get(context.get("dateParam5"))) ? null : dateFormat.parse((String) jsonObject.get(context.get("dateParam5")));
+                } catch (ParseException e) {
+                    if (!reject)
+                        rejectFile.write(jsonObject + " => Incorrect format date for cdr " + context.get("dateParam5") + " \n");
+                    reject = true;
+                }
                 BigDecimal decimalParam1 = StringUtils.isEmpty((String) jsonObject.get(context.get("decimalParam1"))) ? null : new BigDecimal(String.valueOf(jsonObject.get(context.get("decimalParam1"))));
                 BigDecimal decimalParam2 = StringUtils.isEmpty((String) jsonObject.get(context.get("decimalParam2"))) ? null : new BigDecimal(String.valueOf(jsonObject.get(context.get("decimalParam2"))));
                 BigDecimal decimalParam3 = StringUtils.isEmpty((String) jsonObject.get(context.get("decimalParam3"))) ? null : new BigDecimal(String.valueOf(jsonObject.get(context.get("decimalParam3"))));
@@ -9915,9 +10005,9 @@ public class CdrJsonImportScript extends Script {
                 cdr.setDecimalParam4(decimalParam4);
                 cdr.setDecimalParam5(decimalParam5);
                 cdr.setExtraParameter(extraParam);
-                if (cdr.getEventDate() != null && cdr.getQuantity() != null && cdr.getAccessCode() != null && cdr.getParameter1() != null)
+                if (!reject && cdr.getEventDate() != null && cdr.getQuantity() != null && cdr.getAccessCode() != null && cdr.getParameter1() != null)
                     cdrService.create(cdr);
-                else {
+                else if (!reject) {
                     validateCdr(jsonObject, cdr, context, rejectFile);
                 }
             }
@@ -9967,7 +10057,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
-public class CdrCsvImportScript extends GenericMassImportScript {
+public class CdrMassImportScript extends GenericMassImportScript {
 
     private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ssXXX";
     private static final String RECORD_VARIABLE_NAME = "record";
@@ -10027,8 +10117,12 @@ public class CdrCsvImportScript extends GenericMassImportScript {
         String OC_cdr_date = (String) recordMap.get("OC_CDR_DATE");
         String OC_quantity = (String) recordMap.get("OC_QANTITY");
         String OC_ac = (String) recordMap.get("OC_AC");
-
-        Date cdrDate = StringUtils.isEmpty(OC_cdr_date) ? null : dateFormat.parse(OC_cdr_date);
+        Date cdrDate;
+        try {
+            cdrDate = StringUtils.isEmpty(OC_cdr_date) ? null : dateFormat.parse(OC_cdr_date);
+        } catch (ParseException e) {
+            throw new ValidationException("Incorrect format date for cdr OC_CDR_DATE");
+        }
         BigDecimal cdrQuantity = OC_quantity.isEmpty() ? null : new BigDecimal(OC_quantity);
 
 
@@ -10037,12 +10131,36 @@ public class CdrCsvImportScript extends GenericMassImportScript {
         String OC_date_param_3 = (String) recordMap.get("OC_DATE_PARAM_3");
         String OC_date_param_4 = (String) recordMap.get("OC_DATE_PARAM_4");
         String OC_date_param_5 = (String) recordMap.get("OC_DATE_PARAM_5");
-
-        Date cdrDateParam1 = StringUtils.isEmpty(OC_date_param_1) ? null : dateFormat.parse(OC_date_param_1);
-        Date cdrDateParam2 = StringUtils.isEmpty(OC_date_param_2) ? null : dateFormat.parse(OC_date_param_2);
-        Date cdrDateParam3 = StringUtils.isEmpty(OC_date_param_3) ? null : dateFormat.parse(OC_date_param_3);
-        Date cdrDateParam4 = StringUtils.isEmpty(OC_date_param_4) ? null : dateFormat.parse(OC_date_param_4);
-        Date cdrDateParam5 = StringUtils.isEmpty(OC_date_param_5) ? null : dateFormat.parse(OC_date_param_5);
+        Date cdrDateParam1;
+        Date cdrDateParam2;
+        Date cdrDateParam3;
+        Date cdrDateParam4;
+        Date cdrDateParam5;
+        try {
+            cdrDateParam1 = StringUtils.isEmpty(OC_date_param_1) ? null : dateFormat.parse(OC_date_param_1);
+        } catch (ParseException e) {
+            throw new ValidationException("Incorrect format date for cdr OC_DATE_PARAM_1");
+        }
+        try {
+            cdrDateParam2 = StringUtils.isEmpty(OC_date_param_2) ? null : dateFormat.parse(OC_date_param_2);
+        } catch (ParseException e) {
+            throw new ValidationException("Incorrect format date for cdr OC_DATE_PARAM_2");
+        }
+        try {
+            cdrDateParam3 = StringUtils.isEmpty(OC_date_param_3) ? null : dateFormat.parse(OC_date_param_3);
+        } catch (ParseException e) {
+            throw new ValidationException("Incorrect format date for cdr OC_DATE_PARAM_3");
+        }
+        try {
+            cdrDateParam4 = StringUtils.isEmpty(OC_date_param_4) ? null : dateFormat.parse(OC_date_param_4);
+        } catch (ParseException e) {
+            throw new ValidationException("Incorrect format date for cdr OC_DATE_PARAM_4");
+        }
+        try {
+            cdrDateParam5 = StringUtils.isEmpty(OC_date_param_5) ? null : dateFormat.parse(OC_date_param_5);
+        } catch (ParseException e) {
+            throw new ValidationException("Incorrect format date for cdr OC_DATE_PARAM_5");
+        }
 
         String OC_decimal_param_1 = (String) recordMap.get("OC_DECIMAL_PARAM_1");
         String OC_decimal_param_2 = (String) recordMap.get("OC_DECIMAL_PARAM_2");
@@ -10098,7 +10216,7 @@ public class CdrCsvImportScript extends GenericMassImportScript {
 			<column name="src_type" value="JAVA" />
 		</insert>
 	</changeSet>
-	<changeSet id="#jobs_20220930" author="MohamedChaouki">
+	<changeSet id="#OUTRD-3_20221006-jobs" author="MohamedChaouki">
 		<!-- JOBS -->
 		<insert tableName="meveo_job_instance">
 			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
@@ -10120,7 +10238,7 @@ public class CdrCsvImportScript extends GenericMassImportScript {
 			</column>
 		</insert>
 		<insert tableName="meveo_job_instance">
-			<column name="id" valueNumeric="-60" />
+			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
 			<column name="version" valueNumeric="0" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="created" valueDate="now()" />
@@ -10141,7 +10259,7 @@ public class CdrCsvImportScript extends GenericMassImportScript {
 			</column>
 		</insert>
 		<insert tableName="meveo_job_instance">
-			<column name="id" valueNumeric="-61" />
+			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
 			<column name="version" valueNumeric="0" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="created" valueDate="now()" />
@@ -10160,6 +10278,50 @@ public class CdrCsvImportScript extends GenericMassImportScript {
             		{"ScriptingJob_script":[{"entity":{"classname":"org.meveo.model.scripts.ScriptInstance","code":"org.meveo.service.script.CdrJsonImportScript","id":-30}}],"ScriptingJob_TransactionType":[{"string":"REQUIRES_NEW"}]}
             	]]>
 			</column>
+		</insert>
+
+	</changeSet>
+	<changeSet id="#OUTRD-3_20221006-custom-field" author="MohamedChaouki">
+		<insert tableName="crm_custom_field_tmpl">
+			<column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="pathFile"/>
+			<column name="applies_to" value="JobInstance_ScriptingJob"/>
+			<column name="description" value="pathFile"/>
+			<column name="field_type" value="STRING"/>
+			<column name="value_required" value="0"/>
+			<column name="creator" value="applicationInitializer"/>
+			<column name="versionable" value="0"/>
+			<column name="storage_type" value="SINGLE"/>
+			<column name="gui_position" value=""/>
+			<column name="allow_edit" value="1"/>
+			<column name="hide_on_new" value="0"/>
+			<column name="inh_as_def_value" value="0"/>
+			<column name="max_value" valueNumeric="256"/>
+			<column name="cf_protectable" value="0"/>
+		</insert>
+		<insert tableName="crm_custom_field_tmpl">
+			<column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="mapping"/>
+			<column name="applies_to" value="JobInstance_ScriptingJob"/>
+			<column name="description" value="mapping"/>
+			<column name="field_type" value="STRING"/>
+			<column name="value_required" value="0"/>
+			<column name="creator" value="applicationInitializer"/>
+			<column name="versionable" value="0"/>
+			<column name="storage_type" value="MAP"/>
+			<column name="gui_position" value=""/>
+			<column name="allow_edit" value="1"/>
+			<column name="hide_on_new" value="0"/>
+			<column name="inh_as_def_value" value="0"/>
+			<column name="mapkey_type" value="STRING"/>
+			<column name="max_value" valueNumeric="256"/>
+			<column name="cf_protectable" value="0"/>
 		</insert>
 
 	</changeSet>
