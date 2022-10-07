@@ -27,6 +27,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Hidden;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -38,6 +40,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.billing.CdrListDto;
 import org.meveo.api.dto.billing.ChargeCDRResponseDto;
 import org.meveo.api.dto.billing.PrepaidReservationDto;
+import org.meveo.api.dto.billing.ProcessCDRResponseDto;
 import org.meveo.api.dto.response.billing.CdrReservationResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
@@ -135,4 +138,16 @@ public interface MediationRs extends IBaseRs {
     @Operation(summary = " Notify of rejected CDRs  ", description = " Notify of rejected CDRs  ", operationId = "    POST_Mediation_notifyOfRejectedCdrs", responses = {
             @ApiResponse(description = " Request processing status ", content = @Content(schema = @Schema(implementation = ActionStatus.class))) })
     ActionStatus notifyOfRejectedCdrs(CdrListDto cdrList);
+
+    /**
+     * Convert CDRs to EDRs
+     * 
+     * @param cdrIds A list of CDR ids to be processed
+     * @return Request processing status
+     */
+    @POST
+    @Path("/processCdrList")
+    @Operation(summary = " Convert CDRs to EDRs ", description = " Convert CDRs to EDRs ", operationId = "    POST_Mediation_processCdrList", responses = {
+            @ApiResponse(description = " Request processing status ", content = @Content(schema = @Schema(implementation = ActionStatus.class))) })
+    ProcessCDRResponseDto processCdrList(List<Long> cdrIds);
 }

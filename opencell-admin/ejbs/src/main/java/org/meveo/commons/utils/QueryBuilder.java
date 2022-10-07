@@ -44,6 +44,7 @@ import javax.persistence.criteria.JoinType;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.meveo.admin.util.pagination.FilterOperatorEnum;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.jpa.EntityManagerProvider;
@@ -99,6 +100,8 @@ public class QueryBuilder {
     private static Set<String> joinAlias = new TreeSet<String>();
     
     private JoinType joinType = JoinType.INNER ;
+    
+    private FilterOperatorEnum filterOperator = FilterOperatorEnum.AND;
 
 
 	public JoinType getJoinType() {
@@ -230,6 +233,20 @@ public class QueryBuilder {
 		this(getInitQuery(clazz, alias, fetchFields), alias);
     	this.clazz = clazz;
 		this.joinType = joinType != null ? joinType : JoinType.INNER;
+	}
+
+	/**
+	 * Contructor 
+	 * 
+	 * @param clazz Class for which query is created.
+     * @param alias Alias of a main table.
+     * @param fetchFields Additional (list/map type) fields to fetch
+	 * @param joinType
+	 * @param filterOperator Operator to build where statement
+	 */
+	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, JoinType joinType, FilterOperatorEnum filterOperator) {
+		this(clazz, alias, fetchFields, joinType);
+    	this.filterOperator = filterOperator;
 	}
 
     /**
@@ -416,7 +433,7 @@ public class QueryBuilder {
 
         if (hasOneOrMoreCriteria) {
         	if(!sql.startsWith(" or ")) {
-	            if (inOrClause && nbCriteriaInOrClause != 0) {
+	            if (FilterOperatorEnum.OR.equals(this.filterOperator) || (inOrClause && nbCriteriaInOrClause != 0)) {
 	                q.append(" or ");
 	            } else {
 	                q.append(" and ");
@@ -454,7 +471,7 @@ public class QueryBuilder {
         }
 
         if (hasOneOrMoreCriteria) {
-            if (inOrClause && nbCriteriaInOrClause != 0) {
+            if (FilterOperatorEnum.OR.equals(this.filterOperator) || (inOrClause && nbCriteriaInOrClause != 0)) {
                 q.append(" or ");
             } else {
                 q.append(" and ");

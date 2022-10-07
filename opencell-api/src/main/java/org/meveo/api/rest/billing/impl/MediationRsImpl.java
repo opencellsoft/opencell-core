@@ -18,6 +18,8 @@
 
 package org.meveo.api.rest.billing.impl;
 
+import java.util.List;
+
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.context.RequestScoped;
@@ -33,13 +35,14 @@ import org.meveo.api.dto.billing.CdrListDto;
 import org.meveo.api.dto.billing.ChargeCDRDto;
 import org.meveo.api.dto.billing.ChargeCDRResponseDto;
 import org.meveo.api.dto.billing.PrepaidReservationDto;
+import org.meveo.api.dto.billing.ProcessCDRResponseDto;
+import org.meveo.api.dto.billing.ProcessCdrDto;
 import org.meveo.api.dto.response.billing.CdrReservationResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.MediationRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.commons.utils.StringUtils;
-
-import java.util.List;
+import org.meveo.model.rating.CDR;
 
 /**
  * Mediation related API REST implementation
@@ -73,6 +76,23 @@ public class MediationRsImpl extends BaseRs implements MediationRs {
         }
 
         return result;
+    }
+    
+    @Override
+    public ProcessCDRResponseDto processCdrList(List<Long> cdrIds) {
+        try {
+            ProcessCDRResponseDto processCDRResponseDto = new ProcessCDRResponseDto();
+            List<ProcessCdrDto> processCdrList = mediationApi.processCdrList(cdrIds);
+            processCDRResponseDto.setListProcessCdrDto(processCdrList);
+            processCDRResponseDto.setActionStatus(new ActionStatus());
+            return processCDRResponseDto;
+        } catch (Exception e) {
+            ProcessCDRResponseDto result = new ProcessCDRResponseDto();
+            ActionStatus actionStatus = new ActionStatus(ActionStatusEnum.FAIL, null);
+            result.setActionStatus(actionStatus);
+            processException(e, result.getActionStatus());
+            return result;
+        }
     }
 
     @Override
