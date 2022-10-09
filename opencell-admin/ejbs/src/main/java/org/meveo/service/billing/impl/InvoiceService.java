@@ -5818,4 +5818,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         return entity;
     }
+
+	public void validateAndAssignInvoiceNumber(Invoice invoice) {
+		
+		serviceSingleton.validateAndAssignInvoiceNumber(invoice.getId());
+	}
 }

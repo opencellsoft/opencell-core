@@ -29,6 +29,7 @@ import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
@@ -36,23 +37,6 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.*;
 import org.meveo.model.catalog.*;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.ChargeApplicationModeEnum;
-import org.meveo.model.billing.CounterInstance;
-import org.meveo.model.billing.DiscountPlanInstance;
-import org.meveo.model.billing.InstanceStatusEnum;
-import org.meveo.model.billing.OneShotChargeInstance;
-import org.meveo.model.billing.ProductChargeInstance;
-import org.meveo.model.billing.ProductInstance;
-import org.meveo.model.billing.RecurringChargeInstance;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionRenewal;
-import org.meveo.model.billing.SubscriptionTerminationReason;
-import org.meveo.model.billing.UsageChargeInstance;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferProductTemplate;
@@ -72,15 +56,20 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.*;
 import org.meveo.service.catalog.impl.*;
 import org.meveo.service.medina.impl.AccessService;
+import org.omnifaces.util.Faces;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.LazyDataModel;
 
 import javax.faces.component.UIInput;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletResponse;
+
+import java.io.File;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -108,6 +97,13 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     @Inject
     private SubscriptionService subscriptionService;
+
+    @Inject
+    private InvoiceService invoiceService;
+    
+    @Inject
+    private ExternalContext externalContext;
+    
 
     /**
      * UserAccount service. TODO (needed?)
@@ -1349,5 +1345,54 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         }
 
         return true;
+    }
+    /**
+     * indicates if response has already been committed
+     * 
+     * @return
+     */
+    private boolean isCommitted() {
+        HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+        return response.isCommitted();
+    }
+    
+    /**
+     * Generates and returns a proforma invoice
+     * 
+     * @return
+     */
+    public String generateProformaInvoice() {
+        log.info("generateProformaInvoice billingAccountId:" + entity.getId());
+        try {
+            entity = subscriptionService.refreshOrRetrieve(entity);
+
+            GenerateInvoiceRequestDto generateInvoiceRequestDto = new GenerateInvoiceRequestDto();
+            generateInvoiceRequestDto.setGeneratePDF(true);
+            generateInvoiceRequestDto.setInvoicingDate(new Date());
+            generateInvoiceRequestDto.setLastTransactionDate(new Date());
+            List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, null, true, null, false);
+            for (Invoice invoice : invoices) {
+                invoiceService.produceFilesAndAO(false, true, false, invoice.getId(), true, new ArrayList<>());
+                String fileName = invoiceService.getFullPdfFilePath(invoice, false);
+                Faces.sendFile(new File(fileName), true);
+            }
+
+            StringBuilder invoiceNumbers = new StringBuilder();
+            for (Invoice invoice : invoices) {
+                invoiceNumbers.append(invoice.getInvoiceNumber());
+                invoiceNumbers.append(" ");
+                invoiceService.cancelInvoice(invoice);
+            }
+
+            messages.info(new BundleKey("messages", "generateInvoice.successful"), invoiceNumbers.toString());
+         //   if (isCommitted()) {
+           //     return null;
+            //}
+
+        } catch (Exception e) {
+            log.error("Failed to generateInvoice ", e);
+            messages.error(e.getMessage());
+        }
+        return getEditViewName();
     }
 }

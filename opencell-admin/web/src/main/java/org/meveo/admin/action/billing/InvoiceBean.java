@@ -109,6 +109,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     @Inject
     InvoiceAgregateService invoiceAgregateService;
+       
 
     @Inject
     InvoiceTypeService invoiceTypeService;
@@ -910,9 +911,16 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     public void cancelInvoice(Invoice invoice) throws BusinessException {
         invoiceService.cancelInvoiceWithoutDelete(invoice);
     }
+    
+    public void cancelInvoiceAndDelete(Invoice invoice) throws BusinessException {
+        invoiceService.cancelInvoice(invoice);
+    }
 
     public void validateInvoice(Invoice invoice) throws BusinessException {
         invoiceService.validateInvoice(invoice, true);
+    }
+    public void validateInvoiceAndAssignNumber(Invoice invoice) throws BusinessException {
+    	invoiceService.validateAndAssignInvoiceNumber(invoice);
     }
 
     public void rebuildInvoice(Invoice invoice) throws BusinessException {
