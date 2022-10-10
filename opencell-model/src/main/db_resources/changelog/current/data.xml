@@ -8192,6 +8192,10 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 	</changeSet>
 	
 	<changeSet id="#INTRD-10199_20221010" author="TarikFA.">
+		<update tableName="ar_occ_template" >
+			<column name="accounting_code_id" valueNumeric="null"></column>
+			<where>id = -50</where>
+		</update>
 		<delete tableName="billing_accounting_code">
 			<where>code = 'T3P9476'</where>
 		</delete>
