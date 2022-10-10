@@ -19,6 +19,7 @@ import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.billing.Language;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.dunning.DunningLevelChargeTypeEnum;
 import org.meveo.model.dunning.DunningPauseReason;
 import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.payments.CustomerAccount;
@@ -208,6 +209,9 @@ public class ProviderResourceImpl implements ProviderResource {
         }
         
         if (provider.getRgaaMessage() != null) {
+        	if (provider.getRgaaMessage().length() > 500) {
+                throw new InvalidParameterException("Max size is 500 characters");
+            } 
             providerByCode.setRgaaMessage(providerUpdateInfos.getRgaaMessage());
         }
         
