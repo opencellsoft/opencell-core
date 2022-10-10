@@ -181,7 +181,10 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
                 billingAccountService.initBillingAccount(entity);
             }
 
-            entity.setLegalEntityType(entity.getName().getTitle());
+            if(entity.getName() != null){
+                entity.setLegalEntityType(entity.getName().getTitle());
+            }
+
             String outcome = super.saveOrUpdate(killConversation);
 
             if (outcome != null) {
