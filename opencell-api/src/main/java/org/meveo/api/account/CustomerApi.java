@@ -205,6 +205,8 @@ public class CustomerApi extends AccountEntityApi {
         }
 
         customerService.create(customer);
+        customer.getAddressbook().setCustomer(customer);
+        addressBookService.update(customer.getAddressbook());
 
         return customer;
     }
@@ -885,6 +887,9 @@ public class CustomerApi extends AccountEntityApi {
 
     public void anonymizeGdpr(String customerCode) throws BusinessException {
         Customer entity = customerService.findByCode(customerCode);
+        if(entity == null) {
+        	throw new EntityDoesNotExistsException(Customer.class, customerCode);
+        }
         gdprService.anonymize(entity);
     }
 

@@ -28,9 +28,12 @@ import org.meveo.api.dto.response.TradingCurrenciesResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.CurrencyRs;
+import org.meveo.api.rest.admin.impl.FileUploadForm;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.model.crm.Provider;
 import org.meveo.util.ApplicationProvider;
+
+import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -48,11 +51,11 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
     @Inject
     private CurrencyApi currencyApi;
 
-      @Inject
+    @Inject
     @ApplicationProvider
     protected Provider appProvider;
 
-    @Override
+	@Override
     public TradingCurrenciesResponseDto list() {
         TradingCurrenciesResponseDto result = new TradingCurrenciesResponseDto();
         result.setPaging( GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering() );
@@ -202,4 +205,18 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
         }
         return result;
     }
+
+	@Override
+	public ActionStatus importExchangeRate(FileUploadForm exchangeRateForm) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            List<String> message = currencyApi.importExchangeRate(exchangeRateForm);
+            result.setMessage(message.toString());
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+	}
+
 }

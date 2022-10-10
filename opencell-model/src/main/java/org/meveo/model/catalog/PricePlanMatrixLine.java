@@ -23,11 +23,9 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.Auditable;
 import org.meveo.model.AuditableEntity;
-import org.meveo.model.ExportIdentifier;
 import org.meveo.model.cpq.AttributeValue;
 
 @Entity
-@ExportIdentifier({"code"})
 @Table(name = "cpq_price_plan_matrix_line")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_price_plan_matrix_line_sq") })
@@ -48,12 +46,20 @@ public class PricePlanMatrixLine extends AuditableEntity {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "price_el")
-    private String priceEL;
-    
-	@Column(name = "price_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @Column(name = "value_el")
+    private String valueEL;
+
+    @Deprecated
+	@Column(name = "value", precision = NB_PRECISION, scale = NB_DECIMALS, insertable = false, updatable = false)
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     private BigDecimal priceWithoutTax;
+
+    /**
+     * Used as price and discount percentage
+     */
+    @Column(name = "value", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
+    private BigDecimal value;
 
     @OneToMany(mappedBy = "pricePlanMatrixLine", fetch = FetchType.EAGER, cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<PricePlanMatrixValue> pricePlanMatrixValues = new HashSet<>();
@@ -76,7 +82,8 @@ public class PricePlanMatrixLine extends AuditableEntity {
         this.priceWithoutTax = copy.priceWithoutTax;
         this.pricePlanMatrixValues = new HashSet<PricePlanMatrixValue>();
         this.priority = copy.priority;
-        this.priceEL = copy.priceEL;
+        this.valueEL = copy.valueEL;
+        this.value = copy.value;
     }
 
     public PricePlanMatrixVersion getPricePlanMatrixVersion() {
@@ -95,13 +102,14 @@ public class PricePlanMatrixLine extends AuditableEntity {
         this.description = description;
     }
 
-
+    @Deprecated
     public BigDecimal getPriceWithoutTax() {
-		return priceWithoutTax;
+		return value;
 	}
 
+    @Deprecated
 	public void setPriceWithoutTax(BigDecimal priceWithoutTax) {
-		this.priceWithoutTax = priceWithoutTax;
+		this.value = priceWithoutTax;
 	}
 
 	public Set<PricePlanMatrixValue> getPricePlanMatrixValues() {
@@ -125,17 +133,25 @@ public class PricePlanMatrixLine extends AuditableEntity {
                 .allMatch(v -> v.matchWithAllValues());
     }
 
-    public String getPriceEL() {
-        return priceEL;
+    public String getValueEL() {
+        return valueEL;
     }
 
-    public void setPriceEL(String priceEL) {
-        this.priceEL = priceEL;
+    public void setValueEL(String priceEL) {
+        this.valueEL = priceEL;
     }
     
     public boolean match(Set<AttributeValue> attributeValues) {
         return pricePlanMatrixValues.stream()
                 .allMatch(v -> v.match(attributeValues));
+    }
+
+    public BigDecimal getValue() {
+        return value;
+    }
+
+    public void setValue(BigDecimal price) {
+        this.value = price;
     }
 
     @Override
@@ -145,13 +161,13 @@ public class PricePlanMatrixLine extends AuditableEntity {
         PricePlanMatrixLine that = (PricePlanMatrixLine) o;
         return Objects.equals(getPricePlanMatrixVersion(), that.getPricePlanMatrixVersion()) &&
                 Objects.equals(getDescription(), that.getDescription()) &&
-                Objects.equals(getPriceWithoutTax(), that.getPriceWithoutTax()) &&
-                Objects.equals(getPriceEL(), that.getPriceEL()) &&             
+                Objects.equals(getValue(), that.getValue()) &&
+                Objects.equals(getValueEL(), that.getValueEL()) &&
                 Objects.equals(getPriority(), that.getPriority());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getPricePlanMatrixVersion(), getDescription(), getPriceWithoutTax(), getPriority());
+        return Objects.hash(super.hashCode(), getPricePlanMatrixVersion(), getDescription(), getValue(), getPriority());
     }
 }

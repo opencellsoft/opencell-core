@@ -77,6 +77,7 @@ import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
+import org.meveo.model.cpq.enums.PriceVersionTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.audit.logging.AuditLogService;
@@ -193,7 +194,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                 else if (newFrom.compareTo(oldFrom) > 0 && newTo != null && oldTo != null && newTo.compareTo(oldTo) < 0) {
                     pv.setValidity(new DatePeriod(oldFrom, newFrom));
                     update(pv);
-                    PricePlanMatrixVersion duplicatedPv = duplicate(pv, new DatePeriod(newTo, oldTo), VersionStatusEnum.PUBLISHED);
+                    PricePlanMatrixVersion duplicatedPv = duplicate(pv, pricePlanMatrix, new DatePeriod(newTo, oldTo), VersionStatusEnum.PUBLISHED, PriceVersionTypeEnum.FIXED, true);
                     lastCurrentVersion = duplicatedPv.getCurrentVersion();
                 } else {
                     boolean validityHasChanged = false;
@@ -339,31 +340,40 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         return update(pricePlanMatrixVersion, "CHANGE_STATUS");
     }
 
-    public PricePlanMatrixVersion duplicate(PricePlanMatrixVersion pricePlanMatrixVersion, DatePeriod validity) {
-        return duplicate(pricePlanMatrixVersion, validity, null);
+    public PricePlanMatrixVersion duplicate(PricePlanMatrixVersion pricePlanMatrixVersion, PricePlanMatrix pricePlanMatrix, DatePeriod validity, PriceVersionTypeEnum priceVersionType, boolean setNewVersion) {
+        return duplicate(pricePlanMatrixVersion, pricePlanMatrix, validity, null, priceVersionType, setNewVersion);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public PricePlanMatrixVersion duplicate(PricePlanMatrixVersion pricePlanMatrixVersion, DatePeriod validity, VersionStatusEnum status) {
+    public PricePlanMatrixVersion duplicate(PricePlanMatrixVersion pricePlanMatrixVersion, PricePlanMatrix pricePlanMatrix, DatePeriod validity, VersionStatusEnum status, PriceVersionTypeEnum priceVersionType, boolean setNewVersion) {
         var columns = new HashSet<>(pricePlanMatrixVersion.getColumns());
         var lines = new HashSet<>(pricePlanMatrixVersion.getLines());
 
         PricePlanMatrixVersion duplicate = new PricePlanMatrixVersion(pricePlanMatrixVersion);
+        duplicate.setPricePlanMatrix(pricePlanMatrix);
         if (validity != null) {
             duplicate.setValidity(validity);
         }
         if (status != null) {
             duplicate.setStatus(status);
         }
-        duplicate.setCurrentVersion(getLastVersion(pricePlanMatrixVersion.getPricePlanMatrix()) + 1);
+        if(priceVersionType != null){
+            duplicate.setPriceVersionType(priceVersionType);
+        }
+        if(!setNewVersion) {
+            Integer lastVersion = getLastVersion(pricePlanMatrixVersion.getPricePlanMatrix());
+            duplicate.setCurrentVersion(lastVersion + 1);
+        }else {
+            duplicate.setCurrentVersion(1);
+        }
         try {
             this.create(duplicate);
         } catch (BusinessException e) {
             throw new BusinessException(String.format("Can not duplicate the version of product from version product (%d)", duplicate.getId()), e);
         }
-
+        Boolean resetValueToPercent = !pricePlanMatrixVersion.getPriceVersionType().equals(priceVersionType);
         var columnsIds = duplicateColumns(duplicate, columns);
-        var lineIds = duplicateLines(duplicate, lines);
+        var lineIds = duplicateLines(duplicate, lines, resetValueToPercent);
         duplicatePricePlanMatrixValue(columnsIds, lineIds);
 
         return duplicate;
@@ -472,7 +482,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         return ids;
     }
 
-    private Map<Long, PricePlanMatrixLine> duplicateLines(PricePlanMatrixVersion entity, Set<PricePlanMatrixLine> lines) {
+    private Map<Long, PricePlanMatrixLine> duplicateLines(PricePlanMatrixVersion entity, Set<PricePlanMatrixLine> lines, Boolean resetValueToPercent) {
         var ids = new HashMap<Long, PricePlanMatrixLine>();
         if (lines != null && !lines.isEmpty()) {
             lines.forEach(ppml -> {
@@ -482,6 +492,9 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
                 var duplicateLine = new PricePlanMatrixLine(ppml);
                 duplicateLine.setPricePlanMatrixVersion(entity);
+                if(resetValueToPercent){
+                    duplicateLine.setValue(BigDecimal.ZERO);
+                }
 
                 pricePlanMatrixLineService.create(duplicateLine);
 
@@ -599,6 +612,16 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         }
         log.info("No PricePlanMatrixVersions was exported.");
         return null;
+    }
+
+    public List<PricePlanMatrixVersion> findByPricePlan(PricePlanMatrix pricePlan) {
+       return this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.findByPricePlan", entityClass)
+                .setParameter("priceplan", pricePlan).getResultList();
+    }
+
+    public List<PricePlanMatrixVersion> findByPricePlans(List<PricePlanMatrix> pricePlans) {
+        return this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.findByPricePlans", entityClass)
+                .setParameter("priceplans", pricePlans).getResultList();
     }
 
     class CSVPricePlanExportManager {

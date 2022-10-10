@@ -702,6 +702,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Size(max = 255)
 	private String openOrderNumber;
 
+    @Column(name = "invoice_balance", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal invoiceBalance;
+    
+
+    @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
+    private List<AdvanceMapping> advanceMappingList;
+    
+
     public Invoice() {
 	}
 
@@ -785,13 +793,15 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         		this.tradingLanguage = customerAccount.getTradingLanguage() != null ? customerAccount.getTradingLanguage() : this.getSeller().getTradingLanguage();
         	}
         }
-        if(this.id == null) {
-            if(this.lastAppliedRate == null) {
-                this.lastAppliedRate = this.tradingCurrency != null && this.tradingCurrency.getCurrentRate() != null
-                        ? this.tradingCurrency.getCurrentRate() : ONE;
+        if (this.id == null) {
+            if (this.lastAppliedRateDate == null) {
+                this.lastAppliedRateDate = invoiceDate;
             }
-            if(this.lastAppliedRateDate == null) {
-                this.lastAppliedRateDate = new Date();
+            if (this.lastAppliedRate == null) {
+                if (this.tradingCurrency != null) {
+                    ExchangeRate rate = this.tradingCurrency.getExchangeRate(invoiceDate);
+                    this.lastAppliedRate = rate != null ? rate.getExchangeRate() : ONE;
+                }
             }
         }
         BigDecimal appliedRate = getAppliedRate();

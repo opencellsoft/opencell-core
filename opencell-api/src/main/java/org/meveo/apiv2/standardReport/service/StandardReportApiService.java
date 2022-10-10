@@ -20,7 +20,8 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
 
 public class StandardReportApiService implements ApiService<RecordedInvoice> {
 
-    @Inject
+
+	@Inject
     private RecordedInvoiceService recordedInvoiceService;
     
     @Inject
@@ -32,14 +33,11 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
     private List<String> fetchFields = asList("fields");
 
     public List<Object[]> list(Long offset, Long limit, String sort, String orderBy, String customerAccountCode,
-							   Date startDate, Date startDueDate, Date endDueDate, String customerAccountDescription, String invoiceNumber,
-							   Integer stepInDays, Integer numberOfPeriods) {
+							   Date startDate, Date startDueDate, Date endDueDate, String customerAccountDescription,
+							   String sellerDescription, String sellerCode,
+							   String invoiceNumber, Integer stepInDays, Integer numberOfPeriods, String tradingCurrency) {
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(),
                 limit.intValue(), null, null, fetchFields, orderBy, sort);
-        CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
-        if (customerAccountCode != null && customerAccount == null) {
-			throw new NotFoundException("Customer account with code " + customerAccountCode + " doesn't exist");
-		}
         if(invoiceNumber != null && invoiceService.findByInvoiceNumber(invoiceNumber) == null) {
 			throw new NotFoundException("Invoice number : " + invoiceNumber + " does not exits");
 		}
@@ -59,10 +57,11 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
 		}
 
 		try {
-			return recordedInvoiceService.getAgedReceivables(customerAccount, startDate, startDueDate, endDueDate,
-					paginationConfiguration, stepInDays, numberOfPeriods, invoiceNumber, customerAccountDescription);
+			return recordedInvoiceService.getAgedReceivables(customerAccountCode, sellerCode, startDate, startDueDate, endDueDate,
+					paginationConfiguration, stepInDays, numberOfPeriods, invoiceNumber, customerAccountDescription, sellerDescription, tradingCurrency);
 		} catch (Exception exception) {
-			throw new BusinessApiException("Error occurred when listing aged balance report");
+			throw new BusinessApiException("Error occurred when listing aged balance report : " + exception.getMessage());
+
 		}
     }
 
@@ -120,9 +119,6 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
 	 */
 	public Long getCountAgedReceivables(String customerAccountCode) {
 		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
-        if (customerAccountCode != null && customerAccount == null) {
-			throw new NotFoundException("Customer account with code "+customerAccountCode+" doesn't exist");
-		}
         return recordedInvoiceService.getCountAgedReceivables(customerAccount);
 	}
 }

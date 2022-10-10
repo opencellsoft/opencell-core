@@ -95,6 +95,8 @@ public class FlatFileProcessingJob extends Job {
 
     private static final String FLAT_FILE_PROCESSING_JOB_RECORD_VARIABLE_NAME = "FlatFileProcessingJob_recordVariableName";
 
+    private static final String FLAT_FILE_PROCESSING_JOB_PROCESSING_ORDER = "FlatFileProcessingJob_processingOrder";
+
     /** The flat file processing job bean. */
     @Inject
     private FlatFileProcessingJobBean flatFileProcessingJobBean;
@@ -115,6 +117,12 @@ public class FlatFileProcessingJob extends Job {
     /** The Constant ROLLBACK. */
     public static final String ROLLBACK = "ROLLBACK";
 
+    /** Default processing order constant */
+    public static final String DEFAULT_PROCESSING_ORDER = "Default";
+
+    /** Alphabetic file name order constant */
+    public static final String ALPHABETIC_FILE_NAME_ORDER = "Alphabetic";
+
     @SuppressWarnings("unchecked")
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
@@ -131,6 +139,7 @@ public class FlatFileProcessingJob extends Job {
         String filenameVariableName = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ORIGIN_FILENAME);
         String formatTransfo = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FORMAT_TRANSFO);
         String errorAction = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ERROR_ACTION);
+
         Map<String, Object> initContext = new HashMap<String, Object>();
         if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_VARIABLES) != null) {
             initContext = (Map<String, Object>) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_VARIABLES);
@@ -207,7 +216,8 @@ public class FlatFileProcessingJob extends Job {
             log.debug("archiveDir {} creation ok", archiveDir);
         }
 
-        File[] files = FileUtils.listFilesByNameFilter(inputDir, fileExtensions, fileNameFilter);
+        String processingOrder = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_PROCESSING_ORDER);
+        File[] files = FileUtils.listFilesByNameFilter(inputDir, fileExtensions, fileNameFilter, processingOrder);
         if (files == null || files.length == 0) {
             log.debug("There is no file in {} with extension {} to by processed by FlatFileProcessing {} job", inputDir, fileExtensions, result.getJobInstance().getCode());
             return result;
@@ -467,6 +477,21 @@ public class FlatFileProcessingJob extends Job {
         oneFilePerJob.setValueRequired(false);
         oneFilePerJob.setGuiPosition("tab:Configuration:0;fieldGroup:Execution configuration:0;field:2");
         result.put("oneFilePerJob", oneFilePerJob);
+
+        CustomFieldTemplate processingOrder = new CustomFieldTemplate();
+        processingOrder.setCode(FLAT_FILE_PROCESSING_JOB_PROCESSING_ORDER);
+        processingOrder.setAppliesTo(JOB_FLAT_FILE_PROCESSING_JOB);
+        processingOrder.setActive(true);
+        processingOrder.setDefaultValue(FlatFileProcessingJob.DEFAULT_PROCESSING_ORDER);
+        processingOrder.setDescription(resourceMessages.getString("flatFile.processingOrder"));
+        processingOrder.setFieldType(CustomFieldTypeEnum.LIST);
+        processingOrder.setValueRequired(false);
+        Map<String, String> listValuesProcessingOrder = new HashMap<String, String>();
+        listValuesProcessingOrder.put(FlatFileProcessingJob.DEFAULT_PROCESSING_ORDER, resourceMessages.getString("flatFile.defaultProcessingOrder"));
+        listValuesProcessingOrder.put(FlatFileProcessingJob.ALPHABETIC_FILE_NAME_ORDER, resourceMessages.getString("flatFile.alphabeticFileNameOrder"));
+        processingOrder.setListValues(listValuesProcessingOrder);
+        processingOrder.setGuiPosition("tab:Configuration:0;fieldGroup:Execution configuration:0;field:3");
+        result.put(FLAT_FILE_PROCESSING_JOB_PROCESSING_ORDER, processingOrder);
 
         return result;
     }

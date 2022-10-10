@@ -21,6 +21,7 @@ import static org.meveo.service.base.PersistenceService.FROM_JSON_FUNCTION;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -39,15 +40,16 @@ import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.JoinType;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.security.keycloak.CurrentUserProvider;
-import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 /**
  * Query builder class for building JPA queries.
@@ -68,7 +70,7 @@ import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 public class QueryBuilder {
 
     public static final String INNER_JOINS = "{innerJoins}";
-    protected StringBuffer q;
+    protected StringBuilder q;
 
     protected String alias;
 
@@ -95,8 +97,19 @@ public class QueryBuilder {
     public static final String  JOIN_AS = " as ";
     
     private static Set<String> joinAlias = new TreeSet<String>();
+    
+    private JoinType joinType = JoinType.INNER ;
 
-    public Class<?> getEntityClass() {
+
+	public JoinType getJoinType() {
+		return joinType;
+	}
+
+	public void setJoinType(JoinType joinType) {
+		this.joinType = joinType;
+	}
+
+	public Class<?> getEntityClass() {
         return clazz;
     }
 
@@ -121,7 +134,7 @@ public class QueryBuilder {
                 .map(next -> {
                     if(!next.getNextInnerJoins().isEmpty())
                         return format(innerJoin.getAlias(), next, doFetch);
-                    return String.format("inner join %s%s.%s %s", shouldFetch, innerJoin.getAlias(), next.getName(), next.getAlias());
+					return String.format(joinType.toString() + " join %s%s.%s %s", shouldFetch, innerJoin.getAlias(), next.getName(), next.getAlias());
                 })
                 .collect(Collectors.joining(" ", sql, ""));
     }
@@ -186,7 +199,7 @@ public class QueryBuilder {
      * @param alias Alias of a main table
      */
     public QueryBuilder(String sql, String alias) {
-        q = new StringBuffer(sql);
+        q = new StringBuilder(sql);
         this.alias = alias;
         params = new HashMap<String, Object>();
         hasOneOrMoreCriteria = false;
@@ -195,6 +208,7 @@ public class QueryBuilder {
         }
         inOrClause = false;
         nbCriteriaInOrClause = 0;
+        addInnerJoinTag(q);
     }
 
     /**
@@ -203,13 +217,20 @@ public class QueryBuilder {
      * @param qb Query builder.
      */
     public QueryBuilder(QueryBuilder qb) {
-        this.q = new StringBuffer(qb.q);
+        this.q = new StringBuilder(qb.q);
         this.alias = qb.alias;
         this.params = new HashMap<String, Object>(qb.params);
         this.hasOneOrMoreCriteria = qb.hasOneOrMoreCriteria;
         this.inOrClause = qb.inOrClause;
         this.nbCriteriaInOrClause = qb.nbCriteriaInOrClause;
     }
+    
+    
+	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, JoinType joinType) {
+		this(getInitQuery(clazz, alias, fetchFields), alias);
+    	this.clazz = clazz;
+		this.joinType = joinType != null ? joinType : JoinType.INNER;
+	}
 
     /**
      * Constructor.
@@ -308,7 +329,7 @@ public class QueryBuilder {
 	/**
      * @return string buffer for SQL
      */
-    public StringBuffer getSqlStringBuffer() {
+    public StringBuilder getSqlStringBuffer() {
         return q;
     }
 
@@ -328,6 +349,9 @@ public class QueryBuilder {
     public QueryBuilder addPaginationConfiguration(PaginationConfiguration paginationConfiguration, String sortAlias) {
         this.paginationSortAlias = sortAlias;
         this.paginationConfiguration = paginationConfiguration;
+        if(paginationConfiguration.getJoinType() != null) {
+        	this.joinType=paginationConfiguration.getJoinType();
+        }
         return this;
     }
 
@@ -391,11 +415,13 @@ public class QueryBuilder {
         }
 
         if (hasOneOrMoreCriteria) {
-            if (inOrClause && nbCriteriaInOrClause != 0) {
-                q.append(" or ");
-            } else {
-                q.append(" and ");
-            }
+        	if(!sql.startsWith(" or ")) {
+	            if (inOrClause && nbCriteriaInOrClause != 0) {
+	                q.append(" or ");
+	            } else {
+	                q.append(" and ");
+	            }
+        	}
         } else {
             q.append(" where ");
         }
@@ -496,7 +522,7 @@ public class QueryBuilder {
             return this;
         }
 
-        StringBuffer sql = new StringBuffer();
+        StringBuilder sql = new StringBuilder();
         String param = convertFieldToParam(field);
         Object nvalue = value;
 
@@ -676,7 +702,7 @@ public class QueryBuilder {
             v = "%" + v;
         }
 
-        StringBuffer sql = new StringBuffer();
+        StringBuilder sql = new StringBuilder();
 
         if (caseInsensitive && (value instanceof String)) {
             sql.append("lower(" + field + ")");
@@ -1249,7 +1275,7 @@ public class QueryBuilder {
         return result;
     }
 
-    public void setQ(StringBuffer q) {
+    public void setQ(StringBuilder q) {
         this.q = q;
     }
 
@@ -1395,6 +1421,34 @@ public class QueryBuilder {
     public List find(EntityManager em) {
         Query query = getQuery(em);
         return query.getResultList();
+    }
+
+    public String getQueryAsString() {
+        applyOrdering(paginationSortAlias);
+
+        String query = toStringQuery();
+
+        for (Map.Entry<String, Object> e : params.entrySet()) {
+            query = query.replaceAll(":" + e.getKey(), paramToString(e.getValue()));
+        }
+        return query;
+    }
+
+    public static String paramToString(Object param) {
+        if (param instanceof Collection) {
+            StringBuilder params = new StringBuilder();
+            ((Collection<?>) param).forEach(v -> {
+                params.append("'").append(v).append("',");
+            });
+            params.setLength(params.length() - 1);
+            return params.toString();
+        } else if (param instanceof String || param instanceof Enum) {
+            return "'" + param + "'";
+        } else if (param instanceof Date) {
+            return "'" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(param) + "'";
+        } else {
+            return param.toString();
+        }
     }
 
     /**

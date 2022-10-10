@@ -17,6 +17,7 @@
  */
 package org.meveo.model.communication.contact;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,6 +30,8 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -44,6 +47,7 @@ import org.meveo.model.communication.CommunicationPolicy;
 import org.meveo.model.communication.Message;
 import org.meveo.model.crm.ProviderContact;
 import org.meveo.model.intcrm.AddressBook;
+import org.meveo.model.intcrm.AddressBookContact;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
@@ -241,6 +245,7 @@ public class Contact extends BusinessCFEntity implements ISearchable {
     /**
      * Address book
      */
+    @Deprecated
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "address_book_id")
     private AddressBook addressBook;
@@ -261,6 +266,13 @@ public class Contact extends BusinessCFEntity implements ISearchable {
     @Column(name = "comment", length = 2000)
     @Size(max = 2000)
     private String comment;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "contact", cascade = CascadeType.ALL)
+    private List<AddressBookContact> addressBookContacts;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "com_contact_category_contact", joinColumns = @JoinColumn(name = "contact_id"), inverseJoinColumns = @JoinColumn(name = "contact_category_id"))
+    private List<ContactCategory> contactCategories = new ArrayList<>(); 
 
     public String getAssistantName() {
         return assistantName;
@@ -528,4 +540,21 @@ public class Contact extends BusinessCFEntity implements ISearchable {
     public void setComment(String comment) {
         this.comment = comment;
     }
+
+    public List<AddressBookContact> getAddressBookContacts() {
+        return addressBookContacts;
+    }
+
+    public void setAddressBookContacts(List<AddressBookContact> addressBookContacts) {
+        this.addressBookContacts = addressBookContacts;
+    }
+
+	public List<ContactCategory> getContactCategories() {
+		return contactCategories;
+	}
+
+	public void setContactCategories(List<ContactCategory> contactCategories) {
+		this.contactCategories = contactCategories;
+	}
+
 }

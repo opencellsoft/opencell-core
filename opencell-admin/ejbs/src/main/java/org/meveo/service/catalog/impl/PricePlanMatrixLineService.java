@@ -1,5 +1,6 @@
 package org.meveo.service.catalog.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -78,13 +79,29 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
             log.warn("The status of the price plan matrix code={} and current version={}, is PUBLISHED, it can not be updated", pricePlanMatrixVersion.getPricePlanMatrix().getCode(),pricePlanMatrixVersion.getCurrentVersion());
             throw new MeveoApiException(String.format("status of the price plan matrix version id=%d is %s, it can not be updated",pricePlanMatrixVersion.getId(), pricePlanMatrixVersion.getStatus().toString()));
         }
+        if(dtoData.getPriceWithoutTax() != null && dtoData.getValue() != null){
+            log.warn("Property priceWithoutTax is deprecated, please use only property value");
+            throw new MeveoApiException("Property priceWithoutTax is deprecated, please use only property value");
+        }
+        if(dtoData.getPriceWithoutTax() == null && dtoData.getValue() == null){
+            log.warn("Property value in lines should not be null");
+            throw new MeveoApiException("Property value in lines should not be null");
+        }
+
+        if(dtoData.getPriceEL() != null && dtoData.getValueEL() != null){
+            log.warn("Property “priceEl” is deprecated, please use only property “valueEl");
+            throw new MeveoApiException("Property “priceEl” is deprecated, please use only property “valueEl”");
+        }
+
         PricePlanMatrixLine pricePlanMatrixLine = new PricePlanMatrixLine();
-        pricePlanMatrixLine.setPriceWithoutTax(dtoData.getPriceWithoutTax());
         pricePlanMatrixLine.setPricePlanMatrixVersion(pricePlanMatrixVersion);
-        pricePlanMatrixLine.setPriceEL(dtoData.getPriceEL());
+        pricePlanMatrixLine.setValueEL(dtoData.getValueEL() != null ? dtoData.getValueEL() : dtoData.getPriceEL());
         pricePlanMatrixLine.setPriority(dtoData.getPriority());
         pricePlanMatrixLine.setDescription(dtoData.getDescription());
         pricePlanMatrixLine.setPricePlanMatrixValues(getPricePlanMatrixValues(dtoData, pricePlanMatrixLine));
+        BigDecimal value = dtoData.getValue() != null? dtoData.getValue():dtoData.getPriceWithoutTax();
+        pricePlanMatrixLine.setValue(value);
+
         super.create(pricePlanMatrixLine);
         return new PricePlanMatrixLineDto(pricePlanMatrixLine);
     }
@@ -106,6 +123,14 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
             log.warn("The status of the price plan matrix code={} and current version={}, is PUBLISHED, it can not be updated", pricePlanMatrixVersion.getPricePlanMatrix().getCode(),pricePlanMatrixVersion.getCurrentVersion());
             throw new MeveoApiException(String.format("status of the price plan matrix version id=%d is %s, it can not be updated",pricePlanMatrixVersion.getId(), pricePlanMatrixVersion.getStatus().toString()));
         }
+        if(pricePlanMatrixLineDto.getPriceWithoutTax() != null && pricePlanMatrixLineDto.getValue() != null){
+            log.warn("Property priceWithoutTax is deprecated, please use only property value");
+            throw new MeveoApiException("Property priceWithoutTax is deprecated, please use only property value");
+        }
+        if(pricePlanMatrixLineDto.getPriceWithoutTax() == null && pricePlanMatrixLineDto.getValue() == null){
+            log.warn("Property value in lines should not be null");
+            throw new MeveoApiException("Property value in lines should not be null");
+        }
         PricePlanMatrixLine pricePlanMatrixLine = findById(pricePlanMatrixLineDto.getPpmLineId());
         if (pricePlanMatrixLine == null) {
             throw new EntityDoesNotExistsException(PricePlanMatrixLine.class, pricePlanMatrixLineDto.getPricePlanMatrixCode(), "pricePlanMatrixVersion.pricePlanMatrixCode", "" + pricePlanMatrixLineDto.getPricePlanMatrixVersion(), "pricePlanMatrixVersion.currentVersion");
@@ -118,6 +143,8 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         pricePlanMatrixLine.getPricePlanMatrixValues().addAll(pricePlanMatrixValues);
         pricePlanMatrixLine.setPricePlanMatrixVersion(pricePlanMatrixVersion);
         pricePlanMatrixLine.setDescription(pricePlanMatrixLineDto.getDescription());
+        BigDecimal value = pricePlanMatrixLineDto.getValue() != null? pricePlanMatrixLineDto.getValue():pricePlanMatrixLineDto.getPriceWithoutTax();
+        pricePlanMatrixLine.setValue(value);
         PricePlanMatrixLine update = super.update(pricePlanMatrixLine);
         return new PricePlanMatrixLineDto(update);
     }
@@ -233,7 +260,6 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
 	 * @param businessAttributes 
      * @param attributeValues
      * @param walletOperation 
-	 * @param product 
 	 */
 	private void addBusinessAttributeValues(List<Attribute> businessAttributes, Set<AttributeValue> attributeValues, WalletOperation walletOperation) {
 		businessAttributes.stream().forEach(attribute->attributeValues.add(getBusinessAttributeValue(attribute, walletOperation)));
@@ -241,8 +267,6 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
 
 	/**
 	 * @param attribute
-	 * @param walletOperation 
-	 * @param product 
 	 * @return
 	 */
 	private AttributeValue getBusinessAttributeValue(Attribute attribute, WalletOperation op) {
@@ -270,12 +294,27 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         Set<PricePlanMatrixLine> lines = new HashSet<>();
         checkDuplicatePricePlanMatrixValues(dtoData.getPricePlanMatrixLines());
         for (PricePlanMatrixLineDto pricePlanMatrixLineDto : dtoData.getPricePlanMatrixLines()) {
+            if(pricePlanMatrixLineDto.getPriceWithoutTax() != null && pricePlanMatrixLineDto.getValue() != null){
+                log.warn("Property priceWithoutTax is deprecated, please use only property value");
+                throw new MeveoApiException("Property priceWithoutTax is deprecated, please use only property value");
+            }
+            if(pricePlanMatrixLineDto.getPriceWithoutTax() == null && pricePlanMatrixLineDto.getValue() == null){
+                log.warn("Property value in lines should not be null");
+                throw new MeveoApiException("Property value in lines should not be null");
+            }
+            if(pricePlanMatrixLineDto.getPriceEL() != null && pricePlanMatrixLineDto.getValueEL() != null){
+                log.warn("Property “priceEl” is deprecated, please use only property “valueEl");
+                throw new MeveoApiException("Property “priceEl” is deprecated, please use only property “valueEl”");
+            }
+
             PricePlanMatrixLine pricePlanMatrixLine = new PricePlanMatrixLine();
             pricePlanMatrixLine.setPriceWithoutTax(pricePlanMatrixLineDto.getPriceWithoutTax());
             pricePlanMatrixLine.setPriority(pricePlanMatrixLineDto.getPriority());
-            pricePlanMatrixLine.setPriceEL(pricePlanMatrixLineDto.getPriceEL());
+            pricePlanMatrixLine.setValueEL(pricePlanMatrixLineDto.getValueEL() != null ? pricePlanMatrixLineDto.getValueEL() : pricePlanMatrixLineDto.getPriceEL());
             pricePlanMatrixLine.setPricePlanMatrixVersion(ppmVersion);
             pricePlanMatrixLine.setDescription(pricePlanMatrixLineDto.getDescription());
+            BigDecimal value = pricePlanMatrixLineDto.getValue() != null? pricePlanMatrixLineDto.getValue():pricePlanMatrixLineDto.getPriceWithoutTax();
+            pricePlanMatrixLine.setValue(value);
             create(pricePlanMatrixLine);
             
             Set<PricePlanMatrixValue> pricePlanMatrixValues = getPricePlanMatrixValues(pricePlanMatrixLineDto, pricePlanMatrixLine);
@@ -317,11 +356,28 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
 
     private void converterPricePlanMatrixLineFromDto(PricePlanMatrixVersion ppmVersion, PricePlanMatrixLineDto pricePlanMatrixLineDto,
             PricePlanMatrixLine pricePlanMatrixLineUpdate) {
+
+        if(pricePlanMatrixLineDto.getPriceWithoutTax() != null && pricePlanMatrixLineDto.getValue() != null){
+            log.warn("Property priceWithoutTax is deprecated, please use only property value");
+            throw new MeveoApiException("Property priceWithoutTax is deprecated, please use only property value");
+        }
+        if(pricePlanMatrixLineDto.getPriceWithoutTax() == null && pricePlanMatrixLineDto.getValue() == null){
+            log.warn("Property value in lines should not be null");
+            throw new MeveoApiException("Property value in lines should not be null");
+        }
+
+        if(pricePlanMatrixLineDto.getPriceEL() != null && pricePlanMatrixLineDto.getValueEL() != null){
+            log.warn("Property “priceEl” is deprecated, please use only property “valueEl");
+            throw new MeveoApiException("Property “priceEl” is deprecated, please use only property “valueEl”");
+        }
+
         pricePlanMatrixLineUpdate.setPriceWithoutTax(pricePlanMatrixLineDto.getPriceWithoutTax());
         pricePlanMatrixLineUpdate.setPriority(pricePlanMatrixLineDto.getPriority());
-        pricePlanMatrixLineUpdate.setPriceEL(pricePlanMatrixLineDto.getPriceEL());
+        pricePlanMatrixLineUpdate.setValueEL(pricePlanMatrixLineDto.getValueEL() != null ? pricePlanMatrixLineDto.getValueEL() : pricePlanMatrixLineDto.getPriceEL());
         pricePlanMatrixLineUpdate.setPricePlanMatrixVersion(ppmVersion);
-        pricePlanMatrixLineUpdate.setDescription(pricePlanMatrixLineDto.getDescription());        
+        pricePlanMatrixLineUpdate.setDescription(pricePlanMatrixLineDto.getDescription());
+        BigDecimal value = pricePlanMatrixLineDto.getValue() != null? pricePlanMatrixLineDto.getValue():pricePlanMatrixLineDto.getPriceWithoutTax();
+        pricePlanMatrixLineUpdate.setValue(value);
     }
     
     public void checkDuplicatePricePlanMatrixValues(List<PricePlanMatrixLineDto> list) {
@@ -335,4 +391,5 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
             }
         }
     }
+
 }
