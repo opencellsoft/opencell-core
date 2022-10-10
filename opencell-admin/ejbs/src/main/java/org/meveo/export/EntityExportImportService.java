@@ -1205,7 +1205,9 @@ public class EntityExportImportService implements Serializable {
 
         // Update statistics
         importStats.updateSummary(entityToSave.getClass(), 1);
-        return entityFound == null ? entityToSave : entityFound;
+        IEntity entityToReturn = entityFound == null ? entityToSave : entityFound;
+        ImportResultService.createImportResultDtoGeneric(importStats.getImportResultDto(), entityToReturn);
+        return entityToReturn;
     }
 
     private IEntity identifyEntity(IEntity entityToSave, boolean lookupById, boolean lookupByCode) {

@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.meveo.api.dto.response.utilities.ImportResultDto;
 import org.meveo.model.IEntity;
 
 /**
@@ -88,6 +89,22 @@ public class ExportImportStatistics {
         return entitiesToRemove;
     }
 
+    private List<ImportResultDto> importResultDto = new ArrayList<>();
+
+    public List<ImportResultDto> getImportResultDto() {
+
+        return importResultDto;
+
+    }
+
+    public void setImportResultDto(List<ImportResultDto> importResultDto) {
+
+        this.importResultDto = importResultDto;
+
+    }
+
+
+
     /**
      * Add to statistics
      * 
@@ -122,7 +139,13 @@ public class ExportImportStatistics {
         for (Entry<String, Collection<String>> fieldInfo : stats.getFieldsNotImported().entrySet()) {
             addFieldsNotImported(fieldInfo.getKey(), fieldInfo.getValue());
         }
+
+        updateDto(stats);
         setFileContent(stats.getFileContent());
+    }
+
+    private void updateDto(ExportImportStatistics stats) {
+        importResultDto.addAll(stats.getImportResultDto());
     }
 
     /**
