@@ -230,7 +230,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         for (WalletOperation walletOp : walletOps) {
             RatedTransaction ratedTransaction = new RatedTransaction(walletOp);
             create(ratedTransaction);
-            em.createNamedQuery("WalletOperation.setStatusToTreatedWithRT").setParameter("rt", ratedTransaction).setParameter("now", now).setParameter("id", walletOp.getId()).executeUpdate();
+            walletOp.setStatus(WalletOperationStatusEnum.TREATED);
+            walletOp.setUpdated(now);
+            walletOp.setRatedTransaction(ratedTransaction);
+            walletOperationService.updateNoCheck(walletOp);
+            //em.createNamedQuery("WalletOperation.setStatusToTreatedWithRT").setParameter("rt", ratedTransaction).setParameter("now", now).setParameter("id", walletOp.getId()).executeUpdate();
         }
     }
 
