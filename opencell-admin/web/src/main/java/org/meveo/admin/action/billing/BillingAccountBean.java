@@ -184,6 +184,11 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         if(entity.getPaymentMethod() != null){
             entity.setPaymentMethod(paymentMethodService.findById(entity.getPaymentMethod().getId()));
         }
+
+        if(entity.getName() != null){
+            entity.setLegalEntityType(entity.getName().getTitle());
+        }
+
         try {
         	
         	if(entity.getTradingCurrency() == null) {
