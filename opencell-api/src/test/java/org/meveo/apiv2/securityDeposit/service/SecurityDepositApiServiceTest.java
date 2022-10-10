@@ -132,8 +132,8 @@ public class SecurityDepositApiServiceTest {
         sd.setSecurityDepositInvoice(inv);        
         try {
             Optional<SecurityDeposit> sdOut = securityDepositApiService.instantiate(sd);
-            assertTrue(sdOut.isPresent());
-            Assert.assertNull(sdOut);
+            assertTrue(!sdOut.isPresent());
+            //Assert.assertNull(sdOut);
         } catch (Exception exception) {
         }
     }
