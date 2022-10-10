@@ -115,9 +115,10 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
     public Optional<SecurityDeposit> findByCode(String code) {
         return empty();
     }
-
+    
     @Transactional
-    public Optional<SecurityDeposit> instantiate(SecurityDeposit securityDepositInput) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
+    public Optional<SecurityDeposit> instantiate(SecurityDeposit securityDepositInput, 
+            SecurityDepositStatusEnum status, boolean validate) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
 
         // Check FinanceSettings.useSecurityDeposit
         FinanceSettings financeSettings = financeSettingsService.findLastOne();
@@ -156,7 +157,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
             securityDepositName = template.getTemplateName();
         }
         securityDepositInput.setCode(securityDepositName + "-" + count);
-        securityDepositInput.setStatus(SecurityDepositStatusEnum.NEW);
+        securityDepositInput.setStatus(status);
 
         // Check validity dates
         if (financeSettings.isAutoRefund() && template.isAllowValidityDate() && template.isAllowValidityPeriod()) {
@@ -218,7 +219,9 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
 
         	securityDepositInput.setSecurityDepositInvoice(invoice);
         	securityDepositInput.setAmount(invoice.getAmountWithoutTax());
-        	invoiceApi.validateInvoice(invoice.getId(), true, false, false);
+        	if(validate) {
+        	    invoiceApi.validateInvoice(invoice.getId(), true, false, false);
+        	}        	
         	
         	securityDepositService.update(securityDepositInput);
         }

@@ -51,20 +51,36 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
 
     @Override
     public Response instantiate(SecurityDepositInput securityDepositInput) {
-
         SecurityDeposit result;
-		try {
-			result = securityDepositApiService.instantiate(securityDepositMapper.toEntity(securityDepositInput))
-												.orElseThrow(() -> new BusinessApiException("Security Deposit hasn't been initialized"));
-			return Response.ok(ImmutableSecurityDepositSuccessResponse
-					.builder()
-					.status("SUCCESS")
-					.newSecurityDeposit(securityDepositMapper.toResource(result))
-					.build()
-					).build();
-		} catch (Exception e) {
-			throw new BusinessApiException(e);
-		}
+        try {
+            result = securityDepositApiService.instantiate(securityDepositMapper.toEntity(securityDepositInput), SecurityDepositStatusEnum.VALIDATED, true)
+                                                .orElseThrow(() -> new BusinessApiException("Security Deposit hasn't been initialized"));
+            return Response.ok(ImmutableSecurityDepositSuccessResponse
+                    .builder()
+                    .status("SUCCESS")
+                    .newSecurityDeposit(securityDepositMapper.toResource(result))
+                    .build()
+                    ).build();
+        } catch (Exception e) {
+            throw new BusinessApiException(e);
+        }
+    }
+    
+    @Override
+    public Response create(SecurityDepositInput securityDepositInput) {
+        SecurityDeposit result;
+        try {
+            result = securityDepositApiService.instantiate(securityDepositMapper.toEntity(securityDepositInput), SecurityDepositStatusEnum.DRAFT, false)
+                                                .orElseThrow(() -> new BusinessApiException("Security Deposit hasn't been initialized"));
+            return Response.ok(ImmutableSecurityDepositSuccessResponse
+                    .builder()
+                    .status("SUCCESS")
+                    .newSecurityDeposit(securityDepositMapper.toResource(result))
+                    .build()
+                    ).build();
+        } catch (Exception e) {
+            throw new BusinessApiException(e);
+        }
     }
     
     @Override
