@@ -157,7 +157,7 @@ public class MassImportApi {
                         .orElse(null);
 
                 if(fileTypeDto != null && fileTypeDto.getFileType() != ImportTypesEnum.UNKNOWN) {
-                    String toPath = getProviderRootDir() + File.separator
+                    String toPath = "/home/zel/OpenCell/tools/oc-wildfly-22.0.1.Final/wildfly-22.0.1.Final/bin/opencelldata/default" + File.separator
                             + ImportTypesEnum.valueOf(fileTypeDto.getFileType().toString()).path + File.separator + file.getName();
 
                     Files.move(Paths.get(file.getPath()), Paths.get(toPath), StandardCopyOption.REPLACE_EXISTING);
