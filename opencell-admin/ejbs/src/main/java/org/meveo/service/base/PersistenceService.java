@@ -1054,7 +1054,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         adaptOrdering(config, filters);
         
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields(), config.getJoinType());
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields(), config.getJoinType(), config.getFilterOperator());
         if (filters != null && !filters.isEmpty()) {
             if (filters.containsKey(SEARCH_FILTER)) {
                 Filter filter = (Filter) filters.get(SEARCH_FILTER);
@@ -1066,7 +1066,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                 filters.putAll(cfFilters);
 
                 ExpressionFactory expressionFactory = new ExpressionFactory(queryBuilder, "a");
-                filters.keySet().stream().filter(key -> filters.get(key) != null).forEach(key -> expressionFactory.addFilters(key, filters.get(key)));
+                filters.keySet().stream().filter(key -> filters.get(key) != null && !"$OPERATOR".equalsIgnoreCase(key)).forEach(key -> expressionFactory.addFilters(key, filters.get(key)));
                 for (String cft : cfFilters.keySet()) {
                     filters.remove(cft);
                 }

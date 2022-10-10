@@ -56,7 +56,7 @@ public class InvoiceApiTest {
         Mockito.when(invoiceService.findById(invoiceId)).thenReturn(invoice);
                 
         try {
-            String invNumber = invoiceApi.validateInvoice(invoiceId, false, true);
+            String invNumber = invoiceApi.validateInvoice(invoiceId, false, true, true);
             Assert.assertEquals("INV_NUMB1", invNumber);
         } catch (Exception e) {
             Assert.fail("Error during validate invoice : " + e.getMessage());
