@@ -5,6 +5,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
+import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.BillingAccount;
@@ -38,28 +40,92 @@ public class SecurityDepositApiServiceTest {
     private String code = "DEFAULT_SD_TEMPLATE-4";
     
     @Test
-    public void testInstantiate() throws ImportInvoiceException, InvoiceExistException {
+    public SecurityDeposit init() {
         SecurityDeposit sd = new SecurityDeposit();
         sd.setId(sdId);
         sd.setAmount(amount);
         sd.setCode(code);
         sd.setValidityPeriodUnit(ValidityPeriodUnit.MONTHS);
         Currency currency = new Currency();
-        currency.setCurrencyCode("EUR");
-        BillingAccount billingAccount = new BillingAccount();
-        billingAccount.setCode("OAU4494");
+        currency.setCurrencyCode("EUR");        
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setCode("OAU4494");
         SecurityDepositTemplate template = new SecurityDepositTemplate();
         template.setId(1L);
         sd.setCurrency(currency);
-        sd.setCustomerAccount(customerAccount);
-        sd.setBillingAccount(billingAccount);
+        sd.setCustomerAccount(customerAccount);        
         sd.setTemplate(template);
-
+        
+        return sd;
+    }
+    
+    @Test
+    public void instantiateSdWithlinkedInvoiceNull() throws ImportInvoiceException, InvoiceExistException {
+        SecurityDeposit sd = init();        
+        sd.setSecurityDepositInvoice(null);        
+        Optional<SecurityDeposit> sdOut = securityDepositApiService.instantiate(sd);
+        assertTrue(sdOut.isPresent());
+        Assert.assertTrue(sdOut.get().getSecurityDepositInvoice().getLinkedInvoices() != null);
+    }
+    
+    @Test
+    public void instantiateSdWithlinkedInvoiceNotNull() throws ImportInvoiceException, InvoiceExistException {
+        SecurityDeposit sd = init();
+        Invoice inv = new Invoice();
+        inv.setId(1L);
+        sd.setSecurityDepositInvoice(inv);        
         Optional<SecurityDeposit> sdOut = securityDepositApiService.instantiate(sd);
         assertTrue(sdOut.isPresent());
         Assert.assertEquals(sdOut.get().getSecurityDepositInvoice().getStatus(), InvoiceStatusEnum.VALIDATED);
+    }
+    
+    @Test
+    public void instantiateSdWithBillingAccount() throws ImportInvoiceException, InvoiceExistException {
+        SecurityDeposit sd = init();
+        BillingAccount billingAccount = new BillingAccount();
+        billingAccount.setCode("OAU4494");
+        sd.setBillingAccount(billingAccount);
+        
+        Optional<SecurityDeposit> sdOut = securityDepositApiService.instantiate(sd);
+        assertTrue(sdOut.isPresent());
+        Assert.assertEquals(sdOut.get().getSecurityDepositInvoice().getStatus(), InvoiceStatusEnum.VALIDATED);
+    }
+    
+    @Test
+    public void instantiateSdWithSameBillingAccount() throws ImportInvoiceException, InvoiceExistException {
+        SecurityDeposit sd = init();
+        BillingAccount billingAccount = new BillingAccount();
+        billingAccount.setCode("OAU4494");
+        sd.setBillingAccount(billingAccount);
+        
+        Invoice inv = new Invoice();
+        inv.setId(1L);
+        inv.setBillingAccount(billingAccount);
+        sd.setSecurityDepositInvoice(inv);    
+        
+        Optional<SecurityDeposit> sdOut = securityDepositApiService.instantiate(sd);
+        assertTrue(sdOut.isPresent());
+        Assert.assertEquals(sdOut.get().getSecurityDepositInvoice().getLinkedInvoices(), InvoiceStatusEnum.VALIDATED);
+    }
+    
+    @Test
+    public void instantiateSdWithDifferentBillingAccount() throws ImportInvoiceException, InvoiceExistException {
+        SecurityDeposit sd = init();
+        BillingAccount billingAccount0 = new BillingAccount();
+        billingAccount0.setCode("OAU4495");
+        BillingAccount billingAccount1 = new BillingAccount();
+        billingAccount1.setCode("OAU4494");        
+        sd.setBillingAccount(billingAccount0);        
+        Invoice inv = new Invoice();
+        inv.setId(1L);
+        inv.setBillingAccount(billingAccount1);
+        sd.setSecurityDepositInvoice(inv);        
+        try {
+            Optional<SecurityDeposit> sdOut = securityDepositApiService.instantiate(sd);
+        } catch (Exception exception) {
+            Assert.assertTrue(exception instanceof BusinessApiException);
+            Assert.assertEquals("Linked invoice should be a SECURITY_DEPOSIT", exception.getMessage());
+        }        
     }
     
 }
