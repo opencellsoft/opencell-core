@@ -344,7 +344,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 			}
 			securityDeposit.setCurrentBalance(Optional.ofNullable(securityDeposit.getCurrentBalance()).orElse(BigDecimal.ZERO).add(amountToMatch));
 			// Update SD.Amount for NEW and HOLD SecurityDeposit
-			if(Arrays.asList(SecurityDepositStatusEnum.NEW, SecurityDepositStatusEnum.HOLD, SecurityDepositStatusEnum.VALIDATED).contains(securityDeposit.getStatus())) {
+			if(Arrays.asList(SecurityDepositStatusEnum.VALIDATED, SecurityDepositStatusEnum.HOLD, SecurityDepositStatusEnum.VALIDATED).contains(securityDeposit.getStatus())) {
 				securityDeposit.setAmount(securityDeposit.getAmount().subtract(amountToMatch));
 				if(BigDecimal.ZERO.compareTo(securityDeposit.getAmount()) >= 0) {
 					securityDeposit.setAmount(null);

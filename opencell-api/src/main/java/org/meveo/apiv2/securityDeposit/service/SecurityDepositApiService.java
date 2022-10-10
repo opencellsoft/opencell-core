@@ -156,7 +156,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
             securityDepositName = template.getTemplateName();
         }
         securityDepositInput.setCode(securityDepositName + "-" + count);
-        securityDepositInput.setStatus(SecurityDepositStatusEnum.NEW);
+        securityDepositInput.setStatus(SecurityDepositStatusEnum.VALIDATED);
 
         // Check validity dates
         if (financeSettings.isAutoRefund() && template.isAllowValidityDate() && template.isAllowValidityPeriod()) {
