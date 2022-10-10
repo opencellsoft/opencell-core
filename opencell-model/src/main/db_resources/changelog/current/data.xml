@@ -11417,7 +11417,7 @@ public class SubscriptionMassImportScript extends GenericMassImportScript {
 
     private void setSubscriptionValues(Map<String, Object> recordMap, SubscriptionDto subscriptionDto) throws ParseException {
         DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
-
+        dateFormat.setLenient(false);
 
         String OC_subscription_date = (String) recordMap.get("OC_SUBSCRIPTION_DATE");
         String OC_endagreement_date = (String) recordMap.get("OC_ENDAGREEMENTDATE");
@@ -11431,9 +11431,24 @@ public class SubscriptionMassImportScript extends GenericMassImportScript {
         String OC_sub_inittermunit = (String) recordMap.get("OC_SUB_INITTERMUNIT");
         String OC_sub_endtermaction = (String) recordMap.get("OC_SUB_ENDTERMACTION");
 
-        Date subscriptionDate = StringUtils.isEmpty(OC_subscription_date) ? null : dateFormat.parse(OC_subscription_date);
-        Date endagreementDate = StringUtils.isEmpty(OC_endagreement_date) ? null : dateFormat.parse(OC_endagreement_date);
-        Date terminationDate = StringUtils.isEmpty(OC_termination_date) ? null : dateFormat.parse(OC_termination_date);
+        try {
+            Date subscriptionDate = StringUtils.isEmpty(OC_subscription_date) ? null : dateFormat.parse(OC_subscription_date);
+            subscriptionDto.setSubscriptionDate(subscriptionDate);
+        } catch(ParseException e) {
+            throw new ValidationException("Incorrect date format for subscription date. Please use 'dd/MM/yyyy'");
+        }
+        try {
+            Date endagreementDate = StringUtils.isEmpty(OC_endagreement_date) ? null : dateFormat.parse(OC_endagreement_date);
+            subscriptionDto.setEndAgreementDate(endagreementDate);
+        } catch(ParseException e) {
+            throw new ValidationException("Incorrect date format for end agreement date. Please use 'dd/MM/yyyy'");
+        }
+        try {
+            Date terminationDate = StringUtils.isEmpty(OC_termination_date) ? null : dateFormat.parse(OC_termination_date);
+            subscriptionDto.setTerminationDate(terminationDate);
+        } catch(ParseException e) {
+            throw new ValidationException("Incorrect date format for termination date. Please use 'dd/MM/yyyy'");
+        }
 
         SubscriptionRenewal.InitialTermTypeEnum initialTermTypeEnum = (!EnumUtils.isValidEnum(SubscriptionRenewal.InitialTermTypeEnum.class, OC_sub_inittermtype)) ? null
                 : SubscriptionRenewal.InitialTermTypeEnum.valueOf(OC_sub_inittermtype);
@@ -11460,9 +11475,6 @@ public class SubscriptionMassImportScript extends GenericMassImportScript {
         subscriptionDto.setDescription((String) recordMap.get("OC_SUBSCRIPTION_DESCRIPTION"));
         subscriptionDto.setOfferTemplate((String) recordMap.get("OC_OFFER_CODE"));
         subscriptionDto.setSeller((String) recordMap.get("OC_SELLER_CODE"));
-        subscriptionDto.setSubscriptionDate(subscriptionDate);
-        subscriptionDto.setEndAgreementDate(endagreementDate);
-        subscriptionDto.setTerminationDate(terminationDate);
         subscriptionDto.setTerminationReason(terminationReason);
         subscriptionDto.setBillingCycle((String) recordMap.get("OC_SUB_BC"));
 
