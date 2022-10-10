@@ -577,8 +577,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 }
 
                 // Check if unit price was not overridden by a contract
-                Subscription subscription = bareWalletOperation.getSubscription();
-                BillingAccount billingAccount = subscription.getUserAccount().getBillingAccount();
+                BillingAccount billingAccount = bareWalletOperation.getBillingAccount();
                 CustomerAccount customerAccount = billingAccount.getCustomerAccount();
                 Customer customer = customerAccount.getCustomer();
                 List<Contract> contracts = contractService.getContractByAccount(customer, billingAccount, customerAccount);
@@ -588,9 +587,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 }
                 ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
                 ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
-                OfferTemplate offerTemplate = subscription.getOffer();
                 ContractItem contractItem = null;
                 if (contract != null && serviceInstance != null) {
+                    OfferTemplate offerTemplate = serviceInstance.getSubscription().getOffer();
                     contractItem = contractItemService.getApplicableContractItem(contract, offerTemplate, serviceInstance.getCode(), chargeTemplate);
 
                     if (contractItem != null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
