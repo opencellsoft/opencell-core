@@ -8190,5 +8190,11 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>template_name = 'DEFAULT_SD_TEMPLATE'</where>
 		</update>
 	</changeSet>
+	
+	<changeSet id="#INTRD-10199_20221010" author="TarikFA.">
+		<delete tableName="billing_accounting_code">
+			<where>code = 'T3P9476'</where>
+		</delete>
+	</changeSet>
 
 </databaseChangeLog>
