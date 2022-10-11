@@ -12269,13 +12269,18 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
 
         // Instantiate products
         DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
-        String OC_product_deliv_dt = (String) recordMap.get("OC_PRODUCT_DELIV_DT");
-        Date deliveryDate = StringUtils.isEmpty(OC_product_deliv_dt) ? null : dateFormat.parse(OC_product_deliv_dt);
+        dateFormat.setLenient(false);
 
+        String OC_product_deliv_dt = (String) recordMap.get("OC_PRODUCT_DELIV_DT");
         ProductToInstantiateDto productToInstantiateDto = new ProductToInstantiateDto();
         productToInstantiateDto.setProductCode((String) recordMap.get("OC_PRODUCT_CODE"));
         productToInstantiateDto.setQuantity(new BigDecimal((String) recordMap.get("OC_PRODUCT_QTY")));
-        productToInstantiateDto.setDeliveryDate(deliveryDate);
+        try {
+            Date deliveryDate = StringUtils.isEmpty(OC_product_deliv_dt) ? null : dateFormat.parse(OC_product_deliv_dt);
+            productToInstantiateDto.setDeliveryDate(deliveryDate);
+        } catch(ParseException e) {
+            throw new ValidationException("Incorrect date format for delivery date. Please use 'dd/MM/yyyy'");
+        }
 
         List<ProductToInstantiateDto> products = new ArrayList<>();
         products.add(productToInstantiateDto);
