@@ -28,6 +28,11 @@ public class ProcessCdrListResult extends BaseResponse {
     private BigDecimal amountWithTax;
 
     /**
+     * The call wallet Operation Count.
+     */
+    private Integer walletOperationCount;
+
+    /**
      * Processing mode
      */
     private ProcessCdrListModeEnum mode;
@@ -46,7 +51,6 @@ public class ProcessCdrListResult extends BaseResponse {
      * Counter periods that were updated during the rating
      */
     private List<CounterPeriodDto> counterPeriods;
-
 
     public ProcessCdrListResult() {
 
@@ -185,5 +189,13 @@ public class ProcessCdrListResult extends BaseResponse {
 
     public void setAmountWithTax(BigDecimal amountWithTax) {
         this.amountWithTax = amountWithTax;
+    }
+
+    public Integer getWalletOperationCount() {
+        return walletOperationCount;
+    }
+
+    public void setWalletOperationCount(Integer walletOperationCount) {
+        this.walletOperationCount = walletOperationCount;
     }
 }
