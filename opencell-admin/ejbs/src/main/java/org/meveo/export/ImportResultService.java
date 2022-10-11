@@ -12,6 +12,10 @@ import java.util.List;
 
 public class ImportResultService {
 
+    private ImportResultService() {
+        throw new UnsupportedOperationException("This class cannot be instantiated");
+    }
+
     static List<ImportResultDto> list = new ArrayList<>();
 
     /**
@@ -23,20 +27,20 @@ public class ImportResultService {
     public static void createImportResultDtoGeneric(List<ImportResultDto> importResultDtoList, IEntity entityToReturn) {
         Class clazz = entityToReturn.getClass();
         ImportResultDto importResultDto = new ImportResultDto();
-        List<Field> fields = getAllFields(new LinkedList<Field>(), clazz);
+        List<Field> fields = getAllFields(new LinkedList<>(), clazz);
 
         for (Field field : fields) {
             try {
                 if (field.getName().equals("code")) {
                     Object fieldValue = FieldUtils.readField(field, entityToReturn, true);
-                    if (fieldValue != null && fieldValue instanceof String) {
+                    if (fieldValue != null) {
                         importResultDto.setCode((String) fieldValue);
                     }
                 }
 
                 if (field.getName().equals("description")) {
                     Object fieldValue = FieldUtils.readField(field, entityToReturn, true);
-                    if (fieldValue != null && fieldValue instanceof String) {
+                    if (fieldValue != null) {
                         importResultDto.setName((String) fieldValue);
                     }
                 }
@@ -56,19 +60,23 @@ public class ImportResultService {
             if(importResultDto.getName() == null) {
                 importResultDto.setName("N/A");
             }
+        }
 
-            boolean found = false;
-            for(ImportResultDto im : list) {
-                if(im.getName() != null && im.getName().equals(importResultDto.getName()) && im.getCode().equals(importResultDto.getCode())) {
-                    found = true;
-                    break;
-                }
-            }
+        addImportResultDtoToList(importResultDtoList, importResultDto);
+    }
 
-            if(!found) {
-                importResultDtoList.add(importResultDto);
-                list.add(importResultDto);
+    private static void addImportResultDtoToList(List<ImportResultDto> importResultDtoList, ImportResultDto importResultDto) {
+        boolean found = false;
+        for(ImportResultDto im : list) {
+            if(im.getName() != null && im.getName().equals(importResultDto.getName()) && im.getCode().equals(importResultDto.getCode())) {
+                found = true;
+                break;
             }
+        }
+
+        if(!found) {
+            importResultDtoList.add(importResultDto);
+            list.add(importResultDto);
         }
     }
 
