@@ -187,7 +187,7 @@ import org.meveo.model.tax.TaxClass;
 
 @NamedNativeQueries({
         @NamedNativeQuery(name = "RatedTransaction.massUpdateWithInvoiceInfoFromPendingTable", query = "update {h-schema}billing_rated_transaction rt set status='BILLED', updated=now(), aggregate_id_f=pending.aggregate_id_f, billing_run_id=pending.billing_run_id, invoice_id=pending.invoice_id from {h-schema}billing_rated_transaction_pending pending where status='OPEN' and rt.id=pending.id"),
-        @NamedNativeQuery(name = "RatedTransaction.massUpdateWithInvoiceInfoFromPendingTableOracle", query = "update {h-schema}billing_rated_transaction rt set (status, updated, aggregate_id_f, billing_run_id, invoice_id) =  (select 'BILLED', now(), pending.aggregate_id_f, pending.billing_run_id, pending.invoice_id from {h-schema}billing_rated_transaction_pending pending where pending.id=rt.id) where status='OPEN' and rt.id in (select id from {h-schema}billing_rated_transaction_pending pending where pending.id=rt.id)"),
+        @NamedNativeQuery(name = "RatedTransaction.massUpdateWithInvoiceInfoFromPendingTableOracle", query = "UPDATE (SELECT rt.status, rt.updated, rt.aggregate_id_f rt_aggregate_id_f, rt.billing_run_id rt_billing_run_id, rt.invoice_id rt_invoice_id, pending.aggregate_id_f pending_aggregate_id_f, pending.billing_run_id pending_billing_run_id, pending.invoice_id pending_invoice_id FROM {h-schema}billing_rated_transaction rt, {h-schema}billing_rated_transaction_pending pending WHERE rt.status = 'OPEN' AND rt.id = pending.id) SET status = 'BILLED', updated = now (), rt_aggregate_id_f = pending_aggregate_id_f, rt_billing_run_id = pending_billing_run_id, rt_invoice_id = pending_invoice_id"),
         @NamedNativeQuery(name = "RatedTransaction.deletePendingTable", query = "delete from {h-schema}billing_rated_transaction_pending") })
 
 public class RatedTransaction extends BaseEntity implements ISearchable, ICustomFieldEntity, IInvoiceable {
@@ -587,6 +587,13 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discount_plan_item_id")
     private DiscountPlanItem discountPlanItem;
+    
+    /**
+  	 * 
+  	 *filled only for price lines related to applied discounts, and contains the application sequence composed by the concatenation of the DP sequence and DPI sequence
+  	 */
+  	@Column(name = "sequence")
+  	private Integer sequence;
     
     public RatedTransaction() {
         super();
@@ -1505,6 +1512,14 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
 
 	public void setDiscountPlanItem(DiscountPlanItem discountPlanItem) {
 		this.discountPlanItem = discountPlanItem;
+	}
+
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
 	}
 
 	

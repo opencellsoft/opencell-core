@@ -8483,7 +8483,7 @@ public class OrderAdvancement extends ModuleScript {
         <addColumn tableName="billing_service_instance">
             <column name="reactivation_date" type="datetime" />
         </addColumn>
-    </changeSet>
+    </changeSet> 
 
     <changeSet id="#INTRD-682_20210707" author="HatimOUDAD" failOnError="false">
     	<createSequence sequenceName="query_scheduler_seq" startValue="1" />
@@ -13051,5 +13051,147 @@ order by date_trunc('month', i.invoice_date) DESC
 			</column>
         </addColumn>
     </changeSet>
+    
+     <changeSet id="#20220408_M540_6296" author="Rachid.Aityaazza">
+        <addColumn tableName="cat_discount_plan_item">
+            <column name="apply_by_article" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#20220412_M540_172" author="Mbarek-Ay">
+	
+		<addColumn tableName="order_price">
+			<column name="discount_value" type="numeric(23,12)" />
+			<column name="discount_plan_type" type="varchar(50)" />
+			<column name="discount_plan_item_id" type="bigint" />
+		</addColumn> 
+		
+        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="order_price" constraintName="fk_order_price_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" /> 
+      </changeSet>
+
+	<changeSet id="#20220412_M540_6533" author="Mbarek-Ay">
+		<addColumn tableName="cpq_quote_price">
+			<column name="apply_discounts_on_overriden_price"
+				type="${type.boolean}" />
+		</addColumn>
+		<addColumn tableName="order_price">
+			<column name="apply_discounts_on_overriden_price"
+				type="${type.boolean}" />
+		</addColumn>
+		<addColumn tableName="billing_charge_instance">
+			<column name="apply_discounts_on_overriden_price"
+				type="${type.boolean}" />
+		</addColumn>
+	</changeSet>
+	
+	  
+       <changeSet id="#20220415_M540_6609" author="Mbarek-Ay">
+		<addColumn tableName="cpq_quote_price">
+		<column name="overcharged_unit_amount_without_tax" type="numeric(23,12)"/>
+		</addColumn>
+		<addColumn tableName="billing_charge_instance">
+		<column name="overcharged_unit_amount_without_tax" type="numeric(23,12)"/>
+		</addColumn>
+      </changeSet>
+      
+      <changeSet id="#20220415_M540_6296" author="Rachid.Aityaazza">
+		<dropNotNullConstraint columnDataType="bigint" columnName="order_article_line_id" tableName="order_price" />
+	</changeSet>
+	
+	
+	<changeSet id="#20220415_M540_6931" author="Mbarek-Ay">
+		<addColumn tableName="cat_discount_plan">
+		<column name="applicable_on_discounted_price" type="${type.boolean}"/>
+		<column name="sequence" type="int4"/>
+		</addColumn>
+		
+	   <addColumn tableName="crm_provider">
+		<column name="activate_cascading_discounts" type="${type.boolean}" defaultValueNumeric="1"/> 
+		</addColumn>
+		
+		<addColumn tableName="cat_discount_plan_item">
+		<column name="sequence" type="int4"/>
+		</addColumn>
+		
+		<addColumn tableName="billing_wallet_operation">
+		<column name="discounted_amount" type="numeric(23,12)"/>
+		<column name="sequence" type="int4"/>
+		</addColumn>
+		
+		<addColumn tableName="cpq_quote_price">
+		<column name="sequence" type="int4"/>
+		<column name="discounted_amount" type="numeric(23,12)"/>
+		</addColumn>
+		
+		<addColumn tableName="order_price">
+		<column name="sequence" type="int4"/>
+		<column name="discounted_amount" type="numeric(23,12)"/>
+		</addColumn>
+		
+		<addColumn tableName="billing_rated_transaction">
+		<column name="sequence" type="int4"/>
+		</addColumn>
+		
+		<addColumn tableName="billing_invoice_line">
+		<column name="sequence" type="int4"/>
+		</addColumn>
+		
+		 <createSequence sequenceName="discount_plan_sequence_seq" />
+		<sql>
+		alter sequence ${db.schema.adapted}discount_plan_sequence_seq RESTART WITH 1;
+		update ${db.schema.adapted}cat_discount_plan set sequence = nextval('discount_plan_sequence_seq') where sequence is null and discount_plan_type='PRODUCT';
+		update ${db.schema.adapted}cat_discount_plan set sequence = nextval('discount_plan_sequence_seq') where sequence is null and discount_plan_type='OFFER';
+		update ${db.schema.adapted}cat_discount_plan set sequence = nextval('discount_plan_sequence_seq') where sequence is null and discount_plan_type='QUOTE';
+		</sql>
+		
+      </changeSet>
+      
+      <changeSet id="#20220519_M540_7341" author="Mbarek-Ay">
+      <addColumn tableName="cat_discount_plan_item">
+		<column name="last_discount" type="${type.boolean}"/> 
+		</addColumn>
+	 </changeSet>
+    
+    
+    <changeSet id="#INTRD-10135_28092022" author="Mbarek-Ay">
+		<update tableName="cpq_attribute"><column name="attribute_type" value="NUMERIC"/><where>id=-9</where></update>
+		<update tableName="cpq_attribute"><column name="attribute_type" value="NUMERIC"/><where>id=-10</where></update>
+		<update tableName="cpq_attribute"><column name="el_value" value="#{serviceInstance.getActivationDate()}"/><where>id=-1</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{serviceInstance.getQuantity()}"/><where>id=-2</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{edr.getEventDate()}"/><where>id=-3</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{edr.getQuantity()}"/><where>id=-4</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{sub.getRenewalDate()}"/><where>id=-5</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{serviceInstance.getDeliveryDate()}"/><where>id=-6</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{quote.getValidationDate()}"/><where>id=-7</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{quote.getValidationDate()}"/><where>id=-8</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{sub.getSubscriptionMonthsAge()}"/><where>id=-9</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{sub.getSubscriptionDaysAge()}"/><where>id=-10</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{edr.getParameter1()}"/><where>id=-11</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{edr.getParameter2()}"/><where>id=-12</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{edr.getParameter3()}"/><where>id=-13</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{edr.getParameter4()}"/><where>id=-14</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{edr.getParameter5()}"/><where>id=-15</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{edr.getParameter6()}"/><where>id=-16</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{edr.getParameter7()}"/><where>id=-17</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{edr.getParameter8()}"/><where>id=-18</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{edr.getParameter9()}"/><where>id=-19</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{edr.getDateParam1()}"/><where>id=-21</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{edr.getDateParam2()}"/><where>id=-22</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{edr.getDateParam3()}"/><where>id=-23</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{edr.getDateParam4()}"/><where>id=-24</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{edr.getDateParam5()}"/><where>id=-25</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{edr.getDecimalParam1()}"/><where>id=-31</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{edr.getDecimalParam2()}"/><where>id=-32</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{edr.getDecimalParam3()}"/><where>id=-33</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{edr.getDecimalParam4()}"/><where>id=-34</where></update>
+        <update tableName="cpq_attribute"><column name="el_value" value="#{edr.getDecimalParam5()}"/><where>id=-35</where></update>
+	</changeSet>
+	
+	<changeSet id="#INTRD-10097_202000926" author="TarikFA.">
+		<addColumn tableName="cat_offer_template">
+			<column name="generate_quote_edr_per_product" type="${type.boolean}" defaultValueNumeric="0"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
     

@@ -1339,6 +1339,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             invoice.setRejectReason((String) methodContext.get(Script.INVOICE_VALIDATION_REASON));
                         }
                     }
+					commit();
                 }
             }
         }
@@ -4018,9 +4019,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>();
         InvoiceType invoiceType = invoiceTypeService.getDefaultDraft();
         for (DiscountPlanInstance dpi : discountPlanInstances) {
-            if (!dpi.isEffective(invoice.getInvoiceDate()) || dpi.getStatus().equals(DiscountPlanInstanceStatusEnum.EXPIRED)) {
-                continue;
-            }
+        	if (!dpi.isEffective(invoice.getInvoiceDate()) || dpi.getStatus().equals(DiscountPlanInstanceStatusEnum.EXPIRED)
+        			|| Arrays.asList(DiscountPlanTypeEnum.OFFER, DiscountPlanTypeEnum.PRODUCT, DiscountPlanTypeEnum.QUOTE).contains(dpi.getDiscountPlan().getDiscountPlanType())) {
+        		continue;
+        	}
             if (dpi.getDiscountPlan().isActive()) {
                 List<DiscountPlanItem> discountPlanItems = dpi.getDiscountPlan().getDiscountPlanItems();
                 for (DiscountPlanItem discountPlanItem : discountPlanItems) {
@@ -5040,7 +5042,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         EntityManager em = getEntityManager();
         for (InvoiceLine invoiceLine : invoiceLines) {
             // Order can span multiple billing accounts and some Billing account-dependent values have to be recalculated
-        	if ((entityToInvoice instanceof Order || entityToInvoice instanceof CpqQuote) && (billingAccount == null || !billingAccount.getId().equals(invoiceLine.getBillingAccount().getId()))) {
+        	if ((entityToInvoice instanceof Order || entityToInvoice instanceof CpqQuote || entityToInvoice instanceof BillingAccount ) && (billingAccount == null || !billingAccount.getId().equals(invoiceLine.getBillingAccount().getId()))) {
                 billingAccount = invoiceLine.getBillingAccount();
                 if (defaultPaymentMethod == null && billingAccount != null) {
                     defaultPaymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());

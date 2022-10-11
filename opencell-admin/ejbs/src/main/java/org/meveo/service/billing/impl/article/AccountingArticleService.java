@@ -12,10 +12,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.*;
+import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -33,7 +35,16 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleMappingLine;
 import org.meveo.model.article.AttributeMapping;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.AccountingCode;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceLine;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.TradingCountry;
+import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
@@ -55,6 +66,13 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 	@Inject
 	private AccountingCodeService accountingCodeService;
 
+	 private String multiValuesAttributeSeparator = ";";
+	    
+	 @PostConstruct
+	 private void init() {
+		 multiValuesAttributeSeparator = paramBeanFactory.getInstance().getProperty("attribute.multivalues.separator", ";");
+	 }
+	 
 	public Optional<AccountingArticle> getAccountingArticle(Product product, Map<String, Object> attributes) throws BusinessException {
 		return getAccountingArticle(product, null, attributes, null);
 	}
@@ -66,20 +84,20 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		String param2 = ofNullable(walletOperation).map(WalletOperation::getParameter2).orElse(null);
 		String param3 = ofNullable(walletOperation).map(WalletOperation::getParameter3).orElse(null);
 		articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate, offer, null, null, null);
+		if(articleMappingLines.isEmpty() && chargeTemplate != null && product != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate, null, null, null, null);
+		}
 		if(articleMappingLines.isEmpty() && chargeTemplate != null) {
 			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, chargeTemplate, null, null, null, null);
+		}
+		if(articleMappingLines.isEmpty() && offer != null && product != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(product, null, offer, null, null, null);
 		}
 		if(articleMappingLines.isEmpty() && product != null) {
 			articleMappingLines = articleMappingLineService.findByProductAndCharge(product, null, null, null, null, null);
 		}
 		if(articleMappingLines.isEmpty() && offer != null) {
 			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, null, offer, null, null, null);
-		}
-		if(articleMappingLines.isEmpty() && offer != null && product != null) {
-			articleMappingLines = articleMappingLineService.findByProductAndCharge(product, null, offer, null, null, null);
-		}
-		if(articleMappingLines.isEmpty() && chargeTemplate != null && product != null) {
-			articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate, null, null, null, null);
 		}
 		if(articleMappingLines.isEmpty() && walletOperation != null && walletOperation.getParameter1() != null) {
 			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, null, null, param1, null, null);
@@ -141,9 +159,10 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 					}
 				});
 			}
-
+			
+			Set<Attribute> matchedAttributes = matchedAttributesMapping.stream().map(AttributeMapping::getAttribute).collect(Collectors.toSet());
 			//fullMatch
-			if(aml.getAttributesMapping().size() >= matchedAttributesMapping.size() && (matchedAttributesMapping.size() == attributes.keySet().size())) {
+			if(aml.getAttributesMapping().size() >= matchedAttributesMapping.size() && (matchedAttributes.size() == attributes.keySet().size())) {
 				attributeMappingLineMatch.addFullMatch(aml);
 			}else{
 				if (!(aml.getAttributesMapping().size() > 0 && matchedAttributesMapping.size() == 0)) {
@@ -439,19 +458,19 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 				case LIST_NUMERIC:
 				case LIST_MULTIPLE_TEXT:
 				case LIST_MULTIPLE_NUMERIC:
-					List<String> source = Arrays.asList(attributeMapping.getAttributeValue().split(";"));
+					List<String> source = Arrays.asList(attributeMapping.getAttributeValue().split(multiValuesAttributeSeparator));
 					List<Object> input;
 					if (value instanceof Collection) {
 						input = (List) value;
 					} else {
-						input = Arrays.asList(value.toString().split(";"));
+						input = Arrays.asList(value.toString().split(multiValuesAttributeSeparator));
 					}
 
 					return valueCompareCollection(attributeMapping.getOperator(), source, input);
 				case EXPRESSION_LANGUAGE:
 					Object result = attributeService.evaluateElExpressionAttribute(value.toString(), product, null, null, Object.class);
 					if (value instanceof Collection) {
-						List<String> sourceEL = Arrays.asList(attributeMapping.getAttributeValue().split(";"));
+						List<String> sourceEL = Arrays.asList(attributeMapping.getAttributeValue().split(multiValuesAttributeSeparator));
 						List<Object> inputEL = (List) value;
 						return valueCompareCollection(attributeMapping.getOperator(), sourceEL, inputEL);
 					}
@@ -502,7 +521,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			String convertedValueStr = convertedValue != null ? String.valueOf(convertedValue) : null;
 			switch (operator) {
 				case EQUAL:
-					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr).compareTo(Double.valueOf(sourceAttributeValue)) == 0) {
 							return true;
 						}
@@ -511,7 +530,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 						return true;
 					break;
 				case NOT_EQUAL:
-					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr).compareTo(Double.valueOf(sourceAttributeValue)) != 0) {
 							return true;
 						}
@@ -520,26 +539,26 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 						return true;
 					break;
 				case LESS_THAN:
-					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr) < Double.valueOf(sourceAttributeValue))
 							return true;
 					}
 					break;
 				case LESS_THAN_OR_EQUAL:
-					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr) <= Double.valueOf(sourceAttributeValue))
 							return true;
 					}
 					break;
 				case GREATER_THAN:
-					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr) > Double.valueOf(sourceAttributeValue))
 							return true;
 					}
 					break;
 
 				case GREATER_THAN_OR_EQUAL:
-					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr) >= Double.valueOf(sourceAttributeValue))
 							return true;
 					}

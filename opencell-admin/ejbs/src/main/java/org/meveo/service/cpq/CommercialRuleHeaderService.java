@@ -16,6 +16,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.Query;
@@ -77,6 +78,13 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 
     @Inject
     QuoteAttributeService quoteAttributeService;
+    
+    private String multiValuesAttributeSeparator = ";";
+    
+    @PostConstruct
+    private void init() {
+    	multiValuesAttributeSeparator = paramBeanFactory.getInstance().getProperty("attribute.multivalues.separator", ";");
+    }
 
     @SuppressWarnings("unchecked")
     public List<CommercialRuleHeader> getTagRules(String tagCode) throws BusinessException {
@@ -269,7 +277,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                                 Object groupedAttributeValue = entry.getValue();
                                 String convertedValue = String.valueOf(groupedAttributeValue);
                                 if (groupedAttributeCode.equals(line.getSourceGroupedAttributes().getCode())) {
-                                    List<String> values = Arrays.asList(convertedValue.split(";"));
+                                    List<String> values = Arrays.asList(convertedValue.split("multiValuesAttributeSeparator"));
                                     if ((isPreRequisite && !values.contains(line.getSourceGroupedAttributeValue()))
                                             || !isPreRequisite && values.contains(line.getSourceGroupedAttributeValue())) {
                                         if (continueProcess.isFalse()) {
@@ -296,7 +304,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     		String convertedValueStr=convertedValue !=null?String.valueOf(convertedValue):null;
     		switch(operator) {
     		case EQUAL:
-    			if(convertedValueStr !=null && NumberUtils.isCreatable(convertedValueStr.trim()) &&  NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+    			if(StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) &&  NumberUtils.isCreatable(sourceAttributeValue.trim())) {
     				 if(Double.valueOf(convertedValueStr).compareTo(Double.valueOf(sourceAttributeValue))==0) {
     					 return true;
     				 }
@@ -305,7 +313,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     				return true;
     			break;
     		case NOT_EQUAL:
-    			if(convertedValueStr !=null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+    			if(StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
    				 if(Double.valueOf(convertedValueStr).compareTo(Double.valueOf(sourceAttributeValue))!=0) {
    					 return true;
    				 }
@@ -315,29 +323,37 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     				return true;
     			break;
     		case LESS_THAN:
-    			if(convertedValueStr !=null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+    			if(StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
     			if (Double.valueOf(convertedValueStr)<Double.valueOf(sourceAttributeValue))
     				return true;
     			}
     			break;
     		case LESS_THAN_OR_EQUAL:
-    			if(convertedValueStr !=null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+    			if(StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
     			if (Double.valueOf(convertedValueStr)<=Double.valueOf(sourceAttributeValue))
     				return true;
     			}
     			break;
     		case GREATER_THAN:
-    			if(convertedValueStr !=null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+    			if(StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
     			if (Double.valueOf(convertedValueStr)>Double.valueOf(sourceAttributeValue))
     				return true;	
     			}
     			break;
 
     		case GREATER_THAN_OR_EQUAL:
-    			if(convertedValueStr !=null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+    			if(StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
     			if (Double.valueOf(convertedValueStr)>=Double.valueOf(sourceAttributeValue))
     				return true;	
-    			}
+    			}break;
+    		
+    		case CONTAINS:
+    			
+    			List<String> values = convertedValueStr!=null?Arrays.asList(convertedValueStr.split(multiValuesAttributeSeparator)):new ArrayList<String>();
+				if (values.contains(sourceAttributeValue.trim())){
+					return true;
+				}
+    			break;
     		}
     	}
     	return false;
@@ -357,7 +373,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     				switch (line.getSourceAttribute().getAttributeType()) {
     				case LIST_MULTIPLE_TEXT:
     				case LIST_MULTIPLE_NUMERIC:
-    					List<String> values = attributeValue!=null?Arrays.asList(String.valueOf(attributeValue).split(";")):new ArrayList<String>();
+    					List<String> values = attributeValue!=null?Arrays.asList(String.valueOf(attributeValue).split(multiValuesAttributeSeparator)):new ArrayList<String>();
     					if ((isPreRequisite && !values.contains(line.getSourceAttributeValue()))
     							|| !isPreRequisite && values.contains(line.getSourceAttributeValue())) {
     						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, values.contains(line.getSourceAttributeValue())));

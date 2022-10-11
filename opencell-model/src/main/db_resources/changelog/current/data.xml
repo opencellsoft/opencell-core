@@ -8005,6 +8005,24 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
 	</changeSet>
 	
+	<changeSet id="#INTRD-8004_210622" author="AbdelkaderBouazza">
+		<insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-64" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="code" value="REF_CASH" />
+			<column name="description" value="Refund - cash" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="account_code_client_side" value="411000000" />
+			<column name="journal_id" value="-2" />
+			<column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
+			<column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='531100000')" />
+			<column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='419000000')" />
+			<column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+		</insert>
+	</changeSet>
+	
 	<changeSet id="#INTRD-1304_21062022" author="AbdelmounaimAkadid">
 		<insert tableName="global_settings">
 			<column name="id" valueSequenceNext="global_settings_seq" />

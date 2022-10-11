@@ -164,6 +164,19 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
     private String accountingArticleCode;
     
     
+    @Schema(description = "Apply by article")
+    private Boolean applyByArticle;
+    
+    /**
+	 defines the order in which discount plans are applied
+	 */
+	@Schema(description = "defines the order in which discount plans are applied")
+	private Integer sequence;
+	
+	 @Schema(description = "last discount")
+	 private Boolean lastDiscount;
+    
+    
     /**
      * Instantiates a new discount plan item dto.
      */
@@ -196,6 +209,8 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
         this.description = discountPlanItem.getDescription();
         this.priority=discountPlanItem.getPriority();
         this.accountingArticleCode= discountPlanItem.getAccountingArticle() != null ? discountPlanItem.getAccountingArticle().getCode() : null;
+        this.applyByArticle=discountPlanItem.isApplyByArticle();
+        this.lastDiscount=discountPlanItem.getLastDiscount();
     }
 
     /**
@@ -446,6 +461,38 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
 
 	public void setAccountingArticleCode(String accountingArticleCode) {
 		this.accountingArticleCode = accountingArticleCode;
+	}
+
+	public Boolean getApplyByArticle() {
+		return applyByArticle;
+	}
+
+	public void setApplyByArticle(Boolean applyByArticle) {
+		this.applyByArticle = applyByArticle;
+	}
+
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
+
+	public Boolean getLastDiscount() {
+		return lastDiscount;
+	}
+
+	public void setLastDiscount(Boolean lastDiscount) {
+		this.lastDiscount = lastDiscount;
+	}
+
+	public Boolean getDisabled() {
+		return disabled;
+	}
+
+	public Boolean getAllowToNegate() {
+		return allowToNegate;
 	}
 	
 	

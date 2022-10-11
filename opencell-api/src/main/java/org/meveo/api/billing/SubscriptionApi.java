@@ -101,6 +101,7 @@ import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.api.security.filter.ObjectFilter;
+import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.VersionCreated;

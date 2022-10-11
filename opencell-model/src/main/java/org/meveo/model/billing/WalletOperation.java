@@ -167,7 +167,7 @@ import org.meveo.model.tax.TaxClass;
 
 @NamedNativeQueries({
         @NamedNativeQuery(name = "WalletOperation.massUpdateWithRTInfoFromPendingTable", query = "update {h-schema}billing_wallet_operation wo set status='TREATED', updated=now(), rated_transaction_id=pending.rated_transaction_id from {h-schema}billing_wallet_operation_pending pending where status='OPEN' and wo.id=pending.id"),
-        @NamedNativeQuery(name = "WalletOperation.massUpdateWithRTInfoFromPendingTableOracle", query = "update {h-schema}billing_wallet_operation wo set status='TREATED',updated=now(),rated_transaction_id = (select rated_transaction_id from {h-schema}billing_wallet_operation_pending pending where wo.id = pending.id) where status = 'OPEN' and wo.id in (select id from billing_wallet_operation_pending pending where wo.id = pending.id)"),
+        @NamedNativeQuery(name = "WalletOperation.massUpdateWithRTInfoFromPendingTableOracle", query = "UPDATE (SELECT wo.status, wo.updated, wo.id wo_id, wo.rated_transaction_id rt_id, pending.rated_transaction_id pending_rt_id FROM {h-schema}billing_wallet_operation wo, {h-schema}billing_wallet_operation_pending pending WHERE wo.status = 'OPEN' AND wo.id = pending.id) SET status = 'TREATED', updated = now (), rt_id = pending_rt_id"),
         @NamedNativeQuery(name = "WalletOperation.deletePendingTable", query = "delete from {h-schema}billing_wallet_operation_pending") })
 public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 
@@ -605,6 +605,14 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 
     @Transient
     private boolean overrodePrice;
+    
+    /**The amount after discount**/
+    @Column(name = "discounted_amount")
+   	private BigDecimal discountedAmount;
+    
+    /**The amount after discount**/
+    @Column(name = "sequence")
+   	private Integer sequence;
     /**
      * Constructor
      */
@@ -1648,5 +1656,31 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 	public void setOverrodePrice(boolean overrodePrice) {
 		this.overrodePrice = overrodePrice;
 	}
+
+
+
+	public BigDecimal getDiscountedAmount() {
+		return discountedAmount;
+	}
+
+
+
+	public void setDiscountedAmount(BigDecimal discountedAmount) {
+		this.discountedAmount = discountedAmount;
+	}
+
+
+
+	public Integer getSequence() {
+		return sequence;
+	}
+
+
+
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
+	
+	
 
 }
