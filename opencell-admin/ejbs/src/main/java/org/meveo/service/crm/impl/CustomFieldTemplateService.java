@@ -869,4 +869,19 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         }).filter(g -> g.getKey() != null).collect(Collectors.toList());
 
     }
+
+    /**
+     * Are end period events enabled for any Custom field of a given entity
+     * 
+     * @return True if there is any Custom field with end period event enabled
+     */
+    public boolean areCFTEndPeriodEventsEnabled(ICustomFieldEntity cu) {
+        Map<String, CustomFieldTemplate> cfts = findByAppliesTo(cu);
+        for (CustomFieldTemplate cft : cfts.values()) {
+            if (cft.isTriggerEndPeriodEvent()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

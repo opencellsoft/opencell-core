@@ -14,8 +14,10 @@ import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.payment.PaymentDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.payment.PaymentApi;
 import org.meveo.apiv2.securityDeposit.*;
 import org.meveo.apiv2.securityDeposit.resource.SecurityDepositResource;
@@ -46,13 +48,21 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
     @Inject
     private PaymentService paymentService;
     
+    @Inject
+    private InvoiceApi invoiceApi;
+    
     SecurityDepositMapper securityDepositMapper = new SecurityDepositMapper();
 
     @Override
     public Response instantiate(SecurityDepositInput securityDepositInput) {
-
-        SecurityDeposit result = securityDepositApiService.instantiate(securityDepositMapper.toEntity(securityDepositInput)).get();
-
+        SecurityDeposit result;
+        try {
+            result = securityDepositApiService.instantiate(securityDepositMapper.toEntity(securityDepositInput))
+                    .orElseThrow(() -> new BusinessApiException("Security Deposit hasn't been initialized"));            
+            invoiceApi.validateInvoice(result.getSecurityDepositInvoice().getId(), true, false, false);
+        } catch (Exception e) {
+            throw new BusinessException(e);
+        }
         return Response.ok(ImmutableSecurityDepositSuccessResponse
                 .builder()
                 .status("SUCCESS")

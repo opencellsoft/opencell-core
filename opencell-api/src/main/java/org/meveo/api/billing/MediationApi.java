@@ -37,6 +37,7 @@ import org.meveo.api.dto.billing.CdrListDto;
 import org.meveo.api.dto.billing.ChargeCDRDto;
 import org.meveo.api.dto.billing.ChargeCDRResponseDto;
 import org.meveo.api.dto.billing.PrepaidReservationDto;
+import org.meveo.api.dto.billing.ProcessCdrDto;
 import org.meveo.api.dto.response.billing.CdrReservationResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.apiv2.billing.CdrListInput;
@@ -53,6 +54,7 @@ import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
 import org.meveo.service.billing.impl.ReservationService;
 import org.meveo.service.billing.impl.UsageRatingService;
+import org.meveo.service.medina.impl.CDRAlreadyProcessedException;
 import org.meveo.service.notification.DefaultObserver;
 
 /**
@@ -106,6 +108,24 @@ public class MediationApi extends BaseApi {
         }
 
         return errors;
+    }
+    
+    /**
+     * Process CDRs to create EDRs
+     *
+     * @param cdrIds
+     * @throws MeveoApiException
+     * @throws BusinessException
+     * @throws CDRAlreadyProcessedException 
+     */
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public List<ProcessCdrDto> processCdrList(List<Long> cdrIds) throws MeveoApiException, BusinessException, CDRAlreadyProcessedException {
+        List<ProcessCdrDto> processCdrDtoList = new ArrayList<>();
+        List<CDR> cdrs = mediationApiService.processCdrList(cdrIds);
+        for(CDR cdr : cdrs) {
+            processCdrDtoList.add(new ProcessCdrDto(cdr));
+        }
+        return processCdrDtoList;
     }
 
     /**

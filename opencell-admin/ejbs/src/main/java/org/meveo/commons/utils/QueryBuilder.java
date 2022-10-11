@@ -21,6 +21,7 @@ import static org.meveo.service.base.PersistenceService.FROM_JSON_FUNCTION;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -43,6 +44,7 @@ import javax.persistence.criteria.JoinType;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.meveo.admin.util.pagination.FilterOperatorEnum;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.jpa.EntityManagerProvider;
@@ -98,6 +100,8 @@ public class QueryBuilder {
     private static Set<String> joinAlias = new TreeSet<String>();
     
     private JoinType joinType = JoinType.INNER ;
+    
+    private FilterOperatorEnum filterOperator = FilterOperatorEnum.AND;
 
 
 	public JoinType getJoinType() {
@@ -229,6 +233,20 @@ public class QueryBuilder {
 		this(getInitQuery(clazz, alias, fetchFields), alias);
     	this.clazz = clazz;
 		this.joinType = joinType != null ? joinType : JoinType.INNER;
+	}
+
+	/**
+	 * Contructor 
+	 * 
+	 * @param clazz Class for which query is created.
+     * @param alias Alias of a main table.
+     * @param fetchFields Additional (list/map type) fields to fetch
+	 * @param joinType
+	 * @param filterOperator Operator to build where statement
+	 */
+	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, JoinType joinType, FilterOperatorEnum filterOperator) {
+		this(clazz, alias, fetchFields, joinType);
+    	this.filterOperator = filterOperator;
 	}
 
     /**
@@ -415,7 +433,7 @@ public class QueryBuilder {
 
         if (hasOneOrMoreCriteria) {
         	if(!sql.startsWith(" or ")) {
-	            if (inOrClause && nbCriteriaInOrClause != 0) {
+	            if (FilterOperatorEnum.OR.equals(this.filterOperator) || (inOrClause && nbCriteriaInOrClause != 0)) {
 	                q.append(" or ");
 	            } else {
 	                q.append(" and ");
@@ -453,7 +471,7 @@ public class QueryBuilder {
         }
 
         if (hasOneOrMoreCriteria) {
-            if (inOrClause && nbCriteriaInOrClause != 0) {
+            if (FilterOperatorEnum.OR.equals(this.filterOperator) || (inOrClause && nbCriteriaInOrClause != 0)) {
                 q.append(" or ");
             } else {
                 q.append(" and ");
@@ -1420,6 +1438,34 @@ public class QueryBuilder {
     public List find(EntityManager em) {
         Query query = getQuery(em);
         return query.getResultList();
+    }
+
+    public String getQueryAsString() {
+        applyOrdering(paginationSortAlias);
+
+        String query = toStringQuery();
+
+        for (Map.Entry<String, Object> e : params.entrySet()) {
+            query = query.replaceAll(":" + e.getKey(), paramToString(e.getValue()));
+        }
+        return query;
+    }
+
+    public static String paramToString(Object param) {
+        if (param instanceof Collection) {
+            StringBuilder params = new StringBuilder();
+            ((Collection<?>) param).forEach(v -> {
+                params.append("'").append(v).append("',");
+            });
+            params.setLength(params.length() - 1);
+            return params.toString();
+        } else if (param instanceof String || param instanceof Enum) {
+            return "'" + param + "'";
+        } else if (param instanceof Date) {
+            return "'" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(param) + "'";
+        } else {
+            return param.toString();
+        }
     }
 
     /**

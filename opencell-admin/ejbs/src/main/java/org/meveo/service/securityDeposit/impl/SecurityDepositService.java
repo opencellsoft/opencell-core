@@ -99,7 +99,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         if (!financeSettings.isAutoRefund() && (securityDepositInput.getValidityDate() != null || securityDepositInput.getValidityPeriod() != null || securityDepositInput.getValidityPeriodUnit() != null)) {
             throw new InvalidParameterException("the option 'Allow auto refund' need to be checked");
         }
-        if (!SecurityDepositStatusEnum.NEW.equals(securityDeposit.getStatus()) && !SecurityDepositStatusEnum.HOLD.equals(securityDeposit.getStatus())) {
+        if (!SecurityDepositStatusEnum.VALIDATED.equals(securityDeposit.getStatus()) && !SecurityDepositStatusEnum.HOLD.equals(securityDeposit.getStatus())) {
             securityDeposit.setAmount(oldAmountSD);
         }
         if (securityDeposit.getServiceInstance() != null && securityDeposit.getSubscription() != null) {
@@ -216,7 +216,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
             }
         }
 
-        if (securityDepositToUpdate.getAmount() != null && (SecurityDepositStatusEnum.NEW.equals(securityDepositToUpdate.getStatus())
+        if (securityDepositToUpdate.getAmount() != null && (SecurityDepositStatusEnum.VALIDATED.equals(securityDepositToUpdate.getStatus())
                 || SecurityDepositStatusEnum.HOLD.equals(securityDepositToUpdate.getStatus())
                 || SecurityDepositStatusEnum.REFUNDED.equals(securityDepositToUpdate.getStatus()))) {
             BigDecimal nAmount = securityDepositToUpdate.getAmount().add(securityDepositInput.getAmountToCredit().negate());
@@ -429,9 +429,10 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         sd.setTemplate(defaultSDTemplate);        
         String securityDepositName = defaultSDTemplate.getTemplateName();
         sd.setCode(securityDepositName + "-" + count);
-        sd.setAmount(invoice.getAmountWithoutTax());
+        sd.setAmount(invoice.getAmountWithTax());
         sd.setStatus(SecurityDepositStatusEnum.VALIDATED);
         sd.setCustomerAccount(invoice.getBillingAccount().getCustomerAccount());
+        sd.setBillingAccount(invoice.getBillingAccount());
         if (providerService.getProvider().getCode() != null) {
             Provider provider = providerService.findByCode(providerService.getProvider().getCode());
             sd.setCurrency(provider.getCurrency()); 

@@ -147,7 +147,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         }
         if(billingRun.getStatus() == PREVALIDATED) {
             billingRun.setStatus(INVOICES_CREATED);
-            billingRunService.createAggregatesAndInvoiceWithIl(billingRun, 1, 0, jobInstance.getId());
+            billingRunService.createAggregatesAndInvoiceWithIl(billingRun, 1, 0, jobInstance.getId(), result);
             billingRun = billingRunService.refreshOrRetrieve(billingRun);
             billingRun.setPrAmountWithTax(amountWithTax);
             billingRun.setPrAmountWithoutTax(amountWithoutTax);
@@ -174,7 +174,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
             	if(billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
                     billingRun.setStatus(POSTVALIDATED);
             	}else if(billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC && prevalidatedAutomaticPrevBRStatus) {
-                    billingRun.setStatus(VALIDATED);
+                    billingRun.setStatus(DRAFT_INVOICES);
             	} else {
                     billingRun.setStatus(POSTVALIDATED);
             	}

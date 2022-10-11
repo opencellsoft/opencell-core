@@ -8,6 +8,8 @@ import org.meveo.apiv2.securityDeposit.SecurityDepositInput;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.payments.CustomerAccount;
@@ -25,6 +27,7 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
                 .template(createResource(entity.getTemplate()))
                 .currency(createResource(entity.getCurrency()))
                 .customerAccount(createResource(entity.getCustomerAccount()))
+                .billingAccount(createResource(entity.getBillingAccount()))
                 .validityDate(entity.getValidityDate())
                 .validityPeriod(entity.getValidityPeriod())
                 .validityPeriodUnit(entity.getValidityPeriodUnit())
@@ -59,12 +62,21 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
             currency.setId(resource.getCurrency().getId());
             currency.setCurrencyCode(resource.getCurrency().getCode());
             securityDeposit.setCurrency(currency);
+        } else {
+        	securityDeposit.setCurrency(null);
         }
+
         if (resource.getCustomerAccount() != null) {
             CustomerAccount customerAccount = new CustomerAccount();
             customerAccount.setId(resource.getCustomerAccount().getId());
             customerAccount.setCode(resource.getCustomerAccount().getCode());
             securityDeposit.setCustomerAccount(customerAccount);
+        }
+        if (resource.getBillingAccount() != null) {
+            BillingAccount billingAccount = new BillingAccount();
+            billingAccount.setId(resource.getBillingAccount().getId());
+            billingAccount.setCode(resource.getBillingAccount().getCode());
+            securityDeposit.setBillingAccount(billingAccount);
         }
         securityDeposit.setValidityDate(resource.getValidityDate());
         securityDeposit.setValidityPeriod(resource.getValidityPeriod());
@@ -102,7 +114,13 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
         }
         if(resource.getCancelReason() != null) {
             securityDeposit.setCancelReason(resource.getCancelReason());
-        }        
+        }
+
+        if(resource.getLinkedInvoice() != null) {
+        	Invoice invoice = new Invoice();
+        	invoice.setId(resource.getLinkedInvoice().getId());
+        	securityDeposit.setSecurityDepositInvoice(invoice);
+        }
         return securityDeposit;
     }
 
@@ -111,6 +129,6 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
     }
     
     private Resource createResource(BusinessEntity businessEntity) {
-        return businessEntity != null ? ImmutableResource.builder().id(businessEntity.getId()).code(businessEntity.getCode()).build() : null;
+        return businessEntity != null ? ImmutableResource.builder().id(businessEntity.getId()).code(businessEntity.getCode()).build() : ImmutableResource.builder().build();
     }
 }

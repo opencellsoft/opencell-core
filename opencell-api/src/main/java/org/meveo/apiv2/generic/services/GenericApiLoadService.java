@@ -23,6 +23,7 @@ import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.Query;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -112,6 +113,11 @@ public class GenericApiLoadService {
 		return list.stream().map(line -> addResultLine(line, genericFieldsAlias != null ? genericFieldsAlias.iterator() : searchConfig.getFetchFields().iterator())).collect(toList());
 	}
 
+    public String findAggregatedPaginatedRecordsAsString(Class entityClass, PaginationConfiguration searchConfig) {
+        return nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig, null)
+                .addPaginationConfiguration(searchConfig, "a").getQueryAsString();
+    }
+
 	public int getAggregatedRecordsCount(Class entityClass, PaginationConfiguration searchConfig) {
 		return nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig, null)
 				.find(nativePersistenceService.getEntityManager()).size();
@@ -119,7 +125,7 @@ public class GenericApiLoadService {
 	private Map<String, Object> addResultLine(List<Object> line, Iterator<String> iterator) {
 	    return line.stream()
 	            .flatMap(array -> array instanceof Object[] ? flatten((Object[])array) : Stream.of(array))
-	            .filter(l -> !Objects.isNull(l))
+                .map(l -> Objects.isNull(l) ? "" : l)
 	            .collect(toMap(x -> iterator.next(), Function.identity(), (existing, replacement) -> existing, LinkedHashMap::new));
 	}
     private static Stream<Object> flatten(Object[] array) {
