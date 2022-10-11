@@ -8135,10 +8135,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>code='org.meveo.service.script.demo.CustomGatewayPaymentScript'</where>
 		</update>
 	</changeSet>
-
-
-
-</databaseChangeLog>
 	
 	<changeSet id="#9811_10102022" author="Mbarek-Ay">
 	<insert tableName="meveo_job_instance">
@@ -8156,4 +8152,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			value='{"waitingMillis":[{"long":0}],"nbRuns":[{"long":-1}]}' />
 	  </insert>
     </changeSet>
+    
+    
 </databaseChangeLog>
