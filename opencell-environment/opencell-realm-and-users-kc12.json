@@ -86,7 +86,11 @@
         "composites": {
           "client": {
             "opencell-web": [
-              "uma_protection"
+              "uma_protection",
+			  "apiAdministrateur"
+            ],
+			"opencell-portal": [
+              "PORTAL_USER"
             ]
           }
         },
