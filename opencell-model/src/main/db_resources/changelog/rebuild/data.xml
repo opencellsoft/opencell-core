@@ -10309,6 +10309,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="FIX validateBR script compile" author="AbdelmounaimAkadid" />
 	<changeSet id="#INTRD-7360_20220525" author="hichamhanine" />
 	<changeSet id="#INTRD-7573_20220602" author="TarikFA." />
+	<changeSet id="#9811_10102022" author="Mbarek-Ay"/>
 	
 	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
