@@ -515,7 +515,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 continue;
             }
             BigDecimal minAmount = accountAmounts.getValue().getMinAmount();
-            String minAmountLabel = accountAmounts.getValue().getMinAmountLabel();
+           
             BigDecimal totalInvoiceableAmount =
                     appProvider.isEntreprise() ? accountAmounts.getValue().getAmounts().getAmountWithoutTax() : accountAmounts.getValue().getAmounts().getAmountWithTax();
             IInvoicingMinimumApplicable entity = accountAmounts.getValue().getEntity();
@@ -533,6 +533,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 log.error("No default AccountingArticle defined");
                 continue;
             }
+            String minAmountLabel = !StringUtils.isBlank(accountAmounts.getValue().getMinAmountLabel())?accountAmounts.getValue().getMinAmountLabel():defaultMinAccountingArticle.getDescription();
             InvoiceSubCategory invoiceSubCategory = defaultMinAccountingArticle.getInvoiceSubCategory();
             String mapKey = mapKeyPrefix + invoiceSubCategory.getId();
             TaxMappingService.TaxInfo taxInfo = taxMappingService
@@ -554,7 +555,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         return accountingArticle;
     }
 
-    private InvoiceLine createInvoiceLine( String minAmountLabel, IBillableEntity billableEntity, BillingAccount billingAccount, Date minRatingDate,
+    private InvoiceLine createInvoiceLine(String minAmountLabel, IBillableEntity billableEntity, BillingAccount billingAccount, Date minRatingDate,
     		IInvoicingMinimumApplicable entity, Seller seller, AccountingArticle defaultAccountingArticle, TaxMappingService.TaxInfo taxInfo, BigDecimal ilMinAmount) {
         Tax tax = taxInfo.tax;
         BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(ilMinAmount, ilMinAmount, tax.getPercent(), appProvider.isEntreprise(),
@@ -1071,7 +1072,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		    return;
 		}
 		TaxMappingService.TaxInfo taxInfo = taxMappingService.determineTax(defaultMinAccountingArticle.getTaxClass(), seller, billingAccount, null, bilingRun.getInvoiceDate(), null, true, false, null);
-		InvoiceLine invoiceLine = createInvoiceLine(minAmountLabel, billingAccount, billingAccount, bilingRun.getInvoiceDate(), minEntity, seller, defaultMinAccountingArticle, taxInfo, diff);
+		InvoiceLine invoiceLine = createInvoiceLine((!StringUtils.isBlank(minAmountLabel)?minAmountLabel:defaultMinAccountingArticle.getDescription()), billingAccount, billingAccount, bilingRun.getInvoiceDate(), minEntity, seller, defaultMinAccountingArticle, taxInfo, diff);
 		invoiceLine.setBillingRun(bilingRun);
 		create(invoiceLine);
 	}
