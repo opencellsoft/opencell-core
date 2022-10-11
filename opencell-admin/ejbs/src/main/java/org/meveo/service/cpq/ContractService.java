@@ -2,6 +2,7 @@ package org.meveo.service.cpq;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,6 +14,7 @@ import javax.persistence.NoResultException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
@@ -24,6 +26,7 @@ import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.slf4j.Logger;
@@ -136,6 +139,20 @@ public class ContractService extends BusinessService<Contract>  {
 
 				}
 			}
+			else {
+			    pricePlanVersions.sort(Comparator.comparing(PricePlanMatrixVersion::getValidity));
+			    if(pricePlanVersions.size() > 0) {
+			        for (int i=0; i < pricePlanVersions.size() - 1; i++) {
+	                    Date ppvValidityTo = pricePlanVersions.get(i).getValidity().getTo();
+	                    Date ppvNextValidityFrom = pricePlanVersions.get(i+1).getValidity().getFrom();
+	                    Date ppvValidityToNextDay = DateUtils.addDaysToDate(ppvValidityTo, 1);
+	                    if (ppvValidityTo.compareTo(ppvNextValidityFrom) != 0 && ppvValidityToNextDay.compareTo(ppvNextValidityFrom) != 0){
+	                        log.error("At any given time during the duration of the framework agreement, a price should be applicable, please check your price version dates");
+	                        throw new BusinessApiException("At any given time during the duration of the framework agreement, a price should be applicable, please check your price version dates");
+	                    }
+	                }
+			    }                
+            }
 		}
 
 		if (ContractStatusEnum.ACTIVE.equals(contract.getStatus())

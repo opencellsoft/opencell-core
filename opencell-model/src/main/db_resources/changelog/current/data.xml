@@ -8201,4 +8201,12 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</delete>
 	</changeSet>
 
+	<changeSet id="#INTRD-10400_20221007" author="HichamHANINE">
+    	<update tableName="security_deposit">
+    	<column name="status" value="VALIDATED"/>
+    	<where>status='NEW'</where>
+    	</update>
+    </changeSet>
+
+
 </databaseChangeLog>

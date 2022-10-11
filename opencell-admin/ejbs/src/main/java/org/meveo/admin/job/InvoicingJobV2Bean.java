@@ -147,7 +147,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         }
         if(billingRun.getStatus() == PREVALIDATED) {
             billingRun.setStatus(INVOICES_CREATED);
-            billingRunService.createAggregatesAndInvoiceWithIl(billingRun, 1, 0, jobInstance.getId());
+            billingRunService.createAggregatesAndInvoiceWithIl(billingRun, 1, 0, jobInstance.getId(), result);
             billingRun = billingRunService.refreshOrRetrieve(billingRun);
             billingRun.setPrAmountWithTax(amountWithTax);
             billingRun.setPrAmountWithoutTax(amountWithoutTax);
