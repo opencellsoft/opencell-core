@@ -33,6 +33,7 @@ import javax.annotation.Resource;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
+import javax.naming.InitialContext;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.tools.Diagnostic;
@@ -48,6 +49,7 @@ import org.meveo.cache.CacheKeyStr;
 import org.meveo.cache.CompiledScript;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.FileUtils;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
@@ -286,6 +288,8 @@ public class ScriptCompilerService extends BusinessService<ScriptInstance> {
                     }
                 }
                 compiledScripts.put(cacheKey, new CompiledScript(compiledScript, scriptInstance));
+                InitialContext ic = new InitialContext();
+                ic.rebind("java:global/" + ParamBean.getInstance().getProperty("opencell.moduleName", "opencell") + "/" + scriptCode, scriptInstance);
 
                 log.debug("Compiled script {} added to compiled interface map", scriptCode);
             }
