@@ -137,8 +137,9 @@ public class MediationJobBeanV2 extends IteratorBasedJobBean<Long> {
                      throw new DuplicateException(cdr);
                 }
                 cdrParsingService.createEdrs(edrs, cdr);
-                
-                mediationsettingService.applyEdrVersioningRule(edrs, cdr);
+
+                String eventKey = mediationsettingService.getKeyEventEl(edrs, cdr);
+                mediationsettingService.applyEdrVersioningRule(eventKey, edrs, cdr);
                 if (!StringUtils.isBlank(cdr.getRejectReason())) {
                     failedCDR(jobExecutionResult, cdr, cdr.getStatus());
                 }
