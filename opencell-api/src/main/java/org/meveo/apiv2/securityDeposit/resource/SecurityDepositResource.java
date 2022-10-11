@@ -30,6 +30,16 @@ public interface SecurityDepositResource {
             @ApiResponse(responseCode = "400", description = "Bad Request") })
     Response instantiate(@Parameter(description = "Security Deposit input", required = true) SecurityDepositInput SecurityDepositInput);
 
+    @POST
+    @Path("/")
+    @Operation(summary = "Create a Security Deposit",
+        tags = { "SecurityDeposit", "Post", "Create" },
+        description = "Create a Security Deposit",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Security deposit was successfully created"),
+            @ApiResponse(responseCode = "400", description = "Bad Request") })
+    Response create(@Parameter(description = "Security Deposit input", required = true) SecurityDepositInput SecurityDepositInput);
+    
     @PUT
     @Path("/{id}")
     @Operation(summary = "Update Security Deposit",
