@@ -567,16 +567,16 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 			final Subscription subscription = serviceInstance.getSubscription();
 			if(subscription!=null) {
 				invoiceLine.setSubscription(subscription);
-				invoiceLine.setUserAccount(subscription.getUserAccount());
+				//invoiceLine.setUserAccount(subscription.getUserAccount());
 			}
         }
         if (entity instanceof Subscription) {
             final Subscription subscription = (Subscription) entity;
 			invoiceLine.setSubscription(subscription);
-            invoiceLine.setUserAccount(subscription.getUserAccount());
+            //invoiceLine.setUserAccount(subscription.getUserAccount());
         }
         if (entity instanceof UserAccount) {
-            invoiceLine.setUserAccount((UserAccount) entity);
+            //invoiceLine.setUserAccount((UserAccount) entity);
         }
         if (billableEntity instanceof Subscription) {
             invoiceLine.setSubscription((Subscription) billableEntity);
