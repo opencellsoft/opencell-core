@@ -18,6 +18,8 @@
 
 package org.meveo.interceptor;
 
+import java.lang.invoke.MethodHandles;
+
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
 
@@ -29,7 +31,7 @@ import org.slf4j.LoggerFactory;
  **/
 public class PerformanceInterceptor {
 
-	private Logger log = LoggerFactory.getLogger(PerformanceInterceptor.class);
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	@AroundInvoke
 	Object measureTime(InvocationContext ctx) throws Exception {

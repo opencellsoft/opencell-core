@@ -18,6 +18,7 @@
 package org.meveo.admin.parse.xls;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +35,7 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 //import org.richfaces.event.FileUploadEvent;
 //import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Action for importing Customer Accounts.
@@ -47,8 +49,7 @@ public class CustomerAccountImportAction implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Inject
-	protected Logger log;
+	private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	@Inject
 	private CustomerAccountService customerAccountService;

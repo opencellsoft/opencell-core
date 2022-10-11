@@ -39,9 +39,12 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+
+import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -57,8 +60,7 @@ import java.util.List;
 public class RealtimeChargingService {
 
     /** The log. */
-    @Inject
-    protected Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /** The charge application rating service. */
     @Inject

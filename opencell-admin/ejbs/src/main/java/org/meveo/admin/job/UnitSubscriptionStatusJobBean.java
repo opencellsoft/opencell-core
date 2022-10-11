@@ -18,6 +18,7 @@
 
 package org.meveo.admin.job;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -41,6 +42,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author HORRI Khalid
@@ -51,8 +53,7 @@ import org.slf4j.Logger;
 @Stateless
 public class UnitSubscriptionStatusJobBean {
 
-	@Inject
-	private Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	@Inject
 	private SubscriptionService subscriptionService;

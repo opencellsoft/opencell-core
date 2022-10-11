@@ -18,6 +18,7 @@
 package org.meveo.admin.action.admin;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,6 +54,8 @@ import org.meveo.util.view.LazyDataModelWSize;
 import org.omnifaces.cdi.Param;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Named
 @ViewScoped
@@ -88,8 +91,7 @@ public class CacheBean implements Serializable {
     private MetricsConfigurationCacheContainerProvider metricsConfigurationCacheContainerProvider;
 
     /** Logger. */
-    @Inject
-    protected org.slf4j.Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     protected Messages messages;

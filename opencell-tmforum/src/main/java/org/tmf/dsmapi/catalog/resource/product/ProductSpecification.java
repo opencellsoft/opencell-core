@@ -21,7 +21,6 @@ package org.tmf.dsmapi.catalog.resource.product;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -29,6 +28,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
+import org.slf4j.Logger;
 import org.tmf.dsmapi.catalog.resource.AbstractCatalogEntity;
 import org.tmf.dsmapi.catalog.resource.Attachment;
 import org.tmf.dsmapi.catalog.resource.CatalogReference;

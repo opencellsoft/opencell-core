@@ -21,6 +21,9 @@ package org.meveo.commons.utils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.invoke.MethodHandles;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -34,8 +37,7 @@ import javax.inject.Inject;
 @Stateless
 public class ParamBeanFactory {
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     @CurrentUser

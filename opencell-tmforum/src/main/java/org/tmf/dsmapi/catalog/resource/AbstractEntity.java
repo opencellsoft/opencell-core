@@ -20,14 +20,13 @@ package org.tmf.dsmapi.catalog.resource;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.persistence.PostLoad;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
 import org.meveo.commons.utils.CustomDateSerializer;
+import org.slf4j.Logger;
 import org.tmf.dsmapi.commons.ParsedVersion;
 import org.tmf.dsmapi.commons.Utilities;
 
@@ -291,12 +290,12 @@ public abstract class AbstractEntity implements Serializable {
         Logger logger = getLogger();
 
         if (Utilities.hasValue(this.name) == false) {
-            logger.log(Level.FINE, " invalid: name is required");
+            logger.trace(" invalid: name is required");
             return false;
         }
 
         if (this.validFor != null && this.validFor.isValid() == false) {
-            logger.log(Level.FINE, " invalid: validFor");
+            logger.trace(" invalid: validFor");
             return false;
         }
 

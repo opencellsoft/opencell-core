@@ -21,8 +21,6 @@ package org.tmf.dsmapi.catalog.resource.product;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -31,6 +29,8 @@ import javax.xml.bind.annotation.XmlType;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tmf.dsmapi.catalog.resource.AbstractCatalogEntity;
 import org.tmf.dsmapi.catalog.resource.CatalogReference;
 import org.tmf.dsmapi.catalog.resource.LifecycleStatus;
@@ -75,7 +75,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ProductOffering extends AbstractCatalogEntity implements Serializable {
     private final static long serialVersionUID = 1L;
 
-    private final static Logger logger = Logger.getLogger(ProductOffering.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(ProductOffering.class);
 
     private Boolean isBundle;
 
@@ -362,7 +362,7 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
     @Override
     @JsonIgnore
     public Logger getLogger() {
-        return logger;
+        return log;
     }
 
     @Override
@@ -430,7 +430,7 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
     @Override
     @JsonIgnore
     public boolean isValid() {
-        logger.log(Level.FINE, "ProductOffering:valid ()");
+        log.trace( "ProductOffering:valid ()");
 
         if (super.isValid() == false) {
             return false;
@@ -438,12 +438,12 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
 
         if (this.isBundle == Boolean.TRUE) {
             if (Utilities.hasContents(this.bundledProductOffering) == false) {
-                logger.log(Level.FINE, " invalid: bundledProductOffering must be specified when isBundle is true");
+                log.trace(" invalid: bundledProductOffering must be specified when isBundle is true");
                 return false;
             }
         } else {
             if (Utilities.hasContents(this.bundledProductOffering) == true) {
-                logger.log(Level.FINE, " invalid: bundledProductOffering must not be specififed when isBundle is false");
+                log.trace(" invalid: bundledProductOffering must not be specififed when isBundle is false");
                 return false;
             }
         }

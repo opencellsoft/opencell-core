@@ -18,6 +18,7 @@
 
 package org.meveo.admin.job;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -51,12 +52,12 @@ import org.meveo.service.filter.FilterService;
 import org.meveo.service.generic.wf.GenericWorkflowService;
 import org.meveo.service.generic.wf.WorkflowInstanceService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class GenericWorkflowJobBean extends BaseJobBean {
 
-    @Inject
-    private Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private GenericWorkflowService genericWorkflowService;

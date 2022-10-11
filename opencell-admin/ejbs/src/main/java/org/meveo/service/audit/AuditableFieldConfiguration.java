@@ -22,6 +22,7 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.audit.AuditTarget;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Lock;
@@ -32,6 +33,7 @@ import javax.inject.Inject;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
@@ -53,8 +55,7 @@ public class AuditableFieldConfiguration implements Serializable {
 
     private static final long serialVersionUID = -4077922735278134360L;
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private Map<String, List<Field>> auditableEntities = new HashMap();
 

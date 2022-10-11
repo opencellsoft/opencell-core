@@ -19,6 +19,7 @@
 package org.meveo.admin.ftp;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
@@ -38,11 +39,11 @@ import org.meveo.model.mediation.ActionEnum;
 import org.meveo.model.mediation.MeveoFtpFile;
 import org.meveo.service.admin.impl.UserService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class MeveoDefaultFtplet extends DefaultFtplet {
-	@Inject
-	private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	@Inject
 	@FileUpload

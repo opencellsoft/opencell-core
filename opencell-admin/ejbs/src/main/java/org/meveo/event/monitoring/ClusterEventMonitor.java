@@ -16,6 +16,8 @@
  */
 package org.meveo.event.monitoring;
 
+import java.lang.invoke.MethodHandles;
+
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
 import javax.inject.Inject;
@@ -34,6 +36,7 @@ import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.script.ScriptCompilerService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Message Driven Bean to handle data synchronization between cluster nodes. Messages are read from a topic "topic/CLUSTEREVENTTOPIC".
@@ -47,8 +50,7 @@ import org.slf4j.Logger;
         @ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge") })
 public class ClusterEventMonitor implements MessageListener {
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private JobInstanceService jobInstanceService;

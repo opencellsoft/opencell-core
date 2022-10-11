@@ -18,6 +18,8 @@
 
 package org.meveo.admin.job;
 
+import java.lang.invoke.MethodHandles;
+
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -28,6 +30,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.PaymentScheduleInstanceItem;
 import org.meveo.service.payments.impl.PaymentScheduleInstanceItemService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -38,8 +41,7 @@ import org.slf4j.Logger;
 @Stateless
 public class UnitPaymentScheduleJobBean {
 
-    @Inject
-    private Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private PaymentScheduleInstanceItemService paymentScheduleInstanceItemService;

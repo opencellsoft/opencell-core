@@ -20,7 +20,7 @@ import java.util.ServiceLoader;
 @Stateless
 public class SMSService {
 
-    private static Logger log = LoggerFactory.getLogger(SMSService.class);
+    private static final Logger log = LoggerFactory.getLogger(SMSService.class);
 
     @Inject
     private CustomerService customerService;

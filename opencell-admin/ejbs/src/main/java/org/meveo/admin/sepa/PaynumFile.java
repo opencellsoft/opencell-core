@@ -19,6 +19,7 @@
 package org.meveo.admin.sepa;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.security.MessageDigest;
@@ -52,7 +53,7 @@ import org.slf4j.LoggerFactory;
 public class PaynumFile extends AbstractDDRequestBuilder {
     
     /** The log. */
-    Logger log = LoggerFactory.getLogger(PaynumFile.class);
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 
     @Override

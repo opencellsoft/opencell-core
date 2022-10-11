@@ -19,6 +19,7 @@
 package org.meveo.service.custom;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -38,6 +39,7 @@ import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import liquibase.Contexts;
 import liquibase.LabelExpression;
@@ -82,8 +84,7 @@ public class CustomTableCreatorService implements Serializable {
     @Inject
     private EntityManagerProvider entityManagerProvider;
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /**
      * Create a table with a single 'id' field. Value is autoincremented for mysql or taken from sequence for Postgress databases.

@@ -18,6 +18,7 @@
 
 package org.meveo.api.rest.impl;
 
+import java.lang.invoke.MethodHandles;
 import java.sql.SQLException;
 import java.util.Set;
 
@@ -64,7 +65,7 @@ import org.slf4j.LoggerFactory;
  **/
 public abstract class BaseRs implements IBaseRs {
 
-    protected Logger log = LoggerFactory.getLogger(this.getClass());
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     @MeveoParamBean

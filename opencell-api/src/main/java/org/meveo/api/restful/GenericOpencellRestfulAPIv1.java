@@ -27,6 +27,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.util.Inflector;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -35,6 +36,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.*;
@@ -81,8 +83,8 @@ public class GenericOpencellRestfulAPIv1 extends Application {
     private String baseURL;
     private List<String> listOfURLs;
 
-    @Inject
-    protected Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

@@ -18,6 +18,7 @@
 
 package org.meveo.util.view;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Date;
 
 import javax.faces.event.PhaseEvent;
@@ -31,7 +32,7 @@ public class LifeCycleListener implements PhaseListener {
 
     private static final long serialVersionUID = 3744688960206329587L;
 
-    Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public PhaseId getPhaseId() {
         return PhaseId.ANY_PHASE;

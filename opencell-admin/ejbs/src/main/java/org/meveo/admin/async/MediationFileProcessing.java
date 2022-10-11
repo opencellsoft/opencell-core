@@ -23,6 +23,7 @@ package org.meveo.admin.async;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.invoke.MethodHandles;
 import java.util.concurrent.Future;
 
 import javax.ejb.AsyncResult;
@@ -45,6 +46,7 @@ import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CSVCDRParser;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author anasseh
@@ -56,8 +58,7 @@ import org.slf4j.Logger;
 @Stateless
 public class MediationFileProcessing {
 
-	@Inject
-	protected Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	/** The job execution service. */
 	@Inject

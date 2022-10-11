@@ -18,6 +18,8 @@
 
 package org.meveo.audit.logging.handler;
 
+import java.lang.invoke.MethodHandles;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.audit.logging.dto.AuditEvent;
 import org.slf4j.Logger;
@@ -30,12 +32,12 @@ import org.slf4j.LoggerFactory;
  **/
 public class ConsoleAuditHandler extends Handler<AuditEvent> {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(ConsoleAuditHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	@Override
 	public void handle() throws BusinessException {
 		final String logText = getLoggableText();
-		LOGGER.info(logText);
+		log.info(logText);
 	}
 
 }

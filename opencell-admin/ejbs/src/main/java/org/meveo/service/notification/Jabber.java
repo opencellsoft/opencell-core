@@ -18,6 +18,7 @@
 
 package org.meveo.service.notification;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Collection;
 
 import javax.inject.Inject;
@@ -31,6 +32,7 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Deprecated
 public class Jabber {
@@ -73,7 +75,7 @@ public class Jabber {
      * free.
      */
     public static boolean free = false;
-    private static Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     static {
         try {
             // establish connection between client and server.

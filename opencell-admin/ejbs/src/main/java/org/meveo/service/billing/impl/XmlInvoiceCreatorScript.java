@@ -23,6 +23,7 @@ import static org.meveo.commons.utils.StringUtils.getDefaultIfNull;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -182,7 +183,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     /** default date time format. */
     protected static String DEFAULT_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
 
-    protected Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /**
      * Create XML invoice and store its content in a file. Note: Just creates a file - does not update invoice with file information

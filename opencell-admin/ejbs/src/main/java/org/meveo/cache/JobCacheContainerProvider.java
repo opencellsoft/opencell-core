@@ -19,6 +19,7 @@
 package org.meveo.cache;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -47,6 +48,7 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.job.JobInstanceService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides cache related services (tracking running jobs) for job running related operations
@@ -64,8 +66,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
     public static final String CACHE_RETRY_DELAY = "runningJobsCache.retry.delay";
     public static final String CACHE_RETRY_TIMES = "runningJobsCache.retry.times";
 
-    @Inject
-    protected Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @EJB
     private JobInstanceService jobInstanceService;

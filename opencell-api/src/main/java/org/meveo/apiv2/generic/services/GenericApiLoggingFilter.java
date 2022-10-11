@@ -14,8 +14,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class GenericApiLoggingFilter implements ContainerRequestFilter, ContainerResponseFilter {
-    private final Logger logger = LoggerFactory.getLogger(GenericApiLoggingFilter.class);
+    
+    private static final Logger log = LoggerFactory.getLogger(GenericApiLoggingFilter.class);
+    
     private final ObjectMapper objectMapper = new ObjectMapper();
+    
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
         requestContext.getDate();
@@ -29,7 +32,7 @@ public class GenericApiLoggingFilter implements ContainerRequestFilter, Containe
             requestLogBuilder.append("Request Payload : ").append(baos).append("\n");
             requestContext.setEntityStream(new ByteArrayInputStream(baos.toByteArray()));
         }
-        logger.info(requestLogBuilder.toString());
+        log.info(requestLogBuilder.toString());
     }
 
     @Override
@@ -38,6 +41,6 @@ public class GenericApiLoggingFilter implements ContainerRequestFilter, Containe
         requestLogBuilder.append("Response Code : ").append(responseContext.getStatus()).append("\n");
         requestLogBuilder.append("Request Headers : ").append(objectMapper.writeValueAsString(requestContext.getHeaders())).append("\n");
         requestLogBuilder.append("Request Payload : ").append(requestContext.hasEntity() ? responseContext.getEntity() : "{}").append("\n");
-        logger.info(requestLogBuilder.toString());
+        log.info(requestLogBuilder.toString());
     }
 }

@@ -1,5 +1,6 @@
 package org.meveo.admin.job.v2.invoicing;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,12 +24,12 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.invoicing.impl.BillingService;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class InvoicingJobBeanV2 extends BaseJobBean {
 
-    @Inject
-    protected Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private BillingService billingRunService;

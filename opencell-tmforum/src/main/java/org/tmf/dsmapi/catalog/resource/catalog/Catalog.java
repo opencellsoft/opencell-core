@@ -20,13 +20,13 @@ package org.tmf.dsmapi.catalog.resource.catalog;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.persistence.PostLoad;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tmf.dsmapi.catalog.resource.AbstractEntity;
 import org.tmf.dsmapi.catalog.resource.CatalogReference;
 import org.tmf.dsmapi.catalog.resource.RelatedParty;
@@ -56,7 +56,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Catalog extends AbstractEntity implements Serializable {
     private final static long serialVersionUID = 1L;
 
-    private static final Logger logger = Logger.getLogger(Catalog.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(Catalog.class.getName());
 
     private CatalogType type;
 
@@ -154,7 +154,7 @@ public class Catalog extends AbstractEntity implements Serializable {
     @Override
     @JsonIgnore
     public Logger getLogger() {
-        return logger;
+        return log;
     }
 
     @Override
@@ -190,7 +190,7 @@ public class Catalog extends AbstractEntity implements Serializable {
     @Override
     @JsonIgnore
     public boolean isValid() {
-        logger.log(Level.FINE, "Catalog:valid ()");
+        log.trace("Catalog:valid ()");
 
         if (super.isValid() == false) {
             return false;

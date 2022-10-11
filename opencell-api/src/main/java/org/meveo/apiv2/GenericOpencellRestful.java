@@ -23,12 +23,14 @@ import org.meveo.apiv2.ordering.resource.orderitem.OrderItemResourceImpl;
 import org.meveo.apiv2.ordering.resource.product.ProductResourceImpl;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -46,8 +48,8 @@ public class GenericOpencellRestful extends Application {
     public static List<Map<String,String>> VERSION_INFO = new ArrayList<Map<String, String>>();
     public static long API_LIST_DEFAULT_LIMIT;
 
-    @Inject
-    protected Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

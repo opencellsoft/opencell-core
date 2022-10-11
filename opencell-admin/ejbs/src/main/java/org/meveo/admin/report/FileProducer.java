@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +32,7 @@ import org.meveo.admin.exception.NoTemplateException;
 import org.meveo.model.crm.Provider;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -45,8 +47,8 @@ import net.sf.jasperreports.engine.util.JRLoader;
  */
 @Named
 public class FileProducer {
-    @Inject
-    protected Logger log;
+    
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public Map<String, Object> parameters = new HashMap<String, Object>();
 

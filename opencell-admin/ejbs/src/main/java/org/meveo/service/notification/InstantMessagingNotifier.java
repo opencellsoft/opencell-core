@@ -18,6 +18,7 @@
 
 package org.meveo.service.notification;
 
+import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -36,6 +37,7 @@ import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.skype.Skype;
 
@@ -47,8 +49,7 @@ import com.skype.Skype;
 @Stateless
 public class InstantMessagingNotifier {
 
-    @Inject
-    Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Resource(lookup = "java:/MeveoMail")
     private Session mailSession;

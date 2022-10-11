@@ -20,6 +20,7 @@ package org.meveo.admin.action.audit;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +47,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.service.base.local.IPersistenceService;
 import org.primefaces.model.DualListModel;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Edward P. Legaspi
@@ -56,8 +58,7 @@ public class AuditConfigurationBean implements Serializable {
 
     private static final long serialVersionUID = -2288050777565855090L;
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private Messages messages;

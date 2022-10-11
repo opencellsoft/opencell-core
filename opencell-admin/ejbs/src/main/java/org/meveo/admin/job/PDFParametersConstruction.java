@@ -18,6 +18,7 @@
 package org.meveo.admin.job;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.text.NumberFormat;
@@ -56,7 +57,7 @@ import net.sf.jasperreports.engine.JRParameter;
 @Stateless
 public class PDFParametersConstruction {
 
-    private Logger log = LoggerFactory.getLogger(PDFParametersConstruction.class);
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     protected CustomFieldTemplateService customFieldTemplateService;

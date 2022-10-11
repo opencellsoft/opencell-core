@@ -21,6 +21,19 @@
  */
 package org.meveo.admin.async;
 
+import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Future;
+
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingAccount;
@@ -36,12 +49,7 @@ import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.RejectedBillingAccountService;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
-
-import javax.ejb.*;
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Future;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class InvoicingAsync.
@@ -61,8 +69,7 @@ public class InvoicingAsync {
     private InvoiceService invoiceService;
 
     /** The log. */
-    @Inject
-    protected Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /** The JobExecution service. */
     @Inject

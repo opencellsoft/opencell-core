@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
 @WebFilter(urlPatterns = "/*")
 public class RequestMonitoringFilter extends HttpFilter {
 
-    private Logger log = LoggerFactory.getLogger(RequestMonitoringFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(RequestMonitoringFilter.class);
 
     @Inject
     @RegistryType(type = MetricRegistry.Type.APPLICATION)

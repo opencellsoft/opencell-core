@@ -47,7 +47,7 @@ public class ObjectConverter implements javax.faces.convert.Converter, Serializa
     @Inject
     private transient Conversation conversation;
 
-    private final transient Logger log = LoggerFactory.getLogger(ObjectConverter.class);
+    private static final transient Logger log = LoggerFactory.getLogger(ObjectConverter.class);
 
     private int incrementor = 1;
 

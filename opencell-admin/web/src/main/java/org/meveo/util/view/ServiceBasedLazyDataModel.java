@@ -17,6 +17,7 @@
  */
 package org.meveo.util.view;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,6 +38,8 @@ import org.slf4j.LoggerFactory;
 public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyDataModel<T> {
 
     private static final long serialVersionUID = -5796910936316457321L;
+    
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 //    private Integer rowCount;
 
@@ -154,7 +157,6 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyD
             return new ElasticSearchResults(rowCount, ids);
 
         } catch (Exception e) {
-            Logger log = LoggerFactory.getLogger(getClass());
             log.error("Failed to search in ES with {} or parse data retrieved {}", paginationConfig, searchResult, e);
         }
         return new ElasticSearchResults(0);

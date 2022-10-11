@@ -44,7 +44,7 @@ public class LogExtractionService {
     /**
      * logger
      */
-    private static Logger log = LoggerFactory.getLogger(LogExtractionService.class);
+    private static final Logger log = LoggerFactory.getLogger(LogExtractionService.class);
 
     /**
      * @param fromDate from date we get logs

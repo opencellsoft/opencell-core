@@ -21,6 +21,7 @@ package org.meveo.admin.action;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.lang.invoke.MethodHandles;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.faces.context.FacesContext;
@@ -38,6 +39,7 @@ import org.meveo.util.ApplicationProvider;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Edward P. Legaspi
@@ -48,8 +50,7 @@ import org.slf4j.Logger;
 @ApplicationScoped
 public class DefaultImageStreamer {
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     @ApplicationProvider

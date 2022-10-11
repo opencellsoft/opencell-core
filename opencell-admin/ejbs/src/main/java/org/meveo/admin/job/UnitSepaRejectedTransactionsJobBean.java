@@ -32,6 +32,7 @@ import org.meveo.model.payments.*;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.payments.impl.*;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -40,6 +41,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import java.io.File;
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -54,8 +56,7 @@ public class UnitSepaRejectedTransactionsJobBean {
 
 
 	/** The log. */
-	@Inject
-	private Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	/** The dd request item service. */
 	@Inject

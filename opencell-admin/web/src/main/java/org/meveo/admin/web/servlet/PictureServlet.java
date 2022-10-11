@@ -71,7 +71,7 @@ public class PictureServlet extends HttpServlet {
      *
      */
     private static final long serialVersionUID = 1L;
-    private final Logger log = LoggerFactory.getLogger(PictureServlet.class);
+    private static final Logger log = LoggerFactory.getLogger(PictureServlet.class);
 
     public static final String DEFAULT_OFFER_CAT_IMAGE = "offer_cat_default.png";
     public static final String DEFAULT_OFFER_IMAGE = "offer_default.png";

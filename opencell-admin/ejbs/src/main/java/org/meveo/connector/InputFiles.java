@@ -18,6 +18,7 @@
 package org.meveo.connector;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -28,6 +29,7 @@ import javax.xml.bind.JAXBException;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ImportFileFiltre;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author anasseh
@@ -36,7 +38,7 @@ import org.slf4j.Logger;
  */
 
 public abstract class InputFiles {
-	protected Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	public void handleFiles(String dirIN, String prefix, String ext, String dirOK, String dirKO) throws InterruptedException {
 		File dir = new File(dirIN);

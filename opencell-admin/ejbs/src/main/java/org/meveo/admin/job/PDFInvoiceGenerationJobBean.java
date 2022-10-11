@@ -18,6 +18,7 @@
 
 package org.meveo.admin.job;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -39,12 +40,12 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class PDFInvoiceGenerationJobBean extends BaseJobBean {
 
-    @Inject
-    private Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private InvoiceService invoiceService;

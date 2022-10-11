@@ -19,6 +19,7 @@
 package org.meveo.cache;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -42,6 +43,7 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides cache related services (loading, update) for CDR and EDR processing related operations
@@ -56,8 +58,7 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
 
     private static final long serialVersionUID = 1435137623784514994L;
 
-    @Inject
-    protected Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @EJB
     private EdrService edrService;

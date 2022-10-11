@@ -50,6 +50,7 @@ import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -59,6 +60,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -87,8 +89,7 @@ public class UsageRatingService implements Serializable {
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
 
-    @Inject
-    protected Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private EdrService edrService;

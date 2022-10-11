@@ -18,6 +18,7 @@
 
 package org.meveo.service.base;
 
+import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -53,7 +54,7 @@ public class ValueExpressionWrapper {
 
     private ValueExpression ve;
 
-    static protected Logger log = LoggerFactory.getLogger(ValueExpressionWrapper.class);
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     static HashMap<String, ValueExpressionWrapper> valueExpressionWrapperMap = new HashMap<String, ValueExpressionWrapper>();
 

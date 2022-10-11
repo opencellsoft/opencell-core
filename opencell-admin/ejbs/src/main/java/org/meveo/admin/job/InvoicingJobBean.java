@@ -18,6 +18,7 @@
 
 package org.meveo.admin.job;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author HORRI Khalid
@@ -48,8 +50,7 @@ import org.slf4j.Logger;
 @Stateless
 public class InvoicingJobBean extends BaseJobBean {
 
-    @Inject
-    protected Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private BillingRunService billingRunService;

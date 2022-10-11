@@ -19,6 +19,7 @@
 package org.meveo.admin.job;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -63,6 +64,7 @@ import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.PaymentHistoryService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class UnitSepaDirectDebitJobBean.
@@ -98,8 +100,7 @@ public class UnitSepaDirectDebitJobBean {
 	private DDRequestItemService dDRequestItemService;
 
 	/** The log. */
-	@Inject
-	private Logger log;
+	protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	/** The rejecteded edr producer. */
 	@Inject

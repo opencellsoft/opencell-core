@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultLocaleProducer implements Serializable {
     private static final long serialVersionUID = -4534087316489937649L;
 
-    private Logger log = LoggerFactory.getLogger(DefaultLocaleProducer.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultLocaleProducer.class);
 
     @Inject
     @DefaultLocale

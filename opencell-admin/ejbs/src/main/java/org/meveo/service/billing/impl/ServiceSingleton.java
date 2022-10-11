@@ -18,6 +18,7 @@
 
 package org.meveo.service.billing.impl;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,6 +57,7 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A singleton service to handle synchronized calls. DO not change lock mode to Write
@@ -102,8 +104,7 @@ public class ServiceSingleton {
     @InvoiceNumberAssigned
     private Event<Invoice> invoiceNumberAssignedEventProducer;
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
     private static Map<Long, AtomicInteger> invoicingTempNumber = new HashMap<>();
     

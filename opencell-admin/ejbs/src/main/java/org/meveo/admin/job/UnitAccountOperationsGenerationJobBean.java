@@ -18,6 +18,7 @@
 
 package org.meveo.admin.job;
 
+import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,6 +42,7 @@ import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInterface;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Edward P. Legaspi
@@ -50,8 +52,7 @@ import org.slf4j.Logger;
 @Stateless
 public class UnitAccountOperationsGenerationJobBean {
 
-    @Inject
-    private Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private InvoiceService invoiceService;

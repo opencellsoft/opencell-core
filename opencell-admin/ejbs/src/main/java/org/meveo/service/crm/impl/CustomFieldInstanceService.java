@@ -2116,14 +2116,12 @@ public class CustomFieldInstanceService extends BaseService {
                 numberToMatchDbl = Double.parseDouble(((String) numberToMatchObj));
 
             } catch (NumberFormatException e) {
-                Logger log = LoggerFactory.getLogger(CustomFieldInstanceService.class);
                 log.error("Failed to match CF value for a range of numbers. Value passed is not a number {} {}", numberToMatchObj,
                     numberToMatchObj != null ? numberToMatchObj.getClass() : null);
                 return false;
             }
 
         } else {
-            Logger log = LoggerFactory.getLogger(CustomFieldInstanceService.class);
             log.error("Failed to match CF value for a range of numbers. Value passed is not a number {} {}", numberToMatchObj,
                 numberToMatchObj != null ? numberToMatchObj.getClass() : null);
             return false;

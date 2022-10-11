@@ -26,6 +26,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import java.lang.invoke.MethodHandles;
+
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
@@ -49,7 +51,7 @@ public class WsRestApiInterceptor {
     @Inject
     private AuditUtils auditUtils;
 
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @AroundInvoke
     public Object aroundInvoke(InvocationContext invocationContext) throws Exception {

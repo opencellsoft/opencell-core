@@ -35,6 +35,7 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.FtpTransferredFileService;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -43,6 +44,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
@@ -67,8 +69,7 @@ public class FtpAdapterJobBean {
     /**
      * The log.
      */
-    @Inject
-    private Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /**
      * The ftp imported file service.

@@ -18,16 +18,16 @@
 
 package org.meveo.api.security.filter;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Map;
 import java.util.Set;
-
-import javax.inject.Inject;
 
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.security.config.FilterResultsConfig;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implements filtering logic for a specific DTO.
@@ -36,8 +36,7 @@ import org.slf4j.Logger;
  */
 public abstract class SecureMethodResultFilter {
 
-    @Inject
-    protected Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /**
      * This method should check if the result object contains {@link SecuredEntity} instances and if the user is not authorized to access these entities, should be filtered out.

@@ -39,7 +39,7 @@ import static org.meveo.apiv2.generic.ValidationUtils.checkId;
 @Stateless
 public class GenericApiAlteringService {
 
-    private static final Logger logger = LoggerFactory.getLogger(GenericApiAlteringService.class);
+    private static final Logger log = LoggerFactory.getLogger(GenericApiAlteringService.class);
     private List<String> forbiddenFieldsToUpdate = Arrays.asList("id", "uuid", "auditable");
     private BaseApi baseApi = (BaseApi) EjbUtils.getServiceInterface(TaxApi.class.getSimpleName());
 
@@ -116,7 +116,7 @@ public class GenericApiAlteringService {
                     updatedField.set(fetchedEntity, newValue);
                     //throw new IllegalArgumentException("a field name or value does not exist in " + parsedEntity.getClass());
                 } catch (IllegalAccessException e) {
-                    logger.error(String.format("Failed to update field %s", fieldName), e);
+                    log.error(String.format("Failed to update field %s", fieldName), e);
                 }
             }
         }

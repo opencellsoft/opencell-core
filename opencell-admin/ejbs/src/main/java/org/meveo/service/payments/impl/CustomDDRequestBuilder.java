@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 public class CustomDDRequestBuilder extends AbstractDDRequestBuilder {
 
     /** The log. */
-    protected Logger log = LoggerFactory.getLogger(CustomDDRequestBuilder.class);
+    protected static final Logger log = LoggerFactory.getLogger(CustomDDRequestBuilder.class);
 
     /** The dd request builder script interface. */
     private DDRequestBuilderScriptInterface ddRequestBuilderScriptInterface;

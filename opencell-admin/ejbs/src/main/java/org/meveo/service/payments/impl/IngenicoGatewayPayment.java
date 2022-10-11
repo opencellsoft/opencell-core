@@ -111,7 +111,7 @@ import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenCardD
 public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 
     /** The log. */
-    protected Logger log = LoggerFactory.getLogger(IngenicoGatewayPayment.class);
+    protected static final Logger log = LoggerFactory.getLogger(IngenicoGatewayPayment.class);
     
     /** The payment gateway. */
     private PaymentGateway paymentGateway = null; 

@@ -18,6 +18,7 @@
 
 package org.meveo.util.view.composite;
 
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
@@ -59,7 +60,7 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
     @SuppressWarnings("rawtypes")
     private Class entityClass;
 
-    Logger log = LoggerFactory.getLogger(this.getClass());
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /**
      * Get backing bean attribute either from parent component (search panel, thats where it usually should be defined) or from searchField component attributes (same with

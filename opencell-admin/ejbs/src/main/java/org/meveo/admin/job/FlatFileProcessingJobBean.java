@@ -20,6 +20,7 @@ package org.meveo.admin.job;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,7 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class FlatFileProcessingJobBean.
@@ -57,8 +59,7 @@ import org.slf4j.Logger;
 public class FlatFileProcessingJobBean {
 
     /** The log. */
-    @Inject
-    private Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /** The script instance service. */
     @Inject

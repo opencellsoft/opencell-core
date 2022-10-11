@@ -18,6 +18,7 @@
 
 package org.meveo.api.billing;
 
+import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -94,6 +95,7 @@ import org.meveo.service.order.OrderService;
 import org.meveo.service.wf.WorkflowService;
 import org.meveo.util.EntityCustomizationUtils;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tmf.dsmapi.catalog.resource.order.Product;
 import org.tmf.dsmapi.catalog.resource.order.ProductCharacteristic;
 import org.tmf.dsmapi.catalog.resource.order.ProductOrder;
@@ -111,8 +113,7 @@ import org.tmf.dsmapi.catalog.resource.product.BundledProductReference;
 @Stateless
 public class OrderApi extends BaseApi {
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private SubscriptionService subscriptionService;

@@ -18,6 +18,7 @@
 
 package org.meveo.api.rest;
 
+import java.lang.invoke.MethodHandles;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -47,7 +48,7 @@ import io.swagger.v3.oas.annotations.info.*;
 @SecurityScheme(type=SecuritySchemeType.HTTP,scheme="basic",paramName="auth")
 public class JaxRsActivator extends Application {
 
-    private Logger log = LoggerFactory.getLogger(JaxRsActivator.class);
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override

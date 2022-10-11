@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -51,7 +52,7 @@ public class FieldAuditInterceptor extends EmptyInterceptor {
 
     private static final long serialVersionUID = -1175387060899608632L;
 
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private AuditableFieldConfiguration auditableFieldConfiguration = (AuditableFieldConfiguration) EjbUtils.getServiceInterface("AuditableFieldConfiguration");
 

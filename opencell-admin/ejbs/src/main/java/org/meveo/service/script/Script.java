@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.util.Map;
 
 /**
@@ -130,7 +131,7 @@ public abstract class Script implements Serializable, ScriptInterface {
     /**
      * A logger
      */
-    protected Logger log = LoggerFactory.getLogger(this.getClass());
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /**
      * A logger to replace with when running script in test mode (from GUI), so logs can be returned/visible to the end user

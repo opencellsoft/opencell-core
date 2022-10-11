@@ -18,6 +18,8 @@
 
 package org.meveo.event.logging;
 
+import java.lang.invoke.MethodHandles;
+
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
@@ -32,7 +34,7 @@ import org.slf4j.LoggerFactory;
 @Interceptor
 public class LoggingEventInterceptor {
 
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @AroundInvoke
     public Object aroundInvoke(InvocationContext invocationContext) throws Exception {

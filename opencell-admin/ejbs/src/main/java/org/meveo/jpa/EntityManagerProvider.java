@@ -17,6 +17,7 @@
  */
 package org.meveo.jpa;
 
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.TreeMap;
@@ -39,6 +40,7 @@ import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handles Entity manager instantiation. Based on https://www.tomas-dvorak.cz/posts/jpa-multitenancy/
@@ -57,8 +59,7 @@ public class EntityManagerProvider {
     @Inject
     private CurrentUserProvider currentUserProvider;
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-multiTenant-cache")
     private Cache<String, EntityManagerFactory> entityManagerFactories;

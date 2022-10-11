@@ -21,20 +21,25 @@
  */
 package org.meveo.admin.async;
 
+import java.lang.invoke.MethodHandles;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.Future;
+
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+
 import org.meveo.admin.job.UnitSubscriptionStatusJobBean;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
-import org.meveo.service.billing.impl.AggregatedWalletOperation;
-import org.meveo.service.billing.impl.RatedTransactionsJobAggregationSetting;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
-
-import javax.ejb.*;
-import javax.inject.Inject;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.Future;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author M.BOUKAYOUA
@@ -43,8 +48,7 @@ import java.util.concurrent.Future;
 @Stateless
 public class SubscriptionStatusAsync {
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private UnitSubscriptionStatusJobBean unitSubscriptionStatusJobBean;

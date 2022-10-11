@@ -18,6 +18,7 @@
 package org.meveo.model.billing;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -39,6 +40,8 @@ import org.slf4j.LoggerFactory;
 public class BankCoordinates implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;
+    
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /**
      * Bank code
@@ -182,7 +185,6 @@ public class BankCoordinates implements Serializable, Cloneable {
     	try {
 			return decryptIban(iban);
 		} catch (Exception e) {
-			Logger log = LoggerFactory.getLogger(BankCoordinates.class);
 			log.error("Error when decrypting Iban", e);
 			return null;
     }
@@ -192,7 +194,6 @@ public class BankCoordinates implements Serializable, Cloneable {
     	try {
 			this.iban = encryptIban(encryptIban(iban));
 		} catch (Exception e) {
-			Logger log = LoggerFactory.getLogger(BankCoordinates.class);
 			log.error("Error when encrypting Iban", e);
     }
     }

@@ -19,6 +19,7 @@
 package org.meveo.service.communication.impl;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -46,7 +47,7 @@ import org.slf4j.LoggerFactory;
 @Stateless
 public class EmailSender {
 	
-	private Logger log = LoggerFactory.getLogger(EmailSender.class);
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Resource(lookup = "java:/MeveoMail")
     private Session mailSession;

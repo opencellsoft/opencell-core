@@ -18,6 +18,7 @@
 
 package org.meveo.service.filter.processor;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -29,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 public class PrimitiveFilterProcessorFactory {
 
-	private Logger logger = LoggerFactory.getLogger(PrimitiveFilterProcessorFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	private List<PrimitiveFilterProcessor> processors;
 	private PrimitiveFilterProcessor defaultProcessor;
@@ -72,7 +73,7 @@ public class PrimitiveFilterProcessorFactory {
 	}
 
 	private void initializeProcessors() {
-		logger.info("Initializing PrimitiveFilterProcessors");
+		log.info("Initializing PrimitiveFilterProcessors");
 		processors = new ArrayList<>();
 		Reflections reflections = new Reflections("org.meveo.service.filter.processor");
 		Set<Class<? extends PrimitiveFilterProcessor>> processorClasses = reflections.getSubTypesOf(PrimitiveFilterProcessor.class);
@@ -87,10 +88,10 @@ public class PrimitiveFilterProcessorFactory {
 					processors.add(processor);
 				}
 			} catch (InstantiationException | IllegalAccessException e) {
-				logger.warn("Failed to instantiate class: " + processorClass.getSimpleName(), e);
+				log.warn("Failed to instantiate class: " + processorClass.getSimpleName(), e);
 			}
 		}
-		logger.info("PrimitiveFilterProcessors initialization complete.  Found " + processors.size() + " processors.");
+		log.info("PrimitiveFilterProcessors initialization complete.  Found " + processors.size() + " processors.");
 	}
 
 }

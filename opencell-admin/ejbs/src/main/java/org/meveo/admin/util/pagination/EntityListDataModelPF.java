@@ -18,6 +18,7 @@
 
 package org.meveo.admin.util.pagination;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,12 +27,13 @@ import javax.inject.Inject;
 
 import org.meveo.model.IEntity;
 import org.primefaces.model.SelectableDataModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EntityListDataModelPF<T extends IEntity> extends ListDataModel<T> implements
 		SelectableDataModel<T> {
 
-	@Inject
-	protected org.slf4j.Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	private T[] selectedItems;
 

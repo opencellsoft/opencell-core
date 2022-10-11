@@ -20,6 +20,9 @@ package org.meveo.api.security.config.annotation;
 
 import org.meveo.api.security.config.*;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.invoke.MethodHandles;
 
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
@@ -37,8 +40,7 @@ import javax.interceptor.InvocationContext;
 @Default
 public class SecuredBusinessEntityAnnotationConfigFactory implements SecuredBusinessEntityConfigFactory {
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /**
      * build and get secured entity config instance based on method defined annotations

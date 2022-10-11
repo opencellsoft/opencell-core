@@ -19,6 +19,7 @@
 package org.meveo.api.module;
 
 import java.io.StringWriter;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.HashMap;
@@ -145,7 +146,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
     @Inject
     private ProductTemplateService productTemplateService;
     
-    private static final Logger log = LoggerFactory.getLogger(MeveoModuleApi.class);
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private static JAXBContext jaxbCxt;
     static {

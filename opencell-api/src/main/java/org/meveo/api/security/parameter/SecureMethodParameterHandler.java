@@ -18,6 +18,7 @@
 
 package org.meveo.api.security.parameter;
 
+import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.config.SecureMethodParameterConfig;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is a singleton object that takes an annotation and the method parameters
@@ -50,8 +52,7 @@ public class SecureMethodParameterHandler {
 	@Inject
 	private Instance<SecureMethodParameterParser<?>> parsers;
 
-	@Inject
-	protected Logger log;
+	private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	@SuppressWarnings("rawtypes")
 	private Map<Class<? extends SecureMethodParameterParser>, SecureMethodParameterParser<?>> parserMap = new HashMap<>();

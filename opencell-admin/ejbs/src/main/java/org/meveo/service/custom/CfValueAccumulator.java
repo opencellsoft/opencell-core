@@ -18,6 +18,7 @@
 
 package org.meveo.service.custom;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,6 +55,7 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handles CF value accumulation rules
@@ -154,8 +156,7 @@ public class CfValueAccumulator {
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     @MeveoJpa

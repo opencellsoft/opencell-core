@@ -19,6 +19,7 @@
 package org.meveo.service.index;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -82,6 +83,7 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.index.ElasticSearchChangeset.ElasticSearchAction;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
@@ -101,8 +103,7 @@ public class ElasticClient {
     public static int INDEX_POPULATE_PAGE_SIZE = 1000;
     public static int INDEX_POPULATE_CT_PAGE_SIZE = 10000;
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private ElasticClientQueuedChanges queuedChanges;

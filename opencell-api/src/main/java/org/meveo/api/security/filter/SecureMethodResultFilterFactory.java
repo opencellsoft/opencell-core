@@ -19,6 +19,7 @@
 package org.meveo.api.security.filter;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +29,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This factory encapsulates the creation and retrieval of
@@ -45,8 +47,7 @@ public class SecureMethodResultFilterFactory implements Serializable {
 	@Inject
 	private Instance<SecureMethodResultFilter> filters;
 
-	@Inject
-	private Logger log;
+	private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	private Map<Class<? extends SecureMethodResultFilter>, SecureMethodResultFilter> filterMap = new HashMap<>();
 

@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -53,6 +54,7 @@ import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -115,8 +117,7 @@ public class ElasticSearchConfiguration implements Serializable {
      */
     private Map<String, String> customEntityTemplates = new HashMap<>();
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /**
      * Load configuration from elasticSearchConfiguration.json file.

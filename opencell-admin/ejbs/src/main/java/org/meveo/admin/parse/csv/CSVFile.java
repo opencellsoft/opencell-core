@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public abstract class CSVFile<T extends CSVLineData> {
 	private File file;
 	private List<T> contexts;
 
-	private Logger log = LoggerFactory.getLogger(CSVFile.class);
+	protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	public CSVFile() {
 	}

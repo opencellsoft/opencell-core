@@ -19,6 +19,7 @@
 package org.meveo.event.monitoring;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
@@ -36,6 +37,7 @@ import org.meveo.model.IEntity;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handle data synchronization between cluster nodes. Inform about CRUD actions to certain entities. Messages are written to topic "topic/CLUSTEREVENTTOPIC".
@@ -50,8 +52,7 @@ public class ClusterEventPublisher implements Serializable {
 
     private static final long serialVersionUID = 4434372450314613654L;
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private JMSContext context;

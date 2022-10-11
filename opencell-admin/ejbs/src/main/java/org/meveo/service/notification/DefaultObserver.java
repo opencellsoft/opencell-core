@@ -79,7 +79,7 @@ import org.slf4j.LoggerFactory;
 @Lock(LockType.READ)
 public class DefaultObserver {
 
-    private static Logger log = LoggerFactory.getLogger(DefaultObserver.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultObserver.class);
 
     @Inject
     private GenericWorkflowService genericWorkflowService;

@@ -18,6 +18,8 @@
 
 package org.meveo.admin.action.intcrm;
 
+import java.lang.invoke.MethodHandles;
+
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -29,6 +31,7 @@ import org.meveo.model.intcrm.AddressBook;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.intcrm.impl.AddressBookService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Named
 @ViewScoped
@@ -41,8 +44,7 @@ public class AddressBookBean extends CustomFieldBean<AddressBook>{
 	@Inject
 	AddressBookService addressBookService;
 
-	@Inject	
-	private Logger log;
+	private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	public AddressBookBean() {
 		super(AddressBook.class);

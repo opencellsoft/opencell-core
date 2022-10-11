@@ -18,6 +18,7 @@
 
 package org.meveo.keycloak.client;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -55,6 +56,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Edward P. Legaspi
@@ -65,8 +67,7 @@ import org.slf4j.Logger;
 @Stateless
 public class KeycloakAdminClientService {
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     @CurrentUser

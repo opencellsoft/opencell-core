@@ -19,6 +19,7 @@
 package org.meveo.admin.job;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.util.Date;
 
 import javax.ejb.Stateless;
@@ -37,6 +38,7 @@ import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.notification.InboundRequestService;
 import org.meveo.service.notification.NotificationHistoryService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class PurgeJobBean extends BaseJobBean implements Serializable {
@@ -55,8 +57,7 @@ public class PurgeJobBean extends BaseJobBean implements Serializable {
     @Inject
     private NotificationHistoryService notificationHistoryService;
 
-    @Inject
-    private Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)

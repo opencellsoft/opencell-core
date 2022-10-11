@@ -36,6 +36,7 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.notification.GenericNotificationService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
@@ -43,6 +44,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -66,8 +68,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
 
     private static final long serialVersionUID = 358151068726872948L;
 
-    @Inject
-    protected Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @EJB
     private GenericNotificationService notificationService;

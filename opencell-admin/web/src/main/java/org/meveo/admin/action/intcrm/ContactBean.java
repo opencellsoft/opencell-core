@@ -19,6 +19,7 @@
 package org.meveo.admin.action.intcrm;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.Scanner;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -36,6 +37,7 @@ import org.meveo.model.shared.Name;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.intcrm.impl.ContactService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 @Named
@@ -53,8 +55,7 @@ public class ContactBean extends BaseBean<Contact> {
 	@Inject
 	ContactApi contactApi;
 	
-	@Inject	
-	private Logger log;
+	private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	private Part file;
 	private String fileContent;

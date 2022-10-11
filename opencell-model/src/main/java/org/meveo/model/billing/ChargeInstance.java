@@ -17,19 +17,12 @@
  */
 package org.meveo.model.billing;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BusinessCFEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ObservableEntity;
-import org.meveo.model.admin.Seller;
-import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.tax.TaxClass;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -56,12 +49,18 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ObservableEntity;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.tax.TaxClass;
 
 /**
  * Instantiated/subscribed charge
@@ -435,8 +434,6 @@ public abstract class ChargeInstance extends BusinessCFEntity {
 
     public List<WalletOperation> getWalletOperationsSorted() {
         if (sortedWalletOperations == null) {
-            Logger log = LoggerFactory.getLogger(this.getClass());
-            log.debug("getSortedWalletOperations");
             sortedWalletOperations = new ArrayList<WalletOperation>(getWalletOperations());
 
             Collections.sort(sortedWalletOperations, new Comparator<WalletOperation>() {

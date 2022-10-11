@@ -18,6 +18,7 @@
 
 package org.meveo.admin.job;
 
+import java.lang.invoke.MethodHandles;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,6 +47,7 @@ import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.notification.GenericNotificationService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class InternalNotificationJobBean.
@@ -54,8 +56,7 @@ import org.slf4j.Logger;
 public class InternalNotificationJobBean {
 
     /** The log. */
-    @Inject
-    protected Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /** The job execution service . */
     @Inject

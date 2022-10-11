@@ -63,7 +63,7 @@ import org.slf4j.LoggerFactory;
  */
 public class GetFieldInformationHandler extends TagHandler {
 
-    private static Logger log = LoggerFactory.getLogger(GetFieldInformationHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(GetFieldInformationHandler.class);
 
     private String backingBean;
     private String entity;

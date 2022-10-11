@@ -1,5 +1,6 @@
 package org.meveo.apiv2.accounts.service;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -28,7 +29,7 @@ import org.slf4j.LoggerFactory;
 @Stateless
 public class AccountsManagementApiService {
 
-    protected Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private SubscriptionService subscriptionService;

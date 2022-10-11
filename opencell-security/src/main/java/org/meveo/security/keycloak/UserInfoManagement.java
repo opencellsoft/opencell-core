@@ -25,11 +25,12 @@ import org.meveo.model.shared.Name;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.UserAuthTimeProducer;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class UserInfoManagement {
-    @Inject
-    private Logger log;
+    
+    private static final Logger log = LoggerFactory.getLogger(UserInfoManagement.class);
 
     /**
      * Map<providerCode, Map<roleName, rolePermissions>>

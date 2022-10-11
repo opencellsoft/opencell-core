@@ -30,6 +30,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.invoke.MethodHandles;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
@@ -58,7 +59,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class FileUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /**
      * The Constant DATETIME_FORMAT for file names
@@ -227,14 +228,14 @@ public final class FileUtils {
                 try {
                     from.close();
                 } catch (IOException e) {
-                    logger.warn("Failed to close file resource!", e);
+                    log.warn("Failed to close file resource!", e);
                 }
             }
             if (to != null) {
                 try {
                     to.close();
                 } catch (IOException e) {
-                    logger.warn("Failed to close file resource!", e);
+                    log.warn("Failed to close file resource!", e);
                 }
             }
         }
@@ -324,7 +325,7 @@ public final class FileUtils {
     public static File[] listFiles(String sourceDirectory, final List<String> extensions, final String prefix) {
         File sourceDir = new File(sourceDirectory);
         if (!sourceDir.exists() || !sourceDir.isDirectory()) {
-            logger.error(String.format("Wrong source directory: %s", sourceDir.getAbsolutePath()));
+            log.error(String.format("Wrong source directory: %s", sourceDir.getAbsolutePath()));
             return null;
         }
         File[] files = sourceDir.listFiles(new ImportFileFiltre(prefix, extensions));
@@ -392,12 +393,12 @@ public final class FileUtils {
                     }
                     FileUtils.closeStream(origin);
                 } catch (Exception ex) {
-                    logger.error("Error while working with zip archive", ex);
+                    log.error("Error while working with zip archive", ex);
                 }
             }
             FileUtils.closeStream(out);
         } catch (Exception e) {
-            logger.error("Error while creating zip archive", e);
+            log.error("Error while creating zip archive", e);
         }
     }
 
@@ -411,11 +412,11 @@ public final class FileUtils {
                 c.close();
                 return true;
             } else {
-                logger.warn("Stream provided for closing was null");
+                log.warn("Stream provided for closing was null");
                 return false;
             }
         } catch (Exception e) {
-            logger.error("Error while closing output stream", e);
+            log.error("Error while closing output stream", e);
             return false;
         }
     }
@@ -499,8 +500,7 @@ public final class FileUtils {
      * @throws Exception exception.
      */
     public static byte[] createZipFile(String sourceFolder) throws Exception {
-
-        Logger log = LoggerFactory.getLogger(FileUtils.class);
+        
         log.info("Creating zip file for {}", sourceFolder);
 
         ZipOutputStream zos = null;
@@ -685,7 +685,7 @@ public final class FileUtils {
 
         File sourceDir = new File(sourceDirectory);
         if (!sourceDir.exists() || !sourceDir.isDirectory()) {
-            logger.info(String.format("Wrong source directory: %s", sourceDir.getAbsolutePath()));
+            log.info(String.format("Wrong source directory: %s", sourceDir.getAbsolutePath()));
             return null;
         }
 

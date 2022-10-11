@@ -70,7 +70,7 @@ import com.slimpay.hapiclient.util.EntityConverter;
 @PaymentGatewayClass
 public class SlimpayGatewayPayment implements GatewayPaymentInterface {
 
-    protected Logger log = LoggerFactory.getLogger(SlimpayGatewayPayment.class);
+    protected static final Logger log = LoggerFactory.getLogger(SlimpayGatewayPayment.class);
 
     /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
     private ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface("ParamBeanFactory");

@@ -18,6 +18,8 @@
 
 package org.meveo.admin.job;
 
+import java.lang.invoke.MethodHandles;
+
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -32,6 +34,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.wf.Workflow;
 import org.meveo.service.wf.WorkflowService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -41,8 +44,7 @@ import org.slf4j.Logger;
 @Stateless
 public class UnitWorkflowJobBean {
 
-    @Inject
-    private Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private WorkflowService workflowService;

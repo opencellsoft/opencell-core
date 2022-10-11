@@ -22,13 +22,15 @@ import org.jboss.resteasy.api.validation.Validation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
+
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 
 public class BadRequestExceptionMapper implements ExceptionMapper<BadRequestException> {
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final ExceptionSerializer exceptionSerializer = new ExceptionSerializer("400");
 
     @Override

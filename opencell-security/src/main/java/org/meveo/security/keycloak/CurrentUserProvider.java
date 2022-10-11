@@ -23,9 +23,11 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+
 import org.keycloak.KeycloakPrincipal;
 import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 /**
@@ -42,8 +44,7 @@ public class CurrentUserProvider {
     @Resource
     private SessionContext ctx;
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(CurrentUserProvider.class);
 
     /**
      * Contains a current tenant

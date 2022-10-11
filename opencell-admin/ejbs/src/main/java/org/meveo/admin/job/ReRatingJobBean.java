@@ -19,6 +19,7 @@
 package org.meveo.admin.job;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -37,6 +38,7 @@ import org.meveo.service.billing.impl.RatingService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class ReRatingJobBean extends BaseJobBean implements Serializable {
@@ -52,8 +54,7 @@ public class ReRatingJobBean extends BaseJobBean implements Serializable {
 	@Inject
 	private RatingService ratingService;
 
-	@Inject
-	protected Logger log;
+	protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	@Inject
 	@Rejected

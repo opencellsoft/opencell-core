@@ -20,6 +20,7 @@ package org.meveo.admin.job;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.lang.invoke.MethodHandles;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -40,6 +41,7 @@ import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.service.payments.impl.DDRequestBuilderInterface;
 import org.meveo.service.payments.impl.DDRequestLOTService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class SepaRejectedTransactionsJobBean consume sepa/paynum or any custom rejected files (ddRequest file callBacks).
@@ -52,8 +54,7 @@ import org.slf4j.Logger;
 public class SepaRejectedTransactionsJobBean extends BaseJobBean {
 
     /** The log. */
-    @Inject
-    private Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /** The ddRequestLotService service. */
     @Inject

@@ -19,6 +19,7 @@
 package org.meveo.cache;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +50,7 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.WalletService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides cache related services (loading, update) for wallet related operations
@@ -63,8 +65,7 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
 
     private static final long serialVersionUID = -4969288143287203121L;
 
-    @Inject
-    protected Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private ChargeInstanceService<ChargeInstance> chargeInstanceService;

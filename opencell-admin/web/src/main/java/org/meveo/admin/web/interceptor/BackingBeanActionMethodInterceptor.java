@@ -19,6 +19,7 @@
 package org.meveo.admin.web.interceptor;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.sql.SQLException;
 
 import javax.faces.context.FacesContext;
@@ -54,7 +55,7 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
 
     private static final long serialVersionUID = -8361765042326423662L;
 
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     protected Messages messages;

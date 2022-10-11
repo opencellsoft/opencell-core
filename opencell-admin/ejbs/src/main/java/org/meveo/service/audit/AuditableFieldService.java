@@ -30,10 +30,13 @@ import org.meveo.model.audit.AuditableFieldHistory;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.PersistenceService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.util.*;
 
@@ -49,8 +52,7 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
 
     private static final String ASYNC_EXEC_ACTOR = "ASYNC_EXEC";
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private Event<Set<BaseEntity>> fieldsUpdatedEventProducer;

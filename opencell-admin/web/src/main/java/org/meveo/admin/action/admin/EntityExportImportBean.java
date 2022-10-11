@@ -20,6 +20,7 @@ package org.meveo.admin.action.admin;
 
 import java.io.File;
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -55,6 +56,7 @@ import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Named
 @ViewScoped
@@ -65,8 +67,7 @@ public class EntityExportImportBean implements Serializable {
     private static String FILTER_TEMPLATENAME = "templateName";
     private static String FILTER_COMPLEX = "complex";
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /** Search filters. */
     protected Map<String, Object> filters = new HashMap<String, Object>();

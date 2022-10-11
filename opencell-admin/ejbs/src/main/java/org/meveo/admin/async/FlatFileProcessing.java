@@ -42,10 +42,12 @@ import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInterface;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ejb.*;
 import javax.inject.Inject;
 import java.io.PrintWriter;
+import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,8 +64,7 @@ import java.util.concurrent.Future;
 public class FlatFileProcessing {
 
     /** The log. */
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /** The unit flat file processing job bean. */
     @Inject

@@ -19,6 +19,7 @@
 package org.meveo.admin.action.index;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,6 +44,7 @@ import org.meveo.service.index.ElasticSearchClassInfo;
 import org.meveo.util.view.ESBasedDataModel;
 import org.primefaces.model.LazyDataModel;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Named
 @ConversationScoped
@@ -63,8 +65,7 @@ public class FullTextSearchBean implements Serializable {
     @Inject
     protected Conversation conversation;
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private LazyDataModel<Map<String, Object>> esDataModel;
 

@@ -18,6 +18,7 @@
 
 package org.meveo.service.crm.impl;
 
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ public abstract class ImportService {
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
 
-    protected Logger log = LoggerFactory.getLogger(this.getClass());    
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());  
 
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;

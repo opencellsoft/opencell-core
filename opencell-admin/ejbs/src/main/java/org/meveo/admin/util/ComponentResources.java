@@ -19,6 +19,7 @@
 package org.meveo.admin.util;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.util.Locale;
 
 import javax.enterprise.context.RequestScoped;
@@ -41,7 +42,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ComponentResources implements Serializable {
 
-	private Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final long serialVersionUID = 1L;
 
     private Locale locale = Locale.ENGLISH;

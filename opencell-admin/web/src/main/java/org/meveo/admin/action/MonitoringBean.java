@@ -19,6 +19,7 @@
 package org.meveo.admin.action;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.nio.file.FileStore;
@@ -44,6 +45,7 @@ import org.json.simple.parser.JSONParser;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.util.Version;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -55,7 +57,7 @@ import org.slf4j.LoggerFactory;
 @Named
 public class MonitoringBean implements Serializable {
 
-    private org.slf4j.Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
     @Inject
     protected FacesContext facesContext;

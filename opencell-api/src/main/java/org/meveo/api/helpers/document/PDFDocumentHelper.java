@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 public class PDFDocumentHelper {
 
     /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(PDFDocumentHelper.class);
+    private static final Logger log = LoggerFactory.getLogger(PDFDocumentHelper.class);
 
     /**
      * Generate PDF document.
@@ -65,10 +65,10 @@ public class PDFDocumentHelper {
                     buildPDFFromTemplate(postData, rootDir, templateDto, pdfBuilder);
                 }
                 pdfFilePath = pdfBuilder.save();
-                LOG.debug(" file created : " + pdfFilePath);
+                log.debug(" file created : " + pdfFilePath);
                 listPaths.add(pdfFilePath);
             } catch (Exception e) {
-                LOG.error("error on generatePDF {} ", e.getMessage(), e);
+                log.error("error on generatePDF {} ", e.getMessage(), e);
                 throw e;
             }
         } else { // create a pdf per template
@@ -78,10 +78,10 @@ public class PDFDocumentHelper {
                     PDFBuilder pdfBuilder = PDFBuilder.newInstance(documentDir, documentNamePrefix.concat("_").concat(templateDto.getTemplateName()), mainTemplateDoc);
                     buildPDFFromTemplate(postData, rootDir, templateDto, pdfBuilder);
                     String pdfFilePath = pdfBuilder.save();
-                    LOG.debug(" file created : " + pdfFilePath);
+                    log.debug(" file created : " + pdfFilePath);
                     listPaths.add(pdfFilePath);
                 } catch (Exception e) {
-                    LOG.error("error on generatePDF {} ", e.getMessage(), e);
+                    log.error("error on generatePDF {} ", e.getMessage(), e);
                     throw e;
                 }
             }
@@ -102,7 +102,7 @@ public class PDFDocumentHelper {
             pdfMerger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
             return destinationPath;
         } catch (Exception e) {
-            LOG.error(e.getMessage());
+            log.error(e.getMessage());
             return null;
         }
     }
@@ -171,7 +171,7 @@ public class PDFDocumentHelper {
             fileInputStream.read(fileBytes);
             return fileBytes;
         } catch (Exception e) {
-            LOG.error("Error reading PDF document file {} contents", pdfFilePath, e);
+            log.error("Error reading PDF document file {} contents", pdfFilePath, e);
         }
         return null;
     }

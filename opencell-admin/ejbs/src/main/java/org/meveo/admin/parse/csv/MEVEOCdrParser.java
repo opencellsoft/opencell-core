@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
 @Named
 public class MEVEOCdrParser implements CSVCDRParser {
 
-    private static Logger log = LoggerFactory.getLogger(MEVEOCdrParser.class);
+    private static final Logger log = LoggerFactory.getLogger(MEVEOCdrParser.class);
 
     static MessageDigest messageDigest = null;
     static {

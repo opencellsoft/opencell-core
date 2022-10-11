@@ -43,6 +43,7 @@ import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.WalletService;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -51,6 +52,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.xml.bind.JAXBException;
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -64,8 +66,7 @@ import java.util.List;
 @Stateless
 public class ImportMediationEntityJobBean extends BaseJobBean {
 
-    @Inject
-    private Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private ParamBeanFactory paramBeanFactory;

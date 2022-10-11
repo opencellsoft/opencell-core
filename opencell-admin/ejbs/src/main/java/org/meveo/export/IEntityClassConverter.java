@@ -18,6 +18,7 @@
 
 package org.meveo.export;
 
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Modifier;
 
 import javax.persistence.Inheritance;
@@ -44,7 +45,7 @@ import com.thoughtworks.xstream.mapper.Mapper;
  */
 public class IEntityClassConverter extends ReflectionConverter {
 
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private boolean preserveId;
     private MeveoUser currentUser;

@@ -18,17 +18,19 @@
 
 package org.meveo.service.notification;
 
+import java.lang.invoke.MethodHandles;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("deprecation")
 @Stateless
 public class RemoteInstanceNotifier {
 
-	@Inject
-	private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	public void invoke(String input,String url) {
 		//TODO: find a better way to send logs

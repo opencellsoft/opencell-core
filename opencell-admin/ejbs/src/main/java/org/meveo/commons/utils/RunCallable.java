@@ -17,6 +17,7 @@
  */
 package org.meveo.commons.utils;
 
+import java.lang.invoke.MethodHandles;
 import java.util.concurrent.Callable;
 
 import org.slf4j.Logger;
@@ -24,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 public class RunCallable implements Runnable {
 
-	private Logger log = LoggerFactory.getLogger(RunCallable.class);
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	Callable<?> callable;
 

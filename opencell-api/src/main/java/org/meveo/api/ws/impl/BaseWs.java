@@ -18,6 +18,7 @@
 
 package org.meveo.api.ws.impl;
 
+import java.lang.invoke.MethodHandles;
 import java.sql.SQLException;
 import java.util.Set;
 
@@ -48,7 +49,7 @@ import org.slf4j.LoggerFactory;
  **/
 public abstract class BaseWs {
 
-    protected Logger log = LoggerFactory.getLogger(this.getClass());
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Resource
     protected WebServiceContext webServiceContext;

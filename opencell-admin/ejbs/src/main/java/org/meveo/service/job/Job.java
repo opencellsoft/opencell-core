@@ -18,6 +18,7 @@
 
 package org.meveo.service.job;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Collection;
 import java.util.Map;
 
@@ -115,7 +116,7 @@ public abstract class Job {
     @RegistryType(type = MetricRegistry.Type.APPLICATION)
     MetricRegistry registry;
 
-    protected Logger log = LoggerFactory.getLogger(this.getClass());
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /**
      * Execute job instance with results published to a given job execution result entity.

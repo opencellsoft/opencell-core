@@ -19,6 +19,7 @@
 package org.meveo.model.crm.custom;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,6 +32,7 @@ import java.util.Map;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -44,7 +46,7 @@ public class CustomFieldValueHolder implements Serializable {
     private static final long serialVersionUID = 2516863650382630587L;
 
     /** Logger. */
-    protected org.slf4j.Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private Map<String, Object> newValues = new HashMap<String, Object>();
 

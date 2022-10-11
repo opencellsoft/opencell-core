@@ -20,6 +20,7 @@ package org.meveo.admin.job;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.lang.invoke.MethodHandles;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -29,6 +30,7 @@ import javax.inject.Inject;
 
 import org.meveo.commons.utils.StringUtils;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Edward P. Legaspi
@@ -49,8 +51,7 @@ public class GenerateMediationImport {
 		new GenerateMediationImport();
 	}
 	
-	@Inject
-	private Logger log;
+	protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	public GenerateMediationImport() {
 		log.info("start creating mediation file...");

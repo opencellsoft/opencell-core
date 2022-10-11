@@ -18,6 +18,7 @@
 
 package org.meveo.admin.job;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -54,6 +55,7 @@ import org.meveo.service.script.ScriptInterface;
 import org.meveo.service.script.payment.AccountOperationFilterScript;
 import org.meveo.service.script.payment.DateRangeScript;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class PaymentJobBean, PaymentJob implementation.
@@ -65,8 +67,7 @@ import org.slf4j.Logger;
 @Stateless
 public class PaymentJobBean extends BaseJobBean {
 
-	@Inject
-	private Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	@Inject
 	private AccountOperationService accountOperationService;

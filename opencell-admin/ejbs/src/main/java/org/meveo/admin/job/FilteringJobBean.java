@@ -18,6 +18,7 @@
 
 package org.meveo.admin.job;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +49,7 @@ import org.meveo.service.filter.FilterService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The FilteringJobBean have 2 mains inputs :ScriptInstance and Filter. For each filtered entity the scriptInstance are executed.
@@ -58,8 +60,7 @@ import org.slf4j.Logger;
 @Stateless
 public class FilteringJobBean extends BaseJobBean {
 
-    @Inject
-    private Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private FilterService filterService;

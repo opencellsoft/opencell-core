@@ -18,6 +18,8 @@
 
 package org.meveo.api.rest;
 
+import java.lang.invoke.MethodHandles;
+
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.Provider;
 
@@ -31,7 +33,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 @Provider
 public class JacksonProvider extends ResteasyJackson2Provider {
 
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
     @Override
     public ObjectMapper locateMapper(Class<?> arg0, MediaType arg1) {

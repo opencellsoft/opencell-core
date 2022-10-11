@@ -71,6 +71,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.invoke.MethodHandles;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -97,7 +98,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /** Logger. */
-    protected Logger log = LoggerFactory.getLogger(this.getClass());
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     protected Messages messages;

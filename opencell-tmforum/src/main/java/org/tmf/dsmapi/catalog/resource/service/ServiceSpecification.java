@@ -20,12 +20,12 @@ package org.tmf.dsmapi.catalog.resource.service;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tmf.dsmapi.catalog.resource.AbstractCatalogEntity;
 import org.tmf.dsmapi.catalog.resource.Attachment;
 import org.tmf.dsmapi.catalog.resource.RelatedParty;
@@ -68,7 +68,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ServiceSpecification extends AbstractCatalogEntity implements Serializable {
     private final static long serialVersionUID = 1L;
 
-    private final static Logger logger = Logger.getLogger(ServiceSpecification.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(ServiceSpecification.class);
 
     private String brand;
 
@@ -238,7 +238,7 @@ public class ServiceSpecification extends AbstractCatalogEntity implements Seria
     @Override
     @JsonIgnore
     public Logger getLogger() {
-        return logger;
+        return log;
     }
 
     public void edit(ServiceSpecification input) {
@@ -280,7 +280,6 @@ public class ServiceSpecification extends AbstractCatalogEntity implements Seria
     @Override
     @JsonIgnore
     public boolean isValid() {
-        logger.log(Level.FINE, "ServiceSpecification:valid ()");
 
         if (super.isValid() == false) {
             return false;

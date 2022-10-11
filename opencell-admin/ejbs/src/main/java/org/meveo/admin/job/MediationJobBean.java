@@ -20,6 +20,7 @@ package org.meveo.admin.job;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -39,6 +40,7 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CSVCDRParser;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class MediationJobBean.
@@ -52,8 +54,7 @@ import org.slf4j.Logger;
 public class MediationJobBean {
 
     /** The log. */
-    @Inject
-    private Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /** The job execution service. */
     @Inject

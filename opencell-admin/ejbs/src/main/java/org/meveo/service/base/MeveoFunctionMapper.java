@@ -43,6 +43,8 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
@@ -76,7 +78,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
     private static CustomFieldTemplateService customFieldTemplateService;
 
-    private static Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public MeveoFunctionMapper() {
 
@@ -376,7 +378,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
                 counterPeriodService = (CounterPeriodService) beanManager.getReference(bean, bean.getBeanClass(), beanManager.createCreationalContext(bean));
 
             } catch (NamingException e) {
-                Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
                 log.error("Unable to access CounterPeriodService", e);
                 throw new RuntimeException(e);
             }
@@ -394,7 +395,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
                 customFieldTemplateService = (CustomFieldTemplateService) beanManager.getReference(bean, bean.getBeanClass(), beanManager.createCreationalContext(bean));
 
             } catch (NamingException e) {
-                Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
                 log.error("Unable to access CustomFieldTemplateService", e);
                 throw new RuntimeException(e);
             }

@@ -17,12 +17,15 @@
  */
 package org.meveo.admin.listener;
 
+import java.lang.invoke.MethodHandles;
+
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Startup
 @Singleton
@@ -31,9 +34,8 @@ public class StartupListener {
     @Inject
     private ApplicationInitializer applicationInitializer;
 
-    @Inject
-    private Logger log;
-
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    
     @PostConstruct
     private void init() {
         log.info("Thank you for running Opencell Community code. For Commercial Grade Support, please purchase an Opencell subscription from https://opencellsoft.com/");

@@ -19,6 +19,7 @@
 package org.meveo.api;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
@@ -116,7 +117,7 @@ import static java.util.stream.Collectors.toList;
  */
 public abstract class BaseApi {
 
-    protected Logger log = LoggerFactory.getLogger(this.getClass());
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private static final int limitDefaultValue = 100;
 

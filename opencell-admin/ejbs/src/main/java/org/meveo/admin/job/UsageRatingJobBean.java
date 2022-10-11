@@ -19,6 +19,7 @@
 package org.meveo.admin.job;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -40,6 +41,7 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.EdrService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class UsageRatingJobBean extends BaseJobBean {
@@ -49,8 +51,7 @@ public class UsageRatingJobBean extends BaseJobBean {
      */
     private static int PROCESS_NR_IN_JOB_RUN = 2000000;
 
-    @Inject
-    private Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private EdrService edrService;

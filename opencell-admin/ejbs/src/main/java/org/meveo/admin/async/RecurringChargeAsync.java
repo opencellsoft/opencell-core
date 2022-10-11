@@ -21,6 +21,7 @@
  */
 package org.meveo.admin.async;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -38,6 +39,7 @@ import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author anasseh
@@ -47,8 +49,7 @@ import org.slf4j.Logger;
 @Stateless
 public class RecurringChargeAsync {
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private UnitRecurringRatingJobBean unitRecurringRatingJobBean;

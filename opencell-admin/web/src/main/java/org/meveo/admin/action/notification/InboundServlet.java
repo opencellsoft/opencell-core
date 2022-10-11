@@ -24,6 +24,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
 import java.util.Enumeration;
 
@@ -47,6 +48,7 @@ import org.meveo.model.notification.InboundRequest;
 import org.meveo.service.audit.AuditOrigin;
 import org.meveo.service.notification.InboundRequestService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * To call this servlet the url must be in this format: /inbound/&lt;provider.code&gt;
@@ -67,8 +69,7 @@ public class InboundServlet extends HttpServlet {
     @Inject
     ParamBeanFactory paramBeanFactory;
 
-    @Inject
-    Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     @InboundRequestReceived

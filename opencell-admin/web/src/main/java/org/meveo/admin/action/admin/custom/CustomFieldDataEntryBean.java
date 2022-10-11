@@ -86,6 +86,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -191,7 +192,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     /**
      * Logger.
      */
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /**
      * Explicitly refresh fields and action definitions. Should be used on some field value change event when that field is used to determine what fields and actions apply. E.g.
@@ -1520,14 +1521,12 @@ public class CustomFieldDataEntryBean implements Serializable {
 
                 convertedEntity.setReferenceCode(entityReferenceValue.getCode());
             } else {
-                Logger log = LoggerFactory.getLogger(this.getClass());
                 log.error("Unknown entity class specified " + entityReferenceValue.getClassname() + "in a custom field value {} ", entityReferenceValue);
             }
             // }
             return convertedEntity;
 
         } catch (Exception e) {
-            Logger log = LoggerFactory.getLogger(this.getClass());
             log.error("Unknown entity class specified in a custom field value {} ", entityReferenceValue);
             return null;
         }

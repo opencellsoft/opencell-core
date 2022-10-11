@@ -51,7 +51,7 @@ public class CalendarBanking extends Calendar {
 
     private static final long serialVersionUID = 1L;
     
-    private static Logger log = LoggerFactory.getLogger(CalendarBanking.class);
+    private static final Logger log = LoggerFactory.getLogger(CalendarBanking.class);
     
     /** The start date. */
     @Column(name = "start_date")

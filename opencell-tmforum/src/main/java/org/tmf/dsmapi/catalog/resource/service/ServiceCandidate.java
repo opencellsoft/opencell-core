@@ -20,12 +20,12 @@ package org.tmf.dsmapi.catalog.resource.service;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tmf.dsmapi.catalog.resource.AbstractCatalogEntity;
 import org.tmf.dsmapi.catalog.resource.CatalogReference;
 import org.tmf.dsmapi.catalog.resource.ServiceLevelAgreement;
@@ -53,7 +53,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ServiceCandidate extends AbstractCatalogEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private final static Logger logger = Logger.getLogger(ServiceCandidate.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(ServiceCandidate.class);
 
     private List<CatalogReference> category;
 
@@ -137,7 +137,7 @@ public class ServiceCandidate extends AbstractCatalogEntity implements Serializa
     @Override
     @JsonIgnore
     public Logger getLogger() {
-        return logger;
+        return log;
     }
 
     public void edit(ServiceCandidate input) {
@@ -163,7 +163,6 @@ public class ServiceCandidate extends AbstractCatalogEntity implements Serializa
     @Override
     @JsonIgnore
     public boolean isValid() {
-        logger.log(Level.FINE, "ServiceCandidate:valid ()");
 
         if (super.isValid() == false) {
             return false;

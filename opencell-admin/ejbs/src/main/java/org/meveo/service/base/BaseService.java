@@ -17,6 +17,7 @@
  */
 package org.meveo.service.base;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Random;
 
 import javax.enterprise.context.spi.CreationalContext;
@@ -42,7 +43,7 @@ public abstract class BaseService {
     @ApplicationProvider
     protected Provider appProvider;
 
-	protected Logger log = LoggerFactory.getLogger(getClass());
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	@Inject
 	private BeanManager beanManager;

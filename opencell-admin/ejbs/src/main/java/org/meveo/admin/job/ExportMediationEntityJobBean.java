@@ -19,6 +19,7 @@
 package org.meveo.admin.job;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
@@ -52,6 +53,7 @@ import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.meveo.admin.job.ExportMediationEntityJob.EXPORT_MEDIATION_DATA_JOB_DAYS_TO_IGNORE;
 import static org.meveo.admin.job.ExportMediationEntityJob.EXPORT_MEDIATION_ENTITY_JOB_EDR_STATUS_CF;
@@ -68,8 +70,7 @@ import static org.meveo.admin.job.ExportMediationEntityJob.EXPORT_MEDIATION_ENTI
 @Stateless
 public class ExportMediationEntityJobBean extends BaseJobBean {
 
-    @Inject
-    private Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private ParamBeanFactory paramBeanFactory;

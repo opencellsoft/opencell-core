@@ -18,6 +18,7 @@
 
 package org.meveo.admin.listener;
 
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -50,6 +51,7 @@ import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.script.ScriptCompilerService;
 import org.primefaces.model.SortOrder;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Takes care of initializing/loading various application services/data
@@ -80,8 +82,7 @@ public class ApplicationInitializer {
     @Inject
     private CfValueAccumulator cfValueAcumulator;
 
-    @Inject
-    private Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private WalletCacheContainerProvider walletCache;

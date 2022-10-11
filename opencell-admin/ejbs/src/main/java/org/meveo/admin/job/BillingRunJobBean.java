@@ -23,6 +23,7 @@ import static org.meveo.model.billing.BillingRunStatusEnum.POSTVALIDATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.PREINVOICED;
 import static org.meveo.model.billing.BillingRunStatusEnum.PREVALIDATED;
 
+import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
@@ -53,6 +54,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * TODO add javadoc
@@ -60,8 +62,7 @@ import org.slf4j.Logger;
 @Stateless
 public class BillingRunJobBean extends BaseJobBean {
 
-	@Inject
-	private Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	@Inject
 	private BillingRunService billingRunService;

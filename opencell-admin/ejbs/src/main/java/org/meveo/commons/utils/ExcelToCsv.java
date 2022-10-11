@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 
 import org.apache.commons.io.IOUtils;
@@ -145,7 +146,7 @@ public class ExcelToCsv {
  private static final String CSV_FILE_EXTENSION = ".csv";
  private static final String DEFAULT_SEPARATOR = ",";
 
- private  Logger log = LoggerFactory.getLogger(ExcelToCsv.class);
+ private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
  /**
   * Identifies that the CSV file should obey Excel's formatting conventions
   * with regard to escaping certain embedded characters - the field separator,

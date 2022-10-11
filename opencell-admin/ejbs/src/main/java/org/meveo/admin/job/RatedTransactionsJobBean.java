@@ -18,6 +18,7 @@
 
 package org.meveo.admin.job;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -43,6 +44,7 @@ import org.meveo.service.billing.impl.RatedTransactionsJobAggregationSetting;
 import org.meveo.service.billing.impl.RatedTransactionsJobAggregationSetting.AggregationLevelEnum;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Edward P. Legaspi
@@ -56,8 +58,7 @@ public class RatedTransactionsJobBean extends BaseJobBean {
      */
     private static int PROCESS_NR_IN_JOB_RUN = 2000000;
 
-    @Inject
-    private Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private WalletOperationService walletOperationService;

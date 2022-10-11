@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
 
 public class CustomApiGatewayPayment implements GatewayPaymentInterface {
 
-    protected Logger log = LoggerFactory.getLogger(CustomApiGatewayPayment.class);
+    protected static final Logger log = LoggerFactory.getLogger(CustomApiGatewayPayment.class);
     private PaymentScriptInterface paymentScriptInterface;
     private PaymentGateway paymentGateway;
 

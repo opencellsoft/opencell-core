@@ -3,6 +3,7 @@
  */
 package org.meveo.admin.async;
 
+import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -52,7 +53,7 @@ public class PaymentAsync {
 	@Inject
 	private CurrentUserProvider currentUserProvider;
 
-	protected Logger log = LoggerFactory.getLogger(this.getClass());
+	protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	/**
 	 * Process card payments for a list of given account operation ids. One account

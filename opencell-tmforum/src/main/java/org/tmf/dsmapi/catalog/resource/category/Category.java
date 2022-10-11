@@ -20,13 +20,13 @@ package org.tmf.dsmapi.catalog.resource.category;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tmf.dsmapi.catalog.resource.AbstractCatalogEntity;
 import org.tmf.dsmapi.catalog.resource.CatalogReference;
 import org.tmf.dsmapi.catalog.resource.LifecycleStatus;
@@ -52,7 +52,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class Category extends AbstractCatalogEntity implements Serializable {
     private final static long serialVersionUID = 1L;
 
-    private static final Logger logger = Logger.getLogger(Category.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(Category.class.getName());
 
     private String parentId;
 
@@ -115,7 +115,7 @@ public class Category extends AbstractCatalogEntity implements Serializable {
     @Override
     @JsonIgnore
     public Logger getLogger() {
-        return logger;
+        return log;
     }
 
     @Override
@@ -147,19 +147,19 @@ public class Category extends AbstractCatalogEntity implements Serializable {
     @Override
     @JsonIgnore
     public boolean isValid() {
-        logger.log(Level.FINE, "Category:isValid ()");
+        log.trace("Category:isValid ()");
 
         if (super.isValid() == false) {
             return false;
         }
 
         if (this.isRoot == Boolean.FALSE && Utilities.hasValue(parentId) == false) {
-            logger.log(Level.FINE, " invalid: parentId must be specified when isRoot is false");
+            log.trace(" invalid: parentId must be specified when isRoot is false");
             return false;
         }
 
         if (this.isRoot == Boolean.TRUE && parentId != null) {
-            logger.log(Level.FINE, " invalid: parentId must not be specififed when isRoot is true");
+            log.trace(" invalid: parentId must not be specififed when isRoot is true");
             return false;
         }
 

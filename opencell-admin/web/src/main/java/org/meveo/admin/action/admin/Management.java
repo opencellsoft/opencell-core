@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -31,6 +32,7 @@ import javax.inject.Named;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class to manage other applications : Medina, Vertina, Oudaya, Bayad.
@@ -41,8 +43,7 @@ public class Management implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Inject
-    protected Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /** paramBeanFactory */
     @Inject

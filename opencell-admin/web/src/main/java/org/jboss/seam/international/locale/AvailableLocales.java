@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 public class AvailableLocales {
-    private final Logger log = LoggerFactory.getLogger(AvailableLocales.class);
+    private static final Logger log = LoggerFactory.getLogger(AvailableLocales.class);
 
     @Produces
     private List<Locale> locales = null;

@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.lang.invoke.MethodHandles;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -39,6 +40,7 @@ import org.meveo.model.bi.JobNameEnum;
 import org.meveo.model.bi.Report;
 import org.meveo.service.bi.impl.ReportService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -63,8 +65,7 @@ public class ReportExecution implements Serializable {
 
     private static String DATE_PATERN = "yyyy.MM.dd";
 
-    @Inject
-    protected Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private ReportService reportService;

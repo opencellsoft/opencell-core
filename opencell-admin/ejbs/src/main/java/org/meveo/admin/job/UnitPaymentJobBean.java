@@ -18,6 +18,7 @@
 
 package org.meveo.admin.job;
 
+import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,7 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.script.payment.AccountOperationFilterScript;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -49,8 +51,7 @@ import org.slf4j.Logger;
 @Stateless
 public class UnitPaymentJobBean {
 
-    @Inject
-    private Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private CustomerAccountService customerAccountService;

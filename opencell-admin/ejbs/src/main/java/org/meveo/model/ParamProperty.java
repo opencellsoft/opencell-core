@@ -19,8 +19,10 @@
 package org.meveo.model;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 
 
 /**
@@ -32,7 +34,7 @@ public class ParamProperty implements Comparable<ParamProperty>, IEntity{
 
 	public static final String PROPERTY_PATTERN = "^[a-zA-Z0-9_\\.]+$";
 
-	private org.slf4j.Logger log;
+	private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	private String key;
 
@@ -43,9 +45,6 @@ public class ParamProperty implements Comparable<ParamProperty>, IEntity{
 
 	public ParamProperty(){
 
-	}
-	public ParamProperty(org.slf4j.Logger log){
-		this.log=log;
 	}
 
 	public String getKey() {

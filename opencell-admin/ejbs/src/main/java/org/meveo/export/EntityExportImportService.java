@@ -29,6 +29,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.io.Writer;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
@@ -131,6 +132,7 @@ import org.primefaces.model.LazyDataModel;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.thoughtworks.xstream.MarshallingStrategy;
 import com.thoughtworks.xstream.XStream;
@@ -183,8 +185,7 @@ public class EntityExportImportService implements Serializable {
 
     // private ParamBean param = ParamBean.getInstance();
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private WalletCacheContainerProvider walletCacheContainerProvider;

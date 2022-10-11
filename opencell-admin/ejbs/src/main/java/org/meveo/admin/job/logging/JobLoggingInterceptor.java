@@ -19,6 +19,7 @@
 package org.meveo.admin.job.logging;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
@@ -38,7 +39,7 @@ public class JobLoggingInterceptor implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 8509493016090519457L;
-	private Logger log = LoggerFactory.getLogger(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	@AroundInvoke
 	public Object aroundInvoke(InvocationContext invocationContext)

@@ -18,6 +18,7 @@
 
 package org.meveo.util.view;
 
+import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +43,7 @@ public class PagePermission {
 	private static final String JSF = ".jsf";
 	private static final String XHTML = ".xhtml";
 
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	private List<Page> pages;
 	private String pagesDirectory;
@@ -97,7 +98,7 @@ public class PagePermission {
 			throws BusinessException {
 		boolean allow = false;
 		if (this.pages == null) {
-			logger.error(PAGE_ACCESS_RULES_EXCEPTION);
+			log.error(PAGE_ACCESS_RULES_EXCEPTION);
 			throw new BusinessException(PAGE_ACCESS_RULES_EXCEPTION);
 		}
 		String requestURI = request.getRequestURI();

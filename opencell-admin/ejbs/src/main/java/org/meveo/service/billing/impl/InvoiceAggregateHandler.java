@@ -18,6 +18,7 @@
 
 package org.meveo.service.billing.impl;
 
+import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -56,7 +57,7 @@ import org.slf4j.LoggerFactory;
  */
 @Stateful
 public class InvoiceAggregateHandler {
-    private Logger log = LoggerFactory.getLogger(InvoiceAggregateHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private Map<String, CategoryInvoiceAgregate> catInvAgregateMap = new HashMap<String, CategoryInvoiceAgregate>();
     private Map<String, SubCategoryInvoiceAgregate> subCatInvAgregateMap = new HashMap<String, SubCategoryInvoiceAgregate>();

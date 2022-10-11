@@ -19,6 +19,7 @@ package org.meveo.admin.job;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -65,7 +66,8 @@ import org.meveo.service.script.ScriptInterface;
 import org.meveo.service.script.payment.AccountOperationFilterScript;
 import org.meveo.service.script.payment.DateRangeScript;
 import org.meveo.util.ApplicationProvider;
-import org.slf4j.Logger;;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;;
 
 /**
  * The Class SepaDirectDebitJobBean.
@@ -78,8 +80,7 @@ import org.slf4j.Logger;;
 public class SepaDirectDebitJobBean extends BaseJobBean {
 
     /** The log. */
-    @Inject
-    private Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /** The d D request lot op service. */
     @Inject

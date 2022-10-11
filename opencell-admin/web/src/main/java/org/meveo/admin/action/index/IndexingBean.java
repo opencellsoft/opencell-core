@@ -19,6 +19,7 @@
 package org.meveo.admin.action.index;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.util.concurrent.Future;
 
 import javax.enterprise.context.SessionScoped;
@@ -32,6 +33,7 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.service.index.ReindexingStatistics;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Named
 @SessionScoped
@@ -45,8 +47,7 @@ public class IndexingBean implements Serializable {
     @Inject
     protected Messages messages;
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     @CurrentUser

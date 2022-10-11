@@ -18,6 +18,8 @@
 
 package org.meveo.api.rest;
 
+import java.lang.invoke.MethodHandles;
+
 import javax.ejb.Singleton;
 import javax.ws.rs.NotAllowedException;
 import javax.ws.rs.NotFoundException;
@@ -43,10 +45,11 @@ import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 @Singleton
 public class JaxRsExceptionMapper implements ExceptionMapper<Exception> {
 
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    
     @Override
     public Response toResponse(Exception e) {
 
-        Logger log = LoggerFactory.getLogger(getClass());
         log.error("REST request failed with an error {}", e);
 
         if (e instanceof UnrecognizedPropertyException) {

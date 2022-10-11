@@ -20,6 +20,7 @@ package org.meveo.service.index;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
@@ -103,6 +104,7 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.EntityCustomizationUtils;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Takes care of managing and populating Elastic search indexes
@@ -137,8 +139,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     @Inject
     private ElasticClientConnection esConnection;
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     @CurrentUser

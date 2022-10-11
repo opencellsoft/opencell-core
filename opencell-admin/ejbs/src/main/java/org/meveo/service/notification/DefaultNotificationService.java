@@ -67,7 +67,7 @@ import org.slf4j.LoggerFactory;
 @Stateless
 public class DefaultNotificationService {
 
-    private static Logger log = LoggerFactory.getLogger(DefaultNotificationService.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultNotificationService.class);
 
     @Inject
     private BeanManager manager;

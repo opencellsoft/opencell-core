@@ -19,6 +19,7 @@
 package org.meveo.admin.job;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,6 +43,7 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A bean used to send invoices by Email
@@ -51,8 +53,7 @@ import org.slf4j.Logger;
  */
 public class SendInvoiceJobBean extends BaseJobBean {
 
-    @Inject
-    protected Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private JobExecutionService jobExecutionService;

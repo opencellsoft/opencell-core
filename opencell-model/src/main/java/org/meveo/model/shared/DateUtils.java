@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DateUtils {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DateUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(DateUtils.class);
 
     private static long lastTime = System.currentTimeMillis() / 1000;
 
@@ -575,7 +575,7 @@ public class DateUtils {
                         try {
                             result = sdf.parse(year + "-" + month + "-" + day);
                         } catch (ParseException e) {
-                            LOG.error("error = {}", e);
+                            log.error("error = {}", e);
                         }
                     }
                 }
@@ -704,7 +704,7 @@ public class DateUtils {
             cal.set(Calendar.MILLISECOND, 0);
             return cal.getTime();
         } catch (Exception e) {
-            LOG.error(" error on truncateTime : [{}] ", e.getMessage());
+            log.error(" error on truncateTime : [{}] ", e.getMessage());
             return date;
         }
     }
@@ -719,7 +719,7 @@ public class DateUtils {
             return formatDateWithPattern(date, toFormat);
 
         } catch (Exception e) {
-            LOG.error(" error on changeFormat : [{}] ", e.getMessage());
+            log.error(" error on changeFormat : [{}] ", e.getMessage());
             return dateValue;
         }
     }

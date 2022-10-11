@@ -35,6 +35,8 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.inject.Inject;
+
+import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -74,7 +76,7 @@ public class MediationApiService {
     @EJB
     private MediationApiService thisNewTX;
 
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public ChargeCDRListResponseDto processCdrList(ChargeCDRDto chargeCDRDto) {

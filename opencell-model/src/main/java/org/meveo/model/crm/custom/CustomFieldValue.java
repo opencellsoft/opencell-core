@@ -19,6 +19,7 @@
 package org.meveo.model.crm.custom;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -78,6 +79,8 @@ import com.google.gson.reflect.TypeToken;
 public class CustomFieldValue implements Serializable, Cloneable {
 
     private static final long serialVersionUID = -9038541899269528670L;
+    
+    private static final Logger log = LoggerFactory.getLogger(CustomFieldValue.class);
 
     /**
      * In a deserialized matrix, represents a map key name to hold the names of matrix keys In Map/matrix value management for GUI (a list of maps), represents a map key name to
@@ -1731,7 +1734,6 @@ public class CustomFieldValue implements Serializable, Cloneable {
             }
 
         } catch (Exception e) {
-            Logger log = LoggerFactory.getLogger(CustomFieldValue.class);
             log.error("Failed to parse {} for CFT {}", valueToConvert, cft, e);
             return null;
         }
@@ -1764,7 +1766,6 @@ public class CustomFieldValue implements Serializable, Cloneable {
             }
 
         } catch (Exception e) {
-            Logger log = LoggerFactory.getLogger(CustomFieldValue.class);
             log.error("Failed to convert {} to String for CFT {}", valueToConvert, cft, e);
             return null;
         }
@@ -1791,7 +1792,6 @@ public class CustomFieldValue implements Serializable, Cloneable {
             return cloned;
 
         } catch (CloneNotSupportedException e) {
-            Logger log = LoggerFactory.getLogger(CustomFieldValue.class);
             log.error("Failed to clone", e);
             return this;
         }

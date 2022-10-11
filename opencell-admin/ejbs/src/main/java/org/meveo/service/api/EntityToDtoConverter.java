@@ -41,10 +41,13 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityInstanceService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+
+import java.lang.invoke.MethodHandles;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -65,8 +68,7 @@ import java.util.stream.Collectors;
 public class EntityToDtoConverter {
 
     /** The logger. */
-    @Inject
-    private Logger logger;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /** The custom field template service. */
     @Inject

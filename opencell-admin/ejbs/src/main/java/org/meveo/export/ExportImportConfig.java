@@ -18,6 +18,7 @@
 
 package org.meveo.export;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -66,7 +67,7 @@ public class ExportImportConfig {
      */
     private Map<Class<? extends IEntity>, String[]> exportIdMapping;
 
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public ExportImportConfig() {
 

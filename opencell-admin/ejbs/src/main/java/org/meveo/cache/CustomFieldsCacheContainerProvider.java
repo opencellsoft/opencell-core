@@ -19,6 +19,7 @@
 package org.meveo.cache;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -55,6 +56,7 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.commons.utils.PersistenceUtils;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides cache related services (loading, update) for custom field value related operations
@@ -69,8 +71,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
 
     private static final long serialVersionUID = 180156064688145292L;
 
-    @Inject
-    protected Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @EJB
     private CustomFieldInstanceService customFieldInstanceService;

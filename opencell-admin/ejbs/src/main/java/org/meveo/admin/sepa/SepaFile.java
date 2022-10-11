@@ -19,6 +19,7 @@
 package org.meveo.admin.sepa;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -107,7 +108,7 @@ import org.slf4j.LoggerFactory;
 public class SepaFile extends AbstractDDRequestBuilder {
 
 	/** The log. */
-	private static Logger log = LoggerFactory.getLogger(SepaFile.class);
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	/** The PATTERN that the IBAN should match. */
 	private static final String IBAN_PATTERN = "[A-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30}";

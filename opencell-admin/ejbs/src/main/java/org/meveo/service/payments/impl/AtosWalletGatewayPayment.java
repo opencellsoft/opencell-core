@@ -83,7 +83,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
     private static final String CF_PRV_COMPL_CODE_WLSIPS = "CF_PRV_COMPL_CODE_WLSIPS";
     private static final String CF_PRV_RESPONSE_CODE_WLSIPS = "CF_PRV_RESPONSE_CODE_WLSIPS";
 
-    protected Logger log = LoggerFactory.getLogger(AtosWalletGatewayPayment.class);
+    protected static final Logger log = LoggerFactory.getLogger(AtosWalletGatewayPayment.class);
 
     private PaymentGateway paymentGateway = null;
     private ParamBeanFactory paramBeanFactory;

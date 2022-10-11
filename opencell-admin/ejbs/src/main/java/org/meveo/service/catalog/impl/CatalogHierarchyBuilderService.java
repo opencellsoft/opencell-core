@@ -21,6 +21,7 @@ package org.meveo.service.catalog.impl;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,7 +81,7 @@ import org.slf4j.LoggerFactory;
 @Stateless
 public class CatalogHierarchyBuilderService {
 
-    private Logger log = LoggerFactory.getLogger(CatalogHierarchyBuilderService.class);
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private ServiceTemplateService serviceTemplateService;

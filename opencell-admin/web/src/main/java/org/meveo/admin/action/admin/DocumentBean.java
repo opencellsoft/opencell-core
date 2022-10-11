@@ -25,6 +25,7 @@ import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -48,6 +49,7 @@ import org.meveo.model.Document;
 import org.meveo.model.crm.Provider;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Named
 @ConversationScoped
@@ -55,8 +57,7 @@ public class DocumentBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     // TODO: DataModel. @DataModel
     private List<Document> documents;

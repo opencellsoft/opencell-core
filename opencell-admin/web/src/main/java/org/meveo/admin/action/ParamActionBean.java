@@ -19,6 +19,7 @@
 package org.meveo.admin.action;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,6 +40,8 @@ import org.meveo.model.ParamProperty;
 import org.meveo.service.base.local.IPersistenceService;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CellEditEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Wassim Drira
@@ -55,8 +58,7 @@ public class ParamActionBean extends BaseBean<ParamProperty> implements Serializ
     @Inject
     protected Conversation conversation;
 
-    @Inject
-    private org.slf4j.Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private transient ResourceBundle bundle;
@@ -107,7 +109,7 @@ public class ParamActionBean extends BaseBean<ParamProperty> implements Serializ
         Set<Object> keys = paramBean.getProperties().keySet();
         if (keys != null) {
             for (Object key : keys) {
-                ParamProperty paramProp = new ParamProperty(log);
+                ParamProperty paramProp = new ParamProperty();
                 String strKey = (String) key;
                 paramProp.setKey(strKey);
                 paramProp.setValue(paramBean.getProperties().getProperty(strKey));

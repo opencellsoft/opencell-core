@@ -17,6 +17,7 @@
  */
 package org.meveo.commons.utils;
 
+import java.lang.invoke.MethodHandles;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -42,7 +43,7 @@ public final class SQLUtils {
     }
     
     /** logger.*/
-    private static final Logger logger = LoggerFactory.getLogger(SQLUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /**
      * Get String value from ResultSet and close it.
@@ -115,7 +116,7 @@ public final class SQLUtils {
                 return rs.wasNull() ? null : value;
             }
         } catch (SQLException e) {
-            logger.error("Could not get Integer from ResultSet", e);
+            log.error("Could not get Integer from ResultSet", e);
         } finally {
             SQLUtils.closeResultSet(rs);
         }
@@ -135,7 +136,7 @@ public final class SQLUtils {
                 return rs.wasNull() ? null : value;
             }
         } catch (SQLException e) {
-            logger.error("Could not get Long from ResultSet", e);
+            log.error("Could not get Long from ResultSet", e);
         } finally {
             SQLUtils.closeResultSet(rs);
         }
@@ -154,7 +155,7 @@ public final class SQLUtils {
                 try {
                     statement.close();
                 } catch (SQLException e) {
-                    logger.error("Could not close Statement", e);
+                    log.error("Could not close Statement", e);
                 }
             }
         }
@@ -171,7 +172,7 @@ public final class SQLUtils {
             try {
                 rs.close();
             } catch (SQLException e) {
-                logger.error("Could not close ResultSet", e);
+                log.error("Could not close ResultSet", e);
             }
         }
     }

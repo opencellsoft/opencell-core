@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
+import java.lang.invoke.MethodHandles;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.service.crm.impl.ProviderService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /* originally from @author BalusC in LGPL licence
 ** @link http://balusc.blogspot.com/2009/02/fileservlet-supporting-resume-and.html
@@ -55,8 +57,7 @@ public class RessourceServlet extends HttpServlet {
     private static final long DEFAULT_EXPIRE_TIME = 604800000L; // ..ms = 1 week.
     private static final String MULTIPART_BOUNDARY = "MULTIPART_BYTERANGES";
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     ProviderService providerService;

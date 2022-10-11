@@ -45,7 +45,7 @@ public class BundleTemplateMessageImpl implements BundleTemplateMessage {
     @Inject
     private LocaleSelector localeSelector;
 
-    private final Logger log = LoggerFactory.getLogger(BundleTemplateMessageImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(BundleTemplateMessageImpl.class);
 
     public Message build() {
         String text;

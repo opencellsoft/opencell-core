@@ -63,7 +63,7 @@ import org.slf4j.LoggerFactory;
 public class PDFBuilder {
     
     /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(PDFBuilder.class);
+    private static final Logger log = LoggerFactory.getLogger(PDFBuilder.class);
     
     /** The target dir path. */
     private final String targetDirPath;
@@ -223,7 +223,7 @@ public class PDFBuilder {
                 }
             }
         } catch (Exception e) {
-            LOG.error("Error settign field value : field = {}, value = {} , error = {} ", key, value, e.getMessage());
+            log.error("Error settign field value : field = {}, value = {} , error = {} ", key, value, e.getMessage());
         }
     }
     
@@ -256,7 +256,7 @@ public class PDFBuilder {
                     List<PDAnnotation> annotations = this.currentTemplateDoc.getPage(p).getAnnotations();
                     for (PDAnnotation ann : annotations) {
                         if (ann.getCOSObject() == widget.getCOSObject()) {
-                            LOG.debug(" setImageFieldValue, field : {} FOUND in page nbr : {} " , pdField.getFullyQualifiedName() , p);
+                            log.debug(" setImageFieldValue, field : {} FOUND in page nbr : {} " , pdField.getFullyQualifiedName() , p);
                             PDPage page = this.currentTemplateDoc.getPages().get(p);
                             this.drawImageInFieldRectangle(pdImageXObject, ann.getRectangle(), page); 
                         }
@@ -306,7 +306,7 @@ public class PDFBuilder {
             return JPEGFactory.createFromImage(this.currentTemplateDoc, bufferedImage);
 
         } catch (IOException e) {
-            LOG.error("error generateBarCodeImage : code = {}, value = {} , pdField = {} ", barCode, pdField, e.getMessage());
+            log.error("error generateBarCodeImage : code = {}, value = {} , pdField = {} ", barCode, pdField, e.getMessage());
             throw e;
         }
     }

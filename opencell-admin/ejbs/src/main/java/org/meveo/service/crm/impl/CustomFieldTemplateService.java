@@ -475,7 +475,6 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
                         }
                         appliesTo = appliesTo + "_" + fieldValue;
                     } catch (IllegalArgumentException | IllegalAccessException e) {
-                        Logger log = LoggerFactory.getLogger(CustomFieldTemplateService.class);
                         log.error("Unable to access field {}.{}", entity.getClass().getSimpleName(), fieldName);
                         throw new RuntimeException("Unable to access field " + entity.getClass().getSimpleName() + "." + fieldName);
                     }

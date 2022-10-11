@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -41,7 +42,7 @@ public class XLSFile implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private Logger log = LoggerFactory.getLogger(XLSFile.class);
+	private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	private File file;
 	private List<String[]> contexts;

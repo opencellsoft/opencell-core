@@ -30,6 +30,7 @@ import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.PermissionService;
 import org.meveo.service.admin.impl.RoleService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -37,6 +38,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.persistence.Entity;
+
+import java.lang.invoke.MethodHandles;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,8 +58,7 @@ public class APIv2PermissionsSyncJobBean extends BaseJobBean {
      */
     private static final String APIV2_FULL_ACCESS = "APIv2_FULL_ACCESS";
 
-    @Inject
-    private Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private RoleService roleService;

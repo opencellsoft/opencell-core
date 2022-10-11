@@ -18,6 +18,7 @@
 
 package org.meveo.admin.job.dwh;
 
+import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ import org.meveo.service.job.JobExecutionService;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
 import org.meveocrm.services.dwh.MeasuredValueService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class DWHQueryBean {
@@ -63,8 +65,7 @@ public class DWHQueryBean {
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private JobExecutionService jobExecutionService;

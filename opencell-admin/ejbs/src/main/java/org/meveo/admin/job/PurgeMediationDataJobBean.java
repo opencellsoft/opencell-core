@@ -22,6 +22,7 @@ import static org.meveo.admin.job.PurgeMediationDataJob.PURGE_MEDIATION_DATA_JOB
 import static org.meveo.admin.job.PurgeMediationDataJob.PURGE_MEDIATION_DATA_JOB_RT_STATUS_CF;
 import static org.meveo.admin.job.PurgeMediationDataJob.PURGE_MEDIATION_DATA_JOB_WO_STATUS_CF;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -44,6 +45,7 @@ import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class job bean to remove not open EDR, WO, RTx between two dates.
@@ -55,8 +57,7 @@ import org.slf4j.Logger;
 public class PurgeMediationDataJobBean extends BaseJobBean {
 
 
-    @Inject
-    private Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private EdrService edrService;

@@ -18,6 +18,7 @@
 
 package org.meveo.export;
 
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Modifier;
 import java.util.Date;
 import java.util.HashMap;
@@ -68,7 +69,7 @@ public class IEntityExportIdentifierConverter implements Converter {
     private boolean ignoreNotFoundFK;
     private Provider forceToProvider;
     private IEntityClassConverter iEntityClassConverter;
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /**
      * 

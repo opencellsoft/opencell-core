@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -45,6 +46,7 @@ import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.script.ScriptInstanceService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Edward P. Legaspi
@@ -53,8 +55,7 @@ import org.slf4j.Logger;
 @Stateless
 public class WebHookNotifier {
 
-    @Inject
-    Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     NotificationHistoryService notificationHistoryService;

@@ -42,6 +42,7 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -49,6 +50,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.*;
 
 /**
@@ -63,8 +65,7 @@ public class FlatFileValidator {
     /**
      * The log.
      */
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private FileFormatService fileFormatService;

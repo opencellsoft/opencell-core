@@ -20,6 +20,7 @@ package org.meveo.admin.excel;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -66,7 +67,7 @@ public class ExcelConverter {
 	@Inject
 	private ResourceBundle resourceMessages;
 
-	private Logger log = LoggerFactory.getLogger(ExcelConverter.class);
+	private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	/**
 	 * Generates file for export.

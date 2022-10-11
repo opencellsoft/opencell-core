@@ -19,6 +19,7 @@
 
 package org.meveo.admin.async;
 
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -37,6 +38,7 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.AccountOperation;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author mboukayoua
@@ -45,8 +47,7 @@ import org.slf4j.Logger;
 public class GDPRJobAsync {
 
     /** The log. */
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private UnitGDPRJobBean unitGDPRJobBean;

@@ -18,6 +18,7 @@
 
 package org.meveo.service.index;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 
 import javax.annotation.PostConstruct;
@@ -37,6 +38,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Establish a connection to Elastic Search cluster
@@ -51,8 +53,7 @@ import org.slf4j.Logger;
 @Lock(LockType.READ)
 public class ElasticClientConnection {
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private ElasticSearchConfiguration esConfiguration;

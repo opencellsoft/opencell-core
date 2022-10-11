@@ -26,7 +26,7 @@ import javax.faces.component.UIComponent;
  */
 @FacesComponent(value = "formField")
 public class FormFieldCompositeComponent extends BackingBeanBasedCompositeComponent {
-
+    
     /**
      * Check if in edit mode in the following order: component's attribute, formPanel's attribute, backing bean's edit property
      * 

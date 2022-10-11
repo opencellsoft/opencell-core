@@ -18,6 +18,7 @@
 
 package org.meveo.service.crm.impl;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Date;
 
 import javax.annotation.Resource;
@@ -33,6 +34,7 @@ import org.meveo.admin.listener.ApplicationInitializer;
 import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.model.crm.Provider;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Manages providers connection to DB.
@@ -54,8 +56,7 @@ public class TenantRegistry {
     @Resource
     private TimerService timerService;
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /**
      * Unregister a tenant/provider.

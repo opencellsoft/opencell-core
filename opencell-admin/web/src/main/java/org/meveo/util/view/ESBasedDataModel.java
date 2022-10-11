@@ -17,6 +17,7 @@
  */
 package org.meveo.util.view;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -97,6 +98,7 @@ import org.slf4j.LoggerFactory;
 public abstract class ESBasedDataModel extends LazyDataModel<Map<String, Object>> {
 
     private static final long serialVersionUID = -5796910936316457321L;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public static String RECORD_ES_ID = "_id";
     public static String RECORD_SCORE = "_score";
@@ -198,7 +200,6 @@ public abstract class ESBasedDataModel extends LazyDataModel<Map<String, Object>
             return searchResult;
 
         } catch (Exception e) {
-            Logger log = LoggerFactory.getLogger(getClass());
             log.error("Failed to search in ES with {}", paginationConfig, e);
         }
         return null;

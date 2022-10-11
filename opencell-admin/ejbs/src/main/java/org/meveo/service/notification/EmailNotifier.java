@@ -20,6 +20,7 @@ package org.meveo.service.notification;
 
 import static java.util.Arrays.asList;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +41,7 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.communication.impl.EmailSender;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author phung
@@ -56,8 +58,7 @@ public class EmailNotifier {
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private EmailSender emailSender;

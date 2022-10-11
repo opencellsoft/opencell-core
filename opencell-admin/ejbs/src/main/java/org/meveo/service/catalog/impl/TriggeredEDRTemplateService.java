@@ -56,12 +56,10 @@ public class TriggeredEDRTemplateService extends BusinessService<TriggeredEDRTem
         edrTemplate.setParam4El(StringUtils.stripToNull(edrTemplate.getParam4El()));
 
         if (edrTemplate.getQuantityEl() == null) {
-            Logger log = LoggerFactory.getLogger(this.getClass());
             log.error("edrTemplate QuantityEL must be set for triggeredEDRTemplate {}", edrTemplate.getId());
         }
 
         if (edrTemplate.getParam1El() == null) {
-            Logger log = LoggerFactory.getLogger(this.getClass());
             log.error("edrTemplate param1El must be set for triggeredEDRTemplate {}", edrTemplate.getId());
         }
 
@@ -80,12 +78,10 @@ public class TriggeredEDRTemplateService extends BusinessService<TriggeredEDRTem
         edrTemplate.setParam4El(StringUtils.stripToNull(edrTemplate.getParam4El()));
 
         if (edrTemplate.getQuantityEl() == null) {
-            Logger log = LoggerFactory.getLogger(this.getClass());
             log.error("edrTemplate QuantityEL must be set for triggeredEDRTemplate {}", edrTemplate.getId());
         }
 
         if (edrTemplate.getParam1El() == null) {
-            Logger log = LoggerFactory.getLogger(this.getClass());
             log.error("edrTemplate param1El must be set for triggeredEDRTemplate {}", edrTemplate.getId());
         }
 

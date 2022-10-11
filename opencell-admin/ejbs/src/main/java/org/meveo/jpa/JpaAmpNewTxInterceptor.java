@@ -19,6 +19,7 @@
 package org.meveo.jpa;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
@@ -26,6 +27,7 @@ import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Interceptor that in case of application managed persistence context, a new EM will be instantiated for the period of a method call
@@ -45,8 +47,7 @@ public class JpaAmpNewTxInterceptor implements Serializable {
     @Inject
     private EntityManagerProvider entityManagerProvider;
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /**
      * Instantiate a new EM if EM is application managed persistence context

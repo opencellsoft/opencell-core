@@ -51,7 +51,7 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
      */
     private SessionContext securityContext;
 
-    Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger log = LoggerFactory.getLogger(MeveoUserKeyCloakImpl.class);
 
     public MeveoUserKeyCloakImpl() {
     }

@@ -18,6 +18,7 @@
 
 package org.meveo.service.notification;
 
+import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 
 import javax.ejb.Asynchronous;
@@ -32,6 +33,7 @@ import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Lauch a jobInstance and create a notificationHistory
@@ -54,8 +56,7 @@ public class JobTriggerLauncher {
     @Inject
     private JobInstanceService jobInstanceService;
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private CurrentUserProvider currentUserProvider;

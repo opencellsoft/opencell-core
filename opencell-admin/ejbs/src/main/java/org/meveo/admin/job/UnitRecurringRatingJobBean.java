@@ -19,6 +19,7 @@
 package org.meveo.admin.job;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
 import java.util.Date;
 
 import javax.ejb.Stateless;
@@ -36,6 +37,7 @@ import org.meveo.model.billing.RatingStatusEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -50,8 +52,7 @@ public class UnitRecurringRatingJobBean implements Serializable {
     @Inject
     private RecurringChargeInstanceService recurringChargeInstanceService;
 
-    @Inject
-    protected Logger log;
+    protected static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })

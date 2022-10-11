@@ -6,12 +6,14 @@ import org.meveo.api.security.config.*;
 import org.meveo.apiv2.generic.security.parser.IdParser;
 import org.meveo.commons.utils.StringUtils;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.interceptor.InvocationContext;
 import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,8 +28,7 @@ import java.util.Map;
 @JsonConfigFactory
 public class SecuredBusinessEntityJsonConfigFactory implements SecuredBusinessEntityConfigFactory {
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /**
      * Map to store loaded SE configs from json file and stored with

@@ -19,6 +19,7 @@
 package org.meveo.admin.ftp;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -53,7 +54,7 @@ public class MeveoFtpUserManager extends AbstractUserManager {
     private static final int HOUR = 60 * 60;
     private static final String ADMINISTRATOR = "administrateur";
 
-    private Logger log = LoggerFactory.getLogger(MeveoFtpUserManager.class);
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private UserService userService;
 

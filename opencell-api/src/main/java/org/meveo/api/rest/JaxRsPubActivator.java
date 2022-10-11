@@ -18,6 +18,7 @@
 
 package org.meveo.api.rest;
 
+import java.lang.invoke.MethodHandles;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,7 +41,7 @@ import org.slf4j.LoggerFactory;
 @ApplicationPath("/api/pub")
 public class JaxRsPubActivator extends Application {
 
-    private Logger log = LoggerFactory.getLogger(JaxRsPubActivator.class);
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override

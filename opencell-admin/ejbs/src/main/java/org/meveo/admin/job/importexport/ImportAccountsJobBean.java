@@ -19,6 +19,7 @@
 package org.meveo.admin.job.importexport;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -62,6 +63,7 @@ import org.meveo.service.crm.impl.ImportWarningException;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Wassim Drira
@@ -71,8 +73,7 @@ import org.slf4j.Logger;
 @Stateless
 public class ImportAccountsJobBean {
 
-    @Inject
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
     private AccountImportHistoService accountImportHistoService;

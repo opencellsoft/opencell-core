@@ -18,6 +18,8 @@
 
 package org.meveo.export;
 
+import java.lang.invoke.MethodHandles;
+
 import org.hibernate.proxy.HibernateProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +42,7 @@ public class IEntityHibernateProxyConverter implements Converter {
 
     private ExportImportConfig exportImportConfig;
 
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public IEntityHibernateProxyConverter(ExportImportConfig exportImportConfig) {
         this.exportImportConfig = exportImportConfig;

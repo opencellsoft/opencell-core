@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ReflectionUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(ReflectionUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(ReflectionUtils.class);
 
     public static final String SET_PREFIX = "set";
 
@@ -83,11 +83,11 @@ public class ReflectionUtils {
             Class classDefinition = Class.forName(className);
             object = classDefinition.newInstance();
         } catch (InstantiationException e) {
-            logger.error("Object could not be created by name!", e);
+            log.error("Object could not be created by name!", e);
         } catch (IllegalAccessException e) {
-            logger.error("Object could not be created by name!", e);
+            log.error("Object could not be created by name!", e);
         } catch (ClassNotFoundException e) {
-            logger.error("Object could not be created by name!", e);
+            log.error("Object could not be created by name!", e);
         }
         return object;
     }
@@ -127,7 +127,7 @@ public class ReflectionUtils {
             return classList;
 
         } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
-            logger.error("Failed to get a list of classes", e);
+            log.error("Failed to get a list of classes", e);
         }
 
         return new ArrayList<>();
@@ -208,7 +208,6 @@ public class ReflectionUtils {
             try {
                 clazz = Class.forName(className);
             } catch (ClassNotFoundException e) {
-                Logger log = LoggerFactory.getLogger(ReflectionUtils.class);
                 log.error("Failed to obtain a class by name {}", className);
             }
         }
@@ -513,7 +512,6 @@ public class ReflectionUtils {
                         iterationClazz = field.getType();
                     }
                 } else {
-                    Logger log = LoggerFactory.getLogger(ReflectionUtils.class);
                     log.error("No field {} in {}", iterationFieldName, iterationClazz);
                     return null;
                 }
@@ -596,7 +594,6 @@ public class ReflectionUtils {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static Object getPropertyValue(Object obj, String property) throws IllegalAccessException {
 
-        // Logger log = LoggerFactory.getLogger(ReflectionUtils.class);
         // log.error("AKK getProperty value {} {} {}", obj, property, obj.getClass());
 
         if (obj instanceof Collection) {
