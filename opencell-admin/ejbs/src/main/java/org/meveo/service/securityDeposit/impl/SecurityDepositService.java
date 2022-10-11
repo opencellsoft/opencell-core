@@ -107,7 +107,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         if (!financeSettings.isAutoRefund() && (securityDepositInput.getValidityDate() != null || securityDepositInput.getValidityPeriod() != null || securityDepositInput.getValidityPeriodUnit() != null)) {
             throw new InvalidParameterException("the option 'Allow auto refund' need to be checked");
         }
-        if (!SecurityDepositStatusEnum.NEW.equals(securityDeposit.getStatus()) && !SecurityDepositStatusEnum.HOLD.equals(securityDeposit.getStatus())) {
+        if (!SecurityDepositStatusEnum.VALIDATED.equals(securityDeposit.getStatus()) && !SecurityDepositStatusEnum.HOLD.equals(securityDeposit.getStatus())) {
             securityDeposit.setAmount(oldAmountSD);
         }
         if (securityDeposit.getServiceInstance() != null && securityDeposit.getSubscription() != null) {
@@ -231,7 +231,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
             }
         }
 
-        if (securityDepositToUpdate.getAmount() != null && (SecurityDepositStatusEnum.NEW.equals(securityDepositToUpdate.getStatus())
+        if (securityDepositToUpdate.getAmount() != null && (SecurityDepositStatusEnum.VALIDATED.equals(securityDepositToUpdate.getStatus())
                 || SecurityDepositStatusEnum.HOLD.equals(securityDepositToUpdate.getStatus())
                 || SecurityDepositStatusEnum.REFUNDED.equals(securityDepositToUpdate.getStatus()))) {
             BigDecimal nAmount = securityDepositToUpdate.getAmount().add(securityDepositInput.getAmountToCredit().negate());

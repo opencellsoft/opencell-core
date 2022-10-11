@@ -76,7 +76,7 @@ public class SecurityDeposit extends BusinessCFEntity {
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "status")
-    private SecurityDepositStatusEnum status = SecurityDepositStatusEnum.NEW;
+    private SecurityDepositStatusEnum status = SecurityDepositStatusEnum.DRAFT;
 
     @ManyToOne
     @JoinColumn(name = "subscription_id")
