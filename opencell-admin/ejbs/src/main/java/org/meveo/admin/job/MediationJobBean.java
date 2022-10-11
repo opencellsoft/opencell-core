@@ -433,8 +433,9 @@ public class MediationJobBean extends BaseJobBean {
                     }
                     
                     cdrParsingService.createEdrs(edrs, cdr);
-                    
-                    mediationsettingService.applyEdrVersioningRule(edrs, cdr);
+
+                    String eventKey = mediationsettingService.getKeyEventEl(edrs, cdr);
+                    mediationsettingService.applyEdrVersioningRule(eventKey, edrs, cdr);
                     if (!StringUtils.isBlank(cdr.getRejectReason())) {
                         failedCDR(jobExecutionResult, fileName, cdr, cdr.getStatus(), rejectFileWriter);
                     }
