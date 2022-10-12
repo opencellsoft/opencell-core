@@ -53,6 +53,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.commons.utils.NumberUtils;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.CounterValueChangeInfo;
@@ -313,7 +314,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             Calendar invoicingCalendar = CalendarService.initializeCalendar(chargeInstance.getInvoicingCalendar(), defaultInitDate, chargeInstance);
             invoicingDate = invoicingCalendar.nextCalendarDate(applicationDate);
         }
-
+        ParamBean.setReload(true);
+        Boolean propagateExtraParam = paramBeanFactory.getInstance().getBooleanValue("edr.propagate.extraParameter", false);
         if (reservation != null) {
             if (orderNumberOverride != null) {
                 walletOperation = new WalletReservation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate, orderNumberOverride.equals(ChargeInstance.NO_ORDER_NUMBER) ? null : orderNumberOverride,
@@ -336,6 +338,10 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     edr != null ? edr.getParameter4() : null, null, startdate, endDate, null, invoicingDate);
             }
         }
+        if(propagateExtraParam) {
+            walletOperation.setParameterExtra(edr != null ? edr.getExtraParameter() : null);
+        }
+        ParamBean.setReload(false);
         walletOperation.setChargeMode(chargeMode);
         walletOperation.setFullRatingPeriod(fullRatingPeriod);
 
