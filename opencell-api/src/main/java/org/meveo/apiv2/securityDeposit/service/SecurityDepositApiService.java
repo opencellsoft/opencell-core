@@ -14,8 +14,12 @@ import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ImportInvoiceException;
+import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.commons.utils.ListUtils;
 import org.meveo.model.BaseEntity;
@@ -118,7 +122,8 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
     }
 
     @Transactional
-    public Optional<SecurityDeposit> instantiate(SecurityDeposit securityDepositInput) {
+    public Optional<SecurityDeposit> instantiate(SecurityDeposit securityDepositInput, 
+            SecurityDepositStatusEnum status, boolean validate) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
         // Check FinanceSettings.useSecurityDeposit
         FinanceSettings financeSettings = financeSettingsService.findLastOne();
         if (financeSettings == null || !financeSettings.isUseSecurityDeposit()) {
@@ -193,7 +198,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
             securityDepositName = template.getTemplateName();
         }
         securityDepositInput.setCode(securityDepositName + "-" + count);
-        securityDepositInput.setStatus(SecurityDepositStatusEnum.VALIDATED);
+        securityDepositInput.setStatus(status);
         
         // Check validity dates
         if (financeSettings.isAutoRefund() && template.isAllowValidityDate() && template.isAllowValidityPeriod()) {
