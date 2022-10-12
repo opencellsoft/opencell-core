@@ -293,7 +293,7 @@ public class CalendarApi extends BaseApi {
             }
         } else if (calendar instanceof CalendarYearly) {
             if (postData.getDays() != null && postData.getDays().size() > 0) {
-                List<DayInYear> days = new ArrayList<DayInYear>();
+                List<DayInYear> days = new ArrayList<>();
                 for (DayInYearDto d : postData.getDays()) {
                     DayInYear dayInYear = dayInYearService.findByMonthAndDay(d.getMonth(), d.getDay());
                     if (dayInYear != null) {
