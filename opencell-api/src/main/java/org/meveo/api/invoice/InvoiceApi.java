@@ -547,10 +547,11 @@ public class InvoiceApi extends BaseApi {
      * @throws BusinessException business exception
      * @throws InvoiceExistException Invoice already exists exception
      * @throws ImportInvoiceException Failed to import invoice exception
+     * @throws IOException 
      */
     @TransactionAttribute
     public String validateInvoice(Long invoiceId, boolean generateAO, boolean refreshExchangeRate) throws MissingParameterException,
-            EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
+            EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException, IOException {
     	return validateInvoice(invoiceId, generateAO, refreshExchangeRate, true);
     }
     
