@@ -283,21 +283,8 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
                  } 
              }
              
-            DatePeriod validity=new DatePeriod(DateUtils.truncateTime(from), DateUtils.truncateTime(to));
-            
-            PricePlanMatrix pricePlanMatrix =  pricePlanMatrixVersion.getPricePlanMatrix(); 
-            
-            pricePlanMatrix.getVersions()
-            .stream()
-            .forEach(ppmv -> {
-                DatePeriod ppmvValidity = DateUtils.truncateTime(ppmv.getValidity());
-                DatePeriod validityNew = DateUtils.truncateTime(validity);
-                if(VersionStatusEnum.PUBLISHED.equals(ppmv.getStatus()) && ppmvValidity.isCorrespondsToPeriod(validityNew, false)) {
-                    throw new MeveoApiException(resourceMessages.getString("error.pricePlanMatrixVersion.overlapPeriodWithVersion") + ppmv.getCurrentVersion());
-                }
-             });
-            
-            return new GetPricePlanVersionResponseDto(pricePlanMatrixVersionService.duplicate(pricePlanMatrixVersion, pricePlanMatrixVersion.getPricePlanMatrix(),validity, pricePlanMatrixVersion.getPriceVersionType(),false));
+             DatePeriod validity=new DatePeriod(DateUtils.truncateTime(from), DateUtils.truncateTime(to));
+             return new GetPricePlanVersionResponseDto(pricePlanMatrixVersionService.duplicate(pricePlanMatrixVersion, pricePlanMatrixVersion.getPricePlanMatrix(), validity, pricePlanMatrixVersion.getPriceVersionType(), false));
         } catch (BusinessException e) {
             throw new MeveoApiException(e);
         }

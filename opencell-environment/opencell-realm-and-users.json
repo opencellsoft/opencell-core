@@ -90,8 +90,12 @@
         "composites": {
           "client": {
             "opencell-web": [
-              "uma_protection"
-            ]
+              "uma_protection",
+			  "apiAdministrateur"
+            ],
+			"opencell-portal": [
+			 "PORTAL_USER"
+			 ]
           }
         },
         "clientRole": false,
@@ -2914,6 +2918,24 @@
           "id": "0112378b-82dc-44c6-8001-281662b2c4ba",
           "name": "C_CARE",
           "description": "accès aux écrans Customer Care",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "3eeadcfd-ace4-44e0-ba78-9a4d0505eef8",
+          "attributes": {}
+        },
+        {
+          "id": "5b93cef8-2c9d-4316-a344-56cfab806e2b",
+          "name": "OPERATIONS",
+          "description": "OPERATIONS role",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "3eeadcfd-ace4-44e0-ba78-9a4d0505eef8",
+          "attributes": {}
+        },
+        {
+          "id": "60aadeb7-099f-4e70-adbf-de56869e8ae6",
+          "name": "SETTINGS",
+          "description": "SETTINGS role",
           "composite": false,
           "clientRole": true,
           "containerId": "3eeadcfd-ace4-44e0-ba78-9a4d0505eef8",
@@ -17855,7 +17877,7 @@
       "identityProviderMapper": "oidc-hardcoded-role-idp-mapper",
       "config": {
         "syncMode": "LEGACY",
-        "role": "superAdministrator"
+        "role": "default-roles-opencell"
       }
     }
   ],

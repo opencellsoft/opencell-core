@@ -172,7 +172,7 @@
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="code" value="401000000"></column>
-            <column name="description" value="General AP"></column>
+            <column name="description" value="General accounts payable"></column>
             <column name="chart_of_account_type" value="LIABILITIES"></column>
             <column name="chart_of_account_view_type" value="REGULAR"></column>
         </insert>
@@ -340,15 +340,6 @@
             <column name="description" value="Discounts"></column>
             <column name="chart_of_account_type" value="REVENUE"></column>
             <column name="chart_of_account_view_type" value="REGULAR"></column>
-        </insert>
-        <insert tableName="billing_accounting_code">
-            <column name="id" valueNumeric="-35" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="T3P9476" />
-            <column name="description" value="WS BAD DEBT WRITE-OFFS IRRE"></column>
-            <column name="chart_of_account_type" value="REVENUE" />
-            <column name="chart_of_account_view_type" value="REGULAR" />
         </insert>
         <insert tableName="billing_accounting_code">
 			<column name="id" valueNumeric="-37" />
@@ -868,7 +859,7 @@
             <column name="id" valueNumeric="-50" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
-            <column name="accounting_code_id" valueNumeric="-35" />
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
             <column name="code" value="PAY_BATCH" />
             <column name="description" value="Payment from batch payment file" />
             <column name="occ_category" value="CREDIT" />
@@ -2579,6 +2570,7 @@
     <changeSet id="#INTRD-6283_20220422" author="HichamELHALOUI" />
     <changeSet id="INTRD-6908_20220503" author="HichamELHALOUI"/>
     <changeSet id="#INTRD-8004_210622" author="AbdelkaderBouazza"/>
+	<changeSet id="#INTRD-10199_20221010" author="TarikFA." />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

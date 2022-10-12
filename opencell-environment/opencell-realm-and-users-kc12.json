@@ -86,7 +86,11 @@
         "composites": {
           "client": {
             "opencell-web": [
-              "uma_protection"
+              "uma_protection",
+			  "apiAdministrateur"
+            ],
+			"opencell-portal": [
+              "PORTAL_USER"
             ]
           }
         },
@@ -2803,6 +2807,14 @@
           "attributes": {}
         },
         {
+          "id": "60aadeb7-099f-4e70-adbf-de56869e8ae6",
+          "name": "SETTINGS",
+          "description": "SETTINGS role",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "3eeadcfd-ace4-44e0-ba78-9a4d0505eef8",
+          "attributes": {}
+        },{
           "id": "67002106-8ad5-4b57-bd7f-f0cf36ea8331",
           "name": "ADMIN",
           "description": "Accès à tout",

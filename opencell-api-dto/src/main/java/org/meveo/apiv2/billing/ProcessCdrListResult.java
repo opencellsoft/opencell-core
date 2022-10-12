@@ -1,6 +1,7 @@
 package org.meveo.apiv2.billing;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.meveo.api.dto.billing.ChargeCDRResponseDto;
@@ -10,6 +11,21 @@ import org.meveo.api.dto.response.BaseResponse;
 public class ProcessCdrListResult extends BaseResponse {
 
     private static final long serialVersionUID = 5503067125480351868L;
+
+    /**
+     * The amount without Tax.
+     */
+    private BigDecimal amountWithoutTax;
+
+    /**
+     * The tax amount.
+     */
+    private BigDecimal amountTax;
+
+    /**
+     * The amount with tax.
+     */
+    private BigDecimal amountWithTax;
 
     /**
      * Processing mode
@@ -30,6 +46,7 @@ public class ProcessCdrListResult extends BaseResponse {
      * Counter periods that were updated during the rating
      */
     private List<CounterPeriodDto> counterPeriods;
+
 
     public ProcessCdrListResult() {
 
@@ -144,5 +161,29 @@ public class ProcessCdrListResult extends BaseResponse {
         public synchronized void addFail() {
             this.fail++;
         }
+    }
+
+    public BigDecimal getAmountWithoutTax() {
+        return amountWithoutTax;
+    }
+
+    public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+        this.amountWithoutTax = amountWithoutTax;
+    }
+
+    public BigDecimal getAmountTax() {
+        return amountTax;
+    }
+
+    public void setAmountTax(BigDecimal amountTax) {
+        this.amountTax = amountTax;
+    }
+
+    public BigDecimal getAmountWithTax() {
+        return amountWithTax;
+    }
+
+    public void setAmountWithTax(BigDecimal amountWithTax) {
+        this.amountWithTax = amountWithTax;
     }
 }

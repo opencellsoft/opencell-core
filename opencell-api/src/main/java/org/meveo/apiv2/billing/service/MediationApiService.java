@@ -505,6 +505,17 @@ public class MediationApiService {
                     ratedTransactionService.createRatedTransaction(walletOperation, false);
                 }
             }
+            cdrProcessingResult.setAmountWithTax(BigDecimal.ZERO);
+            cdrProcessingResult.setAmountWithoutTax(BigDecimal.ZERO);
+            cdrProcessingResult.setAmountTax(BigDecimal.ZERO);
+            Arrays.stream(cdrProcessingResult.getChargedCDRs()).forEach( cdrCharge -> {
+                cdrProcessingResult.setAmountWithTax(cdrProcessingResult.getAmountWithTax().add(cdrCharge.getAmountWithTax() != null
+                        ? cdrCharge.getAmountWithTax() : BigDecimal.ZERO));
+                cdrProcessingResult.setAmountWithoutTax(cdrProcessingResult.getAmountWithoutTax().add(cdrCharge.getAmountWithoutTax() != null
+                        ? cdrCharge.getAmountWithoutTax() : BigDecimal.ZERO));
+                cdrProcessingResult.setAmountTax(cdrProcessingResult.getAmountTax().add(cdrCharge.getAmountTax() != null
+                        ? cdrCharge.getAmountTax() : BigDecimal.ZERO));
+            });
         }
 
     }

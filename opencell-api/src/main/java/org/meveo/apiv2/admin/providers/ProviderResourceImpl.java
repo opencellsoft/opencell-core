@@ -208,6 +208,9 @@ public class ProviderResourceImpl implements ProviderResource {
         }
         
         if (provider.getRgaaMessage() != null) {
+        	if (provider.getRgaaMessage().length() > 500) {
+                throw new InvalidParameterException("Max size is 500 characters.");
+            } 
             providerByCode.setRgaaMessage(providerUpdateInfos.getRgaaMessage());
         }
         
