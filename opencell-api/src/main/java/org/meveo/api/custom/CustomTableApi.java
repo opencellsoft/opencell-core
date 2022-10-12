@@ -202,6 +202,10 @@ public class CustomTableApi extends BaseApi {
         if (pagingAndFiltering == null) {
             pagingAndFiltering = new PagingAndFiltering();
         }
+        
+        if (pagingAndFiltering.getLoadReferenceDepth() > 1) {
+        	pagingAndFiltering.setLoadReferenceDepth(1);
+        }
 
         CustomEntityTemplate cet = customTableService.getCET(customTableCode);
         Map<String, CustomFieldTemplate> cfts = customTableService.retrieveAndValidateCfts(cet, false);
