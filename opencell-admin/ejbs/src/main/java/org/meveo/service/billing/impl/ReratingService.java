@@ -443,7 +443,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
                     edr.setRejectReason("Origin wallet operation [id=" + operationToRerate.getId() + "] has been rerated");
                     operationToRerate.setStatus(WalletOperationStatusEnum.RERATED);
                     operationToRerate.getRatedTransaction().setStatus(RatedTransactionStatusEnum.CANCELED);
-                    operationToRerate.getRatedTransaction().setRejectReason("Origin wallet operation [id=" + operationToRerate.getId() + "] has been rerated");
+                    // RT.rejectReason not found in 13.X ! operationToRerate.getRatedTransaction().setRejectReason("Origin wallet operation [id=" + operationToRerate.getId() + "] has been rerated");
 
                     List<EDR> newTEdrs = oneShotRatingService.instantiateTriggeredEDRs(newWO, edr, false);
                     Optional.ofNullable(newTEdrs).orElse(Collections.emptyList())
