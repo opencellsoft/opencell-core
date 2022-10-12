@@ -17873,7 +17873,7 @@
       "identityProviderMapper": "oidc-hardcoded-role-idp-mapper",
       "config": {
         "syncMode": "LEGACY",
-        "role": "superAdministrator"
+        "role": "default-roles-opencell"
       }
     }
   ],
