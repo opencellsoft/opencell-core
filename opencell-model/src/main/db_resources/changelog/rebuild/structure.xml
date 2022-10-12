@@ -5746,6 +5746,7 @@
             <column name="times_tried" type="int4"/>
             <column name="event_key" type="varchar(100)" />
             <column name="event_version" type="int4" />
+			<column name="wallet_operation_id" type="bigint"/>
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -18652,6 +18653,7 @@
     <changeSet id="#INTRD-8158_20220915" author="AndriusKarpavicius" />
     <changeSet id="#INTRD-4681_20220929" author="AndriusKarpavicius" />
     <changeSet id="#INTRD-10274_20221003" author="AndriusKarpavicius" />
+	<changeSet id="#INTRD-9766_20221011_EDR_new_fields" author="aelmalki" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
