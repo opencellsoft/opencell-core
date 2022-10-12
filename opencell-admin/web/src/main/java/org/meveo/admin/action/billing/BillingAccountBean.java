@@ -142,6 +142,12 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
             populateAccounts(customerAccount);
         }
 
+        Title legalEntityType = entity.getLegalEntityType();
+
+        if (entity.getName() != null && legalEntityType != null) {
+            entity.getName().setTitle(legalEntityType);
+        }
+
         selectedCounterInstance = entity.getCounters() != null && entity.getCounters().size() > 0 ? entity.getCounters().values().iterator().next() : null;
 
         this.initNestedFields(entity);
