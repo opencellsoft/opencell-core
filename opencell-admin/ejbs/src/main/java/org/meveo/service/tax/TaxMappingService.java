@@ -226,7 +226,9 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
         TaxClass taxClass = chargeInstance.getTaxClassResolved();
 
         try {
-            if (taxClass == null && IS_DETERMINE_TAX_CLASS_FROM_AA) {
+            boolean determineTaxClassFromAA = ParamBean.getInstance().getBooleanValue("taxes.determineTaxClassFromAA", true);
+            log.debug("Tax mapping is using V11 approche:{}", determineTaxClassFromAA);
+            if (taxClass == null && determineTaxClassFromAA) {
                 AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance);
                 if (accountingArticle != null) {
                     taxClass = accountingArticle.getTaxClass();
@@ -262,7 +264,9 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
         TaxClass taxClass = chargeInstance.getTaxClassResolved();
 
         try {
-            if (taxClass == null && IS_DETERMINE_TAX_CLASS_FROM_AA) {
+            boolean determineTaxClassFromAA = ParamBean.getInstance().getBooleanValue("taxes.determineTaxClassFromAA", true);
+            log.debug("Tax mapping is using V11 approche:{}", determineTaxClassFromAA);
+            if (taxClass == null && determineTaxClassFromAA) {
                 AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance,walletOperation.getParameter1(),walletOperation.getParameter2(),walletOperation.getParameter3());
                 if (accountingArticle != null) {
                     taxClass = accountingArticle.getTaxClass();
