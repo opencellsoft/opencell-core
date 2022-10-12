@@ -54,6 +54,7 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
+import org.meveo.model.shared.Title;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
@@ -131,6 +132,12 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
             entity.setCustomerAccount(customerAccount);
             entity.setTradingLanguage(customerAccount.getTradingLanguage());
             populateAccounts(customerAccount);
+        }
+
+        Title legalEntityType = entity.getLegalEntityType();
+
+        if (entity.getName() != null && legalEntityType != null) {
+            entity.getName().setTitle(legalEntityType);
         }
 
         selectedCounterInstance = entity.getCounters() != null && entity.getCounters().size() > 0 ? entity.getCounters().values().iterator().next() : null;
