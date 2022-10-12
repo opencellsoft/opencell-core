@@ -23,8 +23,10 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.generic.wf.GenericWorkflowDto;
 import org.meveo.api.dto.generic.wf.WFStatusDto;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WFStatus;
 import org.meveo.service.base.BusinessService;
@@ -58,16 +60,55 @@ public class WFStatusService extends BusinessService<WFStatus> {
         }
         return wfStatus;
     }
-    
-    public void updateStatusByGenericWorkflow(GenericWorkflowDto genericWorkflowDto, GenericWorkflow genericWorkflow) {
-        deleteByGenericWorkflow(genericWorkflow.getId());        
-        genericWorkflow.getStatuses().clear();        
+
+    /**
+     * Update the workflow status
+     *
+     * @param wfStatus    the workflow status entity to be updated
+     * @param wfStatusDto the the workflow status Dto.
+     */
+    private void updateWfStatus(WFStatus wfStatus, WFStatusDto wfStatusDto) {
+        if (!StringUtils.isBlank(wfStatusDto.getUuid())) {
+            wfStatus.setUuid(wfStatusDto.getUuid());
+        }
+        wfStatus.setCode(wfStatusDto.getCode());
+        wfStatus.setDescription(wfStatusDto.getDescription());
+        update(wfStatus);
+    }
+
+    public void updateStatusByGenericWorkflow(GenericWorkflowDto genericWorkflowDto, GenericWorkflow genericWorkflow) throws BusinessException {
+        //deleteByGenericWorkflow(genericWorkflow.getId());
+        //genericWorkflow.getStatuses().clear();
         List<WFStatus> wFStatusAdd = new ArrayList<WFStatus>();
         for (WFStatusDto wfStatusDto : genericWorkflowDto.getStatuses()) {
-            WFStatus wfStatus = wfStatusDto.toWFStatus();          
-            wfStatus.setGenericWorkflow(genericWorkflow);
-            create(wfStatus);
-            wFStatusAdd.add(wfStatus);
+
+            WFStatus wfStatusSameId = null;
+            if (wfStatusDto.getId() != null) {
+                wfStatusSameId = findById(wfStatusDto.getId());
+                if (wfStatusSameId == null) {
+                    throw new BusinessException("Workflow status with id " + wfStatusDto.getId() + " is not found");
+                }
+            }
+
+            WFStatus wfStatusSameCodeAndGWF = null;
+            if (!StringUtils.isBlank(wfStatusDto.getCode())) {
+                wfStatusSameCodeAndGWF = findByCodeAndGWF(wfStatusDto.getCode(), genericWorkflow);
+            }
+
+            if (wfStatusSameId != null) {
+                if (wfStatusSameCodeAndGWF == null || wfStatusSameCodeAndGWF.getId() == wfStatusDto.getId()) {
+                    updateWfStatus(wfStatusSameId, wfStatusDto);
+                }
+            } else {
+                if (wfStatusSameCodeAndGWF == null) {
+                    WFStatus wfStatus = wfStatusDto.toWFStatus();
+                    wfStatus.setGenericWorkflow(genericWorkflow);
+                    create(wfStatus);
+                    wFStatusAdd.add(wfStatus);
+                } else {
+                    updateWfStatus(wfStatusSameCodeAndGWF, wfStatusDto);
+                }
+            }
         }
         genericWorkflow.getStatuses().addAll(wFStatusAdd);
     }
