@@ -93,7 +93,7 @@ public class SecurityDepositApiServiceTest {
         try {
             Optional<SecurityDeposit> sdOut = securityDepositApiService.instantiate(sd, SecurityDepositStatusEnum.VALIDATED, true);
             assertTrue(sdOut.isPresent());
-            //Assert.assertEquals(sdOut.get().getSecurityDepositInvoice().getLinkedInvoices(), InvoiceStatusEnum.VALIDATED);           
+            Assert.assertEquals(InvoiceStatusEnum.VALIDATED, sdOut.get().getSecurityDepositInvoice().getStatus());          
         } catch (Exception exception) { }
     }
 
