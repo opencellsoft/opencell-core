@@ -12,6 +12,10 @@ import java.util.List;
 
 public class ImportResultService {
 
+    private ImportResultService() {
+        throw new UnsupportedOperationException("This class cannot be instantiated");
+    }
+
     static List<ImportResultDto> list = new ArrayList<>();
 
     /**
@@ -23,52 +27,90 @@ public class ImportResultService {
     public static void createImportResultDtoGeneric(List<ImportResultDto> importResultDtoList, IEntity entityToReturn) {
         Class clazz = entityToReturn.getClass();
         ImportResultDto importResultDto = new ImportResultDto();
-        List<Field> fields = getAllFields(new LinkedList<Field>(), clazz);
+        List<Field> fields = getAllFields(new LinkedList<>(), clazz);
 
         for (Field field : fields) {
             try {
-                if (field.getName().equals("code")) {
-                    Object fieldValue = FieldUtils.readField(field, entityToReturn, true);
-                    if (fieldValue != null && fieldValue instanceof String) {
-                        importResultDto.setCode((String) fieldValue);
-                    }
-                }
-
-                if (field.getName().equals("description")) {
-                    Object fieldValue = FieldUtils.readField(field, entityToReturn, true);
-                    if (fieldValue != null && fieldValue instanceof String) {
-                        importResultDto.setName((String) fieldValue);
-                    }
-                }
-
-                if (field.getName().equals("lifeCycleStatus") || field.getName().equals("status")) {
-                    Object fieldValue = FieldUtils.readField(field, entityToReturn, true);
-                    if (fieldValue != null) {
-                        importResultDto.setStatus(fieldValue.toString());
-                    }
-                }
+                getCode(entityToReturn, importResultDto, field);
+                getName(entityToReturn, importResultDto, field);
+                getStatus(entityToReturn, importResultDto, field);
             } catch (IllegalAccessException e) {
                 throw new RuntimeException("Failed to access field " + entityToReturn.getClass().getName() + "." + field.getName(), e);
             }
         }
 
-        if(importResultDto.getCode() != null && !importResultDto.getCode().isEmpty()) {
-            if(importResultDto.getName() == null) {
-                importResultDto.setName("N/A");
-            }
+        if(importResultDto.getCode() != null && !importResultDto.getCode().isEmpty() && importResultDto.getName() == null) {
+            importResultDto.setName("N/A");
+        }
 
-            boolean found = false;
-            for(ImportResultDto im : list) {
-                if(im.getName() != null && im.getName().equals(importResultDto.getName()) && im.getCode().equals(importResultDto.getCode())) {
-                    found = true;
-                    break;
-                }
-            }
+        addImportResultDtoToList(importResultDtoList, importResultDto);
+    }
 
-            if(!found) {
-                importResultDtoList.add(importResultDto);
-                list.add(importResultDto);
+    /**
+     * Get Status
+     * @param entityToReturn {@link IEntity}
+     * @param importResultDto {@link ImportResultDto}
+     * @param field {@link Field}
+     * @throws IllegalAccessException {@link IllegalAccessException}
+     */
+    private static void getStatus(IEntity entityToReturn, ImportResultDto importResultDto, Field field) throws IllegalAccessException {
+        if (field.getName().equals("lifeCycleStatus") || field.getName().equals("status")) {
+            Object fieldValue = FieldUtils.readField(field, entityToReturn, true);
+            if (fieldValue != null) {
+                importResultDto.setStatus(fieldValue.toString());
             }
+        }
+    }
+
+    /**
+     * Get Name information
+     * @param entityToReturn {@link IEntity}
+     * @param importResultDto {@link ImportResultDto}
+     * @param field {@link Field}
+     * @throws IllegalAccessException {@link IllegalAccessException}
+     */
+    private static void getName(IEntity entityToReturn, ImportResultDto importResultDto, Field field) throws IllegalAccessException {
+        if (field.getName().equals("description")) {
+            Object fieldValue = FieldUtils.readField(field, entityToReturn, true);
+            if (fieldValue != null) {
+                importResultDto.setName((String) fieldValue);
+            }
+        }
+    }
+
+    /**
+     * Get Code information
+     * @param entityToReturn {@link IEntity}
+     * @param importResultDto {@link ImportResultDto}
+     * @param field {@link Field}
+     * @throws IllegalAccessException {@link IllegalAccessException}
+     */
+    private static void getCode(IEntity entityToReturn, ImportResultDto importResultDto, Field field) throws IllegalAccessException {
+        if (field.getName().equals("code")) {
+            Object fieldValue = FieldUtils.readField(field, entityToReturn, true);
+            if (fieldValue != null) {
+                importResultDto.setCode((String) fieldValue);
+            }
+        }
+    }
+
+    /**
+     * Add importResultDto to the list
+     * @param importResultDtoList List of {@link ImportResultDto}
+     * @param importResultDto {@link ImportResultDto}
+     */
+    private static void addImportResultDtoToList(List<ImportResultDto> importResultDtoList, ImportResultDto importResultDto) {
+        boolean found = false;
+        for(ImportResultDto im : list) {
+            if(im.getName() != null && im.getName().equals(importResultDto.getName()) && im.getCode().equals(importResultDto.getCode())) {
+                found = true;
+                break;
+            }
+        }
+
+        if(!found) {
+            importResultDtoList.add(importResultDto);
+            list.add(importResultDto);
         }
     }
 
