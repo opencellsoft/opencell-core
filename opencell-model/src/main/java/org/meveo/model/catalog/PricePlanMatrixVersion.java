@@ -319,8 +319,6 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (!super.equals(obj))
-            return false;
         if (!(obj instanceof PricePlanMatrixVersion))
             return false;
         PricePlanMatrixVersion other = (PricePlanMatrixVersion) obj;
@@ -330,4 +328,6 @@ public class PricePlanMatrixVersion extends AuditableEntity {
                 && Objects.equals(pricePlanMatrix, other.pricePlanMatrix) && priority == other.priority && status == other.status
                 && Objects.equals(statusChangeLog, other.statusChangeLog) && Objects.equals(statusDate, other.statusDate) && Objects.equals(validity, other.validity);
     }
+
+
 }
