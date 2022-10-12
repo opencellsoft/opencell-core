@@ -1804,16 +1804,14 @@ public class CpqQuoteApi extends BaseApi {
 								try {
 									edrQuantity = Double.parseDouble(quantityValue.toString());
 								} catch (NumberFormatException exp) {
-									throw new MissingParameterException(
-											"The attribute " + chargetemplate.getUsageQuantityAttribute().getCode()
-													+ " for the usage charge " + usageCharge.getCode());
+                                    log.warn("The following parameters are required or contain invalid values: The attribute {} for the usage charge {}",
+                                            chargetemplate.getUsageQuantityAttribute().getCode(), usageCharge.getCode());
 								}
 							} else if (quantityValue != null && quantityValue instanceof Double) {
 								edrQuantity = (Double) quantityValue;
 							} else {
-								throw new MissingParameterException(
-										"The attribute " + chargetemplate.getUsageQuantityAttribute().getCode()
-												+ " for the usage charge " + usageCharge.getCode());
+                                log.warn("The following parameters are required or contain invalid values: The attribute {} for the usage charge {} ",
+                                        chargetemplate.getUsageQuantityAttribute().getCode(), usageCharge.getCode());
 							}
 							if (edrQuantity > 0) {
 								quantityFound=true;
