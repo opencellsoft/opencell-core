@@ -55,6 +55,7 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
+import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
