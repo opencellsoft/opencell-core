@@ -1,5 +1,9 @@
 package org.meveo.api.invoice;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Date;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,18 +11,12 @@ import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceStatusEnum;
-import org.meveo.model.securityDeposit.SecurityDeposit;
-import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
-import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.math.BigDecimal;
-import java.util.Date;
 
 @RunWith(MockitoJUnitRunner.class)
 public class InvoiceApiTest {
@@ -37,7 +35,7 @@ public class InvoiceApiTest {
     private Date rateDate = new Date();
 
     @Test
-    public void shouldRefreshAndValidateInvoice() throws ImportInvoiceException, InvoiceExistException {
+    public void shouldRefreshAndValidateInvoice() throws ImportInvoiceException, InvoiceExistException ,IOException{
         Invoice invoice = new Invoice();
         invoice.setId(invoiceId);
         invoice.setInvoiceNumber("INV_NUMB1");
