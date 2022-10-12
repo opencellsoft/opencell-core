@@ -2152,7 +2152,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (invoice.isPrepaid()) {
             throw new BusinessException("Invoice XML is disabled for prepaid invoice: " + invoice.getInvoiceNumber());
         }
-
+        if(InvoiceStatusEnum.DRAFT.equals(invoice.getStatus()) || InvoiceStatusEnum.NEW.equals(invoice.getStatus()) || InvoiceStatusEnum.DRAFT.equals(invoice.getStatus()) ){
+    		produceInvoiceXmlNoUpdate(invoice, true);
+    	}
         String xmlFileName = getFullXmlFilePath(invoice, false);
         File xmlFile = new File(xmlFileName);
         if (!xmlFile.exists()) {
