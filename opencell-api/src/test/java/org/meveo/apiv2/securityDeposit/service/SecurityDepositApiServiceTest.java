@@ -69,8 +69,6 @@ public class SecurityDepositApiServiceTest {
         SecurityDeposit sd = init();
         BillingAccount billingAccount = new BillingAccount();
         billingAccount.setCode("OAU4494");
-        //CustomerAccount customerAccount = new CustomerAccount();
-        //customerAccount.setCode("OAU4494");
         sd.setCustomerAccount(null); 
         sd.setBillingAccount(billingAccount);
         try {
