@@ -17,11 +17,12 @@
  */
 package org.meveo.model.billing;
 
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.admin.Seller;
-
 import java.math.BigDecimal;
 import java.util.Map;
+
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.crm.IInvoicingMinimumApplicable;
 
 /**
  * Store needed data used to create a new Rated transaction from minimum amount.
@@ -50,7 +51,7 @@ public class MinAmountData {
     /**
      * The entity having the minimum amount, customer, CA, BA, UA, subscription or serviceInstance.
      */
-    private BusinessEntity entity;
+    private IInvoicingMinimumApplicable entity;
 
     /**
      * The seller.
@@ -67,7 +68,7 @@ public class MinAmountData {
      * @param entity                    the entity
      * @param seller                    the seller
      */
-    public MinAmountData(BigDecimal minAmount, String minAmountLabel, Amounts amounts, Map<Long, Amounts> invoiceSubCategoryAmounts, BusinessEntity entity, Seller seller) {
+    public MinAmountData(BigDecimal minAmount, String minAmountLabel, Amounts amounts, Map<Long, Amounts> invoiceSubCategoryAmounts, IInvoicingMinimumApplicable entity, Seller seller) {
         this.minAmount = minAmount;
         this.minAmountLabel = minAmountLabel;
         this.amounts = amounts;
@@ -151,18 +152,18 @@ public class MinAmountData {
     /**
      * Gets the entity.
      *
-     * @return a BusinessEntity
+     * @return a IInvoicingMinimumApplicable
      */
-    public BusinessEntity getEntity() {
+    public IInvoicingMinimumApplicable getEntity() {
         return entity;
     }
 
     /**
      * Sets the entity.
      *
-     * @param entity a BusinessEntity
+     * @param entity a IInvoicingMinimumApplicable
      */
-    public void setEntity(BusinessEntity entity) {
+    public void setEntity(IInvoicingMinimumApplicable entity) {
         this.entity = entity;
     }
 

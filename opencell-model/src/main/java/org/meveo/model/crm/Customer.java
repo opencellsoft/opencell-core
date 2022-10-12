@@ -81,7 +81,7 @@ import org.meveo.model.payments.CustomerAccount;
         @NamedQuery(name = "Customer.getProspects", query = "select c from Customer c left join c.customerAccounts as ca left join ca.billingAccounts as ba "
                 + "left join ba.invoices as inv left join ba.usersAccounts as ua left join ua.subscriptions as sub "
                 + "where sub.id is null and inv.id is null and c.auditable.created < :creationDate")})
-public class Customer extends AccountEntity implements IWFEntity, ICounterEntity {
+public class Customer extends AccountEntity implements IWFEntity, ICounterEntity,IInvoicingMinimumApplicable {
 
     private static final long serialVersionUID = 1L;
 
