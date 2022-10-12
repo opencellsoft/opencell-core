@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -34,7 +35,7 @@ public class InvoiceApiTest {
     private Date rateDate = new Date();
 
     @Test
-    public void shouldRefreshAndValidateInvoice() throws ImportInvoiceException, InvoiceExistException {
+    public void shouldRefreshAndValidateInvoice() throws ImportInvoiceException, InvoiceExistException,IOException {
         Invoice invoice = new Invoice();
         invoice.setId(invoiceId);
         invoice.setInvoiceNumber("INV_NUMB1");
