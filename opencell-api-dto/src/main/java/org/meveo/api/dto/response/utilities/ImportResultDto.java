@@ -3,11 +3,11 @@ package org.meveo.api.dto.response.utilities;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.List;
+import java.io.Serializable;
 
 @XmlRootElement(name = "ImportResult")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ImportResultDto {
+public class ImportResultDto implements Serializable {
 
     private String name;
     private String code;
