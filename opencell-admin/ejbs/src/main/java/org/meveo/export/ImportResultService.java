@@ -1,6 +1,7 @@
 package org.meveo.export;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.response.utilities.ImportResultDto;
 import org.meveo.model.IEntity;
 
@@ -35,7 +36,7 @@ public class ImportResultService {
                 getName(entityToReturn, importResultDto, field);
                 getStatus(entityToReturn, importResultDto, field);
             } catch (IllegalAccessException e) {
-                throw new RuntimeException("Failed to access field " + entityToReturn.getClass().getName() + "." + field.getName(), e);
+                throw new BusinessException("Failed to access field " + entityToReturn.getClass().getName() + "." + field.getName(), e);
             }
         }
 
