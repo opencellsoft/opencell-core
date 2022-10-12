@@ -76,7 +76,7 @@ public class SecurityDepositApiServiceTest {
         try {
             Optional<SecurityDeposit> sdOut = securityDepositApiService.instantiate(sd, SecurityDepositStatusEnum.VALIDATED, true);
             assertTrue(sdOut.isPresent());
-            Assert.assertEquals(sdOut.get().getSecurityDepositInvoice().getStatus(), InvoiceStatusEnum.VALIDATED);           
+            Assert.assertEquals(InvoiceStatusEnum.VALIDATED, sdOut.get().getSecurityDepositInvoice().getStatus());           
         } catch (Exception exception) { } 
     }
 
@@ -125,9 +125,9 @@ public class SecurityDepositApiServiceTest {
                 if (sdOut.get().getSecurityDepositInvoice().getLinkedInvoices() != null) {
                     List<Invoice> linkedInvoices = new ArrayList<>(sdOut.get().getSecurityDepositInvoice().getLinkedInvoices());
                     for (Invoice inv : linkedInvoices) {
-                        Assert.assertEquals(inv.getStatus(), InvoiceStatusEnum.NEW);
-                        Assert.assertEquals(inv.getInvoiceType().getCode(), "SECURITY_DEPOSIT");
-                        Assert.assertEquals(inv.getInvoiceDate(), new Date());
+                        Assert.assertEquals(InvoiceStatusEnum.NEW, inv.getStatus());
+                        Assert.assertEquals("SECURITY_DEPOSIT", inv.getInvoiceType().getCode());
+                        Assert.assertEquals(new Date(), inv.getInvoiceDate());
                     }
                 }                
             }
@@ -147,7 +147,7 @@ public class SecurityDepositApiServiceTest {
                     List<Invoice> linkedInvoices = new ArrayList<>(sdOut.get().getSecurityDepositInvoice().getLinkedInvoices());
                     for (Invoice inv2 : linkedInvoices) {
                         Assert.assertTrue(inv2.getStatus() == InvoiceStatusEnum.NEW || inv2.getStatus() == InvoiceStatusEnum.DRAFT);
-                        Assert.assertEquals(inv2.getInvoiceType().getCode(), "SECURITY_DEPOSIT");
+                        Assert.assertEquals("SECURITY_DEPOSIT", inv2.getInvoiceType().getCode());
                         Assert.assertNotNull(inv2.getInvoiceLines());
                     }
                 }                
@@ -167,15 +167,15 @@ public class SecurityDepositApiServiceTest {
                 if (sdOut.get().getSecurityDepositInvoice().getLinkedInvoices() != null) {
                     List<Invoice> linkedInvoices = new ArrayList<>(sdOut.get().getSecurityDepositInvoice().getLinkedInvoices());
                     for (Invoice inv2 : linkedInvoices) {
-                        Assert.assertTrue(inv2.getInvoiceLines().get(0).getLabel() == "Generated invoice for Security Deposit {" + sd.getId() + "}");
-                        Assert.assertEquals(inv2.getInvoiceLines().get(0).getAccountingArticle().getCode(), "ART_SECURITY_DEPOSIT");
-                        Assert.assertEquals(inv2.getInvoiceLines().get(0).getTaxMode(), InvoiceLineTaxModeEnum.ARTICLE);
-                        Assert.assertEquals(inv2.getInvoiceLines().get(0).getQuantity() , new BigDecimal("1"));
-                        Assert.assertEquals(inv2.getInvoiceLines().get(0).getAmountTax() , new BigDecimal("0"));
+                        Assert.assertEquals("Generated invoice for Security Deposit {" + sd.getId() + "}", inv2.getInvoiceLines().get(0).getLabel());
+                        Assert.assertEquals("ART_SECURITY_DEPOSIT", inv2.getInvoiceLines().get(0).getAccountingArticle().getCode());
+                        Assert.assertEquals(InvoiceLineTaxModeEnum.ARTICLE, inv2.getInvoiceLines().get(0).getTaxMode());
+                        Assert.assertEquals(new BigDecimal("1"), inv2.getInvoiceLines().get(0).getQuantity());
+                        Assert.assertEquals(new BigDecimal("0"), inv2.getInvoiceLines().get(0).getAmountTax());
                         Assert.assertEquals(inv2.getInvoiceLines().get(0).getAmountWithTax() , sd.getAmount());
                         Assert.assertEquals(inv2.getInvoiceLines().get(0).getAmountWithoutTax() , sd.getAmount());
                         Assert.assertEquals(inv2.getInvoiceLines().get(0).getUnitPrice() , sd.getAmount());
-                        Assert.assertEquals(inv2.getInvoiceLines().get(0).getTaxRate() , new BigDecimal("0"));
+                        Assert.assertEquals(new BigDecimal("0"), inv2.getInvoiceLines().get(0).getTaxRate());
                     }
                 }                
             }
