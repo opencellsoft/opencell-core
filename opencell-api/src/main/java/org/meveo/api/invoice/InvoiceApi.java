@@ -550,7 +550,7 @@ public class InvoiceApi extends BaseApi {
      */
     @TransactionAttribute
     public String validateInvoice(Long invoiceId, boolean generateAO, boolean refreshExchangeRate) throws MissingParameterException,
-            EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
+            EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException,IOException {
     	return validateInvoice(invoiceId, generateAO, refreshExchangeRate, true);
     }
     
