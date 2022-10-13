@@ -93,7 +93,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
 
     @Override
     public Optional<SecurityDeposit> findById(Long id) {
-        return empty();
+        return Optional.ofNullable(securityDepositService.findById(id));
     }
 
     @Override
@@ -230,7 +230,13 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
             throw new BadRequestException("The service instance is mandatory if subscription is set");
         }
 
-        securityDepositService.create(securityDepositInput);        
+        if (securityDepositInput.getId() != null) {
+            securityDepositService.update(securityDepositInput);    
+        }
+        else {
+            securityDepositService.create(securityDepositInput);
+        }
+                
         if (updateComment) {
             invoiceLine.setLabel("Generated invoice for Security Deposit {" + securityDepositInput.getId() + "}");
             invoiceLineService.update(invoiceLine);
@@ -284,6 +290,9 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
                 securityDepositInput.setBillingAccount(billingAccount);
                 CustomerAccount customerAccount = billingAccount.getCustomerAccount();
                 if (customerAccount != null) {
+                    if (!securityDepositInput.getCustomerAccount().equals(customerAccount)) {
+                        throw new BusinessApiException("Customer Account not equal Customer Account in Billing Account");
+                    }
                     securityDepositInput.setCustomerAccount(customerAccount);
                 }
             }            

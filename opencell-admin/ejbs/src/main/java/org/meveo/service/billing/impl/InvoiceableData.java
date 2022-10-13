@@ -153,7 +153,7 @@ public class InvoiceableData implements IInvoiceable, Serializable {
 
     @Override
     public void setAmountWithTax(BigDecimal amountWithTax) {
-        this.amountWithoutTax = amountWithTax;
+        this.amountWithTax = amountWithTax;
     }
 
     @Override
