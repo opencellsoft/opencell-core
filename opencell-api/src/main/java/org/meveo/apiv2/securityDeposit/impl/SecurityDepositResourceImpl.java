@@ -56,12 +56,15 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
 
     @Override
     public Response instantiate(SecurityDepositInput securityDepositInput) {
-        SecurityDeposit sd = new SecurityDeposit();
+        SecurityDeposit sd = null;
         try {
             if (securityDepositInput.getId() !=null) {
                 sd = securityDepositApiService.findById(securityDepositInput.getId())
                         .orElseThrow(() -> new NotFoundException("The SecurityDeposit does not exist with id = " + securityDepositInput.getId()));
-            }                        
+            }
+            else {
+                sd = new SecurityDeposit();
+            }                    
             sd = securityDepositApiService.instantiate(securityDepositMapper.toEntity(sd, securityDepositInput), SecurityDepositStatusEnum.VALIDATED, true)
                     .orElseThrow(() -> new BusinessApiException("Security Deposit hasn't been initialized"));            
             invoiceApi.validateInvoice(sd.getSecurityDepositInvoice().getId(), true, false, false);
