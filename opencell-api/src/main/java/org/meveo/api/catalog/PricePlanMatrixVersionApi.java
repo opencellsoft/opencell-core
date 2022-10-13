@@ -78,7 +78,10 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
                 else {
                     throw new MeveoApiException(String.format("status of the contrat is not Draft , it can not be updated nor removed the price Plan Matrix Version"));
                 }
-            }            
+            }
+            else{
+                pricePlanMatrixVersionService.removePriceMatrixVersion(pricePlanMatrixVersion);
+            }
         } catch (BusinessException exp) {
             throw new MeveoApiException(exp);
         }
