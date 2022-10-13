@@ -320,8 +320,8 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     }
 
     public void removePriceMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion) {
-        if (!pricePlanMatrixVersion.getStatus().equals(VersionStatusEnum.DRAFT)) {
-            log.warn("the status of version of the price plan matrix is not DRAFT, the current version is {}.Can not be deleted", pricePlanMatrixVersion.getStatus().toString());
+        if (pricePlanMatrixVersion.getStatus().equals(VersionStatusEnum.CLOSED)) {
+            log.warn("the status of version of the price plan matrix is CLOSED. Can not be deleted");
             throw new MeveoApiException(String.format(STATUS_ERROR_MSG, pricePlanMatrixVersion.getStatus().toString()));
         }
         logAction(pricePlanMatrixVersion, "DELETE");

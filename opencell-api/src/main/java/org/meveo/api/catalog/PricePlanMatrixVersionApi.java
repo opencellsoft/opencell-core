@@ -26,7 +26,9 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.contract.ContractItem;
+import org.meveo.model.cpq.enums.ContractStatusEnum;
 import org.meveo.model.cpq.enums.PriceVersionTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.shared.DateUtils;
@@ -67,7 +69,16 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             if (pricePlanMatrixVersion == null) {
                 throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, pricePlanMatrixCode, "pricePlanMatrixCode", "" + currentVersion, "currentVersion");
             }
-            pricePlanMatrixVersionService.removePriceMatrixVersion(pricePlanMatrixVersion);
+            PricePlanMatrix ppm = pricePlanMatrixService.findByCode(pricePlanMatrixCode);
+            if (ppm != null && ppm.getContractItems().size() > 0) {
+                Contract contract = ppm.getContractItems().get(0).getContract();
+                if (ContractStatusEnum.DRAFT.equals(contract.getStatus())) {
+                    pricePlanMatrixVersionService.removePriceMatrixVersion(pricePlanMatrixVersion);
+                }
+                else {
+                    throw new MeveoApiException(String.format("status of the contrat is not Draft , it can not be updated nor removed the price Plan Matrix Version"));
+                }
+            }            
         } catch (BusinessException exp) {
             throw new MeveoApiException(exp);
         }
