@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
 import org.meveo.admin.exception.BusinessException;
@@ -55,18 +56,22 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
 
     @Override
     public Response instantiate(SecurityDepositInput securityDepositInput) {
-        SecurityDeposit result;
+        SecurityDeposit sd = new SecurityDeposit();
         try {
-            result = securityDepositApiService.instantiate(securityDepositMapper.toEntity(securityDepositInput), SecurityDepositStatusEnum.VALIDATED, true)
+            if (securityDepositInput.getId() !=null) {
+                sd = securityDepositApiService.findById(securityDepositInput.getId())
+                        .orElseThrow(() -> new NotFoundException("The SecurityDeposit does not exist with id = " + securityDepositInput.getId()));
+            }                        
+            sd = securityDepositApiService.instantiate(securityDepositMapper.toEntity(sd, securityDepositInput), SecurityDepositStatusEnum.VALIDATED, true)
                     .orElseThrow(() -> new BusinessApiException("Security Deposit hasn't been initialized"));            
-            invoiceApi.validateInvoice(result.getSecurityDepositInvoice().getId(), true, false, false);
+            invoiceApi.validateInvoice(sd.getSecurityDepositInvoice().getId(), true, false, false);
         } catch (Exception e) {
             throw new BusinessException(e);
         }
         return Response.ok(ImmutableSecurityDepositSuccessResponse
                 .builder()
                 .status("SUCCESS")
-                .newSecurityDeposit(securityDepositMapper.toResource(result))
+                .newSecurityDeposit(securityDepositMapper.toResource(sd))
                 .build()
             ).build();
     }
