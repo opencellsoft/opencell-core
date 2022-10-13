@@ -585,12 +585,17 @@ public class InvoiceApi extends BaseApi {
 
         Date today = new Date();
         invoice = invoiceService.refreshOrRetrieve(invoice);
-        
+
         //Create SD
         if (invoice.getInvoiceType() != null && "SECURITY_DEPOSIT".equals(invoice.getInvoiceType().getCode()) && createSD) {
             SecurityDepositTemplate defaultSDTemplate = securityDepositTemplateService.getDefaultSDTemplate();
             Long count = securityDepositService.countPerTemplate(defaultSDTemplate);
             securityDepositService.createSD(invoice, defaultSDTemplate, count);
+
+            //Get SD Template number of instantiation and update it after creating a new SD
+            Integer numberOfInstantiation = defaultSDTemplate.getNumberOfInstantiation();
+            defaultSDTemplate.setNumberOfInstantiation(numberOfInstantiation + 1);
+            securityDepositTemplateService.update(defaultSDTemplate);
         }
         
         if(invoice.getDueDate().after(today) && invoice.getStatus() == VALIDATED){
