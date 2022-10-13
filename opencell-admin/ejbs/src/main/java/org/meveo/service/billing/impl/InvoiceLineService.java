@@ -194,19 +194,16 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         if(accountingArticle == null) {
             throw new EntityDoesNotExistsException(AccountingArticle.class, "ART_SECURITY_DEPOSIT");
         }
-        Boolean isExonerated = securityDepositInput.getBillingAccount().isExoneratedFromtaxes();
-        if (isExonerated == null) {
-            isExonerated = billingAccountService.isExonerated(securityDepositInput.getBillingAccount());
+        Tax tax = taxService.findByCode("TAX_00");
+        if(tax == null) {
+            throw new EntityDoesNotExistsException(Tax.class, "TAX_00");
         }
-        TaxInfo recalculatedTaxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), 
-            securityDepositInput.getBillingAccount().getCustomerAccount().getCustomer().getSeller(), 
-            securityDepositInput.getBillingAccount(), null, new Date(), null, isExonerated, false, invoiceLine.getTax());
-        invoiceLine.setTax(recalculatedTaxInfo.tax);
-        invoiceLine.setTaxRate(recalculatedTaxInfo.tax.getPercent());          
+        invoiceLine.setTax(tax);
+        invoiceLine.setTaxRate(BigDecimal.ZERO);          
         invoiceLine.setTaxMode(InvoiceLineTaxModeEnum.ARTICLE);          
         invoiceLine.setAccountingArticle(accountingArticle);
         invoiceLine.setDiscountPlan(null);
-        invoiceLine.setAmountTax(securityDepositInput.getAmount());
+        invoiceLine.setAmountTax(BigDecimal.ZERO);
         invoiceLine.setAmountWithTax(securityDepositInput.getAmount());
         invoiceLine.setAmountWithoutTax(securityDepositInput.getAmount());
         invoiceLine.setUnitPrice(securityDepositInput.getAmount());
