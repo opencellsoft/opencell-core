@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.Entity;
+import javax.persistence.criteria.JoinType;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.NotFoundException;
 
@@ -119,11 +120,8 @@ public class GenericApiAlteringService {
         paginationConfiguration.setFetchFields(new ArrayList<>());
         paginationConfiguration.getFetchFields().add("id");
         // Prepare filter filterQuery
-        String filterQuery = genericApiLoadService.findAggregatedPaginatedRecordsAsString(filteredEntityClass, paginationConfiguration);
-
-        // support of leftJoin for specific ratedTransaction : WO can be without RT
-        filterQuery = filterQuery.replace("select a.id from org.meveo.model.billing.WalletOperation a", "select a.id from org.meveo.model.billing.WalletOperation a LEFT JOIN a.ratedTransaction rt ");
-        filterQuery = filterQuery.replace("a.ratedTransaction.status = 'OPEN'", "rt.status = 'OPEN' ");
+        paginationConfiguration.setJoinType(JoinType.LEFT);
+        String filterQuery = genericApiLoadService.findAggregatedPaginatedRecordsAsString(filteredEntityClass, " a.ratedTransaction rt ", paginationConfiguration);
 
         // Build update filterQuery
         StringBuilder updateQuery = new StringBuilder("UPDATE ").append(updatedEntityClass.getName()).append(" a SET");
