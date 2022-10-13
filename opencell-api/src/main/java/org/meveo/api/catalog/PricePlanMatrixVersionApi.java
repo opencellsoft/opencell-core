@@ -73,13 +73,14 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             if (ppm != null && ppm.getContractItems()!=null && ppm.getContractItems().size() > 0) {
                 Contract contract = ppm.getContractItems().get(0).getContract();
                 if (ContractStatusEnum.DRAFT.equals(contract.getStatus())) {
-                    pricePlanMatrixVersionService.removePriceMatrixVersion(pricePlanMatrixVersion);
+                    pricePlanMatrixVersionService.removePriceMatrixVersionOnlyNotClosed(pricePlanMatrixVersion);
                 }
                 else {
                     throw new MeveoApiException(String.format("status of the contrat is not Draft , it can not be updated nor removed the price Plan Matrix Version"));
                 }
             }
             else{
+                //pour les PV non lié au Contract
                 pricePlanMatrixVersionService.removePriceMatrixVersion(pricePlanMatrixVersion);
             }
         } catch (BusinessException exp) {
