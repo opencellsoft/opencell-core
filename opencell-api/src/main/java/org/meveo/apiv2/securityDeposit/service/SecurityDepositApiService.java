@@ -3,6 +3,7 @@ package org.meveo.apiv2.securityDeposit.service;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -117,7 +118,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
     }
 
     @Transactional
-    public Optional<SecurityDeposit> instantiate(SecurityDeposit securityDepositInput) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
+    public Optional<SecurityDeposit> instantiate(SecurityDeposit securityDepositInput) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException, IOException {
 
         // Check FinanceSettings.useSecurityDeposit
         FinanceSettings financeSettings = financeSettingsService.findLastOne();

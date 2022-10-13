@@ -44,7 +44,7 @@ public class ArticleMappingLine extends BusinessEntity {
 		super();
 	}
 
-	@OneToOne(fetch = LAZY)
+	@OneToOne(fetch = LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "article_mapping_id")
     private ArticleMapping articleMapping;
 
