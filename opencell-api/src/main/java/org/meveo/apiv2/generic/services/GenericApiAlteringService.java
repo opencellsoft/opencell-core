@@ -121,6 +121,10 @@ public class GenericApiAlteringService {
         // Prepare filter filterQuery
         String filterQuery = genericApiLoadService.findAggregatedPaginatedRecordsAsString(filteredEntityClass, paginationConfiguration);
 
+        // support of leftJoin for specific ratedTransaction : WO can be without RT
+        filterQuery = filterQuery.replace("select a.id from org.meveo.model.billing.WalletOperation a", "select a.id from org.meveo.model.billing.WalletOperation a LEFT JOIN a.ratedTransaction rt ");
+        filterQuery = filterQuery.replace("a.ratedTransaction.status = 'OPEN'", "rt.status = 'OPEN' ");
+
         // Build update filterQuery
         StringBuilder updateQuery = new StringBuilder("UPDATE ").append(updatedEntityClass.getName()).append(" a SET");
         updatedFields.forEach((s, o) ->

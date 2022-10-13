@@ -9,13 +9,11 @@ import org.meveo.apiv2.generic.core.GenericRequestMapper;
 import org.meveo.apiv2.generic.services.GenericApiAlteringService;
 import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
 import org.meveo.apiv2.rating.resource.WalletOperationResource;
-import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,12 +30,7 @@ public class WalletOperationResourceImpl implements WalletOperationResource {
         Map<String, Object> filters = mapper.evaluateFilters(Objects.requireNonNull(reRateFilters.getFilters()), WalletOperation.class);
 
         // Hardcoded filter : as status filter: WO with status in (F_TO_RERATE, OPEN, REJECTED), or status=TREATED and wo.ratedTransaction.status=OPEN
-        filters.put("inList status",
-                Arrays.asList(WalletOperationStatusEnum.F_TO_RERATE,
-                        WalletOperationStatusEnum.OPEN,
-                        WalletOperationStatusEnum.REJECTED,
-                        WalletOperationStatusEnum.TREATED));
-        filters.put("ratedTransaction.status", RatedTransactionStatusEnum.OPEN);
+        filters.put("SQL", "(a.status IN ('F_TO_RERATE', 'OPEN', 'REJECTED') OR (a.status = 'TREATED' AND a.ratedTransaction.status = 'OPEN'))");
 
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration("id", PagingAndFiltering.SortOrder.ASCENDING);
         paginationConfiguration.setFilters(filters);
