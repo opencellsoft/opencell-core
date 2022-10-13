@@ -96,7 +96,7 @@ public class WFStatusService extends BusinessService<WFStatus> {
             }
 
             if (wfStatusSameId != null) {
-                if (wfStatusSameCodeAndGWF == null || wfStatusSameCodeAndGWF.getId() == wfStatusDto.getId()) {
+                if (wfStatusSameCodeAndGWF == null || wfStatusSameCodeAndGWF.getId().equals(wfStatusDto.getId())) {
                     updateWfStatus(wfStatusSameId, wfStatusDto);
                 }
             } else {
