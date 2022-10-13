@@ -1700,7 +1700,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                             }
                             
                             if (ratedTransaction.getUnitAmountWithoutTax() == null) {
-                            	ratedTransaction.setUnitAmountTax(ratedTransaction.getAmountTax().divide(ratedTransaction.getQuantity()));
+                            	ratedTransaction.setUnitAmountTax(ratedTransaction.getAmountTax()
+                                        .divide(ratedTransaction.getQuantity(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()));
                             	ratedTransaction.setUnitAmountWithoutTax(ratedTransaction.getUnitAmountWithTax().subtract(ratedTransaction.getUnitAmountTax()));
 							}
                             Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
