@@ -70,7 +70,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
                 throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, pricePlanMatrixCode, "pricePlanMatrixCode", "" + currentVersion, "currentVersion");
             }
             PricePlanMatrix ppm = pricePlanMatrixService.findByCode(pricePlanMatrixCode);
-            if (ppm != null && ppm.getContractItems().size() > 0) {
+            if (ppm != null && ppm.getContractItems()!=null && ppm.getContractItems().size() > 0) {
                 Contract contract = ppm.getContractItems().get(0).getContract();
                 if (ContractStatusEnum.DRAFT.equals(contract.getStatus())) {
                     pricePlanMatrixVersionService.removePriceMatrixVersion(pricePlanMatrixVersion);
