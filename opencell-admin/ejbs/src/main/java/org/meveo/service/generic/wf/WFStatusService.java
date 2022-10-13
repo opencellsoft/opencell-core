@@ -77,9 +77,7 @@ public class WFStatusService extends BusinessService<WFStatus> {
     }
 
     public void updateStatusByGenericWorkflow(GenericWorkflowDto genericWorkflowDto, GenericWorkflow genericWorkflow) throws BusinessException {
-        //deleteByGenericWorkflow(genericWorkflow.getId());
-        //genericWorkflow.getStatuses().clear();
-        List<WFStatus> wFStatusAdd = new ArrayList<WFStatus>();
+        List<WFStatus> wFStatusAdd = new ArrayList<>();
         for (WFStatusDto wfStatusDto : genericWorkflowDto.getStatuses()) {
 
             WFStatus wfStatusSameId = null;
