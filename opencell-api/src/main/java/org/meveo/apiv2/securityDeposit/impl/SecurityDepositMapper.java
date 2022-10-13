@@ -48,7 +48,6 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
     }
 
     protected SecurityDeposit toEntity(SecurityDeposit securityDeposit, SecurityDepositInput resource) {
-        securityDeposit.setId(resource.getId());
         securityDeposit.setCode(resource.getCode());
         securityDeposit.setDescription(resource.getDescription());
         if (resource.getTemplate() != null && resource.getTemplate().getId() != null) {
