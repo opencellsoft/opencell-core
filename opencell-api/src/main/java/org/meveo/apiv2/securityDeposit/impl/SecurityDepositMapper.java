@@ -49,8 +49,7 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
     	return this.toEntity(securityDeposit, resource, false);
     }
 
-    private SecurityDeposit toEntity(SecurityDeposit securityDeposit, SecurityDepositInput resource, boolean createMode) {
-        securityDeposit.setId(resource.getId());
+    protected SecurityDeposit toEntity(SecurityDeposit securityDeposit, SecurityDepositInput resource) {
         securityDeposit.setCode(resource.getCode());
         securityDeposit.setDescription(resource.getDescription());
         if (resource.getTemplate() != null && resource.getTemplate().getId() != null) {
