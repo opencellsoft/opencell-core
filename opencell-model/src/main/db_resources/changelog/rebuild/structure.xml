@@ -1501,8 +1501,8 @@
             <column name="inboundrequest_id" type="bigint">
                 <constraints nullable="false" />
             </column>
-            <column name="coockies" type="varchar(255)" />
-            <column name="coockies_key" type="varchar(255)">
+            <column name="coockies" type="varchar(500)" />
+            <column name="coockies_key" type="varchar(500)">
                 <constraints nullable="false" />
             </column>
         </createTable>
@@ -18652,6 +18652,8 @@
     <changeSet id="#INTRD-8158_20220915" author="AndriusKarpavicius" />
     <changeSet id="#INTRD-4681_20220929" author="AndriusKarpavicius" />
     <changeSet id="#INTRD-10274_20221003" author="AndriusKarpavicius" />
+   	<changeSet id="INTRD-10603_20221113" author="AbdelmounaimAkadid" />
+    
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
