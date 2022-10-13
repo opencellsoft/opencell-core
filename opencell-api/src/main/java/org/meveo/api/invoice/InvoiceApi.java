@@ -22,6 +22,7 @@ import static org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID;
 import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -515,9 +516,10 @@ public class InvoiceApi extends BaseApi {
      * @throws BusinessException business exception
      * @throws InvoiceExistException Invoice already exists exception
      * @throws ImportInvoiceException Failed to import invoice exception
+     * @throws IOException 
      */
     public String validateInvoice(Long invoiceId, boolean generateAO) throws MissingParameterException,
-            EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
+            EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException, IOException {
         if (StringUtils.isBlank(invoiceId)) {
             missingParameters.add("invoiceId");
         }
@@ -534,6 +536,12 @@ public class InvoiceApi extends BaseApi {
             invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), UNPAID);
             invoice.setPaymentStatusDate(today);
             invoiceService.update(invoice);
+        }
+        if (invoiceService.isInvoiceXmlExist(invoice)) {
+            invoiceService.deleteInvoiceXml(invoice);
+        }
+        if (invoiceService.isInvoicePdfExist(invoice)) {
+        	invoiceService.deleteInvoicePdf(invoice);
         }
         return invoice.getInvoiceNumber();
     }
