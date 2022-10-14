@@ -137,7 +137,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
             Optional<SecurityDeposit> sd = findById(securityDepositInput.getId());
             if (sd.isPresent()) {
                 if (SecurityDepositStatusEnum.VALIDATED.equals(sd.get().getStatus())) {
-                    throw new BusinessApiException("The modification of Security deposit not allow for status Validated.");
+                    throw new BusinessApiException("Modification of the security deposit is not allowed for Validated status.");
                 } 
             }
         }        
