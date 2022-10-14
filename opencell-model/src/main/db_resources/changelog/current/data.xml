@@ -8207,6 +8207,25 @@ public class CustomGatewayPaymentScript extends PaymentScript{
     	<where>status='NEW'</where>
     	</update>
     </changeSet>
+    
+    <changeSet id="#INTRD-10587_20221014_" author="TarikFA.">
+    	<update tableName="ar_occ_template" >
+			<column name="accounting_code_id" valueNumeric="null"></column>
+			<where>id in (SELECT id from billing_accounting_code where code in ('120.121.21.4', '120.121.21.2', 'T3P9476'))</where>
+		</update>
+		<update tableName="billing_invoice_sub_cat" >
+            <column name="accounting_code_id" value="null" />
+			<where>id in (SELECT id from billing_accounting_code where code in ('120.121.21.4', '120.121.21.2', 'T3P9476'))</where>
+		</update>
+		<delete tableName="billing_accounting_code">
+			<where>code in ('120.121.21.4', '120.121.21.2')</where>
+		</delete>
+		
+		<update tableName="ar_occ_template" >
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
+			<where>code = 'PAY_BATCH'</where>
+		</update>
+    </changeSet>
 
 
 </databaseChangeLog>
