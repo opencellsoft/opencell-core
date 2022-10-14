@@ -517,7 +517,8 @@ public class MediationApiService {
                             ? cdrCharge.getAmountWithoutTax() : BigDecimal.ZERO));
                     cdrProcessingResult.setAmountTax(cdrProcessingResult.getAmountTax().add(cdrCharge.getAmountTax() != null
                             ? cdrCharge.getAmountTax() : BigDecimal.ZERO));
-                    cdrProcessingResult.setWalletOperationCount(cdrProcessingResult.getWalletOperationCount()+cdrCharge.getWalletOperationCount());
+                    cdrProcessingResult.setWalletOperationCount(cdrProcessingResult.getWalletOperationCount() + (cdrCharge.getWalletOperationCount() != null
+                            ? cdrCharge.getWalletOperationCount() : 0));
                 } else {
                     log.warn("cdrProcessingResult amouts and WOCount will have default 0 value, due to cdrCharge null");
                 }
