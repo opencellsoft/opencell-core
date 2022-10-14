@@ -133,6 +133,15 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         if (securityDepositAmount == null) {
             throw new EntityDoesNotExistsException("The Amount == null.");
         }
+        if (securityDepositInput.getId() != null) {
+            Optional<SecurityDeposit> sd = findById(securityDepositInput.getId());
+            if (sd.isPresent()) {
+                if (SecurityDepositStatusEnum.VALIDATED.equals(sd.get().getStatus())) {
+                    throw new BusinessApiException("Modification of the security deposit is not allowed for Validated status.");
+                } 
+            }
+        }        
+                
         linkRealEntities(securityDepositInput);        
         
         org.meveo.model.billing.InvoiceLine invoiceLine = new org.meveo.model.billing.InvoiceLine();
