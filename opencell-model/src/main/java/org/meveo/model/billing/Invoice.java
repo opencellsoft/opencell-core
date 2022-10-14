@@ -350,9 +350,8 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     /**
      * Linked invoices
      */
-    @ManyToMany
-    @JoinTable(name = "billing_linked_invoices", joinColumns = { @JoinColumn(name = "id") }, inverseJoinColumns = { @JoinColumn(name = "linked_invoice_id") })
-    private Set<Invoice> linkedInvoices = new HashSet<>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "id", cascade = CascadeType.ALL)
+    private Set<LinkedInvoice> linkedInvoices = new HashSet<>();
 
     /**
      * Orders that produced rated transactions that were included in the invoice
@@ -1230,11 +1229,11 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         return null;
     }
 
-    public Set<Invoice> getLinkedInvoices() {
+    public Set<LinkedInvoice> getLinkedInvoices() {
         return linkedInvoices;
     }
 
-    public void setLinkedInvoices(Set<Invoice> linkedInvoices) {
+    public void setLinkedInvoices(Set<LinkedInvoice> linkedInvoices) {
         this.linkedInvoices = linkedInvoices;
     }
 

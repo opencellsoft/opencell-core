@@ -13,6 +13,7 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceLineTaxModeEnum;
 import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.LinkedInvoice;
 import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SecurityDepositApiServiceTest {
@@ -121,7 +123,7 @@ public class SecurityDepositApiServiceTest {
             Optional<SecurityDeposit> sdOut = securityDepositApiService.instantiate(sd, SecurityDepositStatusEnum.VALIDATED, true);
             if (sdOut.isPresent()) {
                 if (sdOut.get().getSecurityDepositInvoice().getLinkedInvoices() != null) {
-                    List<Invoice> linkedInvoices = new ArrayList<>(sdOut.get().getSecurityDepositInvoice().getLinkedInvoices());
+                    List<Invoice> linkedInvoices = new ArrayList<>(sdOut.get().getSecurityDepositInvoice().getLinkedInvoices().stream().map(LinkedInvoice::getLinkedInvoice).collect(Collectors.toList()));
                     for (Invoice inv : linkedInvoices) {
                         Assert.assertEquals(InvoiceStatusEnum.NEW, inv.getStatus());
                         Assert.assertEquals("SECURITY_DEPOSIT", inv.getInvoiceType().getCode());
@@ -142,7 +144,7 @@ public class SecurityDepositApiServiceTest {
             Optional<SecurityDeposit> sdOut = securityDepositApiService.instantiate(sd, SecurityDepositStatusEnum.VALIDATED, true);
             if (sdOut.isPresent()) {
                 if (sdOut.get().getSecurityDepositInvoice().getLinkedInvoices() != null) {
-                    List<Invoice> linkedInvoices = new ArrayList<>(sdOut.get().getSecurityDepositInvoice().getLinkedInvoices());
+                    List<Invoice> linkedInvoices = new ArrayList<>(sdOut.get().getSecurityDepositInvoice().getLinkedInvoices().stream().map(LinkedInvoice::getLinkedInvoice).collect(Collectors.toList()));
                     for (Invoice inv2 : linkedInvoices) {
                         Assert.assertTrue(inv2.getStatus() == InvoiceStatusEnum.NEW || inv2.getStatus() == InvoiceStatusEnum.DRAFT);
                         Assert.assertEquals("SECURITY_DEPOSIT", inv2.getInvoiceType().getCode());
@@ -163,7 +165,7 @@ public class SecurityDepositApiServiceTest {
             Optional<SecurityDeposit> sdOut = securityDepositApiService.instantiate(sd, SecurityDepositStatusEnum.VALIDATED, true);
             if (sdOut.isPresent()) {
                 if (sdOut.get().getSecurityDepositInvoice().getLinkedInvoices() != null) {
-                    List<Invoice> linkedInvoices = new ArrayList<>(sdOut.get().getSecurityDepositInvoice().getLinkedInvoices());
+                    List<Invoice> linkedInvoices = new ArrayList<>(sdOut.get().getSecurityDepositInvoice().getLinkedInvoices().stream().map(LinkedInvoice::getLinkedInvoice).collect(Collectors.toList()));
                     for (Invoice inv2 : linkedInvoices) {
                         Assert.assertEquals("Generated invoice for Security Deposit {" + sd.getId() + "}", inv2.getInvoiceLines().get(0).getLabel());
                         Assert.assertEquals("ART_SECURITY_DEPOSIT", inv2.getInvoiceLines().get(0).getAccountingArticle().getCode());
