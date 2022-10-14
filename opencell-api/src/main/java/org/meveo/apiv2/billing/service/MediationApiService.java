@@ -125,7 +125,7 @@ public class MediationApiService {
 
     @Inject
     private MethodCallingUtils methodCallingUtils;
-    
+
     @Inject
     private EdrService edrService;
 
@@ -149,7 +149,7 @@ public class MediationApiService {
         validate(postData);
         return processCdrList(postData.getCdrs(), postData.getMode(), false, false, false, false, null, false, false, true, false, ipAddress, false);
     }
-    
+
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<CDR> processCdrList(List<Long> cdrIds) throws CDRAlreadyProcessedException {
@@ -165,18 +165,18 @@ public class MediationApiService {
                 try {
                     List<Access> accessPoints = cdrParsingService.accessPointLookup(cdr);
                     List<EDR> edrs = cdrParsingService.convertCdrToEdr(cdr, accessPoints);
-    
+
                     if (EdrService.isDuplicateCheckOn() && edrService.isDuplicateFound(cdr.getOriginBatch(), cdr.getOriginRecord())) {
                          throw new DuplicateException(cdr);
                     }
-                    
+
                     for (EDR edr : edrs) {
                         edrService.create(edr);
                         cdr.setHeaderEDR(edr);
                         cdr.setStatus(CDRStatusEnum.PROCESSED);
                         cdrService.update(cdr);
                     }
-                    
+
                     mediationsettingService.applyEdrVersioningRule(edrs, cdr);
                     if (!StringUtils.isBlank(cdr.getRejectReason())) {
                         cdr.setStatus(cdr.getStatus());
@@ -508,6 +508,7 @@ public class MediationApiService {
             cdrProcessingResult.setAmountWithTax(BigDecimal.ZERO);
             cdrProcessingResult.setAmountWithoutTax(BigDecimal.ZERO);
             cdrProcessingResult.setAmountTax(BigDecimal.ZERO);
+            cdrProcessingResult.setWalletOperationCount(0);
             Arrays.stream(cdrProcessingResult.getChargedCDRs()).forEach( cdrCharge -> {
                 cdrProcessingResult.setAmountWithTax(cdrProcessingResult.getAmountWithTax().add(cdrCharge.getAmountWithTax() != null
                         ? cdrCharge.getAmountWithTax() : BigDecimal.ZERO));
@@ -515,6 +516,7 @@ public class MediationApiService {
                         ? cdrCharge.getAmountWithoutTax() : BigDecimal.ZERO));
                 cdrProcessingResult.setAmountTax(cdrProcessingResult.getAmountTax().add(cdrCharge.getAmountTax() != null
                         ? cdrCharge.getAmountTax() : BigDecimal.ZERO));
+                cdrProcessingResult.setWalletOperationCount(cdrProcessingResult.getWalletOperationCount()+cdrCharge.getWalletOperationCount());
             });
         }
 
