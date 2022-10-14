@@ -124,6 +124,17 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
     @Transactional
     public Optional<SecurityDeposit> instantiate(SecurityDeposit securityDepositInput, 
             SecurityDepositStatusEnum status, boolean validate) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
+        return createOrinstantiate(securityDepositInput, status, validate, true);
+    }
+    
+    @Transactional
+    public Optional<SecurityDeposit> create(SecurityDeposit securityDepositInput, 
+            SecurityDepositStatusEnum status, boolean validate) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
+        return createOrinstantiate(securityDepositInput, status, validate, false);
+    }
+    
+    public Optional<SecurityDeposit> createOrinstantiate(SecurityDeposit securityDepositInput, 
+            SecurityDepositStatusEnum status, boolean validate, boolean isInstantiate) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
         // Check FinanceSettings.useSecurityDeposit
         FinanceSettings financeSettings = financeSettingsService.findLastOne();
         if (financeSettings == null || !financeSettings.isUseSecurityDeposit()) {
@@ -148,12 +159,12 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         boolean updateComment = false;
         Invoice invoice = null;
         if(securityDepositInput.getSecurityDepositInvoice() != null) {
-        	invoice = invoiceService.findById(securityDepositInput.getSecurityDepositInvoice().getId());
-        	if(invoice == null) {
-        	    throw new EntityDoesNotExistsException(Invoice.class, securityDepositInput.getSecurityDepositInvoice().getId());
-            }        		
-        	else {
-        	    if(!"SECURITY_DEPOSIT".equals(invoice.getInvoiceType().getCode())) {
+            invoice = invoiceService.findById(securityDepositInput.getSecurityDepositInvoice().getId());
+            if(invoice == null) {
+                throw new EntityDoesNotExistsException(Invoice.class, securityDepositInput.getSecurityDepositInvoice().getId());
+            }               
+            else {
+                if(!"SECURITY_DEPOSIT".equals(invoice.getInvoiceType().getCode())) {
                     throw new BusinessApiException("Linked invoice should be a SECURITY_DEPOSIT");
                 }
 
@@ -172,12 +183,14 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
                 if(invoice.getAmountWithoutTax() == null) {
                     throw new BusinessApiException("Linked invoice cannot have amountWithoutTax null");
                 }
-        	}
+            }
         }
         else {
-            invoice = invoiceService.createBasicInvoiceFromSD(securityDepositInput);
-            invoiceLine = invoiceLineService.createInvoiceLineWithInvoiceAndSD(securityDepositInput, invoice, invoiceLine);
-            updateComment = true;
+            if (isInstantiate) {
+                invoice = invoiceService.createBasicInvoiceFromSD(securityDepositInput);
+                invoiceLine = invoiceLineService.createInvoiceLineWithInvoiceAndSD(securityDepositInput, invoice, invoiceLine);
+                updateComment = true;
+            }            
         }
         securityDepositInput.setSecurityDepositInvoice(invoice);
         
