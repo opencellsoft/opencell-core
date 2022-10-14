@@ -510,13 +510,17 @@ public class MediationApiService {
             cdrProcessingResult.setAmountTax(BigDecimal.ZERO);
             cdrProcessingResult.setWalletOperationCount(0);
             Arrays.stream(cdrProcessingResult.getChargedCDRs()).forEach( cdrCharge -> {
-                cdrProcessingResult.setAmountWithTax(cdrProcessingResult.getAmountWithTax().add(cdrCharge.getAmountWithTax() != null
-                        ? cdrCharge.getAmountWithTax() : BigDecimal.ZERO));
-                cdrProcessingResult.setAmountWithoutTax(cdrProcessingResult.getAmountWithoutTax().add(cdrCharge.getAmountWithoutTax() != null
-                        ? cdrCharge.getAmountWithoutTax() : BigDecimal.ZERO));
-                cdrProcessingResult.setAmountTax(cdrProcessingResult.getAmountTax().add(cdrCharge.getAmountTax() != null
-                        ? cdrCharge.getAmountTax() : BigDecimal.ZERO));
-                cdrProcessingResult.setWalletOperationCount(cdrProcessingResult.getWalletOperationCount()+cdrCharge.getWalletOperationCount());
+                if (cdrCharge != null) {
+                    cdrProcessingResult.setAmountWithTax(cdrProcessingResult.getAmountWithTax().add(cdrCharge.getAmountWithTax() != null
+                            ? cdrCharge.getAmountWithTax() : BigDecimal.ZERO));
+                    cdrProcessingResult.setAmountWithoutTax(cdrProcessingResult.getAmountWithoutTax().add(cdrCharge.getAmountWithoutTax() != null
+                            ? cdrCharge.getAmountWithoutTax() : BigDecimal.ZERO));
+                    cdrProcessingResult.setAmountTax(cdrProcessingResult.getAmountTax().add(cdrCharge.getAmountTax() != null
+                            ? cdrCharge.getAmountTax() : BigDecimal.ZERO));
+                    cdrProcessingResult.setWalletOperationCount(cdrProcessingResult.getWalletOperationCount() + cdrCharge.getWalletOperationCount());
+                } else {
+                    log.warn("cdrProcessingResult amouts and WOCount will have default 0 value, due to cdrCharge null");
+                }
             });
         }
 
