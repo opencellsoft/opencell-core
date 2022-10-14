@@ -154,8 +154,24 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
     }
 
     @Transactional
+<<<<<<< HEAD
     public Optional<SecurityDeposit> instantiate(SecurityDeposit securityDepositInput) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException, IOException {
 
+=======
+    public Optional<SecurityDeposit> instantiate(SecurityDeposit securityDepositInput, 
+            SecurityDepositStatusEnum status, boolean validate) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
+        return createOrinstantiate(securityDepositInput, status, validate, true);
+    }
+    
+    @Transactional
+    public Optional<SecurityDeposit> create(SecurityDeposit securityDepositInput, 
+            SecurityDepositStatusEnum status, boolean validate) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
+        return createOrinstantiate(securityDepositInput, status, validate, false);
+    }
+    
+    public Optional<SecurityDeposit> createOrinstantiate(SecurityDeposit securityDepositInput, 
+            SecurityDepositStatusEnum status, boolean validate, boolean isInstantiate) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
+>>>>>>> f8d991479c (#INTRD-10604 back dont create the linked - DEV)
         // Check FinanceSettings.useSecurityDeposit
         FinanceSettings financeSettings = financeSettingsService.findLastOne();
         if (financeSettings == null || !financeSettings.isUseSecurityDeposit()) {
@@ -175,7 +191,50 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         }        
                 
         linkRealEntities(securityDepositInput);        
+<<<<<<< HEAD
 
+=======
+        
+        org.meveo.model.billing.InvoiceLine invoiceLine = new org.meveo.model.billing.InvoiceLine();
+        boolean updateComment = false;
+        Invoice invoice = null;
+        if(securityDepositInput.getSecurityDepositInvoice() != null) {
+            invoice = invoiceService.findById(securityDepositInput.getSecurityDepositInvoice().getId());
+            if(invoice == null) {
+                throw new EntityDoesNotExistsException(Invoice.class, securityDepositInput.getSecurityDepositInvoice().getId());
+            }               
+            else {
+                if(!"SECURITY_DEPOSIT".equals(invoice.getInvoiceType().getCode())) {
+                    throw new BusinessApiException("Linked invoice should be a SECURITY_DEPOSIT");
+                }
+
+                if(invoice.getStatus() != InvoiceStatusEnum.NEW && invoice.getStatus() != InvoiceStatusEnum.DRAFT) {
+                    throw new BusinessApiException("Linked invoice status should be NEW or DRAFT");
+                }
+
+                if(!invoice.getBillingAccount().getCustomerAccount().getCustomer().getId().equals(securityDepositInput.getCustomerAccount().getCustomer().getId())) {
+                    throw new BusinessApiException("Linked invoice should have the same Customer as the Security Deposit");
+                }
+
+                if(ListUtils.isEmtyCollection(invoice.getInvoiceLines())) {
+                    throw new BusinessApiException("Linked invoice should have invoice lines");
+                }
+
+                if(invoice.getAmountWithoutTax() == null) {
+                    throw new BusinessApiException("Linked invoice cannot have amountWithoutTax null");
+                }
+            }
+        }
+        else {
+            if (isInstantiate) {
+                invoice = invoiceService.createBasicInvoiceFromSD(securityDepositInput);
+                invoiceLine = invoiceLineService.createInvoiceLineWithInvoiceAndSD(securityDepositInput, invoice, invoiceLine);
+                updateComment = true;
+            }            
+        }
+        securityDepositInput.setSecurityDepositInvoice(invoice);
+        
+>>>>>>> f8d991479c (#INTRD-10604 back dont create the linked - DEV)
         // Check Maximum amount per Security deposit
         BigDecimal maxAmountPerSecurityDeposit = financeSettings.getMaxAmountPerSecurityDeposit();
         if (maxAmountPerSecurityDeposit != null && securityDepositAmount.compareTo(maxAmountPerSecurityDeposit) > 0) {

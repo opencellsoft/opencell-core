@@ -77,7 +77,7 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
     public Response create(SecurityDepositInput securityDepositInput) {
         SecurityDeposit result;
         try {
-            result = securityDepositApiService.instantiate(securityDepositMapper.toEntity(securityDepositInput), SecurityDepositStatusEnum.DRAFT, false)
+            result = securityDepositApiService.create(securityDepositMapper.toEntity(securityDepositInput), SecurityDepositStatusEnum.DRAFT, false)
                                                 .orElseThrow(() -> new BusinessApiException("Security Deposit hasn't been initialized"));
         } catch (Exception e) {
             throw new BusinessApiException(e);
