@@ -375,7 +375,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
     public GetListProductTemplateResponseDto list(PagingAndFiltering pagingAndFiltering) {
         GetListProductTemplateResponseDto result = new GetListProductTemplateResponseDto();
         Long totalCount = productTemplateService.count(GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration());
-        result.setPaging( pagingAndFiltering );
+        result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
         result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
 
         List<ProductTemplate> productTemplates = productTemplateService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
