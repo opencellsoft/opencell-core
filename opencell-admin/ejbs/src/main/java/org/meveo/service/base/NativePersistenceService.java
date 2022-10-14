@@ -795,6 +795,60 @@ public class NativePersistenceService extends BaseService {
 
     }
 
+    /**
+     * Specific getQuery
+     * @param tableName entity name
+     * @param defaultLeftJoinWithAlias if needed, add left join alias when using SQL criteria with OR criteria
+     * @param config PaginationConfoguration
+     * @param id id
+     * @return QueryBuilder
+     */
+    public QueryBuilder getQuery(String tableName, String defaultLeftJoinWithAlias, PaginationConfiguration config, Long id) {
+        Predicate<String> predicate = field -> this.checkAggFunctions(field.toUpperCase().trim());
+        String aggFields = (config != null && config.getFetchFields() != null) ? aggregationFields(config.getFetchFields(), predicate) : "";
+        if (!aggFields.isEmpty()) {
+            config.getFetchFields().remove("id");
+        }
+        String fieldsToRetrieve = (config != null && config.getFetchFields() != null) ? retrieveFields(config.getFetchFields(), predicate.negate()) : "";
+        if (fieldsToRetrieve.isEmpty() && aggFields.isEmpty()) {
+            fieldsToRetrieve = "*";
+        }
+
+        StringBuilder queryInit = new StringBuilder();
+        queryInit.append("SELECT ").append(buildFields(fieldsToRetrieve, aggFields)).append(" FROM ").append(addCurrentSchema(tableName)).append(" a ");
+        if (StringUtils.isNotBlank(defaultLeftJoinWithAlias)) {
+            queryInit.append(" LEFT JOIN ").append(defaultLeftJoinWithAlias);
+        }
+
+        QueryBuilder queryBuilder = new QueryBuilder(queryInit.toString(), "a");
+        if (id != null) {
+            queryBuilder.addSql(" a.id ='" + id + "'");
+        }
+
+        if (config == null) {
+            return queryBuilder;
+        }
+        Map<String, Object> filters = config.getFilters();
+
+        if (filters != null && !filters.isEmpty()) {
+            NativeExpressionFactory nativeExpressionFactory = new NativeExpressionFactory(queryBuilder, "a");
+            filters.keySet().stream()
+                    .filter(key -> filters.get(key) != null)
+                    .forEach(key -> nativeExpressionFactory.addFilters(key, filters.get(key)));
+
+        }
+
+        if (aggFields.isEmpty()) {
+            queryBuilder.addPaginationConfiguration(config, "a");
+        }
+        if (!aggFields.isEmpty() && !fieldsToRetrieve.isEmpty()) {
+            queryBuilder.addGroupCriterion(fieldsToRetrieve);
+        }
+
+        return queryBuilder;
+
+    }
+
     public QueryBuilder getAggregateQuery(String tableName, PaginationConfiguration config, Long id) {
         tableName = addCurrentSchema(tableName);
         Predicate<String> predicate = field -> this.checkAggFunctions(field.toUpperCase().trim());
