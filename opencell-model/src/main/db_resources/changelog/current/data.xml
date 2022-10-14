@@ -8207,6 +8207,13 @@ public class CustomGatewayPaymentScript extends PaymentScript{
     	<where>status='NEW'</where>
     	</update>
     </changeSet>
+    
+    <changeSet id="#INTRD-10592_20221014" author="TarikFA.">
+    	<update tableName="billing_accounting_code">
+            <column name="description" value="General accounts payable"></column>
+    		<where>code = '401000000'</where>
+    	</update>
+    </changeSet>
 
 
 </databaseChangeLog>
