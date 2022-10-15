@@ -30,7 +30,7 @@ public class WalletOperationResourceImpl implements WalletOperationResource {
         Map<String, Object> filters = mapper.evaluateFilters(Objects.requireNonNull(reRateFilters.getFilters()), WalletOperation.class);
 
         // Hardcoded filter : as status filter: WO with status in (F_TO_RERATE, OPEN, REJECTED), or status=TREATED and wo.ratedTransaction.status=OPEN
-        filters.put("SQL", "(a.status IN ('F_TO_RERATE', 'OPEN', 'REJECTED') OR (a.status = 'TREATED' AND a.ratedTransaction.status = 'OPEN'))");
+        filters.put("SQL", "(a.status IN ('F_TO_RERATE', 'OPEN', 'REJECTED') OR (a.status = 'TREATED' AND rt.status = 'OPEN'))");
 
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration("id", PagingAndFiltering.SortOrder.ASCENDING);
         paginationConfiguration.setFilters(filters);

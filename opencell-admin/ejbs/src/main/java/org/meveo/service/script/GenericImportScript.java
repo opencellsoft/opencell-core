@@ -1,10 +1,6 @@
 package org.meveo.service.script;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
@@ -50,10 +46,10 @@ public class GenericImportScript extends Script {
 					String key = "";
 					String value = "";
 					for (String s : list.subList(0, keySize)) {
-						key = key != "" ? key + "|" + s : s;
+						key = !Objects.equals(key, "") ? key + "|" + s : s;
 					}
 					for (String s : list.subList(keySize, list.size())) {
-						value = value != "" ? value + "|" + s : s;
+						value = !Objects.equals(value, "") ? value + "|" + s : s;
 					}
 					matrix.put(key, value);
 				}
@@ -67,7 +63,7 @@ public class GenericImportScript extends Script {
 					}
 					String key = "";
 					for (String s : list.subList(0, keySize)) {
-						key = key != "" ? key + "|" + s : s;
+						key = !Objects.equals(key, "") ? key + "|" + s : s;
 					}
 					matrix.put(key, parseSingleValue(cft, list.get(list.size() - 1)));
 				}
