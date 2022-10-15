@@ -329,6 +329,8 @@
                 <hf:formButtons killConversationOnSave="false" killConversationOnBack="false" ajaxSubmit="true" backingBean="#{invoiceBean}" showBackButton="true"
                     showEnableDisableButton="false" showDeleteButton="false" showEditButton="false">
                     <p:commandButton value="#{messages['action.save']}" icon="ui-icon-check" action="#{invoiceBean.saveOrUpdate(false)}" update="@form" />
+                     <p:commandButton value="Cancel"  action="#{invoiceBean.cancelInvoice(invoiceBean.getEntity())}"   rendered="#{empty invoiceBean.getEntity().invoiceNumber}" update="@form" />
+                     <p:commandButton value="Validate"  action="#{invoiceBean.validateInvoiceAndAssignNumber(invoiceBean.getEntity())}"  rendered="#{empty invoiceBean.getEntity().invoiceNumber}" update="@form" />
                 </hf:formButtons>
 
             </hftl:formPanel>

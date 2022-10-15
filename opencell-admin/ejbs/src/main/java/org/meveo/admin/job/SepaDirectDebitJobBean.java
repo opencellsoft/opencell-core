@@ -243,7 +243,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 						}
 					}
 				} catch (Exception e) {
-					log.error("Failed to sepa direct debit for id {}", ddrequestLotOp.getId(), e);
+					log.error("Failed to sepa direct debit for id {}", ddrequestLotOp.getId(), e.getMessage());
 					if (BooleanUtils.isTrue(ddrequestLotOp.getRecurrent())) {
 						this.createNewDdrequestLotOp(ddrequestLotOp);
 					}
