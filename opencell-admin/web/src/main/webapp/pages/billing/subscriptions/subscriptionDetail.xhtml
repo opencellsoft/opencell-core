@@ -75,18 +75,7 @@
             updateField=":subscriptionTab:subscriptionFormId:informationTab:offerSelectId :subscriptionTab:subscriptionFormId:informationTab:sellerField :subscriptionTab:subscriptionFormId:informationTab:offerSelectId_text :subscriptionTab:subscriptionFormId:informationTab:subscriptionAndRenewalDates :subscriptionTab:subscriptionFormId:informationTab:minimumAmountEl :subscriptionTab:subscriptionFormId:informationTab:minimumLabelEl"
             selectionListenerBean="#{subscriptionBean}" selectionListenerMethod="copyInfoFromOffer">
         </hftl:entityPopup>
-        <!-- 		<hftl:entityPopup id="chargeTemplatePopup" -->
-        <!-- 			header="#{messages['chargeTemplate.popup.header']}" -->
-        <!-- 			backingBean="#{oneShotChargeTemplateBean}" -->
-        <!-- 			searchField1Label="#{messages['businessEntity.code']}" -->
-        <!-- 			searchField1="code" -->
-        <!-- 			searchField2Label="#{messages['businessEntity.description']}" -->
-        <!-- 			searchField2="description" -->
-        <!-- 			column1Label="#{messages['businessEntity.code']}" column1="code" -->
-        <!-- 			column2Label="#{messages['businessEntity.description']}" -->
-        <!-- 			column2="description" -->
-        <!-- 			selection="#{subscriptionBean.oneShotChargeInstance.chargeTemplate}"> -->
-        <!-- 		</hftl:entityPopup> -->
+
 
         <hftl:entityPopup id="recurringChargeTmpPopup" header="#{messages['recurringChargeTmp.popup.header']}" backingBean="#{recurringChargeTemplateBean}"
             searchField1Label="#{messages['chargeTemplate.code']}" searchField1="code" searchField2Label="#{messages['chargeTemplate.description']}" searchField2="description"
@@ -299,7 +288,7 @@
                                 </p:panel>
                             </h:panelGroup>
                         </h:form>
-                        <!-- 						<br /> -->
+
 
                         <h:outputText value="#{messages['subscription.subscribableServices']}:" />
 
@@ -540,7 +529,7 @@
                                 </c:if>
 
                                 <hftl:customFields backingBean="#{subscriptionBean}" messagesId=":subscriptionTab:subscriptionFormId:messages" />
-                                <!-- <hftl:displayWorkflowsHistory entity="#{subscriptionBean.entity}" /> -->
+
                                 <hftl:displayGenericWFsHistory backingBean="#{subscriptionBean}" />
 
                             </p:tabView>
@@ -560,6 +549,9 @@
                                         <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['confirmationMessage.cancelSubscriptionTermination']}"
                                             icon="ui-icon-alert" />
                                     </p:commandButton>
+                                    
+                                     <p:commandButton action="#{subscriptionBean.generateProformaInvoiceForSubscription()}" value="#{messages['account.generateProformaInvoice']}"
+                                            immediate="true" disabled="#{subscriptionBean.isTerminatedSubscription()}" ajax="false" />
                                 </p:panel>
                             </ui:define>
                         </hftl:formPanel>
@@ -659,7 +651,7 @@
 
                     <!-- Access -->
                     <p:tab id="medinaAccessTab" title="#{messages['menu.accessPoints']}" rendered="#{not empty subscriptionBean.entity.id}">
-                        <!-- 												<p:messages id="medinaAccessMessage"></p:messages> -->
+
 
                         <hftl:formPanel formId="accessInfoForm" backingBean="#{subscriptionBean}" showFormButtons="false" edit="false">
                             <hftl:formField label="#{messages['businessEntity.code']}" field="code" />
@@ -789,7 +781,7 @@
                     <hftl:formField label="#{messages['recurringChargeInstance.amountWithTax']}" field="amountWithTax" rendered="#{!appProvider.entreprise}"
                         disabled="#{!subscriptionBean.recurringChargeInstance.chargeTemplate.amountEditable}" />
                     <hftl:formField label="#{messages['recurringChargeInstance.applyInAdvance']}" field="applyInAdvance" />
-                    <!--                     <hftl:formField label="#{messages['recurringChargeInstance.applyInAdvanceEL']}" field="chargeTemplate" valueLabelField="applyInAdvanceEl" edit="false" /> -->
+
                     <hftl:formField label="#{messages['recurringChargeInstance.criteria1']}" field="criteria1" newLine="true" />
                     <hftl:formField label="#{messages['recurringChargeInstance.criteria2']}" field="criteria2" />
                     <hftl:formField label="#{messages['recurringChargeInstance.criteria3']}" field="criteria3" />
@@ -902,7 +894,7 @@
                             </p:column>
                         </p:dataTable>
                     </h:form>
-                    <!-- 					</h:panelGroup> -->
+
                 </p:outputPanel>
             </h:panelGroup>
         </p:dialog>

@@ -136,9 +136,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     @Inject
     private InvoiceService invoiceService;
     
-    /**
-     * UserAccount service. TODO (needed?)
-     */
     @Inject
     private UserAccountService userAccountService;
 
@@ -193,9 +190,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     @Inject
     private CalendarService calendarService;
-
-    @Inject
-    private FacesContext facesContext;
 
     @Inject
     private BillingAccountService billingAccountService;
@@ -307,7 +301,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             return;
         }
 
-        List<ServiceInstance> serviceInstances = entity.getServiceInstances();
+        List<ServiceInstance> serviceInts = entity.getServiceInstances();
         for (OfferServiceTemplate offerServiceTemplate : entity.getOffer().getOfferServiceTemplates()) {
             ServiceTemplate serviceTemplate = offerServiceTemplate.getServiceTemplate();
             if (serviceTemplate.isDisabled()) {
@@ -317,7 +311,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             boolean alreadyInstanciated = false;
 
             if (!allowServiceMultiInstantiation) {
-                for (ServiceInstance serviceInstance : serviceInstances) {
+                for (ServiceInstance serviceInstance : serviceInts) {
                     if (serviceTemplate.getCode().equals(serviceInstance.getCode()) && !hasTerminatedStatus(serviceInstance.getStatus())) {
                         alreadyInstanciated = true;
                         break;
@@ -388,10 +382,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         String outcome = super.saveOrUpdate(killConversation);
 
         if (outcome != null) {
-            return "subscriptionDetailSubscriptionTab"; // getEditViewName(); //
-                                                        // "/pages/billing/subscriptions/subscriptionDetail?edit=false&subscriptionId="
-                                                        // + entity.getId() +
-            // "&faces-redirect=true&includeViewParams=true";
+            return "subscriptionDetailSubscriptionTab"; 
         }
         return null;
     }
@@ -492,20 +483,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         return subscriptionService;
     }
 
-    // /**
-    // * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
-    // */
-    // protected List<String> getFormFieldsToFetch() {
-    // return Arrays.asList("serviceInstances");
-    // }
-    //
-    // /**
-    // * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
-    // */
-    // protected List<String> getListFieldsToFetch() {
-    // return Arrays.asList("serviceInstances");
-    // }
-
+   
     public EntityListDataModelPF<ServiceInstance> getServiceInstances() {
         return serviceInstances;
     }
@@ -729,8 +707,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             productInstance.setProductTemplate(productTemplateService.retrieveIfNotManaged(productInstance.getProductTemplate()));
 
             try {
-                // productInstanceService.create(productInstance);
-                // save custom field before product application so we can use in el
                 customFieldDataEntryBean.saveCustomFieldsToEntity(productInstance, true);
                 productInstanceService.saveAndApplyProductInstance(productInstance, null, null, null, true);
                 productChargeInstances = null;
@@ -808,8 +784,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                 messages.error(new BundleKey("messages", "error.termination.inactiveService"));
                 return;
             }
-            // serviceInstanceService.cancelService(selectedServiceInstance);
-
             selectedServiceInstance = null;
             messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
 
@@ -864,7 +838,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     public void populateAccounts(UserAccount userAccount) {
         userAccount.getBillingAccount().getDiscountPlanInstances().size();
         entity.setUserAccount(userAccount);
-        if (userAccount != null && appProvider.isLevelDuplication()) {
+        if (appProvider.isLevelDuplication()) {
             entity.setCode(userAccount.getCode());
             entity.setDescription(userAccount.getDescription());
         }
@@ -1079,10 +1053,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         return result;
     }
 
-    public BigDecimal getServiceAmountWithoutTax() {
-        BigDecimal quantity = this.oneShotChargeInstance.getQuantity();
-
-        return quantity.multiply(this.getOneShotWalletOperations().get(0).getAmountWithoutTax());
+    public BigDecimal getServiceAmountWithoutTax() {       
+        return this.oneShotChargeInstance.getQuantity().multiply(this.getOneShotWalletOperations().get(0).getAmountWithoutTax());
     }
 
     public void updateProductInstanceCode() {
@@ -1132,9 +1104,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         SubscriptionRenewal subscriptionRenewal = entity.getOffer().getSubscriptionRenewal();
         entity.setSubscriptionRenewal(subscriptionRenewal);
         updateSubscribedTillDate();
-        /* Subscription should not inherit min Amount from OfferTemplate #4757 */
-        // entity.setMinimumAmountEl(entity.getOffer().getMinimumAmountEl());
-        // entity.setMinimumLabelEl(entity.getOffer().getMinimumLabelEl());
     }
 
     public boolean isServiceInstancesEmpty() {
@@ -1146,7 +1115,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     public List<Seller> listProductSellers() {
         if (productInstance != null && productInstance.getProductTemplate() != null) {
-            if (productInstance.getProductTemplate().getSellers().size() > 0) {
+            if (!productInstance.getProductTemplate().getSellers().isEmpty()) {
                 return productInstance.getProductTemplate().getSellers();
             } else {
                 return sellerService.list();
@@ -1158,10 +1127,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     public List<Seller> listSellers() {
         if (entity != null && entity.getOffer() != null) {
-            OfferTemplate offer = entity.getOffer();
-            offer = offerTemplateService.retrieveIfNotManaged(entity.getOffer());
-            if (offer.getSellers().size() > 0) {
-                return offer.getSellers();
+            OfferTemplate off = entity.getOffer();
+            off = offerTemplateService.retrieveIfNotManaged(entity.getOffer());
+            if (!off.getSellers().isEmpty()) {
+                return off.getSellers();
             } else {
                 return sellerService.list();
             }
@@ -1376,40 +1345,20 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         return true;
     }
     
-    
-    /**
-     * Generates and returns a proforma invoice
-     * 
-     * @return
-     */
-    public String generateProformaInvoice() {
-        log.info("generateProformaInvoice billingAccountId:" + entity.getId());
+    public String generateProformaInvoiceForSubscription() {
+        log.info("generateProformaInvoice subscriptionId:{}" , entity.getId());
         try {
             entity = subscriptionService.refreshOrRetrieve(entity);
 
-            GenerateInvoiceRequestDto generateInvoiceRequestDto = new GenerateInvoiceRequestDto();
-            generateInvoiceRequestDto.setGeneratePDF(true);
-            generateInvoiceRequestDto.setInvoicingDate(new Date());
-            generateInvoiceRequestDto.setLastTransactionDate(new Date());
-            List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, null, true, null, false);
-            for (Invoice invoice : invoices) {
-                invoiceService.produceFilesAndAO(false, true, false, invoice.getId(), true, new ArrayList<>());
-                String fileName = invoiceService.getFullPdfFilePath(invoice, false);
-                Faces.sendFile(new File(fileName), true);
+            GenerateInvoiceRequestDto generateInvoiceRequestSubscriptionDto = new GenerateInvoiceRequestDto();
+            generateInvoiceRequestSubscriptionDto.setLastTransactionDate(new Date());
+            generateInvoiceRequestSubscriptionDto.setGeneratePDF(true);
+            generateInvoiceRequestSubscriptionDto.setInvoicingDate(new Date());
+            List<Invoice> invs = invoiceService.generateInvoice(entity, generateInvoiceRequestSubscriptionDto, null, true, null, false);
+            for (Invoice currentInv : invs) {
+                invoiceService.produceFilesAndAO(false, true, false, currentInv.getId(), true, new ArrayList<>());                            
             }
-
-            StringBuilder invoiceNumbers = new StringBuilder();
-            for (Invoice invoice : invoices) {
-                invoiceNumbers.append(invoice.getInvoiceNumber());
-                invoiceNumbers.append(" ");
-                invoiceService.cancelInvoice(invoice);
-            }
-
-            messages.info(new BundleKey("messages", "generateInvoice.successful"), invoiceNumbers.toString());
-         //   if (isCommitted()) {
-           //     return null;
-            //}
-
+            messages.info(new BundleKey("messages", "generateInvoice.successful"),invs.size()+" Drafts");
         } catch (Exception e) {
             log.error("Failed to generateInvoice ", e);
             messages.error(e.getMessage());

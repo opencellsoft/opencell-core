@@ -2238,7 +2238,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.setCfValues(customFieldValues);
             }
             try {
-                if (invoice.getStatus() != InvoiceStatusEnum.REJECTED && invoice.getStatus() != InvoiceStatusEnum.SUSPECT) {
+                if (invoice.getStatus() != InvoiceStatusEnum.REJECTED && invoice.getStatus() != InvoiceStatusEnum.SUSPECT && invoice.getStatus() != InvoiceStatusEnum.DRAFT) {
                     invoicesWNumber.add(serviceSingleton.assignInvoiceNumber(invoice));
                 }
             } catch (Exception e) {
@@ -5819,8 +5819,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return entity;
     }
 
-	public void validateAndAssignInvoiceNumber(Invoice invoice) {
-		
-		serviceSingleton.validateAndAssignInvoiceNumber(invoice.getId());
+	public void validateAndAssignInvoiceNumber(Invoice invoice) throws BusinessException{		
+			serviceSingleton.validateAndAssignInvoiceNumber(invoice.getId());				
 	}
+	public void validateAndAssignInvoiceNumberUnit(Invoice invoice) throws BusinessException{	
+		invoice.setStatus(InvoiceStatusEnum.VALIDATED);
+		serviceSingleton.assignInvoiceNumber(invoice, true);				
+}
 }
