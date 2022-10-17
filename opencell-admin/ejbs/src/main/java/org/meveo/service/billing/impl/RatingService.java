@@ -303,7 +303,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         if (chargeInstance.getInvoicingCalendar() != null) {
 
             Date defaultInitDate = null;
-            RecurringChargeInstance charge = (RecurringChargeInstance) PersistenceUtils.initializeAndUnproxy(chargeInstance);
+            RecurringChargeInstance charge = getEntityManager().getReference(RecurringChargeInstance.class, chargeInstance.getId());
             if (chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING && charge.getSubscriptionDate() != null) {
                 defaultInitDate = charge.getSubscriptionDate();
             } else if (chargeInstance.getServiceInstance() != null) {
@@ -601,13 +601,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             BigDecimal unitPriceWithoutTax = unitPriceWithoutTaxOverridden;
             BigDecimal unitPriceWithTax = unitPriceWithTaxOverridden;
 
-            RecurringChargeTemplate recurringChargeTemplate = null;
-            if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
-                RecurringChargeInstance recurringChargeInstance = getEntityManager().getReference(RecurringChargeInstance.class, chargeInstance.getId());
-                if (recurringChargeInstance != null) {
-                    recurringChargeTemplate = recurringChargeInstance.getRecurringChargeTemplate();
-                }
-            }
+            RecurringChargeTemplate recurringChargeTemplate = getRecurringChargeTemplateFromChargeInstance(chargeInstance);
 
             // Determine and set tax if it was not set before.
             // An absence of tax class and presence of tax means that tax was set manually and should not be recalculated at invoicing time.
@@ -1013,14 +1007,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         Date startDate = bareOperation.getStartDate();
         Date endDate = bareOperation.getEndDate();
 
-        RecurringChargeTemplate recurringChargeTemplate = null;
-        ChargeInstance chargeInstance = bareOperation.getChargeInstance();
-        if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
-            RecurringChargeInstance recurringChargeInstance = getEntityManager().getReference(RecurringChargeInstance.class, chargeInstance.getId());
-            if (recurringChargeInstance != null) {
-                recurringChargeTemplate = recurringChargeInstance.getRecurringChargeTemplate();
-            }
-        }
+        RecurringChargeTemplate recurringChargeTemplate = getRecurringChargeTemplateFromChargeInstance(bareOperation.getChargeInstance());
 
         for (PricePlanMatrix pricePlan : listPricePlan) {
 
