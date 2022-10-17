@@ -5273,6 +5273,7 @@
             <column name="rgaa_message" type="varchar(500)" >
                 <constraints nullable="true"/>
             </column>
+			<column name="current_matching_code" type="varchar(255)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-250">
