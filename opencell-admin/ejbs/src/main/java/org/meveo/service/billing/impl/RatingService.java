@@ -118,7 +118,6 @@ import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
-import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.cpq.ContractItemService;
 import org.meveo.service.cpq.ContractService;
@@ -170,13 +169,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
     @Inject
     private ContractItemService contractItemService;
-    
-    @Inject
-    private RecurringChargeInstanceService recurringChargeInstanceService;
-    
-    
-    @Inject
-    private RecurringChargeTemplateService recurringChargeTemplateService;
 
     @Inject
     protected CounterInstanceService counterInstanceService;
@@ -303,7 +295,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         if (chargeInstance.getInvoicingCalendar() != null) {
 
             Date defaultInitDate = null;
-            RecurringChargeInstance charge = (RecurringChargeInstance) PersistenceUtils.initializeAndUnproxy(chargeInstance);
+            RecurringChargeInstance charge = getEntityManager().getReference(RecurringChargeInstance.class, chargeInstance.getId());
             if (chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING && charge.getSubscriptionDate() != null) {
                 defaultInitDate = charge.getSubscriptionDate();
             } else if (chargeInstance.getServiceInstance() != null) {
@@ -601,10 +593,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             BigDecimal unitPriceWithoutTax = unitPriceWithoutTaxOverridden;
             BigDecimal unitPriceWithTax = unitPriceWithTaxOverridden;
 
-            RecurringChargeTemplate recChargeTemplate = null;
-            if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
-                recChargeTemplate = ((RecurringChargeInstance) PersistenceUtils.initializeAndUnproxy(chargeInstance)).getRecurringChargeTemplate();
-            }
+            RecurringChargeTemplate recurringChargeTemplate = getRecurringChargeTemplateFromChargeInstance(chargeInstance);
 
             // Determine and set tax if it was not set before.
             // An absence of tax class and presence of tax means that tax was set manually and should not be recalculated at invoicing time.
@@ -727,9 +716,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             }
 
             // if the wallet operation correspond to a recurring charge that is shared, we divide the price by the number of shared charges
-            if (recChargeTemplate != null && recChargeTemplate.getShareLevel() != null) {
+            if (recurringChargeTemplate != null && recurringChargeTemplate.getShareLevel() != null) {
                 RecurringChargeInstance recChargeInstance = (RecurringChargeInstance) PersistenceUtils.initializeAndUnproxy(chargeInstance);
-                int sharedQuantity = getSharedQuantity(recChargeTemplate.getShareLevel(), recChargeInstance.getCode(), bareWalletOperation.getOperationDate(), recChargeInstance);
+                int sharedQuantity = getSharedQuantity(recurringChargeTemplate.getShareLevel(), recChargeInstance.getCode(), bareWalletOperation.getOperationDate(), recChargeInstance);
                 if (sharedQuantity > 0) {
                     if (appProvider.isEntreprise()) {
                         unitPriceWithoutTax = unitPriceWithoutTax.divide(new BigDecimal(sharedQuantity), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
@@ -774,6 +763,17 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             log.trace("Will execute an offer level rating script for offer {}", bareWalletOperation.getOfferTemplate());
             executeRatingScript(bareWalletOperation, bareWalletOperation.getOfferTemplate().getGlobalRatingScriptInstance(), isVirtual);
         }
+    }
+
+    private RecurringChargeTemplate getRecurringChargeTemplateFromChargeInstance(ChargeInstance chargeInstance) {
+        RecurringChargeTemplate recurringChargeTemplate = null;
+        if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
+            RecurringChargeInstance recurringChargeInstance = getEntityManager().getReference(RecurringChargeInstance.class, chargeInstance.getId());
+            if (recurringChargeInstance != null) {
+                recurringChargeTemplate = recurringChargeInstance.getRecurringChargeTemplate();
+            }
+        }
+        return recurringChargeTemplate;
     }
 
     /**
@@ -1010,11 +1010,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         Date startDate = bareOperation.getStartDate();
         Date endDate = bareOperation.getEndDate();
 
-        RecurringChargeTemplate recChargeTemplate = null;
-        ChargeInstance chargeInstance = bareOperation.getChargeInstance();
-        if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
-            recChargeTemplate = ((RecurringChargeInstance) PersistenceUtils.initializeAndUnproxy(chargeInstance)).getRecurringChargeTemplate();
-        }
+        RecurringChargeTemplate recurringChargeTemplate = getRecurringChargeTemplateFromChargeInstance(bareOperation.getChargeInstance());
 
         for (PricePlanMatrix pricePlan : listPricePlan) {
 
@@ -1135,7 +1131,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 log.trace("The quantity " + quantity + " is less than " + minQuantity);
                 continue;
             }
-            if ((recChargeTemplate != null && recChargeTemplate.isProrataOnPriceChange())
+            if ((recurringChargeTemplate != null && recurringChargeTemplate.isProrataOnPriceChange())
                     && (!isStartDateBetween(startDate, pricePlan.getValidityFrom(), pricePlan.getValidityDate()) || !isEndDateBetween(endDate, startDate, pricePlan.getValidityDate()))) {
                 continue;
             }
