@@ -10551,7 +10551,6 @@
             <column name="run_on_nodes" value="null" />
             <column name="single_node" value="1" />
             <column name="cf_values" value="null" />
-            <column name="verbose_report" value="1" />
         </insert>
 	</changeSet>
 	
