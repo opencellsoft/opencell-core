@@ -118,7 +118,6 @@ import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
-import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.cpq.ContractItemService;
 import org.meveo.service.cpq.ContractService;
@@ -170,13 +169,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
     @Inject
     private ContractItemService contractItemService;
-    
-    @Inject
-    private RecurringChargeInstanceService recurringChargeInstanceService;
-    
-    
-    @Inject
-    private RecurringChargeTemplateService recurringChargeTemplateService;
 
     @Inject
     protected CounterInstanceService counterInstanceService;
@@ -771,6 +763,17 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             log.trace("Will execute an offer level rating script for offer {}", bareWalletOperation.getOfferTemplate());
             executeRatingScript(bareWalletOperation, bareWalletOperation.getOfferTemplate().getGlobalRatingScriptInstance(), isVirtual);
         }
+    }
+
+    private RecurringChargeTemplate getRecurringChargeTemplateFromChargeInstance(ChargeInstance chargeInstance) {
+        RecurringChargeTemplate recurringChargeTemplate = null;
+        if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
+            RecurringChargeInstance recurringChargeInstance = getEntityManager().getReference(RecurringChargeInstance.class, chargeInstance.getId());
+            if (recurringChargeInstance != null) {
+                recurringChargeTemplate = recurringChargeInstance.getRecurringChargeTemplate();
+            }
+        }
+        return recurringChargeTemplate;
     }
 
     /**
