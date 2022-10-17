@@ -52,6 +52,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.AbstractEntityPersister;
+import org.hibernate.type.LongType;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.ValidationException;
@@ -151,6 +152,8 @@ public class NativePersistenceService extends BaseService {
             query.setParameter("id", id);
             query.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
             query.setFlushMode(FlushMode.COMMIT);
+            query.addScalar("id", new LongType());
+
 
             Map<String, Object> values = (Map<String, Object>) query.uniqueResult();
             if (values != null) {

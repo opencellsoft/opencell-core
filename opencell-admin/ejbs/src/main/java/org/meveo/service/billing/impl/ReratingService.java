@@ -2,10 +2,12 @@ package org.meveo.service.billing.impl;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -16,6 +18,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.commons.utils.MethodCallingUtils;
@@ -29,6 +32,8 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
+import org.meveo.model.rating.EDR;
+import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.slf4j.Logger;
@@ -131,6 +136,12 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
 
     @Inject
     private MethodCallingUtils methodCallingUtils;
+
+    @Inject
+    private EdrService edrService;
+
+    @Inject
+    private RatedTransactionService ratedTransactionService;
 
     /**
      * Re-rate service instance charges
@@ -402,11 +413,73 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
             ratedTransaction.changeStatus(RatedTransactionStatusEnum.CANCELED);
         }
 
-        WalletOperation operation = oneShotRatingService.rateRatedWalletOperation(operationToRerate, useSamePricePlan);
+        // If walletOperation has produced t.edrs : rerate new logic. If not, continue normally
+        List<EDR> tEdrs = getEntityManager().createNamedQuery("EDR.getByWO")
+                .setParameter("WO_IDS", List.of(operationToRerate.getId()))
+                .getResultList();
 
-        create(operation);
+        WalletOperation newWO = null;
 
-        getEntityManager().createNamedQuery("WalletOperation.setStatusToReratedWithReratedWo").setParameter("now", new Date()).setParameter("newWo", operation).setParameter("id", operationToRerateId).executeUpdate();
+        if (CollectionUtils.isNotEmpty(tEdrs)) {
+            for (EDR edr : tEdrs) {
+                // if edr status is one of REJECTED, CANCELLED or OPEN => Triggered EDRs are simply CANCELLED with reason "Origin wallet operation [id={{id}}] has been rerated", and original WO is rerated
+                if (edr.getStatus() == EDRStatusEnum.REJECTED || edr.getStatus() == EDRStatusEnum.CANCELLED || edr.getStatus() == EDRStatusEnum.OPEN) {
+                    newWO = rateNewWO(operationToRerate, useSamePricePlan, operationToRerateId);
+                    edr.setStatus(EDRStatusEnum.CANCELLED);
+                    edr.setRejectReason("Origin wallet operation [id=" + operationToRerate.getId() + "] has been rerated");
+                    operationToRerate.setStatus(WalletOperationStatusEnum.RERATED);
+
+                    List<EDR> newTEdrs = oneShotRatingService.instantiateTriggeredEDRs(newWO, edr, false);
+                    Optional.ofNullable(newTEdrs).orElse(Collections.emptyList())
+                            .forEach(newEdr -> edrService.create(newEdr));
+
+                    walletOperationService.update(operationToRerate);
+
+                } else if (edr.getStatus() == EDRStatusEnum.RATED &&
+                        operationToRerate.getRatedTransaction() != null && operationToRerate.getRatedTransaction().getStatus() != RatedTransactionStatusEnum.BILLED) {
+                    newWO = rateNewWO(operationToRerate, useSamePricePlan, operationToRerateId);
+                    // Triggered EDRs, their WOs and RTs are CANCELLED with reason "Origin wallet operation [id={{id}}] has been rerated", and original WO is rerated
+                    edr.setStatus(EDRStatusEnum.CANCELLED);
+                    edr.setRejectReason("Origin wallet operation [id=" + operationToRerate.getId() + "] has been rerated");
+                    operationToRerate.setStatus(WalletOperationStatusEnum.RERATED);
+                    operationToRerate.getRatedTransaction().setStatus(RatedTransactionStatusEnum.CANCELED);
+                    operationToRerate.getRatedTransaction().setRejectReason("Origin wallet operation [id=" + operationToRerate.getId() + "] has been rerated");
+
+                    List<EDR> newTEdrs = oneShotRatingService.instantiateTriggeredEDRs(newWO, edr, false);
+                    Optional.ofNullable(newTEdrs).orElse(Collections.emptyList())
+                            .forEach(newEdr -> edrService.create(newEdr));
+
+                    walletOperationService.update(operationToRerate);
+                    ratedTransactionService.update(operationToRerate.getRatedTransaction());
+
+                } else if (edr.getStatus() == EDRStatusEnum.RATED &&
+                        operationToRerate.getRatedTransaction() != null && operationToRerate.getRatedTransaction().getStatus() == RatedTransactionStatusEnum.BILLED) {
+                    // Triggered EDRs, their WOs and RTs are untouched, original WO fails to rerate F_TO_RERATE with reason in error message below
+                    operationToRerate.setStatus(WalletOperationStatusEnum.F_TO_RERATE);
+                    operationToRerate.setRejectReason("Wallet operation [id=" + operationToRerate.getId() + "] cannot be rerated because triggered EDR [id=" + edr.getId() + "] is already billed.");
+                    walletOperationService.update(operationToRerate);
+
+                    return;
+                }
+            }
+
+            getEntityManager().flush();
+
+        } else {
+            rateNewWO(operationToRerate, useSamePricePlan, operationToRerateId);
+        }
+
+        operationToRerate.setStatus(WalletOperationStatusEnum.RERATED);
+        operationToRerate.setUpdated(new Date());
+        operationToRerate.setReratedWalletOperation(newWO);
+        walletOperationService.update(operationToRerate);
 
     }
+
+    private WalletOperation rateNewWO(WalletOperation oldWO, boolean useSamePricePlan, Long operationToRerateId) {
+        WalletOperation newWO = oneShotRatingService.rateRatedWalletOperation(oldWO, useSamePricePlan);
+        create(newWO);
+        return newWO;
+    }
+
 }
