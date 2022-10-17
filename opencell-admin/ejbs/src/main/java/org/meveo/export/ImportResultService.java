@@ -108,7 +108,7 @@ public class ImportResultService {
             }
         }
 
-        if(!found) {
+        if(!found && importResultDto.getName() != null && !importResultDto.getName().isEmpty() && importResultDto.getCode() != null && !importResultDto.getCode().isEmpty()) {
             importResultDtoList.add(importResultDto);
             list.add(importResultDto);
         }
