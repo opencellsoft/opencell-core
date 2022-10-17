@@ -14477,4 +14477,10 @@ order by date_trunc('month', i.invoice_date) DESC
             </column>
         </addColumn>
 	</changeSet>
+	
+	<changeSet id="#INTRD-10522_20221017_matchingCode-journal-entry" author="aelmalki">
+		<addColumn tableName="accounting_journal_entry">
+			<column name="matching_code" type="varchar(255)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
