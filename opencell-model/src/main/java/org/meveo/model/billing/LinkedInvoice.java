@@ -32,7 +32,7 @@ public class LinkedInvoice implements Serializable {
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "linked_invoice_id", nullable = false, referencedColumnName = "id")
-    private Invoice linkedInvoice;
+    private Invoice linkedInvoiceValue;
     
     
     @Column(name = "amount", precision = NB_PRECISION, scale = NB_DECIMALS)
@@ -43,10 +43,10 @@ public class LinkedInvoice implements Serializable {
     private InvoiceTypeEnum type;
 
 
-    public LinkedInvoice(Invoice id, Invoice linkedInvoice) {
+    public LinkedInvoice(Invoice id, Invoice linkedInvoiceValue) {
         super();
         this.id = id;
-        this.linkedInvoice = linkedInvoice;
+        this.linkedInvoiceValue = linkedInvoiceValue;
     }
 
     
@@ -62,12 +62,12 @@ public class LinkedInvoice implements Serializable {
         this.id = id;
     }
 
-    public Invoice getLinkedInvoice() {
-        return this.linkedInvoice;
+    public Invoice getLinkedInvoiceValue() {
+        return this.linkedInvoiceValue;
     }
 
-    public void setLinkedInvoice(Invoice linkedInvoice) {
-        this.linkedInvoice = linkedInvoice;
+    public void setLinkedInvoiceValue(Invoice linkedInvoice) {
+        this.linkedInvoiceValue = linkedInvoice;
     }
 
     public BigDecimal getAmount() {
