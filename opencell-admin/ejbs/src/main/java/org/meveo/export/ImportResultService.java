@@ -109,8 +109,10 @@ public class ImportResultService {
         }
 
         if(!found) {
-            importResultDtoList.add(importResultDto);
-            list.add(importResultDto);
+            if(importResultDto.getName() != null && !importResultDto.getName().isEmpty() && importResultDto.getCode() != null && !importResultDto.getCode().isEmpty()) {
+                importResultDtoList.add(importResultDto);
+                list.add(importResultDto);
+            }
         }
     }
 
