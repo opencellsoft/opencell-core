@@ -58,7 +58,21 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
     @Schema(description = "The amount with tax")
     @Deprecated
     private BigDecimal amountWithTax;
-    
+
+    /**
+     * Field was deprecated in 12 version. Use 'priceEL' field instead.
+     */
+    @Deprecated
+    @Schema(description = "The amount without tax EL")
+    private String amountWithoutTaxEL;
+
+    /**
+     * Field was deprecated in 12 version. Use 'priceEL' field instead.
+     */
+    @Deprecated
+    @Schema(description = "The amount with tax EL")
+    private String amountWithTaxEL;
+
     @Schema(description = "The Price EL")
     private String priceEL;
     
@@ -176,6 +190,22 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
 
     public void setAmountWithTax(BigDecimal amountWithTax) {
         this.amountWithTax = amountWithTax;
+    }
+
+    public String getAmountWithoutTaxEL() {
+        return amountWithoutTaxEL;
+    }
+
+    public void setAmountWithoutTaxEL(String amountWithoutTaxEL) {
+        this.amountWithoutTaxEL = amountWithoutTaxEL;
+    }
+
+    public String getAmountWithTaxEL() {
+        return amountWithTaxEL;
+    }
+
+    public void setAmountWithTaxEL(String amountWithTaxEL) {
+        this.amountWithTaxEL = amountWithTaxEL;
     }
 
     public String getPriceEL() {
