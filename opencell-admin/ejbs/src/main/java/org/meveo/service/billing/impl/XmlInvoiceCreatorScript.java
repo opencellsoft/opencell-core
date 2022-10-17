@@ -1314,7 +1314,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         }
         String result = "";
         for (LinkedInvoice inv : linkedInvoices) {
-            result += inv.getLinkedInvoice().getInvoiceNumber() + " ";
+            result += inv.getLinkedInvoiceValue().getInvoiceNumber() + " ";
         }
         return result;
     }
@@ -1381,8 +1381,8 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         }
         BillingCycle billingCycle = null;
         LinkedInvoice linkedInvoice = invoiceService.getLinkedInvoice(invoice);
-        if (isInvoiceAdjustment && linkedInvoice != null && linkedInvoice.getLinkedInvoice().getBillingRun() != null) {
-            billingCycle = linkedInvoice.getLinkedInvoice().getBillingRun().getBillingCycle();
+        if (isInvoiceAdjustment && linkedInvoice != null && linkedInvoice.getLinkedInvoiceValue().getBillingRun() != null) {
+            billingCycle = linkedInvoice.getLinkedInvoiceValue().getBillingRun().getBillingCycle();
         } else {
             if (invoice.getBillingRun() != null && invoice.getBillingRun().getBillingCycle() != null) {
                 billingCycle = invoice.getBillingRun().getBillingCycle();
@@ -1741,11 +1741,11 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             header.appendChild(sellerTag);
         }
         LinkedInvoice linkedInvoice = invoiceService.getLinkedInvoice(invoice);
-        Element customerAccountTag = createCustomerAccountSection(doc, invoice, linkedInvoice.getLinkedInvoice(), isInvoiceAdjustment, invoiceConfiguration);
+        Element customerAccountTag = createCustomerAccountSection(doc, invoice, linkedInvoice.getLinkedInvoiceValue(), isInvoiceAdjustment, invoiceConfiguration);
         if (customerAccountTag != null) {
             header.appendChild(customerAccountTag);
         }
-        Element billingAccountTag = createBillingAccountSection(doc, invoice, linkedInvoice.getLinkedInvoice(), isInvoiceAdjustment, invoiceConfiguration);
+        Element billingAccountTag = createBillingAccountSection(doc, invoice, linkedInvoice.getLinkedInvoiceValue(), isInvoiceAdjustment, invoiceConfiguration);
         if (billingAccountTag != null) {
             header.appendChild(billingAccountTag);
         }

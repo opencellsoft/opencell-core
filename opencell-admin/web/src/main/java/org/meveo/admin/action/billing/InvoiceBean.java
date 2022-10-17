@@ -795,7 +795,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     public Set<Invoice> getLinkedInvoices(Invoice invoice) {
         if (invoice != null) {
-            return invoiceService.refreshOrRetrieve(invoice).getLinkedInvoices().stream().map(LinkedInvoice::getLinkedInvoice).collect(Collectors.toSet());
+            return invoiceService.refreshOrRetrieve(invoice).getLinkedInvoices().stream().map(LinkedInvoice::getLinkedInvoiceValue).collect(Collectors.toSet());
         }
         return null;
     }
@@ -883,7 +883,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     public Set<Invoice> getLinkedInvoices() {
         entity = invoiceService.refreshOrRetrieve(entity);
-        return entity.getLinkedInvoices().stream().map(LinkedInvoice::getLinkedInvoice).collect(Collectors.toSet());
+        return entity.getLinkedInvoices().stream().map(LinkedInvoice::getLinkedInvoiceValue).collect(Collectors.toSet());
     }
 
     public void setLinkedInvoices(Set<Invoice> linkedInvoices) {

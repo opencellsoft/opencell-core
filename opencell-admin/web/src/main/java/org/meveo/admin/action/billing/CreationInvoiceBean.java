@@ -287,7 +287,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
     public void onInvoiceSelect(SelectEvent event) {
         invoiceToAdd = (Invoice) event.getObject();
-        if (invoiceToAdd != null && !entity.getLinkedInvoices().stream().anyMatch(li -> (invoiceToAdd != null && (li.getLinkedInvoice().getId() == invoiceToAdd.getId())))) {
+        if (invoiceToAdd != null && !entity.getLinkedInvoices().stream().anyMatch(li -> (invoiceToAdd != null && (li.getLinkedInvoiceValue().getId() == invoiceToAdd.getId())))) {
             LinkedInvoice linkedInvoice = new LinkedInvoice(rootInvoice, invoiceToAdd);
             entity.getLinkedInvoices().add(linkedInvoice);
         }
@@ -1205,7 +1205,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     public void setInvoiceToAdd(Invoice invoiceToAdd) {
-        if (invoiceToAdd != null && !entity.getLinkedInvoices().stream().anyMatch(li -> (invoiceToAdd != null && (li.getLinkedInvoice().getId() == invoiceToAdd.getId())))) {
+        if (invoiceToAdd != null && !entity.getLinkedInvoices().stream().anyMatch(li -> (invoiceToAdd != null && (li.getLinkedInvoiceValue().getId() == invoiceToAdd.getId())))) {
             LinkedInvoice linkedInvoice = new LinkedInvoice(rootInvoice, invoiceToAdd);
             entity.getLinkedInvoices().add(linkedInvoice);
         }

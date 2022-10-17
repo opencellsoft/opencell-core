@@ -123,7 +123,7 @@ public class SecurityDepositApiServiceTest {
             Optional<SecurityDeposit> sdOut = securityDepositApiService.instantiate(sd, SecurityDepositStatusEnum.VALIDATED, true);
             if (sdOut.isPresent()) {
                 if (sdOut.get().getSecurityDepositInvoice().getLinkedInvoices() != null) {
-                    List<Invoice> linkedInvoices = new ArrayList<>(sdOut.get().getSecurityDepositInvoice().getLinkedInvoices().stream().map(LinkedInvoice::getLinkedInvoice).collect(Collectors.toList()));
+                    List<Invoice> linkedInvoices = new ArrayList<>(sdOut.get().getSecurityDepositInvoice().getLinkedInvoices().stream().map(LinkedInvoice::getLinkedInvoiceValue).collect(Collectors.toList()));
                     for (Invoice inv : linkedInvoices) {
                         Assert.assertEquals(InvoiceStatusEnum.NEW, inv.getStatus());
                         Assert.assertEquals("SECURITY_DEPOSIT", inv.getInvoiceType().getCode());
@@ -144,7 +144,7 @@ public class SecurityDepositApiServiceTest {
             Optional<SecurityDeposit> sdOut = securityDepositApiService.instantiate(sd, SecurityDepositStatusEnum.VALIDATED, true);
             if (sdOut.isPresent()) {
                 if (sdOut.get().getSecurityDepositInvoice().getLinkedInvoices() != null) {
-                    List<Invoice> linkedInvoices = new ArrayList<>(sdOut.get().getSecurityDepositInvoice().getLinkedInvoices().stream().map(LinkedInvoice::getLinkedInvoice).collect(Collectors.toList()));
+                    List<Invoice> linkedInvoices = new ArrayList<>(sdOut.get().getSecurityDepositInvoice().getLinkedInvoices().stream().map(LinkedInvoice::getLinkedInvoiceValue).collect(Collectors.toList()));
                     for (Invoice inv2 : linkedInvoices) {
                         Assert.assertTrue(inv2.getStatus() == InvoiceStatusEnum.NEW || inv2.getStatus() == InvoiceStatusEnum.DRAFT);
                         Assert.assertEquals("SECURITY_DEPOSIT", inv2.getInvoiceType().getCode());
@@ -165,7 +165,7 @@ public class SecurityDepositApiServiceTest {
             Optional<SecurityDeposit> sdOut = securityDepositApiService.instantiate(sd, SecurityDepositStatusEnum.VALIDATED, true);
             if (sdOut.isPresent()) {
                 if (sdOut.get().getSecurityDepositInvoice().getLinkedInvoices() != null) {
-                    List<Invoice> linkedInvoices = new ArrayList<>(sdOut.get().getSecurityDepositInvoice().getLinkedInvoices().stream().map(LinkedInvoice::getLinkedInvoice).collect(Collectors.toList()));
+                    List<Invoice> linkedInvoices = new ArrayList<>(sdOut.get().getSecurityDepositInvoice().getLinkedInvoices().stream().map(LinkedInvoice::getLinkedInvoiceValue).collect(Collectors.toList()));
                     for (Invoice inv2 : linkedInvoices) {
                         Assert.assertEquals("Generated invoice for Security Deposit {" + sd.getId() + "}", inv2.getInvoiceLines().get(0).getLabel());
                         Assert.assertEquals("ART_SECURITY_DEPOSIT", inv2.getInvoiceLines().get(0).getAccountingArticle().getCode());
