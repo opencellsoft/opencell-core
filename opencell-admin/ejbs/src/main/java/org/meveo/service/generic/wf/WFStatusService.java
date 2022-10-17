@@ -26,8 +26,6 @@ import javax.persistence.NoResultException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.generic.wf.GenericWorkflowDto;
 import org.meveo.api.dto.generic.wf.WFStatusDto;
-import org.meveo.api.exception.BusinessApiException;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WFStatus;
@@ -64,6 +62,24 @@ public class WFStatusService extends BusinessService<WFStatus> {
     }
 
     /**
+     * Get the workflow status.
+     *
+     * @param wfStatusDto the workflow status Dto.
+     * @return the workflow status.
+     * @throws BusinessException the business exception
+     */
+    private WFStatus getWFStatus(WFStatusDto wfStatusDto) throws BusinessException {
+        WFStatus wfStatus = null;
+        if (wfStatusDto.getId() != null) {
+            wfStatus = findById(wfStatusDto.getId());
+            if (wfStatus == null) {
+                throw new BusinessException("Workflow status with id " + wfStatusDto.getId() + " is not found");
+            }
+        }
+        return wfStatus;
+    }
+
+    /**
      * Update the workflow status
      *
      * @param wfStatus    the workflow status entity to be updated
@@ -82,13 +98,7 @@ public class WFStatusService extends BusinessService<WFStatus> {
         List<WFStatus> wFStatusAdd = new ArrayList<>();
         for (WFStatusDto wfStatusDto : genericWorkflowDto.getStatuses()) {
 
-            WFStatus wfStatusSameId = null;
-            if (wfStatusDto.getId() != null) {
-                wfStatusSameId = findById(wfStatusDto.getId());
-                if (wfStatusSameId == null) {
-                    throw new BusinessException("Workflow status with id " + wfStatusDto.getId() + " is not found");
-                }
-            }
+            WFStatus wfStatusSameId = getWFStatus(wfStatusDto);
 
             WFStatus wfStatusSameCodeAndGWF = null;
             if (!StringUtils.isBlank(wfStatusDto.getCode())) {
