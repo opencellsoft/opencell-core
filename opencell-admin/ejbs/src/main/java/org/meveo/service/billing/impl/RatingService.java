@@ -601,9 +601,12 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             BigDecimal unitPriceWithoutTax = unitPriceWithoutTaxOverridden;
             BigDecimal unitPriceWithTax = unitPriceWithTaxOverridden;
 
-            RecurringChargeTemplate recChargeTemplate = null;
+            RecurringChargeTemplate recurringChargeTemplate = null;
             if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
-                recChargeTemplate = ((RecurringChargeInstance) PersistenceUtils.initializeAndUnproxy(chargeInstance)).getRecurringChargeTemplate();
+                RecurringChargeInstance recurringChargeInstance = getEntityManager().getReference(RecurringChargeInstance.class, chargeInstance.getId());
+                if (recurringChargeInstance != null) {
+                    recurringChargeTemplate = recurringChargeInstance.getRecurringChargeTemplate();
+                }
             }
 
             // Determine and set tax if it was not set before.
@@ -727,9 +730,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             }
 
             // if the wallet operation correspond to a recurring charge that is shared, we divide the price by the number of shared charges
-            if (recChargeTemplate != null && recChargeTemplate.getShareLevel() != null) {
+            if (recurringChargeTemplate != null && recurringChargeTemplate.getShareLevel() != null) {
                 RecurringChargeInstance recChargeInstance = (RecurringChargeInstance) PersistenceUtils.initializeAndUnproxy(chargeInstance);
-                int sharedQuantity = getSharedQuantity(recChargeTemplate.getShareLevel(), recChargeInstance.getCode(), bareWalletOperation.getOperationDate(), recChargeInstance);
+                int sharedQuantity = getSharedQuantity(recurringChargeTemplate.getShareLevel(), recChargeInstance.getCode(), bareWalletOperation.getOperationDate(), recChargeInstance);
                 if (sharedQuantity > 0) {
                     if (appProvider.isEntreprise()) {
                         unitPriceWithoutTax = unitPriceWithoutTax.divide(new BigDecimal(sharedQuantity), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
@@ -1010,10 +1013,13 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         Date startDate = bareOperation.getStartDate();
         Date endDate = bareOperation.getEndDate();
 
-        RecurringChargeTemplate recChargeTemplate = null;
+        RecurringChargeTemplate recurringChargeTemplate = null;
         ChargeInstance chargeInstance = bareOperation.getChargeInstance();
         if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
-            recChargeTemplate = ((RecurringChargeInstance) PersistenceUtils.initializeAndUnproxy(chargeInstance)).getRecurringChargeTemplate();
+            RecurringChargeInstance recurringChargeInstance = getEntityManager().getReference(RecurringChargeInstance.class, chargeInstance.getId());
+            if (recurringChargeInstance != null) {
+                recurringChargeTemplate = recurringChargeInstance.getRecurringChargeTemplate();
+            }
         }
 
         for (PricePlanMatrix pricePlan : listPricePlan) {
@@ -1135,7 +1141,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 log.trace("The quantity " + quantity + " is less than " + minQuantity);
                 continue;
             }
-            if ((recChargeTemplate != null && recChargeTemplate.isProrataOnPriceChange())
+            if ((recurringChargeTemplate != null && recurringChargeTemplate.isProrataOnPriceChange())
                     && (!isStartDateBetween(startDate, pricePlan.getValidityFrom(), pricePlan.getValidityDate()) || !isEndDateBetween(endDate, startDate, pricePlan.getValidityDate()))) {
                 continue;
             }
