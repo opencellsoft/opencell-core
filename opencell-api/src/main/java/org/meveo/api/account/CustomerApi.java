@@ -77,6 +77,7 @@ import org.meveo.export.CustomBigDecimalConverter;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.catalog.ProductChargeTemplateMapping;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
@@ -844,6 +845,7 @@ public class CustomerApi extends AccountEntityApi {
         xstream.omitField(AccountOperationDto.class, "accountingCode");
         xstream.omitField(AccountOperationDto.class, "accountCodeClientSide");
         xstream.omitField(PaymentMethodDto.class, "tokenId");
+        xstream.omitField(ProductChargeTemplateMapping.class, "chargeTemplate");
 
         String accountHierarchy = xstream.toXML(result);
 

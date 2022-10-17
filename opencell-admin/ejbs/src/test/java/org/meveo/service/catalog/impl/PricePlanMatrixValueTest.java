@@ -1,16 +1,38 @@
-package org.meveo.model.catalog;
+package org.meveo.service.catalog.impl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
+import java.util.Set;
+
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.model.catalog.ColumnTypeEnum;
+import org.meveo.model.catalog.PricePlanMatrixColumn;
+import org.meveo.model.catalog.PricePlanMatrixValue;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.List;
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
+@RunWith(MockitoJUnitRunner.class)
 public class PricePlanMatrixValueTest {
+	 
+	@Mock
+	private ParamBeanFactory paramBeanFactory;
+
+	@Mock
+	private ParamBean paramBean;
+	 
+	 @Before
+	 public void setUp() {
+		when(paramBeanFactory.getInstance()).thenReturn(paramBean);
+		when(paramBean.getProperty("attribute.multivalues.separator", ";")).thenReturn(";");
+	 }
 
     @Test
     public void string_values_matches_if_equals() {

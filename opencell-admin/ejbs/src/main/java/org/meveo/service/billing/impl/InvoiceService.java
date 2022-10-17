@@ -2173,7 +2173,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (invoice.isPrepaid()) {
             throw new BusinessException("Invoice XML is disabled for prepaid invoice: " + invoice.getInvoiceNumber());
         }
-
+        if(InvoiceStatusEnum.DRAFT.equals(invoice.getStatus()) || InvoiceStatusEnum.NEW.equals(invoice.getStatus()) || InvoiceStatusEnum.DRAFT.equals(invoice.getStatus()) ){
+    		produceInvoiceXmlNoUpdate(invoice, true);
+    	}
         String xmlFileName = getFullXmlFilePath(invoice, false);
         File xmlFile = new File(xmlFileName);
         if (!xmlFile.exists()) {
@@ -5150,7 +5152,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         EntityManager em = getEntityManager();
         for (InvoiceLine invoiceLine : invoiceLines) {
             // Order can span multiple billing accounts and some Billing account-dependent values have to be recalculated
-        	if ((entityToInvoice instanceof Order || entityToInvoice instanceof CpqQuote) && (billingAccount == null || !billingAccount.getId().equals(invoiceLine.getBillingAccount().getId()))) {
+        	if ((entityToInvoice instanceof Order || entityToInvoice instanceof CpqQuote || entityToInvoice instanceof BillingAccount ) && (billingAccount == null || !billingAccount.getId().equals(invoiceLine.getBillingAccount().getId()))) {
                 billingAccount = invoiceLine.getBillingAccount();
                 if (defaultPaymentMethod == null && billingAccount != null) {
                     defaultPaymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());
@@ -6440,6 +6442,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoicePaymentStatusUpdated.fire(entity);
         }
         entity.setPaymentStatus(newInvoicePaymentStatusEnum);
+    }
+
+    public String getFilePathByInvoiceIdType(Long invoiceId, String type) {
+        String fileName = "";
+        Invoice invoice = findById(invoiceId);
+        if (invoice != null) {
+            if (type == "xml") {
+                fileName = getFullXmlFilePath(invoice, false);
+            }
+            else if (type == "pdf") {
+                fileName = getFullPdfFilePath(invoice, false);
+            }
+        }
+        return fileName;
     }
 
 }

@@ -70,7 +70,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
     }
 
     @Override
-    public PricePlanMatrixVersion createOrUpdate(PricePlanMatrixVersionDto pricePlanMatrixVersionDto) {
+    public PricePlanMatrixVersion createOrUpdate(PricePlanMatrixVersionDto pricePlanMatrixVersionDto) throws MeveoApiException, BusinessException {
         String pricePlanMatrixCode = checkPricePlanMatrixVersion(pricePlanMatrixVersionDto);
         PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionDto.getVersion()==null ? null: pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixCode, pricePlanMatrixVersionDto.getVersion());
         if (pricePlanMatrixVersion == null) {
@@ -84,7 +84,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         return pricePlanMatrixVersion;
     }    
     
-    public PricePlanMatrixVersion updatePricePlanMatrixVersion(PricePlanMatrixVersionDto pricePlanMatrixVersionDto) {
+    public PricePlanMatrixVersion updatePricePlanMatrixVersion(PricePlanMatrixVersionDto pricePlanMatrixVersionDto) throws MeveoApiException {
         String pricePlanMatrixCode = checkPricePlanMatrixVersion(pricePlanMatrixVersionDto);
         final DatePeriod validity = pricePlanMatrixVersionDto.getValidity();
         if(validity!=null) {
@@ -114,7 +114,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         return pricePlanMatrixVersion;
     }
 
-    private String checkPricePlanMatrixVersion(PricePlanMatrixVersionDto pricePlanMatrixVersionDto) {
+    private String checkPricePlanMatrixVersion(PricePlanMatrixVersionDto pricePlanMatrixVersionDto) throws MeveoApiException {
         Boolean isMatrix = pricePlanMatrixVersionDto.getMatrix();
         String pricePlanMatrixCode = pricePlanMatrixVersionDto.getPricePlanMatrixCode();
 
@@ -127,12 +127,24 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         if (StringUtils.isBlank(isMatrix)) {
             missingParameters.add("isMatrix");
         }
-        if (isMatrix!=null && !isMatrix) {
+        if (isMatrix != null && !isMatrix) {
             if (!appProvider.isEntreprise() && StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithTax())) {
                 missingParameters.add("amountWithTax");
             }
             if (appProvider.isEntreprise() && StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithoutTax())) {
                 missingParameters.add("price");
+            }
+        }
+        if (!StringUtils.isBlank(pricePlanMatrixVersionDto.getPriceEL()) && (!StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithoutTaxEL())
+                || !StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithTaxEL()))) {
+            log.error("'amountWithoutTaxEL' and 'amountWithTaxEL' are deprecated, please use only property 'priceEL' to provide unit price");
+            throw new InvalidParameterException("'amountWithoutTaxEL' and 'amountWithTaxEL' are deprecated, please use only property 'priceEL' to provide unit price");
+        }
+        if (StringUtils.isBlank(pricePlanMatrixVersionDto.getPriceEL()) && (!StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithoutTaxEL())
+                || !StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithTaxEL()))) {
+            pricePlanMatrixVersionDto.setPriceEL(pricePlanMatrixVersionDto.getAmountWithTaxEL());
+            if(StringUtils.isBlank(pricePlanMatrixVersionDto.getPriceEL())){
+                pricePlanMatrixVersionDto.setPriceEL(pricePlanMatrixVersionDto.getAmountWithoutTaxEL());
             }
         }
         handleMissingParametersAndValidate(pricePlanMatrixVersionDto);
