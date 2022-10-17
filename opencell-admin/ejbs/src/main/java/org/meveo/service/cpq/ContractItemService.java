@@ -104,7 +104,7 @@ public class ContractItemService extends BusinessService<ContractItem> {
 		// TODO: a confirmer avec Rachid
 		if(contract != null && contract.getStatus().equals(ContractStatusEnum.DRAFT)) {
 			item.setContract(contract);
-		}else if(!contract.getStatus().equals(ContractStatusEnum.DRAFT)) {
+		}else if(!ContractStatusEnum.DRAFT.equals(contract != null ? contract.getStatus(): null)) {
 			throw new BusinessException(CONTRACT_STATUS_NOT_DRAFT);
 		}
 		final OfferTemplate commercialOffer = offerTemplateService.findById(idCommercialOffer);

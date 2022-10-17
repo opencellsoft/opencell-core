@@ -792,7 +792,7 @@ public class QuoteApi extends BaseApi {
             if (!valueClass.isAssignableFrom(value.getClass())) {
 
                 if (valueClass == BigDecimal.class) {
-                    value = new BigDecimal((String) value);
+                    value = new BigDecimal(value.toString());
 
                 }
                 if (valueClass == Date.class) {

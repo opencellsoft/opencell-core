@@ -33,7 +33,7 @@ public class EncryptCFValuesScript extends Script  {
     
     private static final long serialVersionUID = 1L;
     static final String UTF_8_ENCODING = "UTF-8";
-    static final String ENCRYPTION_ALGORITHM = "AES/ECB/PKCS5PADDING";
+    static final String ENCRYPTION_ALGORITHM = "AES:ECB:PKCS5PADDING";
     static final String INTERNAL_SECRET_KEY = "staySafe";
     static final String SHA_256_HASHING = "SHA-256";
     static final String AES_ALOGRITHM = "AES";
@@ -124,7 +124,7 @@ public class EncryptCFValuesScript extends Script  {
                     return strToEncrypt;
                 }
                 SecretKeySpec secretKey = buildSecretKey();
-                Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
+                Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM.replaceAll(":", "/"));
                 cipher.init(Cipher.ENCRYPT_MODE, secretKey);
                 String encrypted  = Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes(UTF_8_ENCODING)));
                 return ENCRYPTION_CHECK_STRING + encrypted;

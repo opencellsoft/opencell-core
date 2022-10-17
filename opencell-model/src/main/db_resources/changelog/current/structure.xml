@@ -14455,4 +14455,12 @@ order by date_trunc('month', i.invoice_date) DESC
         <addPrimaryKey columnNames="id" tableName="adm_secured_entity"/>
     </changeSet>
     
+    <changeSet id="#INTRD-10540_20221013" author="TarikFA.">
+    	<dropTable tableName="billing_invoice_advance_mapping"/>
+    </changeSet>
+    
+    <changeSet id="INTRD-10603_20221113" author="AbdelmounaimAkadid">	
+		<modifyDataType tableName="adm_inbound_req_cookies" columnName="coockies" newDataType="varchar(500)" />
+		<modifyDataType tableName="adm_inbound_req_cookies" columnName="coockies_key" newDataType="varchar(500)" />
+	</changeSet>	
 </databaseChangeLog>

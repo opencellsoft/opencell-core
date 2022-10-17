@@ -90,8 +90,12 @@
         "composites": {
           "client": {
             "opencell-web": [
-              "uma_protection"
-            ]
+              "uma_protection",
+			  "apiAdministrateur"
+            ],
+			"opencell-portal": [
+			 "PORTAL_USER"
+			 ]
           }
         },
         "clientRole": false,
@@ -17873,7 +17877,7 @@
       "identityProviderMapper": "oidc-hardcoded-role-idp-mapper",
       "config": {
         "syncMode": "LEGACY",
-        "role": "superAdministrator"
+        "role": "default-roles-opencell"
       }
     }
   ],
