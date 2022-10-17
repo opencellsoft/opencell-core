@@ -1176,8 +1176,8 @@ public class InvoiceApi extends BaseApi {
         categoryInvoiceAgregates.sort(Comparator.comparing(CategoryInvoiceAgregateDto::getCategoryInvoiceCode));
         taxAggregates.sort(Comparator.comparing(TaxInvoiceAggregateDto::getTaxCode));
 
-        for (Invoice inv : invoice.getLinkedInvoices()) {
-            listInvoiceIdToLink.add(inv.getId());
+        for (LinkedInvoice inv : invoice.getLinkedInvoices()) {
+            listInvoiceIdToLink.add(inv.getLinkedInvoice().getId());
         }
 
         if (!categoryInvoiceAgregates.isEmpty()) {

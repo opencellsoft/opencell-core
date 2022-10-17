@@ -60,6 +60,7 @@ import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.LinkedInvoice;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
@@ -245,7 +246,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                     rootInvoiceId = linkedInvoiceIdParam;
                     rootInvoice = invoiceService.findById(rootInvoiceId);
                     entity.setBillingAccount(rootInvoice.getBillingAccount());
-                    entity.getLinkedInvoices().add(rootInvoice);
+                    LinkedInvoice linkedInvoice = new LinkedInvoice(rootInvoice, entity);
+                    entity.getLinkedInvoices().add(linkedInvoice);
                     entity.setPaymentMethod(rootInvoice.getPaymentMethod());
                     try {
                         entity.setInvoiceType(invoiceTypeService.getDefaultAdjustement());
@@ -285,8 +287,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
     public void onInvoiceSelect(SelectEvent event) {
         invoiceToAdd = (Invoice) event.getObject();
-        if (invoiceToAdd != null && !entity.getLinkedInvoices().contains(invoiceToAdd)) {
-            entity.getLinkedInvoices().add(invoiceToAdd);
+        if (invoiceToAdd != null && !entity.getLinkedInvoices().stream().anyMatch(li -> (invoiceToAdd != null && (li.getLinkedInvoice().getId() == invoiceToAdd.getId())))) {
+            LinkedInvoice linkedInvoice = new LinkedInvoice(rootInvoice, invoiceToAdd);
+            entity.getLinkedInvoices().add(linkedInvoice);
         }
     }
 
@@ -594,7 +597,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
             invoiceCopy = (Invoice) BeanUtils.cloneBean(entity);
             invoiceCopy.setBillingAccount(billingAccountService.retrieveIfNotManaged(entity.getBillingAccount()));
-            invoiceCopy.setLinkedInvoices(invoiceService.retrieveIfNotManaged(entity.getLinkedInvoices()));
+            invoiceCopy.setLinkedInvoices(entity.getLinkedInvoices());
             BillingAccount billingAccount = invoiceCopy.getBillingAccount();
             Customer customer = billingAccount.getCustomerAccount().getCustomer();
             if (invoiceCopy.getSeller() == null) {
@@ -758,7 +761,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             }
         }
 
-        entity.setLinkedInvoices(invoiceService.retrieveIfNotManaged(entity.getLinkedInvoices()));
+        entity.setLinkedInvoices(entity.getLinkedInvoices());
 
         super.saveOrUpdate(false);
 
@@ -800,14 +803,14 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
         UserAccount ua = getFreshUA();
 
-        for (Invoice invoice : entity.getLinkedInvoices()) {
-            invoice = invoiceService.findById(invoice.getId());
+        for (LinkedInvoice invoice : entity.getLinkedInvoices()) {
+            var referenceInvoice = invoiceService.findById(invoice.getId().getId());
             if (entity.getLinkedInvoices().size() == 1) {
-                entity.setCfValues(invoice.getCfValues());
+                entity.setCfValues(referenceInvoice.getCfValues());
                 customFieldDataEntryBean.refreshFieldsAndActions(entity);
             }
 
-            List<RatedTransaction> ratedTransactions = ratedTransactionService.getRatedTransactionsByInvoice(invoice, true);
+            List<RatedTransaction> ratedTransactions = ratedTransactionService.getRatedTransactionsByInvoice(referenceInvoice, true);
 
             if (isDetailed()) {
 
@@ -832,7 +835,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                     aggregateHandler.addRT(entity.getInvoiceDate(), newRT);
                 }
             } else {
-                for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
+                for (InvoiceAgregate invoiceAgregate : referenceInvoice.getInvoiceAgregates()) {
                     if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
                         aggregateHandler.addInvoiceSubCategory(((SubCategoryInvoiceAgregate) invoiceAgregate).getInvoiceSubCategory(), getFreshUA(), invoiceAgregate.getDescription(),
                             invoiceAgregate.getAmountWithoutTax(), invoiceAgregate.getAmountWithTax());
@@ -1202,8 +1205,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     public void setInvoiceToAdd(Invoice invoiceToAdd) {
-        if (invoiceToAdd != null && !entity.getLinkedInvoices().contains(invoiceToAdd)) {
-            entity.getLinkedInvoices().add(invoiceToAdd);
+        if (invoiceToAdd != null && !entity.getLinkedInvoices().stream().anyMatch(li -> (invoiceToAdd != null && (li.getLinkedInvoice().getId() == invoiceToAdd.getId())))) {
+            LinkedInvoice linkedInvoice = new LinkedInvoice(rootInvoice, invoiceToAdd);
+            entity.getLinkedInvoices().add(linkedInvoice);
         }
         this.invoiceToAdd = invoiceToAdd;
     }
