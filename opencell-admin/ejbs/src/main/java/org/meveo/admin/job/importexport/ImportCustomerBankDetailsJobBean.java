@@ -20,6 +20,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.CustomerBankDetailsImportHisto;
+import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jaxb.customer.bankdetails.Document;
 import org.meveo.model.jaxb.customer.bankdetails.Modification;
@@ -28,7 +29,6 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.service.admin.impl.CustomerBankDetailsImportHistoService;
-import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.payments.impl.PaymentMethodService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
@@ -48,9 +48,6 @@ public class ImportCustomerBankDetailsJobBean {
     @Inject
     @ApplicationProvider
     protected Provider appProvider;
-
-    @Inject
-    private JobExecutionService jobExecutionService;
     
     private int nbModifications;
     private int nbModificationsError;
@@ -97,9 +94,6 @@ public class ImportCustomerBankDetailsJobBean {
 
     private void traitementFiles(JobExecutionResultImpl result, String dirOK, String dirKO, List<File> files) {
         for (File file : files) {
-            /*if (!jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
-                break;
-            }*/
             File currentFile = null;
             try {
                 log.info("InputFiles job {} in progress...", file.getName());
@@ -129,7 +123,7 @@ public class ImportCustomerBankDetailsJobBean {
     }
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    private void importFile(File file, String fileName, JobInstance jobInstance) throws JAXBException, CloneNotSupportedException {
+    private void importFile(File file, String fileName, JobInstance jobInstance) throws JAXBException, CloneNotSupportedException,Exception {
         createCustomerBankDetailsImport(fileName);
 
         if (file.length() < 100) {
@@ -151,25 +145,34 @@ public class ImportCustomerBankDetailsJobBean {
         log.info("end import file ");
     }
 
-    private void paymentMethodeDepartArrivee(Document customerBankDetails) throws CloneNotSupportedException {
+    
+    private void paymentMethodeDepartArrivee(Document customerBankDetails) throws Exception {
         for (Modification newModification : customerBankDetails.getMessageBanqueEmetteur().getModification()) {
             //IBAN du client et BIC dans l'établissement de départ
             String ibanDepart = newModification.getOrgPartyAndAccount().getAccount().getiBAN();
+            String encryptIbanDepart = encryptIban(ibanDepart);
             String bicDepart = newModification.getOrgPartyAndAccount().getAgent().getFinInstnId().getBicFi();
             //IBAN du client et BIC dans l'établissement d'arrivée
             String ibanArrivee = newModification.getUpdatedPartyAndAccount().getAccount().getiBAN();
+            String encryptIbanArrivee = encryptIban(ibanArrivee);
             String bicArrivee = newModification.getUpdatedPartyAndAccount().getAgent().getFinInstnId().getBicFi();
-            log.debug("(ibanDepart: [{}] ibanDepart: [{}] ibanDepart: [{}] ibanDepart: [{}])"
-                , ibanDepart, bicDepart, ibanArrivee, bicArrivee);
-            List<PaymentMethod> paymentMethods = paymentMethodService.listByIbanAndBicFi(ibanDepart, bicDepart, false);
+            log.debug("(ibanDepart: [{}] ibanDepart: [{}] ibanDepart: [{}] ibanDepart: [{}])", ibanDepart, bicDepart, ibanArrivee, bicArrivee);
+            List<PaymentMethod> paymentMethods = paymentMethodService.listByIbanAndBicFi(encryptIbanDepart, bicDepart, false);
             log.debug("paymentMethodsDepart.size(): {}", paymentMethods.size());
-            List<PaymentMethod> paymentMethodsArrivee = paymentMethodService.listByIbanAndBicFi(ibanArrivee, bicArrivee);
+            List<PaymentMethod> paymentMethodsArrivee = paymentMethodService.listByIbanAndBicFi(encryptIbanArrivee, bicArrivee);
             log.debug("paymentMethodsArrivee.size(): {}", paymentMethodsArrivee.size());
             dupPmDepartArrivee(ibanDepart, bicDepart, ibanArrivee, bicArrivee, paymentMethods, paymentMethodsArrivee);
         }
     }
+    
+    private String encryptIban(String ibanDepart) throws Exception {
+		BankCoordinates bankCoordinates = new BankCoordinates();
+		
+		return bankCoordinates.encryptIban(bankCoordinates.encryptIban(ibanDepart));
+	}
 
-    private void dupPmDepartArrivee(String ibanDepart, String bicDepart, String ibanArrivee, String bicArrivee, List<PaymentMethod> paymentMethods, List<PaymentMethod> paymentMethodsArrivee)
+   
+	private void dupPmDepartArrivee(String ibanDepart, String bicDepart, String ibanArrivee, String bicArrivee, List<PaymentMethod> paymentMethods, List<PaymentMethod> paymentMethodsArrivee)
             throws CloneNotSupportedException {
         if(paymentMethodsArrivee.isEmpty()) {
             for (PaymentMethod paymentMethod : paymentMethods) {

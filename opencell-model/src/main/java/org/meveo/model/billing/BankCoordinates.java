@@ -287,7 +287,7 @@ public class BankCoordinates implements Serializable, Cloneable {
 	 * @return encrypted iban if encryption key exist in config file else return iban
 	 * @throws Exception
 	 */
-	private String encryptIban(String iban) throws Exception {
+	public String encryptIban(String iban) throws Exception {
 
 		if (iban != null && !(iban.startsWith("AES"))) {
 			AesEncrypt ae = new AesEncrypt();
@@ -302,7 +302,7 @@ public class BankCoordinates implements Serializable, Cloneable {
 	 * @return decrypted iban if iban is already encypted
 	 * @throws Exception
 	 */
-	private String decryptIban(String iban) throws Exception {
+	public String decryptIban(String iban) throws Exception {
 
 		if (iban != null && iban.startsWith("AES")) {
 			iban = iban.substring(3);
