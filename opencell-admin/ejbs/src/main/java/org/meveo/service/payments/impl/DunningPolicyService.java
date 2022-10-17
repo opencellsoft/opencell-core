@@ -3,6 +3,7 @@ package org.meveo.service.payments.impl;
 import static java.util.Collections.EMPTY_LIST;
 import static java.util.Comparator.comparing;
 import static java.util.Optional.*;
+import static org.meveo.model.billing.InvoicePaymentStatusEnum.PENDING;
 import static org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID;
 import static org.meveo.model.dunning.PolicyConditionTargetEnum.valueOf;
 
@@ -298,7 +299,7 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
             dayOverDueAndThresholdCondition =
                     (dayOverDue.longValue() == daysDiff || minBalance.doubleValue() >= policy.getMinBalanceTrigger());
         }
-        return invoice.getPaymentStatus().equals(UNPAID)
+        return (invoice.getPaymentStatus().equals(UNPAID) || invoice.getPaymentStatus().equals(PENDING))
                 && collectionPlanService.findByInvoiceId(invoice.getId()).isEmpty()
                 && dayOverDueAndThresholdCondition;
     }

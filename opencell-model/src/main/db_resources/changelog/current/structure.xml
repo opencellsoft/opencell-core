@@ -14454,5 +14454,27 @@ order by date_trunc('month', i.invoice_date) DESC
         <dropNotNullConstraint tableName="adm_secured_entity" columnName="user_name"/>
         <addPrimaryKey columnNames="id" tableName="adm_secured_entity"/>
     </changeSet>
+	
+	<changeSet id="#INTRD-9766_20221011_EDR_new_fields" author="aelmalki">
+		<addColumn tableName="rating_edr">
+			<column name="wallet_operation_id" type="bigint"/>
+		</addColumn>
+	</changeSet>
     
+    <changeSet id="#INTRD-10540_20221013" author="TarikFA.">
+    	<dropTable tableName="billing_invoice_advance_mapping"/>
+    </changeSet>
+    
+    <changeSet id="INTRD-10603_20221113" author="AbdelmounaimAkadid">	
+		<modifyDataType tableName="adm_inbound_req_cookies" columnName="coockies" newDataType="varchar(500)" />
+		<modifyDataType tableName="adm_inbound_req_cookies" columnName="coockies_key" newDataType="varchar(500)" />
+	</changeSet>	
+	
+	<changeSet id="#INTRD-10607_20221014" author="AdilElJaouhari">
+		<addColumn tableName="billing_invoice">
+            <column name="use_current_rate" type="${type.boolean}" defaultValueNumeric="0">
+            	<constraints nullable="false" />
+            </column>
+        </addColumn>
+	</changeSet>
 </databaseChangeLog>

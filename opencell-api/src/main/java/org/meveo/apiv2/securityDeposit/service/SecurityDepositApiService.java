@@ -93,7 +93,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
 
     @Override
     public Optional<SecurityDeposit> findById(Long id) {
-        return empty();
+        return Optional.ofNullable(securityDepositService.findById(id));
     }
 
     @Override
@@ -124,6 +124,17 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
     @Transactional
     public Optional<SecurityDeposit> instantiate(SecurityDeposit securityDepositInput, 
             SecurityDepositStatusEnum status, boolean validate) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
+        return createOrinstantiate(securityDepositInput, status, validate, true);
+    }
+    
+    @Transactional
+    public Optional<SecurityDeposit> create(SecurityDeposit securityDepositInput, 
+            SecurityDepositStatusEnum status, boolean validate) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
+        return createOrinstantiate(securityDepositInput, status, validate, false);
+    }
+    
+    public Optional<SecurityDeposit> createOrinstantiate(SecurityDeposit securityDepositInput, 
+            SecurityDepositStatusEnum status, boolean validate, boolean isInstantiate) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
         // Check FinanceSettings.useSecurityDeposit
         FinanceSettings financeSettings = financeSettingsService.findLastOne();
         if (financeSettings == null || !financeSettings.isUseSecurityDeposit()) {
@@ -133,18 +144,27 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         if (securityDepositAmount == null) {
             throw new EntityDoesNotExistsException("The Amount == null.");
         }
+        if (securityDepositInput.getId() != null) {
+            Optional<SecurityDeposit> sd = findById(securityDepositInput.getId());
+            if (sd.isPresent()) {
+                if (SecurityDepositStatusEnum.VALIDATED.equals(sd.get().getStatus())) {
+                    throw new BusinessApiException("Modification of the security deposit is not allowed for Validated status.");
+                } 
+            }
+        }        
+                
         linkRealEntities(securityDepositInput);        
         
         org.meveo.model.billing.InvoiceLine invoiceLine = new org.meveo.model.billing.InvoiceLine();
         boolean updateComment = false;
         Invoice invoice = null;
         if(securityDepositInput.getSecurityDepositInvoice() != null) {
-        	invoice = invoiceService.findById(securityDepositInput.getSecurityDepositInvoice().getId());
-        	if(invoice == null) {
-        	    throw new EntityDoesNotExistsException(Invoice.class, securityDepositInput.getSecurityDepositInvoice().getId());
-            }        		
-        	else {
-        	    if(!"SECURITY_DEPOSIT".equals(invoice.getInvoiceType().getCode())) {
+            invoice = invoiceService.findById(securityDepositInput.getSecurityDepositInvoice().getId());
+            if(invoice == null) {
+                throw new EntityDoesNotExistsException(Invoice.class, securityDepositInput.getSecurityDepositInvoice().getId());
+            }               
+            else {
+                if(!"SECURITY_DEPOSIT".equals(invoice.getInvoiceType().getCode())) {
                     throw new BusinessApiException("Linked invoice should be a SECURITY_DEPOSIT");
                 }
 
@@ -163,12 +183,14 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
                 if(invoice.getAmountWithoutTax() == null) {
                     throw new BusinessApiException("Linked invoice cannot have amountWithoutTax null");
                 }
-        	}
+            }
         }
         else {
-            invoice = invoiceService.createBasicInvoiceFromSD(securityDepositInput);
-            invoiceLine = invoiceLineService.createInvoiceLineWithInvoiceAndSD(securityDepositInput, invoice, invoiceLine);
-            updateComment = true;
+            if (isInstantiate) {
+                invoice = invoiceService.createBasicInvoiceFromSD(securityDepositInput);
+                invoiceLine = invoiceLineService.createInvoiceLineWithInvoiceAndSD(securityDepositInput, invoice, invoiceLine);
+                updateComment = true;
+            }            
         }
         securityDepositInput.setSecurityDepositInvoice(invoice);
         
@@ -230,7 +252,13 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
             throw new BadRequestException("The service instance is mandatory if subscription is set");
         }
 
-        securityDepositService.create(securityDepositInput);        
+        if (securityDepositInput.getId() != null) {
+            securityDepositService.update(securityDepositInput);    
+        }
+        else {
+            securityDepositService.create(securityDepositInput);
+        }
+                
         if (updateComment) {
             invoiceLine.setLabel("Generated invoice for Security Deposit {" + securityDepositInput.getId() + "}");
             invoiceLineService.update(invoiceLine);
@@ -283,7 +311,11 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
             if(billingAccount != null) {
                 securityDepositInput.setBillingAccount(billingAccount);
                 CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+                customerAccount = customerAccountService.refreshOrRetrieve(customerAccount);
                 if (customerAccount != null) {
+                    if (!securityDepositInput.getCustomerAccount().equals(customerAccount)) {
+                        throw new BusinessApiException("Customer Account not equal Customer Account in Billing Account");
+                    }
                     securityDepositInput.setCustomerAccount(customerAccount);
                 }
             }            
