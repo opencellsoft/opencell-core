@@ -254,16 +254,19 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         if(accountingArticle==null && walletOperation!=null) {
         	accountingArticle=accountingArticleService.getAccountingArticleByChargeInstance(walletOperation.getChargeInstance());
         }
-        ChargeTemplate chargeTemplate = walletOperation.getChargeInstance().getChargeTemplate();
-        
+        ChargeTemplate chargeTemplate = null;
         boolean isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discountPlan,applicationDate,walletOperation,subscription);
-        log.debug("getApplicableDiscountPlanItems accountingArticle={}, discountPlan code={},isDiscountApplicable={}",accountingArticle,discountPlan.getCode(),isDiscountApplicable);
-        
-        Boolean applyDiscountsOverridenPriceInCharge=  walletOperation.getChargeInstance().getApplyDiscountsOnOverridenPrice();
-        boolean applyDiscountsOnOverridenPrice=applyDiscountsOverridenPriceInCharge!=null?applyDiscountsOverridenPriceInCharge:BooleanUtils.isTrue(discountPlan.getApplicableOnOverriddenPrice());
-        
-        if (walletOperation.isOverrodePrice() && !applyDiscountsOnOverridenPrice) {
-        	return Collections.emptyList();
+        if (walletOperation != null) {
+            chargeTemplate = walletOperation.getChargeInstance().getChargeTemplate();
+            
+            log.debug("getApplicableDiscountPlanItems accountingArticle={}, discountPlan code={},isDiscountApplicable={}",accountingArticle,discountPlan.getCode(),isDiscountApplicable);
+            
+            Boolean applyDiscountsOverridenPriceInCharge=  walletOperation.getChargeInstance().getApplyDiscountsOnOverridenPrice();
+            boolean applyDiscountsOnOverridenPrice=applyDiscountsOverridenPriceInCharge!=null?applyDiscountsOverridenPriceInCharge:BooleanUtils.isTrue(discountPlan.getApplicableOnOverriddenPrice());
+            
+            if (walletOperation.isOverrodePrice() && !applyDiscountsOnOverridenPrice) {
+                return Collections.emptyList();
+            }
         }
         boolean isFixedDpItemIncluded=false;
         if (isDiscountApplicable) {
@@ -271,7 +274,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         	Long lowPriority=null;
         	for (DiscountPlanItem discountPlanItem : discountPlanItems) {
         		isFixedDpItemIncluded=false;
-        		if(DiscountPlanItemTypeEnum.FIXED.equals(discountPlanItemType) && chargeTemplate instanceof OneShotChargeTemplate) {
+        		if(chargeTemplate != null && DiscountPlanItemTypeEnum.FIXED.equals(discountPlanItemType) && chargeTemplate instanceof OneShotChargeTemplate) {
         			if(!discountPlanItem.isApplyByArticle() && ((OneShotChargeTemplate)chargeTemplate).getOneShotChargeTemplateType()!=OneShotChargeTemplateTypeEnum.OTHER)
         				continue;
         		}
