@@ -1495,10 +1495,18 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setAmountTax(amounts[2]);
         
 
-        ratedTransaction.setParameter1(param1);
-        ratedTransaction.setParameter2(param2);
-        ratedTransaction.setParameter3(param3);
-        ratedTransaction.setParameterExtra(paramExtra);
+        if(param1 != null) {
+            ratedTransaction.setParameter1(param1);
+        }
+        if(param2 != null) {
+            ratedTransaction.setParameter2(param2);
+        }
+        if(param3 != null) {
+            ratedTransaction.setParameter3(param3);
+        }
+        if(paramExtra != null) {
+            ratedTransaction.setParameterExtra(paramExtra);
+        }
 
         update(ratedTransaction);
 
