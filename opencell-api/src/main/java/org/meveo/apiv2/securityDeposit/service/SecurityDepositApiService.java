@@ -311,6 +311,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
             if(billingAccount != null) {
                 securityDepositInput.setBillingAccount(billingAccount);
                 CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+                customerAccount = customerAccountService.refreshOrRetrieve(customerAccount);
                 if (customerAccount != null) {
                     if (!securityDepositInput.getCustomerAccount().equals(customerAccount)) {
                         throw new BusinessApiException("Customer Account not equal Customer Account in Billing Account");
