@@ -727,9 +727,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             }
 
             // if the wallet operation correspond to a recurring charge that is shared, we divide the price by the number of shared charges
-            if (recChargeTemplate != null && recChargeTemplate.getShareLevel() != null) {
-                RecurringChargeInstance recChargeInstance = (RecurringChargeInstance) PersistenceUtils.initializeAndUnproxy(chargeInstance);
-                int sharedQuantity = getSharedQuantity(recChargeTemplate.getShareLevel(), recChargeInstance.getCode(), bareWalletOperation.getOperationDate(), recChargeInstance);
+            if (recurringChargeTemplate != null && recurringChargeTemplate.getShareLevel() != null) {
+                RecurringChargeInstance recurringChargeInstance = getEntityManager().getReference(RecurringChargeInstance.class, chargeInstance.getId());
+                int sharedQuantity = getSharedQuantity(recurringChargeTemplate.getShareLevel(), recurringChargeInstance.getCode(), bareWalletOperation.getOperationDate(), recurringChargeInstance);
                 if (sharedQuantity > 0) {
                     if (appProvider.isEntreprise()) {
                         unitPriceWithoutTax = unitPriceWithoutTax.divide(new BigDecimal(sharedQuantity), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
@@ -805,7 +805,20 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
         return bareWalletOperation;
     }
-    
+
+    private RecurringChargeTemplate getRecurringChargeTemplateFromChargeInstance(ChargeInstance chargeInstance) {
+
+        RecurringChargeTemplate recurringChargeTemplate = null;
+
+        if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
+            RecurringChargeInstance recurringChargeInstance = getEntityManager().getReference(RecurringChargeInstance.class, chargeInstance.getId());
+            if (recurringChargeInstance != null) {
+                recurringChargeTemplate = recurringChargeInstance.getRecurringChargeTemplate();
+            }
+        }
+        return recurringChargeTemplate;
+    }
+
     /**
      * Determine unit price from a priceplan
      * 
