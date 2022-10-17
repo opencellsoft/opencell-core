@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "40bd5fa5-a131-4239-9002-184a9c27175a",
-		"name": "00_OPENCELL_V12__12.2.3",
+		"name": "00_OPENCELL_V12__12.2.X",
 		"description": "# Introduction\r\n\r\nThis configuration file is designed to be a basis for all configurations provided by Opencell.\r\nIt merely contains most common general settings and a catalog of services implementing various rating models.\r\n\r\n# Configuring Opencell\r\n\r\nThere are 2 main ways for configuring ***Opencell***:\r\n* GUI (*Administration GUI* and *Marketing Manager*)\r\n* API (all Opencell configuration and operations can be performed using our extensive API library)\r\n\r\nThe most flexible way is using APIs which currently are available as **Rest** and **Soap**.\r\nThe **Soap** API are deprecated, so will won't mention them anymore.\r\n\r\n## Tools\r\n\r\nAny tools able to send HTTP requests will do.\r\nOne could even just script *curl* calls using shell script.\r\nBut of course, a more user friendly tool will make things easier.\r\n\r\nHere at ***Opencell***, we prefer **Postman** (https://getpostman.com):\r\n* it has a modern, friendly interface\r\n* Sets of API request can be organized into collections, themselves structured into a folder tree.\r\n* Collections can be exported as _JSON_ files or shared with other team members using collaboration features (payed version)\r\n* it allows to uses variables at different levels (collection, environement, global) and to execute *Javascript* scripts before and after executing API calls which allows great flexibility and API response testing.\r\n\r\n\r\n\r\n# Configuration documentation guidelines\r\n\r\nIn order to document our configuration, we make full used of the internal documentation capabilities of the Markdown fields on Postman Objects\r\n\r\n## Default template for *Collection* documentation\r\n\r\n## Default template for *Folder* documentation\r\n\r\n## Default template for *Request* documentation\r\n\r\n\r\n\r\n# Tips & guidelines\r\n\r\nHere follow a few tips for understanding this collection.\r\n\r\n## Collection pre-request script\r\n\r\n```javascript\r\npm.globals.set(\"timestamp.iso\", (new Date()).toISOString());\r\npm.globals.set(\"request.label\", pm.info.requestName);\r\n\r\nvar parts = pm.info.requestName.split(\"|\");\r\n\r\nfor(let i=0; i<parts.length; i++) {\r\n    pm.globals.set(\"request.label.\"+i, parts[i]);\r\n}\r\n```\r\n\r\n## Configuration guidelines\r\n\r\n## Entities\r\n\r\n<entity>_<project_code>_XXX\r\n\r\n### Custom Fields\r\n\r\nCF_<entity>_<project_code>_ XXX\r\n\r\n<entity> will be discarded for inherited\r\n\r\n#### Custom field visibility\r\n\r\nSE_<entity>_<project_code>_<markers>_XXX\r\n\r\n<markers> are used in CFT.applicableOnEl to show CFT on entities\r\n\r\n\r\n## Entity abbreviation\r\n\r\n| code  | entity                        |\r\n|:-----:|:------------------------------|\r\n|   P   | Provider                      |\r\n|   S   | Seller                        |\r\n|   C   | Customer                      |\r\n|  CA   | Customer Account              |\r\n|  BA   | Billing Account               |\r\n|  UA   | User Account                  |\r\n|  SU   | Subscription                  |\r\n|  AP   | Access Point                  |\r\n|  OF   | Offer Template                |\r\n|  SE   | Service Template and Instance |\r\n|  CH   | Charge Template               |\r\n|  PP   | Price Plan                    |\r\n|  CN   | Counter                       |\r\n| ICAT  | Invoice Category              |\r\n| ISCAT | Invoice SubCategory           |\r\n|  CAL  | Calendar                      |\r\n|  BC   | Billing Cycle                 |\r\n",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "2006058"
@@ -12456,7 +12456,7 @@
 									"response": []
 								},
 								{
-									"name": "CFT|code=aDouble|type=DOUBLE|target=BillingAccount|desc=A {{type}} on {{target}}|value=true|filterEL=#{true} Copy",
+									"name": "CFT|code=aDouble|type=DOUBLE|target=BillingAccount|desc=A {{type}} on {{target}}|value=10.00|filterEL=#{true}",
 									"event": [
 										{
 											"listen": "test",
@@ -14464,7 +14464,7 @@
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"filters\": {\r\n        \"quoteCode\": \"III\"\r\n    }\r\n}",
+											"raw": "{\r\n    \"filters\": {\r\n        \"quoteCode\": \"{{quote.code}}\"\r\n    }\r\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -15249,136 +15249,6 @@
 					"name": "Mediation",
 					"item": [
 						{
-							"name": "chargeCDR_user02",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"if( pm.response.code === 200) {\r",
-											"    var jsonData = JSON.parse(responseBody);\r",
-											"    \r",
-											"}\r",
-											"\r",
-											"  setTimeout(function(){\r",
-											"          console.log(\"Sleeping for 1 seconds before next request.\");\r",
-											"  }, 1000);\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "2022-07-07T00:00:00.000Z;1200;SUB5;SIGNATURE;PACK_1000;FRA;;;"
-								},
-								"url": {
-									"raw": "{{opencell.url}}/billing/mediation/chargeCdr?returnWalletOperations=false&isVirtual=false&rateTriggeredEdr=true&maxDepth=0",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"billing",
-										"mediation",
-										"chargeCdr"
-									],
-									"query": [
-										{
-											"key": "returnWalletOperations",
-											"value": "false"
-										},
-										{
-											"key": "isVirtual",
-											"value": "false"
-										},
-										{
-											"key": "rateTriggeredEdr",
-											"value": "true"
-										},
-										{
-											"key": "maxDepth",
-											"value": "0"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "chargeCDR_user02 Copy",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"if( pm.response.code === 200) {\r",
-											"    var jsonData = JSON.parse(responseBody);\r",
-											"    \r",
-											"}\r",
-											"\r",
-											"  setTimeout(function(){\r",
-											"          console.log(\"Sleeping for 1 seconds before next request.\");\r",
-											"  }, 1000);\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "2022-07-07T00:00:00.000Z;1400;SUB555;SIGNATURE_CACHET;PACK_1000;FRA;;;"
-								},
-								"url": {
-									"raw": "{{opencell.url}}/billing/mediation/chargeCdr?returnWalletOperations=false&isVirtual=false&rateTriggeredEdr=true&maxDepth=0",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"billing",
-										"mediation",
-										"chargeCdr"
-									],
-									"query": [
-										{
-											"key": "returnWalletOperations",
-											"value": "false"
-										},
-										{
-											"key": "isVirtual",
-											"value": "false"
-										},
-										{
-											"key": "rateTriggeredEdr",
-											"value": "true"
-										},
-										{
-											"key": "maxDepth",
-											"value": "0"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
 							"name": "registerCdrList CLIENT 000",
 							"request": {
 								"method": "POST",
@@ -15390,7 +15260,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"mode\": \"PROCESS_ALL\",\n    \"cdrs\": [\n        \"2022-06-23T00:00:00.000Z;35;OPENSOFT_OPENSOFT-00_1;PS;2022-06-23T00:00:00.000Z;;;;\",\n        \"2022-06-23T00:00:00.000Z;135;OPENSOFT_OPENSOFT-00_1;PS;2022-06-23T00:00:00.000Z;;;;\"\n    ]\n}"
+									"raw": "{\n    \"mode\": \"PROCESS_ALL\",\n    \"cdrs\": [\n        \"2022-06-23T00:00:00.000Z;36;OPENSOFT_OPENSOFT-00_1;PS;2022-06-23T00:00:00.000Z;;;;\",\n        \"2022-06-23T00:00:00.000Z;136;OPENSOFT_OPENSOFT-00_1;PS;2022-06-23T00:00:00.000Z;;;;\"\n    ]\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/v2/mediation/cdrs/registerCdrList",
