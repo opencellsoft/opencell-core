@@ -20,9 +20,11 @@ package org.meveo.admin.action;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.meveo.model.IEntity;
 import org.meveo.service.base.local.IPersistenceService;
@@ -92,6 +94,9 @@ public abstract class UpdateMapTypeFieldBean<T extends IEntity> extends CustomFi
         mapTypeFieldValues.remove(fieldName);
 
         if (entityField != null) {
+            entityField = entityField.entrySet().stream().sorted(Map.Entry.comparingByKey())
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+
             List<HashMap<String, String>> fieldValues = new ArrayList<HashMap<String, String>>();
             mapTypeFieldValues.put(fieldName, fieldValues);
             for (Entry<String, String> setInfo : entityField.entrySet()) {
