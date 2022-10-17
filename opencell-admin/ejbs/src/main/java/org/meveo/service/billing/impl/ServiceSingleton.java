@@ -36,6 +36,7 @@ import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentGatewayRumSequence;
+import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.model.sequence.GenericSequence;
 import org.meveo.model.sequence.Sequence;
 import org.meveo.model.sequence.SequenceTypeEnum;
@@ -47,6 +48,7 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.payments.impl.OCCTemplateService;
+import org.meveo.service.securityDeposit.impl.SecurityDepositTemplateService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
@@ -140,6 +142,9 @@ public class ServiceSingleton {
     private JobExecutionService jobExecutionService;
     @Inject
     private JobInstanceService jobInstanceService;
+
+    @Inject
+    private SecurityDepositTemplateService securityDepositTemplateService;
 
     private static Map<Character, Character> mapper = Map.of('0', 'Q',
             '1', 'R', '2', 'S', '3', 'T', '4', 'U', '5',
@@ -729,5 +734,14 @@ public class ServiceSingleton {
         sequence.setCurrentNumber(sequence.getCurrentNumber()+1);
 
         return ooqCode;
+    }
+
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public SecurityDepositTemplate incrementSDTemplateInstanciationNumber(SecurityDepositTemplate securityDepositTemplate) throws BusinessException {
+        Integer numberOfInstantiation = securityDepositTemplate.getNumberOfInstantiation();
+        securityDepositTemplate.setNumberOfInstantiation(numberOfInstantiation != null ? numberOfInstantiation + 1 : 1);
+        return securityDepositTemplate;
     }
 }
