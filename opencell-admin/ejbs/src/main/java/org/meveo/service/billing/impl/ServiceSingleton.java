@@ -143,9 +143,6 @@ public class ServiceSingleton {
     @Inject
     private JobInstanceService jobInstanceService;
 
-    @Inject
-    private SecurityDepositTemplateService securityDepositTemplateService;
-
     private static Map<Character, Character> mapper = Map.of('0', 'Q',
             '1', 'R', '2', 'S', '3', 'T', '4', 'U', '5',
             'V', '6', 'W', '7', 'X', '8', 'Y', '9', 'Z');
