@@ -319,9 +319,18 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         return pricePlanMatrixVersion;
     }
 
+    public void removePriceMatrixVersionOnlyNotClosed(PricePlanMatrixVersion pricePlanMatrixVersion) {
+        removePriceMatrixVersionByStatus(pricePlanMatrixVersion, false);
+    }
+    
     public void removePriceMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion) {
-        if (!pricePlanMatrixVersion.getStatus().equals(VersionStatusEnum.DRAFT)) {
-            log.warn("the status of version of the price plan matrix is not DRAFT, the current version is {}.Can not be deleted", pricePlanMatrixVersion.getStatus().toString());
+        boolean isPublished = VersionStatusEnum.PUBLISHED.equals(pricePlanMatrixVersion.getStatus());
+        removePriceMatrixVersionByStatus(pricePlanMatrixVersion, isPublished);
+    }
+    
+    public void removePriceMatrixVersionByStatus(PricePlanMatrixVersion pricePlanMatrixVersion, boolean isStatusKo) {
+        if (VersionStatusEnum.CLOSED.equals(pricePlanMatrixVersion.getStatus()) || isStatusKo) {
+            log.warn("the status of version of the price plan matrix is {}. Can not be deleted", pricePlanMatrixVersion.getStatus().toString());
             throw new MeveoApiException(String.format(STATUS_ERROR_MSG, pricePlanMatrixVersion.getStatus().toString()));
         }
         logAction(pricePlanMatrixVersion, "DELETE");

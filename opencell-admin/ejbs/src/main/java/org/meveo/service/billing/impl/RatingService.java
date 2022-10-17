@@ -53,7 +53,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.commons.utils.NumberUtils;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.CounterValueChangeInfo;
@@ -303,8 +303,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         if (chargeInstance.getInvoicingCalendar() != null) {
 
             Date defaultInitDate = null;
-            if (chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING && ((RecurringChargeInstance) chargeInstance).getSubscriptionDate() != null) {
-                defaultInitDate = ((RecurringChargeInstance) chargeInstance).getSubscriptionDate();
+            RecurringChargeInstance charge = (RecurringChargeInstance) PersistenceUtils.initializeAndUnproxy(chargeInstance);
+            if (chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING && charge.getSubscriptionDate() != null) {
+                defaultInitDate = charge.getSubscriptionDate();
             } else if (chargeInstance.getServiceInstance() != null) {
                 defaultInitDate = chargeInstance.getServiceInstance().getSubscriptionDate();
             } else if (chargeInstance != null && chargeInstance.getSubscription() != null) {
@@ -442,7 +443,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
      * @throws InvalidELException Failed to evaluate EL expression
      * @throws ElementNotFoundException Subscription as resolved from EL expression was not found
      */
-    private List<EDR> instantiateTriggeredEDRs(WalletOperation walletOperation, EDR edr, boolean isVirtual)
+    public List<EDR> instantiateTriggeredEDRs(WalletOperation walletOperation, EDR edr, boolean isVirtual)
             throws RatingException, InvalidELException, ElementNotFoundException, CommunicateToRemoteInstanceException, ChargingEdrOnRemoteInstanceErrorException {
 
         List<EDR> triggredEDRs = new ArrayList<>();
@@ -480,6 +481,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 newEdr.setParameter3(evaluateStringExpression(triggeredEDRTemplate.getParam3El(), walletOperation, ua, null, edr));
                 newEdr.setParameter4(evaluateStringExpression(triggeredEDRTemplate.getParam4El(), walletOperation, ua, null, edr));
                 newEdr.setQuantity(BigDecimal.valueOf(evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(), walletOperation, ua, null, edr)));
+                newEdr.setWalletOperation(walletOperation);
 
                 Subscription sub = null;
 
@@ -601,7 +603,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
             RecurringChargeTemplate recChargeTemplate = null;
             if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
-                recChargeTemplate = ((RecurringChargeInstance) chargeInstance).getRecurringChargeTemplate();
+                recChargeTemplate = ((RecurringChargeInstance) PersistenceUtils.initializeAndUnproxy(chargeInstance)).getRecurringChargeTemplate();
             }
 
             // Determine and set tax if it was not set before.
@@ -726,7 +728,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
             // if the wallet operation correspond to a recurring charge that is shared, we divide the price by the number of shared charges
             if (recChargeTemplate != null && recChargeTemplate.getShareLevel() != null) {
-                RecurringChargeInstance recChargeInstance = (RecurringChargeInstance) chargeInstance;
+                RecurringChargeInstance recChargeInstance = (RecurringChargeInstance) PersistenceUtils.initializeAndUnproxy(chargeInstance);
                 int sharedQuantity = getSharedQuantity(recChargeTemplate.getShareLevel(), recChargeInstance.getCode(), bareWalletOperation.getOperationDate(), recChargeInstance);
                 if (sharedQuantity > 0) {
                     if (appProvider.isEntreprise()) {
@@ -1011,7 +1013,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         RecurringChargeTemplate recChargeTemplate = null;
         ChargeInstance chargeInstance = bareOperation.getChargeInstance();
         if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
-            recChargeTemplate = ((RecurringChargeInstance) chargeInstance).getRecurringChargeTemplate();
+            recChargeTemplate = ((RecurringChargeInstance) PersistenceUtils.initializeAndUnproxy(chargeInstance)).getRecurringChargeTemplate();
         }
 
         for (PricePlanMatrix pricePlan : listPricePlan) {
@@ -1161,7 +1163,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     /**
      * Get a rerated copy of a wallet operation. New wallet operation is not persisted nor status of wallet operation to rerate is changed
      *
-     * @param operationToRerate wallet operation to be rerated
+     * @param walletOperationToRerate wallet operation to be rerated
      * @param useSamePricePlan true if same price plan will be used
      * @throws BusinessException business exception
      * @throws RatingException Operation rerating failure due to lack of funds, data validation, inconsistency or other rating related failure
