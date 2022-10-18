@@ -25,9 +25,13 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 @Entity
 @DiscriminatorValue("T")
+@NamedQueries({
+        @NamedQuery(name = "TaxInvoiceAggregate.deleteByInvoiceIds", query = "delete from TaxInvoiceAgregate ti where ti.invoice.id = :invoicesId and ti.tax.id = :taxId") })
 public class TaxInvoiceAgregate extends InvoiceAgregate {
 
     private static final long serialVersionUID = 1L;

@@ -72,6 +72,7 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceAggregateHandler;
+import org.meveo.service.billing.impl.InvoiceAgregateService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
@@ -191,6 +192,12 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     private Date rtEndDate;
 
 	private boolean amountsAndlinesUpdated=false;
+
+    @Inject
+    private InvoiceAgregateService invoiceAgregateService;
+
+    private String subCatCodeToAdd = null;
+    private String subCatCodeToRemove = null;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -354,7 +361,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         ratedTransaction.setInvoice(entity);
 
         aggregateHandler.addRT(entity.getInvoiceDate(), ratedTransaction);
+        subCatCodeToAdd = ratedTransaction.getInvoiceSubCategory().getCode();
         updateAmountsAndLines();
+        invoiceAgregateService.deleteTaxAggregateByInvoice(entity.getId(), ratedTransaction.getTax().getId());
 
     }
 
@@ -467,7 +476,13 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
         List<RatedTransaction> listToRemove = new ArrayList<>();
         listToRemove.addAll(selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactionsToAssociate());
-		for (RatedTransaction rt : listToRemove) {
+        List<Long> rtIds = listToRemove.stream().map(RatedTransaction::getId).collect(Collectors.toList());
+        ratedTransactionService.cancelRatedTransactions(rtIds);
+        for (RatedTransaction rt : listToRemove) {
+            invoiceAgregateService.deleteTaxAggregateByInvoice(entity.getId(), rt.getTax().getId());
+            subCatCodeToRemove = rt.getInvoiceSubCategory().getCode();
+            aggregateHandler.getCatInvAgregateMap().remove(rt.getInvoiceSubCategory().getCode());
+            aggregateHandler.getSubCatInvAgregateMap().remove(subCatCodeToRemove);
             aggregateHandler.removeRT(rt);
         }
 		updateAmountsAndLines();
@@ -700,6 +715,10 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             }
         }
         //return getListViewName();
+        aggregateHandler.reset();
+        subCatCodeToAdd = null;
+        subCatCodeToRemove = null;
+        initEntity();
         return "";
     }
 
@@ -721,6 +740,19 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 		entity.setLinkedInvoices(invoiceService.retrieveIfNotManaged(entity.getLinkedInvoices()));
 
 		super.saveOrUpdate(false);
+        if(subCatCodeToAdd != null) {
+            aggregateHandler.getSubCatInvAgregateMap().values()
+                    .stream()
+                    .filter(subCategoryInvoiceAgregate -> !subCategoryInvoiceAgregate.getInvoiceSubCategory().getCode().equals(subCatCodeToAdd))
+                    .forEach(sub -> invoiceAgregateService.remove(sub));
+        }
+
+        if(subCatCodeToRemove != null) {
+            aggregateHandler.getSubCatInvAgregateMap().values()
+                    .stream()
+                    .filter(subCategoryInvoiceAgregate -> !subCategoryInvoiceAgregate.getInvoiceSubCategory().getCode().equals(subCatCodeToRemove))
+                    .forEach(sub -> invoiceAgregateService.remove(sub));
+        }
 
 		for (RatedTransaction rt : rts) {
 			if(rt.getId() == null) {
@@ -728,7 +760,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 			}
 		}
 		List<RatedTransaction> RtsToCancel = initialRTList.stream().filter(i -> !rts.contains(i)).collect (Collectors.toList());
-		cancelRTs(RtsToCancel);
 		return rts;
 	}
 

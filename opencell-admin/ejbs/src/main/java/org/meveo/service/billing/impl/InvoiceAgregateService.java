@@ -147,4 +147,11 @@ public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> 
 		getEntityManager().createNamedQuery("InvoiceAgregate.deleteByInvoiceIds").setParameter("invoicesIds", invoicesIds).executeUpdate();
 
 	}
+
+	public void deleteTaxAggregateByInvoice(Long invoiceID, Long taxId) {
+		getEntityManager().createNamedQuery("TaxInvoiceAggregate.deleteByInvoiceIds")
+				.setParameter("invoicesId", invoiceID)
+				.setParameter("taxId", taxId)
+				.executeUpdate();
+	}
 }
