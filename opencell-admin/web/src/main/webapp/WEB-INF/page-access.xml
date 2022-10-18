@@ -310,6 +310,10 @@
 		<constraint type="READ">currentUser.hasRole('billingVisualization')</constraint>
 	</page>
 
+ 	<page view-id=".+\/finance\/revenueSchedules\/.+">
+		<constraint>currentUser.hasRole('reportExtractManagementAdvanced')</constraint>
+	</page>
+
 	<!--  PAGE RULES FOR FINANCE PAGES -->
 	<page view-id=".+\/finance\/.+">
 		<constraint>currentUser.hasRole('billingManagement')</constraint>
@@ -356,8 +360,5 @@
         <constraint>currentUser.hasRole('cdrManager')</constraint>
         <constraint type="READ">currentUser.hasRole('cdrVisualizer')</constraint>
     </page>
-    
-    <page view-id=".+\/finance\/revenueSchedules\/.+">
-		<constraint type="READ">currentUser.hasRole('reportExtractManagementAdvanced')</constraint>
-	</page>
+   
 </page-access>
