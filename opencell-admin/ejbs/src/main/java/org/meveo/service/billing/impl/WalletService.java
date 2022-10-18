@@ -62,7 +62,7 @@ public class WalletService extends PersistenceService<WalletInstance> {
     private static boolean usePrepaidBalanceCache = true;
 
     @PostConstruct
-    private void init() {
+    private void initialize() {
         usePrepaidBalanceCache = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("cache.cachePrepaidBalance", "true"));
     }
 

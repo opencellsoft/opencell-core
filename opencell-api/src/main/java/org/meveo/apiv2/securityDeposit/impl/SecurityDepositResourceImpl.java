@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
 import org.meveo.admin.exception.BusinessException;
@@ -55,18 +56,25 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
 
     @Override
     public Response instantiate(SecurityDepositInput securityDepositInput) {
-        SecurityDeposit result;
+        SecurityDeposit sd = null;
         try {
-            result = securityDepositApiService.instantiate(securityDepositMapper.toEntity(securityDepositInput), SecurityDepositStatusEnum.VALIDATED, true)
+            if (securityDepositInput.getId() !=null) {
+                sd = securityDepositApiService.findById(securityDepositInput.getId())
+                        .orElseThrow(() -> new NotFoundException("The SecurityDeposit does not exist with id = " + securityDepositInput.getId()));
+            }
+            else {
+                sd = new SecurityDeposit();
+            }                    
+            sd = securityDepositApiService.instantiate(securityDepositMapper.toEntity(sd, securityDepositInput), SecurityDepositStatusEnum.VALIDATED, true)
                     .orElseThrow(() -> new BusinessApiException("Security Deposit hasn't been initialized"));            
-            invoiceApi.validateInvoice(result.getSecurityDepositInvoice().getId(), true, false, false);
+            invoiceApi.validateInvoice(sd.getSecurityDepositInvoice().getId(), true, false, false);
         } catch (Exception e) {
             throw new BusinessException(e);
         }
         return Response.ok(ImmutableSecurityDepositSuccessResponse
                 .builder()
                 .status("SUCCESS")
-                .newSecurityDeposit(securityDepositMapper.toResource(result))
+                .newSecurityDeposit(securityDepositMapper.toResource(sd))
                 .build()
             ).build();
     }
@@ -75,7 +83,7 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
     public Response create(SecurityDepositInput securityDepositInput) {
         SecurityDeposit result;
         try {
-            result = securityDepositApiService.instantiate(securityDepositMapper.toEntity(securityDepositInput), SecurityDepositStatusEnum.DRAFT, false)
+            result = securityDepositApiService.create(securityDepositMapper.toEntity(securityDepositInput), SecurityDepositStatusEnum.DRAFT, false)
                                                 .orElseThrow(() -> new BusinessApiException("Security Deposit hasn't been initialized"));
         } catch (Exception e) {
             throw new BusinessApiException(e);
@@ -114,14 +122,12 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
             throw new ValidationException(msgErrValidation + "not allowed for Update.");
         }
 
-        BigDecimal oldAmountSD = securityDepositToUpdate.getAmount();
         securityDepositToUpdate = securityDepositMapper.toEntity(securityDepositToUpdate, securityDepositInput);
-        securityDepositService.checkParameters(securityDepositToUpdate, securityDepositInput, oldAmountSD);
+        securityDepositService.checkParameters(securityDepositToUpdate, securityDepositInput);
         securityDepositApiService.linkRealEntities(securityDepositToUpdate);        
         securityDepositService.update(securityDepositToUpdate);
         auditLogService.trackOperation("UPDATE", new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
         return Response.ok().entity(buildResponse(securityDepositMapper.toResource(securityDepositToUpdate))).build();
-
     }
 
     @Override

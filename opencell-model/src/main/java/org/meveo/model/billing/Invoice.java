@@ -29,7 +29,30 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.PostLoad;
+import javax.persistence.PostPersist;
+import javax.persistence.PostUpdate;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 import javax.validation.ValidationException;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -705,10 +728,12 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Column(name = "invoice_balance", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal invoiceBalance;
     
-
-    @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
-    private List<AdvanceMapping> advanceMappingList;
-    
+    /**
+     * Indicates if the current rate has already been applied.
+     */
+    @Column(name = "use_current_rate")
+    @Type(type = "numeric_boolean")
+    private boolean useCurrentRate = false;
 
     public Invoice() {
 	}
@@ -738,6 +763,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 		this.cfAccumulatedValues = copy.cfAccumulatedValues;
 		this.seller = copy.seller;
 		this.invoiceType = copy.invoiceType;
+		this.useCurrentRate = copy.useCurrentRate;
 
 		this.quote = null;
 		this.commercialOrder = null;
@@ -1841,6 +1867,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
 	public void setOpenOrderNumber(String openOrderNumber) {
 		this.openOrderNumber = openOrderNumber;
+	}
+
+	public boolean isUseCurrentRate() {
+		return useCurrentRate;
+	}
+
+	public void setUseCurrentRate(boolean useCurrentRate) {
+		this.useCurrentRate = useCurrentRate;
 	}
 
 
