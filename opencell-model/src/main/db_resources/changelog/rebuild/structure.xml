@@ -5273,6 +5273,7 @@
             <column name="rgaa_message" type="varchar(500)" >
                 <constraints nullable="true"/>
             </column>
+			<column name="current_matching_code" type="varchar(255)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-250">
@@ -16944,6 +16945,7 @@
             <column name="seller_name" type="varchar(255)" />
             <column name="reference" type="varchar(50)" />
             <column name="document_type" type="varchar(50)" />
+            <column name="matching_code" type="varchar(255)" />
 
         </createTable>
     </changeSet>
@@ -18634,6 +18636,7 @@
    	<changeSet id="#INTRD-10607_20221014" author="AdilElJaouhari" />
 	<changeSet id="#INTRD-9766_20221011_EDR_new_fields" author="aelmalki" />
 	<changeSet id="#INTRD-10581_20221018" author="HichamHANINE" />
+	<changeSet id="#INTRD-10522_20221017_matchingCode-journal-entry" author="aelmalki" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

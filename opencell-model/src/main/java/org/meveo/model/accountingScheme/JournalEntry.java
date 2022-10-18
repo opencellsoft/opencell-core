@@ -223,6 +223,9 @@ public class JournalEntry extends AuditableEntity {
      */
     @Column(name = "document_type")
     private String documentType;
+
+    @Column(name = "matching_code")
+    private String matchingCode;
     
     public AccountOperation getAccountOperation() {
         return accountOperation;
@@ -456,4 +459,11 @@ public class JournalEntry extends AuditableEntity {
 		this.documentType = documentType;
 	}
 
+    public String getMatchingCode() {
+        return matchingCode;
+    }
+
+    public void setMatchingCode(String matchingCode) {
+        this.matchingCode = matchingCode;
+    }
 }
