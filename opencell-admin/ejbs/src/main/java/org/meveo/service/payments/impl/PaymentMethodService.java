@@ -96,6 +96,9 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
         if (paymentMethod instanceof CardPaymentMethod) {
             CardPaymentMethod cardPayment = (CardPaymentMethod) paymentMethod;
+            if (cardTokenAlreadyExist(cardPayment)) {
+                throw new BusinessException("A card with the same number already exists");
+            }
             if (!cardPayment.isValidForDate(new Date())) {
                 throw new BusinessException("Cant add expired card");
             }
@@ -115,6 +118,15 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
             getEntityManager().createNamedQuery("PaymentMethod.updatePreferredPaymentMethod").setParameter("id", paymentMethod.getId())
                 .setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
         }
+    }
+
+    private boolean cardTokenAlreadyExist(CardPaymentMethod cardPaymentMethod) throws BusinessException {
+        long numberOfCardsByAccountAndCardInfo = (long) getEntityManager().createNamedQuery("PaymentMethod.getNumberOfCardCustomerAccount")
+                .setParameter("customerAccountId", cardPaymentMethod.getCustomerAccount().getId())
+                .setParameter("hiddenCardNumber", cardPaymentMethod.getHiddenCardNumber())
+                .setParameter("cardType", cardPaymentMethod.getCardType()).getSingleResult();
+
+        return numberOfCardsByAccountAndCardInfo > 0;
     }
 
     public void createMandate(DDPaymentMethod ddpaymentMethod) throws BusinessException{
@@ -317,7 +329,6 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
      * Store payment information in payment gateway and return token id in a payment gateway.
      * Reserved to GlobalCollect platform
      * 
-     * @param ddPaymentMethod Direct debit method
      * @param customerAccount Customer account
      * @throws BusinessException business exception.
      * 
