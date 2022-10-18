@@ -356,4 +356,8 @@
         <constraint>currentUser.hasRole('cdrManager')</constraint>
         <constraint type="READ">currentUser.hasRole('cdrVisualizer')</constraint>
     </page>
+    
+    <page view-id=".+\/finance\/revenueSchedules\/.+">
+		<constraint type="READ">currentUser.hasRole('reportExtractManagementAdvanced')</constraint>
+	</page>
 </page-access>
