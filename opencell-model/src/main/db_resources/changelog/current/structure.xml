@@ -14347,6 +14347,12 @@ order by date_trunc('month', i.invoice_date) DESC
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
     </changeSet>
     
+    <changeSet id="#INTRD-10581_20221018" author="HichamHANINE">
+        <addColumn tableName="meveo_script_instance">
+            <column name="description_i18n" type="${type.json}"></column>
+        </addColumn>
+    </changeSet>
+    
 	<changeSet id="#INTRD-9871_20220919" author="TarikFA.">
 	
 		<dropForeignKeyConstraint constraintName="price_plan_matrix_line_fk"  baseTableName="billing_wallet_operation"/>
@@ -14476,5 +14482,14 @@ order by date_trunc('month', i.invoice_date) DESC
             	<constraints nullable="false" />
             </column>
         </addColumn>
+	</changeSet>
+	
+	<changeSet id="#INTRD-10522_20221017_matchingCode-journal-entry" author="aelmalki">
+		<addColumn tableName="accounting_journal_entry">
+			<column name="matching_code" type="varchar(255)" />
+		</addColumn>
+		<addColumn tableName="crm_provider">
+			<column name="current_matching_code" type="varchar(255)" />
+		</addColumn>
 	</changeSet>
 </databaseChangeLog>
