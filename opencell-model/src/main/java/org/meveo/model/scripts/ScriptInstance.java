@@ -20,6 +20,7 @@ package org.meveo.model.scripts;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Cacheable;
@@ -124,6 +125,18 @@ public class ScriptInstance extends EnableBusinessEntity {
     @CollectionTable(name = "adm_script_sourc_role", joinColumns = @JoinColumn(name = "script_instance_id", referencedColumnName = "id"))   
     private Set<String> sourcingRoles = new HashSet<String>();
 
+    @Type(type = "json")
+    @Column(name = "description_i18n", columnDefinition = "jsonb")
+    private Map<String, String> descriptionI18n;    
+    
+    public Map<String, String> getDescriptionI18n() {
+        return descriptionI18n;
+    }
+
+    public void setDescriptionI18n(Map<String, String> descriptionI18n) {
+        this.descriptionI18n = descriptionI18n;
+    }
+    
     public ScriptInstance() {
 
     }
