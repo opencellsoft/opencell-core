@@ -38,19 +38,8 @@ import java.lang.reflect.TypeVariable;
 import java.net.HttpURLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.TreeMap;
 import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -123,6 +112,7 @@ import org.meveo.model.IEntity;
 import org.meveo.model.IJPAVersionedEntity;
 import org.meveo.model.catalog.*;
 import org.meveo.model.communication.MeveoInstance;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.ScriptInstance;
@@ -736,6 +726,7 @@ public class EntityExportImportService implements Serializable {
         xstream.omitField(ProductOffering.class, "lifeCycleStatus");
         //status for the OfferTemplate should be by default DRAFT
         xstream.omitField(Product.class, "status");
+        xstream.omitField(Attribute.class, "productVersionAttributes");
     }
 
 
@@ -1205,7 +1196,9 @@ public class EntityExportImportService implements Serializable {
 
         // Update statistics
         importStats.updateSummary(entityToSave.getClass(), 1);
-        return entityFound == null ? entityToSave : entityFound;
+        IEntity entityToReturn = entityFound == null ? entityToSave : entityFound;
+        ImportResultService.createImportResultDtoGeneric(importStats.getImportResultDto(), entityToReturn);
+        return entityToReturn;
     }
 
     private IEntity identifyEntity(IEntity entityToSave, boolean lookupById, boolean lookupByCode) {

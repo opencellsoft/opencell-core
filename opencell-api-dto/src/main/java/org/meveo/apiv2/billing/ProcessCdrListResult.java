@@ -1,6 +1,7 @@
 package org.meveo.apiv2.billing;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.meveo.api.dto.billing.ChargeCDRResponseDto;
@@ -10,6 +11,26 @@ import org.meveo.api.dto.response.BaseResponse;
 public class ProcessCdrListResult extends BaseResponse {
 
     private static final long serialVersionUID = 5503067125480351868L;
+
+    /**
+     * The amount without Tax.
+     */
+    private BigDecimal amountWithoutTax;
+
+    /**
+     * The tax amount.
+     */
+    private BigDecimal amountTax;
+
+    /**
+     * The amount with tax.
+     */
+    private BigDecimal amountWithTax;
+
+    /**
+     * The call wallet Operation Count.
+     */
+    private Integer walletOperationCount;
 
     /**
      * Processing mode
@@ -144,5 +165,37 @@ public class ProcessCdrListResult extends BaseResponse {
         public synchronized void addFail() {
             this.fail++;
         }
+    }
+
+    public BigDecimal getAmountWithoutTax() {
+        return amountWithoutTax;
+    }
+
+    public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+        this.amountWithoutTax = amountWithoutTax;
+    }
+
+    public BigDecimal getAmountTax() {
+        return amountTax;
+    }
+
+    public void setAmountTax(BigDecimal amountTax) {
+        this.amountTax = amountTax;
+    }
+
+    public BigDecimal getAmountWithTax() {
+        return amountWithTax;
+    }
+
+    public void setAmountWithTax(BigDecimal amountWithTax) {
+        this.amountWithTax = amountWithTax;
+    }
+
+    public Integer getWalletOperationCount() {
+        return walletOperationCount;
+    }
+
+    public void setWalletOperationCount(Integer walletOperationCount) {
+        this.walletOperationCount = walletOperationCount;
     }
 }

@@ -241,7 +241,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         for (WalletOperation walletOp : walletOps) {
             RatedTransaction ratedTransaction = new RatedTransaction(walletOp);
             create(ratedTransaction);
-            em.createNamedQuery("WalletOperation.setStatusToTreatedWithRT").setParameter("rt", ratedTransaction).setParameter("now", now).setParameter("id", walletOp.getId()).executeUpdate();
+            walletOp.setStatus(WalletOperationStatusEnum.TREATED);
+            walletOp.setUpdated(now);
+            walletOp.setRatedTransaction(ratedTransaction);
+            walletOperationService.updateNoCheck(walletOp);
+            //em.createNamedQuery("WalletOperation.setStatusToTreatedWithRT").setParameter("rt", ratedTransaction).setParameter("now", now).setParameter("id", walletOp.getId()).executeUpdate();
         }
     }
 
@@ -1416,7 +1420,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public RatedTransaction createRatedTransaction(String billingAccountCode, String userAccountCode,
             String subscriptionCode, String serviceInstanceCode, String chargeInstanceCode, Date usageDate,
-            BigDecimal unitAmountWithoutTax, BigDecimal quantity) {
+            BigDecimal unitAmountWithoutTax, BigDecimal quantity, String param1, String param2, String param3, String paramExtra) {
 
         String errors = "";
         if (billingAccountCode == null) {
@@ -1461,7 +1465,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
         RatedTransaction rt = new RatedTransaction(usageDate, unitAmounts[0], unitAmounts[1], unitAmounts[2], quantity,
                 amounts[0], amounts[1], amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount, userAccount,
-                null, null, null, null, null, null, subscription, null, null, null, subscription.getOffer(), null,
+                null, param1, param2, param3, paramExtra, null, subscription, null, null, null, subscription.getOffer(), null,
                 serviceInstance.getCode(), serviceInstance.getCode(), null, null, subscription.getSeller(), taxInfo.tax,
                 taxPercent, serviceInstance, taxClass, null, RatedTransactionTypeEnum.MANUAL, chargeInstance, null);
         rt.setAccountingArticle(accountingArticle);
@@ -1476,7 +1480,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @return
      */
     public void updateRatedTransaction(RatedTransaction ratedTransaction, BigDecimal unitAmountWithoutTax,
-            BigDecimal quantity) {
+            BigDecimal quantity, String param1, String param2, String param3, String paramExtra) {
         BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(unitAmountWithoutTax, unitAmountWithoutTax,
                 ratedTransaction.getTaxPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
         BigDecimal AmountWithoutTax = unitAmountWithoutTax.multiply(quantity);
@@ -1489,6 +1493,20 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setAmountWithoutTax(amounts[0]);
         ratedTransaction.setAmountWithTax(amounts[1]);
         ratedTransaction.setAmountTax(amounts[2]);
+        
+
+        if(param1 != null) {
+            ratedTransaction.setParameter1(param1);
+        }
+        if(param2 != null) {
+            ratedTransaction.setParameter2(param2);
+        }
+        if(param3 != null) {
+            ratedTransaction.setParameter3(param3);
+        }
+        if(paramExtra != null) {
+            ratedTransaction.setParameterExtra(paramExtra);
+        }
 
         update(ratedTransaction);
 

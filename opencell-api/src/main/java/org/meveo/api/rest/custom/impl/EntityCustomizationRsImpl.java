@@ -438,7 +438,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
 
     @Override
     public EntityCustomActionResponseDto findActionV2(String actionCode, String appliesTo) {
-        return findActionV2(actionCode, appliesTo);
+        return findAction(actionCode, appliesTo);
     }
 
     @Override

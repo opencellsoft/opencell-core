@@ -118,6 +118,7 @@ public class ImportExportResourceImpl implements ImportExportResource {
             dto.getSummary().put(summaryInfo.getKey().getName(), summaryInfo.getValue());
         }
 
+        dto.setImportResultDto(statistics.getImportResultDto());
         return dto;
     }
 

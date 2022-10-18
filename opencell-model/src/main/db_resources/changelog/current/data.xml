@@ -8190,5 +8190,85 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>template_name = 'DEFAULT_SD_TEMPLATE'</where>
 		</update>
 	</changeSet>
+	
+	<changeSet id="#INTRD-10199_20221010" author="TarikFA.">
+		<update tableName="ar_occ_template" >
+			<column name="accounting_code_id" valueNumeric="null"></column>
+			<where>id = -50</where>
+		</update>
+		<delete tableName="billing_accounting_code">
+			<where>code = 'T3P9476'</where>
+		</delete>
+	</changeSet>
+
+	<changeSet id="#INTRD-10400_20221007" author="HichamHANINE">
+    	<update tableName="security_deposit">
+    	<column name="status" value="VALIDATED"/>
+    	<where>status='NEW'</where>
+    	</update>
+    </changeSet>
+    
+    <changeSet id="#INTRD-10592_20221014" author="TarikFA.">
+    	<update tableName="billing_accounting_code">
+            <column name="description" value="General accounts payable"></column>
+    		<where>code = '401000000'</where>
+    	</update>
+    </changeSet>
+
+    <changeSet id="#INTRD-10587_20221014" author="TarikFA.">
+    	<update tableName="ar_occ_template" >
+			<column name="accounting_code_id" valueNumeric="null"></column>
+			<where>id in (SELECT id from billing_accounting_code where code in ('120.121.21.4', '120.121.21.2', 'T3P9476'))</where>
+		</update>
+		<update tableName="billing_invoice_sub_cat" >
+            <column name="accounting_code_id" value="null" />
+			<where>id in (SELECT id from billing_accounting_code where code in ('120.121.21.4', '120.121.21.2', 'T3P9476'))</where>
+		</update>
+		<delete tableName="billing_accounting_code">
+			<where>code in ('120.121.21.4', '120.121.21.2')</where>
+		</delete>
+		
+		<update tableName="ar_occ_template" >
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
+			<where>code = 'PAY_BATCH'</where>
+		</update>
+    </changeSet>
+    
+	<changeSet id="#INTRD-10572_20221014" author="HichamHANINE">
+		<update tableName="crm_customer_category">
+			<column name="tax_category_id" value="-3" />
+			<where>id in (-1,-2)</where>
+		</update>
+    </changeSet>
+    
+   	<changeSet id="#INTRD-10572_20221018" author="HichamHANINE">
+   		<update tableName="crm_customer_category">
+			<column name="tax_category_id" value="-1" />
+			<where>id in (-1,-2)</where>
+		</update>
+		<update tableName="billing_tax_mapping">
+			<column name="tax_category_id" value="-1" />
+			<where>tax_category_id = -3</where>
+		</update>
+		<update tableName="billing_billing_account">
+			<column name="tax_category_id" value="-1" />
+			<where>tax_category_id = -3</where>
+		</update>
+		<update tableName="billing_tax_category">			
+			<column name="code" value="REGULAR1"/>        
+			<where>id = -3</where>
+		</update>
+		<update tableName="billing_tax_category">			
+			<column name="code" value="REGULAR"/>
+            <column name="description_i18n" value='{"FRA":"Standard","ENG":"Regular"}'/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_tax_category_regular" />            
+			<where>id = -1</where>
+		</update>
+		<delete tableName="billing_tax_category">
+			<where>id = -3</where>
+		</delete>
+    </changeSet>
 
 </databaseChangeLog>

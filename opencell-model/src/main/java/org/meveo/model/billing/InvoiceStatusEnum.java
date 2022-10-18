@@ -69,7 +69,7 @@ public enum InvoiceStatusEnum {
 
         SUSPECT.id = 2;
         SUSPECT.label = "invoiceStatusEnum.suspect";
-        SUSPECT.previousStats = Arrays.asList(new InvoiceStatusEnum[]{NEW});
+        SUSPECT.previousStats = Arrays.asList(new InvoiceStatusEnum[]{NEW, DRAFT});
         
 
         REJECTED.id = 3;

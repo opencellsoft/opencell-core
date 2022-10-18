@@ -1483,7 +1483,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createAggregatesAndInvoiceWithIl(BillingRun billingRun, long nbRuns, long waitingMillis,
-                                                 Long jobInstanceId) throws BusinessException {
+                                                 Long jobInstanceId, JobExecutionResultImpl jobExecutionResult) throws BusinessException {
         List<? extends IBillableEntity> entities = getEntitiesToInvoice(billingRun);
         billingRun.setBillableBillingAcountNumber(entities.size());
         SubListCreator<? extends IBillableEntity> subListCreator;
@@ -1496,7 +1496,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         MeveoUser lastCurrentUser = currentUser.unProxy();
         while (subListCreator.isHasNext()) {
             asyncReturns.add(createAggregatesAndInvoiceAsyncWithIL(subListCreator.getNextWorkSet(),
-                    billingRun, jobInstanceId, null, lastCurrentUser, !billingRun.isSkipValidationScript()));
+                    billingRun, jobInstanceId, null, lastCurrentUser, !billingRun.isSkipValidationScript(), jobExecutionResult));
             try {
                 Thread.sleep(waitingMillis);
             } catch (InterruptedException e) {
@@ -1528,9 +1528,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     private Future<String> createAggregatesAndInvoiceAsyncWithIL(List<? extends IBillableEntity> entities,
-                                                                BillingRun billingRun, Long jobInstanceId,
-                                                                MinAmountForAccounts minAmountForAccounts,
-                                                                MeveoUser lastCurrentUser, boolean automaticInvoiceCheck) {
+                                                                 BillingRun billingRun, Long jobInstanceId,
+                                                                 MinAmountForAccounts minAmountForAccounts,
+                                                                 MeveoUser lastCurrentUser, boolean automaticInvoiceCheck,
+                                                                 JobExecutionResultImpl jobExecutionResult) {
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
         for (IBillableEntity entityToInvoice : entities) {
             if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
@@ -1541,6 +1542,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                         billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, true) : null,
                         null, null, null, minAmountForAccounts,
                         false, automaticInvoiceCheck, false);
+                jobExecutionResult.addNbItemsToProcess(invoices.size());
+                jobExecutionResult.addNbItemsCorrectlyProcessed(invoices.size());
                 updateBillingRunWithStatistics(invoices);
             } catch (Exception exception) {
                 throw new BusinessException(exception);
@@ -1584,7 +1587,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         Filter filter = new Filter();
         if(invoicingV2) {
             filter.setPollingQuery("SELECT il FROM InvoiceLine il WHERE il.id in (" +
-                    billingRun.getExceptionalILIds().stream().map(id -> String.valueOf(id))
+                    billingRun.getExceptionalILIds().stream().map(String::valueOf)
                             .collect(joining(",")) + ") AND il.status = 'OPEN'");
         } else {
             Map<String, String> filters = billingRun.getFilters();
