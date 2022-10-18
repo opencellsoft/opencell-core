@@ -8226,6 +8226,12 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>code = 'PAY_BATCH'</where>
 		</update>
     </changeSet>
+    
+    <changeSet id="#INTRD-10541_20221017" author="TarikFA.">
+    	<update tableName="billing_linked_invoices">
+    		<column name="type" value="ADJUSTMENT" />
+    	</update>
+    </changeSet>
 
 
 </databaseChangeLog>

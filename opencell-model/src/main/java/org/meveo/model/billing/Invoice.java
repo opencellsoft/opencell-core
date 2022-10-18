@@ -1894,4 +1894,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public BigDecimal getAppliedRate() {
         return this.lastAppliedRate != null && !this.lastAppliedRate.equals(ZERO) ? this.lastAppliedRate : ONE;
     }
+
+
+    public BigDecimal getInvoiceBalance() {
+        return invoiceBalance;
+    }
+
+
+    public void setInvoiceBalance(BigDecimal invoiceBalance) {
+        this.invoiceBalance = invoiceBalance;
+    }
 }

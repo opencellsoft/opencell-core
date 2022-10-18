@@ -6272,6 +6272,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if(invoiceResource.getDiscount() == null && toUpdate.getDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
             toUpdate.setDiscountAmount(BigDecimal.ZERO);
         }
+        
+        
+        if(toUpdate.getInvoiceType() != null && invoiceTypeService.getListAdjustementCode().contains(toUpdate.getInvoiceType().getCode())) {
+           boolean isAccountingArticleAdt = toUpdate.getInvoiceLines() != null && toUpdate.getInvoiceLines().stream().allMatch(il -> il.getAccountingArticle() != null && il.getAccountingArticle().getCode().equals("ADV-STD"));
+           if(!isAccountingArticleAdt) {
+               throw new BusinessException("Invoice of type " + invoiceTypeService.getListAdjustementCode() + ", must use ADV-STD article");
+           }
+           toUpdate.setInvoiceBalance(invoiceResource.getAmountWithTax());
+            
+        }
 
         return update(toUpdate);
     }
