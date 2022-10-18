@@ -14492,4 +14492,13 @@ order by date_trunc('month', i.invoice_date) DESC
 			<column name="current_matching_code" type="varchar(255)" />
 		</addColumn>
 	</changeSet>
+
+    <changeSet id="#10629_20221018" author="zelmeliani">
+        <addColumn tableName="billing_invoice_line">
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" />
+            </column>
+            <column name="cf_values" type="${type.json}" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
