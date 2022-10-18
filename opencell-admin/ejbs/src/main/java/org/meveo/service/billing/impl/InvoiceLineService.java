@@ -598,16 +598,11 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 			final Subscription subscription = serviceInstance.getSubscription();
 			if(subscription!=null) {
 				invoiceLine.setSubscription(subscription);
-				//invoiceLine.setUserAccount(subscription.getUserAccount());
 			}
         }
         if (entity instanceof Subscription) {
             final Subscription subscription = (Subscription) entity;
 			invoiceLine.setSubscription(subscription);
-            //invoiceLine.setUserAccount(subscription.getUserAccount());
-        }
-        if (entity instanceof UserAccount) {
-            //invoiceLine.setUserAccount((UserAccount) entity);
         }
         if (billableEntity instanceof Subscription) {
             invoiceLine.setSubscription((Subscription) billableEntity);
@@ -1199,7 +1194,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     
     public List<Object[]> findMinimumsTocheck(BillingRun billingRun, String joinPath) {
 		if (joinPath == null || !joinPath.contains("mt")) {
-			return null;
+			return Collections.emptyList();
 		}
 		String amount = appProvider.isEntreprise() ? " sum(il.amountWithoutTax) " : " sum(il.amountWithTax) ";
 		String baseQuery = "SELECT mt, ba, " + amount + " FROM InvoiceLine il join il.billingAccount ba " + joinPath + " WHERE il.status='OPEN' AND il.billingRun.id=:billingRunId AND mt.minimumAmountEl is not null GROUP BY mt, ba HAVING (mt.minimumAmountEl like '#{%' OR cast(mt.minimumAmountEl AS big_decimal)>"+ amount + ")";
