@@ -18,7 +18,7 @@ public class ExtraMinAmount implements Serializable{
     /**
      * The Entity generating the amounts
      */
-    private IInvoicingMinimumApplicable entity;
+    private transient IInvoicingMinimumApplicable entity;
 
     public ExtraMinAmount(IInvoicingMinimumApplicable entity, Map<String, Amounts> createdAmount) {
         this.createdAmount = createdAmount;
