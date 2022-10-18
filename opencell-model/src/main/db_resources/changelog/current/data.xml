@@ -8208,6 +8208,13 @@ public class CustomGatewayPaymentScript extends PaymentScript{
     	</update>
     </changeSet>
     
+    <changeSet id="#INTRD-10592_20221014" author="TarikFA.">
+    	<update tableName="billing_accounting_code">
+            <column name="description" value="General accounts payable"></column>
+    		<where>code = '401000000'</where>
+    	</update>
+    </changeSet>
+
     <changeSet id="#INTRD-10587_20221014" author="TarikFA.">
     	<update tableName="ar_occ_template" >
 			<column name="accounting_code_id" valueNumeric="null"></column>
@@ -8233,5 +8240,11 @@ public class CustomGatewayPaymentScript extends PaymentScript{
     	</update>
     </changeSet>
 
+	<changeSet id="#INTRD-10572_20221014" author="HichamHANINE">
+		<update tableName="crm_customer_category">
+			<column name="tax_category_id" value="-3" />
+			<where>id in (-1,-2)</where>
+		</update>
+    </changeSet>
 
 </databaseChangeLog>
