@@ -5966,7 +5966,7 @@
             <column name="reuse" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
-			<column name="description_i18n" type="${type.json}"></column>
+            <column name="description_i18n" type="${type.json}"></column>
         </createTable>
 
     </changeSet>
