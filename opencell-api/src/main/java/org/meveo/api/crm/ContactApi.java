@@ -135,6 +135,10 @@ public class ContactApi extends BaseApi {
             missingParameters.add("email");
         }
 
+        if(postData.getAddressBookContacts() == null || postData.getAddressBookContacts().isEmpty()){
+            missingParameters.add("AddressBookContacts");
+        }
+
         handleMissingParameters();
 
         if ((postData.getContactInformation() != null && !StringUtils.isBlank(postData.getContactInformation().getEmail()))){
@@ -196,6 +200,10 @@ public class ContactApi extends BaseApi {
 
         if ((postData.getContactInformation() == null || StringUtils.isBlank(postData.getContactInformation().getEmail())) && StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("email or code");
+        }
+
+        if(postData.getAddressBookContacts() == null || postData.getAddressBookContacts().isEmpty()){
+            missingParameters.add("AddressBookContacts");
         }
 
         handleMissingParameters();
@@ -480,6 +488,10 @@ public class ContactApi extends BaseApi {
         if ((postData.getContactInformation() == null || StringUtils.isBlank(postData.getContactInformation().getEmail())) && StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("email or code");
             // missingParameters.add("code");
+        }
+
+        if(postData.getAddressBookContacts() == null || postData.getAddressBookContacts().isEmpty()){
+            missingParameters.add("AddressBookContacts");
         }
 
         handleMissingParameters();
