@@ -11722,6 +11722,7 @@
 			<column name="cancel_reason" type="varchar(255)"/>
 			<column name="sd_invoice_id" type="bigint"/>
 			<column name="billing_account_id" type="bigint"/>
+            <column name="sd_adjustment_id" type="bigint" />
 		</createTable>
 
 		<createTable tableName="security_deposit_transaction">
@@ -17386,6 +17387,16 @@
                                  baseTableName="com_contact_category_contact"
                                  referencedTableName="com_contact"
                                  referencedColumnNames="id" />
+    </changeSet>
+
+    <changeSet id="#INTRD-10693_20221019-sd-adjustment" author="a.rouaguebe">
+        <addForeignKeyConstraint baseTableName="security_deposit"
+                                 baseColumnNames="sd_adjustment_id"
+                                 constraintName="fk_security_adjustment_invoice"
+                                 referencedTableName="billing_invoice"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
     
     

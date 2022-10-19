@@ -14492,4 +14492,16 @@ order by date_trunc('month', i.invoice_date) DESC
 			<column name="current_matching_code" type="varchar(255)" />
 		</addColumn>
 	</changeSet>
+    <changeSet id="#INTRD-10693_20221019-sd-adjustment" author="a.rouaguebe">
+        <addColumn tableName="security_deposit">
+            <column name="sd_adjustment_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="security_deposit"
+                                 baseColumnNames="sd_adjustment_id"
+                                 constraintName="fk_security_adjustment_invoice"
+                                 referencedTableName="billing_invoice"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
 </databaseChangeLog>
