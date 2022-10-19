@@ -288,8 +288,14 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
                     headerSubCat.setId(subCatInvoiceAgregate.getId());
                     headerSubCat.setDescription(invoiceSubCategory.getDescription());
                     headerSubCat.setCode(invoiceSubCategory.getCode());
-                    headerSubCat.setAmountWithoutTax(subCatInvoiceAgregate.getAmountWithoutTax());
-                    headerSubCat.setAmountWithTax(subCatInvoiceAgregate.getAmountWithTax());
+                    if(headerSubCategories.get(invoiceSubCategory.getId().toString()) != null) {
+                        InvoiceSubCategoryDTO dto = headerSubCategories.get(invoiceSubCategory.getId().toString());
+                        headerSubCat.setAmountWithoutTax(subCatInvoiceAgregate.getAmountWithoutTax().add(dto.getAmountWithoutTax()));
+                        headerSubCat.setAmountWithTax(subCatInvoiceAgregate.getAmountWithTax().add(dto.getAmountWithTax()));
+                    } else {
+                        headerSubCat.setAmountWithoutTax(subCatInvoiceAgregate.getAmountWithoutTax());
+                        headerSubCat.setAmountWithTax(subCatInvoiceAgregate.getAmountWithTax());
+                    }
                     headerSubCategories.put(invoiceSubCategory.getId().toString(), headerSubCat);
 
                     ServiceBasedLazyDataModel<RatedTransaction> rtDM = new ServiceBasedLazyDataModel<RatedTransaction>() {
