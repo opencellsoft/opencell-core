@@ -39,7 +39,6 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.DatePeriod;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
@@ -49,6 +48,7 @@ import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.BillingRunService;
+import org.meveo.service.billing.invoicing.impl.BillingService;
 import org.meveo.util.MeveoParamBean;
 
 /**
@@ -60,6 +60,9 @@ public class InvoicingApi extends BaseApi {
 
     @Inject
     BillingRunService billingRunService;
+    
+    @Inject
+    BillingService billingService;
 
     @Inject
     BillingCycleService billingCycleService;
@@ -215,10 +218,14 @@ public class InvoicingApi extends BaseApi {
             missingParameters.add("billingRunId");
             handleMissingParameters();
         }
-        billingRunService.forceValidate(billingRunId);
+        if("true".equals(paramBean.getProperty("invoicing.useRefactoredInvoicingJob", "true"))) {
+        	billingService.forceValidate(billingRunId);
+        }else {
+        	billingRunService.forceValidate(billingRunId);
+        }
        
     }
-
+   
     public void cancelBillingRun(Long billingRunId) throws MissingParameterException, EntityDoesNotExistsException, BusinessApiException, BusinessException {
         if (billingRunId == null || billingRunId.longValue() == 0) {
             missingParameters.add("billingRunId");
