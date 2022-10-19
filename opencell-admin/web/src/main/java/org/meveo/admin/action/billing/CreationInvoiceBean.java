@@ -17,6 +17,7 @@
  */
 package org.meveo.admin.action.billing;
 
+import static java.math.BigDecimal.ZERO;
 import static org.meveo.commons.utils.NumberUtils.round;
 
 import java.io.File;
@@ -50,6 +51,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.BillingAccount;
@@ -78,6 +80,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceAggregateHandler;
+import org.meveo.service.billing.impl.InvoiceAgregateService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
@@ -208,6 +211,12 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
     private boolean amountsAndlinesUpdated=false;
     
+    @Inject
+    private InvoiceAgregateService invoiceAgregateService;
+
+    private List<RatedTransaction> ratedTransactionsToSave = new ArrayList<>();
+    private List<RatedTransaction> ratedTransactionsToRemove = new ArrayList<>();
+
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
@@ -220,12 +229,13 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
     @Override
     public Invoice initEntity() {
-        final String id = facesContext.getExternalContext().getRequestParameterMap().get("objectId");
-        initialRTList = new ArrayList<RatedTransaction>();
-        if (id != null) {
-            setObjectId(Long.parseLong(id));
-            entity = super.initEntity();
-            initialRTList = ratedTransactionService.listRatedTransactionsByInvoice(entity);
+    	final String id = facesContext.getExternalContext().getRequestParameterMap().get("objectId");
+    	initialRTList = new ArrayList<>();
+		if (id != null) {
+    		setObjectId(Long.parseLong(id));
+    		entity = super.initEntity();
+    		initialRTList = ratedTransactionService.listRatedTransactionsByInvoice(entity);
+    		ratedTransactionsToSave = initialRTList;
             for (RatedTransaction ratedTransaction : initialRTList) {
                 aggregateHandler.addRT(entity.getInvoiceDate(), ratedTransaction);
             }
@@ -259,6 +269,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             entity.setAmountTax(BigDecimal.ZERO);
             entity.setNetToPay(BigDecimal.ZERO);
         }
+        amountsAndlinesUpdated = false;
         return entity;
     }
 
@@ -388,8 +399,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             }
         }
         aggregateHandler.addRT(entity.getInvoiceDate(), ratedTransaction);
+        ratedTransactionsToSave.add(ratedTransaction);
         updateAmountsAndLines();
-
     }
 
     /**
@@ -500,10 +511,10 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
     @ActionMethod
     public void deleteLinkedInvoiceCategoryDetaild() {
-
-        List<RatedTransaction> listToRemove = new ArrayList<RatedTransaction>();
+        List<RatedTransaction> listToRemove = new ArrayList<>();
         listToRemove.addAll(selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactionsToAssociate());
-        for (RatedTransaction rt : listToRemove) {
+        ratedTransactionsToRemove.addAll(selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactionsToAssociate());
+		for (RatedTransaction rt : listToRemove) {
             aggregateHandler.removeRT(rt);
         }
         updateAmountsAndLines();
@@ -527,8 +538,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     private void synchroniseAmounts(RatedTransaction rt) {
-        BigDecimal uawot = rt.getUnitAmountWithoutTax() != null ? rt.getUnitAmountWithoutTax() : BigDecimal.ZERO;
-        BigDecimal rtAwot = rt.getAmountWithoutTax() != null ? rt.getAmountWithoutTax() : BigDecimal.ZERO;
+        BigDecimal uawot = rt.getUnitAmountWithoutTax() != null ? rt.getUnitAmountWithoutTax() : ZERO;
+        BigDecimal rtAwot = rt.getAmountWithoutTax() != null ? rt.getAmountWithoutTax() : ZERO;
         BigDecimal newAwot = uawot.multiply(rt.getQuantity());
         if (newAwot.compareTo(rtAwot) != 0) {
             BigDecimal amountTax = NumberUtils.computeTax(newAwot, rt.getTaxPercent(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
@@ -694,51 +705,142 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     		} else{
     			entity = invoiceService.retrieveIfNotManaged(entity);
     		}
+        }
+        if (!ratedTransactionsToRemove.isEmpty()) {
+            ratedTransactionsToSave.removeAll(ratedTransactionsToRemove);
+            ratedTransactionService.cancelRatedTransactions(ratedTransactionsToRemove
+                    .stream()
+                    .map(RatedTransaction::getId)
+                    .collect(Collectors.toList()));
+        }
+        detachRts();
+        invoiceAgregateService.deleteInvoiceAggregates(entity.getId());
+        Map<String, CategoryInvoiceAgregate> categoryInvoiceAggregateMap = new HashMap<>();
+        List<SubCategoryInvoiceAgregate> newSubCategoryInvoiceAggregates = new ArrayList<>();
+        for (RatedTransaction ratedTransaction : ratedTransactionsToSave) {
+            InvoiceSubCategory invoiceSubCategory =
+                    invoiceSubCategoryService.refreshOrRetrieve(ratedTransaction.getInvoiceSubCategory());
+            CategoryInvoiceAgregate categoryInvoiceAgregate;
+            if(categoryInvoiceAggregateMap.get(invoiceSubCategory.getInvoiceCategory().getCode()) != null) {
+                categoryInvoiceAgregate = categoryInvoiceAggregateMap.get(invoiceSubCategory.getInvoiceCategory().getCode());
+                categoryInvoiceAgregate.setAmountTax(categoryInvoiceAgregate.getAmountTax().add(ratedTransaction.getAmountTax()));
+                categoryInvoiceAgregate.
+                        setAmountWithTax(categoryInvoiceAgregate.getAmountWithTax().add(ratedTransaction.getAmountWithTax()));
+                categoryInvoiceAgregate.
+                        setAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax().add(ratedTransaction.getAmountWithoutTax()));
+            } else {
+                categoryInvoiceAgregate = createCategoryInvoiceAggregate(ratedTransaction, entity, invoiceSubCategory);
+                categoryInvoiceAggregateMap.put(invoiceSubCategory.getInvoiceCategory().getCode(), categoryInvoiceAgregate);
+            }
+            SubCategoryInvoiceAgregate subCategoryInvoiceAgregate =
+                    createSubCategoryAggregate(ratedTransaction, entity, categoryInvoiceAgregate, invoiceSubCategory);
+            ratedTransaction.setInvoiceAgregateF(subCategoryInvoiceAgregate);
+            newSubCategoryInvoiceAggregates.add(subCategoryInvoiceAgregate);
+            TaxInvoiceAgregate invoiceAggregateTax = createTaxAggregate(ratedTransaction, entity);
+            invoiceAgregateService.create(invoiceAggregateTax);
+        }
+        categoryInvoiceAggregateMap.values()
+                .forEach(categoryInvoiceAggregate -> invoiceAgregateService.create(categoryInvoiceAggregate));
+        newSubCategoryInvoiceAggregates
+                .forEach(subCategoryInvoiceAggregate -> invoiceAgregateService.create(subCategoryInvoiceAggregate));
+        for (RatedTransaction ratedTransaction : ratedTransactionsToSave) {
+             if(ratedTransaction.getId() == null) {
+                 ratedTransactionService.create(ratedTransaction);
+             } else {
+                 ratedTransactionService.update(ratedTransaction);
+             }
+        }
+    	if(entity.getId()  == null) {
+	        BillingAccount billingAccount = getFreshBA();
+	        Customer customer = billingAccount.getCustomerAccount().getCustomer();
+	        entity.setBillingAccount(billingAccount);
+	        entity.setDetailedInvoice(isDetailed());
+	        if (entity.getSeller() == null) {
+	            entity.setSeller(customer.getSeller());
+	        }
+	        invoiceService.postCreate(entity);
+	        
+	        
+    	}
+    	entity.setBillingAccount(billingAccountService.findById(entity.getBillingAccount().getId()));
+    	if(entity.getInvoiceNumber() == null) {
+	        entity = serviceSingleton.assignInvoiceNumberVirtual(entity);
+	        try {
+	            entity = invoiceService.generateXmlAndPdfInvoice(entity, true);
+	        } catch (Exception e) {
+	            log.error("Failed to create an XML and PDF invoice", e);
+	            messages.error("Error generating xml / pdf invoice=" + e.getMessage());
+	        }
     	}
 
-        BillingAccount billingAccount = getFreshBA();
+        //return getListViewName();*/
+        aggregateHandler.reset();
+        initEntity();
+        return "";
+    }
 
-        List<RatedTransaction> rts = null;
-        for (Entry<String, TaxInvoiceAgregate> entry : aggregateHandler.getTaxInvAgregateMap().entrySet()) {
-            TaxInvoiceAgregate taxInvAgr = entry.getValue();
-            taxInvAgr.setInvoice(entity);
-            taxInvAgr.setBillingAccount(billingAccount);
-            taxInvAgr.updateAudit(currentUser);
-        }
-
-        for (Entry<String, CategoryInvoiceAgregate> entry : aggregateHandler.getCatInvAgregateMap().entrySet()) {
-            CategoryInvoiceAgregate catInvAgr = entry.getValue();
-            catInvAgr.setInvoice(entity);
-            catInvAgr.setBillingAccount(billingAccount);
-            catInvAgr.updateAudit(currentUser);
-//            catInvAgr.setSubCategoryInvoiceAgregates(new HashSet<SubCategoryInvoiceAgregate>());
-        }
-
-        entity.setBillingAccount(billingAccount);
-        entity.setDetailedInvoice(isDetailed());
-        if (entity.getSeller() == null) {
-            entity.setSeller(billingAccount.getCustomerAccount().getCustomer().getSeller());
-        }
-        rts = saveRTs();
-        
-        invoiceService.postCreate(entity);
-        
-        if (entity.getInvoiceNumber() == null) {
-            entity.setStatus(InvoiceStatusEnum.VALIDATED);
-            entity = serviceSingleton.assignInvoiceNumberVirtual(entity);
-        }
-        try {
-            entity = invoiceService.generateXmlAndPdfInvoice(entity, true);
-        } catch (Exception e) {
-            log.error("Failed to create an XML and PDF invoice", e);
-            messages.error("Error generating xml / pdf invoice=" + e.getMessage());
-        }
-        if ("DRAFT".equals(entity.getInvoiceType().getCode())) {
-            for (RatedTransaction rt : rts) {
-                ratedTransactionService.remove(rt);
+    private void detachRts() {
+        List<Long> ratedTransactionsToDetach  = new ArrayList<>();
+        for (RatedTransaction ratedTransaction : ratedTransactionsToSave) {
+            if(ratedTransaction.getId() != null && ratedTransaction.getInvoiceAgregateF() != null
+                    && ratedTransaction.getInvoiceAgregateF().getId() != null) {
+                ratedTransaction.setInvoiceAgregateF(null);
+                ratedTransactionsToDetach.add(ratedTransaction.getId());
             }
         }
-        return getListViewName();
+        if(!ratedTransactionsToDetach.isEmpty()) {
+            ratedTransactionService.detachRTFromSubCatAgg(ratedTransactionsToDetach);
+        }
+    }
+    private CategoryInvoiceAgregate createCategoryInvoiceAggregate(RatedTransaction ratedTransaction, Invoice invoice,
+                                                                   InvoiceSubCategory invoiceSubCategory) {
+        CategoryInvoiceAgregate categoryInvoiceAgregate = new CategoryInvoiceAgregate();
+        categoryInvoiceAgregate.setAuditable(new Auditable(currentUser));
+        categoryInvoiceAgregate.setInvoiceCategory(invoiceSubCategory.getInvoiceCategory());
+        categoryInvoiceAgregate.setDescription(invoiceSubCategory.getInvoiceCategory().getDescription());
+        categoryInvoiceAgregate.setAmountWithoutTax(ratedTransaction.getAmountWithoutTax());
+        categoryInvoiceAgregate.setAmountWithTax(ratedTransaction.getAmountWithTax());
+        categoryInvoiceAgregate.setAmountTax(ratedTransaction.getAmountTax());
+        categoryInvoiceAgregate.setBillingAccount(ratedTransaction.getBillingAccount());
+        categoryInvoiceAgregate.setUserAccount(ratedTransaction.getUserAccount());
+        categoryInvoiceAgregate.setItemNumber(0);
+        categoryInvoiceAgregate.setInvoice(invoice);
+        return categoryInvoiceAgregate;
+    }
+    private SubCategoryInvoiceAgregate createSubCategoryAggregate(RatedTransaction ratedTransaction, Invoice invoice,
+                                                                  CategoryInvoiceAgregate categoryInvoiceAgregate,
+                                                                  InvoiceSubCategory invoiceSubCategory) {
+        SubCategoryInvoiceAgregate subCategoryInvoiceAgregate = new SubCategoryInvoiceAgregate();
+        subCategoryInvoiceAgregate.setAuditable(new Auditable(currentUser));
+        subCategoryInvoiceAgregate.setCategoryInvoiceAgregate(categoryInvoiceAgregate);
+        subCategoryInvoiceAgregate.setInvoiceSubCategory(invoiceSubCategory);
+        subCategoryInvoiceAgregate.setDescription(invoiceSubCategory.getDescription());
+        subCategoryInvoiceAgregate.setBillingRun(null);
+        subCategoryInvoiceAgregate.setWallet(ratedTransaction.getUserAccount().getWallet());
+        subCategoryInvoiceAgregate.setUserAccount(ratedTransaction.getUserAccount());
+        subCategoryInvoiceAgregate.setBillingAccount(ratedTransaction.getBillingAccount());
+        subCategoryInvoiceAgregate.setAccountingCode(invoiceSubCategory.getAccountingCode());
+        subCategoryInvoiceAgregate.setAmountWithoutTax(ratedTransaction.getAmountWithoutTax());
+        subCategoryInvoiceAgregate.setAmountWithTax(ratedTransaction.getAmountWithTax());
+        subCategoryInvoiceAgregate.setAmountTax(ratedTransaction.getAmountTax());
+        subCategoryInvoiceAgregate.setItemNumber(0);
+        subCategoryInvoiceAgregate.setInvoice(invoice);
+        return subCategoryInvoiceAgregate;
+    }
+
+    private TaxInvoiceAgregate createTaxAggregate(RatedTransaction ratedTransaction, Invoice invoice) {
+        TaxInvoiceAgregate invoiceAggregateTax = new TaxInvoiceAgregate();
+        invoiceAggregateTax.setBillingRun(null);
+        invoiceAggregateTax.setTax(ratedTransaction.getTax());
+        invoiceAggregateTax.setAccountingCode(ratedTransaction.getTax().getAccountingCode());
+        invoiceAggregateTax.setTaxPercent(ratedTransaction.getTax().getPercent());
+        invoiceAggregateTax.setAmountWithoutTax(ratedTransaction.getAmountWithoutTax());
+        invoiceAggregateTax.setAmountWithTax(ratedTransaction.getAmountWithTax());
+        invoiceAggregateTax.setAmountTax(ratedTransaction.getAmountTax());
+        invoiceAggregateTax.setBillingAccount(ratedTransaction.getBillingAccount());
+        invoiceAggregateTax.setItemNumber(0);
+        invoiceAggregateTax.setInvoice(invoice);
+        return invoiceAggregateTax;
     }
 
     private List<RatedTransaction> saveRTs() {
