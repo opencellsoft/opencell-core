@@ -119,7 +119,6 @@ public class CustomTableImportJob extends Job {
                         Thread.sleep(waitingMillis.longValue());
                     } catch (InterruptedException e) {
                         log.error("", e);
-                        throw new UnchckedThreadingExcpetion(e);
                     }
                 }
             }
