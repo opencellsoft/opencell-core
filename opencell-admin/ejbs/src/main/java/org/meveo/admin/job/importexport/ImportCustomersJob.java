@@ -31,7 +31,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.async.ImportCustomersAsync;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.UnchckedThreadingExcpetion;
+import org.meveo.admin.exception.UncheckedThreadingException;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -70,7 +70,7 @@ public class ImportCustomersJob extends Job {
                     Thread.sleep(waitingMillis.longValue());
                 } catch (InterruptedException e) {
                     log.error("", e);
-                    throw new UnchckedThreadingExcpetion(e);
+                    throw new UncheckedThreadingException(e);
                 }
             }
         }
@@ -80,7 +80,7 @@ public class ImportCustomersJob extends Job {
                 future.get();
 
             } catch (InterruptedException | CancellationException e) {
-                throw new UnchckedThreadingExcpetion(e);
+                throw new UncheckedThreadingException(e);
 
             } catch (ExecutionException e) {
                 Throwable cause = e.getCause();

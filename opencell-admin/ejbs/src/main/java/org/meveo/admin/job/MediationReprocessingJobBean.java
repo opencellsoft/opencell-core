@@ -31,9 +31,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.UnchckedThreadingExcpetion;
-import org.meveo.api.exception.BusinessApiException;
+import org.meveo.admin.exception.UncheckedThreadingException;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
@@ -184,7 +182,7 @@ public class MediationReprocessingJobBean extends BaseJobBean {
                     Thread.sleep(waitingMillis.longValue());
                 } catch (InterruptedException e) {
                     log.error("", e);
-                    throw new UnchckedThreadingExcpetion(e);
+                    throw new UncheckedThreadingException(e);
 
                 }
             }
@@ -202,7 +200,7 @@ public class MediationReprocessingJobBean extends BaseJobBean {
                 } catch (InterruptedException | CancellationException e) {
                     wasKilled = true;
                     log.error("Thread/future for job {} was canceled", jobInstance);
-                    throw new UnchckedThreadingExcpetion(e);
+                    throw new UncheckedThreadingException(e);
 
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause();
