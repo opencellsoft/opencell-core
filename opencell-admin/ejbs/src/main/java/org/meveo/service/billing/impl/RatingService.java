@@ -778,14 +778,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     }
 
     private RecurringChargeTemplate getRecurringChargeTemplateFromChargeInstance(ChargeInstance chargeInstance) {
-
         RecurringChargeTemplate recurringChargeTemplate = null;
-
         if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
-            RecurringChargeInstance recurringChargeInstance = getEntityManager().getReference(RecurringChargeInstance.class, chargeInstance.getId());
-            if (recurringChargeInstance != null) {
-                recurringChargeTemplate = recurringChargeInstance.getRecurringChargeTemplate();
-            }
+        	recurringChargeTemplate = ((RecurringChargeInstance) chargeInstance).getRecurringChargeTemplate();
         }
         return recurringChargeTemplate;
     }
