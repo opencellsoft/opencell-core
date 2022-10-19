@@ -21,12 +21,14 @@ package org.meveo.api;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.ScriptInstanceDto;
 import org.meveo.api.dto.ScriptInstanceErrorDto;
 import org.meveo.api.dto.script.CustomScriptDto;
@@ -290,6 +292,10 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
 
         scriptInstance.getExecutionRoles().addAll(dto.getExecutionRoles());
         scriptInstance.getSourcingRoles().addAll(dto.getExecutionRoles());
+        
+        if(dto.getLanguageDescriptions() != null && !dto.getLanguageDescriptions().isEmpty()) {
+            scriptInstance.setDescriptionI18n(dto.getLanguageDescriptions().stream().collect(Collectors.toMap(LanguageDescriptionDto::getLanguageCode, LanguageDescriptionDto::getDescription)));
+        }
         
         return scriptInstance;
     }
