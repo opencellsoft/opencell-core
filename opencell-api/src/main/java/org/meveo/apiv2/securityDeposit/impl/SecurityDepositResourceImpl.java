@@ -122,14 +122,12 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
             throw new ValidationException(msgErrValidation + "not allowed for Update.");
         }
 
-        BigDecimal oldAmountSD = securityDepositToUpdate.getAmount();
         securityDepositToUpdate = securityDepositMapper.toEntity(securityDepositToUpdate, securityDepositInput);
-        securityDepositService.checkParameters(securityDepositToUpdate, securityDepositInput, oldAmountSD);
+        securityDepositService.checkParameters(securityDepositToUpdate, securityDepositInput);
         securityDepositApiService.linkRealEntities(securityDepositToUpdate);        
         securityDepositService.update(securityDepositToUpdate);
         auditLogService.trackOperation("UPDATE", new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
         return Response.ok().entity(buildResponse(securityDepositMapper.toResource(securityDepositToUpdate))).build();
-
     }
 
     @Override

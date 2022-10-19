@@ -93,14 +93,10 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
                 .getSingleResult();
     }
 
-    public void checkParameters(SecurityDeposit securityDeposit, SecurityDepositInput securityDepositInput, BigDecimal oldAmountSD) {
+    public void checkParameters(SecurityDeposit securityDeposit, SecurityDepositInput securityDepositInput) {
         FinanceSettings financeSettings = financeSettingsService.findLastOne();
-
         if (!financeSettings.isAutoRefund() && (securityDepositInput.getValidityDate() != null || securityDepositInput.getValidityPeriod() != null || securityDepositInput.getValidityPeriodUnit() != null)) {
             throw new InvalidParameterException("the option 'Allow auto refund' need to be checked");
-        }
-        if (!SecurityDepositStatusEnum.VALIDATED.equals(securityDeposit.getStatus()) && !SecurityDepositStatusEnum.HOLD.equals(securityDeposit.getStatus())) {
-            securityDeposit.setAmount(oldAmountSD);
         }
         if (securityDeposit.getServiceInstance() != null && securityDeposit.getSubscription() != null) {
             ServiceInstance serviceInstance = serviceInstanceService.retrieveIfNotManaged(securityDeposit.getServiceInstance());

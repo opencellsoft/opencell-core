@@ -60,11 +60,13 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IDiscountable;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.tags.Tag;
+import org.meveo.model.crm.IInvoicingMinimumApplicable;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.tax.TaxCategory;
@@ -91,7 +93,7 @@ import org.meveo.model.tax.TaxCategory;
         @NamedQuery(name = "BillingAccount.getUnbilledByBCWithStartDate", query = "select ba.id from BillingAccount ba where ba.billingCycle=:billingCycle and (ba.nextInvoiceDate is null or ba.nextInvoiceDate>=:minNextInvoiceDate) and (ba.nextInvoiceDate is null or ba.nextInvoiceDate<:maxNextInvoiceDate) and (ba.billingRun is null OR ba.billingRun<>:billingRun)"),
         @NamedQuery(name = "BillingAccount.getBillingAccountsWithMinAmountELNotNullByBA", query = "select ba from BillingAccount ba where ba.minimumAmountEl is not null AND ba.status = org.meveo.model.billing.AccountStatusEnum.ACTIVE AND ba=:billingAccount"),
         @NamedQuery(name = "BillingAccount.getCountByParent", query = "select count(*) from BillingAccount ba where ba.customerAccount=:parent") })
-public class BillingAccount extends AccountEntity implements IBillableEntity, IWFEntity, IDiscountable, ICounterEntity {
+public class BillingAccount extends AccountEntity implements IInvoicingMinimumApplicable, IBillableEntity, IWFEntity, IDiscountable, ICounterEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -810,5 +812,12 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
                 .stream()
                 .filter(userAccount -> userAccount.getParentUserAccount() == null)
                 .collect(toList());
+    }
+    
+    public Seller getSeller() {
+    	if(customerAccount==null) {
+    		return null;
+    	}
+    	return customerAccount.getSeller();
     }
 }
