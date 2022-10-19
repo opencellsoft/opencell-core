@@ -48,6 +48,7 @@ import org.hibernate.collection.internal.PersistentBag;
 import org.hibernate.collection.internal.PersistentSet;
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.UnchckedThreadingExcpetion;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -356,6 +357,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             }
             
         } catch (InterruptedException | CancellationException e) {
+            throw new UnchckedThreadingExcpetion(e);
         } catch (Exception exception) {
         	if(sendNotification) {
 	            long duration = new Date().getTime() - startDate.getTime();

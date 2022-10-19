@@ -22,6 +22,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.async.FlatFileProcessing;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.UnchckedThreadingExcpetion;
 import org.meveo.admin.parse.csv.MEVEOCdrFlatFileReader;
 import org.meveo.admin.storage.StorageFactory;
 import org.meveo.cache.JobRunningStatusEnum;
@@ -294,7 +295,9 @@ public class MediationJobBean extends BaseJobBean {
                 try {
                     Thread.sleep(waitingMillis.longValue());
                 } catch (InterruptedException e) {
+
                     log.error("", e);
+                    throw new UnchckedThreadingExcpetion(e);
                 }
             }
 
@@ -311,6 +314,7 @@ public class MediationJobBean extends BaseJobBean {
                 } catch (InterruptedException | CancellationException e) {
                     wasKilled = true;
                     log.error("Thread/future for job {} was canceled", jobInstance);
+                    throw new UnchckedThreadingExcpetion(e);
 
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause();

@@ -38,6 +38,7 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.UnchckedThreadingExcpetion;
 import org.meveo.admin.job.logging.JobMultithreadingHistoryInterceptor;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
@@ -118,6 +119,7 @@ public class CustomTableImportJob extends Job {
                         Thread.sleep(waitingMillis.longValue());
                     } catch (InterruptedException e) {
                         log.error("", e);
+                        throw new UnchckedThreadingExcpetion(e);
                     }
                 }
             }
@@ -128,7 +130,7 @@ public class CustomTableImportJob extends Job {
                     future.get();
 
                 } catch (InterruptedException | CancellationException e) {
-                    // It was cancelled from outside - no interest
+                    throw new UnchckedThreadingExcpetion(e);
 
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause();

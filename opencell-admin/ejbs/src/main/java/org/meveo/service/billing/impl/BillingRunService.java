@@ -51,6 +51,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.async.AmountsToInvoice;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.UnchckedThreadingExcpetion;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.InvoicingJob;
 import org.meveo.admin.job.InvoicingJobV2Bean;
@@ -1501,7 +1502,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 Thread.sleep(waitingMillis);
             } catch (InterruptedException e) {
                 log.error("Failed to create aggregates and invoice waiting for thread", e);
-                throw new BusinessException(e);
+                throw new UnchckedThreadingExcpetion(e);
             }
         }
         for (Future<String> futureItsNow : asyncReturns) {
@@ -1509,7 +1510,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 futureItsNow.get();
             } catch (InterruptedException | ExecutionException e) {
                 log.error("Failed to create aggregates and invoice getting future", e);
-                throw new BusinessException(e);
+                throw new UnchckedThreadingExcpetion(e);
             }
         }
     }

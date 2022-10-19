@@ -18,6 +18,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.async.SynchronizedIterator;
+import org.meveo.admin.exception.UnchckedThreadingExcpetion;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.model.IEntity;
@@ -232,6 +233,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                     Thread.sleep(waitingMillis.longValue());
                 } catch (InterruptedException e) {
                     log.error("", e);
+                    throw new UnchckedThreadingExcpetion(e);
                 }
             }
 
@@ -248,6 +250,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                 } catch (InterruptedException | CancellationException e) {
                     wasKilled = true;
                     log.error("Thread/future for job {} was canceled", jobInstance);
+                    throw new UnchckedThreadingExcpetion(e);
 
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause();

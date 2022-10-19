@@ -39,6 +39,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.UnchckedThreadingExcpetion;
 import org.meveo.admin.job.MediationJobBean;
 import org.meveo.api.dto.billing.ChargeCDRResponseDto;
 import org.meveo.api.dto.billing.ChargeCDRResponseDto.CdrError;
@@ -280,6 +281,7 @@ public class MediationApiService {
 
             } catch (InterruptedException | CancellationException e) {
 //                wasKilled = true;
+                throw new UnchckedThreadingExcpetion(e);
 
             } catch (ExecutionException e) {
                 Throwable cause = e.getCause();
