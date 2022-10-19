@@ -146,6 +146,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.base.NativePersistenceService;
@@ -6538,6 +6539,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
         return fileName;
+    }
+
+    /**
+     * Update Security Deposit Template
+     * @param securityDepositTemplate {@link SecurityDepositTemplate}
+     */
+    public SecurityDepositTemplate updateSDTemplate(SecurityDepositTemplate securityDepositTemplate) {
+        return serviceSingleton.incrementSDTemplateInstanciationNumber(securityDepositTemplate);
     }
 
     /**

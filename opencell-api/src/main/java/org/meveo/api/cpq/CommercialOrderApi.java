@@ -686,7 +686,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 				.filter(orderOffer -> orderOffer.getUserAccount() == null)
 				.findFirst();
 		if(order.getUserAccount() == null && optionalOrderOfferWithoutUA.isPresent()){
-			throw new MissingParameterException("Customer has several consumers. You must either select a default consumer on the order, or select a consumer for each order line");
+			throw new MissingParameterException("Customer has no consumer. You must create a consumer for this customer in order to validate the order");
 		}
 		ParamBean paramBean = ParamBean.getInstance();
 		String sellerCode = getSelectedSeller(order).getCode();

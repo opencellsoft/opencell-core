@@ -36,6 +36,7 @@ import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentGatewayRumSequence;
+import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.model.sequence.GenericSequence;
 import org.meveo.model.sequence.Sequence;
 import org.meveo.model.sequence.SequenceTypeEnum;
@@ -729,5 +730,14 @@ public class ServiceSingleton {
         sequence.setCurrentNumber(sequence.getCurrentNumber()+1);
 
         return ooqCode;
+    }
+
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public SecurityDepositTemplate incrementSDTemplateInstanciationNumber(SecurityDepositTemplate securityDepositTemplate) throws BusinessException {
+        Integer numberOfInstantiation = securityDepositTemplate.getNumberOfInstantiation();
+        securityDepositTemplate.setNumberOfInstantiation(numberOfInstantiation != null ? numberOfInstantiation + 1 : 1);
+        return securityDepositTemplate;
     }
 }

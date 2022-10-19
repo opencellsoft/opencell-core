@@ -431,6 +431,9 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     @Column(name = "rgaa_message", length = 500)
     @Size(max = 500)
     protected String rgaaMessage;
+
+    @Column(name = "current_matching_code")
+    private String currentMatchingCode = "AAA";
     
     public String getCode() {
         return code;
@@ -902,5 +905,13 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
 
     public void setRgaaMessage(String rgaaMessage) {
         this.rgaaMessage = rgaaMessage;
+    }
+
+    public String getCurrentMatchingCode() {
+        return currentMatchingCode;
+    }
+
+    public void setCurrentMatchingCode(String currentMatchingCode) {
+        this.currentMatchingCode = currentMatchingCode;
     }
 }
