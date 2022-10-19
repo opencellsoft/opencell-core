@@ -705,6 +705,12 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Column(name = "invoice_balance", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal invoiceBalance;
     
+    /**
+     * Indicates if the current rate has already been applied.
+     */
+    @Column(name = "use_current_rate")
+    @Type(type = "numeric_boolean")
+    private boolean useCurrentRate = false;
 
     @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
     private List<AdvanceMapping> advanceMappingList;
@@ -738,6 +744,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 		this.cfAccumulatedValues = copy.cfAccumulatedValues;
 		this.seller = copy.seller;
 		this.invoiceType = copy.invoiceType;
+		this.useCurrentRate = copy.useCurrentRate;
 
 		this.quote = null;
 		this.commercialOrder = null;
@@ -1841,6 +1848,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
 	public void setOpenOrderNumber(String openOrderNumber) {
 		this.openOrderNumber = openOrderNumber;
+	}
+	
+	public boolean isUseCurrentRate() {
+		return useCurrentRate;
+	}
+	public void setUseCurrentRate(boolean useCurrentRate) {
+		this.useCurrentRate = useCurrentRate;
 	}
 
 
