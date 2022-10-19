@@ -4810,6 +4810,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setNetToPay(amountWithTax);
         Date dueDate = calculateDueDate(invoice, billingAccount.getBillingCycle(), billingAccount, billingAccount.getCustomerAccount(), order);
         invoice.setDueDate(dueDate);
+        setInitialCollectionDate(invoice, billingAccount.getBillingCycle(), null);
         invoice.setSeller(billingAccount.getCustomerAccount().getCustomer().getSeller());
         invoice.setStatus(InvoiceStatusEnum.NEW);
         return invoice;
@@ -5206,7 +5207,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         invoiceAgregateService.create(subAggregate);
                     }
 
-                    setInvoiceDueDate(invoice, invoiceLinesGroup.getBillingCycle());
+                    if (invoice.getDueDate() == null) {
+                        setInvoiceDueDate(invoice, invoiceLinesGroup.getBillingCycle());
+                    }
+                    setInitialCollectionDate(invoice, invoiceLinesGroup.getBillingCycle(), billingRun);
 
                     EntityManager em = getEntityManager();
                     invoice.setNewInvoicingProcess(true);
