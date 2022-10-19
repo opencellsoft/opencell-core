@@ -1869,8 +1869,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         userMap.put("rt", rt);
         String code = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
         if (code != null) {
-           return code;
+            return code;
         }
-        return null;       
+        return null;
+    }
+
+    public int detachRTFromSubCatAgg(List<Long> rtIds) {
+        return getEntityManager().createNamedQuery("RatedTransaction.detachRTFromSubCat")
+                .setParameter("rtIds", rtIds)
+                .executeUpdate();
     }
 }
