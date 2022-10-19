@@ -13193,5 +13193,11 @@ order by date_trunc('month', i.invoice_date) DESC
 			<column name="generate_quote_edr_per_product" type="${type.boolean}" defaultValueNumeric="0"/>
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="INTRD-10603_20221113" author="AbdelmounaimAkadid">	
+		<modifyDataType tableName="adm_inbound_req_cookies" columnName="coockies" newDataType="varchar(500)" />
+		<modifyDataType tableName="adm_inbound_req_cookies" columnName="coockies_key" newDataType="varchar(500)" />
+	</changeSet>		
+	
 </databaseChangeLog>
     
