@@ -8207,6 +8207,23 @@ public class CustomGatewayPaymentScript extends PaymentScript{
     	<where>status='NEW'</where>
     	</update>
     </changeSet>
+	
+	<changeSet id="#9811_10102022" author="Mbarek-Ay">
+	<insert tableName="meveo_job_instance">
+		<column name="id" valueSequenceNext="meveo_job_instance_seq" />
+		<column name="version" valueNumeric="0" />
+		<column name="disabled" valueNumeric="1" />
+		<column name="created" valueDate="2022-10-10 15:04:19.913" />
+		<column name="job_category" value="INVOICING" />
+		<column name="job_template" value="InvoiceLinesMinimumJob" />
+		<column name="code" value="Invoice_Lines_Minimum_Job" />
+		<column name="creator" value="OPENCELL.ADMIN" />
+		<column name="timerentity_id" valueNumeric="-1" />
+		<column name="uuid" value="Invoice_Lines_Minimum_Job" />
+		<column name="cf_values"
+			value='{"waitingMillis":[{"long":0}],"nbRuns":[{"long":-1}]}' />
+	  </insert>
+    </changeSet>
     
     <changeSet id="#INTRD-10592_20221014" author="TarikFA.">
     	<update tableName="billing_accounting_code">
