@@ -14465,6 +14465,14 @@ order by date_trunc('month', i.invoice_date) DESC
 		<modifyDataType tableName="adm_inbound_req_cookies" columnName="coockies" newDataType="varchar(500)" />
 		<modifyDataType tableName="adm_inbound_req_cookies" columnName="coockies_key" newDataType="varchar(500)" />
 	</changeSet>	
+	
+	<changeSet id="#INTRD-10607_20221014" author="AdilElJaouhari">
+		<addColumn tableName="billing_invoice">
+            <column name="use_current_rate" type="${type.boolean}" defaultValueNumeric="0">
+            	<constraints nullable="false" />
+            </column>
+        </addColumn>
+	</changeSet>
 
 	<changeSet id="#INTRD-10522_20221017_matchingCode-journal-entry" author="aelmalki">
 		<addColumn tableName="accounting_journal_entry">

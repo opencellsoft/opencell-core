@@ -2969,6 +2969,7 @@
             <column name="payment_plan_id" type="bigint" />
             <column name="open_order_number" type="varchar(255)" />
             <column name= "invoice_balance" type="numeric(23, 12)" />
+            <column name="use_current_rate" type="${type.boolean}" defaultValueNumeric="0"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -18660,6 +18661,7 @@
     <changeSet id="#INTRD-4681_20220929" author="AndriusKarpavicius" />
     <changeSet id="#INTRD-10274_20221003" author="AndriusKarpavicius" />
    	<changeSet id="INTRD-10603_20221113" author="AbdelmounaimAkadid" />
+   	<changeSet id="#INTRD-10607_20221014" author="AdilElJaouhari" />
 	<changeSet id="#INTRD-10522_20221017_matchingCode-journal-entry" author="aelmalki" />
 
 	<changeSet id="#INTRD-9766_20221011_EDR_new_fields" author="aelmalki" />
