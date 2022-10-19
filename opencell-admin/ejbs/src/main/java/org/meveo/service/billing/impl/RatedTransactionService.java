@@ -1998,4 +1998,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 .setParameter("newUserAccount", newWallet.getUserAccount())
                 .setParameter("subscription", subscription).executeUpdate();
     }
+
+    public int detachRTFromSubCatAgg(List<Long> rtIds) {
+        return getEntityManager().createNamedQuery("RatedTransaction.detachRTFromSubCat")
+                .setParameter("rtIds", rtIds)
+                .executeUpdate();
+    }
 }
