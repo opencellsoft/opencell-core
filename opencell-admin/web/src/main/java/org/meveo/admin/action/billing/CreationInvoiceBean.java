@@ -376,6 +376,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             taxInfo = taxMappingService.determineTax(selectedCharge, seller, ua, usageDate);
         }
 
+        if(entity.getId() == null) {
+            invoiceService.create(entity);
+        }
         // AKK check what happens with tax
         RatedTransaction ratedTransaction = new RatedTransaction(usageDate, unitAmountWithoutTax, unitAmountWithTax, null, quantity, null, null, null, RatedTransactionStatusEnum.BILLED, ua.getWallet(),
             ua.getBillingAccount(), ua, selectInvoiceSubCat, parameter1, parameter2, parameter3, null, orderNumber, null, null, null, null, null, null, selectedCharge.getCode(), description, rtStartDate, rtEndDate,
@@ -703,6 +706,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     			entity = invoiceService.retrieveIfNotManaged(entity);
     		}
     	}
+    	if(entity.getId() == null) {
+            invoiceService.create(entity);
+        }
 
         BillingAccount billingAccount = getFreshBA();
 
