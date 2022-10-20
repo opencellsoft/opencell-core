@@ -9711,6 +9711,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="#INTRD-10247_20220928_default_currency_sd_template" author="a.rouaguebe" />
 	<changeSet id="#INTRD-10400_20221007" author="HichamHANINE" />
     <changeSet id="#INTRD-10587_20221014" author="TarikFA." />
+    <changeSet id="#INTRD-10541_20221017" author="TarikFA.">
 	<changeSet id="#INTRD-10572_20221014" author="HichamHANINE" />
 	<changeSet id="#INTRD-10572_20221018" author="HichamHANINE" />
 	

@@ -6575,17 +6575,6 @@
         </createTable>
         <addPrimaryKey columnNames="invoice_type_id, applies_to_id" constraintName="billing_invoice_type_applies_to_pkey" tableName="billing_invoice_type_applies_to" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-319">
-        <createTable tableName="billing_linked_invoices">
-            <column name="id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="linked_invoice_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-        <addPrimaryKey columnNames="id, linked_invoice_id" constraintName="billing_linked_invoices_pkey" tableName="billing_linked_invoices" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-320">
         <createTable tableName="billing_seq_invtyp_sell">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -17390,6 +17379,34 @@
                                  baseTableName="com_contact_category_contact"
                                  referencedTableName="com_contact"
                                  referencedColumnNames="id" />
+    </changeSet>
+    
+    <changeSet id="#INTRD-10541_20221013_build" author="TarikFA.">
+    	<createTable tableName="billing_linked_invoices">
+            <column name="id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="linked_invoice_id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="numeric(23, 12)" />
+            <column name="type" type="varchar(50)" />
+    	</createTable>
+    	
+        <addPrimaryKey columnNames="id, linked_invoice_id" constraintName="billing_linked_invoices_pkey" tableName="billing_linked_invoices" />
+    	
+		<addForeignKeyConstraint constraintName="invoice_id_fk"
+                                 baseColumnNames="id"
+                                 baseTableName="billing_linked_invoices"
+                                 referencedTableName="billing_invoice"
+                                 referencedColumnNames="id" />
+                                 
+		<addForeignKeyConstraint constraintName="linked_invoice_id_fk"
+                                 baseColumnNames="linked_invoice_id"
+                                 baseTableName="billing_linked_invoices"
+                                 referencedTableName="billing_invoice"
+                                 referencedColumnNames="id" />
+    	
     </changeSet>
     
     

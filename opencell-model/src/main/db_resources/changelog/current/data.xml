@@ -8251,6 +8251,12 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
     </changeSet>
     
+    <changeSet id="#INTRD-10541_20221017" author="TarikFA.">
+    	<update tableName="billing_linked_invoices">
+    		<column name="type" value="ADJUSTMENT" />
+    	</update>
+    </changeSet>
+
 	<changeSet id="#INTRD-10572_20221014" author="HichamHANINE">
 		<update tableName="crm_customer_category">
 			<column name="tax_category_id" value="-3" />

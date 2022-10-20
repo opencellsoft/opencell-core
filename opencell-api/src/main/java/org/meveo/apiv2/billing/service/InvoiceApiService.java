@@ -39,6 +39,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.LinkedInvoice;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.payments.OperationCategoryEnum;
@@ -435,7 +436,8 @@ public class InvoiceApiService  implements ApiService<Invoice> {
     	    else {
     	        invoice.setLinkedInvoices(new HashSet<>());
     	    }
-    	    invoice.getLinkedInvoices().add(adjInvoice);
+    	    LinkedInvoice linkedInvoice = new LinkedInvoice(invoice, adjInvoice);
+    	    invoice.getLinkedInvoices().add(linkedInvoice);
     	    invoiceService.update(invoice);
 	    }
 	    catch (Exception e) {

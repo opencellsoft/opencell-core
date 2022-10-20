@@ -14483,6 +14483,26 @@ order by date_trunc('month', i.invoice_date) DESC
             </column>
         </addColumn>
 	</changeSet>
+
+    <changeSet id="#INTRD-10541_20221013" author="TarikFA.">
+	    <addColumn tableName="billing_linked_invoices">
+	            <column name="amount" type="numeric(23, 12)" />
+	            <column name="type" type="varchar(50)" />
+	    </addColumn>
+	    
+		<addForeignKeyConstraint constraintName="invoice_id_fk"
+                                 baseColumnNames="id"
+                                 baseTableName="billing_linked_invoices"
+                                 referencedTableName="billing_invoice"
+                                 referencedColumnNames="id" />
+                                 
+		<addForeignKeyConstraint constraintName="linked_invoice_id_fk"
+                                 baseColumnNames="linked_invoice_id"
+                                 baseTableName="billing_linked_invoices"
+                                 referencedTableName="billing_invoice"
+                                 referencedColumnNames="id" />
+    	
+    </changeSet>
 	
 	<changeSet id="#INTRD-10522_20221017_matchingCode-journal-entry" author="aelmalki">
 		<addColumn tableName="accounting_journal_entry">
@@ -14501,4 +14521,5 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="cf_values" type="${type.json}" />
         </addColumn>
     </changeSet>
+
 </databaseChangeLog>
