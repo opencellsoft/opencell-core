@@ -6188,7 +6188,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (input.getExternalRef() != null) {
             toUpdate.setExternalRef(input.getExternalRef());
         }
-        if (input.getInvoiceDate() != null) {
+        if (input.getInvoiceDate() != null && !toUpdate.isUseCurrentRate()) {
             toUpdate.setInvoiceDate(input.getInvoiceDate());
 
             BigDecimal currentRate = null;
