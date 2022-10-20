@@ -306,18 +306,27 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
             securityDepositInput.setServiceInstance(serviceInstance);
         }
         
+        if (securityDepositInput.getSecurityDepositInvoice() != null) {
+            Invoice invoice = invoiceService.findById(securityDepositInput.getSecurityDepositInvoice().getId());
+            securityDepositInput.setSecurityDepositInvoice(invoice);
+        }
+        else {
+            securityDepositInput.setSecurityDepositInvoice(null);
+        }
+        
         if (securityDepositInput.getBillingAccount() != null) {
             BillingAccount billingAccount = billingAccountService.tryToFindByCodeOrId(securityDepositInput.getBillingAccount());
             if(billingAccount != null) {
                 securityDepositInput.setBillingAccount(billingAccount);
                 CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+                customerAccount = customerAccountService.refreshOrRetrieve(customerAccount);
                 if (customerAccount != null) {
                     if (!securityDepositInput.getCustomerAccount().equals(customerAccount)) {
                         throw new BusinessApiException("Customer Account not equal Customer Account in Billing Account");
                     }
                     securityDepositInput.setCustomerAccount(customerAccount);
                 }
-            }            
+            }
         }
     }
 

@@ -234,6 +234,9 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     
     @Column(name = "maximum_delay")
     private Integer maximumDelay;
+
+    @Column(name = "current_matching_code")
+    private String currentMatchingCode = "AAA";
     
     public Integer getMaximumDelay() {
 		return maximumDelay;
@@ -902,5 +905,13 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
 
     public void setRgaaMessage(String rgaaMessage) {
         this.rgaaMessage = rgaaMessage;
+    }
+
+    public String getCurrentMatchingCode() {
+        return currentMatchingCode;
+    }
+
+    public void setCurrentMatchingCode(String currentMatchingCode) {
+        this.currentMatchingCode = currentMatchingCode;
     }
 }

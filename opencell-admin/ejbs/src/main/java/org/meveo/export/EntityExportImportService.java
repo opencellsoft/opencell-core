@@ -112,6 +112,7 @@ import org.meveo.model.IEntity;
 import org.meveo.model.IJPAVersionedEntity;
 import org.meveo.model.catalog.*;
 import org.meveo.model.communication.MeveoInstance;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.ScriptInstance;
@@ -725,6 +726,7 @@ public class EntityExportImportService implements Serializable {
         xstream.omitField(ProductOffering.class, "lifeCycleStatus");
         //status for the OfferTemplate should be by default DRAFT
         xstream.omitField(Product.class, "status");
+        xstream.omitField(Attribute.class, "productVersionAttributes");
     }
 
 

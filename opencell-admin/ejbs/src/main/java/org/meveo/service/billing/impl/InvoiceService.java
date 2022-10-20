@@ -147,6 +147,7 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.securityDeposit.SecurityDeposit;
+import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.base.NativePersistenceService;
@@ -2254,7 +2255,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param invoice invoice used to find
      * @return linked invoice
      */
-    public Invoice getLinkedInvoice(Invoice invoice) {
+    public LinkedInvoice getLinkedInvoice(Invoice invoice) {
         if (invoice == null || invoice.getLinkedInvoices() == null || invoice.getLinkedInvoices().isEmpty()) {
             return null;
         }
@@ -4692,7 +4693,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (!invoiceType.getAppliesTo().contains(invoiceTmp.getInvoiceType())) {
                     throw new BusinessApiException("InvoiceId " + invoiceId + " cant be linked");
                 }
-                invoice.getLinkedInvoices().add(invoiceTmp);
+                LinkedInvoice linkedInvoice = new LinkedInvoice(invoice, invoiceTmp);
+                invoice.getLinkedInvoices().add(linkedInvoice);
             }
         }
 
@@ -4728,7 +4730,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (!invoiceType.getAppliesTo().contains(invoiceTmp.getInvoiceType())) {
                     throw new BusinessApiException("InvoiceId " + invoiceId + " cant be linked");
                 }
-                invoice.getLinkedInvoices().add(invoiceTmp);
+                LinkedInvoice linkedInvoice = new LinkedInvoice(invoice, invoiceTmp);
+                invoice.getLinkedInvoices().add(linkedInvoice);
             }
         }
 
@@ -4782,6 +4785,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         } else {
             invoice.setLastAppliedRateDate(invoice.getAuditable().getCreated());
         }
+        invoice.setUseCurrentRate(true);
         refreshInvoiceLineAndAggregateAmounts(invoice);
         return update(invoice);
     }
@@ -6235,7 +6239,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (!toUpdate.getInvoiceType().getAppliesTo().contains(invoiceTmp.getInvoiceType())) {
                     throw new BusinessApiException("InvoiceId " + invoiceId + " cant be linked");
                 }
-                toUpdate.getLinkedInvoices().add(invoiceTmp);
+                LinkedInvoice linkedInvoice = new LinkedInvoice(toUpdate, invoiceTmp);
+                toUpdate.getLinkedInvoices().add(linkedInvoice);
             }
         }
 
@@ -6268,6 +6273,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         if(invoiceResource.getDiscount() == null && toUpdate.getDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
             toUpdate.setDiscountAmount(BigDecimal.ZERO);
+        }
+        
+        
+        if(toUpdate.getInvoiceType() != null && invoiceTypeService.getListAdjustementCode().contains(toUpdate.getInvoiceType().getCode())) {
+           boolean isAccountingArticleAdt = toUpdate.getInvoiceLines() != null && toUpdate.getInvoiceLines().stream().allMatch(il -> il.getAccountingArticle() != null && il.getAccountingArticle().getCode().equals("ADV-STD"));
+           if(!isAccountingArticleAdt) {
+               throw new BusinessException("Invoice of type " + invoiceTypeService.getListAdjustementCode() + ", must use ADV-STD article");
+           }
+           toUpdate.setInvoiceBalance(invoiceResource.getAmountWithTax());
+            
         }
 
         return update(toUpdate);
@@ -6415,7 +6430,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         duplicatedInvoice.setInvoiceDate(new Date());
         duplicatedInvoice.setInvoiceType(invoiceTypeService.getDefaultAdjustement());
         duplicatedInvoice.setStatus(InvoiceStatusEnum.DRAFT);
-        duplicatedInvoice.setLinkedInvoices(of(invoice));
+        LinkedInvoice linkedInvoice = new LinkedInvoice(duplicatedInvoice, invoice);
+        duplicatedInvoice.setLinkedInvoices(of(linkedInvoice));
         getEntityManager().flush();
 
         if (invoiceLinesIds != null && !invoiceLinesIds.isEmpty()) {
@@ -6552,6 +6568,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         return fileName;
     }
+
+    /**
+     * Update Security Deposit Template
+     * @param securityDepositTemplate {@link SecurityDepositTemplate}
+     */
+    public SecurityDepositTemplate updateSDTemplate(SecurityDepositTemplate securityDepositTemplate) {
+        return serviceSingleton.incrementSDTemplateInstanciationNumber(securityDepositTemplate);
+    }
+
 
     /**
      * Clear cached Jasper reports

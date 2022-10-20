@@ -53,6 +53,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.commons.utils.NumberUtils;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.CounterValueChangeInfo;
@@ -117,7 +118,6 @@ import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
-import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.cpq.ContractItemService;
 import org.meveo.service.cpq.ContractService;
@@ -169,13 +169,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
     @Inject
     private ContractItemService contractItemService;
-    
-    @Inject
-    private RecurringChargeInstanceService recurringChargeInstanceService;
-    
-    
-    @Inject
-    private RecurringChargeTemplateService recurringChargeTemplateService;
 
     @Inject
     protected CounterInstanceService counterInstanceService;
@@ -302,8 +295,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         if (chargeInstance.getInvoicingCalendar() != null) {
 
             Date defaultInitDate = null;
-            if (chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING && ((RecurringChargeInstance) chargeInstance).getSubscriptionDate() != null) {
-                defaultInitDate = ((RecurringChargeInstance) chargeInstance).getSubscriptionDate();
+            RecurringChargeInstance charge = getEntityManager().getReference(RecurringChargeInstance.class, chargeInstance.getId());
+            if (chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING && charge.getSubscriptionDate() != null) {
+                defaultInitDate = charge.getSubscriptionDate();
             } else if (chargeInstance.getServiceInstance() != null) {
                 defaultInitDate = chargeInstance.getServiceInstance().getSubscriptionDate();
             } else if (chargeInstance != null && chargeInstance.getSubscription() != null) {
@@ -313,27 +307,27 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             Calendar invoicingCalendar = CalendarService.initializeCalendar(chargeInstance.getInvoicingCalendar(), defaultInitDate, chargeInstance);
             invoicingDate = invoicingCalendar.nextCalendarDate(applicationDate);
         }
-
+        String extraParam = edr != null ? paramBeanFactory.getInstance().getBooleanValue("edr.propagate.extraParameter", false) ? edr.getExtraParameter(): edr.getParameter4() : null;
         if (reservation != null) {
             if (orderNumberOverride != null) {
                 walletOperation = new WalletReservation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate, orderNumberOverride.equals(ChargeInstance.NO_ORDER_NUMBER) ? null : orderNumberOverride,
                     edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
-                    edr != null ? edr.getParameter4() : null, null, startdate, endDate, null, invoicingDate, reservation);
+                            extraParam, null, startdate, endDate, null, invoicingDate, reservation);
             } else {
                 walletOperation = new WalletReservation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate, chargeInstance.getOrderNumber(),
                     edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
-                    edr != null ? edr.getParameter4() : null, null, startdate, endDate, null, invoicingDate, reservation);
+                            extraParam, null, startdate, endDate, null, invoicingDate, reservation);
             }
 
         } else {
             if (orderNumberOverride != null) {
                 walletOperation = new WalletOperation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate, orderNumberOverride.equals(ChargeInstance.NO_ORDER_NUMBER) ? null : orderNumberOverride,
                     edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
-                    edr != null ? edr.getParameter4() : null, null, startdate, endDate, null, invoicingDate);
+                            extraParam , null, startdate, endDate, null, invoicingDate);
             } else {
                 walletOperation = new WalletOperation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate, chargeInstance.getOrderNumber(),
                     edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
-                    edr != null ? edr.getParameter4() : null, null, startdate, endDate, null, invoicingDate);
+                            extraParam , null, startdate, endDate, null, invoicingDate);
             }
         }
         walletOperation.setChargeMode(chargeMode);
@@ -441,7 +435,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
      * @throws InvalidELException Failed to evaluate EL expression
      * @throws ElementNotFoundException Subscription as resolved from EL expression was not found
      */
-    private List<EDR> instantiateTriggeredEDRs(WalletOperation walletOperation, EDR edr, boolean isVirtual)
+    public List<EDR> instantiateTriggeredEDRs(WalletOperation walletOperation, EDR edr, boolean isVirtual)
             throws RatingException, InvalidELException, ElementNotFoundException, CommunicateToRemoteInstanceException, ChargingEdrOnRemoteInstanceErrorException {
 
         List<EDR> triggredEDRs = new ArrayList<>();
@@ -479,6 +473,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 newEdr.setParameter3(evaluateStringExpression(triggeredEDRTemplate.getParam3El(), walletOperation, ua, null, edr));
                 newEdr.setParameter4(evaluateStringExpression(triggeredEDRTemplate.getParam4El(), walletOperation, ua, null, edr));
                 newEdr.setQuantity(BigDecimal.valueOf(evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(), walletOperation, ua, null, edr)));
+                newEdr.setWalletOperation(walletOperation);
 
                 Subscription sub = null;
 
@@ -598,10 +593,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             BigDecimal unitPriceWithoutTax = unitPriceWithoutTaxOverridden;
             BigDecimal unitPriceWithTax = unitPriceWithTaxOverridden;
 
-            RecurringChargeTemplate recChargeTemplate = null;
-            if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
-                recChargeTemplate = ((RecurringChargeInstance) chargeInstance).getRecurringChargeTemplate();
-            }
+            RecurringChargeTemplate recurringChargeTemplate = getRecurringChargeTemplateFromChargeInstance(chargeInstance);
 
             // Determine and set tax if it was not set before.
             // An absence of tax class and presence of tax means that tax was set manually and should not be recalculated at invoicing time.
@@ -724,9 +716,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             }
 
             // if the wallet operation correspond to a recurring charge that is shared, we divide the price by the number of shared charges
-            if (recChargeTemplate != null && recChargeTemplate.getShareLevel() != null) {
-                RecurringChargeInstance recChargeInstance = (RecurringChargeInstance) chargeInstance;
-                int sharedQuantity = getSharedQuantity(recChargeTemplate.getShareLevel(), recChargeInstance.getCode(), bareWalletOperation.getOperationDate(), recChargeInstance);
+            if (recurringChargeTemplate != null && recurringChargeTemplate.getShareLevel() != null) {
+                RecurringChargeInstance recChargeInstance = (RecurringChargeInstance) PersistenceUtils.initializeAndUnproxy(chargeInstance);
+                int sharedQuantity = getSharedQuantity(recurringChargeTemplate.getShareLevel(), recChargeInstance.getCode(), bareWalletOperation.getOperationDate(), recChargeInstance);
                 if (sharedQuantity > 0) {
                     if (appProvider.isEntreprise()) {
                         unitPriceWithoutTax = unitPriceWithoutTax.divide(new BigDecimal(sharedQuantity), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
@@ -771,6 +763,14 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             log.trace("Will execute an offer level rating script for offer {}", bareWalletOperation.getOfferTemplate());
             executeRatingScript(bareWalletOperation, bareWalletOperation.getOfferTemplate().getGlobalRatingScriptInstance(), isVirtual);
         }
+    }
+
+    private RecurringChargeTemplate getRecurringChargeTemplateFromChargeInstance(ChargeInstance chargeInstance) {
+        RecurringChargeTemplate recurringChargeTemplate = null;
+        if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
+        	recurringChargeTemplate = ((RecurringChargeInstance) chargeInstance).getRecurringChargeTemplate(); 
+        }
+        return recurringChargeTemplate;
     }
 
     /**
@@ -1007,11 +1007,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         Date startDate = bareOperation.getStartDate();
         Date endDate = bareOperation.getEndDate();
 
-        RecurringChargeTemplate recChargeTemplate = null;
-        ChargeInstance chargeInstance = bareOperation.getChargeInstance();
-        if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
-            recChargeTemplate = ((RecurringChargeInstance) chargeInstance).getRecurringChargeTemplate();
-        }
+        RecurringChargeTemplate recurringChargeTemplate = getRecurringChargeTemplateFromChargeInstance(bareOperation.getChargeInstance());
 
         for (PricePlanMatrix pricePlan : listPricePlan) {
 
@@ -1132,7 +1128,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 log.trace("The quantity " + quantity + " is less than " + minQuantity);
                 continue;
             }
-            if ((recChargeTemplate != null && recChargeTemplate.isProrataOnPriceChange())
+            if ((recurringChargeTemplate != null && recurringChargeTemplate.isProrataOnPriceChange())
                     && (!isStartDateBetween(startDate, pricePlan.getValidityFrom(), pricePlan.getValidityDate()) || !isEndDateBetween(endDate, startDate, pricePlan.getValidityDate()))) {
                 continue;
             }
@@ -1160,7 +1156,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     /**
      * Get a rerated copy of a wallet operation. New wallet operation is not persisted nor status of wallet operation to rerate is changed
      *
-     * @param operationToRerate wallet operation to be rerated
+     * @param walletOperationToRerate wallet operation to be rerated
      * @param useSamePricePlan true if same price plan will be used
      * @throws BusinessException business exception
      * @throws RatingException Operation rerating failure due to lack of funds, data validation, inconsistency or other rating related failure
