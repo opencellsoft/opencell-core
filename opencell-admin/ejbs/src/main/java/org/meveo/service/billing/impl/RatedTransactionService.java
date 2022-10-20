@@ -52,7 +52,6 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.*;
@@ -86,6 +85,7 @@ import org.meveo.model.catalog.*;
 import org.meveo.model.cpq.*;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.IInvoicingMinimumApplicable;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.order.Order;
@@ -839,14 +839,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             BigDecimal minAmount = accountAmounts.getValue().getMinAmount();
             String minAmountLabel = accountAmounts.getValue().getMinAmountLabel();
             BigDecimal totalInvoiceableAmount = appProvider.isEntreprise() ? accountAmounts.getValue().getAmounts().getAmountWithoutTax() : accountAmounts.getValue().getAmounts().getAmountWithTax();
-            BusinessEntity entity = accountAmounts.getValue().getEntity();
+            IInvoicingMinimumApplicable  entity = accountAmounts.getValue().getEntity();
 
             Seller seller = accountAmounts.getValue().getSeller();
             if (seller == null) {
                 throw new BusinessException("Default Seller is mandatory for invoice minimum (Customer.seller)");
             }
             String mapKeyPrefix = seller.getId().toString() + "_";
-
             BigDecimal diff = minAmount.subtract(totalInvoiceableAmount);
             if (diff.compareTo(BigDecimal.ZERO) <= 0 || (BigDecimal.ZERO.equals(totalInvoiceableAmount) && !paramBeanFactory.getInstance().getPropertyAsBoolean(APPLY_MINIMA_EVEN_ON_ZERO_TRANSACTION, true))) {
                 continue;
@@ -885,7 +884,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param accountClass the account class
      * @return the minimum amount RT code
      */
-    private String getMinAmountRTCode(BusinessEntity entity, @SuppressWarnings("rawtypes") Class accountClass) {
+    private String getMinAmountRTCode(IInvoicingMinimumApplicable entity, @SuppressWarnings("rawtypes") Class accountClass) {
         String prefix = "";
         if (accountClass.equals(ServiceInstance.class)) {
             prefix = RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SE.getCode();
@@ -909,7 +908,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return prefix + "_" + entity.getCode();
     }
 
-    private OneShotChargeTemplate getMinimumChargeTemplate(BusinessEntity entity) {
+    private OneShotChargeTemplate getMinimumChargeTemplate(IInvoicingMinimumApplicable entity) {
         try {
             Method method = entity.getClass().getMethod("getMinimumChargeTemplate", null);
             return (OneShotChargeTemplate) method.invoke(entity, null);
@@ -936,7 +935,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param minimum
      * @return a rated transaction
      */
-    private RatedTransaction getNewMinRatedTransaction(IBillableEntity billableEntity, BillingAccount billingAccount, Date minRatingDate, String minAmountLabel, BusinessEntity entity, Seller seller,
+    private RatedTransaction getNewMinRatedTransaction(IBillableEntity billableEntity, BillingAccount billingAccount, Date minRatingDate, String minAmountLabel, IInvoicingMinimumApplicable entity, Seller seller,
             InvoiceSubCategory invoiceSubCategory, TaxInfo taxInfo, BigDecimal rtMinAmount, String code) {
         Tax tax = taxInfo.tax;
         BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(rtMinAmount, rtMinAmount, tax.getPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);

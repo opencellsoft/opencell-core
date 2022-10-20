@@ -57,12 +57,14 @@ import org.meveo.model.ICounterEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.IInvoicingMinimumApplicable;
 import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.intcrm.AddressBook;
 
@@ -90,7 +92,7 @@ import org.meveo.model.intcrm.AddressBook;
 		@NamedQuery(name = "CustomerAccount.getCustomerAccountsWithMinAmountELNotNullByBA", query = "select ca from CustomerAccount ca where ca.minimumAmountEl is not null AND ca.status = org.meveo.model.billing.AccountStatusEnum.ACTIVE AND ca=:customerAccount"),
         @NamedQuery(name = "CustomerAccount.getCountByParent", query = "select count(*) from CustomerAccount ca where ca.customer=:parent")
 })
-public class CustomerAccount extends AccountEntity implements IWFEntity, ICounterEntity {
+public class CustomerAccount extends AccountEntity  implements IInvoicingMinimumApplicable, IWFEntity, ICounterEntity {
 
 	private static final long serialVersionUID = 1L;
 
@@ -772,4 +774,11 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 	public String getDueBalance() {
 		return dueBalance;
 	}
+	
+    public Seller getSeller() {
+    	if(customer==null) {
+    		return null;
+    	}
+    	return customer.getSeller();
+    }
 }
