@@ -31,7 +31,7 @@ public class InvoicingJobBeanV2 extends BaseJobBean {
     protected Logger log;
 
     @Inject
-    private BillingService billingRunService;
+    private BillingService billingService;
 
     @Inject
     private JobExecutionService jobExecutionService;
@@ -57,8 +57,8 @@ public class InvoicingJobBeanV2 extends BaseJobBean {
                     break;
                 }
                 try {
-                    billingRunService.detach(billingRun);
-                    billingRunService.validate(billingRun, nbRuns.longValue(), waitingMillis.longValue(),recalculateTaxes, result.getJobInstance().getId(), result);
+                    billingService.detach(billingRun);
+                    billingService.validate(billingRun, nbRuns.longValue(), waitingMillis.longValue(),recalculateTaxes, result.getJobInstance().getId(), result);
                     result.registerSucces();
                 } catch (Exception e) {
                     log.error("Failed to run invoicing", e);
@@ -91,10 +91,10 @@ public class InvoicingJobBeanV2 extends BaseJobBean {
             Map<String, Object> filters = new HashedMap();
             filters.put("inList id", ids);
             PaginationConfiguration paginationConfiguration = new PaginationConfiguration(filters);
-            billingRuns = billingRunService.list(paginationConfiguration);
+            billingRuns = billingService.list(paginationConfiguration);
         } else {
             if (billingRuns == null || billingRuns.isEmpty()) {
-                billingRuns = billingRunService.listByNamedQuery("BillingRun.getForInvoicing");
+                billingRuns = billingService.listByNamedQuery("BillingRun.getForInvoicing");
             }
         }
         return billingRuns;

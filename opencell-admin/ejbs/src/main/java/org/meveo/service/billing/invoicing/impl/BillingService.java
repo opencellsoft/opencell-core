@@ -128,6 +128,48 @@ public class BillingService extends PersistenceService<BillingRun> {
 		}
 		log.info("==================== END OF Processing billingRun id={} status={} ====================", billingRun.getId(), billingRun.getStatus());
 	}
+	
+	/**
+	 * Validate billingRun, launched by Api.
+	 * 
+	 * @param billingRunId
+	 * @throws BusinessException
+	 */
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public void forceValidate(Long billingRunId) throws BusinessException {
+		BillingRun billingRun = findById(billingRunId);
+		if (billingRun == null) {
+			throw new BusinessException("Cant find BillingRun with id:" + billingRunId);
+		}
+		if (!BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())
+				&& !BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus())) {
+			throw new BusinessException("Cant validate BillingRun with status:" + billingRun.getStatus());
+
+		}
+		detach(billingRun);
+		log.info("==================== START forceValidate billingRun id={} status={} ====================",
+				billingRun.getId(), billingRun.getStatus());
+		long nbThreads = paramBeanFactory.getInstance().getPropertyAsInteger("invoicing.api.nbThreads", -1);
+		long waitingMillis = paramBeanFactory.getInstance().getPropertyAsInteger("invoicing.api.waitingMillis", 0);
+
+		BillingCycle billingCycle = billingRun.getBillingCycle();
+		if (!BillingEntityTypeEnum.BILLINGACCOUNT.equals(billingCycle.getType())) {
+			throw new BusinessException(billingCycle.getType()
+					+ " billingCycles are not yet managed, only BILLINGACCOUNT BCs may be processed by this job");
+		}
+
+		log.info(
+				"==================== forceValidate assignInvoiceNumberAndIncrementBAInvoiceDates ====================");
+		invoiceService.nullifyInvoiceFileNames(billingRun); // #3600
+		billingRunService.assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, nbThreads, waitingMillis, null,
+				null);
+
+		billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.VALIDATED,
+				null);
+
+		log.info("==================== END OF forceValidate billingRun id={} status={} ====================",
+				billingRun.getId(), billingRun.getStatus());
+	}
 
 	private void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId,
 			boolean isFullAutomatic, BillingCycle billingCycle, Date lastTransactionDate) throws BusinessException {
