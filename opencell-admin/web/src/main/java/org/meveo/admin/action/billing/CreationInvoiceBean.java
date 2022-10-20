@@ -742,10 +742,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	        }
     	}
 
-        //return getListViewName();*/
         aggregateHandler.reset();
         initEntity();
-        return "";
+        return getListViewName();
     }
 
     private void detachRts() {
