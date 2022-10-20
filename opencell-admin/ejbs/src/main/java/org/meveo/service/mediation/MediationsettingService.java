@@ -148,19 +148,20 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 					edr.setEventKey(keyEvent);		
     				errorMsg = String.format(errorMessage, "isNewVersionEL", edrVersionRule.getId(), edrVersionRule.getCriteriaEL(), cdr, "%s");
     				var previousEdrs = this.findByEventKey(keyEvent); // get EDR by key event 
+    				String keyCaheEdr = keyEvent + (edr.getEventVersion() != null ? edr.getEventVersion() : 1 ); 
     				synchronized (EdrCache) { // prevent concurrency access
                         if(CollectionUtils.isEmpty(previousEdrs)) {
-                            if(EdrCache.get(keyEvent) != null) {
-                                previousEdrs.add(EdrCache.get(keyEvent));
+                            if(EdrCache.get(keyCaheEdr) != null) {
+                                previousEdrs.add(EdrCache.get(keyCaheEdr));
                             }else {
                                 edr.setEventVersion(1);
                                 getEntityManager().flush();
-                                EdrCache.put(keyEvent, edr);
+                                EdrCache.put(keyCaheEdr, edr);
                                 continue;
                             }
                         }
                     }
-					EDR previousEdr = previousEdrs.get(0);
+					EDR previousEdr = EdrCache.get(keyCaheEdr) == null ? previousEdrs.get(0) : EdrCache.get(keyCaheEdr) ;
 					if(edr.equals(previousEdr)) {
                         if(edr.getId() != null)
                             edrService.remove(edr);
@@ -169,6 +170,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 					//evaluate the version if it true that means a new version of EDR will be created
         			boolean isNewVersion = (boolean) evaluateEdrVersion(edrVersionRule.getId(), edrVersionRule.getIsNewVersionEL(),edr, cdr, errorMsg, Boolean.class, previousEdr, edrIterate);    				
         			if(isNewVersion) {
+                        EdrCache.put(keyCaheEdr, edr);
         				 // liste des edr versioning 
     					if(previousEdr.getStatus() != EDRStatusEnum.RATED) { // all status : OPEN, CANCELLED, REJECTED
         					previousEdr.setStatus(EDRStatusEnum.CANCELLED);
