@@ -763,7 +763,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 		this.cfAccumulatedValues = copy.cfAccumulatedValues;
 		this.seller = copy.seller;
 		this.invoiceType = copy.invoiceType;
-		this.useCurrentRate = copy.useCurrentRate;
 
 		this.quote = null;
 		this.commercialOrder = null;
