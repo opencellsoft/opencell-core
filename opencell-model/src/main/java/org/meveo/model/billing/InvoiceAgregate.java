@@ -51,7 +51,8 @@ import org.meveo.model.AuditableEntity;
 @NamedQueries({ @NamedQuery(name = "InvoiceAgregate.deleteByBR", query = "delete from InvoiceAgregate ia where ia.billingRun.id=:billingRunId AND "
         + "ia.invoice.id in (select ia2.invoice.id from InvoiceAgregate ia2 where ia2.invoice.status <> org.meveo.model.billing.InvoiceStatusEnum.VALIDATED)"),
         @NamedQuery(name = "InvoiceAgregate.deleteByInvoiceIds", query = "delete from InvoiceAgregate ia where ia.invoice.id IN (:invoicesIds)"),
-        @NamedQuery(name = "InvoiceAgregate.updateByInvoiceIds", query = "update InvoiceAgregate ia set ia.invoice = null where ia.invoice.id IN (:invoicesIds)") })
+        @NamedQuery(name = "InvoiceAgregate.updateByInvoiceIds", query = "update InvoiceAgregate ia set ia.invoice = null where ia.invoice.id IN (:invoicesIds)"),
+        @NamedQuery(name = "InvoiceAgregate.deleteByInvoiceId", query = "delete from InvoiceAgregate ia where ia.invoice.id = :invoiceId") })
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_invoice_agregate_seq"), })
 public abstract class InvoiceAgregate extends AuditableEntity {
 
