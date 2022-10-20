@@ -168,10 +168,10 @@ public abstract class PaymentMethod extends EnableCFEntity {
     @Transient
     private String action;
 
-    public PaymentMethod() {
+    protected PaymentMethod() {
     }
 
-    public PaymentMethod(String alias, boolean preferred, CustomerAccount customerAccount) {
+    protected PaymentMethod(String alias, boolean preferred, CustomerAccount customerAccount) {
         super();
         this.alias = alias;
         this.preferred = preferred;

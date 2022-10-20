@@ -19,6 +19,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.UncheckedThreadingException;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.model.IEntity;
@@ -176,6 +177,7 @@ public class IteratorBasedJobProcessing implements Serializable {
                 Thread.sleep(waitingMillis.longValue());
             } catch (InterruptedException e) {
                 log.error("", e);
+                throw new UncheckedThreadingException(e);
             }
         }
 
@@ -195,6 +197,7 @@ public class IteratorBasedJobProcessing implements Serializable {
             } catch (InterruptedException | CancellationException e) {
                 wasKilled = true;
                 log.error("Thread/future for job {} was canceled", jobInstance);
+                throw new UncheckedThreadingException(e);
 
             } catch (ExecutionException e) {
                 Throwable cause = e.getCause();
@@ -346,6 +349,7 @@ public class IteratorBasedJobProcessing implements Serializable {
                 Thread.sleep(waitingMillis.longValue());
             } catch (InterruptedException e) {
                 log.error("", e);
+                throw new UncheckedThreadingException(e);
             }
         }
 
@@ -362,6 +366,7 @@ public class IteratorBasedJobProcessing implements Serializable {
             } catch (InterruptedException | CancellationException e) {
                 wasKilled = true;
                 log.error("Thread/future for job {} was canceled", jobInstance);
+                throw new UncheckedThreadingException(e);
 
             } catch (ExecutionException e) {
                 Throwable cause = e.getCause();
