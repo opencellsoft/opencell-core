@@ -205,16 +205,21 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	}
 
 	/**
-	 * @param invoice
-	 * @param invoiceLinesInput InvoiceLinesInput
+	 * Create Invoice Lines
+	 * @param invoice Invoice to update {@link Invoice}
+	 * @param invoiceLinesInput Invoice Lines Input {@link InvoiceLineInput} with a list of InvoiceLine to create {@link org.meveo.apiv2.billing.InvoiceLine}
+	 * @return {@link InvoiceLineInput}
 	 */
 	public InvoiceLinesInput createLines(Invoice invoice, InvoiceLinesInput invoiceLinesInput) {
 		ImmutableInvoiceLinesInput.Builder result = ImmutableInvoiceLinesInput.builder();
-		for(InvoiceLine invoiceLineResource : invoiceLinesInput.getInvoiceLines()) {
-			org.meveo.model.billing.InvoiceLine invoiceLine = invoiceLinesService.create(invoice, invoiceLineResource);
 
-			//Populate custom fields
-			invoiceBaseApi.populateCustomFieldsForGenericApi(invoiceLineResource.getCustomFields(), invoiceLine, true);
+		for(InvoiceLine invoiceLineResource : invoiceLinesInput.getInvoiceLines()) {
+			// For Each Invoice Line Resource, convert InvoiceLineResource to InvoiceLine
+			org.meveo.model.billing.InvoiceLine invoiceLine = invoiceLinesService.getInvoiceLine(invoice, invoiceLineResource);
+			// Populate CustomFields
+			invoiceBaseApi.populateCustomFieldsForGenericApi(invoiceLineResource.getCustomFields(), invoiceLine, false);
+			// Create Invoice Line
+			invoiceLine = invoiceLinesService.createInvoiceLine(invoiceLine);
 			invoiceLineResource = ImmutableInvoiceLine.copyOf(invoiceLineResource)
 					.withId(invoiceLine.getId())
 					.withAmountWithoutTax(invoiceLine.getAmountWithoutTax())
@@ -222,6 +227,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 					.withAmountTax(invoiceLine.getAmountTax());
 			result.addInvoiceLines(invoiceLineResource);
 		}
+
 		invoiceService.calculateInvoice(invoice);
 		invoiceService.updateBillingRunStatistics(invoice);
 		result.skipValidation(invoiceLinesInput.getSkipValidation());
@@ -237,15 +243,18 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	}
 
 	/**
-	 * @param invoice
-	 * @param invoiceLineInput
-	 * @param lineId 
+	 * Update Invoice Line
+	 * @param invoice Invoice to update {@link Invoice}
+	 * @param invoiceLineInput Invoice Line Input to update {@link InvoiceLineInput}
+	 * @param lineId Invoice Line Id
 	 */
 	public void updateLine(Invoice invoice, InvoiceLineInput invoiceLineInput, Long lineId) {
-		invoiceLinesService.update(invoice, invoiceLineInput.getInvoiceLine(), lineId);
-		//Populate custom fields
-		org.meveo.model.billing.InvoiceLine invoiceLine = invoiceLinesService.findById(lineId);
+		// Get Invoice Line to update using Invoice Line Input
+		org.meveo.model.billing.InvoiceLine invoiceLine = invoiceLinesService.getInvoiceLineForUpdate(invoice, invoiceLineInput.getInvoiceLine(), lineId);
+		// Populate Custom fields
 		invoiceBaseApi.populateCustomFieldsForGenericApi(invoiceLineInput.getInvoiceLine().getCustomFields(), invoiceLine, false);
+		// Update Invoice Line
+		invoiceLinesService.update(invoiceLine);
 		invoiceService.calculateInvoice(invoice);
 		invoiceService.updateBillingRunStatistics(invoice);
 	}
