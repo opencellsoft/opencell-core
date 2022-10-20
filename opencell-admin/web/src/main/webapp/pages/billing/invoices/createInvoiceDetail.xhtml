@@ -75,11 +75,11 @@
 									<p:dataTable label="#{messages['invoice.linkedInvoices']}" noClose="false" value="#{creationInvoiceBean.entity.linkedInvoices}" var="entity" resizableColumns="true">
 
 										<f:facet name="header">#{messages['invoice.linkedInvoices']}</f:facet>
-										<hftl:column label="#{messages['invoice.invoiceType']}" field="invoiceType.code" />
-										<hftl:column label="#{messages['invoice.invoiceNumber']}" field="invoiceNumber" />
-										<hftl:column label="#{messages['invoice.invoiceDate']}" field="invoiceDate" isDate="true" />
-										<hftl:column label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" rendered="#{appProvider.entreprise}" />
-										<hftl:column label="#{messages['invoice.amountWithTax']}" field="amountWithTax" rendered="#{!appProvider.entreprise}" />
+										<hftl:column label="#{messages['invoice.invoiceType']}" field="linkedInvoiceValue.invoiceType.code" />
+										<hftl:column label="#{messages['invoice.linkedInvoiceValue.invoiceNumber']}" field="linkedInvoiceValue.invoiceNumber" />
+										<hftl:column label="#{messages['invoice.invoiceDate']}" field="linkedInvoiceValue.invoiceDate" isDate="true" />
+										<hftl:column label="#{messages['invoice.amountWithoutTax']}" field="linkedInvoiceValue.amountWithoutTax" rendered="#{appProvider.entreprise}" />
+										<hftl:column label="#{messages['invoice.amountWithTax']}" field="linkedInvoiceValue.amountWithTax" rendered="#{!appProvider.entreprise}" />
 										<p:column width="20px;">
 											<p:commandButton icon="ui-icon-trash" action="#{creationInvoiceBean.deleteLinkedInvoice}" update=":formId:tabView:linkedInvoices :formId:tabView:ImportRTs">
 												<f:setPropertyActionListener value="#{entity}" target="#{creationInvoiceBean.selectedInvoice}" />

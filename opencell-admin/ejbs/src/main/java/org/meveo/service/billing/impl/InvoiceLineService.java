@@ -201,14 +201,17 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         TaxInfo recalculatedTaxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), 
             securityDepositInput.getBillingAccount().getCustomerAccount().getCustomer().getSeller(), 
             securityDepositInput.getBillingAccount(), null, new Date(), null, isExonerated, false, invoiceLine.getTax());
+        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(securityDepositInput.getAmount(), securityDepositInput.getAmount(), 
+            recalculatedTaxInfo.tax.getPercent(), appProvider.isEntreprise(), appProvider.getRounding(),
+            appProvider.getRoundingMode().getRoundingMode());
+        invoiceLine.setAmountWithoutTax(amounts[0]);
+        invoiceLine.setAmountWithTax(amounts[1]);
+        invoiceLine.setAmountTax(amounts[2]);
         invoiceLine.setTax(recalculatedTaxInfo.tax);
         invoiceLine.setTaxRate(recalculatedTaxInfo.tax.getPercent());          
         invoiceLine.setTaxMode(InvoiceLineTaxModeEnum.ARTICLE);          
         invoiceLine.setAccountingArticle(accountingArticle);
         invoiceLine.setDiscountPlan(null);
-        invoiceLine.setAmountTax(securityDepositInput.getAmount());
-        invoiceLine.setAmountWithTax(securityDepositInput.getAmount());
-        invoiceLine.setAmountWithoutTax(securityDepositInput.getAmount());
         invoiceLine.setUnitPrice(securityDepositInput.getAmount());
         invoiceLine.setInvoice(invoice);        
         invoiceLine.setQuantity(new BigDecimal("1"));

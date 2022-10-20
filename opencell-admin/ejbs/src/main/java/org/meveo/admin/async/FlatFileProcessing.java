@@ -234,6 +234,7 @@ public class FlatFileProcessing {
                 } else {
                     unitFlatFileProcessingJobBean.execute(script, executeParams);
                 }
+                // TO REMOVE the block
 
                 synchronized (outputFileWriter) {
                     if (nbLinesToProcess == 1) {
