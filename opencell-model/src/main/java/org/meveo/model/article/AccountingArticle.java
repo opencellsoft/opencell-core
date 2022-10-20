@@ -33,15 +33,15 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@OneToOne(fetch = LAZY)
+	@OneToOne(fetch = LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "tax_class_id")
     private TaxClass taxClass;
 
-    @OneToOne(fetch = LAZY)
+	@OneToOne(fetch = LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "invoice_sub_category_id")
     private InvoiceSubCategory invoiceSubCategory;
 
-    @OneToOne(fetch = LAZY)
+	@OneToOne(fetch = LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "article_family_id")
     private ArticleFamily articleFamily;
 
