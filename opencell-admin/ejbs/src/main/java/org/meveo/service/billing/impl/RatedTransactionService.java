@@ -1644,4 +1644,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return null;
         }
 	}
+
+    public int detachRTFromSubCatAgg(List<Long> rtIds) {
+        return getEntityManager().createNamedQuery("RatedTransaction.detachRTFromSubCat")
+                .setParameter("rtIds", rtIds)
+                .executeUpdate();
+    }
 }
