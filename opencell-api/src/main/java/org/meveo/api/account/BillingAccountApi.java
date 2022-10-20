@@ -55,6 +55,7 @@ import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.BeanUtils;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.model.billing.*;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.communication.email.EmailTemplate;
@@ -858,7 +859,7 @@ public class BillingAccountApi extends AccountEntityApi {
                         break;
 
                     } else if (postData.getPaymentMethodType() == PaymentMethodEnum.DIRECTDEBIT) {
-
+                        paymentMethod = PersistenceUtils.initializeAndUnproxy(paymentMethod);
                         if (postData.getBankCoordinates().getIban() != null && ((DDPaymentMethod) paymentMethod).getBankCoordinates() != null
                                 && postData.getBankCoordinates().getIban().equals(((DDPaymentMethod) paymentMethod).getBankCoordinates().getIban())) {
                             found = true;
