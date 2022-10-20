@@ -182,6 +182,18 @@ public class ContactApi extends BaseApi {
             throw new BusinessException("addressBook with id " + addressBookServiceById.getId() + " has already a main contact assigned.");
         }
     }
+    private void checkMainContactExistance(AddressBookContactDto abcDto, AddressBook addressBookServiceById, Contact contact) {
+        List<AddressBookContact> mainContact = addressBookContactService.getMainContact(addressBookServiceById.getId());
+        if (abcDto.getMainContact() && !mainContact.isEmpty() && !isTheSameAddressBook(mainContact, contact)) {
+            throw new BusinessException("addressBook with id " + addressBookServiceById.getId() + " has already a main contact assigned.");
+        }
+    }
+
+    private boolean isTheSameAddressBook(List<AddressBookContact> mainContact, Contact contact) {
+        return mainContact.stream()
+                .filter(x -> x.getMainContact())
+                .anyMatch(x -> x.getContact().getId() == contact.getId());
+    }
 
     public Contact update(ContactDto postData) throws MeveoApiException, BusinessException {
 
@@ -220,7 +232,7 @@ public class ContactApi extends BaseApi {
                         if(addressBookServiceById == null){
                             throw new EntityDoesNotExistsException("addressBook with id "+abcDto.getAddressBook().get("id")+" does not exist");
                         }
-                        checkMainContactExistance(abcDto, addressBookServiceById);
+                        checkMainContactExistance(abcDto, addressBookServiceById, contact);
                         // update existing
                         if(abcDto.getId() != null){
                             AddressBookContact addressBookContact = addressBookContactService.findById(abcDto.getId());
