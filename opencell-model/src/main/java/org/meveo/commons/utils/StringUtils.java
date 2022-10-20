@@ -349,7 +349,10 @@ public class StringUtils {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
-    public static CharSequence computeNextAlphabetSequence(String current) {
+    public static String computeNextAlphabetSequence(String current) {
+        if (StringUtils.isBlank(current)){
+            return "AAA";
+        }
         char[] currentChars = current.toCharArray();
         for (int i = currentChars.length-1; i >= 0 ; i--) {
             if(current.charAt(i) < 'Z'){
@@ -359,7 +362,8 @@ public class StringUtils {
                 }
                 return new String(currentChars);
             }
+            currentChars[i]='A';
         }
-        return current + "A";
+        return new String(currentChars) + "A";
     }
 }

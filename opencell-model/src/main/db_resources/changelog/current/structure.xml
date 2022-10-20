@@ -14465,6 +14465,14 @@ order by date_trunc('month', i.invoice_date) DESC
 		<modifyDataType tableName="adm_inbound_req_cookies" columnName="coockies" newDataType="varchar(500)" />
 		<modifyDataType tableName="adm_inbound_req_cookies" columnName="coockies_key" newDataType="varchar(500)" />
 	</changeSet>	
+	
+	<changeSet id="#INTRD-10607_20221014" author="AdilElJaouhari">
+		<addColumn tableName="billing_invoice">
+            <column name="use_current_rate" type="${type.boolean}" defaultValueNumeric="0">
+            	<constraints nullable="false" />
+            </column>
+        </addColumn>
+	</changeSet>
 
 	<changeSet id="#INTRD-10522_20221017_matchingCode-journal-entry" author="aelmalki">
 		<addColumn tableName="accounting_journal_entry">
@@ -14474,5 +14482,26 @@ order by date_trunc('month', i.invoice_date) DESC
 			<column name="current_matching_code" type="varchar(255)" />
 		</addColumn>
 	</changeSet>
-    
+
+    <changeSet id="#INTRD-10693_20221019-sd-adjustment" author="a.rouaguebe">
+        <addColumn tableName="security_deposit">
+            <column name="sd_adjustment_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="security_deposit"
+                                 baseColumnNames="sd_adjustment_id"
+                                 constraintName="fk_security_adjustment_invoice"
+                                 referencedTableName="billing_invoice"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
+
+    <changeSet id="#10629_20221018" author="zelmeliani">
+        <addColumn tableName="billing_invoice_line">
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" />
+            </column>
+            <column name="cf_values" type="${type.json}" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

@@ -213,6 +213,10 @@ public class ProviderResourceImpl implements ProviderResource {
             } 
             providerByCode.setRgaaMessage(providerUpdateInfos.getRgaaMessage());
         }
+
+        if (provider.getCurrentMatchingCode() != null) {
+            providerByCode.setCurrentMatchingCode(providerUpdateInfos.getCurrentMatchingCode());
+        }
         
         providerService.update(providerByCode);
         return Response.ok().entity("{\"actionStatus\":{\"status\":\"SUCCESS\"}}").build();

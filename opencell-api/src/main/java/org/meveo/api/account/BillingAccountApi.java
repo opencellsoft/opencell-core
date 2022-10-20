@@ -60,6 +60,7 @@ import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.commons.utils.BeanUtils;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -891,6 +892,7 @@ public class BillingAccountApi extends AccountEntityApi {
 
                     } else if (postData.getPaymentMethodType() == PaymentMethodEnum.DIRECTDEBIT) {
 
+                        paymentMethod = PersistenceUtils.initializeAndUnproxy(paymentMethod);
                         if (postData.getBankCoordinates().getIban() != null && ((DDPaymentMethod) paymentMethod).getBankCoordinates() != null
                                 && postData.getBankCoordinates().getIban().equals(((DDPaymentMethod) paymentMethod).getBankCoordinates().getIban())) {
                             found = true;
