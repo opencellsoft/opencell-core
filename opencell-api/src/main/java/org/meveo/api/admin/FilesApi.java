@@ -353,7 +353,8 @@ public class FilesApi extends BaseApi {
      * @throws BusinessApiException business exception.
      */
     public void downloadFile(String filePath, HttpServletResponse response) throws BusinessApiException {
-        File file = new File(getProviderRootDir() + File.separator + normalizePath(filePath));
+		File file = (filePath.contains(getProviderRootDir().replace("\\", "/"))) ? new File(filePath)
+				: new File(getProviderRootDir() + File.separator + normalizePath(filePath));
         if (!file.exists()) {
             throw new BusinessApiException(FILE_DOES_NOT_EXISTS + file.getPath());
         }
