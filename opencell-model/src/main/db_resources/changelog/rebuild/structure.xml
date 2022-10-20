@@ -7613,6 +7613,9 @@
             <column name="description" type="varchar(255)" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
+            <column name="description_i18n" type="${type.json}">
+                <constraints nullable="true" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-371">
@@ -18669,7 +18672,7 @@
 	<changeSet id="#INTRD-9766_20221011_EDR_new_fields" author="aelmalki" />
 	<changeSet id="#INTRD-10581_20221018" author="HichamHANINE" />
 	<changeSet id="#INTRD-10522_20221017_matchingCode-journal-entry" author="aelmalki" />
-
+	<changeSet id="#INTRD-10577_20221020" author="HichamHANINE" />
     <changeSet id="#10629_20221018" author="zelmeliani" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
