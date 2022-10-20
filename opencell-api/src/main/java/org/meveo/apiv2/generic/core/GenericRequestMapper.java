@@ -69,7 +69,9 @@ public class GenericRequestMapper {
         return Stream.of(filters.keySet().toArray())
                 .map(key -> {
                     String keyObject = (String) key;
-                    if(!keyObject.startsWith("SQL") && !"$FILTER".equalsIgnoreCase(keyObject) && !"$OPERATOR".equalsIgnoreCase(keyObject)){
+                    if(keyObject.matches("\\$filter[0-9]+$")) {
+                    	return Collections.singletonMap(keyObject, evaluateFilters((Map<String, Object>)filters.get(key), entity));
+                    } else if(!keyObject.startsWith("SQL") && !"$FILTER".equalsIgnoreCase(keyObject) && !"$OPERATOR".equalsIgnoreCase(keyObject)){
 
                     	String fieldName = keyObject.contains(" ") ? keyObject.substring(keyObject.indexOf(" ")).trim() : keyObject;
                     	String[] fields=fieldName.split(" ");

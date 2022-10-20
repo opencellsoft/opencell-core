@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.Stack;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -69,6 +70,17 @@ import org.meveo.security.keycloak.CurrentUserProvider;
  * @lastModifiedVersion 12.x
  */
 public class QueryBuilder {
+	
+	private class NestedQuery {
+		FilterOperatorEnum operator = FilterOperatorEnum.AND;
+		boolean hasOneOrMoreCriteria = false;
+
+		public NestedQuery(FilterOperatorEnum operator, boolean hasOneOrMoreCriteria) {
+			super();
+			this.operator = operator;
+			this.hasOneOrMoreCriteria = hasOneOrMoreCriteria;
+		} 
+	}
 
     public static final String INNER_JOINS = "{innerJoins}";
     protected StringBuilder q;
@@ -80,6 +92,8 @@ public class QueryBuilder {
     private boolean hasOneOrMoreCriteria;
 
     private boolean inOrClause;
+    
+    private Stack<NestedQuery> nestedClauses = new Stack<>();
 
     private int nbCriteriaInOrClause;
 
@@ -429,6 +443,24 @@ public class QueryBuilder {
     public QueryBuilder addSqlCriterion(String sql, String param, Object value) {
         if (param != null && StringUtils.isBlank(value)) {
             return this;
+        }
+        
+        if(!nestedClauses.empty()) {
+        	NestedQuery currentNF = nestedClauses.pop();
+        	if(currentNF.hasOneOrMoreCriteria) {
+        		if (FilterOperatorEnum.OR.equals(currentNF.operator)) {
+	                q.append(" or ");
+	            } else {
+	                q.append(" and ");
+	            }
+        	}
+        	q.append(sql);
+        	if (param != null) {
+                params.put(param, value);
+            }
+        	currentNF.hasOneOrMoreCriteria = true;
+        	nestedClauses.add(currentNF);
+        	return this;
         }
 
         if (hasOneOrMoreCriteria) {
@@ -1272,6 +1304,31 @@ public class QueryBuilder {
         inOrClause = false;
         nbCriteriaInOrClause = 0;
         return this;
+    }
+
+    public QueryBuilder startNestedFilter(FilterOperatorEnum operator) {
+    	if(!nestedClauses.empty()) {
+    		NestedQuery parentNF = nestedClauses.peek();
+    		if(parentNF.hasOneOrMoreCriteria) {
+    			q.append(" " + parentNF.operator + " ");
+    		}
+    	} else if (hasOneOrMoreCriteria) {
+    		q.append(" " + filterOperator + " ");
+    	} else {
+    		q.append(" where ");
+    	}
+    	q.append(" (");
+    	nestedClauses.add(new NestedQuery(operator, false));
+    	return this;
+    }
+
+    public QueryBuilder endNestedFilter() {
+    	q.append(")");
+    	nestedClauses.pop();
+    	if(!nestedClauses.empty()) {
+    		nestedClauses.peek().hasOneOrMoreCriteria = true;
+    	}
+    	return this;
     }
 
     /**
