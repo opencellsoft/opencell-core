@@ -10603,7 +10603,11 @@
             <column name="converted_discount_amount" type="numeric(23, 12)" />
             <column name="converted_raw_amount" type="numeric(23, 12)" />
             <column name="open_order_number" type="varchar(255)" />
-             <column name="sequence" type="int4"/>
+            <column name="sequence" type="int4"/>
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="cf_values" type="${type.json}" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -18673,8 +18677,11 @@
 
 	<changeSet id="#INTRD-9766_20221011_EDR_new_fields" author="aelmalki" />
 
+    <changeSet id="#10629_20221018" author="zelmeliani" />
+
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
     </changeSet>
+
 </databaseChangeLog>
