@@ -14501,4 +14501,12 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="cf_values" type="${type.json}" />
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD-10577_20221020" author="HichamHANINE">
+        <addColumn tableName="billing_invoice_line">
+            <column name="description_i18n" type="${type.json}">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
