@@ -350,9 +350,8 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     /**
      * Linked invoices
      */
-    @ManyToMany
-    @JoinTable(name = "billing_linked_invoices", joinColumns = { @JoinColumn(name = "id") }, inverseJoinColumns = { @JoinColumn(name = "linked_invoice_id") })
-    private Set<Invoice> linkedInvoices = new HashSet<>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "id", cascade = CascadeType.ALL)
+    private Set<LinkedInvoice> linkedInvoices = new HashSet<>();
 
     /**
      * Orders that produced rated transactions that were included in the invoice
@@ -1235,11 +1234,11 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         return null;
     }
 
-    public Set<Invoice> getLinkedInvoices() {
+    public Set<LinkedInvoice> getLinkedInvoices() {
         return linkedInvoices;
     }
 
-    public void setLinkedInvoices(Set<Invoice> linkedInvoices) {
+    public void setLinkedInvoices(Set<LinkedInvoice> linkedInvoices) {
         this.linkedInvoices = linkedInvoices;
     }
 
@@ -1894,5 +1893,15 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      */
     public BigDecimal getAppliedRate() {
         return this.lastAppliedRate != null && !this.lastAppliedRate.equals(ZERO) ? this.lastAppliedRate : ONE;
+    }
+
+
+    public BigDecimal getInvoiceBalance() {
+        return invoiceBalance;
+    }
+
+
+    public void setInvoiceBalance(BigDecimal invoiceBalance) {
+        this.invoiceBalance = invoiceBalance;
     }
 }

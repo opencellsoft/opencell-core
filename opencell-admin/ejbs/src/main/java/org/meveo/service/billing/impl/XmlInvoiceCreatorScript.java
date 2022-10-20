@@ -1308,13 +1308,13 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * @param linkedInvoices Linked invoices
      * @return A space separated list of invoice numbers
      */
-    private String getLinkedInvoicesnumberAsString(List<Invoice> linkedInvoices) {
+    private String getLinkedInvoicesnumberAsString(List<LinkedInvoice> linkedInvoices) {
         if (linkedInvoices == null || linkedInvoices.isEmpty()) {
             return "";
         }
         String result = "";
-        for (Invoice inv : linkedInvoices) {
-            result += inv.getInvoiceNumber() + " ";
+        for (LinkedInvoice inv : linkedInvoices) {
+            result += inv.getLinkedInvoiceValue().getInvoiceNumber() + " ";
         }
         return result;
     }
@@ -1376,13 +1376,13 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         ofNullable(invoice.getExternalRef()).ifPresent(externalRef
                 -> invoiceTag.setAttribute("externalReference", externalRef));
         if (isInvoiceAdjustment) {
-            Set<Invoice> linkedInvoices = invoice.getLinkedInvoices();
+            Set<LinkedInvoice> linkedInvoices = invoice.getLinkedInvoices();
             invoiceTag.setAttribute("adjustedInvoiceNumber", getLinkedInvoicesnumberAsString(new ArrayList<>(linkedInvoices)));
         }
         BillingCycle billingCycle = null;
-        Invoice linkedInvoice = invoiceService.getLinkedInvoice(invoice);
-        if (isInvoiceAdjustment && linkedInvoice != null && linkedInvoice.getBillingRun() != null) {
-            billingCycle = linkedInvoice.getBillingRun().getBillingCycle();
+        LinkedInvoice linkedInvoice = invoiceService.getLinkedInvoice(invoice);
+        if (isInvoiceAdjustment && linkedInvoice != null && linkedInvoice.getLinkedInvoiceValue().getBillingRun() != null) {
+            billingCycle = linkedInvoice.getLinkedInvoiceValue().getBillingRun().getBillingCycle();
         } else {
             if (invoice.getBillingRun() != null && invoice.getBillingRun().getBillingCycle() != null) {
                 billingCycle = invoice.getBillingRun().getBillingCycle();
@@ -1740,12 +1740,12 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         if (sellerTag != null) {
             header.appendChild(sellerTag);
         }
-        Invoice linkedInvoice = invoiceService.getLinkedInvoice(invoice);
-        Element customerAccountTag = createCustomerAccountSection(doc, invoice, linkedInvoice, isInvoiceAdjustment, invoiceConfiguration);
+        LinkedInvoice linkedInvoice = invoiceService.getLinkedInvoice(invoice);
+        Element customerAccountTag = createCustomerAccountSection(doc, invoice, linkedInvoice.getLinkedInvoiceValue(), isInvoiceAdjustment, invoiceConfiguration);
         if (customerAccountTag != null) {
             header.appendChild(customerAccountTag);
         }
-        Element billingAccountTag = createBillingAccountSection(doc, invoice, linkedInvoice, isInvoiceAdjustment, invoiceConfiguration);
+        Element billingAccountTag = createBillingAccountSection(doc, invoice, linkedInvoice.getLinkedInvoiceValue(), isInvoiceAdjustment, invoiceConfiguration);
         if (billingAccountTag != null) {
             header.appendChild(billingAccountTag);
         }

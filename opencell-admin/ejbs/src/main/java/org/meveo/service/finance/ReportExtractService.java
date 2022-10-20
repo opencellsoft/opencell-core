@@ -195,7 +195,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
         }
 
         File file = new File(reportDir.append(File.separator).append(filename).toString());
-        reportExtractExecutionResult.setFilePath(file.getPath());
+        reportExtractExecutionResult.setFilePath(file.getPath().replace("\\", "/"));
         reportExtractExecutionResult.setEndDate(new Date());
         reportExtractExecutionResultService.createInNewTransaction(reportExtractExecutionResult);
 
@@ -399,7 +399,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
 
     public String getReporFilePath(ReportExtractExecutionResult reportResult) throws BusinessException {
     	
-    	if (reportResult.getFilePath().contains(File.separator + ReportExtractScript.REPORTS_DIR)) {
+    	if (reportResult.getFilePath().contains(ReportExtractScript.REPORTS_DIR)) {
     		return reportResult.getFilePath();
     	}
 

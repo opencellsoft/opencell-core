@@ -6575,17 +6575,6 @@
         </createTable>
         <addPrimaryKey columnNames="invoice_type_id, applies_to_id" constraintName="billing_invoice_type_applies_to_pkey" tableName="billing_invoice_type_applies_to" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-319">
-        <createTable tableName="billing_linked_invoices">
-            <column name="id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="linked_invoice_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-        <addPrimaryKey columnNames="id, linked_invoice_id" constraintName="billing_linked_invoices_pkey" tableName="billing_linked_invoices" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-320">
         <createTable tableName="billing_seq_invtyp_sell">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -10604,7 +10593,11 @@
             <column name="converted_discount_amount" type="numeric(23, 12)" />
             <column name="converted_raw_amount" type="numeric(23, 12)" />
             <column name="open_order_number" type="varchar(255)" />
-             <column name="sequence" type="int4"/>
+            <column name="sequence" type="int4"/>
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="cf_values" type="${type.json}" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -11722,6 +11715,7 @@
 			<column name="cancel_reason" type="varchar(255)"/>
 			<column name="sd_invoice_id" type="bigint"/>
 			<column name="billing_account_id" type="bigint"/>
+            <column name="sd_adjustment_id" type="bigint" />
 		</createTable>
 
 		<createTable tableName="security_deposit_transaction">
@@ -17387,6 +17381,44 @@
                                  referencedTableName="com_contact"
                                  referencedColumnNames="id" />
     </changeSet>
+
+    <changeSet id="#INTRD-10693_20221019-sd-adjustment" author="a.rouaguebe">
+        <addForeignKeyConstraint baseTableName="security_deposit"
+                                 baseColumnNames="sd_adjustment_id"
+                                 constraintName="fk_security_adjustment_invoice"
+                                 referencedTableName="billing_invoice"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
+    
+    <changeSet id="#INTRD-10541_20221013_build" author="TarikFA.">
+    	<createTable tableName="billing_linked_invoices">
+            <column name="id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="linked_invoice_id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="numeric(23, 12)" />
+            <column name="type" type="varchar(50)" />
+    	</createTable>
+    	
+        <addPrimaryKey columnNames="id, linked_invoice_id" constraintName="billing_linked_invoices_pkey" tableName="billing_linked_invoices" />
+    	
+		<addForeignKeyConstraint constraintName="invoice_id_fk"
+                                 baseColumnNames="id"
+                                 baseTableName="billing_linked_invoices"
+                                 referencedTableName="billing_invoice"
+                                 referencedColumnNames="id" />
+                                 
+		<addForeignKeyConstraint constraintName="linked_invoice_id_fk"
+                                 baseColumnNames="linked_invoice_id"
+                                 baseTableName="billing_linked_invoices"
+                                 referencedTableName="billing_invoice"
+                                 referencedColumnNames="id" />
+    	
+    </changeSet>
     
     
 
@@ -18637,6 +18669,8 @@
 	<changeSet id="#INTRD-9766_20221011_EDR_new_fields" author="aelmalki" />
 	<changeSet id="#INTRD-10581_20221018" author="HichamHANINE" />
 	<changeSet id="#INTRD-10522_20221017_matchingCode-journal-entry" author="aelmalki" />
+
+    <changeSet id="#10629_20221018" author="zelmeliani" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
