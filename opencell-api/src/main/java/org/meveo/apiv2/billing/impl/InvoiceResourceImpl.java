@@ -56,7 +56,6 @@ import org.meveo.apiv2.billing.resource.InvoiceResource;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
 import org.meveo.apiv2.billing.service.InvoiceSubTotalsApiService;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
-import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.*;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.MatchingAmount;
