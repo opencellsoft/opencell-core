@@ -1328,6 +1328,7 @@ public class QueryBuilder {
     	if(!nestedClauses.empty()) {
     		nestedClauses.peek().hasOneOrMoreCriteria = true;
     	}
+    	hasOneOrMoreCriteria = true;
     	return this;
     }
 
