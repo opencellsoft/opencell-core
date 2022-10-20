@@ -383,6 +383,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             taxInfo = taxMappingService.determineTax(selectedCharge, seller, ua, usageDate);
         }
 
+        if(entity.getId() == null) {
+            invoiceService.create(entity);
+        }
         // AKK check what happens with tax
         RatedTransaction ratedTransaction = new RatedTransaction(usageDate, unitAmountWithoutTax, unitAmountWithTax, null, quantity, null, null, null, RatedTransactionStatusEnum.BILLED, ua.getWallet(),
             ua.getBillingAccount(), ua, selectInvoiceSubCat, parameter1, parameter2, parameter3, null, orderNumber, null, null, null, null, null, null, selectedCharge.getCode(), description, rtStartDate, rtEndDate,
@@ -705,6 +708,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     		} else{
     			entity = invoiceService.retrieveIfNotManaged(entity);
     		}
+    	}
+        if(entity.getId() == null) {
+            invoiceService.create(entity);
         }
         if (!ratedTransactionsToRemove.isEmpty()) {
             ratedTransactionsToSave.removeAll(ratedTransactionsToRemove);
@@ -714,7 +720,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                     .collect(Collectors.toList()));
         }
         detachRts();
-        invoiceAgregateService.deleteInvoiceAggregates(entity.getId());
+        if(entity.getId() != null) {
+            invoiceAgregateService.deleteInvoiceAggregates(entity.getId());
+        }
         Map<String, CategoryInvoiceAgregate> categoryInvoiceAggregateMap = new HashMap<>();
         List<SubCategoryInvoiceAgregate> newSubCategoryInvoiceAggregates = new ArrayList<>();
         for (RatedTransaction ratedTransaction : ratedTransactionsToSave) {
