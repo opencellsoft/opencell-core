@@ -779,10 +779,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             Text nameTxt = this.createTextNode(doc, account.getName().getLastName());
             name.appendChild(nameTxt);
         }
-        if(account.getIsCompany()) {
-            Text nameTxt = this.createTextNode(doc, account.getDescription());
-            name.appendChild(nameTxt);
-        }
         nameTag.appendChild(name);
         return nameTag;
     }
