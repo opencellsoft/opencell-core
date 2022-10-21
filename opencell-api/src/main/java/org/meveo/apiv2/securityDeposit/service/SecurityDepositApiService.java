@@ -2,7 +2,9 @@ package org.meveo.apiv2.securityDeposit.service;
 
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
+import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -20,6 +22,10 @@ import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.apiv2.billing.ImmutableBasicInvoice;
+import org.meveo.apiv2.billing.ImmutableInvoiceLine;
+import org.meveo.apiv2.billing.ImmutableInvoiceLinesInput;
+import org.meveo.apiv2.billing.service.InvoiceApiService;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.commons.utils.ListUtils;
 import org.meveo.model.BaseEntity;
@@ -32,6 +38,7 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.model.securityDeposit.SecurityDeposit;
+import org.meveo.model.securityDeposit.SecurityDepositOperationEnum;
 import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.service.admin.impl.CurrencyService;
@@ -39,6 +46,7 @@ import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -80,6 +88,12 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         
     @Inject
     private InvoiceLineService invoiceLineService;
+
+    @Inject
+    private InvoiceApiService invoiceApiService;
+
+    @Inject
+    private ServiceSingleton serviceSingleton;
     
     @Override
     public List<SecurityDeposit> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -349,4 +363,52 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
         return fmt.format(date1).equals(fmt.format(date2));
     }
+
+    @Transactional
+	public void refund(SecurityDeposit securityDepositToUpdate, String reason, SecurityDepositOperationEnum securityDepositOperationEnum, SecurityDepositStatusEnum securityDepositStatusEnum, String operationType) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException, IOException {
+
+		securityDepositToUpdate = securityDepositService.refreshOrRetrieve(securityDepositToUpdate);
+		
+		Invoice adjustmentInvoice = createAdjustmentInvoice(securityDepositToUpdate);
+        securityDepositToUpdate.setSecurityDepositAdjustment(adjustmentInvoice);
+        securityDepositService.update(securityDepositToUpdate);
+		
+		securityDepositService.refund(securityDepositToUpdate, reason, securityDepositOperationEnum, securityDepositStatusEnum, operationType);
+	}
+
+	private Invoice createAdjustmentInvoice(SecurityDeposit securityDepositToUpdate) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException, IOException {
+		// Create adjustment invoice
+        org.meveo.apiv2.billing.BasicInvoice adjInvoice = ImmutableBasicInvoice.builder()
+                .invoiceTypeCode("ADJ")
+                .billingAccountCode(securityDepositToUpdate.getBillingAccount().getCode())
+                .invoiceDate(new Date())
+                .amountWithTax(securityDepositToUpdate.getCurrentBalance())
+                .build();
+        Invoice adjustmentInvoice = invoiceService.createBasicInvoice(adjInvoice);
+        invoiceService.getEntityManager().flush();
+
+        // Create Invoice Line
+        org.meveo.apiv2.billing.InvoiceLine invoiceLineResource = ImmutableInvoiceLine.builder()
+                .accountingArticleCode("ART_SECURITY_DEPOSIT")
+                .amountTax(BigDecimal.ZERO)
+                .amountWithoutTax(securityDepositToUpdate.getCurrentBalance())
+                .amountWithTax(securityDepositToUpdate.getCurrentBalance())
+                .unitPrice(securityDepositToUpdate.getCurrentBalance())
+                .invoiceId(adjustmentInvoice.getId())
+                .label("Security Deposit Adjustment")
+                .quantity(BigDecimal.ONE)
+                .build();
+
+        org.meveo.apiv2.billing.InvoiceLinesInput input = ImmutableInvoiceLinesInput.builder()
+                .addInvoiceLines(invoiceLineResource)
+                .build();
+
+        invoiceApiService.createLines(adjustmentInvoice, input);
+        
+        // Validate ADJ Invoice
+        adjustmentInvoice.setStatus(VALIDATED);
+        serviceSingleton.assignInvoiceNumber(adjustmentInvoice, true);
+        
+		return adjustmentInvoice;
+	}
 }

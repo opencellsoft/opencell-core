@@ -1,16 +1,19 @@
 package org.meveo.apiv2.securityDeposit.impl;
 
-import java.math.BigDecimal;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ImportInvoiceException;
+import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.admin.exception.ValidationException;
@@ -29,6 +32,7 @@ import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositOperationEnum;
 import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
 import org.meveo.service.audit.logging.AuditLogService;
+import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositService;
 
@@ -53,6 +57,9 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
     private InvoiceApi invoiceApi;
     
     SecurityDepositMapper securityDepositMapper = new SecurityDepositMapper();
+
+    @Inject
+    BillingAccountService billingAccountService;
 
     @Override
     public Response instantiate(SecurityDepositInput securityDepositInput) {
@@ -131,6 +138,7 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
     }
 
     @Override
+    @Transactional
     public Response refund(Long id, SecurityDepositRefundInput securityDepositInput) {
         SecurityDeposit securityDepositToUpdate = securityDepositService.findById(id);
         if(securityDepositToUpdate == null) {
@@ -143,7 +151,13 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
             throw new EntityDoesNotExistsException("The refund is possible ONLY if the status of the security deposit is at 'Locked' or 'Unlocked' or 'HOLD'");
         }    
 
-        securityDepositService.refund(securityDepositToUpdate, securityDepositInput.getRefundReason(), SecurityDepositOperationEnum.REFUND_SECURITY_DEPOSIT, SecurityDepositStatusEnum.REFUNDED, "REFUND");
+        try {
+			securityDepositApiService.refund(securityDepositToUpdate, securityDepositInput.getRefundReason(), SecurityDepositOperationEnum.REFUND_SECURITY_DEPOSIT, SecurityDepositStatusEnum.REFUNDED, "REFUND");
+        } catch (BusinessException e) {
+            throw new BusinessException(e);
+        } catch (ImportInvoiceException | InvoiceExistException | IOException | MeveoApiException e) {
+            throw new MeveoApiException(e);
+        }
         return Response.ok().entity(buildResponse(securityDepositMapper.toResource(securityDepositToUpdate))).build();
     }
     
@@ -185,6 +199,7 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
         securityDepositService.createSecurityDepositTransaction(securityDepositToUpdate, securityDepositInput.getAmountToCredit(), 
             SecurityDepositOperationEnum.CREDIT_SECURITY_DEPOSIT, OperationCategoryEnum.CREDIT, payment);        
         auditLogService.trackOperation("CREDIT", new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
+        securityDepositToUpdate.setBillingAccount(billingAccountService.refreshOrRetrieve(securityDepositToUpdate.getBillingAccount()));
         return Response.ok().entity(buildResponse(securityDepositMapper.toResource(securityDepositToUpdate))).build();
     }
 

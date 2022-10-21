@@ -21,6 +21,7 @@ package org.meveo.admin.job;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.async.UpdateUnpaidInvoiceStatusAsync;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.UncheckedThreadingException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -85,6 +86,7 @@ public class UpdateUnpaidInvoiceStatusJobBean extends BaseJobBean {
                     Thread.sleep(waitingMillis);
                 } catch (InterruptedException e) {
                     log.error("", e);
+                    throw new UncheckedThreadingException(e);
                 }
             }
 
@@ -93,7 +95,7 @@ public class UpdateUnpaidInvoiceStatusJobBean extends BaseJobBean {
                 try {
                     future.get();
                 } catch (InterruptedException e) {
-                    // It was cancelled from outside - no interest
+                    throw new UncheckedThreadingException(e);
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause();
                     result.registerError(cause.getMessage());

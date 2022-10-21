@@ -20,7 +20,6 @@ import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.QuoteAttribute;
-import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.cpq.commercial.ProductActionTypeEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
 
@@ -74,12 +73,12 @@ public class QuoteProduct extends AuditableCFEntity {
 
     @OneToMany(mappedBy = "quoteProduct", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
-	private List<QuoteAttribute> quoteAttributes = new ArrayList<QuoteAttribute>();
+	private List<QuoteAttribute> quoteAttributes = new ArrayList<>();
     
 
     @OneToMany(mappedBy = "quoteProduct", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
-    private List<QuoteArticleLine> quoteArticleLines = new ArrayList<QuoteArticleLine>();
+    private List<QuoteArticleLine> quoteArticleLines = new ArrayList<>();
     
 	/**
 	 * discountPlan attached to this quoteProduct
@@ -242,7 +241,7 @@ public class QuoteProduct extends AuditableCFEntity {
 	 */
 	public List<QuoteAttribute> getQuoteAttributes() {
 		if(quoteAttributes == null)
-			quoteAttributes = new ArrayList<QuoteAttribute>();
+			quoteAttributes = new ArrayList<>();
 		return quoteAttributes;
 	}
 	/**

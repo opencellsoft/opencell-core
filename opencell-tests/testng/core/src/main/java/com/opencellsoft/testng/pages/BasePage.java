@@ -175,7 +175,7 @@ public class BasePage {
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
-            // Use logger here.
+           throw new UnchckedThreadingExcpetion(e);
         }
 
 

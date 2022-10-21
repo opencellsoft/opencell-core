@@ -796,7 +796,7 @@ public class QuoteApi extends BaseApi {
 
                 }
                 if (valueClass == Date.class) {
-                    value = DateUtils.parseDateWithPattern((String) value, DateUtils.DATE_PATTERN);
+                    value = DateUtils.parseDateWithPattern(value.toString(), DateUtils.DATE_PATTERN);
                 }
             }
 

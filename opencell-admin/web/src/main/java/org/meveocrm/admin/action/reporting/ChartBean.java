@@ -52,6 +52,7 @@ import com.google.gson.Gson;
 @ViewScoped
 public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityModel<Chart, ChartModel>> {
 
+    public static final String YEAR_MONTH_FORMAT = "yyyy-MM";
     @Inject
     private CustomFieldInstanceService cfiService;
 
@@ -92,7 +93,7 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
     }
 
     public final String getMrrOnSubscriptionsValues() throws BusinessException {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
+        SimpleDateFormat format = new SimpleDateFormat(YEAR_MONTH_FORMAT);
         List<MeasuredValue> measuredValues = getMeasuredValuesPerYear(null, MQ_MRR_REC_PER_MONTH_SUBS);
         ChartJsModel jsModel = initChartJsModel(MQ_MRR_REC_PER_MONTH_SUBS);
 
@@ -108,7 +109,7 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
     }
 
     public final String getChurnValues() throws BusinessException {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
+        SimpleDateFormat format = new SimpleDateFormat(YEAR_MONTH_FORMAT);
         List<MeasuredValue> measuredValues = getMeasuredValuesPerYear(null, MQ_CHURN_SUB_PER_MONTH);
         ChartJsModel jsModel = initChartJsModel(MQ_CHURN_SUB_PER_MONTH);
 
@@ -128,7 +129,7 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
     }
 
     public final String getMrrOnOffers() throws BusinessException {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
+        SimpleDateFormat format = new SimpleDateFormat(YEAR_MONTH_FORMAT);
         List<MeasuredValue> measuredValues = getMeasuredValuesPerYear(null, MQ_MRR_REC_PER_MONTH_PER_OFFER);
         ChartJsModel jsModel = initChartJsModel(MQ_MRR_REC_PER_MONTH_PER_OFFER);
 
@@ -197,7 +198,7 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
 
         List<BigDecimal> data = new ArrayList<>();
         List<String> legendLabels = jsModel.getLegendLabels();
-        if (measuredValues != null && measuredValues.size() > 0) {
+        if (measuredValues != null && !measuredValues.isEmpty()) {
             MeasuredValue latestValue = measuredValues.get(measuredValues.size() - 1);
             data.add(latestValue.getValue());
             if (hasDimension1) {
@@ -246,7 +247,7 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
             total = total.add(value);
         }
         BigDecimal average = new BigDecimal(0);
-        if (values.size() > 0) {
+        if (!values.isEmpty()) {
             average = total.divide(new BigDecimal(values.size()), 15, BigDecimal.ROUND_HALF_UP);
         }
         return average;
@@ -266,7 +267,7 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
     }
 
     private BigDecimal computeCompoundGrowthRate(List<BigDecimal> totals) {
-        if (totals.size() > 0) {
+        if (!totals.isEmpty()) {
             int count = totals.size();
             double first = totals.get(0).doubleValue();
             double last = totals.get(count - 1).doubleValue();
@@ -286,7 +287,7 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
 
     private BigDecimal computeMeasuredValuesAverage(List<MeasuredValue> measuredValues) {
         BigDecimal average = BigDecimal.ZERO;
-        boolean isEmpty = measuredValues == null || measuredValues.size() == 0;
+        boolean isEmpty = measuredValues == null || measuredValues.isEmpty();
         if (!isEmpty) {
             MeasuredValue last = measuredValues.get(measuredValues.size() - 1);
             double lastValue = last.getValue().doubleValue();
@@ -299,7 +300,7 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
                 double avg = total / lastValue;
                 avg -= 1;
                 avg *= 100;
-                average = new BigDecimal(avg).setScale(1, RoundingMode.HALF_UP);
+                average = BigDecimal.valueOf(avg).setScale(1, RoundingMode.HALF_UP);
             }
         }
         return average;
@@ -321,13 +322,13 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
             jsModel.setTitle(mq.getDescription());
         }
 
-        jsModel.getDatasets().put(DIMENSION_1, new ArrayList<BigDecimal>());
-        jsModel.getDatasets().put(DIMENSION_2, new ArrayList<BigDecimal>());
-        jsModel.getDatasets().put(DIMENSION_3, new ArrayList<BigDecimal>());
-        jsModel.getDatasets().put(DIMENSION_4, new ArrayList<BigDecimal>());
-        jsModel.getDatasets().put(OTHERS, new ArrayList<BigDecimal>());
-        jsModel.getDatasets().put(TREND, new ArrayList<BigDecimal>());
-        jsModel.getDatasets().put(TOTAL, new ArrayList<BigDecimal>());
+        jsModel.getDatasets().put(DIMENSION_1, new ArrayList<>());
+        jsModel.getDatasets().put(DIMENSION_2, new ArrayList<>());
+        jsModel.getDatasets().put(DIMENSION_3, new ArrayList<>());
+        jsModel.getDatasets().put(DIMENSION_4, new ArrayList<>());
+        jsModel.getDatasets().put(OTHERS, new ArrayList<>());
+        jsModel.getDatasets().put(TREND, new ArrayList<>());
+        jsModel.getDatasets().put(TOTAL, new ArrayList<>());
 
         return jsModel;
     }

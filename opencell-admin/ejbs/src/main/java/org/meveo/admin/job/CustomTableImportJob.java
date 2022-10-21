@@ -34,11 +34,10 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.job.logging.JobMultithreadingHistoryInterceptor;
+import org.meveo.admin.exception.UncheckedThreadingException;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -128,7 +127,7 @@ public class CustomTableImportJob extends Job {
                     future.get();
 
                 } catch (InterruptedException | CancellationException e) {
-                    // It was cancelled from outside - no interest
+                    throw new UncheckedThreadingException(e);
 
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause();
