@@ -1,6 +1,7 @@
 package org.meveo.apiv2.securityDeposit.impl;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -8,7 +9,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
 import org.meveo.admin.exception.BusinessException;
