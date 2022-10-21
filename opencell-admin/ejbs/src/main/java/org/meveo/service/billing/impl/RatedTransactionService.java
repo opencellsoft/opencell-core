@@ -1887,4 +1887,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 .setParameter("rtIds", rtIds)
                 .executeUpdate();
     }
+
+    public void reopenRatedTransactions(List<Long> ratedTransactionIds) {
+        if(ratedTransactionIds != null && !ratedTransactionIds.isEmpty()) {
+            getEntityManager().createNamedQuery("RatedTransaction.reopenRatedTransactions")
+                    .setParameter("rtIds", ratedTransactionIds)
+                    .setParameter("now", new Date())
+                    .executeUpdate();
+        }
+    }
 }
