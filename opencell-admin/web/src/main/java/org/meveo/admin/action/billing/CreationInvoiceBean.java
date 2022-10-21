@@ -685,7 +685,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             invoiceAgregateService.deleteInvoiceAggregates(entity.getId());
         }
         Map<String, CategoryInvoiceAgregate> categoryInvoiceAggregateMap = new HashMap<>();
-        List<SubCategoryInvoiceAgregate> newSubCategoryInvoiceAggregates = new ArrayList<>();
+        Map<String, SubCategoryInvoiceAgregate> subCategoryInvoiceAggregateMap = new HashMap<>();
         for (RatedTransaction ratedTransaction : ratedTransactionsToSave) {
             InvoiceSubCategory invoiceSubCategory =
                     invoiceSubCategoryService.refreshOrRetrieve(ratedTransaction.getInvoiceSubCategory());
@@ -701,16 +701,27 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                 categoryInvoiceAgregate = createCategoryInvoiceAggregate(ratedTransaction, entity, invoiceSubCategory);
                 categoryInvoiceAggregateMap.put(invoiceSubCategory.getInvoiceCategory().getCode(), categoryInvoiceAgregate);
             }
-            SubCategoryInvoiceAgregate subCategoryInvoiceAgregate =
-                    createSubCategoryAggregate(ratedTransaction, entity, categoryInvoiceAgregate, invoiceSubCategory);
+            SubCategoryInvoiceAgregate subCategoryInvoiceAgregate;
+            if(subCategoryInvoiceAggregateMap.get(invoiceSubCategory.getCode()) != null) {
+                subCategoryInvoiceAgregate =
+                        subCategoryInvoiceAggregateMap.get(invoiceSubCategory.getCode());
+                subCategoryInvoiceAgregate.setAmountTax(subCategoryInvoiceAgregate.getAmountTax().add(ratedTransaction.getAmountTax()));
+                subCategoryInvoiceAgregate.
+                        setAmountWithTax(subCategoryInvoiceAgregate.getAmountWithTax().add(ratedTransaction.getAmountWithTax()));
+                subCategoryInvoiceAgregate.
+                        setAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax().add(ratedTransaction.getAmountWithoutTax()));
+            } else {
+                subCategoryInvoiceAgregate =
+                        createSubCategoryAggregate(ratedTransaction, entity, categoryInvoiceAgregate, invoiceSubCategory);
+                subCategoryInvoiceAggregateMap.put(invoiceSubCategory.getCode(), subCategoryInvoiceAgregate);
+            }
             ratedTransaction.setInvoiceAgregateF(subCategoryInvoiceAgregate);
-            newSubCategoryInvoiceAggregates.add(subCategoryInvoiceAgregate);
             TaxInvoiceAgregate invoiceAggregateTax = createTaxAggregate(ratedTransaction, entity);
             invoiceAgregateService.create(invoiceAggregateTax);
         }
         categoryInvoiceAggregateMap.values()
                 .forEach(categoryInvoiceAggregate -> invoiceAgregateService.create(categoryInvoiceAggregate));
-        newSubCategoryInvoiceAggregates
+        subCategoryInvoiceAggregateMap.values()
                 .forEach(subCategoryInvoiceAggregate -> invoiceAgregateService.create(subCategoryInvoiceAggregate));
         for (RatedTransaction ratedTransaction : ratedTransactionsToSave) {
              if(ratedTransaction.getId() == null) {
@@ -719,6 +730,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                  ratedTransactionService.update(ratedTransaction);
              }
         }
+        entity.setAmountWithoutTax(round(aggregateHandler.getInvoiceAmountWithoutTax(), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode()));
+        entity.setAmountTax(round(aggregateHandler.getInvoiceAmountTax(), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode()));
+        entity.setAmountWithTax(round(aggregateHandler.getInvoiceAmountWithTax(), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode()));
     	if(entity.getId()  == null) {
 	        BillingAccount billingAccount = getFreshBA();
 	        Customer customer = billingAccount.getCustomerAccount().getCustomer();
@@ -743,7 +757,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     	}
 
         aggregateHandler.reset();
-        initEntity();
         return getListViewName();
     }
 
