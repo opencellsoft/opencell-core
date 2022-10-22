@@ -14347,6 +14347,12 @@ order by date_trunc('month', i.invoice_date) DESC
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
     </changeSet>
     
+    <changeSet id="#INTRD-10581_20221018" author="HichamHANINE">
+        <addColumn tableName="meveo_script_instance">
+            <column name="description_i18n" type="${type.json}"></column>
+        </addColumn>
+    </changeSet>
+    
 	<changeSet id="#INTRD-9871_20220919" author="TarikFA.">
 	
 		<dropForeignKeyConstraint constraintName="price_plan_matrix_line_fk"  baseTableName="billing_wallet_operation"/>
@@ -14454,6 +14460,12 @@ order by date_trunc('month', i.invoice_date) DESC
         <dropNotNullConstraint tableName="adm_secured_entity" columnName="user_name"/>
         <addPrimaryKey columnNames="id" tableName="adm_secured_entity"/>
     </changeSet>
+	
+	<changeSet id="#INTRD-9766_20221011_EDR_new_fields" author="aelmalki">
+		<addColumn tableName="rating_edr">
+			<column name="wallet_operation_id" type="bigint"/>
+		</addColumn>
+	</changeSet>
     
     <changeSet id="#INTRD-10540_20221013" author="TarikFA.">
     	<dropTable tableName="billing_invoice_advance_mapping"/>
@@ -14463,4 +14475,63 @@ order by date_trunc('month', i.invoice_date) DESC
 		<modifyDataType tableName="adm_inbound_req_cookies" columnName="coockies" newDataType="varchar(500)" />
 		<modifyDataType tableName="adm_inbound_req_cookies" columnName="coockies_key" newDataType="varchar(500)" />
 	</changeSet>	
+	
+	<changeSet id="#INTRD-10607_20221014" author="AdilElJaouhari">
+		<addColumn tableName="billing_invoice">
+            <column name="use_current_rate" type="${type.boolean}" defaultValueNumeric="0">
+            	<constraints nullable="false" />
+            </column>
+        </addColumn>
+	</changeSet>
+
+    <changeSet id="#INTRD-10541_20221013" author="TarikFA.">
+	    <addColumn tableName="billing_linked_invoices">
+	            <column name="amount" type="numeric(23, 12)" />
+	            <column name="type" type="varchar(50)" />
+	    </addColumn>
+	    
+		<addForeignKeyConstraint constraintName="invoice_id_fk"
+                                 baseColumnNames="id"
+                                 baseTableName="billing_linked_invoices"
+                                 referencedTableName="billing_invoice"
+                                 referencedColumnNames="id" />
+                                 
+		<addForeignKeyConstraint constraintName="linked_invoice_id_fk"
+                                 baseColumnNames="linked_invoice_id"
+                                 baseTableName="billing_linked_invoices"
+                                 referencedTableName="billing_invoice"
+                                 referencedColumnNames="id" />
+    	
+    </changeSet>
+	
+	<changeSet id="#INTRD-10522_20221017_matchingCode-journal-entry" author="aelmalki">
+		<addColumn tableName="accounting_journal_entry">
+			<column name="matching_code" type="varchar(255)" />
+		</addColumn>
+		<addColumn tableName="crm_provider">
+			<column name="current_matching_code" type="varchar(255)" />
+		</addColumn>
+	</changeSet>
+    <changeSet id="#INTRD-10693_20221019-sd-adjustment" author="a.rouaguebe">
+        <addColumn tableName="security_deposit">
+            <column name="sd_adjustment_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="security_deposit"
+                                 baseColumnNames="sd_adjustment_id"
+                                 constraintName="fk_security_adjustment_invoice"
+                                 referencedTableName="billing_invoice"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
+
+    <changeSet id="#10629_20221018" author="zelmeliani">
+        <addColumn tableName="billing_invoice_line">
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" />
+            </column>
+            <column name="cf_values" type="${type.json}" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

@@ -29,6 +29,7 @@ import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositOperationEnum;
 import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
 import org.meveo.service.audit.logging.AuditLogService;
+import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositService;
 
@@ -53,6 +54,9 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
     private InvoiceApi invoiceApi;
     
     SecurityDepositMapper securityDepositMapper = new SecurityDepositMapper();
+
+    @Inject
+    BillingAccountService billingAccountService;
 
     @Override
     public Response instantiate(SecurityDepositInput securityDepositInput) {
@@ -122,14 +126,12 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
             throw new ValidationException(msgErrValidation + "not allowed for Update.");
         }
 
-        BigDecimal oldAmountSD = securityDepositToUpdate.getAmount();
         securityDepositToUpdate = securityDepositMapper.toEntity(securityDepositToUpdate, securityDepositInput);
-        securityDepositService.checkParameters(securityDepositToUpdate, securityDepositInput, oldAmountSD);
+        securityDepositService.checkParameters(securityDepositToUpdate, securityDepositInput);
         securityDepositApiService.linkRealEntities(securityDepositToUpdate);        
         securityDepositService.update(securityDepositToUpdate);
         auditLogService.trackOperation("UPDATE", new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
         return Response.ok().entity(buildResponse(securityDepositMapper.toResource(securityDepositToUpdate))).build();
-
     }
 
     @Override
@@ -187,6 +189,7 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
         securityDepositService.createSecurityDepositTransaction(securityDepositToUpdate, securityDepositInput.getAmountToCredit(), 
             SecurityDepositOperationEnum.CREDIT_SECURITY_DEPOSIT, OperationCategoryEnum.CREDIT, payment);        
         auditLogService.trackOperation("CREDIT", new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
+        securityDepositToUpdate.setBillingAccount(billingAccountService.refreshOrRetrieve(securityDepositToUpdate.getBillingAccount()));
         return Response.ok().entity(buildResponse(securityDepositMapper.toResource(securityDepositToUpdate))).build();
     }
 

@@ -26,9 +26,17 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -40,16 +48,15 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import com.google.common.collect.ImmutableMap;
+
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.api.dto.RatedTransactionDto;
-import org.meveo.api.exception.BusinessApiException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -57,10 +64,9 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.article.*;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.ApplyMinimumModeEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -87,11 +93,15 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.billing.WalletOperationStatusEnum;
-import org.meveo.model.catalog.*;
-import org.meveo.model.cpq.*;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.cpq.AttributeValue;
+import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.contract.BillingRule;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.IInvoicingMinimumApplicable;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.order.Order;
@@ -101,7 +111,7 @@ import org.meveo.model.tax.TaxClass;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.billing.impl.article.*;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.TaxService;
@@ -111,8 +121,6 @@ import org.meveo.service.order.OrderService;
 import org.meveo.service.tax.TaxClassService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
-
-import com.google.common.collect.ImmutableMap;
 
 /**
  * RatedTransactionService : A class for Rated transaction persistence services.
@@ -847,7 +855,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             BigDecimal minAmount = accountAmounts.getValue().getMinAmount();
             String minAmountLabel = accountAmounts.getValue().getMinAmountLabel();
             BigDecimal totalInvoiceableAmount = appProvider.isEntreprise() ? accountAmounts.getValue().getAmounts().getAmountWithoutTax() : accountAmounts.getValue().getAmounts().getAmountWithTax();
-            BusinessEntity entity = accountAmounts.getValue().getEntity();
+            IInvoicingMinimumApplicable entity = accountAmounts.getValue().getEntity();
 
             Seller seller = accountAmounts.getValue().getSeller();
             if (seller == null) {
@@ -893,7 +901,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param accountClass the account class
      * @return the minimum amount RT code
      */
-    private String getMinAmountRTCode(BusinessEntity entity, @SuppressWarnings("rawtypes") Class accountClass) {
+    private String getMinAmountRTCode(IInvoicingMinimumApplicable entity, @SuppressWarnings("rawtypes") Class accountClass) {
         String prefix = "";
         if (accountClass.equals(ServiceInstance.class)) {
             prefix = RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SE.getCode();
@@ -917,7 +925,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return prefix + "_" + entity.getCode();
     }
 
-    private OneShotChargeTemplate getMinimumChargeTemplate(BusinessEntity entity) {
+    private OneShotChargeTemplate getMinimumChargeTemplate(IInvoicingMinimumApplicable entity) {
         try {
             Method method = entity.getClass().getMethod("getMinimumChargeTemplate", null);
             return (OneShotChargeTemplate) method.invoke(entity, null);
@@ -944,7 +952,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param minimum
      * @return a rated transaction
      */
-    private RatedTransaction getNewMinRatedTransaction(IBillableEntity billableEntity, BillingAccount billingAccount, Date minRatingDate, String minAmountLabel, BusinessEntity entity, Seller seller,
+    private RatedTransaction getNewMinRatedTransaction(IBillableEntity billableEntity, BillingAccount billingAccount, Date minRatingDate, String minAmountLabel, IInvoicingMinimumApplicable entity, Seller seller,
             InvoiceSubCategory invoiceSubCategory, TaxInfo taxInfo, BigDecimal rtMinAmount, String code) {
         Tax tax = taxInfo.tax;
         BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(rtMinAmount, rtMinAmount, tax.getPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
@@ -1420,7 +1428,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public RatedTransaction createRatedTransaction(String billingAccountCode, String userAccountCode,
             String subscriptionCode, String serviceInstanceCode, String chargeInstanceCode, Date usageDate,
-            BigDecimal unitAmountWithoutTax, BigDecimal quantity) {
+            BigDecimal unitAmountWithoutTax, BigDecimal quantity, String param1, String param2, String param3, String paramExtra) {
 
         String errors = "";
         if (billingAccountCode == null) {
@@ -1465,7 +1473,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
         RatedTransaction rt = new RatedTransaction(usageDate, unitAmounts[0], unitAmounts[1], unitAmounts[2], quantity,
                 amounts[0], amounts[1], amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount, userAccount,
-                null, null, null, null, null, null, subscription, null, null, null, subscription.getOffer(), null,
+                null, param1, param2, param3, paramExtra, null, subscription, null, null, null, subscription.getOffer(), null,
                 serviceInstance.getCode(), serviceInstance.getCode(), null, null, subscription.getSeller(), taxInfo.tax,
                 taxPercent, serviceInstance, taxClass, null, RatedTransactionTypeEnum.MANUAL, chargeInstance, null);
         rt.setAccountingArticle(accountingArticle);
@@ -1480,7 +1488,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @return
      */
     public void updateRatedTransaction(RatedTransaction ratedTransaction, BigDecimal unitAmountWithoutTax,
-            BigDecimal quantity) {
+            BigDecimal quantity, String param1, String param2, String param3, String paramExtra) {
         BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(unitAmountWithoutTax, unitAmountWithoutTax,
                 ratedTransaction.getTaxPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
         BigDecimal AmountWithoutTax = unitAmountWithoutTax.multiply(quantity);
@@ -1493,6 +1501,20 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setAmountWithoutTax(amounts[0]);
         ratedTransaction.setAmountWithTax(amounts[1]);
         ratedTransaction.setAmountTax(amounts[2]);
+        
+
+        if(param1 != null) {
+            ratedTransaction.setParameter1(param1);
+        }
+        if(param2 != null) {
+            ratedTransaction.setParameter2(param2);
+        }
+        if(param3 != null) {
+            ratedTransaction.setParameter3(param3);
+        }
+        if(paramExtra != null) {
+            ratedTransaction.setParameterExtra(paramExtra);
+        }
 
         update(ratedTransaction);
 

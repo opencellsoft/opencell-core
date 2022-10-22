@@ -592,6 +592,10 @@ public class InvoiceApi extends BaseApi {
             SecurityDepositTemplate defaultSDTemplate = securityDepositTemplateService.getDefaultSDTemplate();
             Long count = securityDepositService.countPerTemplate(defaultSDTemplate);
             securityDepositService.createSD(invoice, defaultSDTemplate, count);
+
+            //Get SD Template number of instantiation and update it after creating a new SD
+            SecurityDepositTemplate sdt = invoiceService.updateSDTemplate(defaultSDTemplate);
+            securityDepositTemplateService.update(sdt);
         }
         
         if(invoice.getDueDate().after(today) && invoice.getStatus() == VALIDATED){
@@ -1176,8 +1180,8 @@ public class InvoiceApi extends BaseApi {
         categoryInvoiceAgregates.sort(Comparator.comparing(CategoryInvoiceAgregateDto::getCategoryInvoiceCode));
         taxAggregates.sort(Comparator.comparing(TaxInvoiceAggregateDto::getTaxCode));
 
-        for (Invoice inv : invoice.getLinkedInvoices()) {
-            listInvoiceIdToLink.add(inv.getId());
+        for (LinkedInvoice inv : invoice.getLinkedInvoices()) {
+            listInvoiceIdToLink.add(inv.getLinkedInvoiceValue().getId());
         }
 
         if (!categoryInvoiceAgregates.isEmpty()) {
