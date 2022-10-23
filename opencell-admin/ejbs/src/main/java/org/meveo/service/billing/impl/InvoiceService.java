@@ -19,14 +19,12 @@ package org.meveo.service.billing.impl;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
-import static java.math.RoundingMode.*;
 import static java.util.Arrays.asList;
 import static java.util.Set.of;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -61,12 +59,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -177,7 +171,6 @@ import org.meveo.service.script.ScriptInterface;
 import org.meveo.service.script.billing.TaxScriptService;
 import org.meveo.service.tax.TaxClassService;
 import org.meveo.service.tax.TaxMappingService;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import net.sf.jasperreports.engine.DefaultJasperReportsContext;
@@ -2538,7 +2531,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * @param billingRunId
-     * @param invoices
+     * @param invoiceIds
      */
     public void rebuildInvoices(Long billingRunId, List<Long> invoiceIds) throws BusinessException {
         List<Invoice> invoices = extractInvalidInvoiceList(billingRunId, invoiceIds, Arrays.asList(InvoiceStatusEnum.REJECTED, InvoiceStatusEnum.SUSPECT), Arrays.asList(InvoiceStatusEnum.DRAFT));
@@ -2549,7 +2542,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * @param billingRunId
-     * @param invoices
+     * @param invoiceIds
      */
     public void rejectInvoices(Long billingRunId, List<Long> invoiceIds) {
         List<Invoice> invoices = extractInvalidInvoiceList(billingRunId, invoiceIds, Arrays.asList(InvoiceStatusEnum.SUSPECT, InvoiceStatusEnum.DRAFT));
@@ -2665,7 +2658,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * @param billingRunId
-     * @param invoices
+     * @param invoiceIds
      */
     public void cancelInvoices(Long billingRunId, List<Long> invoiceIds, Boolean deleteCanceledInvoices) {
 
@@ -2692,7 +2685,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-     * @param id
+     * @param billingRunId
      * @param invoices
      * @return billingRunId the id of the new billing run.
      */
@@ -2997,7 +2990,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * Re-computed invoice date, due date and collection date when the invoice is validated.
      *
-     * @param invoice
+     * @param invoiceId
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -4160,7 +4153,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * @param expression el expression
-     * @param userAccount user account
+     * @param billingAccount billing account
      * @param wallet wallet
      * @param invoice invoice
      * @param subCatTotal total of sub category
@@ -5039,7 +5032,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * Find by invoice number and invoice type id.
      *
      * @param invoiceNumber invoice's number
-     * @param invoiceType invoice's type
+     * @param invoiceTypeId invoice's type
      * @return found invoice
      * @throws BusinessException business exception
      */
@@ -5387,7 +5380,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param minAmountForAccounts Check if min amount is enabled in any account level
      * @param isDraft Is this a draft invoice
      * @param automaticInvoiceCheck automatic invoice check
-     * @param invoiceLines 
      * @return A list of created invoices
      * @throws BusinessException business exception
      */
@@ -6471,8 +6463,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-     * @param billingRunId
-     * @param invoiceIds
      * @return billingRunId the id of the new billing run.
      */
     @JpaAmpNewTx
@@ -6526,7 +6516,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     .setParameter("billingRunId", billingRunId)
                     .getResultList();
     }
-    
+
+    public List<LinkedInvoiceInfo> findLinkedInvoicesByIdAndType(Long invoiceId, String invoiceTypeCode) {
+
+        List<Object[]> advanceLinkedInvoices = getEntityManager().createNamedQuery("Invoice.findLinkedInvoicesByIdAndType", Object[].class).setParameter("invoiceId", invoiceId).setParameter("invoiceTypeCode", invoiceTypeCode).getResultList();
+
+        List<LinkedInvoiceInfo> advanceLinkedInvoicesInfo = new ArrayList<>();
+        for (Object[] invoice : advanceLinkedInvoices) {
+            advanceLinkedInvoicesInfo.add(new LinkedInvoiceInfo((Long) invoice[0], (String) invoice[1], (Long) invoice[2]));
+        }
+        return advanceLinkedInvoicesInfo;
+    }
+
+
     public void checkAndUpdatePaymentStatus(Invoice entity,InvoicePaymentStatusEnum oldInvoicePaymentStatusEnum, InvoicePaymentStatusEnum newInvoicePaymentStatusEnum) {
         if (!oldInvoicePaymentStatusEnum.equals(newInvoicePaymentStatusEnum)) {
             invoicePaymentStatusUpdated.fire(entity);
