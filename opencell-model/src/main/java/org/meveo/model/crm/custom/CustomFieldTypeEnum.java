@@ -89,7 +89,12 @@ public enum CustomFieldTypeEnum {
     /**
      * A reference to an entity
      */
-    CUSTOM_TABLE_WRAPPER(true, CustomTableWrapper.class, StringUtils.EMPTY);
+    CUSTOM_TABLE_WRAPPER(true, CustomTableWrapper.class, StringUtils.EMPTY),
+
+    /**
+     * A URL value
+     */
+    URL(true, UrlReferenceWrapper.class, StringUtils.EMPTY);
 
     /**
      * Is value stored in a serialized form in DB
