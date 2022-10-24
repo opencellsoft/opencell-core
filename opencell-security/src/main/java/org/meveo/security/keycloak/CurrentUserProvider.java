@@ -44,7 +44,6 @@ import org.slf4j.MDC;
 @Stateless
 public class CurrentUserProvider {
 
-    public static final String PROVIDER_CODE = "providerCode";
     @Resource
     private SessionContext ctx;
 
@@ -54,12 +53,17 @@ public class CurrentUserProvider {
     /**
      * Contains a current tenant
      */
-    private static final ThreadLocal<String> currentTenant = ThreadLocal.withInitial(() -> "NA");
+    private static final ThreadLocal<String> currentTenant = new ThreadLocal<String>() {
+        @Override
+        protected String initialValue() {
+            return "NA";
+        }
+    };
 
     /**
      * Contains a forced authentication user username
      */
-    private static final ThreadLocal<String> forcedUserUsername = new ThreadLocal<>();
+    private static final ThreadLocal<String> forcedUserUsername = new ThreadLocal<String>();
 
     /**
      * Simulate authentication of a user. Allowed only when no security context is present, mostly used in jobs.
@@ -75,9 +79,9 @@ public class CurrentUserProvider {
         }
 
         if (providerCode == null) {
-            MDC.remove(PROVIDER_CODE);
+            MDC.remove("providerCode");
         } else {
-            MDC.put(PROVIDER_CODE, providerCode);
+            MDC.put("providerCode", providerCode);
         }
         log.debug("Force authentication to {}/{}", providerCode, userName);
         forcedUserUsername.set(userName);
@@ -96,9 +100,9 @@ public class CurrentUserProvider {
         if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal)) {
 
             if (lastCurrentUser.getProviderCode() == null) {
-                MDC.remove(PROVIDER_CODE);
+                MDC.remove("providerCode");
             } else {
-                MDC.put(PROVIDER_CODE, lastCurrentUser.getProviderCode());
+                MDC.put("providerCode", lastCurrentUser.getProviderCode());
             }
 
             forcedUserUsername.set(lastCurrentUser.getUserName());
@@ -120,22 +124,27 @@ public class CurrentUserProvider {
             providerCode = MeveoUserKeyCloakImpl.extractProviderCode(ctx);
 
             if (providerCode == null) {
-                MDC.remove(PROVIDER_CODE);
+                MDC.remove("providerCode");
             } else {
-                MDC.put(PROVIDER_CODE, providerCode);
+                MDC.put("providerCode", providerCode);
             }
 
+            // log.trace("Will setting current provider to extracted value from KC token: {}", providerCode);
             setCurrentTenant(providerCode);
 
         } else if (isCurrentTenantSet()) {
             providerCode = getCurrentTenant();
 
             if (providerCode == null) {
-                MDC.remove(PROVIDER_CODE);
+                MDC.remove("providerCode");
             } else {
-                MDC.put(PROVIDER_CODE, providerCode);
+                MDC.put("providerCode", providerCode);
             }
 
+            // log.trace("Current provider is {}", providerCode);
+
+            // } else {
+            // log.trace("Current provider is not set");
         }
 
         return providerCode;
@@ -152,6 +161,7 @@ public class CurrentUserProvider {
      */
     public MeveoUser getCurrentUser(String providerCode, EntityManager em) {
 
+        // String username = MeveoUserKeyCloakImpl.extractUsername(ctx, forcedUserUsername.get());
 
         MeveoUser user = null;
 
@@ -162,6 +172,8 @@ public class CurrentUserProvider {
         } else {
             user = new MeveoUserKeyCloakImpl(ctx, null, null, null, null);
         }
+        // log.trace("getCurrentUser username={}, providerCode={}, forcedAuthentication {}/{} ", username, user != null ? user.getProviderCode() : null, getForcedUsername(),
+        // getCurrentTenant());
 
         if (log.isTraceEnabled()) {
             log.trace("Current user is {}", user.toStringLong());
@@ -208,7 +220,8 @@ public class CurrentUserProvider {
     public Map<String, Set<String>> getRolesByApplication(MeveoUser currentUser) {
 
         if (ctx.getCallerPrincipal() instanceof KeycloakPrincipal) {
-            return MeveoUserKeyCloakImpl.getRolesByApplication(ctx);
+            Map<String, Set<String>> rolesByApplication = MeveoUserKeyCloakImpl.getRolesByApplication(ctx);
+            return rolesByApplication;
         }
         return null;
     }

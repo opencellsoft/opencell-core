@@ -34,7 +34,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.async.FlatFileProcessing;
-import org.meveo.admin.exception.UncheckedThreadingException;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.parsers.FileParserBeanio;
 import org.meveo.commons.parsers.IFileParser;
@@ -213,7 +212,6 @@ public class FlatFileProcessingJobBean extends BaseJobBean {
                     Thread.sleep(waitingMillis.longValue());
                 } catch (InterruptedException e) {
                     log.error("", e);
-                    throw new UncheckedThreadingException(e);
                 }
             }
 
@@ -230,7 +228,6 @@ public class FlatFileProcessingJobBean extends BaseJobBean {
                 } catch (InterruptedException | CancellationException e) {
                     wasKilled = true;
                     log.error("Thread/future for job {} was canceled", jobInstance);
-                    throw new UncheckedThreadingException(e);
 
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause();

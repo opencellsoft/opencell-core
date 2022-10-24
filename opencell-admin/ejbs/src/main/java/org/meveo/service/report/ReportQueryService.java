@@ -24,6 +24,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Format;
@@ -47,7 +48,6 @@ import org.hibernate.collection.internal.PersistentBag;
 import org.hibernate.collection.internal.PersistentSet;
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.UncheckedThreadingException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -356,7 +356,6 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             }
             
         } catch (InterruptedException | CancellationException e) {
-            throw new UncheckedThreadingException(e);
         } catch (Exception exception) {
         	if(sendNotification) {
 	            long duration = new Date().getTime() - startDate.getTime();
