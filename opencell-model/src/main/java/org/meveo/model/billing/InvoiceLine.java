@@ -856,4 +856,9 @@ public class InvoiceLine extends AuditableCFEntity {
 		InvoiceLine other = (InvoiceLine) obj;
 		return getId() != null && other.getId() != null && getId().equals(other.getId());
 	}
+
+	@Override
+	public int hashCode() {
+		return 961 + ("InvoiceLine" + getId()).hashCode();
+	}
 }
