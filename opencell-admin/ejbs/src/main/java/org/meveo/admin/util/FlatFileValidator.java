@@ -20,7 +20,6 @@ package org.meveo.admin.util;
 
 import org.apache.commons.io.FilenameUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.UncheckedThreadingException;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.parsers.FileParserBeanio;
@@ -558,7 +557,6 @@ public class FlatFileValidator {
                     }
                 } catch (InterruptedException e) {
                     log.warn("Warning on thread sleep = {}", e.getMessage(), e);
-                    throw new UncheckedThreadingException(e);
                 }
 
                 if (flatFileExist) {

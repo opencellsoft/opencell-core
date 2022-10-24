@@ -38,7 +38,6 @@ import org.meveo.admin.async.SepaDirectDebitAsync;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.UncheckedThreadingException;
 import org.meveo.admin.sepa.DDRejectFileInfos;
 import org.meveo.admin.util.ArConfig;
 import org.meveo.commons.utils.StringUtils;
@@ -52,6 +51,7 @@ import org.meveo.model.payments.DDRequestBuilder;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.DDRequestLotOp;
+import org.meveo.model.payments.DDRequestOpStatusEnum;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentLevelEnum;
 import org.meveo.model.payments.PaymentMethod;
@@ -149,7 +149,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 					allErrors += (String) futureResult.get("allErrors");
 
 				} catch (InterruptedException e) {
-					throw new UncheckedThreadingException(e);
+					// It was cancelled from outside - no interest
 
 				} catch (ExecutionException e) {
 					Throwable cause = e.getCause();
@@ -238,7 +238,6 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 				Thread.sleep(waitingMillis);
 			} catch (InterruptedException e) {
 				log.error("", e);
-				throw new UncheckedThreadingException(e);
 			}
 		}
 
@@ -249,7 +248,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 				totalAmount = totalAmount.add((BigDecimal) futureResult.get("totalAmount"));
 
 			} catch (InterruptedException e) {
-				throw new UncheckedThreadingException(e);
+				// It was cancelled from outside - no interest
 			} catch (Exception e) {
 				Throwable cause = e.getCause();
 				if (result != null) {

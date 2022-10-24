@@ -82,7 +82,7 @@ public class ProviderService extends PersistenceService<Provider> {
     static boolean useTenantCache = true;
 
     @PostConstruct
-    private void initialize() {
+    private void init() {
         useTenantCache = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("cache.cacheTenant", "true"));
     }
 
