@@ -1,5 +1,4 @@
-package org.meveo.service.billing.impl;
-
+package org.meveo.model.billing;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -28,6 +27,5 @@ public class LinkedInvoiceInfo {
     public BigDecimal getAmountWithTax() {
         return amountWithTax;
     }
-
 
 }
