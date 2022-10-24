@@ -6326,12 +6326,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         
         
-        if(toUpdate.getInvoiceType() != null && invoiceTypeService.getListAdjustementCode().contains(toUpdate.getInvoiceType().getCode())) {
-           boolean isAccountingArticleAdt = toUpdate.getInvoiceLines() != null && toUpdate.getInvoiceLines().stream().allMatch(il -> il.getAccountingArticle() != null && il.getAccountingArticle().getCode().equals("ADV-STD"));
-           if(!isAccountingArticleAdt) {
-               throw new BusinessException("Invoice of type " + invoiceTypeService.getListAdjustementCode() + ", must use ADV-STD article");
+        if(toUpdate.getInvoiceType() != null) {
+           InvoiceType advType = invoiceTypeService.findByCode("ADV");
+           if(advType != null && "ADV".equals(toUpdate.getInvoiceType().getCode())) {
+               boolean isAccountingArticleAdt = toUpdate.getInvoiceLines() != null && toUpdate.getInvoiceLines().stream().allMatch(il -> il.getAccountingArticle() != null && il.getAccountingArticle().getCode().equals("ADV-STD"));
+               if(!isAccountingArticleAdt) {
+                   throw new BusinessException("Invoice of type " + invoiceTypeService.getListAdjustementCode() + ", must use ADV-STD article");
+               }
+               toUpdate.setInvoiceBalance(invoiceResource.getAmountWithTax());
            }
-           toUpdate.setInvoiceBalance(invoiceResource.getAmountWithTax());
             
         }
 
@@ -6701,6 +6704,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         remainingAmount=remainingAmount.subtract(adv.getInvoiceBalance());
                         adv.setInvoiceBalance(BigDecimal.ZERO);
                     }
+                    if(amount.intValue() == BigDecimal.ZERO.intValue()) continue;
                     var advanceMapping= new LinkedInvoice(invoice ,adv,amount, InvoiceTypeEnum.ADVANCEMENT_PAYMENT);
                     invoice.getLinkedInvoices().add(advanceMapping);
                     appendAdvanceInvoiceLine(invoice, amount);
