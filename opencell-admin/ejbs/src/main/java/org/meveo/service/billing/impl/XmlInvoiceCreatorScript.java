@@ -1669,7 +1669,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         balance.appendChild(this.createTextNode(doc, toPlainString(invoice.getDueBalance())));
         amount.appendChild(balance);
 
-        Element advances = createAdvancesSection(doc, invoice);
+        Element advances = createAndPopulateAdvancesSection(doc, invoice);
         if (advances != null) {
             amount.appendChild(advances);
         }
@@ -1686,27 +1686,31 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         return amount;
     }
 
-    private Element createAdvancesSection(Document doc, Invoice invoice) {
-
-        Element advances = null;
+    private Element createAndPopulateAdvancesSection(Document doc, Invoice invoice) {
 
         List<LinkedInvoiceInfo> advanceLinkedInvoices = invoiceService.findLinkedInvoicesByIdAndType(invoice.getId(), "ADV");
 
         if (advanceLinkedInvoices != null && !advanceLinkedInvoices.isEmpty()) {
 
-            advances = doc.createElement("advances");
-
-            for (LinkedInvoiceInfo advanceLinkedInvoiceInfos : advanceLinkedInvoices) {
-
-                Element advance = doc.createElement("advance");
-                advance.setAttribute("invoiceNumber", advanceLinkedInvoiceInfos.getInvoiceNumber() != null ? String.valueOf(advanceLinkedInvoiceInfos.getInvoiceNumber()) : "");
-                advance.setAttribute("invoiceDate", advanceLinkedInvoiceInfos.getInvoiceDate() != null ? new SimpleDateFormat("dd/MM/yyyy").format(advanceLinkedInvoiceInfos.getInvoiceDate()) : "");
-                advance.setAttribute("amountWithTax", advanceLinkedInvoiceInfos.getAmountWithTax() != null ? String.valueOf(advanceLinkedInvoiceInfos.getAmountWithTax()) : "");
-
-                advances.appendChild(advance);
-            }
+            return populateAdvancesSection(doc, advanceLinkedInvoices);
         }
+        return null;
+    }
 
+    private Element populateAdvancesSection(Document doc, List<LinkedInvoiceInfo> advanceLinkedInvoices) {
+
+        Element advances = doc.createElement("advances");
+
+        for (LinkedInvoiceInfo advanceLinkedInvoiceInfos : advanceLinkedInvoices) {
+
+            Element advance = doc.createElement("advance");
+
+            advance.setAttribute("invoiceNumber", advanceLinkedInvoiceInfos.getInvoiceNumber() != null ? String.valueOf(advanceLinkedInvoiceInfos.getInvoiceNumber()) : "");
+            advance.setAttribute("invoiceDate", advanceLinkedInvoiceInfos.getInvoiceDate() != null ? new SimpleDateFormat("dd/MM/yyyy").format(advanceLinkedInvoiceInfos.getInvoiceDate()) : "");
+            advance.setAttribute("amountWithTax", advanceLinkedInvoiceInfos.getAmountWithTax() != null ? String.valueOf(advanceLinkedInvoiceInfos.getAmountWithTax()) : "");
+
+            advances.appendChild(advance);
+        }
         return advances;
     }
 
