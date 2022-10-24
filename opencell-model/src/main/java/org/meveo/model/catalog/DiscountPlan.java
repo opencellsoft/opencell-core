@@ -73,6 +73,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 		@Parameter(name = "sequence_name", value = "cat_discount_plan_seq"), })
 @NamedQueries({
+		@NamedQuery(name = "DiscountPlan.getAll", query = "select dp from DiscountPlan dp left join fetch dp.discountPlanItems"),
 		@NamedQuery(name = "discountPlan.getExpired", query = "select d.id from DiscountPlan d where d.endDate is not null and d.endDate<=:date and d.status in (:statuses)") })
 
 public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable {

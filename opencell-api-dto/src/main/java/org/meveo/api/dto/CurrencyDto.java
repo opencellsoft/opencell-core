@@ -150,7 +150,7 @@ public class CurrencyDto extends AuditableEntityDto implements IEnableDto {
     public Boolean isDisabled() {
         return disabled;
     }
-
+    
     /**
      * @return the prCurrencyToThis
      */

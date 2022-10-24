@@ -10593,6 +10593,7 @@
             <column name="order_offer_id" type="bigint"/>
             <column name="discounted_invoice_line" type="bigint"/>
             <column name="discount_value" type="numeric(23,12)"/>
+            <column name="user_account_id" type="bigint"></column>
             <column name="discount_plan_type" type="varchar(50)"/>
             <column name="discount_plan_item_id" type="bigint"/>
             <column name="aggregate_id_f" type="bigint" />
@@ -16856,6 +16857,11 @@
 	     <addForeignKeyConstraint baseColumnNames="discounted_invoice_line" baseTableName="billing_invoice_line" constraintName="fk_discounted_invoice_line" deferrable="false"
 	     											initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_line" />
       </changeSet>
+      <changeSet id="#5882_20220325" author="MohammedELAZZOUZI">
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_invoice_line" constraintName="fk_InvoiceLine_userAccount" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
+		</changeSet>
+      
     <changeSet id="#INTRD-5777_2022-03-17_PG" author="MohammedSTITANE" dbms="postgresql">
         <createView viewName="all_sequences_view" replaceIfExists="true">
             <![CDATA[
@@ -17388,8 +17394,6 @@
                                  referencedColumnNames="id" />
     </changeSet>
     
-    
-
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
     <changeSet id="#4140_08042019" author="hznibar">

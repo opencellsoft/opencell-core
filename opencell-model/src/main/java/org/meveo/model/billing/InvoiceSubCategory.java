@@ -39,6 +39,7 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.I18nDescripted;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.payments.OCCTemplate;
 
@@ -53,7 +54,8 @@ import org.meveo.model.payments.OCCTemplate;
 @Table(name = "billing_invoice_sub_cat", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_invoice_sub_cat_seq"), })
 @CustomFieldEntity(cftCodePrefix = "InvoiceSubCategory", inheritCFValuesFrom = "invoiceCategory")
-public class InvoiceSubCategory extends BusinessCFEntity {
+@NamedQueries({ @NamedQuery(name = "InvoiceSubCategory.listWithCategory", query = "from InvoiceSubCategory sc left join fetch sc.invoiceCategory left join fetch sc.accountingCode")})
+public class InvoiceSubCategory extends BusinessCFEntity implements I18nDescripted{
 
     private static final long serialVersionUID = 1L;
 

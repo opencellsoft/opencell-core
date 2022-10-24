@@ -23,14 +23,14 @@ import javax.inject.Inject;
 public class InvoicingJobV2 extends Job {
 
     @Inject
-    private InvoicingJobV2Bean invoiceSplitJobBean;
+    private InvoicingJobV2Bean invoicingJobV2Bean;
 
     private static final String INVOICING_JOB_V2_JOB_INSTANCE = "JobInstance_InvoicingJobV2";
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-        invoiceSplitJobBean.execute(result, jobInstance);
+    	invoicingJobV2Bean.execute(result, jobInstance);
         return result;
     }
 
@@ -77,6 +77,7 @@ public class InvoicingJobV2 extends Job {
         customFieldBR.setValueRequired(false);
         customFieldBR.setGuiPosition("tab:Configuration:0;field:2");
         result.put("billingRuns", customFieldBR);
+        
         return result;
     }
 }

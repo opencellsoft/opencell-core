@@ -58,7 +58,6 @@ import org.meveo.model.cpq.Product;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.WalletOperationService;
-import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
 
@@ -69,9 +68,6 @@ import org.meveo.service.tax.TaxMappingService.TaxInfo;
 public class DiscountPlanService extends BusinessService<DiscountPlan> {
 
 
-    @Inject
-    private AccountingArticleService accountingArticleService;
-    
     @Inject
     private DiscountPlanItemService discountPlanItemService;
     

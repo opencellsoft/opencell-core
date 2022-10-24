@@ -1258,4 +1258,8 @@ public class DateUtils {
             return calendar.getCode() + " #" + priority + " value:" + value;
         }
     }
+    
+    public static Date parseDefaultDate(String dateValue) {
+    	return parseDateWithPattern(dateValue, DATE_PATTERN);
+    }
 }

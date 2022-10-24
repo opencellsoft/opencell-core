@@ -68,10 +68,14 @@ public class QuerySchedulerApiService implements ApiService<QueryScheduler> {
 			jobInstance.setDisabled(isDisabledJob);
 			if(jobInstance.getId() == null) {
 				querySchedulerService.create(entity);
-				entity.setJobInstance(jobInstance);
 				jobInstanceService.create(jobInstance);
+				// Update the QueryScheduler
+				entity.setJobInstance(jobInstance);
+	            querySchedulerService.update(entity);
 			}
 			jobInstanceService.update(jobInstance);
+			entity.getUsersToNotify().size();
+			entity.getEmailsToNotify().size();
             return entity;
         } catch (Exception exception) {
             throw new BadRequestException(exception.getMessage());

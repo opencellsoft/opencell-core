@@ -607,7 +607,6 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                     log.warn("the replacement commercial rule " + commercialRule.getCode() + " has more than one source line");
                 }
                 line = lines.get(0);
-                OfferTemplate sourceOfferTemplate = line.getSourceOfferTemplate();
                 Product sourceProduct = line.getSourceProduct();
                 Attribute sourceAttribute = line.getSourceAttribute();
                 return replaceProductAttribute(selectedProducts, sourceAttribute, line.getSourceAttributeValue(), sourceProduct.getCode());

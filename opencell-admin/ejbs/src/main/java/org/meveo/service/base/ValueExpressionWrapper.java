@@ -290,7 +290,7 @@ public class ValueExpressionWrapper {
 	
 	private static final String VAR_COMMERCIAL_ORDER = "order";
 	
-    private static final String VAR_QUOTE_OFFER = "quoteOffer";
+    	private static final String VAR_QUOTE_OFFER = "quoteOffer";
 	
 	private static final String VAR_QUOTE_PRODUCT = "quoteProduct";
 	

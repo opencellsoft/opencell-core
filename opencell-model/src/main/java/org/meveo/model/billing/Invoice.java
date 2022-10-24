@@ -655,6 +655,8 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Type(type = "numeric_boolean")
     @Column(name = "dunning_collection_plan_triggered")
     private boolean dunningCollectionPlanTriggered;
+    @Transient
+  	private Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates;
     
     /**
      * The exchange rate that converted amounts of the invoice.
@@ -668,6 +670,8 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_applied_rate_date")
     private Date lastAppliedRateDate = new Date();
+    @Transient
+  	private Date nextInvoiceDate;
 
     /**
      * Converted amount without tax
@@ -1895,4 +1899,40 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public BigDecimal getAppliedRate() {
         return this.lastAppliedRate != null && !this.lastAppliedRate.equals(ZERO) ? this.lastAppliedRate : ONE;
     }
+
+/**
+	 * @param invoiceSCAs
+	 * @return
+	 */
+	public void setSubCategoryInvoiceAgregate(Set<SubCategoryInvoiceAgregate> invoiceSCAs) {
+		this.subCategoryInvoiceAgregates = invoiceSCAs;
+	}
+
+	/**
+	 * @param invoiceSCAs
+	 * @return
+	 */
+	public Set<SubCategoryInvoiceAgregate> getSubCategoryInvoiceAgregate() {
+		return this.subCategoryInvoiceAgregates;
+	}
+
+	public void setNextInvoiceDate(Date nextInvoiceDate) {
+		this.nextInvoiceDate = nextInvoiceDate;
+	}
+
+	/**
+	 * @return
+	 */
+	public Date getNextInvoiceDate() {
+		return nextInvoiceDate;
+	}
+
+	/**
+	 * set all invoice amounts to 0
+	 */
+	public void initAmounts() {
+		this.amountTax=BigDecimal.ZERO;
+		this.amountWithTax=BigDecimal.ZERO;
+		this.amountWithoutTax=BigDecimal.ZERO;
+	}
 }

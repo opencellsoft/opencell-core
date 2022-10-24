@@ -1408,7 +1408,7 @@ public class NativePersistenceService extends BaseService {
             Object nextVal = getEntityManager().createNativeQuery(sqlString).setParameter("code", customTableName + "_seq").getSingleResult();
             return Long.parseLong((String) nextVal);
         } catch (Exception e) {
-            throw new BusinessException("cannot get next value from sequence of table : " + customTableName + "_seq", e);
+            throw new BusinessException("cannot get next value from sequence of table : " + customTableName, e);
         }
     }
 }

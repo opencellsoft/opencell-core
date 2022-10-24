@@ -174,21 +174,22 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     protected CounterInstanceService counterInstanceService;
 
     @Inject
-    private ServiceInstanceService serviceInstanceService;
-
-    final private static BigDecimal HUNDRED = new BigDecimal("100");
+    private DiscountPlanService discountPlanService;
     
     @Inject
-    private DiscountPlanService discountPlanService;
-    @Inject
     private DiscountPlanItemService discountPlanItemService;
+    
     @Inject
     private AccountingArticleService accountingArticleService;
 
     @Inject
     private WalletOperationService walletOperationService;
+    
     @Inject
     private MethodCallingUtils methodCallingUtils;
+
+    
+    final private static BigDecimal HUNDRED = new BigDecimal("100");
 
     /**
      * @param level level enum
