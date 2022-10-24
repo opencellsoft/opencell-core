@@ -9,7 +9,6 @@ import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
