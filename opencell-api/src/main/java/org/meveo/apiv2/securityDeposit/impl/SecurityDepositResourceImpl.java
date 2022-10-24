@@ -132,6 +132,7 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
     }
     
     @Override
+    @Transactional
     public Response cancel(Long id, SecurityDepositCancelInput securityDepositInput) {
         SecurityDeposit securityDepositToUpdate = securityDepositService.findById(id);
         if(securityDepositToUpdate == null) {
