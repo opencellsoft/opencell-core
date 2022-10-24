@@ -18,6 +18,8 @@
 
 package org.meveo.api.dto;
 
+import static org.meveo.api.dto.LanguageDescriptionDto.convertMultiLanguageFromMapOfValues;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +29,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.script.CustomScriptDto;
 import org.meveo.model.scripts.ScriptInstance;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * The Class ScriptInstanceDto.
@@ -47,6 +51,9 @@ public class ScriptInstanceDto extends CustomScriptDto {
     private List<String> sourcingRoles = new ArrayList<String>();
     
     private String scriptInstanceCategoryCode;
+
+    @Schema(description = "list of the language description")
+    private List<LanguageDescriptionDto> languageDescriptions;
 
     /**
      * Instantiates a new script instance dto.
@@ -76,6 +83,8 @@ public class ScriptInstanceDto extends CustomScriptDto {
         if(scriptInstance.getScriptInstanceCategory() != null) {
         	scriptInstanceCategoryCode = scriptInstance.getScriptInstanceCategory().getCode();
         }
+        
+        languageDescriptions = convertMultiLanguageFromMapOfValues(scriptInstance.getDescriptionI18n());
     }
 
     @Override
@@ -155,4 +164,12 @@ public class ScriptInstanceDto extends CustomScriptDto {
 	public void setScriptInstanceCategoryCode(String scriptInstanceCategoryCode) {
 		this.scriptInstanceCategoryCode = scriptInstanceCategoryCode;
 	}
+    
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+    }
+
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
+    }
 }
