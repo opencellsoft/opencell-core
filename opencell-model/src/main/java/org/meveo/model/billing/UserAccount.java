@@ -51,6 +51,8 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.crm.IInvoicingMinimumApplicable;
 
 /**
  * User account
@@ -70,7 +72,7 @@ import org.meveo.model.WorkflowedEntity;
         @NamedQuery(name = "UserAccount.getUserAccountsWithMinAmountELNotNullByUA", query = "select u from UserAccount u where u.minimumAmountEl is not null AND u.status = org.meveo.model.billing.AccountStatusEnum.ACTIVE AND u=:userAccount"),
         @NamedQuery(name = "UserAccount.getMinimumAmountUsed", query = "select u.minimumAmountEl from UserAccount u where u.minimumAmountEl is not null"),
         @NamedQuery(name = "UserAccount.getCountByParent", query = "select count(*) from UserAccount ua where ua.billingAccount=:parent") })
-public class UserAccount extends AccountEntity implements IWFEntity, ICounterEntity, ISearchable {
+public class UserAccount extends AccountEntity implements IWFEntity, ICounterEntity, ISearchable , IInvoicingMinimumApplicable{
 
     private static final long serialVersionUID = 1L;
 
@@ -289,5 +291,12 @@ public class UserAccount extends AccountEntity implements IWFEntity, ICounterEnt
 	public void setIsConsumer(Boolean isConsumer) {
 		this.isConsumer = isConsumer;
 	}
+	
+	public Seller getSeller() {
+    	if(billingAccount==null) {
+    		return null;
+    	}
+    	return billingAccount.getSeller();
+    }
     
 }

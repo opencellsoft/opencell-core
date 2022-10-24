@@ -79,6 +79,8 @@ import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.IInvoicingMinimumApplicable;
+import org.meveo.model.crm.IInvoicingMinimumApplicable;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -515,10 +517,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 continue;
             }
             BigDecimal minAmount = accountAmounts.getValue().getMinAmount();
-            String minAmountLabel = accountAmounts.getValue().getMinAmountLabel();
             BigDecimal totalInvoiceableAmount =
                     appProvider.isEntreprise() ? accountAmounts.getValue().getAmounts().getAmountWithoutTax() : accountAmounts.getValue().getAmounts().getAmountWithTax();
-            BusinessEntity entity = accountAmounts.getValue().getEntity();
+            IInvoicingMinimumApplicable entity = accountAmounts.getValue().getEntity();
             Seller seller = accountAmounts.getValue().getSeller();
             if (seller == null) {
                 throw new BusinessException("Default Seller is mandatory for invoice minimum (Customer.seller)");
@@ -533,6 +534,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 log.error("No default AccountingArticle defined");
                 continue;
             }
+            String minAmountLabel = !StringUtils.isBlank(accountAmounts.getValue().getMinAmountLabel())?accountAmounts.getValue().getMinAmountLabel():defaultMinAccountingArticle.getDescription();
             InvoiceSubCategory invoiceSubCategory = defaultMinAccountingArticle.getInvoiceSubCategory();
             String mapKey = mapKeyPrefix + invoiceSubCategory.getId();
             TaxMappingService.TaxInfo taxInfo = taxMappingService
@@ -546,7 +548,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         return minAmountsResult;
     }
 
-    private AccountingArticle getDefaultAccountingArticle() {
+    public AccountingArticle getDefaultAccountingArticle() {
         AccountingArticle accountingArticle = accountingArticleService.findByCode(INVOICE_MINIMUM_COMPLEMENT_CODE);
         if (accountingArticle == null)
             throw new EntityDoesNotExistsException(AccountingArticle.class, INVOICE_MINIMUM_COMPLEMENT_CODE);
@@ -554,7 +556,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
 
     private InvoiceLine createInvoiceLine( String minAmountLabel, IBillableEntity billableEntity, BillingAccount billingAccount, Date minRatingDate,
-                                          BusinessEntity entity, Seller seller, AccountingArticle defaultAccountingArticle,
+    		IInvoicingMinimumApplicable entity, Seller seller, AccountingArticle defaultAccountingArticle,
                                           TaxMappingService.TaxInfo taxInfo, BigDecimal ilMinAmount) {
         Tax tax = taxInfo.tax;
         BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(ilMinAmount, ilMinAmount, tax.getPercent(), appProvider.isEntreprise(),
@@ -562,10 +564,16 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         InvoiceLine invoiceLine = new InvoiceLine(minRatingDate, BigDecimal.ONE, amounts[0], amounts[1], amounts[2], OPEN,
                 billingAccount, minAmountLabel, tax, tax.getPercent(), defaultAccountingArticle);
         if (entity instanceof ServiceInstance) {
-            invoiceLine.setServiceInstance((ServiceInstance) entity);
+            final ServiceInstance serviceInstance = (ServiceInstance) entity;
+			invoiceLine.setServiceInstance(serviceInstance);
+			final Subscription subscription = serviceInstance.getSubscription();
+			if(subscription!=null) {
+				invoiceLine.setSubscription(subscription);
+			}
         }
         if (entity instanceof Subscription) {
-            invoiceLine.setSubscription((Subscription) entity);
+            final Subscription subscription = (Subscription) entity;
+			invoiceLine.setSubscription(subscription);
         }
         if (billableEntity instanceof Subscription) {
             invoiceLine.setSubscription((Subscription) billableEntity);
@@ -1154,4 +1162,44 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             return BigDecimal.ZERO;
         }
     }
+    
+    public List<Object[]> findMinimumsTocheck(BillingRun billingRun, String joinPath) {
+		if (joinPath == null || !joinPath.contains("mt")) {
+			return Collections.emptyList();
+		}
+		String amount = appProvider.isEntreprise() ? " sum(il.amountWithoutTax) " : " sum(il.amountWithTax) ";
+		String baseQuery = "SELECT mt, ba, " + amount + " FROM InvoiceLine il join il.billingAccount ba " + joinPath + " WHERE il.status='OPEN' AND il.billingRun.id=:billingRunId AND mt.minimumAmountEl is not null GROUP BY mt, ba HAVING (mt.minimumAmountEl like '#{%' OR cast(mt.minimumAmountEl AS big_decimal)>"+ amount + ")";
+
+		QueryBuilder qb = new QueryBuilder(baseQuery);
+		final List<Object[]> resultList = qb.getQuery(getEntityManager()).setParameter("billingRunId", billingRun.getId()).getResultList();
+		return resultList;
+	}
+
+	
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void createMinInvoiceLine(BillingRun bilingRun, AccountingArticle defaultMinAccountingArticle, Object[] minimumData) {
+		IInvoicingMinimumApplicable minEntity = (IInvoicingMinimumApplicable)minimumData[0];
+		BillingAccount billingAccount = (BillingAccount)minimumData[1];
+		BigDecimal amount = (BigDecimal)minimumData[2];
+		Seller seller = minEntity.getSeller();
+		if (seller == null) {
+		    throw new BusinessException("Default Seller is mandatory for invoice minimum (Customer.seller)");
+		}
+		BigDecimal minAmount = minAmountService.evaluateMinAmountExpression(minEntity.getMinimumAmountEl(), minEntity);
+		String minAmountLabel = minAmountService.evaluateMinAmountLabelExpression(minEntity.getMinimumLabelEl(), minEntity);
+		BigDecimal diff = minAmount.subtract(amount);
+		if (diff.compareTo(BigDecimal.ZERO) <= 0) {
+		    return;
+		}
+		
+		if (defaultMinAccountingArticle == null) {
+		    log.error("No default AccountingArticle defined");
+		    return;
+		}
+		TaxMappingService.TaxInfo taxInfo = taxMappingService.determineTax(defaultMinAccountingArticle.getTaxClass(), seller, billingAccount, null, bilingRun.getInvoiceDate(), null, true, false, null);
+		InvoiceLine invoiceLine = createInvoiceLine((!StringUtils.isBlank(minAmountLabel)?minAmountLabel:defaultMinAccountingArticle.getDescription()), billingAccount, billingAccount, bilingRun.getInvoiceDate(), minEntity, seller, defaultMinAccountingArticle, taxInfo, diff);
+		invoiceLine.setBillingRun(bilingRun);
+		create(invoiceLine);
+	}
 }
