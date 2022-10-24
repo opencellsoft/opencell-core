@@ -2389,7 +2389,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         }
         Element userAccountTag = doc.createElement("userAccount");
         if (userAccount == null) {
-            userAccountTag.setAttribute("description", "-");
+            return null;
         } else {
             userAccountTag.setAttribute("id", userAccount.getId() + "");
             userAccountTag.setAttribute("code", userAccount.getCode());
