@@ -79,6 +79,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -1700,7 +1701,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
                 Element advance = doc.createElement("advance");
                 advance.setAttribute("invoiceNumber", advanceLinkedInvoiceInfos.getInvoiceNumber() != null ? String.valueOf(advanceLinkedInvoiceInfos.getInvoiceNumber()) : "");
-                advance.setAttribute("invoiceDate", advanceLinkedInvoiceInfos.getInvoiceDate() != null ? String.valueOf(advanceLinkedInvoiceInfos.getInvoiceDate()) : "");
+                advance.setAttribute("invoiceDate", advanceLinkedInvoiceInfos.getInvoiceDate() != null ? new SimpleDateFormat("dd/MM/yyyy").format(advanceLinkedInvoiceInfos.getInvoiceDate()) : "");
                 advance.setAttribute("amountWithTax", advanceLinkedInvoiceInfos.getAmountWithTax() != null ? String.valueOf(advanceLinkedInvoiceInfos.getAmountWithTax()) : "");
 
                 advances.appendChild(advance);

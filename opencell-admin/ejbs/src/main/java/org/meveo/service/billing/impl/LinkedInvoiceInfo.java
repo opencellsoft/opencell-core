@@ -1,27 +1,31 @@
 package org.meveo.service.billing.impl;
 
+
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+
 public class LinkedInvoiceInfo {
 
-    private Long invoiceNumber;
-    private String invoiceDate;
-    private Long amountWithTax;
+    private String invoiceNumber;
+    private Timestamp invoiceDate;
+    private BigDecimal amountWithTax;
 
-    public LinkedInvoiceInfo(Long invoiceNumber, String invoiceDate, Long amountWithTax) {
+    public LinkedInvoiceInfo(String invoiceNumber, Timestamp invoiceDate, BigDecimal amountWithTax) {
         this.invoiceNumber = invoiceNumber;
         this.invoiceDate = invoiceDate;
         this.amountWithTax = amountWithTax;
     }
 
 
-    public Long getInvoiceNumber() {
+    public String getInvoiceNumber() {
         return invoiceNumber;
     }
 
-    public String getInvoiceDate() {
+    public Timestamp getInvoiceDate() {
         return invoiceDate;
     }
 
-    public Long getAmountWithTax() {
+    public BigDecimal getAmountWithTax() {
         return amountWithTax;
     }
 

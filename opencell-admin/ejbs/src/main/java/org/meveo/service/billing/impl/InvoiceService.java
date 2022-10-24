@@ -68,6 +68,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.net.ntp.TimeStamp;
 import org.hibernate.LockMode;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -6519,11 +6520,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public List<LinkedInvoiceInfo> findLinkedInvoicesByIdAndType(Long invoiceId, String invoiceTypeCode) {
 
-        List<Object[]> advanceLinkedInvoices = getEntityManager().createNamedQuery("Invoice.findLinkedInvoicesByIdAndType", Object[].class).setParameter("invoiceId", invoiceId).setParameter("invoiceTypeCode", invoiceTypeCode).getResultList();
+        List<Object[]> advanceLinkedInvoices = getEntityManager().createNamedQuery("Invoice.findLinkedInvoicesByIdAndType", Object[].class).
+                setParameter("invoiceId", invoiceId).getResultList();
 
         List<LinkedInvoiceInfo> advanceLinkedInvoicesInfo = new ArrayList<>();
         for (Object[] invoice : advanceLinkedInvoices) {
-            advanceLinkedInvoicesInfo.add(new LinkedInvoiceInfo((Long) invoice[0], (String) invoice[1], (Long) invoice[2]));
+            advanceLinkedInvoicesInfo.add(new LinkedInvoiceInfo((String) invoice[0], (java.sql.Timestamp) invoice[1], (BigDecimal) invoice[2]));
         }
         return advanceLinkedInvoicesInfo;
     }
