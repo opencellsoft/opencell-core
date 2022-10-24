@@ -143,7 +143,7 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.model.billing.LinkedInvoiceInfo;
+import org.meveo.model.LinkedInvoiceInfo;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;

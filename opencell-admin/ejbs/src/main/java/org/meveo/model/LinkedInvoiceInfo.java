@@ -1,4 +1,4 @@
-package org.meveo.model.billing;
+package org.meveo.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
