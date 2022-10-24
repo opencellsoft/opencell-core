@@ -1,5 +1,8 @@
 package org.meveo.api.dto;
 
+import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.crm.custom.UrlReferenceWrapper;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -64,5 +67,17 @@ public class UrlReferenceDto {
 
     public boolean isEmpty() {
         return url== null || url.isEmpty();
+    }
+
+    /**
+     * to Wrapper.
+     *
+     * @return the url reference wrapper
+     */
+    public UrlReferenceWrapper toWrapper() {
+        if (isEmpty()) {
+            return null;
+        }
+        return new UrlReferenceWrapper(url, regexp, label, length);
     }
 }
