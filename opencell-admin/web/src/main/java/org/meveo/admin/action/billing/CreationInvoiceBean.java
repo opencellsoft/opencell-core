@@ -463,6 +463,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     public void deleteRatedTransactionLine() {
 
         aggregateHandler.removeRT(selectedRatedTransaction);
+        ratedTransactionsToRemove.add(selectedRatedTransaction);
         updateAmountsAndLines();
     }
 
