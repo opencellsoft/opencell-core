@@ -22,6 +22,7 @@ import java.sql.Types;
 
 import org.hibernate.dialect.PostgreSQL94Dialect;
 import org.hibernate.dialect.function.StandardSQLFunction;
+import org.meveo.model.persistence.JsonBinaryType;
 
 /**
  * JPA extensions for searching amount Custom field value fields
@@ -51,5 +52,7 @@ public class MeveoPostgreSQLDialect extends PostgreSQL94Dialect {
         registerFunction("booleanFromJson", new BooleanPostgreSQLJsonSearchFunction());
         registerFunction("entityFromJson", new EntityReferencePostgreSQLJsonSearchFunction());
         registerColumnType(Types.BOOLEAN, "int4");
+        registerColumnType(Types.JAVA_OBJECT, "jsonb");
+        registerHibernateType(Types.OTHER, JsonBinaryType.class.getName());
     }
 }
