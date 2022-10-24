@@ -1343,6 +1343,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 create(nextBillingRun);
                 billingRun.setNextBillingRun(nextBillingRun);
                 update(billingRun);
+                commit();
                 return nextBillingRun;
             } catch (Exception e) {
                 log.error(e.getMessage());
