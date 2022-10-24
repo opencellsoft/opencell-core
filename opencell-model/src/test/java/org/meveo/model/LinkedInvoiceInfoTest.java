@@ -1,10 +1,13 @@
 package org.meveo.model;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.meveo.model.billing.LinkedInvoiceInfo;
+import org.mockito.junit.MockitoJUnitRunner;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-
+@RunWith(MockitoJUnitRunner.class)
 public class LinkedInvoiceInfoTest {
 
     @Test
