@@ -1,5 +1,6 @@
 package org.meveo.service.mediation;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -7,7 +8,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -17,6 +21,7 @@ import javax.inject.Inject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.CollectionUtil;
 import org.meveo.interceptor.ConcurrencyLock;
 import org.meveo.model.RatingResult;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
@@ -47,8 +52,9 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 	private RatedTransactionService ratedTransactionService;
 	@Inject
 	private UsageRatingService usageRatingService;
-	
+
     private final static Map<String, EDR> EdrCache =  Collections.synchronizedMap(new HashMap<String, EDR>());
+    private final static Map<String, List<WalletOperation>> walletOperationCache =  Collections.synchronizedMap(new HashMap<String, List<WalletOperation>>());
 	
 	public String getEventKeyFromEdrVersionRule(EDR edr) {
 		var mediationSettings = this.list();
@@ -121,11 +127,12 @@ public class MediationsettingService extends PersistenceService<MediationSetting
     	if(!mediationSettings.get(0).isEnableEdrVersioning()) {
     	    return isVirtual;
     	}
-    	 boolean isRated = isVirtual;
     	// sort edr rule by priority
     	Comparator<EdrVersioningRule> sortByPriority = (EdrVersioningRule edrV1, EdrVersioningRule edrV2) -> edrV1.getPriority().compareTo(edrV2.getPriority()); 
     	var edrIterate = edrs.iterator();
-    	while(edrIterate.hasNext()) {
+        List<WalletOperation> wos = new ArrayList<WalletOperation>(); 
+    	boolean isRated = isVirtual;
+        while(edrIterate.hasNext()) {
     		var edr = edrIterate.next();
             if(edr.getId() == null)
                 edrService.create(edr);
@@ -170,7 +177,11 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 					//evaluate the version if it true that means a new version of EDR will be created
         			boolean isNewVersion = (boolean) evaluateEdrVersion(edrVersionRule.getId(), edrVersionRule.getIsNewVersionEL(),edr, cdr, errorMsg, Boolean.class, previousEdr, edrIterate);    				
         			if(isNewVersion) {
-                        EdrCache.put(keyCaheEdr, edr);
+        			    
+        			    wos = (List<WalletOperation>) walletOperationService.getEntityManager().createQuery("from WalletOperation wo where wo.edr.id=:edrId and  wo.status in ('TREATED', 'TO_RERATE', 'OPEN', 'SCHEDULED' )")
+                                .setParameter("edrId", previousEdr.getId())
+                                .getResultList();
+        			    
         				 // liste des edr versioning 
     					if(previousEdr.getStatus() != EDRStatusEnum.RATED) { // all status : OPEN, CANCELLED, REJECTED
         					previousEdr.setStatus(EDRStatusEnum.CANCELLED);
@@ -178,9 +189,13 @@ public class MediationsettingService extends PersistenceService<MediationSetting
         					edr.setEventVersion(previousEdr.getEventVersion() + 1);
     					}else { // for status RATED
     						// check if  wallet operation related to EDR is treated
-    					        List<WalletOperation> wos = (List<WalletOperation>) walletOperationService.getEntityManager().createQuery("from WalletOperation wo where wo.edr.id=:edrId and  wo.status in ('TREATED', 'TO_RERATE', 'OPEN', 'SCHEDULED' )")
-                                											.setParameter("edrId", previousEdr.getId())
-                                											.getResultList();
+    					    
+    					        synchronized (walletOperationCache) {
+                                    
+                                     if(walletOperationCache.get(keyCaheEdr) != null) {                                       
+                                         walletOperationCache.get(keyCaheEdr).addAll(wos);
+                                     }
+        					       
                                 	var billedTransaction = wos.stream().anyMatch(wo -> wo.getRatedTransaction() != null && wo.getRatedTransaction().getStatus() ==  RatedTransactionStatusEnum.BILLED);
                                 	if(billedTransaction) {
                                 		cdr.setStatus(CDRStatusEnum.DISCARDED);
@@ -188,59 +203,25 @@ public class MediationsettingService extends PersistenceService<MediationSetting
                                 		if(edr.getId() != null)
                                 			edrService.remove(edr);
                                 		edrIterate.remove();
-                                	}else { // find all wallet operation that have a status OPEN 
+                                	}else { // find all wallet operation that have a status OPEN
                                 		edr.setStatus(EDRStatusEnum.RATED);
                                 		edr.setEventVersion(previousEdr.getEventVersion() + 1);
                                 		previousEdr.setStatus(EDRStatusEnum.CANCELLED);
                                 		previousEdr.setRejectReason("Received new version EDR[id=" + edr.getId() + "]");
                                 		for(WalletOperation wo : wos){
-                                		    RatingResult rating = usageRatingService.rateUsage(edr, true, false, 0, 0, null, false);
-                                		    if(rating.getWalletOperations().size() == 0 ) {
-                                		        throw new BusinessException("Error while rating new Edr version : "  + edr.getEventVersion());
-                                		    }
-                                		    WalletOperation woToRetate = rating.getWalletOperations().get(0);
-                                			wo.setStatus(WalletOperationStatusEnum.TO_RERATE);
-                                			wo.setEdr(edr);
-                                			wo.setAccountingArticle(woToRetate.getAccountingArticle());
-                                			wo.setAccountingCode(woToRetate.getAccountingCode());
-                                			wo.setAmountTax(woToRetate.getAmountTax());
-                                			wo.setAmountWithoutTax(woToRetate.getAmountWithoutTax());
-                                			wo.setAmountWithTax(woToRetate.getAmountWithTax());
-                                			wo.setBillingAccount(woToRetate.getBillingAccount());
-                                			wo.setChargeInstance(woToRetate.getChargeInstance());
-                                			wo.setChargeMode(woToRetate.getChargeMode());
-                                			wo.setParameter1(woToRetate.getParameter1());
-                                			wo.setParameter2(woToRetate.getParameter2());
-                                			wo.setParameter3(woToRetate.getParameter3());
-                                			wo.setParameterExtra(woToRetate.getParameterExtra());
-                                			wo.setTax(woToRetate.getTax());
-                                			wo.setTaxClass(woToRetate.getTaxClass());
-                                			wo.setTaxPercent(woToRetate.getTaxPercent());
-                                			wo.setUnitAmountTax(woToRetate.getUnitAmountTax());
-                                			wo.setUnitAmountWithTax(woToRetate.getUnitAmountWithTax());
-                                			wo.setUnitAmountWithoutTax(woToRetate.getUnitAmountWithoutTax());
-                                			wo.setSubscriptionDate(woToRetate.getSubscriptionDate());
-                                			wo.setInvoiceSubCategory(woToRetate.getInvoiceSubCategory());
-                                			wo.setUserAccount(woToRetate.getUserAccount());
-                                			wo.setType(woToRetate.getType());
-                                			wo.setSubscription(woToRetate.getSubscription());
-                                			wo.setCurrency(woToRetate.getCurrency());
-                                			wo.setCounter(woToRetate.getCounter());
-                                			wo.setDescription(woToRetate.getDescription());
-                                			wo.setInputUnitDescription(woToRetate.getInputUnitDescription());
-                                			wo.setInputUnitOfMeasure(woToRetate.getInputUnitOfMeasure());
-                                			wo.setInputQuantity(woToRetate.getInputQuantity());
-                                			wo.setQuantity(woToRetate.getQuantity());
+                                		    wo.setStatus(WalletOperationStatusEnum.CANCELED);
                                 			walletOperationService.update(wo);
                                 			if(wo.getRatedTransaction() != null) {
                                 				wo.getRatedTransaction().setStatus(RatedTransactionStatusEnum.CANCELED);
                                 				ratedTransactionService.getEntityManager().merge(wo.getRatedTransaction());
                                 			}
-                                			isRated = true;
+                                			isRated  = true;
                                 		}
-                                	
                                 	}
+                                    walletOperationCache.put(keyCaheEdr, wos);
+                                }
     						}
+                        EdrCache.put(keyCaheEdr, edr);
         			}else {
 						cdr.setStatus(CDRStatusEnum.DISCARDED);
 						var msgError = "Newer version already exists EDR[id="+previousEdrs.get(0).getId()+"]";
@@ -292,5 +273,9 @@ public class MediationsettingService extends PersistenceService<MediationSetting
     
     public void clearEdrCach() {
         EdrCache.clear();
+    }
+    
+    public void clearWalletOperationCache() {
+        walletOperationCache.clear();
     }
 }
