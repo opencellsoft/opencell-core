@@ -24,7 +24,6 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.meveo.admin.exception.UncheckedThreadingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,7 +76,6 @@ public class ThreadUtils {
             timeUnit.sleep(time);
         } catch (InterruptedException e) {
             log.error(" Error on sleepSafe : timeUnit = {} , time = {} ", timeUnit, time, e);
-            throw new UncheckedThreadingException(e);
         }
     }
 

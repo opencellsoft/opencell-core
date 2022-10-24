@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.UncheckedThreadingException;
 import org.meveo.admin.job.MediationJobBean;
 import org.meveo.api.dto.billing.ChargeCDRResponseDto;
 import org.meveo.api.dto.billing.ChargeCDRResponseDto.CdrError;
@@ -280,7 +280,6 @@ public class MediationApiService {
 
             } catch (InterruptedException | CancellationException e) {
 //                wasKilled = true;
-                throw new UncheckedThreadingException(e);
 
             } catch (ExecutionException e) {
                 Throwable cause = e.getCause();
