@@ -9,6 +9,7 @@ import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -840,5 +841,19 @@ public class InvoiceLine extends AuditableCFEntity {
 				this.rawAmount.multiply(appliedRate) : ZERO;
 		this.convertedUnitPrice = this.unitPrice != null ?
 				this.unitPrice.multiply(appliedRate) : ZERO;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		} else if (obj == null) {
+			return false;
+		} else if (!(obj instanceof InvoiceLine)) {
+			return false;
+		}
+
+		InvoiceLine other = (InvoiceLine) obj;
+		return getId() != null && other.getId() != null && getId().equals(other.getId());
 	}
 }
