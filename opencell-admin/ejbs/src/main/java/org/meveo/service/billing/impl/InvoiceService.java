@@ -143,7 +143,6 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.model.LinkedInvoiceInfo;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
@@ -6518,17 +6517,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     .getResultList();
     }
 
-    public List<LinkedInvoiceInfo> findLinkedInvoicesByIdAndType(Long invoiceId, String invoiceTypeCode) {
+    public List<Invoice> findLinkedInvoicesByIdAndType(Long invoiceId, String invoiceTypeCode) {
 
-        List<Object[]> advanceLinkedInvoices = getEntityManager().createNamedQuery("Invoice.findLinkedInvoicesByIdAndType", Object[].class).
+        return getEntityManager().createNamedQuery("Invoice.findLinkedInvoicesByIdAndType", Invoice.class).
                 setParameter("invoiceId", invoiceId).
                 setParameter("invoiceTypeCode", invoiceTypeCode).getResultList();
 
-        List<LinkedInvoiceInfo> advanceLinkedInvoicesInfo = new ArrayList<>();
-        for (Object[] invoice : advanceLinkedInvoices) {
-            advanceLinkedInvoicesInfo.add(new LinkedInvoiceInfo((String) invoice[0], (java.sql.Timestamp) invoice[1], (BigDecimal) invoice[2]));
-        }
-        return advanceLinkedInvoicesInfo;
     }
 
 

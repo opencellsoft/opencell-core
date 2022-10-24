@@ -31,7 +31,6 @@ import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.LinkedInvoiceInfo;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.*;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -1700,7 +1699,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
     private Element createAndPopulateAdvancesSection(Document doc, Invoice invoice) {
 
-        List<LinkedInvoiceInfo> advanceLinkedInvoices = invoiceService.findLinkedInvoicesByIdAndType(invoice.getId(), "ADV");
+        List<Invoice> advanceLinkedInvoices = invoiceService.findLinkedInvoicesByIdAndType(invoice.getId(), "ADV");
 
         if (advanceLinkedInvoices != null && !advanceLinkedInvoices.isEmpty()) {
 
@@ -1709,17 +1708,17 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         return null;
     }
 
-    private Element populateAdvancesSection(Document doc, List<LinkedInvoiceInfo> advanceLinkedInvoices) {
+    private Element populateAdvancesSection(Document doc, List<Invoice> advanceLinkedInvoices) {
 
         Element advances = doc.createElement("advances");
 
-        for (LinkedInvoiceInfo advanceLinkedInvoiceInfos : advanceLinkedInvoices) {
+        for (Invoice advancedLinkedInvoice : advanceLinkedInvoices) {
 
             Element advance = doc.createElement("advance");
 
-            advance.setAttribute("invoiceNumber", advanceLinkedInvoiceInfos.getInvoiceNumber() != null ? String.valueOf(advanceLinkedInvoiceInfos.getInvoiceNumber()) : "");
-            advance.setAttribute("invoiceDate", advanceLinkedInvoiceInfos.getInvoiceDate() != null ? new SimpleDateFormat("dd/MM/yyyy").format(advanceLinkedInvoiceInfos.getInvoiceDate()) : "");
-            advance.setAttribute("amountWithTax", advanceLinkedInvoiceInfos.getAmountWithTax() != null ? String.valueOf(advanceLinkedInvoiceInfos.getAmountWithTax()) : "");
+            advance.setAttribute("invoiceNumber", advancedLinkedInvoice.getInvoiceNumber() != null ? String.valueOf(advancedLinkedInvoice.getInvoiceNumber()) : "");
+            advance.setAttribute("invoiceDate", advancedLinkedInvoice.getInvoiceDate() != null ? new SimpleDateFormat("dd/MM/yyyy").format(advancedLinkedInvoice.getInvoiceDate()) : "");
+            advance.setAttribute("amountWithTax", advancedLinkedInvoice.getAmountWithTax() != null ? String.valueOf(advancedLinkedInvoice.getAmountWithTax()) : "");
 
             advances.appendChild(advance);
         }
