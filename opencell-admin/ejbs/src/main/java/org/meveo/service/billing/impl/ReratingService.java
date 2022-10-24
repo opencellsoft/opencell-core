@@ -434,11 +434,17 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
                     edr.setRejectReason("Origin wallet operation [id=" + operationToRerate.getId() + "] has been rerated");
                     operationToRerate.setStatus(WalletOperationStatusEnum.RERATED);
 
+                    walletOperationService.update(operationToRerate);
+
+                    if (newWO==null) {
+                        // that mean no newWO are created, this is the cas when we have 1 WO woth more than 1 T.EDR, we skip creating of T.EDR
+                        continue;
+                    }
+
+                    // Create new T.EDRs
                     List<EDR> newTEdrs = oneShotRatingService.instantiateTriggeredEDRs(newWO, edr, false);
                     Optional.ofNullable(newTEdrs).orElse(Collections.emptyList())
                             .forEach(newEdr -> edrService.create(newEdr));
-
-                    walletOperationService.update(operationToRerate);
 
                 } else if (edr.getStatus() == EDRStatusEnum.RATED &&
                         operationToRerate.getRatedTransaction() != null && operationToRerate.getRatedTransaction().getStatus() != RatedTransactionStatusEnum.BILLED) {
@@ -451,12 +457,18 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
                     operationToRerate.getRatedTransaction().setStatus(RatedTransactionStatusEnum.CANCELED);
                     operationToRerate.getRatedTransaction().setRejectReason("Origin wallet operation [id=" + operationToRerate.getId() + "] has been rerated");
 
+                    walletOperationService.update(operationToRerate);
+                    ratedTransactionService.update(operationToRerate.getRatedTransaction());
+
+                    if (newWO==null) {
+                        // that mean no newWO are created, this is the cas when we have 1 WO woth more than 1 T.EDR, we skip creating of T.EDR
+                        continue;
+                    }
+
+                    // Create new T.EDRs
                     List<EDR> newTEdrs = oneShotRatingService.instantiateTriggeredEDRs(newWO, edr, false);
                     Optional.ofNullable(newTEdrs).orElse(Collections.emptyList())
                             .forEach(newEdr -> edrService.create(newEdr));
-
-                    walletOperationService.update(operationToRerate);
-                    ratedTransactionService.update(operationToRerate.getRatedTransaction());
 
                 } else if (edr.getStatus() == EDRStatusEnum.RATED &&
                         operationToRerate.getRatedTransaction() != null && operationToRerate.getRatedTransaction().getStatus() == RatedTransactionStatusEnum.BILLED) {
@@ -487,10 +499,9 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
         if (oldWOAndNewWO.get(operationToRerate.getId()) == null) {
             newWO = rateNewWO(operationToRerate, useSamePricePlan);
             oldWOAndNewWO.put(operationToRerate.getId(), newWO);
-        } else {
-            newWO = oldWOAndNewWO.get(operationToRerate.getId());
+            return newWO;
         }
-        return newWO;
+        return null;
     }
 
     private WalletOperation rateNewWO(WalletOperation oldWO, boolean useSamePricePlan) {
