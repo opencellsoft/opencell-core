@@ -51,6 +51,7 @@ import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.script.ScriptCompilerService;
 import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.slf4j.Logger;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 /**
  * Takes care of initializing/loading various application services/data
@@ -131,6 +132,12 @@ public class ApplicationInitializer {
 
             } catch (InterruptedException | ExecutionException | BusinessException e) {
                 log.error("Failed to initialize a provider {}", provider.getCode(), e);
+
+                if (e instanceof ExecutionException) {
+                    if (e.getMessage().contains("S3Exception")) {
+                        throw S3Exception.builder().message(e.getMessage()).build();
+                    }
+                }
             }
             i++;
         }
