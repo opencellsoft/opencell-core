@@ -1,5 +1,6 @@
 package org.meveo.apiv2.securityDeposit.service;
 
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -31,6 +32,7 @@ import org.meveo.service.securityDeposit.impl.SecurityDepositService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
 
 @RunWith(MockitoJUnitRunner.class)
 public class SecurityDepositApiServiceTest {
@@ -87,5 +89,7 @@ public class SecurityDepositApiServiceTest {
     	when(invoiceServiceMock.getEntityManager()).thenReturn(entityManagerMock);
     
     	securityDepositApiService.refund(sd, "motif", SecurityDepositOperationEnum.REFUND_SECURITY_DEPOSIT, SecurityDepositStatusEnum.REFUNDED, "REFUND");
+    	
+    	assertNotNull(sd.getSecurityDepositAdjustment());
     }
 }
