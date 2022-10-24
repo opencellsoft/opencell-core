@@ -840,4 +840,23 @@ public class InvoiceLine extends AuditableCFEntity {
 		this.convertedUnitPrice = this.unitPrice != null ?
 				this.unitPrice.multiply(appliedRate) : ZERO;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		} else if (obj == null) {
+			return false;
+		} else if (!(obj instanceof InvoiceLine)) {
+			return false;
+		}
+
+		InvoiceLine other = (InvoiceLine) obj;
+		return getId() != null && other.getId() != null && getId().equals(other.getId());
+	}
+
+	@Override
+	public int hashCode() {
+		return 961 + ("InvoiceLine" + getId()).hashCode();
+	}
 }
