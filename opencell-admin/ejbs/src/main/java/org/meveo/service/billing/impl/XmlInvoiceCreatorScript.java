@@ -412,7 +412,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     protected Element createSubscriptionsSection(Document doc, UserAccount userAccount, List<RatedTransaction> ratedTransactions, boolean isVirtual, boolean ignoreUA,
                                                  List<InvoiceLine> invoiceLines) {
 
-        List<Subscription> subscriptions = ratedTransactions != null ? getSubscriptions(userAccount, isVirtual, ignoreUA, ratedTransactions)
+        List<Subscription> subscriptions = ratedTransactions != null ? getSubscriptions(userAccount, isVirtual, ratedTransactions)
                 : getSubscriptionsFromIls(invoiceLines);
         if (subscriptions == null || subscriptions.isEmpty()) {
             return null;
@@ -1058,7 +1058,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Element categoryTag=null;
         for (CategoryInvoiceAgregate categoryInvoiceAgregate : categoryInvoiceAgregates) {
         	if(categoryInvoiceAgregate.getInvoiceCategory()!=null) {
-        		categoryTag = createDetailsUAInvoiceCategorySection(doc, invoice, categoryInvoiceAgregate, ratedTransactions, isVirtual, invoiceDateFormat, invoiceDateTimeFormat, invoiceLanguageCode,
+        		categoryTag = createDetailsUAInvoiceCategorySection(doc, categoryInvoiceAgregate, ratedTransactions, isVirtual, invoiceDateFormat, invoiceDateTimeFormat, invoiceLanguageCode,
         				invoiceConfiguration);
         	}
             if (categoryTag != null) {
@@ -1282,11 +1282,11 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         if (linkedInvoices == null || linkedInvoices.isEmpty()) {
             return "";
         }
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for (LinkedInvoice inv : linkedInvoices) {
-            result += inv.getLinkedInvoiceValue().getInvoiceNumber() + " ";
+            result.append(inv.getLinkedInvoiceValue().getInvoiceNumber()).append(" ");
         }
-        return result;
+        return result.toString();
     }
 
     /**
@@ -1364,7 +1364,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         if (header != null) {
             invoiceTag.appendChild(header);
         }
-        Element amountTag = createAmountSection(doc, invoice, invoiceConfiguration);
+        Element amountTag = createAmountSection(doc, invoice);
         if (amountTag != null) {
             invoiceTag.appendChild(amountTag);
         }
@@ -1645,10 +1645,9 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      *
      * @param doc                  XML invoice DOM
      * @param invoice              Invoice to convert
-     * @param invoiceConfiguration Invoice configuration
      * @return DOM element
      */
-    protected Element createAmountSection(Document doc, Invoice invoice, InvoiceConfiguration invoiceConfiguration) {
+    protected Element createAmountSection(Document doc, Invoice invoice) {
 
         Element amount = doc.createElement("amount");
 
@@ -1839,12 +1838,11 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      *
      * @param doc                   XML invoice DOM
      * @param edr                   EDR
-     * @param invoiceConfiguration  Invoice configuration
      * @param invoiceDateFormat     Date format
      * @param invoiceDateTimeFormat Timestamp format
      * @return DOM element
      */
-    protected Element createEDRSection(Document doc, EDR edr, InvoiceConfiguration invoiceConfiguration, String invoiceDateFormat, String invoiceDateTimeFormat) {
+    protected Element createEDRSection(Document doc, EDR edr, String invoiceDateFormat, String invoiceDateTimeFormat) {
 
         Element edrInfo = doc.createElement("edr");
         edrInfo.setAttribute("originRecord", edr.getOriginRecord() != null ? edr.getOriginRecord() : "");
@@ -2009,7 +2007,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         }
         EDR edr = ratedTransaction.getEdr();
         if (invoiceConfiguration.isDisplayEdrs() && edr != null) {
-            Element edrTag = createEDRSection(doc, edr, invoiceConfiguration, invoiceDateFormat, invoiceDateTimeFormat);
+            Element edrTag = createEDRSection(doc, edr, invoiceDateFormat, invoiceDateTimeFormat);
             if (edrTag != null) {
                 line.appendChild(edrTag);
             }
@@ -2079,7 +2077,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * Create invoice/details/userAccounts/userAccount/categories/category DOM element
      *
      * @param doc                     XML invoice DOM
-     * @param invoice                 Invoice to convert
      * @param categoryInvoiceAgregate Invoice category aggregate
      * @param ratedTransactions       Rated transactions
      * @param isVirtual               Is this a virtual invoice. If true, no invoice, invoice aggregate nor RT information is persisted in DB
@@ -2089,7 +2086,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * @param invoiceConfiguration    Invoice configuration
      * @return DOM element
      */
-    protected Element createDetailsUAInvoiceCategorySection(Document doc, Invoice invoice, CategoryInvoiceAgregate categoryInvoiceAgregate, List<RatedTransaction> ratedTransactions, boolean isVirtual,
+    protected Element createDetailsUAInvoiceCategorySection(Document doc, CategoryInvoiceAgregate categoryInvoiceAgregate, List<RatedTransaction> ratedTransactions, boolean isVirtual,
             String invoiceDateFormat, String invoiceDateTimeFormat, String invoiceLanguageCode, InvoiceConfiguration invoiceConfiguration) {
 
         InvoiceCategory invoiceCategory = categoryInvoiceAgregate.getInvoiceCategory();
@@ -2179,11 +2176,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Set<Long> serviceInstanceIds = new HashSet<>();
         for (RatedTransaction ratedTransaction : ratedTransactions) {
             if (ratedTransaction.getServiceInstance() != null && ratedTransaction.getOfferTemplate() != null && !serviceInstanceIds.contains(ratedTransaction.getServiceInstance().getId())) {
-                List<ServiceInstance> services = servicesByOffer.get(ratedTransaction.getOfferTemplate().getCode());
-                if (services == null) {
-                    services = new ArrayList<>();
-                    servicesByOffer.put(ratedTransaction.getOfferTemplate().getCode(), services);
-                }
+                List<ServiceInstance> services = servicesByOffer.computeIfAbsent(ratedTransaction.getOfferTemplate().getCode(), k -> new ArrayList<>());
                 services.add(ratedTransaction.getServiceInstance());
                 serviceInstanceIds.add(ratedTransaction.getServiceInstance().getId());
             }
@@ -2217,13 +2210,12 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * Get a list of subscriptions that are being invoiced - referenced from RTs
      *
      * @param userAccount       User account
-     * @param isVirtual         Is this a virtual invoice. If true, no invoice, invoice aggregate nor RT information is persisted in DB
      * @param ignoreUA          Shall UA be ignored and all subscriptions be returned. Used as true when aggregation by user account is turned off - system property
      *                          invoice.aggregateByUA=false
      * @param ratedTransactions Rated transactions
      * @return A list of subscription that are being invoiced - referenced from RTs
      */
-    protected List<Subscription> getSubscriptions(UserAccount userAccount, boolean isVirtual, boolean ignoreUA, List<RatedTransaction> ratedTransactions) {
+    protected List<Subscription> getSubscriptions(UserAccount userAccount, boolean ignoreUA, List<RatedTransaction> ratedTransactions) {
 
         // TODO Need to check performance, maybe its quick enough to avoid searching DB in non-virtual cases
         List<Subscription> subscriptions = new ArrayList<>();
@@ -2308,11 +2300,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         for (InvoiceLine invoiceLine : invoiceLines) {
             if (invoiceLine.getServiceInstance() != null && invoiceLine.getOfferTemplate() != null
                     && !serviceInstanceIds.contains(invoiceLine.getServiceInstance().getId())) {
-                List<ServiceInstance> services = servicesByOffer.get(invoiceLine.getOfferTemplate().getCode());
-                if (services == null) {
-                    services = new ArrayList<>();
-                    servicesByOffer.put(invoiceLine.getOfferTemplate().getCode(), services);
-                }
+                List<ServiceInstance> services = servicesByOffer.computeIfAbsent(invoiceLine.getOfferTemplate().getCode(), k -> new ArrayList<>());
                 services.add(invoiceLine.getServiceInstance());
                 serviceInstanceIds.add(invoiceLine.getServiceInstance().getId());
             }
@@ -2356,7 +2344,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                 && invoiceLine.getValidity() != null ? invoiceLine.getValidity().getTo() : null;
         line.setAttribute("periodEndDate", DateUtils.formatDateWithPattern(periodEndDate, invoiceDateFormat));
         line.setAttribute("periodStartDate", DateUtils.formatDateWithPattern(periodStartDate, invoiceDateFormat));
-        line.setAttribute("taxPercent", invoiceLine.getTaxRate().toPlainString());
+        line.setAttribute("taxPercent", invoiceLine.getTaxRate() != null ? invoiceLine.getTaxRate().toPlainString() : "");
         line.setAttribute("sortIndex", "");
         line.setAttribute("code", invoiceLine.getOrderRef());
         Element label = doc.createElement("label");
