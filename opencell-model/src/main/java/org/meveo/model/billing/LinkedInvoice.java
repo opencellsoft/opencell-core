@@ -49,6 +49,15 @@ public class LinkedInvoice implements Serializable {
         this.linkedInvoiceValue = linkedInvoiceValue;
     }
 
+
+    public LinkedInvoice(Invoice id, Invoice linkedInvoiceValue, BigDecimal amount, InvoiceTypeEnum type) {
+        super();
+        this.id = id;
+        this.linkedInvoiceValue = linkedInvoiceValue;
+        this.amount = amount;
+        this.type = type;
+    }
+
     
     public LinkedInvoice() {
         

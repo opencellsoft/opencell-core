@@ -40,7 +40,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @XmlType(name = "Price", namespace="http://www.tmforum.org")
 @JsonInclude(value = Include.NON_NULL)
 public class Price implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private final static long serialVersionUID = 1L;
 
     private BigDecimal taxIncludedAmount;
 
@@ -53,7 +53,6 @@ public class Price implements Serializable {
     private BigDecimal percentage;
 
     public Price() {
-        // empty constructor
     }
 
     public BigDecimal getTaxIncludedAmount() {
@@ -131,23 +130,27 @@ public class Price implements Serializable {
         }
 
         final Price other = (Price) object;
-        if (!Utilities.areEqual(this.taxIncludedAmount, other.taxIncludedAmount)) {
+        if (Utilities.areEqual(this.taxIncludedAmount, other.taxIncludedAmount) == false) {
             return false;
         }
 
-        if (!Utilities.areEqual(this.dutyFreeAmount, other.dutyFreeAmount)) {
+        if (Utilities.areEqual(this.dutyFreeAmount, other.dutyFreeAmount) == false) {
             return false;
         }
 
-        if (!Utilities.areEqual(this.taxRate, other.taxRate)) {
+        if (Utilities.areEqual(this.taxRate, other.taxRate) == false) {
             return false;
         }
 
-        if (!Utilities.areEqual(this.currencyCode, other.currencyCode)) {
+        if (Utilities.areEqual(this.currencyCode, other.currencyCode) == false) {
             return false;
         }
 
-        return Utilities.areEqual(this.percentage, other.percentage);
+        if (Utilities.areEqual(this.percentage, other.percentage) == false) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
@@ -159,11 +162,11 @@ public class Price implements Serializable {
     public static Price createProto() {
         Price price = new Price();
 
-        price.taxIncludedAmount = BigDecimal.valueOf(13.00);
-        price.dutyFreeAmount = BigDecimal.valueOf(12.20);
-        price.taxRate = BigDecimal.valueOf(14.01);
+        price.taxIncludedAmount = new BigDecimal(13.00);
+        price.dutyFreeAmount = new BigDecimal(12.20);
+        price.taxRate = new BigDecimal(14.01);
         price.currencyCode = "currency code";
-        price.percentage = BigDecimal.valueOf(0.00);
+        price.percentage = new BigDecimal(0.00);
 
         return price;
     }
