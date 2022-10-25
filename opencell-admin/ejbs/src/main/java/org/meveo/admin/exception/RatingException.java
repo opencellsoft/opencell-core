@@ -27,6 +27,7 @@ import org.meveo.model.rating.EDRRejectReasonEnum;
  * 
  * @author Andrius Karpavicius
  */
+@ApplicationException(rollback = false)
 public class RatingException extends BusinessException {
 
     private static final long serialVersionUID = -4006839791846079300L;
