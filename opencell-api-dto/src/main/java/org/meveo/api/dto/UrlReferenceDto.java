@@ -1,6 +1,5 @@
 package org.meveo.api.dto;
 
-import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.UrlReferenceWrapper;
 
 import javax.xml.bind.annotation.XmlAccessType;
