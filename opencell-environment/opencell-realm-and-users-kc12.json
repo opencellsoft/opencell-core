@@ -84,6 +84,9 @@
         "description": "${role_default-roles}",
         "composite": true,
         "composites": {
+          "realm": [
+            "administrator"
+          ],
           "client": {
             "opencell-web": [
               "uma_protection",

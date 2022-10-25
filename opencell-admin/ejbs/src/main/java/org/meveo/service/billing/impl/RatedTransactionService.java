@@ -1897,7 +1897,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
         return null;       
     }
-    
+
     /**
      * Bridge discount RatedTransactions with discounted Rated transaction
      * 
@@ -1907,6 +1907,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     public void bridgeDiscountRTs(Long minId, Long maxId) {
 
         getEntityManager().createNamedQuery("RatedTransaction.massUpdateWithDiscountedRT" + (EntityManagerProvider.isDBOracle() ? "Oracle" : "")).setParameter("minId", minId).setParameter("maxId", maxId)
-            .executeUpdate();
+                .executeUpdate();
+    }
+
+    public void reopenRatedTransaction(List<Long> ratedTransactionIds) {
+        if(ratedTransactionIds != null && !ratedTransactionIds.isEmpty()) {
+            getEntityManager().createNamedQuery("RatedTransaction.reopenRatedTransactions")
+                    .setParameter("rtIds", ratedTransactionIds)
+                    .setParameter("now", new Date())
+                    .executeUpdate();
+        }
     }
 }

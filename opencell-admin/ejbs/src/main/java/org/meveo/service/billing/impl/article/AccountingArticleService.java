@@ -29,6 +29,8 @@ import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvalidELException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.accountingScheme.AccountingCodeMapping;
 import org.meveo.model.admin.Seller;
@@ -611,5 +613,15 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		}
 		return true;
 	}
+	
+
+    public AccountingArticle getDefaultAccountingArticle() {
+        String articleCode = ParamBean.getInstance().getProperty("accountingArticle.advancePayment.defautl.code", "ADV-STD");
+
+        AccountingArticle accountingArticle = findByCode(articleCode);
+        if (accountingArticle == null)
+            throw new EntityDoesNotExistsException(AccountingArticle.class, articleCode);
+        return accountingArticle;
+    }
 
 }

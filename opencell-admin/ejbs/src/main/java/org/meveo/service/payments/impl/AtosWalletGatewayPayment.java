@@ -1,8 +1,10 @@
 package org.meveo.service.payments.impl;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.http.HttpHeaders;
@@ -37,6 +39,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.worldline.sips.checkout.WalletOrderRequest;
 import org.meveo.model.worldline.sips.checkout.WalletOrderResponse;
+import org.meveo.model.worldline.sips.wallet.WalletAction;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.util.PaymentGatewayClass;
@@ -81,7 +84,6 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
     private static final String CF_PRV_ACQUIRER_CODE_WLSIPS = "CF_PRV_ACQUIRER_CODE_WLSIPS";
     private static final String CF_PRV_COMPL_CODE_WLSIPS = "CF_PRV_COMPL_CODE_WLSIPS";
     private static final String CF_PRV_RESPONSE_CODE_WLSIPS = "CF_PRV_RESPONSE_CODE_WLSIPS";
-    private static final String CHANGE_IT = "changeIt";
 
     protected Logger log = LoggerFactory.getLogger(AtosWalletGatewayPayment.class);
 
@@ -163,7 +165,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 			String seal;
 			try {
 				String data = getSealString(request,isPayment);
-				log.info("getSealString(request): {}", data);
+				log.info("getSealString(request):" + data);
 				seal = SealCalculator.calculate(data, paymentGateway.getWebhooksSecretKey());
 				request.setSeal(seal);
 				request.setSealAlgorithm(paramBean().getProperty(SEAL_ALGORITHM_PROPERTY, "HMAC-SHA-256"));
@@ -173,7 +175,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 			}
 		} else {
 
-			Map<String, Object> context = new HashMap<>();
+			Map<String, Object> context = new HashMap<String, Object>();
 
 			context.put("CardPaymentMethod", paymentMethod);
 			context.put("ctsAmount", ctsAmount);
@@ -184,9 +186,9 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 			request = (WalletOrderRequest) context.get("WalletOrderRequest");
 
 		}
-		String wsUrl = paramBean().getProperty(OFFICE_URL_PROPERTY, CHANGE_IT);
+		String wsUrl = paramBean().getProperty(OFFICE_URL_PROPERTY, "changeIt");
 		if(!isPayment) {
-			wsUrl = paramBean().getProperty(WALLET_URL_PROPERTY, CHANGE_IT);
+			wsUrl = paramBean().getProperty(WALLET_URL_PROPERTY, "changeIt");
 		}
 		wsUrl += wsUri;
 		
@@ -250,7 +252,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 	}
 
 	private String[] getErreurCodeAndMsg(WalletOrderResponse response) {
-		Map<Object, Object> mapErrorCodeAndMsg;
+		Map<Object, Object> mapErrorCodeAndMsg = new HashMap<Object, Object>();
 		Provider provider = ((ProviderService) EjbUtils.getServiceInterface(ProviderService.class.getSimpleName())).getProvider();
 		log.info("WalletOrderResponse AuthorisationId:{}  AcquirerResponseCode:{}  ComplementaryCode:{}  ResponseCode:{}", response.getAuthorisationId(),
 				response.getAcquirerResponseCode(), response.getComplementaryCode(), response.getResponseCode());
@@ -280,7 +282,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 	@Override
     public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput) throws BusinessException {
         String returnUrl = hostedCheckoutInput.getReturnUrl();
-        String walletUrl = paramBean().getProperty(WALLET_HOSTED_CHECK_OUT_URL_PROPERTY, CHANGE_IT);
+        String walletUrl = paramBean().getProperty(WALLET_HOSTED_CHECK_OUT_URL_PROPERTY, "changeIt");
 
         PaymentHostedCheckoutResponseDto response = new PaymentHostedCheckoutResponseDto();
         PaymentHostedCheckoutResponseDto.Result result = response.getResult();
@@ -395,6 +397,19 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 		return request;
 	}
 
+    private String buildWalletActionnameList(String variant) {
+        String[] variantList = variant.split(",");
+        List<String> walletActionnameList = new ArrayList<>();
+
+        for (String item : variantList) {
+            if (WalletAction.get(item) != null) {
+                walletActionnameList.add(variant);
+            }
+        }
+
+        return String.join(",", walletActionnameList);
+    }
+
     /**
      * Mapping status.
      *
@@ -495,10 +510,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
             paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface(ParamBeanFactory.class.getSimpleName());
         }
 
-        if( paramBeanFactory != null) return paramBeanFactory.getInstance();
-
-        throw new IllegalStateException("could not instantiate paramBeanFactory ");
-
+        return paramBeanFactory != null ? paramBeanFactory.getInstance() : null;
     }
 
     private CustomerAccountService customerAccountService() {
