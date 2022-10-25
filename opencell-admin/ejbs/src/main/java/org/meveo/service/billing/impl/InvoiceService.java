@@ -61,6 +61,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -6671,27 +6673,27 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return invoicesAdv;
     }
     
-    private void appendAdvanceInvoiceLine(Invoice invoice, BigDecimal invoiceLineAmount) {
-        var invoiceLine = new InvoiceLine();
-        var accountingArticleAdv = accountingArticleService.getDefaultAccountingArticle();
-        if(accountingArticleAdv == null)
-            throw new EntityDoesNotExistsException(AccountingArticle.class, "ADV-STD");
-        
-        invoiceLine.setAccountingArticle(accountingArticleAdv);
-        invoiceLine.setUnitPrice(invoiceLineAmount.negate());
-        invoiceLine.setAmountWithoutTax(invoiceLineAmount.negate());
-        invoiceLine.setAmountTax(BigDecimal.ZERO);
-        invoiceLine.setInvoice(invoice);
-        invoiceLine.setBillingAccount(invoice.getBillingAccount());
-        invoiceLine.setStatus(InvoiceLineStatusEnum.BILLED);
-        invoiceLine.setQuantity(BigDecimal.ONE);
-        invoiceLine.setLabel(invoice.getInvoiceType().getDescription());
-        
-        invoiceLinesService.create(invoiceLine);
-        
-//        calculateInvoice(invoice);
-        
-    }
+   @SuppressWarnings("unchecked")
+   public Map<Invoice, List<Invoice>> applyligibleInvoiceForAdvancement(Long billingRunId) {
+       List<Object[]>  result = this.getEntityManager().createNamedQuery("Invoice.findInvoiceEligibleAdv").setParameter("billingRunId", billingRunId).getResultList();
+       
+       Map<Invoice, List<Invoice>> invoicesWithAdv = new HashMap<Invoice, List<Invoice>>();
+        result.stream().forEach(invoices -> {
+            Invoice key = (Invoice)invoices[0];
+            Invoice adv = (Invoice)invoices[1];
+            if(invoicesWithAdv.get(key) == null) {
+                List<Invoice> advs = new ArrayList<>();
+                advs.add(adv);
+                invoicesWithAdv.put(key, advs);
+            }else {
+                invoicesWithAdv.get(key).add(adv);
+            }
+        });
+       invoicesWithAdv.keySet().forEach(inv -> {
+           applyAdvanceInvoice(inv, invoicesWithAdv.get(inv));
+       });
+       return null;
+   }
     
     public void applyAdvanceInvoice(Invoice invoice, List<Invoice> advInvoices) {
         if(CollectionUtils.isNotEmpty(advInvoices)) {
@@ -6714,10 +6716,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     if(amount.intValue() == BigDecimal.ZERO.intValue()) continue;
                     var advanceMapping= new LinkedInvoice(invoice ,adv,amount, InvoiceTypeEnum.ADVANCEMENT_PAYMENT);
                     invoice.getLinkedInvoices().add(advanceMapping);
-                    appendAdvanceInvoiceLine(invoice, amount);
+                   // appendAdvanceInvoiceLine(invoice, amount);
                     if(remainingAmount == BigDecimal.ZERO)
                         break;
                 }
+                invoice.setInvoiceBalance(remainingAmount);
         }
     }
 }
