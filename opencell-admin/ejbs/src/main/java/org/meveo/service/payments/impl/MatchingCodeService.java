@@ -119,7 +119,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         boolean withRefund = false;
         boolean isToTriggerCollectionPlanLevelsJob = false;
         List<PaymentScheduleInstanceItem> listPaymentScheduleInstanceItem = new ArrayList<>();
-        List<RecordedInvoice> recordedInvoicesToGenerateMatchingCode = new ArrayList<>();
+        List<AccountOperation> aosToGenerateMatchingCode = new ArrayList<>();
 
         // For PaymentPlan, new AO OOC PPL_CREATION shall match all debit one, and recreate new AOS DEBIT OCC PPL_INSTALLMENT recording to the number of installment of Plan
         // Specially for this case, Invoice will pass to PENDING_PLAN status
@@ -195,7 +195,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         log.info("matching - [Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 
                                 invoice.getPaymentStatus() + " - newPaymentStatus : " + InvoicePaymentStatusEnum.PAID + "]");
                         invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.PAID);
-                        recordedInvoicesToGenerateMatchingCode.add((RecordedInvoice) accountOperation);
+                        aosToGenerateMatchingCode.add(accountOperation);
                         if (InvoicePaymentStatusEnum.PAID == invoice.getPaymentStatus()) {
                             isToTriggerCollectionPlanLevelsJob = true;
                         }
@@ -275,7 +275,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         log.info("matching- [Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 
                                 invoice.getPaymentStatus() + " - newPaymentStatus : " + InvoicePaymentStatusEnum.PAID + "]");
                         invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.PAID);
-                        recordedInvoicesToGenerateMatchingCode.add((RecordedInvoice) accountOperation);
+                        aosToGenerateMatchingCode.add((RecordedInvoice) accountOperation);
                         if (InvoicePaymentStatusEnum.PAID == invoice.getPaymentStatus()) {
                             isToTriggerCollectionPlanLevelsJob = true;
                         }
@@ -328,8 +328,8 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 .collect(Collectors.toList()));
 
         // generate matchingCode for related AOs
-        if (CollectionUtils.isNotEmpty(recordedInvoicesToGenerateMatchingCode)) {
-            journalEntryService.assignMatchingCodeToJournalEntries(recordedInvoicesToGenerateMatchingCode);
+        if (CollectionUtils.isNotEmpty(aosToGenerateMatchingCode)) {
+            journalEntryService.assignMatchingCodeToJournalEntries(aosToGenerateMatchingCode, null);
         }
 
     }

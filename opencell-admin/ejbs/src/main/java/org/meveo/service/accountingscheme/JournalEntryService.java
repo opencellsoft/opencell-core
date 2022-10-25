@@ -24,14 +24,13 @@ import static org.meveo.service.securityDeposit.impl.FinanceSettingsService.AUXI
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.accountingScheme.JournalEntry;
 import org.meveo.model.accountingScheme.JournalEntryDirectionEnum;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountingCode;
+import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
-import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AccountOperationStatus;
@@ -62,6 +61,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 @Stateless
 public class JournalEntryService extends PersistenceService<JournalEntry> {
@@ -465,30 +466,45 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                                 .getSingleResult();
     }
 
-    public void assignMatchingCodeToJournalEntries(List<RecordedInvoice> recordedInvoices) {
+    public void assignMatchingCodeToJournalEntries(List<AccountOperation> recordedInvoices, List<JournalEntry> createdEntries) {
         if (CollectionUtils.isEmpty(recordedInvoices)) {
             return;
         }
-        recordedInvoices.forEach(recordedInvoice -> {
-            if (recordedInvoice.getStatus() != AccountOperationStatus.EXPORTED || recordedInvoice.getMatchingStatus() != MatchingStatusEnum.L) {
-                log.info("RecordedInvoice id={} have no expected status to assign it a matchingCode for JournalEntry [given={}-{}, expected={}-{}]",
-                        recordedInvoice.getInvoice(), recordedInvoice.getStatus(), recordedInvoice.getMatchingStatus(), AccountOperationStatus.EXPORTED, MatchingStatusEnum.L);
+
+        recordedInvoices.forEach(ao -> {
+            if (ao.getStatus() != AccountOperationStatus.EXPORTED || ao.getMatchingStatus() != MatchingStatusEnum.L) {
+                log.warn("RecordedInvoice id={} does not have the expected status to assign it a 'Matching Code' for its JournalEntry [given={}-{}, expected={}-{}]",
+                        ao.getId(), ao.getStatus(), ao.getMatchingStatus(), AccountOperationStatus.EXPORTED, MatchingStatusEnum.L);
+                return;
             }
 
-            List<MatchingAmount> matchingAmounts = recordedInvoice.getMatchingAmounts();
+            if (!(ao instanceof RecordedInvoice || ao instanceof Payment)) {
+                log.warn("AccountOperation id={}-type={} is not managed by Assigning matching code processing, Expect RecordedInvoice and Payment.", ao.getId(), ao.getType());
+                return;
+            }
+            List<MatchingAmount> matchingAmounts = ao.getMatchingAmounts();
 
-            final List<JournalEntry> recordedInvoiceJEs = getEntityManager().createNamedQuery(GET_BY_ACCOUNT_OPERATION_AND_DIRECTION_QUERY)
-                    .setParameter(PARAM_ID_AO, recordedInvoice.getId())
-                    .setParameter(PARAM_DIRECTION, JournalEntryDirectionEnum.getValue(recordedInvoice.getTransactionCategory().getId()))
+            final List<JournalEntry> aoJEs = getEntityManager().createNamedQuery(GET_BY_ACCOUNT_OPERATION_AND_DIRECTION_QUERY)
+                    .setParameter(PARAM_ID_AO, ao.getId())
+                    .setParameter(PARAM_DIRECTION, JournalEntryDirectionEnum.getValue(ao.getTransactionCategory().getId()))
                     .getResultList();
+
+            AtomicBoolean isNoAoWithoutJe = new AtomicBoolean(true);
 
             Optional.ofNullable(matchingAmounts).orElse(Collections.emptyList())
                     .forEach(matchingAmount -> {
                                 // get nested matching amount
                                 Optional.ofNullable(matchingAmount.getMatchingCode().getMatchingAmounts()).orElse(Collections.emptyList())
                                         .forEach(ma -> {
-                                            if (!ma.getAccountOperation().getId().equals(recordedInvoice.getId())) {
-                                                recordedInvoiceJEs.addAll(getEntityManager().createNamedQuery(GET_BY_ACCOUNT_OPERATION_AND_DIRECTION_QUERY)
+                                            AccountOperation aoFromMatching = ma.getAccountOperation();
+                                            if (aoFromMatching.getStatus() != AccountOperationStatus.EXPORTED || aoFromMatching.getMatchingStatus() != MatchingStatusEnum.L) {
+                                                log.warn("AccountOperation id={}-type={} does not have the expected status to assign it a 'Matching Code' for its JournalEntry [given={}-{}, expected={}-{}]",
+                                                        aoFromMatching.getId(), aoFromMatching.getType(), aoFromMatching.getStatus(), aoFromMatching.getMatchingStatus(), AccountOperationStatus.EXPORTED, MatchingStatusEnum.L);
+                                                isNoAoWithoutJe.set(false);
+                                                return; // skip process if related Recorded invoice AO (payment in our case) does not have a JournalEntry (export status still in POSTED or FAILED)
+                                            }
+                                            if (!ma.getAccountOperation().getId().equals(ao.getId())) {
+                                                aoJEs.addAll(getEntityManager().createNamedQuery(GET_BY_ACCOUNT_OPERATION_AND_DIRECTION_QUERY)
                                                         .setParameter(PARAM_ID_AO, ma.getAccountOperation().getId())
                                                         .setParameter(PARAM_DIRECTION, JournalEntryDirectionEnum.getValue(ma.getAccountOperation().getTransactionCategory().getId()))
                                                         .getResultList());
@@ -497,16 +513,29 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                             }
                     );
 
-            String matchingCode = providerService.getNextMatchingCode();
+            // add passed journalEntries
+            aoJEs.addAll(getJournalEntries(ao, createdEntries));
 
-            Optional.ofNullable(recordedInvoiceJEs).orElse(Collections.emptyList())
-                    .forEach(je -> {
-                                je.setMatchingCode(matchingCode);
-                                update(je);
-                            }
-                    );
+            if (isNoAoWithoutJe.get() && CollectionUtils.isNotEmpty(aoJEs) && aoJEs.size() >= 2) {
+                String matchingCode = providerService.getNextMatchingCode();
+                aoJEs.forEach(je -> {
+                            je.setMatchingCode(matchingCode);
+                            update(je);
+                        }
+                );
+            }
+
         });
 
+    }
+
+    private List<JournalEntry> getJournalEntries(AccountOperation ao, List<JournalEntry> createdEntries) {
+        if (CollectionUtils.isEmpty(createdEntries)) {
+            return Collections.emptyList();
+        }
+        return createdEntries.stream()
+                .filter(journalEntry -> journalEntry.getDirection() == JournalEntryDirectionEnum.getValue(ao.getTransactionCategory().getId()))
+                .collect(Collectors.toList());
     }
 
 }

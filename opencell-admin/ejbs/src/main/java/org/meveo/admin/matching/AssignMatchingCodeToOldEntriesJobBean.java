@@ -6,7 +6,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.IteratorBasedJobBean;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.model.payments.AccountOperation;
 import org.meveo.service.accountingscheme.JournalEntryService;
 import org.meveo.service.payments.impl.AccountOperationService;
 
@@ -25,7 +25,7 @@ import java.util.Optional;
  * @since V14
  */
 @Stateless
-public class AssignMatchingCodeToOldEntriesJobBean extends IteratorBasedJobBean<RecordedInvoice> {
+public class AssignMatchingCodeToOldEntriesJobBean extends IteratorBasedJobBean<AccountOperation> {
 
     @Inject
     private AccountOperationService accountOperationService;
@@ -38,8 +38,8 @@ public class AssignMatchingCodeToOldEntriesJobBean extends IteratorBasedJobBean<
         super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::executeProcess, null, null);
     }
 
-    private Optional<Iterator<RecordedInvoice>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
-        List<RecordedInvoice> accountOperations = accountOperationService.findAoWithoutMatchingCode();
+    private Optional<Iterator<AccountOperation>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
+        List<AccountOperation> accountOperations = accountOperationService.findAoWithoutMatchingCode();
 
         if (CollectionUtils.isEmpty(accountOperations)) {
             log.warn("No AccountOperation found with a JournalEntry who has no matching code");
@@ -47,7 +47,7 @@ public class AssignMatchingCodeToOldEntriesJobBean extends IteratorBasedJobBean<
         }
 
         // remove duplicated ao
-        Map<Long, RecordedInvoice> mapAo = new HashMap<>();
+        Map<Long, AccountOperation> mapAo = new HashMap<>();
         accountOperations.forEach(recordedInvoice ->
                 mapAo.put(recordedInvoice.getId(), recordedInvoice)
         );
@@ -55,8 +55,8 @@ public class AssignMatchingCodeToOldEntriesJobBean extends IteratorBasedJobBean<
         return Optional.of(new SynchronizedIterator<>(mapAo.values()));
     }
 
-    private void executeProcess(List<RecordedInvoice> aos, JobExecutionResultImpl jobExecutionResult) throws BusinessException {
-        journalEntryService.assignMatchingCodeToJournalEntries(aos);
+    private void executeProcess(List<AccountOperation> aos, JobExecutionResultImpl jobExecutionResult) throws BusinessException {
+        journalEntryService.assignMatchingCodeToJournalEntries(aos, null);
     }
 
 

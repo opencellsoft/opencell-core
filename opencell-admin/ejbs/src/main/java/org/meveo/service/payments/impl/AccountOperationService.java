@@ -799,8 +799,8 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 
     @SuppressWarnings("unchecked")
     @Transactional
-    public List<RecordedInvoice> findAoWithoutMatchingCode() {
-        List<RecordedInvoice> results =  (List<RecordedInvoice>) getEntityManager().createNamedQuery("JournalEntry.findAoWithoutMatchingCode")
+    public List<AccountOperation> findAoWithoutMatchingCode() {
+        List<AccountOperation> results =  getEntityManager().createNamedQuery("JournalEntry.findAoWithoutMatchingCode")
                 .getResultList();
 
         // fetch lazies needed join

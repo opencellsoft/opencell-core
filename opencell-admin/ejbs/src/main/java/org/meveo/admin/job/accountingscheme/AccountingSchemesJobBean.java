@@ -10,7 +10,6 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AccountOperationStatus;
 import org.meveo.model.payments.AccountingScheme;
 import org.meveo.model.payments.OCCTemplate;
-import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.accountingscheme.JournalEntryService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.OCCTemplateService;
@@ -22,7 +21,12 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -98,9 +102,7 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<Long> {
 
                         accountOperation.setStatus(AccountOperationStatus.EXPORTED);
                         accountOperationService.update(accountOperation);
-                        if (accountOperation instanceof RecordedInvoice) {
-                            journalEntryService.assignMatchingCodeToJournalEntries(List.of((RecordedInvoice) accountOperation));
-                        }
+                        journalEntryService.assignMatchingCodeToJournalEntries(List.of(accountOperation), createdEntries);
 
                     } catch (BusinessException e) {
                         jobExecutionResult.registerError(e.getMessage());
