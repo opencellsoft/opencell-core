@@ -383,9 +383,10 @@ public class MediationApiService {
                     } else if (!isVirtual) {
                         cdrProcessingResult.addChargedCdr(position, createChargeCDRResultDto(edrs, null, false, false, returnEDRs, null, null));
                     }
-
-                    synchronized (eventKey) {
-                        mediationsettingService.applyEdrVersioningRule(eventKey, edrs, cdr, isVirtual);
+                    if(eventKey != null) {
+                        synchronized (eventKey) {
+                            mediationsettingService.applyEdrVersioningRule(eventKey, edrs, cdr, isVirtual);
+                        }
                     }
                 } catch (Exception e) {
                     cdr.setRejectReasonException(e);
