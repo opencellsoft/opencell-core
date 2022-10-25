@@ -2586,7 +2586,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * @param billingRunId
-     * @param invoices
+     * @param invoiceIds
      */
     public void rebuildInvoices(Long billingRunId, List<Long> invoiceIds) throws BusinessException {
         List<Invoice> invoices = extractInvalidInvoiceList(billingRunId, invoiceIds, Arrays.asList(InvoiceStatusEnum.REJECTED, InvoiceStatusEnum.SUSPECT), Arrays.asList(InvoiceStatusEnum.DRAFT));
@@ -2597,7 +2597,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * @param billingRunId
-     * @param invoices
+     * @param invoiceIds
      */
     public void rejectInvoices(Long billingRunId, List<Long> invoiceIds) {
         List<Invoice> invoices = extractInvalidInvoiceList(billingRunId, invoiceIds, Arrays.asList(InvoiceStatusEnum.SUSPECT, InvoiceStatusEnum.DRAFT));
@@ -2713,7 +2713,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * @param billingRunId
-     * @param invoices
+     * @param invoiceIds
      */
     public void cancelInvoices(Long billingRunId, List<Long> invoiceIds, Boolean deleteCanceledInvoices) {
 
@@ -2740,7 +2740,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-     * @param id
+     * @param billingRunId
      * @param invoices
      * @return billingRunId the id of the new billing run.
      */
@@ -3045,7 +3045,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * Re-computed invoice date, due date and collection date when the invoice is validated.
      *
-     * @param invoice
+     * @param invoiceId
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -4211,7 +4211,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * @param expression el expression
-     * @param userAccount user account
+     * @param billingAccount billing account
      * @param wallet wallet
      * @param invoice invoice
      * @param subCatTotal total of sub category
@@ -5090,7 +5090,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * Find by invoice number and invoice type id.
      *
      * @param invoiceNumber invoice's number
-     * @param invoiceType invoice's type
+     * @param invoiceTypeId invoice's type
      * @return found invoice
      * @throws BusinessException business exception
      */
@@ -5438,7 +5438,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param minAmountForAccounts Check if min amount is enabled in any account level
      * @param isDraft Is this a draft invoice
      * @param automaticInvoiceCheck automatic invoice check
-     * @param invoiceLines 
      * @return A list of created invoices
      * @throws BusinessException business exception
      */
@@ -6525,8 +6524,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-     * @param billingRunId
-     * @param invoiceIds
      * @return billingRunId the id of the new billing run.
      */
     @JpaAmpNewTx
@@ -6580,7 +6577,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     .setParameter("billingRunId", billingRunId)
                     .getResultList();
     }
-    
+
+    public List<Invoice> findLinkedInvoicesByIdAndType(Long invoiceId, String invoiceTypeCode) {
+
+        return getEntityManager().createNamedQuery("Invoice.findLinkedInvoicesByIdAndType", Invoice.class).
+                setParameter("invoiceId", invoiceId).
+                setParameter("invoiceTypeCode", invoiceTypeCode).getResultList();
+
+    }
+
+
     public void checkAndUpdatePaymentStatus(Invoice entity,InvoicePaymentStatusEnum oldInvoicePaymentStatusEnum, InvoicePaymentStatusEnum newInvoicePaymentStatusEnum) {
         if (!oldInvoicePaymentStatusEnum.equals(newInvoicePaymentStatusEnum)) {
             invoicePaymentStatusUpdated.fire(entity);
