@@ -24,6 +24,7 @@ import javax.ws.rs.NotFoundException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.BaseApi;
 import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.billing.QuarantineBillingRunDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
@@ -42,14 +43,12 @@ import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.payments.OperationCategoryEnum;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.filter.FilterService;
 
-public class InvoiceApiService  implements ApiService<Invoice> {
+public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 	
 	public static final String ADV = "ADV";
 	
@@ -61,10 +60,6 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 
 	@Inject
 	private FilterService filterService;
-
-	@Inject
-	@CurrentUser
-	protected MeveoUser currentUser;
 
 	@Inject
 	private InvoiceBaseApi invoiceBaseApi;
@@ -280,10 +275,18 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	 * @return
 	 */
 	public Invoice create(org.meveo.apiv2.billing.InvoiceInput input) {
-		return invoiceService.createInvoiceV11(input.getInvoice(), input.getSkipValidation(), input.getIsDraft(), input.getIsVirtual(), input.getIsIncludeBalance(), input.getIsAutoValidation());
+		Invoice invoice = new Invoice();
+		if(input.getInvoice() != null && input.getInvoice().getCustomFields() != null) {
+			populateCustomFieldsForGenericApi(input.getInvoice().getCustomFields(), invoice, true);
+		}
+		return invoiceService.createInvoiceV11(input.getInvoice(), input.getSkipValidation(), input.getIsDraft(),
+				input.getIsVirtual(), input.getIsIncludeBalance(), input.getIsAutoValidation(), invoice);
 	}
 	
-	public Invoice update(Invoice invoice, Invoice input, org.meveo.apiv2.billing.Invoice invoiceResource) {       
+	public Invoice update(Invoice invoice, Invoice input, org.meveo.apiv2.billing.Invoice invoiceResource) {
+		if(invoiceResource.getCustomFields() != null) {
+			populateCustomFieldsForGenericApi(invoiceResource.getCustomFields(), input, true);
+		}
         Invoice updateInvoice = invoiceService.update(invoice, input, invoiceResource);
         invoiceService.calculateInvoice(updateInvoice);
         invoiceService.updateBillingRunStatistics(updateInvoice);
@@ -360,7 +363,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
             billingAccountsAfter = ratedTransactionService.applyInvoicingRules(RTs);
         }
         
-        List<Invoice> invoices = new ArrayList<Invoice>();
+        List<Invoice> invoices = new ArrayList<>();
         if (billingAccountsAfter == null || billingAccountsAfter.isEmpty()) {
             invoices = invoiceService.generateInvoice(entity, invoice, ratedTransactionFilter,
                 isDraft, customFieldEntity.getCfValues(), true);
@@ -480,8 +483,6 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	public Invoice updateValidatedInvoice(Invoice invoice, org.meveo.apiv2.billing.InvoicePatchInput invoiceResource) {      
     	ICustomFieldEntity customFieldEntity = new Invoice();
 		customFieldEntity = invoiceBaseApi.populateCustomFieldsForGenericApi(invoiceResource.getCustomFields(), customFieldEntity, false);
-        Invoice updateInvoice = invoiceService.updateValidatedInvoice(invoice, invoiceResource.getComment(), customFieldEntity.getCfValues());
-        return updateInvoice;
-
+        return invoiceService.updateValidatedInvoice(invoice, invoiceResource.getComment(), customFieldEntity.getCfValues());
     }
 }
