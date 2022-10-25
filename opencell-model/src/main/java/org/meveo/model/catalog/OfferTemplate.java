@@ -231,6 +231,10 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @JoinColumn(name = "offer_model_id")
     private OfferTemplate offerModel;
 
+    @Type(type = "numeric_boolean")
+    @Column(name = "generate_quote_edr_per_product")
+    private boolean generateQuoteEdrPerProduct;
+
     public List<OfferServiceTemplate> getOfferServiceTemplates() {
         return offerServiceTemplates;
     }
@@ -664,6 +668,14 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 	public void setOfferModel(OfferTemplate offerModel) {
 		this.offerModel = offerModel;
 	}
+
+    public boolean isGenerateQuoteEdrPerProduct() {
+        return generateQuoteEdrPerProduct;
+    }
+
+    public void setGenerateQuoteEdrPerProduct(boolean generateQuoteEdrPerProduct) {
+        this.generateQuoteEdrPerProduct = generateQuoteEdrPerProduct;
+    }
     
     
     

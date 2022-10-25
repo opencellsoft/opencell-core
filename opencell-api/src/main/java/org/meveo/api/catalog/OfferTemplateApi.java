@@ -415,6 +415,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         }
 
         offerTemplate.setSubscriptionRenewal(subscriptionApi.subscriptionRenewalFromDto(offerTemplate.getSubscriptionRenewal(), postData.getRenewalRule(), false));
+        offerTemplate.setGenerateQuoteEdrPerProduct(postData.getGenerateQuoteEdrPerProduct());
         processAllowedDiscountPlans(postData, offerTemplate);
         processTags(postData, offerTemplate); 
         processOfferProductDtos(postData, offerTemplate);
