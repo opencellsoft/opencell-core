@@ -106,6 +106,7 @@ import org.meveo.model.filter.Filter;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.admin.impl.SellerService;
@@ -1916,6 +1917,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     .setParameter("rtIds", ratedTransactionIds)
                     .setParameter("now", new Date())
                     .executeUpdate();
+        }
+    }
+
+    public RatedTransaction findByEDR(Long edrId) {
+        try {
+            return (RatedTransaction) getEntityManager().createNamedQuery("RatedTransaction.findByEDRId").setParameter("EDR_ID", edrId).getSingleResult();
+
+        } catch (NoResultException e) {
+            log.warn("No ratedTransaction found with the given EDR id={}", edrId);
+            return null;
         }
     }
 }

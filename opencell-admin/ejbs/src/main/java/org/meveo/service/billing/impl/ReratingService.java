@@ -457,6 +457,14 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
                     operationToRerate.getRatedTransaction().setStatus(RatedTransactionStatusEnum.CANCELED);
                     operationToRerate.getRatedTransaction().setRejectReason("Origin wallet operation [id=" + operationToRerate.getId() + "] has been rerated");
 
+                    // Find rated transaction linked to T.EDR
+                    RatedTransaction linkedRT = ratedTransactionService.findByEDR(edr.getId());
+                    if(linkedRT != null) {
+                        linkedRT.setStatus(RatedTransactionStatusEnum.CANCELED);
+                        linkedRT.setRejectReason("Origin wallet operation [id=" + operationToRerate.getId() + "] has been rerated");
+                        ratedTransactionService.update(linkedRT);
+                    }
+
                     walletOperationService.update(operationToRerate);
                     ratedTransactionService.update(operationToRerate.getRatedTransaction());
 
