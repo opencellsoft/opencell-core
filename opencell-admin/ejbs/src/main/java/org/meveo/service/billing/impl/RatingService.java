@@ -53,6 +53,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.commons.utils.NumberUtils;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
@@ -304,29 +305,31 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             Calendar invoicingCalendar = CalendarService.initializeCalendar(chargeInstance.getInvoicingCalendar(), defaultInitDate, chargeInstance);
             invoicingDate = invoicingCalendar.nextCalendarDate(applicationDate);
         }
-
+        ParamBean.setReload(true);
+        String extraParam = edr != null ? paramBeanFactory.getInstance().getPropertyAsBoolean("edr.propagate.extraParameter", false) ? edr.getExtraParameter(): edr.getParameter4() : null;
         if (reservation != null) {
             if (orderNumberOverride != null) {
                 walletOperation = new WalletReservation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate, orderNumberOverride.equals(ChargeInstance.NO_ORDER_NUMBER) ? null : orderNumberOverride,
                     edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
-                    edr != null ? edr.getParameter4() : null, null, startdate, endDate, null, invoicingDate, reservation);
+                            extraParam, null, startdate, endDate, null, invoicingDate, reservation);
             } else {
                 walletOperation = new WalletReservation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate, chargeInstance.getOrderNumber(),
                     edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
-                    edr != null ? edr.getParameter4() : null, null, startdate, endDate, null, invoicingDate, reservation);
+                            extraParam, null, startdate, endDate, null, invoicingDate, reservation);
             }
 
         } else {
             if (orderNumberOverride != null) {
                 walletOperation = new WalletOperation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate, orderNumberOverride.equals(ChargeInstance.NO_ORDER_NUMBER) ? null : orderNumberOverride,
                     edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
-                    edr != null ? edr.getParameter4() : null, null, startdate, endDate, null, invoicingDate);
+                            extraParam, null, startdate, endDate, null, invoicingDate);
             } else {
                 walletOperation = new WalletOperation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate, chargeInstance.getOrderNumber(),
                     edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
-                    edr != null ? edr.getParameter4() : null, null, startdate, endDate, null, invoicingDate);
+                            extraParam, null, startdate, endDate, null, invoicingDate);
             }
         }
+        ParamBean.setReload(false);
         walletOperation.setChargeMode(chargeMode);
         walletOperation.setFullRatingPeriod(fullRatingPeriod);
 
