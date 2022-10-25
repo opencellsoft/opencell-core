@@ -589,10 +589,11 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
 
 
-	/**
-	 * @param invoice
-	 * @param invoiceLineResource
-	 * @return
+    /**
+     * Create Invoice Line using Invoice and InvoiceLineResource
+     * @param invoice Invoice to update {@link Invoice}
+     * @param invoiceLineResource Invoice Line Resource to convert {@link org.meveo.apiv2.billing.InvoiceLine}
+     * @return Invoice Line Converted {@link InvoiceLine}
 	 */
 	public InvoiceLine create(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineResource) {
 		InvoiceLine invoiceLine = new InvoiceLine();
@@ -603,7 +604,31 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		return invoiceLine;
 	}
 
-	public InvoiceLine initInvoiceLineFromResource(org.meveo.apiv2.billing.InvoiceLine resource, InvoiceLine invoiceLine) {
+    /**
+     * Build Invoice Line from Invoice Line Resource
+     * @param invoice Invoice to update {@link Invoice}
+     * @param invoiceLineResource Invoice Line Resource to convert {@link org.meveo.apiv2.billing.InvoiceLine}
+     * @return Invoice Line Converted {@link InvoiceLine}
+     */
+    public InvoiceLine getInvoiceLine(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineResource) {
+        InvoiceLine invoiceLine = new InvoiceLine();
+        invoiceLine.setInvoice(invoice);
+        invoiceLine = initInvoiceLineFromResource(invoiceLineResource, invoiceLine);
+        return invoiceLine;
+    }
+
+    /**
+     * Create Invoice Line
+     * @param invoiceLine Invoice Line to create {@link InvoiceLine}
+     * @return Created Invoice Line {@link InvoiceLine}
+     */
+    public InvoiceLine createInvoiceLine(InvoiceLine invoiceLine) {
+        create(invoiceLine);
+        getEntityManager().flush();
+        return invoiceLine;
+    }
+
+    public InvoiceLine initInvoiceLineFromResource(org.meveo.apiv2.billing.InvoiceLine resource, InvoiceLine invoiceLine) {
 		if(invoiceLine == null) {
 			invoiceLine = new InvoiceLine();
 		}
@@ -812,18 +837,32 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     }
 
-	/**
-	 * @param invoice
-	 * @param invoiceLineResource
-	 * @param invoiceLineId
+    /**
+     * Update Invoice Line
+     * @param invoice Invoice to update
+     * @param invoiceLineResource Invoice Line Resource to update {@link org.meveo.apiv2.billing.InvoiceLine}
+     * @param invoiceLineId Invoice Line Id
 	 */
-	public void update(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineResource, Long invoiceLineId) {
+	public void updateInvoiceLineByInvoice(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineResource, Long invoiceLineId) {
 		InvoiceLine invoiceLine = findInvoiceLine(invoice, invoiceLineId);
 		invoiceLine = initInvoiceLineFromResource(invoiceLineResource, invoiceLine);
 		update(invoiceLine);
 	}
 
-	private InvoiceLine findInvoiceLine(Invoice invoice, Long invoiceLineId) {
+    /**
+     * Get Invoice Line to update
+     * @param invoice Invoice to update
+     * @param invoiceLineResource Invoice Line Resource to update {@link org.meveo.apiv2.billing.InvoiceLine}
+     * @param invoiceLineId Invoice Line Id
+     * @return Invoice Line to update {@link InvoiceLine}
+     */
+    public InvoiceLine getInvoiceLineForUpdate(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineResource, Long invoiceLineId) {
+        InvoiceLine invoiceLine = findInvoiceLine(invoice, invoiceLineId);
+        invoiceLine = initInvoiceLineFromResource(invoiceLineResource, invoiceLine);
+        return invoiceLine;
+    }
+
+    private InvoiceLine findInvoiceLine(Invoice invoice, Long invoiceLineId) {
 		InvoiceLine invoiceLine = findById(invoiceLineId);
 		if(!invoice.equals(invoiceLine.getInvoice())) {
 			throw new BusinessException("invoice line with ID "+invoiceLineId+" is not related to invoice with id:"+invoice.getId());
