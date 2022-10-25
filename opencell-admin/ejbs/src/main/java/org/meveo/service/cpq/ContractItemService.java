@@ -152,7 +152,7 @@ public class ContractItemService extends BusinessService<ContractItem> {
     public Contract getApplicableContract(List<Contract> contracts, OfferTemplate offer, String productCode, ChargeTemplate chargeTemplate) {
         for (Contract contract : contracts) {
             ContractItem contractItem = getApplicableContractItem(contract, offer, productCode, chargeTemplate);
-            if (contractItem != null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
+            if (contractItem != null) {
                 return contract;
             };
         }
