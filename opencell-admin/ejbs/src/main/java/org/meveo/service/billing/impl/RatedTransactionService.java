@@ -106,7 +106,6 @@ import org.meveo.model.filter.Filter;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.admin.impl.SellerService;
