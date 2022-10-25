@@ -39,7 +39,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.exception.UncheckedThreadingException;
 import org.meveo.api.dto.response.utilities.ImportExportResponseDto;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.export.EntityExportImportService;
@@ -400,7 +399,6 @@ public class EntityExportImportBean implements Serializable {
             }
         } catch (InterruptedException | ExecutionException | RemoteAuthenticationException | RemoteImportException e) {
             log.error("Failed to access export execution result", e);
-            throw new UncheckedThreadingException(e);
         }
     }
 }

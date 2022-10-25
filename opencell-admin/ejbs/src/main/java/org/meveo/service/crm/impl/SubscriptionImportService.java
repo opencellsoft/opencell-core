@@ -233,7 +233,6 @@ public class SubscriptionImportService extends ImportService {
 
                 subscription.getServiceInstances().add(serviceInstance);
 
-                // TODO: read updateCharges before refactor it
                 if (serviceInst.getRecurringCharges() != null && serviceInstance.getRecurringChargeInstances() != null) {
                     updateCharges(serviceInstance.getRecurringChargeInstances(), serviceInst.getRecurringCharges());
                 }

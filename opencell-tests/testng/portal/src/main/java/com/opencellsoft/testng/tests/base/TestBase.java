@@ -476,7 +476,8 @@ public abstract class TestBase {
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
-            throw new UnchckedThreadingExcpetion(e);
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
     

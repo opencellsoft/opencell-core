@@ -18669,7 +18669,7 @@
 	<changeSet id="#INTRD-9766_20221011_EDR_new_fields" author="aelmalki" />
 	<changeSet id="#INTRD-10581_20221018" author="HichamHANINE" />
 	<changeSet id="#INTRD-10522_20221017_matchingCode-journal-entry" author="aelmalki" />
-
+	<changeSet id="#INTRD-10541_20221013" author="TarikFA." />
     <changeSet id="#10629_20221018" author="zelmeliani" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
