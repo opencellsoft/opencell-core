@@ -204,7 +204,12 @@ public class MediationsettingService extends PersistenceService<MediationSetting
                                 			edrService.remove(edr);
                                 		edrIterate.remove();
                                 	}else { // find all wallet operation that have a status OPEN
-                                		edr.setStatus(EDRStatusEnum.RATED);
+                                	    if(isVirtual) {
+                                            edr.setStatus(EDRStatusEnum.OPEN);
+                                	    }else {
+                                            edr.setStatus(EDRStatusEnum.RATED);
+                                	    }
+                                	        
                                 		edr.setEventVersion(previousEdr.getEventVersion() + 1);
                                 		previousEdr.setStatus(EDRStatusEnum.CANCELLED);
                                 		previousEdr.setRejectReason("Received new version EDR[id=" + edr.getId() + "]");
