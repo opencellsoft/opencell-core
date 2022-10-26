@@ -21,6 +21,7 @@ import org.meveo.apiv2.billing.service.InvoiceApiService;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositOperationEnum;
 import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
