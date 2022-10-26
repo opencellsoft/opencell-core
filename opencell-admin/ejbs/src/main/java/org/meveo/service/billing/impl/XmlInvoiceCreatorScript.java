@@ -1124,9 +1124,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                 Element taxAmount = doc.createElement("amount");
                 taxAmount.appendChild(this.createTextNode(doc, toPlainString(taxInvoiceAgregate.getAmountTax())));
                 tax.appendChild(taxAmount);
-                Element amountHT = doc.createElement("amountHT");
-                amountHT.appendChild(this.createTextNode(doc, toPlainString(taxInvoiceAgregate.getAmountWithoutTax())));
-                tax.appendChild(amountHT);
                 Element amountWithoutTax = doc.createElement("amountWithoutTax");
                 amountWithoutTax.appendChild(this.createTextNode(doc, toPlainString(taxInvoiceAgregate.getAmountWithoutTax())));
                 tax.appendChild(amountWithoutTax);
@@ -1752,7 +1749,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         if (customerAccountTag != null) {
             header.appendChild(customerAccountTag);
         }
-        Element billingAccountTag = createBillingAccountSection(doc, invoice, linkedInvoice.getLinkedInvoiceValue(), isInvoiceAdjustment, invoiceConfiguration);
+        Element billingAccountTag = createBillingAccountSection(doc, invoice, linkedInvoice != null ? linkedInvoice.getLinkedInvoiceValue() : null, isInvoiceAdjustment, invoiceConfiguration);
         if (billingAccountTag != null) {
             header.appendChild(billingAccountTag);
         }
