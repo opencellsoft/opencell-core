@@ -909,6 +909,13 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		InvoiceLine invoiceLine = findInvoiceLine(invoice, lineId);
         reduceDiscountAmounts(invoice, invoiceLine);
         deleteByDiscountedPlan(invoiceLine);
+        if(invoiceLine.getRatedTransactions() != null) {
+            List<Long> ids = invoiceLine.getRatedTransactions()
+                    .stream()
+                    .map(RatedTransaction::getId)
+                    .collect(toList());
+            ratedTransactionService.reopenRatedTransaction(ids);
+        }
         remove(invoiceLine);
 	}
 

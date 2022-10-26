@@ -14,10 +14,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.meveo.model.IEntity;
+
 @Entity
 @Table(name = "billing_linked_invoices", uniqueConstraints = @UniqueConstraint(columnNames = { "id", "linked_invoice_id" }))
 @SuppressWarnings("serial")
-public class LinkedInvoice implements Serializable {
+public class LinkedInvoice implements IEntity, Serializable {
 
     
 
@@ -49,17 +51,28 @@ public class LinkedInvoice implements Serializable {
         this.linkedInvoiceValue = linkedInvoiceValue;
     }
 
+
+    public LinkedInvoice(Invoice id, Invoice linkedInvoiceValue, BigDecimal amount, InvoiceTypeEnum type) {
+        super();
+        this.id = id;
+        this.linkedInvoiceValue = linkedInvoiceValue;
+        this.amount = amount;
+        this.type = type;
+    }
+
     
     public LinkedInvoice() {
         
     }
-    
-    public Invoice getId() {
+    public Long getId() {
+        return this.id!=null? this.id.getId() : null;
+  }
+    public Invoice getInvoice() {
         return  this.id;
     }
 
-    public void setId(Invoice id) {
-        this.id = id;
+    public void setInvoice(Invoice invoice) {
+          this.id = invoice;
     }
 
     public Invoice getLinkedInvoiceValue() {
@@ -85,5 +98,20 @@ public class LinkedInvoice implements Serializable {
     public void setType(InvoiceTypeEnum type) {
         this.type = type;
     }
+
+
+    @Override
+    public void setId(Long id) {
+        if(this.id!=null) {
+            this.id.setId(id);
+        }
+    }
+
+
+    @Override
+    public boolean isTransient() {
+        return false;
+    }
+    
     
 }
