@@ -1918,4 +1918,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     .executeUpdate();
         }
     }
+
+    public RatedTransaction findByEDR(Long edrId) {
+        try {
+            return (RatedTransaction) getEntityManager().createNamedQuery("RatedTransaction.findByEDRId").setParameter("EDR_ID", edrId).getSingleResult();
+
+        } catch (NoResultException e) {
+            log.warn("No ratedTransaction found with the given EDR id={}", edrId);
+            return null;
+        }
+    }
 }
