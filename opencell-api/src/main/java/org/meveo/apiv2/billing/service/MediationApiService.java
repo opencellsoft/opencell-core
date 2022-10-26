@@ -203,6 +203,7 @@ public class MediationApiService {
 
         counterInstanceService.reestablishCounterTracking(virtualCounters, counterUpdates);
         mediationsettingService.clearEdrCach();
+        mediationsettingService.clearWalletOperationCache();
 
         for (int k = 0; k < nbThreads; k++) {
 
@@ -235,6 +236,7 @@ public class MediationApiService {
                 log.error("Failed to execute Mediation API async method", cause);
             }
         }
+        
 
         // Gather counter update summary information
         if (returnCounters) {
@@ -309,7 +311,7 @@ public class MediationApiService {
                         }
                         cdrParsingService.createEdrs(edrs, cdr);
                     }
-                   boolean isVirtualChanged = mediationsettingService.applyEdrVersioningRule(eventKey, edrs, cdr, isVirtual);
+                   
                     
                     // Convert CDR to EDR and create a reservation
                     if (reserve) {
@@ -368,7 +370,7 @@ public class MediationApiService {
 
                                 // For STOP_ON_FIRST_FAIL or PROCESS_ALL model if rollback is needed, rating is called in a new TX and will rollback
                             } else {
-                                ratingResult = methodCallingUtils.callCallableInNewTx(() -> usageRatingService.rateUsage(edr, isVirtualChanged, rateTriggeredEdrs, maxDepth, 0, null, false));
+                                ratingResult = methodCallingUtils.callCallableInNewTx(() -> usageRatingService.rateUsage(edr, isVirtual, rateTriggeredEdrs, maxDepth, 0, null, false));
 
                                 if (ratingResult.getWalletOperations() != null) {
                                     walletOperations.addAll(ratingResult.getWalletOperations());
@@ -381,7 +383,11 @@ public class MediationApiService {
                     } else if (!isVirtual) {
                         cdrProcessingResult.addChargedCdr(position, createChargeCDRResultDto(edrs, null, false, false, returnEDRs, null, null));
                     }
-
+                    if(eventKey != null) {
+                        synchronized (eventKey) {
+                            mediationsettingService.applyEdrVersioningRule(eventKey, edrs, cdr, isVirtual);
+                        }
+                    }
                 } catch (Exception e) {
                     cdr.setRejectReasonException(e);
                 }
