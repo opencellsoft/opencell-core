@@ -879,16 +879,16 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
         	}	
         	orderOffer.setOfferTemplate(offerTemplate);
     	}
-    	
+
+		DiscountPlan discountPlan=null;
 		if (!StringUtils.isBlank(orderOfferDto.getDiscountPlanCode())) {
-			DiscountPlan discountPlan=null;
 			discountPlan = discountPlanService.findByCode(orderOfferDto.getDiscountPlanCode());
 			if (discountPlan == null) {
 				throw new EntityDoesNotExistsException(DiscountPlan.class, orderOfferDto.getDiscountPlanCode());
 			}
-			orderOffer.setDiscountPlan(discountPlan);
 		}
-		
+		orderOffer.setDiscountPlan(discountPlan);
+
 		if(!StringUtils.isBlank(orderOfferDto.getUserAccountCode())) {
 			UserAccount userAccount = userAccountService.findByCode(orderOfferDto.getUserAccountCode());
 			if (userAccount == null) {
