@@ -3,6 +3,7 @@ package org.meveo.admin.storage;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperPrint;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.carlspring.cloud.storage.s3fs.S3FileSystem;
 import org.carlspring.cloud.storage.s3fs.S3FileSystemProvider;
@@ -21,6 +22,7 @@ import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.model.S3Object;
 
@@ -47,6 +49,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
+import java.util.Iterator;
 
 
 /**
@@ -675,4 +678,31 @@ public class StorageFactory {
         }
     }
 
+    public static void copyDirectory(File srcDir, File destDir) {
+        if (storageType.equals(NFS)) {
+            try {
+                FileUtils.copyDirectory(srcDir, destDir);
+            }
+            catch (IOException e) {
+                log.error("IOException : {}", e.getMessage());
+            }
+        }
+        else if (storageType.equalsIgnoreCase(S3)) {
+            try {
+                // In case of S3, copy Jasper template to both S3 and FileSystem
+                FileUtils.copyDirectory(srcDir, destDir);
+
+                Iterator<File> itSrcFiles = FileUtils.iterateFiles(destDir, null, true);
+
+                while (itSrcFiles.hasNext()) {
+                    File aSrcFile = itSrcFiles.next();
+                    s3FileSystem.getClient().putObject(PutObjectRequest.builder()
+                            .key(formatObjectKey(aSrcFile.getPath())).bucket(bucketName).build(), aSrcFile.toPath());
+                }
+            }
+            catch (IOException e) {
+                log.error("IOException in copyDirectory : {}", e.getMessage());
+            }
+        }
+    }
 }
