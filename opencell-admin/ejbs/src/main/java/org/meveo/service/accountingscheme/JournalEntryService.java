@@ -22,18 +22,22 @@ import static java.util.Optional.ofNullable;
 import static org.meveo.service.securityDeposit.impl.FinanceSettingsService.AUXILIARY_ACCOUNT_CODE;
 import static org.meveo.service.securityDeposit.impl.FinanceSettingsService.AUXILIARY_ACCOUNT_LABEL;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.accountingScheme.JournalEntry;
 import org.meveo.model.accountingScheme.JournalEntryDirectionEnum;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountingCode;
+import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
-import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.AccountOperationStatus;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.Journal;
+import org.meveo.model.payments.MatchingAmount;
+import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.Payment;
@@ -52,9 +56,13 @@ import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 @Stateless
 public class JournalEntryService extends PersistenceService<JournalEntry> {
@@ -70,6 +78,8 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
     public static final String NAMED_QUERY_JOURNAL_ENTRY_CHECK_EXISTENCE_WITH_ACCOUNTING_CODE = "JournalEntry.checkExistenceWithAccountingCode";
     public static final String PARAM_ID_AO = "ID_AO";
     public static final String PARAM_ID_ACCOUNTING_CODE = "ID_ACCOUNTING_CODE";
+    public static final String PARAM_DIRECTION = "DIRECTION";
+    public static final String GET_BY_ACCOUNT_OPERATION_AND_DIRECTION_QUERY = "JournalEntry.getByAccountOperationAndDirection";
 
     @Inject
     private ProviderService providerService;
@@ -455,4 +465,77 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                                 .setParameter("customerAccount", customerAccount)
                                 .getSingleResult();
     }
+
+    public void assignMatchingCodeToJournalEntries(List<AccountOperation> recordedInvoices, List<JournalEntry> createdEntries) {
+        if (CollectionUtils.isEmpty(recordedInvoices)) {
+            return;
+        }
+
+        recordedInvoices.forEach(ao -> {
+            if (ao.getStatus() != AccountOperationStatus.EXPORTED || ao.getMatchingStatus() != MatchingStatusEnum.L) {
+                log.warn("RecordedInvoice id={} does not have the expected status to assign it a 'Matching Code' for its JournalEntry [given={}-{}, expected={}-{}]",
+                        ao.getId(), ao.getStatus(), ao.getMatchingStatus(), AccountOperationStatus.EXPORTED, MatchingStatusEnum.L);
+                return;
+            }
+
+            if (!(ao instanceof RecordedInvoice || ao instanceof Payment)) {
+                log.warn("AccountOperation id={}-type={} is not managed by Assigning matching code processing, Expect RecordedInvoice and Payment.", ao.getId(), ao.getType());
+                return;
+            }
+            List<MatchingAmount> matchingAmounts = ao.getMatchingAmounts();
+
+            final List<JournalEntry> aoJEs = getEntityManager().createNamedQuery(GET_BY_ACCOUNT_OPERATION_AND_DIRECTION_QUERY)
+                    .setParameter(PARAM_ID_AO, ao.getId())
+                    .setParameter(PARAM_DIRECTION, JournalEntryDirectionEnum.getValue(ao.getTransactionCategory().getId()))
+                    .getResultList();
+
+            AtomicBoolean isNoAoWithoutJe = new AtomicBoolean(true);
+
+            Optional.ofNullable(matchingAmounts).orElse(Collections.emptyList())
+                    .forEach(matchingAmount -> {
+                                // get nested matching amount
+                                Optional.ofNullable(matchingAmount.getMatchingCode().getMatchingAmounts()).orElse(Collections.emptyList())
+                                        .forEach(ma -> {
+                                            AccountOperation aoFromMatching = ma.getAccountOperation();
+                                            if (aoFromMatching.getStatus() != AccountOperationStatus.EXPORTED || aoFromMatching.getMatchingStatus() != MatchingStatusEnum.L) {
+                                                log.warn("AccountOperation id={}-type={} does not have the expected status to assign it a 'Matching Code' for its JournalEntry [given={}-{}, expected={}-{}]",
+                                                        aoFromMatching.getId(), aoFromMatching.getType(), aoFromMatching.getStatus(), aoFromMatching.getMatchingStatus(), AccountOperationStatus.EXPORTED, MatchingStatusEnum.L);
+                                                isNoAoWithoutJe.set(false);
+                                                return; // skip process if related Recorded invoice AO (payment in our case) does not have a JournalEntry (export status still in POSTED or FAILED)
+                                            }
+                                            if (!ma.getAccountOperation().getId().equals(ao.getId())) {
+                                                aoJEs.addAll(getEntityManager().createNamedQuery(GET_BY_ACCOUNT_OPERATION_AND_DIRECTION_QUERY)
+                                                        .setParameter(PARAM_ID_AO, ma.getAccountOperation().getId())
+                                                        .setParameter(PARAM_DIRECTION, JournalEntryDirectionEnum.getValue(ma.getAccountOperation().getTransactionCategory().getId()))
+                                                        .getResultList());
+                                            }
+                                        });
+                            }
+                    );
+
+            // add passed journalEntries
+            aoJEs.addAll(getJournalEntries(ao, createdEntries));
+
+            if (isNoAoWithoutJe.get() && CollectionUtils.isNotEmpty(aoJEs) && aoJEs.size() >= 2) {
+                String matchingCode = providerService.getNextMatchingCode();
+                aoJEs.forEach(je -> {
+                            je.setMatchingCode(matchingCode);
+                            update(je);
+                        }
+                );
+            }
+
+        });
+
+    }
+
+    private List<JournalEntry> getJournalEntries(AccountOperation ao, List<JournalEntry> createdEntries) {
+        if (CollectionUtils.isEmpty(createdEntries)) {
+            return Collections.emptyList();
+        }
+        return createdEntries.stream()
+                .filter(journalEntry -> journalEntry.getDirection() == JournalEntryDirectionEnum.getValue(ao.getTransactionCategory().getId()))
+                .collect(Collectors.toList());
+    }
+
 }
