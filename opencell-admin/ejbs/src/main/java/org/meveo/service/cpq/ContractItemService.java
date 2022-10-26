@@ -17,6 +17,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.contract.ContractItem;
+import org.meveo.model.cpq.contract.ContractRateTypeEnum;
 import org.meveo.model.cpq.enums.ContractStatusEnum;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
@@ -145,5 +146,16 @@ public class ContractItemService extends BusinessService<ContractItem> {
             }
         }
         return contractItem;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public Contract getApplicableContract(List<Contract> contracts, OfferTemplate offer, String productCode, ChargeTemplate chargeTemplate) {
+        for (Contract contract : contracts) {
+            ContractItem contractItem = getApplicableContractItem(contract, offer, productCode, chargeTemplate);
+            if (contractItem != null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
+                return contract;
+            };
+        }
+        return null;
     }
 }
