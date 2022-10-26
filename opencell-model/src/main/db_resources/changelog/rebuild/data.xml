@@ -9736,6 +9736,13 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			value='{"waitingMillis":[{"long":0}],"nbRuns":[{"long":-1}]}' />
 	  </insert>
     </changeSet>
+
+	<changeSet id="#INTRD-10907_20221026" author="EBOURRAS">
+		<insert tableName="billing_invoice_type_applies_to">
+			<column name="invoice_type_id" value="-1"/>
+			<column name="applies_to_id" value="-5"/>
+		</insert>
+	</changeSet>
 	
 	<changeSet id="#INTRD-6484" author="hichamElHaloui"/>
 	<changeSet id="#INTRD-6668_20220421" author="TarikRabeh" />
