@@ -21,7 +21,7 @@ public class GlobalSettings extends AuditableEntity {
     private Integer quoteDefaultValidityDelay;
 
     /**
-     * Deprecated in 14.0.0 for not use
+     * @Deprecated in 14.0.0 for not use
      */
     @Deprecated
     @Type(type = "numeric_boolean")
