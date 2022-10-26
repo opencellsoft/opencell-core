@@ -1320,6 +1320,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param billingRunId
      * @return
      */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public BillingRun findOrCreateNextBR(Long billingRunId) {
          BillingRun billingRun = findById(billingRunId);
         if (billingRun != null) {
