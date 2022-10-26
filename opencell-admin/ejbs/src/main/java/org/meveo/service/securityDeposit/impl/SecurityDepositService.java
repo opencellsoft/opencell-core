@@ -49,6 +49,9 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
     CustomerAccountService customerAccountService;
 
     @Inject
+    AccountOperationService accountOperationService;
+
+    @Inject
     private PaymentService paymentService;
 
     @Inject
@@ -74,10 +77,6 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
     @Inject
     private RatedTransactionService ratedTransactionService;
-
-    /** The OCCTemplate service. */
-	@Inject
-	private OCCTemplateService oCCTemplateService;
 
 	/** The OCC Account Operation Service */
 	@Inject
@@ -304,6 +303,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         checkSecurityDepositPaymentAmount(securityDeposit, securityDepositPaymentInput.getAmount(), recordedInvoice);
         checkSecurityDepositSubscription(securityDeposit, recordedInvoice);
         checkSecurityDepositServiceInstance(securityDeposit, recordedInvoice);
+        createSecurityDepositPaymentAccountOperation(recordedInvoice, securityDepositPaymentInput.getAmount());
         matchSecurityDepositPayments(securityDeposit, recordedInvoice, securityDepositPaymentInput.getAmount());
         logPaymentHistory(securityDepositPaymentInput, securityDeposit);
 
@@ -316,6 +316,17 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
         auditLogService.trackOperation("DEBIT", new Date(), securityDeposit, securityDeposit.getCode());
 
+    }
+
+    private void createSecurityDepositPaymentAccountOperation(AccountOperation accountOperation, BigDecimal amount) {
+
+        AccountOperation securityDepositPaymentAccountOperation = new AccountOperation();
+        securityDepositPaymentAccountOperation.setAmount(amount);
+        securityDepositPaymentAccountOperation.setDepositDate(new Date());
+        securityDepositPaymentAccountOperation.setPaymentMethod(PaymentMethodEnum.CHECK);
+        securityDepositPaymentAccountOperation.setCustomerAccount(accountOperation.getCustomerAccount());
+
+        accountOperationService.create(securityDepositPaymentAccountOperation);
     }
 
     private void logPaymentHistory(SecurityDepositPaymentInput securityDepositPaymentInput, SecurityDeposit securityDeposit) {
@@ -341,6 +352,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
         CustomerAccount customerAccount = securityDeposit.getCustomerAccount();
 
+        //TODO match the invoice (AO of the payload) with the new created AO (PAY_SD)
         List<Long> aosIdsToMatch = securityDepositTransactionService.getSecurityDepositTransactionBySecurityDepositId(securityDeposit.getId())
                 .stream().filter(securityDepositTransaction ->OperationCategoryEnum.CREDIT.equals(securityDepositTransaction.getAccountOperation().getTransactionCategory()))
                 .filter(securityDepositTransaction -> securityDepositTransaction.getAccountOperation().getMatchingStatus() == MatchingStatusEnum.O || securityDepositTransaction.getAccountOperation().getMatchingStatus() == MatchingStatusEnum.P)
