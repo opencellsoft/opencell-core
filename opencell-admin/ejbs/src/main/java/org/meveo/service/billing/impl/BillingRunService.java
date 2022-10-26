@@ -858,6 +858,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             } else if (billingRun.getBillingCycle() == null) {
                 return true;
             }
+            billingRun = refreshOrRetrieve(billingRun);
             final ScriptInstance billingRunValidationScript = billingRun.getBillingCycle().getBillingRunValidationScript();
             if(billingRunValidationScript!=null) {
                 ScriptInterface script = scriptInstanceService.getScriptInstance(billingRunValidationScript.getCode());
