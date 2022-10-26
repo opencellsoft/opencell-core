@@ -133,10 +133,8 @@ public class ApplicationInitializer {
             } catch (InterruptedException | ExecutionException | BusinessException e) {
                 log.error("Failed to initialize a provider {}", provider.getCode(), e);
 
-                if (e instanceof ExecutionException) {
-                    if (e.getMessage().contains("S3Exception")) {
-                        throw S3Exception.builder().message(e.getMessage()).build();
-                    }
+                if (e instanceof ExecutionException && e.getMessage().contains("S3Exception")) {
+                    throw S3Exception.builder().message(e.getMessage()).build();
                 }
             }
             i++;
