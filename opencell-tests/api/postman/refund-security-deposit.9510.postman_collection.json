@@ -1,0 +1,708 @@
+{
+	"info": {
+		"_postman_id": "48bed035-94ae-4274-a8dc-73890240a23d",
+		"name": "10694",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "customer hierarchy",
+			"item": [
+				{
+					"name": "01 - create customer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"{{customerCode}}\",\r\n    \"description\": \"{{customerCode}}\",\r\n    \"address\": {},\r\n    \"name\": {},\r\n    \"seller\": \"MAIN_SELLER\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"isCompany\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/account/customer",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"account",
+								"customer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "02 - create customer account",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"{{customerAccountCode}}\",\r\n    \"description\": \"{{customerAccountCode}}\",\r\n    \"contactInformation\": {},\r\n    \"address\": {},\r\n    \"name\": {},\r\n    \"dueDateDelayEL\": \"\",\r\n    \"customer\": \"{{customerCode}}\",\r\n    \"currency\": \"EUR\",\r\n    \"language\": \"FRA\",\r\n    \"isCompany\": true,\r\n    \"methodOfPayment\": [\r\n        {\r\n            \"paymentMethodType\": \"CARD\",\r\n            \"alias\": \"AR_PM_API\",\r\n            \"disabled\": false,\r\n            \"preferred\": true,\r\n            \"cardNumber\": \"0102030405060708\",\r\n            \"cardType\": \"CB\",\r\n            \"monthExpiration\": 12,\r\n            \"yearExpiration\": 23,\r\n            \"owner\": \"{{customerCode}}\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/account/customerAccount",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"account",
+								"customerAccount"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "03 - Billing account",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"{{billingAccountCode}}\",\r\n    \"description\": \"{{billingAccountCode}}\",\r\n    \"contactInformation\": {\r\n        \"address\": {},\r\n        \"email\": \"a@a.com\"\r\n    },\r\n    \"registrationNo\": \"\",\r\n    \"vatNo\": \"\",\r\n    \"externalRef1\": \"\",\r\n    \"country\": \"FR\",\r\n    \"language\": \"FRA\",\r\n    \"tradingCurrency\": \"EUR\",\r\n    \"customerAccount\": \"{{customerAccountCode}}\",\r\n    \"invoicingThreshold\": \"\",\r\n    \"discountPlanInstance\": [],\r\n    \"discountPlanForInstantiation\": [],\r\n    \"discountPlanForTermination\": [],\r\n    \"electronicBilling\": \"\",\r\n    \"email\": \"a@a.com\",\r\n    \"ccedEmails\": \"\",\r\n    \"mailingType\": \"\",\r\n    \"emailTemplate\": \"\",\r\n    \"address\": {},\r\n    \"billingCycle\": \"CYC_INV_MT_1\",\r\n    \"name\": {},\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"ASSOC\"\r\n    },\r\n    \"minimumAmountEl\": \"\",\r\n    \"minimumLabelEl\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/account/billingAccount",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"account",
+								"billingAccount"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "03 - User account",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"description\": \"AR_CONSUMER\",\r\n    \"name\": {\r\n        \"title\": \"ASSOC\"\r\n    },\r\n    \"billingAccount\": \"{{billingAccountCode}}\",\r\n    \"isCompany\": true,\r\n    \"isConsumer\": true,\r\n    \"parentUserAccountCode\": null,\r\n    \"code\": \"{{userAccountCode}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/account/userAccount",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"account",
+								"userAccount"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Create SD Invoice - OK Copy",
+			"item": [
+				{
+					"name": "Init SD Invoice",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"okInvoiceId\", pm.response.json().id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"invoiceTypeCode\": \"SECURITY_DEPOSIT\",\r\n    \"billingAccountCode\": \"{{billingAccountCode}}\",\r\n    \"amountWithTax\": 0,\r\n    \"comment\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/billing/invoices/basicInvoices",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"billing",
+								"invoices",
+								"basicInvoices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add invoice line",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"skipValidation\": true,\r\n    \"invoiceLines\": [\r\n        {\r\n            \"invoiceId\": \"{{okInvoiceId}}\",\r\n            \"label\": \"SD Invoice\",\r\n            \"accountingArticleCode\": \"ART_SECURITY_DEPOSIT\",\r\n            \"quantity\": 1,\r\n            \"amountWithoutTax\": 100,\r\n            \"amountWithTax\": 100,\r\n            \"amountTax\": 0,\r\n            \"unitPrice\": 100,\r\n            \"productCode\": null,\r\n            \"taxMode\": \"ARTICLE\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/billing/invoices/{{okInvoiceId}}/invoiceLines",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"billing",
+								"invoices",
+								"{{okInvoiceId}}",
+								"invoiceLines"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check Invoice",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/generic/invoice/{{okInvoiceId}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"generic",
+								"invoice",
+								"{{okInvoiceId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Create SD",
+			"item": [
+				{
+					"name": "Create SD - Invoice OK",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"amount\": 10,\r\n    \"linkedInvoice\": {\r\n        \"id\":{{okInvoiceId}}\r\n    },\r\n    \"currency\": {\r\n        \"code\": \"USD\"\r\n    },\r\n    \"customerAccount\": {\r\n        \"code\": \"{{customerAccountCode}}\"\r\n    },\r\n    \"billingAccount\": {\r\n        \"code\": \"{{billingAccountCode}}\"\r\n    },\r\n    \"template\": {\r\n        \"id\": 1\r\n    },\r\n    \"validityPeriodUnit\": \"MONTHS\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/securityDeposit/instantiateSecurityDeposit",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"securityDeposit",
+								"instantiateSecurityDeposit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check SD",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nestedEntities\": [\r\n        \"securityDepositInvoice\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/generic/all/securityDeposit",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"generic",
+								"all",
+								"securityDeposit"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Match SD",
+			"item": [
+				{
+					"name": "Create Payment",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"paymentMethod\": \"CARD\",\r\n    \"amount\": 10,\r\n    \"reference\": \"ref\",\r\n    \"dueDate\": 1666312058290,\r\n    \"occTemplateCode\": \"PAY_CRD\",\r\n    \"customerAccountCode\": \"{{customerAccountCode}}\",\r\n    \"transactionDate\": 1666312074379,\r\n    \"bankCollectionDate\": 1666312058284,\r\n    \"bankLot\": \"@today-opencell.admin\",\r\n    \"paymentInfo\": \"opencell.admin\",\r\n    \"isToMatching\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/payment",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get AO",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/generic/all/accountOperation",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"generic",
+								"all",
+								"accountOperation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Match SD",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"accountOperations\": [\r\n        {\r\n            \"id\": 2,\r\n            \"sequence\": 0\r\n        },\r\n        {\r\n            \"id\": 1,\r\n            \"sequence\": 1\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/accountReceivable/accountOperation/matchOperations",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"accountReceivable",
+								"accountOperation",
+								"matchOperations"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Refund SD",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"refundReason\": \"ARE Refund\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/v2/securityDeposit/refund/1",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"v2",
+						"securityDeposit",
+						"refund",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check AO Post Refund",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/v2/generic/all/accountOperation",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"v2",
+						"generic",
+						"all",
+						"accountOperation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check ADJ Invoice",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nestedEntities\": [\r\n        \"invoiceType\"\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/v2/generic/all/invoice",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"v2",
+						"generic",
+						"all",
+						"invoice"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check SD",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nestedEntities\": [\r\n        \"securityDepositAdjustment\"\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/v2/generic/all/securityDeposit",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"v2",
+						"generic",
+						"all",
+						"securityDeposit"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "opencell.admin",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "opencell.admin",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"let testSuffix = \"_1\"",
+					"",
+					"var moment = require('moment');",
+					"pm.environment.set('now', moment().format((\"YYYY-MM-DDTHH:mm:ssZ\")));",
+					"",
+					"// Customer hierarchy",
+					"let customerCode = \"AR_CUST\" + testSuffix;",
+					"let customerAccountCode = \"AR_CA\" + testSuffix;",
+					"let billingAccountCode = \"AR_BA\" + testSuffix;",
+					"let userAccountCode = \"AR_UA\" + testSuffix;",
+					"",
+					"pm.collectionVariables.set(\"customerCode\", customerCode);",
+					"pm.collectionVariables.set(\"customerAccountCode\", customerAccountCode);",
+					"pm.collectionVariables.set(\"billingAccountCode\", billingAccountCode);",
+					"pm.collectionVariables.set(\"userAccountCode\", userAccountCode);",
+					"",
+					"// Payment Method",
+					"let paymentMethodeDDAlias = \"AR_PM_DD\" + testSuffix;",
+					"let paymentMethodeDDmandateIdent = \"AR_MI_DD\" + testSuffix;",
+					"pm.collectionVariables.set(\"paymentMethodeDDAlias\", paymentMethodeDDAlias);",
+					"pm.collectionVariables.set(\"paymentMethodeDDmandateIdent\",  paymentMethodeDDmandateIdent);",
+					"",
+					"",
+					"//--------------- Charges",
+					"let oneShotChargeCode = \"AR_CH_OS\" + testSuffix;",
+					"let recurrentChargeCode = \"AR_CH_RE\" + testSuffix;",
+					"let oneshotPricePlanCode = \"PP_\" + oneShotChargeCode;",
+					"let recurrentPricePlanCode = \"PP_\" + recurrentChargeCode;",
+					"",
+					"pm.collectionVariables.set(\"oneShotChargeCode\", oneShotChargeCode);",
+					"pm.collectionVariables.set(\"recurrentChargeCode\", recurrentChargeCode);",
+					"pm.collectionVariables.set(\"oneshotPricePlanCode\", oneshotPricePlanCode);",
+					"pm.collectionVariables.set(\"recurrentPricePlanCode\", recurrentPricePlanCode);",
+					"",
+					"//--------------- Products",
+					"let productCode = \"AR_PR\" + testSuffix;",
+					"",
+					"pm.collectionVariables.set(\"productCode\", productCode);",
+					"",
+					"//--------------- Offers",
+					"let offerCode = \"AR_OF\" + testSuffix;",
+					"let subscriptionCode = \"AR_SUB\" + testSuffix;",
+					"",
+					"pm.collectionVariables.set(\"offerCode\", offerCode);",
+					"pm.collectionVariables.set(\"subscriptionCode\", subscriptionCode);",
+					"",
+					"",
+					"let billingCycleCode = \"CYC_INV_MT_1\";",
+					"pm.collectionVariables.set(\"billingCycleCode\", billingCycleCode);",
+					"",
+					"// Quote",
+					"let quoteCode = \"AR_QUOTE\" + testSuffix;",
+					"pm.collectionVariables.set(\"quoteCode\", quoteCode);",
+					"",
+					"// OpenOrders",
+					"",
+					"let ooTemplateCode = \"AR_OOT_\" + testSuffix;",
+					"pm.collectionVariables.set(\"ooTemplateCode\", quoteCode);"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "customerCode",
+			"value": ""
+		},
+		{
+			"key": "customerAccountCode",
+			"value": ""
+		},
+		{
+			"key": "billingAccountCode",
+			"value": ""
+		},
+		{
+			"key": "userAccountCode",
+			"value": ""
+		},
+		{
+			"key": "paymentMethodeDDAlias",
+			"value": ""
+		},
+		{
+			"key": "paymentMethodeDDmandateIdent",
+			"value": ""
+		},
+		{
+			"key": "oneShotChargeCode",
+			"value": ""
+		},
+		{
+			"key": "recurrentChargeCode",
+			"value": ""
+		},
+		{
+			"key": "oneshotPricePlanCode",
+			"value": ""
+		},
+		{
+			"key": "recurrentPricePlanCode",
+			"value": ""
+		},
+		{
+			"key": "productCode",
+			"value": ""
+		},
+		{
+			"key": "offerCode",
+			"value": ""
+		},
+		{
+			"key": "subscriptionCode",
+			"value": ""
+		},
+		{
+			"key": "billingCycleCode",
+			"value": ""
+		},
+		{
+			"key": "quoteCode",
+			"value": ""
+		},
+		{
+			"key": "ooTemplateCode",
+			"value": ""
+		},
+		{
+			"key": "okInvoiceId",
+			"value": ""
+		}
+	]
+}
