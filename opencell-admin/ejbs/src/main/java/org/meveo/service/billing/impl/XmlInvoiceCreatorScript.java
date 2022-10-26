@@ -1749,7 +1749,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         if (customerAccountTag != null) {
             header.appendChild(customerAccountTag);
         }
-        Element billingAccountTag = createBillingAccountSection(doc, invoice, linkedInvoice.getLinkedInvoiceValue(), isInvoiceAdjustment, invoiceConfiguration);
+        Element billingAccountTag = createBillingAccountSection(doc, invoice, linkedInvoice != null ? linkedInvoice.getLinkedInvoiceValue() : null, isInvoiceAdjustment, invoiceConfiguration);
         if (billingAccountTag != null) {
             header.appendChild(billingAccountTag);
         }
