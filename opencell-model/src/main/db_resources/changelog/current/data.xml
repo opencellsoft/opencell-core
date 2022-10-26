@@ -8310,4 +8310,11 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</insert>
 	</changeSet>
 
+	<changeSet id="#INTRD-10907_20221026" author="EBOURRAS">
+		<insert tableName="billing_invoice_type_applies_to">
+			<column name="invoice_type_id" value="-1"/>
+			<column name="applies_to_id" value="-5"/>
+		</insert>
+	</changeSet>
+
 </databaseChangeLog>
