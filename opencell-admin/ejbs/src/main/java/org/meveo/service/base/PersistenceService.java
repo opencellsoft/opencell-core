@@ -26,6 +26,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.sql.Clob;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -60,6 +62,7 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
 
+import org.apache.commons.io.IOUtils;
 import org.hibernate.LockMode;
 import org.hibernate.SQLQuery;
 import org.hibernate.ScrollMode;
@@ -1686,7 +1689,18 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return data -> {
             Map<String, Object> map = new HashMap<>();
             for (TupleElement<?> tuple : data.getElements()) {
-                map.put(tuple.getAlias(), data.get(tuple.getAlias()));
+
+                Object value = data.get(tuple.getAlias());
+                if (value instanceof Clob) {
+                    try {
+                        value = IOUtils.toString(((Clob) value).getCharacterStream());
+
+                    } catch (IOException | SQLException e) {
+                        throw new RuntimeException("Failed to read clob value", e);
+                    }
+                }
+
+                map.put(tuple.getAlias(), value);
             }
             return map;
         };
