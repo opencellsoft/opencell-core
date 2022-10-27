@@ -51,6 +51,7 @@ import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IReferenceEntity;
+import org.meveo.model.ObservableEntity;
 import org.meveo.model.ReferenceIdentifierQuery;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.User;
@@ -64,6 +65,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
  * @lastModifiedVersion 7.0
  */
 @Entity
+@ObservableEntity
 @ReferenceIdentifierQuery("BillingRun.findByIdAndBCCode")
 @CustomFieldEntity(cftCodePrefix = "BillingRun")
 @Table(name = "billing_billing_run")

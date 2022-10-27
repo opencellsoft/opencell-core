@@ -213,10 +213,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
         if (cancelationDate == null) {
             cancelationDate = new Date();
         }
-        /*
-         * List<ServiceInstance> serviceInstances = subscription .getServiceInstances(); for (ServiceInstance serviceInstance : serviceInstances) { if
-         * (InstanceStatusEnum.ACTIVE.equals(serviceInstance.getStatus())) { serviceInstanceService.serviceCancellation(serviceInstance, terminationDate); } }
-         */
         subscription.setTerminationDate(cancelationDate);
         subscription.setStatus(SubscriptionStatusEnum.CANCELED);
         subscription = update(subscription);
@@ -246,9 +242,12 @@ public class SubscriptionService extends BusinessService<Subscription> {
             }
         }
 
+        SubscriptionStatusEnum lastStatus = subscription.getStatus();
         subscription.setTerminationDate(suspensionDate);
         subscription.setStatus(SubscriptionStatusEnum.SUSPENDED);
         subscription = update(subscription);
+        auditableFieldService.createFieldHistory(subscription, AuditableFieldNameEnum.STATUS.getFieldName(),
+                AuditChangeTypeEnum.STATUS, lastStatus.toString(), subscription.getStatus().toString());
         for (Access access : subscription.getAccessPoints()) {
             accessService.disable(access);
         }
@@ -268,6 +267,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
             throw new ElementNotResiliatedOrCanceledException("subscription", subscription.getCode());
         }
 
+        SubscriptionStatusEnum lastStatus = subscription.getStatus();
         subscription.setTerminationDate(null);
         subscription.setSubscriptionTerminationReason(null);
         subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
@@ -280,6 +280,8 @@ public class SubscriptionService extends BusinessService<Subscription> {
         }
 
         subscription = update(subscription);
+        auditableFieldService.createFieldHistory(subscription, AuditableFieldNameEnum.STATUS.getFieldName(),
+                AuditChangeTypeEnum.STATUS, lastStatus.toString(), subscription.getStatus().toString());
 
         for (Access access : subscription.getAccessPoints()) {
             accessService.enable(access);
@@ -388,8 +390,11 @@ public class SubscriptionService extends BusinessService<Subscription> {
                 // INTRD-5666: for services with subscription dates in futurs, they should be passed to terminated
                 // immediately since the whole sub is terminated
                 if (serviceInstance.getStatus() != InstanceStatusEnum.TERMINATED) {
+                    InstanceStatusEnum lastStatus = serviceInstance.getStatus();
                     serviceInstance.setStatus(InstanceStatusEnum.TERMINATED);
                     serviceInstanceService.update(serviceInstance);
+                    auditableFieldService.createFieldHistory(serviceInstance, AuditableFieldNameEnum.STATUS.getFieldName(),
+                            AuditChangeTypeEnum.STATUS, lastStatus.toString(), serviceInstance.getStatus().toString());
                 }
 
                 orderHistoryService.create(orderNumber, orderItemId, serviceInstance, orderItemAction);
@@ -414,10 +419,13 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
         }
 
+        SubscriptionStatusEnum lastStatus = subscription.getStatus();
         subscription.setSubscriptionTerminationReason(terminationReason);
         subscription.setTerminationDate(terminationDate);
         subscription.setStatus(SubscriptionStatusEnum.RESILIATED);
         subscription = update(subscription);
+        auditableFieldService.createFieldHistory(subscription, AuditableFieldNameEnum.STATUS.getFieldName(),
+                AuditChangeTypeEnum.STATUS, lastStatus.toString(), subscription.getStatus().toString());
 
         for (Access access : subscription.getAccessPoints()) {
             access.setEndDate(terminationDate);
@@ -518,7 +526,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     public RatingResult activateInstantiatedService(Subscription sub) throws BusinessException {
         // using a new ArrayList (cloning the original one) to avoid ConcurrentModificationException
     	RatingResult ratingResult = new RatingResult();
-    	Set<DiscountPlanItem> fixedDiscountItems = new HashSet<DiscountPlanItem>();
+    	Set<DiscountPlanItem> fixedDiscountItems = new HashSet<>();
         for (ServiceInstance si : new ArrayList<>(emptyIfNull(sub.getServiceInstances()))) {
             if (si.getStatus().equals(InstanceStatusEnum.INACTIVE)) {
             	ratingResult = serviceInstanceService.serviceActivation(si);
