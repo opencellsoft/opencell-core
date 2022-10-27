@@ -43,6 +43,8 @@ public class MeveoOracleDialect extends Oracle12cDialect {
         super();
         registerFunction( "concat", new StandardSQLFunction( "concat", new org.hibernate.type.StringType()));
         registerFunction("string_agg", new StandardSQLFunction("LISTAGG", new org.hibernate.type.StringType()));
+//        registerFunction("string_agg_long", new StandardSQLFunction("LISTAGG", new org.hibernate.type.StringType()));
+        registerFunction("string_agg_long", new StandardSQLFunction("LISTAGG_CLOB", new org.hibernate.type.ClobType()));
         registerFunction("numericFromJson", new DoubleOracleJsonSearchFunction());
         registerFunction("varcharFromJson", new OracleJsonSearchFunction());
         registerFunction("bigIntFromJson", new LongOracleJsonSearchFunction());

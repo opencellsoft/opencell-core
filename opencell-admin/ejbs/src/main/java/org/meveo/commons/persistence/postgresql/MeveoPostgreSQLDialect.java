@@ -44,8 +44,9 @@ import org.hibernate.dialect.function.StandardSQLFunction;
 public class MeveoPostgreSQLDialect extends PostgreSQL94Dialect {
     public MeveoPostgreSQLDialect() {
         super();
+        registerFunction("concat", new StandardSQLFunction( "concat", new org.hibernate.type.StringType()));
         registerFunction("string_agg", new StandardSQLFunction("string_agg", new org.hibernate.type.StringType()));
-        registerFunction( "concat", new StandardSQLFunction( "concat", new org.hibernate.type.StringType()));
+        registerFunction("string_agg_long", new StandardSQLFunction("string_agg", new org.hibernate.type.StringType()));
         registerFunction("numericFromJson", new DoublePostgreSQLJsonSearchFunction());
         registerFunction("varcharFromJson", new PostgreSQLJsonSearchFunction());
         registerFunction("bigIntFromJson", new LongPostgreSQLJsonSearchFunction());
