@@ -75,6 +75,11 @@ public class StorageFactory {
     /** Logger. */
     protected static Logger log = LoggerFactory.getLogger(StorageFactory.class);
 
+    /**
+     * init StorageFactory.
+     *
+     * required configuration parameters : endpointUrl, region, accessKeyId, secretAccessKey, bucketName
+     */
     public void init() {
         ParamBean tmpParamBean = ParamBeanFactory.getAppScopeInstance();
         storageType = tmpParamBean.getProperty("storage.type", NFS);
@@ -138,14 +143,22 @@ public class StorageFactory {
         }
     }
 
+    /**
+     * get path of object in S3
+     *
+     * @param objectPath String
+     * @return Path object
+     */
     public static Path getObjectPath(String objectPath) {
         return s3FileSystem.getPath("/" + objectPath);
     }
 
-    public static Path getObjectPath(File file) {
-        return s3FileSystem.getPath("/" + file.getPath());
-    }
-
+    /**
+     * get inputStream based on a filename S3
+     *
+     * @param fileName String
+     * @return InputStream
+     */
     public static InputStream getInputStream(String fileName) {
         if (storageType.equals(NFS)) {
             try {
@@ -173,6 +186,12 @@ public class StorageFactory {
         return null;
     }
 
+    /**
+     * get inputStream based on array of bytes
+     *
+     * @param bytes array of bytes
+     * @return InputStream
+     */
     public static InputStream getInputStream(byte[] bytes) {
         if (storageType.equals(NFS)) {
             return new ByteArrayInputStream(bytes);
@@ -193,6 +212,12 @@ public class StorageFactory {
         return null;
     }
 
+    /**
+     * get reader based on file, to read data from a file
+     *
+     * @param file a file
+     * @return Reader
+     */
     public static Reader getReader(File file) {
         if (storageType.equals(NFS)) {
             try {
@@ -224,6 +249,12 @@ public class StorageFactory {
         return null;
     }
 
+    /**
+     * get reader based on file, to read data from a file
+     *
+     * @param file String filename of the file
+     * @return Reader
+     */
     public static Reader getReader(String file) {
         if (storageType.equals(NFS)) {
             try {
@@ -255,6 +286,12 @@ public class StorageFactory {
         return null;
     }
 
+    /**
+     * get writer based on file, used to write character-oriented data to a file.
+     *
+     * @param file String filename of the file
+     * @return Writer
+     */
     public static Writer getWriter(String file) {
         if (storageType.equals(NFS)) {
             try {
@@ -286,6 +323,12 @@ public class StorageFactory {
         return null;
     }
 
+    /**
+     * get writer based on file, used to write character-oriented data to a file.
+     *
+     * @param file the file
+     * @return Writer
+     */
     public static Writer getWriter(File file) {
         if (storageType.equals(NFS)) {
             try {
@@ -317,6 +360,12 @@ public class StorageFactory {
         return null;
     }
 
+
+    /**
+     * delete a file in S3 or FileSystem.
+     *
+     * @param file the file
+     */
     public static void deleteFile(File file) {
         if (storageType.equals(NFS)) {
             file.delete();
@@ -335,6 +384,12 @@ public class StorageFactory {
         }
     }
 
+    /**
+     * check existence of a file on File System or S3.
+     *
+     * @param fileName String the filename
+     * @return true if file exists, false otherwise
+     */
     public static boolean exists(String fileName) {
         if (storageType.equals(NFS)) {
             return new File(fileName).exists();
@@ -356,6 +411,12 @@ public class StorageFactory {
         return false;
     }
 
+    /**
+     * check existence of a file on File System or S3.
+     *
+     * @param file the file
+     * @return true if file exists, false otherwise
+     */
     public static boolean exists(File file) {
         if (storageType.equals(NFS)) {
             return file.exists();
@@ -377,6 +438,11 @@ public class StorageFactory {
         return false;
     }
 
+    /**
+     * create a new empty file on File System or S3.
+     *
+     * @param file the file
+     */
     public static void createNewFile(File file) {
         if (storageType.equals(NFS)) {
             try {
@@ -403,6 +469,12 @@ public class StorageFactory {
         }
     }
 
+    /**
+     * get PrintWriter of a file on File System or S3.
+     *
+     * @param file the file
+     * @return PrintWriter object
+     */
     public static PrintWriter getPrintWriter(File file) {
         if (storageType.equals(NFS)) {
             try {
@@ -432,6 +504,12 @@ public class StorageFactory {
         return null;
     }
 
+    /**
+     * get InputStream of a file.
+     *
+     * @param file the file
+     * @return InputStream object
+     */
     public static InputStream getInputStream(File file) {
         if (storageType.equals(NFS)) {
             try {
@@ -459,6 +537,11 @@ public class StorageFactory {
         return null;
     }
 
+    /**
+     * create a directory.
+     *
+     * @param file the file
+     */
     public static void createDirectory(File file) {
         if (storageType.equals(NFS)) {
             file.mkdirs();
@@ -478,6 +561,12 @@ public class StorageFactory {
 
     }
 
+    /**
+     * get OutputStream of a file.
+     *
+     * @param file the file
+     * @return OutputStream object
+     */
     public static OutputStream getOutputStream(File file) {
         if (storageType.equals(NFS)) {
             try {
@@ -506,6 +595,12 @@ public class StorageFactory {
         return null;
     }
 
+    /**
+     * get OutputStream of a file.
+     *
+     * @param fileName the filename
+     * @return OutputStream object
+     */
     public static OutputStream getOutputStream(String fileName) {
         if (storageType.equals(NFS)) {
             try {
@@ -534,6 +629,15 @@ public class StorageFactory {
         return null;
     }
 
+    /**
+     * Writes bytes to a file.
+     * @param   path
+     *          the path to the file
+     * @param   bytes
+     *          the byte array with the bytes to write
+     * @param   options
+     *          options specifying how the file is opened
+     */
     public static void write(Path path, byte[] bytes, OpenOption... options) {
         if (storageType.equals(NFS)) {
             try {
@@ -563,6 +667,14 @@ public class StorageFactory {
         }
     }
 
+    /**
+     * Parse the content of the given file as an XML document
+     * and return a new DOM {@link Document} object.
+     *
+     * @param file The file containing the XML to parse.
+     *
+     * @return Document object
+     */
     public static Document parse(DocumentBuilder db, File file) {
         if (storageType.equals(NFS)) {
             try {
@@ -591,6 +703,16 @@ public class StorageFactory {
         return null;
     }
 
+    /**
+     * Marshal to XML File
+     *
+     * @param marshaller The Marshaller object.
+     *
+     * @param   obj
+     *          the object to be marshalled
+     * @param   file
+     *          the file to it the object will be marshalled
+     */
     public static void marshal(Marshaller marshaller, Object obj, File file) {
         if (storageType.equals(NFS)) {
             try {
@@ -619,6 +741,14 @@ public class StorageFactory {
         }
     }
 
+    /**
+     * format object key with bucketName
+     * and return a string of object key.
+     *
+     * @param filePath The file containing the XML to parse.
+     *
+     * @return String
+     */
     public static String formatFullObjectKey(String filePath){
         String fullObjectKey = bucketName;
         if (filePath.charAt(0) == '.') {
@@ -634,6 +764,14 @@ public class StorageFactory {
         return fullObjectKey;
     }
 
+    /**
+     * format object key without bucketName
+     * and return a string of object key.
+     *
+     * @param filePath The file containing the XML to parse.
+     *
+     * @return String
+     */
     public static String formatObjectKey(String filePath){
         String objectKey = "";
 
@@ -647,15 +785,13 @@ public class StorageFactory {
         return objectKey;
     }
 
-    public static void uploadJasperTemplate(File file) throws IOException {
-        InputStream inStream = new FileInputStream(file);
-        OutputStream outStream = getOutputStream(file.getPath());
-        IOUtils.copy(inStream, outStream);
-        inStream.close();
-        assert outStream != null;
-        outStream.close();
-    }
-
+    /**
+     * export report to a pdf file
+     *
+     * @param jasperPrint the JasperPrint object.
+     *
+     * @param fileName String
+     */
     public static void exportReportToPdfFile(JasperPrint jasperPrint, String fileName) {
         if (storageType.equals(NFS)) {
             try {
@@ -679,6 +815,14 @@ public class StorageFactory {
         }
     }
 
+    /**
+     * copy a directory or file from a source to a destination
+     * Note that in case of S3, it copies both to S3 and FileSystem
+     *
+     * @param srcDir source file.
+     *
+     * @param destDir destination file
+     */
     public static void copyDirectory(File srcDir, File destDir) {
         if (storageType.equals(NFS)) {
             try {
