@@ -1524,7 +1524,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         try {
             File destDir = new File(resDir + File.separator + billingTemplateName + File.separator + "pdf");
 
-            if (!destDir.exists()) {
+            if (!StorageFactory.exists(destDir)) {
 
                 log.warn("PDF jasper report {} was not found. A default report will be used.", destDir.getAbsolutePath());
 
@@ -1542,7 +1542,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     }
                 }
                 destDir.mkdirs();
-                FileUtils.copyDirectory(sourceFile, destDir);
+                StorageFactory.copyDirectory(sourceFile, destDir);
             }
 
             File destDirInvoiceAdjustment = new File(resDir + File.separator + billingTemplateName + File.separator + "invoiceAdjustmentPdf");
