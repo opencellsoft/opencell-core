@@ -3,8 +3,8 @@ package org.meveo.admin.storage;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRXmlDataSource;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.carlspring.cloud.storage.s3fs.S3FileSystem;
 import org.carlspring.cloud.storage.s3fs.S3FileSystemProvider;
 import org.meveo.commons.keystore.KeystoreManager;
@@ -849,5 +849,31 @@ public class StorageFactory {
                 log.error("IOException in copyDirectory : {}", e.getMessage());
             }
         }
+    }
+
+    /**
+     * creates a data source of type JRXmlDataSource from a file
+     *
+     * @param file a file.
+     *
+     * @return JRXmlDataSource JRXmlDataSource object
+     */
+    public static JRXmlDataSource getJRXmlDataSource(File file) {
+        if (storageType.equals(NFS)) {
+            try {
+                return new JRXmlDataSource(file);
+            } catch (JRException e) {
+                log.error("JRException : {}", e.getMessage());
+            }
+        }
+        else if (storageType.equalsIgnoreCase(S3)) {
+            try {
+                return new JRXmlDataSource(getInputStream(file));
+            } catch (JRException e) {
+                log.error("JRException in getJRXmlDataSource : {}", e.getMessage());
+            }
+        }
+
+        return null;
     }
 }
