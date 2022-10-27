@@ -70,7 +70,11 @@ public class QuoteVersionDto extends BaseEntityDto {
     
     private Set<String> mediaCodes = new HashSet<String>();
 
-    
+	/** The comment. */
+	@XmlAttribute()
+    @Schema(description = "The comment")
+	private String comment;
+	
 	@Schema(description = "The custom fields")
     protected CustomFieldsDto customFields;
 
@@ -239,6 +243,14 @@ public class QuoteVersionDto extends BaseEntityDto {
 
 	public void setMediaCodes(Set<String> mediaCodes) {
 		this.mediaCodes = mediaCodes;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 	
 	
