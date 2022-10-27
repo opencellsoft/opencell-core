@@ -9822,6 +9822,22 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		</insert>
 	</changeSet>
 
+
+
+	<changeSet id="#INTRD-10772_20221025_ajd_occ_template" author="e.bourras">
+		<insert tableName="ar_occ_template">
+			<column name="id" valueSequenceNext="ar_occ_template_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="code" value="PAY_SD" />
+			<column name="description" value="Security Deposit Payment" />
+			<column name="occ_category" value="CREDIT" /><column name="manual_creation_enabled" value="0"/>
+			<column name="journal_id" valueComputed="(SELECT id FROM journal where code = 'SAL')"/>
+			<column name="manual_creation_enabled" value="0"/>
+		</insert>
+	</changeSet>
+
 	<changeSet id="#INTRD-6484" author="hichamElHaloui"/>
 	<changeSet id="#INTRD-6668_20220421" author="TarikRabeh" />
 	<changeSet id="#INTRD-6638_20220422-update-occT" author="aelmalki" />
