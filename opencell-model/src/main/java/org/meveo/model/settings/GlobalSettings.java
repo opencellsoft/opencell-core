@@ -20,6 +20,10 @@ public class GlobalSettings extends AuditableEntity {
     @Column(name = "quote_default_validity_delay", nullable = false)
     private Integer quoteDefaultValidityDelay;
 
+    /**
+     * @deprecated in 14.0.0 for not use
+     */
+    @Deprecated
     @Type(type = "numeric_boolean")
     @Column(name = "activate_dunning")
     private Boolean activateDunning = Boolean.FALSE;
