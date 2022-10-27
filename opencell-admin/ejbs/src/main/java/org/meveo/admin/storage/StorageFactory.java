@@ -135,7 +135,8 @@ public class StorageFactory {
                 log.info("S3 parameters are correctly configured");
             }
             else {
-                log.info("S3 parameters are not correctly configured");
+                log.error("S3 parameters are not correctly configured");
+                throw S3Exception.builder().build();
             }
 
             s3FileSystem = new S3FileSystem(new S3FileSystemProvider(), accessKeyId, client, endpointUrl);
