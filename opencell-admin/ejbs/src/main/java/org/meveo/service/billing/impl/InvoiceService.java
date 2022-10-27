@@ -1598,8 +1598,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public synchronized void generateInvoiceFile(String billingTemplateName, String resDir) throws IOException {
         File destDir = new File(resDir + File.separator + billingTemplateName + File.separator + "pdf");
-        
-        if (!destDir.exists()) {
+
+        if (!StorageFactory.exists(destDir)) {
             log.warn("PDF jasper report {} was not found. A default report will be used.", destDir.getAbsolutePath());
             String sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + File.separator + billingTemplateName + File.separator + "invoice";
             File sourceFile = new File(sourcePath);
@@ -1616,7 +1616,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             destDir.mkdirs();
-            FileUtils.copyDirectory(sourceFile, destDir);
+            StorageFactory.copyDirectory(sourceFile, destDir);
         }
     }
 
