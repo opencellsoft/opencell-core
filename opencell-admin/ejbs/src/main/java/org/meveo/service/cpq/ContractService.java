@@ -113,7 +113,7 @@ public class ContractService extends BusinessService<Contract>  {
 			List<PricePlanMatrix> pricePlans = contract.getContractItems().stream().map(ContractItem::getPricePlan).collect(Collectors.toList());
 			List<PricePlanMatrixVersion> pricePlanVersions = pricePlanMatrixVersionService.findByPricePlans(pricePlans);
 			if (pricePlanVersions.isEmpty()) {
-				log.error("At any given time during the duration of the framework agreement, a price should be applicable, please check your price version dates");
+				log.error("At any given time during the duration of the framework agreement, a price should be applicable, please check your price versions");
 			}
 			List<PricePlanMatrixVersion> draftPricePlanVersions = pricePlanVersions.stream().filter(pricePlanMatrixVersion -> VersionStatusEnum.DRAFT.equals(pricePlanMatrixVersion.getStatus())).collect(Collectors.toList());
 			if (!draftPricePlanVersions.isEmpty()){
@@ -121,38 +121,25 @@ public class ContractService extends BusinessService<Contract>  {
 				throw new BusinessApiException("All contract lines should have all price versions published to activate the framework agreement");
 			}
 			List<PricePlanMatrixVersion> endDatePricePlanVersions = pricePlanVersions.stream().filter(pricePlanMatrixVersion -> pricePlanMatrixVersion.getValidity().getTo() == null).collect(Collectors.toList());
+			
 			if (endDatePricePlanVersions.isEmpty() && !pricePlanVersions.isEmpty()){
 				pricePlanVersions.sort(Comparator.comparing(PricePlanMatrixVersion::getValidity));
 				PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanVersions.get(0);
-				if (pricePlanMatrixVersion.getValidity().getFrom().compareTo(contract.getBeginDate()) != 0){
-					log.error("At any given time during the duration of the framework agreement, a price should be applicable, please check your price version dates");
+				if (pricePlanMatrixVersion.getValidity().getFrom().compareTo(contract.getBeginDate()) < 0){
+			//NOTE 2		
+					log.error("Start date of the price version id {} should not be prior to the Start date of the contract",pricePlanMatrixVersion.getId());
 					throw new BusinessApiException(
-							"At any given time during the duration of the framework agreement, a price should be applicable, please check your price version dates");
+							"Start date of a price version should not be prior to the Start date of the contract.");
 
 				}
-				pricePlanVersions.sort((p1,p2) -> p1.getValidity().compareFieldTo(p2.getValidity()));
+			//NOTE 3
 				pricePlanMatrixVersion = pricePlanVersions.get(pricePlanVersions.size()-1);
-				if (pricePlanMatrixVersion.getValidity().getTo().compareTo(contract.getEndDate()) != 0){
-					log.error("At any given time during the duration of the framework agreement, a price should be applicable, please check your price version dates");
+				if (pricePlanMatrixVersion.getValidity().getTo().compareTo(contract.getEndDate()) > 0){
+					log.error("End date of of the price version id {} should not be after the End date of a contract",pricePlanMatrixVersion.getId());
 					throw new BusinessApiException(
-							"At any given time during the duration of the framework agreement, a price should be applicable, please check your price version dates");
-
+							"Start date of a price version should not be prior to the Start date of the contract.");
 				}
 			}
-			else {
-			    pricePlanVersions.sort(Comparator.comparing(PricePlanMatrixVersion::getValidity));
-			    if(pricePlanVersions.size() > 0) {
-			        for (int i=0; i < pricePlanVersions.size() - 1; i++) {
-	                    Date ppvValidityTo = pricePlanVersions.get(i).getValidity().getTo();
-	                    Date ppvNextValidityFrom = pricePlanVersions.get(i+1).getValidity().getFrom();
-	                    Date ppvValidityToNextDay = DateUtils.addDaysToDate(ppvValidityTo, 1);
-	                    if (ppvValidityTo.compareTo(ppvNextValidityFrom) != 0 && ppvValidityToNextDay.compareTo(ppvNextValidityFrom) != 0){
-	                        log.error("At any given time during the duration of the framework agreement, a price should be applicable, please check your price version dates");
-	                        throw new BusinessApiException("At any given time during the duration of the framework agreement, a price should be applicable, please check your price version dates");
-	                    }
-	                }
-			    }                
-            }
 		}
 
 		if (ContractStatusEnum.ACTIVE.equals(contract.getStatus())
