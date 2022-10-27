@@ -1560,7 +1560,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             reportTemplate = StorageFactory.getInputStream(jasperFile);
 
-            JRXmlDataSource dataSource = new JRXmlDataSource(invoiceXmlFile);
+            JRXmlDataSource dataSource = StorageFactory.getJRXmlDataSource(invoiceXmlFile);
 
             String fileKey = jasperFile.getPath() + jasperFile.lastModified();
             JasperReport jasperReport = jasperReportMap.get(fileKey);
