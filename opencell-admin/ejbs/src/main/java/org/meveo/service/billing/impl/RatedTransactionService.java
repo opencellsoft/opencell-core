@@ -52,12 +52,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.api.dto.RatedTransactionDto;
-import org.meveo.api.exception.BusinessApiException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -65,7 +62,6 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.*;
@@ -1658,54 +1654,54 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @return
      */
     public List<Map<String, Object>> getGroupedRTsWithAggregation(AggregationConfiguration aggregationConfiguration,
-            BillingRun billingRun, IBillableEntity be, Date lastTransactionDate, Date invoiceDate, Filter filter, Integer pageSize, Integer pageIndex) {
+			BillingRun billingRun, IBillableEntity be, Date lastTransactionDate, Date invoiceDate, Filter filter, Integer pageSize, Integer pageIndex) {
 
-        if (filter != null) {
+		if (filter != null) {
 
-            // TODO #MEL use of filter must be reviewed
-            List<RatedTransaction> ratedTransactions = (List<RatedTransaction>) filterService.filteredListAsObjects(filter, null);
-            List<Long> ratedTransactionIds = null;
-            if (billingRun.isExceptionalBR()) {
-                ratedTransactionIds = ratedTransactions.stream().filter(rt -> (rt.getStatus() == RatedTransactionStatusEnum.OPEN && rt.getBillingRun() == null))
-                        .map(RatedTransaction::getId)
-                        .collect(toList());
-            } else {
-                ratedTransactionIds = ratedTransactions.stream().map(RatedTransaction::getId).collect(toList());
-            }
-            if (!ratedTransactionIds.isEmpty()) {
-                return getGroupedRTsWithAggregation(ratedTransactionIds, aggregationConfiguration);
-            }
-        }
+			// TODO #MEL use of filter must be reviewed
+			List<RatedTransaction> ratedTransactions = (List<RatedTransaction>) filterService.filteredListAsObjects(filter, null);
+			List<Long> ratedTransactionIds = null;
+			if (billingRun.isExceptionalBR()) {
+				ratedTransactionIds = ratedTransactions.stream().filter(rt -> (rt.getStatus() == RatedTransactionStatusEnum.OPEN && rt.getBillingRun() == null))
+					.map(RatedTransaction::getId).collect(toList());
+			} else {
+				ratedTransactionIds = ratedTransactions.stream().map(RatedTransaction::getId).collect(toList());
+			}
+			if (!ratedTransactionIds.isEmpty()) {
+				return getGroupedRTsWithAggregation(ratedTransactionIds, aggregationConfiguration);
+			}
+		}
 
-	boolean needSubscriptionData=false;
-        Map<String, Object> params = buildParams(billingRun, lastTransactionDate);
-        String entityCondition = getEntityCondition(be, params);
-        String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration);
+		boolean needSubscriptionData = false;
+		Map<String, Object> params = buildParams(billingRun, lastTransactionDate);
+		String entityCondition = getEntityCondition(be, params);
+		String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration);
 
-	if (be instanceof Subscription) {
-        	needSubscriptionData=true;
-	}
-	final String joinSubscription=needSubscriptionData?" left join rt.subscription s ":"";
-	final String groupBySubscription =needSubscriptionData? ", rt.serviceInstance.id, rt.chargeInstance.id, s.id, s.order.id ":"";
-	final String selectSubscription =needSubscriptionData? ",s.id as subscription_id, s.order.id as commercial_order_id, rt.chargeInstance.id as charge_instance_id, rt.serviceInstance.id as service_instance_id ":"";
-		
-        final String unitAmount = aggregationConfiguration.isAggregationPerUnitAmount() ?
-                "(case when sum(rt.quantity)=0 then sum(rt.amountWithoutTax) else (sum(rt.amountWithoutTax) / sum(rt.quantity)) end) as unit_amount_without_tax, (case when sum(rt.quantity)=0 then sum(rt.amountWithTax) else (sum(rt.amountWithTax) / sum(rt.quantity)) end)  as unit_amount_with_tax," :
-                "rt.unitAmountWithoutTax as unit_amount_without_tax, rt.unitAmountWithTax as unit_amount_with_tax,  ";
-        final String unitAmountGroupBy = aggregationConfiguration.isAggregationPerUnitAmount() ? "" : " rt.unitAmountWithoutTax, rt.unitAmountWithTax,  ";
+		if (be instanceof Subscription) {
+			needSubscriptionData = true;
+		}
+		final String joinSubscription = needSubscriptionData ? " left join rt.subscription s " : "";
+		final String groupBySubscription = needSubscriptionData ? ", rt.serviceInstance.id, rt.chargeInstance.id, s.id, s.order.id " : "";
+		final String selectSubscription = needSubscriptionData
+				? ",s.id as subscription_id, s.order.id as commercial_order_id, rt.chargeInstance.id as charge_instance_id, rt.serviceInstance.id as service_instance_id "
+				: "";
+
+		final String unitAmount = aggregationConfiguration.isAggregationPerUnitAmount()
+				? "(case when sum(rt.quantity)=0 then sum(rt.amountWithoutTax) else (sum(rt.amountWithoutTax) / sum(rt.quantity)) end) as unit_amount_without_tax, (case when sum(rt.quantity)=0 then sum(rt.amountWithTax) else (sum(rt.amountWithTax) / sum(rt.quantity)) end)  as unit_amount_with_tax,"
+				: "rt.unitAmountWithoutTax as unit_amount_without_tax, rt.unitAmountWithTax as unit_amount_with_tax,  ";
+		final String unitAmountGroupBy = aggregationConfiguration.isAggregationPerUnitAmount() ? "" : " rt.unitAmountWithoutTax, rt.unitAmountWithTax,  ";
         String query =
                 "SELECT string_agg(concat(rt.id, ''), ',') as rated_transaction_ids, rt.billingAccount.id as billing_account__id, rt.accountingCode.id as accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, "
                         + unitAmount + " SUM(rt.amountWithoutTax) as sum_without_tax, SUM(rt.amountWithTax) as sum_with_tax, rt.offerTemplate.id as offer_id, rt.userAccount.id as user_account_id, rt.accountingArticle.id as accounting_article_id, "
-                        + usageDateAggregation + " as usage_date, min(rt.startDate) as start_date, max(rt.endDate) as end_date, rt.orderNumber as order_number, "
-                        + " s.id as subscription_id, s.order.id as commercial_order_id, rt.taxPercent as tax_percent, rt.tax.id as tax_id, "
+                        + usageDateAggregation + " as usage_date, min(rt.startDate) as start_date, max(rt.endDate) as end_date, rt.orderNumber as order_number, rt.taxPercent as tax_percent, rt.tax.id as tax_id, "
                         + " rt.infoOrder.order.id as order_id, rt.infoOrder.productVersion.id as product_version_id, rt.infoOrder.orderLot.id as order_lot_id, "
-                        + " rt.chargeInstance.id as charge_instance_id, rt.parameter2 as parameter_2, rt.accountingArticle.id as article_id, rt.discountedRatedTransaction as discounted_ratedtransaction_id " + selectSubscription
+                        + " rt.parameter2 as parameter_2, rt.discountedRatedTransaction as discounted_ratedtransaction_id " + selectSubscription
                         + " FROM RatedTransaction rt "+joinSubscription+" WHERE " + entityCondition
                         + " AND rt.status = 'OPEN' AND :firstTransactionDate <= rt.usageDate AND rt.usageDate < :lastTransactionDate"
                         + " and (rt.invoicingDate is NULL or rt.invoicingDate < :invoiceUpToDate) AND rt.accountingArticle.ignoreAggregation = false"
-                        + " GROUP BY rt.billingAccount.id, rt.accountingCode.id, rt.description, rt.offerTemplate.id, rt.serviceInstance.id, " + unitAmountGroupBy
-                        + usageDateAggregation + ", rt.startDate, rt.endDate, rt.orderNumber, s.id,  s.order.id, rt.taxPercent, rt.tax.id, rt.userAccount.id, rt.accountingArticle.id, rt.discountedRatedTransaction"
-                        + " rt.infoOrder.order.id, rt.infoOrder.productVersion.id, rt.infoOrder.orderLot.id, rt.chargeInstance.id, rt.parameter2 "+groupBySubscription;
+                        + " GROUP BY rt.billingAccount.id, rt.accountingCode.id, rt.description, rt.offerTemplate.id, " + unitAmountGroupBy
+                        + usageDateAggregation + ", rt.startDate, rt.endDate, rt.orderNumber, rt.taxPercent, rt.tax.id, rt.userAccount.id, rt.accountingArticle.id, rt.discountedRatedTransaction, "
+                        + " rt.infoOrder.order.id, rt.infoOrder.productVersion.id, rt.infoOrder.orderLot.id, rt.parameter2 "+groupBySubscription;
         List<Map<String, Object>> groupedRTsWithAggregation = getSelectQueryAsMap(query, params, pageSize, pageIndex);
         groupedRTsWithAggregation.addAll(getGroupedRTsWithoutAggregation(billingRun, be, lastTransactionDate));
         return groupedRTsWithAggregation;

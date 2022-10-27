@@ -11527,8 +11527,7 @@ order by date_trunc('month', i.invoice_date) DESC
                                  deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="ar_accounting_scheme"/>
     </changeSet>
-    
-     <changeSet id="#INTRD-4682_20220209" author="AndriusKarpavicius">
+    <changeSet id="#INTRD-4682_20220209" author="AndriusKarpavicius">
         <renameColumn tableName="adm_secured_entity" oldColumnName="disable" newColumnName="disabled" columnDataType="${type.boolean}"/>
         <renameColumn tableName="adm_role_secured_entity" oldColumnName="disable" newColumnName="disabled" columnDataType="${type.boolean}"/>
      </changeSet>
@@ -11857,7 +11856,6 @@ order by date_trunc('month', i.invoice_date) DESC
                              tableName="open_order_template_articles"/>
 
     </changeSet>
-
 	<changeSet id="#INTRD-5341_20220307" author="aelmalki">
         <renameTable oldTableName="cpq_invoice_line" newTableName="billing_invoice_line"/>
         <renameSequence oldSequenceName="cpq_invoice_line_seq" newSequenceName="billing_invoice_line_seq" />
@@ -11920,7 +11918,13 @@ order by date_trunc('month', i.invoice_date) DESC
                                  constraintName="billing_invoice_line__product_version__fk"
                                  referencedTableName="cpq_product_version" referencedColumnNames="id"/>
     </changeSet>
-
+	<changeSet id="#5882_20220325" author="MohammedELAZZOUZI">
+     	<addColumn tableName="billing_invoice_line">
+            <column name="user_account_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_invoice_line" constraintName="fk_InvoiceLine_userAccount" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
+   	</changeSet> 
     <changeSet id="#INTRD-4852-18032022" author="AbdelkaderBouazza">
         <dropNotNullConstraint tableName="cpq_commercial_order" columnName="order_type_id" />
     </changeSet>
