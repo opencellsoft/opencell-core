@@ -75,6 +75,14 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
     @Inject
     private RatedTransactionService ratedTransactionService;
 
+    /** The OCCTemplate service. */
+	@Inject
+	private OCCTemplateService oCCTemplateService;
+
+	/** The OCC Account Operation Service */
+	@Inject
+	private OtherCreditAndChargeService otherCreditAndChargeService;
+
     protected List<String> missingParameters = new ArrayList<>();
 
 
@@ -154,6 +162,8 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
                 accountOperationsToPayIds.add(aOSecurityDepositTransaction.getId());
             }
         }
+        
+        OtherCreditAndCharge ao = otherCreditAndChargeService.addOCC("ADJ_SD", null, securityDepositToUpdate.getCustomerAccount(), securityDepositToUpdate.getCurrentBalance(), new Date());
 
         Long refundId = null;
         PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, preferredPaymentMethod, null);
@@ -161,7 +171,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
             throw new PaymentException(PaymentErrorEnum.NO_PAY_GATEWAY_FOR_CA, "No payment gateway for customerAccount:" + customerAccount.getCode());
         }
 
-        refundId = doPayment(amountToPay, accountOperationsToPayIds, customerAccount, preferredPaymentMethod, refundId, paymentGateway);
+        refundId = doPayment(amountToPay, List.of(ao.getId()), customerAccount, preferredPaymentMethod, refundId, paymentGateway);
         if (refundId == null) {
             return null;
         } else {
@@ -206,6 +216,11 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         if (securityDepositToUpdate.getCurrentBalance() == null) {
             securityDepositToUpdate.setCurrentBalance(BigDecimal.ZERO);
         }
+
+        if (securityDepositToUpdate.getCurrentBalance().compareTo(securityDepositInput.getAmountToCredit()) < 0) {
+            throw new BusinessException("The amount to credit should be less than or equal to the security deposit current balance");
+        }
+
         BigDecimal nCurrentBalance = securityDepositInput.getAmountToCredit().add(securityDepositToUpdate.getCurrentBalance());
         securityDepositToUpdate.setCurrentBalance(nCurrentBalance);
 

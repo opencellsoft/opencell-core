@@ -19,14 +19,12 @@ package org.meveo.service.billing.impl;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
-import static java.math.RoundingMode.*;
 import static java.util.Arrays.asList;
 import static java.util.Set.of;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -61,12 +59,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -176,7 +170,6 @@ import org.meveo.service.script.ScriptInterface;
 import org.meveo.service.script.billing.TaxScriptService;
 import org.meveo.service.tax.TaxClassService;
 import org.meveo.service.tax.TaxMappingService;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import net.sf.jasperreports.engine.DefaultJasperReportsContext;
@@ -1509,7 +1502,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             reportTemplate = StorageFactory.getInputStream(jasperFile);
 
-            JRXmlDataSource dataSource = new JRXmlDataSource(invoiceXmlFile);
+            JRXmlDataSource dataSource = StorageFactory.getJRXmlDataSource(invoiceXmlFile);
 
             String fileKey = jasperFile.getPath() + jasperFile.lastModified();
             JasperReport jasperReport = jasperReportMap.get(fileKey);
@@ -1553,8 +1546,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public synchronized void generateInvoiceFile(String billingTemplateName, String resDir) throws IOException {
         File destDir = new File(resDir + File.separator + billingTemplateName + File.separator + "pdf");
-        
-        if (!destDir.exists()) {
+
+        if (!StorageFactory.exists(destDir)) {
             log.warn("PDF jasper report {} was not found. A default report will be used.", destDir.getAbsolutePath());
             String sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + File.separator + billingTemplateName + File.separator + "invoice";
             File sourceFile = new File(sourcePath);
@@ -1571,7 +1564,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             destDir.mkdirs();
-            FileUtils.copyDirectory(sourceFile, destDir);
+            StorageFactory.copyDirectory(sourceFile, destDir);
         }
     }
 
@@ -4782,6 +4775,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         } else {
             invoice.setLastAppliedRateDate(invoice.getAuditable().getCreated());
         }
+        invoice.setUseCurrentRate(true);
         refreshInvoiceLineAndAggregateAmounts(invoice);
         return update(invoice);
     }
@@ -5898,77 +5892,90 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * Create an invoice (V11 process)
      *
-     * @param invoiceRessource
-     * @param skipValidtion
+     * @param invoiceResource
+     * @param skipValidation
      * @param isDraft
      * @return invoice
      * @param isIncludeBalance
      * @param isAutoValidation
      * @param isVirtual
+     * @param entity
      * @throws EntityDoesNotExistsException
      * @throws BusinessApiException
      * @throws BusinessException
      * @throws InvalidParameterException
      */
-    public Invoice createInvoiceV11(org.meveo.apiv2.billing.Invoice invoiceRessource, boolean skipValidtion, boolean isDraft, boolean isVirtual, Boolean isIncludeBalance, Boolean isAutoValidation)
+    public Invoice createInvoiceV11(org.meveo.apiv2.billing.Invoice invoiceResource,
+                                    boolean skipValidation, boolean isDraft, boolean isVirtual,
+                                    Boolean isIncludeBalance, Boolean isAutoValidation, Invoice entity)
             throws EntityDoesNotExistsException, BusinessApiException, BusinessException, InvalidParameterException {
 
-        Seller seller = (Seller) tryToFindByEntityClassAndCode(Seller.class, invoiceRessource.getSellerCode());
-        BillingAccount billingAccount = (BillingAccount) tryToFindByEntityClassAndCode(BillingAccount.class, invoiceRessource.getBillingAccountCode());
-        InvoiceType invoiceType = (InvoiceType) tryToFindByEntityClassAndCode(InvoiceType.class, invoiceRessource.getInvoiceTypeCode());
+        Seller seller = (Seller) tryToFindByEntityClassAndCode(Seller.class, invoiceResource.getSellerCode());
+        BillingAccount billingAccount = (BillingAccount) tryToFindByEntityClassAndCode(BillingAccount.class, invoiceResource.getBillingAccountCode());
+        InvoiceType invoiceType = (InvoiceType) tryToFindByEntityClassAndCode(InvoiceType.class, invoiceResource.getInvoiceTypeCode());
         if (invoiceType == null) {
-            throw new EntityDoesNotExistsException(InvoiceType.class, invoiceRessource.getInvoiceTypeCode());
+            throw new EntityDoesNotExistsException(InvoiceType.class, invoiceResource.getInvoiceTypeCode());
         }
-        Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<>();
+        Map<Long, TaxInvoiceAgregate> taxInvoiceAggregateMap = new HashMap<>();
         boolean isEnterprise = appProvider.isEntreprise();
         int invoiceRounding = appProvider.getInvoiceRounding();
         RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode();
         Auditable auditable = new Auditable(currentUser);
-        Map<InvoiceSubCategory, List<InvoiceLine>> existinginvoiceLinesTolinkMap = extractMappedInvoiceLinesTolink(invoiceRessource, billingAccount);
+        Map<InvoiceSubCategory, List<InvoiceLine>> existingInvoiceLinesToLinkMap
+                = extractMappedInvoiceLinesTolink(invoiceResource, billingAccount);
 
         Map<InvoiceCategory, List<InvoiceSubCategory>> subCategoryMap = new HashMap<>();
-        Invoice invoice = this.initValidatedInvoice(invoiceRessource, billingAccount, invoiceType, seller, isDraft);
+        Invoice invoice = this.initValidatedInvoice(invoiceResource, billingAccount, invoiceType, seller, isDraft);
+        if(entity != null && entity.getCfValues() != null) {
+            invoice.setCfValues(entity.getCfValues());
+        }
 
-        if (invoiceRessource.getDiscountPlan() != null) {
-            final Long dpId = invoiceRessource.getDiscountPlan().getId();
+        if (invoiceResource.getDiscountPlan() != null) {
+            final Long dpId = invoiceResource.getDiscountPlan().getId();
             DiscountPlan discountPlan = (DiscountPlan) tryToFindByEntityClassAndId(DiscountPlan.class, dpId);
             invoice.setDiscountPlan(discountPlan);
         }
-        validateInvoiceResourceAgregates(invoiceRessource);
-        for (org.meveo.apiv2.billing.CategoryInvoiceAgregate catInvAgr : invoiceRessource.getCategoryInvoiceAgregates()) {
+        validateInvoiceResourceAgregates(invoiceResource);
+        for (org.meveo.apiv2.billing.CategoryInvoiceAgregate catInvAgr : invoiceResource.getCategoryInvoiceAgregates()) {
             UserAccount userAccount = extractUserAccount(billingAccount, catInvAgr.getUserAccountCode());
             InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(catInvAgr.getCategoryInvoiceCode());
             if (invoiceCategory == null) {
                 throw new EntityDoesNotExistsException(InvoiceSubCategory.class, catInvAgr.getCategoryInvoiceCode());
             }
-            CategoryInvoiceAgregate invoiceAgregateCat = initCategoryInvoiceAgregate(billingAccount, auditable, invoice, userAccount, invoiceCategory, catInvAgr.getListSubCategoryInvoiceAgregate().size(),
-                catInvAgr.getDescription());
+            CategoryInvoiceAgregate invoiceAggregateCat = initCategoryInvoiceAgregate(billingAccount, auditable, invoice,
+                    userAccount, invoiceCategory, catInvAgr.getListSubCategoryInvoiceAgregate().size(), catInvAgr.getDescription());
 
             for (org.meveo.apiv2.billing.SubCategoryInvoiceAgregate subCatInvAgr : catInvAgr.getListSubCategoryInvoiceAgregate()) {
                 InvoiceSubCategory invoiceSubCategory = invoiceSubcategoryService.findByCode(subCatInvAgr.getInvoiceSubCategoryCode());
                 if (invoiceSubCategory == null) {
                     throw new EntityDoesNotExistsException(InvoiceSubCategory.class, subCatInvAgr.getInvoiceSubCategoryCode());
                 }
-                SubCategoryInvoiceAgregate invoiceAgregateSubcat = initSubCategoryInvoiceAgregate(auditable, invoice, userAccount, invoiceAgregateCat, subCatInvAgr.getDescription(), invoiceSubCategory);
-                createAndLinkILsFromDTO(seller, billingAccount, isEnterprise, invoiceRounding, invoiceRoundingMode, invoice, userAccount, subCatInvAgr, invoiceSubCategory, invoiceAgregateSubcat);
-                linkExistingILs(invoiceRessource, existinginvoiceLinesTolinkMap, isEnterprise, invoice, userAccount, invoiceSubCategory, invoiceAgregateSubcat);
-                saveInvoiceSubCatAndILs(invoice, invoiceAgregateSubcat, subCatInvAgr, billingAccount, taxInvoiceAgregateMap, isEnterprise, auditable, invoiceRounding, invoiceRoundingMode);
-                addSubCategoryAmountsToCategory(invoiceAgregateCat, invoiceAgregateSubcat);
+                SubCategoryInvoiceAgregate invoiceAggregateSubCat = initSubCategoryInvoiceAgregate(auditable, invoice,
+                        userAccount, invoiceAggregateCat, subCatInvAgr.getDescription(), invoiceSubCategory);
+                createAndLinkILsFromDTO(seller, billingAccount, isEnterprise, invoiceRounding, invoiceRoundingMode,
+                        invoice, userAccount, subCatInvAgr, invoiceSubCategory, invoiceAggregateSubCat);
+                linkExistingILs(invoiceResource, existingInvoiceLinesToLinkMap,
+                        isEnterprise, invoice, userAccount, invoiceSubCategory, invoiceAggregateSubCat);
+                saveInvoiceSubCatAndILs(invoice, invoiceAggregateSubCat, subCatInvAgr, billingAccount,
+                        taxInvoiceAggregateMap, isEnterprise, auditable, invoiceRounding, invoiceRoundingMode);
+                addSubCategoryAmountsToCategory(invoiceAggregateCat, invoiceAggregateSubCat);
             }
 
-            if (!existinginvoiceLinesTolinkMap.isEmpty() && subCategoryMap.containsKey(invoiceCategory)) {
+            if (!existingInvoiceLinesToLinkMap.isEmpty() && subCategoryMap.containsKey(invoiceCategory)) {
                 List<InvoiceSubCategory> subCategories = subCategoryMap.get(invoiceCategory);
-                linkILsAndSubCats(billingAccount, taxInvoiceAgregateMap, isEnterprise, invoiceRounding, invoiceRoundingMode, auditable, existinginvoiceLinesTolinkMap, invoice, userAccount, invoiceAgregateCat,
-                    subCategories);
+                linkILsAndSubCats(billingAccount, taxInvoiceAggregateMap, isEnterprise, invoiceRounding, invoiceRoundingMode,
+                        auditable, existingInvoiceLinesToLinkMap, invoice, userAccount, invoiceAggregateCat, subCategories);
             }
             getEntityManager().flush();
-            addCategoryAmountsToInvoice(invoice, invoiceAgregateCat);
+            addCategoryAmountsToInvoice(invoice, invoiceAggregateCat);
             subCategoryMap.remove(invoiceCategory);
         }
 
-        linkILsHavingCategoryOutOfInput(billingAccount, isEnterprise, auditable, existinginvoiceLinesTolinkMap, subCategoryMap, invoice, taxInvoiceAgregateMap, invoiceRounding, invoiceRoundingMode);
+        linkILsHavingCategoryOutOfInput(billingAccount, isEnterprise, auditable, existingInvoiceLinesToLinkMap,
+                subCategoryMap, invoice, taxInvoiceAggregateMap, invoiceRounding, invoiceRoundingMode);
 
-        invoice = finaliseInvoiceCreation(invoiceRessource, isEnterprise, invoiceRounding, invoiceRoundingMode, invoice, isAutoValidation, isIncludeBalance);
+        invoice = finaliseInvoiceCreation(invoiceResource, isEnterprise,
+                invoiceRounding, invoiceRoundingMode, invoice, isAutoValidation, isIncludeBalance);
         return invoice;
     }
 
@@ -6187,7 +6194,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (input.getExternalRef() != null) {
             toUpdate.setExternalRef(input.getExternalRef());
         }
-        if (input.getInvoiceDate() != null) {
+        if (input.getInvoiceDate() != null && !toUpdate.isUseCurrentRate()) {
             toUpdate.setInvoiceDate(input.getInvoiceDate());
 
             BigDecimal currentRate = null;

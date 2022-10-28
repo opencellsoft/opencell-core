@@ -36,9 +36,7 @@ import javax.persistence.PrePersist;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.commons.utils.NumberUtils;
-import org.meveo.model.AuditableEntity;
-import org.meveo.model.DatePeriod;
-import org.meveo.model.ObservableEntity;
+import org.meveo.model.*;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
@@ -60,6 +58,7 @@ import org.meveo.model.cpq.offer.QuoteOffer;
  */
 @Entity
 @ObservableEntity
+@CustomFieldEntity(cftCodePrefix = "InvoiceLine")
 @Table(name = "billing_invoice_line")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_invoice_line_seq")})
@@ -119,7 +118,7 @@ import org.meveo.model.cpq.offer.QuoteOffer;
         @NamedQuery(name = "InvoiceLine.sumAmountByOpenOrderNumberAndBA", query = "SELECT SUM(il.amountWithTax) FROM InvoiceLine il WHERE il.status = 'BILLED' AND il.openOrderNumber = :openOrderNumber AND il.billingAccount.id = :billingAccountId")
 
 	})
-public class InvoiceLine extends AuditableEntity {
+public class InvoiceLine extends AuditableCFEntity {
 
 	/**
      * 
@@ -357,6 +356,7 @@ public class InvoiceLine extends AuditableEntity {
 		this.valueDate = valueDate;
 		this.quantity = quantity;
 		this.amountWithoutTax = amountWithoutTax;
+		this.unitPrice = quantity!=null && !BigDecimal.ZERO.equals(quantity)?amountWithoutTax.divide(quantity):amountWithoutTax;
 		this.amountWithTax = amountWithTax;
 		this.amountTax = amountTax;
 		this.status = status;
@@ -840,5 +840,24 @@ public class InvoiceLine extends AuditableEntity {
 				this.rawAmount.multiply(appliedRate) : ZERO;
 		this.convertedUnitPrice = this.unitPrice != null ?
 				this.unitPrice.multiply(appliedRate) : ZERO;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		} else if (obj == null) {
+			return false;
+		} else if (!(obj instanceof InvoiceLine)) {
+			return false;
+		}
+
+		InvoiceLine other = (InvoiceLine) obj;
+		return getId() != null && other.getId() != null && getId().equals(other.getId());
+	}
+
+	@Override
+	public int hashCode() {
+		return 961 + ("InvoiceLine" + getId()).hashCode();
 	}
 }

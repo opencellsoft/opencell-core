@@ -779,10 +779,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             Text nameTxt = this.createTextNode(doc, account.getName().getLastName());
             name.appendChild(nameTxt);
         }
-        if(account.getIsCompany()) {
-            Text nameTxt = this.createTextNode(doc, account.getDescription());
-            name.appendChild(nameTxt);
-        }
         nameTag.appendChild(name);
         return nameTag;
     }
@@ -1145,9 +1141,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                 Element taxAmount = doc.createElement("amount");
                 taxAmount.appendChild(this.createTextNode(doc, toPlainString(taxInvoiceAgregate.getAmountTax())));
                 tax.appendChild(taxAmount);
-                Element amountHT = doc.createElement("amountHT");
-                amountHT.appendChild(this.createTextNode(doc, toPlainString(taxInvoiceAgregate.getAmountWithoutTax())));
-                tax.appendChild(amountHT);
                 Element amountWithoutTax = doc.createElement("amountWithoutTax");
                 amountWithoutTax.appendChild(this.createTextNode(doc, toPlainString(taxInvoiceAgregate.getAmountWithoutTax())));
                 tax.appendChild(amountWithoutTax);
@@ -1770,7 +1763,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             header.appendChild(paymentMethod);
         }
         Element comment = doc.createElement("comment");
-        comment.appendChild(doc.createComment(getDefaultIfNull(invoice.getComment(), " ")));
+        comment.appendChild(doc.createTextNode(getDefaultIfNull(invoice.getComment(), " ")));
         header.appendChild(comment);
         Element categoriesTag = createHeaderCategoriesSection(doc, invoice, invoiceConfiguration);
         if (categoriesTag != null) {
