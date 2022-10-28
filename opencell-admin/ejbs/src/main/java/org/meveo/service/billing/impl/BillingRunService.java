@@ -1366,7 +1366,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public BillingRun findOrCreateNextQuarantineBR(Long billingRunId, Long quarantineBRId, List<LanguageDescriptionDto> descriptionsTranslated) {
+    public BillingRun findOrCreateNextQuarantineBR(Long billingRunId, Long quarantineBRId) {
        BillingRun billingRun = findById(billingRunId);
        if (billingRun != null) {
     	   if(quarantineBRId != null) {
