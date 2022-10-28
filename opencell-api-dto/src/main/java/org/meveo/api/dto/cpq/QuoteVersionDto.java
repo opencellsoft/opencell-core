@@ -99,6 +99,7 @@ public class QuoteVersionDto extends BaseEntityDto {
 		this.startDate = q.getStartDate();
 		this.statusDate = q.getStatusDate();
 		this.discountPlanCode=q.getDiscountPlan()!=null?q.getDiscountPlan().getCode():null;
+		this.comment=q.getComment();
 	}
 
 	/**
