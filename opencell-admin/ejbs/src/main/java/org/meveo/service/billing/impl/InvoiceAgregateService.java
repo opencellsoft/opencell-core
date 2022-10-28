@@ -123,6 +123,14 @@ public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> 
 	 */
 	public void deleteInvoiceAgregates(BillingRun billingRun) {
 		getEntityManager().createNamedQuery("SubCategoryInvoiceAgregate.deleteByBR").setParameter("billingRunId", billingRun.getId()).executeUpdate();
+		List<Long> ids = getEntityManager().createNamedQuery("InvoiceAggregate.fetchInvoiceAggregateByBR")
+									.setParameter("billingRunId", billingRun.getId())
+									.getResultList();
+		if (!ids.isEmpty()) {
+			getEntityManager().createNamedQuery("SubCategoryInvoiceAggregate.removeInvoiceAggregateReferences")
+					.setParameter("categoryInvoiceAggregateIds", ids)
+					.executeUpdate();
+		}
 		getEntityManager().createNamedQuery("InvoiceAgregate.deleteByBR").setParameter("billingRunId", billingRun.getId()).executeUpdate();
 	}
 

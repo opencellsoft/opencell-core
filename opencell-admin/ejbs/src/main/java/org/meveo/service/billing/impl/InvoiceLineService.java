@@ -1038,6 +1038,33 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 .getResultList();
     }
 	
+	public void deleteByAssociatedInvoice(List<Long> invoices) {
+        if(!invoices.isEmpty()) {
+            List<Long> invoicesLines = findInvoiceLineByAssociatedInvoices(invoices);
+            ratedTransactionService.getEntityManager()
+                    .createNamedQuery("RatedTransaction.detachFromInvoices")
+                    .setParameter("ids", invoices)
+                    .setParameter("now", new Date())
+                    .executeUpdate();
+            if(!invoicesLines.isEmpty()) {
+                detachRatedTransactions(invoicesLines);
+                getEntityManager()
+                        .createQuery("DELETE FROM InvoiceLine WHERE id in (:ids)")
+                        .setParameter("ids", invoicesLines)
+                        .executeUpdate();
+            }
+        }
+    }
+
+    public List<Long> findInvoiceLineByAssociatedInvoices(List<Long> invoiceIds) {
+        if(invoiceIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return getEntityManager().createNamedQuery("InvoiceLine.listByAssociatedInvoice")
+                    .setParameter("invoiceIds", invoiceIds)
+                    .getResultList();
+    }
+    
 	public List<Object[]> findMinimumsTocheck(BillingRun billingRun, String joinPath) {
 		if (joinPath == null || !joinPath.contains("mt")) {
 			return null;

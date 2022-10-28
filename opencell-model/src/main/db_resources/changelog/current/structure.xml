@@ -12987,6 +12987,18 @@ order by date_trunc('month', i.invoice_date) DESC
     </changeSet>
 
 
+    <changeSet id="#INTRD-10046_20221028" author="HichamHANINE">
+        <addColumn tableName="billing_billing_run">
+            <column name="origin_billing_run_id" type="bigint" />
+        </addColumn>
+		<addColumn tableName="adm_role">
+            <column name="role_description" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="origin_billing_run_id" baseTableName="billing_billing_run" constraintName="fk_billing_billing_run_origin_billing_run"
+              					 referencedColumnNames="id" referencedTableName="billing_billing_run"/>
+    </changeSet>
     <changeSet id="INTRD-7479_20220603" author="AndriusKarpavicius">
         <renameColumn tableName="sub_accounting_period" oldColumnName="number" newColumnName="period_number"/>
     </changeSet>

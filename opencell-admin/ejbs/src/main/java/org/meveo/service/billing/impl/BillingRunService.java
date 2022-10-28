@@ -812,28 +812,33 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param billingRun the billing run to process
      * @throws Exception the exception
      */
-    public void applyAutomaticValidationActions(BillingRun billingRun) {
-        if (BillingRunStatusEnum.REJECTED.equals(billingRun.getStatus())) {
+    public BillingRun applyAutomaticValidationActions(BillingRun billingRun) {
+        if (BillingRunStatusEnum.REJECTED.equals(billingRun.getStatus()) || BillingRunStatusEnum.DRAFT_INVOICES.equals(billingRun.getStatus())) {
             List<InvoiceStatusEnum> toMove = new ArrayList<>();
+            List<InvoiceStatusEnum> toQuarantine = new ArrayList<>();
             List<InvoiceStatusEnum> toCancel = new ArrayList<>();
             if (billingRun.getRejectAutoAction() != null && billingRun.getRejectAutoAction().equals(BillingRunAutomaticActionEnum.CANCEL)) {
                 toCancel.add(InvoiceStatusEnum.REJECTED);
-            } else {
-                toMove.add(InvoiceStatusEnum.REJECTED);
+            } else if (billingRun.getRejectAutoAction() != null && billingRun.getRejectAutoAction().equals(BillingRunAutomaticActionEnum.MOVE)){
+            	toQuarantine.add(InvoiceStatusEnum.REJECTED);
             }
-
             if (billingRun.getSuspectAutoAction() != null && billingRun.getSuspectAutoAction().equals(BillingRunAutomaticActionEnum.CANCEL)) {
                 toCancel.add(InvoiceStatusEnum.SUSPECT);
-            } else {
+            } else if(billingRun.getSuspectAutoAction() != null && billingRun.getSuspectAutoAction().equals(BillingRunAutomaticActionEnum.MOVE)){
                 toMove.add(InvoiceStatusEnum.SUSPECT);
             }
             if (CollectionUtils.isNotEmpty(toMove)) {
                 invoiceService.moveInvoicesByStatus(billingRun, toMove);
             }
+            if (CollectionUtils.isNotEmpty(toQuarantine)) {
+                invoiceService.quarantineRejectedInvoicesByBR(billingRun);
+            }
             if (CollectionUtils.isNotEmpty(toCancel)) {
                 invoiceService.cancelInvoicesByStatus(billingRun, toCancel);
             }
         }
+        
+        return billingRun;
     }
 
     public BillingRunStatusEnum validateBillingRun(BillingRun billingRun, BillingRunStatusEnum validationStatus) {
@@ -1355,6 +1360,64 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         return null;
     }
 
+    /**
+     * Search if a next quarantine BR exist for the given BR quarantineBRId. if is not found, a new one is created and associated to the BR
+     * @param billingRun
+     * @param quarantineBRId
+     * @return
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public BillingRun findOrCreateNextQuarantineBR(Long billingRunId, Long quarantineBRId) {
+       BillingRun billingRun = findById(billingRunId);
+       if (billingRun != null) {
+    	   if(quarantineBRId != null) {
+	            BillingRun quarantineBillingRun = findById(quarantineBRId);	            
+	            if (quarantineBillingRun != null) {
+	            	if(quarantineBillingRun.getIsQuarantine() && BillingRunStatusEnum.REJECTED.equals(quarantineBillingRun.getStatus())) {
+	            		return quarantineBillingRun;
+	            	}else {
+	                    throw new BusinessException("The billing run with quarantine billing run id " + quarantineBRId + " is not a quarantine billing run");
+	            	}
+	            	
+	            }else {
+	                throw new BusinessException("The billing run with quarantine billing run id " + quarantineBRId + " is not found");
+	            }
+	       }else {
+	    	   BillingRun quarantineBillingRun = new BillingRun();
+	           try {
+	               BeanUtils.copyProperties(quarantineBillingRun, billingRun);
+
+	               Set<BillingRunList> billingRunLists = new HashSet<>();
+	               billingRunLists.addAll(billingRun.getBillingRunLists());
+                   quarantineBillingRun.setBillingRunLists(billingRunLists);
+	               quarantineBillingRun.setBillableBillingAccounts(new ArrayList<>());
+	               quarantineBillingRun.setBillingAccountNumber(null);
+	               quarantineBillingRun.setRejectedBillingAccounts(null);
+	               quarantineBillingRun.setRejectionReason(null);
+	               quarantineBillingRun.setPdfJobExecutionResultId(null);
+	               quarantineBillingRun.setXmlJobExecutionResultId(null);
+	               quarantineBillingRun.setInvoices(new ArrayList<>());
+	               quarantineBillingRun.setPrAmountTax(BigDecimal.ZERO);
+	               quarantineBillingRun.setPrAmountWithoutTax(BigDecimal.ZERO);
+	               quarantineBillingRun.setPrAmountWithTax(BigDecimal.ZERO);
+	               quarantineBillingRun.setStatus(BillingRunStatusEnum.REJECTED);
+	               quarantineBillingRun.setIsQuarantine(Boolean.TRUE);
+	               quarantineBillingRun.setOriginBillingRun(billingRun);
+	               quarantineBillingRun.setId(null);
+	               create(quarantineBillingRun);
+	               billingRun.setNextBillingRun(quarantineBillingRun);
+	               update(billingRun);
+	               return quarantineBillingRun;
+	           } catch (Exception e) {
+	               log.error(e.getMessage());
+	               throw new BusinessException(e);
+	           }
+	       }
+       }
+       return null;
+    }
+    
     /**
      * Creates the aggregates and invoice with invoiceLines.
      * @param billingRun the billing run
