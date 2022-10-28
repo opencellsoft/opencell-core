@@ -2584,6 +2584,7 @@
             <column name="suspect_auto_action" type="varchar(255)"/>
             <column name="reject_auto_action" type="varchar(255)"/>
             <column name="next_billing_run_id" type="bigint"/>
+            <column name="origin_billing_run_id" type="bigint"/>
             <column name="minimum_applied" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="threshold_checked" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="discount_applied" type="${type.boolean}" defaultValueNumeric="0"/>
@@ -16077,6 +16078,11 @@
 			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
 	</changeSet>
 	<!-- end fk -->
+    <changeSet id="#INTRD-10046_20221028-fk" author="HichamHANINE">          
+        <addForeignKeyConstraint baseColumnNames="origin_billing_run_id" baseTableName="billing_billing_run" constraintName="fk_billing_billing_run_origin_billing_run"
+              					 referencedColumnNames="id" referencedTableName="billing_billing_run"/>
+    </changeSet>
+    
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
         <sql><![CDATA[ alter table ${db.schema.adapted}adm_notif_history add constraint adm_notif_history_nb_retry_check check (nb_retry <= 10)]]></sql>
@@ -17786,7 +17792,7 @@
 	<changeSet id="#20220519_M540_7341" author="Mbarek-Ay"/>
 	<changeSet id="#INTRD-10097_202000926" author="TarikFA." />
 	<changeSet id="INTRD-10603_20221113" author="AbdelmounaimAkadid" />
-    
+    <changeSet id="#INTRD-10046_20221028" author="HichamHANINE" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
