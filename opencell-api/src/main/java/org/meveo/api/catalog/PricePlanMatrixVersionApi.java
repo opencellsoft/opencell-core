@@ -26,7 +26,9 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.contract.ContractItem;
+import org.meveo.model.cpq.enums.ContractStatusEnum;
 import org.meveo.model.cpq.enums.PriceVersionTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.shared.DateUtils;
@@ -67,7 +69,20 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             if (pricePlanMatrixVersion == null) {
                 throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, pricePlanMatrixCode, "pricePlanMatrixCode", "" + currentVersion, "currentVersion");
             }
-            pricePlanMatrixVersionService.removePriceMatrixVersion(pricePlanMatrixVersion);
+            PricePlanMatrix ppm = pricePlanMatrixService.findByCode(pricePlanMatrixCode);
+            if (ppm != null && ppm.getContractItems()!=null && ppm.getContractItems().size() > 0) {
+                Contract contract = ppm.getContractItems().get(0).getContract();
+                if (ContractStatusEnum.DRAFT.equals(contract.getStatus())) {
+                    pricePlanMatrixVersionService.removePriceMatrixVersionOnlyNotClosed(pricePlanMatrixVersion);
+                }
+                else {
+                    throw new MeveoApiException(String.format("status of the contrat is not Draft , it can not be updated nor removed the price Plan Matrix Version"));
+                }
+            }
+            else{
+                //pour les PV non lié au Contract
+                pricePlanMatrixVersionService.removePriceMatrixVersion(pricePlanMatrixVersion);
+            }
         } catch (BusinessException exp) {
             throw new MeveoApiException(exp);
         }
@@ -294,21 +309,8 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
                  } 
              }
              
-            DatePeriod validity=new DatePeriod(DateUtils.truncateTime(from), DateUtils.truncateTime(to));
-            
-            PricePlanMatrix pricePlanMatrix =  pricePlanMatrixVersion.getPricePlanMatrix(); 
-            
-            pricePlanMatrix.getVersions()
-            .stream()
-            .forEach(ppmv -> {
-                DatePeriod ppmvValidity = DateUtils.truncateTime(ppmv.getValidity());
-                DatePeriod validityNew = DateUtils.truncateTime(validity);
-                if(VersionStatusEnum.PUBLISHED.equals(ppmv.getStatus()) && ppmvValidity.isCorrespondsToPeriod(validityNew, false)) {
-                    throw new MeveoApiException(resourceMessages.getString("error.pricePlanMatrixVersion.overlapPeriodWithVersion") + ppmv.getCurrentVersion());
-                }
-             });
-            
-            return new GetPricePlanVersionResponseDto(pricePlanMatrixVersionService.duplicate(pricePlanMatrixVersion, pricePlanMatrixVersion.getPricePlanMatrix(),validity, pricePlanMatrixVersion.getPriceVersionType(),false));
+             DatePeriod validity=new DatePeriod(DateUtils.truncateTime(from), DateUtils.truncateTime(to));
+             return new GetPricePlanVersionResponseDto(pricePlanMatrixVersionService.duplicate(pricePlanMatrixVersion, pricePlanMatrixVersion.getPricePlanMatrix(), validity, pricePlanMatrixVersion.getPriceVersionType(), false));
         } catch (BusinessException e) {
             throw new MeveoApiException(e);
         }

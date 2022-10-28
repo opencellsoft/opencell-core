@@ -317,9 +317,18 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         return pricePlanMatrixVersion;
     }
 
+    public void removePriceMatrixVersionOnlyNotClosed(PricePlanMatrixVersion pricePlanMatrixVersion) {
+        removePriceMatrixVersionByStatus(pricePlanMatrixVersion, false);
+    }
+
     public void removePriceMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion) {
-        if (!pricePlanMatrixVersion.getStatus().equals(VersionStatusEnum.DRAFT)) {
-            log.warn("the status of version of the price plan matrix is not DRAFT, the current version is {}.Can not be deleted", pricePlanMatrixVersion.getStatus().toString());
+        boolean isPublished = VersionStatusEnum.PUBLISHED.equals(pricePlanMatrixVersion.getStatus());
+        removePriceMatrixVersionByStatus(pricePlanMatrixVersion, isPublished);
+    }
+
+    public void removePriceMatrixVersionByStatus(PricePlanMatrixVersion pricePlanMatrixVersion, boolean isStatusKo) {
+        if (VersionStatusEnum.CLOSED.equals(pricePlanMatrixVersion.getStatus()) || isStatusKo) {
+            log.warn("the status of version of the price plan matrix is {}. Can not be deleted", pricePlanMatrixVersion.getStatus().toString());
             throw new MeveoApiException(String.format(STATUS_ERROR_MSG, pricePlanMatrixVersion.getStatus().toString()));
         }
         logAction(pricePlanMatrixVersion, "DELETE");
@@ -412,13 +421,13 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 	public PricePlanMatrixVersion getPublishedVersionValideForDate(String ppmCode, ServiceInstance serviceInstance, Date operationDate) {
 		Date operationDateParam = new Date();
 		if(serviceInstance==null || PriceVersionDateSettingEnum.EVENT.equals(serviceInstance.getPriceVersionDateSetting())) {
-			operationDateParam = operationDate; 
-		} else if(PriceVersionDateSettingEnum.DELIVERY.equals(serviceInstance.getPriceVersionDateSetting()) 
-			|| PriceVersionDateSettingEnum.RENEWAL.equals(serviceInstance.getPriceVersionDateSetting()) 
+			operationDateParam = operationDate;
+		} else if(PriceVersionDateSettingEnum.DELIVERY.equals(serviceInstance.getPriceVersionDateSetting())
+			|| PriceVersionDateSettingEnum.RENEWAL.equals(serviceInstance.getPriceVersionDateSetting())
 			|| PriceVersionDateSettingEnum.QUOTE.equals(serviceInstance.getPriceVersionDateSetting())) {
-				operationDateParam = serviceInstance.getPriceVersionDate(); 
+				operationDateParam = serviceInstance.getPriceVersionDate();
 		}
-		
+
         List<PricePlanMatrixVersion> result=(List<PricePlanMatrixVersion>) this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.getPublishedVersionValideForDate")
                 .setParameter("pricePlanMatrixCode", ppmCode).setParameter("operationDate", operationDateParam).getResultList();
         if(CollectionUtils.isEmpty(result)) {
@@ -524,16 +533,16 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
         /*
          * if(pricePlanMatrixValues != null && !pricePlanMatrixValues.isEmpty()) {
-         * 
+         *
          * pricePlanMatrixValues.forEach(ppmv -> {
-         * 
+         *
          * pricePlanMatrixValueService.detach(ppmv);
-         * 
+         *
          * var pricePlanMatrixValue = new PricePlanMatrixValue(ppmv); if(pricePlanMatrixColumn != null) { pricePlanMatrixValue.setPricePlanMatrixColumn(pricePlanMatrixColumn);
          * pricePlanMatrixColumn.getPricePlanMatrixValues().add(pricePlanMatrixValue); } if(pricePlanMatrixLine != null) {
          * pricePlanMatrixValue.setPricePlanMatrixLine(pricePlanMatrixLine); pricePlanMatrixLine.getPricePlanMatrixValues().add(pricePlanMatrixValue); }
          * pricePlanMatrixValueService.create(pricePlanMatrixValue);
-         * 
+         *
          * }); }
          */
     }
