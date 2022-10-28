@@ -6247,6 +6247,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
     }
 
+    @Inject private LinkedInvoiceService linkedInvoiceService;
     /**
      * @param toUpdate invoice to update
      * @param input
@@ -6295,18 +6296,44 @@ public class InvoiceService extends PersistenceService<Invoice> {
             toUpdate.setPaymentMethod(pm);
         }
         if (invoiceResource.getListLinkedInvoices() != null) {
-            toUpdate.getLinkedInvoices().clear();
-            for (Long invoiceId : invoiceResource.getListLinkedInvoices()) {
+            List<Long> toUpdateLinkedInvoice = toUpdate.getLinkedInvoices().stream()
+                    .filter(li -> li.getLinkedInvoiceValue().getInvoiceType().getCode().equals("ADJ"))
+                    .map(li -> li.getLinkedInvoiceValue().getId()).collect(Collectors.toList());
+            
+            List<Long> linkedInvoiceToAdd = new ArrayList<>(invoiceResource.getListLinkedInvoices());
+            List<Long> linkedInvoiceToRemove = new ArrayList<>(toUpdateLinkedInvoice);
+            
+            linkedInvoiceToAdd.removeAll(toUpdateLinkedInvoice);
+            for (Long invoiceId : linkedInvoiceToAdd) {
                 Invoice invoiceTmp = findById(invoiceId);
                 if (invoiceTmp == null) {
                     throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
                 }
+                if(invoiceTmp.getInvoiceType() != null && invoiceTmp.getInvoiceType().getCode().equals("ADV")) {
+                    throw new BusinessApiException("The invoice of type Advance can not be linked manually");
+                }
                 if (!toUpdate.getInvoiceType().getAppliesTo().contains(invoiceTmp.getInvoiceType())) {
                     throw new BusinessApiException("InvoiceId " + invoiceId + " cant be linked");
                 }
-                LinkedInvoice linkedInvoice = new LinkedInvoice(toUpdate, invoiceTmp);
-                toUpdate.getLinkedInvoices().add(linkedInvoice);
+                 LinkedInvoice linkedInvoice = new LinkedInvoice(toUpdate, invoiceTmp);
+                 toUpdate.getLinkedInvoices().add(linkedInvoice);
             }
+            linkedInvoiceToRemove.removeAll(invoiceResource.getListLinkedInvoices());
+            for(Long invoiceId : linkedInvoiceToRemove) {
+                Invoice invoiceTmp = findById(invoiceId);
+                if (invoiceTmp == null) {
+                    throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
+                }
+                if(invoiceTmp.getInvoiceType() != null && invoiceTmp.getInvoiceType().getCode().equals("ADV")) {
+                    throw new BusinessApiException("The invoice of type Advance can not be linked manually");
+                }
+                if (!toUpdate.getInvoiceType().getAppliesTo().contains(invoiceTmp.getInvoiceType())) {
+                    throw new BusinessApiException("InvoiceId " + invoiceId + " cant be linked");
+                }
+                linkedInvoiceService.deleteByIdInvoiceAndLinkedInvoice(toUpdate.getId(), Arrays.asList(invoiceId));
+            }
+            
+            
         }
 
         if (invoiceResource.getOrder() != null) {
