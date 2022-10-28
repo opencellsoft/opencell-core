@@ -130,6 +130,7 @@ import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
+import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.ApplyMinimumModeEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -2638,6 +2639,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public void deleteInvoices(Long billingRunId) {
         BillingRun br = getBrById(billingRunId);
         deleteInvoicesByStatus(br, Arrays.asList(InvoiceStatusEnum.CANCELED));
+        billingRunService.updateBillingRunStatistics(br);
     }
 
     /**
@@ -4865,6 +4867,36 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
+     * Return the total of positive rated transaction for a billing run.
+     *
+     * @param billingRun the billing run
+     * @return a map of positive rated transaction for a billing run.
+     */
+    @SuppressWarnings("unchecked")
+    public Amounts getTotalAmountsByBR(BillingRun billingRun) {
+        Amounts amounts = new Amounts();
+        try {
+            Object[] result = (Object[]) getEntityManager().createNamedQuery("Invoice.sumAmountsByBR").setParameter("billingRunId", billingRun.getId()).getSingleResult();
+            amounts.setAmountTax(result[0] != null ? (BigDecimal) result[0] : BigDecimal.ZERO);
+            amounts.setAmountWithoutTax(result[1] != null ? (BigDecimal) result[1] : BigDecimal.ZERO);
+            amounts.setAmountWithTax(result[2] != null ? (BigDecimal) result[2] : BigDecimal.ZERO);
+        } catch (NoResultException e) {
+            //ignore
+        }
+        return amounts;     
+    }
+
+    /**
+     * List billing accounts that are associated with invoice for a given billing run
+     *
+     * @param billingRun Billing run
+     * @return A list of Billing accounts
+     */
+    public List<BillingAccount> getInvoicesBillingAccountsByBR(BillingRun billingRun) {
+        return getEntityManager().createNamedQuery("Invoice.billingAccountsByBr", BillingAccount.class).setParameter("billingRunId", billingRun.getId()).getResultList();
+    }
+    
+    /**
      * Resolve Invoice production date delay for a given billing run
      *
      * @param el EL expression to resolve
@@ -4902,6 +4934,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public void cancelInvoicesByStatus(BillingRun billingRun, List<InvoiceStatusEnum> toCancel) {
         List<Invoice> invoices = findInvoicesByStatusAndBR(billingRun.getId(), toCancel);
         invoices.stream().forEach(invoice -> cancelInvoiceWithoutDelete(invoice));
+        billingRunService.updateBillingRunStatistics(billingRun);
+    }
+
+    public void cancelRejectedInvoicesByBR(BillingRun billingRun) {
+        List<Invoice> invoices = findInvoicesByStatusAndBR(billingRun.getId(), Arrays.asList(InvoiceStatusEnum.REJECTED));
+        invoices.stream().forEach(invoice -> cancelInvoiceWithoutDelete(invoice));
     }
     
     public void quarantineRejectedInvoicesByBR(BillingRun billingRun) {
@@ -4920,6 +4958,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             getEntityManager().createNamedQuery("SubCategoryInvoiceAgregate.moveToQuarantineBRByInvoiceIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
 
             billingRun = billingRunService.refreshOrRetrieve(billingRun);
+
+            billingRunService.updateBillingRunStatistics(nextBR);
+            billingRunService.updateBillingRunStatistics(billingRun);
         }
     }
 
