@@ -24,7 +24,7 @@ import org.hibernate.QueryException;
 import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.engine.spi.Mapping;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.hibernate.type.ClobType;
+import org.hibernate.type.StringType;
 import org.hibernate.type.Type;
 
 public class PostgreSQLStringAggLongFunction implements SQLFunction {
@@ -47,7 +47,7 @@ public class PostgreSQLStringAggLongFunction implements SQLFunction {
 
     @Override
     public Type getReturnType(Type firstArgumentType, Mapping mapping) throws QueryException {
-        return ClobType.INSTANCE;
+        return StringType.INSTANCE;
     }
 
     @Override
