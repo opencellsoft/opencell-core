@@ -32,7 +32,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.*;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -64,6 +87,7 @@ import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.OrderOffer;
+import org.meveo.model.crm.IInvoicingMinimumApplicable;
 import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.payments.AccountOperation;
@@ -100,8 +124,9 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Subscription.getSellersByBA", query = "select distinct s.seller from Subscription s where s.userAccount.billingAccount=:billingAccount"),
         @NamedQuery(name = "Subscription.listByCustomer", query = "select s from Subscription s inner join s.userAccount ua inner join ua.billingAccount ba inner join ba.customerAccount ca inner join ca.customer c where c=:customer order by s.code asc"),
         @NamedQuery(name = "Subscription.getCountByParent", query = "select count(*) from Subscription s where s.userAccount=:parent"),
-        @NamedQuery(name = "Subscription.getSubscriptionIdsUsingProduct", query = "select si.subscription.id from ServiceInstance si where si.subscription.status not in ('CANCELED','RESILIATED','CLOSED') and si.productVersion.product in (select pc.product from ProductChargeTemplateMapping pc where pc.chargeTemplate.code=:eventCode)")})
-public class Subscription extends BusinessCFEntity implements IBillableEntity, IWFEntity, IDiscountable, ICounterEntity {
+        @NamedQuery(name = "Subscription.getSubscriptionIdsUsingProduct", query = "select si.subscription.id from ServiceInstance si where si.subscription.status not in ('CANCELED','RESILIATED','CLOSED') and si.productVersion.product in (select pc.product from ProductChargeTemplateMapping pc where pc.chargeTemplate.code=:eventCode)"),
+        @NamedQuery(name = "Subscription.updateOwner", query = "update Subscription s set s.userAccount=:newOwner where s.id=:id")})
+public class Subscription extends BusinessCFEntity implements IBillableEntity, IWFEntity, IDiscountable, ICounterEntity, IInvoicingMinimumApplicable {
 
     private static final long serialVersionUID = 1L;
 

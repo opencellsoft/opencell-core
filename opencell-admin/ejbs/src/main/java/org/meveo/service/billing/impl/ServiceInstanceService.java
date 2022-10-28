@@ -343,10 +343,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             SubscriptionRenewal serviceRenewal = serviceTemplate.getServiceRenewal();
             serviceInstance.setServiceRenewal(serviceRenewal);
         }
-        // serviceInstance.setMinimumAmountEl(serviceTemplate.getMinimumAmountEl());
-        // serviceInstance.setMinimumLabelEl(serviceTemplate.getMinimumLabelEl());
-        // serviceInstance.setMinimumInvoiceSubCategory(serviceTemplate.getMinimumInvoiceSubCategory());
-
         if (!isVirtual) {
             create(serviceInstance);
         } else {
@@ -476,7 +472,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     public RatingResult serviceActivation(ServiceInstance serviceInstance, boolean applySubscriptionCharges, boolean applyRecurringCharges)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         Subscription subscription = serviceInstance.getSubscription();
-        List<DiscountPlanItem> eligibleFixedDiscountItems = new ArrayList<DiscountPlanItem>();
+        List<DiscountPlanItem> eligibleFixedDiscountItems = new ArrayList<>();
 
         log.debug("Will activate service {} for subscription {} quantity {}", serviceInstance.getCode(), serviceInstance.getSubscription().getCode(), serviceInstance.getQuantity());
 
@@ -566,7 +562,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
             } catch (RatingException e) {
                 log.trace("Failed to apply recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());
-                throw e; // e.getBusinessException();
+                throw e;
 
             } catch (BusinessException e) {
                 log.error("Failed to apply recurring charge {}: {}", recurringChargeInstance, e.getMessage(), e);
@@ -853,9 +849,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             usageChargeInstanceService.suspendUsageChargeInstance(usageChargeInstance, suspensionDate);
         }
 
+        InstanceStatusEnum lastStatus = serviceInstance.getStatus();
         serviceInstance.setStatus(InstanceStatusEnum.SUSPENDED);
         serviceInstance.setTerminationDate(suspensionDate);
         update(serviceInstance);
+        auditableFieldService.createFieldHistory(serviceInstance, AuditableFieldNameEnum.STATUS.getFieldName(),
+                AuditChangeTypeEnum.STATUS, lastStatus.toString(), serviceInstance.getStatus().toString());
     }
 
     /**
@@ -885,6 +884,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
         checkServiceAssociatedWithOffer(serviceInstance);
 
+        InstanceStatusEnum lastStatus = serviceInstance.getStatus();
         serviceInstance.setStatus(InstanceStatusEnum.ACTIVE);
         serviceInstance.setReactivationDate(reactivationDate);
         serviceInstance.setDescription(description);
@@ -899,6 +899,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             reactivateUsageChargeWithStatus(serviceInstance, reactivationDate, InstanceStatusEnum.TERMINATED);
         }
 
+        auditableFieldService.createFieldHistory(serviceInstance, AuditableFieldNameEnum.STATUS.getFieldName(),
+                AuditChangeTypeEnum.STATUS, lastStatus.toString(), serviceInstance.getStatus().toString());
         update(serviceInstance);
 
         if (serviceInstance.getServiceTemplate() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
