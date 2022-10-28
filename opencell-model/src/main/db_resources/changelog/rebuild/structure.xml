@@ -9299,6 +9299,7 @@
             <column name="xml_filename" type="varchar(255)" />
             <column name="discount_plan_id" type="bigint"></column>
             <column name="contract_id" type="bigint" />
+            <column name="comment" type="varchar(2000)" />
         </createTable>
     </changeSet>
 
