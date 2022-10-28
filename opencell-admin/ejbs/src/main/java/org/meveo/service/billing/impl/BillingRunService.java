@@ -812,7 +812,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param billingRun the billing run to process
      * @throws Exception the exception
      */
-    public void applyAutomaticValidationActions(BillingRun billingRun) {
+    public BillingRun applyAutomaticValidationActions(BillingRun billingRun) {
         if (BillingRunStatusEnum.REJECTED.equals(billingRun.getStatus()) || BillingRunStatusEnum.DRAFT_INVOICES.equals(billingRun.getStatus())) {
             List<InvoiceStatusEnum> toMove = new ArrayList<>();
             List<InvoiceStatusEnum> toQuarantine = new ArrayList<>();
@@ -837,6 +837,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 invoiceService.cancelInvoicesByStatus(billingRun, toCancel);
             }
         }
+        
+        return billingRun;
     }
 
     public BillingRunStatusEnum validateBillingRun(BillingRun billingRun, BillingRunStatusEnum validationStatus) {
