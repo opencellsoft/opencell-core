@@ -6255,6 +6255,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return null;
         }
     }
+    public List<Long> getInvoicesByBR(Long billingRunId) {
+        return getEntityManager().createNamedQuery("Invoice.loadByBillingRun", Long.class)
+                    .setParameter("billingRunId", billingRunId)
+                    .getResultList();
+    }
     
     public void checkAndUpdatePaymentStatus(Invoice entity,InvoicePaymentStatusEnum oldInvoicePaymentStatusEnum, InvoicePaymentStatusEnum newInvoicePaymentStatusEnum) {
         if (!oldInvoicePaymentStatusEnum.equals(newInvoicePaymentStatusEnum)) {
