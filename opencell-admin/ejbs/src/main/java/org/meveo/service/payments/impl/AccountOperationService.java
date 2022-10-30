@@ -786,11 +786,6 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         super.create(entity);
     }
 
-    public AccountOperation persistAndGetEntity(AccountOperation accountOperation) {
-        fillOperationNumber(accountOperation);
-        return super.persistAndGetEntity(accountOperation);
-    }
-
     @SuppressWarnings("unchecked")
     public List<AccountOperation> findByCustomerAccount(List<Long> aoIds, Long customerAccountId) {
         return getEntityManager().createNamedQuery("AccountOperation.findByCustomerAccount")
