@@ -607,6 +607,16 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         log.trace("end of create {}. entity id={}.", entity.getClass().getSimpleName(), entity.getId());
     }
 
+
+    public E persistAndGetEntity(E entity) {
+
+        getEntityManager().persist(entity);
+        getEntityManager().flush();
+
+        return entity;
+
+    }
+
     /**
      * @see org.meveo.service.base.local.IPersistenceService#create(org.meveo.model.IEntity)
      */

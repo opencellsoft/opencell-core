@@ -303,8 +303,8 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         checkSecurityDepositPaymentAmount(securityDeposit, securityDepositPaymentInput.getAmount(), recordedInvoice);
         checkSecurityDepositSubscription(securityDeposit, recordedInvoice);
         checkSecurityDepositServiceInstance(securityDeposit, recordedInvoice);
-        createSecurityDepositPaymentAccountOperation(recordedInvoice, securityDepositPaymentInput.getAmount());
-        matchSecurityDepositPayments(securityDeposit, recordedInvoice, securityDepositPaymentInput.getAmount());
+        Long securityDepositAOId = createSecurityDepositPaymentAccountOperation(securityDeposit, securityDepositPaymentInput.getAmount());
+        matchSecurityDepositPayments(securityDeposit, recordedInvoice, securityDepositAOId, securityDepositPaymentInput.getAmount());
         logPaymentHistory(securityDepositPaymentInput, securityDeposit);
 
         DebitSecurityDeposit(securityDeposit, securityDepositPaymentInput.getAmount());
@@ -318,15 +318,20 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
     }
 
-    private void createSecurityDepositPaymentAccountOperation(AccountOperation accountOperation, BigDecimal amount) {
+    private Long createSecurityDepositPaymentAccountOperation(SecurityDeposit securityDeposit, BigDecimal amount) {
 
         AccountOperation securityDepositPaymentAccountOperation = new AccountOperation();
         securityDepositPaymentAccountOperation.setAmount(amount);
         securityDepositPaymentAccountOperation.setDepositDate(new Date());
         securityDepositPaymentAccountOperation.setPaymentMethod(PaymentMethodEnum.CHECK);
-        securityDepositPaymentAccountOperation.setCustomerAccount(accountOperation.getCustomerAccount());
+        securityDepositPaymentAccountOperation.setCustomerAccount(securityDeposit.getCustomerAccount());
+        securityDepositPaymentAccountOperation.setUnMatchingAmount(amount);
+        securityDepositPaymentAccountOperation.setTransactionCategory(OperationCategoryEnum.CREDIT);
+        securityDepositPaymentAccountOperation.setCode("PAY_SD");
+        securityDepositPaymentAccountOperation.setMatchingStatus(MatchingStatusEnum.P);
 
-        accountOperationService.create(securityDepositPaymentAccountOperation);
+        return accountOperationService.createAndReturnId(securityDepositPaymentAccountOperation);
+
     }
 
     private void logPaymentHistory(SecurityDepositPaymentInput securityDepositPaymentInput, SecurityDeposit securityDeposit) {
@@ -348,16 +353,12 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         update(securityDeposit);
     }
 
-    private void matchSecurityDepositPayments(SecurityDeposit securityDeposit, AccountOperation accountOperation, BigDecimal amount)  {
+    private void matchSecurityDepositPayments(SecurityDeposit securityDeposit, AccountOperation accountOperation, Long securityDepositAOId, BigDecimal amount)  {
 
         CustomerAccount customerAccount = securityDeposit.getCustomerAccount();
 
-        //TODO match the invoice (AO of the payload) with the new created AO (PAY_SD)
-        List<Long> aosIdsToMatch = securityDepositTransactionService.getSecurityDepositTransactionBySecurityDepositId(securityDeposit.getId())
-                .stream().filter(securityDepositTransaction ->OperationCategoryEnum.CREDIT.equals(securityDepositTransaction.getAccountOperation().getTransactionCategory()))
-                .filter(securityDepositTransaction -> securityDepositTransaction.getAccountOperation().getMatchingStatus() == MatchingStatusEnum.O || securityDepositTransaction.getAccountOperation().getMatchingStatus() == MatchingStatusEnum.P)
-                .map(securityDepositTransaction -> securityDepositTransaction.getAccountOperation().getId())
-                        .collect(Collectors.toList());
+        List<Long> aosIdsToMatch = new ArrayList<>();
+        aosIdsToMatch.add(securityDepositAOId);
         aosIdsToMatch.add(accountOperation.getId());
 
         try {
