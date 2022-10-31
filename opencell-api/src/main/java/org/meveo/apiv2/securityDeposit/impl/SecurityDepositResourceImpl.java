@@ -1,18 +1,14 @@
 package org.meveo.apiv2.securityDeposit.impl;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
-<<<<<<< HEAD
 import javax.transaction.Transactional;
-=======
 import javax.ws.rs.NotFoundException;
->>>>>>> e41b6f740c (#INTRD-10402 back update the api instantiate - DEV)
 import javax.ws.rs.core.Response;
 
 import org.meveo.admin.exception.BusinessException;
@@ -22,7 +18,11 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.apiv2.securityDeposit.*;
+import org.meveo.apiv2.securityDeposit.SecurityDepositCancelInput;
+import org.meveo.apiv2.securityDeposit.SecurityDepositCreditInput;
+import org.meveo.apiv2.securityDeposit.SecurityDepositInput;
+import org.meveo.apiv2.securityDeposit.SecurityDepositPaymentInput;
+import org.meveo.apiv2.securityDeposit.SecurityDepositRefundInput;
 import org.meveo.apiv2.securityDeposit.resource.SecurityDepositResource;
 import org.meveo.apiv2.securityDeposit.service.SecurityDepositApiService;
 import org.meveo.model.securityDeposit.SecurityDeposit;
