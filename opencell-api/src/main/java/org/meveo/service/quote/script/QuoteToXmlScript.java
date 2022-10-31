@@ -11,15 +11,16 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.inject.Inject;
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.cpq.PriceDTO;
 import org.meveo.api.dto.cpq.xml.BillableAccount;
@@ -38,16 +39,17 @@ import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
-import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuoteLot;
 import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.QuoteMapper;
@@ -64,6 +66,7 @@ public class QuoteToXmlScript extends ModuleScript {
     private CpqQuoteService cpqQuoteService = (CpqQuoteService) getServiceInterface(CpqQuoteService.class.getSimpleName());
     protected ParamBeanFactory paramBeanFactory = (ParamBeanFactory) getServiceInterface(ParamBeanFactory.class.getSimpleName());
     private EntityToDtoConverter entityToDtoConverter = (EntityToDtoConverter) getServiceInterface(EntityToDtoConverter.class.getSimpleName());
+    private TradingCurrencyService currencyService = (TradingCurrencyService) getServiceInterface(TradingCurrencyService.class.getSimpleName());
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -210,7 +213,16 @@ public class QuoteToXmlScript extends ModuleScript {
     	org.meveo.api.dto.cpq.xml.AccountingArticle accountingArticleDto = new  org.meveo.api.dto.cpq.xml.AccountingArticle(accountingArticle, quoteArticleLines, getTradingLanguage(ba));
 
     	accountingArticleDto.setQuoteLines(quoteArticleLines.stream().filter(line -> line.getQuoteProduct() != null)
-    			.map(line -> new QuoteLine(line,mapToOffer(line.getQuoteProduct())))
+    			.map(line -> {
+                    // build currency details
+                    Map<String, TradingCurrency> currencies = new HashMap<>();
+                    line.getQuotePrices().forEach(quotePrice -> {
+                        if(StringUtils.isNotBlank(quotePrice.getCurrencyCode())){
+                            currencies.put(quotePrice.getCurrencyCode(), currencyService.findByTradingCurrencyCode(quotePrice.getCurrencyCode()));
+                        }
+                    });
+                    return new QuoteLine(line,mapToOffer(line.getQuoteProduct()), currencies);
+                })
     			.collect(Collectors.toList()));
     	return accountingArticleDto; 
     }
