@@ -8320,7 +8320,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="job_template" value="AssignMatchingCodeToOldEntriesJob" />
 			<column name="code" value="AssignMatchingCodeToOldEntriesJob" />
 			<column name="creator" value="OPENCELL.ADMIN" />
-			<column name="timerentity_id" valueNumeric="-1" />
+			<column name="timerentity_id" valueNumeric="null" />
 			<column name="uuid" value="AssignMatchingCodeToOldEntriesJob" />
 		</insert>
 	</changeSet>
