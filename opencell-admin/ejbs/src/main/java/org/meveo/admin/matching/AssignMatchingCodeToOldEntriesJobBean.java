@@ -56,7 +56,8 @@ public class AssignMatchingCodeToOldEntriesJobBean extends IteratorBasedJobBean<
     }
 
     private void executeProcess(List<AccountOperation> aos, JobExecutionResultImpl jobExecutionResult) throws BusinessException {
-        journalEntryService.assignMatchingCodeToJournalEntries(aos, null);
+        Optional.ofNullable(aos).orElse(Collections.emptyList())
+                .forEach(ao -> journalEntryService.assignMatchingCodeToJournalEntries(ao, null));
     }
 
 
