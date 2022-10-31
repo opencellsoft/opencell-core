@@ -18,11 +18,8 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.apiv2.securityDeposit.SecurityDepositCancelInput;
-import org.meveo.apiv2.securityDeposit.SecurityDepositCreditInput;
-import org.meveo.apiv2.securityDeposit.SecurityDepositInput;
-import org.meveo.apiv2.securityDeposit.SecurityDepositPaymentInput;
-import org.meveo.apiv2.securityDeposit.SecurityDepositRefundInput;
+import org.meveo.api.invoice.InvoiceApi;
+import org.meveo.apiv2.securityDeposit.*;
 import org.meveo.apiv2.securityDeposit.resource.SecurityDepositResource;
 import org.meveo.apiv2.securityDeposit.service.SecurityDepositApiService;
 import org.meveo.model.securityDeposit.SecurityDeposit;
@@ -44,9 +41,12 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
     private AuditLogService auditLogService;
     
     @Inject
-    private BillingAccountService billingAccountService;
+    private InvoiceApi invoiceApi;
     
     SecurityDepositMapper securityDepositMapper = new SecurityDepositMapper();
+
+    @Inject
+    BillingAccountService billingAccountService;
 
     @Override
     public Response instantiate(SecurityDepositInput securityDepositInput) {
@@ -139,7 +139,7 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
         }    
 
         try {
-			securityDepositApiService.refund(securityDepositToUpdate, securityDepositInput.getRefundReason(), SecurityDepositOperationEnum.REFUND_SECURITY_DEPOSIT, SecurityDepositStatusEnum.REFUNDED, "REFUND");
+            securityDepositApiService.refund(securityDepositToUpdate, securityDepositInput.getRefundReason(), SecurityDepositOperationEnum.REFUND_SECURITY_DEPOSIT, SecurityDepositStatusEnum.REFUNDED, "REFUND");
         } catch (BusinessException e) {
             throw new BusinessException(e);
         } catch (ImportInvoiceException | InvoiceExistException | IOException | MeveoApiException e) {
