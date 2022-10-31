@@ -49,6 +49,9 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
     CustomerAccountService customerAccountService;
 
     @Inject
+    AccountOperationService accountOperationService;
+
+    @Inject
     private PaymentService paymentService;
 
     @Inject
@@ -74,10 +77,6 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
     @Inject
     private RatedTransactionService ratedTransactionService;
-
-    /** The OCCTemplate service. */
-	@Inject
-	private OCCTemplateService oCCTemplateService;
 
 	/** The OCC Account Operation Service */
 	@Inject
@@ -309,7 +308,8 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         checkSecurityDepositPaymentAmount(securityDeposit, securityDepositPaymentInput.getAmount(), recordedInvoice);
         checkSecurityDepositSubscription(securityDeposit, recordedInvoice);
         checkSecurityDepositServiceInstance(securityDeposit, recordedInvoice);
-        matchSecurityDepositPayments(securityDeposit, recordedInvoice, securityDepositPaymentInput.getAmount());
+        Long securityDepositAOId = createSecurityDepositPaymentAccountOperation(securityDeposit, securityDepositPaymentInput.getAmount());
+        matchSecurityDepositPayments(securityDeposit, recordedInvoice, securityDepositAOId, securityDepositPaymentInput.getAmount());
         logPaymentHistory(securityDepositPaymentInput, securityDeposit);
 
         DebitSecurityDeposit(securityDeposit, securityDepositPaymentInput.getAmount());
@@ -320,6 +320,22 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
                 recordedInvoice);
 
         auditLogService.trackOperation("DEBIT", new Date(), securityDeposit, securityDeposit.getCode());
+
+    }
+
+    private Long createSecurityDepositPaymentAccountOperation(SecurityDeposit securityDeposit, BigDecimal amount) {
+
+        AccountOperation securityDepositPaymentAccountOperation = new AccountOperation();
+        securityDepositPaymentAccountOperation.setAmount(amount);
+        securityDepositPaymentAccountOperation.setDepositDate(new Date());
+        securityDepositPaymentAccountOperation.setPaymentMethod(PaymentMethodEnum.CHECK);
+        securityDepositPaymentAccountOperation.setCustomerAccount(securityDeposit.getCustomerAccount());
+        securityDepositPaymentAccountOperation.setUnMatchingAmount(amount);
+        securityDepositPaymentAccountOperation.setTransactionCategory(OperationCategoryEnum.CREDIT);
+        securityDepositPaymentAccountOperation.setCode("PAY_SD");
+        securityDepositPaymentAccountOperation.setMatchingStatus(MatchingStatusEnum.P);
+
+        return accountOperationService.createAndReturnId(securityDepositPaymentAccountOperation);
 
     }
 
@@ -342,15 +358,12 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         update(securityDeposit);
     }
 
-    private void matchSecurityDepositPayments(SecurityDeposit securityDeposit, AccountOperation accountOperation, BigDecimal amount)  {
+    private void matchSecurityDepositPayments(SecurityDeposit securityDeposit, AccountOperation accountOperation, Long securityDepositAOId, BigDecimal amount)  {
 
         CustomerAccount customerAccount = securityDeposit.getCustomerAccount();
 
-        List<Long> aosIdsToMatch = securityDepositTransactionService.getSecurityDepositTransactionBySecurityDepositId(securityDeposit.getId())
-                .stream().filter(securityDepositTransaction ->OperationCategoryEnum.CREDIT.equals(securityDepositTransaction.getAccountOperation().getTransactionCategory()))
-                .filter(securityDepositTransaction -> securityDepositTransaction.getAccountOperation().getMatchingStatus() == MatchingStatusEnum.O || securityDepositTransaction.getAccountOperation().getMatchingStatus() == MatchingStatusEnum.P)
-                .map(securityDepositTransaction -> securityDepositTransaction.getAccountOperation().getId())
-                        .collect(Collectors.toList());
+        List<Long> aosIdsToMatch = new ArrayList<>();
+        aosIdsToMatch.add(securityDepositAOId);
         aosIdsToMatch.add(accountOperation.getId());
 
         try {
