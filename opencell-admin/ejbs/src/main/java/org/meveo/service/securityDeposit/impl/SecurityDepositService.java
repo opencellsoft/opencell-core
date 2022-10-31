@@ -318,7 +318,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
     }
 
-    private Long createSecurityDepositPaymentAccountOperation(SecurityDeposit securityDeposit, BigDecimal amount) {
+    public Long createSecurityDepositPaymentAccountOperation(SecurityDeposit securityDeposit, BigDecimal amount) {
 
         AccountOperation securityDepositPaymentAccountOperation = new AccountOperation();
         securityDepositPaymentAccountOperation.setAmount(amount);
