@@ -244,47 +244,6 @@ public class SecurityDepositServiceTest {
     }
 
     @Test
-    public void testU() {
-
-
-        SecurityDepositService businessService = Mockito.spy(securityDepositService);
-
-        SecurityDeposit securityDeposit = new SecurityDeposit();
-        securityDeposit.setCurrentBalance(BigDecimal.valueOf(100L));
-        Subscription securityDepositSubscription = new Subscription();
-        securityDepositSubscription.setId(1L);
-        securityDepositSubscription.setCode("1");
-
-        securityDeposit.setSubscription(securityDepositSubscription);
-        Mockito.doReturn(securityDeposit).when(businessService).findById(-1L);
-
-
-        AccountOperation accountOperation = new AccountOperation();
-        accountOperation.setAmount(BigDecimal.valueOf(100L));
-        Invoice accountOperationInvoice = new Invoice();
-        Subscription accountOperationSubscription = new Subscription();
-        accountOperationSubscription.setId(2L);
-        accountOperationSubscription.setCode("2");
-        accountOperationInvoice.setSubscription(accountOperationSubscription);
-        accountOperation.setInvoices(Collections.singletonList(accountOperationInvoice));
-        Mockito.doReturn(accountOperation).when(accountOperationService).findById(-1L);
-
-
-        try {
-            businessService.payInvoices(Long.valueOf(-1),
-                    ImmutableSecurityDepositPaymentInput.builder()
-                            .amount(BigDecimal.TEN)
-                            .accountOperation(ImmutableResource.builder().id(-1L).build()).build());
-        } catch (Exception exception) {
-            Assert.assertTrue(exception instanceof InvalidParameterException);
-            Assert.assertEquals("All invoices should have the same subscription",
-                    exception.getMessage());
-        }
-
-
-    }
-
-    @Test
     public void should_createSecurityDepositPaymentAccountOperation_from_SecurityDeposit_And_Amount() {
 
         //Given
