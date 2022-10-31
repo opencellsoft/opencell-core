@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -420,24 +421,35 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
 
         WalletOperation newWO = null;
 
+        // To manage case when 1 WO have more than 1 T.EDR
+        Map<Long, WalletOperation> oldWOAndNewWO = new HashMap<>();
+
         if (CollectionUtils.isNotEmpty(tEdrs)) {
             for (EDR edr : tEdrs) {
                 // if edr status is one of REJECTED, CANCELLED or OPEN => Triggered EDRs are simply CANCELLED with reason "Origin wallet operation [id={{id}}] has been rerated", and original WO is rerated
                 if (edr.getStatus() == EDRStatusEnum.REJECTED || edr.getStatus() == EDRStatusEnum.CANCELLED || edr.getStatus() == EDRStatusEnum.OPEN) {
-                    newWO = rateNewWO(operationToRerate, useSamePricePlan, operationToRerateId);
+                    newWO = createNewWO(oldWOAndNewWO, operationToRerate, useSamePricePlan);
+
                     edr.setStatus(EDRStatusEnum.CANCELLED);
                     edr.setRejectReason("Origin wallet operation [id=" + operationToRerate.getId() + "] has been rerated");
                     operationToRerate.setStatus(WalletOperationStatusEnum.RERATED);
 
+                    walletOperationService.update(operationToRerate);
+
+                    if (newWO==null) {
+                        // that mean no newWO are created, this is the cas when we have 1 WO woth more than 1 T.EDR, we skip creating of T.EDR
+                        continue;
+                    }
+
+                    // Create new T.EDRs
                     List<EDR> newTEdrs = oneShotRatingService.instantiateTriggeredEDRs(newWO, edr, false);
                     Optional.ofNullable(newTEdrs).orElse(Collections.emptyList())
                             .forEach(newEdr -> edrService.create(newEdr));
 
-                    walletOperationService.update(operationToRerate);
-
                 } else if (edr.getStatus() == EDRStatusEnum.RATED &&
                         operationToRerate.getRatedTransaction() != null && operationToRerate.getRatedTransaction().getStatus() != RatedTransactionStatusEnum.BILLED) {
-                    newWO = rateNewWO(operationToRerate, useSamePricePlan, operationToRerateId);
+                    newWO = createNewWO(oldWOAndNewWO, operationToRerate, useSamePricePlan);
+
                     // Triggered EDRs, their WOs and RTs are CANCELLED with reason "Origin wallet operation [id={{id}}] has been rerated", and original WO is rerated
                     edr.setStatus(EDRStatusEnum.CANCELLED);
                     edr.setRejectReason("Origin wallet operation [id=" + operationToRerate.getId() + "] has been rerated");
@@ -445,12 +457,26 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
                     operationToRerate.getRatedTransaction().setStatus(RatedTransactionStatusEnum.CANCELED);
                     operationToRerate.getRatedTransaction().setRejectReason("Origin wallet operation [id=" + operationToRerate.getId() + "] has been rerated");
 
-                    List<EDR> newTEdrs = oneShotRatingService.instantiateTriggeredEDRs(newWO, edr, false);
-                    Optional.ofNullable(newTEdrs).orElse(Collections.emptyList())
-                            .forEach(newEdr -> edrService.create(newEdr));
+                    // Find rated transaction linked to T.EDR
+                    RatedTransaction linkedRT = ratedTransactionService.findByEDR(edr.getId());
+                    if(linkedRT != null) {
+                        linkedRT.setStatus(RatedTransactionStatusEnum.CANCELED);
+                        linkedRT.setRejectReason("Origin wallet operation [id=" + operationToRerate.getId() + "] has been rerated");
+                        ratedTransactionService.update(linkedRT);
+                    }
 
                     walletOperationService.update(operationToRerate);
                     ratedTransactionService.update(operationToRerate.getRatedTransaction());
+
+                    if (newWO==null) {
+                        // that mean no newWO are created, this is the cas when we have 1 WO woth more than 1 T.EDR, we skip creating of T.EDR
+                        continue;
+                    }
+
+                    // Create new T.EDRs
+                    List<EDR> newTEdrs = oneShotRatingService.instantiateTriggeredEDRs(newWO, edr, false);
+                    Optional.ofNullable(newTEdrs).orElse(Collections.emptyList())
+                            .forEach(newEdr -> edrService.create(newEdr));
 
                 } else if (edr.getStatus() == EDRStatusEnum.RATED &&
                         operationToRerate.getRatedTransaction() != null && operationToRerate.getRatedTransaction().getStatus() == RatedTransactionStatusEnum.BILLED) {
@@ -466,7 +492,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
             getEntityManager().flush();
 
         } else {
-            rateNewWO(operationToRerate, useSamePricePlan, operationToRerateId);
+            rateNewWO(operationToRerate, useSamePricePlan);
         }
 
         operationToRerate.setStatus(WalletOperationStatusEnum.RERATED);
@@ -476,7 +502,17 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
 
     }
 
-    private WalletOperation rateNewWO(WalletOperation oldWO, boolean useSamePricePlan, Long operationToRerateId) {
+    private WalletOperation createNewWO(Map<Long, WalletOperation> oldWOAndNewWO, WalletOperation operationToRerate, boolean useSamePricePlan) {
+        WalletOperation newWO;
+        if (oldWOAndNewWO.get(operationToRerate.getId()) == null) {
+            newWO = rateNewWO(operationToRerate, useSamePricePlan);
+            oldWOAndNewWO.put(operationToRerate.getId(), newWO);
+            return newWO;
+        }
+        return null;
+    }
+
+    private WalletOperation rateNewWO(WalletOperation oldWO, boolean useSamePricePlan) {
         WalletOperation newWO = oneShotRatingService.rateRatedWalletOperation(oldWO, useSamePricePlan);
         create(newWO);
         return newWO;
