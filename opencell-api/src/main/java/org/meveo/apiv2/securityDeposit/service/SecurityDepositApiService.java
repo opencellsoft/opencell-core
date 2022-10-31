@@ -165,6 +165,15 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         if (securityDepositAmount == null) {
             throw new EntityDoesNotExistsException("The Amount == null.");
         }
+        if (securityDepositInput.getId() != null) {
+            Optional<SecurityDeposit> sd = findById(securityDepositInput.getId());
+            if (sd.isPresent()) {
+                if (SecurityDepositStatusEnum.VALIDATED.equals(sd.get().getStatus())) {
+                    throw new BusinessApiException("Modification of the security deposit is not allowed for Validated status.");
+                } 
+            }
+        }        
+                
         linkRealEntities(securityDepositInput);        
 
         // Check Maximum amount per Security deposit
@@ -193,8 +202,8 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
             securityDepositName = template.getTemplateName();
         }
         securityDepositInput.setCode(securityDepositName + "-" + count);
-        securityDepositInput.setStatus(SecurityDepositStatusEnum.NEW);
-
+        securityDepositInput.setStatus(SecurityDepositStatusEnum.VALIDATED);
+        
         // Check validity dates
         if (financeSettings.isAutoRefund() && template.isAllowValidityDate() && template.isAllowValidityPeriod()) {
             if (securityDepositInput.getValidityDate() == null && securityDepositInput.getValidityPeriod() == null) {
@@ -300,6 +309,29 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         if (securityDepositInput.getServiceInstance() != null) {
             ServiceInstance serviceInstance = serviceInstanceService.tryToFindByCodeOrId(securityDepositInput.getServiceInstance());
             securityDepositInput.setServiceInstance(serviceInstance);
+        }
+        
+        if (securityDepositInput.getSecurityDepositInvoice() != null) {
+            Invoice invoice = invoiceService.findById(securityDepositInput.getSecurityDepositInvoice().getId());
+            securityDepositInput.setSecurityDepositInvoice(invoice);
+        }
+        else {
+            securityDepositInput.setSecurityDepositInvoice(null);
+        }
+        
+        if (securityDepositInput.getBillingAccount() != null) {
+            BillingAccount billingAccount = billingAccountService.tryToFindByCodeOrId(securityDepositInput.getBillingAccount());
+            if(billingAccount != null) {
+                securityDepositInput.setBillingAccount(billingAccount);
+                CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+                customerAccount = customerAccountService.refreshOrRetrieve(customerAccount);
+                if (customerAccount != null) {
+                    if (!securityDepositInput.getCustomerAccount().equals(customerAccount)) {
+                        throw new BusinessApiException("Customer Account not equal Customer Account in Billing Account");
+                    }
+                    securityDepositInput.setCustomerAccount(customerAccount);
+                }
+            }
         }
     }
 

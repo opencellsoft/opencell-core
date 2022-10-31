@@ -35,6 +35,7 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
                 .subscription(createResource(entity.getSubscription()))
                 .serviceInstance(createResource(entity.getServiceInstance()))
                 .externalReference(entity.getExternalReference())
+                .linkedInvoice(createResource(entity.getSecurityDepositInvoice()))
                 .refundReason(entity.getRefundReason())
                 .cancelReason(entity.getCancelReason())
                 .build();
@@ -49,8 +50,7 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
     	return this.toEntity(securityDeposit, resource, false);
     }
 
-    private SecurityDeposit toEntity(SecurityDeposit securityDeposit, SecurityDepositInput resource, boolean createMode) {
-        securityDeposit.setId(resource.getId());
+    protected SecurityDeposit toEntity(SecurityDeposit securityDeposit, SecurityDepositInput resource) {
         securityDeposit.setCode(resource.getCode());
         securityDeposit.setDescription(resource.getDescription());
         if (resource.getTemplate() != null && resource.getTemplate().getId() != null) {
@@ -116,6 +116,9 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
         	Invoice invoice = new Invoice();
         	invoice.setId(resource.getLinkedInvoice().getId());
         	securityDeposit.setSecurityDepositInvoice(invoice);
+        }
+        else {
+            securityDeposit.setSecurityDepositInvoice(null);
         }
         return securityDeposit;
     }

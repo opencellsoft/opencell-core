@@ -8190,6 +8190,13 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>template_name = 'DEFAULT_SD_TEMPLATE'</where>
 		</update>
 	</changeSet>
+	
+	<changeSet id="#INTRD-10400_20221007" author="HichamHANINE">
+    	<update tableName="security_deposit">
+    	<column name="status" value="VALIDATED"/>
+    	<where>status='NEW'</where>
+    	</update>
+    </changeSet>
 
 	<changeSet id="#INTRD-10692_20221019_ajd_occ_template" author="a.rouaguebe">
 		<insert tableName="ar_occ_template">
