@@ -4,11 +4,9 @@ import static java.time.temporal.ChronoField.DAY_OF_MONTH;
 import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
 import static java.time.temporal.ChronoField.YEAR;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
@@ -49,7 +47,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.meveo.admin.exception.BusinessException;
@@ -319,9 +317,18 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         return pricePlanMatrixVersion;
     }
 
+    public void removePriceMatrixVersionOnlyNotClosed(PricePlanMatrixVersion pricePlanMatrixVersion) {
+        removePriceMatrixVersionByStatus(pricePlanMatrixVersion, false);
+    }
+
     public void removePriceMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion) {
-        if (!pricePlanMatrixVersion.getStatus().equals(VersionStatusEnum.DRAFT)) {
-            log.warn("the status of version of the price plan matrix is not DRAFT, the current version is {}.Can not be deleted", pricePlanMatrixVersion.getStatus().toString());
+        boolean isPublished = VersionStatusEnum.PUBLISHED.equals(pricePlanMatrixVersion.getStatus());
+        removePriceMatrixVersionByStatus(pricePlanMatrixVersion, isPublished);
+    }
+
+    public void removePriceMatrixVersionByStatus(PricePlanMatrixVersion pricePlanMatrixVersion, boolean isStatusKo) {
+        if (VersionStatusEnum.CLOSED.equals(pricePlanMatrixVersion.getStatus()) || isStatusKo) {
+            log.warn("the status of version of the price plan matrix is {}. Can not be deleted", pricePlanMatrixVersion.getStatus().toString());
             throw new MeveoApiException(String.format(STATUS_ERROR_MSG, pricePlanMatrixVersion.getStatus().toString()));
         }
         logAction(pricePlanMatrixVersion, "DELETE");
@@ -414,13 +421,13 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 	public PricePlanMatrixVersion getPublishedVersionValideForDate(String ppmCode, ServiceInstance serviceInstance, Date operationDate) {
 		Date operationDateParam = new Date();
 		if(serviceInstance==null || PriceVersionDateSettingEnum.EVENT.equals(serviceInstance.getPriceVersionDateSetting())) {
-			operationDateParam = operationDate; 
-		} else if(PriceVersionDateSettingEnum.DELIVERY.equals(serviceInstance.getPriceVersionDateSetting()) 
-			|| PriceVersionDateSettingEnum.RENEWAL.equals(serviceInstance.getPriceVersionDateSetting()) 
+			operationDateParam = operationDate;
+		} else if(PriceVersionDateSettingEnum.DELIVERY.equals(serviceInstance.getPriceVersionDateSetting())
+			|| PriceVersionDateSettingEnum.RENEWAL.equals(serviceInstance.getPriceVersionDateSetting())
 			|| PriceVersionDateSettingEnum.QUOTE.equals(serviceInstance.getPriceVersionDateSetting())) {
-				operationDateParam = serviceInstance.getPriceVersionDate(); 
+				operationDateParam = serviceInstance.getPriceVersionDate();
 		}
-		
+
         List<PricePlanMatrixVersion> result=(List<PricePlanMatrixVersion>) this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.getPublishedVersionValideForDate")
                 .setParameter("pricePlanMatrixCode", ppmCode).setParameter("operationDate", operationDateParam).getResultList();
         if(CollectionUtils.isEmpty(result)) {
@@ -526,23 +533,23 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
         /*
          * if(pricePlanMatrixValues != null && !pricePlanMatrixValues.isEmpty()) {
-         * 
+         *
          * pricePlanMatrixValues.forEach(ppmv -> {
-         * 
+         *
          * pricePlanMatrixValueService.detach(ppmv);
-         * 
+         *
          * var pricePlanMatrixValue = new PricePlanMatrixValue(ppmv); if(pricePlanMatrixColumn != null) { pricePlanMatrixValue.setPricePlanMatrixColumn(pricePlanMatrixColumn);
          * pricePlanMatrixColumn.getPricePlanMatrixValues().add(pricePlanMatrixValue); } if(pricePlanMatrixLine != null) {
          * pricePlanMatrixValue.setPricePlanMatrixLine(pricePlanMatrixLine); pricePlanMatrixLine.getPricePlanMatrixValues().add(pricePlanMatrixValue); }
          * pricePlanMatrixValueService.create(pricePlanMatrixValue);
-         * 
+         *
          * }); }
          */
     }
 
     /**
      * @param pricePlanMatrixCode
-     * @param pricePlanMatrixVersion
+     * @param version
      * @return
      */
     public Map<String, List<Long>> getUsedEntities(String pricePlanMatrixCode, int version) {
@@ -579,8 +586,8 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
      * @param auditAction
      * @return
      */
-    private PricePlanMatrixVersion update(PricePlanMatrixVersion entity, String auditAction) {
-        final PricePlanMatrixVersion ppmv = super.update(entity);
+    private PricePlanMatrixVersion update(PricePlanMatrixVersion pricePlanMatrixVersion, String auditAction) {
+        final PricePlanMatrixVersion ppmv = super.update(pricePlanMatrixVersion);
         logAction(ppmv, auditAction);
         return ppmv;
     }
@@ -756,53 +763,95 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
          * @throws IOException
          */
         private void writeExcelFile(File file, Set<LinkedHashMap<String, Object>> CSVLineRecords, boolean isMatrix) throws IOException {
-            FileWriter fw = new FileWriter(file, true); 
-            BufferedWriter bw = new BufferedWriter(fw);
-            var wb = new XSSFWorkbook();
-            XSSFSheet sheet = wb.createSheet();
-            int i = 0;
-            String key1 = "label";
-            String key2 = "amount";
-            if(isMatrix){
-                key1 = "description[text]";
-                key2 = "priceWithoutTax[number]";
+
+            var workbook = new XSSFWorkbook();
+            XSSFSheet sheet = workbook.createSheet();
+
+            if (isMatrix) {
+                buildPriceGridExcel(CSVLineRecords, sheet);
+            } else {
+                buildPricePlanExcel(CSVLineRecords, sheet);
             }
-            
-            //Header
-            var rowHeader = sheet.createRow(i++);
-            Cell cell = rowHeader.createCell(0);
-            cell.setCellValue("id");
-            cell = rowHeader.createCell(1);
-            cell.setCellValue(key1);
-            cell = rowHeader.createCell(2);
-            cell.setCellValue(key2);                   
-            
-            //Cell
-            for(LinkedHashMap<String, Object> cSVLineRecord : CSVLineRecords) {
-                rowHeader = sheet.createRow(i++);
-                for(String key : cSVLineRecord.keySet()) {
-                    Object ret = cSVLineRecord.get(key);
-                    if (ret == null) ret = "";
-                    if (key == "id") {
-                        cell = rowHeader.createCell(0);
-                        cell.setCellValue((Long)ret);
+
+            FileOutputStream fileOut = new FileOutputStream(file);
+            workbook.write(fileOut);
+            fileOut.close();
+            workbook.close();
+        }
+
+        private void buildPriceGridExcel(Set<LinkedHashMap<String, Object>> CSVLineRecords, XSSFSheet sheet) {
+
+            buildMatrixPlanPriceExcelHeader(CSVLineRecords, sheet);
+            buildMatrixPlanPriceExcelLines(CSVLineRecords, sheet);
+        }
+
+        private void buildPricePlanExcel(Set<LinkedHashMap<String, Object>> CSVLineRecords, XSSFSheet sheet) {
+
+            buildSimplePricePlanExcelHeader(sheet);
+            buildSimplePricePlanExcelLines(CSVLineRecords, sheet);
+        }
+
+        private void buildSimplePricePlanExcelHeader(XSSFSheet sheet) {
+            var baseRow = sheet.createRow(0);
+            baseRow.createCell(0).setCellValue("id");
+            baseRow.createCell(1).setCellValue("label");
+            baseRow.createCell(2).setCellValue("amount");
+        }
+
+        private void buildSimplePricePlanExcelLines(Set<LinkedHashMap<String, Object>> CSVLineRecords, XSSFSheet sheet) {
+
+            int lineNumber = 1;
+
+            for (LinkedHashMap<String, Object> lineRecord : CSVLineRecords) {
+                XSSFRow row = sheet.createRow(lineNumber++);
+                for (String key : lineRecord.keySet()) {
+
+                    Object cellValue = lineRecord.get(key);
+
+                    if (key.equals("id")) {
+                        row.createCell(0).setCellValue((Long) cellValue);
                     }
-                    if (key == key1) {
-                        cell = rowHeader.createCell(1);
-                        cell.setCellValue(ret+ "");
+                    if (key.equals("label")) {
+                        row.createCell(1).setCellValue(cellValue != null ? String.valueOf(cellValue) : "");
                     }
-                    if (key == key2) {
-                        cell = rowHeader.createCell(2);
-                        cell.setCellValue(ret + "");
+                    if (key.equals("amount")) {
+                        row.createCell(2).setCellValue(cellValue != null ? String.valueOf(cellValue) : "");
                     }
                 }
             }
-            FileOutputStream fileOut = new FileOutputStream(file);
-            wb.write(fileOut);
-            fileOut.close();
-            wb.close();
         }
-        
+
+
+        private void buildMatrixPlanPriceExcelHeader(Set<LinkedHashMap<String, Object>> CSVLineRecords, XSSFSheet sheet) {
+
+            var header = sheet.createRow(0);
+            header.createCell(0).setCellValue("id");
+            List<String> attributeNames = (CSVLineRecords != null && !CSVLineRecords.isEmpty()) ? new ArrayList<>(CSVLineRecords.iterator().next().keySet()) : new ArrayList<>();
+            for (String dynamicAttribute : attributeNames) {
+                if (!dynamicAttribute.equals("id")) {
+                    header.createCell(header.getLastCellNum()).setCellValue(dynamicAttribute);
+                }
+            }
+        }
+
+        private void buildMatrixPlanPriceExcelLines(Set<LinkedHashMap<String, Object>> CSVLineRecords, XSSFSheet sheet) {
+
+            int lineNumber = 1;
+            for (LinkedHashMap<String, Object> lineRecord : CSVLineRecords) {
+                XSSFRow row = sheet.createRow(lineNumber++);
+                for (String key : lineRecord.keySet()) {
+
+                    Object cellValue = lineRecord.get(key);
+
+                    if (key.equals("id")) {
+                        row.createCell(0).setCellValue((Long) cellValue);
+                    } else {
+                        row.createCell(row.getLastCellNum()).setCellValue(cellValue != null ? String.valueOf(cellValue) : "");
+                    }
+                }
+            }
+        }
+
         /**
          * @param fileName
          * @param ppv
@@ -899,21 +948,5 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         }
     }
 
-	/**
-	 * get pricePlanVersion Valid for the given operationDate
-	 * @param ppmCode
-	 * @param operationDate
-	 * @return
-	 */
-	public PricePlanMatrixVersion getPublishedVersionValideForDate(String ppmCode, Date operationDate) {
-        List<PricePlanMatrixVersion> result=(List<PricePlanMatrixVersion>) this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.getPublishedVersionValideForDate")
-                .setParameter("pricePlanMatrixCode", ppmCode).setParameter("operationDate", operationDate).getResultList();
-        if(CollectionUtils.isEmpty(result)) {
-        	return null;
-        }
-        if(result.size()>1) {
-        	throw new BusinessException("More than one pricePlaneVersion for pricePlan '"+ppmCode+"' matching date: "+ operationDate);
-        }
-		return result.get(0);
-	}
 }
+

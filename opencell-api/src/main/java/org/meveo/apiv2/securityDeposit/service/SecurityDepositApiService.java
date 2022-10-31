@@ -10,24 +10,27 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ImportInvoiceException;
-import org.meveo.admin.exception.InvoiceExistException;
+import org.meveo.admin.exception.*;
+import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.invoice.InvoiceApi;
+import org.meveo.api.payment.PaymentApi;
 import org.meveo.apiv2.billing.ImmutableBasicInvoice;
 import org.meveo.apiv2.billing.ImmutableInvoiceLine;
 import org.meveo.apiv2.billing.ImmutableInvoiceLinesInput;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
 import org.meveo.apiv2.ordering.services.ApiService;
+import org.meveo.apiv2.securityDeposit.SecurityDepositCreditInput;
 import org.meveo.commons.utils.ListUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.Currency;
@@ -35,19 +38,27 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.Payment;
 import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositOperationEnum;
 import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.service.admin.impl.CurrencyService;
+import org.meveo.service.audit.logging.AuditLogService;
+import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositTemplateService;
@@ -89,6 +100,18 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
 
     @Inject
     private ServiceSingleton serviceSingleton;
+
+    @Inject
+    private AuditLogService auditLogService;
+
+    @Inject
+    private PaymentApi paymentApi;
+
+    @Inject
+    private PaymentService paymentService;
+
+    @Inject
+    private AccountOperationService accountOperationService;
     
     @Override
     public List<SecurityDeposit> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -142,6 +165,15 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         if (securityDepositAmount == null) {
             throw new EntityDoesNotExistsException("The Amount == null.");
         }
+        if (securityDepositInput.getId() != null) {
+            Optional<SecurityDeposit> sd = findById(securityDepositInput.getId());
+            if (sd.isPresent()) {
+                if (SecurityDepositStatusEnum.VALIDATED.equals(sd.get().getStatus())) {
+                    throw new BusinessApiException("Modification of the security deposit is not allowed for Validated status.");
+                } 
+            }
+        }        
+                
         linkRealEntities(securityDepositInput);        
 
         // Check Maximum amount per Security deposit
@@ -170,8 +202,8 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
             securityDepositName = template.getTemplateName();
         }
         securityDepositInput.setCode(securityDepositName + "-" + count);
-        securityDepositInput.setStatus(SecurityDepositStatusEnum.NEW);
-
+        securityDepositInput.setStatus(SecurityDepositStatusEnum.VALIDATED);
+        
         // Check validity dates
         if (financeSettings.isAutoRefund() && template.isAllowValidityDate() && template.isAllowValidityPeriod()) {
             if (securityDepositInput.getValidityDate() == null && securityDepositInput.getValidityPeriod() == null) {
@@ -278,6 +310,29 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
             ServiceInstance serviceInstance = serviceInstanceService.tryToFindByCodeOrId(securityDepositInput.getServiceInstance());
             securityDepositInput.setServiceInstance(serviceInstance);
         }
+        
+        if (securityDepositInput.getSecurityDepositInvoice() != null) {
+            Invoice invoice = invoiceService.findById(securityDepositInput.getSecurityDepositInvoice().getId());
+            securityDepositInput.setSecurityDepositInvoice(invoice);
+        }
+        else {
+            securityDepositInput.setSecurityDepositInvoice(null);
+        }
+        
+        if (securityDepositInput.getBillingAccount() != null) {
+            BillingAccount billingAccount = billingAccountService.tryToFindByCodeOrId(securityDepositInput.getBillingAccount());
+            if(billingAccount != null) {
+                securityDepositInput.setBillingAccount(billingAccount);
+                CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+                customerAccount = customerAccountService.refreshOrRetrieve(customerAccount);
+                if (customerAccount != null) {
+                    if (!securityDepositInput.getCustomerAccount().equals(customerAccount)) {
+                        throw new BusinessApiException("Customer Account not equal Customer Account in Billing Account");
+                    }
+                    securityDepositInput.setCustomerAccount(customerAccount);
+                }
+            }
+        }
     }
 
     private <B extends BaseEntity> void validateNotNull(B input, B result) {
@@ -347,4 +402,63 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         
 		return adjustmentInvoice;
 	}
+
+    public SecurityDeposit credit(Long id, SecurityDepositCreditInput securityDepositInput) {
+        SecurityDeposit securityDepositToUpdate = securityDepositService.findById(id);
+        if(securityDepositToUpdate == null) {
+            throw new EntityDoesNotExistsException("security deposit with id " + id + " does not exist.");
+        }
+        if(SecurityDepositStatusEnum.CANCELED.equals(securityDepositToUpdate.getStatus())){
+            throw new EntityDoesNotExistsException("The Credit is not possible if the status of the security deposit is at 'Cancel'");
+        }
+        securityDepositService.credit(securityDepositToUpdate, securityDepositInput);
+
+        List<AccountOperation> sdAOs = accountOperationService.listByInvoice(securityDepositToUpdate.getSecurityDepositInvoice());
+
+        PaymentDto paymentDto = createPaymentDto(securityDepositInput);
+        if (securityDepositInput.getIsToMatching() && sdAOs != null) {
+            List<Long> aoIds = sdAOs.stream().map(AccountOperation::getId).collect(Collectors.toList());
+            paymentDto.setListAoIdsForMatching(aoIds);
+        }
+        Long idPayment = null;
+        try {
+            idPayment = paymentApi.createPayment(paymentDto);
+        } catch (BusinessException e) {
+            throw new BusinessException(e);
+        } catch (MeveoApiException | NoAllOperationUnmatchedException | UnbalanceAmountException e) {
+            throw new MeveoApiException(e);
+        }
+        Payment payment = paymentService.findById(idPayment);
+        securityDepositService.createSecurityDepositTransaction(securityDepositToUpdate, securityDepositInput.getAmountToCredit(),
+                SecurityDepositOperationEnum.CREDIT_SECURITY_DEPOSIT, OperationCategoryEnum.CREDIT, payment);
+        auditLogService.trackOperation("CREDIT", new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
+
+        return securityDepositService.refreshOrRetrieve(securityDepositToUpdate);
+    }
+
+    private PaymentDto createPaymentDto(SecurityDepositCreditInput securityDepositInput) {
+        PaymentDto paymentDto = new PaymentDto();
+        paymentDto.setToMatching(securityDepositInput.getIsToMatching());
+        paymentDto.setCustomerAccountCode(securityDepositInput.getCustomerAccountCode());
+        paymentDto.setPaymentMethod(securityDepositInput.getPaymentMethod());
+        paymentDto.setAmount(securityDepositInput.getAmountToCredit());
+        paymentDto.setDescription(null);
+        paymentDto.setReference(securityDepositInput.getReference());
+        paymentDto.setDueDate(new Date());
+        paymentDto.setTransactionDate(new Date());
+        paymentDto.setBankLot(securityDepositInput.getBankLot());
+        paymentDto.setPaymentInfo(securityDepositInput.getPaymentInfo());
+        paymentDto.setPaymentInfo1(securityDepositInput.getPaymentInfo1());
+        paymentDto.setPaymentInfo2(securityDepositInput.getPaymentInfo2());
+        paymentDto.setPaymentInfo3(securityDepositInput.getPaymentInfo3());
+        paymentDto.setPaymentInfo4(securityDepositInput.getPaymentInfo4());
+        paymentDto.setPaymentInfo5(securityDepositInput.getPaymentInfo5());
+        paymentDto.setOccTemplateCode(securityDepositInput.getOccTemplateCode());
+        paymentDto.setPaymentInfo6(null);
+        paymentDto.setFees(null);
+        paymentDto.setComment(null);
+        paymentDto.setPaymentOrder(null);
+        paymentDto.setCollectionDate(new Date());
+        return paymentDto;
+    }
 }

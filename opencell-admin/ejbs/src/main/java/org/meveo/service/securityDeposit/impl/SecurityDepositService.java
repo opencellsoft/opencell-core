@@ -101,14 +101,10 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
                 .getSingleResult();
     }
 
-    public void checkParameters(SecurityDeposit securityDeposit, SecurityDepositInput securityDepositInput, BigDecimal oldAmountSD) {
+    public void checkParameters(SecurityDeposit securityDeposit, SecurityDepositInput securityDepositInput) {
         FinanceSettings financeSettings = financeSettingsService.findLastOne();
-
         if (!financeSettings.isAutoRefund() && (securityDepositInput.getValidityDate() != null || securityDepositInput.getValidityPeriod() != null || securityDepositInput.getValidityPeriodUnit() != null)) {
             throw new InvalidParameterException("the option 'Allow auto refund' need to be checked");
-        }
-        if (!SecurityDepositStatusEnum.NEW.equals(securityDeposit.getStatus()) && !SecurityDepositStatusEnum.HOLD.equals(securityDeposit.getStatus())) {
-            securityDeposit.setAmount(oldAmountSD);
         }
         if (securityDeposit.getServiceInstance() != null && securityDeposit.getSubscription() != null) {
             ServiceInstance serviceInstance = serviceInstanceService.retrieveIfNotManaged(securityDeposit.getServiceInstance());
@@ -216,6 +212,11 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         if (securityDepositToUpdate.getCurrentBalance() == null) {
             securityDepositToUpdate.setCurrentBalance(BigDecimal.ZERO);
         }
+
+        if (securityDepositToUpdate.getCurrentBalance().compareTo(securityDepositInput.getAmountToCredit()) < 0) {
+            throw new BusinessException("The amount to credit should be less than or equal to the security deposit current balance");
+        }
+
         BigDecimal nCurrentBalance = securityDepositInput.getAmountToCredit().add(securityDepositToUpdate.getCurrentBalance());
         securityDepositToUpdate.setCurrentBalance(nCurrentBalance);
 
@@ -226,7 +227,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
             }
         }
 
-        if (securityDepositToUpdate.getAmount() != null && (SecurityDepositStatusEnum.NEW.equals(securityDepositToUpdate.getStatus())
+        if (securityDepositToUpdate.getAmount() != null && (SecurityDepositStatusEnum.VALIDATED.equals(securityDepositToUpdate.getStatus())
                 || SecurityDepositStatusEnum.HOLD.equals(securityDepositToUpdate.getStatus())
                 || SecurityDepositStatusEnum.REFUNDED.equals(securityDepositToUpdate.getStatus()))) {
             BigDecimal nAmount = securityDepositToUpdate.getAmount().add(securityDepositInput.getAmountToCredit().negate());

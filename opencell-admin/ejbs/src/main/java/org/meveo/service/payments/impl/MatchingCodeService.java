@@ -31,6 +31,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
@@ -56,6 +57,7 @@ import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositOperationEnum;
 import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
+import org.meveo.service.accountingscheme.JournalEntryService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositService;
@@ -94,6 +96,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
     @Updated
     private Event<BaseEntity> entityUpdatedEventProducer;
 
+    @Inject
+    private JournalEntryService journalEntryService;
+
     /**
      * Match account operations.
      * 
@@ -113,7 +118,8 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         boolean withWriteOff = false;
         boolean withRefund = false;
         boolean isToTriggerCollectionPlanLevelsJob = false;
-        List<PaymentScheduleInstanceItem> listPaymentScheduleInstanceItem = new ArrayList<PaymentScheduleInstanceItem>();
+        List<PaymentScheduleInstanceItem> listPaymentScheduleInstanceItem = new ArrayList<>();
+        List<AccountOperation> aosToGenerateMatchingCode = new ArrayList<>();
 
         // For PaymentPlan, new AO OOC PPL_CREATION shall match all debit one, and recreate new AOS DEBIT OCC PPL_INSTALLMENT recording to the number of installment of Plan
         // Specially for this case, Invoice will pass to PENDING_PLAN status
@@ -189,6 +195,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         log.info("matching - [Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 
                                 invoice.getPaymentStatus() + " - newPaymentStatus : " + InvoicePaymentStatusEnum.PAID + "]");
                         invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.PAID);
+                        aosToGenerateMatchingCode.add(accountOperation);
                         if (InvoicePaymentStatusEnum.PAID == invoice.getPaymentStatus()) {
                             isToTriggerCollectionPlanLevelsJob = true;
                         }
@@ -268,6 +275,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         log.info("matching- [Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 
                                 invoice.getPaymentStatus() + " - newPaymentStatus : " + InvoicePaymentStatusEnum.PAID + "]");
                         invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.PAID);
+                        aosToGenerateMatchingCode.add((RecordedInvoice) accountOperation);
                         if (InvoicePaymentStatusEnum.PAID == invoice.getPaymentStatus()) {
                             isToTriggerCollectionPlanLevelsJob = true;
                         }
@@ -319,6 +327,11 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 .map(AccountOperation::getId)
                 .collect(Collectors.toList()));
 
+        // generate matchingCode for related AOs
+        if (CollectionUtils.isNotEmpty(aosToGenerateMatchingCode)) {
+            journalEntryService.assignMatchingCodeToJournalEntries(aosToGenerateMatchingCode, null);
+        }
+
     }
 
     /**
@@ -343,8 +356,8 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 				throw new BusinessException("The current balance + amount to credit must be less than or equal to the maximum amount of the Template");
 			}
 			securityDeposit.setCurrentBalance(Optional.ofNullable(securityDeposit.getCurrentBalance()).orElse(BigDecimal.ZERO).add(amountToMatch));
-			// Update SD.Amount for NEW and HOLD SecurityDeposit
-			if(Arrays.asList(SecurityDepositStatusEnum.NEW, SecurityDepositStatusEnum.HOLD, SecurityDepositStatusEnum.VALIDATED).contains(securityDeposit.getStatus())) {
+			// Update SD.Amount for VALIDATED and HOLD SecurityDeposit
+			if(Arrays.asList(SecurityDepositStatusEnum.HOLD, SecurityDepositStatusEnum.VALIDATED).contains(securityDeposit.getStatus())) {
 				securityDeposit.setAmount(securityDeposit.getAmount().subtract(amountToMatch));
 				if(BigDecimal.ZERO.compareTo(securityDeposit.getAmount()) >= 0) {
 					securityDeposit.setAmount(null);
