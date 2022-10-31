@@ -89,10 +89,7 @@ import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldValue;
-import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.crm.custom.*;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.shared.DateUtils;
@@ -618,6 +615,14 @@ public abstract class BaseApi {
                         ((CustomEntityInstanceDto) valueToCheck).setCetCode(CustomFieldTemplate.retrieveCetCode(cft.getEntityClazz()));
                         customEntityInstanceApi.validateEntityInstanceDto((CustomEntityInstanceDto) valueToCheck);
                     }
+                    else if (cft.getFieldType() == CustomFieldTypeEnum.URL)
+                    {
+                        UrlReferenceWrapper urlValue = (UrlReferenceWrapper) valueToCheck;
+                        if((urlValue.getRegexp()!= null && !urlValue.getRegexp().isEmpty() && !urlValue.getUrl().matches(urlValue.getRegexp())) || !urlValue.containsValidURL() ) {
+
+                            throw new InvalidParameterException("Custom field " + cft.getCode() + " value " + urlValue.getUrl() + " is not a valid URL");
+                        }
+                    }
                 }
             }
 
@@ -751,6 +756,9 @@ public abstract class BaseApi {
             // } else {
             // Other type values that are of some other DTO type (e.g.
             // CustomEntityInstanceDto for child entity type) are not converted
+        }
+        else if(cfDto.getUrlReferenceValue() != null){
+            return cfDto.getUrlReferenceValue().toWrapper();
         }
         return null;
     }

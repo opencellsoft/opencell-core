@@ -142,7 +142,10 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.countRejectedByBillingRun", query = "select count(id) from Invoice where billingRun.id =:billingRunId and status = org.meveo.model.billing.InvoiceStatusEnum.REJECTED"),
         @NamedQuery(name = "Invoice.getInvoiceTypeANDRecordedInvoiceID", query = "select inv.invoiceType.code, inv.recordedInvoice.id from Invoice inv where inv.id =:id"),
         @NamedQuery(name = "Invoice.initAmounts", query = "UPDATE Invoice inv set inv.amount = 0, inv.amountTax = 0, inv.amountWithTax = 0, inv.amountWithoutTax = 0, inv.netToPay = 0, inv.discountAmount = 0, inv.amountWithoutTaxBeforeDiscount = 0 where inv.id = :invoiceId"),
-        @NamedQuery(name = "Invoice.loadByBillingRun", query = "SELECT inv.id FROM Invoice inv WHERE inv.billingRun.id = :billingRunId")
+        @NamedQuery(name = "Invoice.loadByBillingRun", query = "SELECT inv.id FROM Invoice inv WHERE inv.billingRun.id = :billingRunId"),
+        @NamedQuery(name = "Invoice.findLinkedInvoicesByIdAndType", query = "SELECT inv FROM Invoice inv inner join LinkedInvoice linkedinv on inv.id = linkedinv.linkedInvoiceValue.id where linkedinv.id.id = :invoiceId and inv.invoiceType.code =: invoiceTypeCode"),
+        @NamedQuery(name = "Invoice.findInvoiceEligibleAdv", query = "select bi, adv from Invoice bi inner join  BillingAccount bba on bi.billingAccount.id = bba.id inner join Invoice adv on adv.billingAccount.id = bba.id inner join InvoiceType  it on it.id = adv.invoiceType.id"
+                + " where bi.billingRun.id = :billingRunId and it.code = 'ADV' and adv.status = 'VALIDATED' and adv.invoiceBalance > 0 and bi.status = 'DRAFT' order by bi.id, adv.auditable.created, adv.invoiceBalance")
 
 })
 public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISearchable {

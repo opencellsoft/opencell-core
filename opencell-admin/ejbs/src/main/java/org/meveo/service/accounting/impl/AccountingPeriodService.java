@@ -21,12 +21,16 @@ import org.meveo.model.accounting.CustomLockOption;
 import org.meveo.model.accounting.RegularUserLockOption;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.crm.impl.ProviderService;
 
 @Stateless
 public class AccountingPeriodService extends PersistenceService<AccountingPeriod> {
 	
     @Inject
     private SubAccountingPeriodService subAccountingPeriodService;
+
+	@Inject
+	private ProviderService providerService;
 
 	public AccountingPeriod create(AccountingPeriod entity, Boolean isUseSubAccountingPeriods) {
 		return createAccountingPeriod(entity, isUseSubAccountingPeriods);
@@ -46,6 +50,10 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		}
 		create(entity);
 		generateSubAccountingPeriods(entity);
+
+		// Init MatchingCode sequence in Provider
+		providerService.resetMatchingCode();
+
 		return entity;
 	}
 

@@ -25,6 +25,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +37,7 @@ import javax.inject.Inject;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.SerializationUtils;
 import org.meveo.admin.exception.BusinessException;
@@ -792,6 +794,23 @@ public class AccountOperationService extends PersistenceService<AccountOperation
                 .setParameter("AO_IDS", aoIds)
                 .setParameter("CUSTOMERACCOUNT_ID", customerAccountId)
                 .getResultList();
+
+    }
+
+    @SuppressWarnings("unchecked")
+    @Transactional
+    public List<AccountOperation> findAoWithoutMatchingCode() {
+        List<AccountOperation> results =  getEntityManager().createNamedQuery("JournalEntry.findAoWithoutMatchingCode")
+                .getResultList();
+
+        // fetch lazies needed join
+        Optional.ofNullable(results).orElse(Collections.emptyList())
+                .forEach(recordedInvoice -> recordedInvoice.getMatchingAmounts().forEach(matchingAmount ->
+                        matchingAmount.getMatchingCode().getMatchingAmounts().size()
+                    )
+                );
+
+        return results;
 
     }
 }

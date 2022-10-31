@@ -776,7 +776,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     private RecurringChargeTemplate getRecurringChargeTemplateFromChargeInstance(ChargeInstance chargeInstance) {
         RecurringChargeTemplate recurringChargeTemplate = null;
         if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
-        	recurringChargeTemplate = ((RecurringChargeInstance) chargeInstance).getRecurringChargeTemplate(); 
+        	recurringChargeTemplate = ((RecurringChargeInstance) PersistenceUtils.initializeAndUnproxy(chargeInstance)).getRecurringChargeTemplate();
         }
         return recurringChargeTemplate;
     }
@@ -878,6 +878,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     }
                 }
             }
+        }
+        if(priceWithoutTax == null && priceWithTax == null) {
+            throw new BusinessException("Couldn’t find a price for charge " + wo.getChargeInstance().getCode() + " and price plan " + pricePlan.getCode() + ": no price version and price plan amount is null");
         }
         return new Amounts(priceWithoutTax, priceWithTax);
     }

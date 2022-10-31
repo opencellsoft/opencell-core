@@ -804,7 +804,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         UserAccount ua = getFreshUA();
 
         for (LinkedInvoice invoice : entity.getLinkedInvoices()) {
-            var referenceInvoice = invoiceService.findById(invoice.getId().getId());
+            var referenceInvoice = invoiceService.findById(invoice.getInvoice().getId());
             if (entity.getLinkedInvoices().size() == 1) {
                 entity.setCfValues(referenceInvoice.getCfValues());
                 customFieldDataEntryBean.refreshFieldsAndActions(entity);
