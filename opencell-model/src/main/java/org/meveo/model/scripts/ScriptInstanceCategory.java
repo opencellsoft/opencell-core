@@ -58,12 +58,20 @@ public class ScriptInstanceCategory extends BusinessEntity {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (!super.equals(obj))
+        }
+        else if (!super.equals(obj)) {
             return false;
-        if (!(obj instanceof ScriptInstanceCategory))
+        }
+        else if (!(obj instanceof ScriptInstanceCategory)) {
             return false;
+        }
         return true;
+    }
+    
+    @Override
+    public int hashCode() {
+        return 961 + ("ScriptInstanceCategory" + getId()).hashCode();
     }
 }
