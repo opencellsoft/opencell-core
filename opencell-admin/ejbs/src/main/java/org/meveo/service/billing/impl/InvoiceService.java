@@ -1521,7 +1521,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         boolean isInvoiceAdjustment = invoiceTypeService.getListAdjustementCode().contains(invoice.getInvoiceType().getCode());
 
         File invoiceXmlFile = new File(invoiceXmlFileName);
-        if (!invoiceXmlFile.exists()) {
+        if (!StorageFactory.exists(invoiceXmlFile)) {
             produceInvoiceXmlNoUpdate(invoice, true);
         }
 
@@ -1560,7 +1560,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             reportTemplate = StorageFactory.getInputStream(jasperFile);
 
-            JRXmlDataSource dataSource = new JRXmlDataSource(invoiceXmlFile);
+            JRXmlDataSource dataSource = StorageFactory.getJRXmlDataSource(invoiceXmlFile);
 
             String fileKey = jasperFile.getPath() + jasperFile.lastModified();
             JasperReport jasperReport = jasperReportMap.get(fileKey);
@@ -1604,8 +1604,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public synchronized void generateInvoiceFile(String billingTemplateName, String resDir) throws IOException {
         File destDir = new File(resDir + File.separator + billingTemplateName + File.separator + "pdf");
-        
-        if (!destDir.exists()) {
+
+        if (!StorageFactory.exists(destDir)) {
             log.warn("PDF jasper report {} was not found. A default report will be used.", destDir.getAbsolutePath());
             String sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + File.separator + billingTemplateName + File.separator + "invoice";
             File sourceFile = new File(sourcePath);
@@ -1622,7 +1622,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             destDir.mkdirs();
-            FileUtils.copyDirectory(sourceFile, destDir);
+            StorageFactory.copyDirectory(sourceFile, destDir);
         }
     }
 
@@ -6247,6 +6247,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
     }
 
+    @Inject private LinkedInvoiceService linkedInvoiceService;
     /**
      * @param toUpdate invoice to update
      * @param input
@@ -6295,18 +6296,44 @@ public class InvoiceService extends PersistenceService<Invoice> {
             toUpdate.setPaymentMethod(pm);
         }
         if (invoiceResource.getListLinkedInvoices() != null) {
-            toUpdate.getLinkedInvoices().clear();
-            for (Long invoiceId : invoiceResource.getListLinkedInvoices()) {
+            List<Long> toUpdateLinkedInvoice = toUpdate.getLinkedInvoices().stream()
+                    .filter(li -> li.getLinkedInvoiceValue().getInvoiceType().getCode().equals("ADJ"))
+                    .map(li -> li.getLinkedInvoiceValue().getId()).collect(Collectors.toList());
+            
+            List<Long> linkedInvoiceToAdd = new ArrayList<>(invoiceResource.getListLinkedInvoices());
+            List<Long> linkedInvoiceToRemove = new ArrayList<>(toUpdateLinkedInvoice);
+            
+            linkedInvoiceToAdd.removeAll(toUpdateLinkedInvoice);
+            for (Long invoiceId : linkedInvoiceToAdd) {
                 Invoice invoiceTmp = findById(invoiceId);
                 if (invoiceTmp == null) {
                     throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
                 }
+                if(invoiceTmp.getInvoiceType() != null && invoiceTmp.getInvoiceType().getCode().equals("ADV")) {
+                    throw new BusinessApiException("The invoice of type Advance can not be linked manually");
+                }
                 if (!toUpdate.getInvoiceType().getAppliesTo().contains(invoiceTmp.getInvoiceType())) {
                     throw new BusinessApiException("InvoiceId " + invoiceId + " cant be linked");
                 }
-                LinkedInvoice linkedInvoice = new LinkedInvoice(toUpdate, invoiceTmp);
-                toUpdate.getLinkedInvoices().add(linkedInvoice);
+                 LinkedInvoice linkedInvoice = new LinkedInvoice(toUpdate, invoiceTmp);
+                 toUpdate.getLinkedInvoices().add(linkedInvoice);
             }
+            linkedInvoiceToRemove.removeAll(invoiceResource.getListLinkedInvoices());
+            for(Long invoiceId : linkedInvoiceToRemove) {
+                Invoice invoiceTmp = findById(invoiceId);
+                if (invoiceTmp == null) {
+                    throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
+                }
+                if(invoiceTmp.getInvoiceType() != null && invoiceTmp.getInvoiceType().getCode().equals("ADV")) {
+                    throw new BusinessApiException("The invoice of type Advance can not be linked manually");
+                }
+                if (!toUpdate.getInvoiceType().getAppliesTo().contains(invoiceTmp.getInvoiceType())) {
+                    throw new BusinessApiException("InvoiceId " + invoiceId + " cant be linked");
+                }
+                linkedInvoiceService.deleteByIdInvoiceAndLinkedInvoice(toUpdate.getId(), Arrays.asList(invoiceId));
+            }
+            
+            
         }
 
         if (invoiceResource.getOrder() != null) {

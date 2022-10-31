@@ -14534,6 +14534,26 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
 
+    <changeSet id="#INTRD-10673_20221025" author="AbdellatifBARI">
+        <addColumn tableName="finance_settings">
+            <column name="activate_dunning" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
+    
+     <changeSet id="#INTRD-10957_20221026" author="Mbarek-Ay">
+        <addColumn tableName="cpq_quote_version">
+            <column name="comment" type="varchar(2000)" />
+        </addColumn>
+    </changeSet>
+
+	<changeSet id="#INTRD-10577_20221020" author="HichamHANINE">
+        <addColumn tableName="meveo_script_instance_cat">
+            <column name="description_i18n" type="${type.json}">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+    
     
     <changeSet author="AndriusKarpavicius" id="#INTRD-10253_20221027" dbms="oracle">
         <createProcedure>

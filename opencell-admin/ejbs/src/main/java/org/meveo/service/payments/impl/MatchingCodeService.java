@@ -31,7 +31,6 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
@@ -328,9 +327,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 .collect(Collectors.toList()));
 
         // generate matchingCode for related AOs
-        if (CollectionUtils.isNotEmpty(aosToGenerateMatchingCode)) {
-            journalEntryService.assignMatchingCodeToJournalEntries(aosToGenerateMatchingCode, null);
-        }
+        aosToGenerateMatchingCode.forEach(accountOperation -> journalEntryService.assignMatchingCodeToJournalEntries(accountOperation, null));
 
     }
 
