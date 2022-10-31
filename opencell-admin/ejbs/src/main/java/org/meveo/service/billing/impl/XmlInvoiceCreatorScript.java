@@ -2363,10 +2363,8 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         List<UserAccount> userAccounts=new ArrayList<>();
         if(invoice.getSubscription()!=null) {
         	userAccounts.add(invoice.getSubscription().getUserAccount());
-        }else {
-        	userAccounts=invoice.getBillingAccount().getUsersAccounts();
         }
-        for (UserAccount userAccount : userAccounts) {
+        for (UserAccount userAccount : userAccounts.isEmpty()?invoice.getBillingAccount().getUsersAccounts():userAccounts) {
             Element userAccountTag = createUserAccountSectionIL(doc, invoice, userAccount, invoiceLines, isVirtual,
                     false, invoiceLanguageCode, invoiceConfiguration);
             if (userAccountTag == null) {
