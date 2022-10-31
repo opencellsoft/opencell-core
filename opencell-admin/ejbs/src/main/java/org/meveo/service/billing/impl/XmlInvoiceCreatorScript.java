@@ -24,8 +24,17 @@ import static org.meveo.commons.utils.StringUtils.getDefaultIfNull;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -989,7 +998,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * @return True if user account match
      */
     private boolean isValidCategoryInvoiceAgregate(final UserAccount userAccount, final CategoryInvoiceAgregate categoryInvoiceAgregate) {
-        if (userAccount == null || categoryInvoiceAgregate.getUserAccount()==null) {
+        if (userAccount == null) {
             return categoryInvoiceAgregate.getUserAccount() == null;
         } else {
             Long uaId = userAccount.getId();
@@ -2351,7 +2360,13 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
         Element userAccountsTag = doc.createElement("userAccounts");
         String invoiceLanguageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
-        for (UserAccount userAccount : invoice.getBillingAccount().getUsersAccounts()) {
+        List<UserAccount> userAccounts=new ArrayList<>();
+        if(invoice.getSubscription()!=null) {
+        	userAccounts.add(invoice.getSubscription().getUserAccount());
+        }else {
+        	userAccounts=invoice.getBillingAccount().getUsersAccounts();
+        }
+        for (UserAccount userAccount : userAccounts) {
             Element userAccountTag = createUserAccountSectionIL(doc, invoice, userAccount, invoiceLines, isVirtual,
                     false, invoiceLanguageCode, invoiceConfiguration);
             if (userAccountTag == null) {
@@ -2389,7 +2404,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         }
         Element userAccountTag = doc.createElement("userAccount");
         if (userAccount == null) {
-            return null;
+        	 userAccountTag.setAttribute("description", "-");
         } else {
             userAccountTag.setAttribute("id", userAccount.getId() + "");
             userAccountTag.setAttribute("code", userAccount.getCode());

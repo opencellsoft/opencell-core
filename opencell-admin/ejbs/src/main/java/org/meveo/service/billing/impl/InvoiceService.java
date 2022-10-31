@@ -5319,6 +5319,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         boolean isAggregateByUA = paramBeanFactory.getInstance().getPropertyAsBoolean("invoice.agregateByUA", true);
 
+        if(!isAggregateByUA) {
+            isAggregateByUA=billingAccount.getUsersAccounts().size()==1;
+        }
+        
         boolean isEnterprise = appProvider.isEntreprise();
         String languageCode = billingAccount.getTradingLanguage().getLanguageCode();
         Boolean isExonerated = billingAccount.isExoneratedFromtaxes();
@@ -5362,6 +5366,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             Tax tax = invoiceLine.getTax();
             UserAccount userAccount = invoiceLine.getSubscription() == null ? null : invoiceLine.getSubscription().getUserAccount();
 
+            if(userAccount==null) {
+                userAccount=invoiceLine.getBillingAccount().getUsersAccounts().size()==1?invoiceLine.getBillingAccount().getUsersAccounts().get(0):null;
+            }
             // Check if tax has to be recalculated. Does not apply to RatedTransactions that had tax explicitly set/overridden
             if (calculateTaxOnSubCategoryLevel && !invoiceLine.isTaxOverridden()) {
 
