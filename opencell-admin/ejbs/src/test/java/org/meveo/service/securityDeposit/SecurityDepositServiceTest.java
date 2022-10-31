@@ -30,9 +30,7 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.OperationCategoryEnum;
-import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.model.securityDeposit.ValidityPeriodUnit;
@@ -345,7 +343,7 @@ public class SecurityDepositServiceTest {
     }
 
     @Test
-        public void should_createSecurityDepositPaymentAccountOperation_from_SecurityDeposit_And_Amount() {
+    public void should_createSecurityDepositPaymentAccountOperation_from_SecurityDeposit_And_Amount() {
 
         //Given
         BigDecimal invoicePaymentAmount = new BigDecimal(10);
