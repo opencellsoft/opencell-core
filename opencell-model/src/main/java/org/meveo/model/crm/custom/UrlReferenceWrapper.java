@@ -64,4 +64,8 @@ public class UrlReferenceWrapper implements Serializable {
         return false;
     }
 }
+
+    public boolean isEmpty() {
+        return url == null || url.isEmpty();
+    }
 }
