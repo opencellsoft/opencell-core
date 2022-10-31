@@ -243,39 +243,7 @@ public class SecurityDepositServiceTest {
 
     }
 
-    @Test
-    public void should_createSecurityDepositPaymentAccountOperation_from_SecurityDeposit_And_Amount() {
 
-        //Given
-        BigDecimal invoicePaymentAmount = new BigDecimal(10);
-
-        SecurityDeposit securityDeposit = new SecurityDeposit();
-        securityDeposit.setCurrentBalance(BigDecimal.valueOf(100L));
-        Subscription securityDepositSubscription = new Subscription();
-        securityDepositSubscription.setId(1L);
-        securityDepositSubscription.setCode("1");
-
-
-        CustomerAccount customerAccount = new CustomerAccount();
-        customerAccount.setId(Long.valueOf(1));
-
-        securityDeposit.setCustomerAccount(customerAccount);
-
-        //When
-        securityDepositService.createSecurityDepositPaymentAccountOperation(securityDeposit, invoicePaymentAmount);
-
-        ArgumentCaptor<AccountOperation> accountOperationCaptor = ArgumentCaptor.forClass(AccountOperation.class);
-        verify(accountOperationService).createAndReturnId(accountOperationCaptor.capture());
-        AccountOperation expecTedAccountOperation = accountOperationCaptor.getValue();
-
-        //Then
-        Assert.assertEquals(expecTedAccountOperation.getCustomerAccount().getId(), customerAccount.getId());
-        Assert.assertEquals(expecTedAccountOperation.getAmount(), invoicePaymentAmount);
-        Assert.assertEquals(expecTedAccountOperation.getPaymentMethod(), PaymentMethodEnum.CHECK);
-        Assert.assertEquals(expecTedAccountOperation.getTransactionCategory(), OperationCategoryEnum.CREDIT);
-        Assert.assertEquals(expecTedAccountOperation.getCode(), "PAY_SD");
-
-    }
 
 
     @Test
@@ -373,6 +341,40 @@ public class SecurityDepositServiceTest {
     	securityDepositService.credit(sd, input);
 
     	fail("BusinessException should be rised - check on amount to credit");
+
+    }
+
+    @Test
+        public void should_createSecurityDepositPaymentAccountOperation_from_SecurityDeposit_And_Amount() {
+
+        //Given
+        BigDecimal invoicePaymentAmount = new BigDecimal(10);
+
+        SecurityDeposit securityDeposit = new SecurityDeposit();
+        securityDeposit.setCurrentBalance(BigDecimal.valueOf(100L));
+        Subscription securityDepositSubscription = new Subscription();
+        securityDepositSubscription.setId(1L);
+        securityDepositSubscription.setCode("1");
+
+
+        CustomerAccount customerAccount = new CustomerAccount();
+        customerAccount.setId(Long.valueOf(1));
+
+        securityDeposit.setCustomerAccount(customerAccount);
+
+        //When
+        securityDepositService.createSecurityDepositPaymentAccountOperation(securityDeposit, invoicePaymentAmount);
+
+        ArgumentCaptor<AccountOperation> accountOperationCaptor = ArgumentCaptor.forClass(AccountOperation.class);
+        verify(accountOperationService).createAndReturnId(accountOperationCaptor.capture());
+        AccountOperation expecTedAccountOperation = accountOperationCaptor.getValue();
+
+        //Then
+        Assert.assertEquals(expecTedAccountOperation.getCustomerAccount().getId(), customerAccount.getId());
+        Assert.assertEquals(expecTedAccountOperation.getAmount(), invoicePaymentAmount);
+        Assert.assertEquals(expecTedAccountOperation.getPaymentMethod(), PaymentMethodEnum.CHECK);
+        Assert.assertEquals(expecTedAccountOperation.getTransactionCategory(), OperationCategoryEnum.CREDIT);
+        Assert.assertEquals(expecTedAccountOperation.getCode(), "PAY_SD");
 
     }
 
