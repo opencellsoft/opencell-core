@@ -53,4 +53,10 @@ public interface FinanceSettings extends Resource {
 
     @Nullable
     OpenOrderSettingInput getOpenOrderSetting();
+
+    @Value.Default
+    @Schema(description = "Activate dunning")
+    default Boolean getActivateDunning() {
+        return FALSE;
+    }
 }

@@ -2,6 +2,7 @@ package org.meveo.model.billing;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,13 +12,23 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.meveo.model.IEntity;
+
 @Entity
 @Table(name = "billing_linked_invoices", uniqueConstraints = @UniqueConstraint(columnNames = { "id", "linked_invoice_id" }))
+@NamedQueries({ 
+    @NamedQuery(name = "LinkedInvoice.deleteByIdInvoiceAndLinkedInvoice", query = "delete from LinkedInvoice l where l.id.id = :invoiceId and l.linkedInvoiceValue.id in (:linkedInvoiceId)"),
+    @NamedQuery(name = "LinkedInvoice.deleteAllAdjLink", query = "delete from LinkedInvoice l  where l.linkedInvoiceValue.id in (select inv.id from Invoice inv where inv.invoiceType.code = 'ADJ')"),
+    @NamedQuery(name = "LinkedInvoice.find", query = "select l from LinkedInvoice l where l.id.id = :invoiceId and l.linkedInvoiceValue.id = :linkedInvoiceId")
+    
+})
 @SuppressWarnings("serial")
-public class LinkedInvoice implements Serializable {
+public class LinkedInvoice implements IEntity, Serializable {
 
     
 
@@ -62,13 +73,15 @@ public class LinkedInvoice implements Serializable {
     public LinkedInvoice() {
         
     }
-    
-    public Invoice getId() {
+    public Long getId() {
+        return this.id!=null? this.id.getId() : null;
+  }
+    public Invoice getInvoice() {
         return  this.id;
     }
 
-    public void setId(Invoice id) {
-        this.id = id;
+    public void setInvoice(Invoice invoice) {
+          this.id = invoice;
     }
 
     public Invoice getLinkedInvoiceValue() {
@@ -94,5 +107,39 @@ public class LinkedInvoice implements Serializable {
     public void setType(InvoiceTypeEnum type) {
         this.type = type;
     }
+
+
+    @Override
+    public void setId(Long id) {
+        if(this.id!=null) {
+            this.id.setId(id);
+        }
+    }
+
+
+    @Override
+    public boolean isTransient() {
+        return false;
+    }
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id.getId(), linkedInvoiceValue.getId());
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        LinkedInvoice other = (LinkedInvoice) obj;
+        return Objects.equals(id.getId(), other.id.getId()) && Objects.equals(linkedInvoiceValue.getId(), other.linkedInvoiceValue.getId());
+    }
+    
     
 }

@@ -124,7 +124,7 @@ public class QuoteToXmlScript extends ModuleScript {
        }
         
         Header header = new Header(billingAccount,ctr,quoteVersion.getQuoteVersion(),quote.getCode(),startDate,duration,
-        		quote.getQuoteLotDuration(),quote.getCustomerRef(),quote.getRegisterNumber(),startDate,endDate);
+        		quote.getQuoteLotDuration(),quote.getCustomerRef(),quote.getRegisterNumber(),startDate,endDate,quoteVersion.getComment());
 
         Map<org.meveo.model.billing.BillingAccount, List<QuoteArticleLine>> linesByBillingAccount = getAllOffersQuoteLineStream(quoteVersion)
                 .collect(groupingBy(QuoteArticleLine::getBillableAccount));

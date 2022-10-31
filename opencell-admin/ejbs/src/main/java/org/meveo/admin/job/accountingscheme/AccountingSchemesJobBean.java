@@ -10,6 +10,7 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AccountOperationStatus;
 import org.meveo.model.payments.AccountingScheme;
 import org.meveo.model.payments.OCCTemplate;
+import org.meveo.service.accountingscheme.JournalEntryService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.script.Script;
@@ -20,7 +21,12 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -35,6 +41,8 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<Long> {
     private ScriptInstanceService scriptInstanceService;
     @Inject
     private OCCTemplateService occTemplateService;
+    @Inject
+    private JournalEntryService journalEntryService;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
@@ -48,7 +56,7 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<Long> {
         List<AccountOperation> accountOperations = accountOperationService.findAoByStatus(onlyClosedPeriods, AccountOperationStatus.POSTED, AccountOperationStatus.EXPORT_FAILED);
 
         if (accountOperations == null) {
-            log.warn("No AccountOperation found witch onlyClosedPeriods={}", onlyClosedPeriods);
+            log.warn("No AccountOperation found with onlyClosedPeriods={}", onlyClosedPeriods);
             return Optional.of(new SynchronizedIterator<>(Collections.emptyList()));
         }
 
@@ -94,6 +102,7 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<Long> {
 
                         accountOperation.setStatus(AccountOperationStatus.EXPORTED);
                         accountOperationService.update(accountOperation);
+                        journalEntryService.assignMatchingCodeToJournalEntries(accountOperation, createdEntries);
 
                     } catch (BusinessException e) {
                         jobExecutionResult.registerError(e.getMessage());

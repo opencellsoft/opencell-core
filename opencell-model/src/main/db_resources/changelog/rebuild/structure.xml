@@ -9299,6 +9299,7 @@
             <column name="xml_filename" type="varchar(255)" />
             <column name="discount_plan_id" type="bigint"></column>
             <column name="contract_id" type="bigint" />
+            <column name="comment" type="varchar(2000)" />
         </createTable>
     </changeSet>
 
@@ -11653,6 +11654,7 @@
                     defaultValue="#{gca.code.substring(0, 3)}#{ca.description}"/>
             <column name="auxiliary_account_label_el" type="varchar(2000)"
                     defaultValue="#{ca.description}"/>
+            <column name="activate_dunning" type="${type.boolean}" defaultValueNumeric="0" />
       </createTable>
     </changeSet>
     <changeSet id="#INTRD-3461_20212128-rebuild-str-tbl" author="hichamElHaloui">
@@ -18671,6 +18673,8 @@
 	<changeSet id="#INTRD-10522_20221017_matchingCode-journal-entry" author="aelmalki" />
 	<changeSet id="#INTRD-10541_20221013" author="TarikFA." />
     <changeSet id="#10629_20221018" author="zelmeliani" />
+    <changeSet id="#INTRD-10673_20221025" author="AbdellatifBARI" />
+    <changeSet id="#INTRD-10957_20221026" author="Mbarek-Ay"/>
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

@@ -56,6 +56,7 @@ import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositOperationEnum;
 import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
+import org.meveo.service.accountingscheme.JournalEntryService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositService;
@@ -94,6 +95,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
     @Updated
     private Event<BaseEntity> entityUpdatedEventProducer;
 
+    @Inject
+    private JournalEntryService journalEntryService;
+
     /**
      * Match account operations.
      * 
@@ -113,7 +117,8 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         boolean withWriteOff = false;
         boolean withRefund = false;
         boolean isToTriggerCollectionPlanLevelsJob = false;
-        List<PaymentScheduleInstanceItem> listPaymentScheduleInstanceItem = new ArrayList<PaymentScheduleInstanceItem>();
+        List<PaymentScheduleInstanceItem> listPaymentScheduleInstanceItem = new ArrayList<>();
+        List<AccountOperation> aosToGenerateMatchingCode = new ArrayList<>();
 
         // For PaymentPlan, new AO OOC PPL_CREATION shall match all debit one, and recreate new AOS DEBIT OCC PPL_INSTALLMENT recording to the number of installment of Plan
         // Specially for this case, Invoice will pass to PENDING_PLAN status
@@ -189,6 +194,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         log.info("matching - [Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 
                                 invoice.getPaymentStatus() + " - newPaymentStatus : " + InvoicePaymentStatusEnum.PAID + "]");
                         invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.PAID);
+                        aosToGenerateMatchingCode.add(accountOperation);
                         if (InvoicePaymentStatusEnum.PAID == invoice.getPaymentStatus()) {
                             isToTriggerCollectionPlanLevelsJob = true;
                         }
@@ -268,6 +274,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         log.info("matching- [Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 
                                 invoice.getPaymentStatus() + " - newPaymentStatus : " + InvoicePaymentStatusEnum.PAID + "]");
                         invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.PAID);
+                        aosToGenerateMatchingCode.add((RecordedInvoice) accountOperation);
                         if (InvoicePaymentStatusEnum.PAID == invoice.getPaymentStatus()) {
                             isToTriggerCollectionPlanLevelsJob = true;
                         }
@@ -318,6 +325,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 .filter(accountOperation -> PPL_INSTALLMENT.equals(accountOperation.getCode()) && MatchingStatusEnum.L == accountOperation.getMatchingStatus())
                 .map(AccountOperation::getId)
                 .collect(Collectors.toList()));
+
+        // generate matchingCode for related AOs
+        aosToGenerateMatchingCode.forEach(accountOperation -> journalEntryService.assignMatchingCodeToJournalEntries(accountOperation, null));
 
     }
 

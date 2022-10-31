@@ -1124,9 +1124,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                 Element taxAmount = doc.createElement("amount");
                 taxAmount.appendChild(this.createTextNode(doc, toPlainString(taxInvoiceAgregate.getAmountTax())));
                 tax.appendChild(taxAmount);
-                Element amountHT = doc.createElement("amountHT");
-                amountHT.appendChild(this.createTextNode(doc, toPlainString(taxInvoiceAgregate.getAmountWithoutTax())));
-                tax.appendChild(amountHT);
                 Element amountWithoutTax = doc.createElement("amountWithoutTax");
                 amountWithoutTax.appendChild(this.createTextNode(doc, toPlainString(taxInvoiceAgregate.getAmountWithoutTax())));
                 tax.appendChild(amountWithoutTax);
@@ -1485,6 +1482,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         customerAccountTag.setAttribute("externalRef1", getDefaultIfNull(customerAccount.getExternalRef1(), ""));
         customerAccountTag.setAttribute("externalRef2", getDefaultIfNull(customerAccount.getExternalRef2(), ""));
         customerAccountTag.setAttribute("currency", getDefaultIfNull(invoice.getBillingAccount().getTradingCurrency().getCurrencyCode(), ""));
+        customerAccountTag.setAttribute("currencySymbol", getDefaultIfNull(invoice.getBillingAccount().getTradingCurrency().getSymbol(), ""));
         customerAccountTag.setAttribute("language", getDefaultIfNull(languageDescription, ""));
         customerAccountTag.setAttribute("jobTitle", getDefaultIfNull(customerAccount.getJobTitle(), ""));
         customerAccountTag.setAttribute("registrationNo", getDefaultIfNull(customerAccount.getRegistrationNo(), ""));
@@ -1659,9 +1657,15 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Element amount = doc.createElement("amount");
 
         Element currency = doc.createElement("currency");
-        Text currencyTxt = this.createTextNode(doc, invoice.getBillingAccount().getTradingCurrency().getCurrencyCode());
-        currency.appendChild(currencyTxt);
+        Element currencySymbol = doc.createElement("currencySymbol");
+        Text currencyCodeValue = this.createTextNode(doc, invoice.getBillingAccount().getTradingCurrency().getCurrencyCode());
+        Text currencySymbolValue = this.createTextNode(doc, StringUtils.isNotBlank(invoice.getBillingAccount().getTradingCurrency().getSymbol())
+                        ? invoice.getBillingAccount().getTradingCurrency().getSymbol()
+                        : invoice.getBillingAccount().getTradingCurrency().getCurrencyCode());
+        currency.appendChild(currencyCodeValue);
+        currencySymbol.appendChild(currencySymbolValue);
         amount.appendChild(currency);
+        amount.appendChild(currencySymbol);
 
         Element amountWithoutTax = doc.createElement("amountWithoutTax");
         amountWithoutTax.appendChild(this.createTextNode(doc, toPlainString(invoice.getAmountWithoutTax())));
@@ -1752,7 +1756,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         if (customerAccountTag != null) {
             header.appendChild(customerAccountTag);
         }
-        Element billingAccountTag = createBillingAccountSection(doc, invoice, linkedInvoice.getLinkedInvoiceValue(), isInvoiceAdjustment, invoiceConfiguration);
+        Element billingAccountTag = createBillingAccountSection(doc, invoice, linkedInvoice != null ? linkedInvoice.getLinkedInvoiceValue() : null, isInvoiceAdjustment, invoiceConfiguration);
         if (billingAccountTag != null) {
             header.appendChild(billingAccountTag);
         }
