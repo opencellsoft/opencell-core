@@ -195,18 +195,20 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         }
         List<ContractItem> contractItems = pricePlanMatrixVersion.getPricePlanMatrix().getContractItems();
         if (contractItems != null && !contractItems.isEmpty()){
-            DatePeriod period = pricePlanMatrixVersionDto.getValidity();
+            DatePeriod period = pricePlanMatrixVersionDto.getValidity();            
             for(ContractItem contractItem : contractItems){
-                if (period != null && period.getFrom() != null && period.getFrom().before(contractItem.getContract().getBeginDate())){
-                    log.error("Price plan's period should not be before contract's start date");
-                    throw new MeveoApiException("Price plan's period should not be before contract's start date");
-                }
-                if (period != null && period.getTo() != null && period.getTo().after(contractItem.getContract().getEndDate())){
-                    log.error("Price plan's period should not be after contract's end date");
-                    throw new MeveoApiException("Price plan's period should not be after contract's end date");
-                }
+                if (period != null){
+                    period = DateUtils.truncateTime(period);
+                    if (period.getFrom() != null && period.getFrom().before(contractItem.getContract().getBeginDate())){
+                        log.error("Price plan's period should not be before contract's start date");
+                        throw new MeveoApiException("Price plan's period should not be before contract's start date");
+                    }
+                    if (period.getTo() != null && period.getTo().after(contractItem.getContract().getEndDate())){
+                        log.error("Price plan's period should not be after contract's end date");
+                        throw new MeveoApiException("Price plan's period should not be after contract's end date");
+                    }
+                }                
             }
-
         }
     }
 
