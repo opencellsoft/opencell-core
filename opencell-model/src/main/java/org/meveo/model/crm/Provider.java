@@ -236,7 +236,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     private Integer maximumDelay;
 
     @Column(name = "current_matching_code")
-    private String currentMatchingCode = "AAA";
+    private String currentMatchingCode = "A";
     
     public Integer getMaximumDelay() {
 		return maximumDelay;
