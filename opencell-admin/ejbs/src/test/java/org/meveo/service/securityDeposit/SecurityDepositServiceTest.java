@@ -3,6 +3,7 @@ package org.meveo.service.securityDeposit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
@@ -29,6 +30,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
@@ -37,6 +39,7 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositService;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -331,6 +334,39 @@ public class SecurityDepositServiceTest {
 
     	fail("BusinessException should be rised - check on amount to credit");
     	
+    }
+
+    @Test
+    public void should_createSecurityDepositPaymentAccountOperation_from_SecurityDeposit_And_Amount() {
+
+        //Given
+        BigDecimal invoicePaymentAmount = new BigDecimal(10);
+
+        SecurityDeposit securityDeposit = new SecurityDeposit();
+        securityDeposit.setCurrentBalance(BigDecimal.valueOf(100L));
+        Subscription securityDepositSubscription = new Subscription();
+        securityDepositSubscription.setId(1L);
+        securityDepositSubscription.setCode("1");
+
+        CustomerAccount customerAccount = new CustomerAccount();
+        customerAccount.setId(Long.valueOf(1));
+
+        securityDeposit.setCustomerAccount(customerAccount);
+
+        //When
+        securityDepositService.createSecurityDepositPaymentAccountOperation(securityDeposit, invoicePaymentAmount);
+
+        ArgumentCaptor<AccountOperation> accountOperationCaptor = ArgumentCaptor.forClass(AccountOperation.class);
+        verify(accountOperationService).createAndReturnId(accountOperationCaptor.capture());
+        AccountOperation expecTedAccountOperation = accountOperationCaptor.getValue();
+
+        //Then
+        Assert.assertEquals(customerAccount.getId(),expecTedAccountOperation.getCustomerAccount().getId());
+        Assert.assertEquals(invoicePaymentAmount,expecTedAccountOperation.getAmount());
+        Assert.assertEquals(PaymentMethodEnum.CHECK,expecTedAccountOperation.getPaymentMethod());
+        Assert.assertEquals(OperationCategoryEnum.CREDIT,expecTedAccountOperation.getTransactionCategory());
+        Assert.assertEquals("PAY_SD",expecTedAccountOperation.getCode());
+
     }
 
 
