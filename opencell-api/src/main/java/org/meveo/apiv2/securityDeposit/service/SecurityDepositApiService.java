@@ -175,10 +175,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         if (financeSettings == null || !financeSettings.isUseSecurityDeposit()) {
             throw new BadRequestException("instantiation is not allowed in general settings");
         }
-        BigDecimal securityDepositAmount = securityDepositInput.getAmount();
-        if (securityDepositAmount == null) {
-            throw new EntityDoesNotExistsException("The Amount == null.");
-        }
+        
         if (securityDepositInput.getId() != null) {
             Optional<SecurityDeposit> sd = findById(securityDepositInput.getId());
             if (sd.isPresent()) {
@@ -189,6 +186,14 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         }        
                 
         linkRealEntities(securityDepositInput);        
+        if(isInstantiate && securityDepositInput.getSecurityDepositInvoice() != null) {
+        	securityDepositInput.setAmount(securityDepositInput.getSecurityDepositInvoice().getAmountWithoutTax());
+        }
+
+        BigDecimal securityDepositAmount = securityDepositInput.getAmount();
+        if (securityDepositAmount == null) {
+            throw new EntityDoesNotExistsException("The Amount == null.");
+        }
         
         org.meveo.model.billing.InvoiceLine invoiceLine = new org.meveo.model.billing.InvoiceLine();
         boolean updateComment = false;
