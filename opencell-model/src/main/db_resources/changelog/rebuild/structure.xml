@@ -6702,17 +6702,6 @@
         </createTable>
         <addPrimaryKey columnNames="invoice_type_id, applies_to_id" constraintName="billing_invoice_type_applies_to_pkey" tableName="billing_invoice_type_applies_to" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-319">
-        <createTable tableName="billing_linked_invoices">
-            <column name="id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="linked_invoice_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-        <addPrimaryKey columnNames="id, linked_invoice_id" constraintName="billing_linked_invoices_pkey" tableName="billing_linked_invoices" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-320">
         <createTable tableName="billing_seq_invtyp_sell">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -17530,33 +17519,34 @@
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
-    
-    
-	<changeSet id="#INTRD-10163_20220930_build" author="TarikFA.">
-		<createSequence sequenceName="billing_invoice_advance_mapping_seq" startValue="1"/>
-		<createTable tableName="billing_invoice_advance_mapping">
-			 <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="advance_mapping_pkey" />
-            </column>
-            <column name="version" type="int4" />
-            <column name= "advance_invoice_id" type="bigint" />
-            <column name= "invoice_id" type="bigint" />
-            <column name= "amount" type="numeric(23, 12)" />
-		</createTable>
-		
-        <addForeignKeyConstraint baseTableName="billing_invoice_advance_mapping" 
-        						baseColumnNames="advance_invoice_id"
-                                 constraintName="advance_invoice_id_fk"
-                                 referencedTableName="billing_invoice"
-                                 referencedColumnNames="id"/>
-                                 
-        <addForeignKeyConstraint baseTableName="billing_invoice_advance_mapping" 
-        						baseColumnNames="invoice_id"
-                                 constraintName="invoice_id_fk"
-                                 referencedTableName="billing_invoice"
-                                 referencedColumnNames="id"/>
-                                 
-	</changeSet>
+	
+	<changeSet id="#INTRD-10541_20221013_build" author="TarikFA.">
+     	<createTable tableName="billing_linked_invoices">
+             <column name="id" type="bigint" >
+                 <constraints nullable="false"/>
+             </column>
+             <column name="linked_invoice_id" type="bigint" >
+                 <constraints nullable="false"/>
+             </column>
+             <column name="amount" type="numeric(23, 12)" />
+             <column name="type" type="varchar(50)" />
+     	</createTable>
+     	
+         <addPrimaryKey columnNames="id, linked_invoice_id" constraintName="billing_linked_invoices_pkey" tableName="billing_linked_invoices" />
+     	
+ 		<addForeignKeyConstraint constraintName="invoice_id_fk"
+                                  baseColumnNames="id"
+                                  baseTableName="billing_linked_invoices"
+                                  referencedTableName="billing_invoice"
+                                  referencedColumnNames="id" />
+                                  
+ 		<addForeignKeyConstraint constraintName="linked_invoice_id_fk"
+                                  baseColumnNames="linked_invoice_id"
+                                  baseTableName="billing_linked_invoices"
+                                  referencedTableName="billing_invoice"
+                                  referencedColumnNames="id" />
+     	
+    </changeSet>
 
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
@@ -18809,6 +18799,8 @@
 
     <changeSet id="#10629_20221018" author="zelmeliani" />
     <changeSet id="#INTRD-10673_20221025" author="AbdellatifBARI" />
+    <changeSet id="#INTRD-10540_20221013" author="TarikFA." />
+    <changeSet id="#INTRD-10541_20221013" author="TarikFA." />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
