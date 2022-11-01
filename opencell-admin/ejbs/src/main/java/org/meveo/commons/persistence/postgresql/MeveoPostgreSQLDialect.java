@@ -22,6 +22,7 @@ import java.sql.Types;
 
 import org.hibernate.dialect.PostgreSQL94Dialect;
 import org.hibernate.dialect.function.StandardSQLFunction;
+import org.hibernate.type.StringType;
 
 /**
  * JPA extensions for searching amount Custom field value fields
@@ -44,8 +45,9 @@ import org.hibernate.dialect.function.StandardSQLFunction;
 public class MeveoPostgreSQLDialect extends PostgreSQL94Dialect {
     public MeveoPostgreSQLDialect() {
         super();
-        registerFunction("string_agg", new StandardSQLFunction("string_agg", new org.hibernate.type.StringType()));
-        registerFunction( "concat", new StandardSQLFunction( "concat", new org.hibernate.type.StringType()));
+        registerFunction("concat", new StandardSQLFunction("concat", StringType.INSTANCE));
+        registerFunction("string_agg", new StandardSQLFunction("string_agg", StringType.INSTANCE));
+        registerFunction("string_agg_long", new PostgreSQLStringAggLongFunction());
         registerFunction("numericFromJson", new DoublePostgreSQLJsonSearchFunction());
         registerFunction("varcharFromJson", new PostgreSQLJsonSearchFunction());
         registerFunction("bigIntFromJson", new LongPostgreSQLJsonSearchFunction());
