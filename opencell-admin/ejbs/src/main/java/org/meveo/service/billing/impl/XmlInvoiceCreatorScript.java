@@ -1028,7 +1028,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * @return True if user account match
      */
     private boolean isValidCategoryInvoiceAgregate(final UserAccount userAccount, final CategoryInvoiceAgregate categoryInvoiceAgregate) {
-        if (userAccount == null || categoryInvoiceAgregate.getUserAccount() == null) {
+        if (userAccount == null) {
             return categoryInvoiceAgregate.getUserAccount() == null;
         } else {
             Long uaId = userAccount.getId();
@@ -2452,10 +2452,12 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
         Element userAccountsTag = doc.createElement("userAccounts");
         String invoiceLanguageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
-        
+        List<UserAccount> userAccounts=new ArrayList<>();
+    	if(invoice.getSubscription()!=null) {
+    		userAccounts.add(invoice.getSubscription().getUserAccount());
+    	}
         if(invoiceConfiguration.isDisplayUserAccountHierarchy()) {
-        	List<UserAccount> parentUserAccounts = invoice.getBillingAccount().getParentUserAccounts();
-        	for(UserAccount parentUserAccount : parentUserAccounts) {
+        	for(UserAccount parentUserAccount :userAccounts.isEmpty()?invoice.getBillingAccount().getParentUserAccounts():userAccounts) {
                     Element userAccountTag = createUserAccountSectionIL(doc, invoice, parentUserAccount,
                             invoiceLines, isVirtual, false, invoiceLanguageCode, invoiceConfiguration);
                     if (userAccountTag == null) {
@@ -2467,7 +2469,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         		}
 
         } else {
-            for (UserAccount userAccount : invoice.getBillingAccount().getUsersAccounts()) {
+            for (UserAccount userAccount : userAccounts.isEmpty()?invoice.getBillingAccount().getUsersAccounts():userAccounts) {
                 Element userAccountTag = createUserAccountSectionIL(doc, invoice, userAccount, invoiceLines, isVirtual,
                         false, invoiceLanguageCode, invoiceConfiguration);
                 if (userAccountTag == null) {
@@ -2507,7 +2509,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         }
         Element userAccountTag = doc.createElement("userAccount");
         if (userAccount == null) {
-            return null;
+        	 userAccountTag.setAttribute("description", "-");
         } else {
             userAccountTag.setAttribute("id", userAccount.getId() + "");
             userAccountTag.setAttribute("code", userAccount.getCode());
