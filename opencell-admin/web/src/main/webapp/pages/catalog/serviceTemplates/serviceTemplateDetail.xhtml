@@ -129,10 +129,13 @@
 											field="code" required="true" validateUnique="true"/>
 							<hftl:formField label="#{messages['enableEntity.disabled']}"
 											doNotShowOnNew="true" allowEdit="false" field="disabled"
-											isMessage="true"/>
+											isMessage="true" newLine="true"/>
+							<hftl:formField
+									label="#{messages['subscription.doNotApplyEngagement']}"
+									field="doNotApplyEngagement"/>
 							<hftl:formField
 									label="#{messages['subscription.autoEndOfEngagement']}"
-									field="autoEndOfEngagement"/>
+									field="autoEndOfEngagement" newLine="true"/>
 							<hftl:formField
 									label="#{messages['serviceTemplate.description']}"
 									field="description" useConverter="false" size="50"

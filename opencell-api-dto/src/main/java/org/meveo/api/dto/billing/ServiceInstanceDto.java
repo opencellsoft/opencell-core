@@ -140,6 +140,8 @@ public class ServiceInstanceDto extends BusinessEntityDto {
 
     private Boolean autoEndOfEngagement;
 
+    private Boolean doNotApplyEngagement;
+
     /**
      * Corresponding to minimum one shot charge template code.
      */
@@ -181,6 +183,8 @@ public class ServiceInstanceDto extends BusinessEntityDto {
             terminationReason = serviceInstance.getSubscriptionTerminationReason().getCode();
         }
         endAgreementDate = serviceInstance.getEndAgreementDate();
+        autoEndOfEngagement = serviceInstance.getAutoEndOfEngagement();
+        doNotApplyEngagement = serviceInstance.getDoNotApplyEngagement();
 
         subscribedTillDate = serviceInstance.getSubscribedTillDate();
         serviceRenewal = new SubscriptionRenewalDto(serviceInstance.getServiceRenewal());
@@ -609,6 +613,24 @@ public class ServiceInstanceDto extends BusinessEntityDto {
      */
     public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
         this.autoEndOfEngagement = autoEndOfEngagement;
+    }
+
+    /**
+     * Gets the doNotApplyEngagement flag.
+     *
+     * @return the doNotApplyEngagement
+     */
+    public Boolean getDoNotApplyEngagement() {
+        return doNotApplyEngagement;
+    }
+
+    /**
+     * Sets the doNotApplyEngagement flag.
+     *
+     * @param doNotApplyEngagement the autoEndOfEngagement to set
+     */
+    public void setDoNotApplyEngagement(Boolean doNotApplyEngagement) {
+        this.doNotApplyEngagement = doNotApplyEngagement;
     }
 
     /**

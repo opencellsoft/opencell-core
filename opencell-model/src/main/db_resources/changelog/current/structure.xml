@@ -3402,4 +3402,15 @@ END $$;]]>
         </addColumn>
     </changeSet>
 
+    <changeSet id="#INTRD-11130_01112022" author="Mounir_BOUKAYOUA">
+        <addColumn tableName="cat_service_template">
+            <column name="do_not_apply_engagement" type="${type.boolean}">
+            </column>
+        </addColumn>
+        <addColumn tableName="billing_service_instance">
+            <column name="do_not_apply_engagement" type="${type.boolean}">
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

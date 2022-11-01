@@ -167,6 +167,15 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     @Column(name = "auto_end_of_engagement")
     private Boolean autoEndOfEngagement = Boolean.FALSE;
 
+    /** If true, the end engagement date will never be set. That means engagement will not be applied
+     * on SI even its parent Subscription has an endAgreementDate not null.
+     * This is useful to give the choice to add services without engagement (like promo)
+     * to subs with engagement
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "do_not_apply_engagement")
+    private Boolean doNotApplyEngagement;
+
     /**
      * Charges instances associated with a service instance
      */
@@ -337,6 +346,9 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
      * @param endAgreementDate the new end agreement date
      */
     public void setEndAgreementDate(Date endAgreementDate) {
+        if (BooleanUtils.isTrue(doNotApplyEngagement)) {
+            return;
+        }
         this.endAgreementDate = endAgreementDate;
     }
 
@@ -502,6 +514,7 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     public void setServiceTemplate(ServiceTemplate serviceTemplate) {
         this.serviceTemplate = serviceTemplate;
         if (serviceTemplate != null) {
+            this.doNotApplyEngagement = serviceTemplate.getDoNotApplyEngagement();
             this.autoEndOfEngagement = serviceTemplate.getAutoEndOfEngagement();
         }
     }
@@ -953,7 +966,8 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
      * Auto update end of engagement date.
      */
     public void autoUpdateEndOfEngagementDate() {
-        if (BooleanUtils.isTrue(this.autoEndOfEngagement)) {
+        if (BooleanUtils.isTrue(this.autoEndOfEngagement)
+                && BooleanUtils.isNotTrue(this.doNotApplyEngagement)) {
             this.setEndAgreementDate(this.subscribedTillDate);
         }
     }
@@ -1026,6 +1040,24 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
      */
     public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
         this.autoEndOfEngagement = autoEndOfEngagement;
+    }
+
+    /**
+     * Gets the doNotApplyEngagement flag.
+     *
+     * @return the doNotApplyEngagement
+     */
+    public Boolean getDoNotApplyEngagement() {
+        return doNotApplyEngagement;
+    }
+
+    /**
+     * Sets the doNotApplyEngagement flag.
+     *
+     * @param doNotApplyEngagement the autoEndOfEngagement to set
+     */
+    public void setDoNotApplyEngagement(Boolean doNotApplyEngagement) {
+        this.doNotApplyEngagement = doNotApplyEngagement;
     }
 
     /**

@@ -201,6 +201,13 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     @Column(name = "auto_end_of_engagement")
     private Boolean autoEndOfEngagement = Boolean.FALSE;
 
+    /** If true, Engagement will not be applied on SI even its parent Subscription has
+     * an endAgreementDate not null. This usefull to give the choice to add services
+     * without engagement (like promo) to sub with engagement */
+    @Type(type = "numeric_boolean")
+    @Column(name = "do_not_apply_engagement")
+    private Boolean doNotApplyEngagement;
+
     /**
      * If service is from BSM, it allows us to have a duplicate service template when instantiating BOM.
      */
@@ -479,6 +486,24 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
      */
     public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
         this.autoEndOfEngagement = autoEndOfEngagement;
+    }
+
+    /**
+     * Gets the doNotApplyEngagement flag.
+     *
+     * @return the doNotApplyEngagement
+     */
+    public Boolean getDoNotApplyEngagement() {
+        return doNotApplyEngagement;
+    }
+
+    /**
+     * Sets the doNotApplyEngagement flag.
+     *
+     * @param doNotApplyEngagement the autoEndOfEngagement to set
+     */
+    public void setDoNotApplyEngagement(Boolean doNotApplyEngagement) {
+        this.doNotApplyEngagement = doNotApplyEngagement;
     }
 
 }
