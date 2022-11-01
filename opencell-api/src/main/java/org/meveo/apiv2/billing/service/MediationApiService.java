@@ -40,14 +40,20 @@ import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.MediationJobBean;
+import org.meveo.api.dto.billing.CdrErrorDto;
 import org.meveo.api.dto.billing.ChargeCDRResponseDto;
 import org.meveo.api.dto.billing.ChargeCDRResponseDto.CdrError;
 import org.meveo.api.dto.billing.CounterPeriodDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
+import org.meveo.api.exception.MissingParameterException;
+import org.meveo.apiv2.billing.CdrDtoResponse;
 import org.meveo.apiv2.billing.CdrListInput;
 import org.meveo.apiv2.billing.ChargeCdrListInput;
+import org.meveo.apiv2.billing.ImmutableCdrDtoResponse;
+import org.meveo.apiv2.billing.ImmutableCdrDtoResponse.Builder;
 import org.meveo.apiv2.billing.ProcessCdrListModeEnum;
 import org.meveo.apiv2.billing.ProcessCdrListResult;
+import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -72,6 +78,7 @@ import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.ReservationService;
 import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.mediation.MediationsettingService;
+import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.medina.impl.CDRAlreadyProcessedException;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
@@ -603,5 +610,69 @@ public class MediationApiService {
         } catch (BusinessException e) {
             log.error("Failed to cancel Prepaid Reservation In New Transaction", e);
         }
+    }
+
+    @Inject
+    private AccessService accessService;
+    
+    public CdrDtoResponse createCdr(List<CDR> cdrs, ProcessCdrListModeEnum mode, boolean returnCDRs, boolean returnError) {
+        Builder cdrDtoResponse = ImmutableCdrDtoResponse.builder();
+        List<org.meveo.apiv2.models.Resource> ids = new ArrayList<>();
+        List<CdrErrorDto> cdrErrorDtos = new ArrayList<CdrErrorDto>();
+        for (CDR cdr : cdrs) {
+            List<String> error = new ArrayList<String>();
+            String invalidAccessMsg = null;
+            String mandatoryErrorMsg = null;
+            cdr.setStatus(CDRStatusEnum.OPEN);
+            cdr.setStatusDate(new Date());
+            // mandatory
+            if(cdr.getEventDate() == null) {
+                error.add("eventDate");
+            }
+            if(cdr.getQuantity() == null || cdr.getQuantity() == BigDecimal.ZERO) {
+                error.add("getQuantity");
+            }
+            if(StringUtils.isEmpty(cdr.getAccessCode())) {
+                error.add("accessCode");
+            }
+            if(StringUtils.isEmpty(cdr.getParameter1())) {
+                error.add("paramter1");
+            }
+            // construct error
+            if(error.size() > 0) {
+                mandatoryErrorMsg = "missing paramters : " + error.toString();
+                    
+            }
+            // check access point
+            if(error.size() == 0 &&  CollectionUtils.isEmpty(accessService.getActiveAccessByUserId(cdr.getAccessCode()))) {
+                invalidAccessMsg =  "Invalid Access for " + cdr.getAccessCode();
+            }
+            
+            if(mandatoryErrorMsg != null || invalidAccessMsg != null) {
+                cdr.setRejectReason( (mandatoryErrorMsg != null ? mandatoryErrorMsg : "" ) + (invalidAccessMsg != null ? invalidAccessMsg : ""));
+                cdr.setStatus(CDRStatusEnum.ERROR);
+                cdr.setStatusDate(new Date());
+                cdr.setLine(cdr.toCsv());
+
+                cdrErrorDtos.add(new CdrErrorDto(cdr.toCsv(), cdr.getRejectReason()));
+            }
+            
+            cdrService.create(cdr);
+            ids.add(ImmutableResource.builder().id(cdr.getId()).build());
+            
+            if(cdr.getRejectReason() != null) {
+                if(mode == STOP_ON_FIRST_FAIL) {
+                    break;
+                }else if(mode == ROLLBACK_ON_ERROR) {
+                    throw new BusinessException(cdr.getRejectReason());
+                }
+            }
+        }
+        if(returnCDRs)
+            cdrDtoResponse.addAllCdrs(ids);
+        if(returnError)
+            cdrDtoResponse.addAllErrors(cdrErrorDtos);
+        
+        return cdrDtoResponse.build();
     }
 }

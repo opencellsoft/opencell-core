@@ -2,16 +2,22 @@ package org.meveo.apiv2.billing.resource;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.apiv2.billing.CdrDtoResponse;
+import org.meveo.apiv2.billing.CdrListDtoInput;
 import org.meveo.apiv2.billing.CdrListInput;
 import org.meveo.apiv2.billing.ChargeCdrListInput;
 import org.meveo.apiv2.billing.ProcessCdrListResult;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @Path("/mediation/cdrs")
@@ -38,4 +44,15 @@ public interface MediationResource {
             @ApiResponse(responseCode = "200", description = "A list of rated wallet operations, preserving the order of incomming CDRs"),
             @ApiResponse(responseCode = "400", description = "bad request on register CDR list") })
     ProcessCdrListResult chargeCdrList(@Parameter(description = "the ChargeCdrListInput object", required = true) ChargeCdrListInput cdrListInput);
+
+    @POST
+    @Operation(summary = "create manuel CDR", description = "allow to create a manuel cdr from api", operationId = "    POST_Mediation_processCdrList", responses = {
+            @ApiResponse(description = " return new created CDR id ", content = @Content(schema = @Schema(implementation = ActionStatus.class))) })
+    CdrDtoResponse createCDR(CdrListDtoInput cdrs);
+    
+
+    @PUT
+    @Operation(summary = "update an existing  CDR", description = "allow to update a existing cdr from api allowed for CDR that hava status : ", operationId = "    POST_Mediation_processCdrList", responses = {
+            @ApiResponse(description = " status of the operation ", content = @Content(schema = @Schema(implementation = ActionStatus.class))) })
+    CdrDtoResponse updateCDR(CdrListDtoInput cdrDto);
 }
