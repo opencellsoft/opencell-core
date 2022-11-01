@@ -433,7 +433,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     protected String rgaaMessage;
 
     @Column(name = "current_matching_code")
-    private String currentMatchingCode = "AAA";
+    private String currentMatchingCode = "A";
     
     public String getCode() {
         return code;
