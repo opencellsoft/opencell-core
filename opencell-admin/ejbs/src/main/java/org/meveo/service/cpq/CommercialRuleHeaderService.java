@@ -386,7 +386,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     					break;
     				case EXPRESSION_LANGUAGE:
     					OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode);
-    					String result =attributeValue!=null? attributeService.evaluateElExpressionAttribute(String.valueOf(attributeValue), null, offerTemplate, null, String.class):null;
+    					String result =attributeValue!=null? attributeService.evaluateElExpressionAttribute(String.valueOf(attributeValue), null, offerTemplate, null, null, String.class):null;
     					if(result!=null) {
     					boolean resultCompareEl=valueCompare(line.getOperator(), line.getSourceAttributeValue(), result);
     					if (isPreRequisite && !resultCompareEl || !isPreRequisite && resultCompareEl) {
