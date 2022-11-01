@@ -49,7 +49,7 @@ public class StandardReportResourceImpl implements StandardReportResource {
                 .map(agedReceivableDto ->
                         agedReceivableMapper.toResourceAgedReceivable(agedReceivableMapper.toResource(agedReceivableDto)))
                 .toArray(ImmutableAgedReceivable[]::new);
-        Long count = standardReportApiService.getCountAgedReceivables(customerAccountCode);
+        Long count = functionalCurrency!= null && !functionalCurrency.equals(appProvider.getCurrency().getCurrencyCode()) ? 0: standardReportApiService.getCountAgedReceivables(customerAccountCode);
         AgedReceivables agedReceivables = ImmutableAgedReceivables.builder()
                 .addData(agedReceivablesData)
                 .startDate(DateUtils.formatDateWithPattern(startDate, "dd/MM/yyyy"))
