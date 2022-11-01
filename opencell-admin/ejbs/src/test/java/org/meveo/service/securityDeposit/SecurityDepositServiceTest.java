@@ -361,11 +361,11 @@ public class SecurityDepositServiceTest {
         AccountOperation expecTedAccountOperation = accountOperationCaptor.getValue();
 
         //Then
-        Assert.assertEquals(expecTedAccountOperation.getCustomerAccount().getId(), customerAccount.getId());
-        Assert.assertEquals(expecTedAccountOperation.getAmount(), invoicePaymentAmount);
-        Assert.assertEquals(expecTedAccountOperation.getPaymentMethod(), PaymentMethodEnum.CHECK);
-        Assert.assertEquals(expecTedAccountOperation.getTransactionCategory(), OperationCategoryEnum.CREDIT);
-        Assert.assertEquals(expecTedAccountOperation.getCode(), "PAY_SD");
+        Assert.assertEquals(customerAccount.getId(),expecTedAccountOperation.getCustomerAccount().getId());
+        Assert.assertEquals(invoicePaymentAmount,expecTedAccountOperation.getAmount());
+        Assert.assertEquals(PaymentMethodEnum.CHECK,expecTedAccountOperation.getPaymentMethod());
+        Assert.assertEquals(OperationCategoryEnum.CREDIT,expecTedAccountOperation.getTransactionCategory());
+        Assert.assertEquals("PAY_SD",expecTedAccountOperation.getCode());
 
     }
 
