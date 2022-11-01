@@ -92,6 +92,8 @@ import org.meveo.model.payments.PaymentHistory;
 import org.meveo.model.payments.PaymentScheduleInstance;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.WriteOff;
+import org.meveo.model.securityDeposit.SecurityDeposit;
+import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -589,13 +591,28 @@ public class InvoiceApi extends BaseApi {
         
         //Create SD
         if (invoice.getInvoiceType() != null && "SECURITY_DEPOSIT".equals(invoice.getInvoiceType().getCode()) && createSD) {
-            SecurityDepositTemplate defaultSDTemplate = securityDepositTemplateService.getDefaultSDTemplate();
-            Long count = securityDepositService.countPerTemplate(defaultSDTemplate);
-            securityDepositService.createSD(invoice, defaultSDTemplate, count);
-
-            //Get SD Template number of instantiation and update it after creating a new SD
-            SecurityDepositTemplate sdt = invoiceService.updateSDTemplate(defaultSDTemplate);
-            securityDepositTemplateService.update(sdt);
+        	Optional<SecurityDeposit> osd = securityDepositService.getSecurityDepositByInvoiceId(invoice.getId());
+        	if(osd.isPresent()) {
+        		SecurityDeposit securityDeposit = osd.get();
+        		securityDeposit.setAmount(invoice.getAmountWithoutTax());
+        		securityDeposit.setBillingAccount(invoice.getBillingAccount());
+        		securityDeposit.setCustomerAccount(invoice.getBillingAccount().getCustomerAccount());
+        		securityDeposit.setStatus(SecurityDepositStatusEnum.VALIDATED);
+        		securityDepositService.update(securityDeposit);
+        		
+        		//Get SD Template number of instantiation and update it after creating a new SD
+        		SecurityDepositTemplate sdt = invoiceService.updateSDTemplate(securityDeposit.getTemplate());
+        		securityDepositTemplateService.update(sdt);
+        		
+        	} else if(createSD) {
+        		SecurityDepositTemplate defaultSDTemplate = securityDepositTemplateService.getDefaultSDTemplate();
+        		Long count = securityDepositService.countPerTemplate(defaultSDTemplate);
+        		securityDepositService.createSD(invoice, defaultSDTemplate, count);
+        		
+        		//Get SD Template number of instantiation and update it after creating a new SD
+        		SecurityDepositTemplate sdt = invoiceService.updateSDTemplate(defaultSDTemplate);
+        		securityDepositTemplateService.update(sdt);
+        	}
         }
         
         if(invoice.getDueDate().after(today) && invoice.getStatus() == VALIDATED){
