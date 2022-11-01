@@ -475,7 +475,10 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 
     @SuppressWarnings("unchecked")
     public List<Object[]> getAgedReceivables(String customerAccountCode, String sellerCode, Date startDate, Date startDueDate, Date endDueDate, PaginationConfiguration paginationConfiguration,
-                                             Integer stepInDays, Integer numberOfPeriods, String invoiceNumber, String customerAccountDescription, String sellerDescription, String tradingCurrency) {
+                                             Integer stepInDays, Integer numberOfPeriods, String invoiceNumber, String customerAccountDescription, String sellerDescription, String tradingCurrency, String functionalCurrency) {
+        if(functionalCurrency != null && !functionalCurrency.equals(appProvider.getCurrency().getCurrencyCode()))
+            return Collections.emptyList();
+
     	String datePattern = "yyyy-MM-dd";
         StringBuilder query = new StringBuilder("Select ao.customerAccount.id, sum (case when ao.dueDate >= '")
                 .append(DateUtils.formatDateWithPattern(startDate, datePattern))
