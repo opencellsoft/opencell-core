@@ -95,7 +95,7 @@ public class Product extends ServiceCharge {
 		this.brand = null;
 		this.currentVersion = null;
 		this.pricePlanMatrixColumns = new ArrayList<>();
-		this.offerComponents = new ArrayList<>();
+		this.offerComponents = new HashSet<>();
 		this.articleMappingLines = new ArrayList<>();
 		this.commercialRuleLines = new ArrayList<>();
 		this.commercialRuleHeader = new ArrayList<>();
@@ -218,8 +218,8 @@ public class Product extends ServiceCharge {
     /**
      * offer component
      */  
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) 
-    private List<OfferComponent> offerComponents = new ArrayList<>();
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<OfferComponent> offerComponents = new HashSet<>();
 
 	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ProductChargeTemplateMapping> productCharges = new ArrayList<>();
@@ -565,7 +565,7 @@ public class Product extends ServiceCharge {
 	/**
 	 * @return the offerComponents
 	 */
-	public List<OfferComponent> getOfferComponents() {
+	public Set<OfferComponent> getOfferComponents() {
 		return offerComponents;
 	}
 
@@ -573,7 +573,7 @@ public class Product extends ServiceCharge {
 	/**
 	 * @param offerComponents the offerComponents to set
 	 */
-	public void setOfferComponents(List<OfferComponent> offerComponents) {
+	public void setOfferComponents(Set<OfferComponent> offerComponents) {
 		this.offerComponents = offerComponents;
 	}
 
