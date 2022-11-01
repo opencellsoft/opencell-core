@@ -140,7 +140,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			if (OperatorEnum.AND == aml.getAttributeOperator()) {
 				aml.getAttributesMapping().forEach(attributeMapping -> {
 					if (continueProcess.get()) {
-						if (checkAttribute(product, attributes, attributeMapping)) {
+						if (checkAttribute(product, walletOperation, attributes, attributeMapping)) {
 							matchedAttributesMapping.add(attributeMapping);
 						} else {
 							// for AND operator, if at least we have 1 unmatchedAttributs (else), all previous matchedAttribut shall not taken into account
@@ -152,7 +152,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			} else if (OperatorEnum.OR == aml.getAttributeOperator()) {
 				aml.getAttributesMapping().forEach(attributeMapping -> {
 					if (continueProcess.get()) {
-						if (checkAttribute(product, attributes, attributeMapping)) {
+						if (checkAttribute(product, walletOperation, attributes, attributeMapping)) {
 							matchedAttributesMapping.add(attributeMapping);
 							continueProcess.set(false);
 						}
@@ -445,7 +445,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 
 	}
 
-	private boolean checkAttribute(Product product, Map<String, Object> attributes, AttributeMapping attributeMapping) {
+	private boolean checkAttribute(Product product, WalletOperation walletOperation, Map<String, Object> attributes, AttributeMapping attributeMapping) {
 		final Attribute attribute = attributeMapping.getAttribute();
 		if (attributes.get(attribute.getCode()) != null) {
 			isValidOperator(attributeMapping.getAttribute(), attributeMapping.getOperator());
@@ -468,7 +468,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 
 					return valueCompareCollection(attributeMapping.getOperator(), source, input);
 				case EXPRESSION_LANGUAGE:
-					Object result = attributeService.evaluateElExpressionAttribute(value.toString(), product, null, null, Object.class);
+					Object result = attributeService.evaluateElExpressionAttribute(value.toString(), product, null, null, walletOperation, Object.class);
 					if (value instanceof Collection) {
 						List<String> sourceEL = Arrays.asList(attributeMapping.getAttributeValue().split(multiValuesAttributeSeparator));
 						List<Object> inputEL = (List) value;

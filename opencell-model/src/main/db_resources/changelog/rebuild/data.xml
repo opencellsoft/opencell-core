@@ -9684,7 +9684,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="job_template" value="AssignMatchingCodeToOldEntriesJob" />
 			<column name="code" value="AssignMatchingCodeToOldEntriesJob" />
 			<column name="creator" value="OPENCELL.ADMIN" />
-			<column name="timerentity_id" valueNumeric="-1" />
+			<column name="timerentity_id" valueNumeric="null" />
 			<column name="uuid" value="AssignMatchingCodeToOldEntriesJob" />
 			<column name="cf_values" value='{"nbRuns": [{"long": 1}], "waitingMillis": [{"long": 0}]}'/>
 		</insert>
