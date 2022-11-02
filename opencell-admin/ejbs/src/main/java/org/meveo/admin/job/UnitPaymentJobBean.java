@@ -96,6 +96,7 @@ public class UnitPaymentJobBean {
             log.error("Failed to pay recorded AccountOperation id:{} customerAccountId:{}, " + listAOids,customerAccountId, e);
             result.registerError(listAOids.toString(), e.getMessage());
             result.addReport("AccountOperation id  : " + listAOids + " RejectReason : " + e.getMessage());
+            this.checkPaymentRetry(null, listAOids, aoFilterScript);
         }
 
     }
