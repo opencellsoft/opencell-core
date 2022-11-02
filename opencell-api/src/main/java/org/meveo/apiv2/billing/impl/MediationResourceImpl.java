@@ -8,6 +8,8 @@ import javax.interceptor.Interceptors;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.billing.CdrDtoInput;
 import org.meveo.apiv2.billing.CdrDtoResponse;
@@ -61,11 +63,10 @@ public class MediationResourceImpl implements MediationResource {
        return mediationApiService.createCdr(cdrs, dtoInput.getMode(), dtoInput.getReturnCDRs(), dtoInput.getReturnCDRs());
     }
 
-
     @Override
-    public CdrDtoResponse updateCDR(CdrListDtoInput cdrDto) {
-        // TODO Auto-generated method stub
-        return null;
+    public ActionStatus updateCDR(Long cdrId, CdrDtoInput cdrDto) {
+        CDR toBeUpdated = mapper.toEntity(cdrDto);
+         mediationApiService.updateCDR(cdrId, toBeUpdated);
+         return new ActionStatus(ActionStatusEnum.SUCCESS, "");
     }
-
 }

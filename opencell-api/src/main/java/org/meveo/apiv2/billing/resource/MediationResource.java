@@ -4,10 +4,12 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.apiv2.billing.CdrDtoInput;
 import org.meveo.apiv2.billing.CdrDtoResponse;
 import org.meveo.apiv2.billing.CdrListDtoInput;
 import org.meveo.apiv2.billing.CdrListInput;
@@ -46,13 +48,16 @@ public interface MediationResource {
     ProcessCdrListResult chargeCdrList(@Parameter(description = "the ChargeCdrListInput object", required = true) ChargeCdrListInput cdrListInput);
 
     @POST
-    @Operation(summary = "create manuel CDR", description = "allow to create a manuel cdr from api", operationId = "    POST_Mediation_processCdrList", responses = {
-            @ApiResponse(description = " return new created CDR id ", content = @Content(schema = @Schema(implementation = ActionStatus.class))) })
+    @Operation(summary = "create manuel CDR", description = "allow to create a manuel cdr from api", operationId = "POST_Mediation_processCdrList", responses = {
+            @ApiResponse(description = " return new created CDR id ", content = @Content(schema = @Schema(implementation = CdrDtoResponse.class))) })
     CdrDtoResponse createCDR(CdrListDtoInput cdrs);
     
 
-    @PUT
-    @Operation(summary = "update an existing  CDR", description = "allow to update a existing cdr from api allowed for CDR that hava status : ", operationId = "    POST_Mediation_processCdrList", responses = {
-            @ApiResponse(description = " status of the operation ", content = @Content(schema = @Schema(implementation = ActionStatus.class))) })
-    CdrDtoResponse updateCDR(CdrListDtoInput cdrDto);
+    @POST
+    @Path("/{id}")
+//    @Operation(summary = "update an existing  CDR", description = "allow to update a existing cdr from api allowed for CDR that hava status : ", operationId = "POST_Mediation_processCdrList", responses = {
+//            @ApiResponse(description = " status of the operation ", content = @Content(schema = @Schema(implementation = ActionStatus.class))) })
+    ActionStatus updateCDR(@PathParam("id") Long id, CdrDtoInput cdrDto);
+    
+
 }

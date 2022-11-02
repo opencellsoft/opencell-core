@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -45,6 +46,7 @@ import org.meveo.api.dto.billing.ChargeCDRResponseDto;
 import org.meveo.api.dto.billing.ChargeCDRResponseDto.CdrError;
 import org.meveo.api.dto.billing.CounterPeriodDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.apiv2.billing.CdrDtoResponse;
 import org.meveo.apiv2.billing.CdrListInput;
@@ -147,6 +149,9 @@ public class MediationApiService {
 
     @Inject
     private RatedTransactionService ratedTransactionService;
+    
+    @Inject
+    private AccessService accessService;
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -612,8 +617,6 @@ public class MediationApiService {
         }
     }
 
-    @Inject
-    private AccessService accessService;
     
     public CdrDtoResponse createCdr(List<CDR> cdrs, ProcessCdrListModeEnum mode, boolean returnCDRs, boolean returnError) {
         Builder cdrDtoResponse = ImmutableCdrDtoResponse.builder();
@@ -674,5 +677,126 @@ public class MediationApiService {
             cdrDtoResponse.addAllErrors(cdrErrorDtos);
         
         return cdrDtoResponse.build();
+    }
+
+    public void updateCDR(Long cdrId, CDR toBeUpdated) {
+        CDR cdr = Optional.ofNullable(cdrService.findById(cdrId)).orElseThrow(() -> new EntityDoesNotExistsException(CDR.class, cdrId));
+        // OPEN, PROCESSED, CLOSED, DISCARDED, ERROR,TO_REPROCESS
+        CDRStatusEnum statusToUpdated = toBeUpdated.getStatus();
+        if(statusToUpdated != null) {
+            switch(cdr.getStatus()) {
+                case OPEN :
+                    if(statusToUpdated == CDRStatusEnum.TO_REPROCESS || statusToUpdated == CDRStatusEnum.PROCESSED || statusToUpdated == CDRStatusEnum.CLOSED) {
+                        throw new BusinessException("Impossible to update CDR with status  from OPEN to : TO_REPROCESS, PROCESSED, CLOSED");
+                    }
+                    break;
+                case ERROR:
+                case TO_REPROCESS :
+                    if(statusToUpdated == CDRStatusEnum.OPEN || statusToUpdated == CDRStatusEnum.PROCESSED || statusToUpdated == CDRStatusEnum.CLOSED) {
+                        throw new BusinessException("Impossible to update CDR with status from " + cdr.getStatus() + " to : OPEN, PROCESSED, CLOSED");
+                    }
+                    break;
+                case DISCARDED : 
+                    if(statusToUpdated != CDRStatusEnum.OPEN && statusToUpdated != CDRStatusEnum.DISCARDED ) {
+                        throw new BusinessException("Impossible to update CDR with status from " + cdr.getStatus() + " to : ERROR, TO_REPROCESS, PROCESSED, CLOSED");
+                    }
+                    break;
+                case PROCESSED : 
+                    if(statusToUpdated != CDRStatusEnum.PROCESSED) {
+                        throw new BusinessException("Impossible to update CDR with status from " + cdr.getStatus() + " to : OPEN, ERROR, TO_REPROCESS, DISCARDED, CLOSED");
+                    }
+                    break;
+                case CLOSED : 
+                    if(statusToUpdated != CDRStatusEnum.CLOSED) {
+                        throw new BusinessException("Impossible to update CDR with status from " + cdr.getStatus() + " to : OPEN, ERROR, TO_REPROCESS, DISCARDED, PROCESSED");
+                    }
+                    break;
+                    
+            default:
+                break;
+            }
+            
+        }
+        if(statusToUpdated == CDRStatusEnum.ERROR && StringUtils.isEmpty(toBeUpdated.getRejectReason())) {
+            throw new BusinessException("You must fill the reject reason");
+        }
+        
+        List<String> error = new ArrayList<String>();
+        
+        if(toBeUpdated.getEventDate() == null) {
+            error.add("eventDate");
+        }
+        if(toBeUpdated.getQuantity() == null || cdr.getQuantity() == BigDecimal.ZERO) {
+            error.add("getQuantity");
+        }
+        if(StringUtils.isEmpty(toBeUpdated.getAccessCode())) {
+            error.add("accessCode");
+        }
+        if(StringUtils.isEmpty(toBeUpdated.getParameter1())) {
+            error.add("paramter1");
+        }
+        if(error.size() > 0) {
+            throw new MissingParameterException(error);
+                
+        }
+        if(CollectionUtils.isEmpty(accessService.getActiveAccessByUserId(toBeUpdated.getAccessCode()))) {
+            throw new BusinessException("Invalid Access for " + cdr.getAccessCode());
+        }
+        cdr.setEventDate(toBeUpdated.getEventDate());
+        cdr.setQuantity(toBeUpdated.getQuantity());
+        cdr.setAccessCode(toBeUpdated.getAccessCode());
+        cdr.setParameter1(toBeUpdated.getParameter1());
+        cdr.setStatus(statusToUpdated);
+        cdr.setStatusDate(new Date());
+
+        if(toBeUpdated.getParameter2() != null) {
+            cdr.setParameter2(toBeUpdated.getParameter2());
+        }
+        if(toBeUpdated.getParameter3() != null) {
+            cdr.setParameter3(toBeUpdated.getParameter3());
+        }
+        if(toBeUpdated.getParameter4() != null) {
+            cdr.setParameter4(toBeUpdated.getParameter4());
+        }
+        if(toBeUpdated.getParameter5() != null) {
+            cdr.setParameter5(toBeUpdated.getParameter5());
+        }
+        if(toBeUpdated.getParameter6() != null) {
+            cdr.setParameter6(toBeUpdated.getParameter6());
+        }
+        if(toBeUpdated.getParameter7() != null) {
+            cdr.setParameter7(toBeUpdated.getParameter7());
+        }
+        if(toBeUpdated.getParameter8() != null) {
+            cdr.setParameter8(toBeUpdated.getParameter8());
+        }
+        if(toBeUpdated.getParameter9() != null) {
+            cdr.setParameter9(toBeUpdated.getParameter9());
+        }
+
+        if(toBeUpdated.getDateParam1() != null) {
+            cdr.setDateParam1(toBeUpdated.getDateParam1());
+        }
+        if(toBeUpdated.getDateParam2() != null) {
+            cdr.setDateParam2(toBeUpdated.getDateParam2());
+        }
+        if(toBeUpdated.getDateParam3() != null) {
+            cdr.setDateParam3(toBeUpdated.getDateParam3());
+        }
+        if(toBeUpdated.getDateParam4() != null) {
+            cdr.setDateParam4(toBeUpdated.getDateParam4());
+        }
+        if(toBeUpdated.getDateParam5() != null) {
+            cdr.setDateParam5(toBeUpdated.getDateParam5());
+        }
+        
+        if(toBeUpdated.getRejectReason() != null) {
+            cdr.setRejectReason(toBeUpdated.getRejectReason());
+        }
+        if(toBeUpdated.getExtraParam() != null) {
+            cdr.setExtraParameter(toBeUpdated.getExtraParam());
+        }
+        
+        cdrService.update(cdr);
     }
 }
