@@ -9878,6 +9878,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="#INTRD-10572_20221014" author="HichamHANINE" />
 	<changeSet id="#INTRD-10572_20221018" author="HichamHANINE" />
 	<changeSet id="#INTRD-11124_20221102" author="HatimOUDAD" />
+    <changeSet id="#INTRD-11154_20221102" author="TarikFA." />
 	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
