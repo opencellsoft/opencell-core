@@ -805,10 +805,12 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 
         // fetch lazies needed join
         Optional.ofNullable(results).orElse(Collections.emptyList())
-                .forEach(recordedInvoice -> recordedInvoice.getMatchingAmounts().forEach(matchingAmount ->
-                        matchingAmount.getMatchingCode().getMatchingAmounts().size()
-                    )
-                );
+                .forEach(recordedInvoice -> recordedInvoice.getMatchingAmounts().forEach(matchingAmount -> {
+                            Optional.ofNullable(matchingAmount.getMatchingCode().getMatchingAmounts()).orElse(Collections.emptyList())
+                                    .forEach(ma -> {
+                                        ma.getAccountOperation().getMatchingAmounts().size();
+                                    });
+                                }));
 
         return results;
 
