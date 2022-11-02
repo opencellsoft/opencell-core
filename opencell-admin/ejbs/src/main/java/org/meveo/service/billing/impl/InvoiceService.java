@@ -6741,7 +6741,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     
     public void applyAdvanceInvoice(Invoice invoice, List<Invoice> advInvoices) {
         if(CollectionUtils.isNotEmpty(advInvoices)) {
-                BigDecimal remainingAmount = invoice.getAmountWithTax();
+                BigDecimal remainingAmount = invoice.getAmountWithTax() != null ? invoice.getAmountWithTax(): ZERO;
                 BigDecimal amount = BigDecimal.ZERO;
                 for(Invoice adv : advInvoices){
                     if(adv.getInvoiceBalance() == null) {
