@@ -746,9 +746,11 @@ public class MediationApiService {
         cdr.setQuantity(toBeUpdated.getQuantity());
         cdr.setAccessCode(toBeUpdated.getAccessCode());
         cdr.setParameter1(toBeUpdated.getParameter1());
-        cdr.setStatus(statusToUpdated);
         cdr.setStatusDate(new Date());
 
+        if(statusToUpdated != null) {
+            cdr.setStatus(statusToUpdated);
+        }
         if(toBeUpdated.getParameter2() != null) {
             cdr.setParameter2(toBeUpdated.getParameter2());
         }
