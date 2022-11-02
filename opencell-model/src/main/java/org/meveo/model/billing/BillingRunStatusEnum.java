@@ -29,6 +29,7 @@ public enum BillingRunStatusEnum {
     VALIDATED(8, "BillingRunStatusEnum.validated"),// the invoices are assigned an invoice number, end of the process
     CANCELLING(9, "BillingRunStatusEnum.cancelling"),
     REJECTED(10, "BillingRunStatusEnum.rejected"),// the billing run or some invoices are rejected and need to be validated/cancelled.
+    SUSPECTED(11, "BillingRunStatusEnum.suspected"),// the billing run or some invoices are suspected and need to be validated/cancelled.
     //NEW STATUS USED ON V2 ONLY:
     CREATING_INVOICE_LINES(20,"BillingRunStatusEnum.creatingInvoiceLines"),//Status indicating that the invoice line job is running
     INVOICE_LINES_CREATED(21,"BillingRunStatusEnum.invoiceLinesCreated"),//Pre-invoicing report is based on invoice lines
