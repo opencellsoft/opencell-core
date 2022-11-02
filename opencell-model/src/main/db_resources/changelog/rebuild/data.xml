@@ -7525,7 +7525,7 @@
            <column name="version" valueNumeric="0" />
            <column name="created" valueDate="2021-02-03 00:00:00.000" />
            <column name="code" value="ADV" />
-           <column name="description" value="Advanced Payment Invoicee" />
+		   <column name="description" value="Call for advance payment" />
            <column name="creator" value="OPENCELL.ADMIN" />
            <column name="invoice_sequence_id"
 				   valueComputed="(SELECT id from billing_seq_invoice where code = 'ADV')" />
@@ -9859,6 +9859,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="#INTRD-10541_20221017" author="TarikFA." />
 	<changeSet id="#INTRD-11124_20221102" author="HatimOUDAD" />
     <changeSet id="#INTRD-11154_20221102" author="TarikFA." />
+    <changeSet id="INTRD-11152_20221102" author="TarikFA." />
 	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
