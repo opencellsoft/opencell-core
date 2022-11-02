@@ -2,7 +2,6 @@ package org.meveo.api.dto.billing;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.Objects;
 
 import org.meveo.api.dto.BaseEntityDto;
 

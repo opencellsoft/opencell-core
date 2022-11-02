@@ -20,6 +20,7 @@ package org.meveo.api.billing;
 
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -69,8 +70,6 @@ import org.meveo.service.medina.impl.CDRAlreadyProcessedException;
 import org.meveo.service.medina.impl.CDRService;
 import org.meveo.service.medina.impl.DuplicateException;
 import org.meveo.service.notification.DefaultObserver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * API for CDR processing and mediation handling in general
@@ -83,7 +82,6 @@ import org.slf4j.LoggerFactory;
 @Stateless
 public class MediationApi extends BaseApi {
 
-    private static Logger log = LoggerFactory.getLogger(MediationApi.class);
     @Inject
     private UsageRatingService usageRatingService;
 
@@ -108,7 +106,7 @@ public class MediationApi extends BaseApi {
     static MessageDigest messageDigest = null;
     static {
         try {
-            messageDigest = MessageDigest.getInstance("MD5");
+            messageDigest = MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException e) {
             log.error("No message digest of type MD5", e);
         }
@@ -384,6 +382,14 @@ public class MediationApi extends BaseApi {
         cdr.setQuantity(dto.getQuantity());
         cdr.setAccessCode(dto.getAccessCode());
         cdr.setParameter1(dto.getParameter1());
+        
+        checkAndSetValueParams(dto, cdr);
+        checkAndSetValueDateParam(dto, cdr);
+        checkAndValueDecimaParam(dto, cdr);
+        
+    }
+    
+    private void checkAndSetValueParams(CdrDto dto, CDR cdr) {
         if(dto.getParameter2() != null)
             cdr.setParameter2(dto.getParameter2());
         if(dto.getParameter3() != null)
@@ -400,7 +406,8 @@ public class MediationApi extends BaseApi {
              cdr.setParameter8(dto.getParameter8());
         if(dto.getParameter9() != null)
              cdr.setParameter9(dto.getParameter9());
-        
+    }
+    private void checkAndSetValueDateParam(CdrDto dto, CDR cdr) {
         if(dto.getDateParam1() != null)
             cdr.setDateParam1(dto.getDateParam1());
         if(dto.getDateParam2() != null)
@@ -411,7 +418,10 @@ public class MediationApi extends BaseApi {
             cdr.setDateParam4(dto.getDateParam4());
         if(dto.getDateParam5() != null)
             cdr.setDateParam5(dto.getDateParam5());
-        
+    	
+    }
+    
+    private void checkAndValueDecimaParam(CdrDto dto, CDR cdr) {
         if(dto.getDecimalParam1() != null)
             cdr.setDecimalParam1(dto.getDecimalParam1());
         if(dto.getDecimalParam2() != null)
@@ -424,8 +434,6 @@ public class MediationApi extends BaseApi {
             cdr.setDecimalParam5(dto.getDecimalParam5());
         if(dto.getExtraParam() != null)
             cdr.setExtraParameter(dto.getExtraParam());
-        ;
-        
     }
     
 
@@ -434,9 +442,9 @@ public class MediationApi extends BaseApi {
         if (messageDigest != null) {
             synchronized (messageDigest) {
                 messageDigest.reset();
-                messageDigest.update(cdr.getBytes(Charset.forName("UTF8")));
+                messageDigest.update(cdr.getBytes(StandardCharsets.UTF_8));
                 final byte[] resultByte = messageDigest.digest();
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < resultByte.length; ++i) {
                     sb.append(Integer.toHexString((resultByte[i] & 0xFF) | 0x100).substring(1, 3));
                 }

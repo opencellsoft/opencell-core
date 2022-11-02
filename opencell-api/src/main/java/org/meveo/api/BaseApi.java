@@ -129,7 +129,7 @@ public abstract class BaseApi {
 
 	protected static final String DEFAULT_SORT_ORDER_ID = "id";
 
-    protected Logger log = LoggerFactory.getLogger(this.getClass());
+    protected static Logger log = LoggerFactory.getLogger(BaseApi.class);
 
     private static final int limitDefaultValue = 100;
 

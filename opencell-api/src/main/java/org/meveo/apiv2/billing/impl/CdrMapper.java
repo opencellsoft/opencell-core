@@ -8,7 +8,6 @@ import org.meveo.apiv2.generic.ResourceMapper;
 import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.model.rating.CDR;
 import org.meveo.service.billing.impl.EdrService;
-import org.meveo.service.medina.impl.CDRService;
 
 public class CdrMapper extends ResourceMapper<CdrDtoInput, CDR>{
 

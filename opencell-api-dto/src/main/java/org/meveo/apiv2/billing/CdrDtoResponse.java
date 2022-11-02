@@ -5,7 +5,6 @@ import java.util.List;
 import org.immutables.value.Value;
 import org.meveo.api.dto.billing.CdrErrorDto;
 import org.meveo.apiv2.models.Resource;
-import org.meveo.model.rating.CDR;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
