@@ -2524,13 +2524,16 @@
         	<column name="id" value="-5"/>
         	<column name="version" valueNumeric="0" />
         	<column name="code" value="ADV-STD"/>
-        	<column name="tax_class_id" value="-1"/>
+        	<column name="tax_class_id" value="-3"/>
             <column name="invoice_sub_category_id" value="-3"/>
             <column name="description_i18n" value='{"FRA":"Acompte","ENG":"Advance payment"}'/>
             <column name="description" value='Advance payment'/>
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_accounting_article-ADV-STD" />
+            <column name="accounting_code_id" value="-6" />
+            <column name="invoice_type_id" value="-5" />
+             
         </insert>
     </changeSet>
 

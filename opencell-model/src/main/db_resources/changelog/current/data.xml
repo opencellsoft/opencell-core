@@ -8265,5 +8265,14 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>code = 'AutoUpdateCurrentRateJob_Job'</where>
 		</update>
     </changeSet>
+    
+    <changeSet id="#INTRD-11154_20221102" author="TarikFA.">
+    	<update tableName="billing_accounting_article">
+            <column name="accounting_code_id" value="-6" />
+            <column name="invoice_type_id" value="-5" />
+        	<column name="tax_class_id" value="-3"/>
+        	<where> code = 'ADV-STD'</where>
+    	</update>
+    </changeSet>
 
 </databaseChangeLog>
