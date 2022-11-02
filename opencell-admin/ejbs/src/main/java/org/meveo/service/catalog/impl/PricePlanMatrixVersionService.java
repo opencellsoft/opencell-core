@@ -3,6 +3,8 @@ package org.meveo.service.catalog.impl;
 import static java.time.temporal.ChronoField.DAY_OF_MONTH;
 import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
 import static java.time.temporal.ChronoField.YEAR;
+import static org.meveo.model.catalog.ColumnTypeEnum.Range_Date;
+import static org.meveo.model.catalog.ColumnTypeEnum.Range_Numeric;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -661,7 +663,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                 line.getPricePlanMatrixValues().iterator().forEachRemaining(ppmv -> {
 
                     String value = resolveValue(ppmv, ppmv.getPricePlanMatrixColumn().getType());
-                    String type = resolveAttributeType(ppmv.getPricePlanMatrixColumn().getAttribute().getAttributeType(), (value == null ? "" : value).contains("|"));
+                    String type = resolveAttributeType(ppmv.getPricePlanMatrixColumn().getAttribute().getAttributeType(), ppmv.getPricePlanMatrixColumn().getType(), (value == null ? "" : value).contains("|"));
                     CSVLineRecord.put(ppmv.getPricePlanMatrixColumn().getCode() + "[" + (ColumnTypeEnum.String.equals(type) ? "text" : type) + ']', value);
 
                     CSVLineRecordPosition.put(ppmv.getPricePlanMatrixColumn().getCode() + "[" + (ColumnTypeEnum.String.equals(type) ? "text" : type) + ']',
@@ -683,25 +685,31 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
             return sortedMap;
         }
 
-        private String resolveAttributeType(AttributeTypeEnum attributeType, boolean isRange) {
+        private String resolveAttributeType(AttributeTypeEnum attributeType, ColumnTypeEnum columnType, boolean isRange) {
             switch (attributeType) {
-            case DATE:
-                return isRange ? "range-date" : "date";
-            case NUMERIC:
-            case INTEGER:
-                return isRange ? "range-number" : "number";
-            case LIST_TEXT:
-                return "list_of_text_values";
-            case LIST_MULTIPLE_TEXT:
-                return "multiple_list_of_text_values";
-            case LIST_NUMERIC:
-                return "list_of_numeric_values";
-            case LIST_MULTIPLE_NUMERIC:
-                return "multiple_list_of_numeric_values";
-            case BOOLEAN:
-                return "boolean";
-            default:
-                return "text";
+                case DATE:
+                    return isRange ? "range-date" : "date";
+                case NUMERIC:
+                case INTEGER:
+                    return isRange ? "range-number" : "number";
+                case LIST_TEXT:
+                    return "list_of_text_values";
+                case LIST_MULTIPLE_TEXT:
+                    return "multiple_list_of_text_values";
+                case LIST_NUMERIC:
+                    return "list_of_numeric_values";
+                case LIST_MULTIPLE_NUMERIC:
+                    return "multiple_list_of_numeric_values";
+                case BOOLEAN:
+                    return "boolean";
+                case EXPRESSION_LANGUAGE:
+                    if (columnType.equals(Range_Numeric)) {
+                        return "range-numeric";
+                    } else if (columnType.equals(Range_Date)) {
+                        return "range-date";
+                    }
+                default:
+                    return "text";
             }
         }
 
