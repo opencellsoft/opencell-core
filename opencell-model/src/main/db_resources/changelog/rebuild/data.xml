@@ -9083,7 +9083,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		<insert tableName="meveo_job_instance">
 			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
 			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueNumeric="1" />
+			<column name="disabled" valueNumeric="0" />
 			<column name="created" valueDate="2022-02-18 00:04:19.913" />
 			<column name="job_category" value="UTILS" />
 			<column name="job_template" value="AutoUpdateCurrentRateJob" />
@@ -9877,6 +9877,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
     <changeSet id="#INTRD-10541_20221017" author="TarikFA." />
 	<changeSet id="#INTRD-10572_20221014" author="HichamHANINE" />
 	<changeSet id="#INTRD-10572_20221018" author="HichamHANINE" />
+	<changeSet id="#INTRD-11124_20221102" author="HatimOUDAD" />
 	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
