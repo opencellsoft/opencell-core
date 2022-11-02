@@ -3,6 +3,8 @@ package org.meveo.service.catalog.impl;
 import static java.time.temporal.ChronoField.DAY_OF_MONTH;
 import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
 import static java.time.temporal.ChronoField.YEAR;
+import static org.meveo.model.catalog.ColumnTypeEnum.Range_Date;
+import static org.meveo.model.catalog.ColumnTypeEnum.Range_Numeric;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -402,13 +404,13 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 	public PricePlanMatrixVersion getPublishedVersionValideForDate(String ppmCode, ServiceInstance serviceInstance, Date operationDate) {
 		Date operationDateParam = new Date();
 		if(serviceInstance==null || PriceVersionDateSettingEnum.EVENT.equals(serviceInstance.getPriceVersionDateSetting())) {
-			operationDateParam = operationDate; 
-		} else if(PriceVersionDateSettingEnum.DELIVERY.equals(serviceInstance.getPriceVersionDateSetting()) 
-			|| PriceVersionDateSettingEnum.RENEWAL.equals(serviceInstance.getPriceVersionDateSetting()) 
+			operationDateParam = operationDate;
+		} else if(PriceVersionDateSettingEnum.DELIVERY.equals(serviceInstance.getPriceVersionDateSetting())
+			|| PriceVersionDateSettingEnum.RENEWAL.equals(serviceInstance.getPriceVersionDateSetting())
 			|| PriceVersionDateSettingEnum.QUOTE.equals(serviceInstance.getPriceVersionDateSetting())) {
-				operationDateParam = serviceInstance.getPriceVersionDate(); 
+				operationDateParam = serviceInstance.getPriceVersionDate();
 		}
-		
+
         List<PricePlanMatrixVersion> result=(List<PricePlanMatrixVersion>) this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.getPublishedVersionValideForDate")
                 .setParameter("pricePlanMatrixCode", ppmCode).setParameter("operationDate", operationDateParam).getResultList();
         if(CollectionUtils.isEmpty(result)) {
@@ -511,16 +513,16 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
         /*
          * if(pricePlanMatrixValues != null && !pricePlanMatrixValues.isEmpty()) {
-         * 
+         *
          * pricePlanMatrixValues.forEach(ppmv -> {
-         * 
+         *
          * pricePlanMatrixValueService.detach(ppmv);
-         * 
+         *
          * var pricePlanMatrixValue = new PricePlanMatrixValue(ppmv); if(pricePlanMatrixColumn != null) { pricePlanMatrixValue.setPricePlanMatrixColumn(pricePlanMatrixColumn);
          * pricePlanMatrixColumn.getPricePlanMatrixValues().add(pricePlanMatrixValue); } if(pricePlanMatrixLine != null) {
          * pricePlanMatrixValue.setPricePlanMatrixLine(pricePlanMatrixLine); pricePlanMatrixLine.getPricePlanMatrixValues().add(pricePlanMatrixValue); }
          * pricePlanMatrixValueService.create(pricePlanMatrixValue);
-         * 
+         *
          * }); }
          */
     }
@@ -630,7 +632,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                 line.getPricePlanMatrixValues().iterator().forEachRemaining(ppmv -> {
 
                     String value = resolveValue(ppmv, ppmv.getPricePlanMatrixColumn().getType());
-                    String type = resolveAttributeType(ppmv.getPricePlanMatrixColumn().getAttribute().getAttributeType(), (value == null ? "" : value).contains("|"));
+                    String type = resolveAttributeType(ppmv.getPricePlanMatrixColumn().getAttribute().getAttributeType(), ppmv.getPricePlanMatrixColumn().getType(), (value == null ? "" : value).contains("|"));
                     CSVLineRecord.put(ppmv.getPricePlanMatrixColumn().getCode() + "[" + (ColumnTypeEnum.String.equals(type) ? "text" : type) + ']', value);
 
                     CSVLineRecordPosition.put(ppmv.getPricePlanMatrixColumn().getCode() + "[" + (ColumnTypeEnum.String.equals(type) ? "text" : type) + ']',
@@ -652,25 +654,31 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
             return sortedMap;
         }
 
-        private String resolveAttributeType(AttributeTypeEnum attributeType, boolean isRange) {
+        private String resolveAttributeType(AttributeTypeEnum attributeType, ColumnTypeEnum columnType, boolean isRange) {
             switch (attributeType) {
-            case DATE:
-                return isRange ? "range-date" : "date";
-            case NUMERIC:
-            case INTEGER:
-                return isRange ? "range-number" : "number";
-            case LIST_TEXT:
-                return "list_of_text_values";
-            case LIST_MULTIPLE_TEXT:
-                return "multiple_list_of_text_values";
-            case LIST_NUMERIC:
-                return "list_of_numeric_values";
-            case LIST_MULTIPLE_NUMERIC:
-                return "multiple_list_of_numeric_values";
-            case BOOLEAN:
-                return "boolean";
-            default:
-                return "text";
+                case DATE:
+                    return isRange ? "range-date" : "date";
+                case NUMERIC:
+                case INTEGER:
+                    return isRange ? "range-number" : "number";
+                case LIST_TEXT:
+                    return "list_of_text_values";
+                case LIST_MULTIPLE_TEXT:
+                    return "multiple_list_of_text_values";
+                case LIST_NUMERIC:
+                    return "list_of_numeric_values";
+                case LIST_MULTIPLE_NUMERIC:
+                    return "multiple_list_of_numeric_values";
+                case BOOLEAN:
+                    return "boolean";
+                case EXPRESSION_LANGUAGE:
+                    if (columnType.equals(Range_Numeric)) {
+                        return "range-numeric";
+                    } else if (columnType.equals(Range_Date)) {
+                        return "range-date";
+                    }
+                default:
+                    return "text";
             }
         }
 
