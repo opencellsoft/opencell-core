@@ -26,6 +26,7 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -33,8 +34,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -60,6 +63,7 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.commons.utils.EjbUtils;
+import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -757,7 +761,6 @@ public class NativePersistenceService extends BaseService {
      * @param id Id field value to explicitly extract data by ID 
      * @return Query builder to filter entities according to pagination configuration data.
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
     public QueryBuilder getQuery(String tableName, PaginationConfiguration config, Long id) {
         tableName = addCurrentSchema(tableName);
         Predicate<String> predicate = field -> this.checkAggFunctions(field.toUpperCase().trim());
@@ -765,11 +768,26 @@ public class NativePersistenceService extends BaseService {
         if(!aggFields.isEmpty()) {
             config.getFetchFields().remove("id");
         }
-        String fieldsToRetrieve = (config != null && config.getFetchFields() != null) ? retrieveFields(config.getFetchFields(), predicate.negate()) : "";
+        
+        List<String> fetch = (config != null && config.getFetchFields() != null) ? config.getFetchFields().stream().filter(s -> s.contains(".")).map(s -> s.substring(0, s.lastIndexOf("."))).distinct().collect(Collectors.toList()) : Collections.emptyList();
+        Map<String, String> fetchAlias = fetch.stream().collect(Collectors.toMap(Function.identity(), s -> QueryBuilder.getJoinAlias("a", s, false)));
+        
+         String fieldsToRetrieve = (config != null && config.getFetchFields() != null) ? retrieveFields(config.getFetchFields(), predicate.negate()) : "";
         if(fieldsToRetrieve.isEmpty() && aggFields.isEmpty()) {
             fieldsToRetrieve = "*";
         }
-        QueryBuilder queryBuilder = new QueryBuilder("select " + buildFields(fieldsToRetrieve, aggFields) + " from " + tableName + " a ", "a");
+        StringBuilder fetchSql = new StringBuilder();
+        if (!ListUtils.isEmtyCollection(fetch)) {
+        	for (String fetchField : fetch) {
+				String joinAlias = fetchField.contains(QueryBuilder.JOIN_AS) ? "" : QueryBuilder.JOIN_AS + fetchAlias.get(fetchField);
+				fetchSql.append(" left join " + "a" + "." + fetchField + joinAlias);
+            }
+        }
+        StringBuilder sql = new StringBuilder("select " + buildFields(fieldsToRetrieve, aggFields) + " from " + tableName + " a ");
+        sql.append(fetchSql);
+        sql.append(" ");
+		QueryBuilder queryBuilder = new QueryBuilder(sql.toString(), "a");
+        
         if(id != null) {
         	queryBuilder.addSql(" a.id ='"+id+"'");
         }
