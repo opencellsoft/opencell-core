@@ -329,7 +329,7 @@ public class QueryBuilder {
 	 * @param fetchField
 	 * @return
 	 */
-	private static String getJoinAlias(String alias, String fetchField, boolean checkExisting) {
+	public static String getJoinAlias(String alias, String fetchField, boolean checkExisting) {
 		String result = alias+"_"+fetchField.replaceAll("\\.", "_");
 		if(checkExisting) {
 			if(joinAlias.contains(result)) {
