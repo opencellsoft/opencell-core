@@ -519,6 +519,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         return getEntityManager().createNamedQuery("WalletOperation.moveNotBilledWOToUA")
         							.setParameter("newWallet", newWallet)
         							.setParameter("newUserAccount", newWallet.getUserAccount())
+                                    .setParameter("billingAccount", newWallet.getUserAccount().getBillingAccount())
         							.setParameter("subscription", subscription).executeUpdate();
     }
 
@@ -526,6 +527,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         return getEntityManager().createNamedQuery("WalletOperation.moveAndRerateNotBilledWOToUA")
         							.setParameter("newWallet", wallet)
         							.setParameter("newUserAccount", wallet.getUserAccount())
+        							.setParameter("billingAccount", wallet.getUserAccount().getBillingAccount())
         							.setParameter("subscription", subscription).executeUpdate();
     }
 

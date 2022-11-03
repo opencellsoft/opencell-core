@@ -34,6 +34,7 @@ import javax.inject.Inject;
 import javax.persistence.Query;
 import javax.ws.rs.core.Response;
 
+import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ChargingEdrOnRemoteInstanceErrorException;
@@ -174,6 +175,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     private DiscountPlanItemService discountPlanItemService;
     @Inject
     private AccountingArticleService accountingArticleService;
+    @Inject 
+    private ChargeInstanceService<ChargeInstance> chargeInstanceService;
 
     /**
      * @param level level enum
@@ -547,7 +550,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     public void rateBareWalletOperation(WalletOperation bareWalletOperation, BigDecimal unitPriceWithoutTaxOverridden, BigDecimal unitPriceWithTaxOverridden, Long buyerCountryId, TradingCurrency buyerCurrency,
             boolean isVirtual) throws InvalidELException, PriceELErrorException, NoTaxException, NoPricePlanException, RatingException {
 
-        ChargeInstance chargeInstance = bareWalletOperation.getChargeInstance();
+        ChargeInstance chargeInstance = chargeInstanceService.findById(bareWalletOperation.getChargeInstance().getId());
     	AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance, bareWalletOperation);
     	bareWalletOperation.setAccountingArticle(accountingArticle);
         // Let charge template's rating script handle all the rating
@@ -567,7 +570,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
             BigDecimal unitPriceWithoutTax = unitPriceWithoutTaxOverridden;
             BigDecimal unitPriceWithTax = unitPriceWithTaxOverridden;
-
+            chargeInstance = (ChargeInstance) Hibernate.unproxy(chargeInstance);
             RecurringChargeTemplate recChargeTemplate = null;
             if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
                 recChargeTemplate = ((RecurringChargeInstance) chargeInstance).getRecurringChargeTemplate();
@@ -897,6 +900,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         RecurringChargeTemplate recChargeTemplate = null;
         ChargeInstance chargeInstance = bareOperation.getChargeInstance();
         if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
+            chargeInstance = (ChargeInstance) Hibernate.unproxy(chargeInstance);
             recChargeTemplate = ((RecurringChargeInstance) chargeInstance).getRecurringChargeTemplate();
         }
 
