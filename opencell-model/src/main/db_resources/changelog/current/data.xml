@@ -8372,7 +8372,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
     
     <changeSet id="INTRD-11152_20221102" author="TarikFA.">
          <insert tableName="ar_occ_template">
-			<column name="id" valueNumeric="-62" />
+			<column name="id" valueNumeric="-65" />
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="code" value="INV_ADV" />
