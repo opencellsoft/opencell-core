@@ -224,7 +224,10 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
 		serviceInstance.setRateUntilDate(subscription.getEndAgreementDate());
 		serviceInstance.setProductVersion(product.getCurrentVersion());
-		serviceInstance.setQuoteProduct(quoteProduct);
+
+		if (quoteProduct != null) {
+			serviceInstance.setQuoteProduct(quoteProduct);
+		}
 
 		serviceInstance.setSubscription(subscription);
 		Map<String,AttributeInstance> instantiatedAttributes=new HashMap<String, AttributeInstance>();
