@@ -238,7 +238,7 @@ public class ProductApi extends BaseApi {
 
 			if(productDto.getCurrentProductVersion() != null){
 				checkMandatoryFields(productDto.getCurrentProductVersion());
-				ProductVersion existingProductVersion = productVersionService.findByProductAndVersion(productDto.getCode(), productDto.getCurrentProductVersion().getCurrentVersion());
+				ProductVersion existingProductVersion = productVersionService.findByProductAndVersion(productCode, productDto.getCurrentProductVersion().getCurrentVersion());
 				if(existingProductVersion != null)
 					updateProductVersion(productDto.getCurrentProductVersion(), existingProductVersion);
 				else
