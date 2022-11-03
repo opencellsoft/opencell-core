@@ -18,7 +18,12 @@
 
 package org.meveo.api.billing;
 
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Asynchronous;
@@ -27,11 +32,13 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InsufficientBalanceException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.dto.billing.CdrDto;
 import org.meveo.api.dto.billing.CdrErrorDto;
 import org.meveo.api.dto.billing.CdrListDto;
 import org.meveo.api.dto.billing.ChargeCDRDto;
@@ -39,6 +46,7 @@ import org.meveo.api.dto.billing.ChargeCDRResponseDto;
 import org.meveo.api.dto.billing.PrepaidReservationDto;
 import org.meveo.api.dto.billing.ProcessCdrDto;
 import org.meveo.api.dto.response.billing.CdrReservationResponseDto;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.apiv2.billing.CdrListInput;
 import org.meveo.apiv2.billing.ChargeCdrListInput;
@@ -51,10 +59,15 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
 import org.meveo.model.rating.CDR;
+import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.model.rating.EDR;
+import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.ReservationService;
 import org.meveo.service.billing.impl.UsageRatingService;
+import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.medina.impl.CDRAlreadyProcessedException;
+import org.meveo.service.medina.impl.CDRService;
+import org.meveo.service.medina.impl.DuplicateException;
 import org.meveo.service.notification.DefaultObserver;
 
 /**
@@ -79,7 +92,24 @@ public class MediationApi extends BaseApi {
 
     @Inject
     private MediationApiService mediationApiService;
+    
+    @Inject
+    private AccessService accessService;
+    
+    @Inject
+    private CDRService cdrService;
+    @Inject
+    private EdrService edrService;
 
+
+    static MessageDigest messageDigest = null;
+    static {
+        try {
+            messageDigest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            log.error("No message digest of type MD5", e);
+        }
+    }
     /**
      * Register EDRS
      * 
@@ -308,5 +338,119 @@ public class MediationApi extends BaseApi {
                 log.error("Failed to notify of rejected CDR {}", cdr, e);
             }
         }
+    }
+    
+    public CDR createCdr(CdrDto dto, String ip) throws DuplicateException {
+        if(dto.getEventDate() == null) {
+            missingParameters.add("eventDate");
+        }
+        if(dto.getQuantity() == null || BigDecimal.ZERO == dto.getQuantity()) {
+            missingParameters.add("quantity");
+        }
+        if(StringUtils.isBlank(dto.getAccessCode())) {
+            missingParameters.add("accessCode");
+        }
+        if(StringUtils.isBlank(dto.getParameter1())) {
+            missingParameters.add("parameter1");
+        }
+        handleMissingParameters();
+        
+        CDR cdr = new CDR();
+        if(CollectionUtils.isEmpty(accessService.getActiveAccessByUserId(dto.getAccessCode()))) {
+            throw new EntityDoesNotExistsException("No Access point found for accessCode : " + dto.getAccessCode());
+        }
+        populateFromDto(dto, cdr);
+        cdr.setStatus(CDRStatusEnum.OPEN);
+        cdr.setStatusDate(new Date());
+        cdr.setOriginBatch(ip);
+        String cdrToCsv = cdr.toCsv();
+        cdr.setOriginRecord(getOriginRecordFromApi(cdrToCsv));
+        cdr.setLine(cdrToCsv);
+        
+        if (edrService.isDuplicateFound(cdr.getOriginBatch(), cdr.getOriginRecord())) {
+            throw new DuplicateException(cdr);
+        }
+        
+        cdrService.create(cdr);
+        return cdr;
+    }
+    
+    private void populateFromDto(CdrDto dto, CDR cdr) {
+
+        cdr.setEventDate(dto.getEventDate());
+        cdr.setQuantity(dto.getQuantity());
+        cdr.setAccessCode(dto.getAccessCode());
+        cdr.setParameter1(dto.getParameter1());
+        
+        checkAndSetValueParams(dto, cdr);
+        checkAndSetValueDateParam(dto, cdr);
+        checkAndValueDecimaParam(dto, cdr);
+        
+    }
+    
+    private void checkAndSetValueParams(CdrDto dto, CDR cdr) {
+        if(dto.getParameter2() != null)
+            cdr.setParameter2(dto.getParameter2());
+        if(dto.getParameter3() != null)
+            cdr.setParameter3(dto.getParameter3());
+        if(dto.getParameter4() != null)
+            cdr.setParameter4(dto.getParameter4());
+        if(dto.getParameter5() != null)
+             cdr.setParameter5(dto.getParameter5());
+        if(dto.getParameter6() != null)
+            cdr.setParameter6(dto.getParameter6());
+        if(dto.getParameter7() != null)
+            cdr.setParameter7(dto.getParameter7());
+        if(dto.getParameter8() != null)
+             cdr.setParameter8(dto.getParameter8());
+        if(dto.getParameter9() != null)
+             cdr.setParameter9(dto.getParameter9());
+    }
+    private void checkAndSetValueDateParam(CdrDto dto, CDR cdr) {
+        if(dto.getDateParam1() != null)
+            cdr.setDateParam1(dto.getDateParam1());
+        if(dto.getDateParam2() != null)
+            cdr.setDateParam2(dto.getDateParam2());
+        if(dto.getDateParam3() != null)
+            cdr.setDateParam3(dto.getDateParam3());
+        if(dto.getDateParam4() != null)
+            cdr.setDateParam4(dto.getDateParam4());
+        if(dto.getDateParam5() != null)
+            cdr.setDateParam5(dto.getDateParam5());
+    	
+    }
+    
+    private void checkAndValueDecimaParam(CdrDto dto, CDR cdr) {
+        if(dto.getDecimalParam1() != null)
+            cdr.setDecimalParam1(dto.getDecimalParam1());
+        if(dto.getDecimalParam2() != null)
+            cdr.setDecimalParam2(dto.getDecimalParam2());
+        if(dto.getDecimalParam3() != null)
+            cdr.setDecimalParam3(dto.getDecimalParam3());
+        if(dto.getDecimalParam4() != null)
+            cdr.setDecimalParam4(dto.getDecimalParam4());
+        if(dto.getDecimalParam5() != null)
+            cdr.setDecimalParam5(dto.getDecimalParam5());
+        if(dto.getExtraParam() != null)
+            cdr.setExtraParameter(dto.getExtraParam());
+    }
+    
+
+    private String getOriginRecordFromApi(String cdr) {
+
+        if (messageDigest != null) {
+            synchronized (messageDigest) {
+                messageDigest.reset();
+                messageDigest.update(cdr.getBytes(StandardCharsets.UTF_8));
+                final byte[] resultByte = messageDigest.digest();
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < resultByte.length; ++i) {
+                    sb.append(Integer.toHexString((resultByte[i] & 0xFF) | 0x100).substring(1, 3));
+                }
+                return sb.toString();
+            }
+        }
+
+        return null;
     }
 }

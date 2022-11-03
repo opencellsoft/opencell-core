@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -40,14 +41,21 @@ import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.MediationJobBean;
+import org.meveo.api.dto.billing.CdrErrorDto;
 import org.meveo.api.dto.billing.ChargeCDRResponseDto;
 import org.meveo.api.dto.billing.ChargeCDRResponseDto.CdrError;
 import org.meveo.api.dto.billing.CounterPeriodDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.MissingParameterException;
+import org.meveo.apiv2.billing.CdrDtoResponse;
 import org.meveo.apiv2.billing.CdrListInput;
 import org.meveo.apiv2.billing.ChargeCdrListInput;
+import org.meveo.apiv2.billing.ImmutableCdrDtoResponse;
+import org.meveo.apiv2.billing.ImmutableCdrDtoResponse.Builder;
 import org.meveo.apiv2.billing.ProcessCdrListModeEnum;
 import org.meveo.apiv2.billing.ProcessCdrListResult;
+import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -72,6 +80,7 @@ import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.ReservationService;
 import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.mediation.MediationsettingService;
+import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.medina.impl.CDRAlreadyProcessedException;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
@@ -140,6 +149,9 @@ public class MediationApiService {
 
     @Inject
     private RatedTransactionService ratedTransactionService;
+    
+    @Inject
+    private AccessService accessService;
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -603,5 +615,190 @@ public class MediationApiService {
         } catch (BusinessException e) {
             log.error("Failed to cancel Prepaid Reservation In New Transaction", e);
         }
+    }
+
+    
+    public CdrDtoResponse createCdr(List<CDR> cdrs, ProcessCdrListModeEnum mode, boolean returnCDRs, boolean returnError) {
+        Builder cdrDtoResponse = ImmutableCdrDtoResponse.builder();
+        List<org.meveo.apiv2.models.Resource> ids = new ArrayList<>();
+        List<CdrErrorDto> cdrErrorDtos = new ArrayList<CdrErrorDto>();
+        for (CDR cdr : cdrs) {
+            List<String> error = new ArrayList<String>();
+            String invalidAccessMsg = null;
+            String mandatoryErrorMsg = null;
+            cdr.setStatus(CDRStatusEnum.OPEN);
+            cdr.setStatusDate(new Date());
+            // mandatory
+            if(cdr.getEventDate() == null) {
+                error.add("eventDate");
+            }
+            if(cdr.getQuantity() == null || cdr.getQuantity() == BigDecimal.ZERO) {
+                error.add("getQuantity");
+            }
+            if(StringUtils.isEmpty(cdr.getAccessCode())) {
+                error.add("accessCode");
+            }
+            if(StringUtils.isEmpty(cdr.getParameter1())) {
+                error.add("paramter1");
+            }
+            // construct error
+            if(error.size() > 0) {
+                mandatoryErrorMsg = "missing paramters : " + error.toString();
+                    
+            }
+            // check access point
+            if(error.size() == 0 &&  CollectionUtils.isEmpty(accessService.getActiveAccessByUserId(cdr.getAccessCode()))) {
+                invalidAccessMsg =  "Invalid Access for " + cdr.getAccessCode();
+            }
+            
+            if(mandatoryErrorMsg != null || invalidAccessMsg != null) {
+                cdr.setRejectReason( (mandatoryErrorMsg != null ? mandatoryErrorMsg : "" ) + (invalidAccessMsg != null ? invalidAccessMsg : ""));
+                cdr.setStatus(CDRStatusEnum.ERROR);
+                cdr.setStatusDate(new Date());
+                cdr.setLine(cdr.toCsv());
+
+                cdrErrorDtos.add(new CdrErrorDto(cdr.toCsv(), cdr.getRejectReason()));
+            }
+            
+            cdrService.create(cdr);
+            ids.add(ImmutableResource.builder().id(cdr.getId()).build());
+            
+            if(cdr.getRejectReason() != null) {
+                if(mode == STOP_ON_FIRST_FAIL) {
+                    break;
+                }else if(mode == ROLLBACK_ON_ERROR) {
+                    throw new BusinessException(cdr.getRejectReason());
+                }
+            }
+        }
+        if(returnCDRs)
+            cdrDtoResponse.addAllCdrs(ids);
+        if(returnError)
+            cdrDtoResponse.addAllErrors(cdrErrorDtos);
+        
+        return cdrDtoResponse.build();
+    }
+
+    public void updateCDR(Long cdrId, CDR toBeUpdated) {
+        CDR cdr = Optional.ofNullable(cdrService.findById(cdrId)).orElseThrow(() -> new EntityDoesNotExistsException(CDR.class, cdrId));
+        // OPEN, PROCESSED, CLOSED, DISCARDED, ERROR,TO_REPROCESS
+        CDRStatusEnum statusToUpdated = toBeUpdated.getStatus();
+        if(statusToUpdated != null) {
+            switch(cdr.getStatus()) {
+                case OPEN :
+                    if(statusToUpdated == CDRStatusEnum.TO_REPROCESS || statusToUpdated == CDRStatusEnum.PROCESSED || statusToUpdated == CDRStatusEnum.CLOSED) {
+                        throw new BusinessException("Impossible to update CDR with status  from OPEN to : TO_REPROCESS, PROCESSED, CLOSED");
+                    }
+                    break;
+                case ERROR:
+                case TO_REPROCESS :
+                    if(statusToUpdated == CDRStatusEnum.OPEN || statusToUpdated == CDRStatusEnum.PROCESSED || statusToUpdated == CDRStatusEnum.CLOSED) {
+                        throw new BusinessException("Impossible to update CDR with status from " + cdr.getStatus() + " to : OPEN, PROCESSED, CLOSED");
+                    }
+                    break;
+                case DISCARDED : 
+                    if(statusToUpdated != CDRStatusEnum.OPEN && statusToUpdated != CDRStatusEnum.DISCARDED ) {
+                        throw new BusinessException("Impossible to update CDR with status from " + cdr.getStatus() + " to : ERROR, TO_REPROCESS, PROCESSED, CLOSED");
+                    }
+                    break;
+                case PROCESSED : 
+                    if(statusToUpdated != CDRStatusEnum.PROCESSED) {
+                        throw new BusinessException("Impossible to update CDR with status from " + cdr.getStatus() + " to : OPEN, ERROR, TO_REPROCESS, DISCARDED, CLOSED");
+                    }
+                    break;
+                case CLOSED : 
+                    if(statusToUpdated != CDRStatusEnum.CLOSED) {
+                        throw new BusinessException("Impossible to update CDR with status from " + cdr.getStatus() + " to : OPEN, ERROR, TO_REPROCESS, DISCARDED, PROCESSED");
+                    }
+                    break;
+                    
+            default:
+                break;
+            }
+            
+        }
+        if(statusToUpdated == CDRStatusEnum.ERROR && StringUtils.isEmpty(toBeUpdated.getRejectReason())) {
+            throw new BusinessException("You must fill the reject reason");
+        }
+        
+        List<String> error = new ArrayList<String>();
+        
+        if(toBeUpdated.getEventDate() == null) {
+            error.add("eventDate");
+        }
+        if(toBeUpdated.getQuantity() == null || cdr.getQuantity() == BigDecimal.ZERO) {
+            error.add("getQuantity");
+        }
+        if(StringUtils.isEmpty(toBeUpdated.getAccessCode())) {
+            error.add("accessCode");
+        }
+        if(StringUtils.isEmpty(toBeUpdated.getParameter1())) {
+            error.add("paramter1");
+        }
+        if(error.size() > 0) {
+            throw new MissingParameterException(error);
+                
+        }
+        if(CollectionUtils.isEmpty(accessService.getActiveAccessByUserId(toBeUpdated.getAccessCode()))) {
+            throw new BusinessException("Invalid Access for " + cdr.getAccessCode());
+        }
+        cdr.setEventDate(toBeUpdated.getEventDate());
+        cdr.setQuantity(toBeUpdated.getQuantity());
+        cdr.setAccessCode(toBeUpdated.getAccessCode());
+        cdr.setParameter1(toBeUpdated.getParameter1());
+        cdr.setStatusDate(new Date());
+
+        if(statusToUpdated != null) {
+            cdr.setStatus(statusToUpdated);
+        }
+        if(toBeUpdated.getParameter2() != null) {
+            cdr.setParameter2(toBeUpdated.getParameter2());
+        }
+        if(toBeUpdated.getParameter3() != null) {
+            cdr.setParameter3(toBeUpdated.getParameter3());
+        }
+        if(toBeUpdated.getParameter4() != null) {
+            cdr.setParameter4(toBeUpdated.getParameter4());
+        }
+        if(toBeUpdated.getParameter5() != null) {
+            cdr.setParameter5(toBeUpdated.getParameter5());
+        }
+        if(toBeUpdated.getParameter6() != null) {
+            cdr.setParameter6(toBeUpdated.getParameter6());
+        }
+        if(toBeUpdated.getParameter7() != null) {
+            cdr.setParameter7(toBeUpdated.getParameter7());
+        }
+        if(toBeUpdated.getParameter8() != null) {
+            cdr.setParameter8(toBeUpdated.getParameter8());
+        }
+        if(toBeUpdated.getParameter9() != null) {
+            cdr.setParameter9(toBeUpdated.getParameter9());
+        }
+
+        if(toBeUpdated.getDateParam1() != null) {
+            cdr.setDateParam1(toBeUpdated.getDateParam1());
+        }
+        if(toBeUpdated.getDateParam2() != null) {
+            cdr.setDateParam2(toBeUpdated.getDateParam2());
+        }
+        if(toBeUpdated.getDateParam3() != null) {
+            cdr.setDateParam3(toBeUpdated.getDateParam3());
+        }
+        if(toBeUpdated.getDateParam4() != null) {
+            cdr.setDateParam4(toBeUpdated.getDateParam4());
+        }
+        if(toBeUpdated.getDateParam5() != null) {
+            cdr.setDateParam5(toBeUpdated.getDateParam5());
+        }
+        
+        if(toBeUpdated.getRejectReason() != null) {
+            cdr.setRejectReason(toBeUpdated.getRejectReason());
+        }
+        if(toBeUpdated.getExtraParam() != null) {
+            cdr.setExtraParameter(toBeUpdated.getExtraParam());
+        }
+        
+        cdrService.update(cdr);
     }
 }
