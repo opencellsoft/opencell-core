@@ -246,14 +246,16 @@ public class ProductService extends BusinessService<Product> {
 			throw new EntityDoesNotExistsException(Product.class, productCode);
 		if(product.getStatus().equals(ProductStatusEnum.DRAFT)) {
 			ProductVersion productVersion= productVersionService.findByProductAndStatus(productCode,VersionStatusEnum.PUBLISHED);
-			if(productVersion==null) {
-				throw new MeveoApiException("At least one version must be published");
-			}
-			Optional<ProductChargeTemplateMapping> firstNonActiveLinkedCharge = product.getProductCharges().stream()
-					.filter(chargeTemplateMapping -> !chargeTemplateMapping.getChargeTemplate().getStatus().equals(ChargeTemplateStatusEnum.ACTIVE))
-					.findFirst();
-			if(firstNonActiveLinkedCharge.isPresent()){
-				throw new BusinessException("All linked charges must be activated before activating the product!");
+			if(status.equals(ProductStatusEnum.ACTIVE)) {
+				if(productVersion==null) {
+					throw new MeveoApiException("At least one version must be published");
+				}
+				Optional<ProductChargeTemplateMapping> firstNonActiveLinkedCharge = product.getProductCharges().stream()
+						.filter(chargeTemplateMapping -> !chargeTemplateMapping.getChargeTemplate().getStatus().equals(ChargeTemplateStatusEnum.ACTIVE))
+						.findFirst();
+				if(firstNonActiveLinkedCharge.isPresent()){
+					throw new BusinessException("All linked charges must be activated before activating the product!");
+				}
 			}
 			product.setStatus(status);
 			product.setStatusDate(Calendar.getInstance().getTime());
