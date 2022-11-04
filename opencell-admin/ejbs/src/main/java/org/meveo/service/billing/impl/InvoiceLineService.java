@@ -41,7 +41,6 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
@@ -80,13 +79,13 @@ import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.IInvoicingMinimumApplicable;
-import org.meveo.model.crm.IInvoicingMinimumApplicable;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.order.Order;
 import org.meveo.model.ordering.OpenOrder;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.settings.OpenOrderSetting;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
@@ -189,7 +188,37 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         createInvoiceLineWithInvoice(entity, invoice, false);
     }
 
-    public void createInvoiceLineWithInvoice(InvoiceLine entity, Invoice invoice, boolean isDuplicated) throws BusinessException {
+    public InvoiceLine createInvoiceLineWithInvoiceAndSD(SecurityDeposit securityDepositInput, Invoice invoice, InvoiceLine invoiceLine) throws BusinessException {
+        AccountingArticle accountingArticle = accountingArticleService.findByCode("ART_SECURITY_DEPOSIT");
+        if(accountingArticle == null) {
+            throw new EntityDoesNotExistsException(AccountingArticle.class, "ART_SECURITY_DEPOSIT");
+        }
+        Boolean isExonerated = securityDepositInput.getBillingAccount().isExoneratedFromtaxes();
+        if (isExonerated == null) {
+            isExonerated = billingAccountService.isExonerated(securityDepositInput.getBillingAccount());
+        }
+        TaxInfo recalculatedTaxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), 
+            securityDepositInput.getBillingAccount().getCustomerAccount().getCustomer().getSeller(), 
+            securityDepositInput.getBillingAccount(), null, new Date(), null, isExonerated, false, invoiceLine.getTax());
+        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(securityDepositInput.getAmount(), securityDepositInput.getAmount(), 
+            recalculatedTaxInfo.tax.getPercent(), appProvider.isEntreprise(), appProvider.getRounding(),
+            appProvider.getRoundingMode().getRoundingMode());
+        invoiceLine.setAmountWithoutTax(amounts[0]);
+        invoiceLine.setAmountWithTax(amounts[1]);
+        invoiceLine.setAmountTax(amounts[2]);
+        invoiceLine.setTax(recalculatedTaxInfo.tax);
+        invoiceLine.setTaxRate(recalculatedTaxInfo.tax.getPercent());          
+        invoiceLine.setTaxMode(InvoiceLineTaxModeEnum.ARTICLE);          
+        invoiceLine.setAccountingArticle(accountingArticle);
+        invoiceLine.setDiscountPlan(null);
+        invoiceLine.setUnitPrice(securityDepositInput.getAmount());
+        invoiceLine.setInvoice(invoice);        
+        invoiceLine.setQuantity(new BigDecimal("1"));
+        invoiceLine.setLabel("");
+        return createInvoiceLineWithInvoice(invoiceLine, invoice, false);
+    }
+    
+    public InvoiceLine createInvoiceLineWithInvoice(InvoiceLine entity, Invoice invoice, boolean isDuplicated) throws BusinessException {
         AccountingArticle accountingArticle=entity.getAccountingArticle();
         Date date=new Date();
         if(entity.getValueDate()!=null) {
@@ -214,6 +243,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         if(!isDuplicated && entity.getDiscountPlan() != null) {
         	addDiscountPlanInvoice(entity.getDiscountPlan(), entity, billingAccount,invoice, accountingArticle, seller);
         }
+		
+		return entity;
     }
     
     private void addDiscountPlanInvoice(DiscountPlan discount, InvoiceLine entity, BillingAccount billingAccount, Invoice invoice, AccountingArticle accountingArticle, Seller seller) {

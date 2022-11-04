@@ -8296,5 +8296,42 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         	<where> code = 'ADV'</where>
     	</update>
 	</changeSet>
+	
+	<changeSet id="#INTRD-10572_20221014" author="HichamHANINE">
+		<update tableName="crm_customer_category">
+			<column name="tax_category_id" value="-3" />
+			<where>id in (-1,-2)</where>
+		</update>
+    </changeSet>
+    
+    <changeSet id="#INTRD-10572_20221018" author="HichamHANINE">
+   		<update tableName="crm_customer_category">
+			<column name="tax_category_id" value="-1" />
+			<where>id in (-1,-2)</where>
+		</update>
+		<update tableName="billing_tax_mapping">
+			<column name="tax_category_id" value="-1" />
+			<where>tax_category_id = -3</where>
+		</update>
+		<update tableName="billing_billing_account">
+			<column name="tax_category_id" value="-1" />
+			<where>tax_category_id = -3</where>
+		</update>
+		<update tableName="billing_tax_category">			
+			<column name="code" value="REGULAR1"/>        
+			<where>id = -3</where>
+		</update>
+		<update tableName="billing_tax_category">			
+			<column name="code" value="REGULAR"/>
+            <column name="description_i18n" value='{"FRA":"Standard","ENG":"Regular"}'/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_tax_category_regular" />            
+			<where>id = -1</where>
+		</update>
+		<delete tableName="billing_tax_category">
+			<where>id = -3</where>
+		</delete>
+    </changeSet>
 
 </databaseChangeLog>
