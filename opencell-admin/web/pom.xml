@@ -5,7 +5,7 @@
         <artifactId>opencell-admin</artifactId>
         <groupId>com.opencellsoft</groupId>
         <relativePath>../pom.xml</relativePath>
-        <version>12.2.6-hotfix-172</version>
+        <version>12.2.6-600-fab23d6</version>
     </parent>
     <artifactId>opencell-admin-web</artifactId>
     <name>Opencell Admin Web Application - Web Module</name>

@@ -4,7 +4,7 @@
     <groupId>info.opencell.tests</groupId>
     <artifactId>opencelltests</artifactId>
     <name>Opencell tests</name>
-    <version>12.2.6-hotfix-172</version>
+    <version>12.2.6-600-fab23d6</version>
     
     <pluginRepositories>
         <pluginRepository>
