@@ -3696,9 +3696,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Subscription subscription = invoice.getSubscription();
         BillingAccount billingAccount = invoice.getBillingAccount();
         CustomerAccount customerAccount = billingAccount.getCustomerAccount();
-        if(invoice.getBillingRun() == null) {
-            applyAdvanceInvoice(invoice, checkAdvanceInvoice(invoice));
-        }
         
         boolean isEnterprise = appProvider.isEntreprise();
         String languageCode = billingAccount.getTradingLanguage().getLanguageCode();
@@ -3916,6 +3913,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.setDiscountAmount(amountDiscount);
                 invoice.setAmountWithoutTaxBeforeDiscount(invoice.getAmountWithoutTax().add(amountDiscount));
             }
+        }
+        
+        if(invoice.getBillingRun() == null) {
+            applyAdvanceInvoice(invoice, checkAdvanceInvoice(invoice));
         }
     }
 
@@ -6741,14 +6742,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
     
     public void applyAdvanceInvoice(Invoice invoice, List<Invoice> advInvoices) {
         if(CollectionUtils.isNotEmpty(advInvoices)) {
-                BigDecimal remainingAmount = invoice.getAmountWithTax() != null ? invoice.getAmountWithTax(): ZERO;
+                BigDecimal remainingAmount = invoice.getAmountWithTax();
                 BigDecimal amount = BigDecimal.ZERO;
                 for(Invoice adv : advInvoices){
                     if(adv.getInvoiceBalance() == null) {
                         continue;
                     }
                     amount = BigDecimal.ZERO;
-                    if(adv.getInvoiceBalance().compareTo(remainingAmount) >= 1){
+                    if(adv.getInvoiceBalance().compareTo(remainingAmount) >= 0){
                         amount=remainingAmount;
                         adv.setInvoiceBalance( adv.getInvoiceBalance().subtract(remainingAmount));
                         remainingAmount = BigDecimal.ZERO;
