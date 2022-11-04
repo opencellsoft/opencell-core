@@ -663,66 +663,69 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
         Element addressTag = doc.createElement("address");
         Element address1 = doc.createElement("address1");
-        account = accountEntitySearchService.retrieveIfNotManaged(account);
-        if (account.getAddress() != null && account.getAddress().getAddress1() != null) {
-            Text adress1Txt = this.createTextNode(doc, account.getAddress().getAddress1());
-            address1.appendChild(adress1Txt);
-        }
-        addressTag.appendChild(address1);
-        Element address2 = doc.createElement("address2");
-        if (account.getAddress() != null && account.getAddress().getAddress2() != null) {
-            Text adress2Txt = this.createTextNode(doc, account.getAddress().getAddress2());
-            address2.appendChild(adress2Txt);
-        }
-        addressTag.appendChild(address2);
-        Element address3 = doc.createElement("address3");
-        if (account.getAddress() != null && account.getAddress().getAddress3() != null) {
-            Text adress3Txt = this.createTextNode(doc, account.getAddress().getAddress3() != null ? account.getAddress().getAddress3() : "");
-            address3.appendChild(adress3Txt);
-        }
-        addressTag.appendChild(address3);
-        Element city = doc.createElement("city");
-        if (account.getAddress() != null && account.getAddress().getCity() != null) {
-            Text cityTxt = this.createTextNode(doc, account.getAddress().getCity() != null ? account.getAddress().getCity() : "");
-            city.appendChild(cityTxt);
-        }
-        addressTag.appendChild(city);
-        Element postalCode = doc.createElement("postalCode");
-        if (account.getAddress() != null && account.getAddress().getZipCode() != null) {
-            Text postalCodeTxt = this.createTextNode(doc, account.getAddress().getZipCode() != null ? account.getAddress().getZipCode() : "");
-            postalCode.appendChild(postalCodeTxt);
-        }
-        addressTag.appendChild(postalCode);
-        Element state = doc.createElement("state");
-        if (account.getAddress() != null && account.getAddress().getState() != null) {
-            Text stateTxt = this.createTextNode(doc, account.getAddress().getState());
-            state.appendChild(stateTxt);
-        }
-        addressTag.appendChild(state);
-        Element country = doc.createElement("country");
-        Element countryName = doc.createElement("countryName");
-        if (account.getAddress() != null && account.getAddress().getCountry() != null) {
-            Text countryTxt = this.createTextNode(doc, account.getAddress().getCountry() != null ? account.getAddress().getCountry().getCountryCode() : "");
-            country.appendChild(countryTxt);
-            String translationKey = "C_" + account.getAddress().getCountry() + "_" + invoiceLanguageCode;
-            String descTranslated = descriptionMap.get(translationKey);
-            if (descTranslated == null) {
-                Country countrybyCode = account.getAddress().getCountry();
-                if (countrybyCode != null && countrybyCode.getDescriptionI18n() != null && countrybyCode.getDescriptionI18n().get(invoiceLanguageCode) != null) {
-                    // get country description by language code
-                    descTranslated = countrybyCode.getDescriptionI18n().get(invoiceLanguageCode);
-                } else if (countrybyCode != null) {
-                    descTranslated = countrybyCode.getDescription();
-                } else {
-                    descTranslated = "";
-                }
-                descriptionMap.put(translationKey, descTranslated);
+        if (account != null) {
+            account = accountEntitySearchService.retrieveIfNotManaged(account);
+            if (account.getAddress() != null && account.getAddress().getAddress1() != null) {
+                Text adress1Txt = this.createTextNode(doc, account.getAddress().getAddress1());
+                address1.appendChild(adress1Txt);
             }
-            Text countryNameTxt = this.createTextNode(doc, descTranslated);
-            countryName.appendChild(countryNameTxt);
+            addressTag.appendChild(address1);
+            Element address2 = doc.createElement("address2");
+            if (account.getAddress() != null && account.getAddress().getAddress2() != null) {
+                Text adress2Txt = this.createTextNode(doc, account.getAddress().getAddress2());
+                address2.appendChild(adress2Txt);
+            }
+            addressTag.appendChild(address2);
+            Element address3 = doc.createElement("address3");
+            if (account.getAddress() != null && account.getAddress().getAddress3() != null) {
+                Text adress3Txt = this.createTextNode(doc, account.getAddress().getAddress3() != null ? account.getAddress().getAddress3() : "");
+                address3.appendChild(adress3Txt);
+            }
+            addressTag.appendChild(address3);
+            Element city = doc.createElement("city");
+            if (account.getAddress() != null && account.getAddress().getCity() != null) {
+                Text cityTxt = this.createTextNode(doc, account.getAddress().getCity() != null ? account.getAddress().getCity() : "");
+                city.appendChild(cityTxt);
+            }
+            addressTag.appendChild(city);
+            Element postalCode = doc.createElement("postalCode");
+            if (account.getAddress() != null && account.getAddress().getZipCode() != null) {
+                Text postalCodeTxt = this.createTextNode(doc, account.getAddress().getZipCode() != null ? account.getAddress().getZipCode() : "");
+                postalCode.appendChild(postalCodeTxt);
+            }
+            addressTag.appendChild(postalCode);
+            Element state = doc.createElement("state");
+            if (account.getAddress() != null && account.getAddress().getState() != null) {
+                Text stateTxt = this.createTextNode(doc, account.getAddress().getState());
+                state.appendChild(stateTxt);
+            }
+            addressTag.appendChild(state);
+            Element country = doc.createElement("country");
+            Element countryName = doc.createElement("countryName");
+            if (account.getAddress() != null && account.getAddress().getCountry() != null) {
+                Text countryTxt = this.createTextNode(doc, account.getAddress().getCountry() != null ? account.getAddress().getCountry().getCountryCode() : "");
+                country.appendChild(countryTxt);
+                String translationKey = "C_" + account.getAddress().getCountry() + "_" + invoiceLanguageCode;
+                String descTranslated = descriptionMap.get(translationKey);
+                if (descTranslated == null) {
+                    Country countrybyCode = account.getAddress().getCountry();
+                    if (countrybyCode != null && countrybyCode.getDescriptionI18n() != null && countrybyCode.getDescriptionI18n().get(invoiceLanguageCode) != null) {
+                        // get country description by language code
+                        descTranslated = countrybyCode.getDescriptionI18n().get(invoiceLanguageCode);
+                    } else if (countrybyCode != null) {
+                        descTranslated = countrybyCode.getDescription();
+                    } else {
+                        descTranslated = "";
+                    }
+                    descriptionMap.put(translationKey, descTranslated);
+                }
+                Text countryNameTxt = this.createTextNode(doc, descTranslated);
+                countryName.appendChild(countryNameTxt);
+            }
+            addressTag.appendChild(country);
+            addressTag.appendChild(countryName);
         }
-        addressTag.appendChild(country);
-        addressTag.appendChild(countryName);
+        
         return addressTag;
     }
 
@@ -738,7 +741,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
         Element nameTag = doc.createElement("name");
         Element quality = doc.createElement("quality");
-        if (account.getName() != null && account.getName().getTitle() != null) {
+        if (account !=null && account.getName() != null && account.getName().getTitle() != null) {
             String translationKey = "T_" + account.getName().getTitle().getCode() + "_" + invoiceLanguageCode;
             String descTranslated = descriptionMap.get(translationKey);
             if (descTranslated == null) {
@@ -752,14 +755,14 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             quality.appendChild(titleTxt);
         }
         nameTag.appendChild(quality);
-        if (account.getName() != null && account.getName().getFirstName() != null) {
+        if (account !=null && account.getName() != null && account.getName().getFirstName() != null) {
             Element firstName = doc.createElement("firstName");
             Text firstNameTxt = this.createTextNode(doc, account.getName().getFirstName());
             firstName.appendChild(firstNameTxt);
             nameTag.appendChild(firstName);
         }
         Element name = doc.createElement("name");
-        if (account.getName() != null && account.getName().getLastName() != null) {
+        if (account !=null && account.getName() != null && account.getName().getLastName() != null) {
             Text nameTxt = this.createTextNode(doc, account.getName().getLastName());
             name.appendChild(nameTxt);
         }
@@ -2457,7 +2460,12 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     		userAccounts.add(invoice.getSubscription().getUserAccount());
     	}
         if(invoiceConfiguration.isDisplayUserAccountHierarchy()) {
-        	for(UserAccount parentUserAccount :userAccounts.isEmpty()?invoice.getBillingAccount().getParentUserAccounts():userAccounts) {
+            List<UserAccount> parentUserAccounts = userAccounts.isEmpty()?invoice.getBillingAccount().getParentUserAccounts():userAccounts;
+            //List<UserAccount> parentUserAccounts = invoice.getBillingAccount().getParentUserAccounts();
+            for(UserAccount parentUserAccount : parentUserAccounts) {
+                
+            
+        	//for(UserAccount parentUserAccount :userAccounts.isEmpty()?invoice.getBillingAccount().getParentUserAccounts():userAccounts) {
                     Element userAccountTag = createUserAccountSectionIL(doc, invoice, parentUserAccount,
                             invoiceLines, isVirtual, false, invoiceLanguageCode, invoiceConfiguration);
                     if (userAccountTag == null) {
@@ -2469,7 +2477,8 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         		}
 
         } else {
-            for (UserAccount userAccount : userAccounts.isEmpty()?invoice.getBillingAccount().getUsersAccounts():userAccounts) {
+            List<UserAccount> parentUserAccounts = userAccounts.isEmpty()?invoice.getBillingAccount().getUsersAccounts():userAccounts;
+            for (UserAccount userAccount : parentUserAccounts) {
                 Element userAccountTag = createUserAccountSectionIL(doc, invoice, userAccount, invoiceLines, isVirtual,
                         false, invoiceLanguageCode, invoiceConfiguration);
                 if (userAccountTag == null) {
