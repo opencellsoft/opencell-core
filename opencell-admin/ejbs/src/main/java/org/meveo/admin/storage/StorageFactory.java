@@ -425,11 +425,9 @@ public class StorageFactory {
      */
     public static boolean exists(File file) {
         if (storageType.equals(NFS)) {
-log.info("test NFS");
             return file.exists();
         }
         else if (storageType.equalsIgnoreCase(S3)) {
-log.info("test S3");
             String objectKey = formatObjectKey(file.getPath());
 
             try {
@@ -900,6 +898,8 @@ log.info("test S3");
             return org.meveo.commons.utils.FileUtils.listFiles(sourceDirectory, extensions);
         }
         else if (storageType.equalsIgnoreCase(S3)) {
+            log.info("list files in S3 bucket at directory {}", sourceDirectory);
+
             final ListObjectsV2Request objectRequest =
                     ListObjectsV2Request.builder()
                             .bucket(bucketName)
@@ -930,6 +930,7 @@ log.info("test S3");
      *
      */
     public static void moveObject(String srcKey, String destKey) {
+        log.info("move object from source key {} to destination key {}", srcKey, destKey);
         // copy object from srckey to destKey
         CopyObjectRequest copyObjRequest = CopyObjectRequest.builder()
                 .sourceBucket(bucketName).sourceKey(srcKey)
@@ -943,6 +944,7 @@ log.info("test S3");
             log.error("NoSuchKeyException while copying object in addExtension method : {}", e.getMessage());
         }
 
+        log.info("delete old object at source key {}", srcKey);
         // delete old object
         DeleteObjectRequest deleteObjRequest = DeleteObjectRequest.builder()
                 .bucket(bucketName).key(srcKey)
@@ -971,6 +973,7 @@ log.info("test S3");
         else if (storageType.equalsIgnoreCase(S3)) {
             String srcKey = formatObjectKey(srcFile.getPath());
             String destKey = formatObjectKey(destFile.getPath());
+            log.info("rename key object in S3 bucket from source key {} to destination key {}", srcKey, destKey);
 
             moveObject(srcKey, destKey);
 
