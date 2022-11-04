@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -14,6 +15,7 @@ import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.cpq.PriceDTO;
 import org.meveo.api.dto.cpq.xml.BillableAccount;
 import org.meveo.api.dto.cpq.xml.BillingAccount;
@@ -30,6 +32,7 @@ import org.meveo.common.UtilsDto;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
@@ -41,6 +44,7 @@ import org.meveo.model.quote.QuoteLot;
 import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.order.OpenOrderService;
 
@@ -52,6 +56,9 @@ public class QuoteMapper {
 
    	@Inject
     private OpenOrderService openOrderService;
+
+    @Inject
+    private TradingCurrencyService currencyService;
    	
     
     public QuoteXmlDto map(QuoteVersion quoteVersion) {
@@ -166,8 +173,19 @@ public class QuoteMapper {
     																												openOrder.map(OpenOrder::getExternalReference).orElse(null), 
     																												openOrder.map(OpenOrder::getActivationDate).orElse(null));
 
+
+
     	accountingArticleDto.setQuoteLines(quoteArticleLines.stream()
-    			.map(line -> new QuoteLine(line,mapToOffer( line.getQuoteProduct() != null?line.getQuoteProduct().getQuoteOffer():null)))
+    			.map(line -> {
+                    // build currency details
+                    Map<String, TradingCurrency> currencies = new HashMap<>();
+                    line.getQuotePrices().forEach(quotePrice -> {
+                        if(StringUtils.isNotBlank(quotePrice.getCurrencyCode())){
+                            currencies.put(quotePrice.getCurrencyCode(), currencyService.findByTradingCurrencyCode(quotePrice.getCurrencyCode()));
+                        }
+                    });
+                    return new QuoteLine(line,mapToOffer( line.getQuoteProduct() != null?line.getQuoteProduct().getQuoteOffer():null), currencies);
+                })
     			.collect(Collectors.toList()));
     	return accountingArticleDto; 
     }
@@ -224,7 +242,7 @@ public class QuoteMapper {
                 .stream()
                 .map(key -> UtilsDto.reducePrices(key, pricesPerType, PriceLevelEnum.QUOTE, null, null))
                 .filter(Optional::isPresent)
-                .map(price -> new PriceDTO(price.get()))
+                .map(price -> new PriceDTO(price.get(), currencyService.findByTradingCurrencyCode(price.get().getCurrencyCode())))
                 .collect(Collectors.toList());
     }
 
