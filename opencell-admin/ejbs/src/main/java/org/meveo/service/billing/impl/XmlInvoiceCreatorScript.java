@@ -2461,11 +2461,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     	}
         if(invoiceConfiguration.isDisplayUserAccountHierarchy()) {
             List<UserAccount> parentUserAccounts = userAccounts.isEmpty()?invoice.getBillingAccount().getParentUserAccounts():userAccounts;
-            //List<UserAccount> parentUserAccounts = invoice.getBillingAccount().getParentUserAccounts();
-            for(UserAccount parentUserAccount : parentUserAccounts) {
-                
-            
-        	//for(UserAccount parentUserAccount :userAccounts.isEmpty()?invoice.getBillingAccount().getParentUserAccounts():userAccounts) {
+            for(UserAccount parentUserAccount : parentUserAccounts) {            
                     Element userAccountTag = createUserAccountSectionIL(doc, invoice, parentUserAccount,
                             invoiceLines, isVirtual, false, invoiceLanguageCode, invoiceConfiguration);
                     if (userAccountTag == null) {
