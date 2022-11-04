@@ -1,0 +1,661 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Invoice_tva" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryNewPage="true" uuid="801855a9-548e-443b-81d5-d27d42b5df88">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter.xml"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Style_1" backcolor="#CCCCCC"/>
+	<style name="Text Body" mode="Opaque"/>
+	<style name="table 3">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<topPen lineWidth="0.0" lineColor="#000000"/>
+			<bottomPen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<topPen lineWidth="0.0" lineColor="#000000"/>
+			<bottomPen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.0" lineColor="#000000"/>
+			<bottomPen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 5">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 5_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 5_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 5_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 6">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 6_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 6_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 6_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 7">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 7_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 7_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 7_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="dataset1" uuid="caf372ed-b5fb-4515-871b-63c01682a70b">
+		<queryString language="xPath">
+			<![CDATA[/invoice/amount/taxes/tax]]>
+		</queryString>
+		<field name="name" class="java.lang.String">
+			<fieldDescription><![CDATA[name]]></fieldDescription>
+		</field>
+		<field name="amountHT" class="java.lang.String">
+			<fieldDescription><![CDATA[amountHT]]></fieldDescription>
+		</field>
+		<field name="amount" class="java.lang.String">
+			<fieldDescription><![CDATA[amount]]></fieldDescription>
+		</field>
+		<field name="percent" class="java.lang.String">
+			<fieldDescription><![CDATA[percent]]></fieldDescription>
+		</field>
+		<field name="total" class="java.lang.String">
+			<fieldDescription><![CDATA[ancestor::taxes/@total]]></fieldDescription>
+		</field>
+		<field name="currencySymbol" class="java.lang.String">
+			<fieldDescription><![CDATA[ancestor::invoice/amount/currencySymbol]]></fieldDescription>
+		</field>
+		<sortField name="percent"/>
+	</subDataset>
+	<parameter name="logoPath" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="messagePath" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="xmlDateFormat" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA["dd/MM/yyyy"]]></defaultValueExpression>
+	</parameter>
+	<queryString language="xPath">
+		<![CDATA[/invoice]]>
+	</queryString>
+	<field name="amountWithTax" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/amountWithTax]]></fieldDescription>
+	</field>
+	<field name="dueDate" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/dueDate]]></fieldDescription>
+	</field>
+	<field name="CF_CPCU_CA_MANUAL_BALANCE" class="java.lang.String">
+		<fieldDescription><![CDATA[header/customerAccount/customFields/customField[@code="CF_CPCU_CA_MANUAL_BALANCE"]]]></fieldDescription>
+	</field>
+	<field name="total" class="java.lang.String">
+		<fieldDescription><![CDATA[amount/taxes/@total]]></fieldDescription>
+	</field>
+	<field name="vatNo" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/customer/@vatNo"/>
+		<fieldDescription><![CDATA[/invoice/header/customer/@vatNo]]></fieldDescription>
+	</field>
+	<field name="amountWithoutTax" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/amount/amountWithoutTax"/>
+		<fieldDescription><![CDATA[/invoice/amount/amountWithoutTax]]></fieldDescription>
+	</field>
+	<field name="currencySymbol" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/currencySymbol]]></fieldDescription>
+	</field>
+	<field name="paymentMethod" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/paymentMethod/@type]]></fieldDescription>
+	</field>
+	<group name="subCategory"/>
+	<group name="1"/>
+	<group name="2">
+		<groupHeader>
+			<band height="300">
+				<rectangle radius="10">
+					<reportElement x="256" y="101" width="325" height="62" forecolor="#F2F4F5" backcolor="#F2F4F5" uuid="cea08215-b38e-46aa-bd62-e0051c5b3821">
+						<property name="com.jaspersoft.studio.element.name" value="coordonnees_container"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineStyle="Solid"/>
+					</graphicElement>
+				</rectangle>
+				<staticText>
+					<reportElement mode="Opaque" x="255" y="83" width="328" height="23" forecolor="#F0F7FA" backcolor="#911513" uuid="b1666d37-df8f-4e5e-9594-c00b6d883b7e">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="20" bottomPadding="0" rightPadding="0">
+						<pen lineWidth="5.0" lineColor="#FF8C00"/>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#1F1C1C"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Vista Sans OT Bold" size="12.5" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total due :]]></text>
+				</staticText>
+				<rectangle radius="10">
+					<reportElement x="16" y="4" width="216" height="160" forecolor="#FFFFFF" backcolor="#F2F4F5" uuid="8eeebc1b-ab48-4000-ab4c-869aab10b0e3"/>
+					<graphicElement>
+						<pen lineWidth="0.0" lineColor="rgba(0, 0, 0, 0.0)"/>
+					</graphicElement>
+				</rectangle>
+				<staticText>
+					<reportElement x="28" y="40" width="194" height="42" uuid="db8c5362-b4e2-4eea-a454-7b251637b088">
+						<printWhenExpression><![CDATA[$F{paymentMethod}=="CHECK"]]></printWhenExpression>
+					</reportElement>
+					<box padding="1"/>
+					<textElement markup="none">
+						<font fontName="Vista Sans OT Reg" size="11"/>
+					</textElement>
+					<text><![CDATA[Payment Method: Check]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="28" y="40" width="194" height="42" uuid="db8c5362-b4e2-4eea-a454-7b251637b088">
+						<printWhenExpression><![CDATA[$F{paymentMethod}=="DIRECTDEBIT"]]></printWhenExpression>
+					</reportElement>
+					<box padding="1"/>
+					<textElement markup="none">
+						<font fontName="Vista Sans OT Reg" size="11"/>
+					</textElement>
+					<text><![CDATA[Payment Method: Check]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="28" y="40" width="194" height="42" uuid="db8c5362-b4e2-4eea-a454-7b251637b088">
+						<printWhenExpression><![CDATA[$F{paymentMethod}=="WIRETRANSFER"]]></printWhenExpression>
+					</reportElement>
+					<box padding="1"/>
+					<textElement markup="none">
+						<font fontName="Vista Sans OT Reg" size="11"/>
+					</textElement>
+					<text><![CDATA[Payment Method: Wire transfer]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="28" y="40" width="194" height="42" uuid="db8c5362-b4e2-4eea-a454-7b251637b088">
+						<printWhenExpression><![CDATA[$F{paymentMethod}=="CARD"]]></printWhenExpression>
+					</reportElement>
+					<box padding="1"/>
+					<textElement markup="none">
+						<font fontName="Vista Sans OT Reg" size="11"/>
+					</textElement>
+					<text><![CDATA[Payment Method: Card]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="28" y="40" width="194" height="42" uuid="db8c5362-b4e2-4eea-a454-7b251637b088">
+						<printWhenExpression><![CDATA[$F{paymentMethod}=="PAYPAL"]]></printWhenExpression>
+					</reportElement>
+					<box padding="1"/>
+					<textElement markup="none">
+						<font fontName="Vista Sans OT Reg" size="11"/>
+					</textElement>
+					<text><![CDATA[Payment Method: PayPal]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="28" y="40" width="194" height="42" uuid="db8c5362-b4e2-4eea-a454-7b251637b088">
+						<printWhenExpression><![CDATA[$F{paymentMethod}=="STRIPE"]]></printWhenExpression>
+					</reportElement>
+					<box padding="1"/>
+					<textElement markup="none">
+						<font fontName="Vista Sans OT Reg" size="11"/>
+					</textElement>
+					<text><![CDATA[Payment Method: Stripe]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="28" y="40" width="194" height="42" uuid="db8c5362-b4e2-4eea-a454-7b251637b088">
+						<printWhenExpression><![CDATA[$F{paymentMethod}=="CASH"]]></printWhenExpression>
+					</reportElement>
+					<box padding="1"/>
+					<textElement markup="none">
+						<font fontName="Vista Sans OT Reg" size="11"/>
+					</textElement>
+					<text><![CDATA[Payment Method: Cash]]></text>
+				</staticText>
+				<componentElement>
+					<reportElement key="" positionType="Float" isPrintRepeatedValues="false" x="254" y="10" width="315" height="30" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="0be238f7-ed26-41ca-877d-3e29084f5c7c"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="Blank">
+						<datasetRun subDataset="dataset1" uuid="686ce5b3-d948-4909-9ef6-e974d9c647d3">
+							<dataSourceExpression><![CDATA[$P{REPORT_DATA_SOURCE}.dataSource("/invoice/amount/taxes/tax")]]></dataSourceExpression>
+						</datasetRun>
+						<jr:column width="97" uuid="c68583b1-d285-4852-b53b-ffc158bcdb0a">
+							<jr:tableHeader height="14" rowSpan="1">
+								<box>
+									<bottomPen lineWidth="1.0" lineColor="#999999"/>
+								</box>
+								<staticText>
+									<reportElement x="0" y="0" width="89" height="14" uuid="001903c8-d9b3-4994-9f6f-25eff06ca2f7">
+										<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+									</reportElement>
+									<box leftPadding="2">
+										<leftPen lineWidth="0.0"/>
+									</box>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
+									</textElement>
+									<text><![CDATA[VAT rate]]></text>
+								</staticText>
+							</jr:tableHeader>
+							<jr:detailCell height="15" rowSpan="1">
+								<box>
+									<pen lineWidth="0.0" lineColor="#999999"/>
+									<topPen lineWidth="0.0" lineColor="#999999"/>
+									<leftPen lineWidth="0.0" lineColor="#999999"/>
+									<bottomPen lineWidth="1.0" lineColor="#999999"/>
+									<rightPen lineWidth="0.0" lineColor="#999999"/>
+								</box>
+								<textField pattern="#,##0.00" isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="89" height="15" uuid="99bfc2c1-28d2-40b4-ad71-fa8bacbaae1b"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{percent} && $F{percent}.matches("-?\\d+(\\.\\d+)?")?
+new Double($F{percent}):0.00]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="114" uuid="afc2979a-5bda-4d72-85f7-27aa5224b4d2">
+							<jr:tableHeader height="14" rowSpan="1">
+								<box>
+									<bottomPen lineWidth="1.0" lineColor="#999999"/>
+								</box>
+								<textField>
+									<reportElement x="0" y="0" width="114" height="14" uuid="c3db3984-5c1f-4e6f-a716-df003cea2545">
+										<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+									</reportElement>
+									<box leftPadding="2">
+										<leftPen lineWidth="0.0"/>
+									</box>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA["Price w/o tax ("+$F{currencySymbol}+")"]]></textFieldExpression>
+								</textField>
+							</jr:tableHeader>
+							<jr:tableFooter height="19" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="2" width="90" height="16" uuid="d5bfbc3f-ef3f-40d7-bd17-1bf22a0d3acb">
+										<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+									</reportElement>
+									<box leftPadding="2">
+										<leftPen lineWidth="0.0"/>
+									</box>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
+									</textElement>
+									<text><![CDATA[Total Tax]]></text>
+								</staticText>
+							</jr:tableFooter>
+							<jr:detailCell height="15" rowSpan="1">
+								<box>
+									<pen lineWidth="0.0"/>
+									<topPen lineWidth="0.0"/>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="1.0" lineColor="#999999"/>
+									<rightPen lineWidth="0.0"/>
+								</box>
+								<textField pattern="#,##0.00" isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="90" height="15" isPrintWhenDetailOverflows="true" uuid="c920bb46-e4c6-4099-acc3-2c4daaaf9a2d"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{amountHT} && $F{amountHT}.matches("-?\\d+(\\.\\d+)?")?new Double($F{amountHT}):0.00]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="113" uuid="6171bbf3-941d-4db4-a299-2d5c8eeb84ef">
+							<jr:tableHeader height="14" rowSpan="1">
+								<box>
+									<bottomPen lineWidth="1.0" lineColor="#999999"/>
+								</box>
+								<textField>
+									<reportElement x="0" y="0" width="110" height="14" forecolor="#000000" uuid="e9983996-43ab-4f3e-a7a1-42ca8d93f97b">
+										<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+									</reportElement>
+									<box leftPadding="2">
+										<leftPen lineWidth="0.0"/>
+										<rightPen lineWidth="0.0"/>
+									</box>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA["Tax("+$F{currencySymbol}+")"]]></textFieldExpression>
+								</textField>
+							</jr:tableHeader>
+							<jr:tableFooter height="19" rowSpan="1">
+								<textField pattern="#,##0.00">
+									<reportElement x="0" y="2" width="110" height="16" uuid="d3f02d7c-0178-4497-ba8b-ee05af8fe234"/>
+									<textElement textAlignment="Right">
+										<font fontName="Vista Sans OT Bold" size="11"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{total} && $F{total}.matches("-?\\d+(\\.\\d+)?")?
+new Double($F{total}):0.00]]></textFieldExpression>
+								</textField>
+							</jr:tableFooter>
+							<jr:detailCell height="15" rowSpan="1">
+								<box>
+									<pen lineWidth="0.0"/>
+									<topPen lineWidth="0.0"/>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="1.0" lineColor="#999999"/>
+									<rightPen lineWidth="0.0"/>
+								</box>
+								<textField pattern="#,##0.00" isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="110" height="15" uuid="2ffac03d-e29c-48b8-90eb-d216d2f437e5">
+										<printWhenExpression><![CDATA[($F{percent} && $F{percent}.matches("-?\\d+(\\.\\d+)?") &&
+new Double($F{percent}) > 1)]]></printWhenExpression>
+									</reportElement>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{amount} && $F{amount}.matches("-?\\d+(\\.\\d+)?")?
+new Double($F{amount}):0.00]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+				<staticText>
+					<reportElement x="254" y="29" width="100" height="20" uuid="0f9c9845-ec4e-45d3-a675-56bb3ce2366a">
+						<printWhenExpression><![CDATA[!$F{total} || Double.valueOf($F{total}) == 0]]></printWhenExpression>
+					</reportElement>
+					<textElement>
+						<font fontName="Vista Sans OT Bold" size="11"/>
+					</textElement>
+					<text><![CDATA[Client exempté]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="20" y="11" width="139" height="23" forecolor="#F0F7FA" backcolor="#B6C3CF" uuid="5f5419f5-5826-4eb1-87eb-6e0026cf10d4">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="20" bottomPadding="0" rightPadding="0">
+						<pen lineWidth="5.0" lineColor="#FF8C00"/>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Vista Sans OT Bold" size="12.5" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Payment Method]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="445" y="135" width="100" height="30" forecolor="#0D0101" uuid="ab46bcea-35b5-4ac0-8515-0e19afc2ba76"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Vista Sans OT Bold" size="14"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithTax}))]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="550" y="138" width="30" height="26" forecolor="#0D0101" uuid="3f5ecaaa-63e7-46a6-966d-4bd74a147337">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#F2F4F5"/>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Vista Sans OT Bold" size="14" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{currencySymbol}]]></textFieldExpression>
+				</textField>
+				<frame>
+					<reportElement x="0" y="171" width="595" height="129" uuid="76d76503-44fa-4d2c-9040-1cfde1213616"/>
+					<rectangle>
+						<reportElement x="16" y="34" width="564" height="79" backcolor="#911513" uuid="77d52d2e-664e-4a23-aff8-7e7a5b4880c3"/>
+					</rectangle>
+					<rectangle>
+						<reportElement x="20" y="37" width="556" height="73" backcolor="#F2F2F2" uuid="05fd3133-c05d-4296-bfd7-5ed379377941"/>
+					</rectangle>
+					<staticText>
+						<reportElement x="28" y="-54" width="195" height="18" uuid="75de09a5-c84f-43d5-8c81-f67ecc52ffcf"/>
+						<box padding="1"/>
+						<textElement markup="none">
+							<font fontName="Vista Sans OT Bold" size="11"/>
+						</textElement>
+						<text><![CDATA[FR7630001007941234567890185]]></text>
+					</staticText>
+					<image scaleImage="RealSize" hAlign="Center" vAlign="Middle">
+						<reportElement x="137" y="38" width="369" height="75" uuid="9256e210-e1e4-4287-a36a-1a95ea26e588"/>
+						<box>
+							<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+							<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+							<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+							<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<imageExpression><![CDATA[$P{logoPath}+"Pictos/Asilage.jpg"]]></imageExpression>
+					</image>
+				</frame>
+				<staticText>
+					<reportElement mode="Opaque" x="20" y="85" width="139" height="23" forecolor="#F0F7FA" backcolor="#B6C3CF" uuid="5660246d-1b2a-44c8-a3c5-329ec5b46de6">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="20" bottomPadding="0" rightPadding="0">
+						<pen lineWidth="5.0" lineColor="#FF8C00"/>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Vista Sans OT Bold" size="12.5" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Bank account]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="445" y="106" width="100" height="30" forecolor="#0D0101" uuid="a53473ae-1837-4e50-97d0-bae7f3e55ea7"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Vista Sans OT Bold" size="14"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithoutTax}))]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="550" y="107" width="30" height="26" forecolor="#0D0101" uuid="302ed8a5-2d59-4d2d-97e6-a20a009b885d">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#F2F4F5"/>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Vista Sans OT Bold" size="14" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{currencySymbol}]]></textFieldExpression>
+				</textField>
+				<image>
+					<reportElement x="259" y="90" width="11" height="9" uuid="8bc42a06-6b23-4176-afc5-fc24b5dfdda7"/>
+					<imageExpression><![CDATA[$P{logoPath}+"Pictos/ico_playbutton.png"]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement x="370" y="108" width="73" height="26" forecolor="#0D0101" uuid="89ed1a80-2f6b-4ea6-84ad-cf28e1dad9ef">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#F2F4F5"/>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Vista Sans OT Bold" size="12" isBold="false" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[Without Tax]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="370" y="139" width="73" height="26" forecolor="#0D0101" uuid="a4bdb9ff-6624-4191-b2ab-fe8ee405c4d3">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#F2F4F5"/>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Vista Sans OT Bold" size="12" isBold="false" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[With Tax]]></text>
+				</staticText>
+				<line>
+					<reportElement x="340" y="134" width="240" height="1" forecolor="#999999" uuid="60509d8c-612b-425d-b44f-26c3bdd6796e"/>
+					<graphicElement>
+						<pen lineWidth="0.5" lineColor="#CCCCCC"/>
+					</graphicElement>
+				</line>
+				<image>
+					<reportElement x="279" y="111" width="50" height="41" uuid="13e3b1c1-6157-4a19-ba1f-4f140b923e89"/>
+					<imageExpression><![CDATA[$P{logoPath}+"Pictos/ico_commercial-license.png"]]></imageExpression>
+				</image>
+			</band>
+		</groupHeader>
+	</group>
+</jasperReport>

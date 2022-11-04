@@ -31,7 +31,6 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
@@ -328,9 +327,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 .collect(Collectors.toList()));
 
         // generate matchingCode for related AOs
-        if (CollectionUtils.isNotEmpty(aosToGenerateMatchingCode)) {
-            journalEntryService.assignMatchingCodeToJournalEntries(aosToGenerateMatchingCode, null);
-        }
+        aosToGenerateMatchingCode.forEach(accountOperation -> journalEntryService.assignMatchingCodeToJournalEntries(accountOperation, null));
 
     }
 
@@ -356,8 +353,8 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 				throw new BusinessException("The current balance + amount to credit must be less than or equal to the maximum amount of the Template");
 			}
 			securityDeposit.setCurrentBalance(Optional.ofNullable(securityDeposit.getCurrentBalance()).orElse(BigDecimal.ZERO).add(amountToMatch));
-			// Update SD.Amount for NEW and HOLD SecurityDeposit
-			if(Arrays.asList(SecurityDepositStatusEnum.NEW, SecurityDepositStatusEnum.HOLD, SecurityDepositStatusEnum.VALIDATED).contains(securityDeposit.getStatus())) {
+			// Update SD.Amount for VALIDATED and HOLD SecurityDeposit
+			if(Arrays.asList(SecurityDepositStatusEnum.HOLD, SecurityDepositStatusEnum.VALIDATED).contains(securityDeposit.getStatus())) {
 				securityDeposit.setAmount(securityDeposit.getAmount().subtract(amountToMatch));
 				if(BigDecimal.ZERO.compareTo(securityDeposit.getAmount()) >= 0) {
 					securityDeposit.setAmount(null);

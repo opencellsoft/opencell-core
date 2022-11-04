@@ -102,7 +102,7 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<Long> {
 
                         accountOperation.setStatus(AccountOperationStatus.EXPORTED);
                         accountOperationService.update(accountOperation);
-                        journalEntryService.assignMatchingCodeToJournalEntries(List.of(accountOperation), createdEntries);
+                        journalEntryService.assignMatchingCodeToJournalEntries(accountOperation, createdEntries);
 
                     } catch (BusinessException e) {
                         jobExecutionResult.registerError(e.getMessage());

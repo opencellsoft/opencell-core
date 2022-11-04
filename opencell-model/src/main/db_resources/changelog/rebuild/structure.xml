@@ -31,6 +31,134 @@
 
         </createProcedure>
     </changeSet>
+    <changeSet author="AndriusKarpavicius"  id="rebuild_oracle_functions_clob" dbms="oracle">
+        <createProcedure>
+          create or replace type listagg_clob_t as object
+            ( t_varchar2 varchar2(32767)
+            , t_clob clob
+            , static function odciaggregateinitialize( sctx in out listagg_clob_t )
+              return number
+            , member function odciaggregateiterate
+                ( self in out listagg_clob_t
+                , a_val varchar2
+                )
+              return number
+            , member function odciaggregateterminate
+                ( self in out listagg_clob_t
+                , returnvalue out clob
+                , flags in number
+                )
+              return number
+            , member function odciaggregatemerge
+                ( self in out listagg_clob_t
+                , ctx2 in out listagg_clob_t
+                )
+              return number
+            );
+        </createProcedure>
+        <createProcedure>
+            create or replace type body listagg_clob_t
+                is
+                  static function odciaggregateinitialize( sctx in out listagg_clob_t )
+                  return number
+                  is
+                  begin
+                    sctx := listagg_clob_t( null, null );
+                    return odciconst.success;
+                  end;
+                --
+                  member function odciaggregateiterate
+                    ( self in out listagg_clob_t
+                    , a_val varchar2
+                    )
+                  return number
+                  is
+                    procedure add_val( p_val varchar2 )
+                    is
+                    begin
+                      if nvl( lengthb( self.t_varchar2 ), 0 ) + lengthb( p_val ) &lt;= 4000
+                -- Strange limit, the max size of self.t_varchar2 is 29993
+                -- If you exceeds this number you get ORA-22813: operand value exceeds system limits
+                -- with 29993 you get JSON-output as large 58894 bytes
+                -- with 4000 you get JSON-output as large 1063896 bytes, probably max more
+                      then
+                        if self.t_varchar2 is null then
+                          self.t_varchar2 := self.t_varchar2 || p_val;
+                        else
+                          self.t_varchar2 := self.t_varchar2 || ',' || p_val;
+                        end if;
+                      else
+                        if self.t_clob is null
+                        then
+                          dbms_lob.createtemporary( self.t_clob, true, dbms_lob.call );
+                          dbms_lob.writeappend( self.t_clob, length( self.t_varchar2 ), self.t_varchar2 );
+                        else
+                          dbms_lob.writeappend( self.t_clob, length( self.t_varchar2 ), ','||self.t_varchar2 );
+                        end if;
+                        self.t_varchar2 := p_val;
+                      end if;
+                    end;
+                  begin
+                    add_val( a_val );
+                    return odciconst.success;
+                  end;
+                --
+                  member function odciaggregateterminate
+                    ( self in out listagg_clob_t
+                    , returnvalue out clob
+                    , flags in number
+                    )
+                  return number
+                  is
+                  begin
+                    if self.t_clob is null
+                    then
+                      dbms_lob.createtemporary( self.t_clob, true, dbms_lob.call );
+                    end if;
+                    if self.t_varchar2 is not null
+                    then
+                      dbms_lob.writeappend( self.t_clob, length( self.t_varchar2 ), self.t_varchar2 );
+                    end if;
+                    returnvalue := self.t_clob;
+                    return odciconst.success;
+                  end;
+                --
+                  member function odciaggregatemerge
+                    ( self in out listagg_clob_t
+                    , ctx2 in out listagg_clob_t
+                    )
+                  return number
+                  is
+                  begin
+                    if self.t_clob is null
+                    then
+                      dbms_lob.createtemporary( self.t_clob, true, dbms_lob.call );
+                    end if;
+                    if self.t_varchar2 is not null
+                    then
+                      dbms_lob.writeappend( self.t_clob, length( self.t_varchar2 ), self.t_varchar2 );
+                    end if;
+                    if ctx2.t_clob is not null
+                    then
+                      dbms_lob.append( self.t_clob, ctx2.t_clob );
+                      dbms_lob.freetemporary( ctx2.t_clob );
+                    end if;
+                    if ctx2.t_varchar2 is not null
+                    then
+                      dbms_lob.writeappend( self.t_clob, length( ctx2.t_varchar2 ), ctx2.t_varchar2 );
+                      ctx2.t_varchar2 := null;
+                    end if;
+                    return odciconst.success;
+                  end;
+                --
+                end;        
+        </createProcedure>
+        <createProcedure>
+            create or replace function listagg_clob( agg varchar2 )
+            return clob
+            parallel_enable aggregate using listagg_clob_t;        
+        </createProcedure>
+    </changeSet>
 
     <!-- Postgres has support for universally unique identifiers (UUIDs) as a column data type via uuid.
     If you have a UUID column, you may need to generate a UUID. This requires the uuid-ossp module. -->
@@ -6573,17 +6701,6 @@
             </column>
         </createTable>
         <addPrimaryKey columnNames="invoice_type_id, applies_to_id" constraintName="billing_invoice_type_applies_to_pkey" tableName="billing_invoice_type_applies_to" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-319">
-        <createTable tableName="billing_linked_invoices">
-            <column name="id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="linked_invoice_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-        <addPrimaryKey columnNames="id, linked_invoice_id" constraintName="billing_linked_invoices_pkey" tableName="billing_linked_invoices" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-320">
         <createTable tableName="billing_seq_invtyp_sell">
@@ -17402,33 +17519,34 @@
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
-    
-    
-	<changeSet id="#INTRD-10163_20220930_build" author="TarikFA.">
-		<createSequence sequenceName="billing_invoice_advance_mapping_seq" startValue="1"/>
-		<createTable tableName="billing_invoice_advance_mapping">
-			 <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="advance_mapping_pkey" />
-            </column>
-            <column name="version" type="int4" />
-            <column name= "advance_invoice_id" type="bigint" />
-            <column name= "invoice_id" type="bigint" />
-            <column name= "amount" type="numeric(23, 12)" />
-		</createTable>
-		
-        <addForeignKeyConstraint baseTableName="billing_invoice_advance_mapping" 
-        						baseColumnNames="advance_invoice_id"
-                                 constraintName="advance_invoice_id_fk"
-                                 referencedTableName="billing_invoice"
-                                 referencedColumnNames="id"/>
-                                 
-        <addForeignKeyConstraint baseTableName="billing_invoice_advance_mapping" 
-        						baseColumnNames="invoice_id"
-                                 constraintName="invoice_id_fk"
-                                 referencedTableName="billing_invoice"
-                                 referencedColumnNames="id"/>
-                                 
-	</changeSet>
+	
+	<changeSet id="#INTRD-10541_20221013_build" author="TarikFA.">
+     	<createTable tableName="billing_linked_invoices">
+             <column name="id" type="bigint" >
+                 <constraints nullable="false"/>
+             </column>
+             <column name="linked_invoice_id" type="bigint" >
+                 <constraints nullable="false"/>
+             </column>
+             <column name="amount" type="numeric(23, 12)" />
+             <column name="type" type="varchar(50)" />
+     	</createTable>
+     	
+         <addPrimaryKey columnNames="id, linked_invoice_id" constraintName="billing_linked_invoices_pkey" tableName="billing_linked_invoices" />
+     	
+ 		<addForeignKeyConstraint constraintName="invoice_id_fk"
+                                  baseColumnNames="id"
+                                  baseTableName="billing_linked_invoices"
+                                  referencedTableName="billing_invoice"
+                                  referencedColumnNames="id" />
+                                  
+ 		<addForeignKeyConstraint constraintName="linked_invoice_id_fk"
+                                  baseColumnNames="linked_invoice_id"
+                                  baseTableName="billing_linked_invoices"
+                                  referencedTableName="billing_invoice"
+                                  referencedColumnNames="id" />
+     	
+    </changeSet>
 
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
@@ -18675,11 +18793,14 @@
    	<changeSet id="INTRD-10603_20221113" author="AbdelmounaimAkadid" />
    	<changeSet id="#INTRD-10607_20221014" author="AdilElJaouhari" />
 	<changeSet id="#INTRD-10522_20221017_matchingCode-journal-entry" author="aelmalki" />
-
+    <changeSet author="AndriusKarpavicius" id="#INTRD-10253_20221027" dbms="oracle" />	
+    
 	<changeSet id="#INTRD-9766_20221011_EDR_new_fields" author="aelmalki" />
 
     <changeSet id="#10629_20221018" author="zelmeliani" />
     <changeSet id="#INTRD-10673_20221025" author="AbdellatifBARI" />
+    <changeSet id="#INTRD-10540_20221013" author="TarikFA." />
+    <changeSet id="#INTRD-10541_20221013" author="TarikFA." />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

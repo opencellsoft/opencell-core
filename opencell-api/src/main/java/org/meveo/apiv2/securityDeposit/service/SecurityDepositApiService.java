@@ -23,7 +23,6 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.payment.PaymentApi;
 import org.meveo.apiv2.billing.ImmutableBasicInvoice;
 import org.meveo.apiv2.billing.ImmutableInvoiceLine;
@@ -34,6 +33,7 @@ import org.meveo.apiv2.securityDeposit.SecurityDepositCreditInput;
 import org.meveo.commons.utils.ListUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
@@ -93,7 +93,10 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
     private ProviderService providerService;
 
     @Inject
-    private InvoiceApi invoiceApi;
+    private BillingAccountService billingAccountService;
+        
+    @Inject
+    private InvoiceLineService invoiceLineService;
 
     @Inject
     private InvoiceApiService invoiceApiService;
@@ -125,7 +128,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
 
     @Override
     public Optional<SecurityDeposit> findById(Long id) {
-        return empty();
+        return Optional.ofNullable(securityDepositService.findById(id));
     }
 
     @Override
@@ -154,18 +157,43 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
     }
 
     @Transactional
-    public Optional<SecurityDeposit> instantiate(SecurityDeposit securityDepositInput) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException, IOException {
-
+    public Optional<SecurityDeposit> instantiate(SecurityDeposit securityDepositInput, 
+            SecurityDepositStatusEnum status, boolean validate) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
+        return createOrinstantiate(securityDepositInput, status, validate, true);
+    }
+    
+    @Transactional
+    public Optional<SecurityDeposit> create(SecurityDeposit securityDepositInput, 
+            SecurityDepositStatusEnum status, boolean validate) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
+        return createOrinstantiate(securityDepositInput, status, validate, false);
+    }
+    
+    public Optional<SecurityDeposit> createOrinstantiate(SecurityDeposit securityDepositInput, 
+            SecurityDepositStatusEnum status, boolean validate, boolean isInstantiate) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
         // Check FinanceSettings.useSecurityDeposit
         FinanceSettings financeSettings = financeSettingsService.findLastOne();
         if (financeSettings == null || !financeSettings.isUseSecurityDeposit()) {
             throw new BadRequestException("instantiation is not allowed in general settings");
         }
+        if (securityDepositInput.getId() != null) {
+            Optional<SecurityDeposit> sd = findById(securityDepositInput.getId());
+            if (sd.isPresent()) {
+                if (SecurityDepositStatusEnum.VALIDATED.equals(sd.get().getStatus())) {
+                    throw new BusinessApiException("Modification of the security deposit is not allowed for Validated status.");
+                } 
+            }
+        }        
+                
+        linkRealEntities(securityDepositInput);  
+        
+        if(isInstantiate && securityDepositInput.getSecurityDepositInvoice() != null) {
+        	securityDepositInput.setAmount(securityDepositInput.getSecurityDepositInvoice().getAmountWithoutTax());
+        }
+
         BigDecimal securityDepositAmount = securityDepositInput.getAmount();
         if (securityDepositAmount == null) {
             throw new EntityDoesNotExistsException("The Amount == null.");
         }
-        linkRealEntities(securityDepositInput);        
 
         // Check Maximum amount per Security deposit
         BigDecimal maxAmountPerSecurityDeposit = financeSettings.getMaxAmountPerSecurityDeposit();
@@ -193,8 +221,8 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
             securityDepositName = template.getTemplateName();
         }
         securityDepositInput.setCode(securityDepositName + "-" + count);
-        securityDepositInput.setStatus(SecurityDepositStatusEnum.NEW);
-
+        securityDepositInput.setStatus(status);
+        
         // Check validity dates
         if (financeSettings.isAutoRefund() && template.isAllowValidityDate() && template.isAllowValidityPeriod()) {
             if (securityDepositInput.getValidityDate() == null && securityDepositInput.getValidityPeriod() == null) {
@@ -225,39 +253,11 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
             throw new BadRequestException("The service instance is mandatory if subscription is set");
         }
 
-        securityDepositService.create(securityDepositInput);
-        
-        if(securityDepositInput.getSecurityDepositInvoice() != null) {
-        	Invoice invoice = invoiceService.findById(securityDepositInput.getSecurityDepositInvoice().getId());
-        	if(invoice == null) {
-        		throw new EntityDoesNotExistsException(Invoice.class, securityDepositInput.getSecurityDepositInvoice().getId());
-        	}
-
-        	if(!"SECURITY_DEPOSIT".equals(invoice.getInvoiceType().getCode())) {
-        		throw new BusinessApiException("Linked invoice should be a SECURITY_DEPOSIT");
-        	}
-
-        	if(invoice.getStatus() != InvoiceStatusEnum.NEW && invoice.getStatus() != InvoiceStatusEnum.DRAFT) {
-        		throw new BusinessApiException("Linked invoice status should be NEW or DRAFT");
-        	}
-
-        	if(!invoice.getBillingAccount().getCustomerAccount().getCustomer().getId().equals(securityDepositInput.getCustomerAccount().getCustomer().getId())) {
-        		throw new BusinessApiException("Linked invoice should have the same Customer as the Security Deposit");
-        	}
-
-        	if(ListUtils.isEmtyCollection(invoice.getInvoiceLines())) {
-        		throw new BusinessApiException("Linked invoice should have invoice lines");
-        	}
-
-        	if(invoice.getAmountWithoutTax() == null) {
-        		throw new BusinessApiException("Linked invoice cannot have amountWithoutTax null");
-        	}
-
-        	securityDepositInput.setSecurityDepositInvoice(invoice);
-        	securityDepositInput.setAmount(invoice.getAmountWithoutTax());
-        	invoiceApi.validateInvoice(invoice.getId(), true, false, false);
-        	
-        	securityDepositService.update(securityDepositInput);
+        if (securityDepositInput.getId() != null) {
+            securityDepositService.update(securityDepositInput);    
+        }
+        else {
+            securityDepositService.create(securityDepositInput);
         }
 
         // Increment template.NumberOfInstantiation after each instantiation
@@ -281,10 +281,10 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         }
 
         if(securityDepositInput.getCurrency() == null) {
-        	Currency defaultCurrency = Optional.ofNullable(securityDepositInput.getTemplate())
-        										.map(SecurityDepositTemplate::getCurrency)
-        										.orElse(providerService.getProvider().getCurrency());
-        	securityDepositInput.setCurrency(defaultCurrency);
+            Currency defaultCurrency = Optional.ofNullable(securityDepositInput.getTemplate())
+                                                .map(SecurityDepositTemplate::getCurrency)
+                                                .orElse(providerService.getProvider().getCurrency());
+            securityDepositInput.setCurrency(defaultCurrency);
         }
 
         if (securityDepositInput.getCustomerAccount() != null) {
@@ -300,6 +300,29 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         if (securityDepositInput.getServiceInstance() != null) {
             ServiceInstance serviceInstance = serviceInstanceService.tryToFindByCodeOrId(securityDepositInput.getServiceInstance());
             securityDepositInput.setServiceInstance(serviceInstance);
+        }
+        
+        if (securityDepositInput.getSecurityDepositInvoice() != null) {
+            Invoice invoice = invoiceService.findById(securityDepositInput.getSecurityDepositInvoice().getId());
+            securityDepositInput.setSecurityDepositInvoice(invoice);
+        }
+        else {
+            securityDepositInput.setSecurityDepositInvoice(null);
+        }
+        
+        if (securityDepositInput.getBillingAccount() != null) {
+            BillingAccount billingAccount = billingAccountService.tryToFindByCodeOrId(securityDepositInput.getBillingAccount());
+            if(billingAccount != null) {
+                securityDepositInput.setBillingAccount(billingAccount);
+                CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+                customerAccount = customerAccountService.refreshOrRetrieve(customerAccount);
+                if (customerAccount != null) {
+                    if (!securityDepositInput.getCustomerAccount().equals(customerAccount)) {
+                        throw new BusinessApiException("Customer Account not equal Customer Account in Billing Account");
+                    }
+                    securityDepositInput.setCustomerAccount(customerAccount);
+                }
+            }
         }
     }
 
@@ -324,19 +347,19 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
     }
 
     @Transactional
-	public void refund(SecurityDeposit securityDepositToUpdate, String reason, SecurityDepositOperationEnum securityDepositOperationEnum, SecurityDepositStatusEnum securityDepositStatusEnum, String operationType) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException, IOException {
+    public void refund(SecurityDeposit securityDepositToUpdate, String reason, SecurityDepositOperationEnum securityDepositOperationEnum, SecurityDepositStatusEnum securityDepositStatusEnum, String operationType) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException, IOException {
 
-		securityDepositToUpdate = securityDepositService.refreshOrRetrieve(securityDepositToUpdate);
-		
-		Invoice adjustmentInvoice = createAdjustmentInvoice(securityDepositToUpdate);
+        securityDepositToUpdate = securityDepositService.refreshOrRetrieve(securityDepositToUpdate);
+        
+        Invoice adjustmentInvoice = createAdjustmentInvoice(securityDepositToUpdate);
         securityDepositToUpdate.setSecurityDepositAdjustment(adjustmentInvoice);
         securityDepositService.update(securityDepositToUpdate);
-		
-		securityDepositService.refund(securityDepositToUpdate, reason, securityDepositOperationEnum, securityDepositStatusEnum, operationType);
-	}
+        
+        securityDepositService.refund(securityDepositToUpdate, reason, securityDepositOperationEnum, securityDepositStatusEnum, operationType);
+    }
 
-	private Invoice createAdjustmentInvoice(SecurityDeposit securityDepositToUpdate) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException, IOException {
-		// Create adjustment invoice
+    private Invoice createAdjustmentInvoice(SecurityDeposit securityDepositToUpdate) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException, IOException {
+        // Create adjustment invoice
         org.meveo.apiv2.billing.BasicInvoice adjInvoice = ImmutableBasicInvoice.builder()
                 .invoiceTypeCode("ADJ")
                 .billingAccountCode(securityDepositToUpdate.getBillingAccount().getCode())
@@ -368,8 +391,8 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         adjustmentInvoice.setStatus(VALIDATED);
         serviceSingleton.assignInvoiceNumber(adjustmentInvoice, true);
         
-		return adjustmentInvoice;
-	}
+        return adjustmentInvoice;
+    }
 
     public SecurityDeposit credit(Long id, SecurityDepositCreditInput securityDepositInput) {
         SecurityDeposit securityDepositToUpdate = securityDepositService.findById(id);

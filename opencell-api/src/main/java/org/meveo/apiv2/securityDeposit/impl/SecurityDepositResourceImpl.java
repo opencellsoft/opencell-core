@@ -1,7 +1,6 @@
 package org.meveo.apiv2.securityDeposit.impl;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -9,6 +8,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
 import org.meveo.admin.exception.BusinessException;
@@ -18,6 +18,7 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.apiv2.securityDeposit.*;
 import org.meveo.apiv2.securityDeposit.resource.SecurityDepositResource;
 import org.meveo.apiv2.securityDeposit.service.SecurityDepositApiService;
@@ -40,26 +41,53 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
     private AuditLogService auditLogService;
     
     @Inject
-    private BillingAccountService billingAccountService;
+    private InvoiceApi invoiceApi;
     
     SecurityDepositMapper securityDepositMapper = new SecurityDepositMapper();
 
+    @Inject
+    BillingAccountService billingAccountService;
+
     @Override
     public Response instantiate(SecurityDepositInput securityDepositInput) {
-
+        SecurityDeposit sd = null;
+        try {
+            if (securityDepositInput.getId() !=null) {
+                sd = securityDepositApiService.findById(securityDepositInput.getId())
+                        .orElseThrow(() -> new NotFoundException("The SecurityDeposit does not exist with id = " + securityDepositInput.getId()));
+            }
+            else {
+                sd = new SecurityDeposit();
+            }                    
+            sd = securityDepositApiService.instantiate(securityDepositMapper.toEntity(sd, securityDepositInput), SecurityDepositStatusEnum.VALIDATED, true)
+                    .orElseThrow(() -> new BusinessApiException("Security Deposit hasn't been initialized"));            
+            invoiceApi.validateInvoice(sd.getSecurityDepositInvoice().getId(), true, false, false);
+        } catch (Exception e) {
+            throw new BusinessException(e);
+        }
+        return Response.ok(ImmutableSecurityDepositSuccessResponse
+                .builder()
+                .status("SUCCESS")
+                .newSecurityDeposit(securityDepositMapper.toResource(sd))
+                .build()
+            ).build();
+    }
+    
+    @Override
+    public Response create(SecurityDepositInput securityDepositInput) {
         SecurityDeposit result;
-		try {
-			result = securityDepositApiService.instantiate(securityDepositMapper.toEntity(securityDepositInput))
-												.orElseThrow(() -> new BusinessApiException("Security Deposit hasn't been initialized"));
-			return Response.ok(ImmutableSecurityDepositSuccessResponse
-					.builder()
-					.status("SUCCESS")
-					.newSecurityDeposit(securityDepositMapper.toResource(result))
-					.build()
-					).build();
-		} catch (Exception e) {
-			throw new BusinessApiException(e);
-		}
+        try {
+            result = securityDepositApiService.create(securityDepositMapper.toEntity(securityDepositInput), SecurityDepositStatusEnum.DRAFT, false)
+                                                .orElseThrow(() -> new BusinessApiException("Security Deposit hasn't been initialized"));
+        } catch (Exception e) {
+            throw new BusinessApiException(e);
+        }
+        return Response.ok(ImmutableSecurityDepositSuccessResponse
+            .builder()
+            .status("SUCCESS")
+            .newSecurityDeposit(securityDepositMapper.toResource(result))
+            .build()
+            ).build();
     }
     
     @Override
@@ -88,14 +116,12 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
             throw new ValidationException(msgErrValidation + "not allowed for Update.");
         }
 
-        BigDecimal oldAmountSD = securityDepositToUpdate.getAmount();
         securityDepositToUpdate = securityDepositMapper.toEntity(securityDepositToUpdate, securityDepositInput);
-        securityDepositService.checkParameters(securityDepositToUpdate, securityDepositInput, oldAmountSD);
+        securityDepositService.checkParameters(securityDepositToUpdate, securityDepositInput);
         securityDepositApiService.linkRealEntities(securityDepositToUpdate);        
         securityDepositService.update(securityDepositToUpdate);
         auditLogService.trackOperation("UPDATE", new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
         return Response.ok().entity(buildResponse(securityDepositMapper.toResource(securityDepositToUpdate))).build();
-
     }
 
     @Override
@@ -113,7 +139,7 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
         }    
 
         try {
-			securityDepositApiService.refund(securityDepositToUpdate, securityDepositInput.getRefundReason(), SecurityDepositOperationEnum.REFUND_SECURITY_DEPOSIT, SecurityDepositStatusEnum.REFUNDED, "REFUND");
+            securityDepositApiService.refund(securityDepositToUpdate, securityDepositInput.getRefundReason(), SecurityDepositOperationEnum.REFUND_SECURITY_DEPOSIT, SecurityDepositStatusEnum.REFUNDED, "REFUND");
         } catch (BusinessException e) {
             throw new BusinessException(e);
         } catch (ImportInvoiceException | InvoiceExistException | IOException | MeveoApiException e) {
