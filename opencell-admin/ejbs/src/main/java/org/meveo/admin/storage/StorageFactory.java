@@ -18,10 +18,14 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.model.S3Object;
@@ -49,7 +53,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -419,20 +425,21 @@ public class StorageFactory {
      */
     public static boolean exists(File file) {
         if (storageType.equals(NFS)) {
+log.info("test NFS");
             return file.exists();
         }
         else if (storageType.equalsIgnoreCase(S3)) {
+log.info("test S3");
             String objectKey = formatObjectKey(file.getPath());
 
-            ListObjectsV2Response response =
-                    s3FileSystem.getClient().listObjectsV2(ListObjectsV2Request.builder().bucket(bucketName).prefix(objectKey).build());
+            try {
+                s3FileSystem.getClient()
+                        .headObject(HeadObjectRequest.builder().bucket(bucketName).key(objectKey).build());
 
-            for (S3Object object : response.contents()) {
-                if (object.key().equals(objectKey))
-                    return true;
+                return true;
+            } catch (NoSuchKeyException e) {
+                return false;
             }
-
-            return false;
         }
 
         return false;
@@ -781,6 +788,9 @@ public class StorageFactory {
         else if (filePath.charAt(0) == '.' && filePath.charAt(1) == '\\'){
             objectKey += filePath.substring(2).replace("\\", "/");
         }
+        else {
+            objectKey += filePath.replace("\\", "/");
+        }
 
         return objectKey;
     }
@@ -875,5 +885,98 @@ public class StorageFactory {
         }
 
         return null;
+    }
+
+    /**
+     * list all files inside of a directory
+     *
+     * @param sourceDirectory a string of source directory.
+     * @param extensions list of file extensions.
+     *
+     * @return a file arrays inside of the source directory
+     */
+    public static File[] listFiles(String sourceDirectory, final List<String> extensions) {
+        if (storageType.equals(NFS)) {
+            return org.meveo.commons.utils.FileUtils.listFiles(sourceDirectory, extensions);
+        }
+        else if (storageType.equalsIgnoreCase(S3)) {
+            final ListObjectsV2Request objectRequest =
+                    ListObjectsV2Request.builder()
+                            .bucket(bucketName)
+                            .prefix(formatObjectKey(sourceDirectory))
+                            .build();
+
+            ListObjectsV2Response listObjects = s3FileSystem.getClient().listObjectsV2(objectRequest);
+
+            List<File> files = new ArrayList<>();
+
+            for (S3Object object:listObjects.contents()){
+                if (object.size() > 0) {
+                    files.add(new File(object.key()));
+                }
+            }
+
+            return files.toArray(new File[0]);
+        }
+
+        return null;
+    }
+
+    /**
+     * move an object from a directory to an other one
+     *
+     * @param srcKey source key of object.
+     * @param destKey destination key of object.
+     *
+     */
+    public static void moveObject(String srcKey, String destKey) {
+        // copy object from srckey to destKey
+        CopyObjectRequest copyObjRequest = CopyObjectRequest.builder()
+                .sourceBucket(bucketName).sourceKey(srcKey)
+                .destinationBucket(bucketName).destinationKey(destKey)
+                .build();
+
+        try {
+            s3FileSystem.getClient().copyObject(copyObjRequest);
+        }
+        catch (NoSuchKeyException e) {
+            log.error("NoSuchKeyException while copying object in addExtension method : {}", e.getMessage());
+        }
+
+        // delete old object
+        DeleteObjectRequest deleteObjRequest = DeleteObjectRequest.builder()
+                .bucket(bucketName).key(srcKey)
+                .build();
+
+        try {
+            s3FileSystem.getClient().deleteObject(deleteObjRequest);
+        }
+        catch (NoSuchKeyException e) {
+            log.error("NoSuchKeyException while deleting object in addExtension method : {}", e.getMessage());
+        }
+    }
+
+    /**
+     * rename a file in FS, or object in S3
+     *
+     * @param srcFile file whose name/extension needs to be changed/modified.
+     * @param destFile new file after modification.
+     *
+     * @return true if name is successfully renamed, false otherwise
+     */
+    public static boolean renameTo(File srcFile, File destFile) {
+        if (storageType.equals(NFS)) {
+            return srcFile.renameTo(destFile);
+        }
+        else if (storageType.equalsIgnoreCase(S3)) {
+            String srcKey = formatObjectKey(srcFile.getPath());
+            String destKey = formatObjectKey(destFile.getPath());
+
+            moveObject(srcKey, destKey);
+
+            return true;
+        }
+
+        return false;
     }
 }
