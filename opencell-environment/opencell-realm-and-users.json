@@ -93,12 +93,8 @@
           ],
           "client": {
             "opencell-web": [
-              "uma_protection",
-			  "apiAdministrateur"
-            ],
-			"opencell-portal": [
-			 "PORTAL_USER"
-			 ]
+              "uma_protection"
+            ]
           }
         },
         "clientRole": false,
@@ -17886,7 +17882,7 @@
       "identityProviderMapper": "oidc-hardcoded-role-idp-mapper",
       "config": {
         "syncMode": "LEGACY",
-        "role": "default-roles-opencell"
+        "role": "superAdministrator"
       }
     }
   ],
