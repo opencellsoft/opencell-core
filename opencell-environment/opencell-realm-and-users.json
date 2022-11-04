@@ -52,10 +52,7 @@
       "composites" : {
         "realm" : [ "offline_access", "uma_authorization" ],
         "client" : {
-          "account" : [ "manage-account", "view-profile" ],
-          "opencell-portal": [
-              "PORTAL_USER"
-            ]
+          "account" : [ "manage-account", "view-profile" ]
         }
       },
       "clientRole" : false,
