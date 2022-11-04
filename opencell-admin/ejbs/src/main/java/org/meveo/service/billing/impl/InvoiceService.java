@@ -6373,7 +6373,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         
         
-        if(toUpdate.getInvoiceType() != null) {
+        if(toUpdate.getInvoiceType() != null && toUpdate.getCommercialOrder() == null) {
            InvoiceType advType = invoiceTypeService.findByCode("ADV");
            if(advType != null && "ADV".equals(toUpdate.getInvoiceType().getCode())) {
                boolean isAccountingArticleAdt = toUpdate.getInvoiceLines() != null && toUpdate.getInvoiceLines().stream().allMatch(il -> il.getAccountingArticle() != null && il.getAccountingArticle().getCode().equals("ADV-STD"));
@@ -6692,6 +6692,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         jasperReportMap.clear();
     }
     
+    @SuppressWarnings("unchecked")
     private List<Invoice> checkAdvanceInvoice(Invoice invoice) {
         if(invoice.getInvoiceType() != null) {
             String invoiceTypeCode = invoice.getInvoiceType().getCode();
@@ -6701,12 +6702,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }else {
             return Collections.emptyList();
         }
-        var invoicesAdv = invoice.getBillingAccount().getInvoices().stream()
-                                                        .filter(inv -> inv.getStatus() == InvoiceStatusEnum.VALIDATED)
-                                                        .filter(inv -> inv.getInvoiceType() != null)
-                                                        .filter(inv -> inv.getInvoiceType().getCode().equals("ADV"))
-                                                        .filter(inv -> inv.getInvoiceBalance() != null && inv.getInvoiceBalance().compareTo(BigDecimal.ZERO) > 0)
-                                                        .collect(Collectors.toList());
+        List<Invoice> invoicesAdv = this.getEntityManager().createNamedQuery("Invoice.findValidatedInvoiceAdvWithoutOrder").setParameter("billingAccountId", invoice.getBillingAccount().getId()).getResultList();
+        
         Collections.sort(invoicesAdv, (inv1, inv2) -> {
             int compCreationDate = inv1.getAuditable().getCreated().compareTo(inv2.getAuditable().getCreated());
             if(compCreationDate != 0) {
