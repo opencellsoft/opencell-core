@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
 import java.util.zip.CheckedOutputStream;
@@ -87,7 +88,7 @@ public final class FileUtils {
         if (file.exists()) {
             String name = file.getName();
             File dest = new File(file.getParentFile(), name + extension);
-            if (file.renameTo(dest)) {
+            if (StorageFactory.renameTo(file, dest)) {
                 return dest;
             }
         }
@@ -140,7 +141,7 @@ public final class FileUtils {
      */
     public static String moveFileDontOverwrite(String dest, File file, String name) {
         String destName = name;
-        if ((new File(dest + File.separator + name)).exists()) {
+        if (StorageFactory.exists(new File(dest + File.separator + name))) {
             destName += "_COPY_" + DateUtils.formatDateWithPattern(new Date(), DATETIME_FORMAT);
         }
         moveFile(dest, file, destName);
@@ -158,12 +159,12 @@ public final class FileUtils {
     public static boolean moveFile(String destination, File file, String newFilename) {
         File destinationDir = new File(destination);
 
-        if (!destinationDir.exists()) {
+        if (!StorageFactory.exists(destinationDir)) {
             destinationDir.mkdirs();
         }
 
         if (destinationDir.isDirectory()) {
-            return file.renameTo(new File(destination, newFilename != null ? newFilename : file.getName()));
+            return StorageFactory.renameTo(file, new File(destination, newFilename != null ? newFilename : file.getName()));
         }
 
         return false;
@@ -763,7 +764,7 @@ public final class FileUtils {
      */
     public static int countLines(File file) throws IOException {
 
-        try (InputStream is = new BufferedInputStream(new FileInputStream(file));) {
+        try (InputStream is = new BufferedInputStream(Objects.requireNonNull(StorageFactory.getInputStream(file)));) {
             byte[] c = new byte[1024];
 
             int readChars = is.read(c);
