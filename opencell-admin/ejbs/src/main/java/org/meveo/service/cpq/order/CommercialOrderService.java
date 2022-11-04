@@ -46,6 +46,7 @@ import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
+import org.meveo.model.quote.QuoteProduct;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
@@ -186,12 +187,12 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			if(offer.getDiscountPlan()!=null) {
 				discountPlans.add(offer.getDiscountPlan());
 			}
-			
+
 			for (OrderProduct product : offer.getProducts()){
 				if(product.getDiscountPlan()!=null) {
 					discountPlans.add(product.getDiscountPlan());
 				}
-				processProduct(subscription, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes());
+				processProduct(subscription, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product.getQuoteProduct());
 			}
 			instanciateDiscountPlans(subscription, discountPlans);
 			subscriptionService.update(subscription);
@@ -214,7 +215,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
         
 	}
 
-	public void processProduct(Subscription subscription, Product product, BigDecimal quantity, List<OrderAttribute> orderAttributes) {
+	public void processProduct(Subscription subscription, Product product, BigDecimal quantity, List<OrderAttribute> orderAttributes, QuoteProduct quoteProduct) {
 
 		ServiceInstance serviceInstance = new ServiceInstance();
 		serviceInstance.setCode(product.getCode());
@@ -223,6 +224,10 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
 		serviceInstance.setRateUntilDate(subscription.getEndAgreementDate());
 		serviceInstance.setProductVersion(product.getCurrentVersion());
+
+		if (quoteProduct != null) {
+			serviceInstance.setQuoteProduct(quoteProduct);
+		}
 
 		serviceInstance.setSubscription(subscription);
 		Map<String,AttributeInstance> instantiatedAttributes=new HashMap<String, AttributeInstance>();
