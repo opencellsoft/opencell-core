@@ -213,8 +213,8 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
             securityDepositToUpdate.setCurrentBalance(BigDecimal.ZERO);
         }
 
-        if (securityDepositToUpdate.getCurrentBalance().compareTo(securityDepositInput.getAmountToCredit()) < 0) {
-            throw new BusinessException("The amount to credit should be less than or equal to the security deposit current balance");
+        if (securityDepositToUpdate.getAmount().compareTo(securityDepositInput.getAmountToCredit()) < 0) {
+            throw new BusinessException("The amount to credit should be less than or equal to the security deposit expected balance");
         }
 
         BigDecimal nCurrentBalance = securityDepositInput.getAmountToCredit().add(securityDepositToUpdate.getCurrentBalance());
