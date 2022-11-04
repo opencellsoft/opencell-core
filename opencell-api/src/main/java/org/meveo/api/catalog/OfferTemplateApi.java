@@ -478,6 +478,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
                 templateAttribute.setValidationLabel(offerAttributeDto.getValidationLabel());
                 templateAttribute.setValidationPattern(offerAttributeDto.getValidationPattern());
                 templateAttribute.setValidationType(offerAttributeDto.getValidationType());
+                if (templateAttribute.isMandatory() && !templateAttribute.isDisplay() 
+                		&& (templateAttribute.getDefaultValue() == null || templateAttribute.getDefaultValue().isEmpty())) 
+                	 throw new InvalidParameterException("Default value is required for an attribute mandatory and hidden");
                 return templateAttribute;
             }).collect(Collectors.toList()));
         }
