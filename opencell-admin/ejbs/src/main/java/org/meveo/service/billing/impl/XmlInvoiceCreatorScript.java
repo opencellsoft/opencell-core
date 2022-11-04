@@ -1781,7 +1781,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             header.appendChild(paymentMethod);
         }
         Element comment = doc.createElement("comment");
-        comment.appendChild(doc.createTextNode(getDefaultIfNull(invoice.getComment(), " ")));
+        comment.appendChild(doc.createCDATASection(getDefaultIfNull(invoice.getComment(), " ")));
         header.appendChild(comment);
         Element categoriesTag = createHeaderCategoriesSection(doc, invoice);
         if (categoriesTag != null) {
