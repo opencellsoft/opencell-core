@@ -89,11 +89,7 @@
           ],
           "client": {
              "opencell-web": [
-              "uma_protection",
-			  "apiAdministrateur"
-            ],
-			"opencell-portal": [
-              "PORTAL_USER"
+              "uma_protection"
             ]
           }
         },
