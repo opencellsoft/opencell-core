@@ -26,7 +26,7 @@ import org.meveo.model.EnableEntity;
 @NamedQueries({
     @NamedQuery(name = "ExchangeRate.getAllTradingCurrencyWithCurrentRate",
             query = "SELECT s.id FROM ExchangeRate s WHERE (s.tradingCurrency.id, s.fromDate)" +
-                    " IN (SELECT ex.tradingCurrency.id, MAX(ex.fromDate) FROM ExchangeRate ex WHERE ex.fromDate <=:sysDate and ex.isCurrentRate=false GROUP BY ex.tradingCurrency.id)"),
+                    " IN (SELECT ex.tradingCurrency.id, MAX(ex.fromDate) FROM ExchangeRate ex WHERE ex.fromDate <=:sysDate GROUP BY ex.tradingCurrency.id)"),
     @NamedQuery(name = "ExchangeRate.findByfromDate", query = "SELECT ec FROM ExchangeRate ec WHERE ec.fromDate = :fromDate and ec.tradingCurrency.id = :tradingCurrencyId")
 })
 public class ExchangeRate extends EnableEntity {
