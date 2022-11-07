@@ -58,7 +58,6 @@ import org.meveo.service.billing.impl.ServiceSingleton;
 @Stateless
 public class ProviderService extends PersistenceService<Provider> {
 
-    private static final String DEFAULT_MATCHING_CODE_VALUE = "AAA";
     /**
      * The tenant registry to add or remove a new tenant.
      */
@@ -267,7 +266,7 @@ public class ProviderService extends PersistenceService<Provider> {
 
     public void resetMatchingCode() {
         Provider provider = findById(Provider.CURRENT_PROVIDER_ID, true);
-        provider.setCurrentMatchingCode(DEFAULT_MATCHING_CODE_VALUE);
+        provider.setCurrentMatchingCode(StringUtils.DEFAULT_MATCHING_CODE_VALUE);
         updateNoCheck(provider);
     }
 

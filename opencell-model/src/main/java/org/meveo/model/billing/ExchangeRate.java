@@ -24,7 +24,9 @@ import org.meveo.model.EnableEntity;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "exchange_rate_seq"), })
 @NamedQueries({
-    @NamedQuery(name = "ExchangeRate.getAllTradingCurrencyWithCurrentRate", query = "SELECT s.id FROM ExchangeRate s WHERE s.fromDate =:sysDate and isCurrentRate=false"),
+    @NamedQuery(name = "ExchangeRate.getAllTradingCurrencyWithCurrentRate",
+            query = "SELECT s.id FROM ExchangeRate s WHERE (s.tradingCurrency.id, s.fromDate)" +
+                    " IN (SELECT ex.tradingCurrency.id, MAX(ex.fromDate) FROM ExchangeRate ex WHERE ex.fromDate <=:sysDate GROUP BY ex.tradingCurrency.id)"),
     @NamedQuery(name = "ExchangeRate.findByfromDate", query = "SELECT ec FROM ExchangeRate ec WHERE ec.fromDate = :fromDate and ec.tradingCurrency.id = :tradingCurrencyId")
 })
 public class ExchangeRate extends EnableEntity {

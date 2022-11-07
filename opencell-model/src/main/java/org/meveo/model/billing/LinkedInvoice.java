@@ -24,6 +24,7 @@ import org.meveo.model.IEntity;
 @NamedQueries({ 
     @NamedQuery(name = "LinkedInvoice.deleteByIdInvoiceAndLinkedInvoice", query = "delete from LinkedInvoice l where l.id.id = :invoiceId and l.linkedInvoiceValue.id in (:linkedInvoiceId)"),
     @NamedQuery(name = "LinkedInvoice.deleteAllAdjLink", query = "delete from LinkedInvoice l  where l.linkedInvoiceValue.id in (select inv.id from Invoice inv where inv.invoiceType.code = 'ADJ')"),
+    @NamedQuery(name = "LinkedInvoice.deleteByInvoiceIdAndType", query = "delete from LinkedInvoice l where l.id.id = :invoiceId and l.type = (:type)"),
     @NamedQuery(name = "LinkedInvoice.find", query = "select l from LinkedInvoice l where l.id.id = :invoiceId and l.linkedInvoiceValue.id = :linkedInvoiceId")
     
 })

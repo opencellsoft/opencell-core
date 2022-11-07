@@ -485,7 +485,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
         final List<JournalEntry> aoJEs = new ArrayList<>();
         Map<Long, Integer> aoIdWithTransactionCategory = new HashMap<>();
-        AtomicBoolean isNoAoWithoutJe = new AtomicBoolean(true);
+        AtomicBoolean isValidAo = new AtomicBoolean(true);
 
         Optional.ofNullable(ao.getMatchingAmounts()).orElse(Collections.emptyList())
                 .forEach(matchingAmount -> {
@@ -496,42 +496,45 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                                 if (aoFromMatching.getStatus() != AccountOperationStatus.EXPORTED || aoFromMatching.getMatchingStatus() != MatchingStatusEnum.L) {
                                     log.warn("AccountOperation id={}-type={} does not have the expected status to assign it a 'Matching Code' for its JournalEntry [given={}-{}, expected={}-{}]",
                                             aoFromMatching.getId(), aoFromMatching.getType(), aoFromMatching.getStatus(), aoFromMatching.getMatchingStatus(), AccountOperationStatus.EXPORTED, MatchingStatusEnum.L);
-                                    isNoAoWithoutJe.set(false);
+                                    isValidAo.set(false);
                                     return; // skip process if related Recorded invoice AO (payment in our case) does not have a JournalEntry (export status still in POSTED or FAILED)
                                 }
-                                if (aoFromMatching instanceof RecordedInvoice) {
-                                    Optional.ofNullable(aoFromMatching.getMatchingAmounts()).orElse(Collections.emptyList())
-                                            .forEach(recIMatAma ->
-                                                    Optional.ofNullable(recIMatAma.getMatchingCode().getMatchingAmounts()).orElse(Collections.emptyList())
-                                                            .forEach(matchingCode ->
-                                                                    aoIdWithTransactionCategory.put(matchingCode.getAccountOperation().getId(), matchingCode.getAccountOperation().getTransactionCategory().getId())
-                                                            )
+                                // if (aoFromMatching instanceof RecordedInvoice) {
+                                Optional.ofNullable(aoFromMatching.getMatchingAmounts()).orElse(Collections.emptyList())
+                                        .forEach(recIMatAma ->
+                                                Optional.ofNullable(recIMatAma.getMatchingCode().getMatchingAmounts()).orElse(Collections.emptyList())
+                                                        .forEach(matchingCode ->
+                                                                aoIdWithTransactionCategory.put(matchingCode.getAccountOperation().getId(), matchingCode.getAccountOperation().getTransactionCategory().getId())
+                                                        )
 
-                                            );
-                                    aoIdWithTransactionCategory.put(aoFromMatching.getId(), aoFromMatching.getTransactionCategory().getId());
-                                }
+                                        );
+                                aoIdWithTransactionCategory.put(aoFromMatching.getId(), aoFromMatching.getTransactionCategory().getId());
+                                // }
 
                             });
                 });
 
-        aoIdWithTransactionCategory.forEach((aoId, transactionCategory) -> aoJEs.addAll(getEntityManager().createNamedQuery(GET_BY_ACCOUNT_OPERATION_AND_DIRECTION_QUERY)
-                .setParameter(PARAM_ID_AO, aoId)
-                .setParameter(PARAM_DIRECTION, JournalEntryDirectionEnum.getValue(transactionCategory))
-                .getResultList()));
+        if (isValidAo.get()) {
+            aoIdWithTransactionCategory.forEach((aoId, transactionCategory) -> aoJEs.addAll(getEntityManager().createNamedQuery(GET_BY_ACCOUNT_OPERATION_AND_DIRECTION_QUERY)
+                    .setParameter(PARAM_ID_AO, aoId)
+                    .setParameter(PARAM_DIRECTION, JournalEntryDirectionEnum.getValue(transactionCategory))
+                    .getResultList()));
 
-        // add passed journalEntries
-        aoJEs.addAll(getJournalEntries(ao, createdEntries));
+            // add passed journalEntries
+            aoJEs.addAll(getJournalEntries(ao, createdEntries));
 
-        if (isNoAoWithoutJe.get() && CollectionUtils.isNotEmpty(aoJEs) && aoJEs.size() >= 2) {
-            String matchingCode = providerService.getNextMatchingCode();
-            aoJEs.forEach(je -> {
-                        if (StringUtils.isBlank(je.getMatchingCode())) {
-                            // Peut on si on lance un exception ca sera plus claire en cas de matchingCode deja existant...a valider = ce cas ne doit pas etre possible : des JE avec code et d'autre sans liés au meme group de matching (Recorded invoice et Payment)
-                            je.setMatchingCode(matchingCode);
-                            update(je);
+            if (CollectionUtils.isNotEmpty(aoJEs) && aoJEs.size() >= aoIdWithTransactionCategory.size()
+                    && CollectionUtils.isEmpty(aoJEs.stream().filter(journalEntry -> StringUtils.isNotBlank(journalEntry.getMatchingCode())).collect(Collectors.toList()))) {
+                String matchingCode = providerService.getNextMatchingCode();
+                aoJEs.forEach(je -> {
+                            if (StringUtils.isBlank(je.getMatchingCode())) {
+                                // Peut on si on lance un exception ca sera plus claire en cas de matchingCode deja existant...a valider = ce cas ne doit pas etre possible : des JE avec code et d'autre sans liés au meme group de matching (Recorded invoice et Payment)
+                                je.setMatchingCode(matchingCode);
+                                update(je);
+                            }
                         }
-                    }
-            );
+                );
+            }
         }
 
     }

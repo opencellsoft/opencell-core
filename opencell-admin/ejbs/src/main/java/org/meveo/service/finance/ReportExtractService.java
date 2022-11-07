@@ -163,18 +163,21 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
                 be = new ReportExtractExecutionException("Invalid SQL query." + entity.getSqlQuery(), e);
             }
 
+            FileDetails fileDetails = null;
+
             if (results != null && results.next()) {
                 if (entity.getReportExtractResultType().equals(ReportExtractResultTypeEnum.CSV)) {
-                    reportSize = writeAsFile(filename, ofNullable(entity.getFileSeparator()).orElse(";"), reportDir, results, ofNullable(entity.getMaximumLine()).orElse(0L),
+                    fileDetails = writeAsFile(filename, ofNullable(entity.getFileSeparator()).orElse(";"), reportDir, results, ofNullable(entity.getMaximumLine()).orElse(0L),
                         ofNullable(entity.getDecimalSeparator()).orElse("."));
 
                 } else {
-                    reportSize = writeAsHtml(filename, reportDir, results, entity);
+                    fileDetails = writeAsHtml(filename, reportDir, results, entity);
                 }
+                filename = fileDetails.getFileName();
                 reportExtractExecutionResult.setLineCount(reportSize);
 
             } else if (be == null && entity.isGenerateEmptyReport()) {
-                generateEmptyReport(filename, reportDir, entity.getReportExtractResultType());
+                filename = generateEmptyReport(filename, reportDir, entity.getReportExtractResultType());
                 reportExtractExecutionResult.setLineCount(0);
             }
 
@@ -207,7 +210,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private int writeAsHtml(String filename, StringBuilder sbDir, ScrollableResults results, ReportExtract entity) throws BusinessException {
+    private FileDetails writeAsHtml(String filename, StringBuilder sbDir, ScrollableResults results, ReportExtract entity) throws BusinessException {
         FileWriter fileWriter = null;
         Map<String, Object> row = null;
         int rowNumber = 0;
@@ -278,7 +281,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             file.createNewFile();
             fileWriter = new FileWriter(file);
             fileWriter.write(template);
-            return rowNumber;
+            return new FileDetails(filename, rowNumber);
         } catch (Exception e) {
             log.error("Cannot write report to file: {}", e);
             throw new BusinessException("Cannot write report to file.");
@@ -296,7 +299,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private int writeAsFile(String filename, String fileSeparator, StringBuilder sbDir, ScrollableResults results, long maxLinePerFile, String decimalSeparator) throws BusinessException {
+    private FileDetails writeAsFile(String filename, String fileSeparator, StringBuilder sbDir, ScrollableResults results, long maxLinePerFile, String decimalSeparator) throws BusinessException {
         Writer fileWriter = null;
         StringBuilder line = new StringBuilder();
         Object value = null;
@@ -361,7 +364,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
                 }
             } while (results.next());
 
-            return rowNumber;
+            return new FileDetails(filename, rowNumber);
             
         } catch (Exception e) {
             log.error("Cannot write report to file: {}", e);
@@ -444,7 +447,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
         return records;
     }    
     
-    private void generateEmptyReport(String filename, StringBuilder sbDir, ReportExtractResultTypeEnum reportType) {
+    private String generateEmptyReport(String filename, StringBuilder sbDir, ReportExtractResultTypeEnum reportType) {
         if (reportType.equals(ReportExtractResultTypeEnum.HTML) && FilenameUtils.getExtension(filename.toLowerCase()).equals("csv")) {
             filename = FileUtils.changeExtension(filename, ".html");
             globalFileName = filename;
@@ -456,6 +459,8 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
         File file = new File(sbDir + File.separator + filename);
 
         StorageFactory.createNewFile(file);
+
+        return filename;
     }
 
 }
