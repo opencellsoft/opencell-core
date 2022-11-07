@@ -75,6 +75,91 @@
         <sql>insert into ${db.schema.adapted}adm_file_format_seq values(1)</sql>
     </changeSet>
 
+    <changeSet author="mohamedCHAOUKI" id="create_seq_tunnel-04112022">
+        <createSequence sequenceName="custom_style_seq" startValue="1"/>
+        <createSequence sequenceName="electronic_signature_seq" startValue="1"/>
+        <createSequence sequenceName="hypertext_link_seq" startValue="1"/>
+        <createSequence sequenceName="hypertext_section_seq" startValue="1"/>
+        <createSequence sequenceName="theme_seq" startValue="1"/>
+        <createSequence sequenceName="tunnel_customization_seq" startValue="1"/>
+        <createSequence sequenceName="tunnel_payment_method_seq" startValue="1"/>
+    </changeSet>
+    <changeSet  author="mohamedCHAOUKI" id="create_tables_tunnel-04112022">
+        <createTable tableName="tnl_payment_method">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="tnl_payment_method_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="payment_method" type="varchar(255)" />
+            <column name="mandat_contact" type="varchar(255)" />
+            <column name="tunnel_customization_id" type="bigint" />
+        </createTable>
+
+        <createTable tableName="tnl_customization">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="tnl_customization_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="theme_id" type="varchar(255)" />
+            <column name="electronic_signature_id" type="varchar(255)" />
+        </createTable>
+
+        <createTable tableName="tnl_electronic_signature">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="tnl_electronic_signature_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="electronic_signature" type="varchar(255)" />
+            <column name="signature_api" type="varchar(255)" />
+            <column name="popup_url" type="varchar(255)" />
+            <column name="signature_status_api" type="varchar(255)" />
+            <column name="get_signature_file_api" type="varchar(255)" />
+        </createTable>
+
+        <createTable tableName="tnl_theme">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="tnl_theme_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created_on" type="date" />
+            <column name="tnl_theme_id_header" type="varchar(255)" />
+            <column name="tnl_theme_id_body" type="varchar(255)" />
+            <column name="tnl_theme_id_footer" type="varchar(255)" />
+        </createTable>
+
+        <createTable tableName="tnl_custom_style">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="tnl_custom_style_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="logo" type="varchar(255)" />
+            <column name="fav_icon" type="varchar(255)" />
+            <column name="police" type="varchar(255)" />
+            <column name="background_color" type="varchar(255)" />
+            <column name="text_color" type="varchar(255)" />
+            <column name="primary_color" type="varchar(255)" />
+            <column name="secondary_color" type="varchar(255)" />
+            <column name="type" type="varchar(255)" />
+        </createTable>
+
+        <createTable tableName="tnl_hypertext_section">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="tnl_hypertext_section_pkey" />
+            </column>
+            <column name="version" type="int4" />
+        </createTable>
+
+        <createTable tableName="tnl_hypertext_link">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="tnl_hypertext_link_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="url" type="varchar(255)" />
+            <column name="icon" type="varchar(255)" />
+            <column name="displayIcon" type="boolean" />
+        </createTable>
+    </changeSet>
+
     <changeSet id="#4371_20190620_2" author="AbdellatifBARI">
         <createSequence sequenceName="adm_file_format_seq" startValue="1" />
         <createTable tableName="adm_file_format">

@@ -31,15 +31,12 @@ import javax.persistence.Table;
  * @author Mohamed Chaouki
  */
 @Entity
-@Table(name = "electronic_signature")
+@Table(name = "tnl_electronic_signature")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "electronic_signature_seq"),})
 public class ElectronicSignature extends BaseEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;
-
-
-    private Long id;
 
     private SignatureMethodEnum electronicSignature;
 

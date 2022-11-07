@@ -22,8 +22,9 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * hypertext link
@@ -31,7 +32,7 @@ import javax.persistence.Table;
  * @author Mohamed Chaouki
  */
 @Entity
-@Table(name = "hypertext_link")
+@Table(name = "tnl_hypertext_link")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "hypertext_link_seq"),})
 public class HypertextLink extends BaseEntity {
@@ -45,6 +46,19 @@ public class HypertextLink extends BaseEntity {
 
     private Boolean displayIcon;
 
+    @ElementCollection
+    private Map<String, String> label = new HashMap<String, String>();
 
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "hypertext_section_id")
+    private HypertextSection hypertextSection;
+
+    public HypertextSection getHypertextSection() {
+        return hypertextSection;
+    }
+
+    public void setHypertextSection(HypertextSection hypertextSection) {
+        this.hypertextSection = hypertextSection;
+    }
 }

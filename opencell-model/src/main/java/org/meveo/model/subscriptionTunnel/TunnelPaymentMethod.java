@@ -23,9 +23,7 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.payments.PaymentMethodEnum;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * tunnel payment method
@@ -33,7 +31,7 @@ import javax.persistence.Table;
  * @author Mohamed Chaouki
  */
 @Entity
-@Table(name = "tunnel_payment_method")
+@Table(name = "tnl_payment_method")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "tunnel_payment_method_seq"),})
 public class TunnelPaymentMethod extends BaseEntity {
@@ -41,13 +39,12 @@ public class TunnelPaymentMethod extends BaseEntity {
     private static final long serialVersionUID = -6831399734977276174L;
 
 
-    private Long id;
-
     private PaymentMethodEnum paymentMethod;
 
     private String mandatContact;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tunnel_customization_id")
     private TunnelCustomization tunnelCustomization;
 
 

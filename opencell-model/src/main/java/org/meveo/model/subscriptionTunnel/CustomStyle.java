@@ -22,10 +22,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +33,7 @@ import java.util.Map;
  * @author Mohamed Chaouki
  */
 @Entity
-@Table(name = "custom_style")
+@Table(name = "tnl_custom_style")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "custom_style_seq"),})
 public class CustomStyle extends BaseEntity {
@@ -61,7 +58,7 @@ public class CustomStyle extends BaseEntity {
 
     private String secondaryColor;
 
-    @OneToMany
+    @OneToMany(mappedBy = "customStyle", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private ArrayList<HypertextSection> hypertextSections = new ArrayList<HypertextSection>();
 
     private CustomEnum type;

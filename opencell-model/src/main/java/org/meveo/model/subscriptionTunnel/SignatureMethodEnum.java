@@ -20,7 +20,7 @@ package org.meveo.model.subscriptionTunnel;
 
 public enum SignatureMethodEnum {
 
-    EMAIL, SMS
+    YOUSIGN
 
 
 }

@@ -23,6 +23,7 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.Date;
@@ -33,7 +34,7 @@ import java.util.Date;
  * @author Mohamed Chaouki
  */
 @Entity
-@Table(name = "theme")
+@Table(name = "tnl_theme")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "theme_seq"),})
 public class Theme extends BaseEntity {
@@ -41,17 +42,18 @@ public class Theme extends BaseEntity {
     private static final long serialVersionUID = -6831399734977276174L;
 
 
-    private Long id;
-
     private Date createdOn;
 
     @OneToOne
+    @JoinColumn(name="tnl_theme_id_header")
     private CustomStyle header;
 
     @OneToOne
+    @JoinColumn(name="tnl_theme_id_body")
     private CustomStyle body;
 
     @OneToOne
+    @JoinColumn(name="tnl_theme_id_footer")
     private CustomStyle footer;
 
 

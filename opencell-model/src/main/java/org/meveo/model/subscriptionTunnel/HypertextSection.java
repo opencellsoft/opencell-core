@@ -22,10 +22,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +33,7 @@ import java.util.Map;
  * @author Mohamed Chaouki
  */
 @Entity
-@Table(name = "hypertext_section")
+@Table(name = "tnl_hypertext_section")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "hypertext_section_seq"),})
 public class HypertextSection extends BaseEntity {
@@ -44,14 +41,23 @@ public class HypertextSection extends BaseEntity {
     private static final long serialVersionUID = -6831399734977276174L;
 
 
-    private Long id;
 
     @ElementCollection
     private Map<String, String> label = new HashMap<String, String>();
 
-    @OneToMany
+    @OneToMany(mappedBy = "hypertextSection", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private ArrayList<HypertextLink> links = new ArrayList<HypertextLink>();
 
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "custom_style_id")
+    private CustomStyle customStyle;
 
+    public CustomStyle getCustomStyle() {
+        return customStyle;
+    }
+
+    public void setCustomStyle(CustomStyle customStyle) {
+        this.customStyle = customStyle;
+    }
 }

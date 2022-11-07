@@ -22,10 +22,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +34,7 @@ import java.util.Map;
  * @author Mohamed Chaouki
  */
 @Entity
-@Table(name = "tunnel_customization")
+@Table(name = "tnl_customization")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "tunnel_customization_seq"),})
 public class TunnelCustomization extends BaseEntity {
@@ -63,9 +60,11 @@ public class TunnelCustomization extends BaseEntity {
     private List<ContactMethodEnum> contactMethods=new ArrayList<>();
 
     @OneToOne
+    @JoinColumn(name="theme_id")
     private Theme theme;
 
     @OneToOne
+    @JoinColumn(name="tnl_electronic_signature_id")
     private ElectronicSignature electronicSignature;
 
 
