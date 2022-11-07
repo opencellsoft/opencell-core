@@ -193,6 +193,7 @@ import org.meveo.model.order.Order;
 import org.meveo.model.ordering.OpenOrder;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.scripts.ScriptInstance;
@@ -6694,7 +6695,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     private List<Invoice> checkAdvanceInvoice(Invoice invoice) {
         if(invoice.getInvoiceType() != null) {
             String invoiceTypeCode = invoice.getInvoiceType().getCode();
-            if(invoiceTypeCode.equals("ADV") || invoiceTypeCode.equals("SECURITY_DEPOSIT") ) {
+            OperationCategoryEnum occCategoryOperation = invoice.getInvoiceType().getOccTemplate() != null ? invoice.getInvoiceType().getOccTemplate().getOccCategory() : null;
+            if(invoiceTypeCode.equals("ADV") || invoiceTypeCode.equals("SECURITY_DEPOSIT")  || (occCategoryOperation != null && occCategoryOperation.equals(OperationCategoryEnum.CREDIT))) {
                 return Collections.emptyList();
             }
         }else {
