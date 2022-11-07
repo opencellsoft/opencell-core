@@ -14682,6 +14682,15 @@ order by date_trunc('month', i.invoice_date) DESC
             return clob
             parallel_enable aggregate using listagg_clob_t;        
         </createProcedure>
-    </changeSet>    
+    </changeSet> 
+    
+    <changeSet id="#INTRD-11162_20221107" author="HatimOUDAD">
+        <addColumn tableName="billing_invoice_line">
+            <column name="adjustment_status" type="varchar(50)">
+            </column>
+        </addColumn>
+    </changeSet>
+    
+   
     
 </databaseChangeLog>
