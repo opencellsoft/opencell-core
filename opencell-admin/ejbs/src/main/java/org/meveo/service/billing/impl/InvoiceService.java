@@ -5139,14 +5139,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
         final String billingAccountCode = resource.getBillingAccountCode();
         final BigDecimal amountWithTax = resource.getAmountWithTax();
         final Date invoiceDate = resource.getInvoiceDate() != null ? resource.getInvoiceDate() : new Date();
+        final String invoiceTypeCodeInput = resource.getInvoiceTypeCode();
 
         Order order = (Order) tryToFindByEntityClassAndCode(Order.class, resource.getOrderCode());
         BillingAccount billingAccount = (BillingAccount) tryToFindByEntityClassAndCode(BillingAccount.class, billingAccountCode);
-        final String invoiceTypeCode = resource.getInvoiceTypeCode() != null ? resource.getInvoiceTypeCode() : "ADV";
-        InvoiceType advType = (InvoiceType) tryToFindByEntityClassAndCode(InvoiceType.class, invoiceTypeCode);
+        final String invoiceTypeCode = (invoiceTypeCodeInput != null && !invoiceTypeCodeInput.isEmpty() && !invoiceTypeCodeInput.isBlank()) ? resource.getInvoiceTypeCode() : "COM";
+        InvoiceType invoiceType = (InvoiceType) tryToFindByEntityClassAndCode(InvoiceType.class, invoiceTypeCode);
         String comment = resource.getComment(); 
 
-        Invoice invoice = initBasicInvoiceInvoice(amountWithTax, invoiceDate, order, billingAccount, advType, comment);
+        Invoice invoice = initBasicInvoiceInvoice(amountWithTax, invoiceDate, order, billingAccount, invoiceType, comment);
         invoice.updateAudit(currentUser);
         getEntityManager().persist(invoice);
         postCreate(invoice);
