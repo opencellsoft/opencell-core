@@ -6746,7 +6746,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 					.reduce(BigDecimal::add).get();
 			//if balance is well calculated and balance=0 or advanceList is empty, we don't need to recalculate
 			if ((sum.add(invoiceBalance)).compareTo(invoice.getAmountWithTax()) == 0) {
-				if (BigDecimal.ZERO.equals(invoiceBalance) || CollectionUtils.isEmpty(advInvoices)) {
+				if (BigDecimal.ZERO.compareTo(invoiceBalance)==0 || CollectionUtils.isEmpty(advInvoices)) {
 					return;
 				} 
 			}
@@ -6788,7 +6788,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			Stream<LinkedInvoice> advances = invoice.getLinkedInvoices().stream()
 					.filter(i -> InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(i.getType()));
 			advances.forEach(li -> li.getLinkedInvoiceValue().getInvoiceBalance().add(li.getAmount()));
-			advances.forEach(adv -> linkedInvoiceService.remove(adv));
+			linkedInvoiceService.deleteByInvoiceIdAndType(invoice.getId(),InvoiceTypeEnum.ADVANCEMENT_PAYMENT);
 		}
 	}
 
