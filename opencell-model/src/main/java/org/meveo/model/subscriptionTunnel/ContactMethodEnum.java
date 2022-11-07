@@ -18,9 +18,10 @@
 
 package org.meveo.model.subscriptionTunnel;
 
+/**
+ * Contact Method types.
+ *
+ */
 public enum ContactMethodEnum {
-
     EMAIL, SMS
-
-
 }

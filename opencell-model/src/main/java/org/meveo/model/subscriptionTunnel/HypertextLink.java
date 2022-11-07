@@ -20,6 +20,7 @@ package org.meveo.model.subscriptionTunnel;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 
 import javax.persistence.*;
@@ -34,25 +35,63 @@ import java.util.Map;
 @Entity
 @Table(name = "tnl_hypertext_link")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "hypertext_link_seq"),})
+        @Parameter(name = "sequence_name", value = "tnl_hypertext_link_seq"),})
 public class HypertextLink extends BaseEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;
 
+    /**
+     * Translated label in JSON format with language code as a key and translated description as a value
+     */
+    @Type(type = "json")
+    @Column(name = "label", columnDefinition = "jsonb")
+    private Map<String, String> label;
 
+    @Column(name = "url")
     private String url;
 
+    @Column(name = "icon")
     private String icon;
 
+    @Type(type = "numeric_boolean")
+    @Column(name = "display_icon")
     private Boolean displayIcon;
-
-    @ElementCollection
-    private Map<String, String> label = new HashMap<String, String>();
-
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "hypertext_section_id")
     private HypertextSection hypertextSection;
+
+    public Map<String, String> getLabel() {
+        return label;
+    }
+
+    public void setLabel(Map<String, String> label) {
+        this.label = label;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public Boolean getDisplayIcon() {
+        return displayIcon;
+    }
+
+    public void setDisplayIcon(Boolean displayIcon) {
+        this.displayIcon = displayIcon;
+    }
 
     public HypertextSection getHypertextSection() {
         return hypertextSection;

@@ -22,8 +22,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * electronic signature
@@ -33,20 +32,65 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "tnl_electronic_signature")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "electronic_signature_seq"),})
+        @Parameter(name = "sequence_name", value = "tnl_electronic_signature_seq"),})
 public class ElectronicSignature extends BaseEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "electronic_signature")
     private SignatureMethodEnum electronicSignature;
 
+    @Column(name = "signature_api")
     private String signatureApi;
 
+    @Column(name = "popup_url")
     private String popupUrl;
 
+    @Column(name = "signature_status_api")
     private String signatureStatusApi;
 
-    private String getSignatureFileApi;
+    @Column(name = "get_signedfile_api")
+    private String getSignedfileApi;
 
 
+    public SignatureMethodEnum getElectronicSignature() {
+        return electronicSignature;
+    }
+
+    public void setElectronicSignature(SignatureMethodEnum electronicSignature) {
+        this.electronicSignature = electronicSignature;
+    }
+
+    public String getSignatureApi() {
+        return signatureApi;
+    }
+
+    public void setSignatureApi(String signatureApi) {
+        this.signatureApi = signatureApi;
+    }
+
+    public String getPopupUrl() {
+        return popupUrl;
+    }
+
+    public void setPopupUrl(String popupUrl) {
+        this.popupUrl = popupUrl;
+    }
+
+    public String getSignatureStatusApi() {
+        return signatureStatusApi;
+    }
+
+    public void setSignatureStatusApi(String signatureStatusApi) {
+        this.signatureStatusApi = signatureStatusApi;
+    }
+
+    public String getGetSignedfileApi() {
+        return getSignedfileApi;
+    }
+
+    public void setGetSignedfileApi(String getSignedfileApi) {
+        this.getSignedfileApi = getSignedfileApi;
+    }
 }

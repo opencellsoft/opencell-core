@@ -18,9 +18,10 @@
 
 package org.meveo.model.subscriptionTunnel;
 
+/**
+ * Signature Method types.
+ *
+ */
 public enum SignatureMethodEnum {
-
     YOUSIGN
-
-
 }

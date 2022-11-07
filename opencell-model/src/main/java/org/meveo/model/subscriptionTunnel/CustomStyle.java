@@ -20,6 +20,7 @@ package org.meveo.model.subscriptionTunnel;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 
 import javax.persistence.*;
@@ -35,33 +36,124 @@ import java.util.Map;
 @Entity
 @Table(name = "tnl_custom_style")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "custom_style_seq"),})
+        @Parameter(name = "sequence_name", value = "tnl_custom_style_seq"),})
 public class CustomStyle extends BaseEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;
 
-
+    @Column(name = "logo")
     private String logo;
 
+    @Column(name = "fav_icon")
     private String favIcon;
 
-    private String police;
+    @Column(name = "font")
+    private String font;
 
+    @Column(name = "background_color")
     private String backgroundColor;
 
+    @Column(name = "text_color")
     private String textColor;
 
-    @ElementCollection
-    private Map<String, String> backgroundImage = new HashMap<String, String>();
+    /**
+     * Background image path and properties in JSON format with property name as a key and its value as a value
+     */
+    @Type(type = "json")
+    @Column(name = "background_image", columnDefinition = "jsonb")
+    private Map<String, String> backgroundImage;
 
+    @Column(name = "primary_color")
     private String primaryColor;
 
+    @Column(name = "secondary_color")
     private String secondaryColor;
 
     @OneToMany(mappedBy = "customStyle", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private ArrayList<HypertextSection> hypertextSections = new ArrayList<HypertextSection>();
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
     private CustomEnum type;
 
 
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
+    }
+
+    public String getFavIcon() {
+        return favIcon;
+    }
+
+    public void setFavIcon(String favIcon) {
+        this.favIcon = favIcon;
+    }
+
+    public String getFont() {
+        return font;
+    }
+
+    public void setFont(String font) {
+        this.font = font;
+    }
+
+    public String getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(String backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+
+    public String getTextColor() {
+        return textColor;
+    }
+
+    public void setTextColor(String textColor) {
+        this.textColor = textColor;
+    }
+
+    public Map<String, String> getBackgroundImage() {
+        return backgroundImage;
+    }
+
+    public void setBackgroundImage(Map<String, String> backgroundImage) {
+        this.backgroundImage = backgroundImage;
+    }
+
+    public String getPrimaryColor() {
+        return primaryColor;
+    }
+
+    public void setPrimaryColor(String primaryColor) {
+        this.primaryColor = primaryColor;
+    }
+
+    public String getSecondaryColor() {
+        return secondaryColor;
+    }
+
+    public void setSecondaryColor(String secondaryColor) {
+        this.secondaryColor = secondaryColor;
+    }
+
+    public ArrayList<HypertextSection> getHypertextSections() {
+        return hypertextSections;
+    }
+
+    public void setHypertextSections(ArrayList<HypertextSection> hypertextSections) {
+        this.hypertextSections = hypertextSections;
+    }
+
+    public CustomEnum getType() {
+        return type;
+    }
+
+    public void setType(CustomEnum type) {
+        this.type = type;
+    }
 }

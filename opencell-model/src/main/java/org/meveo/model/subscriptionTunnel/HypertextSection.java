@@ -20,6 +20,7 @@ package org.meveo.model.subscriptionTunnel;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 
 import javax.persistence.*;
@@ -35,23 +36,40 @@ import java.util.Map;
 @Entity
 @Table(name = "tnl_hypertext_section")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "hypertext_section_seq"),})
+        @Parameter(name = "sequence_name", value = "tnl_hypertext_section_seq"),})
 public class HypertextSection extends BaseEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;
 
-
-
-    @ElementCollection
-    private Map<String, String> label = new HashMap<String, String>();
+    /**
+     * Translated label in JSON format with language code as a key and translated description as a value
+     */
+    @Type(type = "json")
+    @Column(name = "label", columnDefinition = "jsonb")
+    private Map<String, String> label;
 
     @OneToMany(mappedBy = "hypertextSection", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private ArrayList<HypertextLink> links = new ArrayList<HypertextLink>();
 
-
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "custom_style_id")
     private CustomStyle customStyle;
+
+    public Map<String, String> getLabel() {
+        return label;
+    }
+
+    public void setLabel(Map<String, String> label) {
+        this.label = label;
+    }
+
+    public ArrayList<HypertextLink> getLinks() {
+        return links;
+    }
+
+    public void setLinks(ArrayList<HypertextLink> links) {
+        this.links = links;
+    }
 
     public CustomStyle getCustomStyle() {
         return customStyle;

@@ -33,18 +33,20 @@ import javax.persistence.*;
 @Entity
 @Table(name = "tnl_payment_method")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "tunnel_payment_method_seq"),})
+        @Parameter(name = "sequence_name", value = "tnl_payment_method_seq"),})
 public class TunnelPaymentMethod extends BaseEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;
 
-
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_method")
     private PaymentMethodEnum paymentMethod;
 
-    private String mandatContact;
+    @Column(name = "mandat_contract")
+    private String mandatContract;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tunnel_customization_id")
+    @JoinColumn(name = "tunnel_id")
     private TunnelCustomization tunnelCustomization;
 
 

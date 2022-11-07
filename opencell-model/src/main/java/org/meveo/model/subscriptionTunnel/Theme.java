@@ -22,10 +22,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -36,25 +33,56 @@ import java.util.Date;
 @Entity
 @Table(name = "tnl_theme")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "theme_seq"),})
+        @Parameter(name = "sequence_name", value = "tnl_theme_seq"),})
 public class Theme extends BaseEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;
 
-
-    private Date createdOn;
-
     @OneToOne
-    @JoinColumn(name="tnl_theme_id_header")
+    @JoinColumn(name="header")
     private CustomStyle header;
 
     @OneToOne
-    @JoinColumn(name="tnl_theme_id_body")
+    @JoinColumn(name="body")
     private CustomStyle body;
 
     @OneToOne
-    @JoinColumn(name="tnl_theme_id_footer")
+    @JoinColumn(name="footer")
     private CustomStyle footer;
 
+    @Column(name = "created_on")
+    private Date createdOn;
 
+
+    public CustomStyle getHeader() {
+        return header;
+    }
+
+    public void setHeader(CustomStyle header) {
+        this.header = header;
+    }
+
+    public CustomStyle getBody() {
+        return body;
+    }
+
+    public void setBody(CustomStyle body) {
+        this.body = body;
+    }
+
+    public CustomStyle getFooter() {
+        return footer;
+    }
+
+    public void setFooter(CustomStyle footer) {
+        this.footer = footer;
+    }
+
+    public Date getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(Date createdOn) {
+        this.createdOn = createdOn;
+    }
 }

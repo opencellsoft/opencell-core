@@ -17,10 +17,10 @@
  */
 
 package org.meveo.model.subscriptionTunnel;
-
+/**
+ * Custom Style types.
+ *
+ */
 public enum CustomEnum {
-
     HEADER, BODY,FOOTER
-
-
 }
