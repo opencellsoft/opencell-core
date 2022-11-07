@@ -379,9 +379,14 @@ public class FilesApi extends BaseApi {
         if (javaXMlFormatFile.exists()) {
             return javaXMlFormatFile;
         } else {
-            File sqlXMlFormatFile = new File((".").concat(filePath.split("\\.")[0] + "_" + format("%04d", 0) + "." + filePath.split("\\.")[1]));
-            if (sqlXMlFormatFile.exists()) {
-                return sqlXMlFormatFile;
+            String[] fileNameParts = filePath.split("\\.");
+            if (fileNameParts.length > 1) {
+                File sqlXMlFormatFile = new File((".").concat(filePath.split("\\.")[1] + "_" + format("%04d", 0) + "." + filePath.split("\\.")[2]));
+                if (sqlXMlFormatFile.exists()) {
+                    return sqlXMlFormatFile;
+                } else {
+                    throw new BusinessApiException(FILE_DOES_NOT_EXISTS + javaXMlFormatFile.getPath());
+                }
             } else {
                 throw new BusinessApiException(FILE_DOES_NOT_EXISTS + javaXMlFormatFile.getPath());
             }
