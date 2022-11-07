@@ -8384,5 +8384,12 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         	<where> code = 'ADV'</where>
     	</update>
 	</changeSet>
+	
+	<changeSet id="#INTRD-11244_20221104" author="TarikFA.">
+		<update tableName="ar_occ_template">
+			<column name="occ_category" value="DEBIT" />
+			<where> code = 'INV_ADV'</where>
+		</update>
+	</changeSet>
 
 </databaseChangeLog>
