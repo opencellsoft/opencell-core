@@ -110,7 +110,7 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
 
     @Override
     public GetCustomerAccountResponseDto findV2(String customerAccountCode, boolean calculateBalances, CustomFieldInheritanceEnum inheritCF, boolean withAccountOperations, boolean includeBillingAccounts) {
-        return findV2(customerAccountCode, calculateBalances, inheritCF, withAccountOperations, includeBillingAccounts);
+        return find(customerAccountCode, calculateBalances, inheritCF, withAccountOperations, includeBillingAccounts);
     }
 
     @Override
@@ -142,7 +142,7 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
 
     @Override
     public CustomerAccountsResponseDto listByCustomerV2(String customerCode) {
-        return listByCustomerV2(customerCode);
+        return listByCustomer(customerCode);
     }
 
     @Override

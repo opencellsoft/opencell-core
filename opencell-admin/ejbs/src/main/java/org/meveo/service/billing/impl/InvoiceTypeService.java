@@ -53,6 +53,8 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 
     @Inject
     private ProviderService providerService;
+    
+    public final static String DEFAULT_ADVANCE_CODE = "ADV";
 
     /**
      * Gets the default type.

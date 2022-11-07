@@ -43,7 +43,7 @@ import org.meveo.model.shared.DateUtils;
 @Entity
 @DiscriminatorValue(value = "CARD")
 @NamedQueries({ @NamedQuery(name = "PaymentMethod.getNumberOfTokenId", query = "select count(*) from  CardPaymentMethod pm where pm.tokenId = :tokenId and pm.disabled = false"),
-        @NamedQuery(name = "PaymentMethod.getNumberOfCardCustomerAccount", query = "select count(*) from  CardPaymentMethod pm where    pm.customerAccount.id = :customerAccountId and pm.monthExpiration = :monthExpiration and pm.yearExpiration = :yearExpiration and pm.hiddenCardNumber = :hiddenCardNumber and pm.cardType = :cardType and pm.disabled = false") })
+        @NamedQuery(name = "PaymentMethod.getNumberOfCardCustomerAccount", query = "select count(*) from  CardPaymentMethod pm where pm.customerAccount.id = :customerAccountId and pm.hiddenCardNumber = :hiddenCardNumber and pm.cardType = :cardType and pm.disabled = false") })
 public class CardPaymentMethod extends PaymentMethod {
 
     private static final long serialVersionUID = 8726571628074346184L;

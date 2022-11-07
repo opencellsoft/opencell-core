@@ -99,6 +99,6 @@ public class CfValueAccumulatorPath implements Serializable {
     @Override
     public boolean equals(Object obj) {
         CfValueAccumulatorPath other = (CfValueAccumulatorPath) obj;
-        return clazz.equals(other.getClazz()) && ((path == null && other.getPath() == null) || (path != null && path.equals(other.getPath())));
+        return other != null && clazz.equals(other.getClazz()) && ((path == null && other.getPath() == null) || (path != null && path.equals(other.getPath())));
     }
 }

@@ -76,7 +76,7 @@ public class SecurityDeposit extends BusinessCFEntity {
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "status")
-    private SecurityDepositStatusEnum status = SecurityDepositStatusEnum.NEW;
+    private SecurityDepositStatusEnum status = SecurityDepositStatusEnum.DRAFT;
 
     @ManyToOne
     @JoinColumn(name = "subscription_id")
@@ -105,6 +105,10 @@ public class SecurityDeposit extends BusinessCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_account_id", nullable = false)
     private BillingAccount billingAccount;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sd_adjustment_id")
+    private Invoice securityDepositAdjustment;
     
     public BillingAccount getBillingAccount() {
         return billingAccount;
@@ -240,5 +244,13 @@ public class SecurityDeposit extends BusinessCFEntity {
 
     public void setCancelReason(String cancelReason) {
         this.cancelReason = cancelReason;
+    }
+
+    public Invoice getSecurityDepositAdjustment() {
+        return securityDepositAdjustment;
+    }
+
+    public void setSecurityDepositAdjustment(Invoice securityDepositAdjustment) {
+        this.securityDepositAdjustment = securityDepositAdjustment;
     }
 }

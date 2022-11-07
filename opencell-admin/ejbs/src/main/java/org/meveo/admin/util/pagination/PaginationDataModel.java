@@ -264,7 +264,7 @@ public class PaginationDataModel<T>extends DataModel<T> implements Serializable 
         if (wrappedKeys.contains(rowKey)) {
             return true;
         }
-        if (wrappedData.entrySet().contains(rowKey)) {
+        if (wrappedData.keySet().contains(rowKey)) {
             return true;
         }
         /**

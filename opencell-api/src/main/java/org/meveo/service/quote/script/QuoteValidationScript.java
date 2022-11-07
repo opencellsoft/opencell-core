@@ -118,6 +118,7 @@ public class QuoteValidationScript extends ModuleScript {
 						return orderOffer;
 					}).collect(Collectors.toList());
 			order.setOffers(orderOffers);
+		    orderOffers.stream().findFirst().get().getOfferTemplate().getAllowedDiscountPlans().stream().findFirst().ifPresent(matchedDP -> order.setDiscountPlan(matchedDP));
 			commercialOrderService.update(order);
 			List<QuotePrice> quotePrices=quoteVersion.getQuotePrices().stream()
 					.filter(qp -> qp.getPriceLevelEnum()==PriceLevelEnum.QUOTE).collect(Collectors.toList());

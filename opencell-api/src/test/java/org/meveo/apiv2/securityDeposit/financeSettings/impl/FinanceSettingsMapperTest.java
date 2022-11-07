@@ -79,6 +79,7 @@ public class FinanceSettingsMapperTest {
                 .useAuxiliaryAccounting(auxiliaryAccounting)
                 .auxiliaryAccountCodeEl(auxiliaryAccountingCode)
                 .auxiliaryAccountLabelEl(auxiliaryAccountingLabel)
+                .activateDunning(FALSE)
                 .build();
     }
 }

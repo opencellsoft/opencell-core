@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 
 import javax.persistence.criteria.JoinType;
 
+import org.meveo.admin.util.pagination.FilterOperatorEnum;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
@@ -106,7 +107,13 @@ public class NativeExpressionFactory {
                 queryBuilder.addSearchWildcardOrIgnoreCasFilters(tableNameAlias, exp.getAllFields(), value);
                 break;
             default: {
-                if (key.startsWith(PersistenceService.SEARCH_SQL)) {
+            	if (key.matches("^\\$filter[0-9]+$")) {
+            		Map<String, Object> nestedFilterItems = (Map<String, Object>) value;
+            		FilterOperatorEnum operator = (FilterOperatorEnum) nestedFilterItems.getOrDefault("$operator", FilterOperatorEnum.AND);
+            		queryBuilder.startNestedFilter(operator);
+                    nestedFilterItems.keySet().stream().filter(orItemKey -> nestedFilterItems.get(orItemKey) != null && !"$OPERATOR".equalsIgnoreCase(orItemKey)).forEach(orItemKey -> addFilters(orItemKey, nestedFilterItems.get(orItemKey)));
+            		queryBuilder.endNestedFilter();
+                } else if (key.startsWith(PersistenceService.SEARCH_SQL)) {
                     queryBuilder.addSearchSqlFilters(value);
                 } else if (key.startsWith(PersistenceService.SEARCH_OR)) {
                     queryBuilder.startOrClause();

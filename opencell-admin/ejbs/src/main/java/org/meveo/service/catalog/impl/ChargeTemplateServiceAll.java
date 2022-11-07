@@ -122,9 +122,13 @@ public class ChargeTemplateServiceAll extends BusinessService<ChargeTemplate> {
 	public ChargeTemplate duplicateCharge(ChargeTemplate chargeTemplate) {
 		//charge Template to be duplicated
 		ChargeTemplate duplicateChargeTemplate = null;
+		ChargeTemplateStatusEnum statusChargeTemplate = chargeTemplate.getStatus();
 		
 		try {
+			//set status to null to bypass the validation used in the setStatus method
+			chargeTemplate.setStatus(null);
 			duplicateChargeTemplate = (ChargeTemplate) BeanUtils.cloneBean(chargeTemplate);
+			chargeTemplate.setStatus(statusChargeTemplate);
 			
 			if(chargeTemplate.getProductCharges() != null) {
 			    List<ProductChargeTemplateMapping> listProductChargeTemplateMapping = new ArrayList<ProductChargeTemplateMapping>();
@@ -136,8 +140,6 @@ public class ChargeTemplateServiceAll extends BusinessService<ChargeTemplate> {
 			
 			duplicateChargeTemplate.setId(null);
 			duplicateChargeTemplate.setCode(findDuplicateCode(chargeTemplate));
-			//set status to null then to DRAFT to bypass the validation used in the setStatus method
-			duplicateChargeTemplate.setStatus(null);
 			duplicateChargeTemplate.setStatus(ChargeTemplateStatusEnum.DRAFT);
 
 			if(chargeTemplate.getAttributes() != null) {
@@ -178,6 +180,8 @@ public class ChargeTemplateServiceAll extends BusinessService<ChargeTemplate> {
 
 	        		List<PricePlanMatrixVersion> versionsNew = new ArrayList<PricePlanMatrixVersion>();
 	        		pricePlanMatrixNew.setVersions(versionsNew);
+	        		pricePlanMatrixNew.setContractItems(null);
+	        		pricePlanMatrixNew.setDiscountPlanItems(null);
 	        		
 	        		pricePlanMatrixService.create(pricePlanMatrixNew);
 

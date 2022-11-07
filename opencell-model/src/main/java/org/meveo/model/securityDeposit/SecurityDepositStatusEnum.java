@@ -1,7 +1,7 @@
 package org.meveo.model.securityDeposit;
 
 public enum SecurityDepositStatusEnum {
-    NEW,
+    DRAFT,
     
     LOCKED,
     

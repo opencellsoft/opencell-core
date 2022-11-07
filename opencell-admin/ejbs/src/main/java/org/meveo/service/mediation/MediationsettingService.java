@@ -74,14 +74,15 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 	
 	
     @SuppressWarnings("unchecked")
-	public void applyEdrVersioningRule(List<EDR> edrs, CDR cdr){
+	public boolean applyEdrVersioningRule(List<EDR> edrs, CDR cdr, boolean isVirtual){
     	var mediationSettings = this.list();
     	if(CollectionUtils.isNotEmpty(mediationSettings) && mediationSettings.size() > 1)
     		throw new BusinessException("More than one Mediation setting is found");
-    	if(CollectionUtils.isEmpty(mediationSettings)) return ;
-    	if(!mediationSettings.get(0).isEnableEdrVersioning()) return;
+    	if(CollectionUtils.isEmpty(mediationSettings)) return isVirtual;
+    	if(!mediationSettings.get(0).isEnableEdrVersioning()) return isVirtual;
     	Comparator<EdrVersioningRule> sortByPriority = (EdrVersioningRule edrV1, EdrVersioningRule edrV2) -> edrV1.getPriority().compareTo(edrV2.getPriority()); 
     	var edrIterate = edrs.iterator();
+    	boolean isRated = isVirtual;
     	while(edrIterate.hasNext()) {
     		var edr = edrIterate.next();
     		if(edr.getId() == null)
@@ -133,7 +134,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 									edr.setEventVersion(previousEdr.getEventVersion() + 1);
 									previousEdr.setStatus(EDRStatusEnum.CANCELLED);
 									previousEdr.setRejectReason("Received new version EDR[id=" + edr.getId() + "]");
-									wos.forEach(wo -> {
+									for(WalletOperation wo : wos){
 									    RatingResult rating = usageRatingService.rateUsage(edr, true, false, 0, 0, null, false);
 									    if(rating.getWalletOperations().size() == 0 ) {
 									        throw new BusinessException("Error while rating new Edr version : "  + edr.getEventVersion());
@@ -158,7 +159,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 										wo.setTaxPercent(woToRetate.getTaxPercent());
 										wo.setUnitAmountTax(woToRetate.getUnitAmountTax());
 										wo.setUnitAmountWithTax(woToRetate.getUnitAmountWithTax());
-										wo.setUnitAmountWithTax(woToRetate.getUnitAmountWithTax());
+										wo.setUnitAmountWithoutTax(woToRetate.getUnitAmountWithoutTax());
 										wo.setSubscriptionDate(woToRetate.getSubscriptionDate());
 										wo.setInvoiceSubCategory(woToRetate.getInvoiceSubCategory());
 										wo.setUserAccount(woToRetate.getUserAccount());
@@ -176,7 +177,8 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 											wo.getRatedTransaction().setStatus(RatedTransactionStatusEnum.CANCELED);
 											ratedTransactionService.update(wo.getRatedTransaction());
 										}
-									});
+										isRated = true;
+									}
 								
 								}
     						}
@@ -193,6 +195,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
         	}
         	
 		}
+        return isRated;
     }
     
     private Object evaluateEdrVersion(Long idEdrVersion, String expression, EDR edr, CDR cdr, String msg, Class<?> result, EDR previousEdr, Iterator<EDR> edrIterate) {

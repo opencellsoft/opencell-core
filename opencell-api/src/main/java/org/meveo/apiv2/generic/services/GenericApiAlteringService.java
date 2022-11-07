@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.Entity;
+import javax.persistence.criteria.JoinType;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.NotFoundException;
 
@@ -119,7 +120,8 @@ public class GenericApiAlteringService {
         paginationConfiguration.setFetchFields(new ArrayList<>());
         paginationConfiguration.getFetchFields().add("id");
         // Prepare filter filterQuery
-        String filterQuery = genericApiLoadService.findAggregatedPaginatedRecordsAsString(filteredEntityClass, paginationConfiguration);
+        paginationConfiguration.setJoinType(JoinType.LEFT);
+        String filterQuery = genericApiLoadService.findAggregatedPaginatedRecordsAsString(filteredEntityClass, " a.ratedTransaction rt ", paginationConfiguration);
 
         // Build update filterQuery
         StringBuilder updateQuery = new StringBuilder("UPDATE ").append(updatedEntityClass.getName()).append(" a SET");

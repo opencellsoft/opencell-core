@@ -202,7 +202,7 @@ public class CustomTableApi extends BaseApi {
         if (pagingAndFiltering == null) {
             pagingAndFiltering = new PagingAndFiltering();
         }
-
+        
         CustomEntityTemplate cet = customTableService.getCET(customTableCode);
         Map<String, CustomFieldTemplate> cfts = customTableService.retrieveAndValidateCfts(cet, false);
         CustomTableDataResponseDto result = new CustomTableDataResponseDto();

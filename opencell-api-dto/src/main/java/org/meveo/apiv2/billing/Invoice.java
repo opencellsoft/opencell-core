@@ -7,6 +7,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import org.immutables.value.Value;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.model.billing.InvoicePaymentStatusEnum;
 import org.meveo.model.billing.InvoiceStatusEnum;
@@ -306,4 +307,8 @@ public interface Invoice extends Resource {
 	@Schema(description = "discount amount without tax")
 	@Nullable
 	BigDecimal getDiscountAmountWithoutTax();
+
+	@Nullable
+	@Schema(description = "custom field associated to invoice")
+	CustomFieldsDto getCustomFields();
 }

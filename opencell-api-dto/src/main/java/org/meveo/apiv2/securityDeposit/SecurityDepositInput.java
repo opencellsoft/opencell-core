@@ -27,7 +27,7 @@ public interface SecurityDepositInput extends Resource {
     @Nullable
     Resource getCurrency();
 
-    @NotNull
+    @Nullable
     Resource getCustomerAccount();
 
     @Nullable
@@ -65,4 +65,7 @@ public interface SecurityDepositInput extends Resource {
 
     @Nullable
     Resource getLinkedInvoice();
+    
+    @NotNull
+    Resource getBillingAccount();
 }

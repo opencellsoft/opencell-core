@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.quote.QuotePrice;
@@ -65,6 +66,8 @@ public class PriceDTO extends BaseEntityDto {
     private Boolean priceOverCharged;
 
     private String currencyCode;
+
+	private String currencySymbol;
     
     private Long recurrenceDuration;
     private String recurrencePeriodicity;
@@ -126,6 +129,12 @@ public class PriceDTO extends BaseEntityDto {
 	   sequence=quotePrice.getSequence();
 		
 	}
+
+	public PriceDTO(QuotePrice quotePrice, TradingCurrency currency) {
+		this(quotePrice);
+		this.setCurrencySymbol(currency.getSymbol());
+	}
+
 	public PriceDTO(QuotePrice quotePrice,CustomFieldsDto customFields) {
 		this(quotePrice);
 		this.customFields = customFields;
@@ -323,14 +332,11 @@ public class PriceDTO extends BaseEntityDto {
 		this.sequence = sequence;
 	}
 
-	
-	
-    
-    
+	public String getCurrencySymbol() {
+		return currencySymbol;
+	}
 
-    
-  
-    
-    
-    
+	public void setCurrencySymbol(String currencySymbol) {
+		this.currencySymbol = currencySymbol;
+	}
 }

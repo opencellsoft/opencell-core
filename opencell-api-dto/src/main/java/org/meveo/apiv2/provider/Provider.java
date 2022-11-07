@@ -49,6 +49,7 @@ public interface Provider {
     @Nullable Integer getMaximumDelay();
     @Nullable Integer getMaximumDeferralPerInvoice();
     @Nullable String getRgaaMessage();
+    @Nullable String getCurrentMatchingCode();
     
     @Nullable
     Map<String, Long> getCurrency();
@@ -187,6 +188,9 @@ public interface Provider {
         }
         if (this.getRgaaMessage() != null) {
             provider.setRgaaMessage(this.getRgaaMessage());
+        }
+        if (this.getCurrentMatchingCode() != null) {
+            provider.setCurrentMatchingCode(this.getCurrentMatchingCode());
         }
         
         if (this.getInvoiceConfiguration() != null) {

@@ -38,7 +38,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.ResourceBundle;
-import org.meveo.commons.encryption.EncyptionException;
+import org.meveo.commons.encryption.EncryptionException;
 import org.meveo.model.audit.ChangeOriginEnum;
 import org.meveo.service.audit.AuditOrigin;
 import org.slf4j.Logger;
@@ -140,7 +140,7 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
                     }
                     break;
                     
-                } else if (cause instanceof EncyptionException) {
+                } else if (cause instanceof EncryptionException) {
                     message = cause.getMessage();
                     log.error("Error while de/encrypting: " + cause.getMessage(), cause);
                     break;

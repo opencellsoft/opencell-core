@@ -279,8 +279,6 @@ public class CustomField {
             return false;
         } else if (doubleValue != null) {
             return false;
-        } else if (doubleValue != null) {
-            return false;
         } else if (longValue != null) {
             return false;
         } else if (stringValue != null && !stringValue.isEmpty()) {

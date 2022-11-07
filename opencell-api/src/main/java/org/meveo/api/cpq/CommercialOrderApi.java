@@ -686,7 +686,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 				.filter(orderOffer -> orderOffer.getUserAccount() == null)
 				.findFirst();
 		if(order.getUserAccount() == null && optionalOrderOfferWithoutUA.isPresent()){
-			throw new MissingParameterException("Customer has several consumers. You must either select a default consumer on the order, or select a consumer for each order line");
+			throw new MissingParameterException("Customer has no consumer. You must create a consumer for this customer in order to validate the order");
 		}
 		ParamBean paramBean = ParamBean.getInstance();
 		String sellerCode = getSelectedSeller(order).getCode();
@@ -879,16 +879,16 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
         	}	
         	orderOffer.setOfferTemplate(offerTemplate);
     	}
-    	
+
+		DiscountPlan discountPlan=null;
 		if (!StringUtils.isBlank(orderOfferDto.getDiscountPlanCode())) {
-			DiscountPlan discountPlan=null;
 			discountPlan = discountPlanService.findByCode(orderOfferDto.getDiscountPlanCode());
 			if (discountPlan == null) {
 				throw new EntityDoesNotExistsException(DiscountPlan.class, orderOfferDto.getDiscountPlanCode());
 			}
-			orderOffer.setDiscountPlan(discountPlan);
 		}
-		
+		orderOffer.setDiscountPlan(discountPlan);
+
 		if(!StringUtils.isBlank(orderOfferDto.getUserAccountCode())) {
 			UserAccount userAccount = userAccountService.findByCode(orderOfferDto.getUserAccountCode());
 			if (userAccount == null) {

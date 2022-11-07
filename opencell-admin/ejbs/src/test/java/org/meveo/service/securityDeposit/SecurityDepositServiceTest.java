@@ -1,27 +1,49 @@
 package org.meveo.service.securityDeposit;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.math.BigDecimal;
+import java.util.Collections;
+
+import javax.persistence.EntityManager;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.apiv2.models.ImmutableResource;
+import org.meveo.apiv2.securityDeposit.ImmutableSecurityDepositCreditInput;
 import org.meveo.apiv2.securityDeposit.ImmutableSecurityDepositPaymentInput;
+import org.meveo.apiv2.securityDeposit.SecurityDepositCreditInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositPaymentInput;
+import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.securityDeposit.SecurityDeposit;
+import org.meveo.model.securityDeposit.SecurityDepositTemplate;
+import org.meveo.model.securityDeposit.ValidityPeriodUnit;
+import org.meveo.security.MeveoUser;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositService;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.math.BigDecimal;
-import java.util.Collections;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SecurityDepositServiceTest {
@@ -31,6 +53,22 @@ public class SecurityDepositServiceTest {
 
     @Mock
     private AccountOperationService accountOperationService;
+
+    @Mock
+    private EntityManager entityManagerMock;
+    
+    @Mock
+    private EntityManagerWrapper emWrapper;
+    
+    @Mock
+    private MeveoUser currentUser;
+    
+    @Mock
+    private CustomFieldInstanceService customFieldInstanceService;
+    
+    private Long sdId = 10000L;
+    private BigDecimal amount = new BigDecimal(90);
+    private String code = "DEFAULT_SD_TEMPLATE-4";
 
     @Test
     public void FailWhenSecurityDepositDoesntExist() {
@@ -197,6 +235,137 @@ public class SecurityDepositServiceTest {
                     exception.getMessage());
         }
 
+
+    }
+
+    @Test
+    public void testCredit() {
+    	
+    	SecurityDeposit sd = new SecurityDeposit();
+        sd.setId(sdId);
+        sd.setAmount(amount);
+        sd.setCode(code);
+        sd.setValidityPeriodUnit(ValidityPeriodUnit.MONTHS);
+        Currency currency = new Currency();
+        currency.setCurrencyCode("EUR");        
+        SecurityDepositTemplate template = new SecurityDepositTemplate();
+        template.setId(1L);
+        sd.setCurrency(currency);
+        sd.setTemplate(template);
+    	BillingAccount billingAccount = new BillingAccount();
+        billingAccount.setCode("OAU4494");
+        sd.setBillingAccount(billingAccount);
+        sd.setCurrentBalance(BigDecimal.valueOf(1000));
+        
+        CustomerAccount ca = new CustomerAccount();
+        sd.setCustomerAccount(ca);
+        
+    	SecurityDepositCreditInput input = ImmutableSecurityDepositCreditInput.builder()
+    										.amountToCredit(BigDecimal.valueOf(100))
+    										.bankLot("@today-opencell.admin")
+    										.customerAccountCode("customerAccountCode")
+    										.isToMatching(true)
+    										.occTemplateCode("CRD_SD")
+    										.paymentInfo("pi1")
+    										.paymentInfo1("pi1")
+    										.paymentInfo2("pi2")
+    										.paymentInfo3("pi3")
+    										.paymentInfo4("pi4")
+    										.paymentInfo5("pi5")
+    										.paymentMethod(PaymentMethodEnum.CHECK)
+    										.reference("ref")
+    										.build();
+
+
+    	when(securityDepositService.getEntityManager()).thenReturn(entityManagerMock);
+    	when(securityDepositService.refreshOrRetrieve(sd)).thenReturn(sd);
+    	when(entityManagerMock.merge(any(SecurityDeposit.class))).thenReturn(sd);
+
+    	securityDepositService.credit(sd, input);
+
+    	assertEquals(BigDecimal.valueOf(1100), sd.getCurrentBalance());
+    	
+    }
+
+    @Test(expected = BusinessException.class)
+    public void testCredit_failWhenAmountMoreThanCurrentBalance() {
+    	
+    	SecurityDeposit sd = new SecurityDeposit();
+        sd.setId(sdId);
+        sd.setAmount(amount);
+        sd.setCode(code);
+        sd.setValidityPeriodUnit(ValidityPeriodUnit.MONTHS);
+        Currency currency = new Currency();
+        currency.setCurrencyCode("EUR");        
+        SecurityDepositTemplate template = new SecurityDepositTemplate();
+        template.setId(1L);
+        sd.setCurrency(currency);
+        sd.setTemplate(template);
+    	BillingAccount billingAccount = new BillingAccount();
+        billingAccount.setCode("OAU4494");
+        sd.setBillingAccount(billingAccount);
+        sd.setCurrentBalance(BigDecimal.valueOf(10));
+        
+        CustomerAccount ca = new CustomerAccount();
+        sd.setCustomerAccount(ca);
+        
+    	SecurityDepositCreditInput input = ImmutableSecurityDepositCreditInput.builder()
+    										.amountToCredit(BigDecimal.valueOf(100))
+    										.bankLot("@today-opencell.admin")
+    										.customerAccountCode("customerAccountCode")
+    										.isToMatching(true)
+    										.occTemplateCode("CRD_SD")
+    										.paymentInfo("pi1")
+    										.paymentInfo1("pi1")
+    										.paymentInfo2("pi2")
+    										.paymentInfo3("pi3")
+    										.paymentInfo4("pi4")
+    										.paymentInfo5("pi5")
+    										.paymentMethod(PaymentMethodEnum.CHECK)
+    										.reference("ref")
+    										.build();
+
+
+    	when(securityDepositService.getEntityManager()).thenReturn(entityManagerMock);
+    	when(securityDepositService.refreshOrRetrieve(sd)).thenReturn(sd);
+    	when(entityManagerMock.merge(any(SecurityDeposit.class))).thenReturn(sd);
+
+    	securityDepositService.credit(sd, input);
+
+    	fail("BusinessException should be rised - check on amount to credit");
+    	
+    }
+
+    @Test
+    public void should_createSecurityDepositPaymentAccountOperation_from_SecurityDeposit_And_Amount() {
+
+        //Given
+        BigDecimal invoicePaymentAmount = new BigDecimal(10);
+
+        SecurityDeposit securityDeposit = new SecurityDeposit();
+        securityDeposit.setCurrentBalance(BigDecimal.valueOf(100L));
+        Subscription securityDepositSubscription = new Subscription();
+        securityDepositSubscription.setId(1L);
+        securityDepositSubscription.setCode("1");
+
+        CustomerAccount customerAccount = new CustomerAccount();
+        customerAccount.setId(Long.valueOf(1));
+
+        securityDeposit.setCustomerAccount(customerAccount);
+
+        //When
+        securityDepositService.createSecurityDepositPaymentAccountOperation(securityDeposit, invoicePaymentAmount);
+
+        ArgumentCaptor<AccountOperation> accountOperationCaptor = ArgumentCaptor.forClass(AccountOperation.class);
+        verify(accountOperationService).createAndReturnId(accountOperationCaptor.capture());
+        AccountOperation expecTedAccountOperation = accountOperationCaptor.getValue();
+
+        //Then
+        Assert.assertEquals(customerAccount.getId(),expecTedAccountOperation.getCustomerAccount().getId());
+        Assert.assertEquals(invoicePaymentAmount,expecTedAccountOperation.getAmount());
+        Assert.assertEquals(PaymentMethodEnum.CHECK,expecTedAccountOperation.getPaymentMethod());
+        Assert.assertEquals(OperationCategoryEnum.CREDIT,expecTedAccountOperation.getTransactionCategory());
+        Assert.assertEquals("PAY_SD",expecTedAccountOperation.getCode());
 
     }
 

@@ -46,7 +46,7 @@ public class SearchPriceLineByAttributeResourceImpl implements SearchPriceLineBy
     private String buildQuery(Map<String, Object> searchInfo) {
         StringBuilder queryString = new StringBuilder();
         queryString.append("SELECT distinct ppml FROM PricePlanMatrixLine ppml");
-        queryString.append(" LEFT JOIN ppml.pricePlanMatrixValues ppmvs ");
+        queryString.append(" LEFT JOIN FETCH ppml.pricePlanMatrixValues ppmvs ");
         queryString.append(" WHERE (LOWER(ppml.description) LIKE :description OR ppml.description is null) ");
         if(searchInfo.containsKey("pricePlanMatrixVersion") && ((Map) searchInfo.get("pricePlanMatrixVersion")).containsKey("id")){
             queryString.append(" AND ppml.pricePlanMatrixVersion.id = :pricePlanMatrixVersionId ");
