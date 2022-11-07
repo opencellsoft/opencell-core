@@ -20,7 +20,6 @@ package org.meveo.admin.parse.csv;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,6 +27,7 @@ import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.ejb.Lock;
 import javax.ejb.LockType;
@@ -36,6 +36,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
 import org.meveo.admin.exception.InvalidELException;
+import org.meveo.admin.storage.StorageFactory;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.rating.CDR;
@@ -85,7 +86,7 @@ public class MEVEOCdrReader implements ICdrCsvReader {
             totalNumberOfRecords = FileUtils.countLines(cdrFile);
         } catch (IOException e) {
         }
-        fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(cdrFile)));
+        fileReader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(StorageFactory.getInputStream(cdrFile))));
     }
 
     @Override

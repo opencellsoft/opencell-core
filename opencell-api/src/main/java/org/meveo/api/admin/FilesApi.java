@@ -50,6 +50,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.zip.ZipOutputStream;
 
+import static java.lang.String.format;
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 
 /**
@@ -353,11 +354,7 @@ public class FilesApi extends BaseApi {
      * @throws BusinessApiException business exception.
      */
     public void downloadFile(String filePath, HttpServletResponse response) throws BusinessApiException {
-    	File file = (filePath.contains(getProviderRootDir().replace("\\", "/"))) ? new File(filePath)
-				: new File(getProviderRootDir() + File.separator + normalizePath(filePath));
-        if (!file.exists()) {
-            throw new BusinessApiException(FILE_DOES_NOT_EXISTS + file.getPath());
-        }
+        File file = checkAndGetExistingFile(filePath);
 
         try (FileInputStream fis = new FileInputStream(file)) {
             response.setContentType(Files.probeContentType(file.toPath()));
@@ -370,4 +367,23 @@ public class FilesApi extends BaseApi {
         }
     }
 
+    /**
+     * Check existing file with two format (Java format and also SQL format) depends on the type of ReportExtract
+     * @param filePath File Path
+     * @return The existing File {@link File}
+     */
+    private File checkAndGetExistingFile(String filePath) {
+        File fileTypeJava = (filePath.contains(getProviderRootDir().replace("\\", "/"))) ? new File(filePath) : new File(getProviderRootDir() + File.separator + normalizePath(filePath));
+        File fileTypeSQL = new File((".").concat(filePath.split("\\.")[1] + "_" + format("%04d", 0) + "." + filePath.split("\\.")[2]));
+
+        if(!fileTypeJava.exists()) {
+            if(!fileTypeSQL.exists()) {
+                throw new BusinessApiException(FILE_DOES_NOT_EXISTS + fileTypeJava.getPath());
+            } else {
+                return fileTypeSQL;
+            }
+        } else {
+            return fileTypeJava;
+        }
+    }
 }

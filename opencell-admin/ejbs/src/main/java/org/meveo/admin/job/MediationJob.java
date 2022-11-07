@@ -29,6 +29,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.storage.StorageFactory;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -143,7 +144,7 @@ public class MediationJob extends Job {
             log.debug("archiveDir {} creation ok", archiveDir);
         }
 
-        File[] files = FileUtils.listFiles(inputDir, cdrExtensions);
+        File[] files = StorageFactory.listFiles(inputDir, cdrExtensions);
         if (files == null || files.length == 0) {
             log.debug("There is no file in {} with extension {} to by processed by Mediation {} job", inputDir, cdrExtensions, result.getJobInstance().getCode());
             return result;
@@ -155,7 +156,7 @@ public class MediationJob extends Job {
             }
 
             // File might have been processed by another mediation job, so continue with a next file
-            if (!file.exists()) {
+            if (!StorageFactory.exists(file)) {
                 continue;
             }
 

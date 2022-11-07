@@ -65,7 +65,7 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 	public RatedTransaction create(org.meveo.apiv2.billing.RatedTransactionInput input) {
 		return ratedTransactionService.createRatedTransaction(input.getBillingAccountCode(), input.getUserAccountCode(),
 				input.getSubscriptionCode(), input.getServiceInstanceCode(), input.getChargeInstanceCode(), input.getUsageDate(),
-				input.getUnitAmountWithoutTax(), input.getQuantity());
+				input.getUnitAmountWithoutTax(), input.getQuantity(), input.getParameter1(), input.getParameter2(), input.getParameter3(), input.getParameterExtra());
 	}
 
 
@@ -86,8 +86,8 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 	 * @param unitAmountWithoutTax
 	 * @param quantity
 	 */
-	public void update(RatedTransaction ratedTransaction, BigDecimal unitAmountWithoutTax, BigDecimal quantity) {
-		ratedTransactionService.updateRatedTransaction(ratedTransaction, unitAmountWithoutTax, quantity);
+	public void update(RatedTransaction ratedTransaction, BigDecimal unitAmountWithoutTax,  BigDecimal quantity, String param1, String param2, String param3, String paramExtra) {
+		ratedTransactionService.updateRatedTransaction(ratedTransaction, unitAmountWithoutTax, quantity, param1, param2, param3, paramExtra);
 	}
 
 }
