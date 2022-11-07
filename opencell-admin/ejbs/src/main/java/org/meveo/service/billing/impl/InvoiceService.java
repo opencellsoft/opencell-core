@@ -61,6 +61,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -2532,9 +2533,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     public void cancelInvoice(Invoice invoice, boolean remove) {
+    	invoice = refreshOrRetrieve(invoice);
         checkNonValidateInvoice(invoice);
         cancelInvoiceAndRts(invoice);
-        cancelInvoiceAdvances(invoice);
+        cancelInvoiceAdvances(invoice, null, true);
         List<Long> invoicesIds = new ArrayList<>();
         invoicesIds.add(invoice.getId());
         invoiceLinesService.cancelIlByInvoices(invoicesIds);
@@ -4831,6 +4833,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return Refreshed invoice
      */
     public Invoice refreshConvertedAmounts(Invoice invoice, BigDecimal currentRate, Date currentRateFromDate) {
+    	invoice.getLinkedInvoices();
         invoice = refreshOrRetrieve(invoice);
         if(currentRate != null) {
             invoice.setLastAppliedRate(currentRate);
@@ -6750,45 +6753,68 @@ public class InvoiceService extends PersistenceService<Invoice> {
 					return;
 				} 
 			}
-			cancelInvoiceAdvances(invoice);
-			// will need to reload list of advances.
-			advInvoices = checkAdvanceInvoice(invoice);
+			cancelInvoiceAdvances(invoice, advInvoices, false);
 		} 
         if(CollectionUtils.isNotEmpty(advInvoices)) {
                 BigDecimal remainingAmount = invoice.getAmountWithTax();
-                BigDecimal amount = BigDecimal.ZERO;
                 for(Invoice adv : advInvoices){
                     if(adv.getInvoiceBalance() == null) {
                         continue;
                     }
-                    amount = BigDecimal.ZERO;
+                    final BigDecimal amount;
                     if(adv.getInvoiceBalance().compareTo(remainingAmount) >= 0){
                         amount=remainingAmount;
                         adv.setInvoiceBalance( adv.getInvoiceBalance().subtract(remainingAmount));
-                        remainingAmount = BigDecimal.ZERO;
+                        remainingAmount = ZERO;
                     }else{
                         amount = adv.getInvoiceBalance();
                         remainingAmount=remainingAmount.subtract(adv.getInvoiceBalance());
                         adv.setInvoiceBalance(BigDecimal.ZERO);
                     }
-                    if(amount.intValue() == BigDecimal.ZERO.intValue()) continue;
-                    var advanceMapping= new LinkedInvoice(invoice ,adv,amount, InvoiceTypeEnum.ADVANCEMENT_PAYMENT);
-                    invoice.getLinkedInvoices().add(advanceMapping);
-                   // appendAdvanceInvoiceLine(invoice, amount);
-                    if(remainingAmount == BigDecimal.ZERO)
+                    if(amount.intValue() == ZERO.intValue()) continue;
+					Optional<LinkedInvoice> toUpdate = invoice.getLinkedInvoices().stream()
+							.filter(li -> li.getLinkedInvoiceValue().getId() == adv.getId()).findAny();
+					if (toUpdate.isPresent()) {
+						toUpdate.get().setAmount(toUpdate.get().getAmount().add(amount));
+					}
+					else {
+						createNewLinkedInvoice(invoice, amount, adv);
+					}
+                    if(remainingAmount == ZERO) {
                         break;
+                    }
                 }
                 invoice.setInvoiceBalance(remainingAmount);
-        }
+				List<Long> toRemove = invoice.getLinkedInvoices().stream()
+						.filter(il -> ZERO.compareTo(il.getAmount()) == 0 && InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(il.getType()))
+						.map(il -> il.getLinkedInvoiceValue().getId()).collect(Collectors.toList());
+				linkedInvoiceService.deleteByIdInvoiceAndLinkedInvoice(invoice.getId(), toRemove);
+	        }
     }
+
+	private void createNewLinkedInvoice(Invoice invoice, BigDecimal amount, Invoice adv) {
+		LinkedInvoice advanceMapping = new LinkedInvoice(invoice, adv, amount, InvoiceTypeEnum.ADVANCEMENT_PAYMENT);
+		invoice.getLinkedInvoices().add(advanceMapping);
+	}
     
-	private void cancelInvoiceAdvances(Invoice invoice) {
+	private void cancelInvoiceAdvances(Invoice invoice, List<Invoice> advInvoices, boolean delete) {
 		invoice.setInvoiceBalance(null);
 		if (invoice.getLinkedInvoices() != null) {
-			Stream<LinkedInvoice> advances = invoice.getLinkedInvoices().stream()
-					.filter(i -> InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(i.getType()));
-			advances.forEach(li -> li.getLinkedInvoiceValue().getInvoiceBalance().add(li.getAmount()));
-			linkedInvoiceService.deleteByInvoiceIdAndType(invoice.getId(),InvoiceTypeEnum.ADVANCEMENT_PAYMENT);
+			Predicate<LinkedInvoice> advFilter = i -> InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(i.getType());
+			Stream<LinkedInvoice> advances = invoice.getLinkedInvoices().stream().filter(advFilter);
+			if (delete) {
+				advances.forEach(li -> li.getLinkedInvoiceValue().getInvoiceBalance().add(li.getAmount()));
+				linkedInvoiceService.deleteByInvoiceIdAndType(invoice.getId(), InvoiceTypeEnum.ADVANCEMENT_PAYMENT);
+				invoice.getLinkedInvoices().removeIf(advFilter);
+			} else {
+				for (Invoice i : advInvoices) {
+					advances.filter(li -> li.getLinkedInvoiceValue().getId() == i.getId()).findAny().ifPresent(li -> {
+						i.setInvoiceBalance(i.getInvoiceBalance().add(li.getAmount()));
+						li.setAmount(ZERO);
+					});
+				}
+				invoice.getLinkedInvoices().stream().filter(advFilter).filter(li -> ZERO.compareTo(li.getAmount()) < 0).forEach(li -> advInvoices.add(li.getLinkedInvoiceValue()));
+			}
 		}
 	}
 
