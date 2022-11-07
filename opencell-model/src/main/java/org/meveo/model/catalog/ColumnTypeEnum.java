@@ -149,6 +149,8 @@ public enum ColumnTypeEnum {
     Range_Numeric {
         @Override
         public boolean valueMatch(PricePlanMatrixValue pricePlanMatrixValue, AttributeValue attributeValue) {
+            boolean excludeMaxValue =
+                    ParamBean.getInstance().getPropertyAsBoolean("pricePlan.rangeMode.excludeTheMaxValue", true);
             if (attributeValue.getDoubleValue() == null && (pricePlanMatrixValue.getFromDoubleValue() == null && pricePlanMatrixValue.getToDoubleValue() == null)) {
                 return true;
             }
@@ -158,9 +160,17 @@ public enum ColumnTypeEnum {
             if (attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() == null && pricePlanMatrixValue.getToDoubleValue() != null &&  attributeValue.getDoubleValue() <= pricePlanMatrixValue.getToDoubleValue()) {
                 return true;
             }
-            if(attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() != null && pricePlanMatrixValue.getToDoubleValue() != null  && attributeValue.getDoubleValue() >= pricePlanMatrixValue.getFromDoubleValue()
-                    && attributeValue.getDoubleValue() <= pricePlanMatrixValue.getToDoubleValue()){
-                return true;
+            if(attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() != null && pricePlanMatrixValue.getToDoubleValue() != null
+                    && attributeValue.getDoubleValue() >= pricePlanMatrixValue.getFromDoubleValue()){
+                if(excludeMaxValue) {
+                    if(attributeValue.getDoubleValue() < pricePlanMatrixValue.getToDoubleValue()) {
+                        return true;
+                    }
+                } else {
+                    if(attributeValue.getDoubleValue() <= pricePlanMatrixValue.getToDoubleValue()) {
+                        return true;
+                    }
+                }
             }
            return false;
 
