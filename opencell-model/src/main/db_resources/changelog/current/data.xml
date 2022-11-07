@@ -8346,6 +8346,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="accounting_code_id" valueNumeric="null"></column>
 			<where>id = -50</where>
 		</update>
+		<sql>delete from accounting_accountingcode_mapping where accounting_code_id in (select id from billing_accounting_code where code = 'T3P9476')</sql>
 		<delete tableName="billing_accounting_code">
 			<where>code = 'T3P9476'</where>
 		</delete>
