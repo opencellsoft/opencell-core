@@ -288,6 +288,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             create(ratedTransaction);
             walletOperation.setRatedTransaction(ratedTransaction);
         }
+        updateBAForRT(List.of(ratedTransaction));
         return ratedTransaction;
     }
 
@@ -1476,6 +1477,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				taxPercent, serviceInstance, taxClass, null, RatedTransactionTypeEnum.MANUAL, chargeInstance, null);
 		rt.setAccountingArticle(accountingArticle);
         create(rt);
+        updateBAForRT(List.of(rt));
         return rt;
     }
 
@@ -1747,7 +1749,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
     
     public List<BillingAccount> updateBAForRT(List<RatedTransaction> rtsResults) {        
-        List<BillingAccount> billingAccountsAfter = new ArrayList<BillingAccount>();
+        List<BillingAccount> billingAccountsAfter = new ArrayList<>();
         if (rtsResults.size() !=0) {  
             
             Map<BillingAccount, List<RatedTransaction>> rtGroupedByBA = rtsResults.stream().collect(Collectors.groupingBy(wo -> wo.getBillingAccount()));
