@@ -392,9 +392,12 @@ public class CpqQuoteApi extends BaseApi {
             		quoteVersion.getMedias().add(media);
             	});
 	        }
+    		if(StringUtils.isNotBlank(quoteVersionDto.getComment())) {
+    			quoteVersion.setComment(quoteVersionDto.getComment());
+    		}
+    		populateCustomFields(quoteVersionDto.getCustomFields(), quoteVersion, true);
 		}
 		quoteVersion.setQuote(cpqQuote);
-		populateCustomFields(quoteVersionDto.getCustomFields(), quoteVersion, true);
 		return quoteVersion;
 	}
 
@@ -771,6 +774,9 @@ public class CpqQuoteApi extends BaseApi {
                 		qv.getMedias().add(media);
                 	});
                 }
+                if(StringUtils.isNotBlank(quoteVersionDto.getComment())) {
+                	qv.setComment(quoteVersionDto.getComment());
+                }
                 populateCustomFields(quoteVersionDto.getCustomFields(), qv, false);
                 quoteVersionService.update(qv);
                 quoteVersionDto = new QuoteVersionDto(qv);
@@ -881,6 +887,9 @@ public class CpqQuoteApi extends BaseApi {
             }
             if (version.getContract() != null) {
             	quoteVersionDto.setContractCode(version.getContract().getCode());
+            }
+            if (StringUtils.isNotBlank(version.getComment())) {
+            	quoteVersionDto.setComment(version.getComment());
             }
             quoteVersionDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(version));
             quoteVersionDto.setPrices(calculateTotalsPerQuote(version, PriceLevelEnum.PRODUCT));
