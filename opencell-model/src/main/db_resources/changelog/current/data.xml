@@ -8412,15 +8412,15 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</insert>
 		<update tableName="meveo_script_instance_cat">
 			<column name="description_i18n" value='{"FR":"Extraction de rapport","EN":"Report Extract"}'/>
-			<where>id = -1</where>
+			<where>code = 'REPORT_EXTRACT'</where>
 		</update>
 		<update tableName="meveo_script_instance_cat">
 			<column name="description_i18n" value='{"FR":"Schéma comptable","EN":"Accounting schemes"}'/>
-			<where>id = 1</where>
+			<where>code = 'ACCOUNTING_SCHEMES'</where>
 		</update>
 		<update tableName="meveo_script_instance_cat">
 			<column name="description_i18n" value='{"FR":"Action de recouvrement","EN":"Dunning action"}'/>
-			<where>id = -2</where>
+			<where>code = 'DUNNING_ACTION'</where>
 		</update>
 
 
