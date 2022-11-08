@@ -6816,7 +6816,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 						li.setAmount(ZERO);
 					});
 				}
-				invoice.getLinkedInvoices().stream().filter(advFilter).filter(li -> ZERO.compareTo(li.getAmount()) < 0).forEach(li -> advInvoices.add(li.getLinkedInvoiceValue()));
+				List<LinkedInvoice> lis = invoice.getLinkedInvoices().stream().filter(advFilter).filter(li -> ZERO.compareTo(li.getAmount()) < 0).collect(Collectors.toList());
+					for(LinkedInvoice li : lis) {
+						Invoice oldAdvanceInvoice = li.getLinkedInvoiceValue();
+						oldAdvanceInvoice.setInvoiceBalance(oldAdvanceInvoice.getInvoiceBalance().add(li.getAmount()));
+						advInvoices.add(oldAdvanceInvoice);
+						li.setAmount(ZERO);
+					};
 			}
 		}
 	}
