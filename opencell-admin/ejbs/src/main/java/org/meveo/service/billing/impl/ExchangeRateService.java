@@ -184,8 +184,13 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
     public void updateCurrentRateForTradingCurrency(Long exchangeRateId) {
         ExchangeRate exchangeRate = findById(exchangeRateId);
         TradingCurrency tradingCurrency = exchangeRate.getTradingCurrency();
+        if (exchangeRate.isCurrentRate()) {
+            log.warn("ExchangeRate already marked as current rate [id={}, currency={}, rate={}]",
+                    exchangeRate.getId(), exchangeRate.getTradingCurrency().getCurrencyCode(), exchangeRate.getExchangeRate());
+            return;
+        }
         if(tradingCurrency != null) {
-            if(tradingCurrency.getCurrentRate().equals(ONE)) {
+            if(tradingCurrency.getCurrentRate().compareTo(ONE) == 0) {
                 List<ExchangeRate> listExchangeRate = tradingCurrency.getExchangeRates();
                 for (ExchangeRate elementExchangeRate : listExchangeRate) {
                     elementExchangeRate.setCurrentRate(false);

@@ -36,4 +36,16 @@ public interface RatedTransactionInput extends Resource {
 	BigDecimal getUnitAmountWithoutTax();
 
 	BigDecimal getQuantity();
+
+    @Nullable
+	String getParameter1();
+
+    @Nullable
+	String getParameter2();
+
+    @Nullable
+	String getParameter3();
+
+    @Nullable
+	String getParameterExtra();
 }
