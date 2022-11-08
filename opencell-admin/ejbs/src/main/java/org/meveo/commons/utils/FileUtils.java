@@ -82,7 +82,7 @@ public final class FileUtils {
      * @return Renamed File object.
      */
     public static synchronized File addExtension(File file, String extension) {
-        if (file.exists()) {
+        if (StorageFactory.exists(file)) {
             String name = file.getName();
             File dest = new File(file.getParentFile(), name + extension);
             if (StorageFactory.renameTo(file, dest)) {
@@ -156,11 +156,11 @@ public final class FileUtils {
     public static boolean moveFile(String destination, File file, String newFilename) {
         File destinationDir = new File(destination);
 
-        if (!StorageFactory.exists(destinationDir)) {
-            destinationDir.mkdirs();
+        if (!StorageFactory.existsDirectory(destinationDir)) {
+            StorageFactory.mkdirs(destinationDir);
         }
 
-        if (destinationDir.isDirectory()) {
+        if (StorageFactory.isDirectory(destinationDir)) {
             return StorageFactory.renameTo(file, new File(destination, newFilename != null ? newFilename : file.getName()));
         }
 
@@ -686,14 +686,14 @@ public final class FileUtils {
     public static File[] listFilesByNameFilter(String sourceDirectory, ArrayList<String> extensions, String fileNameFilter) {
 
         File sourceDir = new File(sourceDirectory);
-        if (!sourceDir.exists() || !sourceDir.isDirectory()) {
+        if (!StorageFactory.existsDirectory(sourceDir) || !StorageFactory.isDirectory(sourceDir)) {
             logger.info(String.format("Wrong source directory: %s", sourceDir.getAbsolutePath()));
             return null;
         }
 
         String fileNameFilterUpper = fileNameFilter != null ? fileNameFilter.toUpperCase() : null;
 
-        File[] files = sourceDir.listFiles(new FilenameFilter() {
+        File[] files = StorageFactory.listFiles(sourceDir, new FilenameFilter() {
 
             public boolean accept(File dir, String name) {
 
