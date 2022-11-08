@@ -8391,5 +8391,12 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>code = 'T3P9476'</where>
 		</delete>
 	</changeSet>
+	
+	<changeSet id="#INTRD-11165_20221108" author="HatimOUDAD">
+		<update tableName="billing_invoice_line">
+			<column name="adjustment_status" value="NOT_ADJUSTED" />
+			<where> adjustment_status is null</where>
+		</update>
+	</changeSet>
 
 </databaseChangeLog>
