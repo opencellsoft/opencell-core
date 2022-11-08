@@ -625,7 +625,7 @@ public abstract class BaseApi {
                         if(urlValue.getUrl() == null) { urlValue.setUrl("");}
 
                          if (urlValue.getUrl().length() > cft.getMaxValue()) {
-                            throw new InvalidParameterException("This URL is not allowed a length longer than "+CustomFieldTemplate.DEFAULT_MAX_LENGTH_URL);
+                            throw new InvalidParameterException("This URL is not allowed a length longer than "+cft.getMaxValue());
 
                         }
 
