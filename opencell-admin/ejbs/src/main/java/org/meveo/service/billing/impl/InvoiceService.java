@@ -6750,9 +6750,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			BigDecimal sum = invoice.getLinkedInvoices().stream()
 					.filter(i -> InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(i.getType())).map(x -> x.getAmount())
 					.reduce(BigDecimal::add).get();
-			//if balance is well calculated and balance=0 or advanceList is empty, we don't need to recalculate
+			//if balance is well calculated and balance=0, we don't need to recalculate
 			if ((sum.add(invoiceBalance)).compareTo(invoice.getAmountWithTax()) == 0) {
-				if (BigDecimal.ZERO.compareTo(invoiceBalance)==0 || CollectionUtils.isEmpty(advInvoices)) {
+				if (BigDecimal.ZERO.compareTo(invoiceBalance)==0) {
 					return;
 				} 
 			}
@@ -6806,7 +6806,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			Predicate<LinkedInvoice> advFilter = i -> InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(i.getType());
 			Stream<LinkedInvoice> advances = invoice.getLinkedInvoices().stream().filter(advFilter);
 			if (delete) {
-				advances.forEach(li -> li.getLinkedInvoiceValue().getInvoiceBalance().add(li.getAmount()));
+				advances.forEach(li -> li.getLinkedInvoiceValue().setInvoiceBalance(li.getLinkedInvoiceValue().getInvoiceBalance().add(li.getAmount())));
 				linkedInvoiceService.deleteByInvoiceIdAndType(invoice.getId(), InvoiceTypeEnum.ADVANCEMENT_PAYMENT);
 				invoice.getLinkedInvoices().removeIf(advFilter);
 			} else {
