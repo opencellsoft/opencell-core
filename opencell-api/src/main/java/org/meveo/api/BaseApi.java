@@ -518,7 +518,7 @@ public abstract class BaseApi {
             // Validate that value is valid (min/max, regexp). When
             // value is a list or a map, check separately each value
             if (!isEmpty && (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.DOUBLE || cft.getFieldType() == CustomFieldTypeEnum.BOOLEAN
-                    || cft.getFieldType() == CustomFieldTypeEnum.LONG || cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY)) {
+                    || cft.getFieldType() == CustomFieldTypeEnum.LONG || cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY || cft.getFieldType() == CustomFieldTypeEnum.URL)) {
 
                 List valuesToCheck = new ArrayList<>();
 
@@ -617,10 +617,23 @@ public abstract class BaseApi {
                     }
                     else if (cft.getFieldType() == CustomFieldTypeEnum.URL)
                     {
-                        UrlReferenceWrapper urlValue = (UrlReferenceWrapper) valueToCheck;
-                        if((urlValue.getRegexp()!= null && !urlValue.getRegexp().isEmpty() && !urlValue.getUrl().matches(urlValue.getRegexp())) || !urlValue.containsValidURL() ) {
+                        if (cft.getMaxValue() == null) {
+                            cft.setMaxValue(CustomFieldTemplate.DEFAULT_MAX_LENGTH_URL);
+                        }
 
-                            throw new InvalidParameterException("Custom field " + cft.getCode() + " value " + urlValue.getUrl() + " is not a valid URL");
+                        UrlReferenceWrapper urlValue = (UrlReferenceWrapper) valueToCheck;
+                        if(urlValue.getUrl() == null) { urlValue.setUrl("");}
+
+                         if (urlValue.getUrl().length() > cft.getMaxValue()) {
+                            throw new InvalidParameterException("This URL is not allowed a length longer than "+CustomFieldTemplate.DEFAULT_MAX_LENGTH_URL);
+
+                        }
+
+
+                        if( (cft.getRegExp()!= null && !cft.getRegExp().isEmpty() && !urlValue.getUrl().matches(cft.getRegExp()))
+                                || (cft.getRegExp()== null && !urlValue.containsValidURL()) ) {
+
+                            throw new InvalidParameterException("Wrong URL format. URL should match regular expression " + (cft.getRegExp() == null ? "": cft.getRegExp()) );
                         }
                     }
                 }
