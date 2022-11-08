@@ -1594,7 +1594,6 @@ public class CpqQuoteApi extends BaseApi {
         List<PriceDTO> pricesDTO =new ArrayList<>();
         List<QuotePrice> offerQuotePrices = new ArrayList<>();
         List<WalletOperation> walletOperations = quoteRating(subscription,quoteOffer,quoteEligibleFixedDiscountItems, offerQuotePrices,true);
-        List<QuotePrice> productQuotePrices = new ArrayList<>();
         QuoteArticleLine quoteArticleLine = null;
         Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<>();
 		List<QuotePrice> accountingPrices = new ArrayList<>();
