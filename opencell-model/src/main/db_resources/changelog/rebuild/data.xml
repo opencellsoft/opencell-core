@@ -7430,6 +7430,7 @@
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="code" value="INV_ADV" />
 			<column name="description" value="Call for advance payment" />
+			<column name="occ_category" value="DEBIT" />
 		</insert>
         <insert tableName="billing_invoice_type">
            <column name="id" valueNumeric="-5" />
@@ -9910,7 +9911,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
     <changeSet id="#INTRD-11154_20221102" author="TarikFA." />
     <changeSet id="INTRD-11152_20221102" author="TarikFA." />
 	<changeSet id="INTRD-11122_20221104" author="HichamELHALOUI" />
-	
+	<changeSet id="#INTRD-11244_20221104" author="TarikFA." />
+
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>

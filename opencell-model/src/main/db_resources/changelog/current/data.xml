@@ -8190,16 +8190,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>template_name = 'DEFAULT_SD_TEMPLATE'</where>
 		</update>
 	</changeSet>
-	
-	<changeSet id="#INTRD-10199_20221010" author="TarikFA.">
-		<update tableName="ar_occ_template" >
-			<column name="accounting_code_id" valueNumeric="null"></column>
-			<where>id = -50</where>
-		</update>
-		<delete tableName="billing_accounting_code">
-			<where>code = 'T3P9476'</where>
-		</delete>
-	</changeSet>
 
 	<changeSet id="#INTRD-10400_20221007" author="HichamHANINE">
     	<update tableName="security_deposit">
@@ -8383,6 +8373,23 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="description" value="Call for advance payment" />
         	<where> code = 'ADV'</where>
     	</update>
+	</changeSet>
+	
+	<changeSet id="#INTRD-11244_20221104" author="TarikFA.">
+		<update tableName="ar_occ_template">
+			<column name="occ_category" value="DEBIT" />
+			<where> code = 'INV_ADV'</where>
+		</update>
+	</changeSet>
+	
+	<changeSet id="#INTRD-10199_20221010" author="TarikFA.">
+		<update tableName="ar_occ_template" >
+			<column name="accounting_code_id" valueNumeric="null"></column>
+			<where>id = -50</where>
+		</update>
+		<delete tableName="billing_accounting_code">
+			<where>code = 'T3P9476'</where>
+		</delete>
 	</changeSet>
 
 	<changeSet id="INTRD-11122_20221104" author="HichamELHALOUI">

@@ -61,9 +61,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Function;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -194,6 +193,7 @@ import org.meveo.model.order.Order;
 import org.meveo.model.ordering.OpenOrder;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.scripts.ScriptInstance;
@@ -431,6 +431,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private JobInstanceService jobInstanceService;
+    
+    @Inject 
+    private LinkedInvoiceService linkedInvoiceService;
 
     @PostConstruct
     private void init() {
@@ -2532,6 +2535,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public void cancelInvoice(Invoice invoice, boolean remove) {
         checkNonValidateInvoice(invoice);
         cancelInvoiceAndRts(invoice);
+        cancelInvoiceAdvances(invoice);
         List<Long> invoicesIds = new ArrayList<>();
         invoicesIds.add(invoice.getId());
         invoiceLinesService.cancelIlByInvoices(invoicesIds);
@@ -2544,7 +2548,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         log.debug("Invoice canceled {}", invoice.getTemporaryInvoiceNumber());
     }
 
-    public void cancelInvoiceById(Long invoiceId) {
+	public void cancelInvoiceById(Long invoiceId) {
         getEntityManager().createNamedQuery("Invoice.cancelInvoiceById")
         .setParameter("now", new Date())
                 .setParameter("invoiceId", invoiceId)
@@ -5133,14 +5137,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
         final String billingAccountCode = resource.getBillingAccountCode();
         final BigDecimal amountWithTax = resource.getAmountWithTax();
         final Date invoiceDate = resource.getInvoiceDate() != null ? resource.getInvoiceDate() : new Date();
+        final String invoiceTypeCodeInput = resource.getInvoiceTypeCode();
 
         Order order = (Order) tryToFindByEntityClassAndCode(Order.class, resource.getOrderCode());
         BillingAccount billingAccount = (BillingAccount) tryToFindByEntityClassAndCode(BillingAccount.class, billingAccountCode);
-        final String invoiceTypeCode = resource.getInvoiceTypeCode() != null ? resource.getInvoiceTypeCode() : "ADV";
-        InvoiceType advType = (InvoiceType) tryToFindByEntityClassAndCode(InvoiceType.class, invoiceTypeCode);
+        final String invoiceTypeCode = (invoiceTypeCodeInput != null && !invoiceTypeCodeInput.isEmpty() && !invoiceTypeCodeInput.isBlank()) ? resource.getInvoiceTypeCode() : "COM";
+        InvoiceType invoiceType = (InvoiceType) tryToFindByEntityClassAndCode(InvoiceType.class, invoiceTypeCode);
         String comment = resource.getComment(); 
 
-        Invoice invoice = initBasicInvoiceInvoice(amountWithTax, invoiceDate, order, billingAccount, advType, comment);
+        Invoice invoice = initBasicInvoiceInvoice(amountWithTax, invoiceDate, order, billingAccount, invoiceType, comment);
         invoice.updateAudit(currentUser);
         getEntityManager().persist(invoice);
         postCreate(invoice);
@@ -6252,7 +6257,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
     }
 
-    @Inject private LinkedInvoiceService linkedInvoiceService;
     /**
      * @param toUpdate invoice to update
      * @param input
@@ -6302,12 +6306,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         if (invoiceResource.getListLinkedInvoices() != null) {
             List<Long> toUpdateLinkedInvoice = toUpdate.getLinkedInvoices().stream()
-                    .filter(li -> li.getLinkedInvoiceValue().getInvoiceType().getCode().equals("ADJ"))
                     .map(li -> li.getLinkedInvoiceValue().getId()).collect(Collectors.toList());
             
             List<Long> linkedInvoiceToAdd = new ArrayList<>(invoiceResource.getListLinkedInvoices());
             List<Long> linkedInvoiceToRemove = new ArrayList<>(toUpdateLinkedInvoice);
-            
             linkedInvoiceToAdd.removeAll(toUpdateLinkedInvoice);
             for (Long invoiceId : linkedInvoiceToAdd) {
                 Invoice invoiceTmp = findById(invoiceId);
@@ -6337,8 +6339,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 }
                 linkedInvoiceService.deleteByIdInvoiceAndLinkedInvoice(toUpdate.getId(), Arrays.asList(invoiceId));
             }
-            
-            
         }
 
         if (invoiceResource.getOrder() != null) {
@@ -6696,7 +6696,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     private List<Invoice> checkAdvanceInvoice(Invoice invoice) {
         if(invoice.getInvoiceType() != null) {
             String invoiceTypeCode = invoice.getInvoiceType().getCode();
-            if(invoiceTypeCode.equals("ADV") || invoiceTypeCode.equals("SECURITY_DEPOSIT") ) {
+            OperationCategoryEnum occCategoryOperation = invoice.getInvoiceType().getOccTemplate() != null ? invoice.getInvoiceType().getOccTemplate().getOccCategory() : null;
+            if(invoiceTypeCode.equals("ADV") || invoiceTypeCode.equals("SECURITY_DEPOSIT")  || (occCategoryOperation != null && occCategoryOperation.equals(OperationCategoryEnum.CREDIT))) {
                 return Collections.emptyList();
             }
         }else {
@@ -6738,6 +6739,24 @@ public class InvoiceService extends PersistenceService<Invoice> {
    }
     
     public void applyAdvanceInvoice(Invoice invoice, List<Invoice> advInvoices) {
+    	if(InvoiceTypeService.DEFAULT_ADVANCE_CODE.equals(invoice.getInvoiceType().getCode())) {
+    		return;
+    	}
+		BigDecimal invoiceBalance = invoice.getInvoiceBalance();
+		if (invoiceBalance != null) {
+			BigDecimal sum = invoice.getLinkedInvoices().stream()
+					.filter(i -> InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(i.getType())).map(x -> x.getAmount())
+					.reduce(BigDecimal::add).get();
+			//if balance is well calculated and balance=0 or advanceList is empty, we don't need to recalculate
+			if ((sum.add(invoiceBalance)).compareTo(invoice.getAmountWithTax()) == 0) {
+				if (BigDecimal.ZERO.compareTo(invoiceBalance)==0 || CollectionUtils.isEmpty(advInvoices)) {
+					return;
+				} 
+			}
+			cancelInvoiceAdvances(invoice);
+			// will need to reload list of advances.
+			advInvoices = checkAdvanceInvoice(invoice);
+		} 
         if(CollectionUtils.isNotEmpty(advInvoices)) {
                 BigDecimal remainingAmount = invoice.getAmountWithTax();
                 BigDecimal amount = BigDecimal.ZERO;
@@ -6765,4 +6784,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.setInvoiceBalance(remainingAmount);
         }
     }
+    
+	private void cancelInvoiceAdvances(Invoice invoice) {
+		invoice.setInvoiceBalance(null);
+		if (invoice.getLinkedInvoices() != null) {
+			Stream<LinkedInvoice> advances = invoice.getLinkedInvoices().stream()
+					.filter(i -> InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(i.getType()));
+			advances.forEach(li -> li.getLinkedInvoiceValue().getInvoiceBalance().add(li.getAmount()));
+			linkedInvoiceService.deleteByInvoiceIdAndType(invoice.getId(),InvoiceTypeEnum.ADVANCEMENT_PAYMENT);
+		}
+	}
+
 }
