@@ -464,9 +464,11 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
             throw new MeveoApiException(e);
         }
         Payment payment = paymentService.findById(idPayment);
-        securityDepositService.createSecurityDepositTransaction(securityDepositToUpdate, securityDepositInput.getAmountToCredit(),
-                SecurityDepositOperationEnum.CREDIT_SECURITY_DEPOSIT, OperationCategoryEnum.CREDIT, payment);
-        auditLogService.trackOperation("CREDIT", new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
+        if (!securityDepositInput.getIsToMatching()) {
+            securityDepositService.createSecurityDepositTransaction(securityDepositToUpdate, securityDepositInput.getAmountToCredit(),
+                    SecurityDepositOperationEnum.CREDIT_SECURITY_DEPOSIT, OperationCategoryEnum.CREDIT, payment);
+        }
+        auditLogService.trackOperation(OperationCategoryEnum.CREDIT.name(), new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
 
         return securityDepositService.refreshOrRetrieve(securityDepositToUpdate);
     }
