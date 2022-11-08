@@ -75,9 +75,6 @@ public class UrlReferenceDto {
      * @return the url reference wrapper
      */
     public UrlReferenceWrapper toWrapper() {
-        if (isEmpty()) {
-            return null;
-        }
         return new UrlReferenceWrapper(url, regexp, label, length);
     }
 }
