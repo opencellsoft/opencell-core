@@ -31,6 +31,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.storage.StorageFactory;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.admin.FileFormat;
@@ -188,8 +189,8 @@ public class FlatFileProcessingJob extends Job {
         fileExtensions.add(fileNameExtension);
 
         File f = new File(inputDir);
-        if (!f.exists()) {
-            f.mkdirs();
+        if (!StorageFactory.existsDirectory(f)) {
+            StorageFactory.mkdirs(f);
         }
 
         String inputDirParent = f.getParent();
@@ -198,21 +199,21 @@ public class FlatFileProcessingJob extends Job {
         archiveDir = archiveDir != null ? archiveDir : inputDirParent + File.separator + "archive";
 
         f = new File(outputDir);
-        if (!f.exists()) {
+        if (!StorageFactory.existsDirectory(f)) {
             log.debug("outputDir {} not exist", outputDir);
-            f.mkdirs();
+            StorageFactory.mkdirs(f);
             log.debug("outputDir {} creation ok", outputDir);
         }
         f = new File(rejectDir);
-        if (!f.exists()) {
+        if (!StorageFactory.existsDirectory(f)) {
             log.debug("rejectDir {} not exist", rejectDir);
-            f.mkdirs();
+            StorageFactory.mkdirs(f);
             log.debug("rejectDir {} creation ok", rejectDir);
         }
         f = new File(archiveDir);
-        if (!f.exists()) {
+        if (!StorageFactory.existsDirectory(f)) {
             log.debug("archiveDir {} not exist", archiveDir);
-            f.mkdirs();
+            StorageFactory.mkdirs(f);
             log.debug("archiveDir {} creation ok", archiveDir);
         }
 
@@ -227,7 +228,7 @@ public class FlatFileProcessingJob extends Job {
                 break;
             }
             // File might have been processed by another mediation job, so continue with a next file
-            if (!file.exists()) {
+            if (!StorageFactory.exists(file)) {
                 continue;
             }
 
