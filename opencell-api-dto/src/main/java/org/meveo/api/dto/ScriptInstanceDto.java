@@ -55,7 +55,7 @@ public class ScriptInstanceDto extends CustomScriptDto {
     @Schema(description = "list of the language description")
     private List<LanguageDescriptionDto> languageDescriptions;
     
-    @Schema(description = "list of the script parameter")
+    @Schema(description = "list of the script parameters")
     private List<ScriptParameterDto> scriptParameters;
 
     /**

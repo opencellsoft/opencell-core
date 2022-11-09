@@ -2,7 +2,6 @@ package org.meveo.api.dto;
 
 import static org.meveo.api.dto.LanguageDescriptionDto.convertMultiLanguageFromMapOfValues;
 
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,7 +9,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.scripts.ScriptParameter;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -20,9 +18,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @XmlRootElement(name = "ScriptParameter")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ScriptParameterDto extends BusinessEntityDto {
+public class ScriptParameterDto extends BaseEntityDto {
 	
 	private static final long serialVersionUID = 1L;
+	
+	@Schema(description = "The code parameter")
+    private String code;
  
     @Schema(description = "The class name")
     private String className;
