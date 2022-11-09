@@ -15,12 +15,14 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
@@ -32,6 +34,7 @@ import software.amazon.awssdk.services.s3.model.S3Object;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilder;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,6 +42,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -235,7 +239,7 @@ public class StorageFactory {
         else if (storageType.equalsIgnoreCase(S3)) {
             InputStream inStream;
             InputStreamReader inputStreamReader;
-            String fileName = bucketName + file.getPath().substring(1).replace("\\", "/");
+            String fileName = formatObjectKey(bucketName + File.separator + file.getPath());
 
             Path objectPath = getObjectPath(fileName);
 
@@ -245,6 +249,40 @@ public class StorageFactory {
                 inputStreamReader = new InputStreamReader(inStream, StandardCharsets.US_ASCII);
 
                 return inputStreamReader;
+            }
+            catch (IOException e) {
+                log.error("IOException message in getReader : {}", e.getMessage());
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * get buffer reader to read data from a file
+     *
+     * @param file a file
+     * @return BufferReader
+     */
+    public static Reader getBufferedReader(File file) {
+        if (storageType.equals(NFS)) {
+            try {
+                return new BufferedReader(new FileReader(file));
+            }
+            catch (FileNotFoundException e) {
+                log.error("File not found exception in getReader: {}", e.getMessage());
+            }
+        }
+        else if (storageType.equalsIgnoreCase(S3)) {
+            InputStream inStream;
+            String fileName = formatObjectKey(bucketName + File.separator + file.getPath());
+
+            Path objectPath = getObjectPath(fileName);
+
+            try {
+                inStream = s3FileSystem.provider().newInputStream(objectPath);
+
+                return new BufferedReader(new InputStreamReader(inStream));
             }
             catch (IOException e) {
                 log.error("IOException message in getReader : {}", e.getMessage());
@@ -428,6 +466,7 @@ public class StorageFactory {
         }
         else if (storageType.equalsIgnoreCase(S3)) {
             String objectKey = formatObjectKey(file.getPath());
+            log.info("check existence of a file on S3 at key {}", objectKey);
 
             try {
                 s3FileSystem.getClient()
@@ -440,6 +479,53 @@ public class StorageFactory {
         }
 
         return false;
+    }
+
+    /**
+     * check existence of a directory on File System or S3.
+     *
+     * @param directory the directory
+     * @return true if directory exists, false otherwise
+     */
+    public static boolean existsDirectory(File directory) {
+        if (storageType.equals(NFS)) {
+            return directory.exists();
+        }
+        else if (storageType.equalsIgnoreCase(S3)) {
+            String objectKey = formatObjectKey(directory.getPath()) + "/";
+            log.info("check existence of a directory on S3 at key {}", objectKey);
+
+            try {
+                s3FileSystem.getClient()
+                        .headObject(HeadObjectRequest.builder().bucket(bucketName).key(objectKey).build());
+
+                return true;
+            } catch (NoSuchKeyException e) {
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * create a new directory on File System or S3.
+     *
+     * @param directory the directory
+     */
+    public static void mkdirs(File directory) {
+        if (storageType.equals(NFS)) {
+            directory.mkdirs();
+        }
+        else if (storageType.equalsIgnoreCase(S3)) {
+            String objectKey = formatObjectKey(directory.getPath()) + "/";
+            log.info("create a directory in S3 at key {}", objectKey);
+
+            PutObjectRequest request = PutObjectRequest.builder().bucket(bucketName)
+                    .key(objectKey).build();
+
+            s3FileSystem.getClient().putObject(request, RequestBody.empty());
+        }
     }
 
     /**
@@ -954,5 +1040,67 @@ public class StorageFactory {
         }
 
         return false;
+    }
+
+    /**
+     * Tests whether the file denoted by this abstract pathname is a directory.
+     *
+     * @param directory the directory
+     * @return true if file is directory, false otherwise
+     */
+    public static boolean isDirectory(File directory) {
+        if (storageType.equals(NFS)) {
+            return directory.isDirectory();
+        }
+        else if (storageType.equalsIgnoreCase(S3)) {
+            String objectKey = formatObjectKey(directory.getPath()) + "/";
+            log.info("check if object is a directory in S3 bucket at key {}", objectKey);
+
+            HeadObjectRequest request = HeadObjectRequest.builder().bucket(bucketName).key(objectKey).build();
+
+            HeadObjectResponse response = s3FileSystem.getClient().headObject(request);
+
+            return response.contentLength() <= 0;
+        }
+
+        return false;
+    }
+
+    /**
+     * list all files inside of a directory
+     *
+     * @param sourceDirectory a source directory.
+     * @param filter FilenameFilter.
+     *
+     * @return a file arrays inside of the source directory
+     */
+    public static File[] listFiles(File sourceDirectory, FilenameFilter filter) {
+        if (storageType.equals(NFS)) {
+            return sourceDirectory.listFiles(filter);
+        }
+        else if (storageType.equalsIgnoreCase(S3)) {
+            String objectKey = formatObjectKey(sourceDirectory.getPath());
+            log.info("list files in S3 bucket at directory {} with FilenameFilter ", objectKey);
+
+            final ListObjectsV2Request objectRequest =
+                    ListObjectsV2Request.builder()
+                            .bucket(bucketName)
+                            .prefix(objectKey)
+                            .build();
+
+            ListObjectsV2Response listObjects = s3FileSystem.getClient().listObjectsV2(objectRequest);
+
+            List<File> files = new ArrayList<>();
+
+            for (S3Object object : listObjects.contents()){
+                if (object.size() > 0) {
+                    files.add(new File(object.key()));
+                }
+            }
+
+            return files.toArray(new File[0]);
+        }
+
+        return null;
     }
 }
