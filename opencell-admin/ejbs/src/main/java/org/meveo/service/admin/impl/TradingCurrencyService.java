@@ -96,7 +96,7 @@ public class TradingCurrencyService extends PersistenceService<TradingCurrency> 
         return update(tradingCurrency);
     }
 
-    public void checkFunctionalCurrency(org.meveo.model.admin.Currency functionalCurrency) {
+    public void checkFunctionalCurrency() {
         // check functional currency rate : US INTRD-8094
         // on doit avoir toujours fuctionalCurrency rate = 1 sans aucun ExchangeRate fromDate sup à now()
         if (appProvider.getCurrency() != null) {
