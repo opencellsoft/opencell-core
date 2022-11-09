@@ -7058,7 +7058,7 @@
 			<column name="sc_sec" value="1" />
 			<column name="sc_year" value="*" />
 			<column name="code" value="Daily-midnight-start-of-day" />
-			<column name="created" valueDate="2017-06-29 00:04:19.913" />
+			<column name="created" valueDate="2022-11-09 00:00:00.000" />
 		</insert>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-data-jobs">
