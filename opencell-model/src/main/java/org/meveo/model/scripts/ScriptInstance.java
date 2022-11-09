@@ -267,4 +267,13 @@ public class ScriptInstance extends EnableBusinessEntity {
     public void setDescriptionI18n(Map<String, String> descriptionI18n) {
         this.descriptionI18n = descriptionI18n;
     }
+
+	public List<ScriptParameter> getScriptParameters() {
+		return scriptParameters;
+	}
+
+	public void setScriptParameters(List<ScriptParameter> scriptParameters) {
+		this.scriptParameters = scriptParameters;
+	}
+    
 }
