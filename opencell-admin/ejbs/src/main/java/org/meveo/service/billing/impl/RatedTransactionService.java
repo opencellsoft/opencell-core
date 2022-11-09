@@ -48,8 +48,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import com.google.common.collect.ImmutableMap;
-
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.meveo.admin.async.SubListCreator;
@@ -103,6 +101,7 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.IInvoicingMinimumApplicable;
 import org.meveo.model.filter.Filter;
+import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
@@ -121,6 +120,8 @@ import org.meveo.service.order.OrderService;
 import org.meveo.service.tax.TaxClassService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * RatedTransactionService : A class for Rated transaction persistence services.
@@ -1927,4 +1928,48 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return null;
         }
     }
+    
+    /**
+	 * @param result
+	 * @param billableEntity
+	 * @param pageSize
+	 * @param pageIndex
+	 * @return
+	 */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public int calculateAccountingArticle(JobExecutionResultImpl result, IBillableEntity billableEntity, Integer pageSize, Integer pageIndex) {
+		List<RatedTransaction> ratedTransactions = getRatedTransactionHavingEmptyAccountingArticle(billableEntity, pageSize, pageIndex);
+		ratedTransactions.stream().forEach(rt->rt.setAccountingArticle(accountingArticleService.getAccountingArticleByChargeInstance(rt.getChargeInstance())));
+	    return ratedTransactions.size();
+	}
+    
+	/**
+	 * @param billableEntity
+	 * @param pageSize
+	 * @param pageIndex
+	 * @return
+	 */
+	public List<RatedTransaction> getRatedTransactionHavingEmptyAccountingArticle(IBillableEntity billableEntity, Integer pageSize, Integer pageIndex) {
+		QueryBuilder qb = new QueryBuilder("select rt from RatedTransaction rt ", "rt");
+		if (billableEntity instanceof Subscription) {
+        	qb.addCriterion("rt.subscription.id ", "=", billableEntity.getId(), false);
+        } else if (billableEntity instanceof BillingAccount) {
+        	qb.addCriterion("rt.billingAccount.id ", "=", billableEntity.getId(), false);
+        } else if (billableEntity instanceof Order) {
+        	qb.addCriterion("orderNumber ","=", ((Order) billableEntity).getOrderNumber(), false);;
+        }
+        qb.addSql(" rt.status='OPEN' and accountingArticle is null ");
+        try {
+            final Query query = qb.getQuery(getEntityManager());
+            if(pageIndex!=null && pageSize!=null) {
+            	query.setMaxResults(pageSize).setFirstResult(pageIndex * pageSize);
+            }
+			return query.getResultList();
+        } catch (NoResultException e) {
+        	log.error(e.getMessage());
+            return null;
+        }
+	}
+    
 }
