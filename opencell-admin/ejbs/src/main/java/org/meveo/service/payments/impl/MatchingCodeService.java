@@ -73,7 +73,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
     private static final String PPL_INSTALLMENT = "PPL_INSTALLMENT";
     private static final String PPL_CREATION = "PPL_CREATION";
-    private static final String DEB_SD = "DEB_SD";
+    private static final String INVOICE_TYPE_SECURITY_DEPOSIT = "SECURITY_DEPOSIT";
     private static final String CRD_SD = "CRD_SD";
 
     @Inject
@@ -217,7 +217,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                     invoice.setPaymentStatusDate(new Date());
                     entityUpdatedEventProducer.fire(invoice);
 
-                    updateMatchedSecurityDeposit(amountToMatch, accountOperation, invoice, securityDepositAOPs);
+                    updateMatchedSecurityDeposit(amountToMatch, invoice, securityDepositAOPs);
                 }
             }
 
@@ -284,7 +284,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         log.info("matching- [Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 
                                 invoice.getPaymentStatus() + " - newPaymentStatus : " + InvoicePaymentStatusEnum.PAID + "]");
                         invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.PAID);
-                        aosToGenerateMatchingCode.add((RecordedInvoice) accountOperation);
+                        // aosToGenerateMatchingCode.add((RecordedInvoice) accountOperation);
                         if (InvoicePaymentStatusEnum.PAID == invoice.getPaymentStatus()) {
                             isToTriggerCollectionPlanLevelsJob = true;
                         }
@@ -296,7 +296,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                     invoice.setPaymentStatusDate(new Date());
 
                     // INTRD-9400 - Check and update Matched SecurityDeposit  
-                    updateMatchedSecurityDeposit(amountToMatch, accountOperation, invoice, securityDepositAOPs);
+                    updateMatchedSecurityDeposit(amountToMatch, invoice, securityDepositAOPs);
                 }
                 
             }
@@ -348,14 +348,13 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
      * @param accountOperation
      * @param invoice
      */
-	private void updateMatchedSecurityDeposit(BigDecimal amountToMatch, AccountOperation accountOperation,
-                                              Invoice invoice, List<AccountOperation> securityDepositAOPs) {
+	private void updateMatchedSecurityDeposit(BigDecimal amountToMatch, Invoice invoice, List<AccountOperation> securityDepositAOPs) {
 
         if (CollectionUtils.isEmpty(securityDepositAOPs)) {
             return;
         }
 		
-		if(!DEB_SD.equals(accountOperation.getCode())) {
+		if(invoice.getInvoiceType() == null || !INVOICE_TYPE_SECURITY_DEPOSIT.equals(invoice.getInvoiceType().getCode())) {
 			return;
 		}
 
