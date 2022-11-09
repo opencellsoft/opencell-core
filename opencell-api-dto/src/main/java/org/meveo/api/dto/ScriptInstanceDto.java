@@ -22,7 +22,6 @@ import static org.meveo.api.dto.LanguageDescriptionDto.convertMultiLanguageFromM
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
