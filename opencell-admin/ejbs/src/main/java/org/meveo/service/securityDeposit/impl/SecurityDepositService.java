@@ -1,5 +1,6 @@
 package org.meveo.service.securityDeposit.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
@@ -113,9 +114,9 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         }
     }
 
-    public void refund(SecurityDeposit securityDepositToUpdate, String reason, SecurityDepositOperationEnum securityDepositOperationEnum, SecurityDepositStatusEnum securityDepositStatusEnum, String operationType) {
+    public void refund(SecurityDeposit securityDepositToUpdate, String reason, SecurityDepositOperationEnum securityDepositOperationEnum, SecurityDepositStatusEnum securityDepositStatusEnum, String operationType, String refundReference) {
         if (securityDepositToUpdate.getCurrentBalance() != null && BigDecimal.ZERO.compareTo(securityDepositToUpdate.getCurrentBalance()) != 0) {
-            Refund refund = createRefund(securityDepositToUpdate);
+            Refund refund = createRefund(securityDepositToUpdate, refundReference);
             if (refund == null) {
                 throw new BusinessException("Cannot create Refund.");
             } else {
@@ -136,7 +137,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         auditLogService.trackOperation(operationType, new Date(), securityDepositToUpdate, nameSDandExplanation);
     }
 
-    private Refund createRefund(SecurityDeposit securityDepositToUpdate) {
+    private Refund createRefund(SecurityDeposit securityDepositToUpdate, String reference) {
         securityDepositToUpdate = retrieveIfNotManaged(securityDepositToUpdate);
         long amountToPay = securityDepositToUpdate.getCurrentBalance().multiply(new BigDecimal(100)).longValue();
         List<Long> accountOperationsToPayIds = new ArrayList<Long>();
@@ -170,7 +171,12 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         if (refundId == null) {
             return null;
         } else {
-            return refundService.findById(refundId);
+            Refund refund = refundService.findById(refundId);
+            if (StringUtils.isNotBlank(reference)) {
+                refund.setReference(reference);
+                refundService.update(refund); // This is the unique place where we can persist it without changing big hierary methods
+            }
+            return refund;
         }
     }
 
