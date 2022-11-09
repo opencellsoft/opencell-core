@@ -54,6 +54,9 @@ public class ScriptInstanceDto extends CustomScriptDto {
 
     @Schema(description = "list of the language description")
     private List<LanguageDescriptionDto> languageDescriptions;
+    
+    @Schema(description = "list of the script parameter")
+    private List<ScriptParameterDto> scriptParameters;
 
     /**
      * Instantiates a new script instance dto.
@@ -82,6 +85,10 @@ public class ScriptInstanceDto extends CustomScriptDto {
         
         if(scriptInstance.getScriptInstanceCategory() != null) {
         	scriptInstanceCategoryCode = scriptInstance.getScriptInstanceCategory().getCode();
+        }
+        
+        if(scriptInstance.getScriptParameters() != null) {
+        	// scriptParameters.addAll(scriptInstance.getScriptParameters().stream().map(a -> ScriptParameterDto(a)).  );
         }
         
         languageDescriptions = convertMultiLanguageFromMapOfValues(scriptInstance.getDescriptionI18n());
@@ -172,4 +179,13 @@ public class ScriptInstanceDto extends CustomScriptDto {
     public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
         this.languageDescriptions = languageDescriptions;
     }
+
+	public List<ScriptParameterDto> getScriptParameters() {
+		return scriptParameters;
+	}
+
+	public void setScriptParameters(List<ScriptParameterDto> scriptParameters) {
+		this.scriptParameters = scriptParameters;
+	}
+    
 }
