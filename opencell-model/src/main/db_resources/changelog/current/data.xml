@@ -8235,7 +8235,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		<insert tableName="meveo_job_instance">
 			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
 			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueNumeric="0" />
+			<column name="disabled" valueNumeric="1" />
 			<column name="created" valueDate="2022-10-20 00:00:00.000" />
 			<column name="job_category" value="ACCOUNTING" />
 			<column name="job_template" value="AssignMatchingCodeToOldEntriesJob" />
@@ -8333,6 +8333,25 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>id = -3</where>
 		</delete>
     </changeSet>
+    
+    <changeSet id="#INTRD-11244_20221104" author="TarikFA.">
+    	<update tableName="ar_occ_template">
+    		<column name="occ_category" value="DEBIT" />
+    		<where> code = 'INV_ADV'</where>
+    	</update>
+    </changeSet>
+    
+    <changeSet id="#INTRD-10199_20221010" author="TarikFA.">
+		<update tableName="ar_occ_template" >
+			<column name="accounting_code_id" valueNumeric="null"></column>
+			<where>id = -50</where>
+		</update>
+		<sql>delete from accounting_accountingcode_mapping where accounting_code_id in (select id from billing_accounting_code where code = 'T3P9476')</sql>
+		<delete tableName="billing_accounting_code">
+			<where>code = 'T3P9476'</where>
+		</delete>
+	</changeSet>
+    
 
 	<changeSet id="INTRD-11124_20221109" author="aelmalki">
 		<insert tableName="meveo_timer">
