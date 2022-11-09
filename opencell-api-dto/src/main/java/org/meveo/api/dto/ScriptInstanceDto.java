@@ -22,6 +22,8 @@ import static org.meveo.api.dto.LanguageDescriptionDto.convertMultiLanguageFromM
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -88,7 +90,8 @@ public class ScriptInstanceDto extends CustomScriptDto {
         }
         
         if(scriptInstance.getScriptParameters() != null) {
-        	// scriptParameters.addAll(scriptInstance.getScriptParameters().stream().map(a -> ScriptParameterDto(a)).  );
+        	scriptParameters = new ArrayList<>();
+        	scriptParameters.addAll(scriptInstance.getScriptParameters().stream().map(ScriptParameterDto::new).collect(Collectors.toList()));
         }
         
         languageDescriptions = convertMultiLanguageFromMapOfValues(scriptInstance.getDescriptionI18n());
