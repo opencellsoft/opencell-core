@@ -1,5 +1,6 @@
 package org.meveo.api.cpq;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -217,9 +218,12 @@ public class CommercialOrderApi extends BaseApi {
 		order.setProgressDate(new Date());
 		order.setOrderDate(orderDto.getOrderDate()!=null?orderDto.getOrderDate():new Date());
 
-        if (orderDto.getDeliveryDate() != null && (new Date()).after(orderDto.getDeliveryDate())) {
-            throw new MeveoApiException("Delivery date can't be in the past");
-        }
+		Date today = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+
+		if (orderDto.getDeliveryDate() != null && orderDto.getDeliveryDate().before(today) && !formatter.format(orderDto.getDeliveryDate()).equals(formatter.format(today))) {
+			throw new MeveoApiException("Delivery date can't be in the past");
+		}
     	order.setDeliveryDate(orderDto.getDeliveryDate());
         
 		order.setCustomerServiceBegin(orderDto.getCustomerServiceBegin());
