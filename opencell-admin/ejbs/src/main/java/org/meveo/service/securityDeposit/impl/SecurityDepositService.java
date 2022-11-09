@@ -202,19 +202,6 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
     public void credit(SecurityDeposit securityDepositToUpdate, SecurityDepositCreditInput securityDepositInput) {
         securityDepositToUpdate = retrieveIfNotManaged(securityDepositToUpdate);
-        CustomerAccount customerAccount = securityDepositToUpdate.getCustomerAccount();
-
-        if (customerAccount == null) {
-            throw new EntityDoesNotExistsException("Cannot find customer account in the this Security Deposit");
-        }
-
-        if (securityDepositToUpdate.getCurrentBalance() == null) {
-            securityDepositToUpdate.setCurrentBalance(BigDecimal.ZERO);
-        }
-
-        if (securityDepositToUpdate.getAmount().compareTo(securityDepositInput.getAmountToCredit()) < 0) {
-            throw new BusinessException("The amount to credit should be less than or equal to the security deposit expected balance");
-        }
 
         BigDecimal nCurrentBalance = securityDepositInput.getAmountToCredit().add(securityDepositToUpdate.getCurrentBalance());
         securityDepositToUpdate.setCurrentBalance(nCurrentBalance);
