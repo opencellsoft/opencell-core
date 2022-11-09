@@ -373,17 +373,23 @@ public class FilesApi extends BaseApi {
      * @return The existing File {@link File}
      */
     private File checkAndGetExistingFile(String filePath) {
-        File fileTypeJava = (filePath.contains(getProviderRootDir().replace("\\", "/"))) ? new File(filePath) : new File(getProviderRootDir() + File.separator + normalizePath(filePath));
-        File fileTypeSQL = new File((".").concat(filePath.split("\\.")[1] + "_" + format("%04d", 0) + "." + filePath.split("\\.")[2]));
 
-        if(!fileTypeJava.exists()) {
-            if(!fileTypeSQL.exists()) {
-                throw new BusinessApiException(FILE_DOES_NOT_EXISTS + fileTypeJava.getPath());
-            } else {
-                return fileTypeSQL;
-            }
+        File javaXMlFormatFile = (filePath.contains(getProviderRootDir().replace("\\", "/"))) ? new File(filePath) : new File(getProviderRootDir() + File.separator + normalizePath(filePath));
+
+        if (javaXMlFormatFile.exists()) {
+            return javaXMlFormatFile;
         } else {
-            return fileTypeJava;
+            String[] fileNameParts = filePath.split("\\.");
+            if (fileNameParts.length > 1) {
+                File sqlXMlFormatFile = new File((".").concat(filePath.split("\\.")[1] + "_" + format("%04d", 0) + "." + filePath.split("\\.")[2]));
+                if (sqlXMlFormatFile.exists()) {
+                    return sqlXMlFormatFile;
+                } else {
+                    throw new BusinessApiException(FILE_DOES_NOT_EXISTS + javaXMlFormatFile.getPath());
+                }
+            } else {
+                throw new BusinessApiException(FILE_DOES_NOT_EXISTS + javaXMlFormatFile.getPath());
+            }
         }
     }
 }

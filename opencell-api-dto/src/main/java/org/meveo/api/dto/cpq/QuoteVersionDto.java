@@ -69,6 +69,11 @@ public class QuoteVersionDto extends BaseEntityDto {
    	private String contractCode;
     
     private Set<String> mediaCodes = new HashSet<String>();
+    
+    /** The comment. */
+	@XmlAttribute()
+    @Schema(description = "The comment")
+	private String comment;
 
     
 	@Schema(description = "The custom fields")
@@ -95,6 +100,7 @@ public class QuoteVersionDto extends BaseEntityDto {
 		this.startDate = q.getStartDate();
 		this.statusDate = q.getStatusDate();
 		this.discountPlanCode=q.getDiscountPlan()!=null?q.getDiscountPlan().getCode():null;
+		this.comment=q.getComment();
 	}
 
 	/**
@@ -239,6 +245,14 @@ public class QuoteVersionDto extends BaseEntityDto {
 
 	public void setMediaCodes(Set<String> mediaCodes) {
 		this.mediaCodes = mediaCodes;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 	
 	

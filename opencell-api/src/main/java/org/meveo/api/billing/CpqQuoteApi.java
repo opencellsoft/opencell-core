@@ -392,9 +392,12 @@ public class CpqQuoteApi extends BaseApi {
             		quoteVersion.getMedias().add(media);
             	});
 	        }
+    		if(StringUtils.isNotBlank(quoteVersionDto.getComment())) {
+    			quoteVersion.setComment(quoteVersionDto.getComment());
+    		}
+    		populateCustomFields(quoteVersionDto.getCustomFields(), quoteVersion, true);
 		}
 		quoteVersion.setQuote(cpqQuote);
-		populateCustomFields(quoteVersionDto.getCustomFields(), quoteVersion, true);
 		return quoteVersion;
 	}
 
@@ -771,6 +774,9 @@ public class CpqQuoteApi extends BaseApi {
                 		qv.getMedias().add(media);
                 	});
                 }
+                if(StringUtils.isNotBlank(quoteVersionDto.getComment())) {
+                	qv.setComment(quoteVersionDto.getComment());
+                }
                 populateCustomFields(quoteVersionDto.getCustomFields(), qv, false);
                 quoteVersionService.update(qv);
                 quoteVersionDto = new QuoteVersionDto(qv);
@@ -881,6 +887,9 @@ public class CpqQuoteApi extends BaseApi {
             }
             if (version.getContract() != null) {
             	quoteVersionDto.setContractCode(version.getContract().getCode());
+            }
+            if (StringUtils.isNotBlank(version.getComment())) {
+            	quoteVersionDto.setComment(version.getComment());
             }
             quoteVersionDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(version));
             quoteVersionDto.setPrices(calculateTotalsPerQuote(version, PriceLevelEnum.PRODUCT));
@@ -1594,9 +1603,9 @@ public class CpqQuoteApi extends BaseApi {
         List<PriceDTO> pricesDTO =new ArrayList<>();
         List<QuotePrice> offerQuotePrices = new ArrayList<>();
         List<WalletOperation> walletOperations = quoteRating(subscription,quoteOffer,quoteEligibleFixedDiscountItems, offerQuotePrices,true);
-        List<QuotePrice> productQuotePrices = new ArrayList<>();
         QuoteArticleLine quoteArticleLine = null;
         Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<>();
+		List<QuotePrice> accountingPrices = new ArrayList<>();
 
 //        Map<Long, BigDecimal> quoteProductTotalAmount =new HashMap<Long, BigDecimal>();;
 //        for(QuoteArticleLine overrodeLine : quoteOffer.getQuoteVersion().getQuoteArticleLines()){
@@ -1677,12 +1686,12 @@ public class CpqQuoteApi extends BaseApi {
             quotePriceService.create(quotePrice);
             quoteArticleLine.getQuotePrices().add(quotePrice);
             quoteArticleLine = quoteArticleLineService.update(quoteArticleLine);
-            
+            accountingPrices.add(quotePrice);
         }
         //Calculate totals by offer
 
         //Calculate totals by offer
-        Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = productQuotePrices.stream()
+        Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = accountingPrices.stream()
                 .collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
 
         log.debug("offerQuotation pricesPerType size={}",pricesPerType.size());
