@@ -60,7 +60,7 @@ public class AutoUpdateCurrentRateJobBean extends BaseJobBean {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void checkFunctionalCurrency() {
-        tradingCurrencyService.checkFunctionalCurrency(appProvider.getCurrency());
+        tradingCurrencyService.checkFunctionalCurrency();
     }
 
 }

@@ -480,7 +480,7 @@ public class ProductApi extends BaseApi {
 			productVersion.setValidity(postData.getValidity());
 		}
 		Date today = DateUtils.setTimeToZero(new Date());
-		if(postData.getValidity() != null
+		if(postData.getValidity() != null && postData.getValidity().getTo()!=null
 				&& DateUtils.setTimeToZero(postData.getValidity().getTo()).compareTo(today) <= 0) {
 			throw new MeveoApiException("End date must be greater than today");
 		}
