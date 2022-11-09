@@ -52,7 +52,7 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		generateSubAccountingPeriods(entity);
 
 		// Init MatchingCode sequence in Provider
-		providerService.resetMatchingCode();
+		// providerService.resetMatchingCode();
 
 		return entity;
 	}

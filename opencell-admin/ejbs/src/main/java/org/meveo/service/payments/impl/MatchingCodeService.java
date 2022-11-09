@@ -121,7 +121,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         boolean withRefund = false;
         boolean isToTriggerCollectionPlanLevelsJob = false;
         List<PaymentScheduleInstanceItem> listPaymentScheduleInstanceItem = new ArrayList<>();
-        List<AccountOperation> aosToGenerateMatchingCode = new ArrayList<>();
+        //List<AccountOperation> aosToGenerateMatchingCode = new ArrayList<>();
         List<AccountOperation> securityDepositAOPs = new ArrayList<>();
 
         // For PaymentPlan, new AO OOC PPL_CREATION shall match all debit one, and recreate new AOS DEBIT OCC PPL_INSTALLMENT recording to the number of installment of Plan
@@ -204,7 +204,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         log.info("matching - [Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 
                                 invoice.getPaymentStatus() + " - newPaymentStatus : " + InvoicePaymentStatusEnum.PAID + "]");
                         invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.PAID);
-                        aosToGenerateMatchingCode.add(accountOperation);
+                        //aosToGenerateMatchingCode.add(accountOperation);
                         if (InvoicePaymentStatusEnum.PAID == invoice.getPaymentStatus()) {
                             isToTriggerCollectionPlanLevelsJob = true;
                         }
@@ -337,7 +337,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 .collect(Collectors.toList()));
 
         // generate matchingCode for related AOs
-        aosToGenerateMatchingCode.forEach(accountOperation -> journalEntryService.assignMatchingCodeToJournalEntries(accountOperation, null));
+        // aosToGenerateMatchingCode.forEach(accountOperation -> journalEntryService.assignMatchingCodeToJournalEntries(accountOperation, null));
 
     }
 
