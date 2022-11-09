@@ -121,25 +121,25 @@ public class MediationJob extends Job {
             archiveDir = meteringDir + "archive";
         }
         File f = new File(inputDir);
-        if (!f.exists()) {
-            f.mkdirs();
+        if (!StorageFactory.existsDirectory(f)) {
+            StorageFactory.mkdirs(f);
         }
         f = new File(outputDir);
-        if (!f.exists()) {
+        if (!StorageFactory.existsDirectory(f)) {
             log.debug("outputDir {} not exist", outputDir);
-            f.mkdirs();
+            StorageFactory.mkdirs(f);
             log.debug("outputDir {} creation ok", outputDir);
         }
         f = new File(rejectDir);
-        if (!f.exists()) {
+        if (!StorageFactory.existsDirectory(f)) {
             log.debug("rejectDir {} not exist", rejectDir);
-            f.mkdirs();
+            StorageFactory.mkdirs(f);
             log.debug("rejectDir {} creation ok", rejectDir);
         }
         f = new File(archiveDir);
-        if (!f.exists()) {
+        if (!StorageFactory.existsDirectory(f)) {
             log.debug("archiveDir {} not exist", archiveDir);
-            f.mkdirs();
+            StorageFactory.mkdirs(f);
             log.debug("archiveDir {} creation ok", archiveDir);
         }
 
