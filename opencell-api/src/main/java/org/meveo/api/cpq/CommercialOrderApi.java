@@ -219,7 +219,7 @@ public class CommercialOrderApi extends BaseApi {
 		order.setOrderDate(orderDto.getOrderDate()!=null?orderDto.getOrderDate():new Date());
 
 		Date today = new Date();
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
 		if (orderDto.getDeliveryDate() != null && orderDto.getDeliveryDate().before(today) && !formatter.format(orderDto.getDeliveryDate()).equals(formatter.format(today))) {
 			throw new MeveoApiException("Delivery date can't be in the past");
