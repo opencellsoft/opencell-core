@@ -446,7 +446,20 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         if(SecurityDepositStatusEnum.CANCELED.equals(securityDepositToUpdate.getStatus())){
             throw new EntityDoesNotExistsException("The Credit is not possible if the status of the security deposit is at 'Cancel'");
         }
-        securityDepositService.credit(securityDepositToUpdate, securityDepositInput);
+
+        CustomerAccount customerAccount = securityDepositToUpdate.getCustomerAccount();
+
+        if (customerAccount == null) {
+            throw new EntityDoesNotExistsException("Cannot find customer account in the this Security Deposit");
+        }
+
+        if (securityDepositToUpdate.getCurrentBalance() == null) {
+            securityDepositToUpdate.setCurrentBalance(BigDecimal.ZERO);
+        }
+
+        if (securityDepositToUpdate.getAmount() != null && securityDepositToUpdate.getAmount().compareTo(securityDepositInput.getAmountToCredit()) < 0) {
+            throw new BusinessException("The amount to credit should be less than or equal to the security deposit expected balance");
+        }
 
         List<AccountOperation> sdAOs = accountOperationService.listByInvoice(securityDepositToUpdate.getSecurityDepositInvoice());
 
@@ -465,6 +478,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         }
         Payment payment = paymentService.findById(idPayment);
         if (!securityDepositInput.getIsToMatching()) {
+            securityDepositService.credit(securityDepositToUpdate, securityDepositInput);
             securityDepositService.createSecurityDepositTransaction(securityDepositToUpdate, securityDepositInput.getAmountToCredit(),
                     SecurityDepositOperationEnum.CREDIT_SECURITY_DEPOSIT, OperationCategoryEnum.CREDIT, payment);
         }
