@@ -1283,14 +1283,14 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     
     public List<InvoiceLine> findByIdsAndAdjustmentStatus(List<Long> invoiceLinesIds) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByIdsAndAdjustmentStatus", entityClass)
-                .setParameter("status", AdjustmentStatusEnum.NOT_ADJUSTED)
+                .setParameter("status", AdjustmentStatusEnum.NOT_ADJUSTED.toString())
                 .setParameter("invoiceLinesIds", invoiceLinesIds)
                 .getResultList();
     }
     
     public List<InvoiceLine> findByIdsAndOtherAdjustmentStatus(List<Long> invoiceLinesIds) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByIdsAndOtherAdjustmentStatus", entityClass)
-                .setParameter("status", AdjustmentStatusEnum.NOT_ADJUSTED)
+                .setParameter("status", AdjustmentStatusEnum.NOT_ADJUSTED.toString())
                 .setParameter("invoiceLinesIds", invoiceLinesIds)
                 .getResultList();
     }

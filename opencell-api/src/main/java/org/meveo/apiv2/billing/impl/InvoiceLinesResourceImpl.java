@@ -9,22 +9,16 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
-import org.meveo.apiv2.billing.*;
+import org.apache.commons.collections.CollectionUtils;
+import org.meveo.apiv2.billing.InvoiceLinesToMarkAdjustment;
 import org.meveo.apiv2.billing.resource.InvoiceLinesResource;
-import org.meveo.apiv2.billing.service.InvoiceApiService;
 import org.meveo.apiv2.billing.service.InvoiceLinesApiService;
-import org.meveo.service.billing.impl.InvoiceLineService;
 
 public class InvoiceLinesResourceImpl implements InvoiceLinesResource {
 
     @Inject
     private InvoiceLinesApiService invoiceLinesApiService;
     
-    @Inject
-	private InvoiceApiService invoiceApiService;
-	
-    @Inject
-    private InvoiceLineService invoiceLinesService;
 
     @Override
     public Response getTaxDetails(Long invoiceLineId, Request request) {
@@ -34,30 +28,15 @@ public class InvoiceLinesResourceImpl implements InvoiceLinesResource {
     }
     
     @Override
-    public Response markForAdjustment() {
-        //Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
-       // Invoice adjInvoice = invoiceApiService.createAdjustment(invoice, invoiceLinesToMark);
-    	//invoiceLinesService.findByIdsAndAdjustmentStatus(invoiceLinesToMark.);
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
+    public Response markForAdjustment(@NotNull InvoiceLinesToMarkAdjustment invoiceLinesToMark) {
+    	int nbInvoiceLinesMarked = 0;
+    	if(!CollectionUtils.isEmpty(invoiceLinesToMark.getInvoiceLinesIds()))
+    		nbInvoiceLinesMarked = invoiceLinesApiService.markInvoiceLinesForAdjustment(invoiceLinesToMark);
     	
         Map<String, Object> response = new HashMap<>();
         response.put("actionStatus", Collections.singletonMap("status", "SUCCESS"));
-       // response.put("invoice", invoice);
+        response.put("message", nbInvoiceLinesMarked+" new invoiceLine(s) marked TO_ADJUST");
         return Response.ok(response).build();
     }
+
 }

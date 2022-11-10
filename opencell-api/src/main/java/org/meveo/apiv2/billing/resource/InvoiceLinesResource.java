@@ -48,6 +48,6 @@ public interface InvoiceLinesResource {
                     @ApiResponse(responseCode = "403", description = "IThe following parameters are required or contain invalid values: globalAdjustment")
                 }
             )
-    Response markForAdjustment(@Parameter(description = "InvoiceLines to mark for adjustment", required = true) @NotNull InvoiceLinesToMark invoiceLinesToMark);
+    Response markForAdjustment(@Parameter(description = "InvoiceLines to mark for adjustment", required = true) @NotNull InvoiceLinesToMarkAdjustment invoiceLinesToMark);
     
 }
