@@ -17,9 +17,14 @@ import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.meveo.admin.exception.*;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ImportInvoiceException;
+import org.meveo.admin.exception.InvoiceExistException;
+import org.meveo.admin.exception.NoAllOperationUnmatchedException;
+import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
@@ -257,9 +262,12 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         Long count = securityDepositService.countPerTemplate(template);
         String securityDepositName = securityDepositInput.getCode();
         if (StringUtils.isBlank(securityDepositName)) {
-            securityDepositName = template.getTemplateName();
+        	securityDepositName = template.getTemplateName()+ "-" + count;
         }
-        securityDepositInput.setCode(securityDepositName + "-" + count);
+        if (securityDepositService.findByCode(securityDepositName) != null) {
+            throw new EntityAlreadyExistsException(SecurityDeposit.class, securityDepositName);
+        }
+        securityDepositInput.setCode(securityDepositName);
         securityDepositInput.setStatus(status);
         
         // Check validity dates
