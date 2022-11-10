@@ -6628,9 +6628,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     .getResultList();
     }
 
-    public List<Invoice> findLinkedInvoicesByIdAndType(Long invoiceId, String invoiceTypeCode) {
+    public List<Object[]> findLinkedInvoicesByIdAndType(Long invoiceId, String invoiceTypeCode) {
 
-        return getEntityManager().createNamedQuery("Invoice.findLinkedInvoicesByIdAndType", Invoice.class).
+        return getEntityManager().createNamedQuery("Invoice.findLinkedInvoicesByIdAndType").
                 setParameter("invoiceId", invoiceId).
                 setParameter("invoiceTypeCode", invoiceTypeCode).getResultList();
 
