@@ -70,10 +70,10 @@ public class FilesApi extends BaseApi {
     public String getProviderRootDir() {
         return paramBeanFactory.getDefaultChrootDir();
     }
-    
+
     @PostConstruct
     public void init() {
-    	createMissingDirectories();
+        createMissingDirectories();
     }
 
     private void createMissingDirectories() {
@@ -110,7 +110,7 @@ public class FilesApi extends BaseApi {
         String jasperDir = getProviderRootDir() + File.separator + DirectoriesConstants.JASPER_ROOT_FOLDER;
         String priceplanVersionsDir = getProviderRootDir() + File.separator + DirectoriesConstants.IMPORTS_ROOT_FOLDER + File.separator + "priceplan_versions";
         List<String> filePaths = Arrays.asList("", customerDirIN, customerDirOUT, customerDirERR, customerDirWARN, customerDirKO, accountDirIN, accountDirOUT, accountDirERR, accountDirWARN, accountDirKO, subDirIN,
-            subDirOUT, subDirERR, subDirWARN, catDirIN, catDirOUT, catDirKO, subDirKO, meterDirIN, meterDirOUT, meterDirKO, invoicePdfDir, invoiceXmlDir, jasperDir, priceplanVersionsDir);
+                subDirOUT, subDirERR, subDirWARN, catDirIN, catDirOUT, catDirKO, subDirKO, meterDirIN, meterDirOUT, meterDirKO, invoicePdfDir, invoiceXmlDir, jasperDir, priceplanVersionsDir);
         for (String custDirs : filePaths) {
             File subDir = new File(custDirs);
             if (!subDir.exists()) {
@@ -148,18 +148,19 @@ public class FilesApi extends BaseApi {
 
     /**
      * Remove any directory above the provider directory root
+     *
      * @param dir
      * @return
      */
     private String normalizePath(String dir) {
-        if(dir == null){
+        if (dir == null) {
             throw new BusinessApiException("Invalid parameter, file or directory is null");
         }
-        File dirFile = new File(getProviderRootDir()+File.separator+dir);
+        File dirFile = new File(getProviderRootDir() + File.separator + dir);
         Path path = dirFile.toPath();
-        path= path.normalize();
-        String prefix =  getProviderRootDir().replace("./","");
-        if(!path.toString().contains(prefix)){
+        path = path.normalize();
+        String prefix = getProviderRootDir().replace("./", "");
+        if (!path.toString().contains(prefix)) {
             throw new EntityDoesNotExistsException(FILE_DOES_NOT_EXISTS + dir);
         }
         return dir;
@@ -190,7 +191,7 @@ public class FilesApi extends BaseApi {
      * @throws BusinessApiException business exception.
      */
     public void zipDir(String dir) throws BusinessApiException {
-        String normalizedDir = (isLocalDir(dir) ? "" : normalizePath(dir)) ;
+        String normalizedDir = (isLocalDir(dir) ? "" : normalizePath(dir));
         File file = new File(getProviderRootDir() + File.separator + normalizedDir);
         if (!file.exists()) {
             throw new BusinessApiException("Directory does not exists: " + file.getPath());
@@ -199,7 +200,7 @@ public class FilesApi extends BaseApi {
         try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipFile))) {
             FileUtils.addDirToArchive(getProviderRootDir(), file.getPath(), zos);
             zos.flush();
-            if(isLocalDir(dir))
+            if (isLocalDir(dir))
                 Files.move(zipFile.toPath(), Paths.get(getProviderRootDir() + File.separator + zipFile.getName()), ATOMIC_MOVE);
         } catch (IOException e) {
             throw new BusinessApiException("Error zipping directory: " + file.getName() + ". " + e.getMessage());
@@ -219,7 +220,7 @@ public class FilesApi extends BaseApi {
      */
     public FlatFile uploadFile(byte[] data, String filename, String fileFormat) throws BusinessApiException {
         File file = new File(getProviderRootDir() + File.separator + normalizePath(filename));
-        try (FileOutputStream fop = new FileOutputStream(file)){
+        try (FileOutputStream fop = new FileOutputStream(file)) {
 //            if (!file.exists()) {
 //                file.createNewFile();
 //            }
@@ -228,7 +229,7 @@ public class FilesApi extends BaseApi {
 
             fop.write(data);
             fop.close();
-            
+
             if (FilenameUtils.getExtension(file.getName()).equals("zip")) {
                 // unzip
                 // get parent dir
@@ -250,11 +251,11 @@ public class FilesApi extends BaseApi {
      * Allows to upload a base64 file
      *
      * @param postData contains filename and the base64 data to upload
-     * @throws  MeveoApiException
+     * @throws MeveoApiException
      */
     public void uploadFileBase64(FileRequestDto postData) throws MeveoApiException {
-        if (postData == null){
-           throw new InvalidParameterException("Body request is empty");
+        if (postData == null) {
+            throw new InvalidParameterException("Body request is empty");
         }
         if (StringUtils.isBlank(postData.getFilepath())) {
             missingParameters.add("filepath");
@@ -307,7 +308,7 @@ public class FilesApi extends BaseApi {
             throw new BusinessApiException("The zipped file is invalid ! ");
         }
 
-        try(FileInputStream fileInputStream = new FileInputStream(file)) {
+        try (FileInputStream fileInputStream = new FileInputStream(file)) {
             String parentDir = file.getParent();
             FileUtils.unzipFile(parentDir, fileInputStream);
         } catch (Exception e) {
@@ -369,21 +370,31 @@ public class FilesApi extends BaseApi {
 
     /**
      * Check existing file with two format (Java format and also SQL format) depends on the type of ReportExtract
+     *
      * @param filePath File Path
      * @return The existing File {@link File}
      */
     private File checkAndGetExistingFile(String filePath) {
-        File fileTypeJava = (filePath.contains(getProviderRootDir().replace("\\", "/"))) ? new File(filePath) : new File(getProviderRootDir() + File.separator + normalizePath(filePath));
-        File fileTypeSQL = new File((".").concat(filePath.split("\\.")[1] + "_" + format("%04d", 0) + "." + filePath.split("\\.")[2]));
 
-        if(!fileTypeJava.exists()) {
-            if(!fileTypeSQL.exists()) {
-                throw new BusinessApiException(FILE_DOES_NOT_EXISTS + fileTypeJava.getPath());
-            } else {
-                return fileTypeSQL;
-            }
+        File javaXMlFormatFile = (filePath.contains(getProviderRootDir().replace("\\", "/"))) ? new File(filePath) : new File(getProviderRootDir() + File.separator + normalizePath(filePath));
+
+        if (javaXMlFormatFile.exists()) {
+            return javaXMlFormatFile;
         } else {
-            return fileTypeJava;
+            String[] fileNameParts = filePath.split("\\.");
+            if (fileNameParts.length > 1) {
+                File sqlXMlFormatFile = new File((".").concat(filePath.split("\\.")[1] + "_" + format("%04d", 0) + "." + filePath.split("\\.")[2]));
+                if (sqlXMlFormatFile.exists()) {
+                    return sqlXMlFormatFile;
+                } else {
+                    throw new BusinessApiException(FILE_DOES_NOT_EXISTS + javaXMlFormatFile.getPath());
+                }
+            } else {
+                throw new BusinessApiException(FILE_DOES_NOT_EXISTS + javaXMlFormatFile.getPath());
+            }
         }
     }
 }
+
+
+

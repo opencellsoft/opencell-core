@@ -12,9 +12,12 @@ import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 
+import liquibase.pro.packaged.D;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
+import org.assertj.core.util.DateUtil;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
@@ -68,6 +71,7 @@ import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
@@ -474,6 +478,15 @@ public class ProductApi extends BaseApi {
 		}else if(postData.getValidity() != null && postData.getValidity().getFrom() == null) {
 			postData.getValidity().setFrom(Calendar.getInstance().getTime());
 			productVersion.setValidity(postData.getValidity());
+		}
+		Date today = DateUtils.setTimeToZero(new Date());
+		if(postData.getValidity() != null && postData.getValidity().getTo()!=null
+				&& DateUtils.setTimeToZero(postData.getValidity().getTo()).compareTo(today) <= 0) {
+			throw new MeveoApiException("End date must be greater than today");
+		}
+		if(productVersion.getStatus() == VersionStatusEnum.CLOSED
+				&& postData.getValidity() != null && postData.getValidity().getTo() != null) {
+			throw new MeveoApiException("Can not update endDate for closed version");
 		}
 		productVersion.setValidity(postData.getValidity());
 		productVersion.setStatus(postData.getStatus() == null ? VersionStatusEnum.DRAFT : postData.getStatus());
