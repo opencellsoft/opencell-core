@@ -5398,7 +5398,7 @@
             </column>
             <column name="default_starting_date_of_plan" type="varchar(255)" />
             <column name="activate_cascading_discounts" type="${type.boolean}" defaultValueNumeric="1"/>
-            <column name="rgaa_message" type="varchar(500)" >
+            <column name="portal_message" type="varchar(500)" >
                 <constraints nullable="true"/>
             </column>
 			<column name="current_matching_code" type="varchar(255)" />
@@ -18804,6 +18804,7 @@
     <changeSet id="#INTRD-10541_20221013" author="TarikFA." />
     <changeSet id="#INTRD-10957_20221026" author="Mbarek-Ay"/>
     <changeSet id="INTRD-11433_20221110" author="AbdelmounaimAkadid" />
+    <changeSet id="#INTRD-11310_20221110" author="ZBariki" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
