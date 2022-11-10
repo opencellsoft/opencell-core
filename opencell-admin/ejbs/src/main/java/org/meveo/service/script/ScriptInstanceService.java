@@ -20,11 +20,13 @@ package org.meveo.service.script;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
@@ -35,6 +37,7 @@ import javax.inject.Inject;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.infinispan.Cache;
 import org.meveo.admin.exception.BusinessException;
@@ -51,6 +54,7 @@ import org.meveo.event.monitoring.ClusterEventPublisher;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.scripts.ScriptInstanceError;
+import org.meveo.model.scripts.ScriptParameter;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
 import org.meveo.service.base.BusinessService;
 
@@ -722,5 +726,58 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
         if (cacheName == null || cacheName.equals(compiledScripts.getName())) {
             scriptCompilerService.compileAndInitializeAll();
         }
+    }
+    
+    /**
+     * inject default values, validate script Params and execute script 
+     * @param scriptInstance
+     * @param classInstance
+     * @param context
+     */
+    private void processScript(ScriptInstance scriptInstance, ScriptInterface classInstance, Map<String, Object> context) {
+    	if (scriptInstance.getScriptParameters() != null && !scriptInstance.getScriptParameters().isEmpty()) {
+    		validateScriptParams(scriptInstance, context);
+    	} 
+    	classInstance.execute(context);
+    }
+    
+    /**
+     * Validate script Params : check mantadory params and allowed values 
+     * @param scriptInstance
+     * @param context
+     */
+    private void validateScriptParams(ScriptInstance scriptInstance, Map<String, Object> context) {
+    	// Inject default values on context for missing params
+    	injectDefaultValues(scriptInstance, context);
+    	
+    	// Check mandatory parameter is missing, then raise an exception
+    	scriptInstance.getScriptParameters().stream().filter(sp -> sp.isMandatory()).filter(sp -> !context.containsKey(sp.getCode()))
+    	.findAny().ifPresent(sp -> {throw new BusinessException(resourceMessages.getString("message.scriptInstance.paramMandatory", sp.getCode(), sp.getClassName(), scriptInstance.getCode()));});
+    	 
+    	// Check that param is one of allowedValues
+    	scriptInstance.getScriptParameters().stream().filter(sp -> StringUtils.isNotEmpty(sp.getAllowedValues()))
+    	.filter(sp -> context.containsKey(sp.getCode()) && Arrays.stream(sp.getDefaultValue().split(sp.getValuesSeparator())).noneMatch(context.get(sp.getCode())::equals))
+    	.findAny().ifPresent(sp -> {throw new BusinessException(resourceMessages.getString("message.scriptInstance.allowedValues", sp.getCode(), sp.getAllowedValues()));});
+    	
+    }
+    
+    /**
+     * Inject default values on context for missing params
+     * @param scriptInstance
+     * @param context
+     */
+    private void injectDefaultValues(ScriptInstance scriptInstance, Map<String, Object> context) {
+    	List<ScriptParameter> paramsWithDefaultValue = scriptInstance.getScriptParameters().stream().filter(sp -> StringUtils.isNotEmpty(sp.getDefaultValue())).collect(Collectors.toList());
+    	paramsWithDefaultValue.stream().filter(sp -> !context.containsKey(sp.getCode())).forEach(sp -> context.put(sp.getCode(), sp.getDefaultValue()));
+    }
+    
+    private <T> T parseObjectFromString(String value, String clazzName) throws Exception {
+        try {
+            Class<T> clazz = (Class<T>) Class.forName(clazzName);
+            return clazz.getConstructor(new Class[] {String.class }).newInstance(value);
+        } catch (ClassNotFoundException e) {
+            log.error("Failed to parse {} as {}, error: {}", value, clazzName, e.getMessage());
+        }
+        return null;
     }
 }
