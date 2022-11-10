@@ -399,7 +399,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         securityDepositToUpdate.setSecurityDepositAdjustment(adjustmentInvoice);
         securityDepositService.update(securityDepositToUpdate);
 		
-		securityDepositService.refund(securityDepositToUpdate, reason, securityDepositOperationEnum, securityDepositStatusEnum, operationType);
+		securityDepositService.refund(securityDepositToUpdate, reason, securityDepositOperationEnum, securityDepositStatusEnum, operationType, adjustmentInvoice.getInvoiceNumber());
 	}
 
 	private Invoice createAdjustmentInvoice(SecurityDeposit securityDepositToUpdate) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException, IOException {
