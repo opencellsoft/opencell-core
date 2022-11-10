@@ -207,11 +207,11 @@ public class ProviderResourceImpl implements ProviderResource {
             providerByCode.setPaymentMethods(provider.getPaymentMethods().stream().filter(StringUtils::isNotBlank).map(PaymentMethodEnum::valueOf).collect(Collectors.toList()));
         }
         
-        if (provider.getRgaaMessage() != null) {
-        	if (provider.getRgaaMessage().length() > 500) {
+        if (provider.getPortalMessage() != null) {
+        	if (provider.getPortalMessage().length() > 500) {
                 throw new InvalidParameterException("Max size is 500 characters.");
             } 
-            providerByCode.setRgaaMessage(providerUpdateInfos.getRgaaMessage());
+            providerByCode.setPortalMessage(providerUpdateInfos.getPortalMessage());
         }
 
         if (provider.getCurrentMatchingCode() != null) {
