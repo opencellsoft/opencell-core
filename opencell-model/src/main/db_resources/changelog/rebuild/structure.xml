@@ -5398,7 +5398,7 @@
             </column>
             <column name="default_starting_date_of_plan" type="varchar(255)" />
             <column name="activate_cascading_discounts" type="${type.boolean}" defaultValueNumeric="1"/>
-            <column name="rgaa_message" type="varchar(500)" >
+            <column name="portal_message" type="varchar(500)" >
                 <constraints nullable="true"/>
             </column>
 			<column name="current_matching_code" type="varchar(255)" />
@@ -7715,7 +7715,7 @@
             </column>
             <column name="start_date" type="datetime" />
             <column name="end_date" type="datetime" />
-            <column name="file_path" type="varchar(100)" />
+            <column name="file_path" type="varchar(256)" />
             <column name="line_count" type="int" />
             <column name="origin" type="varchar(20)" />
             <column name="error_message" type="${type.text}" />
@@ -17554,6 +17554,40 @@
     	
     </changeSet>
     
+    <changeSet id="#INTRD-10768-20221108-validationrule" author="a.rouaguebe">
+        <createSequence sequenceName="billing_invoice_validation_rule_seq" startValue="1" />
+        <createTable tableName="billing_invoice_validation_rule">
+            <column name="id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="invoice_type_id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="priority" type="int4" />
+            <column name="valid_from" type="datetime" />
+            <column name="valid_to" type="datetime" />
+            <column name="type" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fail_status" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="validation_script" type="${type.text}" />
+            <column name="validation_el" type="${type.text}" />
+        </createTable>
+    </changeSet>
+    
     
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
@@ -18810,6 +18844,8 @@
     <changeSet id="#INTRD-10957_20221026" author="Mbarek-Ay"/>
 	<changeSet id="#INTRD-10577_20221020" author="HichamHANINE" />
 	<changeSet id="#INTRD-11162_20221107" author="HatimOUDAD"/>
+	<changeSet id="INTRD-11433_20221110" author="AbdelmounaimAkadid" />
+    <changeSet id="#INTRD-11310_20221110" author="ZBariki" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

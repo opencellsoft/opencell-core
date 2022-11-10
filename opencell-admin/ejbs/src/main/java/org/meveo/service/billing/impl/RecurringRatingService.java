@@ -252,9 +252,10 @@ public class RecurringRatingService extends RatingService implements Serializabl
                 // The counter will be decremented by charge quantity
                 CounterInstance counterInstance = chargeInstance.getCounter();
                 if (!isVirtual && counterInstance != null) {
-
-                    CounterValueChangeInfo counterValueChangeInfo = counterInstanceService.deduceCounterValue(counterInstance, chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
-                        chargeInstance, chargeInstance.getQuantity(), isVirtual);
+                	
+                	CounterValueChangeInfo counterValueChangeInfo = counterInstanceService.deduceCounterValue_noLock(counterInstance, chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
+                				chargeInstance, chargeInstance.getQuantity(), isVirtual);
+                	
 
                     boolean isApplyInAdvance = isApplyInAdvance(chargeInstance);
 
