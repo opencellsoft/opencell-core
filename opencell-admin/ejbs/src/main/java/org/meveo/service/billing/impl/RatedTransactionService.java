@@ -48,8 +48,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import com.google.common.collect.ImmutableMap;
-
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.meveo.admin.async.SubListCreator;
@@ -103,6 +101,7 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.IInvoicingMinimumApplicable;
 import org.meveo.model.filter.Filter;
+import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
@@ -121,6 +120,8 @@ import org.meveo.service.order.OrderService;
 import org.meveo.service.tax.TaxClassService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * RatedTransactionService : A class for Rated transaction persistence services.
@@ -288,6 +289,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             create(ratedTransaction);
             walletOperation.setRatedTransaction(ratedTransaction);
         }
+        updateBAForRT(List.of(ratedTransaction));
         return ratedTransaction;
     }
 
@@ -1477,6 +1479,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 taxPercent, serviceInstance, taxClass, null, RatedTransactionTypeEnum.MANUAL, chargeInstance, null);
         rt.setAccountingArticle(accountingArticle);
         create(rt);
+        updateBAForRT(List.of(rt));
         return rt;
     }
 
@@ -1615,8 +1618,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     public void linkRTsToIL(final List<Long> ratedTransactionsIDs, final Long invoiceLineID) {
-        if (ratedTransactionsIDs.size() > SHORT_MAX_VALUE) {
-            SubListCreator<Long> subLists = new SubListCreator<>(ratedTransactionsIDs, (1 + (ratedTransactionsIDs.size() / SHORT_MAX_VALUE)));
+    	final int maxValue = ParamBean.getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
+        if (ratedTransactionsIDs.size() > maxValue) {
+            SubListCreator<Long> subLists = new SubListCreator<>(ratedTransactionsIDs, (1 + (ratedTransactionsIDs.size() / maxValue)));
             while (subLists.isHasNext()) {
                 linkRTsWithILByIds(invoiceLineID, subLists.getNextWorkSet());
             }
@@ -1763,7 +1767,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
     
     public List<BillingAccount> updateBAForRT(List<RatedTransaction> rtsResults) {        
-        List<BillingAccount> billingAccountsAfter = new ArrayList<BillingAccount>();
+        List<BillingAccount> billingAccountsAfter = new ArrayList<>();
         if (rtsResults.size() !=0) {  
             
             Map<BillingAccount, List<RatedTransaction>> rtGroupedByBA = rtsResults.stream().collect(Collectors.groupingBy(wo -> wo.getBillingAccount()));
@@ -1927,4 +1931,48 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return null;
         }
     }
+    
+    /**
+	 * @param result
+	 * @param billableEntity
+	 * @param pageSize
+	 * @param pageIndex
+	 * @return
+	 */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public int calculateAccountingArticle(JobExecutionResultImpl result, IBillableEntity billableEntity, Integer pageSize, Integer pageIndex) {
+		List<RatedTransaction> ratedTransactions = getRatedTransactionHavingEmptyAccountingArticle(billableEntity, pageSize, pageIndex);
+		ratedTransactions.stream().forEach(rt->rt.setAccountingArticle(accountingArticleService.getAccountingArticleByChargeInstance(rt.getChargeInstance())));
+	    return ratedTransactions.size();
+	}
+    
+	/**
+	 * @param billableEntity
+	 * @param pageSize
+	 * @param pageIndex
+	 * @return
+	 */
+	public List<RatedTransaction> getRatedTransactionHavingEmptyAccountingArticle(IBillableEntity billableEntity, Integer pageSize, Integer pageIndex) {
+		QueryBuilder qb = new QueryBuilder("select rt from RatedTransaction rt ", "rt");
+		if (billableEntity instanceof Subscription) {
+        	qb.addCriterion("rt.subscription.id ", "=", billableEntity.getId(), false);
+        } else if (billableEntity instanceof BillingAccount) {
+        	qb.addCriterion("rt.billingAccount.id ", "=", billableEntity.getId(), false);
+        } else if (billableEntity instanceof Order) {
+        	qb.addCriterion("orderNumber ","=", ((Order) billableEntity).getOrderNumber(), false);;
+        }
+        qb.addSql(" rt.status='OPEN' and accountingArticle is null ");
+        try {
+            final Query query = qb.getQuery(getEntityManager());
+            if(pageIndex!=null && pageSize!=null) {
+            	query.setMaxResults(pageSize).setFirstResult(pageIndex * pageSize);
+            }
+			return query.getResultList();
+        } catch (NoResultException e) {
+        	log.error(e.getMessage());
+            return null;
+        }
+	}
+    
 }

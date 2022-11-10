@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
-
+import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.*;
 import org.meveo.api.dto.payment.PaymentDto;
@@ -257,9 +257,12 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         Long count = securityDepositService.countPerTemplate(template);
         String securityDepositName = securityDepositInput.getCode();
         if (StringUtils.isBlank(securityDepositName)) {
-            securityDepositName = template.getTemplateName();
+            securityDepositName = template.getTemplateName()+ "-" + count;
         }
-        securityDepositInput.setCode(securityDepositName + "-" + count);
+        if (securityDepositService.findByCode(securityDepositName) != null) {
+            throw new EntityAlreadyExistsException(SecurityDeposit.class, securityDepositName);
+        }
+        securityDepositInput.setCode(securityDepositName);
         securityDepositInput.setStatus(status);
         
         // Check validity dates
@@ -399,7 +402,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         securityDepositToUpdate.setSecurityDepositAdjustment(adjustmentInvoice);
         securityDepositService.update(securityDepositToUpdate);
 		
-		securityDepositService.refund(securityDepositToUpdate, reason, securityDepositOperationEnum, securityDepositStatusEnum, operationType);
+		securityDepositService.refund(securityDepositToUpdate, reason, securityDepositOperationEnum, securityDepositStatusEnum, operationType, adjustmentInvoice.getInvoiceNumber());
 	}
 
 	private Invoice createAdjustmentInvoice(SecurityDeposit securityDepositToUpdate) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException, IOException {
@@ -446,7 +449,20 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         if(SecurityDepositStatusEnum.CANCELED.equals(securityDepositToUpdate.getStatus())){
             throw new EntityDoesNotExistsException("The Credit is not possible if the status of the security deposit is at 'Cancel'");
         }
-        securityDepositService.credit(securityDepositToUpdate, securityDepositInput);
+
+        CustomerAccount customerAccount = securityDepositToUpdate.getCustomerAccount();
+
+        if (customerAccount == null) {
+            throw new EntityDoesNotExistsException("Cannot find customer account in the this Security Deposit");
+        }
+
+        if (securityDepositToUpdate.getCurrentBalance() == null) {
+            securityDepositToUpdate.setCurrentBalance(BigDecimal.ZERO);
+        }
+
+        if (securityDepositToUpdate.getAmount() != null && securityDepositToUpdate.getAmount().compareTo(securityDepositInput.getAmountToCredit()) < 0) {
+            throw new BusinessException("The amount to credit should be less than or equal to the security deposit expected balance");
+        }
 
         List<AccountOperation> sdAOs = accountOperationService.listByInvoice(securityDepositToUpdate.getSecurityDepositInvoice());
 
@@ -464,9 +480,12 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
             throw new MeveoApiException(e);
         }
         Payment payment = paymentService.findById(idPayment);
-        securityDepositService.createSecurityDepositTransaction(securityDepositToUpdate, securityDepositInput.getAmountToCredit(),
-                SecurityDepositOperationEnum.CREDIT_SECURITY_DEPOSIT, OperationCategoryEnum.CREDIT, payment);
-        auditLogService.trackOperation("CREDIT", new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
+        if (!securityDepositInput.getIsToMatching()) {
+            securityDepositService.credit(securityDepositToUpdate, securityDepositInput);
+            securityDepositService.createSecurityDepositTransaction(securityDepositToUpdate, securityDepositInput.getAmountToCredit(),
+                    SecurityDepositOperationEnum.CREDIT_SECURITY_DEPOSIT, OperationCategoryEnum.CREDIT, payment);
+        }
+        auditLogService.trackOperation(OperationCategoryEnum.CREDIT.name(), new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
 
         return securityDepositService.refreshOrRetrieve(securityDepositToUpdate);
     }

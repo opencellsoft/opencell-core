@@ -1606,9 +1606,9 @@ public class CpqQuoteApi extends BaseApi {
         List<PriceDTO> pricesDTO =new ArrayList<>();
         List<QuotePrice> offerQuotePrices = new ArrayList<>();
         List<WalletOperation> walletOperations = quoteRating(subscription,quoteOffer,quoteEligibleFixedDiscountItems, offerQuotePrices,true);
-        List<QuotePrice> productQuotePrices = new ArrayList<>();
         QuoteArticleLine quoteArticleLine = null;
         Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<>();
+		List<QuotePrice> accountingPrices = new ArrayList<>();
 
 //        Map<Long, BigDecimal> quoteProductTotalAmount =new HashMap<Long, BigDecimal>();;
 //        for(QuoteArticleLine overrodeLine : quoteOffer.getQuoteVersion().getQuoteArticleLines()){
@@ -1689,12 +1689,12 @@ public class CpqQuoteApi extends BaseApi {
             quotePriceService.create(quotePrice);
             quoteArticleLine.getQuotePrices().add(quotePrice);
             quoteArticleLine = quoteArticleLineService.update(quoteArticleLine);
-            
+            accountingPrices.add(quotePrice);
         }
         //Calculate totals by offer
 
         //Calculate totals by offer
-        Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = productQuotePrices.stream()
+        Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = accountingPrices.stream()
                 .collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
 
         log.debug("offerQuotation pricesPerType size={}",pricesPerType.size());

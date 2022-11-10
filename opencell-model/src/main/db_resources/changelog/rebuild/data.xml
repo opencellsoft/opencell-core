@@ -7047,6 +7047,19 @@
             <column name="code" value="Daily-midnight" />
             <column name="created" valueDate="2017-06-29 00:04:19.913" />
         </insert>
+		<insert tableName="meveo_timer">
+			<column name="id" valueNumeric="-4" />
+			<column name="version" valueNumeric="0" />
+			<column name="sc_d_o_month" value="*" />
+			<column name="sc_d_o_week" value="*" />
+			<column name="sc_hour" value="0" />
+			<column name="sc_min" value="0" />
+			<column name="sc_month" value="*" />
+			<column name="sc_sec" value="1" />
+			<column name="sc_year" value="*" />
+			<column name="code" value="Daily-midnight-start-of-day" />
+			<column name="created" valueDate="2017-06-29 00:04:19.913" />
+		</insert>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-data-jobs">
 
@@ -9119,7 +9132,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="job_template" value="AutoUpdateCurrentRateJob" />
 			<column name="code" value="AutoUpdateCurrentRateJob_Job" />
 			<column name="creator" value="OPENCELL.ADMIN" />
-			<column name="timerentity_id" valueNumeric="-3" />
+			<column name="timerentity_id" valueNumeric="-4" />
 			<column name="uuid" value="AutoUpdateCurrentRateJob_Job" />
 		</insert>
 	</changeSet>
@@ -9913,6 +9926,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="INTRD-11122_20221104" author="HichamELHALOUI" />
 	<changeSet id="#INTRD-11244_20221104" author="TarikFA." />
 	<changeSet id="#INTRD-11165_20221108" author="HatimOUDAD" />
+	<changeSet id="INTRD-11124_20221109" author="aelmalki" />
 	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

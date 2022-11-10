@@ -50,13 +50,13 @@ public class DefaultStatusConverter extends ReflectionConverter {
         if (original instanceof Product) {
 
             writer.startNode("status");
-            writer.setValue("DRAFT");
+            writer.setValue(((Product) original).getStatus().getValue());
             writer.endNode();
 
         }else if (original instanceof  ProductOffering || original instanceof OfferTemplate) {
 
             writer.startNode("lifeCycleStatus");
-            writer.setValue("IN_DESIGN");
+            writer.setValue(((ProductOffering) original).getLifeCycleStatus().getValue());
             writer.endNode();
         }
         super.marshal(original, writer, context);
