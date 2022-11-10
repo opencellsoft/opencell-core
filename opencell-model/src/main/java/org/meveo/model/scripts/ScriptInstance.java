@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -35,6 +36,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -124,19 +126,17 @@ public class ScriptInstance extends EnableBusinessEntity {
     @Column(name = "role")
     @CollectionTable(name = "adm_script_sourc_role", joinColumns = @JoinColumn(name = "script_instance_id", referencedColumnName = "id"))   
     private Set<String> sourcingRoles = new HashSet<String>();
-
+    
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "jsonb")
     private Map<String, String> descriptionI18n;    
     
-    public Map<String, String> getDescriptionI18n() {
-        return descriptionI18n;
-    }
+    /**
+     * A list of script parameters that can use the script
+     */
+    @OneToMany(mappedBy = "scriptInstance", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private List<ScriptParameter> scriptParameters=new ArrayList<>();
 
-    public void setDescriptionI18n(Map<String, String> descriptionI18n) {
-        this.descriptionI18n = descriptionI18n;
-    }
-    
     public ScriptInstance() {
 
     }
@@ -260,4 +260,21 @@ public class ScriptInstance extends EnableBusinessEntity {
     public void setScriptInstanceCategory(ScriptInstanceCategory scriptInstanceCategory) {
         this.scriptInstanceCategory = scriptInstanceCategory;
     }
+    
+    public Map<String, String> getDescriptionI18n() {
+        return descriptionI18n;
+    }
+
+    public void setDescriptionI18n(Map<String, String> descriptionI18n) {
+        this.descriptionI18n = descriptionI18n;
+    }
+
+	public List<ScriptParameter> getScriptParameters() {
+		return scriptParameters;
+	}
+
+	public void setScriptParameters(List<ScriptParameter> scriptParameters) {
+		this.scriptParameters = scriptParameters;
+	}
+    
 }
