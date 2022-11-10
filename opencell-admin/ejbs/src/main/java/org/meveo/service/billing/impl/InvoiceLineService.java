@@ -47,6 +47,7 @@ import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.AccountingCode;
+import org.meveo.model.billing.AdjustmentStatusEnum;
 import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.ApplyMinimumModeEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -1279,4 +1280,18 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		invoiceLine.setBillingRun(bilingRun);
 		create(invoiceLine);
 	}
+    
+    public List<InvoiceLine> findByIdsAndAdjustmentStatus(List<Long> invoiceLinesIds) {
+        return getEntityManager().createNamedQuery("InvoiceLine.findByIdsAndAdjustmentStatus", entityClass)
+                .setParameter("status", AdjustmentStatusEnum.NOT_ADJUSTED)
+                .setParameter("invoiceLinesIds", invoiceLinesIds)
+                .getResultList();
+    }
+    
+    public List<InvoiceLine> findByIdsAndOtherAdjustmentStatus(List<Long> invoiceLinesIds) {
+        return getEntityManager().createNamedQuery("InvoiceLine.findByIdsAndOtherAdjustmentStatus", entityClass)
+                .setParameter("status", AdjustmentStatusEnum.NOT_ADJUSTED)
+                .setParameter("invoiceLinesIds", invoiceLinesIds)
+                .getResultList();
+    }
 }

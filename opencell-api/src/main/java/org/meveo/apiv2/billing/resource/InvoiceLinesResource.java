@@ -3,19 +3,21 @@ package org.meveo.apiv2.billing.resource;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import javax.validation.constraints.NotNull;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
-import org.meveo.apiv2.billing.InvoiceLinesToMark;
-import org.meveo.apiv2.billing.InvoiceLinesToRemove;
-import org.meveo.apiv2.billing.InvoiceLinesToReplicate;
+import org.meveo.apiv2.billing.*;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @Path("/billing/invoiceLines")
 @Consumes(APPLICATION_JSON)

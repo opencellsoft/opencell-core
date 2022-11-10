@@ -12,7 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Value.Immutable
 @Value.Style(jdkOnly = true)
-@JsonDeserialize(as = ImmutableInvoiceLinesToReplicate.class)
+@JsonDeserialize(as = ImmutableInvoiceLinesToMark.class)
 public interface InvoiceLinesToMark {
 
     @Nullable
