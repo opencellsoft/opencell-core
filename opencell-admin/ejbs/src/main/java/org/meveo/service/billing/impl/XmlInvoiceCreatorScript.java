@@ -1701,7 +1701,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
     private Element createAndPopulateAdvancesSection(Document doc, Invoice invoice) {
 
-        List<Invoice> advanceLinkedInvoices = invoiceService.findLinkedInvoicesByIdAndType(invoice.getId(), "ADV");
+        List<Object[]> advanceLinkedInvoices = invoiceService.findLinkedInvoicesByIdAndType(invoice.getId(), "ADV");
 
         if (advanceLinkedInvoices != null && !advanceLinkedInvoices.isEmpty()) {
 
@@ -1710,17 +1710,17 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         return null;
     }
 
-    private Element populateAdvancesSection(Document doc, List<Invoice> advanceLinkedInvoices) {
+    private Element populateAdvancesSection(Document doc, List<Object[]> advanceLinkedInvoices) {
 
         Element advances = doc.createElement("advances");
 
-        for (Invoice advancedLinkedInvoice : advanceLinkedInvoices) {
+        for (Object[] advancedLinkedInvoice : advanceLinkedInvoices) {
 
             Element advance = doc.createElement("advance");
 
-            advance.setAttribute("invoiceNumber", advancedLinkedInvoice.getInvoiceNumber() != null ? String.valueOf(advancedLinkedInvoice.getInvoiceNumber()) : "");
-            advance.setAttribute("invoiceDate", advancedLinkedInvoice.getInvoiceDate() != null ? new SimpleDateFormat("dd/MM/yyyy").format(advancedLinkedInvoice.getInvoiceDate()) : "");
-            advance.setAttribute("amountWithTax", advancedLinkedInvoice.getAmountWithTax() != null ? String.valueOf(advancedLinkedInvoice.getAmountWithTax()) : "");
+            advance.setAttribute("invoiceNumber", advancedLinkedInvoice[0] != null ? advancedLinkedInvoice[0].toString() : "");
+            advance.setAttribute("invoiceDate", advancedLinkedInvoice[1] != null ? new SimpleDateFormat("dd/MM/yyyy").format(advancedLinkedInvoice[1]) : "");
+            advance.setAttribute("amountWithTax", advancedLinkedInvoice[2] != null ? advancedLinkedInvoice[2].toString() : "");
 
             advances.appendChild(advance);
         }
