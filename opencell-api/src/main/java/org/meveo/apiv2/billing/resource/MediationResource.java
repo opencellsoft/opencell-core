@@ -60,4 +60,10 @@ public interface MediationResource {
     ActionStatus updateCDR(@PathParam("id") Long id, CdrDtoInput cdrDto);
     
 
+    @PUT
+    @Operation(summary = "update multiple for an existing CDRs", description = "update multiple for an existing CDRs", operationId = "POST_Mediation_processCdrList", responses = {
+            @ApiResponse(description = " status of the operation ", content = @Content(schema = @Schema(implementation = CdrDtoResponse.class))) })
+    CdrDtoResponse updateCDRs(CdrListDtoInput cdrs);
+    
+
 }
