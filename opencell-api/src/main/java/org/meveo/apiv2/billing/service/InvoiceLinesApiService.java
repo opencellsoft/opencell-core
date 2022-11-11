@@ -3,17 +3,21 @@ package org.meveo.apiv2.billing.service;
 import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.apiv2.billing.ImmutableTax;
 import org.meveo.apiv2.billing.ImmutableTaxDetails;
+import org.meveo.apiv2.billing.InvoiceLinesToMarkAdjustment;
 import org.meveo.apiv2.billing.Tax;
 import org.meveo.apiv2.billing.TaxDetails;
 import org.meveo.apiv2.ordering.services.ApiService;
+import org.meveo.model.billing.AdjustmentStatusEnum;
 import org.meveo.model.billing.InvoiceLine;
 import org.meveo.service.billing.impl.InvoiceLineService;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -111,4 +115,24 @@ public class InvoiceLinesApiService implements ApiService<InvoiceLine>  {
                 .subTaxes(subTaxesDetails)
                 .build();
     }
+    
+
+	public int markInvoiceLinesForAdjustment(InvoiceLinesToMarkAdjustment invoiceLinesToMark) {
+		if(invoiceLinesToMark.getIgnoreInvalidStatuses() == null || !invoiceLinesToMark.getIgnoreInvalidStatuses()) {
+    		List<InvoiceLine> invoiceLines = invoiceLinesService.findByIdsAndAdjustmentStatus(invoiceLinesToMark.getInvoiceLinesIds());
+    		if (invoiceLines != null && invoiceLines.size() != invoiceLinesToMark.getInvoiceLinesIds().size()) {
+    			 throw new BusinessException("Only NOT_ADJUSTED invoice lines can be marked TO_ADJUST");
+			}
+    		invoiceLines.stream().forEach(invoiceLine -> {invoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.TO_ADJUST);
+											invoiceLinesService.update(invoiceLine);}
+    									);
+    		return invoiceLines.size();
+    	}else {
+    		List<InvoiceLine> invoiceLines = invoiceLinesService.findByIdsAndAdjustmentStatus(invoiceLinesToMark.getInvoiceLinesIds());
+    		invoiceLines.stream().forEach(invoiceLine -> {invoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.TO_ADJUST);
+    														invoiceLinesService.update(invoiceLine);}
+    									);
+    		return invoiceLines == null ? 0 : invoiceLines.size();
+    	}
+	}
 }

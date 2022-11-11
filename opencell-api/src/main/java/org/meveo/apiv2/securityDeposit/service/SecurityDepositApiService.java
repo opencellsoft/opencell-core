@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
-
+import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.*;
 import org.meveo.api.dto.payment.PaymentDto;
@@ -257,9 +257,12 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         Long count = securityDepositService.countPerTemplate(template);
         String securityDepositName = securityDepositInput.getCode();
         if (StringUtils.isBlank(securityDepositName)) {
-            securityDepositName = template.getTemplateName();
+            securityDepositName = template.getTemplateName()+ "-" + count;
         }
-        securityDepositInput.setCode(securityDepositName + "-" + count);
+        if (securityDepositService.findByCode(securityDepositName) != null) {
+            throw new EntityAlreadyExistsException(SecurityDeposit.class, securityDepositName);
+        }
+        securityDepositInput.setCode(securityDepositName);
         securityDepositInput.setStatus(status);
         
         // Check validity dates
