@@ -13,13 +13,13 @@ import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.cpq.Product;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.model.securityDeposit.SecurityDeposit;
@@ -136,9 +136,12 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         Long count = securityDepositService.countPerTemplate(template);
         String securityDepositName = securityDepositInput.getCode();
         if (StringUtils.isBlank(securityDepositName)) {
-            securityDepositName = template.getTemplateName();
+            securityDepositName = template.getTemplateName()+ "-" + count;
         }
-        securityDepositInput.setCode(securityDepositName + "-" + count);
+        if (securityDepositService.findByCode(securityDepositName) != null) {
+            throw new EntityAlreadyExistsException(SecurityDeposit.class, securityDepositName);
+        }
+        securityDepositInput.setCode(securityDepositName);
         securityDepositInput.setStatus(SecurityDepositStatusEnum.NEW);
 
         // Check validity dates
