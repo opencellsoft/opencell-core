@@ -9948,6 +9948,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
     <changeSet id="INTRD-11152_20221102" author="TarikFA." />
 	<changeSet id="INTRD-11122_20221104" author="HichamELHALOUI" />
 	<changeSet id="#INTRD-11244_20221104" author="TarikFA." />
+	<changeSet id="#INTRD-11165_20221108" author="HatimOUDAD" />
 	<changeSet id="INTRD-11124_20221109" author="aelmalki" />
 	<changeSet id="#INTRD-11328_20221110" author="aelmalki" />
 
