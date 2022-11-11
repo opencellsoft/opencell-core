@@ -8391,7 +8391,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</insert>
 		<update tableName="meveo_job_instance">
 			<column name="cf_values" value='{"cleanAppliedRateInvoice": [{"boolean": false}]}' />
-			<where> code='AccountingSchemesJob'</where>
+			<where> code='AutoUpdateCurrentRateJob_Job'</where>
 		</update>
 	</changeSet>
 
