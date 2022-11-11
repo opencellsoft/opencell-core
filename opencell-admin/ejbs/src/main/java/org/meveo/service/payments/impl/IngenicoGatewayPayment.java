@@ -435,45 +435,46 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
      * @return the payment response dto
      * @throws BusinessException the business exception
      */
-    private PaymentResponseDto doPayment(DDPaymentMethod ddPaymentMethod, CardPaymentMethod paymentCardToken, Long ctsAmount, CustomerAccount customerAccount, String cardNumber,
-            String ownerName, String cvv, String expirayDate, CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException {
+    private PaymentResponseDto doPayment(DDPaymentMethod ddPaymentMethod, CardPaymentMethod paymentCardToken,
+			Long ctsAmount, CustomerAccount customerAccount, String cardNumber, String ownerName, String cvv,
+			String expirayDate, CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams)
+			throws BusinessException {
 		PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
 		doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.NOT_PROCESSED);
-    	try {
-            
-            CreatePaymentRequest body = buildPaymentRequest(ddPaymentMethod, paymentCardToken, ctsAmount, customerAccount, cardNumber, ownerName, cvv, expirayDate, cardType);
-            getClient();
-            log.info("doPayment REQUEST :"+marshaller.marshal(body));
-            
-            CreatePaymentResponse response = getClient().merchant(paymentGateway.getMarchandId()).payments().create(body);
-            
-            if (response != null) {
-            	log.info("doPayment RESPONSE :"+marshaller.marshal(response));
-              
-                doPaymentResponseDto.setPaymentID(response.getPayment().getId());
-                doPaymentResponseDto.setPaymentStatus(mappingStaus(response.getPayment().getStatus()));
-                if (response.getCreationOutput() != null) {
-                    doPaymentResponseDto.setTransactionId(response.getCreationOutput().getExternalReference());
-                    doPaymentResponseDto.setTokenId(response.getCreationOutput().getToken());
-                    doPaymentResponseDto.setNewToken(response.getCreationOutput().getIsNewToken());
-                }
-                Payment payment = response.getPayment();
-                if (payment != null && response.getPayment().getStatusOutput().getErrors() != null) {
-                    PaymentStatusOutput statusOutput = payment.getStatusOutput();
-                    if (statusOutput != null) {
-                        List<APIError> errors = statusOutput.getErrors();
-                        if (CollectionUtils.isNotEmpty(errors)) {
-                            doPaymentResponseDto.setErrorMessage(errors.toString());
-                            doPaymentResponseDto.setErrorCode(errors.get(0).getId()); 
-                        }
-                    }
-                }
-                return doPaymentResponseDto;
-            } else {
-                throw new BusinessException("Gateway response is null");
-            }
-    	} catch (ApiException e) {
-			log.error("Error on doPayment :",e);
+		try {
+
+			CreatePaymentRequest body = buildPaymentRequest(ddPaymentMethod, paymentCardToken, ctsAmount,
+					customerAccount, cardNumber, ownerName, cvv, expirayDate, cardType);
+
+			CreatePaymentResponse response = getClient().merchant(paymentGateway.getMarchandId()).payments()
+					.create(body);
+
+			if (response != null && response.getPayment() != null) {
+				log.info("doPayment RESPONSE :" + marshaller.marshal(response));
+				Payment paymentResponse = response.getPayment();
+				doPaymentResponseDto.setPaymentID(paymentResponse.getId());
+				doPaymentResponseDto.setPaymentStatus(mappingStaus(paymentResponse.getStatus()));
+				if (response.getCreationOutput() != null) {
+					doPaymentResponseDto.setTransactionId(response.getCreationOutput().getExternalReference());
+					doPaymentResponseDto.setTokenId(response.getCreationOutput().getToken());
+					doPaymentResponseDto.setNewToken(response.getCreationOutput().getIsNewToken() == null ? false
+							: response.getCreationOutput().getIsNewToken());
+				}
+
+				if (paymentResponse.getStatusOutput() != null && paymentResponse.getStatusOutput().getErrors() != null) {
+					PaymentStatusOutput statusOutput = paymentResponse.getStatusOutput();
+						List<APIError> errors = statusOutput.getErrors();
+						if (CollectionUtils.isNotEmpty(errors)) {
+							doPaymentResponseDto.setErrorMessage(errors.toString());
+							doPaymentResponseDto.setErrorCode(errors.get(0).getId());
+						}					
+				}
+				return doPaymentResponseDto;
+			} else {
+				throw new BusinessException("Gateway response is null");
+			}
+		} catch (ApiException e) {
+			log.error("Error on doPayment :", e);
 			doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.ERROR);
 			doPaymentResponseDto.setErrorMessage(e.getResponseBody());
 			if (CollectionUtils.isNotEmpty(e.getErrors())) {
