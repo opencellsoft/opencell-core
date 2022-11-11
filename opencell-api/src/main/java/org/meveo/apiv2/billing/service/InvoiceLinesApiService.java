@@ -135,4 +135,23 @@ public class InvoiceLinesApiService implements ApiService<InvoiceLine>  {
     		return invoiceLines == null ? 0 : invoiceLines.size();
     	}
 	}
+	
+	public int unmarkInvoiceLinesForAdjustment(InvoiceLinesToMarkAdjustment invoiceLinesToUnmark) {
+		if(invoiceLinesToUnmark.getIgnoreInvalidStatuses() == null || !invoiceLinesToUnmark.getIgnoreInvalidStatuses()) {
+    		List<InvoiceLine> invoiceLines = invoiceLinesService.findByIdsAndAdjustmentStatus(invoiceLinesToUnmark.getInvoiceLinesIds());
+    		if (invoiceLines != null && invoiceLines.size() != invoiceLinesToUnmark.getInvoiceLinesIds().size()) {
+    			 throw new BusinessException("Only TO_ADJUST invoice lines can be marked NOT_ADJUSTED");
+			}
+    		invoiceLines.stream().forEach(invoiceLine -> {invoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
+											invoiceLinesService.update(invoiceLine);}
+    									);
+    		return invoiceLines.size();
+    	}else {
+    		List<InvoiceLine> invoiceLines = invoiceLinesService.findByIdsAndAdjustmentStatus(invoiceLinesToUnmark.getInvoiceLinesIds());
+    		invoiceLines.stream().forEach(invoiceLine -> {invoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
+    														invoiceLinesService.update(invoiceLine);}
+    									);
+    		return invoiceLines == null ? 0 : invoiceLines.size();
+    	}
+	}
 }
