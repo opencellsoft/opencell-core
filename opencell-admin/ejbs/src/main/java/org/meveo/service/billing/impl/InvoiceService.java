@@ -4836,7 +4836,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public Invoice refreshConvertedAmounts(Invoice invoice, BigDecimal currentRate, Date currentRateFromDate) {
     	invoice.getLinkedInvoices();
         invoice = refreshOrRetrieve(invoice);
-        if(currentRate != null) {
+        if(currentRate != null && !invoice.getTradingCurrency().getCurrency().getId().equals(appProvider.getCurrency().getId())) {
             invoice.setLastAppliedRate(currentRate);
         } else {
             invoice.setLastAppliedRate(ONE);
@@ -4849,6 +4849,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setUseCurrentRate(true);
         refreshInvoiceLineAndAggregateAmounts(invoice);
         return update(invoice);
+    }
+
+    public void cleanUpInvoiceWithFuntionalCurrencyDifferentFromOne(){
+        List<Invoice> invoices = getEntityManager().createNamedQuery("Invoice.findWithFuntionalCurrencyDifferentFromOne")
+                .setParameter("EXPECTED_RATE", ONE).getResultList();
+
+        Optional.ofNullable(invoices).orElse(Collections.emptyList())
+                .forEach(invoice ->
+                        refreshConvertedAmounts(invoice, null, invoice.getTradingCurrency().getCurrentRateFromDate())
+                );
     }
 
     private void refreshInvoiceLineAndAggregateAmounts(Invoice invoice) {
