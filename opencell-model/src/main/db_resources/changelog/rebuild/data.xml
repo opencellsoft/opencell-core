@@ -9910,7 +9910,6 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
     <changeSet id="#INTRD-10572_20221014" author="HichamHANINE" />
     <changeSet id="#INTRD-11244_20221104" author="TarikFA." />
 	<changeSet id="INTRD-11124_20221109" author="aelmalki" />
-	<changeSet id="#INTRD-11328_20221110" author="aelmalki" />
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
