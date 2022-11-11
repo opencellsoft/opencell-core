@@ -140,9 +140,6 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         if (StringUtils.isBlank(securityDepositName)) {
             securityDepositName = template.getTemplateName()+ "-" + count;
         }
-        if (securityDepositService.findByCode(securityDepositName) != null) {
-            throw new EntityAlreadyExistsException(SecurityDeposit.class, securityDepositName);
-        }
         securityDepositInput.setCode(securityDepositName);
         securityDepositInput.setStatus(SecurityDepositStatusEnum.NEW);
 
