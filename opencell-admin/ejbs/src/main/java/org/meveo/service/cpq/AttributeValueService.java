@@ -104,60 +104,58 @@ public abstract class AttributeValueService<T extends AttributeValue> extends Pe
                 .findFirst();
         return mandatoryEl;
     }
-    public AttributeValue getAttributeValue(AttributeValue attributeInstance, Object... parameters) throws BusinessException{
 
-    	try {
+    public AttributeValue getAttributeValue(AttributeValue attributeInstance, Object... parameters) throws BusinessException {
 
-        	if(AttributeTypeEnum.EXPRESSION_LANGUAGE.equals(attributeInstance.getAttribute().getAttributeType())) {
+        try {
 
-        		if(!StringUtils.isBlank(attributeInstance.getStringValue())) {
+            if (AttributeTypeEnum.EXPRESSION_LANGUAGE.equals(attributeInstance.getAttribute().getAttributeType())) {
 
-        			Object value=ValueExpressionWrapper.evaluateExpression(attributeInstance.getStringValue(), Object.class, parameters);
+                if (!StringUtils.isBlank(attributeInstance.getStringValue())) {
 
-    	    			if(value!=null) {
+                    Object value = ValueExpressionWrapper.evaluateExpression(attributeInstance.getStringValue(), Object.class, parameters);
 
-    	    				AttributeValue<AttributeValue> attributeValue= (AttributeValue) BeanUtils.cloneBean(attributeInstance);
+                    if (value != null) {
 
-    	    				attributeValue.setId(null);
+                        AttributeValue<AttributeValue> attributeValue = (AttributeValue) BeanUtils.cloneBean(attributeInstance);
 
-    	       			 if(value instanceof Boolean) {
+                        attributeValue.setId(null);
 
-    	       				 attributeValue.setBooleanValue((Boolean)value);
+                        if (value instanceof Boolean) {
 
-    	       			 }else if(NumberUtils.isCreatable(value.toString().trim())) {
+                            attributeValue.setBooleanValue((Boolean) value);
 
-    	       					attributeValue.setDoubleValue(Double.valueOf(value.toString().trim()));
+                        } else if (NumberUtils.isCreatable(value.toString().trim()) && !shouldEvaluateNumericValueAsString(attributeValue)) {
 
-    	       			 }else {
+                            attributeValue.setDoubleValue(Double.valueOf(value.toString().trim()));
 
-    	       				attributeValue.setStringValue((String)value);
+                        } else {
 
-    	       			}
+                            attributeValue.setStringValue((String) value);
 
-    	       			log.debug("getAttributeValue value={}, String={},boolean={},double={}",value,attributeValue.getStringValue(),attributeValue.getBooleanValue(),attributeValue.getDoubleValue());
+                        }
 
-    	       			
+                        log.debug("getAttributeValue value={}, String={},boolean={},double={}", value, attributeValue.getStringValue(), attributeValue.getBooleanValue(), attributeValue.getDoubleValue());
 
-    	       			return attributeValue;
+                        return attributeValue;
+                    }
+                }
 
-        			}
+            }
 
-        			
+        } catch (Exception e) {
 
-        		  }
+            log.error("Error when trying to get AttributeValue : ", e);
 
-        		}
+            throw new BusinessException(e.getMessage());
 
-		} catch (Exception e) {
+        }
 
-			log.error("Error when trying to get AttributeValue : ", e);
+        return (AttributeValue) attributeInstance;
 
-			throw new BusinessException(e.getMessage());
+    }
 
-		}
-
-       	AttributeValue attributeValue=(AttributeValue)attributeInstance; 
-    	return attributeValue;
-
-    	}
+    private boolean shouldEvaluateNumericValueAsString(AttributeValue<AttributeValue> attributeValue) {
+        return attributeValue.getStringValue().contains("serviceInstance.code");
+    }
 }
