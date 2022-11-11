@@ -13,6 +13,7 @@ import org.meveo.api.dto.ExchangeRateDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.ExchangeRate;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.shared.DateUtils;
@@ -180,12 +181,19 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
                 .setParameter("sysDate", DateUtils.setTimeToZero(new Date()))
                 .getResultList();
     }
-    
-    public void updateCurrentRateForTradingCurrency(Long exchangeRateId) {
+
+    public void updateCurrentRateForTradingCurrency(Long exchangeRateId, Currency functionalCurrency) {
         ExchangeRate exchangeRate = findById(exchangeRateId);
         TradingCurrency tradingCurrency = exchangeRate.getTradingCurrency();
-        if(tradingCurrency != null) {
-            if(tradingCurrency.getCurrentRate().equals(ONE)) {
+        if (exchangeRate.isCurrentRate()) {
+            log.warn("ExchangeRate already marked as current rate [id={}, currency={}, rate={}]",
+                    exchangeRate.getId(), exchangeRate.getTradingCurrency().getCurrencyCode(), exchangeRate.getExchangeRate());
+            return;
+        }
+        if (tradingCurrency != null) {
+            if (tradingCurrency.getCurrency().getId().equals(functionalCurrency.getId())) { // if functional currency of provider
+                tradingCurrencyService.updateFunctionalCurrency(tradingCurrency);
+            } else {
                 List<ExchangeRate> listExchangeRate = tradingCurrency.getExchangeRates();
                 for (ExchangeRate elementExchangeRate : listExchangeRate) {
                     elementExchangeRate.setCurrentRate(false);
@@ -197,8 +205,6 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
                 tradingCurrency.setCurrentRateUpdater(currentUser.getUserName());
                 exchangeRate.setTradingCurrency(tradingCurrency);
                 update(exchangeRate);
-            } else {
-                tradingCurrencyService.updateFunctionalCurrency(tradingCurrency);
             }
         }
     }

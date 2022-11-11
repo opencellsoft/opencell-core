@@ -14553,6 +14553,40 @@ order by date_trunc('month', i.invoice_date) DESC
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="#INTRD-10768-20221108-validationrule" author="a.rouaguebe">
+        <createSequence sequenceName="billing_invoice_validation_rule_seq" startValue="1" />
+        <createTable tableName="billing_invoice_validation_rule">
+            <column name="id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="invoice_type_id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="priority" type="int4" />
+            <column name="valid_from" type="datetime" />
+            <column name="valid_to" type="datetime" />
+            <column name="type" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fail_status" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="validation_script" type="${type.text}" />
+            <column name="validation_el" type="${type.text}" />
+        </createTable>
+    </changeSet>
     
     
     <changeSet author="AndriusKarpavicius" id="#INTRD-10253_20221027" dbms="oracle">
@@ -14682,6 +14716,69 @@ order by date_trunc('month', i.invoice_date) DESC
             return clob
             parallel_enable aggregate using listagg_clob_t;        
         </createProcedure>
-    </changeSet>    
+    </changeSet> 
     
+    <changeSet id="#INTRD-11162_20221107" author="HatimOUDAD">
+        <addColumn tableName="billing_invoice_line">
+            <column name="adjustment_status" type="varchar(50)">
+            </column>
+        </addColumn>
+    </changeSet>
+    
+   
+    
+    <changeSet id="INTRD-11433_20221110" author="AbdelmounaimAkadid">
+        <modifyDataType tableName="dwh_report_extract_execution" columnName="file_path" newDataType="varchar(256)"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-11310_20221110" author="ZBariki">
+        <renameColumn tableName="crm_provider"
+                      newColumnName="portal_message"
+                      oldColumnName="rgaa_message"
+                      columnDataType="varchar(500)"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-10683_20221107" author="AdilElJaouhari">
+        <createSequence sequenceName="meveo_script_parameter_seq"/>
+        <createTable tableName="meveo_script_parameter">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_meveo_script_parameter" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="script_instance_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="description_i18n" type="${type.json}">
+                <constraints nullable="true" />
+            </column>
+            <column name="class_name" type="varchar(255)" defaultValue="java.lang.String">
+                <constraints nullable="false" />
+            </column>
+            <column name="default_value" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="mandatory" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+             <column name="allowed_values" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="values_separator" type="varchar(20)" defaultValue="|">
+                <constraints nullable="false" />
+            </column>
+            <column name="collection" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="meveo_script_parameter" baseColumnNames="script_instance_id"
+                                 constraintName="script_parameter_script_instance_id_fk"
+                                 referencedTableName="meveo_script_instance"
+                                 referencedColumnNames="id"/>
+   
+    </changeSet>
 </databaseChangeLog>

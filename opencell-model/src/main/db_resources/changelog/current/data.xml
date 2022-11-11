@@ -8881,16 +8881,6 @@ public class CdrMassImportScript extends GenericMassImportScript {
 			<where>template_name = 'DEFAULT_SD_TEMPLATE'</where>
 		</update>
 	</changeSet>
-	
-	<changeSet id="#INTRD-10199_20221010" author="TarikFA.">
-		<update tableName="ar_occ_template" >
-			<column name="accounting_code_id" valueNumeric="null"></column>
-			<where>id = -50</where>
-		</update>
-		<delete tableName="billing_accounting_code">
-			<where>code = 'T3P9476'</where>
-		</delete>
-	</changeSet>
 
 	<changeSet id="#INTRD-10400_20221007" author="HichamHANINE">
     	<update tableName="security_deposit">
@@ -9075,6 +9065,108 @@ public class CdrMassImportScript extends GenericMassImportScript {
         	<where> code = 'ADV'</where>
     	</update>
 	</changeSet>
+
+	<changeSet id="#INTRD-11244_20221104" author="TarikFA.">
+		<update tableName="ar_occ_template">
+			<column name="occ_category" value="DEBIT" />
+			<where> code = 'INV_ADV'</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-10199_20221010" author="TarikFA.">
+		<update tableName="ar_occ_template" >
+			<column name="accounting_code_id" valueNumeric="null"></column>
+			<where>id = -50</where>
+		</update>
+		<delete tableName="billing_accounting_code">
+			<where>code = 'T3P9476'</where>
+		</delete>
+	</changeSet>
+
+	<changeSet id="#INTRD-11165_20221108" author="HatimOUDAD">
+		<update tableName="billing_invoice_line">
+			<column name="adjustment_status" value="NOT_ADJUSTED" />
+			<where> adjustment_status is null</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="INTRD-11122_20221104" author="HichamELHALOUI">
+		<insert tableName="meveo_script_instance_cat">
+			<column name="id" valueNumeric="-3"/>
+			<column name="version" valueNumeric="0"/>
+			<column name="created" valueDate="${db.current.time}"/>
+			<column name="code" value="INVOICE_VALIDATION"/>
+			<column name="description" value="Invoice validation"/>
+			<column name="description_i18n" value='{"FR":"Validation de facture","EN":"Invoice validation"}'/>
+		</insert>
+		<insert tableName="meveo_script_instance_cat">
+			<column name="id" valueNumeric="-4"/>
+			<column name="version" valueNumeric="0"/>
+			<column name="created" valueDate="${db.current.time}"/>
+			<column name="code" value="BILLING_RUN_VALIDATION"/>
+			<column name="description" value="Billing run validation"/>
+			<column name="description_i18n"
+					value='{"FR":"Validation de run de facturation","EN":"Billing run validation"}'/>
+		</insert>
+		<update tableName="meveo_script_instance_cat">
+			<column name="description_i18n" value='{"FR":"Extraction de rapport","EN":"Report Extract"}'/>
+			<where>code = 'REPORT_EXTRACT'</where>
+		</update>
+		<update tableName="meveo_script_instance_cat">
+			<column name="description_i18n" value='{"FR":"Schéma comptable","EN":"Accounting schemes"}'/>
+			<where>code = 'ACCOUNTING_SCHEMES'</where>
+		</update>
+		<update tableName="meveo_script_instance_cat">
+			<column name="description_i18n" value='{"FR":"Action de recouvrement","EN":"Dunning action"}'/>
+			<where>code = 'DUNNING_ACTION'</where>
+		</update>
+
+
+	</changeSet>
+
+	<changeSet id="INTRD-11124_20221109" author="aelmalki">
+		<insert tableName="meveo_timer">
+			<column name="id" valueNumeric="-4" />
+			<column name="version" valueNumeric="0" />
+			<column name="sc_d_o_month" value="*" />
+			<column name="sc_d_o_week" value="*" />
+			<column name="sc_hour" value="0" />
+			<column name="sc_min" value="0" />
+			<column name="sc_month" value="*" />
+			<column name="sc_sec" value="1" />
+			<column name="sc_year" value="*" />
+			<column name="code" value="Daily-midnight-start-of-day" />
+			<column name="created" valueDate="2017-06-29 00:04:19.913" />
+		</insert>
+		<update tableName="meveo_job_instance">
+			<column name="timerentity_id">-4</column>
+			<where>code='AutoUpdateCurrentRateJob_Job'</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-11328_20221110" author="aelmalki">
+		<insert tableName="crm_custom_field_tmpl">
+			<column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="cleanAppliedRateInvoice"/>
+			<column name="applies_to" value="JobInstance_AutoUpdateCurrentRateJob"/>
+			<column name="description" value="Clean Invoice applied rate"/>
+			<column name="field_type" value="BOOLEAN"/>
+			<column name="storage_type" value="SINGLE"/>
+			<column name="value_required" value="0"/>
+			<column name="default_value" value="0"/>
+			<column name="creator" value="applicationInitializer"/>
+			<column name="gui_position" value="tab:Configuration:0;field:0"/>
+		</insert>
+
+		<update tableName="meveo_job_instance">
+			<column name="cf_values" value='{"cleanAppliedRateInvoice": [{"boolean": false}]}' />
+			<where> code='AutoUpdateCurrentRateJob_Job'</where>
+		</update>
+	</changeSet>
+
 
 	<changeSet id="#OUTRD-49_20220913-scripts" author="HamzaBiadi">
 		<!-- SCRIPTS -->
@@ -12447,7 +12539,7 @@ public class SubscriptionMassImportScript extends GenericMassImportScript {
 			<where>code='org.meveo.service.script.SubscriptionMassImportScript'</where>
 		</update>
 	</changeSet>
-	
+
 	<changeSet id="#OUTRD-72_20221011" author="Ilham-Chafik">
 		<update tableName="meveo_script_instance">
 			<column name="script">
@@ -12579,7 +12671,7 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
 			<where>code='org.meveo.service.script.ServiceInstanceImportScript'</where>
 		</update>
 	</changeSet>
-	
+
 	<changeSet id="#OUTRD-79_20221011" author="Ilham-Chafik">
 		<update tableName="meveo_script_instance">
 			<column name="script">

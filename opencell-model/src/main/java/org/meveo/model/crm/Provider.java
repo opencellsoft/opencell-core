@@ -45,8 +45,6 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -431,9 +429,9 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     /**
      * RGAA regulation
      */
-    @Column(name = "rgaa_message", length = 500)
+    @Column(name = "portal_message", length = 500)
     @Size(max = 500)
-    protected String rgaaMessage;
+    protected String portalMessage;
     
     public String getCode() {
         return code;
@@ -899,12 +897,12 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
 		this.activateCascadingDiscounts = activateCascadingDiscounts;
 	}
     
-	public String getRgaaMessage() {
-        return rgaaMessage;
+	public String getPortalMessage() {
+        return portalMessage;
     }
 
-    public void setRgaaMessage(String rgaaMessage) {
-        this.rgaaMessage = rgaaMessage;
+    public void setPortalMessage(String rgaaMessage) {
+        this.portalMessage = rgaaMessage;
     }
 
     public String getCurrentMatchingCode() {

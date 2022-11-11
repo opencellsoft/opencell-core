@@ -21,6 +21,8 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.meveo.model.billing.InvoiceTypeEnum;
 import org.meveo.model.billing.LinkedInvoice;
 import org.meveo.service.base.PersistenceService;
 
@@ -33,11 +35,23 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class LinkedInvoiceService extends PersistenceService<LinkedInvoice> {
     
-    public void deleteByIdInvoiceAndLinkedInvoice(Long invoiceId, List<Long> linkedInvoice) {
-      getEntityManager().createNamedQuery("LinkedInvoice.deleteByIdInvoiceAndLinkedInvoice")
-                            .setParameter("invoiceId", invoiceId)
-                            .setParameter("linkedInvoiceId", linkedInvoice)
-                            .executeUpdate();
-    }
+	public void deleteByIdInvoiceAndLinkedInvoice(Long invoiceId, List<Long> linkedInvoice) {
+		if (CollectionUtils.isEmpty(linkedInvoice)) {
+			return;
+		}
+		getEntityManager().createNamedQuery("LinkedInvoice.deleteByIdInvoiceAndLinkedInvoice")
+				.setParameter("invoiceId", invoiceId)
+				.setParameter("linkedInvoiceId", linkedInvoice)
+				.executeUpdate();
+	}
+
+
+	public void deleteByInvoiceIdAndType(Long invoiceId, InvoiceTypeEnum type) {
+		getEntityManager().createNamedQuery("LinkedInvoice.deleteByInvoiceIdAndType")
+        .setParameter("invoiceId", invoiceId)
+        .setParameter("type", type)
+        .executeUpdate();
+		
+	}
     
 }

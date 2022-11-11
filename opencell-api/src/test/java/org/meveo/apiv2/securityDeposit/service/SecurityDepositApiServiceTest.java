@@ -40,6 +40,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceLineTaxModeEnum;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.LinkedInvoice;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositOperationEnum;
@@ -263,13 +264,14 @@ public class SecurityDepositApiServiceTest {
         billingAccount.setCode("OAU4494");
         sd.setBillingAccount(billingAccount);
         sd.setCurrentBalance(BigDecimal.ONE);
+        sd.setCustomerAccount(new CustomerAccount());
         
     	when(securityDepositServiceMock.refreshOrRetrieve(sd)).thenReturn(sd);
     	when(securityDepositServiceMock.findById(anyLong())).thenReturn(sd);
     	when(paymentApiMock.createPayment(any(PaymentDto.class))).thenReturn(1L);
     	
     	SecurityDepositCreditInput input = ImmutableSecurityDepositCreditInput.builder()
-    										.amountToCredit(BigDecimal.valueOf(100))
+    										.amountToCredit(BigDecimal.valueOf(50))
     										.bankLot("@today-opencell.admin")
     										.customerAccountCode("customerAccountCode")
     										.isToMatching(true)

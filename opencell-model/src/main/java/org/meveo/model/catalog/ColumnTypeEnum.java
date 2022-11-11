@@ -149,18 +149,41 @@ public enum ColumnTypeEnum {
     Range_Numeric {
         @Override
         public boolean valueMatch(PricePlanMatrixValue pricePlanMatrixValue, AttributeValue attributeValue) {
-            if (attributeValue.getDoubleValue() == null && (pricePlanMatrixValue.getFromDoubleValue() == null && pricePlanMatrixValue.getToDoubleValue() == null)) {
+            boolean excludeMaxValue =
+                    ParamBean.getInstance().getPropertyAsBoolean("pricePlan.rangeMode.excludeTheMaxValue", true);
+            if (attributeValue.getDoubleValue() == null && (pricePlanMatrixValue.getFromDoubleValue() == null
+                    && pricePlanMatrixValue.getToDoubleValue() == null)) {
                 return true;
             }
-            if (attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() != null && pricePlanMatrixValue.getToDoubleValue() == null &&  attributeValue.getDoubleValue() >= pricePlanMatrixValue.getFromDoubleValue()) {
+            if (attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() != null
+                    && pricePlanMatrixValue.getToDoubleValue() == null
+                    &&  attributeValue.getDoubleValue() >= pricePlanMatrixValue.getFromDoubleValue()) {
                 return true;
             }
-            if (attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() == null && pricePlanMatrixValue.getToDoubleValue() != null &&  attributeValue.getDoubleValue() <= pricePlanMatrixValue.getToDoubleValue()) {
-                return true;
+            if (attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() == null
+                    && pricePlanMatrixValue.getToDoubleValue() != null) {
+                if(excludeMaxValue) {
+                    if(attributeValue.getDoubleValue() < pricePlanMatrixValue.getToDoubleValue()) {
+                        return true;
+                    }
+                } else {
+                    if(attributeValue.getDoubleValue() <= pricePlanMatrixValue.getToDoubleValue()) {
+                        return true;
+                    }
+                }
             }
-            if(attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() != null && pricePlanMatrixValue.getToDoubleValue() != null  && attributeValue.getDoubleValue() >= pricePlanMatrixValue.getFromDoubleValue()
-                    && attributeValue.getDoubleValue() <= pricePlanMatrixValue.getToDoubleValue()){
-                return true;
+            if(attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() != null
+                    && pricePlanMatrixValue.getToDoubleValue() != null
+                    && attributeValue.getDoubleValue() >= pricePlanMatrixValue.getFromDoubleValue()){
+                if(excludeMaxValue) {
+                    if(attributeValue.getDoubleValue() < pricePlanMatrixValue.getToDoubleValue()) {
+                        return true;
+                    }
+                } else {
+                    if(attributeValue.getDoubleValue() <= pricePlanMatrixValue.getToDoubleValue()) {
+                        return true;
+                    }
+                }
             }
            return false;
 

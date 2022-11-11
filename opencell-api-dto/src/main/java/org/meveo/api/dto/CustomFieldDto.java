@@ -511,7 +511,7 @@ public class CustomFieldDto {
             case CHILD_ENTITY:
                 return true; // TODO add implementation for child entity value
                 case URL:
-                    return urlReferenceValue == null || urlReferenceValue.isEmpty();
+                    return urlReferenceValue == null ;
             }
         }
         return false;
