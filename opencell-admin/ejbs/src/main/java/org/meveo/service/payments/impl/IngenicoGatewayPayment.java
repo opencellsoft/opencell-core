@@ -415,18 +415,18 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 
     @Override
     public PaymentResponseDto doPaymentToken(CardPaymentMethod paymentCardToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
-        return doPayment(null, paymentCardToken, ctsAmount, paymentCardToken.getCustomerAccount(), null, null, null, null, null, null, additionalParams);
+        return doPayment(null, paymentCardToken, ctsAmount, paymentCardToken.getCustomerAccount(), null, null, null, null, null);
     }
 
     @Override
     public PaymentResponseDto doPaymentCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
             CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException {
-        return doPayment(null, null, ctsAmount, customerAccount, cardNumber, ownerName, cvv, expirayDate, cardType, countryCode, additionalParams);
+        return doPayment(null, null, ctsAmount, customerAccount, cardNumber, ownerName, cvv, expirayDate, cardType);
     }
     
     @Override
     public PaymentResponseDto doPaymentSepa(DDPaymentMethod ddPaymentMethod, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
-        return doPayment(ddPaymentMethod, null, ctsAmount, ddPaymentMethod.getCustomerAccount(), null, null, null, null, null, null, additionalParams);
+        return doPayment(ddPaymentMethod, null, ctsAmount, ddPaymentMethod.getCustomerAccount(), null, null, null, null, null);
     }
 
     /**
@@ -441,13 +441,11 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
      * @param cvv the cvv
      * @param expirayDate the expiray date
      * @param cardType the card type
-     * @param countryCode the country code
-     * @param additionalParams the additional params
      * @return the payment response dto
      * @throws BusinessException the business exception
      */
     private PaymentResponseDto doPayment(DDPaymentMethod ddPaymentMethod, CardPaymentMethod paymentCardToken, Long ctsAmount, CustomerAccount customerAccount, String cardNumber,
-            String ownerName, String cvv, String expirayDate, CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException {
+            String ownerName, String cvv, String expirayDate, CreditCardTypeEnum cardType) throws BusinessException {
 		PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
 		doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.NOT_PROCESSED);
     	try {
@@ -458,7 +456,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
             
             CreatePaymentResponse response = getClient().merchant(paymentGateway.getMarchandId()).payments().create(body);
             
-            if (response != null) {
+            if (response != null && response.getPayment() != null) {
             	log.info("doPayment RESPONSE :"+marshaller.marshal(response));
               
                 doPaymentResponseDto.setPaymentID(response.getPayment().getId());
@@ -466,10 +464,15 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
                 if (response.getCreationOutput() != null) {
                     doPaymentResponseDto.setTransactionId(response.getCreationOutput().getExternalReference());
                     doPaymentResponseDto.setTokenId(response.getCreationOutput().getToken());
-                    doPaymentResponseDto.setNewToken(response.getCreationOutput().getIsNewToken());
+                    if(response.getCreationOutput().getIsNewToken() != null) {
+                    	doPaymentResponseDto.setNewToken(response.getCreationOutput().getIsNewToken());
+                    }else {
+                    	doPaymentResponseDto.setNewToken(false);
+                    }
+                    
                 }
                 Payment payment = response.getPayment();
-                if (payment != null && response.getPayment().getStatusOutput().getErrors() != null) {
+                if (payment.getStatusOutput() != null && payment.getStatusOutput().getErrors() != null) {
                     PaymentStatusOutput statusOutput = payment.getStatusOutput();
                     if (statusOutput != null) {
                         List<APIError> errors = statusOutput.getErrors();
