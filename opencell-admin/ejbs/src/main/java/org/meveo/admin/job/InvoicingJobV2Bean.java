@@ -193,6 +193,10 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                 }
             }
         }
+        
+		BillingRunStatusEnum billingRunStatusEnum = billingRun.getStatus();
+        billingRun = billingRunService.refreshOrRetrieve(billingRun);
+        billingRun.setStatus(billingRunStatusEnum);
         if(billingRun.getStatus() == POSTVALIDATED) {
             assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, result);
             billingRun.setStatus(VALIDATED);
