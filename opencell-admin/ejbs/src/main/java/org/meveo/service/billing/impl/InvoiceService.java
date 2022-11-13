@@ -5075,24 +5075,39 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
     
     public void quarantineRejectedInvoicesByBR(BillingRun billingRun) {
-        List<Invoice> invoices = findInvoicesByStatusAndBR(billingRun.getId(), Arrays.asList(InvoiceStatusEnum.REJECTED));
+        quarantineInvoicesByBR(billingRun, InvoiceStatusEnum.REJECTED, BillingRunStatusEnum.REJECTED);        
+    }
+    
+    public void quarantineSuspectedInvoicesByBR(BillingRun billingRun) {
+        quarantineInvoicesByBR(billingRun, InvoiceStatusEnum.SUSPECT, BillingRunStatusEnum.SUSPECTED);        
+    }
+
+    public void quarantineInvoicesByBR(BillingRun billingRun, InvoiceStatusEnum invoiceStatusEnum, BillingRunStatusEnum billingRunStatusEnum) {
+        List<Invoice> invoices = findInvoicesByStatusAndBR(billingRun.getId(), Arrays.asList(invoiceStatusEnum));
         
         if(!invoices.isEmpty()) {
             List<Long> invoiceIds = new ArrayList<>();
             for (Invoice invoice : invoices) {
                 invoiceIds.add(invoice.getId());
             }
-            
-            BillingRun nextBR = billingRunService.findOrCreateNextQuarantineBR(billingRun.getId(), null, null);
-            getEntityManager().createNamedQuery("Invoice.moveToBRByIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
-            getEntityManager().createNamedQuery("InvoiceLine.moveToQuarantineBRByInvoiceIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
-            getEntityManager().createNamedQuery("RatedTransaction.moveToQuarantineBRByInvoiceIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
-            getEntityManager().createNamedQuery("SubCategoryInvoiceAgregate.moveToQuarantineBRByInvoiceIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
+            BillingRun nextBR = null;
+            if(BillingRunStatusEnum.REJECTED.equals(billingRunStatusEnum)) {
+                nextBR = billingRunService.findOrCreateNextQuarantineBR(billingRun.getId(), null);
+            }
+            else if(BillingRunStatusEnum.SUSPECTED.equals(billingRunStatusEnum)){
+                nextBR = billingRunService.findOrCreateNextBR(billingRun.getId());
+            }
+            if (nextBR != null) {
+                getEntityManager().createNamedQuery("Invoice.moveToBRByIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
+                getEntityManager().createNamedQuery("InvoiceLine.moveToQuarantineBRByInvoiceIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
+                getEntityManager().createNamedQuery("RatedTransaction.moveToQuarantineBRByInvoiceIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
+                getEntityManager().createNamedQuery("SubCategoryInvoiceAgregate.moveToQuarantineBRByInvoiceIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
+                
+                billingRun = billingRunService.refreshOrRetrieve(billingRun);
 
-            billingRun = billingRunService.refreshOrRetrieve(billingRun);
-
-            billingRunService.updateBillingRunStatistics(nextBR);
-            billingRunService.updateBillingRunStatistics(billingRun);
+                billingRunService.updateBillingRunStatistics(nextBR);
+                billingRunService.updateBillingRunStatistics(billingRun);
+            }            
         }
     }
 
@@ -6587,7 +6602,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoices.add(invoiceService.refreshOrRetrieve(invoice));
        
         if (billingRun != null) {
-            BillingRun nextBR = billingRunService.findOrCreateNextQuarantineBR(billingRun.getId(), quarantineBillingRunDto.getQuarantineBillingRunId(), quarantineBillingRunDto.getDescriptionsTranslated());
+            BillingRun nextBR = billingRunService.findOrCreateNextQuarantineBR(billingRun.getId(), quarantineBillingRunDto.getDescriptionsTranslated());
             getEntityManager().createNamedQuery("Invoice.moveToBRByIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
             getEntityManager().createNamedQuery("InvoiceLine.moveToQuarantineBRByInvoiceIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
             getEntityManager().createNamedQuery("RatedTransaction.moveToQuarantineBRByInvoiceIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
