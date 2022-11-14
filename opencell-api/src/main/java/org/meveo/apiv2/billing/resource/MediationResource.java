@@ -1,6 +1,7 @@
 package org.meveo.apiv2.billing.resource;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -11,6 +12,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.apiv2.billing.CdrDtoInput;
 import org.meveo.apiv2.billing.CdrDtoResponse;
+import org.meveo.apiv2.billing.CdrListDtoDeletedInput;
 import org.meveo.apiv2.billing.CdrListDtoInput;
 import org.meveo.apiv2.billing.CdrListInput;
 import org.meveo.apiv2.billing.ChargeCdrListInput;
@@ -64,6 +66,17 @@ public interface MediationResource {
     @Operation(summary = "update multiple for an existing CDRs", description = "update multiple for an existing CDRs", operationId = "POST_Mediation_processCdrList", responses = {
             @ApiResponse(description = " status of the operation ", content = @Content(schema = @Schema(implementation = CdrDtoResponse.class))) })
     CdrDtoResponse updateCDRs(CdrListDtoInput cdrs);
+    
+    @DELETE
+    @Path("/{id}")
+    @Operation(summary = "delete an existing  CDR", description = "Only CDRs is statuses OPEN, TO_REPROCESS, ERROR, discarded can be deleted.", operationId = "POST_Mediation_processCdrList", responses = {
+            @ApiResponse(description = " status of the operation ", content = @Content(schema = @Schema(implementation = ActionStatus.class))) })
+    ActionStatus deletCDR(@PathParam("id") Long id);
+    
+    @DELETE
+    @Operation(summary = "delete  list of  an existing  CDR", description = "delete multiple for an existing CDRs having a status : OPEN, TO_REPROCESS, ERROR, DISCARDED ", operationId = "POST_Mediation_processCdrList", responses = {
+            @ApiResponse(description = " status of the operation ", content = @Content(schema = @Schema(implementation = CdrDtoResponse.class))) })
+    CdrDtoResponse deletCDR(CdrListDtoDeletedInput cdrs);
     
 
 }
