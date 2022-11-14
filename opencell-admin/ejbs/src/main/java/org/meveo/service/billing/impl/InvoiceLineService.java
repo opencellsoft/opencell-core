@@ -1281,9 +1281,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		create(invoiceLine);
 	}
     
-    public List<InvoiceLine> findByIdsAndAdjustmentStatus(List<Long> invoiceLinesIds) {
+    public List<InvoiceLine> findByIdsAndAdjustmentStatus(List<Long> invoiceLinesIds, AdjustmentStatusEnum adjustmentStatusEnum) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByIdsAndAdjustmentStatus", entityClass)
-                .setParameter("status", AdjustmentStatusEnum.NOT_ADJUSTED.toString())
+                .setParameter("status", adjustmentStatusEnum.toString())
                 .setParameter("invoiceLinesIds", invoiceLinesIds)
                 .getResultList();
     }

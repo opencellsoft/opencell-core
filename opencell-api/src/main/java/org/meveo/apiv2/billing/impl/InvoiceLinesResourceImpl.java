@@ -47,7 +47,7 @@ public class InvoiceLinesResourceImpl implements InvoiceLinesResource {
     	
         Map<String, Object> response = new HashMap<>();
         response.put("actionStatus", Collections.singletonMap("status", "SUCCESS"));
-        response.put("message", nbInvoiceLinesUnmarked+" new invoiceLine(s) unmarked NOT_ADJUSTED");
+        response.put("message", nbInvoiceLinesUnmarked+" new invoiceLine(s) marked NOT_ADJUSTED");
         return Response.ok(response).build();
     }
 
