@@ -17,7 +17,6 @@ public class UrlReferenceWrapper implements Serializable {
     public UrlReferenceWrapper() {
     }
 
-
     public UrlReferenceWrapper(String url, String regexp, String label, Integer length) {
         this.url = url;
         this.regexp = regexp;
@@ -57,14 +56,14 @@ public class UrlReferenceWrapper implements Serializable {
         this.length = length;
     }
 
-    public boolean containsValidURL() {
-        try {
-            new URL(url);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+    public  boolean containsValidURL() {
+    try {
+        new URL(url);
+        return true;
+    } catch (Exception e) {
+        return false;
     }
+}
 
     public boolean isEmpty() {
         return url == null || url.isEmpty();
