@@ -626,6 +626,7 @@ public class MediationApiService {
             List<String> error = new ArrayList<String>();
             String invalidAccessMsg = null;
             String mandatoryErrorMsg = null;
+            String duplicateCdr = null;
             cdr.setStatus(CDRStatusEnum.OPEN);
             cdr.setStatusDate(new Date());
             // mandatory
@@ -650,9 +651,11 @@ public class MediationApiService {
             if(error.size() == 0 &&  CollectionUtils.isEmpty(accessService.getActiveAccessByUserId(cdr.getAccessCode()))) {
                 invalidAccessMsg =  "Invalid Access for " + cdr.getAccessCode();
             }
-            
-            if(mandatoryErrorMsg != null || invalidAccessMsg != null) {
-                cdr.setRejectReason( (mandatoryErrorMsg != null ? mandatoryErrorMsg : "" ) + (invalidAccessMsg != null ? invalidAccessMsg : ""));
+            if(cdrService.checkDuplicateCDR(cdr.getOriginRecord())) {
+                duplicateCdr = "Duplicate CDR";
+            }
+            if(mandatoryErrorMsg != null || invalidAccessMsg != null || invalidAccessMsg != null) {
+                cdr.setRejectReason( (mandatoryErrorMsg != null ? mandatoryErrorMsg : "" ) + (invalidAccessMsg != null ? invalidAccessMsg : "") + (invalidAccessMsg != null ? invalidAccessMsg : ""));
                 cdr.setStatus(CDRStatusEnum.ERROR);
                 cdr.setStatusDate(new Date());
                 cdr.setLine(cdr.toCsv());
@@ -660,8 +663,6 @@ public class MediationApiService {
                 cdrErrorDtos.add(new CdrErrorDto(cdr.toCsv(), cdr.getRejectReason()));
             }
             
-            cdrService.create(cdr);
-            ids.add(ImmutableResource.builder().id(cdr.getId()).build());
             
             if(cdr.getRejectReason() != null) {
                 if(mode == STOP_ON_FIRST_FAIL) {
@@ -670,6 +671,8 @@ public class MediationApiService {
                     throw new BusinessException(cdr.getRejectReason());
                 }
             }
+            cdrService.create(cdr);
+            ids.add(ImmutableResource.builder().id(cdr.getId()).build());
         }
         if(returnCDRs)
             cdrDtoResponse.addAllCdrs(ids);
@@ -857,6 +860,57 @@ public class MediationApiService {
         Builder cdrDtoResponse = ImmutableCdrDtoResponse.builder();
         if(returnCDRs)
             cdrDtoResponse.addAllCdrs(ids);
+        if(returnError)
+            cdrDtoResponse.addAllErrors(cdrErrorDtos);
+        
+        return cdrDtoResponse.build();
+    }
+    
+    public void deleteCdr(Long cdrId) {
+        CDR cdr = Optional.ofNullable(cdrService.findById(cdrId)).orElseThrow(() -> new EntityDoesNotExistsException(CDR.class, cdrId));
+        var statusToBeDeleted = Arrays.asList(CDRStatusEnum.OPEN, CDRStatusEnum.TO_REPROCESS, CDRStatusEnum.ERROR, CDRStatusEnum.DISCARDED);
+        if(!statusToBeDeleted.contains(cdr.getStatus())) {
+            throw new BusinessException("Only CDR with status : " + statusToBeDeleted.toString() + " can be deleted");
+        }
+        cdrService.remove(cdr);
+    }
+    
+    public CdrDtoResponse deleteCdrs(List<Long> ids, ProcessCdrListModeEnum mode, boolean returnCDRs, boolean returnError) {
+        List<CdrErrorDto> cdrErrorDtos = new ArrayList<CdrErrorDto>();
+        List<org.meveo.apiv2.models.Resource> returnIds = new ArrayList<>();
+        for (Long id : ids) {
+            CDR cdr = cdrService.findById(id); 
+            if(cdr == null) {
+                CdrErrorDto error = new CdrErrorDto(null, "No CDR found for id : " + id);
+                cdrErrorDtos.add(error);
+                if(mode == STOP_ON_FIRST_FAIL) {
+                    break;
+                }else if (mode == ROLLBACK_ON_ERROR) {
+                    throw new EntityDoesNotExistsException(CDR.class, id);
+                }else {
+                    continue;
+                }
+            }
+            var statusToBeDeleted = Arrays.asList(CDRStatusEnum.OPEN, CDRStatusEnum.TO_REPROCESS, CDRStatusEnum.ERROR, CDRStatusEnum.DISCARDED);
+            if(!statusToBeDeleted.contains(cdr.getStatus())) {
+                var errorMsg = "Only CDR with status : " + statusToBeDeleted.toString() + " can be deleted";
+                CdrErrorDto error = new CdrErrorDto(cdr.toCsv(), errorMsg);
+                cdrErrorDtos.add(error);
+                if(mode == STOP_ON_FIRST_FAIL) {
+                    break;
+                }else if (mode == ROLLBACK_ON_ERROR) {
+                    throw new BusinessException(errorMsg);
+                }else {
+                    continue;
+                }
+            }
+
+            returnIds.add(ImmutableResource.builder().id(cdr.getId()).build());
+            
+        }
+        Builder cdrDtoResponse = ImmutableCdrDtoResponse.builder();
+        if(returnCDRs)
+            cdrDtoResponse.addAllCdrs(returnIds);
         if(returnError)
             cdrDtoResponse.addAllErrors(cdrErrorDtos);
         

@@ -13,6 +13,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.billing.CdrDtoInput;
 import org.meveo.apiv2.billing.CdrDtoResponse;
+import org.meveo.apiv2.billing.CdrListDtoDeletedInput;
 import org.meveo.apiv2.billing.CdrListDtoInput;
 import org.meveo.apiv2.billing.CdrListInput;
 import org.meveo.apiv2.billing.ChargeCdrListInput;
@@ -80,5 +81,16 @@ public class MediationResourceImpl implements MediationResource {
             cdrs.add(cdr);
         }
         return cdrs;
+    }
+
+    @Override
+    public ActionStatus deletCDR(Long id) {
+        mediationApiService.deleteCdr(id);
+        return new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    }
+
+    @Override
+    public CdrDtoResponse deletCDR(CdrListDtoDeletedInput cdrs) {
+        return   mediationApiService.deleteCdrs(cdrs.getCdrs(), cdrs.getMode(), cdrs.getReturnCDRs(), cdrs.getReturnErrors());
     }
 }
