@@ -55,6 +55,7 @@ import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.cpq.Product;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -180,7 +181,8 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     		BigDecimal unitAmountWithoutTax, String discountCode, WalletInstance walletInstance, OfferTemplate offerTemplate, 
     		ServiceInstance serviceInstance, Subscription subscription, String discountDescription, boolean isVirtual, ChargeInstance chargeInstance, WalletOperation walletOperation, DiscountPlanTypeEnum... discountPlanTypeEnum) {
     	List<WalletOperation> discountWalletOperations = new ArrayList<WalletOperation>();
-    	
+    	  int rounding = appProvider.getRounding();
+          RoundingModeEnum roundingMode = appProvider.getRoundingMode();
     	discountPlanItems.sort(Comparator.comparing(DiscountPlanItem::getFinalSequence));
     	
     	if(discountPlanItems != null && !discountPlanItems.isEmpty()) {
@@ -228,7 +230,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     			 
     			walletOperationDiscountAmount = discountPlanItemService.getDiscountAmount(unitAmountWithoutTax, discountPlanItem,product,serviceInstance!=null?new ArrayList<>(serviceInstance.getAttributeInstances()):Collections.emptyList());
     			discountValue=discountPlanItemService.getDiscountAmountOrPercent(null, null, unitAmountWithoutTax, discountPlanItem,product, serviceInstance!=null?new HashSet<>(serviceInstance.getAttributeInstances()):Collections.emptySet());
-    			amounts = NumberUtils.computeDerivedAmounts(walletOperationDiscountAmount, walletOperationDiscountAmount, taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);            	
+    			amounts = NumberUtils.computeDerivedAmounts(walletOperationDiscountAmount, walletOperationDiscountAmount, taxPercent, appProvider.isEntreprise(), rounding, roundingMode.getRoundingMode());            	
     			discountedAmount=discountedAmount!=null?discountedAmount.add(walletOperationDiscountAmount):null;
     			
     		     log.info("calculateDiscountplanItems walletOperationDiscountAmount{},unitAmountWithoutTax{} ,discountValue{} ,discountedAmount{} ",walletOperationDiscountAmount,unitAmountWithoutTax,discountValue,discountedAmount);

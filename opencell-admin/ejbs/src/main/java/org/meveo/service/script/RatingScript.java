@@ -79,7 +79,7 @@ public class RatingScript extends Script {
             RoundingModeEnum roundingMode = appProvider.getRoundingMode();
                 BigDecimal unitPrice = appProvider.isEntreprise()?pricePlan.getAmountWithoutTax():pricePlan.getAmountWithTax();
                 BigDecimal amount = wo.getQuantity().multiply(unitPrice);
-                BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(unitPrice, unitPrice, wo.getTaxPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+                BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(unitPrice, unitPrice, wo.getTaxPercent(), appProvider.isEntreprise(), rounding, roundingMode.getRoundingMode());
                 BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(amount, amount, wo.getTaxPercent(), appProvider.isEntreprise(), rounding, roundingMode.getRoundingMode());
                 wo.setUnitAmountWithoutTax(unitAmounts[0]);
                 wo.setUnitAmountWithTax(unitAmounts[1]);
