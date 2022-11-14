@@ -57,7 +57,7 @@ public class ScriptParameter extends BaseEntity {
     
     @Column(name = "values_separator", length = 20)
     @Size(max = 20)
-    private String valuesSeparator = "|";
+    private String valuesSeparator = "\\|";
     
     @Type(type = "numeric_boolean")
 	@Column(name = "collection")
