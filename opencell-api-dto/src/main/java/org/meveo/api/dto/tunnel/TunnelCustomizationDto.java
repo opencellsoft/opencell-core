@@ -18,16 +18,14 @@
 
 package org.meveo.api.dto.tunnel;
 
-import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.subscriptionTunnel.ContactMethodEnum;
-import org.meveo.model.subscriptionTunnel.ElectronicSignature;
-import org.meveo.model.subscriptionTunnel.Theme;
 
-import java.util.ArrayList;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +34,9 @@ import java.util.Map;
  *
  * @author Ilham CHAFIK
  */
-public class TunnelCustomizationDto extends BaseEntityDto {
+@XmlRootElement(name = "TunnelCustomization")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class TunnelCustomizationDto extends BusinessEntityDto {
 
     /** serial version uid. */
     private static final long serialVersionUID = -2250220156985183482L;
@@ -69,19 +69,19 @@ public class TunnelCustomizationDto extends BaseEntityDto {
     private List<ContactMethodEnum> contactMethods;
 
     /** The default billing cycle for tunnel users. */
-    private BillingCycle billingCycle;
+    private String billingCycleCode;
 
     /** The default customer category for tunnel users. */
-    private CustomerCategory customerCategory;
+    private String customerCategoryCode;
 
     /** the theme applied on the tunnel. */
-    private ThemeDto theme;
+    private String themeCode;
 
     /** Is electronic signature feature active. */
     private Boolean isSignatureActive;
 
     /** the chosen electronic signature for the tunnel. */
-    private ElectronicSignatureDto electronicSignature;
+    private String electronicSignatureCode;
 
     /**
      *  Instantiates the Tunnel
@@ -117,8 +117,8 @@ public class TunnelCustomizationDto extends BaseEntityDto {
      * @param signatureMsg message to ask the user to sign
      * @param analytics analytics codes
      * @param contactMethods methods to send notifications to tunnel users
-     * @param theme tunnel theme
-     * @param electronicSignature electronic signature params
+     * @param themeCode tunnel theme
+     * @param electronicSignatureCode electronic signature params
      */
     public TunnelCustomizationDto(List<LanguageDescriptionDto> rgpd,
                                   List<LanguageDescriptionDto> termsAndConditions,
@@ -126,16 +126,16 @@ public class TunnelCustomizationDto extends BaseEntityDto {
                                   List<LanguageDescriptionDto> signatureMsg,
                                   Map<String, String> analytics,
                                   List<ContactMethodEnum> contactMethods,
-                                  ThemeDto theme,
-                                  ElectronicSignatureDto electronicSignature) {
+                                  String themeCode,
+                                  String electronicSignatureCode) {
         this.rgpd = rgpd;
         this.termsAndConditions = termsAndConditions;
         this.orderValidationMsg = orderValidationMsg;
         this.signatureMsg = signatureMsg;
         this.analytics = analytics;
         this.contactMethods = contactMethods;
-        this.theme = theme;
-        this.electronicSignature = electronicSignature;
+        this.themeCode = themeCode;
+        this.electronicSignatureCode = electronicSignatureCode;
     }
 
     /**
@@ -148,11 +148,11 @@ public class TunnelCustomizationDto extends BaseEntityDto {
      * @param isContractActive is contract active
      * @param mandateContract the mandate contract
      * @param contactMethods methods to send notifications to tunnel users
-     * @param billingCycle the default billing cycle
-     * @param customerCategory the default customer category
-     * @param theme tunnel theme
+     * @param billingCycleCode the default billing cycle
+     * @param customerCategoryCode the default customer category
+     * @param themeCode tunnel theme
      * @param isSignatureActive is signature active
-     * @param electronicSignature electronic signature params
+     * @param electronicSignatureCode electronic signature params
      */
     public TunnelCustomizationDto(List<LanguageDescriptionDto> rgpd,
                                   List<LanguageDescriptionDto> termsAndConditions,
@@ -162,11 +162,11 @@ public class TunnelCustomizationDto extends BaseEntityDto {
                                   Boolean isContractActive,
                                   String mandateContract,
                                   List<ContactMethodEnum> contactMethods,
-                                  BillingCycle billingCycle,
-                                  CustomerCategory customerCategory,
-                                  ThemeDto theme,
+                                  String billingCycleCode,
+                                  String customerCategoryCode,
+                                  String themeCode,
                                   Boolean isSignatureActive,
-                                  ElectronicSignatureDto electronicSignature) {
+                                  String electronicSignatureCode) {
         this.rgpd = rgpd;
         this.termsAndConditions = termsAndConditions;
         this.orderValidationMsg = orderValidationMsg;
@@ -175,11 +175,11 @@ public class TunnelCustomizationDto extends BaseEntityDto {
         this.isContractActive = isContractActive;
         this.mandateContract = mandateContract;
         this.contactMethods = contactMethods;
-        this.billingCycle = billingCycle;
-        this.customerCategory = customerCategory;
-        this.theme = theme;
+        this.billingCycleCode = billingCycleCode;
+        this.customerCategoryCode = customerCategoryCode;
+        this.themeCode = themeCode;
         this.isSignatureActive = isSignatureActive;
-        this.electronicSignature = electronicSignature;
+        this.electronicSignatureCode = electronicSignatureCode;
     }
 
     /**
@@ -329,50 +329,50 @@ public class TunnelCustomizationDto extends BaseEntityDto {
 
     /**
      *
-     * @return billingCycle
+     * @return billingCycleCode
      */
-    public BillingCycle getBillingCycle() {
-        return billingCycle;
+    public String getBillingCycleCode() {
+        return billingCycleCode;
     }
 
     /**
      *
-     * @param billingCycle the default billing cycle
+     * @param billingCycleCode the default billing cycle
      */
-    public void setBillingCycle(BillingCycle billingCycle) {
-        this.billingCycle = billingCycle;
+    public void setBillingCycleCode(String billingCycleCode) {
+        this.billingCycleCode = billingCycleCode;
     }
 
     /**
      *
-     * @return customerCategory
+     * @return customerCategoryCode
      */
-    public CustomerCategory getCustomerCategory() {
-        return customerCategory;
+    public String getCustomerCategoryCode() {
+        return customerCategoryCode;
     }
 
     /**
      *
-     * @param customerCategory the customer category
+     * @param customerCategoryCode the customer category
      */
-    public void setCustomerCategory(CustomerCategory customerCategory) {
-        this.customerCategory = customerCategory;
+    public void setCustomerCategoryCode(String customerCategoryCode) {
+        this.customerCategoryCode = customerCategoryCode;
     }
 
     /**
-     * Gets the tunnel theme.
-     * @return theme
+     * Gets the tunnel theme code.
+     * @return themeCode
      */
-    public ThemeDto getTheme() {
-        return theme;
+    public String getThemeCode() {
+        return themeCode;
     }
 
     /**
      * Sets the tunnel theme.
-     * @param theme the tunnel theme
+     * @param themeCode the tunnel theme
      */
-    public void setTheme(ThemeDto theme) {
-        this.theme = theme;
+    public void setTheme(String themeCode) {
+        this.themeCode = themeCode;
     }
 
     /**
@@ -392,18 +392,18 @@ public class TunnelCustomizationDto extends BaseEntityDto {
     }
 
     /**
-     * Gets the electronic signature.
-     * @return electronicSignature
+     * Gets the electronic signature code.
+     * @return electronicSignatureCode code
      */
-    public ElectronicSignatureDto getElectronicSignature() {
-        return electronicSignature;
+    public String getElectronicSignatureCode() {
+        return electronicSignatureCode;
     }
 
     /**
      * Sets the electronic signature.
-     * @param electronicSignature the electronic signature
+     * @param electronicSignatureCode the electronic signature
      */
-    public void setElectronicSignature(ElectronicSignatureDto electronicSignature) {
-        this.electronicSignature = electronicSignature;
+    public void setElectronicSignatureCode(String electronicSignatureCode) {
+        this.electronicSignatureCode = electronicSignatureCode;
     }
 }

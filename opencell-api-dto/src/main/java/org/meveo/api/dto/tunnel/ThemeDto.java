@@ -18,8 +18,19 @@
 
 package org.meveo.api.dto.tunnel;
 
+import org.meveo.api.dto.BusinessEntityDto;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * @author Ilham CHAFIK
  */
-public class ThemeDto {
+@XmlRootElement(name = "Theme")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class ThemeDto extends BusinessEntityDto {
+
+    /** serial version uid. */
+    private static final long serialVersionUID = 475958204852585405L;
 }
