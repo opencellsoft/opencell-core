@@ -8373,4 +8373,26 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
 	</changeSet>
 
+	<changeSet id="#INTRD-11328_20221110" author="aelmalki">
+		<insert tableName="crm_custom_field_tmpl">
+			<column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="cleanAppliedRateInvoice"/>
+			<column name="applies_to" value="JobInstance_AutoUpdateCurrentRateJob"/>
+			<column name="description" value="Clean Invoice applied rate"/>
+			<column name="field_type" value="BOOLEAN"/>
+			<column name="storage_type" value="SINGLE"/>
+			<column name="value_required" value="0"/>
+			<column name="default_value" value="0"/>
+			<column name="creator" value="applicationInitializer"/>
+			<column name="gui_position" value="tab:Configuration:0;field:0"/>
+		</insert>
+		<update tableName="meveo_job_instance">
+			<column name="cf_values" value='{"cleanAppliedRateInvoice": [{"boolean": false}]}' />
+			<where> code='AutoUpdateCurrentRateJob_Job'</where>
+		</update>
+	</changeSet>
+
 </databaseChangeLog>
