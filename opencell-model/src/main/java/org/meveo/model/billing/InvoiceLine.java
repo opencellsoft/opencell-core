@@ -5,6 +5,7 @@ import static java.math.BigDecimal.ZERO;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
+import static org.meveo.model.billing.AdjustmentStatusEnum.NOT_ADJUSTED;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -115,8 +116,11 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 		@NamedQuery(name = "InvoiceLine.updateTaxForRateTaxMode", query = "UPDATE InvoiceLine il SET il.tax= null WHERE il.id in (:invoiceLinesIds)"),
         @NamedQuery(name = "InvoiceLine.moveToQuarantineBRByInvoiceIds", query = "update InvoiceLine il set il.billingRun=:billingRun where il.invoice.id in (:invoiceIds)"),
         @NamedQuery(name = "InvoiceLine.listByAssociatedInvoice", query = "SELECT il.id FROM InvoiceLine il where il.invoice.id in (:invoiceIds)"),
-        @NamedQuery(name = "InvoiceLine.sumAmountByOpenOrderNumberAndBA", query = "SELECT SUM(il.amountWithTax) FROM InvoiceLine il WHERE il.status = 'BILLED' AND il.openOrderNumber = :openOrderNumber AND il.billingAccount.id = :billingAccountId")
-
+        @NamedQuery(name = "InvoiceLine.sumAmountByOpenOrderNumberAndBA", query = "SELECT SUM(il.amountWithTax) FROM InvoiceLine il WHERE il.status = 'BILLED' AND il.openOrderNumber = :openOrderNumber AND il.billingAccount.id = :billingAccountId"),
+        @NamedQuery(name = "InvoiceLine.findByIdsAndAdjustmentStatus", query = "SELECT il from InvoiceLine il WHERE adjustment_status = :status and il.id in (:invoiceLinesIds)"),
+        @NamedQuery(name = "InvoiceLine.findByIdsAndOtherAdjustmentStatus", query = "SELECT il from InvoiceLine il WHERE adjustment_status <> :status and il.id in (:invoiceLinesIds)")
+		
+		
 	})
 public class InvoiceLine extends AuditableCFEntity {
 
@@ -269,6 +273,11 @@ public class InvoiceLine extends AuditableCFEntity {
     @JoinColumn(name = "discount_plan_item_id")
     private DiscountPlanItem discountPlanItem;
     
+    @Enumerated(EnumType.STRING)
+	@Column(name = "adjustment_status", nullable = false)
+	@NotNull
+	private AdjustmentStatusEnum adjustmentStatus = NOT_ADJUSTED;
+    
     /**
    	 * 
    	 *filled only for price lines related to applied discounts, and contains the application sequence composed by the concatenation of the DP sequence and DPI sequence
@@ -401,6 +410,7 @@ public class InvoiceLine extends AuditableCFEntity {
 		this.taxRecalculated = copy.taxRecalculated;
 		this.taxMode = copy.taxMode;
 		this.status = InvoiceLineStatusEnum.OPEN;
+		this.adjustmentStatus = copy.adjustmentStatus;
 	}
 
 	public Invoice getInvoice() {
@@ -822,6 +832,14 @@ public class InvoiceLine extends AuditableCFEntity {
 
 	public void setSequence(Integer sequence) {
 		this.sequence = sequence;
+	}
+
+	public AdjustmentStatusEnum getAdjustmentStatus() {
+		return adjustmentStatus;
+	}
+
+	public void setAdjustmentStatus(AdjustmentStatusEnum adjustmentStatus) {
+		this.adjustmentStatus = adjustmentStatus;
 	}
 
 	@PrePersist

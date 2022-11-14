@@ -29,7 +29,7 @@ public class AutoUpdateCurrentRateJobBean extends BaseJobBean {
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        checkFunctionalCurrency(); // US INTRD-8094
+        checkFunctionalCurrency(jobExecutionResult); // US INTRD-8094
 
         List<Long> listExchangeRateId = exchangeRateService.getAllTradingCurrencyWithCurrentRate();
 
@@ -59,8 +59,9 @@ public class AutoUpdateCurrentRateJobBean extends BaseJobBean {
 
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void checkFunctionalCurrency() {
-        tradingCurrencyService.checkFunctionalCurrency();
+    public void checkFunctionalCurrency(JobExecutionResultImpl jobExecutionResult) {
+        Boolean isCleanAppliedRateInvoice = (Boolean) this.getParamOrCFValue(jobExecutionResult.getJobInstance(), "cleanAppliedRateInvoice");
+        tradingCurrencyService.checkFunctionalCurrency(isCleanAppliedRateInvoice != null && isCleanAppliedRateInvoice);
     }
 
 }

@@ -72,34 +72,70 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 		createSubAccountingPeriodsByType(ap, type, startDateTime, endDateTime);
 	}
 
-	private void createSubAccountingPeriodsByType(AccountingPeriod ap, SubAccountingPeriodTypeEnum type,
+	private void createSubAccountingPeriodsByType(AccountingPeriod accountingPeriod, SubAccountingPeriodTypeEnum type,
 												  LocalDateTime startDateTime, LocalDateTime endDate) {
+
 		final int numberOfPeriodsPerYear = type.getNumberOfPeriodsPerYear();
 		final int monthsPerPeriod = 12 / numberOfPeriodsPerYear;
 		int number = 1;
-		LocalDate now = startDateTime == null ? LocalDate.now() : startDateTime.toLocalDate();
-		int currentYear = now.getYear();
-		LocalDateTime startDatePeriod = now.withYear(currentYear).withDayOfYear(1).atStartOfDay();
-		LocalDateTime endDatePeriod = startDatePeriod.toLocalDate()
-				.plusMonths(monthsPerPeriod)
-				.minusDays(1)
-				.with(TemporalAdjusters.lastDayOfMonth())
-				.atTime(MAX);
-		while (!endDatePeriod.isAfter(endDate)) {
-			if (!endDatePeriod.isBefore(now.atTime(MAX))) {
-				createSubAccPeriod(ap, startDatePeriod, endDatePeriod, number);
-				number ++;
+
+		LocalDate fiscalYearStartDate = endDate != null ? endDate.minusYears(1).plusDays(1).toLocalDate() : startDateTime.toLocalDate();
+		int currentYear = fiscalYearStartDate.getYear();
+
+		LocalDateTime startDatePeriod = fiscalYearStartDate.withYear(currentYear).atStartOfDay();
+		LocalDateTime endDatePeriod = calculateInitialEndDatePeriod(monthsPerPeriod, startDatePeriod, endDate);
+
+		while (!endDatePeriod.isAfter(endDate) || endDatePeriod.isEqual(endDate.toLocalDate().atStartOfDay())) {
+			if (!endDatePeriod.isBefore(fiscalYearStartDate.atTime(MAX))) {
+				createSubAccountingPeriod(accountingPeriod, startDatePeriod, endDatePeriod, number);
+				number++;
 			}
 			//next period
 			startDatePeriod = endDatePeriod.plusDays(1).toLocalDate().atStartOfDay();
-			endDatePeriod = startDatePeriod.toLocalDate()
-					.plusMonths(monthsPerPeriod)
-					.minusDays(1).with(TemporalAdjusters.lastDayOfMonth())
-					.atTime(MAX);
+			endDatePeriod = calculateNextEndDatePeriod(monthsPerPeriod, endDatePeriod, endDate);
 		}
 	}
 
-	private void createSubAccPeriod(AccountingPeriod ap, LocalDateTime startDate, LocalDateTime endDate, int number) {
+	private static LocalDateTime calculateNextEndDatePeriod(int monthsPerPeriod, LocalDateTime endDatePeriod, LocalDateTime endDate) {
+
+		return isEndDateEndOfTheMonth(endDate) ?
+
+				endDatePeriod.toLocalDate()
+						.plusMonths(monthsPerPeriod)
+						.with(TemporalAdjusters.lastDayOfMonth())
+						.atStartOfDay() :
+
+				endDatePeriod.toLocalDate()
+						.plusMonths(monthsPerPeriod)
+						.atStartOfDay();
+
+	}
+
+	private static LocalDateTime calculateInitialEndDatePeriod(int monthsPerPeriod, LocalDateTime startDatePeriod, LocalDateTime endDate) {
+
+		return  isEndDateEndOfTheMonth(endDate) ?
+
+				startDatePeriod.toLocalDate()
+						.plusMonths(monthsPerPeriod)
+						.minusDays(1)
+						.with(TemporalAdjusters.lastDayOfMonth())
+						.atStartOfDay() :
+
+				startDatePeriod.toLocalDate()
+						.plusMonths(monthsPerPeriod)
+						.minusDays(1)
+						.atStartOfDay();
+	}
+
+	private static boolean isEndDateEndOfTheMonth(LocalDateTime endDate) {
+
+		LocalDate endDateLocalDate = endDate.toLocalDate();
+
+		return endDateLocalDate.withDayOfMonth(
+				endDate.getMonth().length(endDate.toLocalDate().isLeapYear())).equals(endDateLocalDate);
+	}
+
+	private void createSubAccountingPeriod(AccountingPeriod ap, LocalDateTime startDate, LocalDateTime endDate, int number) {
 		SubAccountingPeriod subAccountingPeriod = new SubAccountingPeriod();
 		subAccountingPeriod.setAccountingPeriod(ap);
 		subAccountingPeriod.setStartDate(Date.from(startDate.atZone(ZoneId.systemDefault()).toInstant()));
