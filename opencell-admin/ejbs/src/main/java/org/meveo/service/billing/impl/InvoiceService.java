@@ -3789,6 +3789,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             addApplicableDiscount(billingAccountApplicableDiscountPlanItems,  subscription.getDiscountPlanInstances(), billingAccount, customerAccount, invoice);
         }
 
+        BigDecimal otherDiscount = ZERO;
         // Construct discount and tax aggregates
         for (SubCategoryInvoiceAgregate scAggregate : subCategoryAggregates) {
 
@@ -3811,6 +3812,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (discountAggregate != null) {
                     addAmountsToMap(amountCumulativeForTax, discountAggregate.getAmountsByTax());
                     discountAggregates.add(discountAggregate);
+                    otherDiscount = otherDiscount.add(discountAggregate.getAmountWithoutTax().abs());
                 }
             }
 
@@ -3820,6 +3822,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (discountAggregate != null) {
                     addAmountsToMap(amountCumulativeForTax, discountAggregate.getAmountsByTax());
                     discountAggregates.add(discountAggregate);
+                    otherDiscount = otherDiscount.add(discountAggregate.getAmountWithoutTax().abs());
                 }
             }
 
@@ -3905,6 +3908,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     .map(InvoiceLine::getDiscountAmount)
                     .reduce(BigDecimal::add)
                     .orElse(BigDecimal.ZERO);
+            amountDiscount = amountDiscount.add(otherDiscount);
             if(!amountDiscount.equals(BigDecimal.ZERO)) {
                 invoice.setDiscountAmount(amountDiscount);
                 invoice.setAmountWithoutTaxBeforeDiscount(invoice.getAmountWithoutTax().add(amountDiscount));
