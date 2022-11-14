@@ -20,7 +20,7 @@ package org.meveo.model.subscriptionTunnel;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -31,10 +31,10 @@ import java.util.Date;
  * @author Mohamed Chaouki
  */
 @Entity
-@Table(name = "tnl_theme")
+@Table(name = "tnl_theme", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "tnl_theme_seq"),})
-public class Theme extends BaseEntity {
+public class Theme extends BusinessEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;
 
@@ -51,6 +51,7 @@ public class Theme extends BaseEntity {
     private CustomStyle footer;
 
     @Column(name = "created_on")
+    @Temporal(TemporalType.DATE)
     private Date createdOn;
 
 

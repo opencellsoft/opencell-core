@@ -21,11 +21,10 @@ package org.meveo.model.subscriptionTunnel;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,7 +36,7 @@ import java.util.Map;
 @Table(name = "tnl_hypertext_section")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "tnl_hypertext_section_seq"),})
-public class HypertextSection extends BaseEntity {
+public class HypertextSection extends BusinessEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;
 
@@ -49,7 +48,7 @@ public class HypertextSection extends BaseEntity {
     private Map<String, String> label;
 
     @OneToMany(mappedBy = "hypertextSection", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private ArrayList<HypertextLink> links = new ArrayList<HypertextLink>();
+    private List<HypertextLink> links;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "custom_style_id")
@@ -63,11 +62,11 @@ public class HypertextSection extends BaseEntity {
         this.label = label;
     }
 
-    public ArrayList<HypertextLink> getLinks() {
+    public List<HypertextLink> getLinks() {
         return links;
     }
 
-    public void setLinks(ArrayList<HypertextLink> links) {
+    public void setLinks(List<HypertextLink> links) {
         this.links = links;
     }
 

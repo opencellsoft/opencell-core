@@ -21,10 +21,9 @@ package org.meveo.model.subscriptionTunnel;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 
 import javax.persistence.*;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -36,7 +35,7 @@ import java.util.Map;
 @Table(name = "tnl_hypertext_link")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "tnl_hypertext_link_seq"),})
-public class HypertextLink extends BaseEntity {
+public class HypertextLink extends BusinessEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;
 

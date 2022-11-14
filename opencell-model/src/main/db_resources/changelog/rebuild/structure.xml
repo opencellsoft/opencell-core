@@ -18661,6 +18661,7 @@
         <createSequence sequenceName="tnl_hypertext_link_seq" startValue="1"/>
         <createSequence sequenceName="tnl_electronic_signature_seq" startValue="1"/>
     </changeSet>
+
     <changeSet id="create_tables_tunnel-04112022"  author="mohamedCHAOUKI">
         <createTable tableName="tnl_payment_method">
             <column name="tunnel_id" type="bigint" />
@@ -18672,17 +18673,31 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="tnl_customization_pkey" />
             </column>
             <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
             <column name="rgpd" type="${type.json}" />
             <column name="terms_conditions" type="${type.json}" />
             <column name="order_validation_msg" type="${type.json}" />
             <column name="signature_msg" type="${type.json}" />
             <column name="analytics" type="${type.json}" />
-            <column name="contract_active" type="${type.boolean}" />
+            <column name="contract_active" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="mandate_contract" type="varchar(255)" />
             <column name="billing_cycle_id" type="bigint" />
             <column name="customer_category_id" type="bigint" />
             <column name="theme_id" type="bigint" />
-            <column name="signature_active" type="${type.boolean}" />
+            <column name="signature_active" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="electronic_signature_id" type="bigint" />
         </createTable>
 
@@ -18696,7 +18711,18 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="tnl_electronic_signature_pkey" />
             </column>
             <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
             <column name="electronic_signature" type="varchar(255)" />
+            <column name="label" type="varchar(255)" />
             <column name="signature_api" type="varchar(255)" />
             <column name="popup_url" type="varchar(255)" />
             <column name="signature_status_api" type="varchar(255)" />
@@ -18708,6 +18734,16 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="tnl_theme_pkey" />
             </column>
             <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
             <column name="header" type="bigint" />
             <column name="body" type="bigint" />
             <column name="footer" type="bigint" />
@@ -18719,6 +18755,16 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="tnl_custom_style_pkey" />
             </column>
             <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
             <column name="logo" type="varchar(255)" />
             <column name="fav_icon" type="varchar(255)" />
             <column name="font" type="varchar(255)" />
@@ -18735,6 +18781,16 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="tnl_hypertext_section_pkey" />
             </column>
             <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
             <column name="label" type="${type.json}" />
             <column name="custom_style_id" type="bigint" />
         </createTable>
@@ -18744,6 +18800,16 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="tnl_hypertext_link_pkey" />
             </column>
             <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
             <column name="label" type="${type.json}" />
             <column name="url" type="varchar(255)" />
             <column name="icon" type="varchar(255)" />

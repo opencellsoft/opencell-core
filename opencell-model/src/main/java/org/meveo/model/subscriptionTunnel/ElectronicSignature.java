@@ -20,7 +20,7 @@ package org.meveo.model.subscriptionTunnel;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 
 import javax.persistence.*;
 
@@ -30,16 +30,19 @@ import javax.persistence.*;
  * @author Mohamed Chaouki
  */
 @Entity
-@Table(name = "tnl_electronic_signature")
+@Table(name = "tnl_electronic_signature", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "tnl_electronic_signature_seq"),})
-public class ElectronicSignature extends BaseEntity {
+public class ElectronicSignature extends BusinessEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "electronic_signature")
     private SignatureMethodEnum electronicSignature;
+
+    @Column(name = "label")
+    private String label;
 
     @Column(name = "signature_api")
     private String signatureApi;
@@ -60,6 +63,14 @@ public class ElectronicSignature extends BaseEntity {
 
     public void setElectronicSignature(SignatureMethodEnum electronicSignature) {
         this.electronicSignature = electronicSignature;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     public String getSignatureApi() {

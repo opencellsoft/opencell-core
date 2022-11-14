@@ -21,11 +21,10 @@ package org.meveo.model.subscriptionTunnel;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,7 +36,7 @@ import java.util.Map;
 @Table(name = "tnl_custom_style")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "tnl_custom_style_seq"),})
-public class CustomStyle extends BaseEntity {
+public class CustomStyle extends BusinessEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;
 
@@ -70,7 +69,7 @@ public class CustomStyle extends BaseEntity {
     private String secondaryColor;
 
     @OneToMany(mappedBy = "customStyle", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private ArrayList<HypertextSection> hypertextSections = new ArrayList<HypertextSection>();
+    private List<HypertextSection> hypertextSections;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
@@ -141,11 +140,11 @@ public class CustomStyle extends BaseEntity {
         this.secondaryColor = secondaryColor;
     }
 
-    public ArrayList<HypertextSection> getHypertextSections() {
+    public List<HypertextSection> getHypertextSections() {
         return hypertextSections;
     }
 
-    public void setHypertextSections(ArrayList<HypertextSection> hypertextSections) {
+    public void setHypertextSections(List<HypertextSection> hypertextSections) {
         this.hypertextSections = hypertextSections;
     }
 

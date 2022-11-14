@@ -23,7 +23,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Cache;
-import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -39,10 +39,10 @@ import java.util.Map;
  * @author Mohamed Chaouki
  */
 @Entity
-@Table(name = "tnl_customization")
+@Table(name = "tnl_customization", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "tnl_customization_seq"),})
-public class TunnelCustomization extends BaseEntity {
+public class TunnelCustomization extends BusinessEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;
 
@@ -90,7 +90,7 @@ public class TunnelCustomization extends BaseEntity {
 
     @Type(type = "numeric_boolean")
     @Column(name = "contract_active", nullable = false)
-    private Boolean isContractActive;
+    private Boolean isContractActive=Boolean.FALSE;
 
     @Column(name = "mandate_contract")
     private String mandateContract;
@@ -116,7 +116,7 @@ public class TunnelCustomization extends BaseEntity {
 
     @Type(type = "numeric_boolean")
     @Column(name = "signature_active", nullable = false)
-    private Boolean isSignatureActive;
+    private Boolean isSignatureActive=Boolean.FALSE;;
 
     @OneToOne
     @JoinColumn(name="electronic_signature_id")
