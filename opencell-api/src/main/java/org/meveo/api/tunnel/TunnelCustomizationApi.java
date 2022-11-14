@@ -19,17 +19,21 @@
 package org.meveo.api.tunnel;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseApi;
 import org.meveo.api.BaseCrudApi;
-import org.meveo.api.dto.BillingCycleDto;
 import org.meveo.api.dto.tunnel.TunnelCustomizationDto;
+import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
-import org.meveo.model.billing.BillingCycle;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.subscriptionTunnel.TunnelCustomization;
+import org.meveo.service.billing.impl.BillingCycleService;
+import org.meveo.service.crm.impl.CustomerCategoryService;
+import org.meveo.service.tunnel.ElectronicSignatureService;
+import org.meveo.service.tunnel.ThemeService;
+import org.meveo.service.tunnel.TunnelCustomizationService;
 
 import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
+import javax.inject.Inject;
 
 /**
  * @author Ilham CHAFIK
@@ -37,25 +41,68 @@ import javax.interceptor.Interceptors;
 @Stateless
 public class TunnelCustomizationApi extends BaseCrudApi<TunnelCustomization, TunnelCustomizationDto> {
 
+    @Inject
+    private TunnelCustomizationService tunnelCustomizationService;
+
+    @Inject
+    private ThemeService themeService;
+
+    @Inject
+    private ElectronicSignatureService signatureService;
+
+    @Inject
+    private BillingCycleService billingCycleService;
+
+    @Inject
+    private CustomerCategoryService customerCategoryService;
 
     @Override
-    public TunnelCustomization create(TunnelCustomizationDto dtoData) throws MeveoApiException, BusinessException {
-        return null;
+    public TunnelCustomization create(TunnelCustomizationDto postData) throws MeveoApiException, BusinessException {
+        if (StringUtils.isBlank(postData.getCode())) {
+            addGenericCodeIfAssociated(TunnelCustomization.class.getName(), postData);
+        }
+
+        if (tunnelCustomizationService.findByCode(postData.getCode()) != null) {
+            throw new EntityAlreadyExistsException(TunnelCustomization.class, postData.getCode());
+        }
+
+        TunnelCustomization entity = new TunnelCustomization();
+
+        dtoToEntity(postData, entity);
+        tunnelCustomizationService.create(entity);
+
+        return entity;
     }
 
     @Override
-    public TunnelCustomization update(TunnelCustomizationDto dtoData) throws MeveoApiException, BusinessException {
-        return null;
+    public TunnelCustomization update(TunnelCustomizationDto postData) throws MeveoApiException, BusinessException {
+
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+
+        handleMissingParameters();
+
+        TunnelCustomization tunnelCustomization = tunnelCustomizationService.findByCode(postData.getCode());
+        if (tunnelCustomization == null) {
+            throw new EntityDoesNotExistsException(TunnelCustomization.class, postData.getCode());
+        }
+
+        dtoToEntity(postData, tunnelCustomization);
+
+        tunnelCustomizationService.update(tunnelCustomization);
+
+        return tunnelCustomization;
     }
 
     /**
      * Populate entity with fields from DTO entity
      *
-     * @param entity Entity to populate
      * @param dto DTO entity object to populate from
+     * @param entity Entity to populate
      **/
-    private void dtoToEntity(TunnelCustomization entity, TunnelCustomizationDto dto) {
-
+    private void dtoToEntity(TunnelCustomizationDto dto, TunnelCustomization entity) {
+        entity.setCode(dto.getCode());
         if(dto.getRgpd() != null) {
             entity.setRgpd(convertMultiLanguageToMapOfValues(dto.getRgpd(), null));
         }
@@ -71,8 +118,32 @@ public class TunnelCustomizationApi extends BaseCrudApi<TunnelCustomization, Tun
         if (dto.getAnalytics() != null) {
             entity.setAnalytics(dto.getAnalytics());
         }
-        if (dto.getTheme() != null) {
-
+        if (dto.getPaymentMethods() != null) {
+            entity.setPaymentMethods(dto.getPaymentMethods());
+        }
+        if (dto.getContractActive() != null) {
+            entity.setContractActive(dto.getContractActive());
+        }
+        if (dto.getMandateContract() != null) {
+            entity.setMandateContract(dto.getMandateContract());
+        }
+        if (dto.getContactMethods() != null) {
+            entity.setContactMethods(dto.getContactMethods());
+        }
+        if (dto.getBillingCycleCode() != null) {
+            entity.setBillingCycle(billingCycleService.findByCode(dto.getBillingCycleCode()));
+        }
+        if (dto.getCustomerCategoryCode() != null) {
+            entity.setCustomerCategory(customerCategoryService.findByCode(dto.getCustomerCategoryCode()));
+        }
+        if (dto.getThemeCode() != null) {
+            entity.setTheme(themeService.findByCode(dto.getThemeCode()));
+        }
+        if (dto.getSignatureActive() != null) {
+            entity.setSignatureActive(dto.getSignatureActive());
+        }
+        if (dto.getElectronicSignatureCode() != null) {
+            entity.setElectronicSignature(signatureService.findByCode(dto.getElectronicSignatureCode()));
         }
     }
 }
