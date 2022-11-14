@@ -301,7 +301,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
             
             CreatePaymentResponse response = getClient().merchant(paymentGateway.getMarchandId()).payments().create(body);
             
-            if (response != null) {
+            if (response != null && response.getPayment() != null) {
             	log.info("doPayment RESPONSE :"+marshaller.marshal(response));
               
                 doPaymentResponseDto.setPaymentID(response.getPayment().getId());
@@ -309,10 +309,10 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
                 if (response.getCreationOutput() != null) {
                     doPaymentResponseDto.setTransactionId(response.getCreationOutput().getExternalReference());
                     doPaymentResponseDto.setTokenId(response.getCreationOutput().getToken());
-                    doPaymentResponseDto.setNewToken(response.getCreationOutput().getIsNewToken());
+                    doPaymentResponseDto.setNewToken(response.getCreationOutput().getIsNewToken() == null ? false : response.getCreationOutput().getIsNewToken());
                 }
                 Payment payment = response.getPayment();
-                if (payment != null && response.getPayment().getStatusOutput().getErrors() != null) {
+                if (response.getPayment().getStatusOutput() != null && response.getPayment().getStatusOutput().getErrors() != null) {
                     PaymentStatusOutput statusOutput = payment.getStatusOutput();
                     if (statusOutput != null) {
                         List<APIError> errors = statusOutput.getErrors();
