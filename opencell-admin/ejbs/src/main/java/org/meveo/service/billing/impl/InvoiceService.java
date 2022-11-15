@@ -2509,7 +2509,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public void generateRecordedInvoiceAO(Long invoiceId) throws InvoiceExistException, ImportInvoiceException, BusinessException {
 
         Invoice invoice = findById(invoiceId);
-        recordedInvoiceService.generateRecordedInvoice(invoice);
+        recordedInvoiceService.generateRecordedInvoice(invoice, null);
         update(invoice);
     }
 
