@@ -2079,7 +2079,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (invoice.isPrepaid()) {
             throw new BusinessException("Invoice XML is disabled for prepaid invoice: " + invoice.getInvoiceNumber());
         }
-
+        if(InvoiceStatusEnum.DRAFT.equals(invoice.getStatus()) || InvoiceStatusEnum.NEW.equals(invoice.getStatus()) || InvoiceStatusEnum.DRAFT.equals(invoice.getStatus()) ){
+    		produceInvoiceXmlNoUpdate(invoice, true);
+    	}
         String xmlFileName = getFullXmlFilePath(invoice, false);
         File xmlFile = new File(xmlFileName);
         if (!xmlFile.exists()) {
@@ -4808,6 +4810,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setNetToPay(amountWithTax);
         Date dueDate = calculateDueDate(invoice, billingAccount.getBillingCycle(), billingAccount, billingAccount.getCustomerAccount(), order);
         invoice.setDueDate(dueDate);
+        setInitialCollectionDate(invoice, billingAccount.getBillingCycle(), null);
         invoice.setSeller(billingAccount.getCustomerAccount().getCustomer().getSeller());
         invoice.setStatus(InvoiceStatusEnum.NEW);
         return invoice;
@@ -5204,7 +5207,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         invoiceAgregateService.create(subAggregate);
                     }
 
-                    setInvoiceDueDate(invoice, invoiceLinesGroup.getBillingCycle());
+                    if (invoice.getDueDate() == null) {
+                        setInvoiceDueDate(invoice, invoiceLinesGroup.getBillingCycle());
+                    }
+                    setInitialCollectionDate(invoice, invoiceLinesGroup.getBillingCycle(), billingRun);
 
                     EntityManager em = getEntityManager();
                     invoice.setNewInvoicingProcess(true);
@@ -5313,6 +5319,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         boolean isAggregateByUA = paramBeanFactory.getInstance().getPropertyAsBoolean("invoice.agregateByUA", true);
 
+        if(!isAggregateByUA) {
+            isAggregateByUA=billingAccount.getUsersAccounts().size()==1;
+        }
+        
         boolean isEnterprise = appProvider.isEntreprise();
         String languageCode = billingAccount.getTradingLanguage().getLanguageCode();
         Boolean isExonerated = billingAccount.isExoneratedFromtaxes();
@@ -5356,6 +5366,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             Tax tax = invoiceLine.getTax();
             UserAccount userAccount = invoiceLine.getSubscription() == null ? null : invoiceLine.getSubscription().getUserAccount();
 
+            if(userAccount==null) {
+                userAccount=invoiceLine.getBillingAccount().getUsersAccounts().size()==1?invoiceLine.getBillingAccount().getUsersAccounts().get(0):null;
+            }
             // Check if tax has to be recalculated. Does not apply to RatedTransactions that had tax explicitly set/overridden
             if (calculateTaxOnSubCategoryLevel && !invoiceLine.isTaxOverridden()) {
 

@@ -3058,7 +3058,7 @@ public class SubscriptionApi extends BaseApi {
                 	})
                 .collect(Collectors.toList());
 
-        commercialOrderService.processProduct(subscription, product, productDto.getQuantity(), orderAttributes);
+        commercialOrderService.processProduct(subscription, product, productDto.getQuantity(), orderAttributes, null);
 
     }
 

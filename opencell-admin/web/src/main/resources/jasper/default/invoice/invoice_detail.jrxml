@@ -227,6 +227,9 @@
 			</band>
 		</groupHeader>
 	</group>
+	<group name="Group3">
+		<groupExpression><![CDATA[$F{code_line}+$F{unitAmountWithoutTax}]]></groupExpression>
+	</group>
 	<group name="2">
 		<groupExpression><![CDATA[$F{code}+$F{useraccount_code}+$F{unitAmountWithoutTax}+ ((new SimpleDateFormat("dd/MM/yyyy").parse($F{usageDate})).getMonth()+"/"+(new SimpleDateFormat("dd/MM/yyyy").parse($F{usageDate})).getYear())]]></groupExpression>
 		<groupHeader>

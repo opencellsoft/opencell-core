@@ -19,6 +19,7 @@
 package org.meveo.api.invoice;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -546,13 +547,20 @@ public class InvoiceApi extends BaseApi {
      * @throws MissingParameterException missing parameter exception
      * @throws EntityDoesNotExistsException entity does not exist exception
      * @throws BusinessException business exception
+     * @throws IOException 
      */
-    public String validateInvoice(Long invoiceId) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+    public String validateInvoice(Long invoiceId) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, IOException {
         if (StringUtils.isBlank(invoiceId)) {
             missingParameters.add("invoiceId");
         }
         handleMissingParameters();
        Invoice invoice = serviceSingleton.validateAndAssignInvoiceNumber(invoiceId);
+       if (invoiceService.isInvoiceXmlExist(invoice)) {
+           invoiceService.deleteInvoiceXml(invoice);
+       }
+       if (invoiceService.isInvoicePdfExist(invoice)) {
+       	invoiceService.deleteInvoicePdf(invoice);
+       }
         return invoice.getInvoiceNumber();
     }
 

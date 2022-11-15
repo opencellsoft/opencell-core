@@ -1477,22 +1477,20 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         Map<String, Object> params = new HashMap<>();
         params.put("ids", ratedTransactionIds);
         String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration, " rt.usageDate");
-
-        String query = "SELECT  string_agg(concat(rt.id, ''), ',') as rated_transaction_ids, rt.billing_account__id, "
-                + "              rt.accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, "
-                + "              sum(rt.amount_without_tax) as sum_amount_without_tax,"
-                + "              sum(rt.amount_with_tax) / sum(rt.quantity) as unit_price,"
-                + "              rt.amount_without_tax, rt.amount_with_tax, rt.offer_id, "
-                + 			usageDateAggregation+", min(rt.start_date) as start_date, "
-                + "              max(rt.end_date) as end_date, rt.order_number, rt.tax_percent, rt.tax_id, "
-                + "              rt.order_id, rt.product_version_id, rt.order_lot_id, rt.article_id "
-                + "    FROM billing_rated_transaction rt WHERE id in (:ids) "
-                + "    GROUP BY rt.billing_account__id, rt.accounting_code_id, rt.description, "
-                + "             rt.offer_id, "+usageDateAggregation+", rt.start_date, "
-                + "             rt.end_date, rt.order_number, rt.tax_percent, rt.tax_id, "
-                + "             rt.order_id, rt.product_version_id, rt.order_lot_id, rt.article_id ";
-        return executeNativeSelectQuery(query, params);
-       
+        String query = "SELECT  string_agg(concat(rt.id, ''), ',') as rated_transaction_ids, rt.billingAccount.id as billing_account__id, "
+                + "              rt.accountingCode.id as accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, "
+                + "              sum(rt.amountWithoutTax) as sum_without_tax, sum(rt.amountWithTax) as sum_with_tax, "
+                + "              sum(rt.amountWithTax) / sum(rt.quantity) as unit_price,"
+                + "              rt.offerTemplate.id as offer_id, rt.serviceInstance.id as service_instance_id, "
+                + 				 usageDateAggregation + " as usage_date, min(rt.startDate) as start_date, "
+                + "              max(rt.endDate) as end_date, rt.orderNumber as order_number, rt.taxPercent as tax_percent, rt.tax.id as tax_id, "
+                + "             rt.infoOrder.order.id as order_id, rt.infoOrder.productVersion.id as product_version_id, rt.infoOrder.orderLot.id as order_lot_id, rt.chargeInstance.id as charge_instance_id, rt.accountingArticle.id as accounting_article_id  "
+                + "    FROM RatedTransaction rt WHERE rt.id in (:ids) "
+                + "    GROUP BY rt.billingAccount.id, rt.accountingCode.id, rt.description, "
+                + "             rt.offerTemplate.id, rt.serviceInstance.id, " + usageDateAggregation + ",  "
+                + "             rt.orderNumber, rt.taxPercent, rt.tax.id, "
+                + "             rt.infoOrder.order.id, rt.infoOrder.productVersion.id, rt.infoOrder.orderLot.id, rt.chargeInstance.id, rt.accountingArticle.id ";
+        return getSelectQueryAsMap(query, params);
     }
 
     public int makeAsProcessed(List<Long> ratedTransactionIds) {
@@ -1511,8 +1509,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	}
 
 	public void linkRTsToIL(final List<Long> ratedTransactionsIDs, final Long invoiceLineID) {
-		if (ratedTransactionsIDs.size() > SHORT_MAX_VALUE) {
-			SubListCreator<Long> subLists = new SubListCreator<Long>(ratedTransactionsIDs, (1 + (ratedTransactionsIDs.size() / SHORT_MAX_VALUE)));
+		final int maxValue = ParamBean.getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
+		if (ratedTransactionsIDs.size() > maxValue) {
+			SubListCreator<Long> subLists = new SubListCreator<Long>(ratedTransactionsIDs, (1 + (ratedTransactionsIDs.size() / maxValue)));
 			while (subLists.isHasNext()) {
 				linkRTsWithILByIds(invoiceLineID, subLists.getNextWorkSet());
 			}
@@ -1568,8 +1567,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 "(case when sum(rt.quantity)=0 then sum(rt.amountWithoutTax) else (sum(rt.amountWithoutTax) / sum(rt.quantity)) end) as unit_amount_without_tax, (case when sum(rt.quantity)=0 then sum(rt.amountWithTax) else (sum(rt.amountWithTax) / sum(rt.quantity)) end)  as unit_amount_with_tax," :
                 "rt.unitAmountWithoutTax as unit_amount_without_tax, rt.unitAmountWithTax as unit_amount_with_tax,  ";
         final String unitAmountGroupBy = aggregationConfiguration.isAggregationPerUnitAmount() ? "" : " rt.unitAmountWithoutTax, rt.unitAmountWithTax,  ";
+        
         String query =
-                "SELECT string_agg(concat(rt.id, ''), ',') as rated_transaction_ids, rt.billingAccount.id as billing_account__id, rt.accountingCode.id as accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, "
+                "SELECT string_agg_long(rt.id) as rated_transaction_ids, rt.billingAccount.id as billing_account__id, rt.accountingCode.id as accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, "
                         + unitAmount + " SUM(rt.amountWithoutTax) as sum_without_tax, SUM(rt.amountWithTax) as sum_with_tax, rt.offerTemplate.id as offer_id, "
                         + usageDateAggregation + " as usage_date, min(rt.startDate) as start_date, max(rt.endDate) as end_date, rt.orderNumber as order_number, "
                         + " rt.taxPercent as tax_percent, rt.tax.id as tax_id, "
@@ -1644,4 +1644,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return null;
         }
 	}
+
+    public int detachRTFromSubCatAgg(List<Long> rtIds) {
+        return getEntityManager().createNamedQuery("RatedTransaction.detachRTFromSubCat")
+                .setParameter("rtIds", rtIds)
+                .executeUpdate();
+    }
 }

@@ -114,13 +114,11 @@ public class InvoiceLinesJobBean extends BaseJobBean {
     
     
     /**
-    	 * @param billingRun
-         * @param waitingMillis 
+         * @param waitingMillis
     	 * @param waitingMillis
          * @param jobInstance 
     	 * @param nbRuns
-         * @param jobExecutionResult 
-         * @param jobInstance 
+         * @param jobInstance
          * @param nbRuns 
     	 */
     	private void assignAccountingArticleIfMissingInRTs(JobExecutionResultImpl result, List<? extends IBillableEntity> billableEntities,
@@ -131,7 +129,6 @@ public class InvoiceLinesJobBean extends BaseJobBean {
     
     	/**
     	 * @param result
-    	 * @param billingRun
     	 * @param billableEntity
     	 * @param maxInvoiceLinesPerTransaction
     	 * @return

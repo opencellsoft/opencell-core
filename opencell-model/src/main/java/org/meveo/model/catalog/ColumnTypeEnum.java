@@ -1,17 +1,17 @@
 package org.meveo.model.catalog;
 
-import org.meveo.model.cpq.AttributeValue;
-import org.meveo.model.cpq.QuoteAttribute;
-
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.stream.Stream;
+
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.cpq.AttributeValue;
 
 
 public enum ColumnTypeEnum {
     String {
         @Override
         public boolean valueMatch(PricePlanMatrixValue pricePlanMatrixValue, AttributeValue attributeValue) {
+        	String multiValuesAttributeSeparator = ParamBean.getInstance().getProperty("attribute.multivalues.separator", ";");
             if (attributeValue.getStringValue() == null || pricePlanMatrixValue.getStringValue() == null) {
                 return true;
             }

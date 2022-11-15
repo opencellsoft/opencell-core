@@ -664,7 +664,7 @@ public class CustomFieldDataEntryBean implements Serializable {
                 messages.error(new BundleKey("messages", "customFieldTemplate.mapKeyExists"));
                 facesContext.validationFailed();
                 return;
-            } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST && mapItem.get(CustomFieldValue.MAP_VALUE).equals(newValue)) {
+            } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST && mapItem.get(CustomFieldValue.MAP_VALUE) != null && mapItem.get(CustomFieldValue.MAP_VALUE).equals(newValue)) {
                 messages.error(new BundleKey("messages", "customFieldTemplate.listValueExists"));
                 facesContext.validationFailed();
                 return;
@@ -2396,8 +2396,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     
     /**
 	 * Check if field is still encrypted
-	 * @param field
-	 * @return boolean 
+	 * @return boolean
 	 */
     public Boolean isEncrypted(ICustomFieldEntity entity, CustomFieldTemplate cft) {
     	
