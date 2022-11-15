@@ -7,9 +7,11 @@ import net.sf.jasperreports.engine.data.JRXmlDataSource;
 import org.apache.commons.io.FileUtils;
 import org.carlspring.cloud.storage.s3fs.S3FileSystem;
 import org.carlspring.cloud.storage.s3fs.S3FileSystemProvider;
+import org.meveo.admin.job.SortingFilesEnum;
 import org.meveo.commons.keystore.KeystoreManager;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -58,6 +60,7 @@ import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -993,15 +996,15 @@ public class StorageFactory {
      * list all files inside of a directory
      *
      * @param sourceDirectory a string of source directory.
-     * @param extensions list of file extensions.
-     *
+     * @param extensions      list of file extensions.
+     * @param sortingOption       the sorting option
      * @return a file arrays inside of the source directory
      */
-    public static File[] listFiles(String sourceDirectory, final List<String> extensions) {
+    public static File[] listFiles(String sourceDirectory, final List<String> extensions, String sortingOption) {
+        File[] files = null;
         if (storageType.equals(NFS)) {
-            return org.meveo.commons.utils.FileUtils.listFiles(sourceDirectory, extensions);
-        }
-        else if (storageType.equalsIgnoreCase(S3)) {
+            files = org.meveo.commons.utils.FileUtils.listFiles(sourceDirectory, extensions);
+        } else if (storageType.equalsIgnoreCase(S3)) {
             log.info("list files in S3 bucket at directory {}", sourceDirectory);
 
             final ListObjectsV2Request objectRequest =
@@ -1012,18 +1015,18 @@ public class StorageFactory {
 
             ListObjectsV2Response listObjects = s3FileSystem.getClient().listObjectsV2(objectRequest);
 
-            List<File> files = new ArrayList<>();
+            List<File> listFiles = new ArrayList<>();
 
-            for (S3Object object:listObjects.contents()){
+            for (S3Object object : listObjects.contents()) {
                 if (object.size() > 0) {
-                    files.add(new File(object.key()));
+                    listFiles.add(new File(object.key()));
                 }
             }
 
-            return files.toArray(new File[0]);
+            files = listFiles.toArray(new File[0]);
         }
 
-        return null;
+        return sortFiles(files, sortingOption);
     }
 
     /**
@@ -1147,5 +1150,23 @@ public class StorageFactory {
         }
 
         return null;
+    }
+
+    /**
+     * Sort the list of files
+     *
+     * @param files         the files tob sorted
+     * @param sortingOption the sorting option
+     * @return the sorted list of files
+     */
+    public static File[] sortFiles(File[] files, String sortingOption) {
+        if (files != null && files.length > 0 && !StringUtils.isBlank(sortingOption)) {
+            if (SortingFilesEnum.ALPHA.name().equals(sortingOption)) {
+                Arrays.sort(files, (a, b) -> a.getName().compareTo(b.getName()));
+            } else if (SortingFilesEnum.CREATION_DATE.name().equals(sortingOption)) {
+                Arrays.sort(files, (a, b) -> Long.compare(a.lastModified(), b.lastModified()));
+            }
+        }
+        return files;
     }
 }
