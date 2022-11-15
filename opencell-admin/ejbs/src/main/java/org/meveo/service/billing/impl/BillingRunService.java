@@ -901,6 +901,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                             result = false;
                     }
                 }
+                update(billingRun);
             }
         }
         return result;

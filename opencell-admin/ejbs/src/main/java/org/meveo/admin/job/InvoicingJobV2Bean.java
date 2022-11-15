@@ -166,11 +166,13 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         }
         if(!billingRunService.isBillingRunValid(billingRun, InvoiceValidationStatusEnum.REJECTED) && 
                 (billingRun.getRejectAutoAction() != null && billingRun.getRejectAutoAction().equals(BillingRunAutomaticActionEnum.MOVE))) {
+            billingRun = billingRunService.refreshOrRetrieve(billingRun);
             billingRun.setStatus(REJECTED);
         }
         if(!billingRunService.isBillingRunValid(billingRun, InvoiceValidationStatusEnum.SUSPECT) && 
                 (billingRun.getSuspectAutoAction() != null && billingRun.getSuspectAutoAction().equals(BillingRunAutomaticActionEnum.MOVE))) {
-            billingRun.setStatus(BillingRunStatusEnum.SUSPECTED);
+            billingRun = billingRunService.refreshOrRetrieve(billingRun);
+            billingRun.setStatus(SUSPECTED);
         }
 		if ((billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC || billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC) 
         		&& (BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus()) 
@@ -178,9 +180,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                         || BillingRunStatusEnum.SUSPECTED.equals(billingRun.getStatus())
         				|| BillingRunStatusEnum.REJECTED.equals(billingRun.getStatus()))) {
 		    billingRun = billingRunService.applyAutomaticValidationActions(billingRun);
-		    BillingRunStatusEnum billingRunStatusEnum = billingRun.getStatus();
 		    billingRun = billingRunService.refreshOrRetrieve(billingRun);
-		    billingRun.setStatus(billingRunStatusEnum);
 		    if(billingRunService.isBillingRunValid(billingRun, InvoiceValidationStatusEnum.REJECTED) 
 		            || billingRunService.isBillingRunValid(billingRun, InvoiceValidationStatusEnum.SUSPECT)) {
 		        billingRun = billingRunService.refreshOrRetrieve(billingRun);
@@ -197,10 +197,6 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         
         billingRun = billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null,
                 billingRun.getStatus(), null);
-        
-		BillingRunStatusEnum billingRunStatusEnum = billingRun.getStatus();
-		billingRun = billingRunService.refreshOrRetrieve(billingRun);
-		billingRun.setStatus(billingRunStatusEnum);
         if(billingRun.getStatus() == POSTVALIDATED) {
             assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, result);
             billingRun.setStatus(VALIDATED);
