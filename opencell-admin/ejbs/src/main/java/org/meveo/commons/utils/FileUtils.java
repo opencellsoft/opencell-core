@@ -34,6 +34,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
 import java.util.zip.CheckedOutputStream;
@@ -81,10 +82,10 @@ public final class FileUtils {
      * @return Renamed File object.
      */
     public static synchronized File addExtension(File file, String extension) {
-        if (file.exists()) {
+        if (StorageFactory.exists(file)) {
             String name = file.getName();
             File dest = new File(file.getParentFile(), name + extension);
-            if (file.renameTo(dest)) {
+            if (StorageFactory.renameTo(file, dest)) {
                 return dest;
             }
         }
@@ -137,7 +138,7 @@ public final class FileUtils {
      */
     public static String moveFileDontOverwrite(String dest, File file, String name) {
         String destName = name;
-        if ((new File(dest + File.separator + name)).exists()) {
+        if (StorageFactory.exists(new File(dest + File.separator + name))) {
             destName += "_COPY_" + DateUtils.formatDateWithPattern(new Date(), DATETIME_FORMAT);
         }
         moveFile(dest, file, destName);
@@ -155,12 +156,12 @@ public final class FileUtils {
     public static boolean moveFile(String destination, File file, String newFilename) {
         File destinationDir = new File(destination);
 
-        if (!destinationDir.exists()) {
-            destinationDir.mkdirs();
+        if (!StorageFactory.existsDirectory(destinationDir)) {
+            StorageFactory.mkdirs(destinationDir);
         }
 
-        if (destinationDir.isDirectory()) {
-            return file.renameTo(new File(destination, newFilename != null ? newFilename : file.getName()));
+        if (StorageFactory.isDirectory(destinationDir)) {
+            return StorageFactory.renameTo(file, new File(destination, newFilename != null ? newFilename : file.getName()));
         }
 
         return false;
@@ -686,14 +687,14 @@ public final class FileUtils {
     public static File[] listFilesByNameFilter(String sourceDirectory, ArrayList<String> extensions, String fileNameFilter) {
 
         File sourceDir = new File(sourceDirectory);
-        if (!sourceDir.exists() || !sourceDir.isDirectory()) {
+        if (!StorageFactory.existsDirectory(sourceDir) || !StorageFactory.isDirectory(sourceDir)) {
             logger.info(String.format("Wrong source directory: %s", sourceDir.getAbsolutePath()));
             return null;
         }
 
         String fileNameFilterUpper = fileNameFilter != null ? fileNameFilter.toUpperCase() : null;
 
-        File[] files = sourceDir.listFiles(new FilenameFilter() {
+        File[] files = StorageFactory.listFiles(sourceDir, new FilenameFilter() {
 
             public boolean accept(File dir, String name) {
 
@@ -757,7 +758,7 @@ public final class FileUtils {
      */
     public static int countLines(File file) throws IOException {
 
-        try (InputStream is = new BufferedInputStream(new FileInputStream(file));) {
+        try (InputStream is = new BufferedInputStream(Objects.requireNonNull(StorageFactory.getInputStream(file)));) {
             byte[] c = new byte[1024];
 
             int readChars = is.read(c);

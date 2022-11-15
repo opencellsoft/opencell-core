@@ -34,6 +34,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.async.FlatFileProcessing;
+import org.meveo.admin.storage.StorageFactory;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.parsers.FileParserBeanio;
 import org.meveo.commons.parsers.IFileParser;
@@ -167,10 +168,10 @@ public class FlatFileProcessingJobBean extends BaseJobBean {
             fileParser.parsing();
 
             rejectFile = new File(rejectDir + File.separator + rejectedfileName);
-            rejectFileWriter = new PrintWriter(rejectFile);
+            rejectFileWriter = StorageFactory.getPrintWriter(rejectFile);
 
             File outputFile = new File(outputDir + File.separator + processedfileName);
-            outputFileWriter = new PrintWriter(outputFile);
+            outputFileWriter = StorageFactory.getPrintWriter(outputFile);
 
             JobInstance jobInstance = jobExecutionResult.getJobInstance();
 
@@ -289,7 +290,7 @@ public class FlatFileProcessingJobBean extends BaseJobBean {
             try {
                 if (currentFile != null) {
                     // Move current CSV file to save directory, if his origin from an Excel transformation, else CSV file was deleted.
-                    if (isCsvFromExcel == false) {
+                    if (!isCsvFromExcel) {
                         FileUtils.moveFileDontOverwrite(archiveDir, currentFile, fileName);
                     } else {
                         currentFile.delete();

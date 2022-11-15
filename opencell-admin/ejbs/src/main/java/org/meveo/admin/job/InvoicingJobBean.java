@@ -18,6 +18,8 @@
 
 package org.meveo.admin.job;
 
+import static org.meveo.model.billing.BillingRunStatusEnum.SUSPECTED;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -47,9 +49,11 @@ import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunAutomaticActionEnum;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.InvoiceValidationStatusEnum;
 import org.meveo.model.billing.MinAmountForAccounts;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -236,11 +240,16 @@ public class InvoicingJobBean extends BaseJobBean {
             billingRunService.applyThreshold(billingRun.getId());
             rejectBAWithoutBillableTransactions(billingRun, jobExecutionResult);
 
-            BillingRunStatusEnum nextStatus = BillingRunStatusEnum.POSTINVOICED;
-            if (!billingRunService.isBillingRunValid(billingRun)) {
+            BillingRunStatusEnum nextStatus = BillingRunStatusEnum.POSTINVOICED;            
+            if (!billingRunService.isBillingRunValid(billingRun, InvoiceValidationStatusEnum.REJECTED)) {
                 nextStatus = BillingRunStatusEnum.REJECTED;
             }
-
+            if(!billingRunService.isBillingRunValid(billingRun, InvoiceValidationStatusEnum.SUSPECT) && 
+                    (billingRun.getSuspectAutoAction() != null 
+                        && billingRun.getSuspectAutoAction().equals(BillingRunAutomaticActionEnum.MOVE))
+                ) {
+                billingRun.setStatus(SUSPECTED);
+            }
             billingRun = billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, nextStatus, null);
 
             ranAnotherStage = true;
