@@ -21,12 +21,17 @@ package org.meveo.api.tunnel;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.tunnel.ThemeDto;
+import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.subscriptionTunnel.CustomStyle;
 import org.meveo.model.subscriptionTunnel.Theme;
+import org.meveo.model.subscriptionTunnel.TunnelCustomization;
+import org.meveo.service.tunnel.ThemeService;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
 /**
  * @author Ilham CHAFIK
@@ -34,24 +39,71 @@ import javax.ejb.Stateless;
 @Stateless
 public class ThemeApi extends BaseCrudApi<Theme, ThemeDto> {
 
+    @Inject
+    private ThemeService themeService;
+
+    @Inject
+    CustomStyleApi customStyleApi;
+
     /**
      * Populate entity with fields from DTO entity
      *
-     * @param dto DTO entity object to populate from
+     * @param dto    DTO entity object to populate from
      * @param entity Entity to populate
      **/
-    public void dtoToEntity(ThemeDto dto, Theme entity) {
+    private void dtoToEntity(ThemeDto dto, Theme entity) {
 
+        entity.setCode(dto.getCode());
+        if (dto.getBody() != null) {
+            entity.setBody(customStyleApi.create(dto.getBody()));
+        }
+        if (dto.getHeader() != null) {
+            entity.setHeader(customStyleApi.create(dto.getHeader()));
+        }
+        if (dto.getFooter() != null) {
+            entity.setFooter(customStyleApi.create(dto.getFooter()));
+        }
+        if (dto.getCreatedOn() != null) {
+            entity.setCreatedOn(dto.getCreatedOn());
+        }
     }
 
     @Override
-    public Theme create(ThemeDto dtoData) throws MeveoApiException, BusinessException {
-        return null;
+    public Theme create(ThemeDto postData) throws MeveoApiException, BusinessException {
+        if (StringUtils.isBlank(postData.getCode())) {
+            addGenericCodeIfAssociated(Theme.class.getName(), postData);
+        }
+
+        if (themeService.findByCode(postData.getCode()) != null) {
+            throw new EntityAlreadyExistsException(Theme.class, postData.getCode());
+        }
+
+        Theme entity = new Theme();
+
+        dtoToEntity(postData, entity);
+        themeService.create(entity);
+
+        return entity;
     }
 
     @Override
-    public Theme update(ThemeDto dtoData) throws MeveoApiException, BusinessException {
-        return null;
+    public Theme update(ThemeDto postData) throws MeveoApiException, BusinessException {
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+
+        handleMissingParameters();
+
+        Theme theme = themeService.findByCode(postData.getCode());
+        if (theme == null) {
+            throw new EntityDoesNotExistsException(Theme.class, postData.getCode());
+        }
+
+        dtoToEntity(postData, theme);
+
+        themeService.update(theme);
+
+        return theme;
     }
 
     public ThemeDto findById(Long id) {

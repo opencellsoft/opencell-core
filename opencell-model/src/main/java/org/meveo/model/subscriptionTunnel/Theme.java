@@ -18,6 +18,7 @@
 
 package org.meveo.model.subscriptionTunnel;
 
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
@@ -38,15 +39,15 @@ public class Theme extends BusinessEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="header")
     private CustomStyle header;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="body")
     private CustomStyle body;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="footer")
     private CustomStyle footer;
 

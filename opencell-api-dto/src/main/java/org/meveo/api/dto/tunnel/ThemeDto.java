@@ -19,10 +19,13 @@
 package org.meveo.api.dto.tunnel;
 
 import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.model.subscriptionTunnel.CustomStyle;
 
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Date;
 
 /**
  * @author Ilham CHAFIK
@@ -33,4 +36,44 @@ public class ThemeDto extends BusinessEntityDto {
 
     /** serial version uid. */
     private static final long serialVersionUID = 475958204852585405L;
+
+    private CustomStyleDto header;
+
+    private CustomStyleDto body;
+
+    private CustomStyleDto footer;
+
+    private Date createdOn;
+
+    public CustomStyleDto getHeader() {
+        return header;
+    }
+
+    public void setHeader(CustomStyleDto header) {
+        this.header = header;
+    }
+
+    public CustomStyleDto getBody() {
+        return body;
+    }
+
+    public void setBody(CustomStyleDto body) {
+        this.body = body;
+    }
+
+    public CustomStyleDto getFooter() {
+        return footer;
+    }
+
+    public void setFooter(CustomStyleDto footer) {
+        this.footer = footer;
+    }
+
+    public Date getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(Date createdOn) {
+        this.createdOn = createdOn;
+    }
 }
