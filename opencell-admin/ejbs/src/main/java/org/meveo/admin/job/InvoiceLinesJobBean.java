@@ -8,9 +8,11 @@ import static org.meveo.model.billing.BillingRunStatusEnum.INVOICE_LINES_CREATED
 import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -104,6 +106,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                         billingRunExtensionService.updateBillingRunStatistics(billingRun, basicStatistics, billableEntities.size(), INVOICE_LINES_CREATED);
             		    result.setNbItemsCorrectlyProcessed(basicStatistics.getCount());
                     }
+                    processErrors(result);
                 }
             }
         } catch(BusinessException exception) {
@@ -159,4 +162,12 @@ public class InvoiceLinesJobBean extends BaseJobBean {
         return excludedBRs.size();
     }
 
+    private void processErrors(JobExecutionResultImpl result) {
+        //TODO : CHECK WHY CONCURRENT UPDATE ISSUE, AND REMOVE THIS WORKAROUND
+        long lockNbr = result.getErrors().stream().filter(error -> error.contains("org.hibernate.exception.LockAcquisitionException")).count();
+        List<String> errors = result.getErrors().stream().filter(error -> !error.contains("org.hibernate.exception.LockAcquisitionException")).collect(toList());
+        result.setReport(errors.stream().collect(Collectors.joining("\n")));
+        result.setNbItemsProcessedWithError(result.getNbItemsProcessedWithError() - lockNbr);
+        jobExecutionResultService.update(result);
+    }
 }
