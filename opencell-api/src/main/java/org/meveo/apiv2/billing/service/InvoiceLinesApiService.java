@@ -120,8 +120,6 @@ public class InvoiceLinesApiService implements ApiService<InvoiceLine>  {
 
 	public int markInvoiceLinesForAdjustment(InvoiceLinesToMarkAdjustment invoiceLinesToMark) {
 		
-		//List<Long> invoiceLinesIds = invoiceLinesToMark.getInvoiceLines().stream().map(invoiceLine -> invoiceLine.getId()).collect(Collectors.toList());
-		
 		if(invoiceLinesToMark.getIgnoreInvalidStatuses() == null || !invoiceLinesToMark.getIgnoreInvalidStatuses()) {
     		List<InvoiceLine> invoiceLines = invoiceLinesService.findByIdsAndAdjustmentStatus(invoiceLinesToMark.getInvoiceLinesIds(), AdjustmentStatusEnum.NOT_ADJUSTED);
     		if (invoiceLines != null && invoiceLines.size() != invoiceLinesToMark.getInvoiceLinesIds().size()) {
@@ -149,8 +147,6 @@ public class InvoiceLinesApiService implements ApiService<InvoiceLine>  {
 	}
 	
 	public int unmarkInvoiceLinesForAdjustment(InvoiceLinesToMarkAdjustment invoiceLinesToUnmark) {
-		
-		//List<Long> invoiceLinesIds = invoiceLinesToUnmark.getInvoiceLines().stream().map(invoiceLine -> invoiceLine.getId()).collect(Collectors.toList());
 		
 		if(invoiceLinesToUnmark.getIgnoreInvalidStatuses() == null || !invoiceLinesToUnmark.getIgnoreInvalidStatuses()) {			
     		List<InvoiceLine> invoiceLines = invoiceLinesService.findByIdsAndAdjustmentStatus(invoiceLinesToUnmark.getInvoiceLinesIds(), AdjustmentStatusEnum.TO_ADJUST);
