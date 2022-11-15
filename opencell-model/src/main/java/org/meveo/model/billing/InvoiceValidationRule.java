@@ -12,6 +12,7 @@ import java.util.Date;
 @Table(name = "billing_invoice_validation_rule", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_invoice_validation_rule_seq"), })
+@NamedQueries({@NamedQuery(name = "InvoiceValidationRule.findByCodeAndInvoiceType", query = "select validationRule from InvoiceValidationRule validationRule where validationRule.code =:code and validationRule.invoiceType.code =: invoiceTypeCode")})
 public class InvoiceValidationRule extends BusinessEntity {
 
 
