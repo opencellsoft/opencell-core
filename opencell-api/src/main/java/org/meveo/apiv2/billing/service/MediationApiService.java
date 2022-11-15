@@ -634,7 +634,7 @@ public class MediationApiService {
                 error.add("eventDate");
             }
             if(cdr.getQuantity() == null || cdr.getQuantity() == BigDecimal.ZERO) {
-                error.add("getQuantity");
+                error.add("quantity");
             }
             if(StringUtils.isEmpty(cdr.getAccessCode())) {
                 error.add("accessCode");
@@ -730,7 +730,7 @@ public class MediationApiService {
             error.add("eventDate");
         }
         if(toBeUpdated.getQuantity() == null || cdr.getQuantity() == BigDecimal.ZERO) {
-            error.add("getQuantity");
+            error.add("quantity");
         }
         if(StringUtils.isEmpty(toBeUpdated.getAccessCode())) {
             error.add("accessCode");
@@ -762,7 +762,7 @@ public class MediationApiService {
                 errorParamters.add("eventDate");
             }
             if(cdrToBeUpdated.getQuantity() == null || cdrToBeUpdated.getQuantity() == BigDecimal.ZERO) {
-                errorParamters.add("getQuantity");
+                errorParamters.add("quantity");
             }
             if(StringUtils.isEmpty(cdrToBeUpdated.getAccessCode())) {
                 errorParamters.add("accessCode");
