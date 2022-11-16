@@ -88,6 +88,12 @@ public class YouSignApi extends BaseApi {
     /** The Constant YOUSIGN_API_DOWNLOAD_DIR_KEY. */
     private static final String YOUSIGN_API_DOWNLOAD_DIR_KEY = "yousign.api.download.dir";
     
+    /** The Constant YOUSIGN_API_CONNECT_TIME_OUT. */
+    private static final String YOUSIGN_API_CONNECT_TIME_OUT = "yousign.api.connectTimeout";
+    
+    /** The Constant YOUSIGN_API_READ_TIME_OUT. */
+    private static final String YOUSIGN_API_READ_TIME_OUT = "yousign.api.readTimeout";
+    
     /** The Constant SIGN_OBJECT_POSITION_PATTERN. */
     private static final Pattern SIGN_OBJECT_POSITION_PATTERN = Pattern.compile("[0-9]+,[0-9]+,[0-9]+,[0-9]+");
     
@@ -441,14 +447,14 @@ public class YouSignApi extends BaseApi {
         }
     }
 
-    private ResteasyClient getResteasyClient() {
-    	
-    	long connectTimeout = Long.parseLong(getYousignParam("yousign.api.connectTimeout", true, "1000"));
+	private ResteasyClient getResteasyClient() {
 
-    	long readTimeout = Long.parseLong(getYousignParam("yousign.api.readTimeout", true, "1000"));
-    	
-		return new ResteasyClientProxyBuilder().connectTimeout(connectTimeout , TimeUnit.MILLISECONDS)
-	            .readTimeout(readTimeout, TimeUnit.MILLISECONDS).build();
+		long connectTimeout = Long.parseLong(getYousignParam(YOUSIGN_API_CONNECT_TIME_OUT, true, "1000"));
+
+		long readTimeout = Long.parseLong(getYousignParam(YOUSIGN_API_READ_TIME_OUT, true, "1000"));
+
+		return new ResteasyClientProxyBuilder().connectTimeout(connectTimeout, TimeUnit.MILLISECONDS)
+				.readTimeout(readTimeout, TimeUnit.MILLISECONDS).build();
 	}
 
 
