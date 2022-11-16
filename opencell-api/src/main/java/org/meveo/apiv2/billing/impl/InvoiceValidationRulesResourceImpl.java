@@ -119,9 +119,9 @@ public class InvoiceValidationRulesResourceImpl implements InvoiceValidationRule
 
         if (invoiceValidationRule.getDescription() == null || invoiceValidationRule.getDescription().isEmpty()) {
 
-             invoiceValidationRule.setDescription("Rule " + invoiceValidationRule.getPriority() + ":"
-                 + invoiceValidationRule.getFailStatus().toString() + "if" + invoiceValidationRule.getType().toString()
-                 + "fails");
+             invoiceValidationRule.setDescription("Rule " + invoiceValidationRule.getPriority() + ": "
+                 + invoiceValidationRule.getFailStatus().toString() + " if " + invoiceValidationRule.getType().toString()
+                 + " fails");
         }
     }
 

@@ -22,7 +22,6 @@ public class InvoiceValidationRulesApiService implements ApiService<InvoiceValid
     @Inject
     InvoiceTypeService invoiceTypeService;
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     @Override
     public InvoiceValidationRule create(InvoiceValidationRule invoiceValidationRule) {
 
@@ -32,14 +31,12 @@ public class InvoiceValidationRulesApiService implements ApiService<InvoiceValid
 
         return invoiceValidationRule;
     }
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     @Override
     public Optional<InvoiceValidationRule> update(Long id, InvoiceValidationRule invoiceValidationRule) {
         updateInvoiceTypePriority(invoiceValidationRule);
         return Optional.ofNullable(invoiceValidationRulesService.update(invoiceValidationRule));
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void updateInvoiceTypePriority(InvoiceValidationRule invoiceValidationRule) {
 
         InvoiceType invoiceType = invoiceValidationRule.getInvoiceType();
@@ -51,7 +48,6 @@ public class InvoiceValidationRulesApiService implements ApiService<InvoiceValid
             invoiceTypeService.update(updatedInvoiceType);
         }
     }
-
 
     @Override
     public List<InvoiceValidationRule> list(Long offset, Long limit, String sort, String orderBy, String filter) {
