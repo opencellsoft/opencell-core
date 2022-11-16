@@ -9095,11 +9095,11 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="created" valueDate="2022-02-18 00:04:19.913" />
 			<column name="job_category" value="PAYMENT" />
 			<column name="job_template" value="AutoRefundSecurityDepositJob" />
-			<column name="code" value="AutoRefundSecurityDepositJob_Job" />
+			<column name="code" value="AutoRefundSecurityDepositJob" />
 
 			<column name="creator" value="OPENCELL.ADMIN" />
 			<column name="timerentity_id" valueNumeric="-1" />
-			<column name="uuid" value="AutoRefundSecurityDepositJob_Job" />
+			<column name="uuid" value="AutoRefundSecurityDepositJob" />
 		</insert>
 	</changeSet>
 
@@ -9111,10 +9111,10 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="created" valueDate="2022-02-18 00:04:19.913" />
 			<column name="job_category" value="UTILS" />
 			<column name="job_template" value="AutoUpdateCurrentRateJob" />
-			<column name="code" value="AutoUpdateCurrentRateJob_Job" />
+			<column name="code" value="AutoUpdateCurrentRateJob" />
 			<column name="creator" value="OPENCELL.ADMIN" />
 			<column name="timerentity_id" valueNumeric="-4" />
-			<column name="uuid" value="AutoUpdateCurrentRateJob_Job" />
+			<column name="uuid" value="AutoUpdateCurrentRateJob" />
 			<column name="cf_values" value='{"cleanAppliedRateInvoice": [{"boolean": false}]}' />
 		</insert>
 	</changeSet>
@@ -9907,6 +9907,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
     <changeSet id="#INTRD-10572_20221014" author="HichamHANINE" />
     <changeSet id="#INTRD-11244_20221104" author="TarikFA." />
 	<changeSet id="INTRD-11124_20221109" author="aelmalki" />
+    <changeSet id="#INTR-11598_20221116" author="TarikFA." />
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
