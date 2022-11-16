@@ -1,0 +1,57 @@
+package org.meveo.apiv2.billing;
+
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import io.swagger.v3.oas.annotations.media.Schema;
+import org.immutables.value.Value;
+import org.meveo.apiv2.models.Resource;
+import org.meveo.model.billing.InvoiceValidationStatusEnum;
+import org.meveo.model.billing.ValidationRuleTypeEnum;
+
+import javax.annotation.Nullable;
+import java.util.Date;
+
+@Value.Immutable
+@Value.Style(jdkOnly = true)
+@JsonDeserialize(as = ImmutableInvoiceValidationRuleDto.class)
+public interface InvoiceValidationRuleDto extends Resource {
+
+    @Schema(description = "Description Of Invoice Validation Rule")
+    @Nullable
+    String getDescription();
+
+    @Schema(description = "Priority")
+    @Nullable
+    Integer getPriority();
+
+    @Schema(description = "Valid From")
+    @Nullable
+    Date getValidFrom();
+
+    @Schema(description = "Valid To")
+    @Nullable
+    Date getValidTo();
+
+    @Schema(description = "Type")
+    @Nullable
+    ValidationRuleTypeEnum getType();
+
+    @Schema(description = "Fail Status")
+    InvoiceValidationStatusEnum getFailStatus();
+
+    @Schema(description = "Validation Script")
+    String getValidationScript();
+
+    @Schema(description = "Validation EL")
+    @Nullable
+    String getValidationEL();
+
+    @Schema(description = "InvoiceType")
+    @Nullable
+    String getInvoiceType();
+
+    @Schema(description = "Code")
+    @Nullable
+    String getCode();
+
+}

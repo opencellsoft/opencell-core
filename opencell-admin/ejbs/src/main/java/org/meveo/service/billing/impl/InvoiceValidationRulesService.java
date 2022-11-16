@@ -2,17 +2,17 @@ package org.meveo.service.billing.impl;
 
 
 import org.apache.commons.collections.CollectionUtils;
-import org.meveo.api.dto.invoice.InvoiceValidationRuleDto;
+import org.meveo.apiv2.billing.InvoiceValidationRuleDto;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceValidationRule;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.BusinessService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.util.List;
 
 @Stateless
-public class InvoiceValidationRulesService extends PersistenceService<InvoiceValidationRule> {
+public class InvoiceValidationRulesService extends BusinessService<InvoiceValidationRule> {
 
     @Inject
     InvoiceTypeService invoiceTypeService;
@@ -42,37 +42,5 @@ public class InvoiceValidationRulesService extends PersistenceService<InvoiceVal
         return invoiceType;
     }
 
-    public InvoiceValidationRule createInvoiceValidationOrUpdateFromDto(InvoiceValidationRuleDto invoiceValidationRuleDto, InvoiceValidationRule invoiceValidationRule) {
-
-        if (invoiceValidationRule == null) {
-            invoiceValidationRule = new InvoiceValidationRule();
-        }
-
-        if (invoiceValidationRuleDto.getType() != null)
-            invoiceValidationRule.setType(invoiceValidationRuleDto.getType());
-
-        if (invoiceValidationRuleDto.getValidationEL() != null)
-            invoiceValidationRule.setValidationEL(invoiceValidationRuleDto.getValidationEL());
-
-        if (invoiceValidationRuleDto.getValidationScript() != null)
-            invoiceValidationRule.setValidationScript(invoiceValidationRuleDto.getValidationScript());
-
-        if (invoiceValidationRuleDto.getCode() != null)
-            invoiceValidationRule.setCode(invoiceValidationRuleDto.getCode());
-
-        if (invoiceValidationRuleDto.getDescription() != null)
-            invoiceValidationRule.setDescription(invoiceValidationRuleDto.getDescription());
-
-        if (invoiceValidationRuleDto.getValidFrom() != null)
-            invoiceValidationRule.setValidTo(invoiceValidationRuleDto.getValidFrom());
-
-        if (invoiceValidationRuleDto.getValidTo() != null)
-            invoiceValidationRule.setValidTo(invoiceValidationRuleDto.getValidTo());
-
-        InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceValidationRuleDto.getInvoiceTypeDto().getCode());
-        invoiceValidationRule.setInvoiceType(invoiceType);
-
-        return invoiceValidationRule;
-    }
 
 }
