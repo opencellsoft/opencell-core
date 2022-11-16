@@ -4,6 +4,7 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.carlspring.cloud.storage.s3fs.S3FileSystem;
 import org.carlspring.cloud.storage.s3fs.S3FileSystemProvider;
 import org.meveo.commons.keystore.KeystoreManager;
@@ -20,6 +21,7 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
@@ -57,8 +59,18 @@ import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 
 /**
@@ -484,7 +496,7 @@ public class StorageFactory {
         }
         else if (storageType.equalsIgnoreCase(S3)) {
             String objectKey = formatObjectKey(file.getPath());
-            log.info("check existence of a file on S3 at key {}", objectKey);
+            log.debug("check existence of a file on S3 at key {}", objectKey);
 
             try {
                 s3FileSystem.getClient()
@@ -510,17 +522,21 @@ public class StorageFactory {
             return directory.exists();
         }
         else if (storageType.equalsIgnoreCase(S3)) {
-            String objectKey = formatObjectKey(directory.getPath()) + "/";
-            log.info("check existence of a directory on S3 at key {}", objectKey);
+            if (! directory.getPath().isBlank()) {
+                String objectKey = formatObjectKey(directory.getPath()) + "/";
+                log.debug("check existence of a directory on S3 at key {}", objectKey);
 
-            try {
-                s3FileSystem.getClient()
-                        .headObject(HeadObjectRequest.builder().bucket(bucketName).key(objectKey).build());
+                try {
+                    s3FileSystem.getClient()
+                            .headObject(HeadObjectRequest.builder().bucket(bucketName).key(objectKey).build());
 
-                return true;
-            } catch (NoSuchKeyException e) {
-                return false;
+                    return true;
+                } catch (NoSuchKeyException e) {
+                    return false;
+                }
             }
+
+            return true;
         }
 
         return false;
@@ -543,6 +559,30 @@ public class StorageFactory {
                     .key(objectKey).build();
 
             s3FileSystem.getClient().putObject(request, RequestBody.empty());
+        }
+    }
+
+    /**
+     * delete a directory on File System or S3.
+     *
+     * @param srcDir the directory
+     */
+    public static void deleteDirectory(File srcDir) {
+        if (storageType.equals(NFS)) {
+            try {
+                FileUtils.deleteDirectory(srcDir);
+            } catch (IOException e) {
+                log.error("IOException message {}", e.getMessage());
+            }
+        }
+        else if (storageType.equalsIgnoreCase(S3)) {
+            Set<String> setKeys = listAllSubFoldersAndFiles(srcDir);
+
+            // remove all sub-folders and files objects
+            for (String key : setKeys) {
+                log.debug("object on S3 to remove at the key {}", key);
+                deleteObject(key);
+            }
         }
     }
 
@@ -628,18 +668,12 @@ public class StorageFactory {
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
-            InputStream inStream;
-            String fullObjectKey = formatFullObjectKey(file.getPath());
-            Path objectPath = getObjectPath(fullObjectKey);
+            String objectKey = formatObjectKey(file.getPath());
+            log.debug("objectKey in getInputStream {}", objectKey);
 
-            try {
-                inStream = s3FileSystem.provider().newInputStream(objectPath);
+            GetObjectRequest request = GetObjectRequest.builder().bucket(bucketName).key(objectKey).build();
 
-                return inStream;
-            }
-            catch (IOException e) {
-                log.error("IOException message in getInputStream(File) : {}", e.getMessage());
-            }
+            return s3FileSystem.getClient().getObject(request);
         }
 
         return null;
@@ -883,14 +917,16 @@ public class StorageFactory {
     public static String formatObjectKey(String filePath){
         String objectKey = "";
 
-        if (filePath.charAt(0) == '.' && filePath.charAt(1) == '/') {
-            objectKey += filePath.substring(2).replace("\\", "/");
-        }
-        else if (filePath.charAt(0) == '.' && filePath.charAt(1) == '\\'){
-            objectKey += filePath.substring(2).replace("\\", "/");
-        }
-        else {
-            objectKey += filePath.replace("\\", "/");
+        if (! filePath.isBlank()) {
+            if (filePath.charAt(0) == '.' && filePath.charAt(1) == '/') {
+                objectKey += filePath.substring(2).replace("\\", "/");
+            }
+            else if (filePath.charAt(0) == '.' && filePath.charAt(1) == '\\'){
+                objectKey += filePath.substring(2).replace("\\", "/");
+            }
+            else {
+                objectKey += filePath.replace("\\", "/");
+            }
         }
 
         return objectKey;
@@ -963,7 +999,7 @@ public class StorageFactory {
     }
 
     /**
-     * list all files inside of a directory
+     * list all files inside of a directory with extensions
      *
      * @param sourceDirectory a string of source directory.
      * @param extensions list of file extensions.
@@ -975,12 +1011,13 @@ public class StorageFactory {
             return org.meveo.commons.utils.FileUtils.listFiles(sourceDirectory, extensions);
         }
         else if (storageType.equalsIgnoreCase(S3)) {
-            log.info("list files in S3 bucket at directory {}", sourceDirectory);
+            String objectKey = formatObjectKey(sourceDirectory);
+            log.debug("list files in S3 bucket at directory {}", objectKey);
 
             final ListObjectsV2Request objectRequest =
                     ListObjectsV2Request.builder()
                             .bucket(bucketName)
-                            .prefix(formatObjectKey(sourceDirectory))
+                            .prefix(objectKey)
                             .build();
 
             ListObjectsV2Response listObjects = s3FileSystem.getClient().listObjectsV2(objectRequest);
@@ -1121,4 +1158,229 @@ public class StorageFactory {
 
         return null;
     }
+
+    /**
+     * delete a file on File System or an object on S3
+     *
+     * @param file a file to delete.
+     *
+     */
+    public static void delete(File file) {
+        if (storageType.equals(NFS)) {
+            file.delete();
+        }
+        else if (storageType.equalsIgnoreCase(S3)) {
+            deleteObject(file.getPath());
+        }
+    }
+
+    /**
+     * put an object on S3
+     *
+     * @param objectKey an objectKey.
+     * @param body RequestBody.
+     *
+     */
+    public static void putObject(String objectKey, RequestBody body) {
+        PutObjectRequest request = PutObjectRequest.builder().bucket(bucketName)
+                .key(objectKey).build();
+
+        s3FileSystem.getClient().putObject(request, body);
+    }
+
+    /**
+     * delete an object on S3
+     *
+     * @param filePath a file path.
+     *
+     */
+    public static void deleteObject(String filePath) {
+        String objectKey = StorageFactory.formatObjectKey(filePath);
+
+        DeleteObjectRequest request = DeleteObjectRequest.builder().bucket(bucketName)
+                .key(objectKey).build();
+
+        s3FileSystem.getClient().deleteObject(request);
+    }
+
+    /**
+     * get a file base on its file path
+     *
+     * @param filePath a filepath.
+     *
+     * @return a new file
+     */
+    public static File getFile(String filePath) {
+        if (storageType.equals(NFS)) {
+            return new File(filePath);
+        }
+        else if (storageType.equalsIgnoreCase(S3)) {
+            if (! FilenameUtils.getExtension(filePath).equals("zip")) {
+                log.debug("file {} is not a zip file", filePath);
+                return new File(filePath);
+            }
+            else {
+                log.debug("file {} is a zip file ...", filePath);
+                ZipOutputStream zos = null;
+
+                try {
+                    // create zip file
+                    log.debug("path of zip file {}", filePath);
+                    zos = new ZipOutputStream(Objects.requireNonNull(getOutputStream(filePath)));
+                    log.debug("parent path of zip file {}", new File(filePath).getParent());
+
+                    String srcDir;
+                    if (FilenameUtils.getExtension(filePath).equals("zip")) {
+                        srcDir = filePath.substring(0, filePath.indexOf(".zip"));
+                    }
+                    else {
+                        srcDir = filePath;
+                    }
+                    File[] listFiles = listFiles(srcDir, null);
+
+                    assert listFiles != null;
+                    ZipEntry zipEntry;
+                    byte[] bytes = new byte[4096];
+
+                    for (File aFile : listFiles) {
+                        zipEntry = new ZipEntry(aFile.getPath());
+                        zos.putNextEntry(zipEntry);
+                        InputStream inStr = getInputStream(aFile);
+                        assert inStr != null;
+                        int length;
+                        while ((length = inStr.read(bytes)) != -1) {
+                            zos.write(bytes, 0, length);
+                        }
+
+                        log.debug("Finish writing File {}", aFile.getName());
+                        inStr.close();
+                    }
+
+                    return new File(filePath);
+
+                } catch (IOException e) {
+                    log.error("IOException message {}", e.getMessage());
+                }
+                finally {
+                    assert zos != null;
+                    try {
+                        zos.flush();
+                        zos.closeEntry();
+                        zos.close();
+                    } catch (IOException e) {
+                        log.error("IOException message {}", e.getMessage());
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * check if storage type is S3
+     *
+     * @return true if S3 is used, false otherwise
+     */
+    public static boolean isS3Activated() {
+        return storageType.equals(S3);
+    }
+
+    /**
+     * list sub-files and sub-folders inside of a directory
+     *
+     * @param sourceDirectory a source directory.
+     *
+     * @return a file arrays inside of the source directory
+     */
+    public static Map<String, Date> listSubFoldersAndFiles(File sourceDirectory){
+        String sourceDir = formatObjectKey(sourceDirectory.getPath() + "/");
+        log.debug("list files and directories in S3 bucket at directory {} ", sourceDir);
+
+        final ListObjectsV2Request objectRequest = ListObjectsV2Request.builder()
+                .bucket(bucketName)
+                .prefix(sourceDir)
+                .build();
+
+        ListObjectsV2Response listObjects = s3FileSystem.getClient().listObjectsV2(objectRequest);
+
+        String patternStr = "^" + sourceDir + "([^/\n]+/?).*";
+
+        Pattern pattern = Pattern.compile(patternStr);
+
+        List<S3Object> s3Objects = listObjects.contents();
+
+        Map<String, Date> result = new HashMap<>();
+
+        for (S3Object obj : s3Objects) {
+            Matcher matcher = pattern.matcher(obj.key());
+            if (matcher.find()) {
+                result.put(matcher.group(1), Date.from(obj.lastModified()));
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * list all nested sub-files and sub-folders inside of a directory
+     *
+     * @param sourceDirectory a source directory.
+     *
+     * @return a file arrays inside of the source directory
+     */
+    public static Set<String> listAllSubFoldersAndFiles(File sourceDirectory){
+        String sourceDir = formatObjectKey(sourceDirectory.getPath() + "/");
+        log.debug("list all nested files and directories in S3 bucket at source directory {} ", sourceDir);
+
+        final ListObjectsV2Request objectRequest = ListObjectsV2Request.builder()
+                .bucket(bucketName)
+                .prefix(sourceDir)
+                .build();
+
+        ListObjectsV2Response listObjects = s3FileSystem.getClient().listObjectsV2(objectRequest);
+
+        String patternStr = "^" + sourceDir + "([^/\n]*/?)*";
+
+        Pattern pattern = Pattern.compile(patternStr);
+
+        List<S3Object> s3Objects = listObjects.contents();
+
+        Set<String> setKeys = new HashSet<>();
+
+        for (S3Object obj : s3Objects) {
+            Matcher matcher = pattern.matcher(obj.key());
+            if (matcher.matches()) {
+                setKeys.add(obj.key());
+            }
+        }
+
+        return setKeys;
+    }
+
+    /**
+     * get length of a file on File System or length of an object on S3
+     *
+     * @param file a file.
+     *
+     * @return a file arrays inside of the source directory
+     */
+    public static long length(File file) {
+        if (storageType.equals(NFS)) {
+            return file.length();
+        }
+        else if (storageType.equalsIgnoreCase(S3)) {
+            String objectKey = formatObjectKey(file.getPath());
+            log.debug("get length of object on S3 at key {}", objectKey);
+
+            HeadObjectRequest request = HeadObjectRequest.builder().bucket(bucketName).key(objectKey).build();
+
+            HeadObjectResponse response = s3FileSystem.getClient().headObject(request);
+
+            return response.contentLength();
+        }
+
+        return 0L;
+    }
+
 }
