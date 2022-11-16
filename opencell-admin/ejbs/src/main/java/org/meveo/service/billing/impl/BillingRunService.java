@@ -813,7 +813,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             List<? extends IBillableEntity> billableEntities = getEntitiesToInvoice(billingRun);
             for (IBillableEntity be :  billableEntities){
                 ratedTransactions.addAll(ratedTransactionService.listRTsToInvoice(be, new Date(0), billingRun.getLastTransactionDate(), billingRun.getInvoiceDate(),
-                        billingRun.isExceptionalBR() ? createFilter(billingRun, false) : null, rtPaginationSize));
+                        billingRun.isExceptionalBR() ? createFilter(billingRun, false, null) : null, rtPaginationSize));
             }
         }
         return ratedTransactions;
@@ -1430,7 +1430,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             }
             try {
                 invoiceService.createAggregatesAndInvoiceWithILInNewTransaction(entityToInvoice, billingRun,
-                        billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, true) : null,
+                        billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, true, null) : null,
                         null, null, null, minAmountForAccounts,
                         false, automaticInvoiceCheck, false);
             } catch (Exception exception) {
@@ -1441,7 +1441,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         return new AsyncResult<>("OK");
     }
 
-    public Filter createFilter(BillingRun billingRun, boolean invoicingV2) {
+    public Filter createFilter(BillingRun billingRun, boolean invoicingV2, BillingAccount billingAccount) {
         QueryBuilder queryBuilder;
         Filter filter = new Filter();
         if(invoicingV2) {
@@ -1453,6 +1453,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             if(filters.containsKey("SQL")) {
                 queryBuilder = new QueryBuilder(filters.get("SQL"));
             } else {
+                if(billingAccount != null) {
+                    filters.put("billingAccount.id", billingAccount.getId().toString());
+                }
                 PaginationConfiguration configuration = new PaginationConfiguration(new HashMap<>(filters));
                 queryBuilder = ratedTransactionService.getQuery(configuration);
             }

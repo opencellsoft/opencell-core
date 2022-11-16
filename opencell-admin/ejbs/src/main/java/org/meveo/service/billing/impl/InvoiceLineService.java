@@ -677,7 +677,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             associatedRtIds = stream(((String) record.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
             ratedTransactionService.linkRTsToIL(associatedRtIds, invoiceLine.getId());
         }
-        basicStatistics.setCount(associatedRtIds == null? 0 : associatedRtIds.size());
+        basicStatistics.setCount(groupedRTs.size());
         return basicStatistics;
     }
 
@@ -693,7 +693,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void createInvoiceLines(JobExecutionResultImpl result, AggregationConfiguration aggregationConfiguration, BillingRun billingRun, IBillableEntity be, BasicStatistics basicStatistics) {
 	    BasicStatistics ilBasicStatistics = createInvoiceLines(ratedTransactionService.getGroupedRTsWithAggregation(aggregationConfiguration, billingRun, be, billingRun.getLastTransactionDate(), billingRun.getInvoiceDate(),
-		        billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, false) : null), aggregationConfiguration, result, billingRun);
+		        billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, false, (BillingAccount) be) : null), aggregationConfiguration, result, billingRun);
 	    basicStatistics.append(ilBasicStatistics);
 	}
 
