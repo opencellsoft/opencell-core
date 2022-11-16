@@ -8475,6 +8475,17 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where> code='AutoUpdateCurrentRateJob_Job'</where>
 		</update>
 	</changeSet>
+    
+    <changeSet id="#INTR-11598_20221116" author="TarikFA.">
+        <update tableName="meveo_job_instance">
+            <column name="code" value="AutoUpdateCurrentRateJob"/>
+            <where>code = 'AutoUpdateCurrentRateJob_Job'</where>
+        </update>
+        <update tableName="meveo_job_instance">
+            <column name="code" value="AutoRefundSecurityDepositJob"/>
+            <where>code = 'AutoRefundSecurityDepositJob_Job'</where>
+        </update>
+    </changeSet>
 
 
 </databaseChangeLog>

@@ -850,7 +850,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     String amountEL = ppmVersion.getPriceEL();
                     String amountELPricePlanMatrixLine = pricePlanMatrixLine.getValueEL();
                     if (!StringUtils.isBlank(amountEL)) {
-                        priceWithoutTax = priceWithoutTax.add(evaluateAmountExpression(amountEL, wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax));
+                        priceWithoutTax = evaluateAmountExpression(amountEL, wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax);
                     }
                     if (!StringUtils.isBlank(amountELPricePlanMatrixLine)) {
                         priceWithoutTax = priceWithoutTax.add(evaluateAmountExpression(amountELPricePlanMatrixLine, wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax));

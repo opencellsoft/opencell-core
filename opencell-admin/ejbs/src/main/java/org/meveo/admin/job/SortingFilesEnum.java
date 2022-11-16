@@ -16,35 +16,18 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.api.dto.billing;
+package org.meveo.admin.job;
 
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlElement;
-
-import org.meveo.api.dto.cpq.ProductToInstantiateDto;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-/** 
- *
- * @author Mbarek-Ay
- * @lastModifiedVersion 11.0
+/**
+ * 
+ * Enum of different way to sort files to be processed by the job
+ * 
+ * Possible values are : - ALPHA - CREATION_DATE
+ * 
+ * @author Abdellatif BARI
  */
-@JsonIgnoreProperties({"services","products","productInstances"})
-public class SubscriptionAndProductsToInstantiateDto extends SubscriptionDto { 
-	
-    private static final long serialVersionUID = 178969317101107648L;
-    
-    /** The productToInstantiateDto. */
-    @XmlElement(required = true)
-    private List<ProductToInstantiateDto> productToInstantiateDto;
+public enum SortingFilesEnum {
 
-	public List<ProductToInstantiateDto> getProductToInstantiateDto() {
-		return productToInstantiateDto;
-	}
+	ALPHA, CREATION_DATE;
 
-	public void setProductToInstantiateDto(List<ProductToInstantiateDto> productToInstantiateDto) {
-		this.productToInstantiateDto = productToInstantiateDto;
-	}
 }
