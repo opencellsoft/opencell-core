@@ -2,7 +2,6 @@ package org.meveo.service.billing.impl;
 
 
 import org.apache.commons.collections.CollectionUtils;
-import org.meveo.apiv2.billing.InvoiceValidationRuleDto;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceValidationRule;
 import org.meveo.service.base.BusinessService;
@@ -32,12 +31,15 @@ public class InvoiceValidationRulesService extends BusinessService<InvoiceValida
         }
 
         if (remove) {
-            invoiceValidationRules.stream().filter(currentRule -> currentRule.getPriority() > rulePriority).forEach(currentRule -> currentRule.setPriority(currentRule.getPriority() - 1));
+            invoiceValidationRules.stream().filter(currentRule -> currentRule.getPriority() > rulePriority)
+                    .forEach(currentRule -> currentRule.setPriority(currentRule.getPriority() - 1));
         } else {
-            invoiceValidationRules.stream().filter(currentRule -> currentRule.getPriority() >= rulePriority).forEach(currentRule -> currentRule.setPriority(currentRule.getPriority() + 1));
+            invoiceValidationRules.stream().filter(currentRule -> currentRule.getPriority() >= rulePriority).forEach(currentRule ->
+                    currentRule.setPriority(currentRule.getPriority() + 1));
         }
 
         invoiceType.setInvoiceValidationRules(invoiceValidationRules);
+        invoiceTypeService.update(invoiceType);
 
         return invoiceType;
     }

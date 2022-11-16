@@ -7,8 +7,6 @@ import org.meveo.model.billing.InvoiceValidationRule;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.InvoiceValidationRulesService;
 
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import java.util.List;
@@ -31,6 +29,7 @@ public class InvoiceValidationRulesApiService implements ApiService<InvoiceValid
 
         return invoiceValidationRule;
     }
+
     @Override
     public Optional<InvoiceValidationRule> update(Long id, InvoiceValidationRule invoiceValidationRule) {
         updateInvoiceTypePriority(invoiceValidationRule);
@@ -45,7 +44,7 @@ public class InvoiceValidationRulesApiService implements ApiService<InvoiceValid
             invoiceValidationRule.setPriority(invoiceType.getInvoiceValidationRules() != null ? invoiceType.getInvoiceValidationRules().size() + 1 : null);
         } else {
             InvoiceType updatedInvoiceType = invoiceValidationRulesService.reorderInvoiceValidationRules(invoiceType, invoiceValidationRule, false);
-            invoiceTypeService.update(updatedInvoiceType);
+            invoiceValidationRule.setInvoiceType(updatedInvoiceType);
         }
     }
 
