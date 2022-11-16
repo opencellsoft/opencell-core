@@ -47,7 +47,9 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.meveo.admin.job.FlatFileProcessingJob;
+import org.meveo.admin.job.SortingFilesEnum;
 import org.meveo.admin.storage.StorageFactory;
+import org.meveo.api.dto.catalog.PricePlanMatrixValueDto;
 import org.meveo.model.shared.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -342,13 +344,14 @@ public final class FileUtils {
 
     /**
      * List files matching extension and prefix in a given directory
-     * 
-     * @param dir Directory to inspect
-     * @param extension File extension to match
-     * @param prefix File prefix to match
+     *
+     * @param dir           Directory to inspect
+     * @param extension     File extension to match
+     * @param prefix        File prefix to match
+     * @param sortingOption the sorting option
      * @return Array of matched files
      */
-    public static List<File> listFiles(File dir, String extension, String prefix) {
+    public static List<File> listFiles(File dir, String extension, String prefix, String sortingOption) {
         List<File> files = new ArrayList<File>();
         ImportFileFiltre filtre = new ImportFileFiltre(prefix, extension);
         File[] listFile = dir.listFiles(filtre);
@@ -363,7 +366,7 @@ public final class FileUtils {
             }
         }
 
-        return files;
+        return Arrays.asList(StorageFactory.sortFiles(files.toArray(new File[]{}), sortingOption));
     }
 
     /**
@@ -687,10 +690,10 @@ public final class FileUtils {
      * @param sourceDirectory the source directory
      * @param extensions the extensions
      * @param fileNameFilter the file name key
-     * @param processingOrder the processing order
+     * @param sortingOption the sorting option
      * @return the files for parsing
      */
-    public static File[] listFilesByNameFilter(String sourceDirectory, ArrayList<String> extensions, String fileNameFilter, String processingOrder) {
+    public static File[] listFilesByNameFilter(String sourceDirectory, ArrayList<String> extensions, String fileNameFilter, String sortingOption) {
 
         File sourceDir = new File(sourceDirectory);
         if (!StorageFactory.existsDirectory(sourceDir) || !StorageFactory.isDirectory(sourceDir)) {
@@ -733,13 +736,7 @@ public final class FileUtils {
 
         });
 
-        if (files == null || files.length == 0) {
-            return null;
-        }
-        if (FlatFileProcessingJob.ALPHABETIC_FILE_NAME_ORDER.equals(processingOrder)) {
-            Arrays.sort(files, (a, b) -> a.getName().compareTo(b.getName()));
-        }
-        return files;
+        return StorageFactory.sortFiles(files, sortingOption);
 
     }
 

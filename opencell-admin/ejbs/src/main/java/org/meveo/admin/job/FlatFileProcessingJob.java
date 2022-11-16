@@ -96,8 +96,6 @@ public class FlatFileProcessingJob extends Job {
 
     private static final String FLAT_FILE_PROCESSING_JOB_RECORD_VARIABLE_NAME = "FlatFileProcessingJob_recordVariableName";
 
-    private static final String FLAT_FILE_PROCESSING_JOB_PROCESSING_ORDER = "FlatFileProcessingJob_processingOrder";
-
     /** The flat file processing job bean. */
     @Inject
     private FlatFileProcessingJobBean flatFileProcessingJobBean;
@@ -117,12 +115,6 @@ public class FlatFileProcessingJob extends Job {
 
     /** The Constant ROLLBACK. */
     public static final String ROLLBACK = "ROLLBACK";
-
-    /** Default processing order constant */
-    public static final String DEFAULT_PROCESSING_ORDER = "Default";
-
-    /** Alphabetic file name order constant */
-    public static final String ALPHABETIC_FILE_NAME_ORDER = "Alphabetic";
 
     @SuppressWarnings("unchecked")
     @Override
@@ -217,8 +209,8 @@ public class FlatFileProcessingJob extends Job {
             log.debug("archiveDir {} creation ok", archiveDir);
         }
 
-        String processingOrder = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_PROCESSING_ORDER);
-        File[] files = FileUtils.listFilesByNameFilter(inputDir, fileExtensions, fileNameFilter, processingOrder);
+        String sortingOption = (String) this.getParamOrCFValue(jobInstance, CF_SORTING_OPTION);
+        File[] files = FileUtils.listFilesByNameFilter(inputDir, fileExtensions, fileNameFilter, sortingOption);
         if (files == null || files.length == 0) {
             log.debug("There is no file in {} with extension {} to by processed by FlatFileProcessing {} job", inputDir, fileExtensions, result.getJobInstance().getCode());
             return result;
@@ -480,19 +472,19 @@ public class FlatFileProcessingJob extends Job {
         result.put("oneFilePerJob", oneFilePerJob);
 
         CustomFieldTemplate processingOrder = new CustomFieldTemplate();
-        processingOrder.setCode(FLAT_FILE_PROCESSING_JOB_PROCESSING_ORDER);
+        processingOrder.setCode(CF_SORTING_OPTION);
         processingOrder.setAppliesTo(JOB_FLAT_FILE_PROCESSING_JOB);
         processingOrder.setActive(true);
-        processingOrder.setDefaultValue(FlatFileProcessingJob.DEFAULT_PROCESSING_ORDER);
+        processingOrder.setDefaultValue(SortingFilesEnum.ALPHA.name());
         processingOrder.setDescription(resourceMessages.getString("flatFile.processingOrder"));
         processingOrder.setFieldType(CustomFieldTypeEnum.LIST);
         processingOrder.setValueRequired(false);
-        Map<String, String> listValuesProcessingOrder = new HashMap<String, String>();
-        listValuesProcessingOrder.put(FlatFileProcessingJob.DEFAULT_PROCESSING_ORDER, resourceMessages.getString("flatFile.defaultProcessingOrder"));
-        listValuesProcessingOrder.put(FlatFileProcessingJob.ALPHABETIC_FILE_NAME_ORDER, resourceMessages.getString("flatFile.alphabeticFileNameOrder"));
+        Map<String, String> listValuesProcessingOrder = new HashMap();
+        listValuesProcessingOrder.put(SortingFilesEnum.ALPHA.name(), resourceMessages.getString("flatFile.alphabeticFileNameOrder"));
+        listValuesProcessingOrder.put(SortingFilesEnum.CREATION_DATE.name(), resourceMessages.getString("flatFile.creationDateFileOrder"));
         processingOrder.setListValues(listValuesProcessingOrder);
         processingOrder.setGuiPosition("tab:Configuration:0;fieldGroup:Execution configuration:0;field:3");
-        result.put(FLAT_FILE_PROCESSING_JOB_PROCESSING_ORDER, processingOrder);
+        result.put(CF_SORTING_OPTION, processingOrder);
 
         return result;
     }

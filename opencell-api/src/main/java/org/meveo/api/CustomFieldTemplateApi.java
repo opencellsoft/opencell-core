@@ -41,6 +41,7 @@ import org.meveo.util.EntityCustomizationUtils;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,6 +114,7 @@ public class CustomFieldTemplateApi extends BaseApi {
             missingParameters.add("childEntityFieldsForSummary");
         }
         handleMissingParameters();
+        checkWhenURL(postData);
 
         if (appliesTo != null) {
             postData.setAppliesTo(appliesTo);
@@ -146,6 +148,30 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
 	}
 
+    private void checkWhenURL(CustomFieldTemplateDto postData) {
+        if (CustomFieldTypeEnum.URL == postData.getFieldType()
+                && postData.getDefaultValue() != null
+                && !postData.getDefaultValue().isEmpty()) {
+
+
+            if (postData.getRegExp() != null
+                    && !postData.getRegExp().isEmpty()
+                    && !postData.getDefaultValue().matches(postData.getRegExp())) {
+
+                throw new InvalidParameterException("Wrong URL format. URL should match regular expression " + postData.getRegExp());
+
+            } else {
+                try {
+                    new URL(postData.getDefaultValue());
+                } catch (Exception exception){
+                     throw new InvalidParameterException("Wrong URL format." );
+                }
+
+            }
+
+        }
+    }
+
     public void update(CustomFieldTemplateDto postData, String appliesTo) throws MeveoApiException, BusinessException {
         update(postData, appliesTo, false);
     }
@@ -177,6 +203,7 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
 
         handleMissingParameters();
+        checkWhenURL(postData);
 
         if (appliesTo != null) {
             postData.setAppliesTo(appliesTo);
