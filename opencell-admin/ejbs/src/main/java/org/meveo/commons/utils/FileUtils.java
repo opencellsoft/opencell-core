@@ -473,13 +473,13 @@ public final class FileUtils {
                     throw new IOException("Entry is outside of the target directory");
                 }
                 if (entry.isDirectory()) {
-                    if (!fileout.exists()) {
-                        fileout.mkdirs();
+                    if (!StorageFactory.existsDirectory(fileout)) {
+                        StorageFactory.mkdirs(fileout);
                     }
                     continue;
                 }
-                if (!fileout.exists()) {
-                    (new File(fileout.getParent())).mkdirs();
+                if (!StorageFactory.exists(fileout)) {
+                    StorageFactory.mkdirs(new File(fileout.getParent()));
                 }
                 try (OutputStream fos = StorageFactory.getOutputStream(fileout)) {
                     assert fos != null;
