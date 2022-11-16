@@ -2509,7 +2509,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public void generateRecordedInvoiceAO(Long invoiceId) throws InvoiceExistException, ImportInvoiceException, BusinessException {
 
         Invoice invoice = findById(invoiceId);
-        recordedInvoiceService.generateRecordedInvoice(invoice);
+        recordedInvoiceService.generateRecordedInvoice(invoice, null);
         update(invoice);
     }
 
@@ -3789,6 +3789,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             addApplicableDiscount(billingAccountApplicableDiscountPlanItems,  subscription.getDiscountPlanInstances(), billingAccount, customerAccount, invoice);
         }
 
+        BigDecimal otherDiscount = ZERO;
         // Construct discount and tax aggregates
         for (SubCategoryInvoiceAgregate scAggregate : subCategoryAggregates) {
 
@@ -3811,6 +3812,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (discountAggregate != null) {
                     addAmountsToMap(amountCumulativeForTax, discountAggregate.getAmountsByTax());
                     discountAggregates.add(discountAggregate);
+                    otherDiscount = otherDiscount.add(discountAggregate.getAmountWithoutTax().abs());
                 }
             }
 
@@ -3820,6 +3822,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (discountAggregate != null) {
                     addAmountsToMap(amountCumulativeForTax, discountAggregate.getAmountsByTax());
                     discountAggregates.add(discountAggregate);
+                    otherDiscount = otherDiscount.add(discountAggregate.getAmountWithoutTax().abs());
                 }
             }
 
@@ -3905,6 +3908,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     .map(InvoiceLine::getDiscountAmount)
                     .reduce(BigDecimal::add)
                     .orElse(BigDecimal.ZERO);
+            amountDiscount = amountDiscount.add(otherDiscount);
             if(!amountDiscount.equals(BigDecimal.ZERO)) {
                 invoice.setDiscountAmount(amountDiscount);
                 invoice.setAmountWithoutTaxBeforeDiscount(invoice.getAmountWithoutTax().add(amountDiscount));
@@ -4836,7 +4840,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public Invoice refreshConvertedAmounts(Invoice invoice, BigDecimal currentRate, Date currentRateFromDate) {
     	invoice.getLinkedInvoices();
         invoice = refreshOrRetrieve(invoice);
-        if(currentRate != null) {
+        if(currentRate != null && !invoice.getTradingCurrency().getCurrency().getId().equals(appProvider.getCurrency().getId())) {
             invoice.setLastAppliedRate(currentRate);
         } else {
             invoice.setLastAppliedRate(ONE);
@@ -4849,6 +4853,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setUseCurrentRate(true);
         refreshInvoiceLineAndAggregateAmounts(invoice);
         return update(invoice);
+    }
+
+    public void cleanUpInvoiceWithFuntionalCurrencyDifferentFromOne(){
+        List<Invoice> invoices = getEntityManager().createNamedQuery("Invoice.findWithFuntionalCurrencyDifferentFromOne")
+                .setParameter("EXPECTED_RATE", ONE).getResultList();
+
+        Optional.ofNullable(invoices).orElse(Collections.emptyList())
+                .forEach(invoice ->
+                        refreshConvertedAmounts(invoice, null, invoice.getTradingCurrency().getCurrentRateFromDate())
+                );
     }
 
     private void refreshInvoiceLineAndAggregateAmounts(Invoice invoice) {
@@ -6628,9 +6642,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     .getResultList();
     }
 
-    public List<Invoice> findLinkedInvoicesByIdAndType(Long invoiceId, String invoiceTypeCode) {
+    public List<Object[]> findLinkedInvoicesByIdAndType(Long invoiceId, String invoiceTypeCode) {
 
-        return getEntityManager().createNamedQuery("Invoice.findLinkedInvoicesByIdAndType", Invoice.class).
+        return getEntityManager().createNamedQuery("Invoice.findLinkedInvoicesByIdAndType").
                 setParameter("invoiceId", invoiceId).
                 setParameter("invoiceTypeCode", invoiceTypeCode).getResultList();
 

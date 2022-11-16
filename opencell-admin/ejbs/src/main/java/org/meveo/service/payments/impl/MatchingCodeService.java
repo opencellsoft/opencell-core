@@ -31,6 +31,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
@@ -72,6 +73,8 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
     private static final String PPL_INSTALLMENT = "PPL_INSTALLMENT";
     private static final String PPL_CREATION = "PPL_CREATION";
+    private static final String INVOICE_TYPE_SECURITY_DEPOSIT = "SECURITY_DEPOSIT";
+    private static final String CRD_SD = "CRD_SD";
 
     @Inject
     private CustomerAccountService customerAccountService;
@@ -120,6 +123,10 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         List<PaymentScheduleInstanceItem> listPaymentScheduleInstanceItem = new ArrayList<>();
         //List<AccountOperation> aosToGenerateMatchingCode = new ArrayList<>();
 
+        // Param for security deposit
+        Invoice sdInvoice = null;
+        List<AccountOperation> securityDepositAOPs = new ArrayList<>();
+
         // For PaymentPlan, new AO OOC PPL_CREATION shall match all debit one, and recreate new AOS DEBIT OCC PPL_INSTALLMENT recording to the number of installment of Plan
         // Specially for this case, Invoice will pass to PENDING_PLAN status
         boolean isPplCreationCreditAo = false;
@@ -163,6 +170,11 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                     isPplCreationCreditAo = true;
                 }
 
+                // Builld list with AOP for SecurityDeposit, that will be stored in SD Transaction
+                // Transaction shall only have a Payment AOP : No AOI please
+                // no need to check AO type, if the invoice is SD, this list will be used in other call, to create SD Transaction
+                securityDepositAOPs.add(accountOperation);
+
             } else {
                 if (amountDebit.compareTo(accountOperation.getUnMatchingAmount()) >= 0) {
                     fullMatch = true;
@@ -178,6 +190,10 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             if (accountOperation instanceof RecordedInvoice) {
                 Invoice invoice = ((RecordedInvoice) accountOperation).getInvoice();
                 if (invoice != null) {
+                    if (invoice.getInvoiceType() != null && INVOICE_TYPE_SECURITY_DEPOSIT.equals(invoice.getInvoiceType().getCode())) {
+                        sdInvoice = invoice;
+                    }
+
                     if (withWriteOff) {
                         log.info("matching - [Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 
                                 invoice.getPaymentStatus() + " - newPaymentStatus : " + InvoicePaymentStatusEnum.ABANDONED + "]");
@@ -207,7 +223,6 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                     invoice.setPaymentStatusDate(new Date());
                     entityUpdatedEventProducer.fire(invoice);
 
-                    updateMatchedSecurityDeposit(amountToMatch, accountOperation, invoice);
                 }
             }
 
@@ -247,6 +262,11 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                     amountCredit = BigDecimal.ZERO;
                 }
 
+                // Builld list with AOP for SecurityDeposit, that will be stored in SD Transaction
+                // Transaction shall only have a Payment AOP : No AOI please
+                // no need to check AO type, if the invoice is SD, this list will be used in other call, to create SD Transaction
+                securityDepositAOPs.add(accountOperation);
+
             } else {
                 if (amountDebit.compareTo(accountOperation.getUnMatchingAmount()) >= 0) {
                     fullMatch = true;
@@ -262,6 +282,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             if(accountOperation instanceof RecordedInvoice) {
                 Invoice invoice = ((RecordedInvoice)accountOperation).getInvoice();
                 if (invoice != null) {
+                    if (invoice.getInvoiceType() != null && INVOICE_TYPE_SECURITY_DEPOSIT.equals(invoice.getInvoiceType().getCode())) {
+                        sdInvoice = invoice;
+                    }
                     if(withWriteOff) {
                         log.info("matching- [Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 
                                 invoice.getPaymentStatus() + " - newPaymentStatus : " + InvoicePaymentStatusEnum.ABANDONED + "]");
@@ -274,7 +297,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         log.info("matching- [Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 
                                 invoice.getPaymentStatus() + " - newPaymentStatus : " + InvoicePaymentStatusEnum.PAID + "]");
                         invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.PAID);
-                        //aosToGenerateMatchingCode.add((RecordedInvoice) accountOperation);
+                        // aosToGenerateMatchingCode.add((RecordedInvoice) accountOperation);
                         if (InvoicePaymentStatusEnum.PAID == invoice.getPaymentStatus()) {
                             isToTriggerCollectionPlanLevelsJob = true;
                         }
@@ -285,8 +308,6 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                     }
                     invoice.setPaymentStatusDate(new Date());
 
-                    // INTRD-9400 - Check and update Matched SecurityDeposit  
-                    updateMatchedSecurityDeposit(amountToMatch, accountOperation, invoice);
                 }
                 
             }
@@ -329,20 +350,25 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         // generate matchingCode for related AOs
         // aosToGenerateMatchingCode.forEach(accountOperation -> journalEntryService.assignMatchingCodeToJournalEntries(accountOperation, null));
 
+        //  case when totally matched AOs
+        updateMatchedSecurityDeposit(amountToMatch, sdInvoice, securityDepositAOPs);
+
     }
 
     /**
      * Update SecurityDeposit related to a DEB_SD AO
      * 
      * @param amountToMatch
-     * @param accountOperation
      * @param invoice
      */
-	private void updateMatchedSecurityDeposit(BigDecimal amountToMatch, AccountOperation accountOperation, Invoice invoice) {
-		
-		if(!"DEB_SD".equals(accountOperation.getCode())) {
-			return;
-		}
+	private void updateMatchedSecurityDeposit(BigDecimal amountToMatch, Invoice invoice, List<AccountOperation> securityDepositAOPs) {
+        if (invoice == null) {
+            return;
+        }
+
+        if (CollectionUtils.isEmpty(securityDepositAOPs)) {
+            return;
+        }
 
 		Optional<SecurityDeposit> osd = securityDepositService.getSecurityDepositByInvoiceId(invoice.getId());
 		if(osd.isPresent() && osd.map(SecurityDeposit::getTemplate).isPresent()) {
@@ -364,7 +390,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 				}
 			}
 			// Create SD Transaction
-			securityDepositService.createSecurityDepositTransaction(securityDeposit, amountToMatch, SecurityDepositOperationEnum.CREDIT_SECURITY_DEPOSIT, OperationCategoryEnum.CREDIT, accountOperation);
+            securityDepositAOPs.forEach(sdAop ->
+                    securityDepositService.createSecurityDepositTransaction(securityDeposit, amountToMatch, SecurityDepositOperationEnum.CREDIT_SECURITY_DEPOSIT, OperationCategoryEnum.CREDIT, sdAop));
+
 		}
 	}
 

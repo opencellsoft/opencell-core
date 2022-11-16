@@ -160,7 +160,7 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
             throw new EntityDoesNotExistsException("The Cancel is not possible if the status of the security deposit is at 'Cancel'");
         } 
         
-        securityDepositService.refund(securityDepositToUpdate, securityDepositInput.getCancelReason(), SecurityDepositOperationEnum.CANCEL_SECURITY_DEPOSIT, SecurityDepositStatusEnum.CANCELED, "CANCEL");
+        securityDepositService.refund(securityDepositToUpdate, securityDepositInput.getCancelReason(), SecurityDepositOperationEnum.CANCEL_SECURITY_DEPOSIT, SecurityDepositStatusEnum.CANCELED, "CANCEL", null);
         return Response.ok().entity(buildResponse(securityDepositMapper.toResource(securityDepositToUpdate))).build();
     }
     

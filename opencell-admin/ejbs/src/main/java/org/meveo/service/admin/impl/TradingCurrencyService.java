@@ -27,6 +27,7 @@ import org.meveo.model.billing.ExchangeRate;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.ExchangeRateService;
+import org.meveo.service.billing.impl.InvoiceService;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -46,6 +47,8 @@ public class TradingCurrencyService extends PersistenceService<TradingCurrency> 
 
     @Inject
     private ExchangeRateService exchangeRateService;
+    @Inject
+    private InvoiceService invoiceService;
 
     /**
      * Find TradingCurrency by its trading currency code.
@@ -96,7 +99,7 @@ public class TradingCurrencyService extends PersistenceService<TradingCurrency> 
         return update(tradingCurrency);
     }
 
-    public void checkFunctionalCurrency(org.meveo.model.admin.Currency functionalCurrency) {
+    public void checkFunctionalCurrency(boolean isCleanAppliedRateInvoice) {
         // check functional currency rate : US INTRD-8094
         // on doit avoir toujours fuctionalCurrency rate = 1 sans aucun ExchangeRate fromDate sup à now()
         if (appProvider.getCurrency() != null) {
@@ -109,6 +112,11 @@ public class TradingCurrencyService extends PersistenceService<TradingCurrency> 
                         appProvider.getCurrency().getId(), tradingCurrency.getId());
                 updateFunctionalCurrency(tradingCurrency);
             }
+        }
+
+        if (isCleanAppliedRateInvoice) {
+            log.info("Start clean Invoice wich use FunctionalCurrency but there rate is different from 1");
+            invoiceService.cleanUpInvoiceWithFuntionalCurrencyDifferentFromOne();
         }
     }
 }

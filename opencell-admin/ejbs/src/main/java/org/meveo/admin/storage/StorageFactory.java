@@ -166,6 +166,24 @@ public class StorageFactory {
     }
 
     /**
+     * get S3Client instance
+     *
+     * @return S3Client
+     */
+    public static S3Client getS3Client() {
+        return s3FileSystem.getClient();
+    }
+
+    /**
+     * get bucket name
+     *
+     * @return bucketName bucket name
+     */
+    public static String getBucketName() {
+        return bucketName;
+    }
+
+    /**
      * get path of object in S3
      *
      * @param objectPath String
