@@ -19,7 +19,7 @@ public interface CdrListInput extends Resource {
     List<String> getCdrs();
 
     @Default
-    @Schema(description = "If true, the API will return the list of IDs of all EDRs produced. Applies to non-virtual mode only.")
+    @Schema(description = "If true, the API will return the list of IDs of all EDRs produced. Applies to non-virtual mode only.", name = "isReturnEDRs")
     default boolean isReturnEDRs() {
         return false;
     }
