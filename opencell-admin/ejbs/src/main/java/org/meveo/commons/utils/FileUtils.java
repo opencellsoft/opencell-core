@@ -465,13 +465,13 @@ public final class FileUtils {
             while ((entry = zis.getNextEntry()) != null) {
                 fileout = new File(folder + File.separator + entry.getName());
                 if (entry.isDirectory()) {
-                    if (!fileout.exists()) {
-                        fileout.mkdirs();
+                    if (!StorageFactory.existsDirectory(fileout)) {
+                        StorageFactory.mkdirs(fileout);
                     }
                     continue;
                 }
-                if (!fileout.exists()) {
-                    (new File(fileout.getParent())).mkdirs();
+                if (!StorageFactory.exists(fileout)) {
+                    StorageFactory.mkdirs(new File(fileout.getParent()));
                 }
                 try (OutputStream fos = new FileOutputStream(fileout); BufferedOutputStream bos = new BufferedOutputStream(fos)) {
                     int b = -1;

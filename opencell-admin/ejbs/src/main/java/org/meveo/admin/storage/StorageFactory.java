@@ -537,12 +537,24 @@ public class StorageFactory {
         }
         else if (storageType.equalsIgnoreCase(S3)) {
             String objectKey = formatObjectKey(directory.getPath()) + "/";
-            log.info("create a directory in S3 at key {}", objectKey);
+            log.debug("create a directory in S3 at key {}", objectKey);
 
-            PutObjectRequest request = PutObjectRequest.builder().bucket(bucketName)
-                    .key(objectKey).build();
+            while (objectKey != null) {
+                if (! existsDirectory(new File(objectKey))) {
+                    putObject(objectKey, RequestBody.empty());
+                }
+                else {
+                    break;
+                }
 
-            s3FileSystem.getClient().putObject(request, RequestBody.empty());
+                String parentPath = new File(objectKey).getParent();
+                if (parentPath != null) {
+                    objectKey = formatObjectKey(parentPath) + "/";
+                }
+                else {
+                    objectKey = null;
+                }
+            }
         }
     }
 
@@ -1007,7 +1019,7 @@ public class StorageFactory {
      *
      */
     public static void moveObject(String srcKey, String destKey) {
-        log.info("move object from source key {} to destination key {}", srcKey, destKey);
+        log.debug("move object from source key {} to destination key {}", srcKey, destKey);
         // copy object from srckey to destKey
         CopyObjectRequest copyObjRequest = CopyObjectRequest.builder()
                 .sourceBucket(bucketName).sourceKey(srcKey)
@@ -1021,7 +1033,7 @@ public class StorageFactory {
             log.error("NoSuchKeyException while copying object in addExtension method : {}", e.getMessage());
         }
 
-        log.info("delete old object at source key {}", srcKey);
+        log.debug("delete old object at source key {}", srcKey);
         // delete old object
         DeleteObjectRequest deleteObjRequest = DeleteObjectRequest.builder()
                 .bucket(bucketName).key(srcKey)
@@ -1050,7 +1062,7 @@ public class StorageFactory {
         else if (storageType.equalsIgnoreCase(S3)) {
             String srcKey = formatObjectKey(srcFile.getPath());
             String destKey = formatObjectKey(destFile.getPath());
-            log.info("rename key object in S3 bucket from source key {} to destination key {}", srcKey, destKey);
+            log.debug("rename key object in S3 bucket from source key {} to destination key {}", srcKey, destKey);
 
             moveObject(srcKey, destKey);
 
@@ -1072,7 +1084,7 @@ public class StorageFactory {
         }
         else if (storageType.equalsIgnoreCase(S3)) {
             String objectKey = formatObjectKey(directory.getPath()) + "/";
-            log.info("check if object is a directory in S3 bucket at key {}", objectKey);
+            log.debug("check if object is a directory in S3 bucket at key {}", objectKey);
 
             HeadObjectRequest request = HeadObjectRequest.builder().bucket(bucketName).key(objectKey).build();
 
@@ -1098,7 +1110,7 @@ public class StorageFactory {
         }
         else if (storageType.equalsIgnoreCase(S3)) {
             String objectKey = formatObjectKey(sourceDirectory.getPath());
-            log.info("list files in S3 bucket at directory {} with FilenameFilter ", objectKey);
+            log.debug("list files in S3 bucket at directory {} with FilenameFilter ", objectKey);
 
             final ListObjectsV2Request objectRequest =
                     ListObjectsV2Request.builder()
