@@ -262,7 +262,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
      * @throws ImportInvoiceException import invoice exception
      * @throws BusinessException business exception.
      */
-    public void generateRecordedInvoice(Invoice invoice) throws InvoiceExistException, ImportInvoiceException, BusinessException {
+    public RecordedInvoice generateRecordedInvoice(Invoice invoice, OCCTemplate givenOccTemplate) throws InvoiceExistException, ImportInvoiceException, BusinessException {
 
     	if (invoice.getInvoiceType().isInvoiceAccountable() && VALIDATED.equals(invoice.getStatus())) {
 
@@ -324,29 +324,33 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             }
 
             OCCTemplate occTemplate = null;
-            if (remainingAmountWithTaxForRecordedIncoice != null && remainingAmountWithTaxForRecordedIncoice.compareTo(BigDecimal.ZERO) < 0) {
-                String occTemplateCode = evaluateStringExpression(invoice.getInvoiceType().getOccTemplateNegativeCodeEl(), invoice, invoice.getBillingRun());
-                if (!StringUtils.isBlank(occTemplateCode)) {
-                    occTemplate = occTemplateService.findByCode(occTemplateCode);
-                }
-
-                if (occTemplate == null) {
-                    occTemplate = invoice.getInvoiceType().getOccTemplateNegative();
-                }
-
-            } else {
-                String occTemplateCode = evaluateStringExpression(invoice.getInvoiceType().getOccTemplateCodeEl(), invoice, invoice.getBillingRun());
-                if (!StringUtils.isBlank(occTemplateCode)) {
-                    occTemplate = occTemplateService.findByCode(occTemplateCode);
-                }
-
-                if (occTemplate == null) {
-                    occTemplate = invoice.getInvoiceType().getOccTemplate();
-                    if (occTemplate == null) {
-                        return;
+            if (givenOccTemplate == null) {
+                if (remainingAmountWithTaxForRecordedIncoice != null && remainingAmountWithTaxForRecordedIncoice.compareTo(BigDecimal.ZERO) < 0) {
+                    String occTemplateCode = evaluateStringExpression(invoice.getInvoiceType().getOccTemplateNegativeCodeEl(), invoice, invoice.getBillingRun());
+                    if (!StringUtils.isBlank(occTemplateCode)) {
+                        occTemplate = occTemplateService.findByCode(occTemplateCode);
                     }
-                }
 
+                    if (occTemplate == null) {
+                        occTemplate = invoice.getInvoiceType().getOccTemplateNegative();
+                    }
+
+                } else {
+                    String occTemplateCode = evaluateStringExpression(invoice.getInvoiceType().getOccTemplateCodeEl(), invoice, invoice.getBillingRun());
+                    if (!StringUtils.isBlank(occTemplateCode)) {
+                        occTemplate = occTemplateService.findByCode(occTemplateCode);
+                    }
+
+                    if (occTemplate == null) {
+                        occTemplate = invoice.getInvoiceType().getOccTemplate();
+                        if (occTemplate == null) {
+                            return null;
+                        }
+                    }
+
+                }
+            } else {
+                occTemplate = givenOccTemplate;
             }
 
             RecordedInvoice recordedInvoice = createRecordedInvoice(remainingAmountWithoutTaxForRecordedIncoice, remainingAmountWithTaxForRecordedIncoice,
@@ -368,11 +372,15 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                         invoice.getPaymentStatus() + " - newPaymentStatus : " + currentStatus + "]");
                 invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), currentStatus);
             }
+
+            return recordedInvoice;
     	} else if(!VALIDATED.equals(invoice.getStatus())) {
     		log.warn(" Invoice status is not validated : id {}, status {}", invoice.getId(), invoice.getStatus());
     	} else {
     		log.warn(" Invoice type is not accountable : {} ", invoice.getInvoiceType());
     	}
+
+        return null;
     }
 
     @Override
