@@ -709,7 +709,7 @@ public class QueryBuilder {
         if (isFieldValueOptional) {
             return addSqlCriterion("(" + field + " IS NULL or (" + field + " " + condition + ":" + param + "))", param, listValue);
         } else {
-            return addSqlCriterion(field + " " + condition + ":" + param, param, listValue);
+            return addSqlCriterion(field + " " + condition + "(:" + param + ")", param, listValue);
         }
     }
 
