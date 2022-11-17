@@ -37,6 +37,7 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InsufficientBalanceException;
 import org.meveo.api.dto.billing.WalletOperationDto;
@@ -455,7 +456,12 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     }
 
     public List<Long> listToRerate() {
-        return getEntityManager().createNamedQuery("WalletOperation.listToRerate", Long.class).getResultList();
+        List<Long> ids = getEntityManager().createNamedQuery("WalletOperation.listToRerate", Long.class).getResultList();
+        if(CollectionUtils.isNotEmpty(ids)) {
+            List<Long> walletOperationIds = getEntityManager().createNamedQuery("WalletOperation.findByTriggerdEdr", Long.class).setParameter("rerateWalletOperationIds", ids).getResultList();
+            ids.addAll(walletOperationIds);
+        }
+        return ids;
     }
 
     @SuppressWarnings("unchecked")
