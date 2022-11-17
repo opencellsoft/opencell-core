@@ -603,18 +603,18 @@ public final class FileUtils {
      */
     public static void addDirToArchive(String relativeRoot, String dir2zip, ZipOutputStream zos) throws IOException {
         File zipDir = new File(dir2zip);
-        String[] dirList = zipDir.list();
+        String[] dirList = StorageFactory.list(zipDir);
         byte[] readBuffer = new byte[2156];
         int bytesIn = 0;
 
-        for (int i = 0; i < dirList.length; i++) {
+        for (int i = 0; i < Objects.requireNonNull(dirList).length; i++) {
             File f = new File(zipDir, dirList[i]);
-            if (f.isDirectory()) {
+            if (StorageFactory.isDirectory(f)) {
                 String filePath = f.getPath();
                 addDirToArchive(relativeRoot, filePath, zos);
                 continue;
             }
-            try (FileInputStream fis = new FileInputStream(f)) {
+            try (InputStream fis = StorageFactory.getInputStream(f)) {
                 String relativePath = Paths.get(relativeRoot).relativize(f.toPath()).toString();
                 ZipEntry anEntry = new ZipEntry(relativePath);
                 zos.putNextEntry(anEntry);
