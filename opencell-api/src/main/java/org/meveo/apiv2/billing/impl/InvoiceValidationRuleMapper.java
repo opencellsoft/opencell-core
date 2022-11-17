@@ -13,7 +13,7 @@ public class InvoiceValidationRuleMapper extends ResourceMapper<InvoiceValidatio
     }
 
     @Override
-    protected InvoiceValidationRule toEntity(InvoiceValidationRuleDto invoiceValidationRuleDto) {
+    public InvoiceValidationRule toEntity(InvoiceValidationRuleDto invoiceValidationRuleDto) {
 
         InvoiceValidationRule invoiceValidationRule = new InvoiceValidationRule();
         invoiceValidationRule.setPriority(invoiceValidationRuleDto.getPriority());
@@ -29,7 +29,7 @@ public class InvoiceValidationRuleMapper extends ResourceMapper<InvoiceValidatio
         return invoiceValidationRule;
     }
 
-    protected InvoiceValidationRule toEntity(InvoiceValidationRuleDto invoiceValidationRuleDto, InvoiceValidationRule invoiceValidationRule, InvoiceType invoiceType) {
+    public InvoiceValidationRule toEntity(InvoiceValidationRuleDto invoiceValidationRuleDto, InvoiceValidationRule invoiceValidationRule, InvoiceType invoiceType) {
 
         if (invoiceValidationRuleDto.getType() != null) {
             invoiceValidationRule.setType(invoiceValidationRuleDto.getType());

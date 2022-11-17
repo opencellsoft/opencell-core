@@ -16,6 +16,18 @@ public class InvoiceValidationRulesService extends BusinessService<InvoiceValida
     @Inject
     InvoiceTypeService invoiceTypeService;
 
+    public void updateInvoiceTypePriority(InvoiceValidationRule invoiceValidationRule) {
+
+        InvoiceType invoiceType = invoiceValidationRule.getInvoiceType();
+
+        if (invoiceValidationRule.getPriority() == null) {
+            invoiceValidationRule.setPriority(invoiceType.getInvoiceValidationRules() != null ? invoiceType.getInvoiceValidationRules().size() + 1 : null);
+        } else {
+            InvoiceType updatedInvoiceType = reorderInvoiceValidationRules(invoiceType, invoiceValidationRule, false);
+            invoiceValidationRule.setInvoiceType(updatedInvoiceType);
+        }
+    }
+
     public InvoiceType reorderInvoiceValidationRules(InvoiceType invoiceType, InvoiceValidationRule rule, boolean remove) {
 
         List<InvoiceValidationRule> invoiceValidationRules = invoiceType.getInvoiceValidationRules();

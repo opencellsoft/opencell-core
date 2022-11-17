@@ -1,14 +1,12 @@
 package org.meveo.api.invoice;
 
 import org.meveo.apiv2.ordering.services.ApiService;
-import org.meveo.jpa.JpaAmpNewTx;
-import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceValidationRule;
-import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.InvoiceValidationRulesService;
 
 import javax.inject.Inject;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,14 +15,10 @@ public class InvoiceValidationRulesApiService implements ApiService<InvoiceValid
     @Inject
     InvoiceValidationRulesService invoiceValidationRulesService;
 
-    @Inject
-    InvoiceTypeService invoiceTypeService;
-
     @Override
     public InvoiceValidationRule create(InvoiceValidationRule invoiceValidationRule) {
 
-        updateInvoiceTypePriority(invoiceValidationRule);
-
+        invoiceValidationRulesService.updateInvoiceTypePriority(invoiceValidationRule);
         invoiceValidationRulesService.create(invoiceValidationRule);
 
         return invoiceValidationRule;
@@ -32,25 +26,13 @@ public class InvoiceValidationRulesApiService implements ApiService<InvoiceValid
 
     @Override
     public Optional<InvoiceValidationRule> update(Long id, InvoiceValidationRule invoiceValidationRule) {
-        updateInvoiceTypePriority(invoiceValidationRule);
+        invoiceValidationRulesService.updateInvoiceTypePriority(invoiceValidationRule);
         return Optional.ofNullable(invoiceValidationRulesService.update(invoiceValidationRule));
-    }
-
-    public void updateInvoiceTypePriority(InvoiceValidationRule invoiceValidationRule) {
-
-        InvoiceType invoiceType = invoiceValidationRule.getInvoiceType();
-
-        if (invoiceValidationRule.getPriority() == null) {
-            invoiceValidationRule.setPriority(invoiceType.getInvoiceValidationRules() != null ? invoiceType.getInvoiceValidationRules().size() + 1 : null);
-        } else {
-            InvoiceType updatedInvoiceType = invoiceValidationRulesService.reorderInvoiceValidationRules(invoiceType, invoiceValidationRule, false);
-            invoiceValidationRule.setInvoiceType(updatedInvoiceType);
-        }
     }
 
     @Override
     public List<InvoiceValidationRule> list(Long offset, Long limit, String sort, String orderBy, String filter) {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
