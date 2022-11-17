@@ -404,9 +404,6 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
     public void reRate(Long operationToRerateId, boolean useSamePricePlan) throws BusinessException, RatingException {
 
         WalletOperation operationToRerate = getEntityManager().find(WalletOperation.class, operationToRerateId);
-        if (operationToRerate.getStatus() != WalletOperationStatusEnum.TO_RERATE) {
-            return;
-        }
 
         // Change related OPEN or REJECTED Rated transaction status to CANCELED
         RatedTransaction ratedTransaction = operationToRerate.getRatedTransaction();
