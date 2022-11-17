@@ -130,7 +130,6 @@ public class MediationApiServiceTest {
         
         List<Access> accesss = new ArrayList<Access>();
         accesss.add(new Access());
-        when(accessService.getActiveAccessByUserId(any())).thenReturn(accesss);
         when(cdrService.checkDuplicateCDR(any())).thenReturn(false);
         
         doNothing().when(cdrService).create(any());
@@ -160,19 +159,16 @@ public class MediationApiServiceTest {
     public void test_update_status_closed_to_open_KO() {
         List<Access> accesss = new ArrayList<Access>();
         accesss.add(new Access());
-        when(accessService.getActiveAccessByUserId(any())).thenReturn(accesss);
         CDR toBeUpdated = createDummyCDR(1L, new Date(), 1d, "AccessCode", "param1");
         toBeUpdated.setStatus(CDRStatusEnum.OPEN);
         CDR cdr = createDummyCDR(1L, new Date(), 1d, "AccessCode", "param1");
         cdr.setStatus(CDRStatusEnum.CLOSED);
         
         when(cdrService.findById(anyLong())).thenReturn(cdr);
-        when(cdrService.update(cdr)).thenReturn(cdr);
 
         expectedEx.expect(BusinessException.class);
         expectedEx.expectMessage("Impossible to update CDR with status from " + cdr.getStatus() + " to : OPEN, ERROR, TO_REPROCESS, DISCARDED, PROCESSED");
-        
-        
+
         mediationApiService.updateCDR(1L, toBeUpdated);
     }
     
@@ -181,14 +177,12 @@ public class MediationApiServiceTest {
     public void test_update_mandatory_field_KO() {
         List<Access> accesss = new ArrayList<Access>();
         accesss.add(new Access());
-        when(accessService.getActiveAccessByUserId(any())).thenReturn(accesss);
         CDR toBeUpdated = createDummyCDR(1L, null, null, "AccessCode", "param1");
         toBeUpdated.setStatus(CDRStatusEnum.OPEN);
         CDR cdr = createDummyCDR(1L, new Date(), 1d, "AccessCode", "param1");
         cdr.setStatus(CDRStatusEnum.OPEN);
         
         when(cdrService.findById(anyLong())).thenReturn(cdr);
-        when(cdrService.update(cdr)).thenReturn(cdr);
 
         expectedEx.expect(MissingParameterException.class);
         expectedEx.expectMessage("The following parameters are required or contain invalid values: eventDate, quantity.");
@@ -220,8 +214,6 @@ public class MediationApiServiceTest {
         expectedEx.expect(BusinessException.class);
         expectedEx.expectMessage("Only CDR with status : " + statusToBeDeleted.toString() + " can be deleted");
         
-        doNothing().when(cdrService).remove(cdr);
-        
         mediationApiService.deleteCdr(1L);
     }
     
@@ -234,8 +226,6 @@ public class MediationApiServiceTest {
                 );
 
         when(cdrService.findById(anyLong())).thenReturn(cdrs.get(0), cdrs.get(1));
-        
-        doNothing().when(cdrService).remove(any(CDR.class));
         
         CdrDtoResponse response =  mediationApiService.deleteCdrs(Arrays.asList(1L, 2L), ProcessCdrListModeEnum.PROCESS_ALL, true, true);
         assertEquals(0, response.getErrors().size());
@@ -250,8 +240,6 @@ public class MediationApiServiceTest {
                 );
 
         when(cdrService.findById(anyLong())).thenReturn(cdrs.get(0), cdrs.get(1));
-        
-        doNothing().when(cdrService).remove(any(CDR.class));
         
         CdrDtoResponse response =  mediationApiService.deleteCdrs(Arrays.asList(1L, 2L), ProcessCdrListModeEnum.PROCESS_ALL, true, true);
 
