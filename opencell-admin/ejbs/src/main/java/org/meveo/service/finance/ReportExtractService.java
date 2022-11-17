@@ -175,7 +175,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
                     fileDetails = writeAsHtml(filename, reportDir, results, entity);
                 }
                 filename = fileDetails.getFileName();
-                reportExtractExecutionResult.setLineCount(reportSize);
+                reportExtractExecutionResult.setLineCount(fileDetails.getSize());
 
             } else if (be == null && entity.isGenerateEmptyReport()) {
                 filename = generateEmptyReport(filename, reportDir, entity.getReportExtractResultType());
