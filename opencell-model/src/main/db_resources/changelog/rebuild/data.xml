@@ -9900,6 +9900,16 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		</insert>
 	</changeSet>
 
+	<changeSet id="#INTRD-11681_20221117" author="ebourras">
+		<update tableName="ar_occ_template">
+			<column name="description" value="Payment by security deposit" />
+			<column name="accounting_code_id" valueComputed="(select id from public.billing_accounting_code where code = '411000000')"/>
+			<column name="contra_accounting_code_id" valueComputed="(select id from public.billing_accounting_code where code = '165000000')"/>
+			<column name="accounting_scheme_id" valueComputed="(select id from ar_accounting_scheme where code = 'Dual entry scheme')"/>
+			<where>code = 'PAY_SD'</where>
+		</update>
+	</changeSet>
+
 	<changeSet id="#INTRD-6484" author="hichamElHaloui"/>
 	<changeSet id="#INTRD-6668_20220421" author="TarikRabeh" />
 	<changeSet id="#INTRD-6638_20220422-update-occT" author="aelmalki" />
