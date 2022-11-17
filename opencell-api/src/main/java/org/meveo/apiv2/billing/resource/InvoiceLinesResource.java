@@ -38,16 +38,27 @@ public interface InvoiceLinesResource {
     @POST
     @Path("/markForAdjustment")
     @Operation(
-            summary = "This API will allow creating adjustment based on an existing validated invoice.",
-            description = "This API will allow creating adjustment based on an existing validated invoice.<br>"
-                            + "Either can we choose specific invoice lines from a specific invoice or the whole invoice to be used on the newly created adjustment.",
+            summary = "This API will allow mark adjustment for invoice lines",
+            description = "This API will allow mark adjustment for invoice lines.<br>",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Adjustment successfully created"),
-                    @ApiResponse(responseCode = "403", description = "Invoice should be Validated and occCategory equals to DEBIT as an invoice type!"),
-                    @ApiResponse(responseCode = "500", description = "Error when creating adjustment"),
-                    @ApiResponse(responseCode = "403", description = "IThe following parameters are required or contain invalid values: globalAdjustment")
+                    @ApiResponse(responseCode = "403", description = "Only NOT_ADJUSTED invoice lines can be marked TO_ADJUST"),
+                    @ApiResponse(responseCode = "500", description = "Error marking for adjustment")
                 }
             )
     Response markForAdjustment(@Parameter(description = "InvoiceLines to mark for adjustment", required = true) @NotNull InvoiceLinesToMarkAdjustment invoiceLinesToMark);
+    
+    @POST
+    @Path("/unmarkForAdjustment")
+    @Operation(
+            summary = "This API will allow creating adjustment based on an existing validated invoice.",
+            description = "This API will allow creating adjustment based on an existing validated invoice.<br>",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Adjustment successfully created"),
+                    @ApiResponse(responseCode = "403", description = "Only invoice lines marked TO_ADJUST can be unmarked as NOT_ADJUSTED"),
+                    @ApiResponse(responseCode = "500", description = "Error marking for adjustment")
+                }
+            )
+    Response unmarkForAdjustment(@Parameter(description = "InvoiceLines to unmark for adjustment", required = true) @NotNull InvoiceLinesToMarkAdjustment invoiceLinesToMark);
     
 }

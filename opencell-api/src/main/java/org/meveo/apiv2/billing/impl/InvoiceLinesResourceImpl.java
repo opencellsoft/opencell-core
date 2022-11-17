@@ -38,5 +38,17 @@ public class InvoiceLinesResourceImpl implements InvoiceLinesResource {
         response.put("message", nbInvoiceLinesMarked+" new invoiceLine(s) marked TO_ADJUST");
         return Response.ok(response).build();
     }
+    
+    @Override
+    public Response unmarkForAdjustment(@NotNull InvoiceLinesToMarkAdjustment invoiceLinesToUnmark) {
+    	int nbInvoiceLinesUnmarked = 0;
+    	if(!CollectionUtils.isEmpty(invoiceLinesToUnmark.getInvoiceLinesIds()))
+    		nbInvoiceLinesUnmarked = invoiceLinesApiService.unmarkInvoiceLinesForAdjustment(invoiceLinesToUnmark);
+    	
+        Map<String, Object> response = new HashMap<>();
+        response.put("actionStatus", Collections.singletonMap("status", "SUCCESS"));
+        response.put("message", nbInvoiceLinesUnmarked+" new invoiceLine(s) marked NOT_ADJUSTED");
+        return Response.ok(response).build();
+    }
 
 }
