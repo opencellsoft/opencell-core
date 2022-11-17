@@ -191,11 +191,11 @@ public class FilesApi extends BaseApi {
     public void zipDir(String dir) throws BusinessApiException {
         String normalizedDir = (isLocalDir(dir) ? "" : normalizePath(dir)) ;
         File file = new File(getProviderRootDir() + File.separator + normalizedDir);
-        if (!file.exists()) {
+        if (!StorageFactory.existsDirectory(file)) {
             throw new BusinessApiException("Directory does not exists: " + file.getPath());
         }
         File zipFile = new File(FilenameUtils.removeExtension(file.getParent() + File.separator + file.getName()) + ".zip");
-        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipFile))) {
+        try (ZipOutputStream zos = new ZipOutputStream(Objects.requireNonNull(StorageFactory.getOutputStream(zipFile)))) {
             FileUtils.addDirToArchive(getProviderRootDir(), file.getPath(), zos);
             zos.flush();
             if(isLocalDir(dir))
