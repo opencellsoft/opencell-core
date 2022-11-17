@@ -867,7 +867,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                     return false;
                 } 
             }
-            else if (billingRun.getBillingCycle() == null) {
+            //Billing Run exceptionnel
+            if (billingRun.getBillingCycle() == null) {
                 return true;
             }
             billingRun = refreshOrRetrieve(billingRun);
