@@ -79,6 +79,11 @@ public class InvoiceValidationRulesResourceImpl implements InvoiceValidationRule
         return Response.ok(responseStatus).build();
     }
 
+    @Override
+    public Response delete(InvoiceValidationRuleDto invoiceValidationRuleDto) {
+        return null;
+    }
+
     private InvoiceType checkInvoiceType(InvoiceValidationRuleDto invoiceValidationRuleDto) {
         InvoiceType invoiceType = null;
 
@@ -114,14 +119,18 @@ public class InvoiceValidationRulesResourceImpl implements InvoiceValidationRule
     private void checkCodeAndDescription(InvoiceValidationRule invoiceValidationRule) {
 
         if (invoiceValidationRule.getCode() == null || invoiceValidationRule.getCode().isEmpty()) {
-             invoiceValidationRule.setCode(invoiceValidationRule.getInvoiceType() + "_" + invoiceValidationRule.getPriority());
+            invoiceValidationRule.setCode(invoiceValidationRule.getInvoiceType() + "_" + invoiceValidationRule.getPriority());
         }
 
         if (invoiceValidationRule.getDescription() == null || invoiceValidationRule.getDescription().isEmpty()) {
 
-             invoiceValidationRule.setDescription("Rule " + invoiceValidationRule.getPriority() + ": "
-                 + invoiceValidationRule.getFailStatus().toString() + " if " + invoiceValidationRule.getType().toString()
-                 + " fails");
+            String value = invoiceValidationRule.getType().equals(ValidationRuleTypeEnum.SCRIPT) ? invoiceValidationRule.getValidationScript()
+                    : invoiceValidationRule.getValidationEL();
+
+            invoiceValidationRule.setDescription("Rule " + invoiceValidationRule.getPriority() + ": "
+                    + invoiceValidationRule.getFailStatus().toString() + " if " + invoiceValidationRule.getType().toString() + " "
+                    + value +
+                    " fails");
         }
     }
 
