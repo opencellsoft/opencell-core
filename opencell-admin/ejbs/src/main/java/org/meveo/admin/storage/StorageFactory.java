@@ -1024,7 +1024,7 @@ public class StorageFactory {
         }
         else if (storageType.equalsIgnoreCase(S3)) {
             String objectKey = formatObjectKey(sourceDirectory);
-            log.debug("list files in S3 bucket at directory {}", objectKey);
+            log.debug("list files in S3 bucket at directory {} with extension", objectKey);
 
             final ListObjectsV2Request objectRequest =
                     ListObjectsV2Request.builder()
@@ -1166,6 +1166,41 @@ public class StorageFactory {
             }
 
             return files.toArray(new File[0]);
+        }
+
+        return null;
+    }
+
+    /**
+     * list all files inside of a directory
+     *
+     * @param sourceDirectory a source directory.
+     *
+     * @return a file arrays inside of the source directory
+     */
+    public static String[] list(File sourceDirectory) {
+        if (storageType.equals(NFS)) {
+            return sourceDirectory.list();
+        }
+        else if (storageType.equalsIgnoreCase(S3)) {
+            String objectKey = formatObjectKey(sourceDirectory.getPath());
+            log.debug("list files in S3 bucket at directory {}", objectKey);
+
+            final ListObjectsV2Request objectRequest =
+                    ListObjectsV2Request.builder()
+                            .bucket(bucketName)
+                            .prefix(objectKey)
+                            .build();
+
+            ListObjectsV2Response listObjects = s3FileSystem.getClient().listObjectsV2(objectRequest);
+
+            List<String> files = new ArrayList<>();
+
+            for (S3Object object : listObjects.contents()){
+                files.add(object.key());
+            }
+
+            return files.toArray(new String[0]);
         }
 
         return null;
