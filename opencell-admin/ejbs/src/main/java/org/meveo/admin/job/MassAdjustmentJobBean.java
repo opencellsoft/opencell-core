@@ -51,10 +51,20 @@ public class MassAdjustmentJobBean extends BaseJobBean {
         
         List<Long> invoiceLinesToAdjustIds = invoiceLinesToAdjust.stream().map(InvoiceLine::getId).collect(Collectors.toList());
         
-        invoiceLinesToAdjust.stream().map(InvoiceLine::getInvoice).distinct().forEach(invoice -> {
+        List<Invoice> impactedInvoices = invoiceLinesToAdjust.stream().map(InvoiceLine::getInvoice).distinct().collect(Collectors.toList());
+        
+        BigDecimal totalAWoTProcessed = BigDecimal.ZERO;
+        BigDecimal totalAWTProcessed = BigDecimal.ZERO;
+        int totalLinesProcessed = 0;
+        int totalImpactedBA = impactedInvoices.stream().map(Invoice::getBillingAccount).mapToInt(i -> 1).sum();
+        
+        for (Invoice invoice : impactedInvoices) {
         	Invoice adjustment = invoiceService.createAdjustment(invoice, invoiceLinesToAdjustIds);
         	invoiceService.validateInvoice(adjustment);
-        });
+        	totalLinesProcessed += adjustment.getInvoiceLines().size();
+        	totalAWoTProcessed = totalAWoTProcessed.add(adjustment.getInvoiceLines().stream().map(InvoiceLine::getAmountWithoutTax).reduce(BigDecimal.ZERO, BigDecimal::add));
+        	totalAWTProcessed = totalAWTProcessed.add(adjustment.getInvoiceLines().stream().map(InvoiceLine::getAmountWithTax).reduce(BigDecimal.ZERO, BigDecimal::add));
+        };
         
         BigDecimal totalAmountWoT = BigDecimal.ZERO;
         BigDecimal totalAmountWT = BigDecimal.ZERO;
@@ -66,8 +76,15 @@ public class MassAdjustmentJobBean extends BaseJobBean {
 			invoiceLineService.update(invoiceLine);
 		}
         
-        jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report", invoiceLinesToAdjust.size(), totalAmountWoT, totalAmountWT));
-
+        jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.initial.lines", invoiceLinesToAdjust.size()));
+        jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.processed.lines", totalLinesProcessed));
+        jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.inital.awot", totalAmountWoT));
+        jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.initial.awt", totalAmountWT));
+        jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.processed.awot", totalAWoTProcessed));
+        jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.processed.awt", totalAWTProcessed));
+        jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.impacted.invoices", impactedInvoices.size()));
+        jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.impacted.ba", totalImpactedBA));
+        
         return jobExecutionResult;
     }
 
