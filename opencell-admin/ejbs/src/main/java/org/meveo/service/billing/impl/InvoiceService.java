@@ -134,6 +134,7 @@ import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
+import org.meveo.model.billing.AdjustmentStatusEnum;
 import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.ApplyMinimumModeEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -2592,6 +2593,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
     }
 
+	public void validateInvoice(Invoice invoice) {
+		invoice.setStatus(InvoiceStatusEnum.VALIDATED);
+		update(invoice);
+	}
+    
     /**
      * @param billingRunId
      * @param invoiceIds
@@ -6528,6 +6534,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         for (InvoiceLine invoiceLine : invoiceLines) {
             invoiceLinesService.detach(invoiceLine);
             InvoiceLine duplicateInvoiceLine = new InvoiceLine(invoiceLine, duplicateInvoice);
+            duplicateInvoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
             invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);
             duplicateInvoice.getInvoiceLines().add(duplicateInvoiceLine);
         }
