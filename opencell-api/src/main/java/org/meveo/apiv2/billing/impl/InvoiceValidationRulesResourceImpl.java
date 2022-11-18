@@ -4,6 +4,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.apiv2.billing.InvoiceValidationRuleDto;
 import org.meveo.api.invoice.InvoiceValidationRulesApiService;
 import org.meveo.apiv2.billing.resource.InvoiceValidationRulesResource;
@@ -145,22 +146,22 @@ public class InvoiceValidationRulesResourceImpl implements InvoiceValidationRule
 
 
         if (isValidationScriptAndValidationEL) {
-            throw new BusinessException("You cannot have both validation script and validation EL");
+            throw new InvalidParameterException("You cannot have both validation script and validation EL");
         }
 
         if (isValidationScriptAndTypeScript) {
             ScriptInstance scriptInstance = scriptInstanceService.findByCode(invoiceValidationRuleDto.getValidationScript());
             if (scriptInstance == null) {
-                throw new BusinessException("Script Instance does not exist");
+                throw new InvalidParameterException("Script Instance does not exist");
             }
         }
 
         if (isValidationScriptAndTypeIsNotScript) {
-            throw new BusinessException("Type is set to SCRIPT and validation EL is provided instead of validation script");
+            throw new InvalidParameterException("Type is set to SCRIPT and validation EL is provided instead of validation script");
 
         }
         if (isValidationELAndTypeisNotEL) {
-            throw new BusinessException("Type is set to EL and validation script is provided instead of validation EL");
+            throw new InvalidParameterException("Type is set to EL and validation script is provided instead of validation EL");
         }
     }
 
