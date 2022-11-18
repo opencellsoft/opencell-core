@@ -74,7 +74,7 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
         }
         if(policy.getDunningPolicyRules() != null && !policy.getDunningPolicyRules().isEmpty()) {
             try {
-                String query = "SELECT inv FROM Invoice inv WHERE inv.paymentStatus = 'PENDING' AND inv.dunningCollectionPlanTriggered = false AND "
+                String query = "SELECT inv FROM Invoice inv WHERE (inv.paymentStatus = 'UNPAID' OR inv.paymentStatus = 'PPAID') AND inv.dunningCollectionPlanTriggered = false AND "
                         + buildPolicyRulesFilter(policy.getDunningPolicyRules());
                 return (List<Invoice>) invoiceService.executeSelectQuery(query, null);
             } catch (Exception exception) {
@@ -262,7 +262,7 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
             DunningPolicy policy = refreshOrRetrieve(entry.getKey());
             Optional<DunningPolicyLevel> firstLevel = policy.getDunningLevels()
                     .stream()
-                    .filter(policyLevel -> policyLevel.getSequence() == 1 && !policyLevel.getDunningLevel().isReminder())
+                    .filter(policyLevel -> policyLevel.getSequence() == 0 && !policyLevel.getDunningLevel().isReminder())
                     .findFirst();
             if(!firstLevel.isEmpty()) {
                 Integer dayOverDue = firstLevel.map(policyLevel -> policyLevel.getDunningLevel().getDaysOverdue()).get();
