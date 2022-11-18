@@ -7,8 +7,12 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.accounts.CounterInstanceDto;
 import org.meveo.apiv2.billing.CounterPeriodDto;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.RecurringChargeInstance;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UsageChargeInstance;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.CounterTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -69,7 +73,7 @@ public class CounterInstanceCRUDApiTest {
     @Test
     public void createNominal() {
         CounterInstanceDto dto = buildDto("OVH", "OVH Counter TU", "TEMP1", "CUSTO",
-                null, null, null, null, Set.of("USAGE", "AUTRE"),
+                "BILL", "USER", "SUBSC", "SRV", Set.of("USAGE", "AUTRE"),
                 Set.of(buildCounterPeriodDto(CounterTypeEnum.NOTIFICATION,
                         Date.from(LocalDate.now().minusMonths(12).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                         Date.from(LocalDate.now().minusMonths(10).atStartOfDay(ZoneId.systemDefault()).toInstant()))
@@ -77,6 +81,10 @@ public class CounterInstanceCRUDApiTest {
 
         Mockito.when(counterTemplateService.findByCode(any())).thenReturn(new CounterTemplate());
         Mockito.when(customerAccountService.findByCode(any())).thenReturn(new CustomerAccount());
+        Mockito.when(billingAccountService.findByCode(any())).thenReturn(new BillingAccount());
+        Mockito.when(userAccountService.findByCode(any())).thenReturn(new UserAccount());
+        Mockito.when(subscriptionService.findByCode(any())).thenReturn(new Subscription());
+        Mockito.when(serviceInstanceService.findByCode(any())).thenReturn(new ServiceInstance());
         Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
         Mockito.when(chargeInstanceService.findByCode("AUTRE")).thenReturn(new RecurringChargeInstance());
         Mockito.doNothing().when(counterPeriodService).create(any());
@@ -97,6 +105,28 @@ public class CounterInstanceCRUDApiTest {
         Mockito.when(counterTemplateService.findByCode(any())).thenReturn(new CounterTemplate());
         Mockito.when(customerAccountService.findByCode(any())).thenReturn(new CustomerAccount());
         Mockito.doNothing().when(counterPeriodService).create(any());
+
+        apiService.createCounterInstance(dto);
+
+    }
+
+    @Test(expected = EntityDoesNotExistsException.class)
+    public void codeTemplateNotExistErr() {
+        CounterInstanceDto dto = buildDto("OVH", "OVH Counter TU", "TEMP1", "NOT_FOUND",
+                null, null, null, null, null, null);
+
+        Mockito.when(counterTemplateService.findByCode(any())).thenReturn(null);
+
+        apiService.createCounterInstance(dto);
+
+    }
+
+    @Test(expected = EntityDoesNotExistsException.class)
+    public void custAccountNotExistErr() {
+        CounterInstanceDto dto = buildDto("OVH", "OVH Counter TU", "TEMP1", "NOT_FOUND",
+                null, null, null, null, null, null);
+
+        Mockito.when(counterTemplateService.findByCode(any())).thenReturn(new CounterTemplate());
 
         apiService.createCounterInstance(dto);
 
@@ -220,7 +250,7 @@ public class CounterInstanceCRUDApiTest {
             apiService.createCounterInstance(dto);
             Assert.fail("Exception must be thrown");
         } catch (BusinessApiException e) {
-            Assert.assertTrue(e.getMessage().contains("is overlapping with Period"));
+            Assert.assertTrue(e.getMessage().startsWith("No overlapping should occur between counter Date Periods"));
         }
 
     }
@@ -247,7 +277,7 @@ public class CounterInstanceCRUDApiTest {
             apiService.createCounterInstance(dto);
             Assert.fail("Exception must be thrown");
         } catch (BusinessApiException e) {
-            Assert.assertTrue(e.getMessage().contains("is overlapping with Period"));
+            Assert.assertTrue(e.getMessage().startsWith("No overlapping should occur between counter Date Periods"));
         }
 
     }
@@ -274,7 +304,7 @@ public class CounterInstanceCRUDApiTest {
             apiService.createCounterInstance(dto);
             Assert.fail("Exception must be thrown");
         } catch (BusinessApiException e) {
-            Assert.assertTrue(e.getMessage().contains("is overlapping with Period"));
+            Assert.assertTrue(e.getMessage().startsWith("No overlapping should occur between counter Date Periods"));
         }
 
     }
@@ -301,7 +331,7 @@ public class CounterInstanceCRUDApiTest {
             apiService.createCounterInstance(dto);
             Assert.fail("Exception must be thrown");
         } catch (BusinessApiException e) {
-            Assert.assertTrue(e.getMessage().contains("is overlapping with Period"));
+            Assert.assertTrue(e.getMessage().startsWith("No overlapping should occur between counter Date Periods"));
         }
 
     }
@@ -328,7 +358,7 @@ public class CounterInstanceCRUDApiTest {
             apiService.createCounterInstance(dto);
             Assert.fail("Exception must be thrown");
         } catch (BusinessApiException e) {
-            Assert.assertTrue(e.getMessage().contains("is overlapping with Period"));
+            Assert.assertTrue(e.getMessage().startsWith("No overlapping should occur between counter Date Periods"));
         }
 
     }
@@ -355,7 +385,7 @@ public class CounterInstanceCRUDApiTest {
             apiService.createCounterInstance(dto);
             Assert.fail("Exception must be thrown");
         } catch (BusinessApiException e) {
-            Assert.assertTrue(e.getMessage().contains("is overlapping with Period"));
+            Assert.assertTrue(e.getMessage().startsWith("No overlapping should occur between counter Date Periods"));
         }
 
     }
@@ -382,7 +412,7 @@ public class CounterInstanceCRUDApiTest {
             apiService.createCounterInstance(dto);
             Assert.fail("Exception must be thrown");
         } catch (BusinessApiException e) {
-            Assert.assertTrue(e.getMessage().contains("is overlapping with Period"));
+            Assert.assertTrue(e.getMessage().startsWith("No overlapping should occur between counter Date Periods"));
         }
 
     }
@@ -409,7 +439,7 @@ public class CounterInstanceCRUDApiTest {
             apiService.createCounterInstance(dto);
             Assert.fail("Exception must be thrown");
         } catch (BusinessApiException e) {
-            Assert.assertTrue(e.getMessage().contains("is overlapping with Period"));
+            Assert.assertTrue(e.getMessage().startsWith("No overlapping should occur between counter Date Periods"));
         }
 
     }
@@ -436,7 +466,7 @@ public class CounterInstanceCRUDApiTest {
             apiService.createCounterInstance(dto);
             Assert.fail("Exception must be thrown");
         } catch (BusinessApiException e) {
-            Assert.assertTrue(e.getMessage().contains("is overlapping with Period"));
+            Assert.assertTrue(e.getMessage().startsWith("No overlapping should occur between counter Date Periods"));
         }
 
     }
@@ -463,7 +493,7 @@ public class CounterInstanceCRUDApiTest {
             apiService.createCounterInstance(dto);
             Assert.fail("Exception must be thrown");
         } catch (BusinessApiException e) {
-            Assert.assertTrue(e.getMessage().contains("is overlapping with Period"));
+            Assert.assertTrue(e.getMessage().startsWith("No overlapping should occur between counter Date Periods"));
         }
 
     }
@@ -490,7 +520,7 @@ public class CounterInstanceCRUDApiTest {
             apiService.createCounterInstance(dto);
             Assert.fail("Exception must be thrown");
         } catch (BusinessApiException e) {
-            Assert.assertTrue(e.getMessage().contains("is overlapping with Period"));
+            Assert.assertTrue(e.getMessage().startsWith("No overlapping should occur between counter Date Periods"));
         }
 
     }
@@ -517,7 +547,7 @@ public class CounterInstanceCRUDApiTest {
             apiService.createCounterInstance(dto);
             Assert.fail("Exception must be thrown");
         } catch (BusinessApiException e) {
-            Assert.assertTrue(e.getMessage().contains("is overlapping with Period"));
+            Assert.assertTrue(e.getMessage().startsWith("No overlapping should occur between counter Date Periods"));
         }
 
     }

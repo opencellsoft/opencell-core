@@ -394,8 +394,8 @@ public class AccountsManagementApiService {
                         || (start.before(startP) && end.after(startP) && end.after(endP))
                         || (start.after(startP) && end.after(startP) && end.before(endP))
                 ) {
-                    throw new BusinessApiException("Period [start=" + formatDate(startP) + " - end=" + formatDate(endP) + "]" +
-                            " is overlapping with Period [start=" + formatDate(start) + " - end=" + formatDate(end) + "]");
+                    throw new BusinessApiException("No overlapping should occur between counter Date Periods : [start=" + formatDate(startP) + " - end=" + formatDate(endP) + "]" +
+                            " and [start=" + formatDate(start) + " - end=" + formatDate(end) + "]");
                 }
             });
 
