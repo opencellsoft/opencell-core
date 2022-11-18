@@ -613,7 +613,12 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
             PricePlanMatrix pricePlan = null;
             // Unit price was not overridden
-            if ((unitPriceWithoutTaxOverridden == null && appProvider.isEntreprise()) || (unitPriceWithTaxOverridden == null && !appProvider.isEntreprise())) {
+            BillingAccount billingAccount = bareWalletOperation.getBillingAccount();
+            CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+            Customer customer = customerAccount.getCustomer();
+            List<Contract> contracts = contractService.getContractByAccount(customer, billingAccount, customerAccount);
+            if ((unitPriceWithoutTaxOverridden == null && appProvider.isEntreprise())
+                    || (unitPriceWithTaxOverridden == null && !appProvider.isEntreprise())) {
 
                 List<PricePlanMatrix> chargePricePlans = pricePlanMatrixService.getActivePricePlansByChargeCode(bareWalletOperation.getCode());
                 if (chargePricePlans == null || chargePricePlans.isEmpty()) {
@@ -621,10 +626,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 }
 
                 // Check if unit price was not overridden by a contract
-                BillingAccount billingAccount = bareWalletOperation.getBillingAccount();
-                CustomerAccount customerAccount = billingAccount.getCustomerAccount();
-                Customer customer = customerAccount.getCustomer();
-                List<Contract> contracts = contractService.getContractByAccount(customer, billingAccount, customerAccount);
                 Contract contract = null;
                 Contract contractWithRules = null;
                 if(contracts != null && !contracts.isEmpty()) {
@@ -718,9 +719,11 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
 
                 }
-            }else {
-                     bareWalletOperation.setOverrodePrice(true);
-                 
+            } else {
+                if (contracts != null && !contracts.isEmpty()) {
+                    bareWalletOperation.setRulesContract(addContractWithRules(contracts));
+                }
+                bareWalletOperation.setOverrodePrice(true);
             }
 
             // if the wallet operation correspond to a recurring charge that is shared, we divide the price by the number of shared charges
@@ -810,7 +813,23 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
         return bareWalletOperation;
     }
-    
+
+    private Contract addContractWithRules(List<Contract> contracts) {
+        return contracts.stream()
+                .filter(c -> c.getBillingAccount() != null && c.getBillingRules()!=null && !c.getBillingRules()
+                        .isEmpty())
+                .findFirst() // BA Contract
+                .or(() -> contracts.stream()
+                        .filter(c -> c.getCustomerAccount() != null && c.getBillingRules()!=null && !c.getBillingRules()
+                                .isEmpty())
+                        .findFirst()) // CA Contract
+                .or(() -> contracts.stream()
+                        .filter(c -> c.getCustomer() != null && c.getBillingRules()!=null && !c.getBillingRules()
+                                .isEmpty())
+                        .findFirst()) // Customer Contract
+                .orElse(contracts.get(0));
+    }
+
     /**
      * Determine unit price from a priceplan
      * 
