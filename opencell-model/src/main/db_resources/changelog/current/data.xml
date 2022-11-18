@@ -7120,7 +7120,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="uuid" value="billing_accounting_article-ADV-STD" />
         </insert>
     </changeSet>
-    
+
 	<changeSet id="#INTRD-4702-20220321" author="ZBariki">
 		<update tableName="meveo_script_instance_cat">
 			<column name="code" value="ACCOUNTING_SCHEMES"></column>
@@ -7567,7 +7567,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			where exists(select id from cte where cte.id = bil.id and cte.current_rate is null);
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-7339_20220607" author="hichamhanine">
 		<insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-62" />
@@ -7591,7 +7591,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="verbose_report" value="1" />
         </insert>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-6056_20220415" author="HatimOUDAD">
 		<update tableName="cpq_quote_product">
 			<column name="product_action_type" value="CREATE" />
@@ -7857,7 +7857,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="manual_creation_enabled" value="0"/>
 		</insert>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-7632_20220611" author="HatimOUDAD">
 		<update tableName="cpq_order_product">
 			<column name="instance_status" value="ACTIVE" />
@@ -7995,16 +7995,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where> code IN ('org.meveo.service.script.accountingscheme.PaymentAccountingSchemeScript')</where>
 		</update>
 	</changeSet>
-
-	<changeSet id="#INTRD-8859" author="hichamELHALOUI">
-		<update tableName="dwh_report_extract">
-			<column name="include_headers" value="1"/>
-		</update>
-	</changeSet>
-
-
-
-
 
 	<changeSet id="#INTRD-8507_20220715" author="ZBariki">
 		<update tableName="billing_wallet_operation">
@@ -8172,7 +8162,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <where>code='SALES_JOURNAL'</where>
         </update>
     </changeSet>
-    
+
     <changeSet id="#INTRD-10047_20220926_default_sd_template" author="a.rouaguebe">
 		<insert tableName="security_deposit_templat">
 			<column name="id" valueSequenceNext="security_deposit_templat_seq" />
@@ -8200,7 +8190,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>template_name = 'DEFAULT_SD_TEMPLATE'</where>
 		</update>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-10400_20221007" author="HichamHANINE">
     	<update tableName="security_deposit">
     	<column name="status" value="VALIDATED"/>
@@ -8223,7 +8213,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'SAL')" />
 		</insert>
 	</changeSet>
-	
+
 	 <changeSet id="#9811_10102022" author="Mbarek-Ay">
 	<insert tableName="meveo_job_instance">
 		<column name="id" valueSequenceNext="meveo_job_instance_seq" />
@@ -8262,20 +8252,20 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="applies_to_id" value="-5"/>
 		</insert>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-10541_20221017" author="TarikFA.">
     	<update tableName="billing_linked_invoices">
     		<column name="type" value="ADJUSTMENT" />
     	</update>
     </changeSet>
-    
+
     <changeSet id="#INTRD-11124_20221102" author="HatimOUDAD">
 		<update tableName="meveo_job_instance">
 			<column name="disabled" value="0" />
 			<where>code = 'AutoUpdateCurrentRateJob_Job'</where>
 		</update>
     </changeSet>
-    
+
     <changeSet id="#INTRD-11154_20221102" author="TarikFA.">
     	<update tableName="billing_accounting_article">
             <column name="accounting_code_id" value="-6" />
@@ -8284,14 +8274,14 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         	<where> code = 'ADV-STD'</where>
     	</update>
     </changeSet>
-    
+
     <changeSet id="#INTRD-9161_20221102" author="TarikFA.">
     	<update tableName="billing_invoice_type">
            <column name="description" value="Call for advance payment" />
         	<where> code = 'ADV'</where>
     	</update>
     </changeSet>
-    
+
     <changeSet id="INTRD-11152_20221102" author="TarikFA.">
          <insert tableName="ar_occ_template">
 			<column name="id" valueNumeric="-65" />
@@ -8306,14 +8296,14 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         	<where> code = 'ADV'</where>
     	</update>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-10572_20221014" author="HichamHANINE">
 		<update tableName="crm_customer_category">
 			<column name="tax_category_id" value="-3" />
 			<where>id in (-1,-2)</where>
 		</update>
     </changeSet>
-    
+
     <changeSet id="#INTRD-10572_20221018" author="HichamHANINE">
    		<update tableName="crm_customer_category">
 			<column name="tax_category_id" value="-1" />
@@ -8327,30 +8317,30 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="tax_category_id" value="-1" />
 			<where>tax_category_id = -3</where>
 		</update>
-		<update tableName="billing_tax_category">			
-			<column name="code" value="REGULAR1"/>        
+		<update tableName="billing_tax_category">
+			<column name="code" value="REGULAR1"/>
 			<where>id = -3</where>
 		</update>
-		<update tableName="billing_tax_category">			
+		<update tableName="billing_tax_category">
 			<column name="code" value="REGULAR"/>
             <column name="description_i18n" value='{"FRA":"Standard","ENG":"Regular"}'/>
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
-            <column name="uuid" value="billing_tax_category_regular" />            
+            <column name="uuid" value="billing_tax_category_regular" />
 			<where>id = -1</where>
 		</update>
 		<delete tableName="billing_tax_category">
 			<where>id = -3</where>
 		</delete>
     </changeSet>
-    
+
     <changeSet id="#INTRD-11244_20221104" author="TarikFA.">
     	<update tableName="ar_occ_template">
     		<column name="occ_category" value="DEBIT" />
     		<where> code = 'INV_ADV'</where>
     	</update>
     </changeSet>
-    
+
     <changeSet id="#INTRD-10199_20221010" author="TarikFA.">
 		<update tableName="ar_occ_template" >
 			<column name="accounting_code_id" valueNumeric="null"></column>
@@ -8361,7 +8351,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>code = 'T3P9476'</where>
 		</delete>
 	</changeSet>
-    
+
 
 	<changeSet id="INTRD-11124_20221109" author="aelmalki">
 		<insert tableName="meveo_timer">
@@ -8404,7 +8394,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where> code='AutoUpdateCurrentRateJob_Job'</where>
 		</update>
 	</changeSet>
-    
+
     <changeSet id="#INTR-11598_20221116" author="TarikFA.">
         <update tableName="meveo_job_instance">
             <column name="code" value="AutoUpdateCurrentRateJob"/>
