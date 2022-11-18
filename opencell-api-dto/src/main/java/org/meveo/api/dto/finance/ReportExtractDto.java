@@ -109,6 +109,11 @@ public class ReportExtractDto extends EnableBusinessDto {
     private Long maximumLine;
 
     /**
+     * Allow empty file Generation
+     */
+    private boolean includeHeaders;
+
+    /**
      * Instantiate a new ReportExtract DTO
      */
     public ReportExtractDto() {
@@ -146,6 +151,7 @@ public class ReportExtractDto extends EnableBusinessDto {
         } else {
             setSqlQuery(reportExtract.getSqlQuery());
         }
+        setIncludeHeaders(reportExtract.isIncludeHeaders());
 
     }
 
@@ -400,5 +406,13 @@ public class ReportExtractDto extends EnableBusinessDto {
 
     public void setDecimalSeparator(String decimalSeparator) {
         this.decimalSeparator = decimalSeparator;
+    }
+
+    public boolean isIncludeHeaders() {
+        return includeHeaders;
+    }
+
+    public void setIncludeHeaders(boolean includeHeaders) {
+        this.includeHeaders = includeHeaders;
     }
 }

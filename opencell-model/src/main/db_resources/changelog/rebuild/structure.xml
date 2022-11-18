@@ -7553,6 +7553,7 @@
             <column name="decimal_separator" type="varchar(1)" defaultValue="." />
             <column name="generate_empty_report" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="maximum_line" type="bigint" defaultValueNumeric="0" />
+            <column name="include_headers" type="${type.boolean}" defaultValueNumeric="1"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-360">
@@ -18814,6 +18815,7 @@
     <changeSet author="AbdelmounaimAkadid" id="#INTRD-828-create-view" dbms="postgresql"/>
     <changeSet author="AbdelmounaimAkadid" id="#INTRD-828-create-view-oracle" dbms="oracle"/>
     <changeSet id="INTRD-2371_19102021" author="AbdelkaderBouazza" />
+    <changeSet id="#INTRD-8859_20220802" author="hichamELHALOUI" />
     <changeSet id="#INTRD-8106_20220630" author="TarikFA." />
     <changeSet id="#INTRD-8027_20220629" author="aelmalki" />
 	<changeSet id="#INTRD-8580_20220714" author="aelmalki" />
