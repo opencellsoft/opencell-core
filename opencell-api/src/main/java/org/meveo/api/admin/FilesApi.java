@@ -390,8 +390,7 @@ public class FilesApi extends BaseApi {
     private File checkAndGetExistingFile(String filePath) {
 
         File javaXMlFormatFile = (filePath.contains(getProviderRootDir().replace("\\", "/"))) ?
-                StorageFactory.getFile(filePath) : StorageFactory.getFile(getProviderRootDir() + File.separator + normalizePath(filePath));
-
+                new File(filePath) : new File(getProviderRootDir() + File.separator + normalizePath(filePath));
         if (StorageFactory.exists(javaXMlFormatFile)) {
             return javaXMlFormatFile;
         } else {
