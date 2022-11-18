@@ -14,6 +14,10 @@ public class UrlReferenceWrapper implements Serializable {
 
     private Integer length;
 
+    public UrlReferenceWrapper(String url) {
+        this.url = url;
+    }
+
     public UrlReferenceWrapper() {
     }
 
