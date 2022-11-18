@@ -291,9 +291,8 @@ public class AccountsManagementApiService {
         CounterInstance counterInstance = new CounterInstance();
 
         // At least one of those value is mandatory : customerAccountCode, billingAccountCode, userAccountCode, subscriptionCode, serviceInstanceCode
-        if (StringUtils.isBlank(dto.getCounterTemplateCode()) && StringUtils.isBlank(dto.getCustomerAccountCode())
-                && StringUtils.isBlank(dto.getBillingAccountCode()) && StringUtils.isBlank(dto.getUserAccountCode())
-                && StringUtils.isBlank(dto.getServiceInstanceCode())) {
+        if (StringUtils.isBlank(dto.getCustomerAccountCode()) && StringUtils.isBlank(dto.getBillingAccountCode()) && StringUtils.isBlank(dto.getUserAccountCode())
+                && StringUtils.isBlank(dto.getSubscriptionCode()) && StringUtils.isBlank(dto.getServiceInstanceCode())) {
             throw new BusinessApiException("At least one of those value is mandatory : customerAccountCode, billingAccountCode, userAccountCode, subscriptionCode, serviceInstanceCode");
 
         }
@@ -302,7 +301,7 @@ public class AccountsManagementApiService {
             CounterTemplate counterTemplate = counterTemplateService.findByCode(dto.getCounterTemplateCode());
 
             if (counterTemplate == null) {
-                throw new BusinessApiException("No CounterTemplate found with code : " + dto.getCounterTemplateCode());
+                throw new EntityDoesNotExistsException("No CounterTemplate found with code : " + dto.getCounterTemplateCode());
             }
 
             counterInstance.setCounterTemplate(counterTemplate);
@@ -312,7 +311,7 @@ public class AccountsManagementApiService {
             CustomerAccount customerAccount = customerAccountService.findByCode(dto.getCustomerAccountCode());
 
             if (customerAccount == null) {
-                throw new BusinessApiException("No CustomerAccount found with code : " + dto.getCustomerAccountCode());
+                throw new EntityDoesNotExistsException("No CustomerAccount found with code : " + dto.getCustomerAccountCode());
             }
 
             counterInstance.setCustomerAccount(customerAccount);
@@ -322,7 +321,7 @@ public class AccountsManagementApiService {
             BillingAccount billingAccount = billingAccountService.findByCode(dto.getBillingAccountCode());
 
             if (billingAccount == null) {
-                throw new BusinessApiException("No BillingAccount found with code : " + dto.getBillingAccountCode());
+                throw new EntityDoesNotExistsException("No BillingAccount found with code : " + dto.getBillingAccountCode());
             }
 
             counterInstance.setBillingAccount(billingAccount);
@@ -332,7 +331,7 @@ public class AccountsManagementApiService {
             UserAccount userAccount = userAccountService.findByCode(dto.getUserAccountCode());
 
             if (userAccount == null) {
-                throw new BusinessApiException("No UserAccount found with code : " + dto.getUserAccountCode());
+                throw new EntityDoesNotExistsException("No UserAccount found with code : " + dto.getUserAccountCode());
             }
 
             counterInstance.setUserAccount(userAccount);
@@ -342,7 +341,7 @@ public class AccountsManagementApiService {
             Subscription subscription = subscriptionService.findByCode(dto.getSubscriptionCode());
 
             if (subscription == null) {
-                throw new BusinessApiException("No Subscription found with code : " + dto.getSubscriptionCode());
+                throw new EntityDoesNotExistsException("No Subscription found with code : " + dto.getSubscriptionCode());
             }
 
             counterInstance.setSubscription(subscription);
@@ -352,7 +351,7 @@ public class AccountsManagementApiService {
             ServiceInstance serviceInstance = serviceInstanceService.findByCode(dto.getServiceInstanceCode());
 
             if (serviceInstance == null) {
-                throw new BusinessApiException("No ServiceInstance found with code : " + dto.getServiceInstanceCode());
+                throw new EntityDoesNotExistsException("No ServiceInstance found with code : " + dto.getServiceInstanceCode());
             }
 
             counterInstance.setServiceInstance(serviceInstance);
@@ -363,7 +362,7 @@ public class AccountsManagementApiService {
                 ChargeInstance chargeInstance = chargeInstanceService.findByCode(chargeI);
 
                 if (chargeInstance == null) {
-                    throw new BusinessApiException("No ChargeInstance found with code : " + chargeI);
+                    throw new EntityDoesNotExistsException("No ChargeInstance found with code : " + chargeI);
                 }
 
                 if (chargeInstance instanceof UsageChargeInstance) {
@@ -389,8 +388,8 @@ public class AccountsManagementApiService {
             periodes.forEach(dateRange -> {
                 Date start = DateUtils.setTimeToZero(dateRange.getFrom());
                 Date end = DateUtils.setTimeToZero(dateRange.getTo());
-                if (((start.before(startP) || start.equals(startP)) && end.before(endP) && end.after(startP))
-                        || ((start.after(startP) && start.before(endP)) && (end.after(endP) || end.equals(endP)))
+                if (((start.before(startP) || start.equals(startP)) && end.after(startP) && (end.before(endP) || end.equals(endP)))
+                        || (((start.after(startP) || start.equals(startP)) && start.before(endP)) && (end.after(endP) || end.equals(endP)))
                         || (start.equals(startP) && end.equals(endP))
                         || (start.before(startP) && end.after(startP) && end.after(endP))
                         || (start.after(startP) && end.after(startP) && end.before(endP))
