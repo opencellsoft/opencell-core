@@ -15,6 +15,9 @@ import java.util.Map;
 @JsonDeserialize(as = ImmutableCounterPeriodDto.class)
 public interface CounterPeriodDto {
 
+    @NotNull
+    String getCode();
+
     @Nullable
     CounterTypeEnum getCounterType();
 

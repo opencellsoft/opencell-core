@@ -51,6 +51,7 @@ import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.CounterInstanceService;
+import org.meveo.service.billing.impl.CounterPeriodService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
@@ -123,6 +124,8 @@ public class AccountsManagementApiService {
     private OneShotChargeInstanceService oneShotChargeInstanceService;
     @Inject
     private RecurringChargeInstanceService recurringChargeInstanceService;
+    @Inject
+    private CounterPeriodService counterPeriodService;
 
     /**
      * Transfer the subscription from a consumer to an other consumer (UA)
@@ -398,6 +401,7 @@ public class AccountsManagementApiService {
             });
 
             CounterPeriod period = new CounterPeriod();
+            period.setCode(periodDto.getCode());
             period.setPeriodStartDate(startP);
             period.setPeriodEndDate(endP);
             period.setValue(periodDto.getValue());
@@ -409,6 +413,7 @@ public class AccountsManagementApiService {
             period.setNotificationLevels(counterInstance.getCounterTemplate().getNotificationLevels());
             period.setCounterInstance(counterInstance);
 
+            counterPeriodService.create(period);
             counterInstance.getCounterPeriods().add(period);
 
             periodes.add(new DateRange(startP, endP));
