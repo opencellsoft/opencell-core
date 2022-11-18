@@ -4820,7 +4820,7 @@
 		},
 		{
 			"key": "NB_cust",
-			"value": "20000",
+			"value": "100",
 			"type": "string"
 		},
 		{
