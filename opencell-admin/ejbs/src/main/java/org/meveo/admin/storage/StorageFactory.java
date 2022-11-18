@@ -5,7 +5,6 @@ import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRXmlDataSource;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.carlspring.cloud.storage.s3fs.S3FileSystem;
 import org.carlspring.cloud.storage.s3fs.S3FileSystemProvider;
 import org.meveo.commons.keystore.KeystoreManager;
@@ -66,12 +65,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 
 /**
@@ -446,16 +442,16 @@ public class StorageFactory {
         }
         else if (storageType.equalsIgnoreCase(S3)) {
             String objectKey = formatObjectKey(fileName);
+            log.debug("check existence of an object based in fileName on S3 at key {}", objectKey);
 
-            ListObjectsV2Response response =
-                    s3FileSystem.getClient().listObjectsV2(ListObjectsV2Request.builder().bucket(bucketName).prefix(objectKey).build());
+            try {
+                s3FileSystem.getClient()
+                        .headObject(HeadObjectRequest.builder().bucket(bucketName).key(objectKey).build());
 
-            for (S3Object object : response.contents()) {
-                if (object.key().equals(objectKey))
-                    return true;
+                return true;
+            } catch (NoSuchKeyException e) {
+                return false;
             }
-
-            return false;
         }
 
         return false;
@@ -473,7 +469,7 @@ public class StorageFactory {
         }
         else if (storageType.equalsIgnoreCase(S3)) {
             String objectKey = formatObjectKey(file.getPath());
-            log.debug("check existence of a file on S3 at key {}", objectKey);
+            log.debug("check existence of an object based on file on S3 at key {}", objectKey);
 
             try {
                 s3FileSystem.getClient()
@@ -1126,6 +1122,9 @@ public class StorageFactory {
             String objectKey = formatObjectKey(directory.getPath()) + "/";
             log.debug("check if object is a directory in S3 bucket at key {}", objectKey);
 
+            if (! exists(objectKey))
+                return false;
+
             HeadObjectRequest request = HeadObjectRequest.builder().bucket(bucketName).key(objectKey).build();
 
             HeadObjectResponse response = s3FileSystem.getClient().headObject(request);
@@ -1186,7 +1185,7 @@ public class StorageFactory {
             return sourceDirectory.list();
         }
         else if (storageType.equalsIgnoreCase(S3)) {
-            String objectKey = formatObjectKey(sourceDirectory.getPath());
+            String objectKey = formatObjectKey(sourceDirectory.getPath()) + "/";
             log.debug("list files in S3 bucket at directory {}", objectKey);
 
             final ListObjectsV2Request objectRequest =
@@ -1199,8 +1198,17 @@ public class StorageFactory {
 
             List<String> files = new ArrayList<>();
 
-            for (S3Object object : listObjects.contents()){
-                files.add(object.key());
+            String patternStr = "^" + objectKey + "([^/\n].*/?)*";
+
+            Pattern pattern = Pattern.compile(patternStr);
+
+            List<S3Object> s3Objects = listObjects.contents();
+
+            for (S3Object obj : s3Objects) {
+                Matcher matcher = pattern.matcher(obj.key());
+                if (matcher.find() && matcher.group(1) != null) {
+                    files.add(matcher.group(1));
+                }
             }
 
             return files.toArray(new String[0]);
@@ -1247,84 +1255,12 @@ public class StorageFactory {
     public static void deleteObject(String filePath) {
         String objectKey = StorageFactory.formatObjectKey(filePath);
 
+        log.debug("delete object with key {} in S3 bucket", objectKey);
+
         DeleteObjectRequest request = DeleteObjectRequest.builder().bucket(bucketName)
                 .key(objectKey).build();
 
         s3FileSystem.getClient().deleteObject(request);
-    }
-
-    /**
-     * get a file base on its file path
-     *
-     * @param filePath a filepath.
-     *
-     * @return a new file
-     */
-    public static File getFile(String filePath) {
-        if (storageType.equals(NFS)) {
-            return new File(filePath);
-        }
-        else if (storageType.equalsIgnoreCase(S3)) {
-            if (! FilenameUtils.getExtension(filePath).equals("zip")) {
-                log.debug("file {} is not a zip file", filePath);
-                return new File(filePath);
-            }
-            else {
-                log.debug("file {} is a zip file ...", filePath);
-                ZipOutputStream zos = null;
-
-                try {
-                    // create zip file
-                    log.debug("path of zip file {}", filePath);
-                    zos = new ZipOutputStream(Objects.requireNonNull(getOutputStream(filePath)));
-                    log.debug("parent path of zip file {}", new File(filePath).getParent());
-
-                    String srcDir;
-                    if (FilenameUtils.getExtension(filePath).equals("zip")) {
-                        srcDir = filePath.substring(0, filePath.indexOf(".zip"));
-                    }
-                    else {
-                        srcDir = filePath;
-                    }
-                    File[] listFiles = listFiles(srcDir, null);
-
-                    assert listFiles != null;
-                    ZipEntry zipEntry;
-                    byte[] bytes = new byte[4096];
-
-                    for (File aFile : listFiles) {
-                        zipEntry = new ZipEntry(aFile.getPath());
-                        zos.putNextEntry(zipEntry);
-                        InputStream inStr = getInputStream(aFile);
-                        assert inStr != null;
-                        int length;
-                        while ((length = inStr.read(bytes)) != -1) {
-                            zos.write(bytes, 0, length);
-                        }
-
-                        log.debug("Finish writing File {}", aFile.getName());
-                        inStr.close();
-                    }
-
-                    return new File(filePath);
-
-                } catch (IOException e) {
-                    log.error("IOException message {}", e.getMessage());
-                }
-                finally {
-                    assert zos != null;
-                    try {
-                        zos.flush();
-                        zos.closeEntry();
-                        zos.close();
-                    } catch (IOException e) {
-                        log.error("IOException message {}", e.getMessage());
-                    }
-                }
-            }
-        }
-
-        return null;
     }
 
     /**
