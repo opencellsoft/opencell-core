@@ -62,5 +62,5 @@ public interface InvoiceValidationRulesResource {
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "304",
                             description = "error when deleting invoice validation rule ")
             })
-    Response delete(InvoiceValidationRuleDto invoiceValidationRuleDto);
+    Response delete(@Parameter(description = "id of the InvoiceValidation Rule to delete", required = true) @PathParam("id") @NotNull Long id);
 }

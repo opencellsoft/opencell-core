@@ -52,11 +52,7 @@ public class InvoiceValidationRulesResourceImpl implements InvoiceValidationRule
         checkCodeAndDescription(invoiceValidationRule);
         invoiceValidationRulesApiService.create(invoiceValidationRule);
 
-        ActionStatus responseStatus = new ActionStatus();
-        responseStatus.setStatus(ActionStatusEnum.SUCCESS);
-        responseStatus.setEntityId(invoiceValidationRule.getId());
-
-        return Response.ok(responseStatus).build();
+        return Response.ok(buildSucessResponse(invoiceValidationRule.getId())).build();
 
     }
 
@@ -73,17 +69,22 @@ public class InvoiceValidationRulesResourceImpl implements InvoiceValidationRule
         invoiceValidationRulesApiService.update(invoiceValidationRule.getId(),
                 invoiceValidationRuleMapper.toEntity(invoiceValidationRuleDto, invoiceValidationRule, invoiceType));
 
-        ActionStatus responseStatus = new ActionStatus();
-        responseStatus.setStatus(ActionStatusEnum.SUCCESS);
-        responseStatus.setEntityId(invoiceValidationRule.getId());
-
-        return Response.ok(responseStatus).build();
+        return Response.ok(buildSucessResponse(invoiceValidationRule.getId())).build();
     }
 
     @Override
-    public Response delete(InvoiceValidationRuleDto invoiceValidationRuleDto) {
-        return null;
+    public Response delete(Long id) {
+        invoiceValidationRulesApiService.delete(id);
+        return Response.ok(buildSucessResponse(id)).build();
     }
+
+    private static ActionStatus buildSucessResponse(Long invoiceValidationRuleId) {
+        ActionStatus responseStatus = new ActionStatus();
+        responseStatus.setStatus(ActionStatusEnum.SUCCESS);
+        responseStatus.setEntityId(invoiceValidationRuleId);
+        return responseStatus;
+    }
+
 
     private InvoiceType checkInvoiceType(InvoiceValidationRuleDto invoiceValidationRuleDto) {
         InvoiceType invoiceType = null;
