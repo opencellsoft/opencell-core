@@ -270,8 +270,8 @@
         <createSequence sequenceName="cpq_product_version_attribute_seq" startValue="1"/>
         <createSequence sequenceName="discount_plan_sequence_seq" startValue="1" />
     </changeSet>
-    
-     
+
+
 
 
     <changeSet id="rebuild-str-seq-2" author="AndriusKarpavicius" dbms="mysql">
@@ -3098,7 +3098,7 @@
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
-    	</modifySql>    	
+    	</modifySql>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-185-pk">
         	<addPrimaryKey columnNames="id,status" constraintName="billing_rated_transaction_pkey" tableName="billing_rated_transaction" />
@@ -4916,7 +4916,7 @@
             <column name="cust_no_current_sequence_nb" type="bigint" />
             <column name="invoice_config_id" type="bigint" />
             <column name="gdpr_config_id" type="bigint" />
-            <column name="activate_cascading_discounts" type="${type.boolean}" defaultValueNumeric="1"/> 
+            <column name="activate_cascading_discounts" type="${type.boolean}" defaultValueNumeric="1"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-250">
@@ -9363,7 +9363,7 @@
             <column name="valid_to" type="datetime" />
             <column name="quote_number" type="varchar(50)" />
             <column name="invoice_type_id" type="bigint" />
-         
+
         </createTable>
     </changeSet>
 
@@ -9695,6 +9695,9 @@
             <column name="cf_values_accum" type="${type.json}" />
             <column name="oneshot_total_amount" type="numeric(23, 12)" />
             <column name="discount_plan_id" type="bigint"/>
+            <column name="sales_person_name" type="varchar(52)" />
+            <column name="billing_cycle" type="bigint" />
+            <column name="billing_run" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-475" author="NabilOUACHI">
@@ -10003,7 +10006,7 @@
 		    <column name="apply_discounts_on_overriden_price" type="${type.boolean}"/>
 		    <column name="discounted_amount" type="numeric(23,12)"/>
 		    <column name="sequence" type="int4"/>
-            
+
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-484" author="NabilOUACHI">
@@ -10427,7 +10430,7 @@
 
         <addPrimaryKey columnNames="commercial_order_id,order_lot_id" tableName="cpq_commercial_order_order_lot"/>
     </changeSet>
-    
+
      <changeSet id="rebuild-str-tbl-503" author="Mbarek-Ay">
         <createTable tableName="cpq_assigned_attributes">
             <column name="attribute_id" type="bigint" >
@@ -10456,7 +10459,7 @@
         <addDefaultValue tableName="billing_subscription" columnName="initial_term_type" defaultValue="RECURRING" />
         <addDefaultValue tableName="cat_unit_of_measure" columnName="multiplicator" defaultValueNumeric="1"/>
     </changeSet>
-    
+
     
     <!-- start views -->
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-view-1" dbms="postgresql">
@@ -11346,7 +11349,7 @@
         <addForeignKeyConstraint baseColumnNames="billing_run" baseTableName="billing_rejected_billing_accounts" constraintName="fk_iyfs5u3t9m0hc9rkeadr6atq9" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_run" />
     </changeSet>
-    <!-- 
+    <!--
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-801">
         <addForeignKeyConstraint baseColumnNames="reratedwalletoperation_id" baseTableName="billing_wallet_operation" constraintName="fk_j3ntuqkj79m0fgdwa3anib1nk" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_wallet_operation" />
@@ -11938,7 +11941,7 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_history" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1145">
-    	<!-- 
+    	<!--
         <addForeignKeyConstraint baseColumnNames="origin_edr_id" baseTableName="billing_reservation" constraintName="fk_reservation_edr" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="rating_edr" />
          -->
@@ -12839,7 +12842,7 @@
                                  constraintName="wo_aggregation_settings_id_fk" referencedTableName="wo_aggregation_settings"
                                  referencedColumnNames="id"/>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1355">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1355">
     	<addForeignKeyConstraint baseTableName="document" baseColumnNames="linked_account_entity_id"
                                  constraintName="document_account_entity_id_fk" referencedTableName="account_entity"
                                  referencedColumnNames="id"/>
@@ -14119,42 +14122,42 @@
           <addForeignKeyConstraint baseColumnNames="charge_instance_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_charge_instance_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" />
     </changeSet>
-    
+
       <changeSet id="rebuild-str-fk-1637" author="Mbarek-Ay">
         <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_cpq_quote_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
     </changeSet>
-    
+
      <changeSet id="rebuild-str-fk-540-1638" author="Mbarek-Ay">
         <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="billing_invoice" constraintName="fk_billing_invoice_cpq_quote_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
     </changeSet>
-    
+
     <changeSet id="rebuild-str-fk-540-1639" author="Mbarek-Ay">
      <addForeignKeyConstraint baseColumnNames="quote_offer_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_quote_offer_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="quote_offer" />
-    </changeSet> 
-    
+    </changeSet>
+
      <changeSet id="rebuild-str-fk-540-1640" author="Mbarek-Ay">
      <addForeignKeyConstraint baseColumnNames="order_offer_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_order_offer_id" deferrable="false" initiallyDeferred="false"
-           onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_offer" /> 
-      </changeSet>  
-                               
+           onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_offer" />
+      </changeSet>
+
        <changeSet id="rebuild-str-fk-540-1641" author="Mbarek-Ay">
        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_assigned_attributes" constraintName="fk_cpq_assigned_attributes_attribute_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" /> 
-      </changeSet>                     
-    
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+      </changeSet>
+
       <changeSet id="rebuild-str-fk-540-1642" author="Mbarek-Ay">
         <addForeignKeyConstraint baseColumnNames="assigned_attribute_id" baseTableName="cpq_assigned_attributes" constraintName="fk_cpq_assigned_attributes_assigned_attribute_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />  
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
       </changeSet>
-      
+
        <changeSet id="rebuild-str-fk1-540-6296-fk1" author="Mbarek-Ay">
         <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="cpq_quote_price" constraintName="fk_quote_price_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
        </changeSet>
-       
+
         <changeSet id="rebuild-str-fk2-540-6296" author="Mbarek-Ay">
         <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="billing_wallet_operation" constraintName="fk_wallet_operation_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
@@ -14164,17 +14167,34 @@
         <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="billing_rated_transaction" constraintName="fk_rated_transaction_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
        </changeSet>
-    
+
        <changeSet id="rebuild-str-fk4-540-6296" author="Mbarek-Ay">
         <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
        </changeSet>
-       
+
        <changeSet id="rebuild-str-fk5-540-6296" author="Mbarek-Ay">
         <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="order_price" constraintName="fk_order_price_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
        </changeSet>
-       
+         <changeSet id="#INTRD-11775_20221120_fk" author="hichamELHALOUI">
+        <addForeignKeyConstraint baseTableName="cpq_commercial_order"
+                                 baseColumnNames="billing_cycle"
+                                 constraintName="fk_cpq_commercial_order_billing_cycle"
+                                 referencedTableName="billing_cycle"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+        <addForeignKeyConstraint baseTableName="cpq_commercial_order"
+                                 baseColumnNames="billing_run"
+                                 constraintName="fk_cpq_commercial_order_billing_run"
+                                 referencedTableName="billing_billing_run"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+
+    </changeSet>
+
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -14326,8 +14346,8 @@
         <sql>CREATE INDEX wo_rerated_wo ON ${db.schema.adapted}billing_wallet_operation (reratedwalletoperation_id ASC
             NULLS LAST)
         </sql>
-        
-        
+
+
         <sql>CREATE UNIQUE INDEX adm_file_type_code_index ON ${db.schema.adapted}adm_file_type(lower(code))</sql>
         <sql>CREATE UNIQUE INDEX adm_file_format_code_index ON ${db.schema.adapted}adm_file_format(lower(code))</sql>
         <sql>CREATE UNIQUE INDEX flat_file_code_index ON ${db.schema.adapted}flat_file(lower(code))</sql>
@@ -14389,7 +14409,7 @@
 
         <sql>CREATE UNIQUE INDEX hierarchy_entity_code_index ON ${db.schema.adapted}hierarchy_entity(lower(code), hierarchy_type)</sql>
         <sql>CREATE UNIQUE INDEX account_entity_code_index ON ${db.schema.adapted}account_entity(lower(code), account_type)</sql>
-        
+
        	<sql>CREATE INDEX medina_access_lower_uid_index on ${db.schema.adapted}medina_access (lower(acces_user_id))</sql>
        	<sql>CREATE INDEX idx_ar_payment_history_external_payment_id ON ${db.schema.adapted}ar_payment_history (external_payment_id )</sql>
     </changeSet>
@@ -14416,7 +14436,7 @@
         <sql>CREATE INDEX rt_invoice_index ON billing_rated_transaction (invoice_id, invoice_sub_category_id, wallet_id)</sql>
         <sql>CREATE INDEX rt_order_index ON billing_rated_transaction (order_number, status, usage_date)</sql>
     </changeSet>
-    
+
 
 
     <!-- end index -->
@@ -14432,8 +14452,8 @@
             $$ LANGUAGE plpgsql;
         ]]></sql>
     </changeSet>
-    <!-- <changeSet author="AndriusKarpavicius" id="rebuild-str-func-1000" dbms="mysql"> <sql> drop function if exists ${db.schema.adapted}fn_unaccent;</sql> <sql splitStatements="false" stripComments="false"><![CDATA[ create function ${db.schema.adapted}fn_unaccent( 
-        input_text varchar(2000) ) returns varchar(2000) begin set @textvalue = input_text; set @withaccents = 'çÇâàÂÀéèêÉÈÊîÎûÛôÔ'; set @withoutaccents = 'cCaaAAeeeEEEiIuUoO'; set @count = length(@withaccents); while @count > 0 do set @textvalue = 
+    <!-- <changeSet author="AndriusKarpavicius" id="rebuild-str-func-1000" dbms="mysql"> <sql> drop function if exists ${db.schema.adapted}fn_unaccent;</sql> <sql splitStatements="false" stripComments="false"><![CDATA[ create function ${db.schema.adapted}fn_unaccent(
+        input_text varchar(2000) ) returns varchar(2000) begin set @textvalue = input_text; set @withaccents = 'çÇâàÂÀéèêÉÈÊîÎûÛôÔ'; set @withoutaccents = 'cCaaAAeeeEEEiIuUoO'; set @count = length(@withaccents); while @count > 0 do set @textvalue =
         replace(@textvalue, substring(@withaccents, @count, 1), substring(@withoutaccents, @count, 1)); set @count = @count - 1; end while; return @textvalue; end; ]]></sql> </changeSet> -->
 
 
@@ -14457,31 +14477,31 @@
             BEGIN
 
                 partition_date := to_date(start_date,'YYYY_MM_DD');
-    
+
                 FOR counter IN 1..partitions_number LOOP
-    
+
                     query := 'CREATE TABLE ' || table_name || '_' || to_char(partition_date,'YYYY_MM_DD') || ' PARTITION OF ' || table_name || ' FOR VALUES FROM (''' || to_char(partition_date,'YYYY_MM_DD') || ''') TO (''';
-        
+
                     IF frequency = 'M' THEN
                         partition_date := partition_date + interval '1 month';
                     END IF;
-        
+
                     IF frequency = 'Y' THEN
                         partition_date := partition_date + interval '1 year';
                     END IF;
-        
+
                     IF frequency = 'W' THEN
                         partition_date := partition_date + interval '1 week';
                     END IF;
-        
+
                     query := query || to_char(partition_date,'YYYY_MM_DD') || ''');';
-        
+
                     EXECUTE query;
-        
+
                     partition_date := partition_date + interval '1 day';
-        
+
                     RAISE NOTICE 'partition created : %', table_name || '_' || to_char(partition_date,'YYYY_MM_DD');
-    
+
                 END LOOP;
             END;
             $$ LANGUAGE plpgsql;
@@ -14559,7 +14579,7 @@ execute 'create table '||schema_name||'.billing_rated_transaction (
     charge_instance_id bigint,
     tax_id bigint,
     tax_percent numeric(23,12),
-    user_account_id bigint,    
+    user_account_id bigint,
     constraint billing_rated_transaction_pkey primary key (id, usage_date),
     constraint fk_8g8jlmakt1wyw73oxs5yltlsd foreign key (aggregate_id_t)
         references '||schema_name||'.billing_invoice_agregate (id) match simple on update no action on delete no action,
@@ -14597,21 +14617,21 @@ execute 'create index transaction_billing_index on '||schema_name||'.billing_rat
 
 -- Create default partition
 execute 'create table '||schema_name||'.billing_rated_transaction_default partition of '||schema_name||'.billing_rated_transaction default;';
-    
+
 
 -- Create required partitions. Number of partitions is calculated between min and max partition date based on a frequency
 IF _min_date IS NOT NULL and frequency IS NOT NULL THEN
 
   _partitions_number := _max_date - _min_date;
-  
+
   IF frequency = 'M' THEN
     _partitions_number := _partitions_number/30;
   END IF;
-            
+
   IF frequency = 'Y' THEN
     _partitions_number := _partitions_number/365;
   END IF;
-        
+
   IF frequency = 'W' THEN
     _partitions_number := _partitions_number/7;
   END IF;
@@ -14631,16 +14651,16 @@ execute 'CREATE SEQUENCE IF NOT EXISTS '|| schema_name || '.billing_rated_transa
 
     END;
 $$ LANGUAGE plpgsql;
-    
+
         ]]>
         </createProcedure>
         <createProcedure><![CDATA[
-        
+
 CREATE OR REPLACE FUNCTION switch_billing_wallet_operation_to_partition(schema_name text, frequency text) RETURNS void AS $$
 
 -- Function to replace billing_wallet_operation table with a partitioned table. Preserves existing data.
 -- Param1 : schema_name => name of the schema where table is located.
--- Param2 : frequency => interval of partionning ( Y for years, M for monthes, W for weeks). If provided, partitions will be created to span the current data in 
+-- Param2 : frequency => interval of partionning ( Y for years, M for monthes, W for weeks). If provided, partitions will be created to span the current data in
 
 DECLARE
   _min_date date;
@@ -14747,20 +14767,20 @@ execute 'create index billing_wallet_operation_status on ' || schema_name || '.b
 
 -- Create default partition
 execute 'create table ' || schema_name || '.billing_wallet_operation_default partition of billing_wallet_operation default;';
-    
+
 -- Create required partitions. Number of partitions is calculated between min and max partition date based on a frequency
 IF _min_date IS NOT NULL and frequency IS NOT NULL THEN
 
   _partitions_number := _max_date - _min_date;
-  
+
   IF frequency = 'M' THEN
     _partitions_number := _partitions_number/30;
   END IF;
-            
+
   IF frequency = 'Y' THEN
     _partitions_number := _partitions_number/365;
   END IF;
-        
+
   IF frequency = 'W' THEN
     _partitions_number := _partitions_number/7;
   END IF;
@@ -14783,12 +14803,12 @@ $$ LANGUAGE plpgsql;
         </createProcedure>
 
         <createProcedure><![CDATA[
-       
+
        CREATE OR REPLACE FUNCTION switch_rating_edr_to_partition(schema_name text, frequency text) RETURNS void AS $$
 
 -- Function to replace rating_edr table with a partitioned table. Preserves existing data.
 -- Param1 : schema_name => name of the schema where table is located.
--- Param2 : frequency => interval of partionning ( Y for years, M for monthes, W for weeks). If provided, partitions will be created to span the current data in 
+-- Param2 : frequency => interval of partionning ( Y for years, M for monthes, W for weeks). If provided, partitions will be created to span the current data in
 
 DECLARE
   _min_date date;
@@ -14857,7 +14877,7 @@ execute 'create table ' || schema_name || '.rating_edr
 execute 'create index rating_edr_e_date on ' || schema_name || '.rating_edr using btree (event_date);';
 execute 'create index rating_edr_index on ' || schema_name || '.rating_edr using btree (event_date, origin_batch, origin_record);';
 execute 'create index rating_edr_status on ' || schema_name || '.rating_edr using btree (event_date, status);';
-    
+
 -- Create default partition
 execute 'create table ' || schema_name || '.rating_edr_default partition of ' || schema_name || '.rating_edr default;';
 
@@ -14865,15 +14885,15 @@ execute 'create table ' || schema_name || '.rating_edr_default partition of ' ||
 IF _min_date IS NOT NULL and frequency IS NOT NULL THEN
 
   _partitions_number := _max_date - _min_date;
-  
+
   IF frequency = 'M' THEN
     _partitions_number := _partitions_number/30;
   END IF;
-            
+
   IF frequency = 'Y' THEN
     _partitions_number := _partitions_number/365;
   END IF;
-        
+
   IF frequency = 'W' THEN
     _partitions_number := _partitions_number/7;
   END IF;
@@ -14886,13 +14906,13 @@ execute 'insert into ' || schema_name || '.rating_edr select * from ' || schema_
 
 -- Drop temp data table
 execute 'drop table ' || schema_name || '.rating_edr_tmp cascade;';
-    
+
 -- Recreate sequence
 execute 'CREATE SEQUENCE IF NOT EXISTS '|| schema_name || '.rating_edr_seq START '||_seq_value||';';
 
     END;
 $$ LANGUAGE plpgsql;
-             
+
         ]]>
         </createProcedure>
     </changeSet>
@@ -14911,17 +14931,17 @@ $$ LANGUAGE plpgsql;
         <addPrimaryKey columnNames="disount_plan_id, code, entity_class" constraintName="cat_discount_applicable_entity_pkey" tableName="cat_discount_applicable_entity"/>
     </changeSet>
     <changeSet id="#INTRD-1441_20210728-rebuild" author="TarikFA.">
-   
+
     <createTable tableName="cpq_quote_version_media">
 	<column name="cpq_quote_version_id" type="bigint" />
 	<column name="cpq_media_id" type="bigint" />
 	</createTable>
-	
+
 	<addPrimaryKey columnNames="cpq_quote_version_id, cpq_media_id" tableName="cpq_quote_version_media"/>
 	        <addForeignKeyConstraint baseColumnNames="cpq_quote_version_id" baseTableName="cpq_quote_version_media"
 	                                 constraintName="fk_cpq_quote_version_media_id" deferrable="false"
 	                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-	                                 referencedColumnNames="id" referencedTableName="cpq_quote_version"/>  
+	                                 referencedColumnNames="id" referencedTableName="cpq_quote_version"/>
 	        <addForeignKeyConstraint baseColumnNames="cpq_media_id" baseTableName="cpq_quote_version_media"
 	                                 constraintName="fk_cpq_media_quote_version_id" deferrable="false"
 	                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -14933,7 +14953,7 @@ $$ LANGUAGE plpgsql;
         <delete tableName="DATABASECHANGELOG" />
     </changeSet>
 
-    <changeSet id="#4511_20190919-P" author="AndriusKarpavicius" dbms="postgresql"> 
+    <changeSet id="#4511_20190919-P" author="AndriusKarpavicius" dbms="postgresql">
     	<sql>create table ${db.schema.adapted}rating_edr_open partition of ${db.schema.adapted}rating_edr for values in('OPEN')</sql>
         <sql>create table ${db.schema.adapted}rating_edr_other partition of ${db.schema.adapted}rating_edr default</sql>
 
@@ -14943,8 +14963,8 @@ $$ LANGUAGE plpgsql;
         <sql>create table ${db.schema.adapted}billing_rated_transaction_open  partition of ${db.schema.adapted}billing_rated_transaction for values in('OPEN')</sql>
         <sql>create table ${db.schema.adapted}billing_rated_transaction_other partition of ${db.schema.adapted}billing_rated_transaction default</sql>
    	</changeSet>
-   	
-   	
+
+
     <changeSet author="TarikFA." id="#INTRD-5385_20220228_build">
         <addForeignKeyConstraint baseColumnNames="discounted_quote_price" baseTableName="cpq_quote_price" constraintName="fk_discounted_quote_price" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_price" />
@@ -14969,13 +14989,13 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#INTRD-5529_20220304_build" author="TarikFA.">
     	<addForeignKeyConstraint baseColumnNames="discounted_invoice_line" baseTableName="cpq_invoice_line" constraintName="fk_discounted_invoice_line" deferrable="false"
     		initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_invoice_line" />
-    </changeSet> 
+    </changeSet>
     
     <changeSet id="#INTRD-5859_20220321_build" author="TarikFA.">
         <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="billing_discount_plan_instance" constraintName="fk_discount_instance_service_instance" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
     </changeSet> 
-    
+
     <changeSet id="#INTRD-5872_20220322_build" author="TarikFA.">
         <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="billing_wallet_operation" constraintName="fk_discount_plan_id_wallet_operation" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
@@ -14997,7 +15017,7 @@ $$ LANGUAGE plpgsql;
         <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="order_price" constraintName="fk_order_price_discount_plan" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
     </changeSet>
-    
+
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
 
@@ -15958,9 +15978,9 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#20210416_441" author="TarikFA."></changeSet>
 
     <changeSet id="#470_20210422" author="Mbarek-Ay"></changeSet>
-    
+
     <changeSet id="#446_20210427" author="Mbarek-Ay"></changeSet>
-    
+
 	<changeSet id="#cpq_add_missing_migration" author="AbdelmounaimAkadid">
 	</changeSet>
 
@@ -15980,11 +16000,11 @@ $$ LANGUAGE plpgsql;
     </changeSet>
     <changeSet id="#5869_20210521" author="NabilOuachi">
     </changeSet>
-    
+
     <changeSet id="#5595_540582_20210528" author="TarikFA." />
-    
+
     <changeSet id="#6147_20210530" author="anasseh" />
-    
+
     <changeSet id="#5599_20210526" author="AbdelmounaimAkadid" />
     <changeSet id="#5416_20210526" author="AbdelmounaimAkadid" />
     <changeSet id="#559_20210603" author="TarikFA." />
@@ -16029,7 +16049,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#INTRD-6364_20220519" author="aelmalki" />
 	<changeSet id="#INTRD-9232_20220819" author="aelmalki" />
 	<changeSet id="#INTRD-10097_202000926" author="TarikFA." />
-    
+    <changeSet id="#INTRD-11775_20221120" author="hichamELHALOUI" />
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
