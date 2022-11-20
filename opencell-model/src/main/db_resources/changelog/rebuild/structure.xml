@@ -10233,6 +10233,8 @@
             <column name="oneshot_total_amount" type="numeric(23, 12)" />
             <column name="discount_plan_id" type="bigint"/>
             <column name="sales_person_name" type="varchar(52)" />
+            <column name="billing_cycle_id" type="bigint" />
+            <column name="billing_run_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-475" author="NabilOUACHI">
@@ -18811,9 +18813,10 @@
     <changeSet id="#INTRD-11310_20221110" author="ZBariki" />
     <changeSet id="#2038-20221130" author="Mbarek-Ay"/>
     <changeSet id="#INTR-12252_20221212_agreement_date" author="a.rouaguebe" />
-	<changeSet id="#INTRD-11841_20221214-reports" author="HichamHANINE" />
-	
-	
+	<changeSet id="#INTRD-11775_20221120" author="hichamELHALOUI" />
+    <changeSet id="#INTRD-11841_20221214-reports" author="HichamHANINE" />
+
+
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
