@@ -10187,6 +10187,8 @@
             <column name="cf_values" type="${type.json}" />
             <column name="oneshot_total_amount" type="numeric(23, 12)" />
             <column name="discount_plan_id" type="bigint"/>
+            <column name="billing_cycle_id" type="bigint" />
+            <column name="billing_run_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-475" author="NabilOUACHI">
@@ -16205,12 +16207,30 @@
 		<addForeignKeyConstraint baseColumnNames="target_tax_id" baseTableName="billing_invoice_line" constraintName="fk_billing_invoice_line_target_tax_id" deferrable="false" initiallyDeferred="false"
 			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
 	</changeSet>
-	<!-- end fk -->
-    <changeSet id="#INTRD-10046_20221028-fk" author="HichamHANINE">          
+
+    <changeSet id="#INTRD-10046_20221028-fk" author="HichamHANINE">
         <addForeignKeyConstraint baseColumnNames="origin_billing_run_id" baseTableName="billing_billing_run" constraintName="fk_billing_billing_run_origin_billing_run"
               					 referencedColumnNames="id" referencedTableName="billing_billing_run"/>
     </changeSet>
-    
+
+    <changeSet id="#INTRD-11775_20221120_fk" author="hichamELHALOUI">
+        <addForeignKeyConstraint baseTableName="cpq_commercial_order"
+                                 baseColumnNames="billing_cycle_id"
+                                 constraintName="fk_cpq_commercial_order_billing_cycle"
+                                 referencedTableName="billing_cycle"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+        <addForeignKeyConstraint baseTableName="cpq_commercial_order"
+                                 baseColumnNames="billing_run_id"
+                                 constraintName="fk_cpq_commercial_order_billing_run"
+                                 referencedTableName="billing_billing_run"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+
+    </changeSet
+    <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
         <sql><![CDATA[ alter table ${db.schema.adapted}adm_notif_history add constraint adm_notif_history_nb_retry_check check (nb_retry <= 10)]]></sql>
@@ -17922,6 +17942,7 @@
 	<changeSet id="#INTRD-10097_202000926" author="TarikFA." />
 	<changeSet id="INTRD-10603_20221113" author="AbdelmounaimAkadid" />
     <changeSet id="#INTRD-10046_20221028" author="HichamHANINE" />
+    <changeSet id="#INTRD-11775_20221120" author="hichamELHALOUI" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
