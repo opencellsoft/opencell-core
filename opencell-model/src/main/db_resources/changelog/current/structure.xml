@@ -14687,4 +14687,25 @@ order by date_trunc('month', i.invoice_date) DESC
                       oldColumnName="rgaa_message" 
                       columnDataType="varchar(500)"/>
     </changeSet>
+    <changeSet id="#INTRD-11775_20221120" author="hichamELHALOUI">
+        <addColumn tableName="cpq_commercial_order">
+           <column name="billing_cycle_id" type="bigint" />
+            <column name="billing_run_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="cpq_commercial_order"
+                                 baseColumnNames="billing_cycle_id"
+                                 constraintName="fk_cpq_commercial_order_billing_cycle"
+                                 referencedTableName="billing_cycle"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+        <addForeignKeyConstraint baseTableName="cpq_commercial_order"
+                                 baseColumnNames="billing_run_id"
+                                 constraintName="fk_cpq_commercial_order_billing_run"
+                                 referencedTableName="billing_billing_run"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+
+    </changeSet>
 </databaseChangeLog>
