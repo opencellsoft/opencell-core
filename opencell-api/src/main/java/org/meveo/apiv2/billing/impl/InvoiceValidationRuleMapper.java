@@ -4,6 +4,7 @@ import org.meveo.apiv2.billing.InvoiceValidationRuleDto;
 import org.meveo.apiv2.ordering.ResourceMapper;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceValidationRule;
+import org.meveo.model.billing.ValidationRuleTypeEnum;
 
 public class InvoiceValidationRuleMapper extends ResourceMapper<InvoiceValidationRuleDto, InvoiceValidationRule> {
 
@@ -17,7 +18,7 @@ public class InvoiceValidationRuleMapper extends ResourceMapper<InvoiceValidatio
 
         InvoiceValidationRule invoiceValidationRule = new InvoiceValidationRule();
         invoiceValidationRule.setPriority(invoiceValidationRuleDto.getPriority());
-        invoiceValidationRule.setType(invoiceValidationRuleDto.getType());
+        invoiceValidationRule.setType(ValidationRuleTypeEnum.valueOf(invoiceValidationRuleDto.getType()));
         invoiceValidationRule.setValidationEL(invoiceValidationRuleDto.getValidationEL());
         invoiceValidationRule.setValidationScript(invoiceValidationRuleDto.getValidationScript());
         invoiceValidationRule.setCode(invoiceValidationRuleDto.getCode());
@@ -32,7 +33,7 @@ public class InvoiceValidationRuleMapper extends ResourceMapper<InvoiceValidatio
     public InvoiceValidationRule toEntity(InvoiceValidationRuleDto invoiceValidationRuleDto, InvoiceValidationRule invoiceValidationRule, InvoiceType invoiceType) {
 
         if (invoiceValidationRuleDto.getType() != null) {
-            invoiceValidationRule.setType(invoiceValidationRuleDto.getType());
+            invoiceValidationRule.setType(ValidationRuleTypeEnum.valueOf(invoiceValidationRuleDto.getType()));
         }
 
         if (invoiceValidationRuleDto.getPriority() != null) {

@@ -34,12 +34,14 @@ public interface InvoiceValidationRuleDto extends Resource {
 
     @Schema(description = "Type")
     @Nullable
-    ValidationRuleTypeEnum getType();
+    String getType();
 
     @Schema(description = "Fail Status")
+    @Nullable
     InvoiceValidationStatusEnum getFailStatus();
 
     @Schema(description = "Validation Script")
+    @Nullable
     String getValidationScript();
 
     @Schema(description = "Validation EL")
