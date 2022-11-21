@@ -1294,4 +1294,10 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 .setParameter("invoiceLinesIds", invoiceLinesIds)
                 .getResultList();
     }
+    
+    public List<InvoiceLine> findInvoiceLinesToAdjust() {
+        return getEntityManager().createNamedQuery("InvoiceLine.findByAdjustmentStatus", entityClass)
+                .setParameter("status", AdjustmentStatusEnum.TO_ADJUST.toString())
+                .getResultList();
+    }
 }

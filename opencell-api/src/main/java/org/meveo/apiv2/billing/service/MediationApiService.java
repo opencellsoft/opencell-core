@@ -627,13 +627,15 @@ public class MediationApiService {
             String invalidAccessMsg = null;
             String mandatoryErrorMsg = null;
             String duplicateCdr = null;
+            String quantityGreat = null;
             cdr.setStatus(CDRStatusEnum.OPEN);
+            cdr.setRejectReason(null);
             cdr.setStatusDate(new Date());
             // mandatory
             if(cdr.getEventDate() == null) {
                 error.add("eventDate");
             }
-            if(cdr.getQuantity() == null || cdr.getQuantity() == BigDecimal.ZERO) {
+            if(cdr.getQuantity() == null) {
                 error.add("quantity");
             }
             if(StringUtils.isEmpty(cdr.getAccessCode())) {
@@ -654,8 +656,33 @@ public class MediationApiService {
             if(cdrService.checkDuplicateCDR(cdr.getOriginRecord())) {
                 duplicateCdr = "Duplicate CDR";
             }
-            if(mandatoryErrorMsg != null || invalidAccessMsg != null || invalidAccessMsg != null) {
-                cdr.setRejectReason( (mandatoryErrorMsg != null ? mandatoryErrorMsg : "" ) + (invalidAccessMsg != null ? invalidAccessMsg : "") + (invalidAccessMsg != null ? invalidAccessMsg : ""));
+            if(cdr.getQuantity() == BigDecimal.ZERO) {
+                   quantityGreat = "The quantity must be greater than 0";
+            }
+            if(mandatoryErrorMsg != null || invalidAccessMsg != null || duplicateCdr != null || quantityGreat != null) {
+                StringBuilder builderErrorMsg = new StringBuilder();
+                if(mandatoryErrorMsg != null) {
+                    builderErrorMsg.append( mandatoryErrorMsg );
+                }
+                if(invalidAccessMsg != null) {
+                    if( builderErrorMsg.length() > 0) {
+                        builderErrorMsg.append(", ");
+                    }
+                    builderErrorMsg.append( invalidAccessMsg );
+                }
+                if(duplicateCdr != null) {
+                    if( builderErrorMsg.length() > 0) {
+                        builderErrorMsg.append(", ");
+                    }
+                    builderErrorMsg.append( duplicateCdr );
+                }
+                if(quantityGreat != null) {
+                    if( builderErrorMsg.length() > 0) {
+                        builderErrorMsg.append(", ");
+                    }
+                    builderErrorMsg.append( quantityGreat );
+                }
+                cdr.setRejectReason(builderErrorMsg.toString());
                 cdr.setStatus(CDRStatusEnum.ERROR);
                 cdr.setStatusDate(new Date());
                 cdr.setLine(cdr.toCsv());
@@ -673,6 +700,7 @@ public class MediationApiService {
             }
             cdrService.create(cdr);
             ids.add(ImmutableResource.builder().id(cdr.getId()).build());
+            
         }
         if(returnCDRs)
             cdrDtoResponse.addAllCdrs(ids);
@@ -809,28 +837,28 @@ public class MediationApiService {
                 switch(cdr.getStatus()) {
                     case OPEN :
                         if(statusToUpdated == CDRStatusEnum.TO_REPROCESS || statusToUpdated == CDRStatusEnum.PROCESSED || statusToUpdated == CDRStatusEnum.CLOSED) {
-                            errorStatus = "Impossible to update CDR with status  from OPEN to : TO_REPROCESS, PROCESSED, CLOSED";
+                            errorStatus = "Impossible to update CDR with status OPEN to TO_REPROCESS, PROCESSED, CLOSED for cdr line"  + cdr.toCsv();
                         }
                         break;
                     case ERROR:
                     case TO_REPROCESS :
                         if(statusToUpdated == CDRStatusEnum.OPEN || statusToUpdated == CDRStatusEnum.PROCESSED || statusToUpdated == CDRStatusEnum.CLOSED) {
-                            errorStatus = "Impossible to update CDR with status from " + cdr.getStatus() + " to : OPEN, PROCESSED, CLOSED";
+                            errorStatus = "Impossible to update CDR with status " + cdr.getStatus() + " to OPEN, PROCESSED, CLOSED for cdr line:" + cdr.toCsv();
                         }
                         break;
                     case DISCARDED : 
                         if(statusToUpdated != CDRStatusEnum.OPEN && statusToUpdated != CDRStatusEnum.DISCARDED ) {
-                            errorStatus = "Impossible to update CDR with status from " + cdr.getStatus() + " to : ERROR, TO_REPROCESS, PROCESSED, CLOSED";
+                            errorStatus = "Impossible to update CDR with status DISCARDED to OPEN, TO_REPROCESS, PROCESSED, CLOSED for cdr line:" + cdr.toCsv();
                         }
                         break;
                     case PROCESSED : 
                         if(statusToUpdated != CDRStatusEnum.PROCESSED) {
-                            errorStatus = "Impossible to update CDR with status from " + cdr.getStatus() + " to : OPEN, ERROR, TO_REPROCESS, DISCARDED, CLOSED";
+                            errorStatus = "Impossible to update CDR with the status REPROCESSED to another status.";
                         }
                         break;
                     case CLOSED : 
                         if(statusToUpdated != CDRStatusEnum.CLOSED) {
-                            errorStatus = "Impossible to update CDR with status from " + cdr.getStatus() + " to : OPEN, ERROR, TO_REPROCESS, DISCARDED, PROCESSED";
+                            errorStatus = "Impossible to update CDR with the status CLOSED to another status.";
                         }
                         break;
                         
@@ -903,9 +931,10 @@ public class MediationApiService {
                 }else {
                     continue;
                 }
+            }else {
+                cdrService.remove(cdr);
+                returnIds.add(ImmutableResource.builder().id(cdr.getId()).build());
             }
-
-            returnIds.add(ImmutableResource.builder().id(cdr.getId()).build());
             
         }
         Builder cdrDtoResponse = ImmutableCdrDtoResponse.builder();

@@ -1,11 +1,13 @@
 package org.meveo.apiv2.ordering.resource.mappers;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.meveo.apiv2.billing.ImmutableInvoiceValidationRuleDto;
 import org.meveo.apiv2.billing.impl.InvoiceValidationRuleMapper;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceValidationRule;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +23,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@RunWith(MockitoJUnitRunner.class)
 public class InvoiceValidationRuleMapperTest {
 
     private Random random = new Random();
@@ -58,7 +61,7 @@ public class InvoiceValidationRuleMapperTest {
     }
 
     private static void assertDtoAndEntityAreEqual(ImmutableInvoiceValidationRuleDto invoiceValidationRuleDto, InvoiceValidationRule invoiceValidationRule) {
-        assertThat(invoiceValidationRule.getType()).isEqualTo(invoiceValidationRuleDto.getType());
+        assertThat(invoiceValidationRule.getType().toString()).isEqualTo(invoiceValidationRuleDto.getType());
         assertThat(invoiceValidationRule.getPriority()).isEqualTo(invoiceValidationRuleDto.getPriority());
         assertThat(invoiceValidationRule.getFailStatus()).isEqualTo(invoiceValidationRuleDto.getFailStatus());
         assertThat(invoiceValidationRule.getCode()).isEqualTo(invoiceValidationRuleDto.getCode());
@@ -79,7 +82,13 @@ public class InvoiceValidationRuleMapperTest {
                 if (!java.lang.reflect.Modifier.isStatic(field.getModifiers()) && !Collection.class.isAssignableFrom(field.getType())) {
 
                     Method accessor = builderClass.getMethod(name, field.getType());
-                    Object value = getRandomValueForField(field, onlyBasicFields);
+
+                    Object value;
+                    if (accessor.getName().equals("type")) {
+                        value = "SCRIPT";
+                    } else {
+                        value = getRandomValueForField(field, onlyBasicFields);
+                    }
                     accessor.invoke(builder, value);
                 }
             }

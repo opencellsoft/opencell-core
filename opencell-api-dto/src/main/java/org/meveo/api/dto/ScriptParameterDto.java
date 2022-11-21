@@ -53,6 +53,7 @@ public class ScriptParameterDto extends BaseEntityDto {
      */
 	public ScriptParameterDto (ScriptParameter scriptParameter) {
         super();
+        code = scriptParameter.getCode();
         className = scriptParameter.getClassName();
         defaultValue = scriptParameter.getDefaultValue();
         mandatory = scriptParameter.isMandatory();

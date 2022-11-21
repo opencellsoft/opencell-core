@@ -7,6 +7,7 @@ import org.meveo.apiv2.billing.InvoiceValidationRuleDto;
 
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -48,4 +49,18 @@ public interface InvoiceValidationRulesResource {
             })
     Response update(@Parameter(description = "id of the InvoiceValidation Rule", required = true) @PathParam("id") @NotNull Long id,
                     @Parameter(description = "Validation Rule Dto", required = true) @NotNull InvoiceValidationRuleDto invoiceValidationRuleDto);
+
+
+    @DELETE
+    @Path("/{id}")
+    @Operation(summary = "Delete invoice validation rule",
+            tags = {"InvoiceValidationRules"},
+            description = "Delete invoice validation rule",
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201",
+                            description = "invoice validation rule successfully deleted"),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "304",
+                            description = "error when deleting invoice validation rule ")
+            })
+    Response delete(@Parameter(description = "id of the InvoiceValidation Rule to delete", required = true) @PathParam("id") @NotNull Long id);
 }
