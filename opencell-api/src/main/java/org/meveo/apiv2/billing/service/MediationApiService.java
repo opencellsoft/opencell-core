@@ -655,7 +655,7 @@ public class MediationApiService {
                 duplicateCdr = "Duplicate CDR";
             }
             if(mandatoryErrorMsg != null || invalidAccessMsg != null || invalidAccessMsg != null) {
-                cdr.setRejectReason( (mandatoryErrorMsg != null ? mandatoryErrorMsg : "" ) + (invalidAccessMsg != null ? invalidAccessMsg : "") + (invalidAccessMsg != null ? invalidAccessMsg : ""));
+                cdr.setRejectReason( (mandatoryErrorMsg != null ? mandatoryErrorMsg : "" ) + (invalidAccessMsg != null ? invalidAccessMsg : "") + (duplicateCdr != null ? duplicateCdr : ""));
                 cdr.setStatus(CDRStatusEnum.ERROR);
                 cdr.setStatusDate(new Date());
                 cdr.setLine(cdr.toCsv());
@@ -670,10 +670,10 @@ public class MediationApiService {
                 }else if(mode == ROLLBACK_ON_ERROR) {
                     throw new BusinessException(cdr.getRejectReason());
                 }
-            }else {
-                cdrService.create(cdr);
-                ids.add(ImmutableResource.builder().id(cdr.getId()).build());
             }
+            cdrService.create(cdr);
+            ids.add(ImmutableResource.builder().id(cdr.getId()).build());
+            
         }
         if(returnCDRs)
             cdrDtoResponse.addAllCdrs(ids);
