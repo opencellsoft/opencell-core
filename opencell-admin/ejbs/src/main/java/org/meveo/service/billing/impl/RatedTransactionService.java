@@ -47,6 +47,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.collections4.ListUtils;
 import org.hibernate.Session;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
@@ -1511,17 +1512,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		}
 	}
 
-	public void linkRTsToIL(final List<Long> ratedTransactionsIDs, final Long invoiceLineID) {
-		final int maxValue = ParamBean.getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
-		if (ratedTransactionsIDs.size() > maxValue) {
-			SubListCreator<Long> subLists = new SubListCreator<Long>(ratedTransactionsIDs, (1 + (ratedTransactionsIDs.size() / maxValue)));
-			while (subLists.isHasNext()) {
-				linkRTsWithILByIds(invoiceLineID, subLists.getNextWorkSet());
-			}
-		} else {
-			linkRTsWithILByIds(invoiceLineID, ratedTransactionsIDs);
-		}
-	}
+    public void linkRTsToIL(final List<Long> ratedTransactionsIDs, final Long invoiceLineID) {
+        final int maxValue = ParamBean.getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
+        if (ratedTransactionsIDs.size() > maxValue) {
+            List<List<Long>> subLists = ListUtils.partition(ratedTransactionsIDs, maxValue);
+            for (List<Long> l : subLists) {
+                linkRTsWithILByIds(invoiceLineID, l);
+            }
+        } else {
+            linkRTsWithILByIds(invoiceLineID, ratedTransactionsIDs);
+        }
+    }
 
 	private void linkRTsWithILByIds(Long invoiceLineId, final List<Long> ids) {
 		getEntityManager().createNamedQuery("RatedTransaction.linkRTWithInvoiceLine")
