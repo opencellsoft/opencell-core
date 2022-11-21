@@ -242,8 +242,17 @@ public class QuoteMapper {
                 .stream()
                 .map(key -> UtilsDto.reducePrices(key, pricesPerType, PriceLevelEnum.QUOTE, null, null))
                 .filter(Optional::isPresent)
-                .map(price -> new PriceDTO(price.get(), currencyService.findByTradingCurrencyCode(price.get().getCurrencyCode())))
-                .collect(Collectors.toList());
+                .map(price ->{
+                    if (price.get().getId() != null) {
+                        return new PriceDTO(price.get(), currencyService.findByTradingCurrencyCode(price.get().getCurrencyCode()));
+                    }else {
+                        return new PriceDTO();
+                    }
+                }).collect(Collectors.toList());
+                
+                
+                
+                
     }
 
 }
