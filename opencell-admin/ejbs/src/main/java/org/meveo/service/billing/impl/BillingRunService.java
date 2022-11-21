@@ -887,8 +887,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                             invoiceValidationStatusEnum.equals(status)){
                             result = false;
                     }
-                }
-                update(billingRun);
+                    update(billingRun);
+                }                
             }
         }
         return result;
