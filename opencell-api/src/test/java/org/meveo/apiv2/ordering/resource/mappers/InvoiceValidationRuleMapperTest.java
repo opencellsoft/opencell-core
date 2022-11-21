@@ -1,11 +1,13 @@
 package org.meveo.apiv2.ordering.resource.mappers;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.meveo.apiv2.billing.ImmutableInvoiceValidationRuleDto;
 import org.meveo.apiv2.billing.impl.InvoiceValidationRuleMapper;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceValidationRule;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +23,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@RunWith(MockitoJUnitRunner.class)
 public class InvoiceValidationRuleMapperTest {
 
     private Random random = new Random();

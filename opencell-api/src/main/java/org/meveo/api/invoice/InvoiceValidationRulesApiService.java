@@ -1,5 +1,6 @@
 package org.meveo.api.invoice;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.billing.InvoiceValidationRule;
 import org.meveo.service.billing.impl.InvoiceValidationRulesService;
@@ -52,6 +53,13 @@ public class InvoiceValidationRulesApiService implements ApiService<InvoiceValid
 
     @Override
     public Optional<InvoiceValidationRule> delete(Long id) {
+
+        InvoiceValidationRule invoiceValidationRule = invoiceValidationRulesService.findById(id);
+        if (invoiceValidationRule == null) {
+            throw new BusinessException("The invoice validation rule does not exist");
+        }
+        invoiceValidationRulesService.remove(id);
+        invoiceValidationRulesService.reorderInvoiceValidationRules(invoiceValidationRule, true);
         return Optional.empty();
     }
 

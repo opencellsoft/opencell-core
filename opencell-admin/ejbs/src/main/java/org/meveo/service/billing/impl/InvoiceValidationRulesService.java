@@ -7,14 +7,11 @@ import org.meveo.model.billing.InvoiceValidationRule;
 import org.meveo.service.base.BusinessService;
 
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import java.util.List;
+import java.util.Objects;
 
 @Stateless
 public class InvoiceValidationRulesService extends BusinessService<InvoiceValidationRule> {
-
-    @Inject
-    InvoiceTypeService invoiceTypeService;
 
     public void updateInvoiceTypePriority(InvoiceValidationRule invoiceValidationRule) {
 
@@ -23,22 +20,22 @@ public class InvoiceValidationRulesService extends BusinessService<InvoiceValida
         if (invoiceValidationRule.getPriority() == null) {
             invoiceValidationRule.setPriority(invoiceType.getInvoiceValidationRules() != null ? invoiceType.getInvoiceValidationRules().size() + 1 : null);
         } else {
-            InvoiceType updatedInvoiceType = reorderInvoiceValidationRules(invoiceType, invoiceValidationRule, false);
-            invoiceValidationRule.setInvoiceType(updatedInvoiceType);
+            reorderInvoiceValidationRules(invoiceValidationRule, false);
         }
     }
 
-    public InvoiceType reorderInvoiceValidationRules(InvoiceType invoiceType, InvoiceValidationRule rule, boolean remove) {
+    public void reorderInvoiceValidationRules(InvoiceValidationRule invoiceValidationRule, boolean remove) {
 
+        InvoiceType invoiceType = invoiceValidationRule.getInvoiceType();
         List<InvoiceValidationRule> invoiceValidationRules = invoiceType.getInvoiceValidationRules();
 
-        int rulePriority = rule.getPriority();
+        int rulePriority = invoiceValidationRule.getPriority();
 
         if (CollectionUtils.isEmpty(invoiceValidationRules)) {
-            rule.setPriority(1);
+            invoiceValidationRule.setPriority(1);
         } else {
             if (rulePriority <= 0 || rulePriority > invoiceValidationRules.size() + 1) {
-                rule.setPriority(invoiceValidationRules.size() + 1);
+                invoiceValidationRule.setPriority(invoiceValidationRules.size() + 1);
             }
         }
 
@@ -50,10 +47,8 @@ public class InvoiceValidationRulesService extends BusinessService<InvoiceValida
                     currentRule.setPriority(currentRule.getPriority() + 1));
         }
 
-        invoiceType.setInvoiceValidationRules(invoiceValidationRules);
-        invoiceTypeService.update(invoiceType);
+        invoiceValidationRules.stream().filter(validationRule -> !Objects.equals(validationRule.getId(), invoiceValidationRule.getId())).forEach(this::update);
 
-        return invoiceType;
     }
 
 
