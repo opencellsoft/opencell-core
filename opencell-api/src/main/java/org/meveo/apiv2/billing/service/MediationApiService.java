@@ -629,6 +629,7 @@ public class MediationApiService {
             String duplicateCdr = null;
             String quantityGreat = null;
             cdr.setStatus(CDRStatusEnum.OPEN);
+            cdr.setRejectReason(null);
             cdr.setStatusDate(new Date());
             // mandatory
             if(cdr.getEventDate() == null) {
