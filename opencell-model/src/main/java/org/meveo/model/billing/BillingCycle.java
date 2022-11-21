@@ -207,6 +207,13 @@ public class BillingCycle extends BusinessCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run_validation_script_id")
     private ScriptInstance billingRunValidationScript;
+    
+    /**
+     * Filtering option used in billing cycle.
+     */
+    @Type(type = "json")
+    @Column(name = "filters", columnDefinition = "jsonb")
+    private Map<String, String> filters;
 
     /**
      * @return Invoicing calendar
@@ -471,4 +478,13 @@ public class BillingCycle extends BusinessCFEntity {
 	public void setBillingRunValidationScript(ScriptInstance billingRunValidationScript) {
 		this.billingRunValidationScript = billingRunValidationScript;
 	}
+
+	public Map<String, String> getFilters() {
+		return filters;
+	}
+
+	public void setFilters(Map<String, String> filters) {
+		this.filters = filters;
+	}
+	
 }

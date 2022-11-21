@@ -2923,6 +2923,9 @@
             <column name="collection_date_delay_el" type="varchar(2000)"/>
             <column name="compute_dates_validation" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="billing_run_validation_script_id" type="bigint"/>
+            <column name="filters" type="${type.json}">
+            	<constraints nullable="true" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-172">
@@ -18893,6 +18896,7 @@
 	<changeSet id="INTRD-11433_20221110" author="AbdelmounaimAkadid" />
     <changeSet id="#INTRD-11310_20221110" author="ZBariki" />
     <changeSet id="#INTRD-10683_20221107" author="AdilElJaouhari" />
+    <changeSet id="#INTRD-242_20221121" author="AdilElJaouhari" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
