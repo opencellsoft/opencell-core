@@ -473,7 +473,7 @@ public final class FileUtils {
                 if (!StorageFactory.exists(fileout)) {
                     StorageFactory.mkdirs(new File(fileout.getParent()));
                 }
-                try (OutputStream fos = new FileOutputStream(fileout); BufferedOutputStream bos = new BufferedOutputStream(fos)) {
+                try (OutputStream fos = StorageFactory.getOutputStream(fileout); BufferedOutputStream bos = new BufferedOutputStream(fos)) {
                     int b = -1;
                     while ((b = bis.read()) != -1) {
                         bos.write(b);
