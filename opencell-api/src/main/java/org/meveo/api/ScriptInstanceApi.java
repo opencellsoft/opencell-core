@@ -299,6 +299,11 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
             scriptInstance.setDescriptionI18n(dto.getLanguageDescriptions().stream().collect(Collectors.toMap(LanguageDescriptionDto::getLanguageCode, LanguageDescriptionDto::getDescription)));
         }
         
+        List<ScriptParameter> existingScriptParamters = scriptInstance.getScriptParameters();
+        if (existingScriptParamters != null && !existingScriptParamters.isEmpty()) {
+        	scriptInstance.getScriptParameters().removeAll(existingScriptParamters);
+        }
+        
         if(dto.getScriptParameters() != null && !dto.getScriptParameters().isEmpty()) {
             scriptInstance.getScriptParameters().addAll(dto.getScriptParameters().stream().map(ScriptParameterDto::mapToEntity).collect(Collectors.toList()));
             for (ScriptParameter sp : scriptInstance.getScriptParameters()) sp.setScriptInstance(scriptInstance);
