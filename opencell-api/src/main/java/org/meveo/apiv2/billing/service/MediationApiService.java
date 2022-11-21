@@ -833,28 +833,28 @@ public class MediationApiService {
                 switch(cdr.getStatus()) {
                     case OPEN :
                         if(statusToUpdated == CDRStatusEnum.TO_REPROCESS || statusToUpdated == CDRStatusEnum.PROCESSED || statusToUpdated == CDRStatusEnum.CLOSED) {
-                            errorStatus = "Impossible to update CDR with status  from OPEN to : TO_REPROCESS, PROCESSED, CLOSED";
+                            errorStatus = "Impossible to update CDR with status OPEN to TO_REPROCESS, PROCESSED, CLOSED for cdr line"  + cdr.toCsv();
                         }
                         break;
                     case ERROR:
                     case TO_REPROCESS :
                         if(statusToUpdated == CDRStatusEnum.OPEN || statusToUpdated == CDRStatusEnum.PROCESSED || statusToUpdated == CDRStatusEnum.CLOSED) {
-                            errorStatus = "Impossible to update CDR with status from " + cdr.getStatus() + " to : OPEN, PROCESSED, CLOSED";
+                            errorStatus = "Impossible to update CDR with status " + cdr.getStatus() + " to OPEN, PROCESSED, CLOSED for cdr line:" + cdr.toCsv();
                         }
                         break;
                     case DISCARDED : 
                         if(statusToUpdated != CDRStatusEnum.OPEN && statusToUpdated != CDRStatusEnum.DISCARDED ) {
-                            errorStatus = "Impossible to update CDR with status from " + cdr.getStatus() + " to : ERROR, TO_REPROCESS, PROCESSED, CLOSED";
+                            errorStatus = "Impossible to update CDR with status DISCARDED to OPEN, TO_REPROCESS, PROCESSED, CLOSED for cdr line:" + cdr.toCsv();
                         }
                         break;
                     case PROCESSED : 
                         if(statusToUpdated != CDRStatusEnum.PROCESSED) {
-                            errorStatus = "Impossible to update CDR with status from " + cdr.getStatus() + " to : OPEN, ERROR, TO_REPROCESS, DISCARDED, CLOSED";
+                            errorStatus = "Impossible to update CDR with the status REPROCESSED to another status.";
                         }
                         break;
                     case CLOSED : 
                         if(statusToUpdated != CDRStatusEnum.CLOSED) {
-                            errorStatus = "Impossible to update CDR with status from " + cdr.getStatus() + " to : OPEN, ERROR, TO_REPROCESS, DISCARDED, PROCESSED";
+                            errorStatus = "Impossible to update CDR with the status CLOSED to another status.";
                         }
                         break;
                         
