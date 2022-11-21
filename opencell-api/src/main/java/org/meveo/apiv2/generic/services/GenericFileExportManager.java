@@ -8,13 +8,14 @@ import static java.time.temporal.ChronoField.SECOND_OF_MINUTE;
 import static java.time.temporal.ChronoField.YEAR;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,9 +25,8 @@ import java.time.format.SignStyle;
 import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.stream.IntStream;
 
 import javax.ejb.Stateless;
@@ -35,9 +35,14 @@ import javax.inject.Inject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.bouncycastle.util.Arrays;
 import org.meveo.apiv2.generic.GenericFieldDetails;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -180,7 +185,13 @@ public class GenericFileExportManager {
                         .forEach(indexCol -> {
                             Cell cell = rowCell.createCell(indexCol);
                             String key = ordredColumn.get(indexCol);
-                            cell.setCellValue(applyTransformation(fieldDetails.get(key), CSVLineRecords.get(indexRow).get(key)));
+                            Object value = CSVLineRecords.get(indexRow).get(key);
+                            if (value instanceof BigDecimal) {
+                                applyNumericFormat(wb, cell, "0,00");
+                            } else {
+                                applyStringFormat(wb, cell, "0,00");
+                            }
+                            cell.setCellValue(applyTransformation(fieldDetails.get(key), value));
                         });
                 });
                 try {
@@ -231,7 +242,8 @@ public class GenericFileExportManager {
 
         if (StringUtils.isNotBlank(fieldDetail.getTransformation())) {
             if (value instanceof BigDecimal || value instanceof Double || value instanceof Float) {
-                return new DecimalFormat(fieldDetail.getTransformation()).format(value);
+                DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.FRENCH);
+                return new DecimalFormat(fieldDetail.getTransformation(), symbols).format(value);
             }
 
             if (value instanceof Date) {
@@ -258,5 +270,21 @@ public class GenericFileExportManager {
     private String extractValue(String key, GenericFieldDetails fieldDetail) {
 		return fieldDetail == null ? key : fieldDetail.getHeader() != null ? fieldDetail.getHeader() : fieldDetail.getName();
 	}
+
+    private void applyNumericFormat(Workbook outWorkbook, Cell cell, String styleFormat) {
+        CellStyle style = outWorkbook.createCellStyle();
+        DataFormat format = outWorkbook.createDataFormat();
+        //style.setDataFormat(format.getFormat(styleFormat));
+        style.setAlignment(HorizontalAlignment.RIGHT);
+        cell.setCellStyle(style);
+    }
+
+    private void applyStringFormat(Workbook outWorkbook, Cell cell, String styleFormat) {
+        CellStyle style = outWorkbook.createCellStyle();
+        DataFormat format = outWorkbook.createDataFormat();
+        //style.setDataFormat(format.getFormat(styleFormat));
+        style.setAlignment(HorizontalAlignment.LEFT);
+        cell.setCellStyle(style);
+    }
     
 }
