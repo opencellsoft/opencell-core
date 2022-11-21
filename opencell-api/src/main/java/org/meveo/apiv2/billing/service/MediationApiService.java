@@ -904,9 +904,10 @@ public class MediationApiService {
                 }else {
                     continue;
                 }
+            }else {
+                cdrService.remove(cdr);
+                returnIds.add(ImmutableResource.builder().id(cdr.getId()).build());
             }
-
-            returnIds.add(ImmutableResource.builder().id(cdr.getId()).build());
             
         }
         Builder cdrDtoResponse = ImmutableCdrDtoResponse.builder();
