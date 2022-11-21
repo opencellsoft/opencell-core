@@ -627,13 +627,14 @@ public class MediationApiService {
             String invalidAccessMsg = null;
             String mandatoryErrorMsg = null;
             String duplicateCdr = null;
+            String quantityGreat = null;
             cdr.setStatus(CDRStatusEnum.OPEN);
             cdr.setStatusDate(new Date());
             // mandatory
             if(cdr.getEventDate() == null) {
                 error.add("eventDate");
             }
-            if(cdr.getQuantity() == null || cdr.getQuantity() == BigDecimal.ZERO) {
+            if(cdr.getQuantity() == null) {
                 error.add("quantity");
             }
             if(StringUtils.isEmpty(cdr.getAccessCode())) {
@@ -654,8 +655,30 @@ public class MediationApiService {
             if(cdrService.checkDuplicateCDR(cdr.getOriginRecord())) {
                 duplicateCdr = "Duplicate CDR";
             }
-            if(mandatoryErrorMsg != null || invalidAccessMsg != null || invalidAccessMsg != null) {
-                cdr.setRejectReason( (mandatoryErrorMsg != null ? mandatoryErrorMsg : "" ) + (invalidAccessMsg != null ? invalidAccessMsg : "") + (duplicateCdr != null ? duplicateCdr : ""));
+            if(cdr.getQuantity() == BigDecimal.ZERO) {
+                   quantityGreat = "The quantity must be greater than 0";
+            }
+            if(mandatoryErrorMsg != null || invalidAccessMsg != null || duplicateCdr != null || quantityGreat != null) {
+                StringBuilder builderErrorMsg = new StringBuilder();
+                if(mandatoryErrorMsg != null) {
+                    builderErrorMsg.append( mandatoryErrorMsg );
+                }
+                if(invalidAccessMsg != null && builderErrorMsg.length() > 0) {
+                    builderErrorMsg.append(", ").append( invalidAccessMsg );
+                }else {
+                    builderErrorMsg.append( invalidAccessMsg );
+                }
+                if(duplicateCdr != null && builderErrorMsg.length() > 0) {
+                    builderErrorMsg.append(", ").append( duplicateCdr );
+                }else {
+                    builderErrorMsg.append( duplicateCdr );
+                }
+                if(quantityGreat != null && builderErrorMsg.length() > 0) {
+                    builderErrorMsg.append(", ").append( quantityGreat );
+                }else {
+                    builderErrorMsg.append( quantityGreat );
+                }
+                cdr.setRejectReason(builderErrorMsg.toString());
                 cdr.setStatus(CDRStatusEnum.ERROR);
                 cdr.setStatusDate(new Date());
                 cdr.setLine(cdr.toCsv());
