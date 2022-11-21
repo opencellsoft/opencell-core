@@ -836,13 +836,17 @@ public class MediationApiService {
                 switch(cdr.getStatus()) {
                     case OPEN :
                         if(statusToUpdated == CDRStatusEnum.TO_REPROCESS || statusToUpdated == CDRStatusEnum.PROCESSED || statusToUpdated == CDRStatusEnum.CLOSED) {
-                            errorStatus = "Impossible to update CDR with status OPEN to TO_REPROCESS, PROCESSED, CLOSED for cdr line"  + cdr.toCsv();
+                            errorStatus = "Impossible to update CDR with status OPEN to TO_REPROCESS, PROCESSED, CLOSED for cdr line :"  + cdr.toCsv();
                         }
                         break;
                     case ERROR:
+                        if(statusToUpdated == CDRStatusEnum.OPEN || statusToUpdated == CDRStatusEnum.PROCESSED || statusToUpdated == CDRStatusEnum.CLOSED) {
+                            errorStatus = "Impossible to update CDR with status ERROR to OPEN, PROCESSED, CLOSED for cdr line:" + cdr.toCsv();
+                        }
+                        break;
                     case TO_REPROCESS :
                         if(statusToUpdated == CDRStatusEnum.OPEN || statusToUpdated == CDRStatusEnum.PROCESSED || statusToUpdated == CDRStatusEnum.CLOSED) {
-                            errorStatus = "Impossible to update CDR with status " + cdr.getStatus() + " to OPEN, PROCESSED, CLOSED for cdr line:" + cdr.toCsv();
+                            errorStatus = "Impossible to update CDR with status TO_REPROCESS to OPEN, PROCESSED, CLOSED for cdr line:" + cdr.toCsv();
                         }
                         break;
                     case DISCARDED : 
@@ -867,6 +871,7 @@ public class MediationApiService {
                 if(errorStatus != null) {
                     CdrErrorDto error = new CdrErrorDto(cdrToBeUpdated.toCsv(), errorStatus);
                     cdrErrorDtos.add(error);
+                    cdrToBeUpdated.setStatus(cdr.getStatus());
                     if(mode == STOP_ON_FIRST_FAIL) {
                         break;
                     }else if (mode == ROLLBACK_ON_ERROR) {
