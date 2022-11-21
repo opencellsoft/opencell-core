@@ -853,7 +853,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 	priceWithTax = ppmVersion.getAmountWithTax();
                 }
                 if (ppmVersion.getPriceEL() != null) {
-                	priceWithoutTax = priceWithoutTax.add(evaluateAmountExpression(ppmVersion.getPriceEL(), wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax));
+                	priceWithoutTax = evaluateAmountExpression(ppmVersion.getPriceEL(), wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax);
                     if (priceWithoutTax == null) {
                         throw new PriceELErrorException("Can't evaluate price for price plan " + ppmVersion.getId() + " EL:" + ppmVersion.getPriceEL());
                     }
@@ -866,10 +866,10 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     String amountEL = ppmVersion.getPriceEL();
                     String amountELPricePlanMatrixLine = pricePlanMatrixLine.getValueEL();
                     if (!StringUtils.isBlank(amountEL)) {
-                        priceWithoutTax = priceWithoutTax.add(evaluateAmountExpression(amountEL, wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax));
+                        priceWithoutTax = evaluateAmountExpression(amountEL, wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax);
                     }
                     if (!StringUtils.isBlank(amountELPricePlanMatrixLine)) {
-                        priceWithoutTax = priceWithoutTax.add(evaluateAmountExpression(amountELPricePlanMatrixLine, wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax));
+                        priceWithoutTax = evaluateAmountExpression(amountELPricePlanMatrixLine, wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax);
                     }
                 }
                 if (priceWithoutTax == null) {
