@@ -61,7 +61,7 @@ public class InvoiceValidationRuleMapperTest {
     }
 
     private static void assertDtoAndEntityAreEqual(ImmutableInvoiceValidationRuleDto invoiceValidationRuleDto, InvoiceValidationRule invoiceValidationRule) {
-        assertThat(invoiceValidationRule.getType()).isEqualTo(invoiceValidationRuleDto.getType());
+        assertThat(invoiceValidationRule.getType().toString()).isEqualTo(invoiceValidationRuleDto.getType());
         assertThat(invoiceValidationRule.getPriority()).isEqualTo(invoiceValidationRuleDto.getPriority());
         assertThat(invoiceValidationRule.getFailStatus()).isEqualTo(invoiceValidationRuleDto.getFailStatus());
         assertThat(invoiceValidationRule.getCode()).isEqualTo(invoiceValidationRuleDto.getCode());
@@ -82,7 +82,13 @@ public class InvoiceValidationRuleMapperTest {
                 if (!java.lang.reflect.Modifier.isStatic(field.getModifiers()) && !Collection.class.isAssignableFrom(field.getType())) {
 
                     Method accessor = builderClass.getMethod(name, field.getType());
-                    Object value = getRandomValueForField(field, onlyBasicFields);
+
+                    Object value;
+                    if (accessor.getName().equals("type")) {
+                        value = "SCRIPT";
+                    } else {
+                        value = getRandomValueForField(field, onlyBasicFields);
+                    }
                     accessor.invoke(builder, value);
                 }
             }
