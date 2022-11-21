@@ -2923,6 +2923,9 @@
             <column name="collection_date_delay_el" type="varchar(2000)"/>
             <column name="compute_dates_validation" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="billing_run_validation_script_id" type="bigint"/>
+            <column name="filters" type="${type.json}">
+            	<constraints nullable="true" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-172">
@@ -7553,6 +7556,7 @@
             <column name="decimal_separator" type="varchar(1)" defaultValue="." />
             <column name="generate_empty_report" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="maximum_line" type="bigint" defaultValueNumeric="0" />
+            <column name="include_headers" type="${type.boolean}" defaultValueNumeric="1"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-360">
@@ -18814,6 +18818,7 @@
     <changeSet author="AbdelmounaimAkadid" id="#INTRD-828-create-view" dbms="postgresql"/>
     <changeSet author="AbdelmounaimAkadid" id="#INTRD-828-create-view-oracle" dbms="oracle"/>
     <changeSet id="INTRD-2371_19102021" author="AbdelkaderBouazza" />
+    <changeSet id="#INTRD-8859_20220802" author="hichamELHALOUI" />
     <changeSet id="#INTRD-8106_20220630" author="TarikFA." />
     <changeSet id="#INTRD-8027_20220629" author="aelmalki" />
 	<changeSet id="#INTRD-8580_20220714" author="aelmalki" />
@@ -18891,6 +18896,7 @@
 	<changeSet id="INTRD-11433_20221110" author="AbdelmounaimAkadid" />
     <changeSet id="#INTRD-11310_20221110" author="ZBariki" />
     <changeSet id="#INTRD-10683_20221107" author="AdilElJaouhari" />
+    <changeSet id="#INTRD-242_20221121" author="AdilElJaouhari" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

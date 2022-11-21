@@ -328,7 +328,8 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
     public Long createSecurityDepositPaymentAccountOperation(SecurityDeposit securityDeposit, BigDecimal amount) {
 
-        AccountOperation securityDepositPaymentAccountOperation = new AccountOperation();
+        Payment securityDepositPaymentAccountOperation = new Payment();
+
         securityDepositPaymentAccountOperation.setAmount(amount);
         securityDepositPaymentAccountOperation.setDepositDate(new Date());
         securityDepositPaymentAccountOperation.setPaymentMethod(PaymentMethodEnum.CHECK);
@@ -336,9 +337,13 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         securityDepositPaymentAccountOperation.setUnMatchingAmount(amount);
         securityDepositPaymentAccountOperation.setTransactionCategory(OperationCategoryEnum.CREDIT);
         securityDepositPaymentAccountOperation.setCode("PAY_SD");
+        securityDepositPaymentAccountOperation.setCollectionDate(new Date());
         securityDepositPaymentAccountOperation.setMatchingStatus(MatchingStatusEnum.P);
+        securityDepositPaymentAccountOperation.setDescription("Payment by security deposit");
+        securityDepositPaymentAccountOperation.setType("P");
+        securityDepositPaymentAccountOperation.setReference(securityDeposit.getCode());
 
-        return accountOperationService.createAndReturnId(securityDepositPaymentAccountOperation);
+        return accountOperationService.createAndReturnReference(securityDepositPaymentAccountOperation);
 
     }
 
@@ -428,7 +433,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
             throw new InvalidParameterException("The amount to be paid must be less than or equal to the current security deposit balance");
         }
 
-        if (amount.compareTo(accountOperation.getAmount()) > 0) {
+        if (amount.compareTo(accountOperation.getAmount()) > 0 || amount.compareTo(accountOperation.getUnMatchingAmount()) > 0) {
             throw new InvalidParameterException("The amount to be paid must be less than or equal to the unpaid amount of the invoice");
         }
 

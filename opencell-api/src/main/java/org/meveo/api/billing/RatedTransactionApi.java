@@ -129,7 +129,7 @@ public class RatedTransactionApi extends BaseApi {
         List<RatedTransaction> ratedTransactions = getRatedTransactionsFromPaginationConfig(pagingAndFiltering);
 
         if (!canCancelRatedTransactions(ratedTransactions)) {
-            throw new ActionForbiddenException("Only rated transactions in statuses OPEN, REJECTED can be cancelled");
+            throw new InvalidParameterException("Only rated transactions in statuses OPEN, REJECTED can be cancelled");
         }
 
         List<Long> ratedTransactionsToCancel = retreiveRatedTrasactionsIdsToCancel(ratedTransactions);
