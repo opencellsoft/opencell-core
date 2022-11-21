@@ -670,9 +670,10 @@ public class MediationApiService {
                 }else if(mode == ROLLBACK_ON_ERROR) {
                     throw new BusinessException(cdr.getRejectReason());
                 }
+            }else {
+                cdrService.create(cdr);
+                ids.add(ImmutableResource.builder().id(cdr.getId()).build());
             }
-            cdrService.create(cdr);
-            ids.add(ImmutableResource.builder().id(cdr.getId()).build());
         }
         if(returnCDRs)
             cdrDtoResponse.addAllCdrs(ids);
