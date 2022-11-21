@@ -8,16 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -61,6 +52,11 @@ import org.meveo.model.quote.QuoteVersion;
 @CustomFieldEntity(cftCodePrefix = "CommercialOrder",inheritCFValuesFrom = {"quoteVersion"})
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_commercial_order_seq")})
+@NamedQueries({
+    @NamedQuery(name = "CommercialOrder.getOrderIdsUsingCharge", query = "select op.order.id from OrderProduct op where op.order.status not in('CANCELED','VALIDATED','COMPLETED') and op.productVersion.product in (select pc.product from ProductChargeTemplateMapping pc where pc.chargeTemplate.code=:eventCode)"),
+	@NamedQuery(name = "CommercialOrder.listByCodeOrExternalId", query = "select co from CommercialOrder co where co.code IN :code OR co.externalReference IN :code order by co.id"),
+	@NamedQuery(name = "CommercialOrder.findByCodeOrExternalId", query = "select co from CommercialOrder co left join fetch co.billingRun where co.code = :code OR co.externalReference = :code ")
+    })
 public class CommercialOrder extends BusinessCFEntity implements IBillableEntity  {
 
 
@@ -90,7 +86,6 @@ public class CommercialOrder extends BusinessCFEntity implements IBillableEntity
 		this.orderInvoiceType = copy.orderInvoiceType;
 		this.access = copy.access;
 		this.userAccount = copy.userAccount;
-		this.salesPersonName = copy.salesPersonName;
 		this.billingCycle = copy.billingCycle;
 		this.billingRun = copy.billingRun;
 		this.totalInvoicingAmountWithoutTax = copy.totalInvoicingAmountWithoutTax;
