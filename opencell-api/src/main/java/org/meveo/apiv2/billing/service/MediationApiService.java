@@ -664,19 +664,22 @@ public class MediationApiService {
                 if(mandatoryErrorMsg != null) {
                     builderErrorMsg.append( mandatoryErrorMsg );
                 }
-                if(invalidAccessMsg != null && builderErrorMsg.length() > 0) {
-                    builderErrorMsg.append(", ").append( invalidAccessMsg );
-                }else {
+                if(invalidAccessMsg != null) {
+                    if( builderErrorMsg.length() > 0) {
+                        builderErrorMsg.append(", ");
+                    }
                     builderErrorMsg.append( invalidAccessMsg );
                 }
-                if(duplicateCdr != null && builderErrorMsg.length() > 0) {
-                    builderErrorMsg.append(", ").append( duplicateCdr );
-                }else {
+                if(duplicateCdr != null) {
+                    if( builderErrorMsg.length() > 0) {
+                        builderErrorMsg.append(", ");
+                    }
                     builderErrorMsg.append( duplicateCdr );
                 }
-                if(quantityGreat != null && builderErrorMsg.length() > 0) {
-                    builderErrorMsg.append(", ").append( quantityGreat );
-                }else {
+                if(quantityGreat != null) {
+                    if( builderErrorMsg.length() > 0) {
+                        builderErrorMsg.append(", ");
+                    }
                     builderErrorMsg.append( quantityGreat );
                 }
                 cdr.setRejectReason(builderErrorMsg.toString());
