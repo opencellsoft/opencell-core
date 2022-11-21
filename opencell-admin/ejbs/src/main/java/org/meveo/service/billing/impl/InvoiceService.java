@@ -1140,13 +1140,26 @@ public class InvoiceService extends PersistenceService<Invoice> {
             Set<String> orderNums = invoiceAggregateProcessingInfo.orderNumbers;
             if (entityToInvoice instanceof Order) {
                 orderNums.add(((Order) entityToInvoice).getOrderNumber());
-            }
-            if (orderNums != null && !orderNums.isEmpty()) {
+
+                if (orderNums != null && !orderNums.isEmpty()) {
                 List<Order> orders = orderService.findByCodeOrExternalId(orderNums);
                 if (!orders.isEmpty()) {
                     invoice.setOrders(orders);
                 }
             }
+
+            } else if (entityToInvoice instanceof CommercialOrder)
+            {
+                orderNums.add(((CommercialOrder) entityToInvoice).getOrderNumber());
+
+                if (orderNums != null && !orderNums.isEmpty()) {
+                List<CommercialOrder> orders = commercialOrderService.findByCodeOrExternalId(orderNums);
+                if (!orders.isEmpty()) {
+                    invoice.setCommercialOrder(orders.get(0));
+                }
+            }
+            }
+
 
             BigDecimal balance = customerBalances.get(billingAccount.getCustomerAccount().getId());
             if (balance == null) {
@@ -3606,6 +3619,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Map<String, SubCategoryInvoiceAgregate> subCategoryAggregates = invoiceAggregateProcessingInfo != null ? invoiceAggregateProcessingInfo.subCategoryAggregates : new LinkedHashMap<>();
 
         Set<String> orderNumbers = invoiceAggregateProcessingInfo != null ? invoiceAggregateProcessingInfo.orderNumbers : new HashSet<>();
+        Set<String> commercialOrderNumbers = invoiceAggregateProcessingInfo != null ? invoiceAggregateProcessingInfo.commercialOrderNumbers : new HashSet<>();
 
         String scaKey = null;
 
@@ -3614,7 +3628,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         boolean linkInvoiceToOrders = paramBeanFactory.getInstance().getPropertyAsBoolean("order.linkInvoiceToOrders", true);
-
+        // TODO add  commercialOrder.linkInvoiceToCommercialOrders to paramBean
+        boolean linkInvoiceToCommercialOrders = paramBeanFactory.getInstance().getPropertyAsBoolean("commercialOrder.linkInvoiceToCommercialOrders", true);
         boolean taxWasRecalculated = false;
 
         EntityManager em = getEntityManager();
@@ -3682,6 +3697,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (!(entityToInvoice instanceof Order) && linkInvoiceToOrders && invoiceable.getOrderNumber() != null) {
                 orderNumbers.add(invoiceable.getOrderNumber());
             }
+            // TODO ask if we have to use the same attribute : invoiceable.getOrderNumber()
+            if (!(entityToInvoice instanceof CommercialOrder) && linkInvoiceToCommercialOrders && invoiceable.getOrderNumber() != null) {
+                commercialOrderNumbers.add(invoiceable.getOrderNumber());
+            }
+
+
 
             if (taxWasRecalculated) {
                 invoiceable.setTax(tax);
@@ -4927,6 +4948,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
          * Orders (numbers) referenced from Rated transactions
          */
         private Set<String> orderNumbers = new HashSet<>();
+
+        /**
+         * Commercial Orders (numbers) referenced from Rated transactions
+         */
+        private Set<String> commercialOrderNumbers = new HashSet<>();
     }
 
     /**
@@ -5293,7 +5319,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         EntityManager em = getEntityManager();
         for (InvoiceLine invoiceLine : invoiceLines) {
             // Order can span multiple billing accounts and some Billing account-dependent values have to be recalculated
-            if ((entityToInvoice instanceof Order || entityToInvoice instanceof CpqQuote || entityToInvoice instanceof BillingAccount ) && (billingAccount == null || !billingAccount.getId().equals(invoiceLine.getBillingAccount().getId()))) {
+            if ((entityToInvoice instanceof CommercialOrder || entityToInvoice instanceof Order || entityToInvoice instanceof CpqQuote || entityToInvoice instanceof BillingAccount ) && (billingAccount == null || !billingAccount.getId().equals(invoiceLine.getBillingAccount().getId()))) {
                 billingAccount = invoiceLine.getBillingAccount();
                 if (defaultPaymentMethod == null && billingAccount != null) {
                     defaultPaymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());
@@ -5574,7 +5600,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             if (entityToInvoice instanceof Order) {
                 paymentMethod = ((Order) entityToInvoice).getPaymentMethod();
-            } else {
+            } else if (entityToInvoice instanceof  CommercialOrder){
+                 paymentMethod = ((CommercialOrder) entityToInvoice).getBillingAccount().getPaymentMethod();
+            }else {
                 // Calculate customer account balance
                 boolean isBalanceDue = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.limitByDueDate", true);
                 boolean isBalanceLitigation = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.includeLitigation", false);
@@ -5628,11 +5656,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
  
         while (moreInvoiceLinesExpected) {
 
-            if (entityToInvoice instanceof Order) {
+            if (entityToInvoice instanceof Order || entityToInvoice instanceof CommercialOrder) {
                 billingAccount = null;
                 defaultInvoiceType = null;
             }
-
+                // TODO check getInvoiceLinesGroups(entityToInvoice
             InvoiceLinesToInvoice iLsToInvoice = getInvoiceLinesGroups(entityToInvoice, billingAccount, billingRun, defaultBillingCycle, defaultInvoiceType, filter,filterParams, firstTransactionDate, lastTransactionDate, isDraft,
                 defaultPaymentMethod, existingInvoice, invoiceProcessTypeEnum, existingInvoiceLines, openOrderCode);
             List<InvoiceLinesGroup> invoiceLinesGroupsPaged = iLsToInvoice.invoiceLinesGroups;
@@ -5652,7 +5680,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             } else if (!invoiceLinesGroupsPaged.isEmpty()) {
                 for (InvoiceLinesGroup invoiceLinesGroup : invoiceLinesGroupsPaged) {
 
-                    if (entityToInvoice instanceof Order) {
+                    if (entityToInvoice instanceof Order || entityToInvoice instanceof CommercialOrder) {
                         if (billingAccount == null || !billingAccount.getId().equals(invoiceLinesGroup.getBillingAccount().getId())) {
                             billingAccount = invoiceLinesGroup.getBillingAccount();
                             boolean isBalanceDue = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.due", true);
@@ -5678,6 +5706,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             cleanInvoiceAggregates(existingInvoice.getId());
                             invoiceAggregateProcessingInfo.invoice = existingInvoice;
                         } else {
+                            // TODO check instantiateInvoice(entityToInvoice
                             invoiceAggregateProcessingInfo.invoice = instantiateInvoice(entityToInvoice, invoiceLinesGroup.getBillingAccount(), invoiceLinesGroup.getSeller().getId(), billingRun, invoiceDate, isDraft,
                                 invoiceLinesGroup.getBillingCycle(), invoiceLinesGroup.getPaymentMethod(), invoiceLinesGroup.getInvoiceType(), invoiceLinesGroup.isPrepaid(), automaticInvoiceCheck);
                         }
@@ -5689,6 +5718,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     Invoice invoice = invoiceAggregateProcessingInfo.invoice;
                     invoice.setHasMinimum(hasMin);
 
+                    // TODO check  appendInvoiceAggregatesIL(entityToInvoice,
                     appendInvoiceAggregatesIL(entityToInvoice, invoiceLinesGroup.getBillingAccount(), invoice, invoiceLinesGroup.getInvoiceLines(), false, invoiceAggregateProcessingInfo, !allIlsInOneRun);
                     if(invoice.getOpenOrderNumber() != null) {
                         OpenOrder openOrder = openOrderService.findByOpenOrderNumber(invoice.getOpenOrderNumber());
@@ -5790,13 +5820,33 @@ public class InvoiceService extends PersistenceService<Invoice> {
             Set<String> orderNums = invoiceAggregateProcessingInfo.orderNumbers;
             if (entityToInvoice instanceof Order) {
                 orderNums.add(((Order) entityToInvoice).getOrderNumber());
-            }
-            if (orderNums != null && !orderNums.isEmpty()) {
+
+                if (orderNums != null && !orderNums.isEmpty()) {
                 List<Order> orders = orderService.findByCodeOrExternalId(orderNums);
                 if (!orders.isEmpty()) {
                     invoiceAggregateProcessingInfo.invoice.setOrders(orders);
                 }
             }
+
+            }
+
+            if (entityToInvoice instanceof CommercialOrder) {
+                orderNums.add(((CommercialOrder) entityToInvoice).getOrderNumber());
+
+                if (orderNums != null && !orderNums.isEmpty()) {
+                List<CommercialOrder> orders = commercialOrderService.findByCodeOrExternalId(orderNums);
+                if (!orders.isEmpty()) {
+                    invoiceAggregateProcessingInfo.invoice.setCommercialOrder(orders.get(0));
+                }
+            }
+            }
+
+
+
+
+
+
+
 
             invoiceAggregateProcessingInfo.invoice.assignTemporaryInvoiceNumber();
             applyAutomaticInvoiceCheck(invoiceAggregateProcessingInfo.invoice, automaticInvoiceCheck);
@@ -5958,7 +6008,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.addInvoiceAggregate(scAggregate);
             }
 
-            if (!(entityToInvoice instanceof Order) && invoiceLine.getOrderNumber() != null) {
+            if (!(entityToInvoice instanceof Order || entityToInvoice instanceof CommercialOrder) && invoiceLine.getOrderNumber() != null) {
                 orderNumbers.add(invoiceLine.getOrderNumber());
             }
 
@@ -6558,7 +6608,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             } else if (BillingEntityTypeEnum.SUBSCRIPTION.toString().equalsIgnoreCase(targetType)) {
                 entity = subscriptionService.findByCode(targetCode, asList("billingRun"));
             } else if (BillingEntityTypeEnum.ORDER.toString().equalsIgnoreCase(targetType)) {
-                entity = orderService.findByCodeOrExternalId(targetCode);
+                entity = commercialOrderService.findByCodeOrExternalId(targetCode);
+                // TODO check below
+               // entity = orderService.findByCodeOrExternalId(targetCode);
             }
         } else {
             if (!StringUtils.isBlank(orderNumber)) {

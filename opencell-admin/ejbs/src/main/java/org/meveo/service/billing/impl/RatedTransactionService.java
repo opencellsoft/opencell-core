@@ -94,6 +94,7 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.contract.BillingRule;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
@@ -1010,6 +1011,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         } else if (entityToInvoice instanceof Order) {
             query = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumber", RatedTransaction.class).setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber());
+        }else if (entityToInvoice instanceof CommercialOrder) {
+            query = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumber", RatedTransaction.class).setParameter("orderNumber", ((CommercialOrder) entityToInvoice).getOrderNumber());
         }
         if (query != null) {
             if (rtPageSize != null) {
@@ -1695,6 +1698,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             entityCondition = " rt.billingAccount.id =:entityKey ";
         } else if (be instanceof Order) {
             params.put("entityKey", ((Order) be).getOrderNumber());
+            entityCondition = " rt.orderNumber =:entityKey ";
+        } else if (be instanceof CommercialOrder) {
+            params.put("entityKey", ((CommercialOrder) be).getOrderNumber());
             entityCondition = " rt.orderNumber =:entityKey ";
         }
         return entityCondition;
