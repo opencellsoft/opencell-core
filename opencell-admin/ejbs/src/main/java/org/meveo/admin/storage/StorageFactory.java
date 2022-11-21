@@ -1186,7 +1186,7 @@ public class StorageFactory {
         }
         else if (storageType.equalsIgnoreCase(S3)) {
             String objectKey = formatObjectKey(sourceDirectory.getPath()) + "/";
-            log.debug("list files in S3 bucket at directory {}", objectKey);
+            log.debug("list files in S3 bucket at objectKey {}", objectKey);
 
             final ListObjectsV2Request objectRequest =
                     ListObjectsV2Request.builder()
@@ -1196,9 +1196,9 @@ public class StorageFactory {
 
             ListObjectsV2Response listObjects = s3FileSystem.getClient().listObjectsV2(objectRequest);
 
-            List<String> files = new ArrayList<>();
+            Set<String> files = new HashSet<>();
 
-            String patternStr = "^" + objectKey + "([^/\n].*/?)*";
+            String patternStr = "^" + objectKey + "([^/\n]+/?)";
 
             Pattern pattern = Pattern.compile(patternStr);
 
