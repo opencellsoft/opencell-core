@@ -122,25 +122,10 @@ public class UnitSubscriptionStatusJobBean {
 				} else if (subscription.getSubscriptionRenewal()
 						.getEndOfTermAction() == EndOfTermActionEnum.TERMINATE) {
 
-					Date validTo = subscription.getValidity() != null ? subscription.getValidity().getTo() : null;
-
 					log.debug("Terminate subscription {}", subscription.getId());
 					subscriptionService.terminateSubscription(subscription,
 							subscription.getSubscribedTillDate(),
 							subscription.getSubscriptionRenewal().getTerminationReason(), null);
-
-					//if sub has new next version with status created, then activate it
-					if (validTo != null) {
-						Subscription subNextVersion = subscriptionService
-								.findByCodeAndValidityDate(subscription.getCode(), validTo);
-						if (subNextVersion != null && subNextVersion.getStatus() == SubscriptionStatusEnum.CREATED) {
-							log.info("Subscription {} has new version sub {} with status CREATED. The new version will be activated",
-									subscription.getId(), subNextVersion.getId());
-							log.debug("Old sub terminated: {}. New version of sub which will be activated: {}", subscription, subNextVersion);
-
-							subscriptionService.activateInstantiatedService(subNextVersion);
-						}
-					}
 				}
 
 				// Fire "soon to renew" notification
