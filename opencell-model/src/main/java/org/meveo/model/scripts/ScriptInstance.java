@@ -134,7 +134,7 @@ public class ScriptInstance extends EnableBusinessEntity {
     /**
      * A list of script parameters that can use the script
      */
-    @OneToMany(mappedBy = "scriptInstance", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "scriptInstance", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ScriptParameter> scriptParameters=new ArrayList<>();
 
     public ScriptInstance() {
