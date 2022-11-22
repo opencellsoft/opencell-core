@@ -305,7 +305,7 @@ public class UserAccountApi extends AccountEntityApi {
                     associatedBA != null ? associatedBA : billingAccountService.findByCode(postData.getBillingAccount());
             if (billingAccount == null) {
                 throw new EntityDoesNotExistsException(BillingAccount.class, postData.getBillingAccount());
-            } else if (!isNew && !userAccount.getBillingAccount().equals(billingAccount)) {
+            } else if (!isNew && !userAccount.getBillingAccount().getId().equals(billingAccount.getId())) {
                 // a safeguard to allow this only if all the WO/RT have been invoiced.
                 Long countNonTreatedWO = walletOperationService.countNonTreatedWOByUA(userAccount);
                 if (countNonTreatedWO > 0) {
