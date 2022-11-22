@@ -847,6 +847,10 @@ public class MediationApiService {
                         }
                         break;
                     case ERROR:
+                        if(statusToUpdated == CDRStatusEnum.OPEN || statusToUpdated == CDRStatusEnum.PROCESSED || statusToUpdated == CDRStatusEnum.CLOSED) {
+                            errorStatus = "Impossible to update CDR with status ERROR to OPEN, PROCESSED, CLOSED for cdr line:" + cdr.toCsv();
+                        }
+                        break;
                     case TO_REPROCESS :
                         if(statusToUpdated == CDRStatusEnum.OPEN || statusToUpdated == CDRStatusEnum.PROCESSED || statusToUpdated == CDRStatusEnum.CLOSED) {
                             errorStatus = String.format(IMPOSSIBLE_TO_UPDATE_CDR_WITH_STATUS_S_TO_OPEN_PROCESSED_CLOSED, cdr.getStatus());
@@ -874,6 +878,7 @@ public class MediationApiService {
                 if(errorStatus != null) {
                     CdrErrorDto error = new CdrErrorDto(cdrToBeUpdated.toCsv(), errorStatus);
                     cdrErrorDtos.add(error);
+                    cdrToBeUpdated.setStatus(cdr.getStatus());
                     if(mode == STOP_ON_FIRST_FAIL) {
                         break;
                     }else if (mode == ROLLBACK_ON_ERROR) {

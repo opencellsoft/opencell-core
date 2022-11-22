@@ -119,6 +119,9 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
             collectionPlan.setStatus(collectionPlanStatusService.findByStatus(SUCCESS));
             updateCollectionPlan = true;
         } else {
+            if(collectionPlan.getRelatedInvoice() != null && collectionPlan.getRelatedInvoice().getDueDate() != null) {
+                today = collectionPlan.getRelatedInvoice().getDueDate();
+            }
             for (DunningLevelInstance levelInstance : collectionPlan.getDunningLevelInstances()) {
                 dateToCompare = DateUtils.addDaysToDate(collectionPlan.getStartDate(),
                         ofNullable(collectionPlan.getPauseDuration()).orElse(0) + levelInstance.getDaysOverdue());
