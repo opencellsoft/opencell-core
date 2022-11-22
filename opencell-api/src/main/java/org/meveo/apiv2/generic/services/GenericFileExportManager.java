@@ -39,6 +39,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -67,14 +68,14 @@ public class GenericFileExportManager {
     private static final String PATH_STRING_FOLDER = "exports" + File.separator + "generic"+ File.separator;
     private String saveDirectory;
 
-    public String export(String entityName, List<Map<String, Object>> mapResult, String fileType, Map<String, GenericFieldDetails> fieldDetails, List<String> ordredColumn){
+    public String export(String entityName, List<Map<String, Object>> mapResult, String fileType, Map<String, GenericFieldDetails> fieldDetails, List<String> ordredColumn, String locale){
     	log.debug("Save directory "+paramBeanFactory.getChrootDir());
     	DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendValue(YEAR, 4, 10, SignStyle.EXCEEDS_PAD).appendValue(MONTH_OF_YEAR, 2).appendValue(DAY_OF_MONTH, 2)
         		.appendLiteral('-').appendValue(HOUR_OF_DAY, 2).appendValue(MINUTE_OF_HOUR, 2).appendValue(SECOND_OF_MINUTE, 2).toFormatter();
         String time = LocalDateTime.now().format(formatter);
     	saveDirectory = paramBeanFactory.getChrootDir() + File.separator + PATH_STRING_FOLDER + entityName + File.separator +time.substring(0,8) + File.separator;
         if (mapResult != null && !mapResult.isEmpty()) {        	
-            Path filePath = saveAsRecord(entityName, mapResult, fileType, fieldDetails, time, ordredColumn);
+            Path filePath = saveAsRecord(entityName, mapResult, fileType, fieldDetails, time, ordredColumn, locale);
             return filePath == null? null : filePath.toString();
         }
         return null;
@@ -88,7 +89,7 @@ public class GenericFileExportManager {
      * @param time 
      * @return
      */
-    private Path saveAsRecord(String fileName, List<Map<String, Object>> records, String fileType, Map<String, GenericFieldDetails> fieldDetails, String time, List<String> ordredColumn) {
+    private Path saveAsRecord(String fileName, List<Map<String, Object>> records, String fileType, Map<String, GenericFieldDetails> fieldDetails, String time, List<String> ordredColumn, String locale) {
         String extensionFile = ".csv";
         
         try {
@@ -99,7 +100,7 @@ public class GenericFileExportManager {
                     Files.createDirectories(Path.of(saveDirectory));
                 }
                 File csvFile = new File(saveDirectory + fileName + time + extensionFile);
-                writeCsvFile(records, csvFile, fieldDetails, ordredColumn);
+                writeCsvFile(records, csvFile, fieldDetails, ordredColumn, locale);
                 return Path.of(saveDirectory, fileName + time + extensionFile);
             }
             //EXCEL
@@ -118,7 +119,7 @@ public class GenericFileExportManager {
                 }
                 extensionFile = ".pdf";
                 File outputExcelFile = new File(saveDirectory + fileName + time + extensionFile);
-                writePdfFile(outputExcelFile, records, fieldDetails, ordredColumn);
+                writePdfFile(outputExcelFile, records, fieldDetails, ordredColumn, locale);
                 return Path.of(saveDirectory + fileName + time + extensionFile);
             }
         } catch (IOException | DocumentException e) {
@@ -136,7 +137,7 @@ public class GenericFileExportManager {
      * @param ordredColumn
      * @throws IOException
      */
-	private void writeCsvFile(List<Map<String, Object>> records, File csvFile, Map<String, GenericFieldDetails> fieldDetails, List<String> ordredColumn) throws IOException {
+	private void writeCsvFile(List<Map<String, Object>> records, File csvFile, Map<String, GenericFieldDetails> fieldDetails, List<String> ordredColumn, String locale) throws IOException {
 		CsvBuilder csv = new CsvBuilder();
         ordredColumn.forEach(field -> {
             GenericFieldDetails fieldDetail = fieldDetails.get(field);
@@ -145,7 +146,7 @@ public class GenericFileExportManager {
         csv.startNewLine();
         for (Map<String, Object> item : records) {
             ordredColumn.forEach(field ->
-                    csv.appendValue(applyTransformation(fieldDetails.get(field), item.get(field)))
+                    csv.appendValue(applyTransformation(fieldDetails.get(field), item.get(field), locale))
             );
             csv.startNewLine();
         }
@@ -186,12 +187,51 @@ public class GenericFileExportManager {
                             Cell cell = rowCell.createCell(indexCol);
                             String key = ordredColumn.get(indexCol);
                             Object value = CSVLineRecords.get(indexRow).get(key);
-                            if (value instanceof BigDecimal) {
-                                applyNumericFormat(wb, cell, "0,00");
+
+                            GenericFieldDetails fieldDetail = fieldDetails.get(key);
+
+                            if (fieldDetail == null) {
+                                cell.setCellValue(value == null ? StringUtils.EMPTY : value.toString());
+                            } else if (StringUtils.isNotBlank(fieldDetail.getTransformation())) {
+                                if (value instanceof Long || value instanceof BigDecimal || value instanceof Double || value instanceof Float || value instanceof Integer) {
+                                    cell.setCellValue(value instanceof BigDecimal ? ((BigDecimal) value).doubleValue() : (Long) value);
+                                } else if (value instanceof Date) {
+                                    cell.setCellValue((Date) value);
+                                } else if (value instanceof String && (value.toString().startsWith("0.00"))) { // specific case for formula field, wich have a String type with 0.00 value
+                                    cell.setCellValue(0.00);
+                                } else {
+                                    cell.setCellValue(value.toString());
+                                }
+
+                            } else if (MapUtils.isNotEmpty(fieldDetail.getMappings())) {
+                                for (Map.Entry<String, String> map : fieldDetail.getMappings().entrySet()) {
+                                    if (map.getKey().equals(value.toString())) {
+                                        cell.setCellValue(map.getValue());
+                                        break;
+                                    }
+                                }
                             } else {
-                                applyStringFormat(wb, cell, "0,00");
+                                if (value instanceof Date) {
+                                    cell.setCellValue((Date) value);
+                                } else if (value instanceof Long || value instanceof BigDecimal || value instanceof Double || value instanceof Float || value instanceof Integer) {
+                                    cell.setCellValue(value.toString());
+                                } else {
+                                    cell.setCellValue(value.toString());
+                                }
                             }
-                            cell.setCellValue(applyTransformation(fieldDetails.get(key), value));
+
+                            //cell.setCellValue(applyTransformation(fieldDetails.get(key), value));
+                            if (value instanceof Integer) {
+                                applyNumericFormat(wb, cell);
+                            } else if (value instanceof Long || value instanceof BigDecimal || value instanceof Double || value instanceof Float) {
+                                applyBigDecimalFormat(wb, cell);
+                            } else if (value instanceof Date) {
+                                applyDateFormat(wb, cell);
+                            } else if (value instanceof String && value.toString().startsWith("0.00")) {
+                                applyBigDecimalFormat(wb, cell);
+                            } else {
+                                applyStringFormat(wb, cell);
+                            }
                         });
                 });
                 try {
@@ -205,7 +245,7 @@ public class GenericFileExportManager {
         }
     }
     
-    private void writePdfFile(File file, List<Map<String, Object>> lineRecords, Map<String, GenericFieldDetails> fieldDetails, List<String> ordredColumn) throws IOException, DocumentException{
+    private void writePdfFile(File file, List<Map<String, Object>> lineRecords, Map<String, GenericFieldDetails> fieldDetails, List<String> ordredColumn, String locale) throws IOException, DocumentException{
         if(!CollectionUtils.isEmpty(lineRecords)) {
             Document doc = new Document();
             PdfWriter.getInstance(doc, new FileOutputStream(file));
@@ -213,7 +253,7 @@ public class GenericFileExportManager {
             final PdfPTable table = new PdfPTable(lineRecords.get(0).size());
             table.setWidthPercentage(100);
             addColumns(ordredColumn, table, fieldDetails);
-            lineRecords.forEach(map -> addRows(map, table, fieldDetails, ordredColumn));
+            lineRecords.forEach(map -> addRows(map, table, fieldDetails, ordredColumn, locale));
             doc.add(table);
             doc.close();
         }
@@ -228,21 +268,24 @@ public class GenericFileExportManager {
         });
     }
     
-    private void addRows(Map<String, Object> rows, PdfPTable table, Map<String, GenericFieldDetails> fieldDetails, List<String> ordredColumn) {
+    private void addRows(Map<String, Object> rows, PdfPTable table, Map<String, GenericFieldDetails> fieldDetails, List<String> ordredColumn, String locale) {
         ordredColumn.forEach(col -> {
             GenericFieldDetails fieldDetail = fieldDetails.get(col);
-            table.addCell(applyTransformation(fieldDetail, rows.get(col)));
+            table.addCell(applyTransformation(fieldDetail, rows.get(col), locale));
         });
     }
 
-    private String applyTransformation(GenericFieldDetails fieldDetail, Object value) {
+    private String applyTransformation(GenericFieldDetails fieldDetail, Object value, String locale) {
+        if (StringUtils.isBlank(locale)) {
+            locale = "EN";
+        }
         if (fieldDetail == null) {
             return value == null ? StringUtils.EMPTY : value.toString();
         }
 
         if (StringUtils.isNotBlank(fieldDetail.getTransformation())) {
-            if (value instanceof BigDecimal || value instanceof Double || value instanceof Float) {
-                DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.FRENCH);
+            if (value instanceof Long || value instanceof BigDecimal || value instanceof Double || value instanceof Float || value instanceof Integer) {
+                DecimalFormatSymbols symbols = "FR".equals(locale) ? new DecimalFormatSymbols(Locale.FRENCH) : new DecimalFormatSymbols(Locale.ENGLISH);
                 return new DecimalFormat(fieldDetail.getTransformation(), symbols).format(value);
             }
 
@@ -271,18 +314,30 @@ public class GenericFileExportManager {
 		return fieldDetail == null ? key : fieldDetail.getHeader() != null ? fieldDetail.getHeader() : fieldDetail.getName();
 	}
 
-    private void applyNumericFormat(Workbook outWorkbook, Cell cell, String styleFormat) {
+    private void applyBigDecimalFormat(Workbook outWorkbook, Cell cell) {
         CellStyle style = outWorkbook.createCellStyle();
         DataFormat format = outWorkbook.createDataFormat();
-        //style.setDataFormat(format.getFormat(styleFormat));
+        style.setDataFormat(format.getFormat("#,##0.00"));
         style.setAlignment(HorizontalAlignment.RIGHT);
         cell.setCellStyle(style);
     }
 
-    private void applyStringFormat(Workbook outWorkbook, Cell cell, String styleFormat) {
+    private void applyNumericFormat(Workbook outWorkbook, Cell cell) {
         CellStyle style = outWorkbook.createCellStyle();
-        DataFormat format = outWorkbook.createDataFormat();
-        //style.setDataFormat(format.getFormat(styleFormat));
+        style.setDataFormat((short) 1);
+        style.setAlignment(HorizontalAlignment.RIGHT);
+        cell.setCellStyle(style);
+    }
+
+    private void applyStringFormat(Workbook outWorkbook, Cell cell) {
+        CellStyle style = outWorkbook.createCellStyle();
+        style.setAlignment(HorizontalAlignment.LEFT);
+        cell.setCellStyle(style);
+    }
+
+    private void applyDateFormat(Workbook outWorkbook, Cell cell) {
+        CellStyle style = outWorkbook.createCellStyle();
+        style.setDataFormat((short) 14);
         style.setAlignment(HorizontalAlignment.LEFT);
         cell.setCellStyle(style);
     }
