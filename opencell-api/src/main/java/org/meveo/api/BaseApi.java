@@ -298,7 +298,7 @@ public abstract class BaseApi {
         // check if any templates are applicable
         if (customFieldTemplates == null || customFieldTemplates.isEmpty()) {
             if (customFieldDtos != null && !customFieldDtos.isEmpty()) {
-                log.error("No custom field templates defined while Custom field values were passed");
+log.info("No custom field templates defined while Custom field values were passed");
                 // in createCRMAccountHierarchy cft in dto can be used in any
                 // account level
                 // for instance if the current CFT not for a customer then dont
@@ -315,6 +315,7 @@ public abstract class BaseApi {
         if (customFieldDtos != null && !customFieldDtos.isEmpty()) {
 
             // Validate fields
+log.info("populateCustomFields method here");
             validateAndConvertCustomFields(customFieldTemplates, customFieldDtos, checkCustomFields, isNewEntity, entity);
 
             // Save the values
@@ -478,7 +479,9 @@ public abstract class BaseApi {
     }
 
     protected void validateAndConvertCustomFields(List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity) throws MeveoApiException {
+log.info("validateAndConvertCustomFields method here 1 {}", entity);
         Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity);
+log.info("validateAndConvertCustomFields method here 2 customFieldTemplates.size {}", customFieldTemplates.size());
         this.validateAndConvertCustomFields(customFieldTemplates, customFieldDtos, true, false, entity);
     }
 

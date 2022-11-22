@@ -146,9 +146,10 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @return A list of custom field templates mapped by a template key
      */
     public Map<String, CustomFieldTemplate> findByAppliesTo(String appliesTo) {
+log.info("findByAppliesTo method log info with appliesTo equal to {}", appliesTo);
 
         if (useCFTCache) {
-log.info("findByAppliesTo with useCFTCache is true");
+log.info("findByAppliesTo with useCFTCache is TRUE");
             Map<String, CustomFieldTemplate> cfts = customFieldsCache.getCustomFieldTemplates(appliesTo);
 
             // Populate cache if record is not found in cache
@@ -162,10 +163,13 @@ log.info("cfts == null in cache findByAppliesTo, need to look up in database");
                 }
             }
 
+log.info("end findByAppliesTo");
             return cfts;
 
         } else {
-            return findByAppliesToNoCache(appliesTo);
+log.info("findByAppliesTo with useCFTCache is FALSE");
+            Map<String, CustomFieldTemplate> cfts = findByAppliesToNoCache(appliesTo);
+            return cfts;
         }
     }
 

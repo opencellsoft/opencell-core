@@ -244,6 +244,7 @@ public class CustomEntityInstanceApi extends BaseApi {
      * @throws MeveoApiException meveo api exception.
      */
     public void validateEntityInstanceDto(CustomEntityInstanceDto ceiDto) throws MeveoApiException {
+log.info("validateEntityInstanceDto method here 1 ceiDto {}", ceiDto);
 
         if (StringUtils.isBlank(ceiDto.getCode())) {
             missingParameters.add("code");
@@ -252,6 +253,7 @@ public class CustomEntityInstanceApi extends BaseApi {
             missingParameters.add("cetCode");
         }
         handleMissingParameters();
+log.info("validateEntityInstanceDto method here 2 ceiDto.getCode {}", ceiDto.getCode());
 
         CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(ceiDto.getCetCode(), ceiDto.getCode());
         boolean isNew = cei == null;
@@ -259,9 +261,11 @@ public class CustomEntityInstanceApi extends BaseApi {
             cei = new CustomEntityInstance();
             cei.setCetCode(ceiDto.getCetCode());
         }
+log.info("validateEntityInstanceDto method here 3 cei {}", cei);
 
         Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(cei);
 
+log.info("validateEntityInstanceDto method here 4 customFieldTemplates.size {}", customFieldTemplates.size());
         validateAndConvertCustomFields(customFieldTemplates, ceiDto.getCustomFields() != null ? ceiDto.getCustomFields().getCustomField() : new ArrayList<CustomFieldDto>(), true, isNew, cei);
     }
 
