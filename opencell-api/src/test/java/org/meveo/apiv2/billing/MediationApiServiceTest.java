@@ -167,7 +167,7 @@ public class MediationApiServiceTest {
         when(cdrService.findById(anyLong())).thenReturn(cdr);
 
         expectedEx.expect(BusinessException.class);
-        expectedEx.expectMessage("Impossible to update CDR with status from " + cdr.getStatus() + " to : OPEN, ERROR, TO_REPROCESS, DISCARDED, PROCESSED");
+        expectedEx.expectMessage("Impossible to update CDR with the status CLOSED to another status.");
 
         mediationApiService.updateCDR(1L, toBeUpdated);
     }

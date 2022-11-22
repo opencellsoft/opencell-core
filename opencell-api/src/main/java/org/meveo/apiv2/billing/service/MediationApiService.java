@@ -96,7 +96,13 @@ import org.slf4j.LoggerFactory;
 @Stateless
 public class MediationApiService {
 
-    @Inject
+    private static final String IMPOSSIBLE_TO_UPDATE_CDR_WITH_STATUS_OPEN_TO_TO_REPROCESS_PROCESSED_CLOSED = "Impossible to update CDR with status OPEN to TO_REPROCESS, PROCESSED, CLOSED";
+	private static final String IMPOSSIBLE_TO_UPDATE_CDR_WITH_STATUS_S_TO_OPEN_PROCESSED_CLOSED = "Impossible to update CDR with status %s to OPEN, PROCESSED, CLOSED";
+	private static final String IMPOSSIBLE_TO_UPDATE_CDR_WITH_STATUS_DISCARDED_TO_OPEN_TO_REPROCESS_PROCESSED_CLOSED = "Impossible to update CDR with status DISCARDED to OPEN, TO_REPROCESS, PROCESSED, CLOSED";
+	private static final String IMPOSSIBLE_TO_UPDATE_CDR_WITH_THE_STATUS_REPROCESSED_TO_ANOTHER_STATUS = "Impossible to update CDR with the status REPROCESSED to another status.";
+	private static final String IMPOSSIBLE_TO_UPDATE_CDR_WITH_THE_STATUS_CLOSED_TO_ANOTHER_STATUS = "Impossible to update CDR with the status CLOSED to another status.";
+
+	@Inject
     @CurrentUser
     protected MeveoUser currentUser;
 
@@ -718,28 +724,28 @@ public class MediationApiService {
             switch(cdr.getStatus()) {
                 case OPEN :
                     if(statusToUpdated == CDRStatusEnum.TO_REPROCESS || statusToUpdated == CDRStatusEnum.PROCESSED || statusToUpdated == CDRStatusEnum.CLOSED) {
-                        throw new BusinessException("Impossible to update CDR with status  from OPEN to : TO_REPROCESS, PROCESSED, CLOSED");
+                        throw new BusinessException(IMPOSSIBLE_TO_UPDATE_CDR_WITH_STATUS_OPEN_TO_TO_REPROCESS_PROCESSED_CLOSED);
                     }
                     break;
                 case ERROR:
                 case TO_REPROCESS :
                     if(statusToUpdated == CDRStatusEnum.OPEN || statusToUpdated == CDRStatusEnum.PROCESSED || statusToUpdated == CDRStatusEnum.CLOSED) {
-                        throw new BusinessException("Impossible to update CDR with status from " + cdr.getStatus() + " to : OPEN, PROCESSED, CLOSED");
+                        throw new BusinessException(String.format(IMPOSSIBLE_TO_UPDATE_CDR_WITH_STATUS_S_TO_OPEN_PROCESSED_CLOSED, cdr.getStatus()));
                     }
                     break;
                 case DISCARDED : 
                     if(statusToUpdated != CDRStatusEnum.OPEN && statusToUpdated != CDRStatusEnum.DISCARDED ) {
-                        throw new BusinessException("Impossible to update CDR with status from " + cdr.getStatus() + " to : ERROR, TO_REPROCESS, PROCESSED, CLOSED");
+                        throw new BusinessException(IMPOSSIBLE_TO_UPDATE_CDR_WITH_STATUS_DISCARDED_TO_OPEN_TO_REPROCESS_PROCESSED_CLOSED);
                     }
                     break;
                 case PROCESSED : 
                     if(statusToUpdated != CDRStatusEnum.PROCESSED) {
-                        throw new BusinessException("Impossible to update CDR with status from " + cdr.getStatus() + " to : OPEN, ERROR, TO_REPROCESS, DISCARDED, CLOSED");
+                        throw new BusinessException(IMPOSSIBLE_TO_UPDATE_CDR_WITH_THE_STATUS_REPROCESSED_TO_ANOTHER_STATUS);
                     }
                     break;
                 case CLOSED : 
                     if(statusToUpdated != CDRStatusEnum.CLOSED) {
-                        throw new BusinessException("Impossible to update CDR with status from " + cdr.getStatus() + " to : OPEN, ERROR, TO_REPROCESS, DISCARDED, PROCESSED");
+                        throw new BusinessException(IMPOSSIBLE_TO_UPDATE_CDR_WITH_THE_STATUS_CLOSED_TO_ANOTHER_STATUS);
                     }
                     break;
                     
@@ -837,7 +843,7 @@ public class MediationApiService {
                 switch(cdr.getStatus()) {
                     case OPEN :
                         if(statusToUpdated == CDRStatusEnum.TO_REPROCESS || statusToUpdated == CDRStatusEnum.PROCESSED || statusToUpdated == CDRStatusEnum.CLOSED) {
-                            errorStatus = "Impossible to update CDR with status OPEN to TO_REPROCESS, PROCESSED, CLOSED for cdr line :"  + cdr.toCsv();
+                            errorStatus = IMPOSSIBLE_TO_UPDATE_CDR_WITH_STATUS_OPEN_TO_TO_REPROCESS_PROCESSED_CLOSED;
                         }
                         break;
                     case ERROR:
@@ -847,22 +853,22 @@ public class MediationApiService {
                         break;
                     case TO_REPROCESS :
                         if(statusToUpdated == CDRStatusEnum.OPEN || statusToUpdated == CDRStatusEnum.PROCESSED || statusToUpdated == CDRStatusEnum.CLOSED) {
-                            errorStatus = "Impossible to update CDR with status TO_REPROCESS to OPEN, PROCESSED, CLOSED for cdr line:" + cdr.toCsv();
+                            errorStatus = String.format(IMPOSSIBLE_TO_UPDATE_CDR_WITH_STATUS_S_TO_OPEN_PROCESSED_CLOSED, cdr.getStatus());
                         }
                         break;
                     case DISCARDED : 
                         if(statusToUpdated != CDRStatusEnum.OPEN && statusToUpdated != CDRStatusEnum.DISCARDED ) {
-                            errorStatus = "Impossible to update CDR with status DISCARDED to OPEN, TO_REPROCESS, PROCESSED, CLOSED for cdr line:" + cdr.toCsv();
+                            errorStatus = IMPOSSIBLE_TO_UPDATE_CDR_WITH_STATUS_DISCARDED_TO_OPEN_TO_REPROCESS_PROCESSED_CLOSED;
                         }
                         break;
                     case PROCESSED : 
                         if(statusToUpdated != CDRStatusEnum.PROCESSED) {
-                            errorStatus = "Impossible to update CDR with the status REPROCESSED to another status.";
+                            errorStatus = IMPOSSIBLE_TO_UPDATE_CDR_WITH_THE_STATUS_REPROCESSED_TO_ANOTHER_STATUS;
                         }
                         break;
                     case CLOSED : 
                         if(statusToUpdated != CDRStatusEnum.CLOSED) {
-                            errorStatus = "Impossible to update CDR with the status CLOSED to another status.";
+                            errorStatus = IMPOSSIBLE_TO_UPDATE_CDR_WITH_THE_STATUS_CLOSED_TO_ANOTHER_STATUS;
                         }
                         break;
                         
@@ -878,16 +884,21 @@ public class MediationApiService {
                     }else if (mode == ROLLBACK_ON_ERROR) {
                         throw new BusinessException(errorStatus + " for cdr line : " + cdrToBeUpdated.toCsv());
                     }else {
-                        cdrToBeUpdated.setStatus(CDRStatusEnum.ERROR);
                         cdrToBeUpdated.setStatusDate(new Date());
                         cdrToBeUpdated.setRejectReason(errorStatus);
                         
                     }
                 }
             }
-            fillCdr(cdrToBeUpdated, cdr, statusToUpdated);
+
+            if(statusToUpdated == CDRStatusEnum.ERROR && StringUtils.isEmpty(cdrToBeUpdated.getRejectReason())) {
+                throw new BusinessException("You must fill the reject reason");
+            }
+            if(errorStatus == null) {
+	            fillCdr(cdrToBeUpdated, cdr, statusToUpdated);
+	            cdrService.update(cdr);
+            }
             ids.add(ImmutableResource.builder().id(cdr.getId()).build());
-            cdrService.update(cdr);
         }
 
         Builder cdrDtoResponse = ImmutableCdrDtoResponse.builder();
@@ -1002,7 +1013,7 @@ public class MediationApiService {
             cdr.setDateParam5(toBeUpdated.getDateParam5());
         }
         
-        if(toBeUpdated.getRejectReason() != null) {
+        if(toBeUpdated.getRejectReason() != null && statusToUpdated == CDRStatusEnum.ERROR) {
             cdr.setRejectReason(toBeUpdated.getRejectReason());
         }
         if(toBeUpdated.getExtraParam() != null) {
