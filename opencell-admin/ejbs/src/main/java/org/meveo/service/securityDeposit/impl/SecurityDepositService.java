@@ -328,7 +328,8 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
     }
 
     public Long createSecurityDepositPaymentAccountOperation(SecurityDeposit securityDeposit, BigDecimal amount) {
-        AccountOperation securityDepositPaymentAccountOperation = new AccountOperation();
+
+        Payment securityDepositPaymentAccountOperation = new Payment();
         securityDepositPaymentAccountOperation.setAmount(amount);
         securityDepositPaymentAccountOperation.setDepositDate(new Date());
         securityDepositPaymentAccountOperation.setPaymentMethod(PaymentMethodEnum.CHECK);
@@ -336,8 +337,13 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         securityDepositPaymentAccountOperation.setUnMatchingAmount(amount);
         securityDepositPaymentAccountOperation.setTransactionCategory(OperationCategoryEnum.CREDIT);
         securityDepositPaymentAccountOperation.setCode("PAY_SD");
+        securityDepositPaymentAccountOperation.setCollectionDate(new Date());
         securityDepositPaymentAccountOperation.setMatchingStatus(MatchingStatusEnum.P);
-        return accountOperationService.createAndReturnId(securityDepositPaymentAccountOperation);
+        securityDepositPaymentAccountOperation.setDescription("Payment by security deposit");
+        securityDepositPaymentAccountOperation.setType("P");
+        securityDepositPaymentAccountOperation.setReference(securityDeposit.getCode());
+
+        return accountOperationService.createAndReturnReference(securityDepositPaymentAccountOperation);
     }
 
     private void logPaymentHistory(SecurityDepositPaymentInput securityDepositPaymentInput, SecurityDeposit securityDeposit) {
