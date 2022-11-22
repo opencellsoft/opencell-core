@@ -152,7 +152,7 @@ public interface GenericResource {
     Response getRelatedFieldsAndTypesOfEntity( @Parameter(description = "The entity name", required = true) @PathParam("entityName") String entityName );
 
     @POST
-    @Path("/export/{entityName}/{fileFormat}")
+    @Path("/export/{entityName}/{fileFormat}/{locale}")
     @Operation(summary = "Generic single endpoint to export paginated records of an entity",
             tags = { "Generic" },
             description ="specify the entity name, and as body, the configuration of the research."
@@ -165,6 +165,7 @@ public interface GenericResource {
     Response export(
                     @Parameter(description = "the entity name", required = true) @PathParam("entityName") String entityName,
                     @Parameter(description = "file format", required = true) @PathParam("fileFormat") String fileFormat,
+                    @Parameter(description = "Locale") @PathParam("locale") String locale,
                     @Parameter(description = "requestDto carries the wanted fields ex: {genericFields = [code, description]}", required = true) GenericPagingAndFiltering searchConfig) throws ClassNotFoundException;
 
 

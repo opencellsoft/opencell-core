@@ -156,7 +156,7 @@ public class GenericResourceImpl implements GenericResource {
     }
     
     @Override
-    public Response export(String entityName, String fileFormat, GenericPagingAndFiltering searchConfig) throws ClassNotFoundException {
+    public Response export(String entityName, String fileFormat, String locale, GenericPagingAndFiltering searchConfig) throws ClassNotFoundException {
         Set<String> genericFields = null;
         List<GenericFieldDetails> genericFieldDetails = null;
 
@@ -179,7 +179,7 @@ public class GenericResourceImpl implements GenericResource {
         }
         Class entityClass = GenericHelper.getEntityClass(entityName);
         GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
-        String filePath = loadService.export(entityClass, genericRequestMapper.mapTo(searchConfig), genericFields, genericFieldDetails, fileFormat, entityName);
+        String filePath = loadService.export(entityClass, genericRequestMapper.mapTo(searchConfig), genericFields, genericFieldDetails, fileFormat, entityName, locale);
         return Response.ok()
                 .entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"\"}, \"data\":{ \"filePath\":\""+ filePath +"\"}}")
                 .build();
