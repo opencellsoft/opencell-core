@@ -151,6 +151,9 @@ log.info("findByAppliesTo method log info with appliesTo equal to {}", appliesTo
         if (useCFTCache) {
 log.info("findByAppliesTo with useCFTCache is TRUE");
             Map<String, CustomFieldTemplate> cfts = customFieldsCache.getCustomFieldTemplates(appliesTo);
+for (Map.Entry<String, CustomFieldTemplate> entry : cfts.entrySet()) {
+    log.info("findByAppliesTo with useCFTCache is TRUE entry.getKey {} and getValue {}", entry.getKey(), entry.getValue());
+}
 
             // Populate cache if record is not found in cache
             if (cfts == null) {
