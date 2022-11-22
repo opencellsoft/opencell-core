@@ -280,6 +280,7 @@ for (CustomFieldTemplate cft : values) {
         boolean isCustomTable = cet != null && cet.isStoreAsTable();
         if (isCustomTable) {
             // Check if its a custom table field we need to get previous constraint state
+log.info("create in CustomFieldTemplate class with cet {} and getAppliesTo {}", cet, cet.getAppliesTo());
             cetFields = findByAppliesToNoCache(cet.getAppliesTo());
             oldConstraintColumns = cetFields.values().stream().filter(x -> x.isUniqueConstraint()).map(x -> x.getDbFieldname()).distinct().sorted().collect(Collectors.joining(","));
         }
@@ -378,6 +379,7 @@ for (CustomFieldTemplate cft : values) {
         CustomEntityTemplate cet = findCETbyCFT(cft);
         // Check if its a custom table field we need to get previous constraint state
         if (cet != null && cet.isStoreAsTable()) {
+log.info("update in CustomFieldTemplate class with cet {} and getAppliesTo {}", cet, cet.getAppliesTo());
             cetFields = findByAppliesToNoCache(cet.getAppliesTo());
             oldConstraintColumns = cetFields.values().stream().filter(x -> x.isUniqueConstraint()).map(x -> x.getDbFieldname()).distinct().sorted().collect(Collectors.joining(","));
 
@@ -575,6 +577,7 @@ for (CustomFieldTemplate cft : values) {
     public Map<String, CustomFieldTemplate> createMissingTemplates(String appliesTo, Collection<CustomFieldTemplate> templates, boolean updateExisting, boolean removeOrphans) throws BusinessException {
 
         // Get templates corresponding to an entity type
+log.info("createMissingTemplates in CustomFieldTemplate class with getAppliesTo {}", appliesTo);
         Map<String, CustomFieldTemplate> allTemplates = findByAppliesToNoCache(appliesTo);
 
         if (templates != null) {
