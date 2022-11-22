@@ -881,7 +881,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                     return false;
                 } 
             }
-            else if (billingRun.getBillingCycle() == null) {
+            //Billing Run exceptionnel
+            if (billingRun.getBillingCycle() == null) {
                 return true;
             }
             billingRun = refreshOrRetrieve(billingRun);
@@ -896,13 +897,15 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                     methodContext.put("billingRun", billingRun);
                     script.execute(methodContext);
                     Object status = methodContext.get(Script.INVOICE_VALIDATION_STATUS);
-                    if(status instanceof InvoiceValidationStatusEnum && InvoiceValidationStatusEnum.REJECTED.equals(status)){
+                    if(status instanceof InvoiceValidationStatusEnum && 
+                            invoiceValidationStatusEnum.equals(status)){
                             result = false;
                     }
-                }
-                update(billingRun);
+                    update(billingRun);
+                }                
             }
         }
+        
         return result;
     }
 
@@ -1376,9 +1379,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 nextBillingRun.setIsQuarantine(Boolean.TRUE);
                 nextBillingRun.setStatus(BillingRunStatusEnum.SUSPECTED);
                 nextBillingRun.setOriginBillingRun(billingRun);
+                nextBillingRun.setRejectionReason(billingRun.getRejectionReason());
                 nextBillingRun.setId(null);
                 create(nextBillingRun);
                 billingRun.setNextBillingRun(nextBillingRun);
+                billingRun.setRejectionReason(null);
                 update(billingRun);
                 return nextBillingRun;
             } catch (Exception e) {
@@ -1416,7 +1421,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 quarantineBillingRun.setBillableBillingAccounts(new ArrayList<>());
                 quarantineBillingRun.setBillingAccountNumber(null);
                 quarantineBillingRun.setRejectedBillingAccounts(null);
-                quarantineBillingRun.setRejectionReason(null);
+                quarantineBillingRun.setRejectionReason(billingRun.getRejectionReason());
                 quarantineBillingRun.setPdfJobExecutionResultId(null);
                 quarantineBillingRun.setXmlJobExecutionResultId(null);
                 quarantineBillingRun.setInvoices(new ArrayList<>());
@@ -1449,6 +1454,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 }
 
                 create(quarantineBillingRun);
+                billingRun.setRejectionReason(null);
                 billingRun.setNextBillingRun(quarantineBillingRun);
                 update(billingRun);
                 return quarantineBillingRun;

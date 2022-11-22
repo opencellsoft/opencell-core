@@ -165,13 +165,13 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         if(billingRunValidationScript != null && billingRun.getBillingCycle() != null) {
             billingRun.getBillingCycle().setBillingRunValidationScript(billingRunValidationScript);
         }
-        if(!billingRunService.isBillingRunValid(billingRun, InvoiceValidationStatusEnum.REJECTED) && 
-                (billingRun.getRejectAutoAction() != null && billingRun.getRejectAutoAction().equals(BillingRunAutomaticActionEnum.MOVE))) {
+        if(billingRun.getRejectAutoAction() != null && billingRun.getRejectAutoAction().equals(BillingRunAutomaticActionEnum.MOVE)) {
+            billingRunService.isBillingRunValid(billingRun, InvoiceValidationStatusEnum.REJECTED);
             billingRun = billingRunService.refreshOrRetrieve(billingRun);
             billingRun.setStatus(REJECTED);
-        }
-        if(!billingRunService.isBillingRunValid(billingRun, InvoiceValidationStatusEnum.SUSPECT) && 
-                (billingRun.getSuspectAutoAction() != null && billingRun.getSuspectAutoAction().equals(BillingRunAutomaticActionEnum.MOVE))) {
+        }        
+        else if(billingRun.getSuspectAutoAction() != null && billingRun.getSuspectAutoAction().equals(BillingRunAutomaticActionEnum.MOVE)) {
+            billingRunService.isBillingRunValid(billingRun, InvoiceValidationStatusEnum.SUSPECT);
             billingRun = billingRunService.refreshOrRetrieve(billingRun);
             billingRun.setStatus(SUSPECTED);
         }
@@ -182,20 +182,14 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         				|| BillingRunStatusEnum.REJECTED.equals(billingRun.getStatus()))) {
 		    billingRun = billingRunService.applyAutomaticValidationActions(billingRun);
 		    billingRun = billingRunService.refreshOrRetrieve(billingRun);
-		    if(billingRunService.isBillingRunValid(billingRun, InvoiceValidationStatusEnum.REJECTED) 
-		            || billingRunService.isBillingRunValid(billingRun, InvoiceValidationStatusEnum.SUSPECT)) {
-		        billingRun = billingRunService.refreshOrRetrieve(billingRun);
-                if(billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
-                    billingRun.setStatus(POSTVALIDATED);
-            	}else if(billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC && prevalidatedAutomaticPrevBRStatus) {
-                    billingRun.setStatus(DRAFT_INVOICES);
-            	} else {
-                    billingRun.setStatus(POSTVALIDATED);
-            	}
+            if(billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
+                billingRun.setStatus(POSTVALIDATED);
+            }else if(billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC && prevalidatedAutomaticPrevBRStatus) {
+                billingRun.setStatus(DRAFT_INVOICES);
+            } else {
+                billingRun.setStatus(POSTVALIDATED);
             }
-
         }
-        
         billingRun = billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null,
                 billingRun.getStatus(), null);
         if(billingRun.getStatus() == POSTVALIDATED) {
