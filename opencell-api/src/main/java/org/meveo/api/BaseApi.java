@@ -268,9 +268,16 @@ public abstract class BaseApi {
 
         Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity);
 
+for (Map.Entry<String, CustomFieldTemplate> entry : customFieldTemplates.entrySet()) {
+    log.info("customFieldTemplates day ne ne entry.getKey {} va entry.getValue {}", entry.getKey(), entry.getValue());
+}
+
         List<CustomFieldDto> customFieldDtos = null;
         if (customFieldsDto != null) {
             customFieldDtos = customFieldsDto.getCustomField();
+for (CustomFieldDto cftDto : customFieldDtos) {
+    log.info("cftDto day ne ne {}", cftDto);
+}
         } else {
             customFieldDtos = new ArrayList<CustomFieldDto>();
         }
