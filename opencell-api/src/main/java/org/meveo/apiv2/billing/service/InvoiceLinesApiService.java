@@ -130,10 +130,8 @@ public class InvoiceLinesApiService implements ApiService<InvoiceLine>  {
     }
     
 
-	public int markInvoiceLinesForAdjustment(InvoiceLinesToMarkAdjustment invoiceLinesToMark) {
-		invoiceLinesToMark.getFilters().get("inList id");
-		//List<Long> invoiceLinesIds = invoiceLinesToMark.getInvoiceLinesIds();
-		List<Long> invoiceLinesIds = new ArrayList<>();
+	public int markInvoiceLinesForAdjustment(InvoiceLinesToMarkAdjustment invoiceLinesToMark, List<Long> invoiceLinesIds) {
+		
 		if(invoiceLinesToMark.getIgnoreInvalidStatuses() == null || !invoiceLinesToMark.getIgnoreInvalidStatuses()) {
     		List<InvoiceLine> invoiceLines = invoiceLinesService.findByIdsAndAdjustmentStatus(invoiceLinesIds, AdjustmentStatusEnum.NOT_ADJUSTED);
     		if (invoiceLines != null && invoiceLines.size() != invoiceLinesIds.size()) {
@@ -160,10 +158,9 @@ public class InvoiceLinesApiService implements ApiService<InvoiceLine>  {
     	}
 	}
 	
-	public int unmarkInvoiceLinesForAdjustment(InvoiceLinesToMarkAdjustment invoiceLinesToUnmark) {
+	public int unmarkInvoiceLinesForAdjustment(InvoiceLinesToMarkAdjustment invoiceLinesToUnmark, List<Long> invoiceLinesIds) {
 		
-		//List<Long> invoiceLinesIds = invoiceLinesToUnmark.getInvoiceLinesIds();
-		List<Long> invoiceLinesIds = new ArrayList<>();
+		
 		if(invoiceLinesToUnmark.getIgnoreInvalidStatuses() == null || !invoiceLinesToUnmark.getIgnoreInvalidStatuses()) {			
     		List<InvoiceLine> invoiceLines = invoiceLinesService.findByIdsAndAdjustmentStatus(invoiceLinesIds, AdjustmentStatusEnum.TO_ADJUST);
     		if (invoiceLines != null && invoiceLines.size() != invoiceLinesIds.size()) {
@@ -184,6 +181,11 @@ public class InvoiceLinesApiService implements ApiService<InvoiceLine>  {
 	
 
 	public List<Long> getInvoiceLineIds(InvoiceLinesToMarkAdjustment invoiceLinesToUnmark) {
+		List<InvoiceLine> invoiceLines = getInvoiceLinesForAdjustment(invoiceLinesToUnmark);
+    	return invoiceLines.stream().map(invoiceLine -> invoiceLine.getId()).collect(Collectors.toList());
+	}
+
+	private List<InvoiceLine> getInvoiceLinesForAdjustment(InvoiceLinesToMarkAdjustment invoiceLinesToUnmark) {
 		Class entityClass = GenericHelper.getEntityClass("invoiceLine");
     	GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
     	Map evaluateFilters = genericRequestMapper.evaluateFilters(invoiceLinesToUnmark.getFilters(), entityClass);
@@ -191,6 +193,6 @@ public class InvoiceLinesApiService implements ApiService<InvoiceLine>  {
     	Set<String> genericFields = Set.of("id"); 
     	SearchResult searchResult = persistenceDelegate.list(entityClass, searchConfig);
     	List<InvoiceLine> invoiceLines = (List<InvoiceLine>) searchResult.getEntityList();
-    	return invoiceLines.stream().map(invoiceLine -> invoiceLine.getId()).collect(Collectors.toList());
+		return invoiceLines;
 	}
 }
