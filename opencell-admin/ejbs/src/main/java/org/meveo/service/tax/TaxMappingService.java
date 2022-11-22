@@ -31,6 +31,7 @@ import javax.persistence.NoResultException;
 import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
+import org.meveo.admin.exception.NoTaxException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.QueryBuilder;
@@ -594,4 +595,34 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
          */
         public Tax tax;
     }
+    
+    /**
+     * Recalculate tax to see if it has changed
+     *
+     * @param tax Previous tax
+     * @param isExonerated Is Billing account exonerated from taxes
+     * @param seller The seller
+     * @param billingAccount the billing account
+     * @param taxClass Tax class
+     * @param userAccount User account to calculate tax by external program
+     * @param taxZero Zero tax to apply if Billing account is exonerated
+     * @return An array containing applicable tax and True/false if tax % has changed from a previous tax
+     * @throws NoTaxException Were not able to determine a tax
+     */
+    public Object[] checkIfTaxHasChanged(Tax tax, boolean isExonerated, Seller seller, BillingAccount billingAccount, Date operationDate, TaxClass taxClass, UserAccount userAccount, Tax taxZero) throws NoTaxException {
+
+        if (isExonerated) {
+            return new Object[] { taxZero, false };
+
+        } else {
+
+            TaxInfo recalculatedTaxInfo = determineTax(taxClass, seller, billingAccount, userAccount, operationDate, isExonerated, false);
+
+            Tax recalculatedTax = recalculatedTaxInfo.tax;
+
+            return new Object[] { recalculatedTax, tax == null ? true : recalculatedTax!=null && !tax.getId().equals(recalculatedTax.getId()) };
+        }
+    }
+    
+    
 }

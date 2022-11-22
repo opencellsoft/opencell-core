@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
@@ -30,6 +31,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -322,5 +324,10 @@ public abstract class InvoiceAgregate extends AuditableEntity {
         setAmountTax(new BigDecimal(0));
         setAmountWithoutTax(new BigDecimal(0));
         setAmountWithTax(new BigDecimal(0));
+    }
+    
+    @Transient
+    public String getDescriminatorValue() {
+    	return this.getClass().getAnnotation(DiscriminatorValue.class).value();
     }
 }

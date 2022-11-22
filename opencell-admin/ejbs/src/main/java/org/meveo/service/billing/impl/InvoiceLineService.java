@@ -71,10 +71,12 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
+import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.filter.FilterService;
@@ -109,6 +111,16 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     
     @Inject
     private DiscountPlanService discountPlanService;
+    
+    @Inject
+    private BillingAccountService billingAccountService;
+    
+    @Inject
+    private SellerService sellerService;
+    
+
+    @Inject
+    private TaxService taxService;
     
     
     public List<InvoiceLine> findByQuote(CpqQuote quote) {
@@ -650,4 +662,72 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     public void unInvoiceByInvoiceIds(Collection<Long> invoicesIds) {
         getEntityManager().createNamedQuery("InvoiceLine.unInvoiceByInvoiceIds").setParameter("now", new Date()).setParameter("invoiceIds", invoicesIds).executeUpdate();
     }
+    
+
+    public List<InvoiceLine> findByInvoiceAndIds(Invoice invoice, List<Long> invoiceLinesIds) {
+        return getEntityManager().createNamedQuery("InvoiceLine.findByInvoiceAndIds", entityClass)
+                .setParameter("invoice", invoice)
+                .setParameter("invoiceLinesIds", invoiceLinesIds)
+                .getResultList();
+    }
+    public InvoiceLine createInvoiceLineWithInvoice(InvoiceLine entity, Invoice invoice, boolean isDuplicated) throws BusinessException {
+        AccountingArticle accountingArticle=entity.getAccountingArticle();
+        Date date=new Date();
+        if(entity.getValueDate()!=null) {
+            date=entity.getValueDate();
+        }
+        BillingAccount billingAccount=entity.getBillingAccount();
+        Seller seller=null;
+        if(invoice!=null) {
+         seller=invoice.getSeller()!=null?invoice.getSeller():seller;
+         billingAccount=invoice.getBillingAccount();
+        }
+        billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
+        if(seller==null) {
+             seller=entity.getCommercialOrder()!=null?entity.getCommercialOrder().getSeller():billingAccount.getCustomerAccount().getCustomer().getSeller();
+        }
+        if (accountingArticle != null && entity.getTax() == null) {
+             seller = sellerService.refreshOrRetrieve(seller);
+             setApplicableTax(accountingArticle, date, seller, billingAccount, entity);
+         }
+        super.create(entity);
+        
+        if(!isDuplicated && entity.getDiscountPlan() != null) {
+        	addDiscountPlanInvoice(entity.getDiscountPlan(), entity, billingAccount,invoice, accountingArticle, seller);
+        }
+		
+		return entity;
+    }
+
+	private void setApplicableTax(AccountingArticle accountingArticle, Date operationDate, Seller seller,
+			BillingAccount billingAccount, InvoiceLine invoiceLine) {
+
+		Tax taxZero = (billingAccount.isExoneratedFromtaxes() != null && billingAccount.isExoneratedFromtaxes())
+				? taxService.getZeroTax()
+				: null;
+		Boolean isExonerated = billingAccount.isExoneratedFromtaxes();
+		if (isExonerated == null) {
+			isExonerated = billingAccountService.isExonerated(billingAccount);
+		}
+		Object[] applicableTax = taxMappingService.checkIfTaxHasChanged(invoiceLine.getTax(), isExonerated, seller,
+				billingAccount, operationDate, accountingArticle.getTaxClass(), null, taxZero);
+		boolean taxRecalculated = (boolean) applicableTax[1];
+		if (taxRecalculated) {
+			Tax tax = (Tax) applicableTax[0];
+			log.debug(
+					"Will update invoice line of Billing account {} and tax class {} with new tax from {}/{}% to {}/{}%",
+					billingAccount.getId(), accountingArticle.getTaxClass().getId(),
+					invoiceLine.getTax() == null ? null : invoiceLine.getTax().getId(),
+					tax == null ? null : tax.getPercent(), tax.getId(), tax.getPercent());
+			invoiceLine.setTax(tax);
+			invoiceLine.setTaxRecalculated(taxRecalculated);
+
+			if (!tax.getPercent().equals(invoiceLine.getTaxRate())) {
+				invoiceLine.computeDerivedAmounts(appProvider.isEntreprise(), appProvider.getRounding(),
+						appProvider.getRoundingMode());
+				invoiceLine.setTaxRate(tax.getPercent());
+			}
+		}
+
+	}
 }

@@ -21,6 +21,7 @@ import org.meveo.apiv2.billing.Invoice;
 import org.meveo.apiv2.billing.InvoiceInput;
 import org.meveo.apiv2.billing.InvoiceLineInput;
 import org.meveo.apiv2.billing.InvoiceLinesToRemove;
+import org.meveo.apiv2.billing.InvoiceLinesToReplicate;
 import org.meveo.apiv2.billing.InvoiceLinesInput;
 import org.meveo.apiv2.billing.Invoices;
 import org.meveo.apiv2.models.ApiException;
@@ -244,5 +245,21 @@ public interface InvoiceResource {
 	Response find(@Parameter(description = "invoice Number of the Invoice", required = true)
 						@PathParam("invoiceNumber") String invoiceNumber,
 						@Context Request request);
+
+	@POST
+    @Path("/{id}/createAdjustment")
+    @Operation(
+            summary = "This API will allow creating adjustment based on an existing validated invoice.",
+            description = "This API will allow creating adjustment based on an existing validated invoice.<br>"
+                            + "Either can we choose specific invoice lines from a specific invoice or the whole invoice to be used on the newly created adjustment.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Adjustment successfully created"),
+                    @ApiResponse(responseCode = "403", description = "Invoice should be Validated and occCategory equals to DEBIT as an invoice type!"),
+                    @ApiResponse(responseCode = "500", description = "Error when creating adjustment"),
+                    @ApiResponse(responseCode = "403", description = "IThe following parameters are required or contain invalid values: globalAdjustment")
+                }
+            )
+    Response createAdjustment(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") @NotNull Long id,
+            @Parameter(description = "InvoiceLines to replicate", required = true) @NotNull InvoiceLinesToReplicate invoiceLinesToReplicate);
 
 }

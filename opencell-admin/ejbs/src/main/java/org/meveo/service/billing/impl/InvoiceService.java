@@ -20,7 +20,7 @@ package org.meveo.service.billing.impl;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
-
+import static java.util.Set.of;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -228,6 +228,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public static final String INVOICE_SEQUENCE = "INVOICE_SEQUENCE";
 
     private static final BigDecimal HUNDRED = new BigDecimal("100");
+    
+    
+    private final String TAX_INVOICE_AGREGATE = "T";
+    private final String CATEGORY_INVOICE_AGREGATE = "R";
+    private final String SUBCATEGORY_INVOICE_AGREGATE = "F";
 
     /** The p DF parameters construction. */
     @EJB
@@ -347,6 +352,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private SellerService sellerService;
+    
+    @Inject
+    private InvoiceAgregateService invoiceAgregateService;
 
     /**
      * folder for pdf .
@@ -5868,5 +5876,93 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		final BillingAccount billingAccount = billingAccountService.retrieveIfNotManaged(invoice.getBillingAccount());
 		return createAggregatesAndInvoiceFromIls(billingAccount, billingAccount.getBillingRun(), null, invoice.getInvoiceDate(), null, null, invoice.isDraft(), billingAccount.getBillingCycle(), billingAccount, billingAccount.getPaymentMethod(), invoice.getInvoiceType(), null, false, false, invoice);
 	}
+	
+	@JpaAmpNewTx
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public Invoice createAdjustment(Invoice invoice, List<Long> invoiceLinesIds) {
+		var duplicatedInvoice = duplicate(invoice, invoiceLinesIds);
+		duplicatedInvoice.setInvoiceDate(new Date());
+		duplicatedInvoice.setInvoiceType(invoiceTypeService.getDefaultAdjustement());
+		duplicatedInvoice.setStatus(InvoiceStatusEnum.DRAFT);
+		duplicatedInvoice.setLinkedInvoices(of(invoice));
+		getEntityManager().flush();
+
+		if (invoiceLinesIds != null && !invoiceLinesIds.isEmpty()) {
+			calculateInvoice(duplicatedInvoice);
+		} else {
+			update(duplicatedInvoice);
+		}
+
+		return duplicatedInvoice;
+	}
+	 public Invoice duplicate(Invoice invoice, List<Long> invoiceLinesIds) {
+	        invoice = refreshOrRetrieve(invoice);
+
+	        if (invoice.getOrders() != null) {
+	            invoice.getOrders().size();
+	        }
+
+	        var invoiceAgregates = new ArrayList<InvoiceAgregate>();
+	        if (invoice.getInvoiceAgregates() != null) {
+	            invoice.getInvoiceAgregates().size();
+	            invoiceAgregates.addAll(invoice.getInvoiceAgregates());
+	        }
+	        
+	        var invoiceLines = new ArrayList<InvoiceLine>();
+	        if (invoiceLinesIds != null && !invoiceLinesIds.isEmpty()) { 
+	            invoiceLines.addAll(invoiceLinesService.findByInvoiceAndIds(invoice, invoiceLinesIds));
+	        }
+	        else if (invoice.getInvoiceLines() != null) {
+	            invoice.getInvoiceLines().size();
+	            invoiceLines.addAll(invoice.getInvoiceLines());
+	        }
+
+	        detach(invoice);
+
+	        var duplicateInvoice = new Invoice(invoice);
+	        this.create(duplicateInvoice);
+
+	        if (invoiceLinesIds == null || invoiceLinesIds.isEmpty()) {
+	            for (InvoiceAgregate invoiceAgregate : invoiceAgregates) {
+	    
+	                invoiceAgregateService.detach(invoiceAgregate);
+	    
+	                switch (invoiceAgregate.getDescriminatorValue()) {
+	                    case TAX_INVOICE_AGREGATE: {
+	                        var taxInvoiceAgregate = new TaxInvoiceAgregate((TaxInvoiceAgregate) invoiceAgregate);
+	                        taxInvoiceAgregate.setInvoice(duplicateInvoice);
+	                        invoiceAgregateService.create(taxInvoiceAgregate);
+	                        duplicateInvoice.getInvoiceAgregates().add(taxInvoiceAgregate);
+	                        break;
+	                    }
+	                    case CATEGORY_INVOICE_AGREGATE: {
+	                        var categoryInvoiceAgregate = new CategoryInvoiceAgregate((CategoryInvoiceAgregate) invoiceAgregate);
+	                        categoryInvoiceAgregate.setInvoice(duplicateInvoice);
+	                        invoiceAgregateService.create(categoryInvoiceAgregate);
+	                        duplicateInvoice.getInvoiceAgregates().add(categoryInvoiceAgregate);
+	                        break;
+	                    }
+	                    case SUBCATEGORY_INVOICE_AGREGATE: {
+	                        var subCategoryInvoiceAgregate = new SubCategoryInvoiceAgregate((SubCategoryInvoiceAgregate) invoiceAgregate);
+	                        subCategoryInvoiceAgregate.setInvoice(duplicateInvoice);
+	                        invoiceAgregateService.create(subCategoryInvoiceAgregate);
+	                        duplicateInvoice.getInvoiceAgregates().add(subCategoryInvoiceAgregate);
+	                        break;
+	                    }
+	                }
+	            }
+	        }
+
+	        for (InvoiceLine invoiceLine : invoiceLines) {
+	            invoiceLinesService.detach(invoiceLine);
+	            InvoiceLine duplicateInvoiceLine = new InvoiceLine(invoiceLine, duplicateInvoice);
+	            invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);
+	            duplicateInvoice.getInvoiceLines().add(duplicateInvoiceLine);
+	        }
+
+	        return duplicateInvoice;
+	    }
+	 
+	
 
 }
