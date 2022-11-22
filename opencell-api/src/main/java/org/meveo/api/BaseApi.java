@@ -491,10 +491,11 @@ public abstract class BaseApi {
         }
 
         for (CustomFieldDto cfDto : customFieldDtos) {
+log.info("cfDto.getCode() in validateAndConvertCustomFields {}", cfDto.getCode());
             CustomFieldTemplate cft = customFieldTemplates.get(cfDto.getCode());
 
             if (checkCustomFields && cft == null) {
-                log.error("No custom field template found with code={} for entity {}. Value will be ignored.", cfDto.getCode(), entity.getClass());
+                log.info("No custom field template found with code={} for entity {}. Value will be ignored.", cfDto.getCode(), entity.getClass());
                 throw new InvalidParameterException("Custom field template with code " + cfDto.getCode() + " not found.");
             }
 

@@ -148,11 +148,12 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     public Map<String, CustomFieldTemplate> findByAppliesTo(String appliesTo) {
 
         if (useCFTCache) {
-
+log.info("findByAppliesTo with useCFTCache is true");
             Map<String, CustomFieldTemplate> cfts = customFieldsCache.getCustomFieldTemplates(appliesTo);
 
             // Populate cache if record is not found in cache
             if (cfts == null) {
+log.info("cfts == null in cache findByAppliesTo, need to look up in database");
                 cfts = findByAppliesToNoCache(appliesTo);
                 if (cfts.isEmpty()) {
                     customFieldsCache.markNoCustomFieldTemplates(appliesTo);
@@ -175,9 +176,11 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @return A list of custom field templates mapped by a template key
      */
     public Map<String, CustomFieldTemplate> findByAppliesToNoCache(String appliesTo) {
-
+log.info("appliesTo in findByAppliesToNoCache {}", appliesTo);
         List<CustomFieldTemplate> values = getEntityManager().createNamedQuery("CustomFieldTemplate.getCFTByAppliesTo", CustomFieldTemplate.class).setParameter("appliesTo", appliesTo).getResultList();
-
+for (CustomFieldTemplate cft : values) {
+    log.info("cft customField in findByAppliesToNoCache {}", cft);
+}
         Map<String, CustomFieldTemplate> cftMap = values.stream().collect(Collectors.toMap(cft -> cft.getCode(), cft -> cft));
 
         return cftMap;
