@@ -1380,6 +1380,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 nextBillingRun.setStatus(BillingRunStatusEnum.SUSPECTED);
                 nextBillingRun.setOriginBillingRun(billingRun);
                 nextBillingRun.setId(null);
+                nextBillingRun.setJobExecutions(null);
                 create(nextBillingRun);
                 billingRun.setNextBillingRun(nextBillingRun);
                 update(billingRun);
