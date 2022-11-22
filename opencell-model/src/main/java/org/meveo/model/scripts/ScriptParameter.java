@@ -148,6 +148,8 @@ public class ScriptParameter extends BaseEntity {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
+		if (obj == null)
+			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		ScriptParameter other = (ScriptParameter) obj;
