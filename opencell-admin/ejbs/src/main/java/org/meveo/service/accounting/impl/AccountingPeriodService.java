@@ -21,12 +21,16 @@ import org.meveo.model.accounting.CustomLockOption;
 import org.meveo.model.accounting.RegularUserLockOption;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.crm.impl.ProviderService;
 
 @Stateless
 public class AccountingPeriodService extends PersistenceService<AccountingPeriod> {
 	
     @Inject
     private SubAccountingPeriodService subAccountingPeriodService;
+
+	@Inject
+	private ProviderService providerService;
 
 	public AccountingPeriod create(AccountingPeriod entity, Boolean isUseSubAccountingPeriods) {
 		return createAccountingPeriod(entity, isUseSubAccountingPeriods);
@@ -46,6 +50,10 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		}
 		create(entity);
 		generateSubAccountingPeriods(entity);
+
+		// Init MatchingCode sequence in Provider
+		providerService.resetMatchingCode();
+
 		return entity;
 	}
 
@@ -95,11 +103,6 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		}
 		if (endDate.before(new Date())) {
 			throw new ValidationException("the given endDate " + DateUtils.formatAsDate(endDate) + " is incorrect , the endDate must be greater than today");
-		}
-
-		List<String> allowedDates = Arrays.asList("03-31", "06-30", "09-30", "12-31");
-		if (!allowedDates.contains(DateUtils.formatDateWithPattern(endDate, "MM-dd"))) {
-			throw new ValidationException("End date will only be March 31st, June 30th, September 30th, December 31st.");
 		}
 	}
     

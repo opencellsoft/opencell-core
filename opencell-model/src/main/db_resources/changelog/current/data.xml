@@ -8882,6 +8882,292 @@ public class CdrMassImportScript extends GenericMassImportScript {
 		</update>
 	</changeSet>
 
+	<changeSet id="#INTRD-10400_20221007" author="HichamHANINE">
+    	<update tableName="security_deposit">
+    	<column name="status" value="VALIDATED"/>
+    	<where>status='NEW'</where>
+    	</update>
+    </changeSet>
+	
+	<changeSet id="#9811_10102022" author="Mbarek-Ay">
+	<insert tableName="meveo_job_instance">
+		<column name="id" valueSequenceNext="meveo_job_instance_seq" />
+		<column name="version" valueNumeric="0" />
+		<column name="disabled" valueNumeric="1" />
+		<column name="created" valueDate="2022-10-10 15:04:19.913" />
+		<column name="job_category" value="INVOICING" />
+		<column name="job_template" value="InvoiceLinesMinimumJob" />
+		<column name="code" value="Invoice_Lines_Minimum_Job" />
+		<column name="creator" value="OPENCELL.ADMIN" />
+		<column name="timerentity_id" valueNumeric="-1" />
+		<column name="uuid" value="Invoice_Lines_Minimum_Job" />
+		<column name="cf_values"
+			value='{"waitingMillis":[{"long":0}],"nbRuns":[{"long":-1}]}' />
+	  </insert>
+    </changeSet>
+    
+    <changeSet id="#INTRD-10592_20221014" author="TarikFA.">
+    	<update tableName="billing_accounting_code">
+            <column name="description" value="General accounts payable"></column>
+    		<where>code = '401000000'</where>
+    	</update>
+    </changeSet>
+
+    <changeSet id="#INTRD-10587_20221014" author="TarikFA.">
+    	<update tableName="ar_occ_template" >
+			<column name="accounting_code_id" valueNumeric="null"></column>
+			<where>id in (SELECT id from billing_accounting_code where code in ('120.121.21.4', '120.121.21.2', 'T3P9476'))</where>
+		</update>
+		<update tableName="billing_invoice_sub_cat" >
+            <column name="accounting_code_id" value="null" />
+			<where>id in (SELECT id from billing_accounting_code where code in ('120.121.21.4', '120.121.21.2', 'T3P9476'))</where>
+		</update>
+		<delete tableName="billing_accounting_code">
+			<where>code in ('120.121.21.4', '120.121.21.2')</where>
+		</delete>
+		
+		<update tableName="ar_occ_template" >
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
+			<where>code = 'PAY_BATCH'</where>
+		</update>
+    </changeSet>
+    
+    <changeSet id="#INTRD-10541_20221017" author="TarikFA.">
+    	<update tableName="billing_linked_invoices">
+    		<column name="type" value="ADJUSTMENT" />
+    	</update>
+    </changeSet>
+
+	<changeSet id="#INTRD-10572_20221014" author="HichamHANINE">
+		<update tableName="crm_customer_category">
+			<column name="tax_category_id" value="-3" />
+			<where>id in (-1,-2)</where>
+		</update>
+    </changeSet>
+    
+   	<changeSet id="#INTRD-10572_20221018" author="HichamHANINE">
+   		<update tableName="crm_customer_category">
+			<column name="tax_category_id" value="-1" />
+			<where>id in (-1,-2)</where>
+		</update>
+		<update tableName="billing_tax_mapping">
+			<column name="tax_category_id" value="-1" />
+			<where>tax_category_id = -3</where>
+		</update>
+		<update tableName="billing_billing_account">
+			<column name="tax_category_id" value="-1" />
+			<where>tax_category_id = -3</where>
+		</update>
+		<update tableName="billing_tax_category">			
+			<column name="code" value="REGULAR1"/>        
+			<where>id = -3</where>
+		</update>
+		<update tableName="billing_tax_category">			
+			<column name="code" value="REGULAR"/>
+            <column name="description_i18n" value='{"FRA":"Standard","ENG":"Regular"}'/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_tax_category_regular" />            
+			<where>id = -1</where>
+		</update>
+		<delete tableName="billing_tax_category">
+			<where>id = -3</where>
+		</delete>
+    </changeSet>
+
+	<changeSet id="#INTRD-10692_20221019_ajd_occ_template" author="a.rouaguebe">
+		<insert tableName="ar_occ_template">
+			<column name="id" valueSequenceNext="ar_occ_template_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="ADJ_SD" />
+			<column name="description" value="Adjustment to refund security deposit" />
+			<column name="occ_category" value="CREDIT" />
+			<column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
+			<column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='165000000')" />
+			<column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+			<column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'SAL')" />
+		</insert>
+	</changeSet>
+
+	<changeSet id="#INTRD-10523_20221020" author="aelmalki">
+		<insert tableName="meveo_job_instance">
+			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="2022-10-20 00:00:00.000" />
+			<column name="job_category" value="ACCOUNTING" />
+			<column name="job_template" value="AssignMatchingCodeToOldEntriesJob" />
+			<column name="code" value="AssignMatchingCodeToOldEntriesJob" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="timerentity_id" valueNumeric="null" />
+			<column name="uuid" value="AssignMatchingCodeToOldEntriesJob" />
+		</insert>
+	</changeSet>
+
+	<changeSet id="#INTRD-10907_20221026" author="EBOURRAS">
+		<insert tableName="billing_invoice_type_applies_to">
+			<column name="invoice_type_id" value="-1"/>
+			<column name="applies_to_id" value="-5"/>
+		</insert>
+	</changeSet>
+
+
+	<changeSet id="#INTRD-10772_20221025_ajd_occ_template" author="e.bourras">
+		<insert tableName="ar_occ_template">
+			<column name="id" valueSequenceNext="ar_occ_template_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="code" value="PAY_SD" />
+			<column name="description" value="Security Deposit Payment" />
+			<column name="occ_category" value="CREDIT" /><column name="manual_creation_enabled" value="0"/>
+			<column name="journal_id" valueComputed="(SELECT id FROM journal where code = 'SAL')"/>
+			<column name="manual_creation_enabled" value="0"/>
+		</insert>
+	</changeSet>
+	
+	<changeSet id="#INTRD-11124_20221102" author="HatimOUDAD">
+		<update tableName="meveo_job_instance">
+			<column name="disabled" value="0" />
+			<where>code = 'AutoUpdateCurrentRateJob_Job'</where>
+		</update>
+    </changeSet>
+    
+    <changeSet id="#INTRD-11154_20221102" author="TarikFA.">
+    	<update tableName="billing_accounting_article">
+            <column name="accounting_code_id" value="-6" />
+            <column name="invoice_type_id" value="-5" />
+        	<column name="tax_class_id" value="-3"/>
+        	<where> code = 'ADV-STD'</where>
+    	</update>
+    </changeSet>
+    
+    <changeSet id="#INTRD-9161_20221102" author="TarikFA.">
+    	<update tableName="billing_invoice_type">
+           <column name="description" value="Call for advance payment" />
+        	<where> code = 'ADV'</where>
+    	</update>
+    </changeSet>
+    
+    <changeSet id="INTRD-11152_20221102" author="TarikFA.">
+         <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-65" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="INV_ADV" />
+			<column name="description" value="Call for advance payment" />
+		</insert>
+		<update tableName="billing_invoice_type">
+           <column name="occ_template_id"  valueComputed="(SELECT id FROM ar_occ_template WHERE code='INV_ADV')" />
+			<column name="description" value="Call for advance payment" />
+        	<where> code = 'ADV'</where>
+    	</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-11244_20221104" author="TarikFA.">
+		<update tableName="ar_occ_template">
+			<column name="occ_category" value="DEBIT" />
+			<where> code = 'INV_ADV'</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-10199_20221010" author="TarikFA.">
+		<update tableName="ar_occ_template" >
+			<column name="accounting_code_id" valueNumeric="null"></column>
+			<where>id = -50</where>
+		</update>
+		<delete tableName="billing_accounting_code">
+			<where>code = 'T3P9476'</where>
+		</delete>
+	</changeSet>
+
+	<changeSet id="#INTRD-11165_20221108" author="HatimOUDAD">
+		<update tableName="billing_invoice_line">
+			<column name="adjustment_status" value="NOT_ADJUSTED" />
+			<where> adjustment_status is null</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="INTRD-11122_20221104" author="HichamELHALOUI">
+		<insert tableName="meveo_script_instance_cat">
+			<column name="id" valueNumeric="-3"/>
+			<column name="version" valueNumeric="0"/>
+			<column name="created" valueDate="${db.current.time}"/>
+			<column name="code" value="INVOICE_VALIDATION"/>
+			<column name="description" value="Invoice validation"/>
+			<column name="description_i18n" value='{"FR":"Validation de facture","EN":"Invoice validation"}'/>
+		</insert>
+		<insert tableName="meveo_script_instance_cat">
+			<column name="id" valueNumeric="-4"/>
+			<column name="version" valueNumeric="0"/>
+			<column name="created" valueDate="${db.current.time}"/>
+			<column name="code" value="BILLING_RUN_VALIDATION"/>
+			<column name="description" value="Billing run validation"/>
+			<column name="description_i18n"
+					value='{"FR":"Validation de run de facturation","EN":"Billing run validation"}'/>
+		</insert>
+		<update tableName="meveo_script_instance_cat">
+			<column name="description_i18n" value='{"FR":"Extraction de rapport","EN":"Report Extract"}'/>
+			<where>code = 'REPORT_EXTRACT'</where>
+		</update>
+		<update tableName="meveo_script_instance_cat">
+			<column name="description_i18n" value='{"FR":"Schéma comptable","EN":"Accounting schemes"}'/>
+			<where>code = 'ACCOUNTING_SCHEMES'</where>
+		</update>
+		<update tableName="meveo_script_instance_cat">
+			<column name="description_i18n" value='{"FR":"Action de recouvrement","EN":"Dunning action"}'/>
+			<where>code = 'DUNNING_ACTION'</where>
+		</update>
+
+
+	</changeSet>
+
+	<changeSet id="INTRD-11124_20221109" author="aelmalki">
+		<insert tableName="meveo_timer">
+			<column name="id" valueNumeric="-4" />
+			<column name="version" valueNumeric="0" />
+			<column name="sc_d_o_month" value="*" />
+			<column name="sc_d_o_week" value="*" />
+			<column name="sc_hour" value="0" />
+			<column name="sc_min" value="0" />
+			<column name="sc_month" value="*" />
+			<column name="sc_sec" value="1" />
+			<column name="sc_year" value="*" />
+			<column name="code" value="Daily-midnight-start-of-day" />
+			<column name="created" valueDate="2017-06-29 00:04:19.913" />
+		</insert>
+		<update tableName="meveo_job_instance">
+			<column name="timerentity_id">-4</column>
+			<where>code='AutoUpdateCurrentRateJob_Job'</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-11328_20221110" author="aelmalki">
+		<insert tableName="crm_custom_field_tmpl">
+			<column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="cleanAppliedRateInvoice"/>
+			<column name="applies_to" value="JobInstance_AutoUpdateCurrentRateJob"/>
+			<column name="description" value="Clean Invoice applied rate"/>
+			<column name="field_type" value="BOOLEAN"/>
+			<column name="storage_type" value="SINGLE"/>
+			<column name="value_required" value="0"/>
+			<column name="default_value" value="0"/>
+			<column name="creator" value="applicationInitializer"/>
+			<column name="gui_position" value="tab:Configuration:0;field:0"/>
+		</insert>
+
+		<update tableName="meveo_job_instance">
+			<column name="cf_values" value='{"cleanAppliedRateInvoice": [{"boolean": false}]}' />
+			<where> code='AutoUpdateCurrentRateJob_Job'</where>
+		</update>
+	</changeSet>
+
+
 	<changeSet id="#OUTRD-49_20220913-scripts" author="HamzaBiadi">
 		<!-- SCRIPTS -->
 		<insert tableName="meveo_script_instance">
@@ -12253,7 +12539,7 @@ public class SubscriptionMassImportScript extends GenericMassImportScript {
 			<where>code='org.meveo.service.script.SubscriptionMassImportScript'</where>
 		</update>
 	</changeSet>
-	
+
 	<changeSet id="#OUTRD-72_20221011" author="Ilham-Chafik">
 		<update tableName="meveo_script_instance">
 			<column name="script">
@@ -12385,7 +12671,7 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
 			<where>code='org.meveo.service.script.ServiceInstanceImportScript'</where>
 		</update>
 	</changeSet>
-	
+
 	<changeSet id="#OUTRD-79_20221011" author="Ilham-Chafik">
 		<update tableName="meveo_script_instance">
 			<column name="script">

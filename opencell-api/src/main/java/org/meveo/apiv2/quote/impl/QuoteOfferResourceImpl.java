@@ -21,6 +21,16 @@ public class QuoteOfferResourceImpl implements QuoteOfferResource {
 	@Transactional
 	@Override
 	public Response duplicate(String quoteCode, Integer quoteVersion, Long quoteItemId) {
+		return duplicateQuoteOffer(quoteCode, quoteVersion, quoteItemId);
+	}
+	
+	@Transactional
+	@Override
+	public Response duplicateQuote(String quoteCode, Integer quoteVersion, Long quoteItemId) {
+		return duplicateQuoteOffer(quoteCode, quoteVersion, quoteItemId);
+	}
+
+	private Response duplicateQuoteOffer(String quoteCode, Integer quoteVersion, Long quoteItemId) {
 		var quoteOffer = quoteOfferApiService.findById(quoteItemId).orElseThrow(() -> new EntityDoesNotExistsException(QuoteOffer.class, quoteItemId));
 		var duplicate = quoteOfferApiService.duplicate(quoteOffer, quoteCode, quoteVersion);
 		return Response.created(LinkGenerator.getUriBuilderFromResource(QuoteOfferResource.class, duplicate.getId()).build())
@@ -28,7 +38,6 @@ public class QuoteOfferResourceImpl implements QuoteOfferResource {
 				.build();
 	}
 	
-
 	private org.meveo.apiv2.quote.QuoteOffer toResourceOrderWithLink( org.meveo.apiv2.quote.QuoteOffer quoteOffer) {
 		return ImmutableQuoteOffer.copyOf(quoteOffer)
 				.withLinks(

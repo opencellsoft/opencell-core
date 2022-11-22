@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="152"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="quotev13.xml"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="oc-jaspers\quotes\oc.xml"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -455,6 +455,10 @@
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/billingAccount/@id"/>
 		<fieldDescription><![CDATA[/quote/header/billingAccount/@id]]></fieldDescription>
 	</field>
+	<field name="comment" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/comment"/>
+		<fieldDescription><![CDATA[/quote/header/comment]]></fieldDescription>
+	</field>
 	<group name="1">
 		<groupExpression><![CDATA[]]></groupExpression>
 		<groupHeader>
@@ -542,10 +546,6 @@
 					<reportElement x="20" y="36" width="21" height="30" uuid="b9c156f1-7bf2-4ad8-aa6d-25e70d0bfc08"/>
 					<imageExpression><![CDATA[$P{logoPath}+"Pictos/ico_professional-services.png"]]></imageExpression>
 				</image>
-				<image>
-					<reportElement x="226" y="38" width="21" height="30" uuid="c8cf3162-420a-4eb3-a258-0069dffaf336"/>
-					<imageExpression><![CDATA[$P{logoPath}+"Pictos/ico_helpdeskt-support.png"]]></imageExpression>
-				</image>
 				<textField isBlankWhenNull="true">
 					<reportElement x="49" y="96" width="161" height="17" uuid="1c75a079-814c-4795-907a-ab6f04ac3611">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -555,12 +555,14 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$F{vatNo}]]></textFieldExpression>
 				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement x="257" y="36" width="203" height="17" uuid="7119322b-65cf-4885-aa4d-66125beab821"/>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="226" y="36" width="342" height="20" uuid="6f3473cf-42ef-4541-801e-992c4f1c5682">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="12" isBold="true"/>
+						<font fontName="Vista Sans OT Bold" size="10"/>
 					</textElement>
-					<textFieldExpression><![CDATA["[...]"]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{comment}!=null?$F{comment}:""]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>

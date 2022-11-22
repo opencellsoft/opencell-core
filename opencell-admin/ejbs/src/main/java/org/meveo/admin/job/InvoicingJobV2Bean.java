@@ -32,6 +32,7 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.InvoiceLine;
@@ -147,13 +148,14 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         }
         if(billingRun.getStatus() == PREVALIDATED) {
             billingRun.setStatus(INVOICES_CREATED);
-            billingRunService.createAggregatesAndInvoiceWithIl(billingRun, 1, 0, jobInstance.getId());
+            billingRunService.createAggregatesAndInvoiceWithIl(billingRun, 1, 0, jobInstance.getId(), result);
             billingRun = billingRunService.refreshOrRetrieve(billingRun);
             billingRun.setPrAmountWithTax(amountWithTax);
             billingRun.setPrAmountWithoutTax(amountWithoutTax);
             billingRun.setPrAmountTax(amountTax);
             billingRun.setStatus(DRAFT_INVOICES);
             prevalidatedAutomaticPrevBRStatus = true;
+            invoiceService.applyligibleInvoiceForAdvancement(billingRun.getId());
         }
         if(billingRun.getStatus() == DRAFT_INVOICES && billingRun.getProcessType() == FULL_AUTOMATIC) {
             billingRun.setStatus(POSTVALIDATED);

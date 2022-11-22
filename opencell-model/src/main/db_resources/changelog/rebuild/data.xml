@@ -7047,6 +7047,19 @@
             <column name="code" value="Daily-midnight" />
             <column name="created" valueDate="2017-06-29 00:04:19.913" />
         </insert>
+		<insert tableName="meveo_timer">
+			<column name="id" valueNumeric="-4" />
+			<column name="version" valueNumeric="0" />
+			<column name="sc_d_o_month" value="*" />
+			<column name="sc_d_o_week" value="*" />
+			<column name="sc_hour" value="0" />
+			<column name="sc_min" value="0" />
+			<column name="sc_month" value="*" />
+			<column name="sc_sec" value="1" />
+			<column name="sc_year" value="*" />
+			<column name="code" value="Daily-midnight-start-of-day" />
+			<column name="created" valueDate="2017-06-29 00:04:19.913" />
+		</insert>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-data-jobs">
 
@@ -7423,6 +7436,32 @@
         </insert>
     </changeSet>
     
+    <changeSet id="INTRD-11152_20221102_data" author="TarikFA.">
+         <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-65" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="INV_ADV" />
+			<column name="description" value="Call for advance payment" />
+			<column name="occ_category" value="DEBIT" />
+		</insert>
+        <insert tableName="billing_invoice_type">
+           <column name="id" valueNumeric="-5" />
+           <column name="version" valueNumeric="0" />
+           <column name="created" valueDate="2021-02-03 00:00:00.000" />
+           <column name="code" value="ADV" />
+			<column name="description" value="Call for advance payment" />
+           <column name="creator" value="OPENCELL.ADMIN" />
+           <column name="invoice_sequence_id"
+				   valueComputed="(SELECT id from billing_seq_invoice where code = 'ADV')" />
+           <column name="occ_templ_negative_id" value="-40" />
+           <column name="matching_auto" valueNumeric="0" />
+           <column name="prefix_el" value="ADV" />
+           <column name="uuid" value="InvoiceType-ADV" />
+           <column name="occ_template_id"  valueComputed="(SELECT id FROM ar_occ_template WHERE code='INV_ADV')" />
+        </insert>
+	</changeSet>
+
     <changeSet author="AndriusKarpavicius" id="rebuild-data-invoiceTypes">
 
         <insert tableName="billing_seq_invoice">
@@ -7520,21 +7559,6 @@
             <column name="invoice_sequence_id"
 					valueComputed="(SELECT id from billing_seq_invoice where code = 'DRAFT')" />
         </insert>
-        <insert tableName="billing_invoice_type">
-           <column name="id" valueNumeric="-5" />
-           <column name="version" valueNumeric="0" />
-           <column name="created" valueDate="2021-02-03 00:00:00.000" />
-           <column name="code" value="ADV" />
-           <column name="description" value="Advanced Payment Invoicee" />
-           <column name="creator" value="OPENCELL.ADMIN" />
-           <column name="invoice_sequence_id"
-				   valueComputed="(SELECT id from billing_seq_invoice where code = 'ADV')" />
-           <column name="occ_template_id" valueNumeric="-25" />
-           <column name="occ_templ_negative_id" value="-40" />
-           <column name="matching_auto" valueNumeric="0" />
-           <column name="prefix_el" value="ADV" />
-           <column name="uuid" value="InvoiceType-ADV" />
-        </insert>        
         <insert tableName="billing_invoice_type_applies_to">
             <column name="invoice_type_id" value="-1" />
             <column name="applies_to_id" value="-2" />
@@ -7792,6 +7816,7 @@
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="code" value="DUNNING_ACTION" />
 			<column name="description" value="dunning action" />
+			<column name="description_i18n" value='{"FR":"Action de recouvrement","EN":"Dunning action"}'/>
 		</insert>
 	</changeSet>
 	
@@ -9041,6 +9066,24 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="created" valueDate="${db.current.time}"/>
 			<column name="code" value="ACCOUNTING_SCHEMES"/>
 			<column name="description" value="Accounting schemes"/>
+			<column name="description_i18n" value='{"FR":"Schéma comptable","EN":"Accounting schemes"}'/>
+		</insert>
+		<insert tableName="meveo_script_instance_cat">
+			<column name="id" valueNumeric="-3"/>
+			<column name="version" valueNumeric="0"/>
+			<column name="created" valueDate="${db.current.time}"/>
+			<column name="code" value="INVOICE_VALIDATION"/>
+			<column name="description" value="Invoice validation"/>
+			<column name="description_i18n" value='{"FR":"Validation de facture","EN":"Invoice validation"}'/>
+		</insert>
+		<insert tableName="meveo_script_instance_cat">
+			<column name="id" valueNumeric="-4"/>
+			<column name="version" valueNumeric="0"/>
+			<column name="created" valueDate="${db.current.time}"/>
+			<column name="code" value="BILLING_RUN_VALIDATION"/>
+			<column name="description" value="Billing run validation"/>
+			<column name="description_i18n"
+					value='{"FR":"Validation de run de facturation","EN":"Billing run validation"}'/>
 		</insert>
 		<insert tableName="generic_sequence">
 			<column name="id" valueSequenceNext="bill_seq_invoice_seq" />
@@ -9083,14 +9126,15 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		<insert tableName="meveo_job_instance">
 			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
 			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueNumeric="1" />
+			<column name="disabled" valueNumeric="0" />
 			<column name="created" valueDate="2022-02-18 00:04:19.913" />
 			<column name="job_category" value="UTILS" />
 			<column name="job_template" value="AutoUpdateCurrentRateJob" />
 			<column name="code" value="AutoUpdateCurrentRateJob_Job" />
 			<column name="creator" value="OPENCELL.ADMIN" />
-			<column name="timerentity_id" valueNumeric="-3" />
+			<column name="timerentity_id" valueNumeric="-4" />
 			<column name="uuid" value="AutoUpdateCurrentRateJob_Job" />
+			<column name="cf_values" value='{"cleanAppliedRateInvoice": [{"boolean": false}]}' />
 		</insert>
 	</changeSet>
 
@@ -9655,6 +9699,204 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="creator" value="applicationInitializer"></column>
 			<column name="currency_id" valueComputed="(SELECT currency_id from crm_provider where id = 1)"></column>
+		</insert>
+	</changeSet>
+
+	<changeSet id="#INTRD-10692_20221019_ajd_occ_template" author="a.rouaguebe">
+		<insert tableName="ar_occ_template">
+			<column name="id" valueSequenceNext="ar_occ_template_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="ADJ_SD" />
+			<column name="description" value="Adjustment to refund security deposit" />
+			<column name="occ_category" value="CREDIT" />
+			<column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
+			<column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='165000000')" />
+			<column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+			<column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'SAL')" />
+		</insert>
+	</changeSet>
+
+	 <changeSet id="#9811_10102022" author="Mbarek-Ay">
+	<insert tableName="meveo_job_instance">
+		<column name="id" valueSequenceNext="meveo_job_instance_seq" />
+		<column name="version" valueNumeric="0" />
+		<column name="disabled" valueNumeric="1" />
+		<column name="created" valueDate="2022-10-10 15:04:19.913" />
+		<column name="job_category" value="INVOICING" />
+		<column name="job_template" value="InvoiceLinesMinimumJob" />
+		<column name="code" value="Invoice_Lines_Minimum_Job" />
+		<column name="creator" value="OPENCELL.ADMIN" />
+		<column name="timerentity_id" valueNumeric="-1" />
+		<column name="uuid" value="Invoice_Lines_Minimum_Job" />
+		<column name="cf_values"
+			value='{"waitingMillis":[{"long":0}],"nbRuns":[{"long":-1}]}' />
+	  </insert>
+    </changeSet>
+
+	<changeSet id="#INTRD-10523_20221020" author="aelmalki">
+		<insert tableName="meveo_job_instance">
+			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="2022-10-20 00:00:00.000" />
+			<column name="job_category" value="ACCOUNTING" />
+			<column name="job_template" value="AssignMatchingCodeToOldEntriesJob" />
+			<column name="code" value="AssignMatchingCodeToOldEntriesJob" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="timerentity_id" valueNumeric="null" />
+			<column name="uuid" value="AssignMatchingCodeToOldEntriesJob" />
+			<column name="cf_values" value='{"nbRuns": [{"long": 1}], "waitingMillis": [{"long": 0}]}'/>
+		</insert>
+		<insert tableName="crm_custom_field_tmpl">
+			<column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="waitingMillis"/>
+			<column name="applies_to" value="JobInstance_AssignMatchingCodeToOldEntriesJob"/>
+			<column name="description" value="Waiting before next launch (ms)"/>
+			<column name="field_type" value="LONG"/>
+			<column name="storage_type" value="SINGLE"/>
+			<column name="value_required" value="0"/>
+			<column name="default_value" value="0"/>
+			<column name="creator" value="applicationInitializer"/>
+			<column name="gui_position" value="tab:Configuration:0;field:1"/>
+		</insert>
+		<insert tableName="crm_custom_field_tmpl">
+			<column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="onlyClosedPeriods"/>
+			<column name="applies_to" value="JobInstance_AssignMatchingCodeToOldEntriesJob"/>
+			<column name="description" value="Only closed periods"/>
+			<column name="field_type" value="BOOLEAN"/>
+			<column name="storage_type" value="SINGLE"/>
+			<column name="value_required" value="0"/>
+			<column name="default_value" value="0"/>
+			<column name="creator" value="applicationInitializer"/>
+			<column name="gui_position" value="tab:Configuration:0;field:2"/>
+		</insert>
+	</changeSet>
+
+	<changeSet id="#INTRD-10893_202201026" author="ZBariki">
+		<insert tableName="crm_custom_field_tmpl">
+			<column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="nbRuns"/>
+			<column name="applies_to" value="JobInstance_RecurringRatingJob"/>
+			<column name="description" value="Number of parallel execution"/>
+			<column name="field_type" value="LONG"/>
+			<column name="storage_type" value="SINGLE"/>
+			<column name="value_required" value="0"/>
+			<column name="default_value" value="-1"/>
+			<column name="creator" value="applicationInitializer"/>
+			<column name="gui_position" value="tab:Configuration:0;field:0"/>
+		</insert>
+		<insert tableName="crm_custom_field_tmpl">
+			<column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="waitingMillis"/>
+			<column name="applies_to" value="JobInstance_RecurringRatingJob"/>
+			<column name="description" value="Waiting before next launch (ms)"/>
+			<column name="field_type" value="LONG"/>
+			<column name="storage_type" value="SINGLE"/>
+			<column name="value_required" value="0"/>
+			<column name="default_value" value="0"/>
+			<column name="creator" value="applicationInitializer"/>
+			<column name="gui_position" value="tab:Configuration:0;field:1"/>
+		</insert>
+		<insert tableName="crm_custom_field_tmpl">
+			<column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="rateUntilDate"/>
+			<column name="applies_to" value="JobInstance_RecurringRatingJob"/>
+			<column name="description" value="Apply recurring charge up to date"/>
+			<column name="field_type" value="DATE"/>
+			<column name="storage_type" value="SINGLE"/>
+			<column name="value_required" value="0"/>
+			<column name="creator" value="applicationInitializer"/>
+			<column name="gui_position" value="tab:Configuration:0;field:2"/>
+		</insert>
+		<insert tableName="crm_custom_field_tmpl">
+			<column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="rateUntilDateEL"/>
+			<column name="applies_to" value="JobInstance_RecurringRatingJob"/>
+			<column name="description" value="Apply recurring charge up to date EL"/>
+			<column name="field_type" value="STRING"/>
+			<column name="storage_type" value="SINGLE"/>
+			<column name="max_value" value="100"/>
+			<column name="value_required" value="0"/>
+			<column name="creator" value="applicationInitializer"/>
+			<column name="gui_position" value="tab:Configuration:0;field:3"/>
+		</insert>
+		<insert tableName="crm_custom_field_tmpl">
+			<column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="rateBC"/>
+			<column name="applies_to" value="JobInstance_RecurringRatingJob"/>
+			<column name="description" value="Rate only accounts with billing cycle"/>
+			<column name="field_type" value="ENTITY"/>
+			<column name="storage_type" value="LIST"/>
+			<column name="value_required" value="0"/>
+			<column name="creator" value="applicationInitializer"/>
+			<column name="entity_clazz" value="org.meveo.model.billing.BillingCycle"/>
+			<column name="gui_position" value="tab:Configuration:0;field:4"/>
+		</insert>
+	</changeSet>
+
+
+	<changeSet id="#INTRD-10907_20221026" author="EBOURRAS">
+		<insert tableName="billing_invoice_type_applies_to">
+			<column name="invoice_type_id" value="-1"/>
+			<column name="applies_to_id" value="-5"/>
+		</insert>
+	</changeSet>
+
+
+
+	<changeSet id="#INTRD-10772_20221025_ajd_occ_template" author="e.bourras">
+		<insert tableName="ar_occ_template">
+			<column name="id" valueSequenceNext="ar_occ_template_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="code" value="PAY_SD" />
+			<column name="description" value="Security Deposit Payment" />
+			<column name="occ_category" value="CREDIT" /><column name="manual_creation_enabled" value="0"/>
+			<column name="journal_id" valueComputed="(SELECT id FROM journal where code = 'SAL')"/>
+			<column name="manual_creation_enabled" value="0"/>
+		</insert>
+	</changeSet>
+
+	<changeSet id="#INTRD-11328_20221110" author="aelmalki">
+		<insert tableName="crm_custom_field_tmpl">
+			<column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="cleanAppliedRateInvoice"/>
+			<column name="applies_to" value="JobInstance_AutoUpdateCurrentRateJob"/>
+			<column name="description" value="Clean Invoice applied rate"/>
+			<column name="field_type" value="BOOLEAN"/>
+			<column name="storage_type" value="SINGLE"/>
+			<column name="value_required" value="0"/>
+			<column name="default_value" value="0"/>
+			<column name="creator" value="applicationInitializer"/>
+			<column name="gui_position" value="tab:Configuration:0;field:0"/>
 		</insert>
 	</changeSet>
 
@@ -15157,6 +15399,19 @@ public class CdrFlatFileImportScript extends Script {
 			<column name="get_signedfile_api" value="/document/sign/files/{fileId}/download" />
 		</insert>
 	</changeSet>
+
+	<changeSet id="#INTRD-10400_20221007" author="HichamHANINE" />
+    <changeSet id="#INTRD-10587_20221014" author="TarikFA." />
+    <changeSet id="#INTRD-10541_20221017" author="TarikFA." />
+	<changeSet id="#INTRD-10572_20221014" author="HichamHANINE" />
+	<changeSet id="#INTRD-10572_20221018" author="HichamHANINE" />
+	<changeSet id="#INTRD-11124_20221102" author="HatimOUDAD" />
+    <changeSet id="#INTRD-11154_20221102" author="TarikFA." />
+    <changeSet id="INTRD-11152_20221102" author="TarikFA." />
+	<changeSet id="INTRD-11122_20221104" author="HichamELHALOUI" />
+	<changeSet id="#INTRD-11244_20221104" author="TarikFA." />
+	<changeSet id="#INTRD-11165_20221108" author="HatimOUDAD" />
+	<changeSet id="INTRD-11124_20221109" author="aelmalki" />
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

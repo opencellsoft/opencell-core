@@ -12,6 +12,7 @@ import javax.ws.rs.*;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.apiv2.ordering.services.ApiService;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.billing.impl.*;
@@ -35,7 +36,7 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
     public List<Object[]> list(Long offset, Long limit, String sort, String orderBy, String customerAccountCode,
 							   Date startDate, Date startDueDate, Date endDueDate, String customerAccountDescription,
 							   String sellerDescription, String sellerCode,
-							   String invoiceNumber, Integer stepInDays, Integer numberOfPeriods, String tradingCurrency) {
+							   String invoiceNumber, Integer stepInDays, Integer numberOfPeriods, String tradingCurrency, String functionalCurrency) {
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(),
                 limit.intValue(), null, null, fetchFields, orderBy, sort);
         if(invoiceNumber != null && invoiceService.findByInvoiceNumber(invoiceNumber) == null) {
@@ -58,7 +59,7 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
 
 		try {
 			return recordedInvoiceService.getAgedReceivables(customerAccountCode, sellerCode, startDate, startDueDate, endDueDate,
-					paginationConfiguration, stepInDays, numberOfPeriods, invoiceNumber, customerAccountDescription, sellerDescription, tradingCurrency);
+					paginationConfiguration, stepInDays, numberOfPeriods, invoiceNumber, customerAccountDescription, sellerDescription, tradingCurrency, functionalCurrency);
 		} catch (Exception exception) {
 			throw new BusinessApiException("Error occurred when listing aged balance report : " + exception.getMessage());
 

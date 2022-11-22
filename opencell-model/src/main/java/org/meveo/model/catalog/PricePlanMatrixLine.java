@@ -30,7 +30,7 @@ import org.meveo.model.cpq.AttributeValue;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_price_plan_matrix_line_sq") })
 @NamedQueries({
-    @NamedQuery(name = "PricePlanMatrixLine.findByPricePlanMatrixVersion", query = "select p from PricePlanMatrixLine p where p.pricePlanMatrixVersion=:pricePlanMatrixVersion"),
+	@NamedQuery(name = "PricePlanMatrixLine.findByPricePlanMatrixVersion", query = "select distinct(p) from PricePlanMatrixLine p left join fetch p.pricePlanMatrixValues pv where p.pricePlanMatrixVersion=:pricePlanMatrixVersion"),
     @NamedQuery(name = "PricePlanMatrixLine.findByPricePlanMatrixVersionIds", query = "select p from PricePlanMatrixLine p where p.pricePlanMatrixVersion.id in (:ppmvIds)")})
 public class PricePlanMatrixLine extends AuditableEntity {
 
@@ -61,7 +61,7 @@ public class PricePlanMatrixLine extends AuditableEntity {
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     private BigDecimal value;
 
-    @OneToMany(mappedBy = "pricePlanMatrixLine", fetch = FetchType.EAGER, cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "pricePlanMatrixLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<PricePlanMatrixValue> pricePlanMatrixValues = new HashSet<>();
 
     @Column(name = "priority")

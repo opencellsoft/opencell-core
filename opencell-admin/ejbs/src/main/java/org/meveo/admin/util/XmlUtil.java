@@ -33,6 +33,7 @@ import org.xml.sax.SAXException;
  **/
 public class XmlUtil {
 
+	private XmlUtil(){}
 	public static boolean validate(String xml) {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setValidating(false);
@@ -40,6 +41,7 @@ public class XmlUtil {
 
 		DocumentBuilder builder;
 		try {
+			factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 			builder = factory.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
 			return false;

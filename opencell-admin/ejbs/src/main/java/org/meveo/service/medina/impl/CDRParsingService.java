@@ -76,7 +76,7 @@ public class CDRParsingService extends PersistenceService<EDR> {
     private boolean persistCDR = false;
 
     @PostConstruct
-    private void init() {
+    private void initialize() {
         persistCDR = "true".equals(ParamBeanFactory.getAppScopeInstance().getProperty("mediation.persistCDR", "false"));
 
     }

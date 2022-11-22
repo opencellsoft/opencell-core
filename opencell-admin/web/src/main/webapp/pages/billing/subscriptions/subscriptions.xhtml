@@ -38,7 +38,7 @@
                 entityView="userAccountDetail" propagateConversation="false" />
             <hftl:column label="#{messages['subscription.serviceInstances']}" field="serviceInstances" isList="true" valueLabelField="descriptionAndStatus" valueIdField="id"
                 objectIdParamName="serviceInstanceId" useCustomIdParam="false" entityView="serviceInstanceDetail" backView="subscriptions" />
-            <hftl:column label="#{messages['subscription.status']}" field="status.label" isMessage="true" />
+            <hftl:column label="#{messages['subscription.status']}" sortField="status" field="status.label" isMessage="true" />
             <!-- 			<hftl:actionsColumn useCustomIdParam="true" renderDeleteLink="false" -->
         </hftl:dataList>
 

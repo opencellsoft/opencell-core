@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -578,7 +579,7 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         boolean result = false;
         PricePlanMatrix pricePlanMatrix = findById(entity.getId());
         if (pricePlanMatrix != null) {
-            if (!equal(entity.getCode(), pricePlanMatrix.getCode())) {
+            if (!Objects.equals(entity.getCode(), pricePlanMatrix.getCode())) {
                 PricePlanMatrix existed = findByCode(entity.getCode());
                 if (existed != null) {
                     throw new BusinessException("Price plan " + entity.getCode() + " is existed!");
@@ -587,99 +588,99 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
                     result = true;
                 }
             }
-            if (!equal(entity.getDescription(), pricePlanMatrix.getDescription())) {
+            if (!Objects.equals(entity.getDescription(), pricePlanMatrix.getDescription())) {
                 pricePlanMatrix.setDescription(entity.getDescription());
                 result = true;
             }
-            if (!equal(entity.getEventCode(), pricePlanMatrix.getEventCode())) {
+            if (!Objects.equals(entity.getEventCode(), pricePlanMatrix.getEventCode())) {
                 pricePlanMatrix.setEventCode(entity.getEventCode());
                 result = true;
             }
-            if (!(equal(entity.getOfferTemplate(), pricePlanMatrix.getOfferTemplate()))) {
+            if (!(Objects.equals(entity.getOfferTemplate(), pricePlanMatrix.getOfferTemplate()))) {
                 pricePlanMatrix.setOfferTemplate(entity.getOfferTemplate());
                 result = true;
             }
-            if (!equal(entity.getSeller(), pricePlanMatrix.getSeller())) {
+            if (!Objects.equals(entity.getSeller(), pricePlanMatrix.getSeller())) {
                 pricePlanMatrix.setSeller(entity.getSeller());
                 result = true;
             }
-            if (!equal(entity.getAmountWithTax(), pricePlanMatrix.getAmountWithTax())) {
+            if (!Objects.equals(entity.getAmountWithTax(), pricePlanMatrix.getAmountWithTax())) {
                 pricePlanMatrix.setAmountWithTax(entity.getAmountWithTax());
                 result = true;
             }
-            if (!equal(entity.getAmountWithoutTax(), pricePlanMatrix.getAmountWithoutTax())) {
+            if (!Objects.equals(entity.getAmountWithoutTax(), pricePlanMatrix.getAmountWithoutTax())) {
                 pricePlanMatrix.setAmountWithoutTax(entity.getAmountWithoutTax());
                 result = true;
             }
-            if (!equal(entity.getAmountWithoutTaxEL(), pricePlanMatrix.getAmountWithoutTaxEL())) {
+            if (!Objects.equals(entity.getAmountWithoutTaxEL(), pricePlanMatrix.getAmountWithoutTaxEL())) {
                 pricePlanMatrix.setAmountWithoutTaxEL(entity.getAmountWithoutTaxEL());
                 result = true;
             }
-            if (!equal(entity.getAmountWithTaxEL(), pricePlanMatrix.getAmountWithTaxEL())) {
+            if (!Objects.equals(entity.getAmountWithTaxEL(), pricePlanMatrix.getAmountWithTaxEL())) {
                 pricePlanMatrix.setAmountWithTaxEL(entity.getAmountWithTaxEL());
                 result = true;
             }
-            if (!equal(entity.getStartRatingDate(), pricePlanMatrix.getStartRatingDate())) {
+            if (!Objects.equals(entity.getStartRatingDate(), pricePlanMatrix.getStartRatingDate())) {
                 pricePlanMatrix.setStartRatingDate(entity.getStartRatingDate());
                 result = true;
             }
-            if (!equal(entity.getEndRatingDate(), pricePlanMatrix.getEndRatingDate())) {
+            if (!Objects.equals(entity.getEndRatingDate(), pricePlanMatrix.getEndRatingDate())) {
                 pricePlanMatrix.setEndRatingDate(entity.getEndRatingDate());
                 result = true;
             }
-            if (!equal(entity.getCriteriaEL(), pricePlanMatrix.getCriteriaEL())) {
+            if (!Objects.equals(entity.getCriteriaEL(), pricePlanMatrix.getCriteriaEL())) {
                 pricePlanMatrix.setCriteriaEL(entity.getCriteriaEL());
                 result = true;
             }
-            if (!equal(entity.getTradingCountry(), pricePlanMatrix.getTradingCountry())) {
+            if (!Objects.equals(entity.getTradingCountry(), pricePlanMatrix.getTradingCountry())) {
                 pricePlanMatrix.setTradingCountry(entity.getTradingCountry());
                 result = true;
             }
-            if (!equal(entity.getTradingCurrency(), pricePlanMatrix.getTradingCurrency())) {
+            if (!Objects.equals(entity.getTradingCurrency(), pricePlanMatrix.getTradingCurrency())) {
                 pricePlanMatrix.setTradingCurrency(entity.getTradingCurrency());
                 result = true;
             }
-            if (!equal(entity.getCriteria1Value(), pricePlanMatrix.getCriteria1Value())) {
+            if (!Objects.equals(entity.getCriteria1Value(), pricePlanMatrix.getCriteria1Value())) {
                 pricePlanMatrix.setCriteria1Value(entity.getCriteria1Value());
                 result = true;
             }
-            if (!equal(entity.getCriteria2Value(), pricePlanMatrix.getCriteria2Value())) {
+            if (!Objects.equals(entity.getCriteria2Value(), pricePlanMatrix.getCriteria2Value())) {
                 pricePlanMatrix.setCriteria2Value(entity.getCriteria2Value());
                 result = true;
             }
-            if (!equal(entity.getCriteria3Value(), pricePlanMatrix.getCriteria3Value())) {
+            if (!Objects.equals(entity.getCriteria3Value(), pricePlanMatrix.getCriteria3Value())) {
                 pricePlanMatrix.setCriteria3Value(entity.getCriteria3Value());
                 result = true;
             }
-            if (!equal(entity.getPriority(), pricePlanMatrix.getPriority())) {
+            if (!Objects.equals(entity.getPriority(), pricePlanMatrix.getPriority())) {
                 pricePlanMatrix.setPriority(entity.getPriority());
                 result = true;
             }
-            if (!equal(entity.getMinQuantity(), pricePlanMatrix.getMinQuantity())) {
+            if (!Objects.equals(entity.getMinQuantity(), pricePlanMatrix.getMinQuantity())) {
                 pricePlanMatrix.setMinQuantity(entity.getMinQuantity());
                 result = true;
             }
-            if (!equal(entity.getMaxQuantity(), pricePlanMatrix.getMaxQuantity())) {
+            if (!Objects.equals(entity.getMaxQuantity(), pricePlanMatrix.getMaxQuantity())) {
                 pricePlanMatrix.setMaxQuantity(entity.getMaxQuantity());
                 result = true;
             }
-            if (!equal(entity.getStartSubscriptionDate(), pricePlanMatrix.getStartSubscriptionDate())) {
+            if (!Objects.equals(entity.getStartSubscriptionDate(), pricePlanMatrix.getStartSubscriptionDate())) {
                 pricePlanMatrix.setStartSubscriptionDate(entity.getStartSubscriptionDate());
                 result = true;
             }
-            if (!equal(entity.getEndSubscriptionDate(), pricePlanMatrix.getEndSubscriptionDate())) {
+            if (!Objects.equals(entity.getEndSubscriptionDate(), pricePlanMatrix.getEndSubscriptionDate())) {
                 pricePlanMatrix.setEndSubscriptionDate(entity.getEndSubscriptionDate());
                 result = true;
             }
-            if (!equal(entity.getMaxSubscriptionAgeInMonth(), pricePlanMatrix.getMaxSubscriptionAgeInMonth())) {
+            if (!Objects.equals(entity.getMaxSubscriptionAgeInMonth(), pricePlanMatrix.getMaxSubscriptionAgeInMonth())) {
                 pricePlanMatrix.setMaxSubscriptionAgeInMonth(entity.getMaxSubscriptionAgeInMonth());
                 result = true;
             }
-            if (!equal(entity.getMinSubscriptionAgeInMonth(), pricePlanMatrix.getMinSubscriptionAgeInMonth())) {
+            if (!Objects.equals(entity.getMinSubscriptionAgeInMonth(), pricePlanMatrix.getMinSubscriptionAgeInMonth())) {
                 pricePlanMatrix.setMinSubscriptionAgeInMonth(entity.getMinSubscriptionAgeInMonth());
                 result = true;
             }
-            if (!equal(entity.getValidityCalendar(), pricePlanMatrix.getValidityCalendar())) {
+            if (!Objects.equals(entity.getValidityCalendar(), pricePlanMatrix.getValidityCalendar())) {
                 pricePlanMatrix.setValidityCalendar(entity.getValidityCalendar());
                 result = true;
             }
@@ -690,12 +691,6 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         return result;
     }
 
-    public boolean equal(Object obj1, Object obj2) {
-        if (obj1 == null && obj2 == null) {
-            return true;
-        }
-        return obj1 != null ? obj1.equals(obj2) : (obj2 != null ? false : true);
-    }
 
     public synchronized void duplicate(PricePlanMatrix pricePlan) throws BusinessException {
         pricePlan = refreshOrRetrieve(pricePlan);

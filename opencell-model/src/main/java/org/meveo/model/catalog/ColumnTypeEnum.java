@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.cpq.AttributeValue;
 
 
@@ -11,13 +12,14 @@ public enum ColumnTypeEnum {
     String {
         @Override
         public boolean valueMatch(PricePlanMatrixValue pricePlanMatrixValue, AttributeValue attributeValue) {
-            if (StringUtils.isEmpty(pricePlanMatrixValue.getStringValue())) {
+        	String multiValuesAttributeSeparator = ParamBean.getInstance().getProperty("attribute.multivalues.separator", ";");
+            if (attributeValue.getStringValue() == null || pricePlanMatrixValue.getStringValue() == null) {
                 return true;
             }
             switch (attributeValue.getAttribute().getAttributeType()) {
                 case LIST_MULTIPLE_TEXT:
                 case LIST_TEXT: {
-                    return Stream.of(attributeValue.getStringValue().split(";"))
+                    return Stream.of(attributeValue.getStringValue().split(multiValuesAttributeSeparator))
                             .anyMatch(value -> value.equals(pricePlanMatrixValue.getStringValue()));
                 }
                 case TEXT:
@@ -52,6 +54,7 @@ public enum ColumnTypeEnum {
     Long {
         @Override
         public boolean valueMatch(PricePlanMatrixValue pricePlanMatrixValue, AttributeValue attributeValue) {
+        	String multiValuesAttributeSeparator = ParamBean.getInstance().getProperty("attribute.multivalues.separator", ";");
             if (attributeValue.getDoubleValue() == null || pricePlanMatrixValue.getLongValue() == null) {
                 return true;
             }
@@ -64,7 +67,7 @@ public enum ColumnTypeEnum {
                 }
                 case LIST_NUMERIC:
                 case LIST_MULTIPLE_NUMERIC: {
-                    return Stream.of(attributeValue.getStringValue().split(";"))
+                    return Stream.of(attributeValue.getStringValue().split(multiValuesAttributeSeparator))
                             .map(value -> BigDecimal.valueOf(java.lang.Double.parseDouble(value)))
                             .anyMatch(number -> number.equals(BigDecimal.valueOf(pricePlanMatrixValue.getLongValue().doubleValue())));
                 }
@@ -82,6 +85,7 @@ public enum ColumnTypeEnum {
     Double {
         @Override
         public boolean valueMatch(PricePlanMatrixValue pricePlanMatrixValue, AttributeValue attributeValue) {
+        	String multiValuesAttributeSeparator = ParamBean.getInstance().getProperty("attribute.multivalues.separator", ";");
             if(pricePlanMatrixValue.getDoubleValue() == null && pricePlanMatrixValue.getLongValue() == null && StringUtils.isEmpty(pricePlanMatrixValue.getStringValue()))
                 return true;
             Object quote =  attributeValue.getAttribute().getAttributeType().getValue(attributeValue);
@@ -104,7 +108,7 @@ public enum ColumnTypeEnum {
                     if (attributeValue.getStringValue() == null) {
                         return true;
                     }
-                    return Stream.of(pricePlanMatrixValue.getStringValue().split(";"))
+                    return Stream.of(pricePlanMatrixValue.getStringValue().split(multiValuesAttributeSeparator))
                             .map(number -> BigDecimal.valueOf(java.lang.Double.parseDouble(number)))
                             .anyMatch(number -> {
                                 double value = parseValue(quote);
@@ -145,18 +149,41 @@ public enum ColumnTypeEnum {
     Range_Numeric {
         @Override
         public boolean valueMatch(PricePlanMatrixValue pricePlanMatrixValue, AttributeValue attributeValue) {
-            if (attributeValue.getDoubleValue() == null && (pricePlanMatrixValue.getFromDoubleValue() == null && pricePlanMatrixValue.getToDoubleValue() == null)) {
+            boolean excludeMaxValue =
+                    ParamBean.getInstance().getPropertyAsBoolean("pricePlan.rangeMode.excludeTheMaxValue", true);
+            if (attributeValue.getDoubleValue() == null && (pricePlanMatrixValue.getFromDoubleValue() == null
+                    && pricePlanMatrixValue.getToDoubleValue() == null)) {
                 return true;
             }
-            if (attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() != null && pricePlanMatrixValue.getToDoubleValue() == null &&  attributeValue.getDoubleValue() >= pricePlanMatrixValue.getFromDoubleValue()) {
+            if (attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() != null
+                    && pricePlanMatrixValue.getToDoubleValue() == null
+                    &&  attributeValue.getDoubleValue() >= pricePlanMatrixValue.getFromDoubleValue()) {
                 return true;
             }
-            if (attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() == null && pricePlanMatrixValue.getToDoubleValue() != null &&  attributeValue.getDoubleValue() <= pricePlanMatrixValue.getToDoubleValue()) {
-                return true;
+            if (attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() == null
+                    && pricePlanMatrixValue.getToDoubleValue() != null) {
+                if(excludeMaxValue) {
+                    if(attributeValue.getDoubleValue() < pricePlanMatrixValue.getToDoubleValue()) {
+                        return true;
+                    }
+                } else {
+                    if(attributeValue.getDoubleValue() <= pricePlanMatrixValue.getToDoubleValue()) {
+                        return true;
+                    }
+                }
             }
-            if(attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() != null && pricePlanMatrixValue.getToDoubleValue() != null  && attributeValue.getDoubleValue() >= pricePlanMatrixValue.getFromDoubleValue()
-                    && attributeValue.getDoubleValue() <= pricePlanMatrixValue.getToDoubleValue()){
-                return true;
+            if(attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() != null
+                    && pricePlanMatrixValue.getToDoubleValue() != null
+                    && attributeValue.getDoubleValue() >= pricePlanMatrixValue.getFromDoubleValue()){
+                if(excludeMaxValue) {
+                    if(attributeValue.getDoubleValue() < pricePlanMatrixValue.getToDoubleValue()) {
+                        return true;
+                    }
+                } else {
+                    if(attributeValue.getDoubleValue() <= pricePlanMatrixValue.getToDoubleValue()) {
+                        return true;
+                    }
+                }
             }
            return false;
 

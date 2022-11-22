@@ -1,5 +1,6 @@
 package org.meveo.api.cpq;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -216,11 +217,14 @@ public class CommercialOrderApi extends BaseApi {
 		order.setOrderProgress(orderDto.getOrderProgress()!=null?orderDto.getOrderProgress():0);
 		order.setProgressDate(new Date());
 		order.setOrderDate(orderDto.getOrderDate()!=null?orderDto.getOrderDate():new Date());
-		
-    	if(orderDto.getDeliveryDate()!=null && orderDto.getDeliveryDate().before(new Date())) {
-    		throw new MeveoApiException("Delivery date should be in the future");	
-    	}
-    	order.setDeliveryDate(orderDto.getDeliveryDate());
+
+		Date today = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+		if (orderDto.getDeliveryDate() != null && orderDto.getDeliveryDate().before(today) && !formatter.format(orderDto.getDeliveryDate()).equals(formatter.format(today))) {
+			throw new MeveoApiException("Delivery date can't be in the past");
+		}
+		order.setDeliveryDate(orderDto.getDeliveryDate());
         
 		order.setCustomerServiceBegin(orderDto.getCustomerServiceBegin());
 		order.setCustomerServiceDuration(orderDto.getCustomerServiceDuration());
@@ -686,7 +690,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 				.filter(orderOffer -> orderOffer.getUserAccount() == null)
 				.findFirst();
 		if(order.getUserAccount() == null && optionalOrderOfferWithoutUA.isPresent()){
-			throw new MissingParameterException("Customer has several consumers. You must either select a default consumer on the order, or select a consumer for each order line");
+			throw new MissingParameterException("Customer has no consumer. You must create a consumer for this customer in order to validate the order");
 		}
 		ParamBean paramBean = ParamBean.getInstance();
 		String sellerCode = getSelectedSeller(order).getCode();
@@ -879,16 +883,16 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
         	}	
         	orderOffer.setOfferTemplate(offerTemplate);
     	}
-    	
+
+		DiscountPlan discountPlan=null;
 		if (!StringUtils.isBlank(orderOfferDto.getDiscountPlanCode())) {
-			DiscountPlan discountPlan=null;
 			discountPlan = discountPlanService.findByCode(orderOfferDto.getDiscountPlanCode());
 			if (discountPlan == null) {
 				throw new EntityDoesNotExistsException(DiscountPlan.class, orderOfferDto.getDiscountPlanCode());
 			}
-			orderOffer.setDiscountPlan(discountPlan);
 		}
-		
+		orderOffer.setDiscountPlan(discountPlan);
+
 		if(!StringUtils.isBlank(orderOfferDto.getUserAccountCode())) {
 			UserAccount userAccount = userAccountService.findByCode(orderOfferDto.getUserAccountCode());
 			if (userAccount == null) {

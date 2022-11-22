@@ -15,6 +15,7 @@ import javax.persistence.TypedQuery;
 
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.CpqQuote;
@@ -39,7 +40,7 @@ public class AttributeService extends BusinessService<Attribute>{
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T evaluateElExpressionAttribute(String expression, Product product, OfferTemplate offer, CpqQuote quote, Class<T> resultType) throws BusinessException {
+    public <T> T evaluateElExpressionAttribute(String expression, Product product, OfferTemplate offer, CpqQuote quote, WalletOperation walletOperation, Class<T> resultType) throws BusinessException {
         Map<Object, Object> params = new HashMap<>();
         if (Strings.isBlank(expression)) {
             return null;
@@ -52,6 +53,9 @@ public class AttributeService extends BusinessService<Attribute>{
         }
         if (expression.indexOf(ValueExpressionWrapper.VAR_CPQ_QUOTE) >= 0 && quote != null) {
             params.put(ValueExpressionWrapper.VAR_CPQ_QUOTE, quote);
+        }
+        if (expression.indexOf(ValueExpressionWrapper.VAR_WALLET_OPERATION) >= 0 && walletOperation != null) {
+            params.put(ValueExpressionWrapper.VAR_WALLET_OPERATION, walletOperation);
         }
         if (resultType == null) {
             resultType = (Class<T>) String.class;

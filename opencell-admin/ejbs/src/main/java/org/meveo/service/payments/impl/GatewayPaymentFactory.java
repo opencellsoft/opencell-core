@@ -41,13 +41,14 @@ public class GatewayPaymentFactory implements Serializable {
 
         PaymentGatewayTypeEnum paymentType = paymentGateway.getType();
         if (paymentType == PaymentGatewayTypeEnum.CUSTOM) { 
-            gatewayPaymentInterface = new CustomApiGatewayPayment((PaymentScriptInterface) scriptInstanceService.getScriptInstance(paymentGateway.getScriptInstance().getCode()));           
+            gatewayPaymentInterface = new CustomApiGatewayPayment((PaymentScriptInterface) scriptInstanceService.getScriptInstance(paymentGateway.getScriptInstance().getCode()));
+            gatewayPaymentInterface.setPaymentGateway(paymentGateway);
         }
         if (paymentType == PaymentGatewayTypeEnum.NATIF) {
             Class<?> clazz = Class.forName(paymentGateway.getImplementationClassName());
             gatewayPaymentInterface = (GatewayPaymentInterface) clazz.newInstance();
+            gatewayPaymentInterface.setPaymentGateway(paymentGateway);
         }
-        gatewayPaymentInterface.setPaymentGateway(paymentGateway);
         return gatewayPaymentInterface;
     }
 }

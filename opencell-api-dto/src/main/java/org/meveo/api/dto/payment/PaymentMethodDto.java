@@ -351,6 +351,9 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
         case CARD:
             pmEntity = new CardPaymentMethod(customerAccount, disabledBool, getAlias(), getCardNumber(), getOwner(), isPreferred(), getIssueNumber(), getYearExpiration(),
                 getMonthExpiration(), getCardType());
+            if (getTokenId() != null) {
+                pmEntity.setTokenId(getTokenId());
+            }
             break;
 
         case DIRECTDEBIT:
