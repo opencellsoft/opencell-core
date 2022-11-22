@@ -39,6 +39,8 @@ public class Theme extends BusinessEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;
 
+    private String name;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="header")
     private CustomStyle header;
@@ -55,6 +57,13 @@ public class Theme extends BusinessEntity {
     @Temporal(TemporalType.DATE)
     private Date createdOn;
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public CustomStyle getHeader() {
         return header;

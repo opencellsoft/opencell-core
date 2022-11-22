@@ -27,11 +27,11 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.subscriptionTunnel.CustomStyle;
 import org.meveo.model.subscriptionTunnel.Theme;
-import org.meveo.model.subscriptionTunnel.TunnelCustomization;
 import org.meveo.service.tunnel.ThemeService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.Date;
 
 /**
  * @author Ilham CHAFIK
@@ -54,14 +54,8 @@ public class ThemeApi extends BaseCrudApi<Theme, ThemeDto> {
     private void dtoToEntity(ThemeDto dto, Theme entity) {
 
         entity.setCode(dto.getCode());
-        if (dto.getBody() != null) {
-            entity.setBody(customStyleApi.create(dto.getBody()));
-        }
-        if (dto.getHeader() != null) {
-            entity.setHeader(customStyleApi.create(dto.getHeader()));
-        }
-        if (dto.getFooter() != null) {
-            entity.setFooter(customStyleApi.create(dto.getFooter()));
+        if (dto.getName() != null) {
+            entity.setName(dto.getName());
         }
         if (dto.getCreatedOn() != null) {
             entity.setCreatedOn(dto.getCreatedOn());
@@ -81,6 +75,15 @@ public class ThemeApi extends BaseCrudApi<Theme, ThemeDto> {
         Theme entity = new Theme();
 
         dtoToEntity(postData, entity);
+
+        CustomStyle header = customStyleApi.create(postData.getHeader());
+        CustomStyle body = customStyleApi.create(postData.getBody());
+        CustomStyle footer = customStyleApi.create(postData.getFooter());
+
+        entity.setHeader(header);
+        entity.setBody(body);
+        entity.setFooter(footer);
+        entity.setCreatedOn(new Date());
         themeService.create(entity);
 
         return entity;

@@ -18,12 +18,13 @@
 
 package org.meveo.api.dto.tunnel;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.model.subscriptionTunnel.CustomEnum;
+import org.meveo.model.subscriptionTunnel.CustomStyle;
+import org.meveo.model.subscriptionTunnel.HypertextSection;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
@@ -55,7 +56,75 @@ public class CustomStyleDto extends BusinessEntityDto {
 
     private String secondaryColor;
 
+    @XmlElementWrapper(name = "hypertextSections")
+    @XmlElement(name = "hypertextSections")
+    @Schema(description = "list of hypertext sections")
+    private List<HypertextSectionDto> hypertextSections;
+
     private CustomEnum type;
+
+    public CustomStyleDto() {
+    }
+
+    public CustomStyleDto(String logo,
+                          String favIcon,
+                          String font,
+                          String backgroundColor,
+                          String textColor,
+                          Map<String, String> backgroundImage,
+                          String primaryColor,
+                          String secondaryColor,
+                          List<HypertextSectionDto> hypertextSections,
+                          CustomEnum type) {
+        this.logo = logo;
+        this.favIcon = favIcon;
+        this.font = font;
+        this.backgroundColor = backgroundColor;
+        this.textColor = textColor;
+        this.backgroundImage = backgroundImage;
+        this.primaryColor = primaryColor;
+        this.secondaryColor = secondaryColor;
+        this.hypertextSections = hypertextSections;
+        this.type = type;
+    }
+
+    public CustomStyleDto(CustomStyle customStyle) {
+        code = customStyle.getCode();
+        id = customStyle.getId();
+
+        if (customStyle.getLogo() != null) {
+            logo = customStyle.getLogo();
+        }
+        if (customStyle.getFavIcon() != null) {
+            favIcon = customStyle.getFavIcon();
+        }
+        if (customStyle.getFont() != null) {
+            font = customStyle.getFont();
+        }
+        if (customStyle.getBackgroundColor() != null) {
+            backgroundColor = customStyle.getBackgroundColor();
+        }
+        if (customStyle.getTextColor() != null) {
+            textColor = customStyle.getTextColor();
+        }
+        if (customStyle.getBackgroundImage() != null) {
+            backgroundImage = customStyle.getBackgroundImage();
+        }
+        if (customStyle.getPrimaryColor() != null) {
+            primaryColor = customStyle.getPrimaryColor();
+        }
+        if (customStyle.getSecondaryColor() != null) {
+            secondaryColor = customStyle.getSecondaryColor();
+        }
+        if (customStyle.getType() != null) {
+            type = customStyle.getType();
+        }
+        if (customStyle.getHypertextSections() != null) {
+            for (HypertextSection section: customStyle.getHypertextSections()) {
+                hypertextSections.add(new HypertextSectionDto(section));
+            }
+        }
+    }
 
     public String getLogo() {
         return logo;
@@ -127,5 +196,13 @@ public class CustomStyleDto extends BusinessEntityDto {
 
     public void setType(CustomEnum type) {
         this.type = type;
+    }
+
+    public List<HypertextSectionDto> getHypertextSections() {
+        return hypertextSections;
+    }
+
+    public void setHypertextSections(List<HypertextSectionDto> hypertextSections) {
+        this.hypertextSections = hypertextSections;
     }
 }
