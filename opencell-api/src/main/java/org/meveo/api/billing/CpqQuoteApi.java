@@ -1542,15 +1542,15 @@ public class CpqQuoteApi extends BaseApi {
 //            }
 //
 //        }
-        String accountingArticleCode = null;
+        String accountingArticleKey  = null;
         clearOfferPrices(quoteOffer); 
         for (WalletOperation wo : walletOperations) {
-            accountingArticleCode = wo.getAccountingArticle().getCode();
-            if (!quoteArticleLines.containsKey(accountingArticleCode) || wo.getDiscountPlan() != null ) {
+            accountingArticleKey  = wo.getAccountingArticle().getCode() + "_" + wo.getServiceInstance().getQuoteProduct().getId();
+            if (!quoteArticleLines.containsKey(accountingArticleKey ) || wo.getDiscountPlan() != null ) {
             	quoteArticleLine=createQuoteArticleLine(wo, quoteOffer.getQuoteVersion());
-            	quoteArticleLines.put(accountingArticleCode, quoteArticleLine);
+            	quoteArticleLines.put(accountingArticleKey , quoteArticleLine);
             }else {
-            	quoteArticleLine=quoteArticleLines.get(accountingArticleCode);
+            	quoteArticleLine=quoteArticleLines.get(accountingArticleKey );
                 quoteArticleLine.setQuantity(quoteArticleLine.getQuantity().add(wo.getQuantity()));
             }
             QuotePrice quotePrice = new QuotePrice();
