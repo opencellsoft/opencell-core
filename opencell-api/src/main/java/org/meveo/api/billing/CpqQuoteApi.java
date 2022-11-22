@@ -1616,15 +1616,15 @@ public class CpqQuoteApi extends BaseApi {
 //            }
 //
 //        }
-        String accountingArticleCode = null;
+        String accountingArticleKey  = null;
         clearOfferPrices(quoteOffer); 
         for (WalletOperation wo : walletOperations) {
-            accountingArticleCode = wo.getAccountingArticle().getCode();
-            if (!quoteArticleLines.containsKey(accountingArticleCode) || wo.getDiscountPlan() != null ) {
+            accountingArticleKey = wo.getAccountingArticle().getCode() + "_" + wo.getServiceInstance().getQuoteProduct().getId();
+            if (!quoteArticleLines.containsKey(accountingArticleKey) || wo.getDiscountPlan() != null ) {
             	quoteArticleLine=createQuoteArticleLine(wo, quoteOffer.getQuoteVersion());
-            	quoteArticleLines.put(accountingArticleCode, quoteArticleLine);
+            	quoteArticleLines.put(accountingArticleKey  , quoteArticleLine);
             }else {
-                quoteArticleLine=quoteArticleLines.get(accountingArticleCode);
+                quoteArticleLine=quoteArticleLines.get(accountingArticleKey);
             	var isGroupedBy = quoteArticleLine.getQuoteProduct() != null && 
             	                      wo.getServiceInstance() != null && 
             	                      quoteArticleLine.getQuoteProduct().getId() == wo.getServiceInstance().getId();
@@ -1632,7 +1632,7 @@ public class CpqQuoteApi extends BaseApi {
             	    quoteArticleLine.setQuantity(quoteArticleLine.getQuantity().add(wo.getQuantity()));
             	else {
             	    quoteArticleLine=createQuoteArticleLine(wo, quoteOffer.getQuoteVersion());
-                    quoteArticleLines.put(accountingArticleCode, quoteArticleLine);
+                    quoteArticleLines.put(accountingArticleKey, quoteArticleLine);
             	}
             }
             QuotePrice quotePrice = new QuotePrice();
