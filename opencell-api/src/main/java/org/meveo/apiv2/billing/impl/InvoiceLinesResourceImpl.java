@@ -31,11 +31,9 @@ public class InvoiceLinesResourceImpl implements InvoiceLinesResource {
     @Override
     public Response markForAdjustment(@NotNull InvoiceLinesToMarkAdjustment invoiceLinesToMark) {
     	List<Long> invoiceLineIds = invoiceLinesApiService.getInvoiceLineIds(invoiceLinesToMark);
-    	
     	int nbInvoiceLinesUnmarked = 0;
     	if(!CollectionUtils.isEmpty(invoiceLineIds))
     		nbInvoiceLinesUnmarked = invoiceLinesApiService.markInvoiceLinesForAdjustment(invoiceLinesToMark, invoiceLineIds);
-    	
         Map<String, Object> response = new HashMap<>();
         response.put("actionStatus", Collections.singletonMap("status", "SUCCESS"));
         response.put("message", nbInvoiceLinesUnmarked+" new invoiceLine(s) marked TO_ADJUST");
@@ -43,14 +41,11 @@ public class InvoiceLinesResourceImpl implements InvoiceLinesResource {
     }
     
     @Override
-    public Response unmarkForAdjustment(@NotNull InvoiceLinesToMarkAdjustment invoiceLinesToUnmark) {
-    	
-    	List<Long> invoiceLineIds = invoiceLinesApiService.getInvoiceLineIds(invoiceLinesToUnmark);
-    	
+    public Response unmarkForAdjustment(@NotNull InvoiceLinesToMarkAdjustment invoiceLinesToUnmark) {   	
+    	List<Long> invoiceLineIds = invoiceLinesApiService.getInvoiceLineIds(invoiceLinesToUnmark);   	
     	int nbInvoiceLinesUnmarked = 0;
     	if(!CollectionUtils.isEmpty(invoiceLineIds))
-    		nbInvoiceLinesUnmarked = invoiceLinesApiService.unmarkInvoiceLinesForAdjustment(invoiceLinesToUnmark, invoiceLineIds);
-    	
+    		nbInvoiceLinesUnmarked = invoiceLinesApiService.unmarkInvoiceLinesForAdjustment(invoiceLinesToUnmark, invoiceLineIds);    	
         Map<String, Object> response = new HashMap<>();
         response.put("actionStatus", Collections.singletonMap("status", "SUCCESS"));
         response.put("message", nbInvoiceLinesUnmarked+" new invoiceLine(s) marked NOT_ADJUSTED");
