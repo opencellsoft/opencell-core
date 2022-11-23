@@ -98,8 +98,8 @@ public class MediationApiService {
 
     private static final String IMPOSSIBLE_TO_UPDATE_CDR_WITH_STATUS_OPEN_TO_TO_REPROCESS_PROCESSED_CLOSED = "Impossible to update CDR with status OPEN to TO_REPROCESS, PROCESSED, CLOSED";
 	private static final String IMPOSSIBLE_TO_UPDATE_CDR_WITH_STATUS_S_TO_OPEN_PROCESSED_CLOSED = "Impossible to update CDR with status %s to OPEN, PROCESSED, CLOSED";
-	private static final String IMPOSSIBLE_TO_UPDATE_CDR_WITH_STATUS_DISCARDED_TO_OPEN_TO_REPROCESS_PROCESSED_CLOSED = "Impossible to update CDR with status DISCARDED to OPEN, TO_REPROCESS, PROCESSED, CLOSED";
-	private static final String IMPOSSIBLE_TO_UPDATE_CDR_WITH_THE_STATUS_REPROCESSED_TO_ANOTHER_STATUS = "Impossible to update CDR with the status REPROCESSED to another status.";
+	private static final String IMPOSSIBLE_TO_UPDATE_CDR_WITH_STATUS_DISCARDED_TO_OPEN_TO_REPROCESS_PROCESSED_CLOSED = "Impossible to update CDR with status DISCARDED to ERROR, TO_REPROCESS, PROCESSED, CLOSED";
+	private static final String IMPOSSIBLE_TO_UPDATE_CDR_WITH_THE_STATUS_REPROCESSED_TO_ANOTHER_STATUS = "Impossible to update CDR with the status PROCESSED to another status.";
 	private static final String IMPOSSIBLE_TO_UPDATE_CDR_WITH_THE_STATUS_CLOSED_TO_ANOTHER_STATUS = "Impossible to update CDR with the status CLOSED to another status.";
 
 	@Inject
@@ -847,10 +847,6 @@ public class MediationApiService {
                         }
                         break;
                     case ERROR:
-                        if(statusToUpdated == CDRStatusEnum.OPEN || statusToUpdated == CDRStatusEnum.PROCESSED || statusToUpdated == CDRStatusEnum.CLOSED) {
-                            errorStatus = "Impossible to update CDR with status ERROR to OPEN, PROCESSED, CLOSED for cdr line:" + cdr.toCsv();
-                        }
-                        break;
                     case TO_REPROCESS :
                         if(statusToUpdated == CDRStatusEnum.OPEN || statusToUpdated == CDRStatusEnum.PROCESSED || statusToUpdated == CDRStatusEnum.CLOSED) {
                             errorStatus = String.format(IMPOSSIBLE_TO_UPDATE_CDR_WITH_STATUS_S_TO_OPEN_PROCESSED_CLOSED, cdr.getStatus());
