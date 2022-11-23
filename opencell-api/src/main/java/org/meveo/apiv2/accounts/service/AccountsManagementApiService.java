@@ -1,10 +1,13 @@
 package org.meveo.apiv2.accounts.service;
 
+import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -13,39 +16,52 @@ import javax.ws.rs.NotFoundException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.util.Strings;
-import org.meveo.api.dto.RecurringChargeDto;
+import org.meveo.admin.job.DateRange;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.accounts.ConsumerInput;
+import org.meveo.apiv2.accounts.CounterInstanceDto;
 import org.meveo.apiv2.accounts.OpenTransactionsActionEnum;
 import org.meveo.apiv2.accounts.ParentInput;
 import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.logging.AuditLog;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
+import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.catalog.CounterTypeEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.audit.logging.AuditLogService;
+import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
+import org.meveo.service.billing.impl.CounterInstanceService;
+import org.meveo.service.billing.impl.CounterPeriodService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
+import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UsageChargeInstanceService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.WalletService;
+import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.slf4j.Logger;
@@ -86,7 +102,20 @@ public class AccountsManagementApiService {
 
     @Inject
     private AuditableFieldService auditableFieldService;
-    
+
+    @Inject
+    private CounterTemplateService counterTemplateService;
+
+    @Inject
+    private BillingAccountService billingAccountService;
+
+    @Inject
+    private ServiceInstanceService serviceInstanceService;
+
+    @Inject
+    private CounterInstanceService counterInstanceService;
+
+
     @Inject
     private ChargeInstanceService<ChargeInstance> chargeInstanceService;
     @Inject
@@ -95,6 +124,8 @@ public class AccountsManagementApiService {
     private OneShotChargeInstanceService oneShotChargeInstanceService;
     @Inject
     private RecurringChargeInstanceService recurringChargeInstanceService;
+    @Inject
+    private CounterPeriodService counterPeriodService;
 
     /**
      * Transfer the subscription from a consumer to an other consumer (UA)
@@ -254,6 +285,148 @@ public class AccountsManagementApiService {
         auditableFieldService.createFieldHistory(customerAccount, "customer", AuditChangeTypeEnum.OTHER, newCustomerParent.getCode(), oldCustomerParent.getCode());
         createAuditLog(CustomerAccount.class.getName());
         log.info("the parent customer for the customer account {}, changed from {} to {}", customerAccount.getCode(), oldCustomerParent.getCode(), newCustomerParent.getCode());
+    }
+
+    public Long createCounterInstance(CounterInstanceDto dto) {
+        CounterInstance counterInstance = new CounterInstance();
+
+        // At least one of those value is mandatory : customerAccountCode, billingAccountCode, userAccountCode, subscriptionCode, serviceInstanceCode
+        if (StringUtils.isBlank(dto.getCustomerAccountCode()) && StringUtils.isBlank(dto.getBillingAccountCode()) && StringUtils.isBlank(dto.getUserAccountCode())
+                && StringUtils.isBlank(dto.getSubscriptionCode()) && StringUtils.isBlank(dto.getServiceInstanceCode())) {
+            throw new BusinessApiException("At least one of those value is mandatory : customerAccountCode, billingAccountCode, userAccountCode, subscriptionCode, serviceInstanceCode");
+
+        }
+
+        if (StringUtils.isNotBlank(dto.getCounterTemplateCode())) {
+            CounterTemplate counterTemplate = counterTemplateService.findByCode(dto.getCounterTemplateCode());
+
+            if (counterTemplate == null) {
+                throw new EntityDoesNotExistsException("No CounterTemplate found with code : " + dto.getCounterTemplateCode());
+            }
+
+            counterInstance.setCounterTemplate(counterTemplate);
+        }
+
+        if (StringUtils.isNotBlank(dto.getCustomerAccountCode())) {
+            CustomerAccount customerAccount = customerAccountService.findByCode(dto.getCustomerAccountCode());
+
+            if (customerAccount == null) {
+                throw new EntityDoesNotExistsException("No CustomerAccount found with code : " + dto.getCustomerAccountCode());
+            }
+
+            counterInstance.setCustomerAccount(customerAccount);
+        }
+
+        if (StringUtils.isNotBlank(dto.getBillingAccountCode())) {
+            BillingAccount billingAccount = billingAccountService.findByCode(dto.getBillingAccountCode());
+
+            if (billingAccount == null) {
+                throw new EntityDoesNotExistsException("No BillingAccount found with code : " + dto.getBillingAccountCode());
+            }
+
+            counterInstance.setBillingAccount(billingAccount);
+        }
+
+        if (StringUtils.isNotBlank(dto.getUserAccountCode())) {
+            UserAccount userAccount = userAccountService.findByCode(dto.getUserAccountCode());
+
+            if (userAccount == null) {
+                throw new EntityDoesNotExistsException("No UserAccount found with code : " + dto.getUserAccountCode());
+            }
+
+            counterInstance.setUserAccount(userAccount);
+        }
+
+        if (StringUtils.isNotBlank(dto.getSubscriptionCode())) {
+            Subscription subscription = subscriptionService.findByCode(dto.getSubscriptionCode());
+
+            if (subscription == null) {
+                throw new EntityDoesNotExistsException("No Subscription found with code : " + dto.getSubscriptionCode());
+            }
+
+            counterInstance.setSubscription(subscription);
+        }
+
+        if (StringUtils.isNotBlank(dto.getServiceInstanceCode())) {
+            ServiceInstance serviceInstance = serviceInstanceService.findByCode(dto.getServiceInstanceCode());
+
+            if (serviceInstance == null) {
+                throw new EntityDoesNotExistsException("No ServiceInstance found with code : " + dto.getServiceInstanceCode());
+            }
+
+            counterInstance.setServiceInstance(serviceInstance);
+        }
+
+        Optional.ofNullable(dto.getChargeInstances()).orElse(Collections.emptySet()).forEach(chargeI -> {
+            if (StringUtils.isNotBlank(chargeI)) {
+                ChargeInstance chargeInstance = chargeInstanceService.findByCode(chargeI);
+
+                if (chargeInstance == null) {
+                    throw new EntityDoesNotExistsException("No ChargeInstance found with code : " + chargeI);
+                }
+
+                if (chargeInstance instanceof UsageChargeInstance) {
+                    counterInstance.getUsageChargeInstances().add((UsageChargeInstance) chargeInstance);
+                } else {
+                    counterInstance.getChargeInstances().add(chargeInstance);
+                }
+
+            }
+        });
+
+        List<DateRange> periodes = new ArrayList<>();
+
+        Optional.ofNullable(dto.getCounterPeriods()).orElse(Collections.emptySet()).forEach(periodDto -> {
+            Date startP = DateUtils.setTimeToZero(periodDto.getPeriodStartDate());
+            Date endP = DateUtils.setTimeToZero(periodDto.getPeriodEndDate());
+            if (endP != null && startP != null
+                    && endP.before(startP)) {
+                throw new BusinessApiException("Invalid period dates : Start must be before End [start=" + formatDate(startP) + " - end=" + formatDate(endP) + "]");
+            }
+
+            // check period cheauvauchement
+            periodes.forEach(dateRange -> {
+                Date start = DateUtils.setTimeToZero(dateRange.getFrom());
+                Date end = DateUtils.setTimeToZero(dateRange.getTo());
+                if (((start.before(startP) || start.equals(startP)) && end.after(startP) && (end.before(endP) || end.equals(endP)))
+                        || (((start.after(startP) || start.equals(startP)) && start.before(endP)) && (end.after(endP) || end.equals(endP)))
+                        || (start.equals(startP) && end.equals(endP))
+                        || (start.before(startP) && end.after(startP) && end.after(endP))
+                        || (start.after(startP) && end.after(startP) && end.before(endP))
+                ) {
+                    throw new BusinessApiException("No overlapping should occur between counter Date Periods : [start=" + formatDate(startP) + " - end=" + formatDate(endP) + "]" +
+                            " and [start=" + formatDate(start) + " - end=" + formatDate(end) + "]");
+                }
+            });
+
+            CounterPeriod period = new CounterPeriod();
+            period.setCode(periodDto.getCode());
+            period.setPeriodStartDate(startP);
+            period.setPeriodEndDate(endP);
+            period.setValue(periodDto.getValue());
+            period.setCounterType(periodDto.getCounterType() !=null ? periodDto.getCounterType() : CounterTypeEnum.USAGE);
+            period.setLevel(periodDto.getLevel());
+            period.setAccumulator(counterInstance.getCounterTemplate().getAccumulator());
+            period.setAccumulatedValues(periodDto.getAccumulatedValues());
+            period.setAccumulatorType(counterInstance.getCounterTemplate().getAccumulatorType());
+            period.setNotificationLevels(counterInstance.getCounterTemplate().getNotificationLevels());
+            period.setCounterInstance(counterInstance);
+
+            counterPeriodService.create(period);
+            counterInstance.getCounterPeriods().add(period);
+
+            periodes.add(new DateRange(startP, endP));
+
+        });
+
+        counterInstanceService.create(counterInstance);
+
+        return counterInstance.getId();
+
+    }
+
+    private String formatDate(Date date) {
+        return DateFormat.getDateInstance(DateFormat.SHORT).format(date);
     }
 
     private void createAuditLog(String entity) {
