@@ -343,6 +343,7 @@ public class FilterService extends BusinessService<Filter> {
     }
 
     private void persistCustomFieldTemplates(Filter filter) throws BusinessException {
+log.info("persistCustomFieldTemplates with filter {}", filter);
         try {
             List<CustomFieldTemplate> customFieldTemplates = new ArrayList<>();
             extractCustomFields(filter, filter.getFilterCondition(), customFieldTemplates);

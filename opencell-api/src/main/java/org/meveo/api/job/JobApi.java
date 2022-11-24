@@ -100,7 +100,8 @@ public class JobApi extends BaseApi {
         if (jobInstance == null) {
             throw new EntityDoesNotExistsException(JobInstance.class, code);
         }
-        
+
+log.info("executeJob method info debug with jobInstance {}", jobInstance);
         jobInstanceService.createMissingCustomFieldTemplates(jobInstance);
         
         // populate customFields

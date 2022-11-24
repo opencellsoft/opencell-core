@@ -268,9 +268,18 @@ public abstract class BaseApi {
 
         Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity);
 
+        if (customFieldTemplates != null) {
+            for (Map.Entry<String, CustomFieldTemplate> entry : customFieldTemplates.entrySet()) {
+                log.info("customFieldTemplates day ne ne entry.getKey {} va entry.getValue {}", entry.getKey(), entry.getValue());
+            }
+        }
+
         List<CustomFieldDto> customFieldDtos = null;
         if (customFieldsDto != null) {
             customFieldDtos = customFieldsDto.getCustomField();
+for (CustomFieldDto cftDto : customFieldDtos) {
+    log.info("cftDto day ne ne {}", cftDto);
+}
         } else {
             customFieldDtos = new ArrayList<CustomFieldDto>();
         }
@@ -298,7 +307,7 @@ public abstract class BaseApi {
         // check if any templates are applicable
         if (customFieldTemplates == null || customFieldTemplates.isEmpty()) {
             if (customFieldDtos != null && !customFieldDtos.isEmpty()) {
-                log.error("No custom field templates defined while Custom field values were passed");
+log.info("No custom field templates defined while Custom field values were passed");
                 // in createCRMAccountHierarchy cft in dto can be used in any
                 // account level
                 // for instance if the current CFT not for a customer then dont
@@ -315,6 +324,7 @@ public abstract class BaseApi {
         if (customFieldDtos != null && !customFieldDtos.isEmpty()) {
 
             // Validate fields
+log.info("populateCustomFields method here");
             validateAndConvertCustomFields(customFieldTemplates, customFieldDtos, checkCustomFields, isNewEntity, entity);
 
             // Save the values
@@ -478,7 +488,9 @@ public abstract class BaseApi {
     }
 
     protected void validateAndConvertCustomFields(List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity) throws MeveoApiException {
+log.info("validateAndConvertCustomFields method here 1 {}", entity);
         Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity);
+log.info("validateAndConvertCustomFields method here 2 customFieldTemplates.size {}", customFieldTemplates.size());
         this.validateAndConvertCustomFields(customFieldTemplates, customFieldDtos, true, false, entity);
     }
 
@@ -491,10 +503,11 @@ public abstract class BaseApi {
         }
 
         for (CustomFieldDto cfDto : customFieldDtos) {
+log.info("cfDto.getCode() in validateAndConvertCustomFields {}", cfDto.getCode());
             CustomFieldTemplate cft = customFieldTemplates.get(cfDto.getCode());
 
             if (checkCustomFields && cft == null) {
-                log.error("No custom field template found with code={} for entity {}. Value will be ignored.", cfDto.getCode(), entity.getClass());
+                log.info("No custom field template found with code={} for entity {}. Value will be ignored.", cfDto.getCode(), entity.getClass());
                 throw new InvalidParameterException("Custom field template with code " + cfDto.getCode() + " not found.");
             }
 

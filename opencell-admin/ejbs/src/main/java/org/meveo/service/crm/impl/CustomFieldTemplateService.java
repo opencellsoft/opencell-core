@@ -146,13 +146,20 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @return A list of custom field templates mapped by a template key
      */
     public Map<String, CustomFieldTemplate> findByAppliesTo(String appliesTo) {
+log.info("findByAppliesTo method log info with appliesTo equal to {}", appliesTo);
 
         if (useCFTCache) {
-
+log.info("findByAppliesTo with useCFTCache is TRUE");
             Map<String, CustomFieldTemplate> cfts = customFieldsCache.getCustomFieldTemplates(appliesTo);
+if (cfts != null) {
+    for (Map.Entry<String, CustomFieldTemplate> entry : cfts.entrySet()) {
+        log.info("findByAppliesTo with useCFTCache is TRUE entry.getKey {} and getValue {}", entry.getKey(), entry.getValue());
+    }
+}
 
             // Populate cache if record is not found in cache
             if (cfts == null) {
+log.info("cfts == null in cache findByAppliesTo, need to look up in database");
                 cfts = findByAppliesToNoCache(appliesTo);
                 if (cfts.isEmpty()) {
                     customFieldsCache.markNoCustomFieldTemplates(appliesTo);
@@ -161,10 +168,13 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
                 }
             }
 
+log.info("end findByAppliesTo");
             return cfts;
 
         } else {
-            return findByAppliesToNoCache(appliesTo);
+log.info("findByAppliesTo with useCFTCache is FALSE");
+            Map<String, CustomFieldTemplate> cfts = findByAppliesToNoCache(appliesTo);
+            return cfts;
         }
     }
 
@@ -175,9 +185,11 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @return A list of custom field templates mapped by a template key
      */
     public Map<String, CustomFieldTemplate> findByAppliesToNoCache(String appliesTo) {
-
+log.info("appliesTo in findByAppliesToNoCache {}", appliesTo);
         List<CustomFieldTemplate> values = getEntityManager().createNamedQuery("CustomFieldTemplate.getCFTByAppliesTo", CustomFieldTemplate.class).setParameter("appliesTo", appliesTo).getResultList();
-
+for (CustomFieldTemplate cft : values) {
+    log.info("cft customField in findByAppliesToNoCache {}", cft);
+}
         Map<String, CustomFieldTemplate> cftMap = values.stream().collect(Collectors.toMap(cft -> cft.getCode(), cft -> cft));
 
         return cftMap;
@@ -273,6 +285,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         boolean isCustomTable = cet != null && cet.isStoreAsTable();
         if (isCustomTable) {
             // Check if its a custom table field we need to get previous constraint state
+log.info("create in CustomFieldTemplate class with cet {} and getAppliesTo {}", cet, cet.getAppliesTo());
             cetFields = findByAppliesToNoCache(cet.getAppliesTo());
             oldConstraintColumns = cetFields.values().stream().filter(x -> x.isUniqueConstraint()).map(x -> x.getDbFieldname()).distinct().sorted().collect(Collectors.joining(","));
         }
@@ -371,6 +384,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         CustomEntityTemplate cet = findCETbyCFT(cft);
         // Check if its a custom table field we need to get previous constraint state
         if (cet != null && cet.isStoreAsTable()) {
+log.info("update in CustomFieldTemplate class with cet {} and getAppliesTo {}", cet, cet.getAppliesTo());
             cetFields = findByAppliesToNoCache(cet.getAppliesTo());
             oldConstraintColumns = cetFields.values().stream().filter(x -> x.isUniqueConstraint()).map(x -> x.getDbFieldname()).distinct().sorted().collect(Collectors.joining(","));
 
@@ -515,6 +529,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      */
     public Map<String, CustomFieldTemplate> createMissingTemplates(ICustomFieldEntity entity, Collection<CustomFieldTemplate> templates) throws BusinessException {
         try {
+log.info("createMissingTemplates day ne 1");
             return createMissingTemplates(calculateAppliesToValue(entity), templates, false, false);
 
         } catch (CustomFieldException e) {
@@ -533,6 +548,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Map<String, CustomFieldTemplate> createMissingTemplates(String appliesTo, Collection<CustomFieldTemplate> templates) throws BusinessException {
+log.info("createMissingTemplates day ne 2");
         return createMissingTemplates(appliesTo, templates, false, false);
     }
 
@@ -548,6 +564,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      */
     public Map<String, CustomFieldTemplate> createMissingTemplates(ICustomFieldEntity entity, Collection<CustomFieldTemplate> templates, boolean updateExisting, boolean removeOrphans) throws BusinessException {
         try {
+log.info("createMissingTemplates day ne 3");
             return createMissingTemplates(calculateAppliesToValue(entity), templates, updateExisting, removeOrphans);
         } catch (CustomFieldException e) {
             // Its OK, handles cases when value that is part of CFT.AppliesTo calculation is not set yet on entity
@@ -568,6 +585,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     public Map<String, CustomFieldTemplate> createMissingTemplates(String appliesTo, Collection<CustomFieldTemplate> templates, boolean updateExisting, boolean removeOrphans) throws BusinessException {
 
         // Get templates corresponding to an entity type
+log.info("createMissingTemplates in CustomFieldTemplate class with getAppliesTo {}", appliesTo);
         Map<String, CustomFieldTemplate> allTemplates = findByAppliesToNoCache(appliesTo);
 
         if (templates != null) {
