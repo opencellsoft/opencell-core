@@ -1075,7 +1075,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             }
 
             if(useOpenOrder) {
-            	OpenOrder openOrder = openOrderService.findOpenOrderCompatibleForIL(invoiceLine);
+            	OpenOrder openOrder = openOrderService.findOpenOrderCompatibleForIL(invoiceLine, configuration);
         		if (openOrder != null) {
         			invoiceLine.setOpenOrderNumber(openOrder.getOpenOrderNumber());
         			openOrder.setBalance(openOrder.getBalance().subtract(invoiceLine.getAmountWithTax()));
