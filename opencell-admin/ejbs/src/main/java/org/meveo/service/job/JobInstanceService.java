@@ -377,7 +377,6 @@ public class JobInstanceService extends BusinessService<JobInstance> {
         }
 
         try {
-log.info("createMissingCustomFieldTemplates method with getAppliesTo {} and jobTemplatesFromJob {}", jobInstance, jobTemplatesFromJob);
             customFieldTemplateService.createMissingTemplates((ICustomFieldEntity) jobInstance, jobTemplatesFromJob);
         } catch (BusinessException e) {
             log.error("Failed to create missing custom field templates", e);
