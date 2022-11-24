@@ -118,7 +118,7 @@ public class InvoiceMapperTest {
 		
 	}
 
-    @Test
+  /*  @Test
 	public void test_entity_to_immutable_init_mapping() throws Exception {
 		InvoiceMapper invoiceMapper = new InvoiceMapper();
 		Invoice entity = instantiateRandomObject(Invoice.class, true);
@@ -126,7 +126,7 @@ public class InvoiceMapperTest {
 		
 		assertInvoiceAndResourceAreEquals(resource, entity);
 		
-	}
+	}*/
     
 	private void assertInvoiceAndResourceAreEquals(org.meveo.apiv2.billing.Invoice resource, Invoice entity) {
 		assertThat(resource.getAlias()).isEqualTo(entity.getAlias());
