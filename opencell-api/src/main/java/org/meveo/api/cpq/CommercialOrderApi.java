@@ -33,6 +33,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.StatusUpdated;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
@@ -53,6 +54,7 @@ import org.meveo.model.order.Order;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
@@ -122,6 +124,9 @@ public class CommercialOrderApi extends BaseApi {
 	
 	@Inject
 	private DiscountPlanService discountPlanService;
+	
+	@Inject
+	private BillingCycleService billingCycleService;
 
 	@Inject
 	@StatusUpdated
@@ -192,6 +197,11 @@ public class CommercialOrderApi extends BaseApi {
 		}
 		order.setOrderInvoiceType(invoiceTypeService.getDefaultCommercialOrder());
 		processOrderLot(orderDto, order);
+		if(StringUtils.isNotBlank(orderDto.getBillingCycle())) {
+			BillingCycle bc=billingCycleService.findByCode(orderDto.getBillingCycle());
+			order.setBillingCycle(bc);
+		}
+		
 		commercialOrderService.create(order);
 		CommercialOrderDto dto = new CommercialOrderDto(order);
 		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(order,CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
@@ -333,6 +343,10 @@ public class CommercialOrderApi extends BaseApi {
 		}
 		populateCustomFields(orderDto.getCustomFields(), order, false);
 		processOrderLot(orderDto, order);
+		if(StringUtils.isNotBlank(orderDto.getBillingCycle())) {
+			BillingCycle bc=billingCycleService.findByCode(orderDto.getBillingCycle());
+			order.setBillingCycle(bc);
+		}
 		commercialOrderService.update(order);
 		CommercialOrderDto dto = new CommercialOrderDto(order);
 		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(order,CustomFieldInheritanceEnum.INHERIT_NO_MERGE));

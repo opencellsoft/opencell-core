@@ -82,6 +82,9 @@ public class CommercialOrderDto extends BaseEntityDto {
 	/** Discount plan code */
     @Schema(description = "The code of the discount plan")
 	private String discountPlanCode;
+    
+    @Schema(description = "Order billing cycle")
+ 	private String billingCycle;
 	
 	public CommercialOrderDto() {
 	}
@@ -117,6 +120,7 @@ public class CommercialOrderDto extends BaseEntityDto {
 			this.accessDto = new AccessDto(order.getAccess(), null);
 		if(order.getOrderLots() != null)
 			orderLotCodes = order.getOrderLots().stream().map(OrderLot::getCode).collect(Collectors.toSet());
+		this.billingCycle=order.getBillingCycle()!=null?order.getBillingCycle().getCode():null;
 	}
 	
 	/**
@@ -419,6 +423,15 @@ public class CommercialOrderDto extends BaseEntityDto {
 	public void setDiscountPlanCode(String discountPlanCode) {
 		this.discountPlanCode = discountPlanCode;
 	}
+
+	public String getBillingCycle() {
+		return billingCycle;
+	}
+
+	public void setBillingCycle(String billingCycle) {
+		this.billingCycle = billingCycle;
+	}
+	
 	
 	
 }

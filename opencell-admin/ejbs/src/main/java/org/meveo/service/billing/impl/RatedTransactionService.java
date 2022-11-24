@@ -84,6 +84,7 @@ import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
@@ -1246,6 +1247,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     .getResultList();
 
         } else if (entityToInvoice instanceof Order) {
+            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumber", RatedTransaction.class)
+                    .setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber())
+                    .setParameter("firstTransactionDate", firstTransactionDate)
+                    .setParameter("lastTransactionDate", lastTransactionDate)
+                    .setHint("org.hibernate.readOnly", true)
+                    .setMaxResults(rtPageSize)
+                    .getResultList();
+        } else if (entityToInvoice instanceof CommercialOrder) {
             return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumber", RatedTransaction.class)
                     .setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber())
                     .setParameter("firstTransactionDate", firstTransactionDate)
