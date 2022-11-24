@@ -282,17 +282,17 @@ public class FilesApi extends BaseApi {
 
         String filepath = getProviderRootDir() + File.separator + normalizePath(postData.getFilepath());
         File file = new File(filepath);
-        FileOutputStream fop = null;
+        OutputStream fop = null;
         try {
 
             File parent = file.getParentFile();
             if (parent == null) {
                 throw new BusinessApiException("Invalid path : " + filepath);
             }
-
-            parent.mkdirs();
-            file.createNewFile();
-            fop = new FileOutputStream(file);
+            StorageFactory.mkdirs(parent);
+            StorageFactory.createNewFile(file);
+            fop = StorageFactory.getOutputStream(file);
+            assert fop != null;
             fop.write(Base64.decodeBase64(postData.getContent()));
             fop.flush();
 
@@ -316,12 +316,12 @@ public class FilesApi extends BaseApi {
         }
 
         File file = new File(getProviderRootDir() + File.separator + normalizePath(filePath));
-        if (!FileUtils.isValidZip(file)) {
+        if (!StorageFactory.isValidZip(file)) {
             suppressFile(filePath);
             throw new BusinessApiException("The zipped file is invalid ! ");
         }
 
-        try (FileInputStream fileInputStream = new FileInputStream(file)) {
+        try(InputStream fileInputStream = StorageFactory.getInputStream(file)) {
             String parentDir = file.getParent();
             FileUtils.unzipFile(parentDir, fileInputStream);
         } catch (Exception e) {
