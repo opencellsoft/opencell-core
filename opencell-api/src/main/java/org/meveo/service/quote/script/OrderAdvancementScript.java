@@ -27,7 +27,7 @@ import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderPrice;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.cpq.order.OrderArticleLineService;
@@ -47,9 +47,9 @@ OrderAdvancementScript extends ModuleScript {
     private AccountingArticleService accountingArticleService = (AccountingArticleService) getServiceInterface(AccountingArticleService.class.getSimpleName());
     private InvoiceLineService invoiceLinesService = (InvoiceLineService) getServiceInterface(InvoiceLineService.class.getSimpleName());
     private InvoiceService invoiceService = (InvoiceService) getServiceInterface(InvoiceService.class.getSimpleName());
-    private InvoiceTypeService invoiceTypeService = (InvoiceTypeService) getServiceInterface(InvoiceTypeService.class.getSimpleName());
     private CustomFieldInstanceService customFieldInstanceService = (CustomFieldInstanceService) getServiceInterface(CustomFieldInstanceService.class.getSimpleName());
     private OrderArticleLineService orderArticleLineService = (OrderArticleLineService) getServiceInterface(OrderArticleLineService.class.getSimpleName());
+    private ServiceSingleton serviceSingleton  = (ServiceSingleton) getServiceInterface(ServiceSingleton.class.getSimpleName());
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
 
@@ -179,6 +179,13 @@ OrderAdvancementScript extends ModuleScript {
                 .forEach(
                         invoice -> {
                             customFieldInstanceService.instantiateCFWithDefaultValue(invoice);
+                            if(isDepositInvoice) {
+                                serviceSingleton.assignInvoiceNumber(invoice, true);
+                            }
+                            if(rateToBill.intValue() != 100 && invoice.getInvoiceType() != null && invoice.getInvoiceType().getCode().equals("ADV")) {
+                                BigDecimal amountWithTax = invoice.getInvoiceLines().stream().map(InvoiceLine::getAmountWithTax).reduce(BigDecimal.ZERO, BigDecimal::add);
+                                invoice.setInvoiceBalance(amountWithTax);
+                            }
                             invoiceService.update(invoice);
                         }
                 );
@@ -190,16 +197,9 @@ OrderAdvancementScript extends ModuleScript {
     }
 
     private void generateGlobalInvoice(CommercialOrder commercialOrder,List<Object[]>  groupedPricesToBill, Date nextDay, Date firstTransactionDate, Date invoiceDate) {
-        
-        List<InvoiceLine> accounts = invoiceLinesService.findByCommercialOrder(commercialOrder);
-        for(InvoiceLine account : accounts){
-            createInvoiceLine(commercialOrder, account.getAccountingArticle(),account.getProductVersion(),account.getOrderOffer(),account.getAmountWithoutTax().negate(), account.getAmountWithTax().negate(), account.getAmountTax().negate(), account.getTaxRate(),null);
-        }
-
         createIlsAndInvoice(commercialOrder,groupedPricesToBill, BigDecimal.valueOf(100), nextDay, firstTransactionDate, invoiceDate, false);
-
-
     }
+    
     private AccountingArticle getDefaultAccountingArticle() {
         String articleCode = ParamBean.getInstance().getProperty("accountingArticle.advancePayment.defautl.code", "ADV-STD");
 
