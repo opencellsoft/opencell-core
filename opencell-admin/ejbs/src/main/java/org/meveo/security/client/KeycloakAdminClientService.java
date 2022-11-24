@@ -267,7 +267,7 @@ public class KeycloakAdminClientService implements Serializable {
      */
     public String createUser(String userName, String firstName, String lastName, String email, String password, String userGroup, Collection<String> roles, String providerToOverride)
             throws InvalidParameterException, ElementNotFoundException, UsernameAlreadyExistsException {
-        return createOrUpdateUser(userName, firstName, lastName, email, password, userGroup, roles, providerToOverride, false);
+        return createOrUpdateUser(userName, firstName, lastName, email, password, userGroup, roles, providerToOverride, false, null);
     }
 
     /**
@@ -284,9 +284,9 @@ public class KeycloakAdminClientService implements Serializable {
      * @throws InvalidParameterException Missing fields
      * @throws ElementNotFoundException User was not found
      */
-    public String updateUser(String userName, String firstName, String lastName, String email, String password, String userGroup, Collection<String> roles)
+    public String updateUser(String userName, String firstName, String lastName, String email, String password, String userGroup, Collection<String> roles, Map<String, String> attributes)
             throws InvalidParameterException, ElementNotFoundException, UsernameAlreadyExistsException {
-        return createOrUpdateUser(userName, firstName, lastName, email, password, userGroup, roles, null, true);
+        return createOrUpdateUser(userName, firstName, lastName, email, password, userGroup, roles, null, true, attributes);
     }
 
     /**
@@ -306,7 +306,7 @@ public class KeycloakAdminClientService implements Serializable {
      * @throws UsernameAlreadyExistsException User with such username already exists
      * @throws ElementNotFoundException User was not found
      */
-    private String createOrUpdateUser(String userName, String firstName, String lastName, String email, String password, String userGroup, Collection<String> roles, String providerToOverride, boolean isUpdate)
+    private String createOrUpdateUser(String userName, String firstName, String lastName, String email, String password, String userGroup, Collection<String> roles, String providerToOverride, boolean isUpdate, Map<String, String> pAttributes)
             throws InvalidParameterException, ElementNotFoundException, UsernameAlreadyExistsException {
 
         KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
@@ -374,6 +374,17 @@ public class KeycloakAdminClientService implements Serializable {
                 if (providerToOverride != null) {
                     attributes.put("provider", Arrays.asList(providerToOverride));
                 }
+            }
+
+            user.setAttributes(attributes);
+        }
+
+        //Check if update and attributes are not empty then add the list to user object
+        if(isUpdate && pAttributes != null && !pAttributes.isEmpty()) {
+            Map<String, List<String>> attributes = user.getAttributes();
+
+            for (Map.Entry<String, String> entry : pAttributes.entrySet()) {
+                attributes.put(entry.getKey(), Arrays.asList(entry.getValue()));
             }
 
             user.setAttributes(attributes);
