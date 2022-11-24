@@ -529,7 +529,6 @@ log.info("update in CustomFieldTemplate class with cet {} and getAppliesTo {}", 
      */
     public Map<String, CustomFieldTemplate> createMissingTemplates(ICustomFieldEntity entity, Collection<CustomFieldTemplate> templates) throws BusinessException {
         try {
-log.info("createMissingTemplates day ne 1");
             return createMissingTemplates(calculateAppliesToValue(entity), templates, false, false);
 
         } catch (CustomFieldException e) {
@@ -548,7 +547,6 @@ log.info("createMissingTemplates day ne 1");
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Map<String, CustomFieldTemplate> createMissingTemplates(String appliesTo, Collection<CustomFieldTemplate> templates) throws BusinessException {
-log.info("createMissingTemplates day ne 2");
         return createMissingTemplates(appliesTo, templates, false, false);
     }
 
@@ -564,7 +562,6 @@ log.info("createMissingTemplates day ne 2");
      */
     public Map<String, CustomFieldTemplate> createMissingTemplates(ICustomFieldEntity entity, Collection<CustomFieldTemplate> templates, boolean updateExisting, boolean removeOrphans) throws BusinessException {
         try {
-log.info("createMissingTemplates day ne 3");
             return createMissingTemplates(calculateAppliesToValue(entity), templates, updateExisting, removeOrphans);
         } catch (CustomFieldException e) {
             // Its OK, handles cases when value that is part of CFT.AppliesTo calculation is not set yet on entity
