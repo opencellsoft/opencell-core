@@ -41,6 +41,8 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
     private static final String OCC_TEMPLATE_ADJ_SD_CODE = "ADJ_SD";
 
+    private static final String OCC_PAY_SD_TEMPLATE = "PAY_SD";
+
     @Inject
     AccountOperationService accountOperationService;
 
@@ -329,6 +331,8 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
     public Long createSecurityDepositPaymentAccountOperation(SecurityDeposit securityDeposit, BigDecimal amount) {
 
+        OCCTemplate occTemplate = occTemplateService.findByCode(OCC_PAY_SD_TEMPLATE);
+
         Payment securityDepositPaymentAccountOperation = new Payment();
         securityDepositPaymentAccountOperation.setAmount(amount);
         securityDepositPaymentAccountOperation.setDepositDate(new Date());
@@ -342,6 +346,8 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         securityDepositPaymentAccountOperation.setDescription("Payment by security deposit");
         securityDepositPaymentAccountOperation.setType("P");
         securityDepositPaymentAccountOperation.setReference(securityDeposit.getCode());
+        securityDepositPaymentAccountOperation.setJournal(occTemplate != null ? occTemplate.getJournal() : null);
+        securityDepositPaymentAccountOperation.setTransactionDate(new Date());
 
         return accountOperationService.createAndReturnReference(securityDepositPaymentAccountOperation);
     }
