@@ -1101,10 +1101,10 @@ public class StorageFactory {
     }
 
     /**
-     * Tests whether the file is a valid zip file.
+     * Tests if the file is a valid zip file.
      *
      * @param file the file
-     * @return true if file is directory, false otherwise
+     * @return true if file is a valid zip file, false otherwise
      */
     public static boolean isValidZip(File file) {
         if (storageType.equals(NFS)) {
