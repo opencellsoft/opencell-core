@@ -93,6 +93,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A default implementation of XML invoice creation.
@@ -277,6 +278,62 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     }
 
     /**
+     * Get user accounts
+     *
+     * @param invoiceAgregates Invoice agregates
+     * @return user accounts list
+     */
+    private Set<UserAccount> getUserAccounts(List<InvoiceAgregate> invoiceAgregates) {
+        Set<UserAccount> userAccounts = new HashSet<>();
+        if (invoiceAgregates != null && !invoiceAgregates.isEmpty()) {
+            for (InvoiceAgregate invoiceAgregate : invoiceAgregates) {
+                if (invoiceAgregate instanceof CategoryInvoiceAgregate && ((CategoryInvoiceAgregate) invoiceAgregate).getUserAccount() != null) {
+                    userAccounts.add(((CategoryInvoiceAgregate) invoiceAgregate).getUserAccount());
+                }
+            }
+        }
+        return userAccounts;
+    }
+
+    /**
+     * Get user accounts
+     *
+     * @param invoice              Invoice to convert
+     * @param invoiceConfiguration Invoice configuration
+     * @return user accounts list
+     */
+    protected Set<UserAccount> getUserAccounts(Invoice invoice, InvoiceConfiguration invoiceConfiguration) {
+        Set<UserAccount> userAccounts = new HashSet<>();
+        if (invoice.getSubscription() != null) {
+            userAccounts.add(invoice.getSubscription().getUserAccount());
+        }
+        if (userAccounts.isEmpty()) {
+            if (invoiceConfiguration.isDisplayUserAccountHierarchy()) {
+                userAccounts.addAll(invoice.getBillingAccount().getParentUserAccounts());
+            } else {
+                userAccounts.addAll(invoice.getBillingAccount().getUsersAccounts());
+            }
+        }
+        userAccounts.addAll(getUserAccounts(invoice.getInvoiceAgregates()));
+        return userAccounts;
+    }
+
+
+    /**
+     * Get user accounts
+     *
+     * @param invoice Invoice to convert
+     * @return user accounts list
+     */
+    protected Set<UserAccount> getUserAccounts(Invoice invoice) {
+        Set<UserAccount> userAccounts = new HashSet<>();
+        userAccounts.addAll(invoice.getBillingAccount().getUsersAccounts());
+        userAccounts.addAll(getUserAccounts(invoice.getInvoiceAgregates()));
+        return userAccounts;
+    }
+
+
+    /**
      * Create invoice/details/userAccounts DOM element
      *
      * @param doc                  XML invoice DOM
@@ -290,25 +347,20 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
         Element userAccountsTag = doc.createElement("userAccounts");
         String invoiceLanguageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
-        if(invoiceConfiguration.isDisplayUserAccountHierarchy()) {
-        	List<UserAccount> userAccounts = invoice.getBillingAccount().getUsersAccounts();
-        	for(UserAccount userAccount : userAccounts) {
-        		if(userAccount.getParentUserAccount() == null) {
-                    Element userAccountTag = createUserAccountSection(doc, invoice, userAccount, ratedTransactions, isVirtual, false, invoiceLanguageCode, invoiceConfiguration);
-                    createUserAccountChildSection(doc, invoice, userAccount, ratedTransactions, isVirtual, false, invoiceLanguageCode, invoiceConfiguration, userAccounts, userAccountTag);
-                    userAccountsTag.appendChild(userAccountTag);
-        		}
-        	}
-        	
-        }else {
-            for (UserAccount userAccount : invoice.getBillingAccount().getUsersAccounts()) {
+        Set<UserAccount> userAccounts = getUserAccounts(invoice);
+        for (UserAccount userAccount : userAccounts) {
+            if (!invoiceConfiguration.isDisplayUserAccountHierarchy() || userAccount.getParentUserAccount() == null) {
                 Element userAccountTag = createUserAccountSection(doc, invoice, userAccount, ratedTransactions, isVirtual, false, invoiceLanguageCode, invoiceConfiguration);
-                if (userAccountTag == null) {
-                    continue;
+                if (invoiceConfiguration.isDisplayUserAccountHierarchy()) {
+                    createUserAccountChildSection(doc, invoice, userAccount, ratedTransactions, isVirtual, false, invoiceLanguageCode, invoiceConfiguration,
+                            userAccounts.stream().collect(Collectors.toList()), userAccountTag);
                 }
-                userAccountsTag.appendChild(userAccountTag);
+                if (userAccountTag != null) {
+                    userAccountsTag.appendChild(userAccountTag);
+                }
             }
         }
+
         // Generate invoice lines for Categories/RTs that are not linked to User account
         Element userAccountTag = createUserAccountSection(doc, invoice, null, ratedTransactions, isVirtual, userAccountsTag.getChildNodes().getLength() == 0, invoiceLanguageCode, invoiceConfiguration);
         if (userAccountTag != null) {
@@ -2455,35 +2507,18 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
         Element userAccountsTag = doc.createElement("userAccounts");
         String invoiceLanguageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
-        List<UserAccount> userAccounts=new ArrayList<>();
-    	if(invoice.getSubscription()!=null) {
-    		userAccounts.add(invoice.getSubscription().getUserAccount());
-    	}
-        if(invoiceConfiguration.isDisplayUserAccountHierarchy()) {
-            List<UserAccount> parentUserAccounts = userAccounts.isEmpty()?invoice.getBillingAccount().getParentUserAccounts():userAccounts;
-            for(UserAccount parentUserAccount : parentUserAccounts) {            
-                    Element userAccountTag = createUserAccountSectionIL(doc, invoice, parentUserAccount,
-                            invoiceLines, isVirtual, false, invoiceLanguageCode, invoiceConfiguration);
-                    if (userAccountTag == null) {
-                        continue;
-                    }
+        Set<UserAccount> userAccounts = getUserAccounts(invoice, invoiceConfiguration);
+        for (UserAccount userAccount : userAccounts) {
+            Element userAccountTag = createUserAccountSectionIL(doc, invoice, userAccount,
+                    invoiceLines, isVirtual, false, invoiceLanguageCode, invoiceConfiguration);
+            if (userAccountTag != null) {
+                if (invoiceConfiguration.isDisplayUserAccountHierarchy()) {
                     createUserAccountChildSectionIL(doc, invoice, invoiceLines, isVirtual,
-                            invoiceLanguageCode, invoiceConfiguration, parentUserAccount.getUserAccounts(), userAccountTag);
-                    userAccountsTag.appendChild(userAccountTag);        		
-        		}
-
-        } else {
-            List<UserAccount> parentUserAccounts = userAccounts.isEmpty()?invoice.getBillingAccount().getUsersAccounts():userAccounts;
-            for (UserAccount userAccount : parentUserAccounts) {
-                Element userAccountTag = createUserAccountSectionIL(doc, invoice, userAccount, invoiceLines, isVirtual,
-                        false, invoiceLanguageCode, invoiceConfiguration);
-                if (userAccountTag == null) {
-                    continue;
+                            invoiceLanguageCode, invoiceConfiguration, userAccount.getUserAccounts(), userAccountTag);
                 }
                 userAccountsTag.appendChild(userAccountTag);
             }
         }
-
         Element userAccountTag = createUserAccountSectionIL(doc, invoice, null, invoiceLines, isVirtual,
                 userAccountsTag.getChildNodes().getLength() == 0, invoiceLanguageCode, invoiceConfiguration);
         if (userAccountTag != null) {

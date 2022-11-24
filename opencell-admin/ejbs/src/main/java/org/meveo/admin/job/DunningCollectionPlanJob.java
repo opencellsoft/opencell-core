@@ -26,7 +26,7 @@ public class DunningCollectionPlanJob extends Job {
     private GlobalSettingsService globalSettingsService;
 
     @Override
-    @TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         checkActivateDunning(result);
         dunningCollectionPlanJobBean.execute(result, jobInstance);

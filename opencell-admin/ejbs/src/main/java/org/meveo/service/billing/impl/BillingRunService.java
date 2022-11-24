@@ -901,8 +901,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                             invoiceValidationStatusEnum.equals(status)){
                             result = false;
                     }
-                }
-                update(billingRun);
+                    update(billingRun);
+                }                
             }
         }
         
@@ -1379,9 +1379,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 nextBillingRun.setIsQuarantine(Boolean.TRUE);
                 nextBillingRun.setStatus(BillingRunStatusEnum.SUSPECTED);
                 nextBillingRun.setOriginBillingRun(billingRun);
+                nextBillingRun.setRejectionReason(billingRun.getRejectionReason());
                 nextBillingRun.setId(null);
+                nextBillingRun.setJobExecutions(null);
                 create(nextBillingRun);
                 billingRun.setNextBillingRun(nextBillingRun);
+                billingRun.setRejectionReason(null);
                 update(billingRun);
                 return nextBillingRun;
             } catch (Exception e) {
@@ -1419,7 +1422,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 quarantineBillingRun.setBillableBillingAccounts(new ArrayList<>());
                 quarantineBillingRun.setBillingAccountNumber(null);
                 quarantineBillingRun.setRejectedBillingAccounts(null);
-                quarantineBillingRun.setRejectionReason(null);
+                quarantineBillingRun.setRejectionReason(billingRun.getRejectionReason());
                 quarantineBillingRun.setPdfJobExecutionResultId(null);
                 quarantineBillingRun.setXmlJobExecutionResultId(null);
                 quarantineBillingRun.setInvoices(new ArrayList<>());
@@ -1452,6 +1455,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 }
 
                 create(quarantineBillingRun);
+                billingRun.setRejectionReason(null);
                 billingRun.setNextBillingRun(quarantineBillingRun);
                 update(billingRun);
                 return quarantineBillingRun;
