@@ -130,9 +130,9 @@ public class InvoiceLinesApiService implements ApiService<InvoiceLine>  {
     }
     
 
-	public int markInvoiceLinesForAdjustment(InvoiceLinesToMarkAdjustment invoiceLinesToMark, List<Long> invoiceLinesIds) {
+	public int markInvoiceLinesForAdjustment(Boolean IgnoreInvalidStatuses, List<Long> invoiceLinesIds) {
 		
-		if(invoiceLinesToMark.getIgnoreInvalidStatuses() == null || !invoiceLinesToMark.getIgnoreInvalidStatuses()) {
+		if(IgnoreInvalidStatuses == null || !IgnoreInvalidStatuses) {
     		List<InvoiceLine> invoiceLines = invoiceLinesService.findByIdsAndAdjustmentStatus(invoiceLinesIds, AdjustmentStatusEnum.NOT_ADJUSTED);
     		if (invoiceLines != null && invoiceLines.size() != invoiceLinesIds.size()) {
     			 throw new BusinessException("Only NOT_ADJUSTED invoice lines can be marked TO_ADJUST");
@@ -158,10 +158,10 @@ public class InvoiceLinesApiService implements ApiService<InvoiceLine>  {
     	}
 	}
 	
-	public int unmarkInvoiceLinesForAdjustment(InvoiceLinesToMarkAdjustment invoiceLinesToUnmark, List<Long> invoiceLinesIds) {
+	public int unmarkInvoiceLinesForAdjustment(Boolean IgnoreInvalidStatuses, List<Long> invoiceLinesIds) {
 		
 		
-		if(invoiceLinesToUnmark.getIgnoreInvalidStatuses() == null || !invoiceLinesToUnmark.getIgnoreInvalidStatuses()) {			
+		if(IgnoreInvalidStatuses == null || !IgnoreInvalidStatuses) {			
     		List<InvoiceLine> invoiceLines = invoiceLinesService.findByIdsAndAdjustmentStatus(invoiceLinesIds, AdjustmentStatusEnum.TO_ADJUST);
     		if (invoiceLines != null && invoiceLines.size() != invoiceLinesIds.size()) {
     			 throw new BusinessException("Only TO_ADJUST invoice lines can be marked NOT_ADJUSTED");
