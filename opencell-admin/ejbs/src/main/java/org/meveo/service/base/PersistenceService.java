@@ -62,6 +62,7 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.LockMode;
 import org.hibernate.SQLQuery;
@@ -108,6 +109,7 @@ import org.meveo.model.filter.Filter;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.persistence.CustomFieldJsonTypeDescriptor;
+import org.meveo.model.persistence.JacksonUtil;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.base.expressions.ExpressionFactory;
 import org.meveo.service.base.expressions.ExpressionParser;
@@ -1191,6 +1193,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         for (Object filterValue : filters.values()) {
             if (filterValue instanceof CustomFieldValues) {
                 CustomFieldValues customFieldValues = (CustomFieldValues) filterValue;
+                customFieldValues = checkCFValuesShouldBeEncrypted(customFieldValues);
+
                 Map<String, List<CustomFieldValue>> valuesByCode = customFieldValues.getValuesByCode();
                 for (String customFiterName : valuesByCode.keySet()) {
                     // get the filter value
@@ -1206,8 +1210,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                     // listVarcharFromJson(<entity>.cfValues,<custom field name>,<value to search for>)=true
                     if (SEARCH_LIST.equals(fieldInfo.getCondition())) {
                         if ("string".equals(type)) {
-                            value = checkCFValueShouldBeEncrypted(value);
-                            value = "'" + value + "'";
+                           value = "'" + value + "'";
                         }
                         type = "list" + StringUtils.capitalizeFirstLetter(type);
                         String searchFunction = "list";
@@ -1236,11 +1239,13 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     //check if search by the CF value should use or not the encrypted value
-    private Object checkCFValueShouldBeEncrypted(Object value) {
-        if (!encryptCFSetting || !(value instanceof String)) {
-            return value;
+    private CustomFieldValues checkCFValuesShouldBeEncrypted(CustomFieldValues customFieldValues) {
+        if (!encryptCFSetting) {
+            return customFieldValues;
         }
-        return CustomFieldJsonTypeDescriptor.INSTANCE.encrypt((String) value);
+        String encryptedCFJson = CustomFieldJsonTypeDescriptor.INSTANCE.toString(customFieldValues);
+        Map<String, List<CustomFieldValue>> cfValues = JacksonUtil.fromString(encryptedCFJson, new TypeReference<Map<String, List<CustomFieldValue>>>() {});
+        return new CustomFieldValues(cfValues);
     }
 
     private String extractCustomFieldSyntax(String type, Class clazz, String transformedFilter, String fieldName, String nestedFields) {
