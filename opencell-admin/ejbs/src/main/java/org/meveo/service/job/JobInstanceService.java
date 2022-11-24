@@ -103,7 +103,6 @@ public class JobInstanceService extends BusinessService<JobInstance> {
             Map<String, CustomFieldTemplate> cfts = job.getCustomFields();
             if (cfts != null && !cfts.isEmpty()) {
                 try {
-log.info("registerJob EntityCustomizationUtils.getAppliesTo(job.getClass(), null) {} and cfts.values.size {}", EntityCustomizationUtils.getAppliesTo(job.getClass(), null), cfts.values().size());
                     customFieldTemplateService.createMissingTemplates(EntityCustomizationUtils.getAppliesTo(job.getClass(), null), cfts.values());
                 } catch (BusinessException e) {
                     log.error("Failed to registed missing CF templates for job " + job.getClass());
