@@ -348,6 +348,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         securityDepositPaymentAccountOperation.setReference(securityDeposit.getCode());
         securityDepositPaymentAccountOperation.setJournal(occTemplate != null ? occTemplate.getJournal() : null);
         securityDepositPaymentAccountOperation.setTransactionDate(new Date());
+        securityDepositPaymentAccountOperation.setAccountingDate(new Date());
 
         return accountOperationService.createAndReturnReference(securityDepositPaymentAccountOperation);
 
