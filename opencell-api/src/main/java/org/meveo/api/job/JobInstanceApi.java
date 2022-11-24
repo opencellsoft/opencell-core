@@ -244,9 +244,7 @@ for (Map.Entry<String, CustomFieldTemplate> entry : jobCustomFields.entrySet()) 
         if (jobCustomFields != null) {
             customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values());
         }
-log.info("AFTER createMissingTemplates");
 
-log.info("BEFORE populateCustomFields {}", postData.getCustomFields());
         // Populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), jobInstance, false);
