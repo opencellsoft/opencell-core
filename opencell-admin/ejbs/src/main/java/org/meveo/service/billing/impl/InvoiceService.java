@@ -2356,12 +2356,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
         cancelInvoice(invoice, false);
     }
 
-	public void cancelInvoice(Invoice invoice, boolean remove) {
-		cancelInvoiceAndRts(invoice);
-        if(remove) {
-        	super.remove(invoice);
+    public void cancelInvoice(Invoice invoice, boolean remove) {
+        checkNonValidateInvoice(invoice);
+        cancelInvoiceAndRts(invoice);
+        List<Long> invoicesIds = new ArrayList<>();
+        invoicesIds.add(invoice.getId());
+        invoiceLinesService.cancelIlByInvoices(invoicesIds);
+        if (remove) {
+            super.remove(invoice);
         } else {
-            super.update(invoice);
+            cancelInvoiceById(invoice.getId());
         }
         log.debug("Invoice canceled {}", invoice.getTemporaryInvoiceNumber());
     }
@@ -5894,10 +5898,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	
 	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Invoice createAdjustment(Invoice invoice, List<Long> invoiceLinesIds) {
+	public Invoice createAdjustment(Invoice invoice, List<Long> invoiceLinesIds, String invoiceTypeCode) {
 		var duplicatedInvoice = duplicate(invoice, invoiceLinesIds);
 		duplicatedInvoice.setInvoiceDate(new Date());
-		duplicatedInvoice.setInvoiceType(invoiceTypeService.getDefaultAdjustement());
+		InvoiceType invoiceType=null;
+		if(!StringUtils.isBlank(invoiceTypeCode)){
+			invoiceType=invoiceTypeService.findByCode(invoiceTypeCode);
+		}
+		duplicatedInvoice.setInvoiceType(invoiceType!=null?invoiceType:invoiceTypeService.getDefaultAdjustement());
 		duplicatedInvoice.setStatus(InvoiceStatusEnum.DRAFT);
 		duplicatedInvoice.setLinkedInvoices(of(invoice));
 		getEntityManager().flush();
@@ -5979,5 +5987,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	    }
 	 
 	
+	   private void checkNonValidateInvoice(Invoice invoice) {
+	        if (invoice.getStatus() == InvoiceStatusEnum.VALIDATED) {
+	            throw new BusinessException("You can't cancel a validated invoice");
+	        }
+	    }
+	    
+	    public void cancelInvoiceById(Long invoiceId) {
+	        getEntityManager().createNamedQuery("Invoice.cancelInvoiceById")
+	        .setParameter("now", new Date())
+	                .setParameter("invoiceId", invoiceId)
+	                .executeUpdate();
+	    }
 
 }

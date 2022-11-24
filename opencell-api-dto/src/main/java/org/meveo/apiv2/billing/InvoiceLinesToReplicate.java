@@ -20,4 +20,8 @@ public interface InvoiceLinesToReplicate {
 
 	@Schema(description = "Containing list of invoice line Ids to replicate in the new adjustment.")
 	List<Long> getInvoiceLinesIds();
+	
+	@Nullable
+	@Schema(description = "the invoice type to use, if not set the default one (Adjustement) is used")
+	String getInvoiceType();
 }
