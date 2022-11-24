@@ -300,7 +300,7 @@ public class InvoicingJobBean extends BaseJobBean {
         // NOTE: invoice by order is also included here as there is no FK between Order and RT
         if ((billingCycle == null || billingCycle.getType() == BillingEntityTypeEnum.ORDER
                 || minAmountForAccounts.isMinAmountCalculationActivated()) && !billingRun.isExceptionalBR()) {
-            List<IBillableEntity> entities = (List<IBillableEntity>) billingRunService.getEntitiesToInvoice(billingRun);
+            List<IBillableEntity> entities = (List<IBillableEntity>) billingRunService.getEntitiesToInvoice(billingRun, false);
 
             totalEntityCount = entities != null ? entities.size() : 0;
 

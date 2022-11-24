@@ -573,6 +573,9 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
      */
     public String getOrderNumber() {
         String orderNumber = null;
+        if(order != null){
+            orderNumber = order.getOrderNumber();
+        }
         if (serviceInstances != null && !serviceInstances.isEmpty()) {
             orderNumber = serviceInstances.get(0).getOrderNumber();
         }
