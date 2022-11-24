@@ -138,7 +138,11 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
 
         // Create any missing CFT for a given provider and job
         Map<String, CustomFieldTemplate> jobCustomFields = job.getCustomFields();
+for (Map.Entry<String, CustomFieldTemplate> entry : jobCustomFields.entrySet()) {
+    log.info("entry day ne 1 get key {} and value {}", entry.getKey(), entry.getValue());
+}
 
+        log.info("jobCustomFields day ne 1");
         if (jobCustomFields != null) {
             customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values());
         }
@@ -237,9 +241,6 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
 
         // Create any missing CFT for a given provider and job
         Map<String, CustomFieldTemplate> jobCustomFields = job.getCustomFields();
-for (Map.Entry<String, CustomFieldTemplate> entry : jobCustomFields.entrySet()) {
-    log.info("UPDATE entry day ne 1 get key {} and value {}", entry.getKey(), entry.getValue());
-}
         if (jobCustomFields != null) {
             customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values());
         }
