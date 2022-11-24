@@ -203,7 +203,7 @@ public class UserApi extends BaseApi {
             populateCustomFields(postData.getCustomFields(), user, false, true);
         }
 
-        userService.update(user);
+        userService.updateUserWithAttributes(user, postData.getAttributes());
 
         // Save secured entities
         if (securedEntities != null) {
