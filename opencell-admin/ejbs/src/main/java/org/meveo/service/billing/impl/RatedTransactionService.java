@@ -1256,7 +1256,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     .getResultList();
         } else if (entityToInvoice instanceof CommercialOrder) {
             return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumber", RatedTransaction.class)
-                    .setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber())
+                    .setParameter("orderNumber", ((CommercialOrder) entityToInvoice).getOrderNumber())
                     .setParameter("firstTransactionDate", firstTransactionDate)
                     .setParameter("lastTransactionDate", lastTransactionDate)
                     .setHint("org.hibernate.readOnly", true)
