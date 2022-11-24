@@ -3,8 +3,8 @@ package org.meveo.admin.storage;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.data.JRXmlDataSource;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.carlspring.cloud.storage.s3fs.S3FileSystem;
 import org.carlspring.cloud.storage.s3fs.S3FileSystemProvider;
 import org.meveo.commons.keystore.KeystoreManager;
@@ -972,68 +972,6 @@ public class StorageFactory {
     }
 
     /**
-     * copy a directory or file from a source to a destination
-     * Note that in case of S3, it copies both to S3 and FileSystem
-     *
-     * @param srcDir source file.
-     *
-     * @param destDir destination file
-     */
-    public static void copyDirectory(File srcDir, File destDir) {
-        if (storageType.equals(NFS)) {
-            try {
-                FileUtils.copyDirectory(srcDir, destDir);
-            }
-            catch (IOException e) {
-                log.error("IOException : {}", e.getMessage());
-            }
-        }
-        else if (storageType.equalsIgnoreCase(S3)) {
-            try {
-                // In case of S3, copy Jasper template to both S3 and FileSystem
-                FileUtils.copyDirectory(srcDir, destDir);
-
-                Iterator<File> itSrcFiles = FileUtils.iterateFiles(destDir, null, true);
-
-                while (itSrcFiles.hasNext()) {
-                    File aSrcFile = itSrcFiles.next();
-                    s3FileSystem.getClient().putObject(PutObjectRequest.builder()
-                            .key(formatObjectKey(aSrcFile.getPath())).bucket(bucketName).build(), aSrcFile.toPath());
-                }
-            }
-            catch (IOException e) {
-                log.error("IOException in copyDirectory : {}", e.getMessage());
-            }
-        }
-    }
-
-    /**
-     * creates a data source of type JRXmlDataSource from a file
-     *
-     * @param file a file.
-     *
-     * @return JRXmlDataSource JRXmlDataSource object
-     */
-    public static JRXmlDataSource getJRXmlDataSource(File file) {
-        if (storageType.equals(NFS)) {
-            try {
-                return new JRXmlDataSource(file);
-            } catch (JRException e) {
-                log.error("JRException : {}", e.getMessage());
-            }
-        }
-        else if (storageType.equalsIgnoreCase(S3)) {
-            try {
-                return new JRXmlDataSource(getInputStream(file));
-            } catch (JRException e) {
-                log.error("JRException in getJRXmlDataSource : {}", e.getMessage());
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * list all files inside of a directory with extensions
      *
      * @param sourceDirectory a string of source directory.
@@ -1154,6 +1092,26 @@ public class StorageFactory {
             HeadObjectResponse response = s3FileSystem.getClient().headObject(request);
 
             return response.contentLength() <= 0;
+        }
+
+        return false;
+    }
+
+    /**
+     * Tests if the file is a valid zip file.
+     *
+     * @param file the file
+     * @return true if file is a valid zip file, false otherwise
+     */
+    public static boolean isValidZip(File file) {
+        if (storageType.equals(NFS)) {
+            return org.meveo.commons.utils.FileUtils.isValidZip(file);
+        }
+        else if (storageType.equalsIgnoreCase(S3)) {
+            if (! FilenameUtils.getExtension(file.getName()).equals("zip"))
+                return false;
+
+            return exists(file);
         }
 
         return false;
