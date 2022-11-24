@@ -225,7 +225,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
         }
 	    
 	    try {
-	        adjInvoice = invoiceService.createAdjustment(invoice, invoiceLinesToReplicate.getInvoiceLinesIds());
+	        adjInvoice = invoiceService.createAdjustment(invoice, invoiceLinesToReplicate.getInvoiceLinesIds(),invoiceLinesToReplicate.getInvoiceType());
     	    
     	    if (invoice.getLinkedInvoices() != null) {
     	        invoice.getLinkedInvoices().size();
