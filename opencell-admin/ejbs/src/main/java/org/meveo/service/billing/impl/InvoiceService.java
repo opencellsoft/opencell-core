@@ -1525,7 +1525,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         try {
             File destDir = new File(resDir + File.separator + billingTemplateName + File.separator + "pdf");
 
-            if (!StorageFactory.exists(destDir)) {
+            if (!destDir.exists()) {
 
                 log.warn("PDF jasper report {} was not found. A default report will be used.", destDir.getAbsolutePath());
 
@@ -1543,7 +1543,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     }
                 }
                 destDir.mkdirs();
-                StorageFactory.copyDirectory(sourceFile, destDir);
+                FileUtils.copyDirectory(sourceFile, destDir);
             }
 
             File destDirInvoiceAdjustment = new File(resDir + File.separator + billingTemplateName + File.separator + "invoiceAdjustmentPdf");
@@ -1594,7 +1594,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
             log.debug("Jasper template used: {}", jasperFile.getCanonicalPath());
 
-            reportTemplate = StorageFactory.getInputStream(jasperFile);
+            reportTemplate = new FileInputStream(jasperFile);
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
             Document xmlDocument = StorageFactory.parse(db, invoiceXmlFile);
@@ -1956,7 +1956,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (createDirs) {
             int pos = Integer.max(xmlFilename.lastIndexOf("/"), xmlFilename.lastIndexOf("\\"));
             String dir = xmlFilename.substring(0, pos);
-            (new File(dir)).mkdirs();
+            StorageFactory.mkdirs(new File(dir));
         }
 
         return xmlFilename;
@@ -2029,7 +2029,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (createDirs) {
             int pos = Integer.max(pdfFilename.lastIndexOf("/"), pdfFilename.lastIndexOf("\\"));
             String dir = pdfFilename.substring(0, pos);
-            (new File(dir)).mkdirs();
+            StorageFactory.mkdirs(new File(dir));
         }
 
         return pdfFilename;
