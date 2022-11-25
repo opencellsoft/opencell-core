@@ -133,8 +133,8 @@ public class InvoiceLinesApiService implements ApiService<InvoiceLine>  {
 	public int markInvoiceLinesForAdjustment(Boolean IgnoreInvalidStatuses, List<Long> invoiceLinesIds) {
 		
 		if(IgnoreInvalidStatuses == null || !IgnoreInvalidStatuses) {
-    		List<InvoiceLine> invoiceLines = invoiceLinesService.findByIdsAndAdjustmentStatus(invoiceLinesIds, AdjustmentStatusEnum.NOT_ADJUSTED);
-    		if (invoiceLines != null && invoiceLines.size() != invoiceLinesIds.size()) {
+    		List<InvoiceLine> invoiceLines = invoiceLinesService.findByIdsAndAdjustmentStatusOrInvoiceType(invoiceLinesIds, AdjustmentStatusEnum.NOT_ADJUSTED);
+    		if (invoiceLines.size() != invoiceLinesIds.size()) {
     			 throw new BusinessException("Only NOT_ADJUSTED invoice lines can be marked TO_ADJUST");
 			}
     		invoiceLines.stream().forEach(invoiceLine -> {
@@ -146,7 +146,7 @@ public class InvoiceLinesApiService implements ApiService<InvoiceLine>  {
     									);
     		return invoiceLines.size();
     	}else {
-    		List<InvoiceLine> invoiceLines = invoiceLinesService.findByIdsAndAdjustmentStatus(invoiceLinesIds, AdjustmentStatusEnum.NOT_ADJUSTED);
+    		List<InvoiceLine> invoiceLines = invoiceLinesService.findByIdsAndAdjustmentStatusOrInvoiceType(invoiceLinesIds, AdjustmentStatusEnum.NOT_ADJUSTED);
     		invoiceLines.stream().forEach(invoiceLine -> {
 											    			if(invoiceLine.getInvoice().getInvoiceType().getCode().equalsIgnoreCase("SECURITY_DEPOSIT")) {
 																throw new BusinessException("Security deposit invoices can not be marked for mass adjustment.");
@@ -162,17 +162,25 @@ public class InvoiceLinesApiService implements ApiService<InvoiceLine>  {
 		
 		
 		if(IgnoreInvalidStatuses == null || !IgnoreInvalidStatuses) {			
-    		List<InvoiceLine> invoiceLines = invoiceLinesService.findByIdsAndAdjustmentStatus(invoiceLinesIds, AdjustmentStatusEnum.TO_ADJUST);
-    		if (invoiceLines != null && invoiceLines.size() != invoiceLinesIds.size()) {
+    		List<InvoiceLine> invoiceLines = invoiceLinesService.findByIdsAndAdjustmentStatusOrInvoiceType(invoiceLinesIds, AdjustmentStatusEnum.TO_ADJUST);
+    		if (invoiceLines.size() != invoiceLinesIds.size()) {
     			 throw new BusinessException("Only TO_ADJUST invoice lines can be marked NOT_ADJUSTED");
 			}
-    		invoiceLines.stream().forEach(invoiceLine -> {invoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
-											invoiceLinesService.update(invoiceLine);}
+    		invoiceLines.stream().forEach(invoiceLine -> {
+											    			if(invoiceLine.getInvoice().getInvoiceType().getCode().equalsIgnoreCase("SECURITY_DEPOSIT")) {
+																throw new BusinessException("Security deposit invoices can not be marked for mass adjustment.");
+															}
+				    										invoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);   		
+															invoiceLinesService.update(invoiceLine);}
     									);
     		return invoiceLines.size();
     	}else {
-    		List<InvoiceLine> invoiceLines = invoiceLinesService.findByIdsAndAdjustmentStatus(invoiceLinesIds, AdjustmentStatusEnum.TO_ADJUST);
-    		invoiceLines.stream().forEach(invoiceLine -> {invoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
+    		List<InvoiceLine> invoiceLines = invoiceLinesService.findByIdsAndAdjustmentStatusOrInvoiceType(invoiceLinesIds, AdjustmentStatusEnum.TO_ADJUST);
+    		invoiceLines.stream().forEach(invoiceLine -> {
+											    			if(invoiceLine.getInvoice().getInvoiceType().getCode().equalsIgnoreCase("SECURITY_DEPOSIT")) {
+																throw new BusinessException("Security deposit invoices can not be marked for mass adjustment.");
+															}
+    														invoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
     														invoiceLinesService.update(invoiceLine);}
     									);
     		return invoiceLines == null ? 0 : invoiceLines.size();
