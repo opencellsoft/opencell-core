@@ -6457,5 +6457,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         return fileName;
     }
+    
+	public void validateAndAssignInvoiceNumberUnit(Invoice invoice) throws BusinessException{	
+		invoice.setStatus(InvoiceStatusEnum.VALIDATED);
+		serviceSingleton.assignInvoiceNumber(invoice, true);				
+    }
 
 }

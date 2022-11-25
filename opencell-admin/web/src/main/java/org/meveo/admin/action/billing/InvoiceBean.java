@@ -896,7 +896,18 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         }
     }
 
-
+	@ActionMethod
+	public void validateInvoiceAndAssignNumber(Invoice invoice) {
+		try {
+			invoiceService.deleteInvoiceXml(invoice);
+			invoiceService.deleteInvoicePdf(invoice);			
+			invoiceService.validateAndAssignInvoiceNumberUnit(invoice);
+			invoiceService.generateXmlAndPdfInvoice(invoice, true); 
+		} catch (Exception e) {
+			log.warn("validateInvoiceAndAssignNumber ",e.getMessage());
+		}
+		messages.info(new BundleKey("messages", "info.invoicing.validated"));
+	}
     public void cancelInvoice(Invoice invoice) throws BusinessException {
         invoiceService.cancelInvoiceWithoutDelete(invoice);
     }
