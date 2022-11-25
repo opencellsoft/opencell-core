@@ -146,7 +146,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @return A list of custom field templates mapped by a template key
      */
     public Map<String, CustomFieldTemplate> findByAppliesTo(String appliesTo) {
-
+        useCFTCache = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("cache.cacheCFT", "true"));
         if (useCFTCache) {
 
             Map<String, CustomFieldTemplate> cfts = customFieldsCache.getCustomFieldTemplates(appliesTo);
@@ -225,6 +225,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      */
     public CustomFieldTemplate findByCodeAndAppliesTo(String code, String appliesTo) {
 
+        useCFTCache = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("cache.cacheCFT", "true"));
         if (useCFTCache) {
             Map<String, CustomFieldTemplate> cfts = findByAppliesTo(appliesTo);
             if (cfts != null) {
