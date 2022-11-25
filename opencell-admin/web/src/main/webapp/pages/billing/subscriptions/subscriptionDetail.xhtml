@@ -560,6 +560,8 @@
                                         <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['confirmationMessage.cancelSubscriptionTermination']}"
                                             icon="ui-icon-alert" />
                                     </p:commandButton>
+									<p:commandButton action="#{subscriptionBean.generateProformaInvoiceForSubscription()}" value="#{messages['account.generateProformaInvoice']}"
+                                            immediate="true" disabled="#{subscriptionBean.isTerminatedSubscription()}" ajax="false" />                                    
                                 </p:panel>
                             </ui:define>
                         </hftl:formPanel>

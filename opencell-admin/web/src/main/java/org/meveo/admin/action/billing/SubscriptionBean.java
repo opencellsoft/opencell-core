@@ -29,6 +29,7 @@ import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
@@ -166,6 +167,11 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     @Inject
     private CalendarService calendarService;
+    
+    @Inject
+    private InvoiceService invoiceService;
+    
+    
 
     @Inject
     private FacesContext facesContext;
@@ -1349,5 +1355,26 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         }
 
         return true;
+    }
+    
+    public String generateProformaInvoiceForSubscription() {
+        log.info("generateProformaInvoice subscriptionId:{}" , entity.getId());
+        try {
+            entity = subscriptionService.refreshOrRetrieve(entity);
+
+            GenerateInvoiceRequestDto generateInvoiceRequestSubscriptionDto = new GenerateInvoiceRequestDto();
+            generateInvoiceRequestSubscriptionDto.setLastTransactionDate(new Date());
+            generateInvoiceRequestSubscriptionDto.setGeneratePDF(true);
+            generateInvoiceRequestSubscriptionDto.setInvoicingDate(new Date());
+            List<Invoice> invs = invoiceService.generateInvoice(entity, generateInvoiceRequestSubscriptionDto, null, true, null, false);
+            for (Invoice currentInv : invs) {
+                invoiceService.produceFilesAndAO(false, true, false, currentInv.getId(), true, new ArrayList<>());                            
+            }
+            messages.info(new BundleKey("messages", "generateInvoice.successful"),invs.size()+" Drafts");
+        } catch (Exception e) {
+            log.error("Failed to generateInvoice ", e);
+            messages.error(e.getMessage());
+        }
+        return getEditViewName();
     }
 }
