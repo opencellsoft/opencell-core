@@ -235,6 +235,9 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         if (dto.isComputeDatesAtValidation() != null) {
             entity.setComputeDatesAtValidation(dto.isComputeDatesAtValidation());
         }
+        if (dto.getFilters() != null) {
+        	entity.setFilters(dto.getFilters());
+        }
         // populate customFields
         try {
             populateCustomFields(dto.getCustomFields(), entity, isNew, true);
