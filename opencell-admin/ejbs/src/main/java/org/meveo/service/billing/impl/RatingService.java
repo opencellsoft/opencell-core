@@ -561,7 +561,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     public void rateBareWalletOperation(WalletOperation bareWalletOperation, BigDecimal unitPriceWithoutTaxOverridden, BigDecimal unitPriceWithTaxOverridden, Long buyerCountryId, TradingCurrency buyerCurrency,
             boolean isVirtual) throws InvalidELException, PriceELErrorException, NoTaxException, NoPricePlanException, RatingException {
 
-        ChargeInstance chargeInstance = chargeInstanceService.findById(bareWalletOperation.getChargeInstance().getId());
+        ChargeInstance chargeInstance = bareWalletOperation.getChargeInstance();
     	AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance, bareWalletOperation);
     	bareWalletOperation.setAccountingArticle(accountingArticle);
         // Let charge template's rating script handle all the rating

@@ -110,6 +110,7 @@ public class InvoiceLinesFactory {
             			invoiceLine.setDiscountPlanType(discountRatedTransaction.getDiscountPlanType());
             			invoiceLine.setDiscountValue(discountRatedTransaction.getDiscountValue());
             			invoiceLine.setSequence(discountRatedTransaction.getSequence());
+            			invoiceLine.setDiscountAmount(invoiceLine.getDiscountAmount().add(discountRatedTransaction.getDiscountValue()));
             		}
         		}
         		
@@ -122,7 +123,6 @@ public class InvoiceLinesFactory {
         }
         invoiceLine.setOrderNumber((String) record.get("order_number"));
         invoiceLine.setQuantity((BigDecimal) record.get("quantity"));
-        invoiceLine.setDiscountAmount(ZERO);
         invoiceLine.setDiscountRate(ZERO);
         invoiceLine.setBillingRun(billingRun);
         BigDecimal taxPercent = invoiceLine.getTax() != null ? invoiceLine.getTax().getPercent() : (BigDecimal) record.get("tax_percent");
