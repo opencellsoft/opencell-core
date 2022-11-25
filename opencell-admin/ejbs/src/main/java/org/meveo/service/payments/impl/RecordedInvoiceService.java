@@ -556,15 +556,10 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                     + "' and ao.dueDate <= '" + DateUtils.formatDateWithPattern(endDueDate, datePattern) + "')");
         }
 
-        if(DateUtils.compare(startDate, new Date()) < 0) {
-            var datePatternHours = "yyyy-MM-dd HH:mm:ss";
-        	qb.addSql("ao.invoice.status = '" + VALIDATED + "' and ao.invoice.statusDate <= '"
-                    + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "'");
-        	qb.addSql("(ao.invoice.paymentStatus = '" + PENDING + "' or (ao.invoice.paymentStatus = '"
-                    + PPAID +"' and ao.invoice.paymentStatusDate <= '"
-                    + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "') " +
-                    "or (ao.invoice.paymentStatus ='" + UNPAID +"' and ao.invoice.paymentStatusDate <= '"
-                            + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "'))");
+        if (DateUtils.compare(startDate, new Date()) < 0) {
+            qb.addSql("ao.invoice.status = '" + VALIDATED + "' and ao.invoice.invoiceDate <= '"
+                    + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), "yyyy-MM-dd HH:mm:ss") + "'");
+            qb.addSql("(ao.invoice.paymentStatus = '" + PENDING + "' or ao.invoice.paymentStatus = '" + PPAID + "' or ao.invoice.paymentStatus ='" + UNPAID + "')");
         }
 
         qb.addGroupCriterion("ao.customerAccount.id, ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.seller.description, ao.seller.code, ao.dueDate, ao.amount, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.invoice.billingAccount.id ");
