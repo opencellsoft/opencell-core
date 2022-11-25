@@ -16,6 +16,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceLine;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
@@ -180,6 +181,7 @@ OrderAdvancementScript extends ModuleScript {
                         invoice -> {
                             customFieldInstanceService.instantiateCFWithDefaultValue(invoice);
                             if(isDepositInvoice) {
+                            	invoice.setStatus(InvoiceStatusEnum.VALIDATED);
                                 serviceSingleton.assignInvoiceNumber(invoice, true);
                             }
                             if(rateToBill.intValue() != 100 && invoice.getInvoiceType() != null && invoice.getInvoiceType().getCode().equals("ADV")) {

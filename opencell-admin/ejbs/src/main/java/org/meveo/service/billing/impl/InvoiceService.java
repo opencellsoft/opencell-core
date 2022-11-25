@@ -6817,14 +6817,21 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return Collections.emptyList();
         }
         // check balance when invoicing plan created from order ==> adv from order must have balance set
-        List<Invoice> invoicesAdv = this.getEntityManager().createNamedQuery("Invoice.findValidatedInvoiceAdvWithoutOrder")
-                                                            .setParameter("billingAccountId", invoice.getBillingAccount().getId())
-                                                            .setParameter("commercialOrder", invoice.getCommercialOrder())
-                                                            .getResultList();
+        List<Invoice> invoicesAdv = null;
+        if(invoice.getCommercialOrder() != null) {
+	        invoicesAdv = this.getEntityManager().createNamedQuery("Invoice.findValidatedInvoiceAdvWithOrder")
+	                                                            .setParameter("billingAccountId", invoice.getBillingAccount().getId())
+	                                                            .setParameter("commercialOrder", invoice.getCommercialOrder())
+	                                                            .getResultList();
+        }else {
+	        invoicesAdv = this.getEntityManager().createNamedQuery("Invoice.findValidatedInvoiceAdvWithoutOrder")
+                    .setParameter("billingAccountId", invoice.getBillingAccount().getId())
+                    .getResultList();
+        }
         
         sort(invoicesAdv, (inv1, inv2) -> {
             
-            int compCommercialOrder = 0;
+           /* int compCommercialOrder = 0;
             if(inv1.getCommercialOrder() != null && inv2.getCommercialOrder() == null) {
                 compCommercialOrder = 1;
             }else if(inv1.getCommercialOrder() == null && inv2.getCommercialOrder() != null) {
@@ -6834,7 +6841,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
             if(compCommercialOrder != 0) {
                 return compCommercialOrder;
-            }
+            }*/
             int compCreationDate = inv1.getAuditable().getCreated().compareTo(inv2.getAuditable().getCreated());
             if(compCreationDate != 0) {
                 return compCreationDate;
