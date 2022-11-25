@@ -1094,7 +1094,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             // Retrieve Rated transactions and split them into BA/seller combinations
             List<RatedTransaction> rts = getDataToInvoiceFromFilterOrDraft(entityToInvoice, ratedTransactionFilter, firstTransactionDate, lastTransactionDate, invoiceDate, isDraft);
-            if (billingRun.isExceptionalBR()) {
+            if (billingRun != null && billingRun.isExceptionalBR()) {
                 rts = rts.stream().filter(rt -> (rt.getStatus() == RatedTransactionStatusEnum.OPEN && rt.getBillingRun() == null)).collect(toList());
             }
             if (!rts.isEmpty()) {
@@ -6766,5 +6766,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 }
                 invoice.setInvoiceBalance(remainingAmount);
         }
+    }
+	public void validateAndAssignInvoiceNumberUnit(Invoice invoice) throws BusinessException{	
+		invoice.setStatus(InvoiceStatusEnum.VALIDATED);
+		serviceSingleton.assignInvoiceNumber(invoice, true);				
     }
 }
