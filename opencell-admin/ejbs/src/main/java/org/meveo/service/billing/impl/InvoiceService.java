@@ -5463,7 +5463,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     
     private PaymentMethod resolvePMethod(BillingAccount billingAccount, BillingCycle billingCycle, PaymentMethod defaultPaymentMethod, InvoiceLine invoiceLine) {
         if (BillingEntityTypeEnum.SUBSCRIPTION.equals(billingCycle.getType()) || (BillingEntityTypeEnum.BILLINGACCOUNT.equals(billingCycle.getType()) && billingCycle.isSplitPerPaymentMethod())) {
-            if (Objects.nonNull(invoiceLine.getSubscription().getPaymentMethod())) {
+            if (invoiceLine.getSubscription() != null
+                    && Objects.nonNull(invoiceLine.getSubscription().getPaymentMethod())) {
                 return invoiceLine.getSubscription().getPaymentMethod();
             } else if (Objects.nonNull(billingAccount.getPaymentMethod())) {
                 return billingAccount.getPaymentMethod();
