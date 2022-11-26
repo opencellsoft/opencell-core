@@ -6609,8 +6609,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 entity = subscriptionService.findByCode(targetCode, asList("billingRun"));
             } else if (BillingEntityTypeEnum.ORDER.toString().equalsIgnoreCase(targetType)) {
                 entity = commercialOrderService.findByCodeOrExternalId(targetCode);
-                // TODO check below
-               // entity = orderService.findByCodeOrExternalId(targetCode);
             }
         } else {
             if (!StringUtils.isBlank(orderNumber)) {
