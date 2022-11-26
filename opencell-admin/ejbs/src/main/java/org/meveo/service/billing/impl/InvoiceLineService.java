@@ -1301,11 +1301,10 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 .getResultList();
     }
     
-    public List<InvoiceLine> findByIdsAndAdjustmentStatusOrInvoiceType(List<Long> invoiceLinesIds, AdjustmentStatusEnum adjustmentStatusEnum) {
-        return getEntityManager().createNamedQuery("InvoiceLine.findByIdsAndAdjustmentStatusOrInvoiceType", entityClass)
-                .setParameter("status", adjustmentStatusEnum.toString())
+    public List<InvoiceLine> findByIdsAndInvoiceType(List<Long> invoiceLinesIds, String invoiceType) {
+        return getEntityManager().createNamedQuery("InvoiceLine.findByIdsAndInvoiceType", entityClass)
                 .setParameter("invoiceLinesIds", invoiceLinesIds)
-                .setParameter("invoiceType", "SECURITY_DEPOSIT")
+                .setParameter("invoiceType", invoiceType)
                 .getResultList();
     }
 }

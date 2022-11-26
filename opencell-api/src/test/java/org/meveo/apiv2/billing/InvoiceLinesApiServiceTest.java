@@ -51,7 +51,7 @@ public class InvoiceLinesApiServiceTest {
 
 		// InvoiceType
 		InvoiceType it1 = new InvoiceType();
-		it1.setCode("DRAFT");// SECURITY_DEPOSIT
+		it1.setCode("DRAFT");
 
 		// InvoiceLine
 		InvoiceLine il1 = new InvoiceLine();
@@ -65,7 +65,7 @@ public class InvoiceLinesApiServiceTest {
 
 		invoice.setInvoiceLines(invoiceLines);
 
-		when(invoiceLineService.findByIdsAndAdjustmentStatusOrInvoiceType(any(), Mockito.eq(AdjustmentStatusEnum.NOT_ADJUSTED)))
+		when(invoiceLineService.findByIdsAndAdjustmentStatus(any(), Mockito.eq(AdjustmentStatusEnum.NOT_ADJUSTED)))
 				.thenReturn(invoiceLines);
 
 		expectedException.expect(BusinessException.class);
@@ -79,7 +79,7 @@ public class InvoiceLinesApiServiceTest {
 
 		// InvoiceType
 		InvoiceType it1 = new InvoiceType();
-		it1.setCode("DRAFT");// SECURITY_DEPOSIT
+		it1.setCode("DRAFT");
 
 		// InvoiceLine
 		InvoiceLine il1 = new InvoiceLine();
@@ -92,9 +92,6 @@ public class InvoiceLinesApiServiceTest {
 		List<InvoiceLine> invoiceLines = new ArrayList<>();
 
 		invoice.setInvoiceLines(invoiceLines);
-
-		// when(invoiceLineService.findByIdsAndAdjustmentStatusOrInvoiceType(any(),
-		// Mockito.eq(AdjustmentStatusEnum.NOT_ADJUSTED))).thenReturn(invoiceLines);
 
 		expectedException.expect(BusinessException.class);
 		expectedException.expectMessage("Only TO_ADJUST invoice lines can be marked NOT_ADJUSTED");
@@ -107,7 +104,7 @@ public class InvoiceLinesApiServiceTest {
 
 		// InvoiceType
 		InvoiceType it1 = new InvoiceType();
-		it1.setCode("DRAFT");// SECURITY_DEPOSIT
+		it1.setCode("DRAFT");
 
 		// InvoiceLine
 		InvoiceLine il1 = new InvoiceLine();
@@ -124,7 +121,7 @@ public class InvoiceLinesApiServiceTest {
 
 		invoice.setInvoiceLines(invoiceLines);
 
-		when(invoiceLineService.findByIdsAndAdjustmentStatusOrInvoiceType(any(), Mockito.eq(AdjustmentStatusEnum.NOT_ADJUSTED)))
+		when(invoiceLineService.findByIdsAndAdjustmentStatus(any(), Mockito.eq(AdjustmentStatusEnum.NOT_ADJUSTED)))
 				.thenReturn(invoiceLines);
 
 		int nbInvoiceLines = invoiceLinesApiService.markInvoiceLinesForAdjustment(false, ilIds);
@@ -136,7 +133,7 @@ public class InvoiceLinesApiServiceTest {
 
 		// InvoiceType
 		InvoiceType it1 = new InvoiceType();
-		it1.setCode("DRAFT");// SECURITY_DEPOSIT
+		it1.setCode("DRAFT");
 
 		// InvoiceLine
 		InvoiceLine il1 = new InvoiceLine();
@@ -153,7 +150,7 @@ public class InvoiceLinesApiServiceTest {
 
 		invoice.setInvoiceLines(invoiceLines);
 
-		when(invoiceLineService.findByIdsAndAdjustmentStatusOrInvoiceType(any(), Mockito.eq(AdjustmentStatusEnum.TO_ADJUST)))
+		when(invoiceLineService.findByIdsAndAdjustmentStatus(any(), Mockito.eq(AdjustmentStatusEnum.TO_ADJUST)))
 				.thenReturn(invoiceLines);
 
 		int nbInvoiceLines = invoiceLinesApiService.unmarkInvoiceLinesForAdjustment(false, ilIds);
@@ -181,9 +178,8 @@ public class InvoiceLinesApiServiceTest {
 
 		invoice.setInvoiceLines(invoiceLines);
 
-		when(invoiceLineService.findByIdsAndAdjustmentStatusOrInvoiceType(any(), Mockito.eq(AdjustmentStatusEnum.NOT_ADJUSTED)))
-				.thenReturn(invoiceLines);
-
+		
+		when(invoiceLineService.findByIdsAndInvoiceType(any(), Mockito.eq("SECURITY_DEPOSIT"))).thenReturn(invoiceLines);
 		expectedException.expect(BusinessException.class);
 		expectedException.expectMessage("Security deposit invoices can not be marked for mass adjustment.");
 
@@ -211,13 +207,70 @@ public class InvoiceLinesApiServiceTest {
 
 		invoice.setInvoiceLines(invoiceLines);
 
-		when(invoiceLineService.findByIdsAndAdjustmentStatusOrInvoiceType(any(), Mockito.eq(AdjustmentStatusEnum.TO_ADJUST)))
-				.thenReturn(invoiceLines);
+		when(invoiceLineService.findByIdsAndInvoiceType(any(), Mockito.eq("SECURITY_DEPOSIT"))).thenReturn(invoiceLines);
 
 		expectedException.expect(BusinessException.class);
 		expectedException.expectMessage("Security deposit invoices can not be marked for mass adjustment.");
 
 		invoiceLinesApiService.unmarkInvoiceLinesForAdjustment(false, ilIds);
+	}
+	
+	@Test
+	public void shouldMarkInvoiceLinesForAdjustmentAndIgnoreStatus() {
+
+		// InvoiceType
+		InvoiceType it1 = new InvoiceType();
+		it1.setCode("DRAFT");
+
+		// InvoiceLine
+		InvoiceLine il1 = new InvoiceLine();
+
+		// securityDepositInvoice
+		invoice = new Invoice();
+		invoice.setId(1L);
+		invoice.setInvoiceType(it1);
+
+		il1.setInvoice(invoice);
+
+		List<InvoiceLine> invoiceLines = new ArrayList<>();
+		invoiceLines.add(il1);
+
+		invoice.setInvoiceLines(invoiceLines);
+
+		when(invoiceLineService.findByIdsAndAdjustmentStatus(any(), Mockito.eq(AdjustmentStatusEnum.NOT_ADJUSTED)))
+				.thenReturn(invoiceLines);
+
+		int nbInvoiceLines = invoiceLinesApiService.markInvoiceLinesForAdjustment(true, ilIds);
+		assertEquals(1, nbInvoiceLines);
+	}
+
+	@Test
+	public void shouldUnMarkInvoiceLinesForAdjustmentAndIgnoreStatus() {
+
+		// InvoiceType
+		InvoiceType it1 = new InvoiceType();
+		it1.setCode("DRAFT");
+
+		// InvoiceLine
+		InvoiceLine il1 = new InvoiceLine();
+
+		// securityDepositInvoice
+		invoice = new Invoice();
+		invoice.setId(1L);
+		invoice.setInvoiceType(it1);
+
+		il1.setInvoice(invoice);
+
+		List<InvoiceLine> invoiceLines = new ArrayList<>();
+		invoiceLines.add(il1);
+
+		invoice.setInvoiceLines(invoiceLines);
+
+		when(invoiceLineService.findByIdsAndAdjustmentStatus(any(), Mockito.eq(AdjustmentStatusEnum.TO_ADJUST)))
+				.thenReturn(invoiceLines);
+
+		int nbInvoiceLines = invoiceLinesApiService.unmarkInvoiceLinesForAdjustment(true, ilIds);
+		assertEquals(1, nbInvoiceLines);
 	}
 
 }

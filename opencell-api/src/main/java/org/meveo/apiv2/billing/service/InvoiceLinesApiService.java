@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.billing.ImmutableTax;
@@ -22,7 +23,6 @@ import org.meveo.apiv2.billing.Tax;
 import org.meveo.apiv2.billing.TaxDetails;
 import org.meveo.apiv2.generic.core.GenericHelper;
 import org.meveo.apiv2.generic.core.GenericRequestMapper;
-import org.meveo.apiv2.generic.services.GenericApiLoadService;
 import org.meveo.apiv2.generic.services.GenericApiPersistenceDelegate;
 import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
 import org.meveo.apiv2.generic.services.SearchResult;
@@ -30,6 +30,7 @@ import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.billing.AdjustmentStatusEnum;
 import org.meveo.model.billing.InvoiceLine;
 import org.meveo.service.billing.impl.InvoiceLineService;
+import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
 public class InvoiceLinesApiService implements ApiService<InvoiceLine>  {
 
@@ -132,65 +133,48 @@ public class InvoiceLinesApiService implements ApiService<InvoiceLine>  {
 
 	public int markInvoiceLinesForAdjustment(Boolean IgnoreInvalidStatuses, List<Long> invoiceLinesIds) {
 		
-		if(IgnoreInvalidStatuses == null || !IgnoreInvalidStatuses) {
-    		List<InvoiceLine> invoiceLines = invoiceLinesService.findByIdsAndAdjustmentStatusOrInvoiceType(invoiceLinesIds, AdjustmentStatusEnum.NOT_ADJUSTED);
-    		if (invoiceLines.size() != invoiceLinesIds.size()) {
-    			 throw new BusinessException("Only NOT_ADJUSTED invoice lines can be marked TO_ADJUST");
-			}
-    		invoiceLines.stream().forEach(invoiceLine -> {
-    										if(invoiceLine.getInvoice().getInvoiceType().getCode().equalsIgnoreCase("SECURITY_DEPOSIT")) {
-    											throw new BusinessException("Security deposit invoices can not be marked for mass adjustment.");
-    										}
-    										invoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.TO_ADJUST);
-											invoiceLinesService.update(invoiceLine);}
-    									);
-    		return invoiceLines.size();
-    	}else {
-    		List<InvoiceLine> invoiceLines = invoiceLinesService.findByIdsAndAdjustmentStatusOrInvoiceType(invoiceLinesIds, AdjustmentStatusEnum.NOT_ADJUSTED);
-    		invoiceLines.stream().forEach(invoiceLine -> {
-											    			if(invoiceLine.getInvoice().getInvoiceType().getCode().equalsIgnoreCase("SECURITY_DEPOSIT")) {
-																throw new BusinessException("Security deposit invoices can not be marked for mass adjustment.");
-															}
-											    			invoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.TO_ADJUST);
-    														invoiceLinesService.update(invoiceLine);}
-    									);
-    		return invoiceLines == null ? 0 : invoiceLines.size();
-    	}
+		List<InvoiceLine> sdInvoiceLines = invoiceLinesService.findByIdsAndInvoiceType(invoiceLinesIds, "SECURITY_DEPOSIT");
+		if(!CollectionUtils.isEmpty(sdInvoiceLines)) {
+			StringBuilder ids = new StringBuilder();
+		    sdInvoiceLines.stream().forEach( il -> ids.append(il.getId()+"  "));
+			throw new BusinessException("Security deposit invoices can not be marked for mass adjustment. The ids of invoice lines concerned are "+ ids);
+		}
+				
+		List<InvoiceLine> invoiceLines = invoiceLinesService.findByIdsAndAdjustmentStatus(invoiceLinesIds, AdjustmentStatusEnum.NOT_ADJUSTED);
+		if ((IgnoreInvalidStatuses == null || !IgnoreInvalidStatuses) && invoiceLines.size() != invoiceLinesIds.size()) {
+			 throw new BusinessException("Only NOT_ADJUSTED invoice lines can be marked TO_ADJUST");
+		}
+		invoiceLines.stream().forEach(invoiceLine -> {										
+										invoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.TO_ADJUST);
+										invoiceLinesService.update(invoiceLine);});
+		return invoiceLines.size();
+    	
 	}
 	
 	public int unmarkInvoiceLinesForAdjustment(Boolean IgnoreInvalidStatuses, List<Long> invoiceLinesIds) {
 		
-		
-		if(IgnoreInvalidStatuses == null || !IgnoreInvalidStatuses) {			
-    		List<InvoiceLine> invoiceLines = invoiceLinesService.findByIdsAndAdjustmentStatusOrInvoiceType(invoiceLinesIds, AdjustmentStatusEnum.TO_ADJUST);
-    		if (invoiceLines.size() != invoiceLinesIds.size()) {
+		List<InvoiceLine> sdInvoiceLines = invoiceLinesService.findByIdsAndInvoiceType(invoiceLinesIds, "SECURITY_DEPOSIT");
+		if(!CollectionUtils.isEmpty(sdInvoiceLines)) { 
+			StringBuilder ids = new StringBuilder();
+		    sdInvoiceLines.stream().forEach( il -> ids.append(il.getId()+"  "));
+			throw new BusinessException("Security deposit invoices can not be marked for mass adjustment. The ids of invoice lines concerned are "+ ids);
+		}
+		List<InvoiceLine> invoiceLines = invoiceLinesService.findByIdsAndAdjustmentStatus(invoiceLinesIds, AdjustmentStatusEnum.TO_ADJUST);
+    		if ((IgnoreInvalidStatuses == null || !IgnoreInvalidStatuses) && invoiceLines.size() != invoiceLinesIds.size()) {
     			 throw new BusinessException("Only TO_ADJUST invoice lines can be marked NOT_ADJUSTED");
 			}
     		invoiceLines.stream().forEach(invoiceLine -> {
-											    			if(invoiceLine.getInvoice().getInvoiceType().getCode().equalsIgnoreCase("SECURITY_DEPOSIT")) {
-																throw new BusinessException("Security deposit invoices can not be marked for mass adjustment.");
-															}
 				    										invoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);   		
-															invoiceLinesService.update(invoiceLine);}
-    									);
-    		return invoiceLines.size();
-    	}else {
-    		List<InvoiceLine> invoiceLines = invoiceLinesService.findByIdsAndAdjustmentStatusOrInvoiceType(invoiceLinesIds, AdjustmentStatusEnum.TO_ADJUST);
-    		invoiceLines.stream().forEach(invoiceLine -> {
-											    			if(invoiceLine.getInvoice().getInvoiceType().getCode().equalsIgnoreCase("SECURITY_DEPOSIT")) {
-																throw new BusinessException("Security deposit invoices can not be marked for mass adjustment.");
-															}
-    														invoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
-    														invoiceLinesService.update(invoiceLine);}
-    									);
-    		return invoiceLines == null ? 0 : invoiceLines.size();
-    	}
+															invoiceLinesService.update(invoiceLine);});
+    		return invoiceLines.size();    	
 	}
 	
 
 	public List<Long> getInvoiceLineIds(InvoiceLinesToMarkAdjustment invoiceLinesToUnmark) {
+		if(invoiceLinesToUnmark.getFilters().isEmpty())
+			return new ArrayList<>();
 		List<InvoiceLine> invoiceLines = getInvoiceLinesForAdjustment(invoiceLinesToUnmark);
-    	return invoiceLines.stream().map(invoiceLine -> invoiceLine.getId()).collect(Collectors.toList());
+    	return emptyIfNull(invoiceLines).stream().map(invoiceLine -> invoiceLine.getId()).collect(Collectors.toList());
 	}
 
 	private List<InvoiceLine> getInvoiceLinesForAdjustment(InvoiceLinesToMarkAdjustment invoiceLinesToUnmark) {
