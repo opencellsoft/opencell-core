@@ -1,5 +1,7 @@
 package org.meveo.service.accounting.impl;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Date;
@@ -46,7 +48,9 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 			entity.setAccountingPeriodYear(getAccountingPeriodYear(entity.getStartDate(), entity.getEndDate()));
 		}
 		if(entity.getStartDate() == null) {
-			entity.setStartDate(new Date());
+			LocalDateTime endDate = entity.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+			LocalDateTime startDate = subAccountingPeriodService.calculateInitialStartDatePeriod(LocalDate.now(),endDate);
+			entity.setStartDate(Date.from(startDate.atZone(ZoneId.systemDefault()).toInstant()));
 		}
 		create(entity);
 		generateSubAccountingPeriods(entity);
@@ -137,9 +141,10 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 
 		final Date endDate = Date.from(openAccountingPeriod.getEndDate().toInstant().atZone(ZoneId.systemDefault()).plusYears(1).toInstant());
 		nextAP.setEndDate(endDate);
-		
-		final Date startDate = Date.from(openAccountingPeriod.getStartDate().toInstant().atZone(ZoneId.systemDefault()).plusNanos(1).toInstant());
-		
+
+		final Date startDate = Date.from(openAccountingPeriod.getStartDate().toInstant().atZone(ZoneId.systemDefault()).plusYears(1).toInstant());
+		nextAP.setStartDate(startDate);
+
 		nextAP.setAccountingPeriodYear(getAccountingPeriodYear(startDate,endDate));
 		nextAP.setUseSubAccountingCycles(openAccountingPeriod.isUseSubAccountingCycles());
 		nextAP.setAccountingPeriodStatus(AccountingPeriodStatusEnum.OPEN);
