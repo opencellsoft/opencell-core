@@ -10231,6 +10231,8 @@
             <column name="oneshot_total_amount" type="numeric(23, 12)" />
             <column name="discount_plan_id" type="bigint"/>
             <column name="sales_person_name" type="varchar(52)" />
+            <column name="billing_cycle_id" type="bigint" />
+            <column name="billing_run_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-475" author="NabilOUACHI">
@@ -16620,6 +16622,23 @@
                                  referencedTableName="crm_customer"
                                  referencedColumnNames="id" />
     </changeSet>
+    <changeSet id="#INTRD-11775_20221120_fk" author="hichamELHALOUI">
+        <addForeignKeyConstraint baseTableName="cpq_commercial_order"
+                                 baseColumnNames="billing_cycle_id"
+                                 constraintName="fk_cpq_commercial_order_billing_cycle"
+                                 referencedTableName="billing_cycle"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+        <addForeignKeyConstraint baseTableName="cpq_commercial_order"
+                                 baseColumnNames="billing_run_id"
+                                 constraintName="fk_cpq_commercial_order_billing_run"
+                                 referencedTableName="billing_billing_run"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+
+    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -18807,6 +18826,7 @@
     <changeSet id="#INTRD-10957_20221026" author="Mbarek-Ay"/>
     <changeSet id="INTRD-11433_20221110" author="AbdelmounaimAkadid" />
     <changeSet id="#INTRD-11310_20221110" author="ZBariki" />
+    <changeSet id="#INTRD-11775_20221120" author="hichamELHALOUI" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
