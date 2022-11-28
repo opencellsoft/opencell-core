@@ -87,12 +87,6 @@ public class CommercialOrder extends BusinessCFEntity implements IBillableEntity
 		this.access = copy.access;
 		this.userAccount = copy.userAccount;
 		this.salesPersonName = copy.salesPersonName;
-		this.billingCycle = copy.billingCycle;
-		this.billingRun = copy.billingRun;
-		this.totalInvoicingAmountWithoutTax = copy.totalInvoicingAmountWithoutTax;
-		this.totalInvoicingAmountWithTax = copy.totalInvoicingAmountWithTax;
-		this.totalInvoicingAmountTax = copy.totalInvoicingAmountTax;
-		this.minInvoiceLines = copy.minInvoiceLines;
 	}
 
 	/**
@@ -236,47 +230,6 @@ public class CommercialOrder extends BusinessCFEntity implements IBillableEntity
     @ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "discount_plan_id", referencedColumnName = "id")
 	private DiscountPlan discountPlan;
-
-	    /**
-     * Billing cycle when invoicing by order
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "billing_cycle_id")
-    private BillingCycle billingCycle;
-
-    /**
-     * Last billing run that processed this order
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "billing_run_id")
-    private BillingRun billingRun;
-
-	/**
-     * Rated transactions to reach minimum amount per invoice
-     */
-    @Transient
-    private List<RatedTransaction> minRatedTransactions;
-
-    /**
-     * Total invoicing amount without tax
-     */
-    @Transient
-    private BigDecimal totalInvoicingAmountWithoutTax;
-
-    /**
-     * Total invoicing amount with tax
-     */
-    @Transient
-    private BigDecimal totalInvoicingAmountWithTax;
-
-    /**
-     * Total invoicing tax amount
-     */
-    @Transient
-    private BigDecimal totalInvoicingAmountTax;
-
-    @Transient
-    private List<InvoiceLine> minInvoiceLines;
 	
     
     @Override
@@ -722,72 +675,81 @@ public class CommercialOrder extends BusinessCFEntity implements IBillableEntity
 	}
 
 	@Override
-	public BillingCycle getBillingCycle() {
-		return billingCycle;
-	}
-
-	public void setBillingCycle(BillingCycle billingCycle) {
-		this.billingCycle = billingCycle;
-	}
-
-	@Override
 	public BillingRun getBillingRun() {
-		return billingRun;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public void setBillingRun(BillingRun billingRun) {
-		this.billingRun = billingRun;
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
 	public List<RatedTransaction> getMinRatedTransactions() {
-		return minRatedTransactions;
-	}
-
-	@Override
-	public void setMinRatedTransactions(List<RatedTransaction> minRatedTransactions) {
-		this.minRatedTransactions = minRatedTransactions;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public BigDecimal getTotalInvoicingAmountWithoutTax() {
-		return totalInvoicingAmountWithoutTax;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax) {
-		this.totalInvoicingAmountWithoutTax = totalInvoicingAmountWithoutTax;
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
 	public BigDecimal getTotalInvoicingAmountWithTax() {
-		return totalInvoicingAmountWithTax;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax) {
-		this.totalInvoicingAmountWithTax = totalInvoicingAmountWithTax;
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
 	public BigDecimal getTotalInvoicingAmountTax() {
-		return totalInvoicingAmountTax;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
-		this.totalInvoicingAmountTax = totalInvoicingAmountTax;
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public BillingCycle getBillingCycle() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public List<InvoiceLine> getMinInvoiceLines() {
-		return minInvoiceLines;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	public void setMinInvoiceLines(List<InvoiceLine> minInvoiceLines) {
-		this.minInvoiceLines = minInvoiceLines;
+	public void setMinInvoiceLines(List<InvoiceLine> invoiceLines) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	/**
