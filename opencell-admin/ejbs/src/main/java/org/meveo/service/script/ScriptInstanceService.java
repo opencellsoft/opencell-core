@@ -777,7 +777,7 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
      * @param context
      */
     private void injectDefaultValues(ScriptInstance scriptInstance, Map<String, Object> context) {
-    	List<ScriptParameter> paramsWithDefaultValue = scriptInstance.getScriptParameters().stream().filter(sp -> StringUtils.isNotEmpty(sp.getDefaultValue()) && sp.isMandatory()).collect(Collectors.toList());
+    	List<ScriptParameter> paramsWithDefaultValue = scriptInstance.getScriptParameters().stream().filter(sp -> StringUtils.isNotEmpty(sp.getDefaultValue())).collect(Collectors.toList());
     	paramsWithDefaultValue.stream().filter(sp -> !context.containsKey(sp.getCode())).forEach(sp -> context.put(sp.getCode(), sp.getDefaultValue()));
     }
     
