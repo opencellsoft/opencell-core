@@ -78,11 +78,11 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 		final int monthsPerPeriod = 12 / numberOfPeriodsPerYear;
 		int number = 1;
 
-		LocalDate fiscalYearStartDate = startDateTime.toLocalDate();
+		LocalDate fiscalYearStartDate = calculateFiscalYearStartDate(startDateTime,endDate);
 		LocalDateTime startDatePeriod = calculateInitialStartDatePeriod(fiscalYearStartDate,endDate);
 		LocalDateTime endDatePeriod = calculateInitialEndDatePeriod(monthsPerPeriod, startDatePeriod, endDate);
 
-		while ((!endDatePeriod.isAfter(endDate) || endDatePeriod.isEqual(endDate.toLocalDate().atStartOfDay()))) {
+		while (!endDatePeriod.isAfter(endDate) || endDatePeriod.isEqual(endDate.toLocalDate().atStartOfDay())) {
 			if (!endDatePeriod.isBefore(fiscalYearStartDate.atTime(MAX))) {
 				createSubAccountingPeriod(accountingPeriod, startDatePeriod, endDatePeriod, number);
 				number++;
@@ -93,21 +93,21 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 		}
 	}
 
+	private LocalDate calculateFiscalYearStartDate(LocalDateTime startDateTime, LocalDateTime endDate) {
 
-	public LocalDateTime calculateInitialStartDatePeriod(LocalDate fiscalYearStartDate, LocalDateTime endDate) {
+		if (isEndOfMonth(endDate) && !isEndOfMonth(startDateTime)) {
+			return startDateTime.toLocalDate();
+		}
+		return endDate.minusYears(1).plusDays(1).toLocalDate();
+	}
 
-		int startDay = 0;
-		Month startMonth = Month.JANUARY;
-		LocalDate lastYear = endDate.minusYears(1).plusDays(1).toLocalDate();
+	private LocalDateTime calculateInitialStartDatePeriod(LocalDate fiscalYearStartDate, LocalDateTime endDate) {
 
-		if(isEndOfMonth(endDate)){
-			startDay = fiscalYearStartDate.atStartOfDay().with(TemporalAdjusters.firstDayOfMonth()).getDayOfMonth();
-		}else{
-			startDay = endDate.getDayOfMonth() + 1;
-			startMonth = lastYear.getMonth();
+		if (isEndOfMonth(endDate) && !isEndOfMonth(fiscalYearStartDate.atStartOfDay())) {
+			return fiscalYearStartDate.atStartOfDay().with(TemporalAdjusters.firstDayOfMonth());
 		}
 
-		return LocalDate.of(lastYear.getYear(), startMonth, startDay).atStartOfDay();
+		return fiscalYearStartDate.withYear(fiscalYearStartDate.getYear()).atStartOfDay();
 	}
 
 	private static LocalDateTime calculateNextEndDatePeriod(int monthsPerPeriod, LocalDateTime endDatePeriod, LocalDateTime endDate) {
@@ -126,6 +126,11 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 	}
 
 	private static LocalDateTime calculateInitialEndDatePeriod(int monthsPerPeriod, LocalDateTime startDatePeriod, LocalDateTime endDate) {
+
+		if (isEndOfMonth(endDate) && !isEndOfMonth(startDatePeriod)) {
+			return startDatePeriod.withDayOfMonth(
+					startDatePeriod.getMonth().length(startDatePeriod.toLocalDate().isLeapYear()));
+		}
 
 		return isEndOfMonth(endDate) ?
 
