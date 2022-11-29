@@ -137,7 +137,7 @@ public class InvoiceLinesApiService implements ApiService<InvoiceLine>  {
 		if(!CollectionUtils.isEmpty(sdInvoiceLines)) {
 			StringBuilder ids = new StringBuilder();
 		    sdInvoiceLines.stream().forEach( il -> ids.append(il.getId()+"  "));
-			throw new BusinessException("Security deposit invoices can not be marked for mass adjustment. The ids of invoice lines concerned are "+ ids);
+			throw new BusinessException("Security deposit invoices can not be marked for mass adjustment. The id(s) of invoice line(s) concerned:  "+ ids);
 		}
 				
 		List<InvoiceLine> invoiceLinesIdsToMark = invoiceLinesService.findByIdsAndAdjustmentStatus(invoiceLinesIds, AdjustmentStatusEnum.NOT_ADJUSTED);
@@ -148,9 +148,10 @@ public class InvoiceLinesApiService implements ApiService<InvoiceLine>  {
 	            .stream()
 	            .map(InvoiceLine::getId)
 	            .collect(Collectors.toList());
-		invoiceLinesService.updateForAdjustment(idList, AdjustmentStatusEnum.NOT_ADJUSTED);
-		return invoiceLinesIdsToMark.size();
-    	
+		if(!CollectionUtils.isEmpty(idList)) {
+			invoiceLinesService.updateForAdjustment(idList, AdjustmentStatusEnum.TO_ADJUST);
+		}		
+		return invoiceLinesIdsToMark.size();  	
 	}
 	
 	public int unmarkInvoiceLinesForAdjustment(Boolean IgnoreInvalidStatuses, List<Long> invoiceLinesIds) {
@@ -159,7 +160,7 @@ public class InvoiceLinesApiService implements ApiService<InvoiceLine>  {
 		if(!CollectionUtils.isEmpty(sdInvoiceLines)) { 
 			StringBuilder ids = new StringBuilder();
 		    sdInvoiceLines.stream().forEach( il -> ids.append(il.getId()+"  "));
-			throw new BusinessException("Security deposit invoices can not be marked for mass adjustment. The ids of invoice lines concerned are "+ ids);
+			throw new BusinessException("Security deposit invoices can not be marked for mass adjustment. The id(s) of invoice line(s) concerned: "+ ids);
 		}
 		List<InvoiceLine> invoiceLinesIdsToUnmark = invoiceLinesService.findByIdsAndAdjustmentStatus(invoiceLinesIds, AdjustmentStatusEnum.TO_ADJUST);
     		if ((IgnoreInvalidStatuses == null || !IgnoreInvalidStatuses) && invoiceLinesIdsToUnmark.size() != invoiceLinesIds.size()) {
@@ -169,7 +170,9 @@ public class InvoiceLinesApiService implements ApiService<InvoiceLine>  {
     	            .stream()
     	            .map(InvoiceLine::getId)
     	            .collect(Collectors.toList());
-    		invoiceLinesService.updateForAdjustment(idList, AdjustmentStatusEnum.NOT_ADJUSTED);
+    		if(!CollectionUtils.isEmpty(idList)) {
+    			invoiceLinesService.updateForAdjustment(idList, AdjustmentStatusEnum.NOT_ADJUSTED);
+    		}
     		return invoiceLinesIdsToUnmark.size();    	
 	}
 	

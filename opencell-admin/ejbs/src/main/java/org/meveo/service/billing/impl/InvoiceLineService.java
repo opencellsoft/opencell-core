@@ -1310,8 +1310,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     
     public void updateForAdjustment(Collection<Long> invoicesIds, AdjustmentStatusEnum status) {
         getEntityManager().createNamedQuery("InvoiceLine.updateForAdjustment")
-                .setParameter("status", status)
-                .setParameter("invoiceIds", invoicesIds)
+                .setParameter("status", status.toString())
+                .setParameter("now", new Date())
+                .setParameter("ids", invoicesIds)
                 .executeUpdate();
     }
 }
