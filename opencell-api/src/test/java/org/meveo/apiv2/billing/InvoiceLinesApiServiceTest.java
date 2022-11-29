@@ -7,7 +7,9 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.assertj.core.util.Arrays;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,11 +43,6 @@ public class InvoiceLinesApiServiceTest {
 
 	Invoice invoice = new Invoice();
 
-	@Before
-	public void setUp() {
-		invoice = new Invoice();
-	}
-
 	@Test
 	public void shouldThrowBusinessExceptionIfStatusNotIgnoreToMark() {
 
@@ -62,11 +59,14 @@ public class InvoiceLinesApiServiceTest {
 		invoice.setInvoiceType(it1);
 
 		List<InvoiceLine> invoiceLines = new ArrayList<>();
+		invoiceLines.add(il1);
 
 		invoice.setInvoiceLines(invoiceLines);
-
-		when(invoiceLineService.findByIdsAndAdjustmentStatus(any(), Mockito.eq(AdjustmentStatusEnum.NOT_ADJUSTED)))
-				.thenReturn(invoiceLines);
+		
+		List<Long> idList = invoiceLines
+	            .stream()
+	            .map(InvoiceLine::getId)
+	            .collect(Collectors.toList());
 
 		expectedException.expect(BusinessException.class);
 		expectedException.expectMessage("Only NOT_ADJUSTED invoice lines can be marked TO_ADJUST");
@@ -90,6 +90,7 @@ public class InvoiceLinesApiServiceTest {
 		invoice.setInvoiceType(it1);
 
 		List<InvoiceLine> invoiceLines = new ArrayList<>();
+		invoiceLines.add(il1);
 
 		invoice.setInvoiceLines(invoiceLines);
 
@@ -120,6 +121,7 @@ public class InvoiceLinesApiServiceTest {
 		invoiceLines.add(il1);
 
 		invoice.setInvoiceLines(invoiceLines);
+		
 
 		when(invoiceLineService.findByIdsAndAdjustmentStatus(any(), Mockito.eq(AdjustmentStatusEnum.NOT_ADJUSTED)))
 				.thenReturn(invoiceLines);
@@ -236,6 +238,7 @@ public class InvoiceLinesApiServiceTest {
 		invoiceLines.add(il1);
 
 		invoice.setInvoiceLines(invoiceLines);
+		
 
 		when(invoiceLineService.findByIdsAndAdjustmentStatus(any(), Mockito.eq(AdjustmentStatusEnum.NOT_ADJUSTED)))
 				.thenReturn(invoiceLines);
@@ -265,6 +268,7 @@ public class InvoiceLinesApiServiceTest {
 		invoiceLines.add(il1);
 
 		invoice.setInvoiceLines(invoiceLines);
+		
 
 		when(invoiceLineService.findByIdsAndAdjustmentStatus(any(), Mockito.eq(AdjustmentStatusEnum.TO_ADJUST)))
 				.thenReturn(invoiceLines);

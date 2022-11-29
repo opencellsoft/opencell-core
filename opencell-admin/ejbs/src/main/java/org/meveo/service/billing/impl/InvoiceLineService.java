@@ -1307,4 +1307,11 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 .setParameter("invoiceType", invoiceType)
                 .getResultList();
     }
+    
+    public void updateForAdjustment(Collection<Long> invoicesIds, AdjustmentStatusEnum status) {
+        getEntityManager().createNamedQuery("InvoiceLine.updateForAdjustment")
+                .setParameter("status", status)
+                .setParameter("invoiceIds", invoicesIds)
+                .executeUpdate();
+    }
 }

@@ -140,14 +140,16 @@ public class InvoiceLinesApiService implements ApiService<InvoiceLine>  {
 			throw new BusinessException("Security deposit invoices can not be marked for mass adjustment. The ids of invoice lines concerned are "+ ids);
 		}
 				
-		List<InvoiceLine> invoiceLines = invoiceLinesService.findByIdsAndAdjustmentStatus(invoiceLinesIds, AdjustmentStatusEnum.NOT_ADJUSTED);
-		if ((IgnoreInvalidStatuses == null || !IgnoreInvalidStatuses) && invoiceLines.size() != invoiceLinesIds.size()) {
+		List<InvoiceLine> invoiceLinesIdsToMark = invoiceLinesService.findByIdsAndAdjustmentStatus(invoiceLinesIds, AdjustmentStatusEnum.NOT_ADJUSTED);
+		if ((IgnoreInvalidStatuses == null || !IgnoreInvalidStatuses) && invoiceLinesIdsToMark.size() != invoiceLinesIds.size()) {
 			 throw new BusinessException("Only NOT_ADJUSTED invoice lines can be marked TO_ADJUST");
 		}
-		invoiceLines.stream().forEach(invoiceLine -> {										
-										invoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.TO_ADJUST);
-										invoiceLinesService.update(invoiceLine);});
-		return invoiceLines.size();
+		List<Long> idList = invoiceLinesIdsToMark
+	            .stream()
+	            .map(InvoiceLine::getId)
+	            .collect(Collectors.toList());
+		invoiceLinesService.updateForAdjustment(idList, AdjustmentStatusEnum.NOT_ADJUSTED);
+		return invoiceLinesIdsToMark.size();
     	
 	}
 	
@@ -159,14 +161,16 @@ public class InvoiceLinesApiService implements ApiService<InvoiceLine>  {
 		    sdInvoiceLines.stream().forEach( il -> ids.append(il.getId()+"  "));
 			throw new BusinessException("Security deposit invoices can not be marked for mass adjustment. The ids of invoice lines concerned are "+ ids);
 		}
-		List<InvoiceLine> invoiceLines = invoiceLinesService.findByIdsAndAdjustmentStatus(invoiceLinesIds, AdjustmentStatusEnum.TO_ADJUST);
-    		if ((IgnoreInvalidStatuses == null || !IgnoreInvalidStatuses) && invoiceLines.size() != invoiceLinesIds.size()) {
+		List<InvoiceLine> invoiceLinesIdsToUnmark = invoiceLinesService.findByIdsAndAdjustmentStatus(invoiceLinesIds, AdjustmentStatusEnum.TO_ADJUST);
+    		if ((IgnoreInvalidStatuses == null || !IgnoreInvalidStatuses) && invoiceLinesIdsToUnmark.size() != invoiceLinesIds.size()) {
     			 throw new BusinessException("Only TO_ADJUST invoice lines can be marked NOT_ADJUSTED");
 			}
-    		invoiceLines.stream().forEach(invoiceLine -> {
-				    										invoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);   		
-															invoiceLinesService.update(invoiceLine);});
-    		return invoiceLines.size();    	
+    		List<Long> idList = invoiceLinesIdsToUnmark
+    	            .stream()
+    	            .map(InvoiceLine::getId)
+    	            .collect(Collectors.toList());
+    		invoiceLinesService.updateForAdjustment(idList, AdjustmentStatusEnum.NOT_ADJUSTED);
+    		return invoiceLinesIdsToUnmark.size();    	
 	}
 	
 

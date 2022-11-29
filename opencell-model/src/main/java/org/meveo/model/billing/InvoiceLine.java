@@ -121,9 +121,7 @@ import org.meveo.model.cpq.offer.QuoteOffer;
         @NamedQuery(name = "InvoiceLine.findByIdsAndOtherAdjustmentStatus", query = "SELECT il from InvoiceLine il  left join fetch il.invoice i left join fetch i.invoiceType WHERE adjustment_status <> :status and il.id in (:invoiceLinesIds)"),
         @NamedQuery(name = "InvoiceLine.findByAdjustmentStatus", query = "SELECT il from InvoiceLine il left join fetch il.invoice WHERE adjustment_status = :status"),
         @NamedQuery(name = "InvoiceLine.findByIdsAndInvoiceType", query = "SELECT il from InvoiceLine il left join fetch il.invoice i left join fetch i.invoiceType WHERE i.invoiceType.code = :invoiceType and il.id in (:invoiceLinesIds)"),
-        
-		
-		
+        @NamedQuery(name = "InvoiceLine.updateForAdjustment", query = "UPDATE InvoiceLine il set adjustment_status=:status, il.auditable.updated = :now  where il.id in :ids"),		
 	})
 public class InvoiceLine extends AuditableCFEntity {
 
