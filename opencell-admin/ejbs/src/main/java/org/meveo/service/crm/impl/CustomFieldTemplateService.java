@@ -123,6 +123,14 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         useCFTCache = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("cache.cacheCFT", "true"));
     }
 
+    public static void setCacheCFTAsTrue() {
+        useCFTCache = true;
+    }
+
+    public static void setCacheCFTAsFalse() {
+        useCFTCache = false;
+    }
+
     /**
      * Find a list of custom field templates corresponding to a given entity
      * 
