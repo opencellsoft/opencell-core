@@ -121,7 +121,7 @@ public class AccountOperationsGenerationJobBean extends IteratorBasedJobBean<Lon
 
         try {
             Invoice invoice = invoiceService.findById(invoiceId);
-            recordedInvoiceService.generateRecordedInvoice(invoice);
+            recordedInvoiceService.generateRecordedInvoice(invoice, null);
 
             invoice = invoiceService.update(invoice);
 

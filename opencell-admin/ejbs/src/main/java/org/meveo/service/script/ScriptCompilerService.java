@@ -183,7 +183,7 @@ public class ScriptCompilerService extends BusinessService<ScriptInstance> {
 
                 for (File physicalLibDir : deploymentDir.listFiles()) {
                     if (physicalLibDir.isDirectory()) {
-                        for (File f : FileUtils.listFiles(physicalLibDir, "jar", "*")) {
+                        for (File f : FileUtils.listFiles(physicalLibDir, "jar", "*", null)) {
                             classpath += f.getCanonicalPath() + File.pathSeparator;
                         }
                     }

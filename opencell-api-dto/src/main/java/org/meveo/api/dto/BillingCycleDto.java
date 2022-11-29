@@ -20,6 +20,7 @@ package org.meveo.api.dto;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -27,10 +28,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.mapper.FilterListDeserializer;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.ReferenceDateEnum;
 import org.meveo.model.billing.ThresholdOptionsEnum;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * The Class BillingCycleDto.
@@ -186,6 +190,9 @@ public class BillingCycleDto extends BusinessEntityDto {
 
     @XmlElement
     private String billingRunValidationScriptCode;
+    
+    @JsonDeserialize(using = FilterListDeserializer.class)
+    private Map<String, String> filters;
 
     public String getLastTransactionDateDelayEL() {
 		return lastTransactionDateDelayEL;
@@ -265,6 +272,7 @@ public class BillingCycleDto extends BusinessEntityDto {
             collectionDateDelayEl = billingCycleEntity.getCollectionDateDelayEl();
             computeDatesAtValidation = billingCycleEntity.getComputeDatesAtValidation() == null ? null : billingCycleEntity.getComputeDatesAtValidation();
             billingRunValidationScriptCode=billingCycleEntity.getBillingRunValidationScript()!=null?billingCycleEntity.getBillingRunValidationScript().getCode():null;
+            filters = billingCycleEntity.getFilters();
         }
     }
 
@@ -661,4 +669,12 @@ public class BillingCycleDto extends BusinessEntityDto {
     public void setComputeDatesAtValidation(Boolean computeDatesAtValidation) {
         this.computeDatesAtValidation = computeDatesAtValidation;
     }
+
+	public Map<String, String> getFilters() {
+		return filters;
+	}
+
+	public void setFilters(Map<String, String> filters) {
+		this.filters = filters;
+	}
 }

@@ -161,11 +161,12 @@ public interface GenericResource {
             responses = {
                     @ApiResponse(responseCode="200", description = "paginated results successfully exported"),
                     @ApiResponse(responseCode = "400", description = "bad request when entityName not well formed or entity unrecognized")
-    })
+            })
     Response export(
-                    @Parameter(description = "the entity name", required = true) @PathParam("entityName") String entityName,
-                    @Parameter(description = "file format", required = true) @PathParam("fileFormat") String fileFormat,
-                    @Parameter(description = "requestDto carries the wanted fields ex: {genericFields = [code, description]}", required = true) GenericPagingAndFiltering searchConfig) throws ClassNotFoundException;
+            @Parameter(description = "the entity name", required = true) @PathParam("entityName") String entityName,
+            @Parameter(description = "file format", required = true) @PathParam("fileFormat") String fileFormat,
+            @Parameter(description = "Locale") @QueryParam("locale") String locale,
+            @Parameter(description = "requestDto carries the wanted fields ex: {genericFields = [code, description]}", required = true) GenericPagingAndFiltering searchConfig) throws ClassNotFoundException;
 
 
 }
