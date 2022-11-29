@@ -4752,6 +4752,84 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "RemoveTimer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var idxArrayJob = pm.environment.get(\"idxArrayJob\");\r",
+									"\r",
+									"// while idxArrayJob is less than lengArrayJob, continue to execute the request RemoveTimer\r",
+									"if (idxArrayJob < pm.environment.get(\"lengArrayJob\")) {\r",
+									"    postman.setNextRequest(\"RemoveTimer\");\r",
+									"}\r",
+									"\r",
+									"// unset variables idxArrayJob and lengArrayJob at the end of execution of collection\r",
+									"if (idxArrayJob == pm.environment.get(\"lengArrayJob\")) {\r",
+									"    pm.environment.unset(\"idxArrayJob\");\r",
+									"    pm.environment.unset(\"lengArrayJob\");\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var arrayJobs = [[\"XML_Job\", \"XMLInvoiceGenerationJob\"], [\"Inv_Job\", \"InvoicingJob\"], [\"RT_Job\", \"RatedTransactionsJob\"], [\"RR_Job\", \"RecurringRatingJob\"], [\"U_Job\", \"UsageRatingJob\"], [\"AccountingPeriodClosingJob\", \"AccountingPeriodClosingJob\"], [\"AccountingSchemesJob\", \"AccountingSchemesJob\"], [\"SendResults\", \"ScriptingJob\"], [\"A_SEPA\", \"SepaDirectDebitJob\"], [\"AO_Job\", \"AccountOperationsGenerationJob\"], [\"PDF_Job\", \"PDFInvoiceGenerationJob\"], [\"BillingRunJob\", \"BillingRunJob\"], [\"M_Job\", \"MediationJob\"], [\"CDR_GEN_JOB\", \"ScriptingJob\"], [\"CRM_GEN_JOB\", \"ScriptingJob\"]];\r",
+									"\r",
+									"pm.environment.set(\"lengArrayJob\", arrayJobs.length);\r",
+									"\r",
+									"var idxArrayJob = pm.environment.get(\"idxArrayJob\");\r",
+									"if(!idxArrayJob) {\r",
+									"    pm.environment.set(\"idxArrayJob\", 0);\r",
+									"}\r",
+									"\r",
+									"idxArrayJob = pm.environment.get(\"idxArrayJob\");\r",
+									"\r",
+									"// iterate arrayJobs\r",
+									"var jobCode = arrayJobs[idxArrayJob][0];\r",
+									"pm.environment.set(\"jobCode\", jobCode);\r",
+									"\r",
+									"var jobTemplate = arrayJobs[idxArrayJob][1];\r",
+									"pm.environment.set(\"jobTemplate\", jobTemplate);\r",
+									"\r",
+									"// increase idxArrayJob\r",
+									"idxArrayJob = idxArrayJob + 1;\r",
+									"pm.environment.set(\"idxArrayJob\", idxArrayJob);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"{{jobCode}}\",\n    \"jobTemplate\": \"{{jobTemplate}}\",\n    \"timerCode\": \"\"\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
 				}
 			],
 			"event": [
