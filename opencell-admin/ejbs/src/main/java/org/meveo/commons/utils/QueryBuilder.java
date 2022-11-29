@@ -17,6 +17,7 @@
  */
 package org.meveo.commons.utils;
 
+import static org.apache.commons.lang3.StringUtils.indexOfIgnoreCase;
 import static org.meveo.service.base.PersistenceService.FROM_JSON_FUNCTION;
 
 import java.lang.reflect.Field;
@@ -1284,7 +1285,7 @@ public class QueryBuilder {
         StringBuilder s = new StringBuilder("select ")
                 .append(alias != null ? alias + "." : "")
                 .append("id ")
-                .append(toStringQuery(false).substring(q.indexOf(FROM)));
+                .append(toStringQuery(false).substring(indexOfIgnoreCase(q, FROM)));
 
         TypedQuery<Long> result = em.createQuery(s.toString(), Long.class);
         applyPagination(result);
