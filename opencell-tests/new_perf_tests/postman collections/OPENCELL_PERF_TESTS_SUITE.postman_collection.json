@@ -4708,7 +4708,7 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"var arrayJobs = [[\"XML_Job\", \"XMLInvoiceGenerationJob\"], [\"Inv_Job\", \"InvoicingJob\"], [\"RT_Job\", \"RatedTransactionsJob\"], [\"RR_Job\", \"RecurringRatingJob\"], [\"U_Job\", \"UsageRatingJob\"], [\"AccountingPeriodClosingJob\", \"AccountingPeriodClosingJob\"], [\"AccountingSchemesJob\", \"AccountingSchemesJob\"], [\"SendResults\", \"ScriptingJob\"], [\"A_SEPA\", \"SepaDirectDebitJob\"], [\"AO_Job\", \"AccountOperationsGenerationJob\"], [\"PDF_Job\", \"PDFInvoiceGenerationJob\"], [\"BillingRunJob\", \"BillingRunJob\"], [\"M_Job\", \"MediationJob\"], [\"CDR_GEN_JOB\", \"ScriptingJob\"], [\"CRM_GEN_JOB\", \"ScriptingJob\"]];\r",
+									"var arrayJobs = [[\"XML_Job\", \"XMLInvoiceGenerationJob\"], [\"Inv_Job\", \"InvoicingJob\"], [\"RT_Job\", \"RatedTransactionsJob\"], [\"RR_Job\", \"RecurringRatingJob\"], [\"U_Job\", \"UsageRatingJob\"], [\"AccountingPeriodClosingJob\", \"AccountingPeriodClosingJob\"], [\"AccountingSchemesJob\", \"AccountingSchemesJob\"], [\"SendResults\", \"ScriptingJob\"], [\"A_SEPA\", \"SepaDirectDebitJob\"], [\"AO_Job\", \"AccountOperationsGenerationJob\"], [\"PDF_Job\", \"PDFInvoiceGenerationJob\"], [\"BillingRunJob\", \"BillingRunJob\"], [\"M_Job\", \"MediationJob\"], [\"CDR_GEN_JOB\", \"ScriptingJob\"], [\"CRM_GEN_JOB\", \"ScriptingJob\"], [\"TriggerCollectionPlanLevelsJob_Job\", \"TriggerCollectionPlanLevelsJob\"]];\r",
 									"\r",
 									"pm.environment.set(\"lengArrayJob\", arrayJobs.length);\r",
 									"\r",
