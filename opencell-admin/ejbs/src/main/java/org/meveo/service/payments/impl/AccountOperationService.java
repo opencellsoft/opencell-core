@@ -241,6 +241,12 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 
     }
 
+    public Long createAndReturnReference(AccountOperation accountOperation) {
+        fillOperationNumber(accountOperation);
+        super.create(accountOperation);
+        return accountOperation.getId();
+    }
+
     /**
      * Gets the a os to pay.
      *

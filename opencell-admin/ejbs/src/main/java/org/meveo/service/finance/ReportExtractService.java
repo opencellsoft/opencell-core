@@ -168,13 +168,13 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             if (results != null && results.next()) {
                 if (entity.getReportExtractResultType().equals(ReportExtractResultTypeEnum.CSV)) {
                     fileDetails = writeAsFile(filename, ofNullable(entity.getFileSeparator()).orElse(";"), reportDir, results, ofNullable(entity.getMaximumLine()).orElse(0L),
-                        ofNullable(entity.getDecimalSeparator()).orElse("."));
+                        ofNullable(entity.getDecimalSeparator()).orElse("."), entity);
 
                 } else {
                     fileDetails = writeAsHtml(filename, reportDir, results, entity);
                 }
                 filename = fileDetails.getFileName();
-                reportExtractExecutionResult.setLineCount(reportSize);
+                reportExtractExecutionResult.setLineCount(fileDetails.getSize());
 
             } else if (be == null && entity.isGenerateEmptyReport()) {
                 filename = generateEmptyReport(filename, reportDir, entity.getReportExtractResultType());
@@ -299,7 +299,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private FileDetails writeAsFile(String filename, String fileSeparator, StringBuilder sbDir, ScrollableResults results, long maxLinePerFile, String decimalSeparator) throws BusinessException {
+    private FileDetails writeAsFile(String filename, String fileSeparator, StringBuilder sbDir, ScrollableResults results, long maxLinePerFile, String decimalSeparator, ReportExtract entity) throws BusinessException {
         Writer fileWriter = null;
         StringBuilder line = new StringBuilder();
         Object value = null;
@@ -328,8 +328,10 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
                 header.append(ite.next() + fileSeparator);
             }
             header.deleteCharAt(header.length() - 1);
-            fileWriter.write(header.toString());
-            fileWriter.write(System.lineSeparator());
+            if(entity.isIncludeHeaders()) {
+                fileWriter.write(header.toString());
+                fileWriter.write(System.lineSeparator());
+            }
 
             line = new StringBuilder();
             int counter = 0;
@@ -401,7 +403,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
     }
 
     public String getReporFilePath(ReportExtractExecutionResult reportResult) throws BusinessException {
-    	
+
     	if (reportResult.getFilePath().contains(ReportExtractScript.REPORTS_DIR)) {
     		return reportResult.getFilePath();
     	}

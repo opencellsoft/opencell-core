@@ -142,8 +142,8 @@ public class MediationJob extends Job {
             StorageFactory.mkdirs(f);
             log.debug("archiveDir {} creation ok", archiveDir);
         }
-
-        File[] files = StorageFactory.listFiles(inputDir, cdrExtensions);
+        String sortingOption = (String) this.getParamOrCFValue(jobInstance, CF_SORTING_OPTION);
+        File[] files = StorageFactory.listFiles(inputDir, cdrExtensions, sortingOption);
         if (files == null || files.length == 0) {
             log.debug("There is no file in {} with extension {} to by processed by Mediation {} job", inputDir, cdrExtensions, result.getJobInstance().getCode());
             return result;
@@ -267,6 +267,21 @@ public class MediationJob extends Job {
         batchSize.setDefaultValue("1000");
         batchSize.setGuiPosition("tab:Configuration:0;field:6");
         result.put(batchSize.getCode(), batchSize);
+
+        CustomFieldTemplate processingOrder = new CustomFieldTemplate();
+        processingOrder.setCode(CF_SORTING_OPTION);
+        processingOrder.setAppliesTo(JOB_INSTANCE_MEDIATION_JOB);
+        processingOrder.setActive(true);
+        processingOrder.setDefaultValue(SortingFilesEnum.ALPHA.name());
+        processingOrder.setDescription(resourceMessages.getString("flatFile.processingOrder"));
+        processingOrder.setFieldType(CustomFieldTypeEnum.LIST);
+        processingOrder.setValueRequired(false);
+        Map<String, String> listValuesProcessingOrder = new HashMap();
+        listValuesProcessingOrder.put(SortingFilesEnum.ALPHA.name(), resourceMessages.getString("flatFile.alphabeticFileNameOrder"));
+        listValuesProcessingOrder.put(SortingFilesEnum.CREATION_DATE.name(), resourceMessages.getString("flatFile.creationDateFileOrder"));
+        processingOrder.setListValues(listValuesProcessingOrder);
+        processingOrder.setGuiPosition("tab:Configuration:0;fieldGroup:Execution configuration:0;field:7");
+        result.put(CF_SORTING_OPTION, processingOrder);
 
         return result;
     }

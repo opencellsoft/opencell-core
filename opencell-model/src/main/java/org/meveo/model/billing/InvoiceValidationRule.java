@@ -14,8 +14,7 @@ import java.util.Date;
         @Parameter(name = "sequence_name", value = "billing_invoice_validation_rule_seq"), })
 public class InvoiceValidationRule extends BusinessEntity {
 
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "invoice_type_id", nullable = false)
     @NotNull
     private InvoiceType invoiceType;
@@ -99,5 +98,13 @@ public class InvoiceValidationRule extends BusinessEntity {
 
     public void setValidationEL(String validationEL) {
         this.validationEL = validationEL;
+    }
+
+    public InvoiceValidationStatusEnum getFailStatus() {
+        return failStatus;
+    }
+
+    public void setFailStatus(InvoiceValidationStatusEnum failStatus) {
+        this.failStatus = failStatus;
     }
 }

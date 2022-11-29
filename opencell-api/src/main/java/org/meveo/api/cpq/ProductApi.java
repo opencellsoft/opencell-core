@@ -48,6 +48,7 @@ import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
@@ -846,11 +847,23 @@ public class ProductApi extends BaseApi {
 				productAttribute.setValidationPattern(attr.getValidationPattern());
 				productAttribute.setValidationType(attr.getValidationType());
 				//productVersionAttributeService.checkValidationPattern(productAttribute);
+				validateTemplateAttribute(productAttribute);
                 attributes.add(productAttribute);
 			}
             productVersion.getAttributes().addAll(attributes);
 		}
 	}
+	
+	private void validateTemplateAttribute(ProductVersionAttribute productAttribute) {
+    	// A hidden mandatory field must have a default value 
+    	if (productAttribute.isMandatory() && !productAttribute.isDisplay() 
+         		&& (productAttribute.getDefaultValue() == null || productAttribute.getDefaultValue().isEmpty())) 
+         	 throw new InvalidParameterException("Default value is required for an attribute mandatory and hidden");
+    	// A read-only mandatory attribute must have a default value
+    	 if (productAttribute.isMandatory() && productAttribute.getReadOnly()
+          		&& (productAttribute.getDefaultValue() == null || productAttribute.getDefaultValue().isEmpty())) 
+          	 throw new InvalidParameterException("Default value is required for an attribute mandatory and read-only");
+    }
 
 	private void processTags(ProductVersionDto postData, ProductVersion productVersion) {
 		Set<String> tagCodes = postData.getTagCodes();

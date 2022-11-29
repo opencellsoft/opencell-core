@@ -103,7 +103,8 @@ public class CustomTableImportJob extends Job {
         if (!inputDir.exists()) {
             inputDir.mkdirs();
         }
-        List<File> files = FileUtils.listFiles(inputDir, "csv", null);
+        String sortingOption = (String) this.getParamOrCFValue(jobInstance, CF_SORTING_OPTION);
+        List<File> files = FileUtils.listFiles(inputDir, "csv", null, sortingOption);
         if (files != null && !files.isEmpty()) {
 
             result.setNbItemsToProcess(files.size());
@@ -240,6 +241,21 @@ public class CustomTableImportJob extends Job {
         waitingMillis.setValueRequired(false);
         waitingMillis.setGuiPosition("tab:Configuration:0;field:1");
         result.put(Job.CF_WAITING_MILLIS, waitingMillis);
+
+        CustomFieldTemplate processingOrder = new CustomFieldTemplate();
+        processingOrder.setCode(CF_SORTING_OPTION);
+        processingOrder.setAppliesTo("JobInstance_CustomTableImportJob");
+        processingOrder.setActive(true);
+        processingOrder.setDefaultValue(SortingFilesEnum.ALPHA.name());
+        processingOrder.setDescription(resourceMessages.getString("flatFile.processingOrder"));
+        processingOrder.setFieldType(CustomFieldTypeEnum.LIST);
+        processingOrder.setValueRequired(false);
+        Map<String, String> listValuesProcessingOrder = new HashMap();
+        listValuesProcessingOrder.put(SortingFilesEnum.ALPHA.name(), resourceMessages.getString("flatFile.alphabeticFileNameOrder"));
+        listValuesProcessingOrder.put(SortingFilesEnum.CREATION_DATE.name(), resourceMessages.getString("flatFile.creationDateFileOrder"));
+        processingOrder.setListValues(listValuesProcessingOrder);
+        processingOrder.setGuiPosition("tab:Configuration:0;fieldGroup:Execution configuration:0;field:2");
+        result.put(CF_SORTING_OPTION, processingOrder);
 
         return result;
     }

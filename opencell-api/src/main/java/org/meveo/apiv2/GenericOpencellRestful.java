@@ -24,6 +24,7 @@ import org.apache.commons.collections.map.HashedMap;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.meveo.apiv2.billing.impl.InvoiceValidationRulesResourceImpl;
 import org.meveo.apiv2.accounting.resource.impl.AccountingPeriodResourceImpl;
 import org.meveo.apiv2.accounting.resource.impl.AccountingResourceImpl;
 import org.meveo.apiv2.accountreceivable.accountOperation.AccountReceivableResourceImpl;
@@ -99,7 +100,6 @@ import org.meveo.apiv2.settings.globalSettings.impl.GlobalSettingsResourceImpl;
 import org.meveo.apiv2.settings.openOrderSetting.impl.OpenOrderSettingResourceImpl;
 import org.meveo.apiv2.standardReport.impl.StandardReportResourceImpl;
 import org.meveo.commons.utils.ParamBeanFactory;
-import org.meveo.model.communication.contact.ContactCategory;
 import org.slf4j.Logger;
 
 @ApplicationPath("/api/rest/v2")
@@ -155,7 +155,7 @@ public class GenericOpencellRestful extends Application {
                 OpenOrderTemplateResourceImpl.class, AccountingResourceImpl.class, PaymentPlanResourceImpl.class, MediationSettingResourceImpl.class,
                 OpenOrderQuoteResourceImpl.class, CpqQuoteResourceImpl.class, CommercialOrderResourceImpl.class,
                 SearchPriceLineByAttributeResourceImpl.class, InvoiceLinesResourceImpl.class, CpqContractResourceImpl.class, OpenOrderResourceImpl.class,
-                ContactCategoryResourceImpl.class, WalletOperationResourceImpl.class)
+                ContactCategoryResourceImpl.class, WalletOperationResourceImpl.class, InvoiceValidationRulesResourceImpl.class)
                 .collect(Collectors.toSet());
         if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
             resources.add(GenericApiLoggingFilter.class);
