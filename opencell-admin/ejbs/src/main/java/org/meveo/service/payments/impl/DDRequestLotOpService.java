@@ -50,17 +50,10 @@ public class DDRequestLotOpService extends PersistenceService<DDRequestLotOp> {
 		try {
 			Query query = getEntityManager().createQuery(selectQuery.toString()).setParameter("statusIN", DDRequestOpStatusEnum.WAIT).setParameter("builderIN", ddRequestBuilder)
 					.setParameter("paymentOrRefundEnumIN", paymentOrRefundEnum).setParameter("ddrequestOpIN", ddRequestOpEnum);
-			log.info("selectQuery log {}", selectQuery);
-			log.info("DDRequestOpStatusEnum.WAIT log {}", DDRequestOpStatusEnum.WAIT);
-			log.info("ddRequestBuilder log {}", ddRequestBuilder);
-			log.info("paymentOrRefundEnum log {}", paymentOrRefundEnum);
-			log.info("ddRequestOpEnum log {}", ddRequestOpEnum);
 			if (seller != null) {
 				query = query.setParameter("sellerIN", seller);
-				log.info("seller log {}", seller);
 			}
 			ddrequestOps = (List<DDRequestLotOp>) query.getResultList();
-			log.info("ddrequestOps log {}", ddrequestOps.size());
 		} catch (Exception e) {
 			log.error("failed to get DDRequestOps", e);
 		}
