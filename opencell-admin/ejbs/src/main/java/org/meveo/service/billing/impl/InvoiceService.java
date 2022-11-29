@@ -211,7 +211,6 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
@@ -1363,7 +1362,31 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (automaticInvoiceCheck && invoice.getInvoiceType() != null &&
                 (invoice.getInvoiceType().getInvoiceValidationScript() != null
                         || invoice.getInvoiceType().getInvoiceValidationRules() != null)) {
-            if(invoice.getInvoiceType().getInvoiceValidationRules() != null
+            if(invoice.getInvoiceType().getInvoiceValidationScript() != null) {
+                ScriptInstance scriptInstance = invoice.getInvoiceType().getInvoiceValidationScript();
+                if (scriptInstance != null) {
+                    ScriptInterface script = scriptInstanceService.getScriptInstance(scriptInstance.getCode());
+                    if (script != null) {
+                        Map<String, Object> methodContext = new HashMap<>();
+                        methodContext.put(Script.CONTEXT_ENTITY, invoice);
+                        methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
+                        methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+                        methodContext.put("billingRun", invoice.getBillingRun());
+                        script.execute(methodContext);
+                        Object status = methodContext.get(Script.INVOICE_VALIDATION_STATUS);
+                        if (status != null && status instanceof InvoiceValidationStatusEnum) {
+                            if (InvoiceValidationStatusEnum.REJECTED.equals((InvoiceValidationStatusEnum) status)) {
+                                invoice.setStatus(InvoiceStatusEnum.REJECTED);
+                                invoice.setRejectReason((String) methodContext.get(Script.INVOICE_VALIDATION_REASON));
+
+                            } else if (InvoiceValidationStatusEnum.SUSPECT.equals((InvoiceValidationStatusEnum) status)) {
+                                invoice.setStatus(InvoiceStatusEnum.SUSPECT);
+                                invoice.setRejectReason((String) methodContext.get(Script.INVOICE_VALIDATION_REASON));
+                            }
+                        }
+                    }
+                }
+            } else if(invoice.getInvoiceType().getInvoiceValidationRules() != null
                     && !invoice.getInvoiceType().getInvoiceValidationRules().isEmpty()) {
                 List<InvoiceValidationRule> invoiceValidationRules = invoice.getInvoiceType().getInvoiceValidationRules();
                 sort(invoiceValidationRules, comparingInt(InvoiceValidationRule::getPriority));
@@ -1387,7 +1410,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                                     if (status != null && status instanceof InvoiceValidationStatusEnum) {
                                         if (InvoiceValidationStatusEnum.REJECTED.equals(status)) {
                                             invoice.setStatus(InvoiceStatusEnum.REJECTED);
-                                            invoice.setRejectReason((String) methodContext.get(Script.INVOICE_VALIDATION_REASON));
+                                            invoice.setRejectReason("An error has occurred evaluating rule [id=" + validationRule.getId() + ", "
+                                                    + validationRule.getDescription() + ", script=" + validationRule.getValidationScript()
+                                                    + ": " + methodContext.get(Script.INVOICE_VALIDATION_REASON));
                                             noValidationError = false;
                                         } else if (InvoiceValidationStatusEnum.SUSPECT.equals(status)) {
                                             invoice.setStatus(InvoiceStatusEnum.SUSPECT);
@@ -1396,9 +1421,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                                         }
                                     }
                                 } catch (Exception exception) {
-                                    throw new BusinessException("An error has occurred evaluating rule [id= "
-                                            + validationRule.getId() + ",script "  + validationRule.getValidationScript()
-                                            + "]" + exception.getMessage());
+                                    throw new BusinessException(exception);
                                 }
                             }
                         } else {
@@ -1412,38 +1435,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
                                     }
                                     if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.REJECTED) {
                                         invoice.setStatus(InvoiceStatusEnum.REJECTED);
+                                        invoice.setRejectReason("An error has occurred evaluating rule [id="
+                                                + validationRule.getId() + ", " + validationRule.getDescription());
                                     }
                                 }
                             } catch (Exception exception) {
-                                throw new BusinessException("An error has occurred evaluating rule [id= "
-                                        + validationRule.getId() + ","  + validationRule.getCode() + "]");
+                                throw new BusinessException(exception);
                             }
                         }
 
-                    }
-                }
-            } else {
-                ScriptInstance scriptInstance = invoice.getInvoiceType().getInvoiceValidationScript();
-                if (scriptInstance != null) {
-                    ScriptInterface script = scriptInstanceService.getScriptInstance(scriptInstance.getCode());
-                    if (script != null) {
-                        Map<String, Object> methodContext = new HashMap<>();
-                        methodContext.put(Script.CONTEXT_ENTITY, invoice);
-                        methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
-                        methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
-                        methodContext.put("billingRun", invoice.getBillingRun());
-                        script.execute(methodContext);
-                        Object status = methodContext.get(Script.INVOICE_VALIDATION_STATUS);
-                        if (status != null && status instanceof InvoiceValidationStatusEnum) {
-                            if (InvoiceValidationStatusEnum.REJECTED.equals((InvoiceValidationStatusEnum) status)) {
-                                invoice.setStatus(InvoiceStatusEnum.REJECTED);
-                                invoice.setRejectReason((String) methodContext.get(Script.INVOICE_VALIDATION_REASON));
-
-                            } else if (InvoiceValidationStatusEnum.SUSPECT.equals((InvoiceValidationStatusEnum) status)) {
-                                invoice.setStatus(InvoiceStatusEnum.SUSPECT);
-                                invoice.setRejectReason((String) methodContext.get(Script.INVOICE_VALIDATION_REASON));
-                            }
-                        }
                     }
                 }
             }
