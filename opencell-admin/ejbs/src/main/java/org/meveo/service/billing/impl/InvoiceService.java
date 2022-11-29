@@ -171,6 +171,7 @@ import org.meveo.model.billing.InvoiceValidationStatusEnum;
 import org.meveo.model.billing.LinkedInvoice;
 import org.meveo.model.billing.MinAmountForAccounts;
 import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionAction;
 import org.meveo.model.billing.RatedTransactionGroup;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.ReferenceDateEnum;
@@ -2595,7 +2596,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException business exception
      */
     public void cancelInvoice(Invoice invoice) throws BusinessException {
-        cancelInvoice(invoice, true);
+        cancelInvoice(invoice, true, null);
     }
 
     /**
@@ -2605,13 +2606,24 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException business exception
      */
     public void cancelInvoiceWithoutDelete(Invoice invoice) throws BusinessException {
-        cancelInvoice(invoice, false);
+        cancelInvoice(invoice, false, null);
     }
 
-    public void cancelInvoice(Invoice invoice, boolean remove) {
+    /**
+     * Cancel invoice without delete.
+     *
+     * @param invoice invoice to cancel
+     * @param rtAction to change RT status to OPEN or CANCELED
+     * @throws BusinessException business exception
+     */
+    public void cancelInvoiceWithoutDeleteAndRTAction(Invoice invoice, RatedTransactionAction rtAction) throws BusinessException {
+        cancelInvoice(invoice, false, rtAction);
+    }
+
+    private void cancelInvoice(Invoice invoice, boolean remove, RatedTransactionAction rtAction) {
     	invoice = refreshOrRetrieve(invoice);
         checkNonValidateInvoice(invoice);
-        cancelInvoiceAndRts(invoice);
+        cancelInvoiceAndRts(invoice, rtAction);
         cancelInvoiceAdvances(invoice, null, true);
         List<Long> invoicesIds = new ArrayList<>();
         invoicesIds.add(invoice.getId());
@@ -2642,13 +2654,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     
-    public void cancelInvoiceAndRts(Invoice invoice) {
+    public void cancelInvoiceAndRts(Invoice invoice, RatedTransactionAction rtAction) {
         checkNonValidateInvoice(invoice);
         if (invoice.getRecordedInvoice() != null) {
             throw new BusinessException("Can't cancel an invoice that present in AR");
         }
         ratedTransactionService.deleteSupplementalRTs(invoice);
-        ratedTransactionService.uninvoiceRTs(invoice);
+        ratedTransactionService.uninvoiceRTs(invoice, rtAction);
         invoice.setStatus(InvoiceStatusEnum.CANCELED);
     }
     
