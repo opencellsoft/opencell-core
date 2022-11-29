@@ -1918,11 +1918,9 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         this.invoiceBalance = invoiceBalance;
     }
 
-
 	public InvoiceValidationRule getRejectedByRule() {
 		return rejectedByRule;
 	}
-
 
 	public void setRejectedByRule(InvoiceValidationRule rejectedByRule) {
 		this.rejectedByRule = rejectedByRule;
