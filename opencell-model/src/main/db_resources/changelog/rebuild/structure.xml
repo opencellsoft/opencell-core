@@ -3102,6 +3102,7 @@
             <column name="open_order_number" type="varchar(255)" />
             <column name= "invoice_balance" type="numeric(23, 12)" />
             <column name="use_current_rate" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="invoice_validation_rule_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -16672,6 +16673,13 @@
                                  referencedTableName="meveo_script_instance"
                                  referencedColumnNames="id"/>
     </changeSet>
+    <changeSet id="#INTRD-11780_20221128_fk" author="AdilElJaouhari">
+        <addForeignKeyConstraint baseTableName="billing_invoice"
+                                 baseColumnNames="invoice_validation_rule_id"
+                                 constraintName="fk_billing_invoice_validation_rule"
+                                 referencedTableName="billing_invoice_validation_rule"
+                                 referencedColumnNames="id" />
+    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -17606,7 +17614,7 @@
         <createSequence sequenceName="billing_invoice_validation_rule_seq" startValue="1" />
         <createTable tableName="billing_invoice_validation_rule">
             <column name="id" type="bigint" >
-                <constraints nullable="false"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_validation_rule_pkey" />
             </column>
             <column name="version" type="int4" />
             <column name="created" type="datetime">
@@ -18897,6 +18905,7 @@
     <changeSet id="#INTRD-11310_20221110" author="ZBariki" />
     <changeSet id="#INTRD-10683_20221107" author="AdilElJaouhari" />
     <changeSet id="#INTRD-242_20221121" author="AdilElJaouhari" />
+    <changeSet id="#INTRD-11780_20221128" author="AdilElJaouhari" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
