@@ -6830,18 +6830,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         
         sort(invoicesAdv, (inv1, inv2) -> {
-            
-           /* int compCommercialOrder = 0;
-            if(inv1.getCommercialOrder() != null && inv2.getCommercialOrder() == null) {
-                compCommercialOrder = 1;
-            }else if(inv1.getCommercialOrder() == null && inv2.getCommercialOrder() != null) {
-                compCommercialOrder = -1;
-            }else {
-                compCommercialOrder = inv1.getCommercialOrder().getId().compareTo(inv2.getCommercialOrder().getId());
-            }
-            if(compCommercialOrder != 0) {
-                return compCommercialOrder;
-            }*/
             int compCreationDate = inv1.getAuditable().getCreated().compareTo(inv2.getAuditable().getCreated());
             if(compCreationDate != 0) {
                 return compCreationDate;
