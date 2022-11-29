@@ -116,6 +116,10 @@ public class SubListCreator<E> {
         modulo = listSize % nbSplits;
         from = 0;
         to = blocToRun;
+        if(modulo>0){
+            this.to++;
+            modulo--;
+        }
         if (from == listSize) {
             this.hasNext = false;
         }
@@ -128,6 +132,10 @@ public class SubListCreator<E> {
         List<E> toRuns = theBigList.subList(from, to);
         from = to;
         to = from + blocToRun;
+        if(modulo>0){
+            this.to++;
+            modulo--;
+        }
         if (strictNbRun && listSize - modulo == to) {
             to += modulo;
         } else if (to > listSize) {
