@@ -15,12 +15,6 @@ import java.util.Set;
 public interface CounterInstanceDto {
 
     @NotNull
-    String getCode();
-
-    @Nullable
-    String getDescription();
-
-    @NotNull
     String getCounterTemplateCode();
 
     @Nullable
@@ -32,10 +26,10 @@ public interface CounterInstanceDto {
     @Nullable
     String getUserAccountCode();
 
-    @Nullable
+    @NotNull
     String getSubscriptionCode();
 
-    @Nullable
+    @NotNull
     String getServiceInstanceCode();
 
     @Nullable

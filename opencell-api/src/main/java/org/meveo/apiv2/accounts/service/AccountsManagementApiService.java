@@ -288,97 +288,38 @@ public class AccountsManagementApiService {
     }
 
     public Long createCounterInstance(CounterInstanceDto dto) {
-        CounterInstance counterInstance = new CounterInstance();
-
-        // At least one of those value is mandatory : customerAccountCode, billingAccountCode, userAccountCode, subscriptionCode, serviceInstanceCode
-        if (StringUtils.isBlank(dto.getCustomerAccountCode()) && StringUtils.isBlank(dto.getBillingAccountCode()) && StringUtils.isBlank(dto.getUserAccountCode())
-                && StringUtils.isBlank(dto.getSubscriptionCode()) && StringUtils.isBlank(dto.getServiceInstanceCode())) {
-            throw new BusinessApiException("At least one of those value is mandatory : customerAccountCode, billingAccountCode, userAccountCode, subscriptionCode, serviceInstanceCode");
-
+        // CounterTemplate mandatory
+        if (StringUtils.isBlank(dto.getCounterTemplateCode())){
+            throw new BusinessApiException("CounterTemplate code is mandatory");
         }
 
-        if (StringUtils.isNotBlank(dto.getCounterTemplateCode())) {
-            CounterTemplate counterTemplate = counterTemplateService.findByCode(dto.getCounterTemplateCode());
-
-            if (counterTemplate == null) {
-                throw new EntityDoesNotExistsException("No CounterTemplate found with code : " + dto.getCounterTemplateCode());
-            }
-
-            counterInstance.setCounterTemplate(counterTemplate);
+        if (StringUtils.isBlank(dto.getServiceInstanceCode())){
+            throw new BusinessApiException("ServiceInstance code is mandatory");
         }
 
-        if (StringUtils.isNotBlank(dto.getCustomerAccountCode())) {
-            CustomerAccount customerAccount = customerAccountService.findByCode(dto.getCustomerAccountCode());
-
-            if (customerAccount == null) {
-                throw new EntityDoesNotExistsException("No CustomerAccount found with code : " + dto.getCustomerAccountCode());
-            }
-
-            counterInstance.setCustomerAccount(customerAccount);
+        if (StringUtils.isBlank(dto.getSubscriptionCode())){
+            throw new BusinessApiException("Subscription code is mandatory");
         }
 
-        if (StringUtils.isNotBlank(dto.getBillingAccountCode())) {
-            BillingAccount billingAccount = billingAccountService.findByCode(dto.getBillingAccountCode());
+        CounterTemplate counterTemplate = counterTemplateService.findByCode(dto.getCounterTemplateCode());
 
-            if (billingAccount == null) {
-                throw new EntityDoesNotExistsException("No BillingAccount found with code : " + dto.getBillingAccountCode());
-            }
-
-            counterInstance.setBillingAccount(billingAccount);
+        if (counterTemplate == null) {
+            throw new EntityDoesNotExistsException("No CounterTemplate found with code : " + dto.getCounterTemplateCode());
         }
 
-        if (StringUtils.isNotBlank(dto.getUserAccountCode())) {
-            UserAccount userAccount = userAccountService.findByCode(dto.getUserAccountCode());
+        List<ServiceInstance> serviceInstances = serviceInstanceService.findByCodeAndCodeSubscription(dto.getServiceInstanceCode(), dto.getSubscriptionCode());
 
-            if (userAccount == null) {
-                throw new EntityDoesNotExistsException("No UserAccount found with code : " + dto.getUserAccountCode());
-            }
+        // FIXME que faire dans ce cas de plusieurs result ?
 
-            counterInstance.setUserAccount(userAccount);
-        }
+        CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstances.get(0), counterTemplate, false);
 
-        if (StringUtils.isNotBlank(dto.getSubscriptionCode())) {
-            Subscription subscription = subscriptionService.findByCode(dto.getSubscriptionCode());
-
-            if (subscription == null) {
-                throw new EntityDoesNotExistsException("No Subscription found with code : " + dto.getSubscriptionCode());
-            }
-
-            counterInstance.setSubscription(subscription);
-        }
-
-        if (StringUtils.isNotBlank(dto.getServiceInstanceCode())) {
-            ServiceInstance serviceInstance = serviceInstanceService.findByCode(dto.getServiceInstanceCode());
-
-            if (serviceInstance == null) {
-                throw new EntityDoesNotExistsException("No ServiceInstance found with code : " + dto.getServiceInstanceCode());
-            }
-
-            counterInstance.setServiceInstance(serviceInstance);
-        }
-
-        Optional.ofNullable(dto.getChargeInstances()).orElse(Collections.emptySet()).forEach(chargeI -> {
-            if (StringUtils.isNotBlank(chargeI)) {
-                ChargeInstance chargeInstance = chargeInstanceService.findByCode(chargeI);
-
-                if (chargeInstance == null) {
-                    throw new EntityDoesNotExistsException("No ChargeInstance found with code : " + chargeI);
-                }
-
-                if (chargeInstance instanceof UsageChargeInstance) {
-                    counterInstance.getUsageChargeInstances().add((UsageChargeInstance) chargeInstance);
-                } else {
-                    counterInstance.getChargeInstances().add(chargeInstance);
-                }
-
-            }
-        });
+        counterInstanceService.create(counterInstance);
 
         List<DateRange> periodes = new ArrayList<>();
 
         Optional.ofNullable(dto.getCounterPeriods()).orElse(Collections.emptySet()).forEach(periodDto -> {
-            Date startP = DateUtils.setTimeToZero(periodDto.getPeriodStartDate());
-            Date endP = DateUtils.setTimeToZero(periodDto.getPeriodEndDate());
+            Date startP = DateUtils.setTimeToZero(periodDto.getStartDate());
+            Date endP = DateUtils.setTimeToZero(periodDto.getEndDate());
             if (endP != null && startP != null
                     && endP.before(startP)) {
                 throw new BusinessApiException("Invalid period dates : Start must be before End [start=" + formatDate(startP) + " - end=" + formatDate(endP) + "]");
@@ -399,13 +340,18 @@ public class AccountsManagementApiService {
                 }
             });
 
-            CounterPeriod period = new CounterPeriod();
+            //counterInstanceService.getOrCreateCounterPeriod(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance)
+            //counterInstanceService.getOrCreateCounterPeriod(counterInstance, periodDto.getPeriodStartDate(), periodDto.getPeriodEndDate(), null);
+            // public void createCounterPeriodIfMissing(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance) throws CounterInstantiationException {
+            counterInstanceService.createCounterPeriodIfMissing(counterInstance, periodDto.getStartDate(), periodDto.getEndDate(), null); // FIXME comment charger les charges ici ?
+
+            /*CounterPeriod period = new CounterPeriod();
             period.setCode(periodDto.getCode());
             period.setPeriodStartDate(startP);
             period.setPeriodEndDate(endP);
             period.setValue(periodDto.getValue());
             period.setCounterType(periodDto.getCounterType() !=null ? periodDto.getCounterType() : CounterTypeEnum.USAGE);
-            period.setLevel(periodDto.getLevel());
+            period.setLevel(counterTemplate.getCeiling());
             period.setAccumulator(counterInstance.getCounterTemplate().getAccumulator());
             period.setAccumulatedValues(periodDto.getAccumulatedValues());
             period.setAccumulatorType(counterInstance.getCounterTemplate().getAccumulatorType());
@@ -413,13 +359,11 @@ public class AccountsManagementApiService {
             period.setCounterInstance(counterInstance);
 
             counterPeriodService.create(period);
-            counterInstance.getCounterPeriods().add(period);
+            counterInstance.getCounterPeriods().add(period);*/
 
             periodes.add(new DateRange(startP, endP));
 
         });
-
-        counterInstanceService.create(counterInstance);
 
         return counterInstance.getId();
 
