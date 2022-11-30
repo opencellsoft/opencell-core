@@ -78,6 +78,7 @@ import org.meveo.model.billing.MinAmountData;
 import org.meveo.model.billing.MinAmountForAccounts;
 import org.meveo.model.billing.MinAmountsResult;
 import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionAction;
 import org.meveo.model.billing.RatedTransactionMinAmountTypeEnum;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RatedTransactionTypeEnum;
@@ -1283,8 +1284,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      *
      * @param invoice Invoice
      */
-    public void uninvoiceRTs(Invoice invoice) {
-        getEntityManager().createNamedQuery("RatedTransaction.unInvoiceByInvoice").setParameter("invoice", invoice).setParameter("now", new Date()).executeUpdate();
+    public void uninvoiceRTs(Invoice invoice, RatedTransactionAction rtAction) {
+        getEntityManager().createNamedQuery("RatedTransaction.unInvoiceByInvoice")
+                .setParameter("invoice", invoice)
+                .setParameter("now", new Date())
+                .setParameter("NEW_STATUS", (rtAction == null || rtAction == RatedTransactionAction.REOPEN) ? RatedTransactionStatusEnum.OPEN : RatedTransactionStatusEnum.CANCELED)
+                .executeUpdate();
     }
 
     /**
