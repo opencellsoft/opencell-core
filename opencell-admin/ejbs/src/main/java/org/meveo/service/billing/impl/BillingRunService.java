@@ -889,11 +889,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     public boolean isBRValid(BillingRun billingRun) {
         boolean result = true;
         if (!billingRun.isSkipValidationScript()) {
-            if(isBillingRunContainingRejectedInvoices(billingRun.getId())) {
-                return false;
-            } else if (billingRun.getBillingCycle() == null) {
+            if (billingRun.getBillingCycle() == null) {
                 return true;
-            }            
+            }
+            if (isBillingRunContainingRejectedInvoices(billingRun.getId())) {
+                return false;
+            }
         }
         return result;
     }
