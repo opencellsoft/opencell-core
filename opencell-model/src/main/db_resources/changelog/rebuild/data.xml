@@ -7524,7 +7524,7 @@
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2016-09-14 00:00:00.000" />
             <column name="code" value="ADJ" />
-            <column name="description" value="Adjustement" />
+            <column name="description" value="Manual adjustment" />
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="invoice_sequence_id"
 					valueComputed="(SELECT id from billing_seq_invoice where code = 'ADJ')" />
@@ -9963,6 +9963,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="#INTRD-11165_20221108" author="HatimOUDAD" />
 	<changeSet id="INTRD-11124_20221109" author="aelmalki" />
     <changeSet id="#INTR-11598_20221116" author="TarikFA." />
+	<changeSet id="#INTRD-11745_20221130" author="TarikFA." />
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
