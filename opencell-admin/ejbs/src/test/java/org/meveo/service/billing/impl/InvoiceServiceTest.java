@@ -938,7 +938,7 @@ public class InvoiceServiceTest {
         invoice.rebuildStatus(InvoiceStatusEnum.REJECTED);
         invoice.setBillingRun(br1);
         when(billingRunService.findById(id1)).thenReturn(br1);
-        when(billingRunService.findOrCreateNextBR(id1)).thenReturn(br2);
+        when(billingRunService.findOrCreateNextQuarantineBR(id1)).thenReturn(br2);
         when(invoiceService.findById(id1)).thenReturn(invoice);
         TypedQuery query = mock(TypedQuery.class);
         when(invoiceService.getEntityManager().createNamedQuery("Invoice.moveToBRByIds")).thenReturn(query);
