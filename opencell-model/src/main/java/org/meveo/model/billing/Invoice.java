@@ -740,6 +740,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Column(name = "use_current_rate")
     @Type(type = "numeric_boolean")
     private boolean useCurrentRate = false;
+    
+    /**
+     * Rejected rule validation invoice
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoice_validation_rule_id")
+    private InvoiceValidationRule rejectedByRule;
 
     public Invoice() {
 	}
@@ -1910,4 +1917,12 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public void setInvoiceBalance(BigDecimal invoiceBalance) {
         this.invoiceBalance = invoiceBalance;
     }
+
+	public InvoiceValidationRule getRejectedByRule() {
+		return rejectedByRule;
+	}
+
+	public void setRejectedByRule(InvoiceValidationRule rejectedByRule) {
+		this.rejectedByRule = rejectedByRule;
+	}
 }

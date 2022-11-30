@@ -1399,10 +1399,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
                                             invoice.setRejectReason("An error has occurred evaluating rule [id=" + validationRule.getId() + ", "
                                                     + validationRule.getDescription() + ", script=" + validationRule.getValidationScript()
                                                     + ": " + methodContext.get(Script.INVOICE_VALIDATION_REASON));
+                                            invoice.setRejectedByRule(validationRule);
                                             noValidationError = false;
                                         } else if (InvoiceValidationStatusEnum.SUSPECT.equals(status)) {
                                             invoice.setStatus(InvoiceStatusEnum.SUSPECT);
                                             invoice.setRejectReason((String) methodContext.get(Script.INVOICE_VALIDATION_REASON));
+                                            invoice.setRejectedByRule(validationRule);
                                             noValidationError = false;
                                         }
                                     }
@@ -1418,9 +1420,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
                                     noValidationError = true;
                                     if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.SUSPECT) {
                                         invoice.setStatus(InvoiceStatusEnum.SUSPECT);
+                                        invoice.setRejectedByRule(validationRule);
                                     }
                                     if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.REJECTED) {
                                         invoice.setStatus(InvoiceStatusEnum.REJECTED);
+                                        invoice.setRejectedByRule(validationRule);
                                         invoice.setRejectReason("An error has occurred evaluating rule [id="
                                                 + validationRule.getId() + ", " + validationRule.getDescription());
                                     }
