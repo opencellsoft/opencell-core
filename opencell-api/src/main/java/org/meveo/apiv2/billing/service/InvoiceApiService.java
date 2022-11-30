@@ -42,6 +42,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.LinkedInvoice;
 import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionAction;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.service.billing.impl.InvoiceLineService;
@@ -286,8 +287,8 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 	/**
 	 * @param invoice
 	 */
-	public void cancelInvoice(Invoice invoice) {
-		invoiceService.cancelInvoiceWithoutDelete(invoice);
+	public void cancelInvoice(Invoice invoice, RatedTransactionAction rtAction) {
+		invoiceService.cancelInvoiceWithoutDeleteAndRTAction(invoice, rtAction);
 	}
 
 	/**

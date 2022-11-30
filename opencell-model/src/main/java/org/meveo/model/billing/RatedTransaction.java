@@ -133,7 +133,7 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.cancelByWOIds", query = "UPDATE RatedTransaction r SET r.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED, r.updated = :now  WHERE id IN (SELECT wo.ratedTransaction.id FROM WalletOperation wo WHERE wo.id IN :woIds)"),
         @NamedQuery(name = "RatedTransaction.getListByInvoiceAndSubCategory", query = "select r from RatedTransaction r where r.invoice=:invoice and r.invoiceSubCategory=:invoiceSubCategory "),
 
-        @NamedQuery(name = "RatedTransaction.unInvoiceByInvoice", query = "update RatedTransaction r set r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.invoice=:invoice"),
+        @NamedQuery(name = "RatedTransaction.unInvoiceByInvoice", query = "update RatedTransaction r set r.status=:NEW_STATUS, r.updated = :now, r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.invoice=:invoice"),
         @NamedQuery(name = "RatedTransaction.unInvoiceByBR", query = "update RatedTransaction r set r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.billingRun=:billingRun \r\n"
         		+ "AND r.invoice.id in (select r2.invoice.id from RatedTransaction r2 where r2.invoice.status <> org.meveo.model.billing.InvoiceStatusEnum.VALIDATED)"),
 
