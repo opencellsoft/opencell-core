@@ -60,7 +60,7 @@ public class OrderValidationScript extends Script {
         CommercialOrder order = (CommercialOrder) context.get("commercialOrder");
         MeveoUser currentUser = (MeveoUser) context.get(Script.CONTEXT_CURRENT_USER);
 
-        if (!CommercialOrderEnum.DRAFT.toString().equalsIgnoreCase(order.getStatus())) {
+        if (!CommercialOrderEnum.FINALIZED.toString().equalsIgnoreCase(order.getStatus()) && !CommercialOrderEnum.DRAFT.toString().equalsIgnoreCase(order.getStatus())) {
             throw new BusinessException("Can not validate order with status different then DRAFT, order id: " + order.getId());
         }
 

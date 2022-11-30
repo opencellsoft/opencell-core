@@ -6818,7 +6818,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }else {
             return Collections.emptyList();
         }
-        List<Invoice> invoicesAdv = this.getEntityManager().createNamedQuery("Invoice.findValidatedInvoiceAdvWithoutOrder").setParameter("billingAccountId", invoice.getBillingAccount().getId()).getResultList();
+        // check balance when invoicing plan created from order ==> adv from order must have balance set
+        List<Invoice> invoicesAdv = null;
+        if(invoice.getCommercialOrder() != null) {
+	        invoicesAdv = this.getEntityManager().createNamedQuery("Invoice.findValidatedInvoiceAdvWithOrder")
+	                                                            .setParameter("billingAccountId", invoice.getBillingAccount().getId())
+	                                                            .setParameter("commercialOrder", invoice.getCommercialOrder())
+	                                                            .getResultList();
+        }else {
+	        invoicesAdv = this.getEntityManager().createNamedQuery("Invoice.findValidatedInvoiceAdvWithoutOrder")
+                    .setParameter("billingAccountId", invoice.getBillingAccount().getId())
+                    .getResultList();
+        }
         
         sort(invoicesAdv, (inv1, inv2) -> {
             int compCreationDate = inv1.getAuditable().getCreated().compareTo(inv2.getAuditable().getCreated());
