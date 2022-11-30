@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.meveo.apiv2.accounts.ConsumerInput;
+import org.meveo.apiv2.accounts.CounterInstanceDto;
 import org.meveo.apiv2.accounts.OpenTransactionsActionEnum;
 import org.meveo.apiv2.accounts.ParentInput;
 
@@ -57,4 +58,12 @@ public interface AccountsManagementResource {
                                     @ApiResponse(responseCode = "400", description = "bad request when input not well formed") })
     Response changeCustomerAccountParentAccount(@PathParam("customerAccountCode") String customerAccountCode,
             @Parameter(description = "Parent id or code", required = true) ParentInput parentInput) throws JsonProcessingException;
+
+    @POST
+    @Path("/counterInstance")
+    @Operation(summary = "This API allows to create a new counter instance with its proper counter periods.", tags = { "CounterInstance"},
+            description = "Create a new counter instance with its proper counter periods.", responses = {
+            @ApiResponse(responseCode = "204", description = "Success, no return data"),
+            @ApiResponse(responseCode = "404", description = "Nested entites not found") })
+    Response createCounterInstance(CounterInstanceDto dto);
 }

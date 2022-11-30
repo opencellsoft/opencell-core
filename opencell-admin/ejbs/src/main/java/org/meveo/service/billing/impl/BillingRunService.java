@@ -1381,6 +1381,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 nextBillingRun.setOriginBillingRun(billingRun);
                 nextBillingRun.setRejectionReason(billingRun.getRejectionReason());
                 nextBillingRun.setId(null);
+                nextBillingRun.setJobExecutions(null);
                 create(nextBillingRun);
                 billingRun.setNextBillingRun(nextBillingRun);
                 billingRun.setRejectionReason(null);

@@ -764,7 +764,8 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
     			throw new BusinessException(resourceMessages.getString("message.scriptInstance.allowedValues", sp.getCode(), sp.getAllowedValues()));
     		}
     		if (context.containsKey(sp.getCode())) {
-    			context.put(sp.getCode(), parseObjectFromString(String.valueOf(context.get(sp.getCode())), sp.getClassName()));
+				context.put(sp.getCode(), (sp.isCollection())? parseListFromString(String.valueOf(context.get(sp.getCode())), sp.getClassName(), sp.getValuesSeparator())
+								: parseObjectFromString(String.valueOf(context.get(sp.getCode())), sp.getClassName()));
     		}
     	});
     	
@@ -776,10 +777,24 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
      * @param context
      */
     private void injectDefaultValues(ScriptInstance scriptInstance, Map<String, Object> context) {
-    	List<ScriptParameter> paramsWithDefaultValue = scriptInstance.getScriptParameters().stream().filter(sp -> StringUtils.isNotEmpty(sp.getDefaultValue()) && sp.isMandatory()).collect(Collectors.toList());
-    	paramsWithDefaultValue.stream().filter(sp -> !context.containsKey(sp.getCode())).forEach(sp -> context.put(sp.getCode(), parseObjectFromString(sp.getDefaultValue(), sp.getClassName())));
+    	List<ScriptParameter> paramsWithDefaultValue = scriptInstance.getScriptParameters().stream().filter(sp -> StringUtils.isNotEmpty(sp.getDefaultValue())).collect(Collectors.toList());
+    	paramsWithDefaultValue.stream().filter(sp -> !context.containsKey(sp.getCode())).forEach(sp -> context.put(sp.getCode(), sp.getDefaultValue()));
     }
     
+    /**
+     * Parse a list of object from String
+     * @param value
+     * @param clazzName
+     * @return the object or the entity parsed
+     */
+	private <T> List<T> parseListFromString(String value, String clazzName, String separator) {
+		try {
+			return (List<T>) Arrays.stream(value.split(separator)).map(val -> parseObjectFromString(val, clazzName)).collect(Collectors.toList());
+		} catch (Exception e) {
+			throw new BusinessException(String.format("Failed to parse %s as list of %s", value, clazzName));
+		}
+	}
+
     /**
      * Parse an object from String
      * @param value

@@ -2,6 +2,7 @@ package org.meveo.apiv2.billing.impl;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -29,26 +30,27 @@ public class InvoiceLinesResourceImpl implements InvoiceLinesResource {
     
     @Override
     public Response markForAdjustment(@NotNull InvoiceLinesToMarkAdjustment invoiceLinesToMark) {
-    	int nbInvoiceLinesMarked = 0;
-    	if(!CollectionUtils.isEmpty(invoiceLinesToMark.getInvoiceLinesIds()))
-    		nbInvoiceLinesMarked = invoiceLinesApiService.markInvoiceLinesForAdjustment(invoiceLinesToMark);
-    	
+    	List<Long> invoiceLineIds = invoiceLinesApiService.getInvoiceLineIds(invoiceLinesToMark);
+    	int nbInvoiceLinesUnmarked = 0;
+    	if(!CollectionUtils.isEmpty(invoiceLineIds))
+    		nbInvoiceLinesUnmarked = invoiceLinesApiService.markInvoiceLinesForAdjustment(invoiceLinesToMark, invoiceLineIds);
         Map<String, Object> response = new HashMap<>();
         response.put("actionStatus", Collections.singletonMap("status", "SUCCESS"));
-        response.put("message", nbInvoiceLinesMarked+" new invoiceLine(s) marked TO_ADJUST");
+        response.put("message", nbInvoiceLinesUnmarked+" new invoiceLine(s) marked TO_ADJUST");
         return Response.ok(response).build();
     }
     
     @Override
-    public Response unmarkForAdjustment(@NotNull InvoiceLinesToMarkAdjustment invoiceLinesToUnmark) {
+    public Response unmarkForAdjustment(@NotNull InvoiceLinesToMarkAdjustment invoiceLinesToUnmark) {   	
+    	List<Long> invoiceLineIds = invoiceLinesApiService.getInvoiceLineIds(invoiceLinesToUnmark);   	
     	int nbInvoiceLinesUnmarked = 0;
-    	if(!CollectionUtils.isEmpty(invoiceLinesToUnmark.getInvoiceLinesIds()))
-    		nbInvoiceLinesUnmarked = invoiceLinesApiService.unmarkInvoiceLinesForAdjustment(invoiceLinesToUnmark);
-    	
+    	if(!CollectionUtils.isEmpty(invoiceLineIds))
+    		nbInvoiceLinesUnmarked = invoiceLinesApiService.unmarkInvoiceLinesForAdjustment(invoiceLinesToUnmark, invoiceLineIds);    	
         Map<String, Object> response = new HashMap<>();
         response.put("actionStatus", Collections.singletonMap("status", "SUCCESS"));
         response.put("message", nbInvoiceLinesUnmarked+" new invoiceLine(s) marked NOT_ADJUSTED");
         return Response.ok(response).build();
     }
+
 
 }

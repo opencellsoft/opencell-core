@@ -345,10 +345,10 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         return accountingArticle;
     }
 
-    public BigDecimal getFixedDiscountSumByDP(long discountPlanId) {
-        return (BigDecimal) getEntityManager().createNamedQuery("DiscountPlanItem.getFixedDiscountPlanItemsByDP")
+    public List<DiscountPlanItem> getFixedDiscountPlanItemsByDP(long discountPlanId) {
+        return getEntityManager().createNamedQuery("DiscountPlanItem.getFixedDiscountPlanItemsByDP",DiscountPlanItem.class)
                 .setParameter("discountPlanId", discountPlanId)
-                .getSingleResult();
+                .getResultList();
     }
     
     public void setDisountPlanItemSequence(DiscountPlanItem dpi) {

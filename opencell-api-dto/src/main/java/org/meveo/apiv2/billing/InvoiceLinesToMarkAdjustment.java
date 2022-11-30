@@ -1,10 +1,13 @@
 package org.meveo.apiv2.billing;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
 import org.immutables.value.Value;
+import org.meveo.apiv2.generic.GenericPagingAndFiltering;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -18,7 +21,8 @@ public interface InvoiceLinesToMarkAdjustment {
     @Nullable
     Boolean getIgnoreInvalidStatuses();
 
-    List<Long> getInvoiceLinesIds();
+    @Nullable
+    @Value.Default default Map<String, Object> getFilters(){ return Collections.emptyMap();}
 		
 
 }

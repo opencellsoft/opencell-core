@@ -20,10 +20,14 @@ package org.meveo.service.billing.impl;
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
 import static java.util.Arrays.asList;
+import static java.util.Collections.sort;
+import static java.util.Comparator.comparingInt;
 import static java.util.Set.of;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
+import static org.meveo.model.shared.DateUtils.setTimeToZero;
+import static org.meveo.service.base.ValueExpressionWrapper.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -162,6 +166,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeEnum;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
+import org.meveo.model.billing.InvoiceValidationRule;
 import org.meveo.model.billing.InvoiceValidationStatusEnum;
 import org.meveo.model.billing.LinkedInvoice;
 import org.meveo.model.billing.MinAmountForAccounts;
@@ -175,6 +180,7 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.ValidationRuleTypeEnum;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.DiscountPlan;
@@ -205,7 +211,6 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
@@ -1306,16 +1311,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return result;
         }
         Map<Object, Object> userMap = new HashMap<>();
-        if (expression.indexOf(ValueExpressionWrapper.VAR_BILLING_ACCOUNT) >= 0) {
-            userMap.put(ValueExpressionWrapper.VAR_BILLING_ACCOUNT, billingAccount);
+        if (expression.indexOf(VAR_BILLING_ACCOUNT) >= 0) {
+            userMap.put(VAR_BILLING_ACCOUNT, billingAccount);
         }
-        if (expression.indexOf(ValueExpressionWrapper.VAR_INVOICE) >= 0) {
+        if (expression.indexOf(VAR_INVOICE) >= 0) {
             userMap.put("invoice", invoice);
         }
         if (expression.indexOf("order") >= 0) {
             userMap.put("order", order);
         }
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Integer.class);
+        Object res = evaluateExpression(expression, userMap, Integer.class);
         try {
             result = (Integer) res;
         } catch (Exception e) {
@@ -1340,33 +1345,102 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param automaticInvoiceCheck
      */
     private void applyAutomaticInvoiceCheck(Invoice invoice, boolean automaticInvoiceCheck) {
-        if (automaticInvoiceCheck && invoice.getInvoiceType() != null && invoice.getInvoiceType().getInvoiceValidationScript() != null) {
-            ScriptInstance scriptInstance = invoice.getInvoiceType().getInvoiceValidationScript();
-            if (scriptInstance != null) {
-                ScriptInterface script = scriptInstanceService.getScriptInstance(scriptInstance.getCode());
-                if (script != null) {
-                    Map<String, Object> methodContext = new HashMap<>();
-                    methodContext.put(Script.CONTEXT_ENTITY, invoice);
-                    methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
-                    methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
-                    methodContext.put("billingRun", invoice.getBillingRun());
-                    script.execute(methodContext);
-                    Object status = methodContext.get(Script.INVOICE_VALIDATION_STATUS);
-                    if (status != null && status instanceof InvoiceValidationStatusEnum) {
-                        if (InvoiceValidationStatusEnum.REJECTED.equals((InvoiceValidationStatusEnum) status)) {
-                            invoice.setStatus(InvoiceStatusEnum.REJECTED);
-                            invoice.setRejectReason((String) methodContext.get(Script.INVOICE_VALIDATION_REASON));
+        if (automaticInvoiceCheck && invoice.getInvoiceType() != null &&
+                (invoice.getInvoiceType().getInvoiceValidationScript() != null
+                        || invoice.getInvoiceType().getInvoiceValidationRules() != null)) {
+            if(invoice.getInvoiceType().getInvoiceValidationScript() != null) {
+                ScriptInstance scriptInstance = invoice.getInvoiceType().getInvoiceValidationScript();
+                if (scriptInstance != null) {
+                    ScriptInterface script = scriptInstanceService.getScriptInstance(scriptInstance.getCode());
+                    if (script != null) {
+                        Map<String, Object> methodContext = new HashMap<>();
+                        methodContext.put(Script.CONTEXT_ENTITY, invoice);
+                        methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
+                        methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+                        methodContext.put("billingRun", invoice.getBillingRun());
+                        script.execute(methodContext);
+                        Object status = methodContext.get(Script.INVOICE_VALIDATION_STATUS);
+                        if (status != null && status instanceof InvoiceValidationStatusEnum) {
+                            if (InvoiceValidationStatusEnum.REJECTED.equals((InvoiceValidationStatusEnum) status)) {
+                                invoice.setStatus(InvoiceStatusEnum.REJECTED);
+                                invoice.setRejectReason((String) methodContext.get(Script.INVOICE_VALIDATION_REASON));
 
-                        } else if (InvoiceValidationStatusEnum.SUSPECT.equals((InvoiceValidationStatusEnum) status)) {
-                            invoice.setStatus(InvoiceStatusEnum.SUSPECT);
-                            invoice.setRejectReason((String) methodContext.get(Script.INVOICE_VALIDATION_REASON));
+                            } else if (InvoiceValidationStatusEnum.SUSPECT.equals((InvoiceValidationStatusEnum) status)) {
+                                invoice.setStatus(InvoiceStatusEnum.SUSPECT);
+                                invoice.setRejectReason((String) methodContext.get(Script.INVOICE_VALIDATION_REASON));
+                            }
                         }
                     }
-                    update(invoice);
-                    commit();
+                }
+            } else if(invoice.getInvoiceType().getInvoiceValidationRules() != null
+                    && !invoice.getInvoiceType().getInvoiceValidationRules().isEmpty()) {
+                List<InvoiceValidationRule> invoiceValidationRules = invoice.getInvoiceType().getInvoiceValidationRules();
+                sort(invoiceValidationRules, comparingInt(InvoiceValidationRule::getPriority));
+                Iterator<InvoiceValidationRule> validationRuleIterator = invoiceValidationRules.iterator();
+                boolean noValidationError = true;
+                Map<String, Object> methodContext = new HashMap<>();
+                methodContext.put(Script.CONTEXT_ENTITY, invoice);
+                methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
+                methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+                methodContext.put("billingRun", invoice.getBillingRun());
+                while(validationRuleIterator.hasNext() && noValidationError) {
+                    InvoiceValidationRule validationRule = validationRuleIterator.next();
+                    if(dateBetween(invoice.getInvoiceDate(), validationRule.getValidFrom(), validationRule.getValidTo())) {
+                        if(validationRule.getType() == ValidationRuleTypeEnum.SCRIPT) {
+                            ScriptInterface validationRuleScript =
+                                    scriptInstanceService.getScriptInstance(validationRule.getValidationScript());
+                            if(validationRuleScript != null) {
+                                try {
+                                    validationRuleScript.execute(methodContext);
+                                    Object status = methodContext.get(Script.INVOICE_VALIDATION_STATUS);
+                                    if (status != null && status instanceof InvoiceValidationStatusEnum) {
+                                        if (InvoiceValidationStatusEnum.REJECTED.equals(status)) {
+                                            invoice.setStatus(InvoiceStatusEnum.REJECTED);
+                                            invoice.setRejectReason("An error has occurred evaluating rule [id=" + validationRule.getId() + ", "
+                                                    + validationRule.getDescription() + ", script=" + validationRule.getValidationScript()
+                                                    + ": " + methodContext.get(Script.INVOICE_VALIDATION_REASON));
+                                            noValidationError = false;
+                                        } else if (InvoiceValidationStatusEnum.SUSPECT.equals(status)) {
+                                            invoice.setStatus(InvoiceStatusEnum.SUSPECT);
+                                            invoice.setRejectReason((String) methodContext.get(Script.INVOICE_VALIDATION_REASON));
+                                            noValidationError = false;
+                                        }
+                                    }
+                                } catch (Exception exception) {
+                                    throw new BusinessException(exception);
+                                }
+                            }
+                        } else {
+                            Object validationResult =
+                                    evaluateExpression(validationRule.getValidationEL(), null, Boolean.class);
+                            try {
+                                if(!((Boolean) validationResult)) {
+                                    noValidationError = true;
+                                    if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.SUSPECT) {
+                                        invoice.setStatus(InvoiceStatusEnum.SUSPECT);
+                                    }
+                                    if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.REJECTED) {
+                                        invoice.setStatus(InvoiceStatusEnum.REJECTED);
+                                        invoice.setRejectReason("An error has occurred evaluating rule [id="
+                                                + validationRule.getId() + ", " + validationRule.getDescription());
+                                    }
+                                }
+                            } catch (Exception exception) {
+                                throw new BusinessException(exception);
+                            }
+                        }
+
+                    }
                 }
             }
+            update(invoice);
+            commit();
         }
+    }
+
+    private boolean dateBetween(Date invoiceDate, Date dateFrom, Date dateTo) {
+        return setTimeToZero(invoiceDate).after(setTimeToZero(dateFrom))
+                && setTimeToZero(invoiceDate).before(setTimeToZero(dateTo));
     }
 
     /**
@@ -1563,7 +1637,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
             log.debug("Jasper template used: {}", jasperFile.getCanonicalPath());
 
-            reportTemplate = StorageFactory.getInputStream(jasperFile);
+            reportTemplate = new FileInputStream(jasperFile);
 
             JRXmlDataSource dataSource = StorageFactory.getJRXmlDataSource(invoiceXmlFile);
 
@@ -1610,7 +1684,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public synchronized void generateInvoiceFile(String billingTemplateName, String resDir) throws IOException {
         File destDir = new File(resDir + File.separator + billingTemplateName + File.separator + "pdf");
 
-        if (!StorageFactory.exists(destDir)) {
+        if (!destDir.exists()) {
             log.warn("PDF jasper report {} was not found. A default report will be used.", destDir.getAbsolutePath());
             String sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + File.separator + billingTemplateName + File.separator + "invoice";
             File sourceFile = new File(sourcePath);
@@ -1627,7 +1701,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             destDir.mkdirs();
-            StorageFactory.copyDirectory(sourceFile, destDir);
+            FileUtils.copyDirectory(sourceFile, destDir);
         }
     }
 
@@ -1776,7 +1850,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             userMap.put("quote", entity);
         }
 
-        String result = ValueExpressionWrapper.evaluateExpression(prefix, userMap, String.class);
+        String result = evaluateExpression(prefix, userMap, String.class);
 
         return result;
     }
@@ -1993,7 +2067,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (createDirs) {
             int pos = Integer.max(xmlFilename.lastIndexOf("/"), xmlFilename.lastIndexOf("\\"));
             String dir = xmlFilename.substring(0, pos);
-            (new File(dir)).mkdirs();
+            StorageFactory.mkdirs(new File(dir));
         }
 
         return xmlFilename;
@@ -2021,7 +2095,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             contextMap.put("invoice", invoice);
 
             try {
-                String value = ValueExpressionWrapper.evaluateExpression(expression, contextMap, String.class);
+                String value = evaluateExpression(expression, contextMap, String.class);
                 if (value != null) {
                     xmlFileName = value;
                 }
@@ -2066,7 +2140,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (createDirs) {
             int pos = Integer.max(pdfFilename.lastIndexOf("/"), pdfFilename.lastIndexOf("\\"));
             String dir = pdfFilename.substring(0, pos);
-            (new File(dir)).mkdirs();
+            StorageFactory.mkdirs(new File(dir));
         }
 
         return pdfFilename;
@@ -2094,7 +2168,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             contextMap.put("invoice", invoice);
 
             try {
-                String value = ValueExpressionWrapper.evaluateExpression(expression, contextMap, String.class);
+                String value = evaluateExpression(expression, contextMap, String.class);
 
                 if (value != null) {
                     pdfFileName = value;
@@ -2835,16 +2909,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return result;
         }
         Map<Object, Object> userMap = new HashMap<>();
-        if (expression.contains(ValueExpressionWrapper.VAR_BILLING_ACCOUNT)) {
-            userMap.put(ValueExpressionWrapper.VAR_BILLING_ACCOUNT, billingAccount);
+        if (expression.contains(VAR_BILLING_ACCOUNT)) {
+            userMap.put(VAR_BILLING_ACCOUNT, billingAccount);
         }
-        if (expression.contains(ValueExpressionWrapper.VAR_INVOICE)) {
+        if (expression.contains(VAR_INVOICE)) {
             userMap.put("invoice", invoice);
         }
         if (expression.contains("order")) {
             userMap.put("order", order);
         }
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Integer.class);
+        Object res = evaluateExpression(expression, userMap, Integer.class);
         try {
             result = (Integer) res;
         } catch (Exception e) {
@@ -2863,7 +2937,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public String evaluateBillingTemplateName(String expression, Invoice invoice) {
 
         try {
-            String value = ValueExpressionWrapper.evaluateExpression(expression, String.class, invoice);
+            String value = evaluateExpression(expression, String.class, invoice);
 
             if (value != null) {
                 return StringUtils.normalizeFileName(value);
@@ -2951,7 +3025,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             contextMap.put("ba", billingAccount);
 
             try {
-                String value = ValueExpressionWrapper.evaluateExpression(expression, contextMap, String.class);
+                String value = evaluateExpression(expression, contextMap, String.class);
                 if (value != null) {
                     invoiceTypeCode = (String) value;
                 }
@@ -3129,7 +3203,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         int delay = billingCycle.getInvoiceDateDelayEL() == null ? 0 : InvoiceService.resolveImmediateInvoiceDateDelay(billingCycle.getInvoiceDateDelayEL(), invoice, billingAccount);
         Date invoiceDate = DateUtils.addDaysToDate(new Date(), delay);
-        invoiceDate = DateUtils.setTimeToZero(invoiceDate);
+        invoiceDate = setTimeToZero(invoiceDate);
         invoice.setInvoiceDate(invoiceDate);
         setInvoiceDueDate(invoice, billingCycle);
         setInitialCollectionDate(invoice, billingCycle, billingRun);
@@ -3485,9 +3559,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (electronicBilling && mailingTypeEnum.equals(mailingType)) {
                 Map<Object, Object> params = new HashMap<>();
                 params.put("invoice", invoice);
-                String subject = ValueExpressionWrapper.evaluateExpression(emailTemplate.getSubject(), params, String.class);
-                String content = ValueExpressionWrapper.evaluateExpression(emailTemplate.getTextContent(), params, String.class);
-                String contentHtml = ValueExpressionWrapper.evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
+                String subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
+                String content = evaluateExpression(emailTemplate.getTextContent(), params, String.class);
+                String contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
                 String from = seller.getContactInformation().getEmail();
                 emailSender.send(from, Arrays.asList(from), to, cc, null, subject, content, contentHtml, files, null, false);
                 entityUpdatedEventProducer.fire(invoice);
@@ -3564,7 +3638,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public String evaluateOverrideEmail(String overrideEmailEl, HashMap<Object, Object> userMap, Invoice invoice) throws BusinessException {
         invoice = refreshOrRetrieve(invoice);
         userMap.put("invoice", invoice);
-        String result = ValueExpressionWrapper.evaluateExpression(overrideEmailEl, userMap, String.class);
+        String result = evaluateExpression(overrideEmailEl, userMap, String.class);
         if (StringUtils.isBlank(result)) {
             return null;
         }
@@ -4201,25 +4275,25 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         Map<Object, Object> userMap = new HashMap<>();
 
-        if (expression.indexOf(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT) >= 0) {
-            userMap.put(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT, customerAccount);
+        if (expression.indexOf(VAR_CUSTOMER_ACCOUNT) >= 0) {
+            userMap.put(VAR_CUSTOMER_ACCOUNT, customerAccount);
         }
-        if (expression.indexOf(ValueExpressionWrapper.VAR_BILLING_ACCOUNT) >= 0) {
-            userMap.put(ValueExpressionWrapper.VAR_BILLING_ACCOUNT, billingAccount);
+        if (expression.indexOf(VAR_BILLING_ACCOUNT) >= 0) {
+            userMap.put(VAR_BILLING_ACCOUNT, billingAccount);
         }
-        if (expression.indexOf(ValueExpressionWrapper.VAR_INVOICE_SHORT) >= 0) {
-            userMap.put(ValueExpressionWrapper.VAR_INVOICE_SHORT, invoice);
+        if (expression.indexOf(VAR_INVOICE_SHORT) >= 0) {
+            userMap.put(VAR_INVOICE_SHORT, invoice);
         }
-        if (expression.indexOf(ValueExpressionWrapper.VAR_INVOICE) >= 0) {
-            userMap.put(ValueExpressionWrapper.VAR_INVOICE, invoice);
+        if (expression.indexOf(VAR_INVOICE) >= 0) {
+            userMap.put(VAR_INVOICE, invoice);
         }
-        if (expression.indexOf(ValueExpressionWrapper.VAR_DISCOUNT_PLAN_INSTANCE) >= 0) {
-            userMap.put(ValueExpressionWrapper.VAR_DISCOUNT_PLAN_INSTANCE, dpi);
+        if (expression.indexOf(VAR_DISCOUNT_PLAN_INSTANCE) >= 0) {
+            userMap.put(VAR_DISCOUNT_PLAN_INSTANCE, dpi);
         }
         if (expression.indexOf("su") >= 0) {
             userMap.put("su", invoice.getSubscription());
         }
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
+        Object res = evaluateExpression(expression, userMap, Boolean.class);
         try {
             result = (Boolean) res;
         } catch (Exception e) {
@@ -4243,14 +4317,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return null;
         }
         Map<Object, Object> userMap = new HashMap<>();
-        userMap.put(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT, billingAccount.getCustomerAccount());
-        userMap.put(ValueExpressionWrapper.VAR_BILLING_ACCOUNT, billingAccount);
+        userMap.put(VAR_CUSTOMER_ACCOUNT, billingAccount.getCustomerAccount());
+        userMap.put(VAR_BILLING_ACCOUNT, billingAccount);
         userMap.put("iv", invoice);
         userMap.put("invoice", invoice);
         userMap.put("wa", wallet);
         userMap.put("amount", subCatTotal);
 
-        BigDecimal result = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
+        BigDecimal result = evaluateExpression(expression, userMap, BigDecimal.class);
         return result;
     }
 
@@ -4334,7 +4408,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return An integer value
      */
     public static Integer resolveInvoiceProductionDateDelay(String el, BillingRun billingRun) {
-        return ValueExpressionWrapper.evaluateExpression(el, Integer.class, billingRun);
+        return evaluateExpression(el, Integer.class, billingRun);
     }
 
 
@@ -5052,7 +5126,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return An integer value
      */
     public static Integer resolveInvoiceDateDelay(String el, BillingRun billingRun) {
-        return ValueExpressionWrapper.evaluateExpression(el, Integer.class, billingRun);
+        return evaluateExpression(el, Integer.class, billingRun);
     }
 
     /**
@@ -5064,7 +5138,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws InvalidELException Failed to evaluate EL expression
      */
     public static Integer resolveImmediateInvoiceDateDelay(String el, Object... parameters) throws InvalidELException{
-        return ValueExpressionWrapper.evaluateExpression(el, Integer.class, parameters);
+        return evaluateExpression(el, Integer.class, parameters);
     }
 
     /**
@@ -5375,7 +5449,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             try {
-                String value = ValueExpressionWrapper.evaluateExpression(expression, contextMap, String.class);
+                String value = evaluateExpression(expression, contextMap, String.class);
                 if (value != null) {
                     invoiceTypeCode = value;
                 }
@@ -5389,7 +5463,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     
     private PaymentMethod resolvePMethod(BillingAccount billingAccount, BillingCycle billingCycle, PaymentMethod defaultPaymentMethod, InvoiceLine invoiceLine) {
         if (BillingEntityTypeEnum.SUBSCRIPTION.equals(billingCycle.getType()) || (BillingEntityTypeEnum.BILLINGACCOUNT.equals(billingCycle.getType()) && billingCycle.isSplitPerPaymentMethod())) {
-            if (Objects.nonNull(invoiceLine.getSubscription().getPaymentMethod())) {
+            if (invoiceLine.getSubscription() != null
+                    && Objects.nonNull(invoiceLine.getSubscription().getPaymentMethod())) {
                 return invoiceLine.getSubscription().getPaymentMethod();
             } else if (Objects.nonNull(billingAccount.getPaymentMethod())) {
                 return billingAccount.getPaymentMethod();
@@ -5973,13 +6048,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     private void addFixedDiscount(InvoiceLine invoiceLine) {
-        if(invoiceLine.getDiscountPlan() != null
-                && invoiceLine.getDiscountPlan().getDiscountPlanItems() != null
-                && !invoiceLine.getDiscountPlan().getDiscountPlanItems().isEmpty()) {
-            BigDecimal fixedDiscount = discountPlanItemService.getFixedDiscountSumByDP(invoiceLine.getDiscountPlan().getId());
-            if(fixedDiscount != null && fixedDiscount.compareTo(BigDecimal.ZERO) > 0) {
-                invoiceLine.setAmountWithoutTax(invoiceLine.getAmountWithoutTax().subtract(fixedDiscount));
+        if(invoiceLine.getDiscountPlan() != null && invoiceLine.getDiscountPlan().getDiscountPlanItems() != null && !invoiceLine.getDiscountPlan().getDiscountPlanItems().isEmpty()) {
+        	List<DiscountPlanItem> discountPlanItems = discountPlanItemService.getFixedDiscountPlanItemsByDP(invoiceLine.getDiscountPlan().getId());
+            for(DiscountPlanItem discountPlanItem : discountPlanItems) {
+            if(discountPlanItem != null && discountPlanItemService.isDiscountPlanItemApplicable(invoiceLine.getBillingAccount(),discountPlanItem,invoiceLine.getAccountingArticle(),invoiceLine.getSubscription(),null) ) {
+                invoiceLine.setAmountWithoutTax(invoiceLine.getAmountWithoutTax().subtract(discountPlanItem.getDiscountValue()));
                 invoiceLine.setAmountWithTax(invoiceLine.getAmountWithoutTax().add(invoiceLine.getAmountTax()));
+                invoiceLine.setDiscountAmount(invoiceLine.getDiscountAmount().add(discountPlanItem.getDiscountValue()));
+            }
             }
         }
     }
@@ -6742,9 +6818,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }else {
             return Collections.emptyList();
         }
-        List<Invoice> invoicesAdv = this.getEntityManager().createNamedQuery("Invoice.findValidatedInvoiceAdvWithoutOrder").setParameter("billingAccountId", invoice.getBillingAccount().getId()).getResultList();
+        // check balance when invoicing plan created from order ==> adv from order must have balance set
+        List<Invoice> invoicesAdv = null;
+        if(invoice.getCommercialOrder() != null) {
+	        invoicesAdv = this.getEntityManager().createNamedQuery("Invoice.findValidatedInvoiceAdvWithOrder")
+	                                                            .setParameter("billingAccountId", invoice.getBillingAccount().getId())
+	                                                            .setParameter("commercialOrder", invoice.getCommercialOrder())
+	                                                            .getResultList();
+        }else {
+	        invoicesAdv = this.getEntityManager().createNamedQuery("Invoice.findValidatedInvoiceAdvWithoutOrder")
+                    .setParameter("billingAccountId", invoice.getBillingAccount().getId())
+                    .getResultList();
+        }
         
-        Collections.sort(invoicesAdv, (inv1, inv2) -> {
+        sort(invoicesAdv, (inv1, inv2) -> {
             int compCreationDate = inv1.getAuditable().getCreated().compareTo(inv2.getAuditable().getCreated());
             if(compCreationDate != 0) {
                 return compCreationDate;

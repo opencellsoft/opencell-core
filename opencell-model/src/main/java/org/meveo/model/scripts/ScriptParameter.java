@@ -139,7 +139,7 @@ public class ScriptParameter extends BaseEntity {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(allowedValues, className, code, collection, defaultValue,
+		result = prime * result + Objects.hash(id, allowedValues, className, code, collection, defaultValue,
 				descriptionI18n, mandatory, scriptInstance, valuesSeparator);
 		return result;
 	}
@@ -148,12 +148,13 @@ public class ScriptParameter extends BaseEntity {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
+		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		ScriptParameter other = (ScriptParameter) obj;
-		return Objects.equals(allowedValues, other.allowedValues) && Objects.equals(className, other.className)
+		return Objects.equals(id, other.id) && Objects.equals(allowedValues, other.allowedValues) 
+				&& Objects.equals(className, other.className)
 				&& Objects.equals(code, other.code) && collection == other.collection
 				&& Objects.equals(defaultValue, other.defaultValue)
 				&& Objects.equals(descriptionI18n, other.descriptionI18n) && mandatory == other.mandatory
