@@ -18,8 +18,6 @@
 
 package org.meveo.admin.job;
 
-import static org.meveo.model.billing.BillingRunStatusEnum.SUSPECTED;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -241,14 +239,8 @@ public class InvoicingJobBean extends BaseJobBean {
             rejectBAWithoutBillableTransactions(billingRun, jobExecutionResult);
 
             BillingRunStatusEnum nextStatus = BillingRunStatusEnum.POSTINVOICED;            
-            if (!billingRunService.isBillingRunValid(billingRun, InvoiceValidationStatusEnum.REJECTED)) {
+            if (!billingRunService.isBillingRunValid(billingRun)) {
                 nextStatus = BillingRunStatusEnum.REJECTED;
-            }
-            if(!billingRunService.isBillingRunValid(billingRun, InvoiceValidationStatusEnum.SUSPECT) && 
-                    (billingRun.getSuspectAutoAction() != null 
-                        && billingRun.getSuspectAutoAction().equals(BillingRunAutomaticActionEnum.MOVE))
-                ) {
-                billingRun.setStatus(SUSPECTED);
             }
             billingRun = billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, nextStatus, null);
 
