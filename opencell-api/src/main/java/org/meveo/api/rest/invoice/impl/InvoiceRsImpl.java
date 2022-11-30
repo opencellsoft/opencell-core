@@ -221,7 +221,7 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
     public ActionStatus validate(ValidateInvoiceRequestDto putData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            invoiceApi.validateInvoice(putData.getInvoiceId(), putData.getGenerateAO(), putData.getRefreshExchangeRate(), true);
+            invoiceApi.validateInvoice(putData.getInvoiceId(), putData.getGenerateAO(), putData.getRefreshExchangeRate(), true, false);
         } catch (Exception e) {
             processException(e, result);
         }

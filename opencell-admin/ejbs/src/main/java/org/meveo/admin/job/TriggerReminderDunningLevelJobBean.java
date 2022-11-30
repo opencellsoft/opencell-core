@@ -64,6 +64,8 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
 
     @Inject
     private InvoiceService invoiceService;
+    
+    private Invoice processOnlyValidateOne;
 
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
     private final SimpleDateFormat emailDateFormatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -220,5 +222,9 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
         levelInstance.setDunningLevel(policyLevel.getDunningLevel());
         levelInstanceService.create(levelInstance);
         return levelInstance;
+    }
+    
+    public void setOneValidateInvoice(Invoice invoice) {
+        this.processOnlyValidateOne = invoice;
     }
 }

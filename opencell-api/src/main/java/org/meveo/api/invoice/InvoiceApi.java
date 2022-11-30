@@ -26,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -42,6 +43,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
+import org.meveo.admin.job.TriggerReminderDunningLevelJobBean;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
@@ -85,6 +87,9 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.generic.wf.WorkflowInstance;
+import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.Payment;
@@ -95,6 +100,7 @@ import org.meveo.model.payments.WriteOff;
 import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
+import org.meveo.model.settings.GlobalSettings;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
@@ -106,9 +112,12 @@ import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.generic.wf.WorkflowInstanceService;
+import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositTemplateService;
+import org.meveo.service.settings.impl.GlobalSettingsService;
 import org.meveo.util.ApplicationProvider;
 import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
@@ -556,7 +565,7 @@ public class InvoiceApi extends BaseApi {
             EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException, IOException {
     	return validateInvoice(invoiceId, generateAO, refreshExchangeRate, true);
     }
-    
+
     /**
      * 
      * @param invoiceId invoice id
@@ -573,6 +582,33 @@ public class InvoiceApi extends BaseApi {
      */
     @TransactionAttribute
     public String validateInvoice(Long invoiceId, boolean generateAO, boolean refreshExchangeRate, boolean createSD) throws MissingParameterException,
+            EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException, IOException {
+        return validateInvoice(invoiceId, generateAO, refreshExchangeRate, createSD, false);
+    }
+    /**
+     * 
+     * @param invoiceId invoice id
+     * @param generateAO generate AO, default value false
+     * @param refreshExchangeRate refresh exchange rate
+     *
+     * @return invoice number.
+     * @throws MissingParameterException missing parameter exception
+     * @throws EntityDoesNotExistsException entity does not exist exception
+     * @throws BusinessException business exception
+     * @throws InvoiceExistException Invoice already exists exception
+     * @throws ImportInvoiceException Failed to import invoice exception
+     * @throws IOException 
+     */
+    @Inject
+    private TriggerReminderDunningLevelJobBean reminderDunningLevelJobBean;
+    private GlobalSettingsService globalSettingsService;
+    @Inject
+    private JobExecutionService jobExecutionService;
+    @Inject
+    private JobInstanceService jobInstanceService;
+    
+    @TransactionAttribute
+    public String validateInvoice(Long invoiceId, boolean generateAO, boolean refreshExchangeRate, boolean createSD, boolean launchDunningJobs) throws MissingParameterException,
             EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException, IOException {
         if (StringUtils.isBlank(invoiceId)) {
             missingParameters.add("invoiceId");
@@ -591,28 +627,28 @@ public class InvoiceApi extends BaseApi {
         
         //Create SD
         if (invoice.getInvoiceType() != null && "SECURITY_DEPOSIT".equals(invoice.getInvoiceType().getCode()) && createSD) {
-        	Optional<SecurityDeposit> osd = securityDepositService.getSecurityDepositByInvoiceId(invoice.getId());
-        	if(osd.isPresent()) {
-        		SecurityDeposit securityDeposit = osd.get();
-        		securityDeposit.setAmount(invoice.getAmountWithoutTax());
-        		securityDeposit.setBillingAccount(invoice.getBillingAccount());
-        		securityDeposit.setCustomerAccount(invoice.getBillingAccount().getCustomerAccount());
-        		securityDeposit.setStatus(SecurityDepositStatusEnum.VALIDATED);
-        		securityDepositService.update(securityDeposit);
-        		
-        		//Get SD Template number of instantiation and update it after creating a new SD
-        		SecurityDepositTemplate sdt = invoiceService.updateSDTemplate(securityDeposit.getTemplate());
-        		securityDepositTemplateService.update(sdt);
-        		
-        	} else if(createSD) {
-        		SecurityDepositTemplate defaultSDTemplate = securityDepositTemplateService.getDefaultSDTemplate();
-        		Long count = securityDepositService.countPerTemplate(defaultSDTemplate);
-        		securityDepositService.createSD(invoice, defaultSDTemplate, count);
-        		
-        		//Get SD Template number of instantiation and update it after creating a new SD
-        		SecurityDepositTemplate sdt = invoiceService.updateSDTemplate(defaultSDTemplate);
-        		securityDepositTemplateService.update(sdt);
-        	}
+            Optional<SecurityDeposit> osd = securityDepositService.getSecurityDepositByInvoiceId(invoice.getId());
+            if(osd.isPresent()) {
+                SecurityDeposit securityDeposit = osd.get();
+                securityDeposit.setAmount(invoice.getAmountWithoutTax());
+                securityDeposit.setBillingAccount(invoice.getBillingAccount());
+                securityDeposit.setCustomerAccount(invoice.getBillingAccount().getCustomerAccount());
+                securityDeposit.setStatus(SecurityDepositStatusEnum.VALIDATED);
+                securityDepositService.update(securityDeposit);
+                
+                //Get SD Template number of instantiation and update it after creating a new SD
+                SecurityDepositTemplate sdt = invoiceService.updateSDTemplate(securityDeposit.getTemplate());
+                securityDepositTemplateService.update(sdt);
+                
+            } else if(createSD) {
+                SecurityDepositTemplate defaultSDTemplate = securityDepositTemplateService.getDefaultSDTemplate();
+                Long count = securityDepositService.countPerTemplate(defaultSDTemplate);
+                securityDepositService.createSD(invoice, defaultSDTemplate, count);
+                
+                //Get SD Template number of instantiation and update it after creating a new SD
+                SecurityDepositTemplate sdt = invoiceService.updateSDTemplate(defaultSDTemplate);
+                securityDepositTemplateService.update(sdt);
+            }
         }
         
         if(invoice.getDueDate().after(today) && invoice.getStatus() == VALIDATED){
@@ -625,8 +661,27 @@ public class InvoiceApi extends BaseApi {
             invoiceService.deleteInvoiceXml(invoice);
         }
         if (invoiceService.isInvoicePdfExist(invoice)) {
-        	invoiceService.deleteInvoicePdf(invoice);
+            invoiceService.deleteInvoicePdf(invoice);
         }
+        
+        // launch dunning job
+        if(launchDunningJobs) {
+            //check if the general dunning is set and is activated 
+            GlobalSettings lastOne = globalSettingsService.findLastOne();
+            if(lastOne != null && !lastOne.getActivateDunning()) {
+                String jobInstanceCode = null;
+                if(invoice.getDueDate() != null && invoice.getDueDate().after(today)) { // lunch TriggerReminderDunningLevel job
+                    jobInstanceCode = "TriggerReminderDunningLevel_Job"; 
+                }else if(invoice.getDueDate() != null && invoice.getDueDate().before(today)) { // lunch DunningCollectionPlanJob job
+                    jobInstanceCode = "DunningCollectionPlanJob";
+                }
+                JobInstance triggerCollectionPlanLevelsJob_job = jobInstanceService.findByCode(jobInstanceCode);
+                if (triggerCollectionPlanLevelsJob_job != null) {
+                    jobExecutionService.executeJob(triggerCollectionPlanLevelsJob_job, Collections.emptyMap(), JobLauncherEnum.TRIGGER);
+                }
+            }
+        }
+        
         return invoice.getInvoiceNumber();
     }
 
