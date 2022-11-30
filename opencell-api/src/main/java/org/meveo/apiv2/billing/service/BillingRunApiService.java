@@ -144,11 +144,10 @@ public class BillingRunApiService implements ApiService<BillingRun> {
                 if (billingRun.getStatus() == DRAFT_INVOICES) {
                     billingRun.setStatus(POSTVALIDATED);
                 }                
-                if (billingRun.getStatus() == REJECTED) {
-                    if (billingRunService.isBRValid(billingRun)) {
-                        billingRun.setStatus(POSTVALIDATED);
-                    }
-                }                
+                if (billingRun.getStatus() == REJECTED && billingRunService.isBRValid(billingRun)) {
+                    billingRun.setStatus(POSTVALIDATED);
+                }
+         
                 if (initialStatus != billingRun.getStatus()) {
                     billingRun.setXmlJobExecutionResultId(null);
                     billingRun.setPdfJobExecutionResultId(null);
