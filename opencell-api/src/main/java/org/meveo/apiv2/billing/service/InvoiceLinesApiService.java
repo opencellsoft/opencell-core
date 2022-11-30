@@ -177,10 +177,17 @@ public class InvoiceLinesApiService implements ApiService<InvoiceLine>  {
 	}
 	
 
-	public List<Long> getInvoiceLineIds(InvoiceLinesToMarkAdjustment invoiceLinesToUnmark) {
-		if(invoiceLinesToUnmark.getFilters().isEmpty())
+	public List<Long> getInvoiceLineIds(InvoiceLinesToMarkAdjustment invoiceLinesToMark) {
+		if(invoiceLinesToMark == null || invoiceLinesToMark.getFilters() == null || invoiceLinesToMark.getFilters().isEmpty()) {
 			return new ArrayList<>();
-		List<InvoiceLine> invoiceLines = getInvoiceLinesForAdjustment(invoiceLinesToUnmark);
+		}
+		if(invoiceLinesToMark.getFilters().size() == 1 && invoiceLinesToMark.getFilters().containsKey("inList id")) {
+			List<Long> ids = ((List<Integer>) invoiceLinesToMark.getFilters().get("inList id")).stream()
+			        .mapToLong(Integer::longValue)
+			        .boxed().collect(Collectors.toList());
+			return ids;
+		}
+		List<InvoiceLine> invoiceLines = getInvoiceLinesForAdjustment(invoiceLinesToMark);
     	return emptyIfNull(invoiceLines).stream().map(invoiceLine -> invoiceLine.getId()).collect(Collectors.toList());
 	}
 
