@@ -62,6 +62,7 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.LockMode;
 import org.hibernate.SQLQuery;
@@ -73,6 +74,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.encryption.IEncryptable;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
@@ -107,6 +109,8 @@ import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
+import org.meveo.model.persistence.CustomFieldJsonTypeDescriptor;
+import org.meveo.model.persistence.JacksonUtil;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.base.expressions.ExpressionFactory;
 import org.meveo.service.base.expressions.ExpressionParser;
@@ -183,7 +187,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     public static final String FROM_JSON_FUNCTION = "FromJson(a.";
     public static final String CF_VALUES_FIELD = "cfValues";
-    
+
     public static final int SHORT_MAX_VALUE = 32767;
     /**
      * Is custom field accumulation being used
@@ -197,10 +201,13 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     protected static Map<Class, String> jsonTypes = new HashMap<Class, String>();
 
+    protected static boolean encryptCFSetting = false;
+
     @PostConstruct
     private void init() {
         accumulateCF = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("customFields.accumulateCF", "false"));
         applyGenericWorkflow = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("workflow.enabled", "true"));
+        encryptCFSetting = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty(IEncryptable.ENCRYPT_CUSTOM_FIELDS_PROPERTY, IEncryptable.FALSE_STR));
     }
 
     @Inject
@@ -1202,6 +1209,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         for (Object filterValue : filters.values()) {
             if (filterValue instanceof CustomFieldValues) {
                 CustomFieldValues customFieldValues = (CustomFieldValues) filterValue;
+                customFieldValues = checkCFValuesShouldBeEncrypted(customFieldValues);
+
                 Map<String, List<CustomFieldValue>> valuesByCode = customFieldValues.getValuesByCode();
                 for (String customFiterName : valuesByCode.keySet()) {
                     // get the filter value
@@ -1217,7 +1226,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                     // listVarcharFromJson(<entity>.cfValues,<custom field name>,<value to search for>)=true
                     if (SEARCH_LIST.equals(fieldInfo.getCondition())) {
                         if ("string".equals(type)) {
-                            value = "'" + value + "'";
+                           value = "'" + value + "'";
                         }
                         type = "list" + StringUtils.capitalizeFirstLetter(type);
                         String searchFunction = "list";
@@ -1245,7 +1254,17 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return cftFilters;
     }
 
-	private String extractCustomFieldSyntax(String type, Class clazz, String transformedFilter, String fieldName, String nestedFields) {
+    //check if search by the CF value should use or not the encrypted value
+    private CustomFieldValues checkCFValuesShouldBeEncrypted(CustomFieldValues customFieldValues) {
+        if (!encryptCFSetting) {
+            return customFieldValues;
+        }
+        String encryptedCFJson = CustomFieldJsonTypeDescriptor.INSTANCE.toString(customFieldValues);
+        Map<String, List<CustomFieldValue>> cfValues = JacksonUtil.fromString(encryptedCFJson, new TypeReference<Map<String, List<CustomFieldValue>>>() {});
+        return new CustomFieldValues(cfValues);
+    }
+
+    private String extractCustomFieldSyntax(String type, Class clazz, String transformedFilter, String fieldName, String nestedFields) {
 		nestedFields=nestedFields==null?"":nestedFields;
 		String searchFunction = getCustomFieldSearchFunctionPrefix(clazz);
 		transformedFilter = transformedFilter + searchFunction + FROM_JSON_FUNCTION+nestedFields+"cfValues," + fieldName + "," + type + ") ";
