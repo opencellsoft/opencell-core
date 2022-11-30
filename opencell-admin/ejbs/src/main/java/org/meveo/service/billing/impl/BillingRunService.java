@@ -50,6 +50,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.async.AmountsToInvoice;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ImportInvoiceException;
+import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.InvoicingJob;
 import org.meveo.admin.job.InvoicingJobV2Bean;
@@ -814,8 +816,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      */
     public BillingRun applyAutomaticValidationActions(BillingRun billingRun) {
         if (BillingRunStatusEnum.REJECTED.equals(billingRun.getStatus()) || 
-                BillingRunStatusEnum.SUSPECTED.equals(billingRun.getStatus()) || 
-                BillingRunStatusEnum.DRAFT_INVOICES.equals(billingRun.getStatus())) {
+                BillingRunStatusEnum.DRAFT_INVOICES.equals(billingRun.getStatus()) ||
+                BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
             List<InvoiceStatusEnum> toMove = new ArrayList<>();
             List<InvoiceStatusEnum> toQuarantine = new ArrayList<>();
             List<InvoiceStatusEnum> toCancel = new ArrayList<>();
@@ -846,7 +848,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     public BillingRunStatusEnum validateBillingRun(BillingRun billingRun, BillingRunStatusEnum validationStatus) {
         if(validationStatus == BillingRunStatusEnum.INVOICES_GENERATED || BillingRunStatusEnum.INVOICES_GENERATED.equals(billingRun.getStatus()) || BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus())) {
             BillingRunStatusEnum status = validationStatus != null ? validationStatus : BillingRunStatusEnum.POSTINVOICED;
-            if(!isBillingRunValid(billingRun, InvoiceValidationStatusEnum.REJECTED)) {
+            if(!isBillingRunValid(billingRun)) {
                 status = BillingRunStatusEnum.REJECTED;
             }
             return status;
@@ -854,24 +856,15 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         return null;
     }
     
-    public boolean isBillingRunValid(BillingRun billingRun, InvoiceValidationStatusEnum invoiceValidationStatusEnum) {
+    public boolean isBillingRunValid(BillingRun billingRun) {
         boolean result = true;
         if (!billingRun.isSkipValidationScript()) {
-            if(InvoiceValidationStatusEnum.REJECTED.equals(invoiceValidationStatusEnum)) {
-                if(isBillingRunContainingRejectedInvoices(billingRun.getId())) {
-                    return false;
-                } 
-            }
-            else if(InvoiceValidationStatusEnum.SUSPECT.equals(invoiceValidationStatusEnum)) {
-                if(isBillingRunContainingSuspectInvoices(billingRun.getId())) {
-                    return false;
-                } 
-            }
-            //Billing Run exceptionnel
-            if (billingRun.getBillingCycle() == null) {
+            if(isBillingRunContainingRejectedInvoices(billingRun.getId())) {
+                return false;
+            } else if (billingRun.getBillingCycle() == null) {
                 return true;
             }
-            billingRun = refreshOrRetrieve(billingRun);
+            billingRun = billingRunService.refreshOrRetrieve(billingRun);
             final ScriptInstance billingRunValidationScript = billingRun.getBillingCycle().getBillingRunValidationScript();
             if(billingRunValidationScript!=null) {
                 ScriptInterface script = scriptInstanceService.getScriptInstance(billingRunValidationScript.getCode());
@@ -883,15 +876,52 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                     methodContext.put("billingRun", billingRun);
                     script.execute(methodContext);
                     Object status = methodContext.get(Script.INVOICE_VALIDATION_STATUS);
-                    if(status instanceof InvoiceValidationStatusEnum && 
-                            invoiceValidationStatusEnum.equals(status)){
+                    if(status instanceof InvoiceValidationStatusEnum && InvoiceValidationStatusEnum.REJECTED.equals(status)){
                             result = false;
                     }
                     update(billingRun);
-                }                
+                }
             }
         }
         return result;
+    }
+    
+    public boolean isBRValid(BillingRun billingRun) {
+        boolean result = true;
+        if (!billingRun.isSkipValidationScript()) {
+            if(isBillingRunContainingRejectedInvoices(billingRun.getId())) {
+                return false;
+            } else if (billingRun.getBillingCycle() == null) {
+                return true;
+            }            
+        }
+        return result;
+    }
+
+    public void executeBillingRunValidationScript(BillingRun billingRun) throws BusinessException {
+        if (!billingRun.isSkipValidationScript()) {
+            //Not Billing Run Exceptionnel
+            if (billingRun.getBillingCycle() != null) {
+                billingRun = refreshOrRetrieve(billingRun);
+                final ScriptInstance billingRunValidationScript = billingRun.getBillingCycle().getBillingRunValidationScript();
+                if(billingRunValidationScript!=null) {
+                    ScriptInterface script = scriptInstanceService.getScriptInstance(billingRunValidationScript.getCode());
+                    if (script != null) {
+                        try {
+                            Map<String, Object> methodContext = new HashMap<>();
+                            methodContext.put(Script.CONTEXT_ENTITY, billingRun);
+                            methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
+                            methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+                            methodContext.put("billingRun", billingRun);
+                            script.execute(methodContext);                    
+                            update(billingRun);
+                        } catch (javax.validation.ValidationException e) { //RuntimeException 
+                            throw new BusinessException(e);
+                        }
+                    }                
+                }
+            }
+        }
     }
     
     /**
@@ -1331,52 +1361,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     
     public boolean isBillingRunContainingSuspectInvoices(Long billingRunId) {
         return getEntityManager().createNamedQuery("Invoice.countSuspectByBillingRun", Long.class).setParameter("billingRunId", billingRunId).getSingleResult() > 0;
-    }
-
-    /**
-     * Search if a next BR exist for the given BR ID. if next BR is not found, a new one is created and associated to the BR
-     * return null if no BR is found for the input id
-     *
-     * @param billingRunId
-     * @return
-     */
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public BillingRun findOrCreateNextBR(Long billingRunId) {
-         BillingRun billingRun = findById(billingRunId);
-        if (billingRun != null) {
-            if (billingRun.getNextBillingRun() != null) {
-                return billingRun.getNextBillingRun();
-            }
-            BillingRun nextBillingRun = new BillingRun();
-            try {
-                BeanUtils.copyProperties(nextBillingRun, billingRun);
-                final ArrayList<BillingAccount> selectedBillingAccounts = new ArrayList<>();
-                selectedBillingAccounts.addAll(billingRun.getBillableBillingAccounts());
-                Set<BillingRunList> billingRunLists = new HashSet<>();
-                billingRunLists.addAll(billingRun.getBillingRunLists());
-                List<RejectedBillingAccount> rejectedBillingAccounts = new ArrayList<>();
-                rejectedBillingAccounts.addAll(billingRun.getRejectedBillingAccounts());
-                nextBillingRun.setRejectedBillingAccounts(rejectedBillingAccounts);
-                nextBillingRun.setBillingRunLists(billingRunLists);
-                nextBillingRun.setBillableBillingAccounts(selectedBillingAccounts);
-                nextBillingRun.setRejectionReason(billingRun.getRejectionReason());
-                nextBillingRun.setInvoices(new ArrayList<>());
-                nextBillingRun.setIsQuarantine(Boolean.TRUE);
-                nextBillingRun.setStatus(BillingRunStatusEnum.SUSPECTED);
-                nextBillingRun.setOriginBillingRun(billingRun);
-                nextBillingRun.setId(null);
-                create(nextBillingRun);
-                billingRun.setNextBillingRun(nextBillingRun);
-                billingRun.setRejectionReason(null);
-                update(billingRun);
-                return nextBillingRun;
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                throw new BusinessException(e);
-            }
-        }
-        return null;
     }
 
     /**
