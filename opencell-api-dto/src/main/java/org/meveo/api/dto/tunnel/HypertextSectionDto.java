@@ -20,14 +20,19 @@ package org.meveo.api.dto.tunnel;
 
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
-import org.meveo.model.subscriptionTunnel.HypertextLink;
-import org.meveo.model.subscriptionTunnel.HypertextSection;
+import org.meveo.model.tunnel.HypertextLink;
+import org.meveo.model.tunnel.HypertextSection;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
 /**
  * @author Ilham CHAFIK
  */
+@XmlRootElement(name = "HypertextSection")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class HypertextSectionDto extends BusinessEntityDto {
 
     /** serial version uid. */

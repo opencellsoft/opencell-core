@@ -1,4 +1,4 @@
-package org.meveo.api.dto.tunnel;/*
+/*
  * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
@@ -16,23 +16,29 @@ package org.meveo.api.dto.tunnel;/*
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
+package org.meveo.api.dto.tunnel;
 
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
-import org.meveo.model.subscriptionTunnel.HypertextLink;
+import org.meveo.model.tunnel.HypertextLink;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
 /**
  * @author Ilham CHAFIK
  */
+@XmlRootElement(name = "HypertextLink")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class HypertextLinkDto extends BusinessEntityDto {
 
     private static final long serialVersionUID = 4346589020131903781L;
 
     private List<LanguageDescriptionDto> label;
 
-    private String url;
+    private List<LanguageDescriptionDto> url;
 
     private String icon;
 
@@ -51,7 +57,7 @@ public class HypertextLinkDto extends BusinessEntityDto {
             label = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(link.getLabel());
         }
         if (link.getUrl() != null) {
-            url = link.getUrl();
+            url = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(link.getUrl());
         }
         if (link.getIcon() != null) {
             icon = link.getIcon();
@@ -62,10 +68,9 @@ public class HypertextLinkDto extends BusinessEntityDto {
         if (link.getHypertextSection() != null) {
             hypertextSectionCode = link.getHypertextSection().getCode();
         }
-
     }
 
-    public HypertextLinkDto(List<LanguageDescriptionDto> label, String url, String icon, Boolean displayIcon, String hypertextSectionCode) {
+    public HypertextLinkDto(List<LanguageDescriptionDto> label, List<LanguageDescriptionDto> url, String icon, Boolean displayIcon, String hypertextSectionCode) {
         this.label = label;
         this.url = url;
         this.icon = icon;
@@ -81,11 +86,11 @@ public class HypertextLinkDto extends BusinessEntityDto {
         this.label = label;
     }
 
-    public String getUrl() {
+    public List<LanguageDescriptionDto> getUrl() {
         return url;
     }
 
-    public void setUrl(String url) {
+    public void setUrl(List<LanguageDescriptionDto> url) {
         this.url = url;
     }
 

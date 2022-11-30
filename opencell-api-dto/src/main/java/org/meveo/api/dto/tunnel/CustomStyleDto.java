@@ -20,9 +20,9 @@ package org.meveo.api.dto.tunnel;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.meveo.api.dto.BusinessEntityDto;
-import org.meveo.model.subscriptionTunnel.CustomEnum;
-import org.meveo.model.subscriptionTunnel.CustomStyle;
-import org.meveo.model.subscriptionTunnel.HypertextSection;
+import org.meveo.model.tunnel.CustomEnum;
+import org.meveo.model.tunnel.CustomStyle;
+import org.meveo.model.tunnel.HypertextSection;
 
 import javax.xml.bind.annotation.*;
 import java.util.List;

@@ -25,7 +25,11 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.subscriptionTunnel.TunnelCustomization;
+import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.crm.CustomerCategory;
+import org.meveo.model.tunnel.ElectronicSignature;
+import org.meveo.model.tunnel.Theme;
+import org.meveo.model.tunnel.TunnelCustomization;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.tunnel.ElectronicSignatureService;
@@ -131,19 +135,35 @@ public class TunnelCustomizationApi extends BaseCrudApi<TunnelCustomization, Tun
             entity.setContactMethods(dto.getContactMethods());
         }
         if (dto.getBillingCycleCode() != null) {
-            entity.setBillingCycle(billingCycleService.findByCode(dto.getBillingCycleCode()));
+            BillingCycle billingCycle = billingCycleService.findByCode(dto.getBillingCycleCode());
+            if (billingCycle == null) {
+                throw new EntityDoesNotExistsException(BillingCycle.class, dto.getBillingCycleCode());
+            }
+            entity.setBillingCycle(billingCycle);
         }
         if (dto.getCustomerCategoryCode() != null) {
-            entity.setCustomerCategory(customerCategoryService.findByCode(dto.getCustomerCategoryCode()));
+            CustomerCategory customerCategory = customerCategoryService.findByCode(dto.getCustomerCategoryCode());
+            if (customerCategory == null) {
+                throw new EntityDoesNotExistsException(CustomerCategory.class, dto.getCustomerCategoryCode());
+            }
+            entity.setCustomerCategory(customerCategory);
         }
         if (dto.getThemeCode() != null) {
-            entity.setTheme(themeService.findByCode(dto.getThemeCode()));
+            Theme theme = themeService.findByCode(dto.getThemeCode());
+            if (theme == null) {
+                throw new EntityDoesNotExistsException(Theme.class, dto.getThemeCode());
+            }
+            entity.setTheme(theme);
         }
         if (dto.getSignatureActive() != null) {
             entity.setSignatureActive(dto.getSignatureActive());
         }
         if (dto.getElectronicSignatureCode() != null) {
-            entity.setElectronicSignature(signatureService.findByCode(dto.getElectronicSignatureCode()));
+            ElectronicSignature signature = signatureService.findByCode(dto.getElectronicSignatureCode());
+            if (signature == null) {
+                throw new EntityDoesNotExistsException(ElectronicSignature.class, dto.getElectronicSignatureCode());
+            }
+            entity.setElectronicSignature(signature);
         }
     }
 }

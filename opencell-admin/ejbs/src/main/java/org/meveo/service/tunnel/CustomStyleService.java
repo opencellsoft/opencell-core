@@ -18,7 +18,7 @@
 
 package org.meveo.service.tunnel;
 
-import org.meveo.model.subscriptionTunnel.CustomStyle;
+import org.meveo.model.tunnel.CustomStyle;
 import org.meveo.service.base.BusinessService;
 
 /**

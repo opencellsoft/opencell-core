@@ -21,7 +21,7 @@ package org.meveo.api.dto.tunnel;
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.subscriptionTunnel.ContactMethodEnum;
+import org.meveo.model.tunnel.ContactMethodEnum;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

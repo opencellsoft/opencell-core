@@ -16,7 +16,7 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.model.subscriptionTunnel;
+package org.meveo.model.tunnel;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -68,7 +68,7 @@ public class CustomStyle extends BusinessEntity {
     @Column(name = "secondary_color")
     private String secondaryColor;
 
-    @OneToMany(mappedBy = "customStyle", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "customStyle", cascade = CascadeType.ALL)
     private List<HypertextSection> hypertextSections;
 
     @Enumerated(EnumType.STRING)

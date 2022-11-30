@@ -16,7 +16,7 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.model.subscriptionTunnel;
+package org.meveo.model.tunnel;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -46,8 +46,9 @@ public class HypertextLink extends BusinessEntity {
     @Column(name = "label", columnDefinition = "jsonb")
     private Map<String, String> label;
 
-    @Column(name = "url")
-    private String url;
+    @Type(type = "json")
+    @Column(name = "url", columnDefinition = "jsonb")
+    private Map<String, String> url;
 
     @Column(name = "icon")
     private String icon;
@@ -68,11 +69,11 @@ public class HypertextLink extends BusinessEntity {
         this.label = label;
     }
 
-    public String getUrl() {
+    public Map<String, String> getUrl() {
         return url;
     }
 
-    public void setUrl(String url) {
+    public void setUrl(Map<String, String> url) {
         this.url = url;
     }
 

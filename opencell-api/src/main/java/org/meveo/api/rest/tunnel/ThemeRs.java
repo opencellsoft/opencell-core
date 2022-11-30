@@ -37,10 +37,10 @@ import javax.ws.rs.core.MediaType;
  * @author mohamed CHAOUKI
  */
 @Path("/tunnel/theme")
-@Tag(name = "TunnelTheme", description = "@%TunnelTheme")
+@Tag(name = "Theme", description = "@%Theme")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-public interface TunnelThemeRs extends IBaseRs {
+public interface ThemeRs extends IBaseRs {
 
     /**
      * Create a new tunnel Theme
@@ -51,9 +51,9 @@ public interface TunnelThemeRs extends IBaseRs {
     @Path("/")
     @Operation(
             summary=" Create tunnel theme.  ",
-            tags = { "TunnelTheme" },
+            tags = { "Theme" },
             description=" Create tunnel theme.  ",
-            operationId="    POST_TunnelTheme_create",
+            operationId="    POST_Theme_create",
             responses= {
                     @ApiResponse(
                             responseCode = "200",
@@ -79,9 +79,9 @@ public interface TunnelThemeRs extends IBaseRs {
     @Path("/")
     @Operation(
             summary=" Update tunnel theme.  ",
-            tags = { "TunnelTheme" },
+            tags = { "Theme" },
             description=" Update tunnel theme.  ",
-            operationId="    PUT_TunnelTheme_update",
+            operationId="    PUT_Theme_update",
             responses= {
                     @ApiResponse(
                             responseCode = "200",
@@ -96,5 +96,27 @@ public interface TunnelThemeRs extends IBaseRs {
     )
     ActionStatus update(ThemeDto themeDto);
 
+
+    /**
+     * Deletes the theme with the specified code.
+     * @param code Code of the theme.
+     * @return Request processing status
+     */
+    @DELETE
+    @Path("/{code}")
+    @Operation(
+            summary=" Deletes the theme with the specified code. ",
+            description=" Deletes the theme with the specified code. ",
+            operationId="    DELETE_Theme_{code}",
+            responses= {
+                    @ApiResponse(description=" Request processing status ",
+                            content=@Content(
+                                    schema=@Schema(
+                                            implementation= ActionStatus.class
+                                    )
+                            )
+                    )}
+    )
+    ActionStatus delete(@PathParam("code") String code);
 
 }

@@ -25,7 +25,7 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.subscriptionTunnel.ElectronicSignature;
+import org.meveo.model.tunnel.ElectronicSignature;
 import org.meveo.service.tunnel.ElectronicSignatureService;
 
 import javax.ejb.Stateless;

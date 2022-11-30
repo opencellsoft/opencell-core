@@ -16,12 +16,11 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.model.subscriptionTunnel;
-
+package org.meveo.model.tunnel;
 /**
- * Contact Method types.
+ * Custom Style types.
  *
  */
-public enum ContactMethodEnum {
-    EMAIL, SMS
+public enum CustomEnum {
+    HEADER, BODY,FOOTER
 }

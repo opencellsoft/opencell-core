@@ -24,11 +24,12 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.tunnel.HypertextSectionRs;
 import org.meveo.api.tunnel.HypertextSectionApi;
-import org.meveo.model.subscriptionTunnel.HypertextSection;
+import org.meveo.model.tunnel.HypertextSection;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import java.util.List;
 
 /**
  * @author Ilham CHAFIK
@@ -54,4 +55,34 @@ public class HypertextSectionRsImpl extends BaseRs implements HypertextSectionRs
 
         return result;
     }
+
+    @Override
+    public ActionStatus update(HypertextSectionDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            HypertextSection section = sectionApi.update(postData);
+            result.setEntityCode(section.getCode());
+            result.setEntityId(section.getId());
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus createOrUpdate(List<HypertextSectionDto> sectionsDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            sectionApi.createOrUpdate(sectionsDto);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+
 }

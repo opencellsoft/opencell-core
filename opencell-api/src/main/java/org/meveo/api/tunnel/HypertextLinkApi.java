@@ -21,15 +21,18 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.tunnel.HypertextLinkDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.subscriptionTunnel.HypertextLink;
-import org.meveo.model.subscriptionTunnel.HypertextSection;
+import org.meveo.model.tunnel.HypertextLink;
+import org.meveo.model.tunnel.HypertextSection;
+import org.meveo.model.tunnel.TunnelCustomization;
 import org.meveo.service.tunnel.HypertextLinkService;
 import org.meveo.service.tunnel.HypertextSectionService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.List;
 
 /**
  * @author Ilham CHAFIK
@@ -49,13 +52,13 @@ public class HypertextLinkApi extends BaseCrudApi<HypertextLink, HypertextLinkDt
      * @param dto    DTO entity object to populate from
      * @param entity Entity to populate
      **/
-    public void dtoToEntity(HypertextLinkDto dto, HypertextLink entity) {
+    private void dtoToEntity(HypertextLinkDto dto, HypertextLink entity) {
         entity.setCode(dto.getCode());
         if (dto.getLabel() != null) {
             entity.setLabel(convertMultiLanguageToMapOfValues(dto.getLabel(), null));
         }
         if (dto.getUrl() != null) {
-            entity.setUrl(dto.getUrl());
+            entity.setUrl(convertMultiLanguageToMapOfValues(dto.getUrl(), null));
         }
         if (dto.getIcon() != null) {
             entity.setIcon(dto.getIcon());
@@ -65,6 +68,9 @@ public class HypertextLinkApi extends BaseCrudApi<HypertextLink, HypertextLinkDt
         }
         if (dto.getHypertextSectionCode() != null) {
             HypertextSection section = sectionService.findByCode(dto.getHypertextSectionCode());
+            if (section == null) {
+                throw new EntityDoesNotExistsException(HypertextSection.class, dto.getHypertextSectionCode());
+            }
             entity.setHypertextSection(section);
         }
     }
@@ -90,7 +96,34 @@ public class HypertextLinkApi extends BaseCrudApi<HypertextLink, HypertextLinkDt
     }
 
     @Override
-    public HypertextLink update(HypertextLinkDto dtoData) throws MeveoApiException, BusinessException {
-        return null;
+    public HypertextLink update(HypertextLinkDto postData) throws MeveoApiException, BusinessException {
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+
+        handleMissingParameters();
+
+        HypertextLink entity = linkService.findByCode(postData.getCode());
+        if (entity == null) {
+            throw new EntityDoesNotExistsException(TunnelCustomization.class, postData.getCode());
+        }
+
+        dtoToEntity(postData, entity);
+
+        linkService.update(entity);
+
+        return entity;
+    }
+
+
+    public void createOrUpdate(List<HypertextLinkDto> postData) {
+        for (HypertextLinkDto linkDto: postData) {
+            HypertextLink entity = linkService.findByCode(linkDto.getCode());
+            if (entity == null) {
+                create(linkDto);
+            } else {
+                update(linkDto);
+            }
+        }
     }
 }

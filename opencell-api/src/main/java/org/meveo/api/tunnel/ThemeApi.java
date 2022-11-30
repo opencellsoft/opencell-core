@@ -25,8 +25,8 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.subscriptionTunnel.CustomStyle;
-import org.meveo.model.subscriptionTunnel.Theme;
+import org.meveo.model.tunnel.CustomStyle;
+import org.meveo.model.tunnel.Theme;
 import org.meveo.service.tunnel.ThemeService;
 
 import javax.ejb.Stateless;
@@ -43,7 +43,7 @@ public class ThemeApi extends BaseCrudApi<Theme, ThemeDto> {
     private ThemeService themeService;
 
     @Inject
-    CustomStyleApi customStyleApi;
+    private CustomStyleApi customStyleApi;
 
     /**
      * Populate entity with fields from DTO entity
@@ -107,6 +107,19 @@ public class ThemeApi extends BaseCrudApi<Theme, ThemeDto> {
         themeService.update(theme);
 
         return theme;
+    }
+
+    public void delete(String themeCode) {
+        if (themeCode == null)
+            missingParameters.add("code");
+        handleMissingParameters();
+
+        Theme theme = themeService.findByCode(themeCode);
+        if (theme == null) {
+            throw new EntityDoesNotExistsException(Theme.class, themeCode);
+        }
+
+        themeService.remove(theme);
     }
 
     public ThemeDto findById(Long id) {

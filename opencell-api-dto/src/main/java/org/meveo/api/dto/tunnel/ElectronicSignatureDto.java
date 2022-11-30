@@ -19,7 +19,7 @@
 package org.meveo.api.dto.tunnel;
 
 import org.meveo.api.dto.BusinessEntityDto;
-import org.meveo.model.subscriptionTunnel.SignatureMethodEnum;
+import org.meveo.model.tunnel.SignatureMethodEnum;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

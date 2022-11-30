@@ -16,11 +16,12 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.model.subscriptionTunnel;
+package org.meveo.model.tunnel;
+
 /**
- * Custom Style types.
+ * Signature Method types.
  *
  */
-public enum CustomEnum {
-    HEADER, BODY,FOOTER
+public enum SignatureMethodEnum {
+    YOUSIGN
 }

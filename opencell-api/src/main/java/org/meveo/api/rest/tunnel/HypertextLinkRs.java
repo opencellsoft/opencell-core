@@ -1,4 +1,4 @@
-package org.meveo.api.rest.tunnel;/*
+/*
  * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
@@ -16,6 +16,7 @@ package org.meveo.api.rest.tunnel;/*
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
+package org.meveo.api.rest.tunnel;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,7 +25,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.tunnel.HypertextSectionDto;
+import org.meveo.api.dto.tunnel.HypertextLinkDto;
 import org.meveo.api.rest.IBaseRs;
 
 import javax.ws.rs.*;
@@ -34,28 +35,28 @@ import java.util.List;
 /**
  * @author Ilham CHAFIK
  */
-@Path("/tunnel/section")
-@Tag(name = "HypertextSection", description = "@%HypertextSection")
+@Path("/tunnel/link")
+@Tag(name = "HypertextLink", description = "@%HypertextLink")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-public interface HypertextSectionRs extends IBaseRs {
+public interface HypertextLinkRs extends IBaseRs {
 
     /**
-     * Create a new Hypertext Section
-     * @param sectionDto section data to be created
+     * Create a new hypertext link
+     * @param linkDto link data to be created
      * @return action status
      */
     @POST
     @Path("/")
     @Operation(
-            summary=" Create hypertext section.  ",
-            tags = { "HypertextSection" },
-            description=" Create hypertext section.  ",
-            operationId="    POST_HypertextSection_create",
+            summary=" Create hypertext link.  ",
+            tags = { "HypertextLink" },
+            description=" Create hypertext link.  ",
+            operationId="    POST_HypertextLink_create",
             responses= {
                     @ApiResponse(
                             responseCode = "200",
-                            description=" Succeed creating hypertext section.  ",
+                            description=" Succeed creating hypertext link.  ",
                             content=@Content(
                                     schema=@Schema(
                                             implementation= ActionStatus.class
@@ -64,25 +65,26 @@ public interface HypertextSectionRs extends IBaseRs {
                     )
             }
     )
-    ActionStatus create(@Parameter(description = "Hypertext section dto for a new insertion", required = true)
-                                HypertextSectionDto sectionDto);
+    ActionStatus create(@Parameter(description = "Hypertext link dto for a new insertion", required = true)
+                                HypertextLinkDto linkDto);
+
 
     /**
-     * Create a new hypertext link
-     * @param sectionDto link data to be created
+     * Update an hypertext link
+     * @param linkDto link data to be updated
      * @return action status
      */
     @PUT
     @Path("/")
     @Operation(
-            summary=" Create hypertext section.  ",
-            tags = { "HypertextSection" },
-            description=" Create hypertext section.  ",
-            operationId="    PUT_HypertextSection_update",
+            summary=" Update hypertext link.  ",
+            tags = { "HypertextLink" },
+            description=" Update hypertext link.  ",
+            operationId="    PUT_HypertextLink_update",
             responses= {
                     @ApiResponse(
                             responseCode = "200",
-                            description=" Succeed updating hypertext section.  ",
+                            description=" Succeed updating hypertext link.  ",
                             content=@Content(
                                     schema=@Schema(
                                             implementation= ActionStatus.class
@@ -91,25 +93,24 @@ public interface HypertextSectionRs extends IBaseRs {
                     )
             }
     )
-    ActionStatus update(HypertextSectionDto sectionDto);
-
+    ActionStatus update(HypertextLinkDto linkDto);
 
     /**
-     * Create new or update hypertext sections
-     * @param sectionsDto sections data to be created or updated
+     * Create new or update hypertext links
+     * @param linksDto links data to be created or updated
      * @return action status
      */
     @POST
     @Path("/massCreateOrUpdate")
     @Operation(
-            summary=" Create or update hypertext sections.  ",
-            tags = { "HypertextSection" },
-            description=" Create or update hypertext sections.  ",
-            operationId="    POST_HypertextSection_createOrUpdate",
+            summary=" Create or update hypertext links.  ",
+            tags = { "HypertextLink" },
+            description=" Create or update hypertext links.  ",
+            operationId="    POST_HypertextLink_createOrUpdate",
             responses= {
                     @ApiResponse(
                             responseCode = "200",
-                            description=" Succeed creating or updating hypertext sections.  ",
+                            description=" Succeed creating hypertext link.  ",
                             content=@Content(
                                     schema=@Schema(
                                             implementation= ActionStatus.class
@@ -118,6 +119,6 @@ public interface HypertextSectionRs extends IBaseRs {
                     )
             }
     )
-    ActionStatus createOrUpdate(List<HypertextSectionDto> sectionsDto);
+    ActionStatus createOrUpdate(List<HypertextLinkDto> linksDto);
 
 }

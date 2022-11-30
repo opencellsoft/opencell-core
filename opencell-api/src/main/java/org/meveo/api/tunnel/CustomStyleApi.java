@@ -21,20 +21,16 @@ package org.meveo.api.tunnel;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.tunnel.CustomStyleDto;
-import org.meveo.api.dto.tunnel.HypertextSectionDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.subscriptionTunnel.CustomStyle;
-import org.meveo.model.subscriptionTunnel.HypertextSection;
-import org.meveo.model.subscriptionTunnel.TunnelCustomization;
+import org.meveo.model.tunnel.CustomStyle;
+import org.meveo.model.tunnel.TunnelCustomization;
 import org.meveo.service.tunnel.CustomStyleService;
-import org.meveo.service.tunnel.HypertextSectionService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author mohamed CHAOUKI
@@ -44,12 +40,6 @@ public class CustomStyleApi extends BaseCrudApi<CustomStyle, CustomStyleDto> {
 
     @Inject
     private CustomStyleService customStyleService;
-
-    @Inject
-    private HypertextSectionService sectionService;
-
-    @Inject
-    private HypertextSectionApi sectionApi;
 
     /**
      * Populate entity with fields from DTO entity
@@ -87,18 +77,6 @@ public class CustomStyleApi extends BaseCrudApi<CustomStyle, CustomStyleDto> {
         if (dto.getType() != null) {
             entity.setType(dto.getType());
         }
-        /*if (dto.getHypertextSections() != null) {
-            HypertextSection section = new HypertextSection();
-            for (HypertextSectionDto sectionDto : dto.getHypertextSections()) {
-                sectionApi.dtoToEntity(sectionDto, section);
-                entity.getHypertextSections().add(section);
-            }
-
-            for (HypertextSectionDto sectionDto: dto.getHypertextSections()) {
-                entity.getHypertextSections().add(sectionService.findByCode(sectionDto.getCode()));
-            }
-        }*/
-
     }
 
     @Override
@@ -115,28 +93,28 @@ public class CustomStyleApi extends BaseCrudApi<CustomStyle, CustomStyleDto> {
 
         dtoToEntity(postData, entity);
 
-        List<HypertextSection> sections = new ArrayList<>();
-        if (postData.getHypertextSections() != null) {
-            for (HypertextSectionDto section: postData.getHypertextSections()) {
-                HypertextSection s = null;
-                if (sectionService.findByCode(section.getCode()) != null) {
-                    s = sectionApi.update(section);
-                } else {
-                    s = sectionApi.create(section);
-                }
-                sections.add(s);
-            }
-        }
-
-
-        entity.setHypertextSections(sections);
         customStyleService.create(entity);
 
         return entity;
     }
 
     @Override
-    public CustomStyle update(CustomStyleDto dtoData) throws MeveoApiException, BusinessException {
-        return null;
+    public CustomStyle update(CustomStyleDto postData) throws MeveoApiException, BusinessException {
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+
+        handleMissingParameters();
+
+        CustomStyle entity = customStyleService.findByCode(postData.getCode());
+        if (entity == null) {
+            throw new EntityDoesNotExistsException(TunnelCustomization.class, postData.getCode());
+        }
+
+        dtoToEntity(postData, entity);
+
+        customStyleService.update(entity);
+
+        return entity;
     }
 }

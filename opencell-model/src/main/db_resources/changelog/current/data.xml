@@ -13832,7 +13832,7 @@ public class CdrFlatFileImportScript extends Script {
 		</insert>
 		<insert tableName="adm_custom_generic_entity_code">
 			<column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
-			<column name="entity_class" value="org.meveo.model.subscriptionTunnel.ElectronicSignature" />
+			<column name="entity_class" value="org.meveo.model.tunnel.ElectronicSignature" />
 			<column name="code_el" value="#{sequenceNextValue}" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="OPENCELL.ADMIN" />
@@ -13852,7 +13852,7 @@ public class CdrFlatFileImportScript extends Script {
 		</insert>
 		<insert tableName="adm_custom_generic_entity_code">
 			<column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
-			<column name="entity_class" value="org.meveo.model.subscriptionTunnel.Theme" />
+			<column name="entity_class" value="org.meveo.model.tunnel.Theme" />
 			<column name="code_el" value="#{sequenceNextValue}" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="OPENCELL.ADMIN" />
@@ -13872,7 +13872,7 @@ public class CdrFlatFileImportScript extends Script {
 		</insert>
 		<insert tableName="adm_custom_generic_entity_code">
 			<column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
-			<column name="entity_class" value="org.meveo.model.subscriptionTunnel.CustomStyle" />
+			<column name="entity_class" value="org.meveo.model.tunnel.CustomStyle" />
 			<column name="code_el" value="#{sequenceNextValue}" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="OPENCELL.ADMIN" />
@@ -13892,7 +13892,7 @@ public class CdrFlatFileImportScript extends Script {
 		</insert>
 		<insert tableName="adm_custom_generic_entity_code">
 			<column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
-			<column name="entity_class" value="org.meveo.model.subscriptionTunnel.HypertextSection" />
+			<column name="entity_class" value="org.meveo.model.tunnel.HypertextSection" />
 			<column name="code_el" value="#{sequenceNextValue}" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="OPENCELL.ADMIN" />
@@ -13912,7 +13912,7 @@ public class CdrFlatFileImportScript extends Script {
 		</insert>
 		<insert tableName="adm_custom_generic_entity_code">
 			<column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
-			<column name="entity_class" value="org.meveo.model.subscriptionTunnel.HypertextLink" />
+			<column name="entity_class" value="org.meveo.model.tunnel.HypertextLink" />
 			<column name="code_el" value="#{sequenceNextValue}" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="OPENCELL.ADMIN" />

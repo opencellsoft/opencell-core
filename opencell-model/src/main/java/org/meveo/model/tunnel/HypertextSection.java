@@ -16,7 +16,7 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.model.subscriptionTunnel;
+package org.meveo.model.tunnel;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -47,7 +47,7 @@ public class HypertextSection extends BusinessEntity {
     @Column(name = "label", columnDefinition = "jsonb")
     private Map<String, String> label;
 
-    @OneToMany(mappedBy = "hypertextSection", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "hypertextSection", cascade = CascadeType.ALL)
     private List<HypertextLink> links;
 
     @ManyToOne(cascade = CascadeType.ALL)
