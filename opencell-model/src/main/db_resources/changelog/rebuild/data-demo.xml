@@ -2569,12 +2569,7 @@
     </changeSet>
     
     
-	<changeSet id="#INTRD-11745_20221130_build" author="TarikFA.">
-		<update tableName="billing_invoice_type">
-			<column name="description" value="Manual adjustment"/>
-			<where>code = 'ADJ'</where>
-		</update>
-		
+	<changeSet id="#INTRD-11745_20221130_build" author="TarikFA.">		
 		<insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-26" />
             <column name="version" valueNumeric="0" />
