@@ -89,7 +89,7 @@ public abstract class MessageTemplate extends BusinessEntity {
 
     @Type(type = "JSONB")
     @Column(name = "textcontent_i18n")
-    Map<String,String> translatedTextContent = new HashMap<>();
+    private Map<String,String> translatedTextContent = new HashMap<>();
 
     public String getTextContent() {
         return textContent;

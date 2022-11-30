@@ -43,11 +43,11 @@ public class EmailTemplate extends MessageTemplate {
 
     @Type(type = "JSONB")
     @Column(name = "htmlcontent_i18n")
-    Map<String,String> translatedHtmlContent = new HashMap<>();
+    private Map<String,String> translatedHtmlContent = new HashMap<>();
 
     @Type(type = "JSONB")
     @Column(name = "subject_i18n")
-    Map<String,String> translatedSubject = new HashMap<>();
+    private Map<String,String> translatedSubject = new HashMap<>();
 
     public String getSubject() {
         return subject;
