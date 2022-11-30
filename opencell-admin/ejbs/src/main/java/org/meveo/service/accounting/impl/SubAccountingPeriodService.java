@@ -74,20 +74,23 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 
 	private void createSubAccountingPeriodsByType(AccountingPeriod accountingPeriod, SubAccountingPeriodTypeEnum type,
 												  LocalDateTime startDateTime, LocalDateTime endDate) {
-
 		final int numberOfPeriodsPerYear = type.getNumberOfPeriodsPerYear();
 		final int monthsPerPeriod = 12 / numberOfPeriodsPerYear;
 		int number = 1;
 
 		LocalDate fiscalYearStartDate = calculateFiscalYearDate(monthsPerPeriod,startDateTime,endDate);
-
 		int currentYear = fiscalYearStartDate.getYear();
 
 		LocalDateTime startDatePeriod = fiscalYearStartDate.withYear(currentYear).atStartOfDay();
 		LocalDateTime endDatePeriod = calculateInitialEndDatePeriod(monthsPerPeriod, startDatePeriod, endDate);
+        LocalDate now = LocalDate.now();
 
 		while (!endDatePeriod.isAfter(endDate) || endDatePeriod.isEqual(endDate.toLocalDate().atStartOfDay())) {
-			if (!endDatePeriod.isBefore(fiscalYearStartDate.atTime(MAX))) {
+
+			boolean isInThePast = startDatePeriod.toLocalDate().isBefore(now) && endDatePeriod.toLocalDate().isBefore(now)
+					&& !endDatePeriod.toLocalDate().equals(now);
+
+			if (!endDatePeriod.isBefore(fiscalYearStartDate.atTime(MAX)) && !isInThePast) {
 				createSubAccountingPeriod(accountingPeriod, startDatePeriod, endDatePeriod, number);
 				number++;
 			}
@@ -105,11 +108,9 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 		if (firstTime && isEndOfMonth(endDate)) {
 			return startDateTime.toLocalDate().withDayOfMonth(1);
 		}
-
 		if (firstTime && !isEndOfMonth(endDate)) {
 			return startDateTime.toLocalDate().withDayOfMonth(endDate.getDayOfMonth() + 1);
 		}
-
 		return endDate.minusYears(1).plusDays(1).toLocalDate();
 	}
 
@@ -130,7 +131,7 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 
 	private static LocalDateTime calculateInitialEndDatePeriod(int monthsPerPeriod, LocalDateTime startDatePeriod, LocalDateTime endDate) {
 
-		return  isEndOfMonth(endDate) ?
+		return isEndOfMonth(endDate) ?
 
 				startDatePeriod.toLocalDate()
 						.plusMonths(monthsPerPeriod)
