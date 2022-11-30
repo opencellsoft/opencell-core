@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
@@ -83,9 +84,14 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 
 		LocalDateTime startDatePeriod = fiscalYearStartDate.withYear(currentYear).atStartOfDay();
 		LocalDateTime endDatePeriod = calculateInitialEndDatePeriod(monthsPerPeriod, startDatePeriod, endDate);
+        LocalDate now = LocalDate.now();
 
 		while (!endDatePeriod.isAfter(endDate) || endDatePeriod.isEqual(endDate.toLocalDate().atStartOfDay())) {
-			if (!endDatePeriod.isBefore(fiscalYearStartDate.atTime(MAX))) {
+
+			boolean isInThePast = startDatePeriod.toLocalDate().isBefore(now) && endDatePeriod.toLocalDate().isBefore(now)
+					&& !endDatePeriod.toLocalDate().equals(now);
+
+			if (!endDatePeriod.isBefore(fiscalYearStartDate.atTime(MAX)) && !isInThePast) {
 				createSubAccountingPeriod(accountingPeriod, startDatePeriod, endDatePeriod, number);
 				number++;
 			}
