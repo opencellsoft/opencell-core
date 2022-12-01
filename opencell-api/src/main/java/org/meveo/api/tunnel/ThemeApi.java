@@ -66,6 +66,7 @@ public class ThemeApi extends BaseCrudApi<Theme, ThemeDto> {
     public Theme create(ThemeDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             addGenericCodeIfAssociated(Theme.class.getName(), postData);
+            postData.setCode("TH_"+postData.getCode());
         }
 
         if (themeService.findByCode(postData.getCode()) != null) {

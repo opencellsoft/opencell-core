@@ -83,6 +83,7 @@ public class CustomStyleApi extends BaseCrudApi<CustomStyle, CustomStyleDto> {
     public CustomStyle create(CustomStyleDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             addGenericCodeIfAssociated(CustomStyle.class.getName(), postData);
+            postData.setCode(postData.getType().toString()+"_"+postData.getCode());
         }
 
         if (customStyleService.findByCode(postData.getCode()) != null) {

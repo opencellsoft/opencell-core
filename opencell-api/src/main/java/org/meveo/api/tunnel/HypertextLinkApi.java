@@ -32,6 +32,7 @@ import org.meveo.service.tunnel.HypertextSectionService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -79,7 +80,8 @@ public class HypertextLinkApi extends BaseCrudApi<HypertextLink, HypertextLinkDt
     @Override
     public HypertextLink create(HypertextLinkDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
-            addGenericCodeIfAssociated(HypertextSection.class.getName(), postData);
+            String code = "LI_"+ new Date().getTime();
+            postData.setCode(code);
         }
 
         if (linkService.findByCode(postData.getCode()) != null) {

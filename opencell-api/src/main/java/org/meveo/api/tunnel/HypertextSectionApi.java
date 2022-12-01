@@ -32,6 +32,7 @@ import org.meveo.service.tunnel.HypertextSectionService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -50,7 +51,8 @@ public class HypertextSectionApi extends BaseCrudApi<HypertextSection, Hypertext
     @Override
     public HypertextSection create(HypertextSectionDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
-            addGenericCodeIfAssociated(HypertextSection.class.getName(), postData);
+            String code = "SC_"+ new Date().getTime();
+            postData.setCode(code);
         }
 
         if (sectionService.findByCode(postData.getCode()) != null) {
