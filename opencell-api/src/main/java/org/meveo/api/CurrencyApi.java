@@ -40,7 +40,12 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -228,10 +233,17 @@ public class CurrencyApi extends BaseApi {
     }
 
     public void createOrUpdate(CurrencyDto postData) throws MeveoApiException, BusinessException {
-        if (StringUtils.isBlank(postData.getCode()) && tradingCurrencyService.findByTradingCurrencyCode(postData.getCode()) != null) {
-            update(postData);
-        } else {
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        handleMissingParameters();
+
+        TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCode());
+        if (tradingCurrency == null) {
             create(postData);
+        }
+        else {
+            update(postData);
         }
     }
 
