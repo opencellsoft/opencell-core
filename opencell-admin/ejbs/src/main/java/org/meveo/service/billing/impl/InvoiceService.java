@@ -119,6 +119,7 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.apiv2.billing.BasicInvoice;
+import org.meveo.apiv2.billing.RejectReasonInput;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -2706,11 +2707,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public void rejectInvoices(Long billingRunId, List<Long> invoiceIds) {
         List<Invoice> invoices = extractInvalidInvoiceList(billingRunId, invoiceIds, Arrays.asList(InvoiceStatusEnum.SUSPECT, InvoiceStatusEnum.DRAFT));
         for (Invoice invoice : invoices) {
-            rejectInvoice(invoice);
+            rejectInvoice(invoice, null);
         }
     }
 
-    public void rejectInvoice(Invoice invoice) {
+    public void rejectInvoice(Invoice invoice, RejectReasonInput rejectReasonInput) {
         InvoiceStatusEnum status = invoice.getStatus();
         if (!(InvoiceStatusEnum.SUSPECT.equals(status) || InvoiceStatusEnum.DRAFT.equals(status) || InvoiceStatusEnum.NEW.equals(status))) {
             throw new BusinessException("Can only reject invoices in statuses NEW/DRAFT/SUSPECT. current invoice status is :" + status.name());
@@ -2726,6 +2727,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoice.rebuildStatus(InvoiceStatusEnum.REJECTED);
         }else {
             invoice.setStatus(InvoiceStatusEnum.REJECTED);
+        }
+        
+        if (rejectReasonInput != null) {
+        	invoice.setRejectReason(rejectReasonInput.getRejectReason());
+        } else {
+        	invoice.setRejectReason(null);
         }
         
         update(invoice);
