@@ -239,14 +239,8 @@ public class InvoicingJobBean extends BaseJobBean {
             rejectBAWithoutBillableTransactions(billingRun, jobExecutionResult);
 
             BillingRunStatusEnum nextStatus = BillingRunStatusEnum.POSTINVOICED;            
-            if (!billingRunService.isBillingRunValid(billingRun, InvoiceValidationStatusEnum.REJECTED)) {
+            if (!billingRunService.isBillingRunValid(billingRun)) {
                 nextStatus = BillingRunStatusEnum.REJECTED;
-            }
-            if(!billingRunService.isBillingRunValid(billingRun, InvoiceValidationStatusEnum.SUSPECT) && 
-                    (billingRun.getSuspectAutoAction() != null 
-                        && billingRun.getSuspectAutoAction().equals(BillingRunAutomaticActionEnum.MOVE))
-                ) {
-                billingRun.setStatus(BillingRunStatusEnum.SUSPECTED);
             }
             billingRun = billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, nextStatus, null);
 
