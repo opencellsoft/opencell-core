@@ -18,7 +18,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.InvoiceValidationStatusEnum;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.BillingRunService;
@@ -141,10 +140,7 @@ public class BillingRunApiService implements ApiService<BillingRun> {
                 if (billingRun.getStatus() == INVOICE_LINES_CREATED) {
                     billingRun.setStatus(PREVALIDATED);
                 }
-                if (billingRun.getStatus() == DRAFT_INVOICES) {
-                    billingRun.setStatus(POSTVALIDATED);
-                }                
-                if (billingRun.getStatus() == REJECTED && billingRunService.isBRValid(billingRun)) {
+                if (billingRun.getStatus() == DRAFT_INVOICES || (billingRun.getStatus() == REJECTED && billingRunService.isBRValid(billingRun))) {
                     billingRun.setStatus(POSTVALIDATED);
                 }
          
