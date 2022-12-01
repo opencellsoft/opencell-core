@@ -1,5 +1,6 @@
 package org.meveo.service.accounting.impl;
 
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Date;
@@ -46,7 +47,8 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 			entity.setAccountingPeriodYear(getAccountingPeriodYear(entity.getStartDate(), entity.getEndDate()));
 		}
 		if(entity.getStartDate() == null) {
-			entity.setStartDate(new Date());
+			LocalDateTime startDate = entity.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().minusYears(1);
+			entity.setStartDate(Date.from(startDate.atZone(ZoneId.systemDefault()).toInstant()));
 		}
 		create(entity);
 		generateSubAccountingPeriods(entity);
