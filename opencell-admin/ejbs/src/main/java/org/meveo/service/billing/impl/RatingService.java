@@ -865,7 +865,11 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, wo);
                 if(pricePlanMatrixLine!=null) {
                     wo.setPricePlanMatrixLine(pricePlanMatrixLine);
-                	priceWithoutTax = pricePlanMatrixLine.getValue();
+                    if(appProvider.isEntreprise()) {
+                        priceWithoutTax = pricePlanMatrixLine.getValue();
+                    } else {
+                        priceWithTax = pricePlanMatrixLine.getValue();
+                    }
                     String amountEL = ppmVersion.getPriceEL();
                     String amountELPricePlanMatrixLine = pricePlanMatrixLine.getValueEL();
                     if (!StringUtils.isBlank(amountEL)) {

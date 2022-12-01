@@ -47,11 +47,12 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		if(entity.getAccountingPeriodYear() == null) {
 			entity.setAccountingPeriodYear(getAccountingPeriodYear(entity.getStartDate(), entity.getEndDate()));
 		}
+
 		if(entity.getStartDate() == null) {
-			LocalDateTime endDate = entity.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-			LocalDateTime startDate = subAccountingPeriodService.calculateInitialStartDatePeriod(LocalDate.now(),endDate);
+			LocalDateTime startDate = entity.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().minusYears(1);
 			entity.setStartDate(Date.from(startDate.atZone(ZoneId.systemDefault()).toInstant()));
 		}
+
 		create(entity);
 		generateSubAccountingPeriods(entity);
 
