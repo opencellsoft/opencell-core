@@ -2835,7 +2835,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public Long moveInvoices(Long billingRunId, List<Long> invoiceIds) {
         List<Invoice> invoices = extractInvalidInvoiceList(billingRunId, invoiceIds, Arrays.asList(InvoiceStatusEnum.REJECTED, InvoiceStatusEnum.SUSPECT));
-        BillingRun nextBR = billingRunService.findOrCreateNextBR(billingRunId);
+        BillingRun nextBR = billingRunService.findOrCreateNextQuarantineBR(billingRunId, null);
         if (CollectionUtils.isEmpty(invoiceIds) && !CollectionUtils.isEmpty(invoices)) {
             invoiceIds = invoices.stream().map(invoice -> invoice.getId()).collect(Collectors.toList());
         }
@@ -3200,6 +3200,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 //              || (billingRun.getComputeDatesAtValidation() == null && !billingCycle.getComputeDatesAtValidation())){
 //            return;
 //        }
+        if (invoice.getStatus().equals(InvoiceStatusEnum.SUSPECT)) {
+            invoice.setStatus(InvoiceStatusEnum.DRAFT);
+        }
         
         if ((billingRun.getComputeDatesAtValidation() != null && billingRun.getComputeDatesAtValidation()) 
                 || (billingRun.getComputeDatesAtValidation() == null && billingCycle.getComputeDatesAtValidation())) {
@@ -5165,7 +5168,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         List<Invoice> invoices = findInvoicesByStatusAndBR(billingRun.getId(), Arrays.asList(InvoiceStatusEnum.SUSPECT));
         
         if(!invoices.isEmpty()) {
-            BillingRun nextBR = billingRunService.findOrCreateNextBR(billingRun.getId());
+            BillingRun nextBR = billingRunService.findOrCreateNextQuarantineBR(billingRun.getId(), null);
             getEntityManager().createNamedQuery("Invoice.moveToBR").setParameter("nextBR", nextBR).setParameter("billingRunId", billingRun.getId()).setParameter("statusList", toMove).executeUpdate();
         }
     }
@@ -5189,7 +5192,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
     
     public void quarantineSuspectedInvoicesByBR(BillingRun billingRun) {
-        quarantineInvoicesByBR(billingRun, InvoiceStatusEnum.SUSPECT, BillingRunStatusEnum.SUSPECTED);        
+        quarantineInvoicesByBR(billingRun, InvoiceStatusEnum.SUSPECT, BillingRunStatusEnum.REJECTED);        
     }
 
     public void quarantineInvoicesByBR(BillingRun billingRun, InvoiceStatusEnum invoiceStatusEnum, BillingRunStatusEnum billingRunStatusEnum) {
@@ -5203,9 +5206,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
             BillingRun nextBR = null;
             if(BillingRunStatusEnum.REJECTED.equals(billingRunStatusEnum)) {
                 nextBR = billingRunService.findOrCreateNextQuarantineBR(billingRun.getId(), null);
-            }
-            else if(BillingRunStatusEnum.SUSPECTED.equals(billingRunStatusEnum)){
-                nextBR = billingRunService.findOrCreateNextBR(billingRun.getId());
             }
             if (nextBR != null) {
                 getEntityManager().createNamedQuery("Invoice.moveToBRByIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
