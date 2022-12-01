@@ -55,7 +55,6 @@ public class InvoiceLinesJobBean extends BaseJobBean {
     
     @Inject
     private BillingRunExtensionService billingRunExtensionService;
-
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("Running for with parameter={}", jobInstance.getParametres());
@@ -86,7 +85,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                     for(BillingRun billingRun : billingRuns) {
                         billingRunExtensionService.updateBillingRun(billingRun.getId(),
                                 null, null, CREATING_INVOICE_LINES, null);
-                        List<? extends IBillableEntity> billableEntities = billingRunService.getEntitiesToInvoice(billingRun);
+                        List<? extends IBillableEntity> billableEntities = billingRunService.getEntitiesToInvoice(billingRun, true);
                         Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
 						if (nbRuns == -1) {
 							nbRuns = (long) Runtime.getRuntime().availableProcessors();

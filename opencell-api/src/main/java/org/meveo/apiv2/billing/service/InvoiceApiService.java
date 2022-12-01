@@ -357,6 +357,9 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
     public Optional<List<GenerateInvoiceResult>> generate(GenerateInvoiceRequestDto invoice, boolean isDraft) {
 		IBillableEntity entity = invoiceService.getBillableEntity(invoice.getTargetCode(), invoice.getTargetType(),
 				invoice.getOrderNumber(), invoice.getBillingAccountCode());
+		if(entity == null ){
+			throw new NotFoundException("BillableEntity does not exists");
+		}
     	Filter ratedTransactionFilter = null;
 		if(invoice.getFilter() != null) {
 			ratedTransactionFilter = getFilterFromInput(invoice.getFilter());

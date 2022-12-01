@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
@@ -27,15 +28,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.AdvancementRateIncreased;
 import org.meveo.model.RatingResult;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.AttributeInstance;
-import org.meveo.model.billing.DiscountPlanInstance;
-import org.meveo.model.billing.InstanceStatusEnum;
-import org.meveo.model.billing.RecurringChargeInstance;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionChargeInstance;
-import org.meveo.model.billing.SubscriptionStatusEnum;
-import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
@@ -57,6 +50,7 @@ import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.cpq.commercial.ProductActionTypeEnum;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
+import org.meveo.model.order.Order;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.DiscountPlanInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
@@ -350,6 +344,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
 		serviceInstance.setRateUntilDate(subscription.getEndAgreementDate());
 		serviceInstance.setProductVersion(product.getCurrentVersion());
+		serviceInstance.setOrderNumber(subscription.getOrderNumber());
 		if (deliveryDate != null) {
 			serviceInstance.setDeliveryDate(deliveryDate);
 		} else {
@@ -602,4 +597,39 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		}
 		 
 	}
+
+	    public List<CommercialOrder> findCommercialOrders(BillingCycle billingCycle, Date startdate, Date endDate) {
+        try {
+            QueryBuilder qb = new QueryBuilder(CommercialOrder.class, "co", null);
+            qb.addCriterionEntity("co.billingCycle.id", billingCycle.getId());
+            return (List<CommercialOrder>) qb.getQuery(getEntityManager()).getResultList();
+
+        } catch (Exception ex) {
+            log.error("failed to find billable commercial orders", ex);
+        }
+
+        return null;
+    }
+
+	public List<CommercialOrder> findByCodeOrExternalId(Collection<String> codeOrExternalId) {
+
+        TypedQuery<CommercialOrder> query = getEntityManager().createNamedQuery("CommercialOrder.listByCodeOrExternalId", CommercialOrder.class).setParameter("code", codeOrExternalId);
+
+        return query.getResultList();
+    }
+
+	public CommercialOrder findByCodeOrExternalId(String codeOrExternalId) {
+
+        TypedQuery<CommercialOrder> query = getEntityManager().createNamedQuery("CommercialOrder.findByCodeOrExternalId", CommercialOrder.class).setParameter("code", codeOrExternalId);
+
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            log.debug("No {} of code/externalId {} found", CommercialOrder.class.getSimpleName(), codeOrExternalId);
+            return null;
+        } catch (NonUniqueResultException e) {
+            log.error("More than one entity of type {} with code/externalId {} found", CommercialOrder.class, codeOrExternalId);
+            return null;
+        }
+    }
 }
