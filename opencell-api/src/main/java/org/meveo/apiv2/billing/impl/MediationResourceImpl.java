@@ -13,6 +13,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.billing.CdrDtoInput;
 import org.meveo.apiv2.billing.CdrDtoResponse;
+import org.meveo.apiv2.billing.CdrListDtoDeletedInput;
 import org.meveo.apiv2.billing.CdrListDtoInput;
 import org.meveo.apiv2.billing.CdrListInput;
 import org.meveo.apiv2.billing.ChargeCdrListInput;
@@ -52,14 +53,8 @@ public class MediationResourceImpl implements MediationResource {
 
     @Override
     public CdrDtoResponse createCDR(CdrListDtoInput dtoInput) {
-        List<CDR> cdrs = new ArrayList<>();
         String ipAddress = StringUtils.isBlank(httpServletRequest.getHeader("x-forwarded-for")) ? httpServletRequest.getRemoteAddr() : httpServletRequest.getHeader("x-forwarded-for");
-        for(CdrDtoInput resource: dtoInput.getCdrs()) {
-            CDR cdr = mapper.toEntity(resource);
-            cdr.setOriginBatch(ipAddress);
-            cdr.setOriginRecord(cdr.toCsv().hashCode() + "");
-            cdrs.add(cdr);
-        }
+        List<CDR> cdrs = toEntities(dtoInput.getCdrs(), ipAddress);
        return mediationApiService.createCdr(cdrs, dtoInput.getMode(), dtoInput.getReturnCDRs(), dtoInput.getReturnCDRs());
     }
 
@@ -68,5 +63,34 @@ public class MediationResourceImpl implements MediationResource {
         CDR toBeUpdated = mapper.toEntity(cdrDto);
          mediationApiService.updateCDR(cdrId, toBeUpdated);
          return new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    }
+
+    @Override
+    public CdrDtoResponse updateCDRs(CdrListDtoInput dtoInput) {
+        String ipAddress = StringUtils.isBlank(httpServletRequest.getHeader("x-forwarded-for")) ? httpServletRequest.getRemoteAddr() : httpServletRequest.getHeader("x-forwarded-for");
+        List<CDR> listTobeUpdated = toEntities(dtoInput.getCdrs(), ipAddress);
+        return mediationApiService.updateCDRs(listTobeUpdated, dtoInput.getMode(), dtoInput.getReturnCDRs(), dtoInput.getReturnCDRs());
+    }
+    
+    private List<CDR> toEntities(List<CdrDtoInput> cdrsInput, String ipAddress){
+        List<CDR> cdrs = new ArrayList<CDR>();
+        for(CdrDtoInput resource: cdrsInput) {
+            CDR cdr = mapper.toEntity(resource);
+            cdr.setOriginBatch(ipAddress);
+            cdr.setOriginRecord(cdr.toCsv().hashCode() + "");
+            cdrs.add(cdr);
+        }
+        return cdrs;
+    }
+
+    @Override
+    public ActionStatus deletCDR(Long id) {
+        mediationApiService.deleteCdr(id);
+        return new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    }
+
+    @Override
+    public CdrDtoResponse deletCDR(CdrListDtoDeletedInput cdrs) {
+        return   mediationApiService.deleteCdrs(cdrs.getCdrs(), cdrs.getMode(), cdrs.getReturnCDRs(), cdrs.getReturnErrors());
     }
 }

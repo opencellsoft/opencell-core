@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.scripts.ScriptParameter;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -53,6 +54,7 @@ public class ScriptParameterDto extends BaseEntityDto {
      */
 	public ScriptParameterDto (ScriptParameter scriptParameter) {
         super();
+        code = scriptParameter.getCode();
         className = scriptParameter.getClassName();
         defaultValue = scriptParameter.getDefaultValue();
         mandatory = scriptParameter.isMandatory();
@@ -69,7 +71,7 @@ public class ScriptParameterDto extends BaseEntityDto {
 		scriptParameter.setAllowedValues(allowedValues);
 		scriptParameter.setDefaultValue(defaultValue);
 		scriptParameter.setMandatory(mandatory);
-		scriptParameter.setValuesSeparator(valuesSeparator);
+		scriptParameter.setValuesSeparator(StringUtils.isBlank(valuesSeparator)? "\\|" : valuesSeparator);
 		scriptParameter.setCollection(collection);
 		scriptParameter.setDescriptionI18n(languageDescriptions.stream().collect(Collectors.toMap(LanguageDescriptionDto::getLanguageCode, LanguageDescriptionDto::getDescription)));
 		return scriptParameter;

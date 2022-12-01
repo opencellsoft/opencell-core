@@ -259,9 +259,6 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         if (StringUtils.isBlank(securityDepositName)) {
             securityDepositName = template.getTemplateName()+ "-" + count;
         }
-        if (securityDepositService.findByCode(securityDepositName) != null) {
-            throw new EntityAlreadyExistsException(SecurityDeposit.class, securityDepositName);
-        }
         securityDepositInput.setCode(securityDepositName);
         securityDepositInput.setStatus(status);
         
@@ -402,7 +399,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         securityDepositToUpdate.setSecurityDepositAdjustment(adjustmentInvoice);
         securityDepositService.update(securityDepositToUpdate);
 		
-		securityDepositService.refund(securityDepositToUpdate, reason, securityDepositOperationEnum, securityDepositStatusEnum, operationType, adjustmentInvoice.getInvoiceNumber());
+		securityDepositService.refund(securityDepositToUpdate, reason, securityDepositOperationEnum, securityDepositStatusEnum, operationType, adjustmentInvoice);
 	}
 
 	private Invoice createAdjustmentInvoice(SecurityDeposit securityDepositToUpdate) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException, IOException {

@@ -3,6 +3,8 @@ package org.meveo.service.securityDeposit.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ImportInvoiceException;
+import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.PaymentException;
 import org.meveo.admin.exception.UnbalanceAmountException;
@@ -29,13 +31,16 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.meveo.model.payments.PaymentMethodEnum.CARD;
 import static org.meveo.model.payments.PaymentMethodEnum.DIRECTDEBIT;
 
 @Stateless
 public class SecurityDepositService extends BusinessService<SecurityDeposit> {
+
+    private static final String OCC_TEMPLATE_ADJ_SD_CODE = "ADJ_SD";
+
+    private static final String OCC_PAY_SD_TEMPLATE = "PAY_SD";
 
     @Inject
     private AuditLogService auditLogService;
@@ -79,9 +84,8 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
     @Inject
     private RatedTransactionService ratedTransactionService;
 
-	/** The OCC Account Operation Service */
-	@Inject
-	private OtherCreditAndChargeService otherCreditAndChargeService;
+    @Inject
+    private OCCTemplateService occTemplateService;
 
     protected List<String> missingParameters = new ArrayList<>();
 
@@ -114,9 +118,9 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         }
     }
 
-    public void refund(SecurityDeposit securityDepositToUpdate, String reason, SecurityDepositOperationEnum securityDepositOperationEnum, SecurityDepositStatusEnum securityDepositStatusEnum, String operationType, String refundReference) {
+    public void refund(SecurityDeposit securityDepositToUpdate, String reason, SecurityDepositOperationEnum securityDepositOperationEnum, SecurityDepositStatusEnum securityDepositStatusEnum, String operationType, Invoice adjInvoice) {
         if (securityDepositToUpdate.getCurrentBalance() != null && BigDecimal.ZERO.compareTo(securityDepositToUpdate.getCurrentBalance()) != 0) {
-            Refund refund = createRefund(securityDepositToUpdate, refundReference);
+            Refund refund = createRefund(securityDepositToUpdate, adjInvoice);
             if (refund == null) {
                 throw new BusinessException("Cannot create Refund.");
             } else {
@@ -137,7 +141,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         auditLogService.trackOperation(operationType, new Date(), securityDepositToUpdate, nameSDandExplanation);
     }
 
-    private Refund createRefund(SecurityDeposit securityDepositToUpdate, String reference) {
+    private Refund createRefund(SecurityDeposit securityDepositToUpdate, Invoice adjInvoice) {
         securityDepositToUpdate = retrieveIfNotManaged(securityDepositToUpdate);
         long amountToPay = securityDepositToUpdate.getCurrentBalance().multiply(new BigDecimal(100)).longValue();
         List<Long> accountOperationsToPayIds = new ArrayList<Long>();
@@ -158,26 +162,34 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
                 accountOperationsToPayIds.add(aOSecurityDepositTransaction.getId());
             }
         }
-        
-        OtherCreditAndCharge ao = otherCreditAndChargeService.addOCC("ADJ_SD", null, securityDepositToUpdate.getCustomerAccount(), securityDepositToUpdate.getCurrentBalance(), new Date());
 
-        Long refundId = null;
-        PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, preferredPaymentMethod, null);
-        if (paymentGateway == null) {
-            throw new PaymentException(PaymentErrorEnum.NO_PAY_GATEWAY_FOR_CA, "No payment gateway for customerAccount:" + customerAccount.getCode());
-        }
+        try {
+            OCCTemplate occTemplate = occTemplateService.findByCode(OCC_TEMPLATE_ADJ_SD_CODE);
+            // specific case for AO invoice : this AO of ADJ related to SecurityDeposit must have a new ADJ_SD OOCTemplate code
+            RecordedInvoice ao = recordedInvoiceService.generateRecordedInvoice(adjInvoice, occTemplate);
 
-        refundId = doPayment(amountToPay, List.of(ao.getId()), customerAccount, preferredPaymentMethod, refundId, paymentGateway);
-        if (refundId == null) {
-            return null;
-        } else {
-            Refund refund = refundService.findById(refundId);
-            if (StringUtils.isNotBlank(reference)) {
-                refund.setReference(reference);
-                refundService.update(refund); // This is the unique place where we can persist it without changing big hierary methods
+            Long refundId = null;
+            PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, preferredPaymentMethod, null);
+            if (paymentGateway == null) {
+                throw new PaymentException(PaymentErrorEnum.NO_PAY_GATEWAY_FOR_CA, "No payment gateway for customerAccount:" + customerAccount.getCode());
             }
-            return refund;
+
+            refundId = doPayment(amountToPay, List.of(ao.getId()), customerAccount, preferredPaymentMethod, refundId, paymentGateway);
+            if (refundId == null) {
+                return null;
+            } else {
+                Refund refund = refundService.findById(refundId);
+                if (StringUtils.isNotBlank(adjInvoice.getInvoiceNumber())) {
+                    refund.setReference(adjInvoice.getInvoiceNumber());
+                    refundService.update(refund); // This is the unique place where we can persist it without changing big hierary methods
+                }
+                return refund;
+            }
+        } catch (InvoiceExistException | ImportInvoiceException e) {
+            throw new BusinessException(e);
         }
+
+
     }
 
     private Long doPayment(long amountToPay, List<Long> accountOperationsToPayIds, CustomerAccount customerAccount, PaymentMethod preferredPaymentMethod, Long refundId,
@@ -318,7 +330,10 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
     public Long createSecurityDepositPaymentAccountOperation(SecurityDeposit securityDeposit, BigDecimal amount) {
 
-        AccountOperation securityDepositPaymentAccountOperation = new AccountOperation();
+        OCCTemplate occTemplate = occTemplateService.findByCode(OCC_PAY_SD_TEMPLATE);
+
+        Payment securityDepositPaymentAccountOperation = new Payment();
+
         securityDepositPaymentAccountOperation.setAmount(amount);
         securityDepositPaymentAccountOperation.setDepositDate(new Date());
         securityDepositPaymentAccountOperation.setPaymentMethod(PaymentMethodEnum.CHECK);
@@ -326,9 +341,16 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         securityDepositPaymentAccountOperation.setUnMatchingAmount(amount);
         securityDepositPaymentAccountOperation.setTransactionCategory(OperationCategoryEnum.CREDIT);
         securityDepositPaymentAccountOperation.setCode("PAY_SD");
+        securityDepositPaymentAccountOperation.setCollectionDate(new Date());
         securityDepositPaymentAccountOperation.setMatchingStatus(MatchingStatusEnum.P);
+        securityDepositPaymentAccountOperation.setDescription("Payment by security deposit");
+        securityDepositPaymentAccountOperation.setType("P");
+        securityDepositPaymentAccountOperation.setReference(securityDeposit.getCode());
+        securityDepositPaymentAccountOperation.setJournal(occTemplate != null ? occTemplate.getJournal() : null);
+        securityDepositPaymentAccountOperation.setTransactionDate(new Date());
+        securityDepositPaymentAccountOperation.setAccountingDate(new Date());
 
-        return accountOperationService.createAndReturnId(securityDepositPaymentAccountOperation);
+        return accountOperationService.createAndReturnReference(securityDepositPaymentAccountOperation);
 
     }
 
@@ -418,7 +440,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
             throw new InvalidParameterException("The amount to be paid must be less than or equal to the current security deposit balance");
         }
 
-        if (amount.compareTo(accountOperation.getAmount()) > 0) {
+        if (amount.compareTo(accountOperation.getAmount()) > 0 || amount.compareTo(accountOperation.getUnMatchingAmount()) > 0) {
             throw new InvalidParameterException("The amount to be paid must be less than or equal to the unpaid amount of the invoice");
         }
 

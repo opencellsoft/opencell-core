@@ -14461,6 +14461,177 @@ order by date_trunc('month', i.invoice_date) DESC
         <addPrimaryKey columnNames="id" tableName="adm_secured_entity"/>
     </changeSet>
 
+
+    <!-- FOR Subscription Tunnel -->
+
+    <changeSet id="create_seq_tunnel-04112022" author="mohamedCHAOUKI">
+        <createSequence sequenceName="tnl_customization_seq" startValue="1"/>
+        <createSequence sequenceName="tnl_theme_seq" startValue="1"/>
+        <createSequence sequenceName="tnl_custom_style_seq" startValue="1"/>
+        <createSequence sequenceName="tnl_hypertext_section_seq" startValue="1"/>
+        <createSequence sequenceName="tnl_hypertext_link_seq" startValue="1"/>
+        <createSequence sequenceName="tnl_electronic_signature_seq" startValue="1"/>
+    </changeSet>
+
+    <changeSet id="create_tables_tunnel-04112022"  author="mohamedCHAOUKI">
+        <createTable tableName="tnl_payment_method">
+            <column name="tunnel_id" type="bigint" />
+            <column name="payment_method" type="varchar(255)" />
+        </createTable>
+
+        <createTable tableName="tnl_customization">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="tnl_customization_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="rgpd" type="${type.json}" />
+            <column name="terms_conditions" type="${type.json}" />
+            <column name="order_validation_msg" type="${type.json}" />
+            <column name="signature_msg" type="${type.json}" />
+            <column name="analytics" type="${type.json}" />
+            <column name="contract_active" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="mandate_contract" type="varchar(255)" />
+            <column name="billing_cycle_id" type="bigint" />
+            <column name="customer_category_id" type="bigint" />
+            <column name="theme_id" type="bigint" />
+            <column name="signature_active" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="electronic_signature_id" type="bigint" />
+        </createTable>
+
+        <createTable tableName="tnl_contact_method">
+            <column name="tunnel_id" type="bigint" />
+            <column name="contact_method" type="varchar(255)" />
+        </createTable>
+
+        <createTable tableName="tnl_electronic_signature">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="tnl_electronic_signature_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="electronic_signature" type="varchar(255)" />
+            <column name="label" type="varchar(255)" />
+            <column name="signature_api" type="varchar(255)" />
+            <column name="popup_url" type="varchar(255)" />
+            <column name="signature_status_api" type="varchar(255)" />
+            <column name="get_signedfile_api" type="varchar(255)" />
+        </createTable>
+
+        <createTable tableName="tnl_theme">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="tnl_theme_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="header" type="bigint" />
+            <column name="body" type="bigint" />
+            <column name="footer" type="bigint" />
+            <column name="created_on" type="date" />
+        </createTable>
+
+        <createTable tableName="tnl_custom_style">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="tnl_custom_style_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="logo" type="varchar(255)" />
+            <column name="fav_icon" type="varchar(255)" />
+            <column name="font" type="varchar(255)" />
+            <column name="background_color" type="varchar(255)" />
+            <column name="text_color" type="varchar(255)" />
+            <column name="background_image" type="${type.json}" />
+            <column name="primary_color" type="varchar(255)" />
+            <column name="secondary_color" type="varchar(255)" />
+            <column name="type" type="varchar(255)" />
+        </createTable>
+
+        <createTable tableName="tnl_hypertext_section">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="tnl_hypertext_section_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="label" type="${type.json}" />
+            <column name="custom_style_id" type="bigint" />
+        </createTable>
+
+        <createTable tableName="tnl_hypertext_link">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="tnl_hypertext_link_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="label" type="${type.json}" />
+            <column name="url" type="varchar(255)" />
+            <column name="icon" type="varchar(255)" />
+            <column name="display_icon" type="${type.boolean}" />
+            <column name="hypertext_section_id" type="bigint" />
+        </createTable>
+    </changeSet>
+
+    <!-- END Subscription Tunnel -->
+
+
 	<changeSet id="#INTRD-9766_20221011_EDR_new_fields" author="aelmalki">
 		<addColumn tableName="rating_edr">
 			<column name="wallet_operation_id" type="bigint"/>
@@ -14973,4 +15144,43 @@ order by date_trunc('month', i.invoice_date) DESC
     </changeSet>
 
     <!-- END Subscription Tunnel -->
+
+    <changeSet id="#INTRD-8859_20220802" author="hichamELHALOUI">
+        <addColumn tableName="dwh_report_extract">
+            <column name="include_headers" type="${type.boolean}" defaultValueNumeric="1"/>
+        </addColumn>
+
+    </changeSet>
+
+
+    <changeSet id="#INTRD-11775_20221120" author="hichamELHALOUI">
+        <addColumn tableName="cpq_commercial_order">
+           <column name="billing_cycle_id" type="bigint" />
+            <column name="billing_run_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="cpq_commercial_order"
+                                 baseColumnNames="billing_cycle_id"
+                                 constraintName="fk_cpq_commercial_order_billing_cycle"
+                                 referencedTableName="billing_cycle"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+        <addForeignKeyConstraint baseTableName="cpq_commercial_order"
+                                 baseColumnNames="billing_run_id"
+                                 constraintName="fk_cpq_commercial_order_billing_run"
+                                 referencedTableName="billing_billing_run"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+
+    </changeSet>
+
+	<changeSet id="#INTRD-242_20221121" author="AdilElJaouhari">
+		<addColumn tableName="billing_cycle">
+			<column name="filters" type="${type.json}">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>

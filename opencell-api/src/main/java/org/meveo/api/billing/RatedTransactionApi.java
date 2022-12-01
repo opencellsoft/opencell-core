@@ -129,13 +129,16 @@ public class RatedTransactionApi extends BaseApi {
         List<RatedTransaction> ratedTransactions = getRatedTransactionsFromPaginationConfig(pagingAndFiltering);
 
         if (!canCancelRatedTransactions(ratedTransactions)) {
-            throw new ActionForbiddenException("Only rated transactions in statuses OPEN, REJECTED can be cancelled");
+            throw new InvalidParameterException("Only rated transactions in statuses OPEN, REJECTED can be cancelled");
         }
 
         List<Long> ratedTransactionsToCancel = retreiveRatedTrasactionsIdsToCancel(ratedTransactions);
 
         ratedTransactionService.cancelRatedTransactions(ratedTransactionsToCancel);
-        auditLogService.trackOperation(RatedTransactionStatusEnum.CANCELED.name(), new Date(), new RatedTransaction(), ratedTransactionsToCancel.toString());
+        Date dateOperation = new Date();
+        String ids = ratedTransactionsToCancel.size() == 1 ? "id = " + ratedTransactionsToCancel.get(0).toString() : "ids " + ratedTransactionsToCancel.toString();
+        String detail = auditLogService.getDefaultMessage(RatedTransactionStatusEnum.CANCELED.name(), dateOperation, new RatedTransaction(), ids, null);
+        auditLogService.trackOperation(RatedTransactionStatusEnum.CANCELED.name(), dateOperation, new RatedTransaction(), null, detail);
 
     }
 

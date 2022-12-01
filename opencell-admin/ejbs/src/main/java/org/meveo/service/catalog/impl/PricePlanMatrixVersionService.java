@@ -769,15 +769,15 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
          * @param isMatrix
          * @throws IOException
          */
-        private void writeExcelFile(File file, Set<LinkedHashMap<String, Object>> CSVLineRecords, boolean isMatrix) throws IOException {
+        private void writeExcelFile(File file, Set<LinkedHashMap<String, Object>> csvLineRecords, boolean isMatrix) throws IOException {
 
             var workbook = new XSSFWorkbook();
             XSSFSheet sheet = workbook.createSheet();
 
             if (isMatrix) {
-                buildPriceGridExcel(CSVLineRecords, sheet);
+                buildPriceGridExcel(csvLineRecords, sheet);
             } else {
-                buildPricePlanExcel(CSVLineRecords, sheet);
+                buildPricePlanExcel(csvLineRecords, sheet);
             }
 
             FileOutputStream fileOut = new FileOutputStream(file);
@@ -786,16 +786,23 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
             workbook.close();
         }
 
-        private void buildPriceGridExcel(Set<LinkedHashMap<String, Object>> CSVLineRecords, XSSFSheet sheet) {
-
-            buildMatrixPlanPriceExcelHeader(CSVLineRecords, sheet);
-            buildMatrixPlanPriceExcelLines(CSVLineRecords, sheet);
+        private void buildPriceGridExcel(Set<LinkedHashMap<String, Object>> csvLineRecords, XSSFSheet sheet) {
+        	List<String> attributeNames = (csvLineRecords.stream().map(LinkedHashMap::keySet).flatMap(Collection::stream).collect(Collectors.toList())).stream().distinct().collect(Collectors.toList());
+        	 var header = sheet.createRow(0);
+             header.createCell(0).setCellValue("id");
+          
+             for (String dynamicAttribute : attributeNames) {
+                 if (!dynamicAttribute.equals("id")) {
+                     header.createCell(header.getLastCellNum()).setCellValue(dynamicAttribute);
+                 }
+             }
+            buildMatrixPlanPriceExcelLines(csvLineRecords,attributeNames, sheet);
         }
 
-        private void buildPricePlanExcel(Set<LinkedHashMap<String, Object>> CSVLineRecords, XSSFSheet sheet) {
+        private void buildPricePlanExcel(Set<LinkedHashMap<String, Object>> csvLineRecords, XSSFSheet sheet) {
 
             buildSimplePricePlanExcelHeader(sheet);
-            buildSimplePricePlanExcelLines(CSVLineRecords, sheet);
+            buildSimplePricePlanExcelLines(csvLineRecords, sheet);
         }
 
         private void buildSimplePricePlanExcelHeader(XSSFSheet sheet) {
@@ -829,27 +836,13 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         }
 
 
-        private void buildMatrixPlanPriceExcelHeader(Set<LinkedHashMap<String, Object>> CSVLineRecords, XSSFSheet sheet) {
-
-            var header = sheet.createRow(0);
-            header.createCell(0).setCellValue("id");
-            List<String> attributeNames = (CSVLineRecords != null && !CSVLineRecords.isEmpty()) ? new ArrayList<>(CSVLineRecords.iterator().next().keySet()) : new ArrayList<>();
-            for (String dynamicAttribute : attributeNames) {
-                if (!dynamicAttribute.equals("id")) {
-                    header.createCell(header.getLastCellNum()).setCellValue(dynamicAttribute);
-                }
-            }
-        }
-
-        private void buildMatrixPlanPriceExcelLines(Set<LinkedHashMap<String, Object>> CSVLineRecords, XSSFSheet sheet) {
+        private void buildMatrixPlanPriceExcelLines(Set<LinkedHashMap<String, Object>> csvLineRecords,List<String> attributeNames, XSSFSheet sheet) {
 
             int lineNumber = 1;
-            for (LinkedHashMap<String, Object> lineRecord : CSVLineRecords) {
+            for (LinkedHashMap<String, Object> lineRecord : csvLineRecords) {
                 XSSFRow row = sheet.createRow(lineNumber++);
-                for (String key : lineRecord.keySet()) {
-
+                for (String key : attributeNames) {
                     Object cellValue = lineRecord.get(key);
-
                     if (key.equals("id")) {
                         row.createCell(0).setCellValue((Long) cellValue);
                     } else {

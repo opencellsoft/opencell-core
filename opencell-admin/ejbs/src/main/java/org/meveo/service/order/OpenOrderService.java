@@ -12,15 +12,22 @@ import static org.meveo.model.ordering.OpenOrderTypeEnum.PRODUCTS;
 import static org.meveo.model.shared.DateUtils.setTimeToZero;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 
+import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.commons.utils.ListUtils;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.InvoiceLine;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.ordering.OpenOrder;
 import org.meveo.model.ordering.OpenOrderStatusEnum;
 import org.meveo.model.settings.OpenOrderSetting;
@@ -45,19 +52,63 @@ public class OpenOrderService extends BusinessService<OpenOrder> {
 	 * Find Open orders compatible with InvoiceLine in parameter.
 	 * 
 	 * @param il : InvoiceLine
-	 * @return
-	 */
-	public OpenOrder findOpenOrderCompatibleForIL(InvoiceLine il) {
+     * @param configuration : get DateAggregationOption
+     */
+	public OpenOrder findOpenOrderCompatibleForIL(InvoiceLine il, AggregationConfiguration configuration) {
 		
-    	TypedQuery<OpenOrder> query = getEntityManager().createNamedQuery("OpenOrder.getOpenOrderCompatibleForIL", OpenOrder.class);
+        StringBuilder jpqlQuery = new StringBuilder("SELECT oo FROM OpenOrder oo left join oo.products ooProducts left join oo.articles ooArticles" +
+                " WHERE oo.billingAccount.id = :billingAccountId AND oo.balance >= :ilAmountWithTax AND oo.status != :status" +
+                " AND (oo.endOfValidityDate is null OR oo.endOfValidityDate >= :ooEndValidityDate)" +
+                " AND (ooProducts.product.id = :productId or ooArticles.accountingArticle.id = :articleId)");
+
+        switch (configuration.getDateAggregationOption()){
+            case DAY_OF_USAGE_DATE:
+                jpqlQuery.append(" AND oo.activationDate = :ooActivationDate");
+                break;
+            case NO_DATE_AGGREGATION:
+                jpqlQuery.append(" AND oo.activationDate <= :ooActivationDate");
+                break;
+            case MONTH_OF_USAGE_DATE:
+            case WEEK_OF_USAGE_DATE:
+                jpqlQuery.append(" AND (:ooActivationStartDate <= oo.activationDate  AND oo.activationDate <= :ooActivationEndDate)");
+                break;
+            default:
+        }
+
+        TypedQuery<OpenOrder> query = getEntityManager().createQuery(jpqlQuery.toString(), OpenOrder.class);
 
     	query.setParameter("billingAccountId", il.getBillingAccount().getId());
     	query.setParameter("ilAmountWithTax", il.getAmountWithTax());
     	query.setParameter("status", OpenOrderStatusEnum.CANCELED);
-    	query.setParameter("ilValueDate", il.getValueDate());
-    	query.setParameter("productId", ofNullable(il.getServiceInstance()).map(si -> si.getProductVersion()).map(pv -> pv.getProduct().getId()).orElse(null));
-    	query.setParameter("articleId", ofNullable(il.getAccountingArticle()).map(ila -> ila.getId()).orElse(null));
-    	
+    	query.setParameter("productId", ofNullable(il.getServiceInstance()).map(ServiceInstance::getProductVersion).map(pv -> pv.getProduct().getId()).orElse(null));
+    	query.setParameter("articleId", ofNullable(il.getAccountingArticle()).map(BaseEntity::getId).orElse(null));
+        query.setParameter("ooEndValidityDate", il.getValueDate());
+
+        switch (configuration.getDateAggregationOption()){
+            case DAY_OF_USAGE_DATE:
+            case NO_DATE_AGGREGATION:
+                query.setParameter("ooActivationDate", il.getValueDate());
+                break;
+            case MONTH_OF_USAGE_DATE:
+                // Build month usage date : from start to end month in il.valueDate (usageDate)
+                LocalDate monthStartDate = il.getValueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalDate monthEndDate = il.getValueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                monthStartDate = monthStartDate.withDayOfMonth(1);
+                monthEndDate = monthEndDate.withDayOfMonth(1).plusMonths(1).minusDays(1);
+                query.setParameter("ooActivationStartDate", Date.from(monthStartDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+                query.setParameter("ooActivationEndDate",  Date.from(monthEndDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+                break;
+            case WEEK_OF_USAGE_DATE:
+                // Build week usage date : from start to end week in il.valueDate (usageDate)
+                LocalDate weekStartDate = il.getValueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                weekStartDate = weekStartDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+                LocalDate weekEndDate = weekStartDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+                query.setParameter("ooActivationStartDate", Date.from(weekStartDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+                query.setParameter("ooActivationEndDate", Date.from(weekEndDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+                break;
+            default:
+        }
+
     	List<OpenOrder> result = query.getResultList();
     	
     	if(!ListUtils.isEmtyCollection(result)) {
