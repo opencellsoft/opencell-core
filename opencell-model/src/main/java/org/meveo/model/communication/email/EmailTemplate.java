@@ -41,13 +41,13 @@ public class EmailTemplate extends MessageTemplate {
     @Column(name = "htmlcontent")
     private String htmlContent;
 
-    @Type(type = "JSONB")
-    @Column(name = "htmlcontent_i18n")
-    private Map<String,String> translatedHtmlContent = new HashMap<>();
+    @Type(type = "json")
+    @Column(name = "htmlcontent_i18n", columnDefinition = "jsonb")
+    private Map<String, String> translatedHtmlContent = new HashMap<>();
 
-    @Type(type = "JSONB")
-    @Column(name = "subject_i18n")
-    private Map<String,String> translatedSubject = new HashMap<>();
+    @Type(type = "json")
+    @Column(name = "subject_i18n", columnDefinition = "jsonb")
+    private Map<String, String> translatedSubject = new HashMap<>();
 
     public String getSubject() {
         return subject;
