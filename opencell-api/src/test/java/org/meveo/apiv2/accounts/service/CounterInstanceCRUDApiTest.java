@@ -598,7 +598,7 @@ public class CounterInstanceCRUDApiTest {
 
             @Nullable
             @Override
-            public String getServiceInstanceCode() {
+            public String getProductCode() {
                 return serviceInstanceCode;
             }
 

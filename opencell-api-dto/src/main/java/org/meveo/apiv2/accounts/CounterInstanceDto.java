@@ -30,7 +30,7 @@ public interface CounterInstanceDto {
     String getSubscriptionCode();
 
     @NotNull
-    String getServiceInstanceCode();
+    String getProductCode();
 
     @Nullable
     Set<String> getChargeInstances();
