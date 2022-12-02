@@ -18,7 +18,7 @@
 
 package org.meveo.service.tunnel;
 
-import org.meveo.model.subscriptionTunnel.ElectronicSignature;
+import org.meveo.model.tunnel.ElectronicSignature;
 import org.meveo.service.base.BusinessService;
 
 /**

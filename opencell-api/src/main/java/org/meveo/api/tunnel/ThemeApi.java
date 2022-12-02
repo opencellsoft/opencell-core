@@ -25,13 +25,13 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.subscriptionTunnel.CustomStyle;
-import org.meveo.model.subscriptionTunnel.Theme;
-import org.meveo.model.subscriptionTunnel.TunnelCustomization;
+import org.meveo.model.tunnel.CustomStyle;
+import org.meveo.model.tunnel.Theme;
 import org.meveo.service.tunnel.ThemeService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.Date;
 
 /**
  * @author Ilham CHAFIK
@@ -43,7 +43,7 @@ public class ThemeApi extends BaseCrudApi<Theme, ThemeDto> {
     private ThemeService themeService;
 
     @Inject
-    CustomStyleApi customStyleApi;
+    private CustomStyleApi customStyleApi;
 
     /**
      * Populate entity with fields from DTO entity
@@ -54,14 +54,8 @@ public class ThemeApi extends BaseCrudApi<Theme, ThemeDto> {
     private void dtoToEntity(ThemeDto dto, Theme entity) {
 
         entity.setCode(dto.getCode());
-        if (dto.getBody() != null) {
-            entity.setBody(customStyleApi.create(dto.getBody()));
-        }
-        if (dto.getHeader() != null) {
-            entity.setHeader(customStyleApi.create(dto.getHeader()));
-        }
-        if (dto.getFooter() != null) {
-            entity.setFooter(customStyleApi.create(dto.getFooter()));
+        if (dto.getName() != null) {
+            entity.setName(dto.getName());
         }
         if (dto.getCreatedOn() != null) {
             entity.setCreatedOn(dto.getCreatedOn());
@@ -72,6 +66,7 @@ public class ThemeApi extends BaseCrudApi<Theme, ThemeDto> {
     public Theme create(ThemeDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             addGenericCodeIfAssociated(Theme.class.getName(), postData);
+            postData.setCode("TH_"+postData.getCode());
         }
 
         if (themeService.findByCode(postData.getCode()) != null) {
@@ -81,6 +76,15 @@ public class ThemeApi extends BaseCrudApi<Theme, ThemeDto> {
         Theme entity = new Theme();
 
         dtoToEntity(postData, entity);
+
+        CustomStyle header = customStyleApi.create(postData.getHeader());
+        CustomStyle body = customStyleApi.create(postData.getBody());
+        CustomStyle footer = customStyleApi.create(postData.getFooter());
+
+        entity.setHeader(header);
+        entity.setBody(body);
+        entity.setFooter(footer);
+        entity.setCreatedOn(new Date());
         themeService.create(entity);
 
         return entity;
@@ -104,6 +108,19 @@ public class ThemeApi extends BaseCrudApi<Theme, ThemeDto> {
         themeService.update(theme);
 
         return theme;
+    }
+
+    public void delete(String themeCode) {
+        if (themeCode == null)
+            missingParameters.add("code");
+        handleMissingParameters();
+
+        Theme theme = themeService.findByCode(themeCode);
+        if (theme == null) {
+            throw new EntityDoesNotExistsException(Theme.class, themeCode);
+        }
+
+        themeService.remove(theme);
     }
 
     public ThemeDto findById(Long id) {

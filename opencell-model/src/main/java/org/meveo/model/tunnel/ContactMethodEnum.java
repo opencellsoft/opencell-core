@@ -16,12 +16,12 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.model.subscriptionTunnel;
+package org.meveo.model.tunnel;
 
 /**
- * Signature Method types.
+ * Contact Method types.
  *
  */
-public enum SignatureMethodEnum {
-    YOUSIGN
+public enum ContactMethodEnum {
+    EMAIL, SMS
 }

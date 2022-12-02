@@ -20,36 +20,36 @@ package org.meveo.api.rest.tunnel.impl;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.tunnel.TunnelCustomizationDto;
+import org.meveo.api.dto.tunnel.ThemeDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
-import org.meveo.api.rest.tunnel.TunnelCustomizationRs;
-import org.meveo.api.tunnel.TunnelCustomizationApi;
-import org.meveo.model.tunnel.TunnelCustomization;
+import org.meveo.api.rest.tunnel.ThemeRs;
+import org.meveo.api.tunnel.ThemeApi;
+import org.meveo.model.tunnel.Theme;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 /**
- * @author Ilham CHAFIK
+ * @author Mohamed CHAOUKI
  */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
-public class TunnelCustomizationRsImpl extends BaseRs implements TunnelCustomizationRs {
+public class ThemeRsImpl extends BaseRs implements ThemeRs {
 
     @Inject
-    private TunnelCustomizationApi tunnelCustomizationApi;
+    private ThemeApi themeApi;
 
 
     @Override
-    public ActionStatus create(TunnelCustomizationDto postData) {
+    public ActionStatus create(ThemeDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            TunnelCustomization tunnelCustomization = tunnelCustomizationApi.create(postData);
-            result.setEntityCode(tunnelCustomization.getCode());
-            result.setEntityId(tunnelCustomization.getId());
+            Theme theme = themeApi.create(postData);
+            result.setEntityCode(theme.getCode());
+            result.setEntityId(theme.getId());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -58,18 +58,31 @@ public class TunnelCustomizationRsImpl extends BaseRs implements TunnelCustomiza
     }
 
     @Override
-    public ActionStatus update(TunnelCustomizationDto postData) {
+    public ActionStatus update(ThemeDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            TunnelCustomization tunnelCustomization = tunnelCustomizationApi.update(postData);
-            result.setEntityCode(tunnelCustomization.getCode());
-            result.setEntityId(tunnelCustomization.getId());
+            Theme theme = themeApi.update(postData);
+            result.setEntityCode(theme.getCode());
+            result.setEntityId(theme.getId());
         } catch (Exception e) {
             processException(e, result);
         }
 
         return result;
-
     }
+
+    @Override
+    public ActionStatus delete(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            themeApi.delete(code);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
 }

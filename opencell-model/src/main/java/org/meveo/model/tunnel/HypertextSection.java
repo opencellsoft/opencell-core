@@ -16,75 +16,65 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.model.subscriptionTunnel;
+package org.meveo.model.tunnel;
 
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
- * theme
+ * hypertext section
  *
  * @author Mohamed Chaouki
  */
 @Entity
-@Table(name = "tnl_theme", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@Table(name = "tnl_hypertext_section")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "tnl_theme_seq"),})
-public class Theme extends BusinessEntity {
+        @Parameter(name = "sequence_name", value = "tnl_hypertext_section_seq"),})
+public class HypertextSection extends BusinessEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="header")
-    private CustomStyle header;
+    /**
+     * Translated label in JSON format with language code as a key and translated description as a value
+     */
+    @Type(type = "json")
+    @Column(name = "label", columnDefinition = "jsonb")
+    private Map<String, String> label;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="body")
-    private CustomStyle body;
+    @OneToMany(mappedBy = "hypertextSection", cascade = CascadeType.ALL)
+    private List<HypertextLink> links;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="footer")
-    private CustomStyle footer;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "custom_style_id")
+    private CustomStyle customStyle;
 
-    @Column(name = "created_on")
-    @Temporal(TemporalType.DATE)
-    private Date createdOn;
-
-
-    public CustomStyle getHeader() {
-        return header;
+    public Map<String, String> getLabel() {
+        return label;
     }
 
-    public void setHeader(CustomStyle header) {
-        this.header = header;
+    public void setLabel(Map<String, String> label) {
+        this.label = label;
     }
 
-    public CustomStyle getBody() {
-        return body;
+    public List<HypertextLink> getLinks() {
+        return links;
     }
 
-    public void setBody(CustomStyle body) {
-        this.body = body;
+    public void setLinks(List<HypertextLink> links) {
+        this.links = links;
     }
 
-    public CustomStyle getFooter() {
-        return footer;
+    public CustomStyle getCustomStyle() {
+        return customStyle;
     }
 
-    public void setFooter(CustomStyle footer) {
-        this.footer = footer;
-    }
-
-    public Date getCreatedOn() {
-        return createdOn;
-    }
-
-    public void setCreatedOn(Date createdOn) {
-        this.createdOn = createdOn;
+    public void setCustomStyle(CustomStyle customStyle) {
+        this.customStyle = customStyle;
     }
 }

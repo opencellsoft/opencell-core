@@ -16,65 +16,83 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.model.subscriptionTunnel;
+package org.meveo.model.tunnel;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 
 import javax.persistence.*;
-import java.util.List;
-import java.util.Map;
+import java.util.Date;
 
 /**
- * hypertext section
+ * theme
  *
  * @author Mohamed Chaouki
  */
 @Entity
-@Table(name = "tnl_hypertext_section")
+@Table(name = "tnl_theme", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "tnl_hypertext_section_seq"),})
-public class HypertextSection extends BusinessEntity {
+        @Parameter(name = "sequence_name", value = "tnl_theme_seq"),})
+public class Theme extends BusinessEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;
 
-    /**
-     * Translated label in JSON format with language code as a key and translated description as a value
-     */
-    @Type(type = "json")
-    @Column(name = "label", columnDefinition = "jsonb")
-    private Map<String, String> label;
+    private String name;
 
-    @OneToMany(mappedBy = "hypertextSection", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<HypertextLink> links;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="header")
+    private CustomStyle header;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "custom_style_id")
-    private CustomStyle customStyle;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="body")
+    private CustomStyle body;
 
-    public Map<String, String> getLabel() {
-        return label;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="footer")
+    private CustomStyle footer;
+
+    @Column(name = "created_on")
+    @Temporal(TemporalType.DATE)
+    private Date createdOn;
+
+    public String getName() {
+        return name;
     }
 
-    public void setLabel(Map<String, String> label) {
-        this.label = label;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public List<HypertextLink> getLinks() {
-        return links;
+    public CustomStyle getHeader() {
+        return header;
     }
 
-    public void setLinks(List<HypertextLink> links) {
-        this.links = links;
+    public void setHeader(CustomStyle header) {
+        this.header = header;
     }
 
-    public CustomStyle getCustomStyle() {
-        return customStyle;
+    public CustomStyle getBody() {
+        return body;
     }
 
-    public void setCustomStyle(CustomStyle customStyle) {
-        this.customStyle = customStyle;
+    public void setBody(CustomStyle body) {
+        this.body = body;
+    }
+
+    public CustomStyle getFooter() {
+        return footer;
+    }
+
+    public void setFooter(CustomStyle footer) {
+        this.footer = footer;
+    }
+
+    public Date getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(Date createdOn) {
+        this.createdOn = createdOn;
     }
 }

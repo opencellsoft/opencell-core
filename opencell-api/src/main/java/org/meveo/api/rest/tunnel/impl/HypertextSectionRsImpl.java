@@ -1,4 +1,4 @@
-/*
+package org.meveo.api.rest.tunnel.impl;/*
  * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
@@ -16,40 +16,39 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.api.rest.tunnel.impl;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.tunnel.TunnelCustomizationDto;
+import org.meveo.api.dto.tunnel.HypertextSectionDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
-import org.meveo.api.rest.tunnel.TunnelCustomizationRs;
-import org.meveo.api.tunnel.TunnelCustomizationApi;
-import org.meveo.model.tunnel.TunnelCustomization;
+import org.meveo.api.rest.tunnel.HypertextSectionRs;
+import org.meveo.api.tunnel.HypertextSectionApi;
+import org.meveo.model.tunnel.HypertextSection;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import java.util.List;
 
 /**
  * @author Ilham CHAFIK
  */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
-public class TunnelCustomizationRsImpl extends BaseRs implements TunnelCustomizationRs {
+public class HypertextSectionRsImpl extends BaseRs implements HypertextSectionRs {
 
     @Inject
-    private TunnelCustomizationApi tunnelCustomizationApi;
-
+    private HypertextSectionApi sectionApi;
 
     @Override
-    public ActionStatus create(TunnelCustomizationDto postData) {
+    public ActionStatus create(HypertextSectionDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            TunnelCustomization tunnelCustomization = tunnelCustomizationApi.create(postData);
-            result.setEntityCode(tunnelCustomization.getCode());
-            result.setEntityId(tunnelCustomization.getId());
+            HypertextSection section = sectionApi.create(postData);
+            result.setEntityCode(section.getCode());
+            result.setEntityId(section.getId());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -58,18 +57,32 @@ public class TunnelCustomizationRsImpl extends BaseRs implements TunnelCustomiza
     }
 
     @Override
-    public ActionStatus update(TunnelCustomizationDto postData) {
+    public ActionStatus update(HypertextSectionDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            TunnelCustomization tunnelCustomization = tunnelCustomizationApi.update(postData);
-            result.setEntityCode(tunnelCustomization.getCode());
-            result.setEntityId(tunnelCustomization.getId());
+            HypertextSection section = sectionApi.update(postData);
+            result.setEntityCode(section.getCode());
+            result.setEntityId(section.getId());
         } catch (Exception e) {
             processException(e, result);
         }
 
         return result;
-
     }
+
+    @Override
+    public ActionStatus createOrUpdate(List<HypertextSectionDto> sectionsDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            sectionApi.createOrUpdate(sectionsDto);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+
 }

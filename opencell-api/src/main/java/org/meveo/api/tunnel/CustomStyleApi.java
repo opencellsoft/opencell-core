@@ -22,13 +22,12 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.tunnel.CustomStyleDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.subscriptionTunnel.CustomStyle;
-import org.meveo.model.subscriptionTunnel.Theme;
-import org.meveo.model.subscriptionTunnel.TunnelCustomization;
+import org.meveo.model.tunnel.CustomStyle;
+import org.meveo.model.tunnel.TunnelCustomization;
 import org.meveo.service.tunnel.CustomStyleService;
-import org.meveo.service.tunnel.ThemeService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -48,7 +47,7 @@ public class CustomStyleApi extends BaseCrudApi<CustomStyle, CustomStyleDto> {
      * @param dto    DTO entity object to populate from
      * @param entity Entity to populate
      **/
-    public void dtoToEntity(CustomStyleDto dto, CustomStyle entity) {
+    private void dtoToEntity(CustomStyleDto dto, CustomStyle entity) {
 
         entity.setCode(dto.getCode());
         if (dto.getLogo() != null) {
@@ -78,13 +77,13 @@ public class CustomStyleApi extends BaseCrudApi<CustomStyle, CustomStyleDto> {
         if (dto.getType() != null) {
             entity.setType(dto.getType());
         }
-
     }
 
     @Override
     public CustomStyle create(CustomStyleDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             addGenericCodeIfAssociated(CustomStyle.class.getName(), postData);
+            postData.setCode(postData.getType().toString()+"_"+postData.getCode());
         }
 
         if (customStyleService.findByCode(postData.getCode()) != null) {
@@ -94,13 +93,29 @@ public class CustomStyleApi extends BaseCrudApi<CustomStyle, CustomStyleDto> {
         CustomStyle entity = new CustomStyle();
 
         dtoToEntity(postData, entity);
+
         customStyleService.create(entity);
 
         return entity;
     }
 
     @Override
-    public CustomStyle update(CustomStyleDto dtoData) throws MeveoApiException, BusinessException {
-        return null;
+    public CustomStyle update(CustomStyleDto postData) throws MeveoApiException, BusinessException {
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+
+        handleMissingParameters();
+
+        CustomStyle entity = customStyleService.findByCode(postData.getCode());
+        if (entity == null) {
+            throw new EntityDoesNotExistsException(TunnelCustomization.class, postData.getCode());
+        }
+
+        dtoToEntity(postData, entity);
+
+        customStyleService.update(entity);
+
+        return entity;
     }
 }

@@ -18,7 +18,7 @@
 
 package org.meveo.service.tunnel;
 
-import org.meveo.model.subscriptionTunnel.HypertextLink;
+import org.meveo.model.tunnel.HypertextLink;
 import org.meveo.service.base.BusinessService;
 
 /**

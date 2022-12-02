@@ -18902,7 +18902,7 @@
 
     <!-- FOR Subscription Tunnel -->
 
-    <changeSet id="create_seq_tunnel-04112022" author="mohamedCHAOUKI">
+    <changeSet id="create_seq_tunnel-20221124" author="mohamedCHAOUKI">
         <createSequence sequenceName="tnl_customization_seq" startValue="1"/>
         <createSequence sequenceName="tnl_theme_seq" startValue="1"/>
         <createSequence sequenceName="tnl_custom_style_seq" startValue="1"/>
@@ -18911,11 +18911,57 @@
         <createSequence sequenceName="tnl_electronic_signature_seq" startValue="1"/>
     </changeSet>
 
-    <changeSet id="create_tables_tunnel-04112022"  author="mohamedCHAOUKI">
+    <changeSet id="create_tables_tunnel-20221124"  author="Ilham-Chafik">
+        <createTable tableName="tnl_theme">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="tnl_theme_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="name" type="varchar(255)" />
+            <column name="header" type="bigint" />
+            <column name="body" type="bigint" />
+            <column name="footer" type="bigint" />
+            <column name="created_on" type="date" />
+        </createTable>
+
+        <createTable tableName="tnl_electronic_signature">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="tnl_electronic_signature_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="electronic_signature" type="varchar(255)" />
+            <column name="label" type="varchar(255)" />
+            <column name="signature_api" type="varchar(255)" />
+            <column name="popup_url" type="varchar(255)" />
+            <column name="signature_status_api" type="varchar(255)" />
+            <column name="get_signedfile_api" type="varchar(255)" />
+        </createTable>
+
         <createTable tableName="tnl_payment_method">
             <column name="tunnel_id" type="bigint" />
             <column name="payment_method" type="varchar(255)" />
         </createTable>
+        <addUniqueConstraint columnNames="tunnel_id, payment_method" constraintName="uk_tunnel_pay_meth" tableName="tnl_payment_method" />
 
         <createTable tableName="tnl_customization">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -18949,55 +18995,24 @@
             </column>
             <column name="electronic_signature_id" type="bigint" />
         </createTable>
+        <addForeignKeyConstraint baseColumnNames="billing_cycle_id" baseTableName="tnl_customization"
+                                 constraintName="fk_tunnel_billing_cycle" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_cycle" />
+        <addForeignKeyConstraint baseColumnNames="customer_category_id" baseTableName="tnl_customization"
+                                 constraintName="fk_tunnel_customer_category" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_customer_category" />
+        <addForeignKeyConstraint baseColumnNames="theme_id" baseTableName="tnl_customization"
+                                 constraintName="fk_tunnel_theme" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="tnl_theme" />
+        <addForeignKeyConstraint baseColumnNames="electronic_signature_id" baseTableName="tnl_customization"
+                                 constraintName="fk_tunnel_electronic_signature" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="tnl_electronic_signature" />
 
         <createTable tableName="tnl_contact_method">
             <column name="tunnel_id" type="bigint" />
             <column name="contact_method" type="varchar(255)" />
         </createTable>
-
-        <createTable tableName="tnl_electronic_signature">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="tnl_electronic_signature_pkey" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="code" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="description" type="varchar(255)" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="electronic_signature" type="varchar(255)" />
-            <column name="label" type="varchar(255)" />
-            <column name="signature_api" type="varchar(255)" />
-            <column name="popup_url" type="varchar(255)" />
-            <column name="signature_status_api" type="varchar(255)" />
-            <column name="get_signedfile_api" type="varchar(255)" />
-        </createTable>
-
-        <createTable tableName="tnl_theme">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="tnl_theme_pkey" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="code" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="description" type="varchar(255)" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="header" type="bigint" />
-            <column name="body" type="bigint" />
-            <column name="footer" type="bigint" />
-            <column name="created_on" type="date" />
-        </createTable>
+        <addUniqueConstraint columnNames="tunnel_id, contact_method" constraintName="uk_tunnel_contact_meth" tableName="tnl_contact_method" />
 
         <createTable tableName="tnl_custom_style">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -19043,6 +19058,10 @@
             <column name="label" type="${type.json}" />
             <column name="custom_style_id" type="bigint" />
         </createTable>
+        <addForeignKeyConstraint baseColumnNames="custom_style_id" baseTableName="tnl_hypertext_section"
+                                 constraintName="fk_section_custom_style" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="tnl_custom_style" />
+
 
         <createTable tableName="tnl_hypertext_link">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -19060,11 +19079,14 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             <column name="label" type="${type.json}" />
-            <column name="url" type="varchar(255)" />
+            <column name="url" type="${type.json}" />
             <column name="icon" type="varchar(255)" />
             <column name="display_icon" type="${type.boolean}" />
             <column name="hypertext_section_id" type="bigint" />
         </createTable>
+        <addForeignKeyConstraint baseColumnNames="hypertext_section_id" baseTableName="tnl_hypertext_link"
+                                 constraintName="fk_link_hypertext_section" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="tnl_hypertext_section" />
     </changeSet>
 
     <!-- END Subscription Tunnel -->

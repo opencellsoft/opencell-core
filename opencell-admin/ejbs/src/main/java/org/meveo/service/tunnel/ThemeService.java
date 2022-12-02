@@ -18,7 +18,7 @@
 
 package org.meveo.service.tunnel;
 
-import org.meveo.model.subscriptionTunnel.Theme;
+import org.meveo.model.tunnel.Theme;
 import org.meveo.service.base.BusinessService;
 
 /**

@@ -20,39 +20,36 @@ package org.meveo.api.rest.tunnel.impl;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.tunnel.ThemeDto;
-import org.meveo.api.dto.tunnel.TunnelCustomizationDto;
+import org.meveo.api.dto.tunnel.HypertextLinkDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
-import org.meveo.api.rest.tunnel.TunnelCustomizationRs;
-import org.meveo.api.rest.tunnel.TunnelThemeRs;
-import org.meveo.api.tunnel.ThemeApi;
-import org.meveo.api.tunnel.TunnelCustomizationApi;
-import org.meveo.model.subscriptionTunnel.Theme;
-import org.meveo.model.subscriptionTunnel.TunnelCustomization;
+import org.meveo.api.rest.tunnel.HypertextLinkRs;
+import org.meveo.api.tunnel.HypertextLinkApi;
+import org.meveo.model.tunnel.HypertextLink;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import java.util.List;
 
 /**
- * @author Mohamed CHAOUKI
+ * @author Ilham CHAFIK
  */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
-public class TunnelThemeRsImpl extends BaseRs implements TunnelThemeRs {
-    @Inject
-    private ThemeApi themeApi;
+public class HypertextLinkRsImpl extends BaseRs implements HypertextLinkRs {
 
+    @Inject
+    private HypertextLinkApi linkApi;
 
     @Override
-    public ActionStatus create(ThemeDto postData) {
+    public ActionStatus create(HypertextLinkDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            Theme theme = themeApi.create(postData);
-            result.setEntityCode(theme.getCode());
-            result.setEntityId(theme.getId());
+            HypertextLink link = linkApi.create(postData);
+            result.setEntityCode(link.getCode());
+            result.setEntityId(link.getId());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -61,13 +58,26 @@ public class TunnelThemeRsImpl extends BaseRs implements TunnelThemeRs {
     }
 
     @Override
-    public ActionStatus update(ThemeDto postData) {
+    public ActionStatus update(HypertextLinkDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            Theme theme = themeApi.update(postData);
-            result.setEntityCode(theme.getCode());
-            result.setEntityId(theme.getId());
+            HypertextLink link = linkApi.update(postData);
+            result.setEntityCode(link.getCode());
+            result.setEntityId(link.getId());
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus createOrUpdate(List<HypertextLinkDto> linksDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            linkApi.createOrUpdate(linksDto);
         } catch (Exception e) {
             processException(e, result);
         }
