@@ -8582,5 +8582,22 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="applies_to_id" valueNumeric="-1" />
 		</insert>
 	</changeSet>
-
+	
+	<changeSet id="#INTRD-12024_20221202" author="aeljaouhari">
+		<update tableName="billing_invoice_type">
+			<column name="description" value="Security Deposit"/>
+			<where>code = 'SECURITY_DEPOSIT'</where>
+		</update>
+		<update tableName="billing_invoice_type">
+			<column name="description" value="Commercial order"/>
+			<where>code = 'COMMERCIAL_ORDER'</where>
+		</update>
+		<update tableName="billing_invoice_type">
+			<column name="description" value="Quote"/>
+			<where>code = 'QUOTE'</where>
+		</update>
+		<delete tableName="billing_invoice_type">
+			<where>code='DRAFT'</where>
+		</delete>
+	</changeSet>
 </databaseChangeLog>
