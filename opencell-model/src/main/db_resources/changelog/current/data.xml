@@ -8611,7 +8611,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="default_value" value="withoutTax" />
 			<column name="mandatory" valueNumeric="1" />
 			<column name="allowed_values" value="withoutTax|withTax" />
-			<column name="values_separator" value="|" />
+			<column name="values_separator" value="\|" />
 			<column name="collection" valueNumeric="0" />
 		</insert>
 
@@ -8625,7 +8625,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="default_value" value=">" />
 			<column name="mandatory" valueNumeric="1" />
 			<column name="allowed_values" value="&lt;|&lt;=|=|!=|&gt;|&gt;=" />
-			<column name="values_separator" value="|" />
+			<column name="values_separator" value="\|" />
 			<column name="collection" valueNumeric="0" />
 		</insert>
 
@@ -8638,6 +8638,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="class_name" value="java.math.BigDecimal" />
 			<column name="default_value" value="0" />
 			<column name="mandatory" valueNumeric="1" />
+			<column name="values_separator" value="\|" />
 			<column name="collection" valueNumeric="0" />
 		</insert>
     </changeSet>
