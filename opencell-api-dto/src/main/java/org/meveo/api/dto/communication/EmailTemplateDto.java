@@ -25,6 +25,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.communication.email.EmailTemplate;
 
+import java.util.List;
+
 /**
  * The Class EmailTemplateDto.
  *
@@ -46,7 +48,10 @@ public class EmailTemplateDto extends MessageTemplateDto {
     private String htmlContent;
     
     /** The text content. */
-    private String textContent;
+
+    private List<TranslatedHtmlContentDto> translatedHtmlContent;
+
+    private List<TranslatedSubjectDto> translatedSubject;
 
     /**
      * Instantiates a new email template dto.
@@ -64,7 +69,8 @@ public class EmailTemplateDto extends MessageTemplateDto {
         super(emailTemplate);
         this.subject = emailTemplate.getSubject();
         this.htmlContent = emailTemplate.getHtmlContent();
-        this.textContent = emailTemplate.getTextContent();
+       // this.translatedSubject = emailTemplate.getTranslatedSubject();
+       // this.translatedHtmlContent = emailTemplate.getTranslatedHtmlContent();
     }
 
     /**
@@ -103,21 +109,20 @@ public class EmailTemplateDto extends MessageTemplateDto {
         this.htmlContent = htmlContent;
     }
 
-    /**
-     * Gets the text content.
-     *
-     * @return the text content
-     */
-    public String getTextContent() {
-        return textContent;
+    public List<TranslatedHtmlContentDto> getTranslatedHtmlContent() {
+        return translatedHtmlContent;
     }
 
-    /**
-     * Sets the text content.
-     *
-     * @param textContent the new text content
-     */
-    public void setTextContent(String textContent) {
-        this.textContent = textContent;
+    public void setTranslatedHtmlContent(List<TranslatedHtmlContentDto> translatedHtmlContent) {
+        this.translatedHtmlContent = translatedHtmlContent;
     }
+
+    public List<TranslatedSubjectDto> getTranslatedSubject() {
+        return translatedSubject;
+    }
+
+    public void setTranslatedSubject(List<TranslatedSubjectDto> translatedSubject) {
+        this.translatedSubject = translatedSubject;
+    }
+
 }
