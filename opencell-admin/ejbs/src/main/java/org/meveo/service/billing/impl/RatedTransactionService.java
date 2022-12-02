@@ -1685,13 +1685,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         + usageDateAggregation + " as usage_date, min(rt.startDate) as start_date, max(rt.endDate) as end_date, rt.orderNumber as order_number, "
                         + " s.id as subscription_id, s.order.id as commercial_order_id, rt.taxPercent as tax_percent, rt.tax.id as tax_id, "
                         + " rt.infoOrder.order.id as order_id, rt.infoOrder.productVersion.id as product_version_id, rt.infoOrder.orderLot.id as order_lot_id, "
-                        + " rt.chargeInstance.id as charge_instance_id, rt.parameter2 as parameter_2, rt.accountingArticle.id as article_id, rt.discountedRatedTransaction as discounted_ratedtransaction_id"
+                        + " rt.chargeInstance.id as charge_instance_id, rt.accountingArticle.id as article_id, rt.discountedRatedTransaction as discounted_ratedtransaction_id"
                         + " FROM RatedTransaction rt left join rt.subscription s WHERE " + entityCondition
                         + " AND rt.status = 'OPEN' AND :firstTransactionDate <= rt.usageDate AND rt.usageDate < :lastTransactionDate"
                         + " and (rt.invoicingDate is NULL or rt.invoicingDate < :invoiceUpToDate) AND rt.accountingArticle.ignoreAggregation = false"
                         + " GROUP BY rt.billingAccount.id, rt.accountingCode.id, rt.description, rt.offerTemplate.id, rt.serviceInstance.id, " + unitAmountGroupBy
                         + usageDateAggregation + ", rt.startDate, rt.endDate, rt.orderNumber, s.id,  s.order.id, rt.taxPercent, rt.tax.id, "
-                        + " rt.infoOrder.order.id, rt.infoOrder.productVersion.id, rt.infoOrder.orderLot.id, rt.chargeInstance.id, rt.parameter2, rt.accountingArticle.id, rt.discountedRatedTransaction, rt.amountWithoutTax"
+                        + " rt.infoOrder.order.id, rt.infoOrder.productVersion.id, rt.infoOrder.orderLot.id, rt.chargeInstance.id, rt.accountingArticle.id, rt.discountedRatedTransaction, rt.amountWithoutTax"
                         + " order by rt.amountWithoutTax desc";
         List<Map<String, Object>> groupedRTsWithAggregation = getSelectQueryAsMap(query, params);
         groupedRTsWithAggregation.addAll(getGroupedRTsWithoutAggregation(billingRun, be, lastTransactionDate));
@@ -1753,7 +1753,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         " rt.startDate as start_date, rt.endDate as end_date, rt.orderNumber as order_number, " +
                         " s.id as subscription_id, s.order.id as commercial_order_id, rt.taxPercent as tax_percent, rt.tax.id as tax_id," +
                         " rt.infoOrder.order.id as order_id, rt.infoOrder.productVersion.id as product_version_id, rt.infoOrder.orderLot.id as order_lot_id," +
-                        " rt.chargeInstance.id as charge_instance_id, rt.parameter2 as parameter_2, rt.accountingArticle.id as article_id," +
+                        " rt.chargeInstance.id as charge_instance_id, rt.accountingArticle.id as article_id," +
                         " rt.discountedRatedTransaction as discounted_ratedtransaction_id" +
                         " FROM RatedTransaction rt left join rt.subscription s " +
                         " WHERE" + entityCondition + "AND rt.status = 'OPEN' AND :firstTransactionDate <= rt.usageDate " +
