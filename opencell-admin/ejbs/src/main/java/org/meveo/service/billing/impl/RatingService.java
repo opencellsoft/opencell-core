@@ -848,9 +848,12 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             wo.setPricePlanMatrixVersion(ppmVersion);
             if (!ppmVersion.isMatrix()) {
                 if (appProvider.isEntreprise()) {
-                	priceWithoutTax = ppmVersion.getAmountWithoutTax();
+                	priceWithoutTax = ppmVersion.getPrice();
                 } else {
-                	priceWithTax = ppmVersion.getAmountWithTax();
+                	priceWithTax = ppmVersion.getPrice();
+                }
+                if(wo.getUnitAmountWithoutTax() == null) {
+                    wo.setUnitAmountWithoutTax(priceWithoutTax);
                 }
                 if (ppmVersion.getPriceEL() != null) {
                 	priceWithoutTax = priceWithoutTax.add(evaluateAmountExpression(ppmVersion.getPriceEL(), wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax));
@@ -866,6 +869,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                         priceWithoutTax = pricePlanMatrixLine.getValue();
                     } else {
                         priceWithTax = pricePlanMatrixLine.getValue();
+                    }
+                    if(wo.getUnitAmountWithoutTax() == null) {
+                        wo.setUnitAmountWithoutTax(priceWithoutTax);
                     }
                     String amountEL = ppmVersion.getPriceEL();
                     String amountELPricePlanMatrixLine = pricePlanMatrixLine.getValueEL();
