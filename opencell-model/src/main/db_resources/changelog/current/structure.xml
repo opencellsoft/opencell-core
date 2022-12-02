@@ -14833,5 +14833,12 @@ order by date_trunc('month', i.invoice_date) DESC
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
+    
+    <changeSet id="#INTRD-12043_20221121" author="HatimOUDAD">
+		<addColumn tableName="billing_invoice_validation_rule">
+			<column name="rule_values" type="${type.json}">
+			</column>
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>

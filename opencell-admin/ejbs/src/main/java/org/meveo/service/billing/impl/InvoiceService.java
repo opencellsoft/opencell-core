@@ -1398,6 +1398,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
                 methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
                 methodContext.put("billingRun", invoice.getBillingRun());
+                methodContext.put("ruleValues", invoice.getRejectedByRule());
                 while(validationRuleIterator.hasNext() && noValidationError) {
                     InvoiceValidationRule validationRule = validationRuleIterator.next();
                     if(dateBetween(invoice.getInvoiceDate(), validationRule.getValidFrom(), validationRule.getValidTo())) {

@@ -10,6 +10,7 @@ import org.meveo.model.billing.ValidationRuleTypeEnum;
 
 import javax.annotation.Nullable;
 import java.util.Date;
+import java.util.Map;
 
 @Value.Immutable
 @Value.Style(jdkOnly = true)
@@ -55,5 +56,9 @@ public interface InvoiceValidationRuleDto extends Resource {
     @Schema(description = "Code")
     @Nullable
     String getCode();
+    
+    @Nullable
+    @Schema(description = "Rule values")
+    Map<String, String> getRuleValues();
 
 }
