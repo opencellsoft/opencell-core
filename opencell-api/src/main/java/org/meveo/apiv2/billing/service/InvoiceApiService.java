@@ -273,8 +273,8 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 	/**
 	 * @param invoice
 	 */
-	public void rejectInvoice(Invoice invoice) {
-		invoiceService.rejectInvoice(invoice);
+	public void rejectInvoice(Invoice invoice, RejectReasonInput rejectReasonInput) {
+		invoiceService.rejectInvoice(invoice, rejectReasonInput);
 	}
 
 	/**
