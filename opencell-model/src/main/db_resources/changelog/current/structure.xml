@@ -14822,9 +14822,9 @@ order by date_trunc('month', i.invoice_date) DESC
 
     <changeSet id="INTRD-11732_20221130" author="MehdiBOURRAS">
         <addColumn tableName="com_message_template">
-            <column name="textcontent_i18n" type="JSONB"/>
-            <column name="subject_i18n" type="JSONB"/>
-            <column name="htmlcontent_i18n" type="JSONB"/>
+            <column name="textcontent_i18n" type="${type.json}"/>
+            <column name="subject_i18n" type="${type.json}"/>
+            <column name="htmlcontent_i18n" type="${type.json}"/>
         </addColumn>
     </changeSet>
 
