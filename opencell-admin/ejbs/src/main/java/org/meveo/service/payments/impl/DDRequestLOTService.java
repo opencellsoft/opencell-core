@@ -100,26 +100,24 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	 * @param ddrequestLotOp   the ddrequest lot op
 	 * @param listAoToPay      list of account operations
 	 * @param ddRequestBuilder direct debit request builder
-	 * @param result           the result
 	 * @return the DD request LOT
-	 * @throws BusinessEntityException the business entity exception
-	 * @throws Exception               the exception
+	 * @throws BusinessException the business exception
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public DDRequestLOT createDDRquestLot(DDRequestLotOp ddrequestLotOp, List<AccountOperation> listAoToPay, DDRequestBuilder ddRequestBuilder)
-			throws BusinessException, Exception {
-		if (listAoToPay == null || listAoToPay.isEmpty()) {
-			throw new BusinessEntityException("no invoices!");
+			throws BusinessException {
+		DDRequestLOT ddRequestLOT = null;
+		if (listAoToPay != null && !listAoToPay.isEmpty()) {
+			ddRequestLOT = new DDRequestLOT();
+			ddRequestLOT.setDdRequestBuilder(ddRequestBuilder);
+			ddRequestLOT.setSendDate(new Date());
+			ddRequestLOT.setPaymentOrRefundEnum(ddrequestLotOp.getPaymentOrRefundEnum());
+			ddRequestLOT.setSeller(ddrequestLotOp.getSeller());
+			ddRequestLOT.setSendDate(calendarBankingService.addBusinessDaysToDate(new Date(), ArConfig.getDateValueAfter()));
+			create(ddRequestLOT);
+			ddRequestLOT.setFileName(ddRequestBuilderFactory.getInstance(ddRequestBuilder).getDDFileName(ddRequestLOT, appProvider));
+			update(ddRequestLOT);
 		}
-		DDRequestLOT ddRequestLOT = new DDRequestLOT();
-		ddRequestLOT.setDdRequestBuilder(ddRequestBuilder);
-		ddRequestLOT.setSendDate(new Date());
-		ddRequestLOT.setPaymentOrRefundEnum(ddrequestLotOp.getPaymentOrRefundEnum());
-		ddRequestLOT.setSeller(ddrequestLotOp.getSeller());
-		ddRequestLOT.setSendDate(calendarBankingService.addBusinessDaysToDate(new Date(), ArConfig.getDateValueAfter()));
-		create(ddRequestLOT);
-		ddRequestLOT.setFileName(ddRequestBuilderFactory.getInstance(ddRequestBuilder).getDDFileName(ddRequestLOT, appProvider));
-		update(ddRequestLOT);
 		return ddRequestLOT;
 	}
 
