@@ -148,6 +148,9 @@ public class InvoiceType extends BusinessCFEntity {
     @JoinColumn(name = "invoice_validation_script_id")
     private ScriptInstance invoiceValidationScript;
 
+    @OneToMany(mappedBy = "invoiceType", fetch = FetchType.EAGER)
+    private List<InvoiceValidationRule> invoiceValidationRules;
+    
     public ScriptInstance getInvoiceValidationScript() {
 		return invoiceValidationScript;
 	}
@@ -368,4 +371,13 @@ public class InvoiceType extends BusinessCFEntity {
 	public void setInvoiceAccountable(boolean invoiceAccountable) {
 		this.invoiceAccountable = invoiceAccountable;
 	}
+
+	public List<InvoiceValidationRule> getInvoiceValidationRules() {
+		return invoiceValidationRules;
+	}
+
+	public void setInvoiceValidationRules(List<InvoiceValidationRule> invoiceValidationRules) {
+		this.invoiceValidationRules = invoiceValidationRules;
+	}
+
 }

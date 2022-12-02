@@ -41,6 +41,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.WalletOperation;
 
 /**
  * Event data record - EDR - information
@@ -88,7 +89,8 @@ import org.meveo.model.billing.Subscription;
         @NamedQuery(name = "EDR.updateEdrsToReprocess", query = "update EDR e  set e.status='OPEN',e.rejectReason = NULL, e.timesTried=(case when e.timesTried is null then 1 else (e.timesTried+1) end) where e.id in :ids"),
         @NamedQuery(name = "EDR.reopenByIds", query = "update EDR e  set e.status='OPEN',rejectReason = NULL where e.status='REJECTED' and e.id in :ids"),
         @NamedQuery(name = "EDR.countNbrEdrByOriginRecord", query = "SELECT count(e) from EDR e where e.originRecord =:originRecord"),
-        @NamedQuery(name = "EDR.findEDREventVersioning", query = "SELECT e from EDR e where e.status in ('OPEN', 'REJECTED', 'RATED', 'CANCELLED') and e.eventKey=:eventKey and e.eventVersion != null order by e.eventVersion DESC")
+        @NamedQuery(name = "EDR.findEDREventVersioning", query = "SELECT e from EDR e where e.status in ('OPEN', 'REJECTED', 'RATED', 'CANCELLED') and e.eventKey=:eventKey and e.eventVersion != null order by e.eventVersion DESC"),
+        @NamedQuery(name = "EDR.getByWO", query = "SELECT edr FROM EDR edr WHERE edr.walletOperation.id IN (:WO_IDS)")
     })
 public class EDR extends BaseEntity {
 
@@ -314,6 +316,10 @@ public class EDR extends BaseEntity {
     
     @Column(name = "event_version")
     private Integer eventVersion;
+
+    @JoinColumn(name = "wallet_operation_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private WalletOperation walletOperation;
 
     /**
      * Tracks quantity left to rate. Initialized with quantity field value on the first call.
@@ -564,8 +570,8 @@ public class EDR extends BaseEntity {
         return "EDR [id=" + id + ", subscription=" + (subscription != null ? subscription.getId() : null) + ", originBatch=" + originBatch + ", originRecord=" + originRecord + ", eventDate=" + eventDate + ", quantity="
                 + quantity + ", access=" + accessCode + ", parameter1=" + parameter1 + ", parameter2=" + parameter2 + ", parameter3=" + parameter3 + ", parameter4=" + parameter4 + ", parameter5=" + parameter5
                 + ", parameter6=" + parameter6 + ", parameter7=" + parameter7 + ", parameter8=" + parameter8 + ", parameter9=" + parameter9 + ", dateParam1=" + dateParam1 + ", dateParam2=" + dateParam2 + ", dateParam3="
-                + dateParam3 + ", dateParam4=" + dateParam4 + ", dateParam5=" + dateParam5 + ", decimalParam1=" + decimalParam1 + ", dateParam2=" + dateParam2 + ", decimalParam3=" + decimalParam3 + ", dateParam4="
-                + dateParam4 + ", decimalParam5=" + decimalParam5 + ", extraParameter=" + extraParameter + ", headerEDR=" + ((headerEDR == null) ? "null" : headerEDR.getId()) + ", created=" + created + ", lastUpdate="
+                + dateParam3 + ", dateParam4=" + dateParam4 + ", dateParam5=" + dateParam5 + ", decimalParam1=" + decimalParam1 + ", decimalParam2=" + decimalParam2 + ", decimalParam3=" + decimalParam3 + ", decimalParam4="
+                + decimalParam4 + ", decimalParam5=" + decimalParam5 + ", extraParameter=" + extraParameter + ", headerEDR=" + ((headerEDR == null) ? "null" : headerEDR.getId()) + ", created=" + created + ", lastUpdate="
                 + updated + "]";
     }
 
@@ -691,4 +697,13 @@ public class EDR extends BaseEntity {
 	public void setEventVersion(Integer eventVersion) {
 		this.eventVersion = eventVersion;
 	}
+
+    public WalletOperation getWalletOperation() {
+        return walletOperation;
+    }
+
+    public void setWalletOperation(WalletOperation walletOperation) {
+        this.walletOperation = walletOperation;
+    }
+
 }

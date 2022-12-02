@@ -3171,7 +3171,8 @@ public class SubscriptionApi extends BaseApi {
                     })
                 .collect(Collectors.toList());
 
-        commercialOrderService.processProduct(subscription, product, productDto.getQuantity(), orderAttributes, null, productDto.getDeliveryDate());
+        var serviceInstance = commercialOrderService.processProduct(subscription, product, productDto.getQuantity(), orderAttributes, null, productDto.getDeliveryDate());
+        populateCustomFields(productDto.getCustomFields(), serviceInstance, true);
 
     }
 

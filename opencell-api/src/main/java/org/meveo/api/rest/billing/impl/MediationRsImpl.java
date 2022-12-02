@@ -29,6 +29,7 @@ import javax.interceptor.Interceptors;
 import org.meveo.api.billing.MediationApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.billing.CdrDto;
 import org.meveo.api.dto.billing.CdrErrorDto;
 import org.meveo.api.dto.billing.CdrErrorListDto;
 import org.meveo.api.dto.billing.CdrListDto;
@@ -170,6 +171,20 @@ public class MediationRsImpl extends BaseRs implements MediationRs {
 
         try {
             mediationApi.notifyOfRejectedCdrs(cdrList);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus createCDR(CdrDto cdrDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+           CDR cdr = mediationApi.createCdr(cdrDto, httpServletRequest.getRemoteAddr());
+           result.setEntityId(cdr.getId());
         } catch (Exception e) {
             processException(e, result);
         }

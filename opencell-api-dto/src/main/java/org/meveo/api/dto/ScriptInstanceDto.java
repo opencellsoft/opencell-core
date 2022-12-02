@@ -18,8 +18,11 @@
 
 package org.meveo.api.dto;
 
+import static org.meveo.api.dto.LanguageDescriptionDto.convertMultiLanguageFromMapOfValues;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -27,6 +30,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.script.CustomScriptDto;
 import org.meveo.model.scripts.ScriptInstance;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * The Class ScriptInstanceDto.
@@ -47,6 +52,12 @@ public class ScriptInstanceDto extends CustomScriptDto {
     private List<String> sourcingRoles = new ArrayList<String>();
     
     private String scriptInstanceCategoryCode;
+
+    @Schema(description = "list of the language description")
+    private List<LanguageDescriptionDto> languageDescriptions;
+    
+    @Schema(description = "list of the script parameters")
+    private List<ScriptParameterDto> scriptParameters;
 
     /**
      * Instantiates a new script instance dto.
@@ -76,6 +87,13 @@ public class ScriptInstanceDto extends CustomScriptDto {
         if(scriptInstance.getScriptInstanceCategory() != null) {
         	scriptInstanceCategoryCode = scriptInstance.getScriptInstanceCategory().getCode();
         }
+        
+        if(scriptInstance.getScriptParameters() != null) {
+        	scriptParameters = new ArrayList<>();
+        	scriptParameters.addAll(scriptInstance.getScriptParameters().stream().map(ScriptParameterDto::new).collect(Collectors.toList()));
+        }
+        
+        languageDescriptions = convertMultiLanguageFromMapOfValues(scriptInstance.getDescriptionI18n());
     }
 
     @Override
@@ -155,4 +173,21 @@ public class ScriptInstanceDto extends CustomScriptDto {
 	public void setScriptInstanceCategoryCode(String scriptInstanceCategoryCode) {
 		this.scriptInstanceCategoryCode = scriptInstanceCategoryCode;
 	}
+    
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+    }
+
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
+    }
+
+	public List<ScriptParameterDto> getScriptParameters() {
+		return scriptParameters;
+	}
+
+	public void setScriptParameters(List<ScriptParameterDto> scriptParameters) {
+		this.scriptParameters = scriptParameters;
+	}
+    
 }

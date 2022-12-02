@@ -18,12 +18,16 @@
 
 package org.meveo.model.scripts;
 
+import java.util.Map;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 
 /**
@@ -40,4 +44,34 @@ public class ScriptInstanceCategory extends BusinessEntity {
 
     private static final long serialVersionUID = 3368033230915325843L;
 
+    @Type(type = "json")
+    @Column(name = "description_i18n", columnDefinition = "jsonb")
+    private Map<String, String> descriptionI18n;
+
+    public Map<String, String> getDescriptionI18n() {
+        return descriptionI18n;
+    }
+
+    public void setDescriptionI18n(Map<String, String> descriptionI18n) {
+        this.descriptionI18n = descriptionI18n;
+    }  
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        else if (!super.equals(obj)) {
+            return false;
+        }
+        else if (!(obj instanceof ScriptInstanceCategory)) {
+            return false;
+        }
+        return true;
+    }
+    
+    @Override
+    public int hashCode() {
+        return 961 + ("ScriptInstanceCategory" + getId()).hashCode();
+    }
 }

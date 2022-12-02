@@ -478,9 +478,22 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
                 templateAttribute.setValidationLabel(offerAttributeDto.getValidationLabel());
                 templateAttribute.setValidationPattern(offerAttributeDto.getValidationPattern());
                 templateAttribute.setValidationType(offerAttributeDto.getValidationType());
+                validateTemplateAttribute(templateAttribute);
                 return templateAttribute;
             }).collect(Collectors.toList()));
         }
+    }
+    
+    private void validateTemplateAttribute(OfferTemplateAttribute templateAttribute) {
+    	// A hidden mandatory field must have a default value 
+    	if (templateAttribute.isMandatory() && !templateAttribute.isDisplay() 
+         		&& (templateAttribute.getDefaultValue() == null || templateAttribute.getDefaultValue().isEmpty())) 
+         	 throw new InvalidParameterException("Default value is required for an attribute mandatory and hidden");
+
+    	// A read-only mandatory attribute must have a default value
+    	 if (templateAttribute.isMandatory() && templateAttribute.getReadOnly()
+          		&& (templateAttribute.getDefaultValue() == null || templateAttribute.getDefaultValue().isEmpty())) 
+          	 throw new InvalidParameterException("Default value is required for an attribute mandatory and read-only");
     }
 
     private void processTags(OfferTemplateDto postData, OfferTemplate offerTemplate) {

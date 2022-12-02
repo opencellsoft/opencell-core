@@ -26,6 +26,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.sql.Clob;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -60,6 +62,7 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
 
+import org.apache.commons.io.IOUtils;
 import org.hibernate.LockMode;
 import org.hibernate.SQLQuery;
 import org.hibernate.ScrollMode;
@@ -607,6 +610,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         log.trace("end of create {}. entity id={}.", entity.getClass().getSimpleName(), entity.getId());
     }
 
+
     /**
      * @see org.meveo.service.base.local.IPersistenceService#create(org.meveo.model.IEntity)
      */
@@ -1054,7 +1058,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         adaptOrdering(config, filters);
         
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields(), config.getJoinType());
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields(), config.getJoinType(), config.getFilterOperator());
         if (filters != null && !filters.isEmpty()) {
             if (filters.containsKey(SEARCH_FILTER)) {
                 Filter filter = (Filter) filters.get(SEARCH_FILTER);
@@ -1066,7 +1070,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                 filters.putAll(cfFilters);
 
                 ExpressionFactory expressionFactory = new ExpressionFactory(queryBuilder, "a");
-                filters.keySet().stream().filter(key -> filters.get(key) != null).forEach(key -> expressionFactory.addFilters(key, filters.get(key)));
+                filters.keySet().stream().filter(key -> filters.get(key) != null && !"$OPERATOR".equalsIgnoreCase(key)).forEach(key -> expressionFactory.addFilters(key, filters.get(key)));
                 for (String cft : cfFilters.keySet()) {
                     filters.remove(cft);
                 }
@@ -1670,7 +1674,18 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return data -> {
             Map<String, Object> map = new HashMap<>();
             for (TupleElement<?> tuple : data.getElements()) {
-                map.put(tuple.getAlias(), data.get(tuple.getAlias()));
+
+                Object value = data.get(tuple.getAlias());
+                if (value instanceof Clob) {
+                    try {
+                        value = IOUtils.toString(((Clob) value).getCharacterStream());
+
+                    } catch (IOException | SQLException e) {
+                        throw new RuntimeException("Failed to read clob value", e);
+                    }
+                }
+
+                map.put(tuple.getAlias(), value);
             }
             return map;
         };

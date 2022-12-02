@@ -30,6 +30,8 @@ public class Header {
     private Date validFromDate;
     @XmlElement
     private Date validToDate;
+    @XmlElement
+    private String comment;
     
     
     
@@ -41,7 +43,7 @@ public class Header {
 
     public Header(BillingAccount billingAccount, Contract contract, int quoteVersion, String quoteCode, Date startDate,
 			Long duration, int opportunityDuration, String customerReference, String registrationNumber,
-			Date validFromDate, Date validToDate) {
+			Date validFromDate, Date validToDate,String comment) {
 		super();
 		this.billingAccount = billingAccount;
 		this.contract = contract;
@@ -54,6 +56,7 @@ public class Header {
 		this.registrationNumber = registrationNumber;
 		this.validFromDate = validFromDate;
 		this.validToDate = validToDate;
+		this.comment=comment;
 	}
 
 
@@ -208,4 +211,14 @@ public class Header {
 	public void setBillingAccount(BillingAccount billingAccount) {
 		this.billingAccount = billingAccount;
 	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+	
+	
 }

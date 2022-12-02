@@ -15,8 +15,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.*;
+import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -28,13 +29,24 @@ import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvalidELException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.accountingScheme.AccountingCodeMapping;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleMappingLine;
 import org.meveo.model.article.AttributeMapping;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.AccountingCode;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceLine;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.TradingCountry;
+import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
@@ -56,6 +68,13 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 	@Inject
 	private AccountingCodeService accountingCodeService;
 
+	 private String multiValuesAttributeSeparator = ";";
+	    
+	 @PostConstruct
+	 private void init() {
+		 multiValuesAttributeSeparator = paramBeanFactory.getInstance().getProperty("attribute.multivalues.separator", ";");
+	 }
+	 
 	public Optional<AccountingArticle> getAccountingArticle(Product product, Map<String, Object> attributes) throws BusinessException {
 		return getAccountingArticle(product, null, attributes, null);
 	}
@@ -123,7 +142,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			if (OperatorEnum.AND == aml.getAttributeOperator()) {
 				aml.getAttributesMapping().forEach(attributeMapping -> {
 					if (continueProcess.get()) {
-						if (checkAttribute(product, attributes, attributeMapping)) {
+						if (checkAttribute(product, walletOperation, attributes, attributeMapping)) {
 							matchedAttributesMapping.add(attributeMapping);
 						} else {
 							// for AND operator, if at least we have 1 unmatchedAttributs (else), all previous matchedAttribut shall not taken into account
@@ -135,7 +154,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			} else if (OperatorEnum.OR == aml.getAttributeOperator()) {
 				aml.getAttributesMapping().forEach(attributeMapping -> {
 					if (continueProcess.get()) {
-						if (checkAttribute(product, attributes, attributeMapping)) {
+						if (checkAttribute(product, walletOperation, attributes, attributeMapping)) {
 							matchedAttributesMapping.add(attributeMapping);
 							continueProcess.set(false);
 						}
@@ -428,7 +447,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 
 	}
 
-	private boolean checkAttribute(Product product, Map<String, Object> attributes, AttributeMapping attributeMapping) {
+	private boolean checkAttribute(Product product, WalletOperation walletOperation, Map<String, Object> attributes, AttributeMapping attributeMapping) {
 		final Attribute attribute = attributeMapping.getAttribute();
 		if (attributes.get(attribute.getCode()) != null) {
 			isValidOperator(attributeMapping.getAttribute(), attributeMapping.getOperator());
@@ -441,19 +460,19 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 				case LIST_NUMERIC:
 				case LIST_MULTIPLE_TEXT:
 				case LIST_MULTIPLE_NUMERIC:
-					List<String> source = Arrays.asList(attributeMapping.getAttributeValue().split(";"));
+					List<String> source = Arrays.asList(attributeMapping.getAttributeValue().split(multiValuesAttributeSeparator));
 					List<Object> input;
 					if (value instanceof Collection) {
 						input = (List) value;
 					} else {
-						input = Arrays.asList(value.toString().split(";"));
+						input = Arrays.asList(value.toString().split(multiValuesAttributeSeparator));
 					}
 
 					return valueCompareCollection(attributeMapping.getOperator(), source, input);
 				case EXPRESSION_LANGUAGE:
-					Object result = attributeService.evaluateElExpressionAttribute(value.toString(), product, null, null, Object.class);
+					Object result = attributeService.evaluateElExpressionAttribute(value.toString(), product, null, null, walletOperation, Object.class);
 					if (value instanceof Collection) {
-						List<String> sourceEL = Arrays.asList(attributeMapping.getAttributeValue().split(";"));
+						List<String> sourceEL = Arrays.asList(attributeMapping.getAttributeValue().split(multiValuesAttributeSeparator));
 						List<Object> inputEL = (List) value;
 						return valueCompareCollection(attributeMapping.getOperator(), sourceEL, inputEL);
 					}
@@ -594,5 +613,15 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		}
 		return true;
 	}
+	
+
+    public AccountingArticle getDefaultAccountingArticle() {
+        String articleCode = ParamBean.getInstance().getProperty("accountingArticle.advancePayment.defautl.code", "ADV-STD");
+
+        AccountingArticle accountingArticle = findByCode(articleCode);
+        if (accountingArticle == null)
+            throw new EntityDoesNotExistsException(AccountingArticle.class, articleCode);
+        return accountingArticle;
+    }
 
 }

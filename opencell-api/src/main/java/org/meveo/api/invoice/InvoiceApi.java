@@ -23,6 +23,7 @@ import static org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID;
 import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -91,6 +92,8 @@ import org.meveo.model.payments.PaymentHistory;
 import org.meveo.model.payments.PaymentScheduleInstance;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.WriteOff;
+import org.meveo.model.securityDeposit.SecurityDeposit;
+import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -546,10 +549,11 @@ public class InvoiceApi extends BaseApi {
      * @throws BusinessException business exception
      * @throws InvoiceExistException Invoice already exists exception
      * @throws ImportInvoiceException Failed to import invoice exception
+     * @throws IOException 
      */
     @TransactionAttribute
     public String validateInvoice(Long invoiceId, boolean generateAO, boolean refreshExchangeRate) throws MissingParameterException,
-            EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
+            EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException, IOException {
     	return validateInvoice(invoiceId, generateAO, refreshExchangeRate, true);
     }
     
@@ -565,10 +569,11 @@ public class InvoiceApi extends BaseApi {
      * @throws BusinessException business exception
      * @throws InvoiceExistException Invoice already exists exception
      * @throws ImportInvoiceException Failed to import invoice exception
+     * @throws IOException 
      */
     @TransactionAttribute
     public String validateInvoice(Long invoiceId, boolean generateAO, boolean refreshExchangeRate, boolean createSD) throws MissingParameterException,
-            EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
+            EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException, IOException {
         if (StringUtils.isBlank(invoiceId)) {
             missingParameters.add("invoiceId");
         }
@@ -586,15 +591,41 @@ public class InvoiceApi extends BaseApi {
         
         //Create SD
         if (invoice.getInvoiceType() != null && "SECURITY_DEPOSIT".equals(invoice.getInvoiceType().getCode()) && createSD) {
-            SecurityDepositTemplate defaultSDTemplate = securityDepositTemplateService.getDefaultSDTemplate();
-            Long count = securityDepositService.countPerTemplate(defaultSDTemplate);
-            securityDepositService.createSD(invoice, defaultSDTemplate, count);
+        	Optional<SecurityDeposit> osd = securityDepositService.getSecurityDepositByInvoiceId(invoice.getId());
+        	if(osd.isPresent()) {
+        		SecurityDeposit securityDeposit = osd.get();
+        		securityDeposit.setAmount(invoice.getAmountWithoutTax());
+        		securityDeposit.setBillingAccount(invoice.getBillingAccount());
+        		securityDeposit.setCustomerAccount(invoice.getBillingAccount().getCustomerAccount());
+        		securityDeposit.setStatus(SecurityDepositStatusEnum.VALIDATED);
+        		securityDepositService.update(securityDeposit);
+        		
+        		//Get SD Template number of instantiation and update it after creating a new SD
+        		SecurityDepositTemplate sdt = invoiceService.updateSDTemplate(securityDeposit.getTemplate());
+        		securityDepositTemplateService.update(sdt);
+        		
+        	} else if(createSD) {
+        		SecurityDepositTemplate defaultSDTemplate = securityDepositTemplateService.getDefaultSDTemplate();
+        		Long count = securityDepositService.countPerTemplate(defaultSDTemplate);
+        		securityDepositService.createSD(invoice, defaultSDTemplate, count);
+        		
+        		//Get SD Template number of instantiation and update it after creating a new SD
+        		SecurityDepositTemplate sdt = invoiceService.updateSDTemplate(defaultSDTemplate);
+        		securityDepositTemplateService.update(sdt);
+        	}
         }
         
         if(invoice.getDueDate().after(today) && invoice.getStatus() == VALIDATED){
             updatePaymentStatus(invoice, today, PENDING);
         }else if(invoice.getDueDate().before(today) && invoice.getStatus() == VALIDATED) {
             updatePaymentStatus(invoice, today, UNPAID);
+        }
+        
+        if (invoiceService.isInvoiceXmlExist(invoice)) {
+            invoiceService.deleteInvoiceXml(invoice);
+        }
+        if (invoiceService.isInvoicePdfExist(invoice)) {
+        	invoiceService.deleteInvoicePdf(invoice);
         }
         return invoice.getInvoiceNumber();
     }
@@ -1166,8 +1197,8 @@ public class InvoiceApi extends BaseApi {
         categoryInvoiceAgregates.sort(Comparator.comparing(CategoryInvoiceAgregateDto::getCategoryInvoiceCode));
         taxAggregates.sort(Comparator.comparing(TaxInvoiceAggregateDto::getTaxCode));
 
-        for (Invoice inv : invoice.getLinkedInvoices()) {
-            listInvoiceIdToLink.add(inv.getId());
+        for (LinkedInvoice inv : invoice.getLinkedInvoices()) {
+            listInvoiceIdToLink.add(inv.getLinkedInvoiceValue().getId());
         }
 
         if (!categoryInvoiceAgregates.isEmpty()) {

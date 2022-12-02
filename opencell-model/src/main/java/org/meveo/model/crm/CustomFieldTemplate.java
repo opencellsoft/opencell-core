@@ -67,13 +67,8 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.RoundingModeEnum;
-import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
-import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
+import org.meveo.model.crm.custom.*;
 import org.meveo.model.crm.custom.CustomFieldMatrixColumn.CustomFieldColumnUseEnum;
-import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.shared.DateUtils;
 
@@ -106,6 +101,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     private static final long serialVersionUID = -1403961759495272885L;
 
     public static final long DEFAULT_MAX_LENGTH_STRING = 50L;
+    public static final long DEFAULT_MAX_LENGTH_URL = 200L;
 
     public static final String ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR = " - ";
     private static final String CUSTOM_TABLE_STRUCTURE_REGEX = "org.meveo.model.customEntities.CustomEntityTemplate - [a-zA-Z\\S]{1,}$";
@@ -619,6 +615,8 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
                 return DateUtils.parseDateWithPattern(defaultValue, DateUtils.DATE_TIME_PATTERN);
             } else if (fieldType == CustomFieldTypeEnum.BOOLEAN){
                 return Boolean.parseBoolean(defaultValue);
+            } else if(fieldType == CustomFieldTypeEnum.URL){
+                return new UrlReferenceWrapper(defaultValue);
             }
         } catch (Exception e) {
             return null;

@@ -196,7 +196,7 @@ OrderAdvancementScript extends ModuleScript {
             createInvoiceLine(commercialOrder, account.getAccountingArticle(),account.getProductVersion(),account.getOrderOffer(),account.getAmountWithoutTax().negate(), account.getAmountWithTax().negate(), account.getAmountTax().negate(), account.getTaxRate(),null);
         }
 
-        createIlsAndInvoice(commercialOrder,groupedPricesToBill,null, nextDay, firstTransactionDate, invoiceDate, false);
+        createIlsAndInvoice(commercialOrder,groupedPricesToBill, BigDecimal.valueOf(100), nextDay, firstTransactionDate, invoiceDate, false);
 
 
     }

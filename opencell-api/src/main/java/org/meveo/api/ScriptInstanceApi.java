@@ -21,14 +21,17 @@ package org.meveo.api;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.ScriptInstanceDto;
 import org.meveo.api.dto.ScriptInstanceErrorDto;
+import org.meveo.api.dto.ScriptParameterDto;
 import org.meveo.api.dto.script.CustomScriptDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -40,6 +43,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.scripts.ScriptInstanceCategory;
 import org.meveo.model.scripts.ScriptInstanceError;
+import org.meveo.model.scripts.ScriptParameter;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
 import org.meveo.service.script.ScriptInstanceCategoryService;
 import org.meveo.service.script.ScriptInstanceService;
@@ -290,6 +294,20 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
 
         scriptInstance.getExecutionRoles().addAll(dto.getExecutionRoles());
         scriptInstance.getSourcingRoles().addAll(dto.getExecutionRoles());
+        
+        if(dto.getLanguageDescriptions() != null && !dto.getLanguageDescriptions().isEmpty()) {
+            scriptInstance.setDescriptionI18n(dto.getLanguageDescriptions().stream().collect(Collectors.toMap(LanguageDescriptionDto::getLanguageCode, LanguageDescriptionDto::getDescription)));
+        }
+        
+        List<ScriptParameter> existingScriptParamters = scriptInstance.getScriptParameters();
+        if (existingScriptParamters != null && !existingScriptParamters.isEmpty()) {
+        	scriptInstance.getScriptParameters().removeAll(existingScriptParamters);
+        }
+        
+        if(dto.getScriptParameters() != null && !dto.getScriptParameters().isEmpty()) {
+            scriptInstance.getScriptParameters().addAll(dto.getScriptParameters().stream().map(ScriptParameterDto::mapToEntity).collect(Collectors.toList()));
+            for (ScriptParameter sp : scriptInstance.getScriptParameters()) sp.setScriptInstance(scriptInstance);
+        }
         
         return scriptInstance;
     }

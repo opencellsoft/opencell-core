@@ -2,6 +2,7 @@ package org.meveo.service.base;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.meveo.admin.util.pagination.FilterOperatorEnum;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.Invoice;
@@ -169,7 +170,7 @@ public class PersistenceServiceTest {
     @Test
     public void test_min_max_range_inclusive() {
         filters.put("minmaxRangeInclusive minmaxRangeInclusiveField1 minmaxRangeInclusiveField2", 3);
-        assertThat(getQuery()).isEqualTo("from org.meveo.model.billing.Invoice a left join fetch a.fetchField where " +
+        assertThat(getQuery()).isEqualTo("from org.meveo.model.billing.Invoice a left join fetch a.fetchField as a_fetchField  where " +
                 "a.minmaxRangeInclusiveField1<=:a_minmaxRangeInclusiveField1 and a.minmaxRangeInclusiveField2 >= :a_minmaxRangeInclusiveField2 " +
                 "Param name:a_minmaxRangeInclusiveField2 value:3 Param name:a_minmaxRangeInclusiveField1 value:3");
     }
@@ -351,6 +352,7 @@ public class PersistenceServiceTest {
 
     @Test
     public void test() {
+//    	filters.put("$operator", 'O');
         filters.put("defaultEqualFilter", 1);
         filters.put("eq equalFilter", 2);
         filters.put("fromRange fromRangeFilter", 10);
@@ -362,7 +364,7 @@ public class PersistenceServiceTest {
         filters.put(SEARCH_WILDCARD_OR + " wildcardOrFilter", "wildCard*");
         filters.put(SEARCH_WILDCARD_OR_IGNORE_CAS + " wildcardOrIgnoreCaseFilter", "wildCardIngoreCase*");
 
-        assertThat(getQuery()).isEqualTo("from org.meveo.model.billing.Invoice a left join fetch a.fetchField where " +
+        assertThat(getQuery()).isEqualTo("from org.meveo.model.billing.Invoice a left join fetch a.fetchField as a_fetchField where " +
                 "a.defaultEqualFilter = :a_defaultEqualFilter " +
                 "and (" +
                 "( a.overlapOptionalRangeFilter1 IS NULL and a.overlapOptionalRangeFilter2 IS NULL) " +
@@ -385,6 +387,47 @@ public class PersistenceServiceTest {
                 "and a.fromRangeFilter >= :a_fromRangeFilter " +
                 "and a.equalFilter = :a_equalFilter " +
                 "Param name:a_equalFilter value:2 Param name:a_defaultEqualFilter value:1 Param name:listFilter value:10 Param name:a_toRangeFilter value:10 Param name:a_minmaxRangeFilter2 value:10 Param name:a_minmaxRangeFilter1 value:10 Param name:a_likeCriteriasFilter value:likeword Param name:a_fromRangeFilter value:10 Param name:a_overlapOptionalRangeFilter1 value:10 Param name:a_overlapOptionalRangeFilter2 value:15");
+    }
+    
+    @Test
+    public void test_filter_OR() {
+    	filters.clear();
+        filters.put("$operator", FilterOperatorEnum.OR);
+        filters.put("eq code", "code");
+        filters.put("eq invoiceNumber", "number");
+        
+        assertThat(getQuery()).isEqualTo("from org.meveo.model.billing.Invoice a "
+        								+ "left join fetch a.fetchField as a_fetchField "
+        								+ "where lower(a.code) = :a_code "
+        								+ "or lower(a.invoiceNumber) = :a_invoiceNumber "
+        								+ "Param name:a_code value:code Param name:a_invoiceNumber value:number");
+    }
+
+    @Test
+    public void test_filter_AND() {
+    	filters.clear();
+        filters.put("$operator", FilterOperatorEnum.AND);
+        filters.put("eq code", "code");
+        filters.put("eq invoiceNumber", "number");
+        
+        assertThat(getQuery()).isEqualTo("from org.meveo.model.billing.Invoice a "
+        								+ "left join fetch a.fetchField as a_fetchField "
+        								+ "where lower(a.code) = :a_code "
+        								+ "and lower(a.invoiceNumber) = :a_invoiceNumber "
+        								+ "Param name:a_code value:code Param name:a_invoiceNumber value:number");
+    }
+
+    @Test
+    public void test_filter_default() {
+    	filters.clear();
+        filters.put("eq code", "code");
+        filters.put("eq invoiceNumber", "number");
+        
+        assertThat(getQuery()).isEqualTo("from org.meveo.model.billing.Invoice a "
+        								+ "left join fetch a.fetchField as a_fetchField "
+        								+ "where lower(a.code) = :a_code "
+        								+ "and lower(a.invoiceNumber) = :a_invoiceNumber "
+        								+ "Param name:a_code value:code Param name:a_invoiceNumber value:number");
     }
 
     private String getQuery() {

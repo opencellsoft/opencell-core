@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.Stack;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -44,6 +45,7 @@ import javax.persistence.criteria.JoinType;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.meveo.admin.util.pagination.FilterOperatorEnum;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.jpa.EntityManagerProvider;
@@ -68,6 +70,17 @@ import org.meveo.security.keycloak.CurrentUserProvider;
  * @lastModifiedVersion 12.x
  */
 public class QueryBuilder {
+	
+	private class NestedQuery {
+		FilterOperatorEnum operator = FilterOperatorEnum.AND;
+		boolean hasOneOrMoreCriteria = false;
+
+		public NestedQuery(FilterOperatorEnum operator, boolean hasOneOrMoreCriteria) {
+			super();
+			this.operator = operator;
+			this.hasOneOrMoreCriteria = hasOneOrMoreCriteria;
+		} 
+	}
 
     public static final String INNER_JOINS = "{innerJoins}";
     protected StringBuilder q;
@@ -79,6 +92,8 @@ public class QueryBuilder {
     private boolean hasOneOrMoreCriteria;
 
     private boolean inOrClause;
+    
+    private Stack<NestedQuery> nestedClauses = new Stack<>();
 
     private int nbCriteriaInOrClause;
 
@@ -99,6 +114,8 @@ public class QueryBuilder {
     private static Set<String> joinAlias = new TreeSet<String>();
     
     private JoinType joinType = JoinType.INNER ;
+    
+    private FilterOperatorEnum filterOperator = FilterOperatorEnum.AND;
 
 
 	public JoinType getJoinType() {
@@ -232,6 +249,20 @@ public class QueryBuilder {
 		this.joinType = joinType != null ? joinType : JoinType.INNER;
 	}
 
+	/**
+	 * Contructor 
+	 * 
+	 * @param clazz Class for which query is created.
+     * @param alias Alias of a main table.
+     * @param fetchFields Additional (list/map type) fields to fetch
+	 * @param joinType
+	 * @param filterOperator Operator to build where statement
+	 */
+	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, JoinType joinType, FilterOperatorEnum filterOperator) {
+		this(clazz, alias, fetchFields, joinType);
+    	this.filterOperator = filterOperator;
+	}
+
     /**
      * Constructor.
      * 
@@ -312,7 +343,7 @@ public class QueryBuilder {
 	 * @param fetchField
 	 * @return
 	 */
-	private static String getJoinAlias(String alias, String fetchField, boolean checkExisting) {
+	public static String getJoinAlias(String alias, String fetchField, boolean checkExisting) {
 		String result = alias+"_"+fetchField.replaceAll("\\.", "_");
 		if(checkExisting) {
 			if(joinAlias.contains(result)) {
@@ -413,10 +444,28 @@ public class QueryBuilder {
         if (param != null && StringUtils.isBlank(value)) {
             return this;
         }
+        
+        if(!nestedClauses.empty()) {
+        	NestedQuery currentNF = nestedClauses.pop();
+        	if(currentNF.hasOneOrMoreCriteria) {
+        		if (FilterOperatorEnum.OR.equals(currentNF.operator)) {
+	                q.append(" or ");
+	            } else {
+	                q.append(" and ");
+	            }
+        	}
+        	q.append(sql);
+        	if (param != null) {
+                params.put(param, value);
+            }
+        	currentNF.hasOneOrMoreCriteria = true;
+        	nestedClauses.add(currentNF);
+        	return this;
+        }
 
         if (hasOneOrMoreCriteria) {
         	if(!sql.startsWith(" or ")) {
-	            if (inOrClause && nbCriteriaInOrClause != 0) {
+	            if (FilterOperatorEnum.OR.equals(this.filterOperator) || (inOrClause && nbCriteriaInOrClause != 0)) {
 	                q.append(" or ");
 	            } else {
 	                q.append(" and ");
@@ -454,7 +503,7 @@ public class QueryBuilder {
         }
 
         if (hasOneOrMoreCriteria) {
-            if (inOrClause && nbCriteriaInOrClause != 0) {
+            if (FilterOperatorEnum.OR.equals(this.filterOperator) || (inOrClause && nbCriteriaInOrClause != 0)) {
                 q.append(" or ");
             } else {
                 q.append(" and ");
@@ -660,7 +709,7 @@ public class QueryBuilder {
         if (isFieldValueOptional) {
             return addSqlCriterion("(" + field + " IS NULL or (" + field + " " + condition + ":" + param + "))", param, listValue);
         } else {
-            return addSqlCriterion(field + " " + condition + ":" + param, param, listValue);
+            return addSqlCriterion(field + " " + condition + "(:" + param + ")", param, listValue);
         }
     }
 
@@ -1255,6 +1304,32 @@ public class QueryBuilder {
         inOrClause = false;
         nbCriteriaInOrClause = 0;
         return this;
+    }
+
+    public QueryBuilder startNestedFilter(FilterOperatorEnum operator) {
+    	if(!nestedClauses.empty()) {
+    		NestedQuery parentNF = nestedClauses.peek();
+    		if(parentNF.hasOneOrMoreCriteria) {
+    			q.append(" " + parentNF.operator + " ");
+    		}
+    	} else if (hasOneOrMoreCriteria) {
+    		q.append(" " + filterOperator + " ");
+    	} else {
+    		q.append(" where ");
+    	}
+    	q.append(" (");
+    	nestedClauses.add(new NestedQuery(operator, false));
+    	return this;
+    }
+
+    public QueryBuilder endNestedFilter() {
+    	q.append(")");
+    	nestedClauses.pop();
+    	if(!nestedClauses.empty()) {
+    		nestedClauses.peek().hasOneOrMoreCriteria = true;
+    	}
+    	hasOneOrMoreCriteria = true;
+    	return this;
     }
 
     /**

@@ -12,9 +12,12 @@ import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 
+import liquibase.pro.packaged.D;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
+import org.assertj.core.util.DateUtil;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
@@ -45,6 +48,7 @@ import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
@@ -68,6 +72,7 @@ import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
@@ -238,7 +243,7 @@ public class ProductApi extends BaseApi {
 
 			if(productDto.getCurrentProductVersion() != null){
 				checkMandatoryFields(productDto.getCurrentProductVersion());
-				ProductVersion existingProductVersion = productVersionService.findByProductAndVersion(productDto.getCode(), productDto.getCurrentProductVersion().getCurrentVersion());
+				ProductVersion existingProductVersion = productVersionService.findByProductAndVersion(productCode, productDto.getCurrentProductVersion().getCurrentVersion());
 				if(existingProductVersion != null)
 					updateProductVersion(productDto.getCurrentProductVersion(), existingProductVersion);
 				else
@@ -474,6 +479,15 @@ public class ProductApi extends BaseApi {
 		}else if(postData.getValidity() != null && postData.getValidity().getFrom() == null) {
 			postData.getValidity().setFrom(Calendar.getInstance().getTime());
 			productVersion.setValidity(postData.getValidity());
+		}
+		Date today = DateUtils.setTimeToZero(new Date());
+		if(postData.getValidity() != null && postData.getValidity().getTo()!=null
+				&& DateUtils.setTimeToZero(postData.getValidity().getTo()).compareTo(today) <= 0) {
+			throw new MeveoApiException("End date must be greater than today");
+		}
+		if(productVersion.getStatus() == VersionStatusEnum.CLOSED
+				&& postData.getValidity() != null && postData.getValidity().getTo() != null) {
+			throw new MeveoApiException("Can not update endDate for closed version");
 		}
 		productVersion.setValidity(postData.getValidity());
 		productVersion.setStatus(postData.getStatus() == null ? VersionStatusEnum.DRAFT : postData.getStatus());
@@ -833,11 +847,23 @@ public class ProductApi extends BaseApi {
 				productAttribute.setValidationPattern(attr.getValidationPattern());
 				productAttribute.setValidationType(attr.getValidationType());
 				//productVersionAttributeService.checkValidationPattern(productAttribute);
+				validateTemplateAttribute(productAttribute);
                 attributes.add(productAttribute);
 			}
             productVersion.getAttributes().addAll(attributes);
 		}
 	}
+	
+	private void validateTemplateAttribute(ProductVersionAttribute productAttribute) {
+    	// A hidden mandatory field must have a default value 
+    	if (productAttribute.isMandatory() && !productAttribute.isDisplay() 
+         		&& (productAttribute.getDefaultValue() == null || productAttribute.getDefaultValue().isEmpty())) 
+         	 throw new InvalidParameterException("Default value is required for an attribute mandatory and hidden");
+    	// A read-only mandatory attribute must have a default value
+    	 if (productAttribute.isMandatory() && productAttribute.getReadOnly()
+          		&& (productAttribute.getDefaultValue() == null || productAttribute.getDefaultValue().isEmpty())) 
+          	 throw new InvalidParameterException("Default value is required for an attribute mandatory and read-only");
+    }
 
 	private void processTags(ProductVersionDto postData, ProductVersion productVersion) {
 		Set<String> tagCodes = postData.getTagCodes();
