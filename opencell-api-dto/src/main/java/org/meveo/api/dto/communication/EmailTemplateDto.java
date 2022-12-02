@@ -69,8 +69,6 @@ public class EmailTemplateDto extends MessageTemplateDto {
         super(emailTemplate);
         this.subject = emailTemplate.getSubject();
         this.htmlContent = emailTemplate.getHtmlContent();
-       // this.translatedSubject = emailTemplate.getTranslatedSubject();
-       // this.translatedHtmlContent = emailTemplate.getTranslatedHtmlContent();
     }
 
     /**
