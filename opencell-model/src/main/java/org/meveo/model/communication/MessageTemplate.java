@@ -18,7 +18,6 @@
 package org.meveo.model.communication;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.persistence.Cacheable;

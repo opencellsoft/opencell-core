@@ -49,9 +49,9 @@ public class EmailTemplateDto extends MessageTemplateDto {
     
     /** The text content. */
 
-    private List<TranslatedHtmlContentDto> translatedHtmlContent;
+    private transient List<TranslatedHtmlContentDto> translatedHtmlContent;
 
-    private List<TranslatedSubjectDto> translatedSubject;
+    private transient List<TranslatedSubjectDto> translatedSubject;
 
     /**
      * Instantiates a new email template dto.

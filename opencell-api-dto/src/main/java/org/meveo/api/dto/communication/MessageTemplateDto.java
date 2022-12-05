@@ -63,7 +63,7 @@ public class MessageTemplateDto extends BusinessEntityDto {
 
     private String textContent;
 
-    private List<TranslatedTextContentDto> translatedTextContent;
+    private transient List<TranslatedTextContentDto> translatedTextContent;
 
     /**
      * Instantiates a new message template dto.

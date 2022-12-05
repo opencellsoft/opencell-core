@@ -4,7 +4,6 @@ package org.meveo.apiv2.communication;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.api.dto.communication.EmailTemplateDto;
-import org.meveo.apiv2.crm.ContactCategoryDto;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.PUT;
@@ -12,7 +11,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 @Path("/setting/internationalSettings")
 @Consumes(MediaType.APPLICATION_JSON)

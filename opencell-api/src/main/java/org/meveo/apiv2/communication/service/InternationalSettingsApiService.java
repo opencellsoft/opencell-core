@@ -5,6 +5,7 @@ import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.service.communication.impl.InternationalSettingsService;
 
 import javax.inject.Inject;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,7 +16,7 @@ public class InternationalSettingsApiService implements ApiService<EmailTemplate
 
     @Override
     public List<EmailTemplate> list(Long offset, Long limit, String sort, String orderBy, String filter) {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override

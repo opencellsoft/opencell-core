@@ -25,7 +25,6 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Type;
 import org.meveo.model.communication.MessageTemplate;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Entity
@@ -81,7 +80,7 @@ public class EmailTemplate extends MessageTemplate {
         this.translatedSubject = translatedSubject;
     }
 
-
+    @Override
     public String toString() {
         return super.toString() + "\n subject:" + subject + "\n html content:" + htmlContent + "\n text content:" + super.getTextContent();
     }

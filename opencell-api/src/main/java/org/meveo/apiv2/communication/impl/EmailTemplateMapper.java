@@ -18,6 +18,8 @@ import java.util.Map;
 
 public class EmailTemplateMapper {
 
+    public static final String IS_NOT_SUPPORTED_BY_THE_PROVIDER = " is not supported by the provider.";
+    public static final String LANGUAGE = "Language ";
     @Inject
     TradingLanguageService tradingLanguageService;
 
@@ -40,8 +42,8 @@ public class EmailTemplateMapper {
     private static List<TranslatedTextContentDto> convertToTranslatedTextDto(Map<String, String> textTranslationsMap) {
 
         List<TranslatedTextContentDto> textTranslations = new ArrayList<>();
-        for (String language : textTranslationsMap.keySet()) {
-            TranslatedTextContentDto translatedTextContentDto = new TranslatedTextContentDto(language, textTranslationsMap.get(language));
+        for (Map.Entry<String, String> languageTranslation : textTranslationsMap.entrySet()) {
+            TranslatedTextContentDto translatedTextContentDto = new TranslatedTextContentDto(languageTranslation.getKey(), languageTranslation.getValue());
             textTranslations.add(translatedTextContentDto);
         }
 
@@ -52,8 +54,8 @@ public class EmailTemplateMapper {
 
         List<TranslatedSubjectDto> subjectTranslations = new ArrayList<>();
 
-        for (String language : subjectTranslationsMap.keySet()) {
-            TranslatedSubjectDto translatedSubjectDto = new TranslatedSubjectDto(language, subjectTranslationsMap.get(language));
+        for (Map.Entry<String, String> subjecTranslation : subjectTranslationsMap.entrySet()) {
+            TranslatedSubjectDto translatedSubjectDto = new TranslatedSubjectDto(subjecTranslation.getKey(), subjecTranslation.getValue());
             subjectTranslations.add(translatedSubjectDto);
         }
 
@@ -64,8 +66,8 @@ public class EmailTemplateMapper {
 
         List<TranslatedHtmlContentDto> htmlTranslations = new ArrayList<>();
 
-        for (String language : htmlTranslationsMap.keySet()) {
-            TranslatedHtmlContentDto translatedHtmlContentDto = new TranslatedHtmlContentDto(language, htmlTranslationsMap.get(language));
+        for (Map.Entry<String, String> htmlTranslation : htmlTranslationsMap.entrySet()) {
+            TranslatedHtmlContentDto translatedHtmlContentDto = new TranslatedHtmlContentDto(htmlTranslation.getKey(), htmlTranslation.getValue());
             htmlTranslations.add(translatedHtmlContentDto);
         }
 
@@ -109,7 +111,7 @@ public class EmailTemplateMapper {
 
         for (TranslatedSubjectDto translatedSubjectDto : translatedSubjects) {
             if (!supportedLanguages.contains(translatedSubjectDto.getLanguageCode())) {
-                throw new InvalidParameterException("Language " + translatedSubjectDto.getLanguageCode() + " is not supported by the provider.");
+                throw new InvalidParameterException(LANGUAGE + translatedSubjectDto.getLanguageCode() + IS_NOT_SUPPORTED_BY_THE_PROVIDER);
             }
             if (StringUtils.isBlank(translatedSubjectDto.getSubject())) {
                 values.remove(translatedSubjectDto.getLanguageCode());
@@ -131,7 +133,7 @@ public class EmailTemplateMapper {
 
         for (TranslatedHtmlContentDto translatedHtmlContentDto : htmlTranslations) {
             if (!supportedLanguages.contains(translatedHtmlContentDto.getLanguageCode())) {
-                throw new InvalidParameterException("Language " + translatedHtmlContentDto.getLanguageCode() + " is not supported by the provider.");
+                throw new InvalidParameterException(LANGUAGE + translatedHtmlContentDto.getLanguageCode() + IS_NOT_SUPPORTED_BY_THE_PROVIDER);
             }
             if (StringUtils.isBlank(translatedHtmlContentDto.getHtmlContent())) {
                 values.remove(translatedHtmlContentDto.getLanguageCode());
@@ -153,7 +155,7 @@ public class EmailTemplateMapper {
 
         for (TranslatedTextContentDto translatedTextContentDto : textTranslations) {
             if (!supportedLanguages.contains(translatedTextContentDto.getLanguageCode())) {
-                throw new InvalidParameterException("Language " + translatedTextContentDto.getLanguageCode() + " is not supported by the provider.");
+                throw new InvalidParameterException(LANGUAGE + translatedTextContentDto.getLanguageCode() + IS_NOT_SUPPORTED_BY_THE_PROVIDER);
             }
             if (StringUtils.isBlank(translatedTextContentDto.getTextContent())) {
                 values.remove(translatedTextContentDto.getLanguageCode());
