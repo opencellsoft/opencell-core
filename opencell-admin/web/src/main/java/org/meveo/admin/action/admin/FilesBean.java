@@ -176,8 +176,14 @@ public class FilesBean implements Serializable {
         String invoiceXmlDir = getFilePath() + File.separator + DirectoriesConstants.INVOICES_ROOT_FOLDER + File.separator + "xml";
         String jasperDir = getFilePath() + File.separator + DirectoriesConstants.JASPER_ROOT_FOLDER;
         String priceplanVersionsDir = getFilePath() + File.separator + DirectoriesConstants.IMPORTS_ROOT_FOLDER + File.separator + "priceplan_versions";
+        String tunnelDir = getFilePath() + File.separator + DirectoriesConstants.TUNNEL_ROOT_FOLDER;
+        String tunnelMediaDir = tunnelDir + File.separator + DirectoriesConstants.MEDIA_SUBFOLDER;
+        String tunnelContractsDir = tunnelDir + File.separator + DirectoriesConstants.CONTRACTS_SUBFOLDER;
+        String offersContractsDir = tunnelContractsDir + File.separator + DirectoriesConstants.OFFERS_CONTRACTS_SUBFOLDER;
+        String mandateContractDir = tunnelContractsDir + File.separator + DirectoriesConstants.MANDATE_CONTRACT_SUBFOLDER;
         List<String> filePaths = Arrays.asList("", customerDirIN, customerDirOUT, customerDirERR, customerDirWARN, customerDirKO, accountDirIN, accountDirOUT, accountDirERR, accountDirWARN, accountDirKO, subDirIN,
-            subDirOUT, subDirERR, subDirWARN, catDirIN, catDirOUT, catDirKO, subDirKO, meterDirIN, meterDirOUT, meterDirKO, invoicePdfDir, invoiceXmlDir, jasperDir, priceplanVersionsDir);
+                subDirOUT, subDirERR, subDirWARN, catDirIN, catDirOUT, catDirKO, subDirKO, meterDirIN, meterDirOUT, meterDirKO, invoicePdfDir, invoiceXmlDir, jasperDir, priceplanVersionsDir,
+                tunnelDir, tunnelMediaDir, tunnelContractsDir, offersContractsDir, mandateContractDir);
         for (String custDirs : filePaths) {
             File subDir = new File(custDirs);
             if (!subDir.exists()) {
