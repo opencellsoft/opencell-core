@@ -2,14 +2,10 @@ package org.meveo.api.dto.communication;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 
 
-@XmlRootElement(name = "translatedSubject")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class TranslatedSubjectDto {
+public class TranslatedSubjectDto implements Serializable {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -4686792860854718893L;

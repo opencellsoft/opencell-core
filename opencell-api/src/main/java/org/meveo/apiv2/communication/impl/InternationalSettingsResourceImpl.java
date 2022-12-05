@@ -14,7 +14,6 @@ import javax.inject.Inject;
 
 import java.util.Optional;
 
-import static java.util.Optional.ofNullable;
 
 public class InternationalSettingsResourceImpl implements InternationalSettingsResource {
 
@@ -31,8 +30,7 @@ public class InternationalSettingsResourceImpl implements InternationalSettingsR
     @Override
     public EmailTemplateDto update(String emailTemplateCode, EmailTemplateDto emailTemplateDto) {
 
-        EmailTemplate emailTemplate = ofNullable(emailTemplateService.findByCode(emailTemplateCode))
-                .orElseThrow(() -> new EntityDoesNotExistsException(EmailTemplate.class, emailTemplateCode));
+        EmailTemplate emailTemplate = emailTemplateService.findByCode(emailTemplateCode);
 
         Optional<EmailTemplate> updatedEmailTemplate = internationalSettingsApiService
                 .update(emailTemplate.getId(), emailTemplateMapper.toEntity(emailTemplateDto, emailTemplate));
