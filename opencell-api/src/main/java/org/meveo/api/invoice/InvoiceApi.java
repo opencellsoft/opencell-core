@@ -1280,4 +1280,9 @@ public class InvoiceApi extends BaseApi {
     	if(invoice == null) throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
     	return invoiceToDto(invoiceService.duplicate(invoice), false, false, false);
     }
+
+    public void rebuildInvoice(Long invoiceId, boolean save) {
+        Invoice invoice = invoiceService.findById(invoiceId);
+        invoiceService.rebuildInvoice(invoice, save);
+    }
 }
