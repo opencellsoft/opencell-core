@@ -1,5 +1,6 @@
 package org.meveo.apiv2.communication.service;
 
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.service.communication.impl.InternationalSettingsService;
@@ -36,6 +37,9 @@ public class InternationalSettingsApiService implements ApiService<EmailTemplate
 
     @Override
     public Optional<EmailTemplate> update(Long id, EmailTemplate emailTemplate) {
+        if(emailTemplate == null){
+           throw new EntityDoesNotExistsException(EmailTemplate.class, id);
+        }
         internationalSettingsService.update(emailTemplate);
         return Optional.of(emailTemplate);
     }
