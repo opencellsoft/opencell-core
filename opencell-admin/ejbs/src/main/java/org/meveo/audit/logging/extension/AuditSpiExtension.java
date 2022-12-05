@@ -20,10 +20,10 @@ package org.meveo.audit.logging.extension;
 
 import java.lang.annotation.Annotation;
 
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.AnnotatedType;
-import javax.enterprise.inject.spi.Extension;
-import javax.enterprise.inject.spi.ProcessAnnotatedType;
+import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.spi.AnnotatedType;
+import jakarta.enterprise.inject.spi.Extension;
+import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
 
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.audit.logging.core.AuditContext;

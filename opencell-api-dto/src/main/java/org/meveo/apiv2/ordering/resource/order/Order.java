@@ -25,7 +25,7 @@ import org.meveo.apiv2.models.Resource;
 import org.meveo.apiv2.ordering.resource.orderItem.OrderItem;
 import org.meveo.model.order.OrderStatusEnum;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 
 @Value.Immutable

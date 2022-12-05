@@ -17,11 +17,12 @@
  */
 package org.meveo.model;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
-import javax.validation.constraints.NotNull;
+import org.hibernate.type.NumericBooleanConverter;
 
-import org.hibernate.annotations.Type;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Tracks if business type entity is active or inactive. Extends Business entity
@@ -33,7 +34,7 @@ public abstract class EnableBusinessEntity extends BusinessEntity implements IEn
     /**
      * Is entity disabled
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "disabled", nullable = false)
     @NotNull
     protected boolean disabled;

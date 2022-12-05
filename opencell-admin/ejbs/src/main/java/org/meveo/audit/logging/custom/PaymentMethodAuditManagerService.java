@@ -29,8 +29,8 @@ import org.meveo.model.payments.EntityActionsEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;

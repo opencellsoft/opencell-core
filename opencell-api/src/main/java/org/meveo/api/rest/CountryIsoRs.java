@@ -32,8 +32,8 @@ import org.meveo.api.dto.CountryIsoDto;
 import org.meveo.api.dto.response.GetCountriesIsoResponse;
 import org.meveo.api.dto.response.GetCountryIsoResponse;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * Web service for managing {@link org.meveo.model.billing.Country}.

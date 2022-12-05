@@ -212,7 +212,7 @@
 
         <!-- Import hibernate for boolean mapping to Char - compatibility between postgress and mysql - use provided scope as is included in JBoss -->
         <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -299,8 +299,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jboss.spec.javax.xml.bind</groupId>
-            <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -330,6 +330,7 @@
         <dependency>
             <groupId>org.wildfly.security</groupId>
             <artifactId>wildfly-elytron-credential-store</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <!-- TESTING dependencies -->

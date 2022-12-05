@@ -6,7 +6,7 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.communication.MessageTemplateTypeEnum;
 import org.meveo.model.payments.ActionChannelEnum;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Map;
 
 @Value.Immutable

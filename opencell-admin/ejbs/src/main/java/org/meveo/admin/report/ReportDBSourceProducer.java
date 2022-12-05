@@ -19,7 +19,7 @@ package org.meveo.admin.report;
 
 import java.util.List;
 
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
  * This interface should be implemented by class which generates XML file with

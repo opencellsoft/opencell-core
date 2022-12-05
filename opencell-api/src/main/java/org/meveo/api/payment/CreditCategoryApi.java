@@ -32,8 +32,8 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.CreditCategory;
 import org.meveo.service.payments.impl.CreditCategoryService;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

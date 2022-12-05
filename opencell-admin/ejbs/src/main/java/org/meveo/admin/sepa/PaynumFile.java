@@ -24,7 +24,7 @@ import java.math.RoundingMode;
 import java.security.MessageDigest;
 import java.util.Date;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.exception.BusinessException;

@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.Stateless;
-import javax.persistence.Query;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.DatePeriod;

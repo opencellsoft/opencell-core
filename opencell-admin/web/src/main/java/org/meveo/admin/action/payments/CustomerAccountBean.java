@@ -24,9 +24,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.lang3.RandomStringUtils;

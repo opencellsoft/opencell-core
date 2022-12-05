@@ -13,9 +13,9 @@ import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.crm.impl.ProviderService;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
+import jakarta.persistence.NoResultException;
 
 import java.util.Date;
 import java.util.Set;

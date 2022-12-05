@@ -6,9 +6,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.apiv2.securityDeposit.SDTemplateListStatus;
 import org.meveo.apiv2.securityDeposit.SecurityDepositTemplate;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 @Path("/securityDeposit/securityDepositTemplate")
 @Consumes(MediaType.APPLICATION_JSON)

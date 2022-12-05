@@ -20,7 +20,7 @@ package org.meveo.service.audit;
 
 import org.meveo.model.audit.ChangeOriginEnum;
 
-import javax.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.RequestScoped;
 
 /**
  * keep the audit origin

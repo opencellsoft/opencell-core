@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;

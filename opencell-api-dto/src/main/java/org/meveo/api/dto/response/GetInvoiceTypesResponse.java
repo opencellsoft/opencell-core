@@ -21,9 +21,9 @@ package org.meveo.api.dto.response;
 import org.meveo.api.dto.billing.InvoiceTypeDto;
 import org.meveo.api.dto.billing.InvoiceTypesDto;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 /**
  * The Class GetInvoiceTypesResponse.

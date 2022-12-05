@@ -3,13 +3,6 @@ package org.meveo.model.billing;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.CustomFieldEntity;
@@ -18,6 +11,12 @@ import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.security.MeveoUser;
+
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Cacheable

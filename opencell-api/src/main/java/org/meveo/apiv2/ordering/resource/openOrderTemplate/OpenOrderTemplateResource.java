@@ -27,8 +27,8 @@ import org.meveo.apiv2.models.ApiException;
 import org.meveo.apiv2.ordering.resource.order.OpenOrderTemplateInput;
 import org.meveo.apiv2.ordering.resource.order.Order;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Response;
 
 @Path("ordering/openOrderTemplates")
 @Produces({ "application/json"})

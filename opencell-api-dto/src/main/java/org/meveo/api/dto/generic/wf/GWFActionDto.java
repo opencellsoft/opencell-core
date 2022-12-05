@@ -1,15 +1,15 @@
 package org.meveo.api.dto.generic.wf;
 
 import static java.util.Optional.ofNullable;
-import static javax.xml.bind.annotation.XmlAccessType.FIELD;
+import static jakarta.xml.bind.annotation.XmlAccessType.FIELD;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.generic.wf.GWFTransitionAction;
 import org.meveo.model.notification.Notification;
 
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import java.util.Arrays;
 import java.util.Map;

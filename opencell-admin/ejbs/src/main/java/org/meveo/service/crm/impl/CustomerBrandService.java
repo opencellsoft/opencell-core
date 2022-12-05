@@ -17,7 +17,7 @@
  */
 package org.meveo.service.crm.impl;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.service.base.BusinessService;

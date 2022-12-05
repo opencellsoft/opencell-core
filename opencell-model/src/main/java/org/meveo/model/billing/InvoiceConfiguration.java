@@ -20,22 +20,22 @@ package org.meveo.model.billing;
 
 import java.io.Serializable;
 
-import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
+import org.hibernate.type.NumericBooleanConverter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 import org.meveo.model.article.AccountingArticle;
+
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
 /**
  * Invoicing configuration
@@ -54,77 +54,77 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
     /**
      * Should subscriptions be displayed in the XML invoice
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "display_subscriptions")
     private boolean displaySubscriptions = false;
 
     /**
      * Should services be displayed in the XML invoice
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "display_services")
     private boolean displayServices = false;
 
     /**
      * Should offers be displayed in the XML invoice
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "display_offers")
     private boolean displayOffers = false;
 
     /**
      * Should price plans be displayed in the XML invoice
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "display_priceplans")
     private boolean displayPricePlans = false;
 
     /**
      * Should EDRs be displayed in the XML invoice
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "display_edrs")
     private boolean displayEdrs = false;
 
     /**
      * Should provider information be displayed in the XML invoice
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "display_provider")
     private boolean displayProvider = false;
 
     /**
      * Should subcategory aggregates be displayed in the XML invoice
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "display_detail")
     private boolean displayDetail = true;
 
     /**
      * Should custom field values be displayed in the XML invoice in XML or JSON format
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "display_cf_as_xml")
     private boolean displayCfAsXML = false;
 
     /**
      * Should Billing cycle be displayed in the XML invoice
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "display_billing_cycle")
     private boolean displayBillingCycle = false;
 
     /**
      * Should orders be displayed in the XML invoice
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "display_orders")
     private boolean displayOrders = false;
 
     /**
      * Should tax details be displayed in the XML invoice
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "display_tax_details")
     private boolean displayTaxDetails = false;
 
@@ -172,14 +172,14 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
     /**
      * Should wallet operations be displayed in the XML invoice
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "display_wallet_operations")
     private boolean displayWalletOperations = false;
 
     /**
      * Should user account hierarchy be displayed in the XML invoice
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "display_user_account_hierarchy")
     private boolean displayUserAccountHierarchy = false;    
 

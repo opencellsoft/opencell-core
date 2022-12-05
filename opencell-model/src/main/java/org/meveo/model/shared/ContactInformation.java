@@ -19,12 +19,12 @@ package org.meveo.model.shared;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Embeddable;
-import javax.validation.constraints.Size;
-
 import org.meveo.commons.encryption.PersonnalDataEncryptor;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.Size;
 
 /**
  * Contact information

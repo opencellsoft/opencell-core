@@ -3,9 +3,9 @@ package org.meveo.service.billing.impl;
 import java.math.BigDecimal;
 import java.util.*;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
+import jakarta.persistence.NoResultException;
 
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.api.MeveoApiErrorCodeEnum;

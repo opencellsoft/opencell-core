@@ -32,9 +32,9 @@ import org.primefaces.model.LazyDataModel;
 
 import java.util.List;
 
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 /**
  * Standard backing bean for {@link DunningDocument} (extends {@link BaseBean} that

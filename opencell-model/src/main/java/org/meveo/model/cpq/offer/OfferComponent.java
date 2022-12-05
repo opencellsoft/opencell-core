@@ -4,25 +4,26 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
+import org.hibernate.type.NumericBooleanConverter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.tags.Tag;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * @author Tarik FAKHOURI.
@@ -75,7 +76,7 @@ public class OfferComponent extends BaseEntity {
 	/**
 	* Mandatory
 	*/
-	@Type(type = "numeric_boolean")
+	@Convert(converter = NumericBooleanConverter.class)
 	@Column(name = "mandatory")
 	private boolean mandatory=Boolean.FALSE;
     /**
@@ -87,7 +88,7 @@ public class OfferComponent extends BaseEntity {
     /*
      * display 
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "display")
     protected boolean display = Boolean.TRUE;
 

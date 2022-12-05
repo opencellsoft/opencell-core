@@ -18,8 +18,6 @@
 
 package org.meveo.model.billing;
 
-import org.meveo.model.catalog.DiscountPlanStatusEnum;
-
 /**
  * @author Khalid HORRI
  **/

@@ -3,7 +3,7 @@ package org.meveo.apiv2.dunning;
 import java.math.BigDecimal;
 import java.util.List;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;

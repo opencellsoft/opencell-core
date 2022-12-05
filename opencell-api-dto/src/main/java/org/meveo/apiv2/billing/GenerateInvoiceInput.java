@@ -12,7 +12,7 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.FilterDto;
 import org.meveo.apiv2.models.Resource;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Date;
 
 @Immutable

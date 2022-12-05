@@ -26,8 +26,8 @@ import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.ResourceBundle;

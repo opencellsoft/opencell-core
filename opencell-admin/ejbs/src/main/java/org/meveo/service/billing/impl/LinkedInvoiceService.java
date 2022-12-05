@@ -19,7 +19,7 @@ package org.meveo.service.billing.impl;
 
 import java.util.List;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.meveo.model.billing.InvoiceTypeEnum;

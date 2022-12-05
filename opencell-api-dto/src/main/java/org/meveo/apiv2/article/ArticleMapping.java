@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 @Value.Immutable
 @Value.Style(jdkOnly=true)

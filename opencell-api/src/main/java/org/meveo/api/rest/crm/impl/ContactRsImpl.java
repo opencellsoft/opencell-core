@@ -34,8 +34,8 @@ import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.model.communication.contact.Contact;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
-import javax.inject.Inject;
-import javax.ws.rs.PathParam;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.PathParam;
 
 /**
  * @author Abdellatif BARI

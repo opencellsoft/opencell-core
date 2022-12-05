@@ -8,8 +8,8 @@ import org.meveo.apiv2.models.Resource;
 import org.meveo.model.dunning.PayRetryFrequencyUnitEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 @Value.Immutable
 @Value.Style(jdkOnly = true)

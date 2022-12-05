@@ -28,11 +28,11 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.dataCollector.DataCollectorService;
 import org.slf4j.Logger;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.inject.Inject;
+import jakarta.interceptor.Interceptors;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

@@ -18,29 +18,13 @@
 
 package org.meveo.model.order;
 
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderColumn;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -54,6 +38,23 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.shared.Address;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderColumn;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Order item
@@ -111,7 +112,7 @@ public class OrderItem extends BusinessCFEntity implements IWFEntity {
     /**
      * Serialized orderItem dto
      */
-    @Type(type = "longText")
+    @JdbcTypeCode(Types.LONGVARCHAR)
     @Column(name = "source", nullable = false)
     private String source;
 
@@ -159,7 +160,6 @@ public class OrderItem extends BusinessCFEntity implements IWFEntity {
     /**
      * Custom field values in JSON format
      */
-    @Type(type = "cfjson")
     @Column(name = "cf_values", columnDefinition = "jsonb")
     private CustomFieldValues cfValues;
     

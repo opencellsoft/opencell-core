@@ -18,7 +18,7 @@
 
 package org.meveo.api.dto.response.communication;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.communication.EmailTemplateDto;
 import org.meveo.api.dto.response.BaseResponse;

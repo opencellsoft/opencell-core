@@ -5,7 +5,7 @@ import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.intcrm.AddressBookContact;
 import org.meveo.service.base.PersistenceService;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 import java.util.List;
 
 @Stateless

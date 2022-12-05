@@ -5,8 +5,8 @@ import org.junit.runner.RunWith;
 import org.meveo.apiv2.generic.GenericResource;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import javax.ws.rs.core.Link;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.Link;
+import jakarta.ws.rs.core.UriBuilder;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;

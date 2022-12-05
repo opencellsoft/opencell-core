@@ -1,14 +1,14 @@
 package org.meveo.apiv2.article.impl;
 
-import static javax.ws.rs.core.Response.Status.NOT_IMPLEMENTED;
+import static jakarta.ws.rs.core.Response.Status.NOT_IMPLEMENTED;
 
 import org.meveo.apiv2.article.ArticleMapping;
 import org.meveo.apiv2.article.resource.ArticleMappingResource;
 import org.meveo.apiv2.article.service.ArticleMappingApiService;
 
-import javax.inject.Inject;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Request;
+import jakarta.ws.rs.core.Response;
 
 public class ArticleMappingResourceImpl implements ArticleMappingResource {
 

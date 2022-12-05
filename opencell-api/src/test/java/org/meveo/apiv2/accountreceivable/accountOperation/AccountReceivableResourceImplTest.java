@@ -1,8 +1,8 @@
 package org.meveo.apiv2.accountreceivable.accountOperation;
 
 import static java.util.Optional.of;
-import static javax.ws.rs.core.Response.Status.OK;
-import static javax.ws.rs.core.Response.Status.PRECONDITION_FAILED;
+import static jakarta.ws.rs.core.Response.Status.OK;
+import static jakarta.ws.rs.core.Response.Status.PRECONDITION_FAILED;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.*;
@@ -14,7 +14,7 @@ import org.meveo.model.payments.*;
 import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import javax.ws.rs.core.*;
+import jakarta.ws.rs.core.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AccountReceivableResourceImplTest {

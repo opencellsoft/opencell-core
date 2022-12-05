@@ -17,16 +17,22 @@
  */
 package org.meveo.model.admin;
 
-import javax.persistence.*;
-import javax.validation.constraints.Size;
+import java.util.Map;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
+import org.hibernate.type.NumericBooleanConverter;
+import org.hibernate.type.SqlTypes;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
 
-import java.util.Map;
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Size;
 
 /**
  * Currency entity
@@ -59,14 +65,14 @@ public class Currency extends AuditableEntity {
     private String symbol;
     
     /** Flag field that indicates if it is system currency. */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "system_currency")
     private Boolean systemCurrency;
 
     /**
      * Translated descriptions in JSON format with language code as a key and translated description as a value
      */
-    @Type(type = "json")
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "description_i18n", columnDefinition = "jsonb")
     private Map<String, String> descriptionI18n;
 

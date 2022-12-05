@@ -19,14 +19,14 @@ package org.meveo.model.catalog;/*
 import java.io.Serializable;
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 /**
  * Entity accessibility rules

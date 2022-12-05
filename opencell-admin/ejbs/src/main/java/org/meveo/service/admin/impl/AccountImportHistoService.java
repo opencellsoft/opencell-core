@@ -17,8 +17,8 @@
  */
 package org.meveo.service.admin.impl;
 
-import javax.ejb.Stateless;
-import javax.inject.Named;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Named;
 
 import org.meveo.model.admin.AccountImportHisto;
 import org.meveo.service.base.PersistenceService;

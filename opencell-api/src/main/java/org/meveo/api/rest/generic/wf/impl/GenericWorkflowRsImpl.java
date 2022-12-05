@@ -22,9 +22,9 @@ import static org.meveo.api.MeveoApiErrorCodeEnum.CONDITION_FALSE;
 import static org.meveo.api.dto.ActionStatusEnum.FAIL;
 import static org.meveo.api.dto.ActionStatusEnum.SUCCESS;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.interceptor.Interceptors;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.generic.wf.GenericWorkflowDto;

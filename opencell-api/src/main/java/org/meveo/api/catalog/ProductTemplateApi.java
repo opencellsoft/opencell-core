@@ -47,9 +47,9 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
+import jakarta.interceptor.Interceptors;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;

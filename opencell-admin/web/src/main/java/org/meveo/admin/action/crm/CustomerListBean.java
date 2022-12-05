@@ -17,9 +17,9 @@
  */
 package org.meveo.admin.action.crm;
 
-import javax.enterprise.context.ConversationScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.enterprise.context.ConversationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.crm.Customer;

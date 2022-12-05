@@ -21,8 +21,8 @@ package org.meveo.admin.util.pagination;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.faces.model.ListDataModel;
-import javax.inject.Inject;
+import jakarta.faces.model.ListDataModel;
+import jakarta.inject.Inject;
 
 import org.meveo.model.IEntity;
 import org.primefaces.model.SelectableDataModel;

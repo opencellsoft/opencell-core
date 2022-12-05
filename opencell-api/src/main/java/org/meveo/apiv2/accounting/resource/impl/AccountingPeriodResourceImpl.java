@@ -3,9 +3,9 @@ package org.meveo.apiv2.accounting.resource.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.core.Response;
 
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.apiv2.accounting.ImmutableAccountingPeriod;

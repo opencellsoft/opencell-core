@@ -20,7 +20,7 @@ package org.meveo.service.finance;
 import org.meveo.model.finance.AccountingEntry;
 import org.meveo.service.base.PersistenceService;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 /**
  * Service implementation to manage {@link AccountingEntry} entity.

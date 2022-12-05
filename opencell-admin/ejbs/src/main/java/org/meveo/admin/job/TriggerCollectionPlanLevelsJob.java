@@ -1,6 +1,6 @@
 package org.meveo.admin.job;
 
-import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
+import static jakarta.ejb.TransactionAttributeType.REQUIRES_NEW;
 import static org.meveo.model.jobs.MeveoJobCategoryEnum.DUNNING;
 
 import org.meveo.admin.exception.BusinessException;
@@ -12,9 +12,9 @@ import org.meveo.model.settings.GlobalSettings;
 import org.meveo.service.job.Job;
 import org.meveo.service.settings.impl.GlobalSettingsService;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.inject.Inject;
 
 @Stateless
 public class TriggerCollectionPlanLevelsJob extends Job {

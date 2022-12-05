@@ -33,8 +33,8 @@ import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.crm.impl.CustomerService;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 

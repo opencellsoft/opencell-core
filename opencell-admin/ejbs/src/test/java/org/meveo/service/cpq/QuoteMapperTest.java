@@ -7,7 +7,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.junit.Before;
 import org.junit.Test;

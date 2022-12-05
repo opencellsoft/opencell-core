@@ -18,7 +18,7 @@
 
 package org.meveo.api.dto.catalog;
 
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 @XmlType(name = "baseServiceChargeTemplateDto", propOrder = { "code", "wallets", "accumulatorCounterTemplates", "counterTemplate" })

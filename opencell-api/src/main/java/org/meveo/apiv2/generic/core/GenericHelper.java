@@ -6,7 +6,7 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.reflections.Reflections;
 
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;

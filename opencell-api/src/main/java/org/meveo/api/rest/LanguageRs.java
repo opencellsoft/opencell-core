@@ -32,8 +32,8 @@ import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.response.GetTradingLanguageResponse;
 import org.meveo.api.dto.response.TradingLanguagesResponseDto;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * * Web service for managing {@link org.meveo.model.billing.Language} and {@link org.meveo.model.billing.TradingLanguage}.

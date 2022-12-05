@@ -2,29 +2,30 @@ package org.meveo.model.cpq.commercial;
 
 import java.math.BigDecimal;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
+import org.hibernate.type.NumericBooleanConverter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "order_price", uniqueConstraints = @UniqueConstraint(columnNames = {"id"}))
@@ -80,7 +81,7 @@ public class OrderPrice extends BusinessEntity {
     @Column(name = "tax_rate")
     private BigDecimal taxRate;
 
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "price_over_charged")
     private Boolean priceOverCharged;
 
@@ -123,7 +124,7 @@ public class OrderPrice extends BusinessEntity {
      @JoinColumn(name = "discount_plan_item_id")
      private DiscountPlanItem discountPlanItem;
      
-     @Type(type = "numeric_boolean")
+     @Convert(converter = NumericBooleanConverter.class)
      @Column(name = "apply_discounts_on_overriden_price")
      private Boolean applyDiscountsOnOverridenPrice;
     

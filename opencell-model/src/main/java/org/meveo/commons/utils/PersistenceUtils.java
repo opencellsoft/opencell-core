@@ -48,7 +48,7 @@ public class PersistenceUtils {
     public static Class<IEntity> getClassForHibernateObject(IEntity object) {
         if (object instanceof HibernateProxy) {
             LazyInitializer lazyInitializer = ((HibernateProxy) object).getHibernateLazyInitializer();
-            return lazyInitializer.getPersistentClass();
+            return (Class<IEntity>) lazyInitializer.getPersistentClass();
         } else {
             return (Class<IEntity>) object.getClass();
         }

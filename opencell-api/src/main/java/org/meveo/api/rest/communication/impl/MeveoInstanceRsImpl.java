@@ -28,7 +28,7 @@ import org.meveo.api.rest.communication.MeveoInstanceRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * 

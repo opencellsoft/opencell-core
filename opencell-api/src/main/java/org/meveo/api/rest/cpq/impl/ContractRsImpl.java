@@ -2,8 +2,8 @@ package org.meveo.api.rest.cpq.impl;
 
 import java.util.Collections;
 
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Response;
 
 import org.meveo.api.cpq.ContractApi;
 import org.meveo.api.dto.ActionStatus;

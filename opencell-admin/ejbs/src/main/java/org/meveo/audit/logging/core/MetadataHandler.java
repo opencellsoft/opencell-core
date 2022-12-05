@@ -18,8 +18,8 @@
 
 package org.meveo.audit.logging.core;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 
 import org.meveo.audit.logging.dto.AuditEvent;
 

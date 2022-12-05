@@ -1,7 +1,7 @@
 package org.meveo.apiv2.dunning.impl;
 
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Response;
 
 import org.meveo.apiv2.dunning.DunningCollectionPlanStatus;
 import org.meveo.apiv2.dunning.ImmutableDunningCollectionPlanStatus;

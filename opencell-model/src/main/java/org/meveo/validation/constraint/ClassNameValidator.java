@@ -18,10 +18,10 @@
 
 package org.meveo.validation.constraint;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
 import org.meveo.commons.utils.StringUtils;
+
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class ClassNameValidator implements ConstraintValidator<ClassName, String> {
 

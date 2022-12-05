@@ -13,8 +13,8 @@ import org.meveo.service.crm.impl.CustomerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 import java.util.ServiceLoader;
 
 @Stateless

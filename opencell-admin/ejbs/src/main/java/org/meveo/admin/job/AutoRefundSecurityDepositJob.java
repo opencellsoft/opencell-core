@@ -1,6 +1,6 @@
 package org.meveo.admin.job;
 
-import static javax.ejb.TransactionAttributeType.NEVER;
+import static jakarta.ejb.TransactionAttributeType.NEVER;
 import static org.meveo.model.jobs.MeveoJobCategoryEnum.PAYMENT;
 
 import org.meveo.admin.exception.BusinessException;
@@ -9,9 +9,9 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.inject.Inject;
 
 @Stateless
 public class AutoRefundSecurityDepositJob extends Job {

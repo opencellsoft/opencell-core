@@ -18,12 +18,12 @@
 
 package org.meveo.api.ws.impl;
 
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.jws.WebService;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.inject.Inject;
+import jakarta.interceptor.Interceptors;
+import jakarta.jws.WebService;
+import jakarta.servlet..http.HttpServletRequest;
 
 import org.meveo.api.billing.MediationApi;
 import org.meveo.api.dto.ActionStatus;

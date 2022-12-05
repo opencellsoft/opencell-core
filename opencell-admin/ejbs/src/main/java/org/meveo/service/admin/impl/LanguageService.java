@@ -17,9 +17,9 @@
  */
 package org.meveo.service.admin.impl;
 
-import javax.ejb.Stateless;
-import javax.inject.Named;
-import javax.persistence.NoResultException;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Named;
+import jakarta.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.Language;

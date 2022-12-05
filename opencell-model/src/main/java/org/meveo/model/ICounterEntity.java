@@ -17,9 +17,9 @@
  */
 package org.meveo.model;
 
-import org.meveo.model.billing.CounterInstance;
-
 import java.util.Map;
+
+import org.meveo.model.billing.CounterInstance;
 
 public interface ICounterEntity {
     /**

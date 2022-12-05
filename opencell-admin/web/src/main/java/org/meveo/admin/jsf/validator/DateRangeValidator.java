@@ -24,10 +24,10 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.Stateless;
-import javax.faces.component.UIInput;
-import javax.faces.context.FacesContext;
-import javax.inject.Named;
+import jakarta.ejb.Stateless;
+import jakarta.faces.component.UIInput;
+import jakarta.faces.context.FacesContext;
+import jakarta.inject.Named;
 
 @Named
 @Stateless

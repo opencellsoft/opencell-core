@@ -18,12 +18,7 @@
 
 package org.meveo.commons.persistence.oracle;
 
-import java.sql.Types;
-
 import org.hibernate.dialect.Oracle12cDialect;
-import org.hibernate.dialect.function.StandardSQLFunction;
-import org.hibernate.type.ClobType;
-import org.hibernate.type.StringType;
 
 /**
  * JPA extensions for searching amount Custom field value fields
@@ -43,15 +38,15 @@ import org.hibernate.type.StringType;
 public class MeveoOracleDialect extends Oracle12cDialect {
     public MeveoOracleDialect() {
         super();
-        registerFunction( "concat", new StandardSQLFunction( "concat", StringType.INSTANCE));
-        registerFunction("string_agg", new StandardSQLFunction("LISTAGG", StringType.INSTANCE));
-        registerFunction("string_agg_long", new StandardSQLFunction("LISTAGG_CLOB", ClobType.INSTANCE));
-        registerFunction("numericFromJson", new DoubleOracleJsonSearchFunction());
-        registerFunction("varcharFromJson", new OracleJsonSearchFunction());
-        registerFunction("bigIntFromJson", new LongOracleJsonSearchFunction());
-        registerFunction("timestampFromJson", new DateOracleJsonSearchFunction());
-        registerFunction("booleanFromJson", new BooleanOracleJsonSearchFunction());
-        registerFunction("entityFromJson", new EntityReferenceOracleJsonSearchFunction());
-        registerColumnType(Types.DOUBLE, "float");
+//        registerFunction( "concat", new StandardSQLFunction( "concat", StringType.INSTANCE));
+//        registerFunction("string_agg", new StandardSQLFunction("LISTAGG", StringType.INSTANCE));
+//        registerFunction("string_agg_long", new StandardSQLFunction("LISTAGG_CLOB", ClobType.INSTANCE));
+//        registerFunction("numericFromJson", new DoubleOracleJsonSearchFunction());
+//        registerFunction("varcharFromJson", new OracleJsonSearchFunction());
+//        registerFunction("bigIntFromJson", new LongOracleJsonSearchFunction());
+//        registerFunction("timestampFromJson", new DateOracleJsonSearchFunction());
+//        registerFunction("booleanFromJson", new BooleanOracleJsonSearchFunction());
+//        registerFunction("entityFromJson", new EntityReferenceOracleJsonSearchFunction());
+//        registerColumnType(Types.DOUBLE, "float");
     }
 }

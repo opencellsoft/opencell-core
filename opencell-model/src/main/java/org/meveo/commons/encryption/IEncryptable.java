@@ -21,13 +21,14 @@
  */
 package org.meveo.commons.encryption;
 
+import java.security.MessageDigest;
+
+import javax.crypto.spec.SecretKeySpec;
+
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.crypto.spec.SecretKeySpec;
-import java.security.MessageDigest;
 
 /**
  * @author melyoussoufi

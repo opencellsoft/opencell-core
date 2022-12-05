@@ -21,25 +21,25 @@ import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.annotation.Resource;
-import javax.ejb.Stateless;
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Disposes;
-import javax.enterprise.inject.Produces;
-import javax.faces.context.FacesContext;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceUnit;
-
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.persistence.JsonType;
+import org.meveo.model.persistence.CustomFieldJsonDataType;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.slf4j.Logger;
+
+import jakarta.annotation.Resource;
+import jakarta.ejb.Stateless;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.inject.Disposes;
+import jakarta.enterprise.inject.Produces;
+import jakarta.faces.context.FacesContext;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceUnit;
 
 /**
  * Handles Entity manager instantiation. Based on https://www.tomas-dvorak.cz/posts/jpa-multitenancy/
@@ -66,7 +66,7 @@ public class EntityManagerProvider {
 
     private static boolean isMultiTenancyEnabled = ParamBean.isMultitenancyEnabled();
 
-    private static boolean DB_TYPE_ORACLE = JsonType.IS_CLOB;
+    private static boolean DB_TYPE_ORACLE = CustomFieldJsonDataType.IS_CLOB;
 
     /**
      * Determine if DB is of oracle type. Value is derived when system setting "opencell.json.db.type"="clob"

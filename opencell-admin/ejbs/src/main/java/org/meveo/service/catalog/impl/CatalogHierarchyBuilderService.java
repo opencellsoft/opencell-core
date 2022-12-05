@@ -31,8 +31,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.hibernate.Hibernate;

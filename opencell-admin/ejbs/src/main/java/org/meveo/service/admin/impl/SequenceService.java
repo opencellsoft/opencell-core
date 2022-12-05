@@ -3,7 +3,7 @@ package org.meveo.service.admin.impl;
 import org.meveo.model.sequence.Sequence;
 import org.meveo.service.base.BusinessService;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 @Stateless
 public class SequenceService extends BusinessService<Sequence> {

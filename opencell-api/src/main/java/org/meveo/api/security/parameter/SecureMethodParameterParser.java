@@ -18,7 +18,7 @@
 
 package org.meveo.api.security.parameter;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MissingParameterException;

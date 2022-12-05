@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.catalog.ImportResultResponseDto.ImportResultDto;

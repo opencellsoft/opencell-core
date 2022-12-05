@@ -17,14 +17,14 @@
  */
 package org.meveo.model.payments;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 @DiscriminatorValue(value = "IC")

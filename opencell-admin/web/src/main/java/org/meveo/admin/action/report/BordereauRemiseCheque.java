@@ -34,10 +34,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.faces.context.FacesContext;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.faces.context.FacesContext;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet..http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.jboss.seam.international.status.Messages;

@@ -20,9 +20,9 @@ package org.meveo.api.pub.rest.document.impl;
 
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.interceptor.Interceptors;
 
 import org.meveo.api.YouSignApi;
 import org.meveo.api.dto.ActionStatus;

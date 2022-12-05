@@ -17,9 +17,9 @@
  */
 package org.meveo.service.billing.impl;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.InvoiceType;

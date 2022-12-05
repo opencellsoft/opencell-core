@@ -1,6 +1,6 @@
 package org.meveo.apiv2.article.service;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.api.BaseApi;
 

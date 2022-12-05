@@ -1,17 +1,23 @@
 package org.meveo.model.sequence;
 
-import static javax.persistence.EnumType.STRING;
-import static javax.persistence.InheritanceType.TABLE_PER_CLASS;
+import static jakarta.persistence.EnumType.STRING;
+import static jakarta.persistence.InheritanceType.TABLE_PER_CLASS;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.admin.CustomGenericEntityCode;
 
-import javax.persistence.*;
-import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @ExportIdentifier({ "code" })

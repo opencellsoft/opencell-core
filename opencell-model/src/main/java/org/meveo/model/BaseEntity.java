@@ -22,28 +22,25 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Version;
-
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
-import org.meveo.model.persistence.CustomFieldJsonType;
-import org.meveo.model.persistence.JsonType;
-import org.meveo.model.persistence.TextType;
+import org.hibernate.annotations.JavaTypeRegistration;
+import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.persistence.CustomFieldJsonDataType;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.persistence.Access;
+import jakarta.persistence.AccessType;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Version;
 
 /**
  * Base class for all entity classes.
  */
-@TypeDefs({ @TypeDef(name = "json", typeClass = JsonType.class), @TypeDef(name = "longText", typeClass = TextType.class), @TypeDef(name = "cfjson", typeClass = CustomFieldJsonType.class) })
-//@TypeDef(name = "jsontxt", typeClass = JsonStringType.class), @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class), @TypeDef(name = "jsonClob", typeClass = JsonClobType.class),
+@JavaTypeRegistration(javaType = CustomFieldValues.class, descriptorClass = CustomFieldJsonDataType.class)
 @MappedSuperclass
 public abstract class BaseEntity implements Serializable, IEntity, IJPAVersionedEntity {
     private static final long serialVersionUID = 1L;

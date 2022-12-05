@@ -18,10 +18,10 @@
 
 package org.meveo.apiv2.models;
 
-import javax.annotation.Nullable;
-import javax.ws.rs.core.Link;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.annotation.Nullable;
+import jakarta.ws.rs.core.Link;
+import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;

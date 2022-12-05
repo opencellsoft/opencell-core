@@ -16,7 +16,7 @@
  */
 package org.jboss.seam.international.status;
 
-import javax.faces.application.FacesMessage.Severity;
+import jakarta.faces.application.FacesMessage.Severity;
 
 /**
  * A basic implementation of {@link MutableMessage}.

@@ -7,8 +7,8 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.payments.impl.DunningPaymentRetriesService;
 import org.meveo.service.payments.impl.DunningSettingsService;
 
-import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.BadRequestException;
 import java.util.List;
 import java.util.Optional;
 

@@ -1,8 +1,8 @@
 package org.meveo.service.report;
 
-import javax.ejb.Stateless;
-import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.TypedQuery;
 
 import org.meveo.model.report.query.QueryScheduler;
 import org.meveo.model.report.query.ReportQuery;

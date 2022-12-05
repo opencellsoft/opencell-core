@@ -6,7 +6,7 @@ import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.model.dunning.PolicyConditionRuleJointEnum;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 
 @Value.Immutable

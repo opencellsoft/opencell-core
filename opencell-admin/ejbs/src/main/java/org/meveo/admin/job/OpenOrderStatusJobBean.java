@@ -10,10 +10,10 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.ordering.OpenOrder;
 import org.meveo.service.order.OpenOrderService;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.inject.Inject;
 import java.util.Iterator;
 import java.util.Optional;
 

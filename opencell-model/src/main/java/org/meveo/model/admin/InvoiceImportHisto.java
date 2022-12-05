@@ -17,11 +17,11 @@
  */
 package org.meveo.model.admin;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-
 import org.meveo.model.bi.JobHistory;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 
 @Entity
 @DiscriminatorValue(value = "INVOICE_IMPORT")

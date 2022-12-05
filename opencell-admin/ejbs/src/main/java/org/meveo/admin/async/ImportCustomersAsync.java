@@ -23,11 +23,11 @@ package org.meveo.admin.async;
 
 import java.util.concurrent.Future;
 
-import javax.ejb.AsyncResult;
-import javax.ejb.Asynchronous;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
+import jakarta.ejb.AsyncResult;
+import jakarta.ejb.Asynchronous;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
+import jakarta.interceptor.Interceptors;
 
 import org.meveo.admin.job.importexport.ImportCustomersJobBean;
 import org.meveo.admin.job.logging.JobMultithreadingHistoryInterceptor;

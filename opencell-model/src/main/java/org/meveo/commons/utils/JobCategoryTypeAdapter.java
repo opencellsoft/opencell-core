@@ -18,9 +18,9 @@
 
 package org.meveo.commons.utils;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-
 import org.meveo.model.jobs.JobCategoryEnum;
+
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 public final class JobCategoryTypeAdapter extends XmlAdapter<String, JobCategoryEnum> {
 	public JobCategoryTypeAdapter() {

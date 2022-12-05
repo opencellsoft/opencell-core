@@ -18,58 +18,50 @@
 
 package org.meveo.commons.persistence.postgresql;
 
-import java.util.List;
-
-import org.hibernate.QueryException;
-import org.hibernate.engine.spi.Mapping;
-import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.hibernate.type.BooleanType;
-import org.hibernate.type.Type;
-
 /**
  * A search function for a Custom field of type String with List storage type
  */
 public class ListPostgreSQLJsonSearchFunction extends PostgreSQLJsonSearchFunction {
 
-    @Override
-    public String render(Type firstArgumentType, List args, SessionFactoryImplementor factory) throws QueryException {
-
-        if (args.size() < 2) {
-            throw new IllegalArgumentException("The function parseJson requires at least 2 arguments");
-        }
-        String customFieldPosition = "0";
-        String entityColumnName = (String) args.get(0);
-        String customFieldName = (String) args.get(1);
-        String customFieldValueProperty = getValuePropertyName();
-        String value = null;
-        if (args.size() > 4) {
-            customFieldValueProperty = (String) args.get(2);
-            customFieldPosition = (String) args.get(3);
-            value = (String) args.get(4);
-
-        } else if (args.size() > 2) {
-            value = (String) args.get(2);
-        }
-
-        String fragment = entityColumnName + "::jsonb ->'" + customFieldName + "'->" + customFieldPosition + "->'" + customFieldValueProperty + "'";
-
-        fragment = "(" + fragment + " ^| array[" + value + "])";
-
-        return fragment;
-    }
-
-    @Override
-    public Type getReturnType(Type firstArgumentType, Mapping mapping) throws QueryException {
-        return BooleanType.INSTANCE;
-    }
-
-    @Override
-    public String getCastType() {
-        return null;
-    }
-
-    @Override
-    public String getValuePropertyName() {
-        return "listString";
-    }
+//    @Override
+//    public String render(Type firstArgumentType, List args, SessionFactoryImplementor factory) throws QueryException {
+//        
+//        if (args.size() < 2) {
+//            throw new IllegalArgumentException("The function parseJson requires at least 2 arguments");
+//        }
+//        String customFieldPosition = "0";
+//        String entityColumnName = (String) args.get(0);
+//        String customFieldName = (String) args.get(1);
+//        String customFieldValueProperty = getValuePropertyName();
+//        String value = null;
+//        if (args.size() > 4) {
+//            customFieldValueProperty = (String) args.get(2);
+//            customFieldPosition = (String) args.get(3);
+//            value = (String) args.get(4);
+//
+//        } else if (args.size() > 2) {
+//            value = (String) args.get(2);
+//        }
+//
+//        String fragment = entityColumnName + "::jsonb ->'" + customFieldName + "'->" + customFieldPosition + "->'" + customFieldValueProperty + "'";
+//
+//        fragment = "(" + fragment + " ^| array[" + value + "])";
+//
+//        return fragment;
+//    }
+//
+//    @Override
+//    public Type getReturnType(Type firstArgumentType, Mapping mapping) throws QueryException {
+//        return StandardBasicTypes.BOOLEAN;
+//    }
+//
+//    @Override
+//    public String getCastType() {
+//        return null;
+//    }
+//
+//    @Override
+//    public String getValuePropertyName() {
+//        return "listString";
+//    }
 }

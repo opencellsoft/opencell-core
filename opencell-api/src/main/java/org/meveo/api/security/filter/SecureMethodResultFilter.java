@@ -21,7 +21,7 @@ package org.meveo.api.security.filter;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.security.config.FilterResultsConfig;

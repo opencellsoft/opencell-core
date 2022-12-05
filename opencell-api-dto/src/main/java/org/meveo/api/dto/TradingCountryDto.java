@@ -2,8 +2,8 @@ package org.meveo.api.dto;
 
 import org.meveo.model.billing.TradingCountry;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
 import java.util.List;
 
 /**

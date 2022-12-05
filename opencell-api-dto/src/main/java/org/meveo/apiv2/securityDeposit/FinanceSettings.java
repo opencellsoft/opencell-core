@@ -5,7 +5,7 @@ import static java.lang.Boolean.TRUE;
 
 import java.math.BigDecimal;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.immutables.value.Value;

@@ -1,6 +1,6 @@
 package org.meveo.apiv2.dunning.resource;
 
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -9,8 +9,8 @@ import org.meveo.apiv2.dunning.DunningPolicy;
 import org.meveo.apiv2.dunning.DunningPolicyInput;
 import org.meveo.apiv2.dunning.DunningPolicyRules;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;

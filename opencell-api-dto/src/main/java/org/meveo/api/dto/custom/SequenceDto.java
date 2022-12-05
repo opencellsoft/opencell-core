@@ -1,13 +1,13 @@
 package org.meveo.api.dto.custom;
 
-import static javax.xml.bind.annotation.XmlAccessType.FIELD;
+import static jakarta.xml.bind.annotation.XmlAccessType.FIELD;
 import static org.meveo.model.sequence.SequenceTypeEnum.fromValue;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.sequence.Sequence;
 
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "Sequence")
 @XmlAccessorType(FIELD)

@@ -18,7 +18,7 @@
 
 package org.meveo.service.billing.impl;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.service.base.BusinessService;

@@ -5,7 +5,7 @@ import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.billing.InvoiceValidationRule;
 import org.meveo.service.billing.impl.InvoiceValidationRulesService;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import java.util.ArrayList;
 import java.util.List;

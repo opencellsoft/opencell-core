@@ -17,8 +17,8 @@
  */
 package org.meveocrm.admin.action.reporting;
 
-import javax.enterprise.context.ConversationScoped;
-import javax.inject.Named;
+import jakarta.enterprise.context.ConversationScoped;
+import jakarta.inject.Named;
 
 @Named
 @ConversationScoped

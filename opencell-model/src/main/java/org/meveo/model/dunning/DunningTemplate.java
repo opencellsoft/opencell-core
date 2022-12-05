@@ -1,16 +1,27 @@
 package org.meveo.model.dunning;
 
-import static javax.persistence.FetchType.LAZY;
+import static jakarta.persistence.FetchType.LAZY;
 
 import java.util.List;
 
-import javax.persistence.*;
-
-import org.hibernate.annotations.Type;
+import org.hibernate.type.NumericBooleanConverter;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.communication.MessageTemplateTypeEnum;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.payments.ActionChannelEnum;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
 
 
 @Entity
@@ -32,7 +43,7 @@ public class DunningTemplate extends EmailTemplate {
     @JoinColumn(name = "trading_language_id")
     private TradingLanguage language;
 	
-	@Type(type = "numeric_boolean")
+	@Convert(converter = NumericBooleanConverter.class)
     @Column(name = "is_active")
     protected boolean isActive;
 

@@ -3,8 +3,8 @@ package org.meveo.service.generic.wf;
 import org.meveo.model.generic.wf.GWFTransitionAction;
 import org.meveo.service.base.PersistenceService;
 
-import javax.ejb.Stateless;
-import javax.persistence.NoResultException;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.NoResultException;
 
 @Stateless
 public class GWFTransitionActionService extends PersistenceService<GWFTransitionAction> {

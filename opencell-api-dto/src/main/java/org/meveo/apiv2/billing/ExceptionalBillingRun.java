@@ -13,7 +13,7 @@ import org.meveo.apiv2.models.Resource;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRunAutomaticActionEnum;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Date;
 import java.util.Map;
 

@@ -33,7 +33,7 @@ public class PersonnalDataEncryptor implements IEncryptionConverter {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see javax.persistence.AttributeConverter#convertToDatabaseColumn(java.lang.
+	 * @see jakarta.persistence.AttributeConverter#convertToDatabaseColumn(java.lang.
 	 * Object) Checks if encryption is enabled before performing encryption
 	 */
 	@Override
@@ -48,7 +48,7 @@ public class PersonnalDataEncryptor implements IEncryptionConverter {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see javax.persistence.AttributeConverter#convertToEntityAttribute(java.lang.
+	 * @see jakarta.persistence.AttributeConverter#convertToEntityAttribute(java.lang.
 	 * Object) Checks if encryption is enabled before performing decryption
 	 */
 	@Override

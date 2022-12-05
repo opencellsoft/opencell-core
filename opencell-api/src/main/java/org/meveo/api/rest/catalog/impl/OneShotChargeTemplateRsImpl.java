@@ -20,10 +20,10 @@ package org.meveo.api.rest.catalog.impl;
 
 import java.util.Date;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.ws.rs.POST;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.interceptor.Interceptors;
+import jakarta.ws.rs.POST;
 
 import org.meveo.api.catalog.OneShotChargeTemplateApi;
 import org.meveo.api.dto.ActionStatus;

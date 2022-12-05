@@ -32,8 +32,8 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.service.admin.impl.LanguageService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 import java.util.List;
 
 /**

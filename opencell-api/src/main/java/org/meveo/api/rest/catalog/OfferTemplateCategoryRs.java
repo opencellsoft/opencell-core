@@ -33,8 +33,8 @@ import org.meveo.api.dto.response.OfferTemplateCategoriesResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateCategoryResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 
 @Path("/catalog/offerTemplateCategory")
 @Tag(name = "OfferTemplateCategory", description = "@%OfferTemplateCategory")

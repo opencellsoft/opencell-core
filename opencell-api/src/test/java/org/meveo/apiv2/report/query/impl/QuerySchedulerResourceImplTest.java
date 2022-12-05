@@ -13,9 +13,9 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
-import javax.inject.Inject;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Request;
+import jakarta.ws.rs.core.Response;
 
 import org.junit.Before;
 import org.junit.Test;

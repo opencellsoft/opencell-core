@@ -1,6 +1,6 @@
 package org.meveo.util.view.composite;
 
-import javax.enterprise.inject.spi.CDI;
+import jakarta.enterprise.inject.spi.CDI;
 
 import org.meveo.security.AccessScopeEnum;
 import org.meveo.util.view.PageAccessHandler;

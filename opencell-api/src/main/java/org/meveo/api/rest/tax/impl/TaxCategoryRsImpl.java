@@ -31,9 +31,9 @@ import org.meveo.api.rest.tax.TaxCategoryRs;
 import org.meveo.api.tax.TaxCategoryApi;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.interceptor.Interceptors;
 
 /**
  * REST interface definition of Tax category API

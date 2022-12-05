@@ -18,16 +18,16 @@
 
 package org.meveo.model.dwh;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import org.hibernate.type.NumericBooleanConverter;
 
-import org.hibernate.annotations.Type;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 /**
  * Bar type chart
@@ -71,7 +71,7 @@ public class BarChart extends Chart {
     /**
      * Enables stacked display of bars
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "stacked")
     private boolean stacked;
 
@@ -90,7 +90,7 @@ public class BarChart extends Chart {
     /**
      * Whether line segments should be broken at null value, fall will join point on either side of line.
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "break_on_null")
     private boolean breakOnNull;
 
@@ -135,21 +135,21 @@ public class BarChart extends Chart {
     /**
      * Enables plot zooming
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "zoom")
     private boolean zoom;
 
     /**
      * Enables animation on plot rendering
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "animate")
     private boolean animate;
 
     /**
      * Defines visibility of datatip
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "show_data_tip")
     private boolean showDataTip = true;
 

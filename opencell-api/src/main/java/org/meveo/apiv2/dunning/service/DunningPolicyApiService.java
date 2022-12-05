@@ -7,9 +7,9 @@ import static java.util.Optional.of;
 
 import java.util.*;
 
-import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.NotFoundException;
 
 import org.hibernate.Hibernate;
 import org.hibernate.exception.ConstraintViolationException;

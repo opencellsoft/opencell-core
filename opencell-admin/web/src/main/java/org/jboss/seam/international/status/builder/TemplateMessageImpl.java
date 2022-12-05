@@ -18,7 +18,7 @@ package org.jboss.seam.international.status.builder;
 
 import java.util.Arrays;
 
-import javax.faces.application.FacesMessage.Severity;
+import jakarta.faces.application.FacesMessage.Severity;
 
 import org.jboss.seam.international.status.Message;
 import org.jboss.seam.international.status.MessageBuilder;

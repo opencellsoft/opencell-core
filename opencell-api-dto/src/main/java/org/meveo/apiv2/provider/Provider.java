@@ -9,7 +9,7 @@ import org.meveo.model.billing.*;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.payments.PaymentPlanPolicy;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import java.util.Map;
 import java.util.Set;

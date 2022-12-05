@@ -1,6 +1,6 @@
 package org.meveo.api.dto.cpq;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.model.cpq.tags.Tag;

@@ -2,7 +2,7 @@ package org.meveo.apiv2.dunning;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import org.immutables.value.Value;
 

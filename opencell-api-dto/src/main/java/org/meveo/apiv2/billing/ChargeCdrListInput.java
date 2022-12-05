@@ -1,6 +1,6 @@
 package org.meveo.apiv2.billing;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import org.immutables.value.Value;
 import org.immutables.value.Value.Default;

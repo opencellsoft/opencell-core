@@ -1,11 +1,11 @@
 package org.meveo.apiv2.billing.impl;
 
-import static javax.ws.rs.core.Response.ok;
+import static jakarta.ws.rs.core.Response.ok;
 
-import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.core.Response;
 
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.billing.ExceptionalBillingRun;

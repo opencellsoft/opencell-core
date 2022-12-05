@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immutables.value.Value;
 import org.meveo.api.dto.response.PagingAndFiltering;
 
-import javax.annotation.Nullable;
-import javax.persistence.criteria.JoinType;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.criteria.JoinType;
 
 import java.util.Collections;
 import java.util.List;

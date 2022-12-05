@@ -23,19 +23,19 @@
         <env>dev</env>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.ingenico-connect-sdk>6.31.0</version.ingenico-connect-sdk>
-       <version.worldline.onlinepayments-sdk>3.5.0</version.worldline.onlinepayments-sdk>
+        <version.worldline.onlinepayments-sdk>3.5.0</version.worldline.onlinepayments-sdk>
         <version.paypal-sdk>1.14.0</version.paypal-sdk>
-        <version.keycloak>18.0.0</version.keycloak>
-        <version.pdfbox>2.0.26</version.pdfbox>
+        <version.keycloak>20.0.1</version.keycloak>
+        <version.pdfbox>2.0.27</version.pdfbox>
         <version.barcode>2.1</version.barcode>
         <version.stripe-sdk>20.124.0</version.stripe-sdk>
         <version.sips-payment-sdk>1.4.0</version.sips-payment-sdk>
-        <jackson.version>2.11.3</jackson.version> <!-- wildfly 22 -->
+        <jackson.version>2.13.4</jackson.version> <!-- wildfly 27 -->
         <dbtype>generic</dbtype>
 
         <java.version>11</java.version>
         <primefaces.version>7.0</primefaces.version>
-        <swagger.version>2.2.0</swagger.version>
+        <swagger.version>2.2.7</swagger.version>
         <springfox.swagger.version>3.0.0</springfox.swagger.version>
         <swagger.ui.version>3.0.0</swagger.ui.version>
 
@@ -55,10 +55,11 @@
     </scm>
 
     <repositories>
-        <!-- <repository> -->
-        <!-- <id>jboss-repo</id> -->
-        <!-- <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url> -->
-        <!-- </repository> -->
+        <repository>
+            <id>jboss-public-repository-group</id>
+            <name>JBoss Public Maven Repository Group</name>
+            <url>https://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+        </repository>
         <repository>
             <id>opencell-repo</id>
             <url>http://libs.opencellsoft.com/</url>
@@ -93,8 +94,8 @@
 
             <dependency>
                 <groupId>org.wildfly.bom</groupId>
-                <artifactId>wildfly-jakartaee8-with-tools</artifactId>
-                <version>22.0.1.Final</version>
+                <artifactId>wildfly-ee-with-tools</artifactId>
+                <version>27.0.0.Final</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -140,22 +141,26 @@
                 <version>${project.version}</version>
             </dependency>
 
+            <!-- AK is needed? -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-core</artifactId>
-                <version>2.18.0</version>
+                <version>2.19.0</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-api</artifactId>
-                <version>2.18.0</version>
+                <version>2.19.0</version>
+                <scope>provided</scope>
             </dependency>
+            <!-- AK end -->
 
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.11</version>
+                <version>3.12.0</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -217,19 +222,18 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
-                <version>1.21</version>
+                <version>1.22</version>
             </dependency>
             <dependency>
                 <groupId>org.beanio</groupId>
                 <artifactId>beanio</artifactId>
                 <version>2.1.0</version>
             </dependency>
-            <dependency>
-                <groupId>jakarta.mail</groupId>
-                <artifactId>jakarta.mail-api</artifactId>
-                <version>1.6.5</version>
-                <scope>provided</scope>
-            </dependency>
+            <!-- <dependency> -->
+            <!-- <groupId>jakarta.mail</groupId> -->
+            <!-- <artifactId>jakarta.mail-api</artifactId> -->
+            <!-- <scope>provided</scope> -->
+            <!-- </dependency> -->
             <dependency>
                 <groupId>org.primefaces.extensions</groupId>
                 <artifactId>primefaces-extensions</artifactId>
@@ -248,7 +252,7 @@
             <dependency>
                 <groupId>org.reflections</groupId>
                 <artifactId>reflections</artifactId>
-                <version>0.9.10</version>
+                <version>0.10.2</version>
             </dependency>
             <dependency>
                 <groupId>org.reflections</groupId>
@@ -259,7 +263,7 @@
             <dependency>
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
-                <version>2.8.6</version>
+                <version>2.8.9</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -288,9 +292,9 @@
             </dependency>
 
             <dependency>
-                <groupId>org.codehaus.groovy</groupId>
+                <groupId>org.apache.groovy</groupId>
                 <artifactId>groovy-all</artifactId>
-                <version>2.4.21</version>
+                <version>4.0.6</version>
             </dependency>
             <dependency>
                 <groupId>net.sourceforge.jexcelapi</groupId>
@@ -301,7 +305,7 @@
             <dependency>
                 <groupId>org.jboss</groupId>
                 <artifactId>jboss-vfs</artifactId>
-                <version>3.2.15.Final</version>
+                <version>3.2.17.Final</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -314,13 +318,13 @@
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi</artifactId>
-                <version>5.2.2</version>
+                <version>5.2.3</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi-ooxml</artifactId>
-                <version>5.2.2</version>
+                <version>5.2.3</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.apache.commons</groupId>
@@ -328,7 +332,7 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            
+
             <dependency>
                 <groupId>net.sf.jasperreports</groupId>
                 <artifactId>jasperreports-fonts</artifactId>
@@ -343,7 +347,7 @@
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
-                <version>2.9.7</version>
+                <version>2.11.2</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -356,8 +360,8 @@
             <dependency>
                 <groupId>jaxen</groupId>
                 <artifactId>jaxen</artifactId>
-                 <version>1.1.6</version>
-                 <scope>provided</scope>
+                <version>1.1.6</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
@@ -405,7 +409,7 @@
             <dependency>
                 <groupId>org.apache.velocity</groupId>
                 <artifactId>velocity-engine-core</artifactId>
-                <version>2.2</version>
+                <version>2.3</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -443,12 +447,6 @@
             </dependency>
 
             <dependency>
-                <groupId>javax.interceptor</groupId>
-                <artifactId>javax.interceptor-api</artifactId>
-                <version>1.2.2</version>
-            </dependency>
-
-            <dependency>
                 <groupId>org.keycloak</groupId>
                 <artifactId>keycloak-core</artifactId>
                 <version>${version.keycloak}</version>
@@ -482,7 +480,7 @@
             <dependency>
                 <groupId>com.github.spullara.mustache.java</groupId>
                 <artifactId>compiler</artifactId>
-                <version>0.9.6</version>
+                <version>0.9.10</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -495,14 +493,14 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore-nio</artifactId>
-                <version>4.4.14</version>
+                <version>4.4.15</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpasyncclient</artifactId>
-                <version>4.1.4</version>
+                <version>4.1.5</version>
                 <scope>provided</scope>
                 <exclusions>
                     <exclusion>
@@ -513,34 +511,33 @@
             </dependency>
 
             <dependency>
-                <groupId>javax.annotation</groupId>
-                <artifactId>javax.annotation-api</artifactId>
-                <version>1.3.1</version>
+                <groupId>jakarta.annotation</groupId>
+                <artifactId>jakarta.annotation-api</artifactId>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>javax.xml.ws</groupId>
                 <artifactId>jaxws-api</artifactId>
-                <version>2.0.0</version>
+                <version>2.3.1</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.30</version>
+                <version>1.7.36</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.eclipse.microprofile.metrics</groupId>
                 <artifactId>microprofile-metrics-api</artifactId>
-                <version>2.3</version>
+                <version>4.0</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>25.0-jre</version>
+                <version>31.1-jre</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -585,14 +582,14 @@
             <dependency>
                 <groupId>org.immutables</groupId>
                 <artifactId>value</artifactId>
-                <version>2.9.0</version>
+                <version>2.9.2</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
-                <version>1.26</version>
+                <version>1.33</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -600,48 +597,48 @@
             <dependency>
                 <groupId>org.apache.tika</groupId>
                 <artifactId>tika-core</artifactId>
-                <version>2.4.0</version>
+                <version>2.6.0</version>
             </dependency>
 
 
             <dependency>
                 <groupId>org.jboss.resteasy</groupId>
                 <artifactId>resteasy-client</artifactId>
-                <version>3.14.0.Final</version>
+                <version>6.2.1.Final</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>jakarta.jws</groupId>
                 <artifactId>jakarta.jws-api</artifactId>
-                <version>2.1.0</version>
+                <version>3.0.0</version>
             </dependency>
 
             <dependency>
                 <groupId>org.wildfly.core</groupId>
                 <artifactId>wildfly-server</artifactId>
-                <version>14.0.1.Final</version>
+                <version>19.0.0.Final</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.wildfly.security</groupId>
                 <artifactId>wildfly-elytron-credential-store</artifactId>
-                <version>1.14.1.Final</version>
+                <version>2.0.0.Final</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>com.jayway.jsonpath</groupId>
                 <artifactId>json-path</artifactId>
-                <version>2.4.0</version>
+                <version>2.7.0</version>
             </dependency>
 
             <!-- For testing -->
             <dependency>
                 <groupId>org.hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
-                <version>2.6.1</version>
+                <version>2.7.1</version>
                 <scope>test</scope>
             </dependency>
 
@@ -663,7 +660,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>4.6.0</version>
+                <version>4.9.0</version>
                 <scope>test</scope>
                 <exclusions>
                     <exclusion>
@@ -676,16 +673,43 @@
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
-                <version>1.12.10</version>
+                <version>1.12.19</version>
                 <scope>test</scope>
             </dependency>
 
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${commons.io.version}</version>
-        </dependency>
-        
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons.io.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.slimpay</groupId>
+                <artifactId>hapiclient</artifactId>
+                <version>1.0.3</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.httpcomponents</groupId>
+                        <artifactId>httpclient</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!-- Library needed by third party libraries - Hapi.jar -->
+            <dependency>
+                <groupId>javax.json</groupId>
+                <artifactId>javax.json-api</artifactId>
+                <optional>true</optional>
+                <version>1.1.4</version>
+            </dependency>
+
+            <!-- Library needed by third party libraries - keycloak auth-client.jar -->
+            <dependency>
+                <groupId>org.jboss.spec.javax.ws.rs</groupId>
+                <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
+                <version>2.0.2.Final</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -699,7 +723,7 @@
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
+            <artifactId>hamcrest</artifactId>
             <version>2.2</version>
             <scope>test</scope>
         </dependency>

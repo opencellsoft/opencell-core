@@ -20,7 +20,7 @@ package org.meveo.service.medina.impl;
 
 import java.io.Serializable;
 
-import javax.ejb.ApplicationException;
+import jakarta.ejb.ApplicationException;
 
 import org.meveo.model.mediation.CDRRejectionCauseEnum;
 

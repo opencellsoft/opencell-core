@@ -18,7 +18,7 @@
 
 package org.meveo.api.security.config;
 
-import javax.interceptor.InvocationContext;
+import jakarta.interceptor.InvocationContext;
 
 /**
  * Configuration factory that is responsible to build an instance of {@code SecuredBusinessEntityConfig} depending on the configuration implementation

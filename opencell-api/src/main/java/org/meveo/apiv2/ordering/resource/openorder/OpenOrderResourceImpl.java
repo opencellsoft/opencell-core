@@ -3,8 +3,8 @@ package org.meveo.apiv2.ordering.resource.openorder;
 import org.meveo.apiv2.ordering.resource.oo.OpenOrderDto;
 import org.meveo.apiv2.ordering.services.OpenOrderApiService;
 
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Response;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

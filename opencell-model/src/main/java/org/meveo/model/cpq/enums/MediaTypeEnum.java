@@ -1,7 +1,6 @@
 package org.meveo.model.cpq.enums;
 
 import java.util.Optional;
-
 import java.util.stream.Stream;
 
 /**

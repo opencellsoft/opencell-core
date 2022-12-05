@@ -26,7 +26,7 @@ public class SynchronizedIterator<T> implements Iterator<T> {
      */
     private Iterator<T> iterator;
 
-    private ScrollableResults scrollableResults;
+    private ScrollableResults<T> scrollableResults;
 
     public SynchronizedIterator() {
     }
@@ -47,7 +47,7 @@ public class SynchronizedIterator<T> implements Iterator<T> {
      * @param scrollableResults Scrollable results
      * @param size A total number of records
      */
-    public SynchronizedIterator(ScrollableResults scrollableResults, int size) {
+    public SynchronizedIterator(ScrollableResults<T> scrollableResults, int size) {
         this.scrollableResults = scrollableResults;
         this.size = size;
     }
@@ -57,7 +57,6 @@ public class SynchronizedIterator<T> implements Iterator<T> {
      * 
      * @return Returns the next element, or null if no more elements are found
      */
-    @SuppressWarnings("unchecked")
     @Override
     public synchronized T next() {
 
@@ -68,7 +67,7 @@ public class SynchronizedIterator<T> implements Iterator<T> {
         } else if (scrollableResults != null) {
             if (scrollableResults.next()) {
                 position++;
-                return (T) scrollableResults.get(0);
+                return (T) scrollableResults.get();
             } else {
                 return null;
             }
@@ -83,7 +82,6 @@ public class SynchronizedIterator<T> implements Iterator<T> {
      * 
      * @return Returns the next element, or null if no more elements are found
      */
-    @SuppressWarnings("unchecked")
     public synchronized NextItem<T> nextWPosition() {
 
         if (iterator != null && iterator.hasNext()) {
@@ -95,7 +93,7 @@ public class SynchronizedIterator<T> implements Iterator<T> {
         } else if (scrollableResults != null) {
             if (scrollableResults.next()) {
 
-                NextItem<T> nextItem = new NextItem<T>(position, (T) scrollableResults.get(0));
+                NextItem<T> nextItem = new NextItem<T>(position, (T) scrollableResults.get());
                 position++;
 
                 return nextItem;
@@ -122,6 +120,7 @@ public class SynchronizedIterator<T> implements Iterator<T> {
         return size;
     }
 
+    @SuppressWarnings("hiding")
     public class NextItem<T> {
 
         private int position;

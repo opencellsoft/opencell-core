@@ -18,7 +18,7 @@
 
 package org.meveo.service.filter;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.model.filter.Projector;
 import org.meveo.service.base.PersistenceService;

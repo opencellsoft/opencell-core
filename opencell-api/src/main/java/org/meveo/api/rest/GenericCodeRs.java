@@ -1,7 +1,7 @@
 package org.meveo.api.rest;
 
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static javax.ws.rs.core.MediaType.APPLICATION_XML;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_XML;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,7 +14,7 @@ import org.meveo.api.dto.custom.GenericCodeResponseDto;
 import org.meveo.api.dto.custom.GetGenericCodeResponseDto;
 import org.meveo.api.dto.custom.SequenceDto;
 
-import javax.ws.rs.*;
+import jakarta.ws.rs.*;
 
 @Path("/genericCode")
 @Tag(name = "GenericCode", description = "@%GenericCode")

@@ -21,7 +21,7 @@ package org.tmf.dsmapi.catalog.resource.product;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlType;
 
 import org.tmf.dsmapi.commons.OutputUtilities;
 import org.tmf.dsmapi.commons.Utilities;

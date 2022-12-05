@@ -3,7 +3,7 @@ package org.meveo.service.billing.impl;
 import java.io.File;
 import java.io.IOException;
 
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.meveo.admin.exception.BusinessException;

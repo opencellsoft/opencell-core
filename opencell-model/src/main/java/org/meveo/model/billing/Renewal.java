@@ -18,13 +18,14 @@
 
 package org.meveo.model.billing;
 
+import java.io.Serializable;
+import java.util.Date;
+
+import org.meveo.commons.utils.CustomDateSerializer;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.meveo.commons.utils.CustomDateSerializer;
-
-import java.io.Serializable;
-import java.util.Date;
 
 /**
  * Encapsulates a SubscriptionRenewal value.

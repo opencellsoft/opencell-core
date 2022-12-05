@@ -18,10 +18,10 @@
 
 package org.meveo.model.notification;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
 import org.meveo.model.ModuleItem;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 /**
  * Notification that executes a script

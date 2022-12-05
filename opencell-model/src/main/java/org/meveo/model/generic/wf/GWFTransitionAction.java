@@ -1,15 +1,23 @@
 package org.meveo.model.generic.wf;
 
+import java.util.Objects;
+
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
+import org.hibernate.type.NumericBooleanConverter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.scripts.ScriptInstance;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.util.Objects;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "wf_generic_action", uniqueConstraints = @UniqueConstraint(columnNames = { "uuid" }))
@@ -43,7 +51,7 @@ public class GWFTransitionAction extends BaseEntity implements Comparable<GWFTra
     private String fieldToUpdate;
 
     @Column(name = "is_asynchronous")
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
 
     private boolean asynchronous;
 

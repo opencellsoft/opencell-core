@@ -17,7 +17,7 @@
  */
 package org.meveo.admin.sepa;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 @Stateless
 public class SepaFileBuilder {

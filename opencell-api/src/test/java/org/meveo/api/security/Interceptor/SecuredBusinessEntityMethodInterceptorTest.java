@@ -13,8 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.interceptor.InvocationContext;
-import javax.persistence.EntityManager;
+import jakarta.interceptor.InvocationContext;
+import jakarta.persistence.EntityManager;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

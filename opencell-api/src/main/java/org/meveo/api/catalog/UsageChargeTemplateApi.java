@@ -22,9 +22,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.xml.bind.ValidationException;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
+import jakarta.xml.bind.ValidationException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CustomFieldsDto;

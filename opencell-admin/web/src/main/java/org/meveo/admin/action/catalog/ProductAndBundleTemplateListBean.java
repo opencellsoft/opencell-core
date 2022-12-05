@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.context.ConversationScoped;
-import javax.inject.Named;
+import jakarta.enterprise.context.ConversationScoped;
+import jakarta.inject.Named;
 
 import org.meveo.model.catalog.BundleTemplate;
 import org.meveo.model.catalog.ProductTemplate;

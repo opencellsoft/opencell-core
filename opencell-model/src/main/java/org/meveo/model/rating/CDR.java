@@ -18,30 +18,31 @@
 package org.meveo.model.rating;
 
 import java.math.BigDecimal;
+import java.sql.Types;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-import javax.validation.constraints.Size;
-
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.custom.CustomFieldValues;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.Size;
 
 /**
  * Charging Data Record - CDR - information
@@ -252,7 +253,7 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
     /**
      * Parameter
      */
-    @Type(type = "longText")
+    @JdbcTypeCode(Types.LONGVARCHAR)
     @Column(name = "EXTRA_PARAMETER")
     private String extraParam;
 
@@ -273,7 +274,7 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
     /**
      * Rejection reason
      */
-    @Type(type = "longText")
+    @JdbcTypeCode(Types.LONGVARCHAR)
     @Column(name = "reject_reason")
     private String rejectReason;
 
@@ -296,7 +297,7 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
 
     /** The serialized CDR dto. to be used while re-processing the CDR */
     // TODO Currently source field is not used when reprocessing a CDR - a line field is used instead
-    //@Type(type = "longText")
+    //@JdbcTypeCode(Types.LONGVARCHAR)
     //@Column(name = "source", nullable = true)
     @Transient
     private String source;

@@ -23,30 +23,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.PrePersist;
-import javax.persistence.QueryHint;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.hibernate.type.NumericBooleanConverter;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
@@ -55,6 +35,28 @@ import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.crm.custom.CustomFieldValues;
+
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.QueryHint;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 /**
  * Discount plan item/details
@@ -154,7 +156,6 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	/**
 	 * Custom field values in JSON format
 	 */
-	@Type(type = "cfjson")
 	@Column(name = "cf_values", columnDefinition = "jsonb")
 	protected CustomFieldValues cfValues;
 
@@ -191,12 +192,12 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	 * If fase, then amount for the discount line produce by the discount plan item cannot exceed the amount of discounted lines.
 	 * Default: false
 	 */
-	@Type(type = "numeric_boolean")
+	@Convert(converter = NumericBooleanConverter.class)
 	@Column(name = "allow_to_negate")
 	@NotNull
 	private boolean allowToNegate = false;
 	
-	@Type(type = "numeric_boolean")
+	@Convert(converter = NumericBooleanConverter.class)
 	@Column(name = "apply_by_article")
 	private boolean applyByArticle=false;
 	
@@ -212,7 +213,7 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	/**
 	 * determines if the following discounts ordered by sequence is applicable
 	 */
-	@Type(type = "numeric_boolean")
+	@Convert(converter = NumericBooleanConverter.class)
 	@Column(name = "last_discount")
 	private Boolean lastDiscount;
 	

@@ -18,10 +18,10 @@
 
 package org.meveo.model.payments;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-
 import org.meveo.commons.utils.StringUtils;
+
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 
 /**
  * Payment by check payment method

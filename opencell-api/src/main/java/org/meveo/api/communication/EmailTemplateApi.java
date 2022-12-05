@@ -29,8 +29,8 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.service.communication.impl.EmailTemplateService;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 

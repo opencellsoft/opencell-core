@@ -20,9 +20,9 @@ package org.meveo.commons.persistence.postgresql;
 
 import java.sql.Types;
 
-import org.hibernate.dialect.PostgreSQL94Dialect;
+import org.hibernate.dialect.DatabaseVersion;
+import org.hibernate.dialect.PostgreSQLDialect;
 import org.hibernate.dialect.function.StandardSQLFunction;
-import org.hibernate.type.StringType;
 
 /**
  * JPA extensions for searching amount Custom field value fields
@@ -35,26 +35,28 @@ import org.hibernate.type.StringType;
  * <li>timestampFromJson(&lt;entity&gt;.cfValues,&lt;custom field name&gt;) - for search in Date type custom field</li>
  * <li>booleanFromJson(&lt;entity&gt;.cfValues,&lt;custom field name&gt;) - for search in Boolean type custom field</li>
  * <li>entityFromJson(&lt;entity&gt;.cfValues,&lt;custom field name&gt;) - for search in Entity type custom field. Returns EntityReferenceWrapper.code field value.</li>
- * <li>listFromJson(&lt;entity&gt;.cfValues,&lt;custom field name&gt;,&lt;value to search for&gt;) - for search in String type custom field of List storage type </li>
- * <li>listFromJson(&lt;entity&gt;.cfValues,&lt;custom field name&gt;,&lt;property name&gt;,&lt;position&gt;,&lt;value to search for&gt;) - for search in String type custom field of List storage type </li>
+ * <li>listFromJson(&lt;entity&gt;.cfValues,&lt;custom field name&gt;,&lt;value to search for&gt;) - for search in String type custom field of List storage type</li>
+ * <li>listFromJson(&lt;entity&gt;.cfValues,&lt;custom field name&gt;,&lt;property name&gt;,&lt;position&gt;,&lt;value to search for&gt;) - for search in String type custom field of List storage type</li>
  * </ul>
  * 
  * @author M.ELAZZOUZI
  *
  */
-public class MeveoPostgreSQLDialect extends PostgreSQL94Dialect {
+public class MeveoPostgreSQLDialect extends PostgreSQLDialect {
     public MeveoPostgreSQLDialect() {
-        super();
-        registerFunction("concat", new StandardSQLFunction("concat", StringType.INSTANCE));
-        registerFunction("string_agg", new StandardSQLFunction("string_agg", StringType.INSTANCE));
-        registerFunction("string_agg_long", new PostgreSQLStringAggLongFunction());
-        registerFunction("numericFromJson", new DoublePostgreSQLJsonSearchFunction());
-        registerFunction("varcharFromJson", new PostgreSQLJsonSearchFunction());
-        registerFunction("bigIntFromJson", new LongPostgreSQLJsonSearchFunction());
-        registerFunction("timestampFromJson", new DatePostgreSQLJsonSearchFunction());
-        registerFunction("booleanFromJson", new BooleanPostgreSQLJsonSearchFunction());
-        registerFunction("entityFromJson", new EntityReferencePostgreSQLJsonSearchFunction());
-        registerFunction("listFromJson", new ListPostgreSQLJsonSearchFunction());
-        registerColumnType(Types.BOOLEAN, "int4");
+        super(DatabaseVersion.make(15, 1));
+//        registerColumnType(Types.BOOLEAN, "int4");
+        
+
+//        registerFunction("concat", new StandardSQLFunction("concat", StringType.INSTANCE));
+//        registerFunction("string_agg", new StandardSQLFunction("string_agg", StringType.INSTANCE));
+//        registerFunction("string_agg_long", new PostgreSQLStringAggLongFunction());
+//        registerFunction("numericFromJson", new DoublePostgreSQLJsonSearchFunction());
+//        registerFunction("varcharFromJson", new PostgreSQLJsonSearchFunction());
+//        registerFunction("bigIntFromJson", new LongPostgreSQLJsonSearchFunction());
+//        registerFunction("timestampFromJson", new DatePostgreSQLJsonSearchFunction());
+//        registerFunction("booleanFromJson", new BooleanPostgreSQLJsonSearchFunction());
+//        registerFunction("entityFromJson", new EntityReferencePostgreSQLJsonSearchFunction());
+//        registerFunction("listFromJson", new ListPostgreSQLJsonSearchFunction());
     }
 }

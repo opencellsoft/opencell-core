@@ -20,7 +20,7 @@ package org.tmf.dsmapi.catalog.resource;
 
 import java.io.Serializable;
 
-import javax.persistence.PostLoad;
+import jakarta.persistence.PostLoad;
 
 import org.tmf.dsmapi.commons.ParsedVersion;
 import org.tmf.dsmapi.commons.Utilities;

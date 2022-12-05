@@ -30,8 +30,8 @@ import org.meveo.model.payments.plan.PaymentPlanStatusEnum;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.billing.impl.InvoiceService;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;

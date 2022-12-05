@@ -23,9 +23,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.context.ConversationScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.enterprise.context.ConversationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.apache.tools.ant.util.DateUtils;
 import org.meveo.model.rating.CDR;
 import org.meveo.service.medina.impl.CDRService;

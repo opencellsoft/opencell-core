@@ -1,11 +1,11 @@
 package org.meveo.apiv2.cpq.impl;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilderException;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
+import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilderException;
 
 import org.jboss.resteasy.api.validation.Validation;
 import org.meveo.api.dto.ActionStatus;

@@ -18,10 +18,10 @@
 
 package org.meveo.util.view;
 
-import javax.el.ELContext;
-import javax.el.ValueExpression;
-import javax.faces.component.FacesComponent;
-import javax.faces.context.FacesContext;
+import jakarta.el.ELContext;
+import jakarta.el.ValueExpression;
+import jakarta.faces.component.FacesComponent;
+import jakarta.faces.context.FacesContext;
 
 import org.primefaces.component.datatable.DataTable;
 

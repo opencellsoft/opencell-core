@@ -18,8 +18,8 @@
 
 package org.meveo.api.dto.billing;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
+import jakarta.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlEnumValue;
 
 /**
  * The Enum DueDateDelayReferenceDateEnum.

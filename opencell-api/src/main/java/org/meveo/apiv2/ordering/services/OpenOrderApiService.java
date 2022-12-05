@@ -15,8 +15,8 @@ import org.meveo.service.cpq.TagService;
 import org.meveo.service.order.OpenOrderService;
 import org.meveo.service.order.ThresholdService;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

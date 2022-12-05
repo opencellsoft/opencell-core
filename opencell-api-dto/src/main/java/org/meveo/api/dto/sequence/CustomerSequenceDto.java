@@ -18,7 +18,7 @@
 
 package org.meveo.api.dto.sequence;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.meveo.api.dto.BusinessEntityDto;
 

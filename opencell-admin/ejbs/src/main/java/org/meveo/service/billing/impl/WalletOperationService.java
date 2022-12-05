@@ -30,13 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InsufficientBalanceException;
 import org.meveo.api.dto.billing.WalletOperationDto;
@@ -70,7 +64,6 @@ import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.transformer.AliasToAggregatedWalletOperationResultTransformer;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
@@ -83,6 +76,13 @@ import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.filter.FilterService;
+
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.inject.Inject;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
 
 /**
  * Service class for WalletOperation entity
@@ -574,9 +574,10 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
         Query query = getEntityManager().createQuery(strQuery);
         query.setParameter("invoicingDate", invoicingDate);
+        query.unwrap(org.hibernate.query.Query.class).setResultListTransformer(new AliasToBeanResultTransformer<AggregatedWalletOperation>(AggregatedWalletOperation.class)); //new AliasToAggregatedWalletOperationResultTransformer(AggregatedWalletOperation.class))
         // get the aggregated data
         @SuppressWarnings("rawtypes")
-        List result = query.unwrap(org.hibernate.query.Query.class).setResultTransformer(new AliasToAggregatedWalletOperationResultTransformer(AggregatedWalletOperation.class)).getResultList();
+        List result =  query.getResultList();
 
         return result;
     }

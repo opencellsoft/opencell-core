@@ -20,10 +20,10 @@ package org.meveo.model.dwh;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
+
+import jakarta.persistence.Column;
 
 /**
  * Stores the summary of records to be deleted as specified by GDPR configuration.

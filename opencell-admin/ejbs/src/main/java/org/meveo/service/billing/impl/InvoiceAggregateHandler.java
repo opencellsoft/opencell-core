@@ -26,8 +26,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.ejb.Stateful;
-import javax.inject.Inject;
+import jakarta.ejb.Stateful;
+import jakarta.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.NumberUtils;

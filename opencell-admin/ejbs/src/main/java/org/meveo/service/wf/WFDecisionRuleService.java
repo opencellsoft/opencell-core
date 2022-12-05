@@ -19,8 +19,8 @@ package org.meveo.service.wf;
 
 import java.util.List;
 
-import javax.ejb.Stateless;
-import javax.persistence.NoResultException;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.NoResultException;
 
 import org.meveo.model.wf.WFDecisionRule;
 import org.meveo.service.base.PersistenceService;

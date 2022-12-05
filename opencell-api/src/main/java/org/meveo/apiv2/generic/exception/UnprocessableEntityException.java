@@ -1,6 +1,6 @@
 package org.meveo.apiv2.generic.exception;
 
-import javax.ws.rs.ClientErrorException;
+import jakarta.ws.rs.ClientErrorException;
 
 public class UnprocessableEntityException extends ClientErrorException {
 

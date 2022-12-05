@@ -21,7 +21,7 @@ package org.meveo.api;
 import java.util.List;
 import java.util.Properties;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.api.dto.PropertiesDto;
 import org.meveo.api.dto.PropertyDto;

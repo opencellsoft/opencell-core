@@ -17,7 +17,7 @@
  */
 package org.meveo.service.admin.impl;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.model.admin.GriegInvoiceConverterInputHistory;
 import org.meveo.service.base.PersistenceService;

@@ -20,7 +20,7 @@ package org.meveo.service.tax;
 
 import java.util.List;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.model.tax.TaxCategory;
 import org.meveo.service.base.BusinessService;

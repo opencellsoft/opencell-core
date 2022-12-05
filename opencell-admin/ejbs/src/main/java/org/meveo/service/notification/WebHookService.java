@@ -18,7 +18,7 @@
 
 package org.meveo.service.notification;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.commons.keystore.KeystoreManager;
 import org.meveo.model.communication.MeveoInstance;

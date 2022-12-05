@@ -17,12 +17,12 @@
  */
 package org.meveo.model.admin;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.validation.constraints.Size;
-
 import org.meveo.model.bi.JobHistory;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @DiscriminatorValue(value = "SUBSCRIPTION_IMPORT")

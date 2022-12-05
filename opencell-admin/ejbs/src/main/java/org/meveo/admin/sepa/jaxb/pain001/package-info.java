@@ -23,5 +23,5 @@
 // Generated on: 2018.09.25 at 02:01:12 PM WET 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "urn:iso:std:iso:20022:tech:xsd:pain.001.001.03", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "urn:iso:std:iso:20022:tech:xsd:pain.001.001.03", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.meveo.admin.sepa.jaxb.pain001;

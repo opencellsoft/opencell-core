@@ -19,8 +19,8 @@ package org.meveo.model.listeners;
 
 import org.meveo.model.billing.TradingCountry;
 
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 
 /**
  * This interceptor allows to intercept TradingCountry objects, update their properties before it is saved or updated.

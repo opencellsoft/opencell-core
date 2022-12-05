@@ -18,16 +18,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.Entity;
-import javax.persistence.criteria.JoinType;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.NotFoundException;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
+import jakarta.persistence.Entity;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.NotFoundException;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.hibernate.collection.internal.PersistentBag;
-import org.hibernate.collection.internal.PersistentSet;
+import org.hibernate.collection.spi.PersistentBag;
+import org.hibernate.collection.spi.PersistentSet;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.TaxApi;

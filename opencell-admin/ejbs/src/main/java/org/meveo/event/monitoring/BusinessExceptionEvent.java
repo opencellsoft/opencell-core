@@ -20,7 +20,7 @@ package org.meveo.event.monitoring;
 
 import java.util.Date;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 
 @Named
 public class BusinessExceptionEvent {

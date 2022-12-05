@@ -20,8 +20,8 @@ package org.meveo.admin.action.catalog;
 
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
-import javax.inject.Named;
+import jakarta.enterprise.context.ConversationScoped;
+import jakarta.inject.Named;
 
 import org.meveo.model.catalog.BusinessProductModel;
 

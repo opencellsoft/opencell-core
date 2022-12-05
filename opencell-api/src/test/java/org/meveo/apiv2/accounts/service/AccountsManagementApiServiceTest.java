@@ -9,8 +9,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import javax.validation.ValidationException;
-import javax.ws.rs.NotFoundException;
+import jakarta.validation.ValidationException;
+import jakarta.ws.rs.NotFoundException;
 
 import org.junit.Before;
 import org.junit.Rule;

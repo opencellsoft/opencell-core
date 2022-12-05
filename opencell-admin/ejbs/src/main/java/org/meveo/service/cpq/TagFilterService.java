@@ -1,6 +1,6 @@
 package org.meveo.service.cpq;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.model.cpq.tags.TagFilter;
 import org.meveo.service.base.BusinessService;

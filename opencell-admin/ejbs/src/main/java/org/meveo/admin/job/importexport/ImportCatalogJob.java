@@ -17,8 +17,8 @@
  */
 package org.meveo.admin.job.importexport;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.jobs.JobCategoryEnum;

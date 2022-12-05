@@ -4,8 +4,8 @@ import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.dunning.DunningPolicyLevel;
 import org.meveo.service.payments.impl.DunningPolicyLevelService;
 
-import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.BadRequestException;
 import java.util.List;
 import java.util.Optional;
 

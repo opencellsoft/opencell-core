@@ -23,9 +23,9 @@ import org.meveo.model.AuditableField;
 import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.base.local.IPersistenceService;
 
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 /**
  * @author Abdellatif BARI

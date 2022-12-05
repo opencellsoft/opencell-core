@@ -28,9 +28,9 @@ import org.meveo.model.bi.DataCollector;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.dataCollector.DataCollectorService;
 
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import java.util.*;
 
 @Named

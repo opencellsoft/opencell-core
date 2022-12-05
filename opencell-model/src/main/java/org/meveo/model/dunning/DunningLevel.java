@@ -1,26 +1,28 @@
 package org.meveo.model.dunning;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
+import org.hibernate.type.NumericBooleanConverter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Currency;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.List;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 /**
  *The dunning level
@@ -40,14 +42,14 @@ public class DunningLevel extends BusinessEntity {
      * It is the first level of a policy, and a policy can only have one reminder level.
      * This level is previous to a collection plan, it doesn’t trigger a collection plan.
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "reminder")
     private Boolean isReminder = Boolean.FALSE;
 
     /**
      * A level can be activated or deactivate at any time, it means it is triggered or not within a policy
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "active")
     private Boolean isActive = Boolean.TRUE;
 
@@ -61,7 +63,7 @@ public class DunningLevel extends BusinessEntity {
     /**
      * If set to TRUE, the level is only triggered when the reason for invoice failure is a soft decline of an automatic payment.
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "soft_decline")
     private Boolean isSoftDecline = Boolean.FALSE;
 
@@ -103,7 +105,7 @@ public class DunningLevel extends BusinessEntity {
     /**
      * The end of dunning level refers to the last level of a dunning policy
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "end_dunning_level")
     private Boolean isEndOfDunningLevel = Boolean.FALSE;
 

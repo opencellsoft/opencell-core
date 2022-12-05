@@ -16,7 +16,7 @@ import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.Inheritance;
+import jakarta.persistence.Inheritance;
 import java.lang.reflect.Modifier;
 
 

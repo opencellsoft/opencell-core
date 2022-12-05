@@ -1,6 +1,6 @@
 package org.meveo.service.cpq;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.model.cpq.trade.CommercialRuleItem;
 import org.meveo.service.base.PersistenceService;

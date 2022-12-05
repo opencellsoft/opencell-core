@@ -17,9 +17,9 @@
  */
 package org.meveo.service.billing.impl;
 
-import javax.ejb.Stateless;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.NonUniqueResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.SubscriptionTerminationReason;

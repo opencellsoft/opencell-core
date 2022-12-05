@@ -21,8 +21,8 @@ package org.meveo.api;
 import java.util.Arrays;
 import java.util.function.BiFunction;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CustomFieldsDto;

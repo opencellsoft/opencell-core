@@ -22,8 +22,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 
 import org.meveo.api.dto.usage.CatUsageDto;
 import org.meveo.api.dto.usage.ChargeAggregateDto;

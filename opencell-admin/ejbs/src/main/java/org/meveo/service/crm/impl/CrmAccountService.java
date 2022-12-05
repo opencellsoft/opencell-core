@@ -18,7 +18,7 @@
 
 package org.meveo.service.crm.impl;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.model.AccountEntity;
 import org.meveo.service.base.BusinessService;

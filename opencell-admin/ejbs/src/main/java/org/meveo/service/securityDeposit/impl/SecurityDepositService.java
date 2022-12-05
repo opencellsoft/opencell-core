@@ -27,8 +27,8 @@ import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.*;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 import java.math.BigDecimal;
 import java.util.*;
 

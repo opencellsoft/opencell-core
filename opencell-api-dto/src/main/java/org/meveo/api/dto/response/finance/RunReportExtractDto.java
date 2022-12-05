@@ -21,7 +21,7 @@ package org.meveo.api.dto.response.finance;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * The Class RunReportExtractDto.

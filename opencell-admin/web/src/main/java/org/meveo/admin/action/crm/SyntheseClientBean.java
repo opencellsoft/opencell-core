@@ -17,11 +17,11 @@
  */
 package org.meveo.admin.action.crm;
 
-import javax.faces.view.ViewScoped;
+import jakarta.faces.view.ViewScoped;
 //import java.math.BigDecimal;
 //import java.util.List;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.billing.BillingAccount;
@@ -97,7 +97,7 @@ public class SyntheseClientBean extends BaseBean<BillingAccount> {
 			return;
 		}
 		try {
-			javax.faces.context.FacesContext context = javax.faces.context.FacesContext
+			jakarta.faces.context.FacesContext context = jakarta.faces.context.FacesContext
 					.getCurrentInstance();
 			HttpServletResponse res = (HttpServletResponse) context
 					.getExternalContext().getResponse();

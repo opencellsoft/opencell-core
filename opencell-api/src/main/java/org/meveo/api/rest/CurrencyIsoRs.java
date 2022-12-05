@@ -32,8 +32,8 @@ import org.meveo.api.dto.CurrencyIsoDto;
 import org.meveo.api.dto.response.GetCurrenciesIsoResponse;
 import org.meveo.api.dto.response.GetCurrencyIsoResponse;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * Web service for managing Currency.

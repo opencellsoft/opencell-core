@@ -17,17 +17,18 @@
  */
 package org.meveo.model.communication.postalmail;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.Type;
+import org.hibernate.type.NumericBooleanConverter;
 import org.meveo.model.communication.MessageSenderConfig;
 import org.meveo.model.shared.Address;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @DiscriminatorValue("POSTAL_MAIL")
@@ -44,15 +45,15 @@ public class PostalMailSenderConfig extends MessageSenderConfig {
     @Enumerated(EnumType.STRING)
     private EnvelopeWindowType windowType;
 
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "printrectoverso")
     private boolean printRectoVerso;
 
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "usecolor")
     private boolean useColor;
 
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "addaddressfrontpage")
     private boolean addAddressFrontPage;
 

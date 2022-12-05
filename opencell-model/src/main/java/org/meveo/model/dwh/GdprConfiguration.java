@@ -20,21 +20,18 @@ package org.meveo.model.dwh;
 
 import java.io.Serializable;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
+import org.hibernate.type.NumericBooleanConverter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.billing.InvoiceConfiguration;
-import org.meveo.model.crm.Provider;
+
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 /**
  * Holds the duration of how many years specific data should be kept. Work together with a job. The job runs every end of the day to test the database with the given criteria.
@@ -96,49 +93,49 @@ public class GdprConfiguration extends BaseEntity implements Serializable, IEnti
     /**
      * Should subscriptions be deleted
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "delete_sub")
     private boolean deleteSubscription = false;
 
     /**
      * Should orders be deleted
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "delete_order")
     private boolean deleteOrder = false;
 
     /**
      * Should invoices be deleted
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "delete_invoice")
     private boolean deleteInvoice = false;
 
     /**
      * Should account operations be deleted
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "delete_accounting")
     private boolean deleteAccounting = false;
 
     /**
      * Should customer prospects be deleted
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "delete_cust_prospect")
     private boolean deleteCustomerProspect = false;
 
     /**
      * Should communicatio be deleted
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "delete_mailing_life")
     private boolean deleteMailingLife = false;
 
     /**
      * Should unpaid Account operations be deleted
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "delete_ao_check_unpaid")
     private boolean deleteAoCheckUnpaidLife = false;
 

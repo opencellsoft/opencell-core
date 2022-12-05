@@ -17,21 +17,21 @@
  */
 package org.meveo.model;
 
+import java.util.Date;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.ChangeOriginEnum;
-import org.meveo.security.MeveoUser;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.util.Date;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 /**
  * Tracks Field change history

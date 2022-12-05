@@ -1,20 +1,21 @@
 package org.meveo.model.ordering;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
+import org.hibernate.type.NumericBooleanConverter;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.cpq.Product;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import static javax.persistence.FetchType.LAZY;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "open_order_product")
@@ -33,7 +34,7 @@ public class OpenOrderProduct extends AuditableEntity {
 	@JoinColumn(name = "open_order_template_id")
 	private OpenOrderTemplate openOrderTemplate;
 
-	@Type(type = "numeric_boolean")
+	@Convert(converter = NumericBooleanConverter.class)
 	@Column(name = "active")
 	private Boolean active;
 

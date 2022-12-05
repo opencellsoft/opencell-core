@@ -18,8 +18,8 @@
 
 package org.meveo.admin.util;
 
-import javax.enterprise.inject.Produces;
-import javax.enterprise.inject.spi.InjectionPoint;
+import jakarta.enterprise.inject.Produces;
+import jakarta.enterprise.inject.spi.InjectionPoint;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

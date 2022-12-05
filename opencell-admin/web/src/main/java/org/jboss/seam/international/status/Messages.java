@@ -19,7 +19,7 @@ package org.jboss.seam.international.status;
 
 import java.io.Serializable;
 
-import javax.faces.application.FacesMessage.Severity;
+import jakarta.faces.application.FacesMessage.Severity;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 

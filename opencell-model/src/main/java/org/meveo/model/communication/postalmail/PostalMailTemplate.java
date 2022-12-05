@@ -17,12 +17,12 @@
  */
 package org.meveo.model.communication.postalmail;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.validation.constraints.Size;
-
 import org.meveo.model.communication.MessageTemplate;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @DiscriminatorValue("POSTAL_MAIL")

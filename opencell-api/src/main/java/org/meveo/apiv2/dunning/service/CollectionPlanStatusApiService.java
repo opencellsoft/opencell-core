@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.BadRequestException;
 
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.apiv2.ordering.services.ApiService;

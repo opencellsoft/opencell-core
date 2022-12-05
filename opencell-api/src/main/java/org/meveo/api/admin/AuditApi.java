@@ -18,7 +18,7 @@
 
 package org.meveo.api.admin;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.api.BaseApi;
 import org.meveo.audit.logging.configuration.AuditConfiguration;

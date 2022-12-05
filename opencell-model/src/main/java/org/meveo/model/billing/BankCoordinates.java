@@ -19,15 +19,13 @@ package org.meveo.model.billing;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Embeddable;
-import javax.validation.constraints.Size;
-
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.commons.encryption.BankDataEncryptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.meveo.commons.utils.StringUtils;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.Size;
 
 /**
  * Bank account information

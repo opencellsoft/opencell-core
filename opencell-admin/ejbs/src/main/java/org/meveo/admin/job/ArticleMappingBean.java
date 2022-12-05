@@ -17,12 +17,12 @@ import org.meveo.service.job.JobExecutionErrorService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.slf4j.Logger;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.inject.spi.BeanManager;
+import jakarta.inject.Inject;
+import jakarta.interceptor.Interceptors;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;

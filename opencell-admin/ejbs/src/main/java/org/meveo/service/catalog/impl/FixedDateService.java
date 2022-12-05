@@ -17,7 +17,7 @@
  */
 package org.meveo.service.catalog.impl;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.model.catalog.FixedDate;
 import org.meveo.service.base.PersistenceService;

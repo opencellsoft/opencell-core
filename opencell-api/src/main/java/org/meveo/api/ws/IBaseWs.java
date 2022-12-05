@@ -18,7 +18,7 @@
 
 package org.meveo.api.ws;
 
-import javax.jws.WebMethod;
+import jakarta.jws.WebMethod;
 
 import org.meveo.api.dto.ActionStatus;
 

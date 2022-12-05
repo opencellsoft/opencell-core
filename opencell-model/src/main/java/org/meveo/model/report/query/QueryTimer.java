@@ -1,10 +1,11 @@
 package org.meveo.model.report.query;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.validation.constraints.NotNull;
+import org.hibernate.type.NumericBooleanConverter;
 
-import org.hibernate.annotations.Type;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.NotNull;
 
 @Embeddable
 public class QueryTimer {
@@ -15,7 +16,7 @@ public class QueryTimer {
 	@Column(name = "month")
     private String month;
 	
-	@Type(type = "numeric_boolean")
+	@Convert(converter = NumericBooleanConverter.class)
 	@NotNull
 	@Column(name = "every_month", nullable = false)
     private boolean everyMonth;
@@ -23,7 +24,7 @@ public class QueryTimer {
 	@Column(name = "day_month")
     private String dayOfMonth;
 	
-	@Type(type = "numeric_boolean")
+	@Convert(converter = NumericBooleanConverter.class)
 	@NotNull
 	@Column(name = "every_day_month", nullable = false)
     private boolean everyDayOfMonth;
@@ -31,7 +32,7 @@ public class QueryTimer {
 	@Column(name = "day_week")
     private String dayOfWeek;
 	
-	@Type(type = "numeric_boolean")
+	@Convert(converter = NumericBooleanConverter.class)
 	@NotNull
 	@Column(name = "every_day_week", nullable = false)
     private boolean everyDayOfWeek;
@@ -39,7 +40,7 @@ public class QueryTimer {
 	@Column(name = "hour")
     private String hour;
 	
-	@Type(type = "numeric_boolean")
+	@Convert(converter = NumericBooleanConverter.class)
 	@NotNull
 	@Column(name = "every_hour", nullable = false)
     private boolean everyHour;
@@ -47,7 +48,7 @@ public class QueryTimer {
 	@Column(name = "minute")
     private String minute;
 	
-	@Type(type = "numeric_boolean")
+	@Convert(converter = NumericBooleanConverter.class)
 	@NotNull
 	@Column(name = "every_minute", nullable = false)
     private boolean everyMinute;
@@ -55,7 +56,7 @@ public class QueryTimer {
 	@Column(name = "second")
     private String second;
 	
-	@Type(type = "numeric_boolean")
+	@Convert(converter = NumericBooleanConverter.class)
 	@NotNull
 	@Column(name = "every_second", nullable = false)
     private boolean everySecond;

@@ -35,12 +35,12 @@ import java.util.zip.CRC32;
 import java.util.zip.CheckedOutputStream;
 import java.util.zip.GZIPOutputStream;
 
-import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
-import javax.faces.context.FacesContext;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.enterprise.context.ConversationScoped;
+import jakarta.enterprise.inject.Produces;
+import jakarta.faces.context.FacesContext;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet..http.HttpServletResponse;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.commons.utils.ParamBean;

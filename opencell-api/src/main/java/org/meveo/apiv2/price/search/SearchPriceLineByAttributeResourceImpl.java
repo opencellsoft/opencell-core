@@ -7,9 +7,9 @@ import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.service.catalog.impl.PricePlanMatrixLineService;
 
-import javax.inject.Inject;
-import javax.persistence.Query;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import jakarta.persistence.Query;
+import jakarta.ws.rs.core.Response;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

@@ -5,8 +5,8 @@ import org.immutables.value.Value;
 import org.meveo.apiv2.ordering.resource.order.ThresholdInput;
 import org.meveo.model.ordering.OpenOrderTypeEnum;
 
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;

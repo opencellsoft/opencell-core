@@ -17,8 +17,8 @@
  */
 package org.meveo.admin.action.script;
 
-import javax.enterprise.context.ConversationScoped;
-import javax.inject.Named;
+import jakarta.enterprise.context.ConversationScoped;
+import jakarta.inject.Named;
 
 /**
  * @author Edward P. Legaspi

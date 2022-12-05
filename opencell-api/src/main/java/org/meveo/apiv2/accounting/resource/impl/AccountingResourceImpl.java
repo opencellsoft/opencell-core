@@ -2,8 +2,8 @@ package org.meveo.apiv2.accounting.resource.impl;
 
 import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
-import static javax.ws.rs.core.Response.ok;
-import static javax.ws.rs.core.Response.serverError;
+import static jakarta.ws.rs.core.Response.ok;
+import static jakarta.ws.rs.core.Response.serverError;
 
 import org.meveo.apiv2.accounting.AuxiliaryAccount;
 import org.meveo.apiv2.accounting.ImmutableAuxiliaryAccount;
@@ -17,9 +17,9 @@ import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 
-import javax.inject.Inject;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.core.Response;
 
 import java.util.Map;
 

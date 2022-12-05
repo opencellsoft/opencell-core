@@ -18,25 +18,26 @@
 
 package org.meveo.model.customEntities;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
+import org.hibernate.type.NumericBooleanConverter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
+
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 /**
  * Custom entity template
@@ -68,7 +69,7 @@ public class CustomEntityTemplate extends EnableBusinessEntity implements Compar
     /**
      * Should data be stored in a separate table
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "store_as_table", nullable = false)
     @NotNull
     private boolean storeAsTable;
@@ -80,7 +81,7 @@ public class CustomEntityTemplate extends EnableBusinessEntity implements Compar
     /**
      * Should data be stored in Elastic search
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "store_in_es", nullable = false)
     @NotNull
     private boolean storeInES;
@@ -95,14 +96,14 @@ public class CustomEntityTemplate extends EnableBusinessEntity implements Compar
      * Is field value versioned
      */
     
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "versioned")
     private boolean versioned;
     
     /**
      * Is field value disableable
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "disableable")
     private boolean disableable=false;
     

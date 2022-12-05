@@ -20,7 +20,7 @@ package org.meveo.audit.logging.writer;
 
 import java.util.Date;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.audit.logging.dto.AuditEvent;

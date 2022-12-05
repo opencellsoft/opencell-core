@@ -3,7 +3,7 @@ package org.meveo.model.billing;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import javax.persistence.Embeddable;
+import jakarta.persistence.Embeddable;
 
 /**
  * Sub category invoice aggregate amounts by tax

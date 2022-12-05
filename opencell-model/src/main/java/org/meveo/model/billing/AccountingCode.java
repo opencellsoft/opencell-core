@@ -18,19 +18,23 @@
 
 package org.meveo.model.billing;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.meveo.model.*;
+import org.hibernate.type.NumericBooleanConverter;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessEntity;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ISearchable;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Use to store Chart of accounts. Previously accounting_code fields.
@@ -88,7 +92,7 @@ public class AccountingCode extends EnableBusinessEntity implements ISearchable{
     /**
      * Was record migrated
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "migrated", nullable = false)
     private boolean migrated = false;
 

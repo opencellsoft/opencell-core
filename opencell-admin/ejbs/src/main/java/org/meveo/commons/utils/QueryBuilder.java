@@ -38,12 +38,13 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.JoinType;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.JoinType;
 
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.hibernate.Session;
 import org.meveo.admin.util.pagination.FilterOperatorEnum;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -1361,15 +1362,15 @@ public class QueryBuilder {
      * @param convertToMap If False, query will return a list of Object[] values. If True, query will return a list of map of values.
      * @return instance of Query.
      */
-    public SQLQuery getNativeQuery(EntityManager em, boolean convertToMap) {
+    public NativeQuery getNativeQuery(EntityManager em, boolean convertToMap) {
         applyOrdering(paginationSortAlias);
 
         Session session = em.unwrap(Session.class);
-        SQLQuery result = session.createSQLQuery(toStringQuery());
+        NativeQuery result = session.createNativeQuery(toStringQuery());
         applyPagination(result);
 
         if (convertToMap) {
-            result.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
+            result.setResultListTransformer(AliasToEntityMapResultTransformer.INSTANCE); //  AliasToEntityOrderedMapResultTransformer.INSTANCE);
         }
         for (Map.Entry<String, Object> e : params.entrySet()) {
             Object value = e.getValue();
@@ -1618,7 +1619,7 @@ public class QueryBuilder {
      * 
      * @param query Hibernate query to apply pagination to
      */
-    protected void applyPagination(SQLQuery query) {
+    protected void applyPagination(NativeQuery query) {
         if (paginationConfiguration == null) {
             return;
         }
@@ -1632,7 +1633,7 @@ public class QueryBuilder {
      * @param firstRow the index of first row
      * @param numberOfRows number of rows shoud return.
      */
-    public void applyPagination(SQLQuery query, Integer firstRow, Integer numberOfRows) {
+    public void applyPagination(NativeQuery query, Integer firstRow, Integer numberOfRows) {
         if (firstRow != null) {
             query.setFirstResult(firstRow);
         }

@@ -18,28 +18,23 @@
 
 package org.meveo.commons.persistence.postgresql;
 
-import org.hibernate.QueryException;
-import org.hibernate.engine.spi.Mapping;
-import org.hibernate.type.BooleanType;
-import org.hibernate.type.Type;
-
 /**
  * A search function for a Custom field of type Boolean
  */
 public class BooleanPostgreSQLJsonSearchFunction extends PostgreSQLJsonSearchFunction {
 
-    @Override
-    public Type getReturnType(Type firstArgumentType, Mapping mapping) throws QueryException {
-        return BooleanType.INSTANCE;
-    }
-
-    @Override
-    public String getCastType() {
-        return "boolean";
-    }
-
-    @Override
-    public String getValuePropertyName() {
-        return "boolean";
-    }
+//    @Override
+//    public Type getReturnType(Type firstArgumentType, Mapping mapping) throws QueryException {
+//        return BooleanType.INSTANCE;
+//    }
+//
+//    @Override
+//    public String getCastType() {
+//        return "boolean";
+//    }
+//
+//    @Override
+//    public String getValuePropertyName() {
+//        return "boolean";
+//    }
 }

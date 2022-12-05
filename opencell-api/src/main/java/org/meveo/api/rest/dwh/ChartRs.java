@@ -36,8 +36,8 @@ import org.meveo.api.dto.response.ChartsResponseDto;
 import org.meveo.api.dto.response.dwh.GetChartResponse;
 import org.meveo.api.rest.IBaseRs;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 
 @Path("/chart")
 @Tag(name = "Chart", description = "@%Chart")

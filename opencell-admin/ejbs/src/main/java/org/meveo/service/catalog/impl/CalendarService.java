@@ -19,9 +19,9 @@ package org.meveo.service.catalog.impl;
 
 import java.util.Date;
 
-import javax.ejb.Stateless;
-import javax.inject.Named;
-import javax.persistence.NoResultException;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Named;
+import jakarta.persistence.NoResultException;
 
 import org.meveo.admin.exception.InvalidELException;
 import org.meveo.commons.utils.QueryBuilder;

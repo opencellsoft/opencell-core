@@ -30,9 +30,9 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.CalendarRs;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.interceptor.Interceptors;
 import java.util.Date;
 
 /**

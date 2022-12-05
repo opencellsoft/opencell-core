@@ -17,22 +17,23 @@
  */
 package org.meveo.model.catalog;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.QueryHint;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.Type;
+import org.hibernate.type.NumericBooleanConverter;
 import org.meveo.model.cpq.Attribute;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.QueryHint;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 /**
  * Recurring charge template
@@ -75,21 +76,21 @@ public class RecurringChargeTemplate extends ChargeTemplate {
     /**
      * Prorate amount when subscribing
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "subscription_prorata")
     private Boolean subscriptionProrata;
 
     /**
      * Prorate amount when terminating
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "termination_prorata")
     private Boolean terminationProrata;
 
     /**
      * Prorata On Price Change subscribed
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "prorata_on_price_change", nullable = false)
     @NotNull
     private boolean prorataOnPriceChange = false;
@@ -97,7 +98,7 @@ public class RecurringChargeTemplate extends ChargeTemplate {
     /**
      * Apply charge in advance - at the beginning of the period. If false, charge will be applied at the end of the period
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "apply_in_advance")
     private Boolean applyInAdvance;
 

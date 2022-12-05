@@ -8,7 +8,7 @@ import org.meveo.apiv2.models.Resource;
 import org.meveo.model.billing.InvoiceValidationStatusEnum;
 import org.meveo.model.billing.ValidationRuleTypeEnum;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Date;
 
 @Value.Immutable

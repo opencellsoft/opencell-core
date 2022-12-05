@@ -5,9 +5,9 @@ import org.meveo.service.crm.impl.AccountEntitySearchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.Query;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
+import jakarta.persistence.Query;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Objects;

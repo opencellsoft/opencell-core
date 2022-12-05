@@ -18,7 +18,7 @@
 
 package org.meveo.service.catalog.impl;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.model.catalog.ProductOffering;
 

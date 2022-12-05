@@ -21,9 +21,9 @@ package org.meveo.admin.action.catalog;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.enterprise.context.ConversationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.meveo.model.catalog.OfferTemplateCategory;

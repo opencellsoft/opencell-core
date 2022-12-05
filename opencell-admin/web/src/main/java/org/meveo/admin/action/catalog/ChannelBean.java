@@ -18,9 +18,9 @@
 
 package org.meveo.admin.action.catalog;
 
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.catalog.Channel;

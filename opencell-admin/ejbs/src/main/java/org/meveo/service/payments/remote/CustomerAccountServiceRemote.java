@@ -17,7 +17,7 @@
  */
 package org.meveo.service.payments.remote;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 /**
  * CustomerAccount service remote interface.

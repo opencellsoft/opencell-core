@@ -20,11 +20,11 @@ package org.meveo.admin.action.crm;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpSession;
+import jakarta.annotation.PostConstruct;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet..http.HttpSession;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.commons.utils.StringUtils;

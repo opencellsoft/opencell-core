@@ -20,9 +20,9 @@ package org.meveo.event.monitoring;
 
 import java.util.Date;
 
-import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.enterprise.event.Event;
+import jakarta.inject.Inject;
 
 import org.meveo.commons.utils.ParamBean;
 

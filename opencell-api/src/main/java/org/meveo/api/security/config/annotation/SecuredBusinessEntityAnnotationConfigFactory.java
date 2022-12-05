@@ -18,9 +18,9 @@
 
 package org.meveo.api.security.config.annotation;
 
-import javax.enterprise.inject.Default;
-import javax.inject.Singleton;
-import javax.interceptor.InvocationContext;
+import jakarta.enterprise.inject.Default;
+import jakarta.inject.Singleton;
+import jakarta.interceptor.InvocationContext;
 
 import org.meveo.api.security.config.FilterPropertyConfig;
 import org.meveo.api.security.config.FilterResultsConfig;

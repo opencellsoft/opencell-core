@@ -20,10 +20,10 @@ package org.meveo.service.payments.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.DiscriminatorValue;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
+import jakarta.persistence.DiscriminatorValue;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.audit.logging.annotations.MeveoAudit;

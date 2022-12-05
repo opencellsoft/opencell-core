@@ -1,6 +1,6 @@
 package org.meveo.service.cpq.order;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;

@@ -21,7 +21,7 @@ import org.meveo.model.dunning.DunningDocument;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.PersistenceService;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 /**
  * Service implementation to manage DunningDocument entity.

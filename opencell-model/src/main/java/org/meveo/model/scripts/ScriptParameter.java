@@ -3,19 +3,22 @@ package org.meveo.model.scripts;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
+import org.hibernate.type.NumericBooleanConverter;
+import org.hibernate.type.SqlTypes;
 import org.meveo.model.BaseEntity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "meveo_script_parameter")
@@ -34,7 +37,7 @@ public class ScriptParameter extends BaseEntity {
 	@NotNull
 	private ScriptInstance scriptInstance;
 	
-    @Type(type = "json")
+	@JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "description_i18n", columnDefinition = "jsonb")
     private Map<String, String> descriptionI18n;
     
@@ -47,7 +50,7 @@ public class ScriptParameter extends BaseEntity {
     @Size(max = 255)
     private String defaultValue;
     
-	@Type(type = "numeric_boolean")
+	@Convert(converter = NumericBooleanConverter.class)
 	@Column(name = "mandatory")
 	private boolean mandatory = Boolean.FALSE;
 	
@@ -59,7 +62,7 @@ public class ScriptParameter extends BaseEntity {
     @Size(max = 20)
     private String valuesSeparator = "\\|";
     
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
 	@Column(name = "collection")
 	private boolean collection = Boolean.FALSE;
     

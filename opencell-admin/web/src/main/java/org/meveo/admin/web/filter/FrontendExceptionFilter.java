@@ -20,11 +20,11 @@ package org.meveo.admin.web.filter;
 
 import org.omnifaces.filter.HttpFilter;
 
-import javax.servlet.*;
-import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet..*;
+import jakarta.servlet..annotation.WebFilter;
+import jakarta.servlet..http.HttpServletRequest;
+import jakarta.servlet..http.HttpServletResponse;
+import jakarta.servlet..http.HttpSession;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -66,7 +66,7 @@ public class FrontendExceptionFilter extends HttpFilter {
      * @param chain    The filter chain to continue.
      * @throws ServletException As wrapper exception when something fails in the request processing.
      * @throws IOException      Whenever something fails at I/O level.
-     * @see Filter#doFilter (javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)
+     * @see Filter#doFilter (jakarta.servlet..ServletRequest, jakarta.servlet..ServletResponse, jakarta.servlet..FilterChain)
      */
     @Override
     public void doFilter(HttpServletRequest request, HttpServletResponse response, HttpSession session, FilterChain chain) throws ServletException, IOException {

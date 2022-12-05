@@ -20,7 +20,7 @@ package org.meveo.admin.exception;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.ejb.ApplicationException;
+import jakarta.ejb.ApplicationException;
 
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBean;

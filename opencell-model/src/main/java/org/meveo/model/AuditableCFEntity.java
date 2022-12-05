@@ -19,15 +19,15 @@ package org.meveo.model;
 
 import java.util.UUID;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.PrePersist;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.hibernate.annotations.Type;
 import org.meveo.model.crm.custom.CustomFieldValues;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 
 @MappedSuperclass
@@ -65,7 +65,6 @@ public abstract class AuditableCFEntity extends AuditableEntity implements ICust
     /**
      * Custom field values in JSON format
      */
-    @Type(type = "cfjson")
     @Column(name = "cf_values", columnDefinition = "jsonb")
     protected CustomFieldValues cfValues;
 

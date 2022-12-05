@@ -7,7 +7,7 @@ import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuotePrice;
 
-import javax.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;

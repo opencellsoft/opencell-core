@@ -1,13 +1,13 @@
 package org.meveo.model.billing;
 
-import org.meveo.model.admin.Seller;
-import org.meveo.model.payments.PaymentMethod;
+import static java.lang.String.format;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.String.format;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.payments.PaymentMethod;
 
 public class InvoiceLinesGroup implements Serializable {
 

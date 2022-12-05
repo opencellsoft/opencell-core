@@ -18,8 +18,8 @@
 
 package org.meveo.admin.action.notification;
 
-import javax.enterprise.context.ConversationScoped;
-import javax.inject.Named;
+import jakarta.enterprise.context.ConversationScoped;
+import jakarta.inject.Named;
 
 /**
  * @author Tyshan Shi

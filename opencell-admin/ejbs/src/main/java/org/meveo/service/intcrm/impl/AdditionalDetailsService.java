@@ -20,8 +20,8 @@ package org.meveo.service.intcrm.impl;
 
 import java.util.List;
 
-import javax.persistence.Query;
-import javax.inject.Inject;
+import jakarta.persistence.Query;
+import jakarta.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.crm.Customer;

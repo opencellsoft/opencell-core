@@ -1,7 +1,7 @@
 package org.meveo.api.rest.cpq.impl;
 
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Response;
 
 import org.meveo.api.cpq.CommercialOrderApi;
 import org.meveo.api.dto.ActionStatus;

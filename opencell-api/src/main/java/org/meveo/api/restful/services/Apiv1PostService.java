@@ -13,8 +13,8 @@ import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.generic.core.GenericHelper;
 import org.meveo.util.Inflector;
 
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.*;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.*;
 
 import java.io.IOException;
 import java.net.URI;

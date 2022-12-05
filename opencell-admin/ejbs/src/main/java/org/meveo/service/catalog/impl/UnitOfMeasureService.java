@@ -19,7 +19,7 @@ package org.meveo.service.catalog.impl;
 
 import java.util.List;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.UnitOfMeasure;

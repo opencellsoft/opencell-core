@@ -30,8 +30,8 @@ import io.swagger.v3.oas.annotations.Hidden;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.rest.IBaseRs;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * @author Mounir Bahije

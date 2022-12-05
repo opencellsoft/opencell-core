@@ -19,7 +19,7 @@ package org.meveo.service.wf;
 
 import java.util.List;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.wf.WFAction;

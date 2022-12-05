@@ -19,9 +19,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.util.ResourceBundle;

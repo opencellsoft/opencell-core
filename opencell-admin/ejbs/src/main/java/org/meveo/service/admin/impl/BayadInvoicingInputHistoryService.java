@@ -17,7 +17,7 @@
  */
 package org.meveo.service.admin.impl;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.model.admin.BayadInvoicingInputHistory;
 import org.meveo.service.base.PersistenceService;

@@ -1,6 +1,6 @@
 package org.meveo.apiv2.generic.security.config;
 
-import javax.inject.Qualifier;
+import jakarta.inject.Qualifier;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 

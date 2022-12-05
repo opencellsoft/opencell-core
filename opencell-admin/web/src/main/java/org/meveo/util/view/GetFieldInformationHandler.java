@@ -29,19 +29,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.el.ELContext;
-import javax.el.ExpressionFactory;
-import javax.el.ValueExpression;
-import javax.faces.application.Application;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.view.facelets.FaceletContext;
-import javax.faces.view.facelets.TagConfig;
-import javax.faces.view.facelets.TagHandler;
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.el.ELContext;
+import jakarta.el.ExpressionFactory;
+import jakarta.el.ValueExpression;
+import jakarta.faces.application.Application;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.view.facelets.FaceletContext;
+import jakarta.faces.view.facelets.TagConfig;
+import jakarta.faces.view.facelets.TagHandler;
+import jakarta.persistence.Column;
+import jakarta.persistence.JoinColumn;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.commons.utils.EnumBuilder;
@@ -250,25 +250,25 @@ public class GetFieldInformationHandler extends TagHandler {
                         || fieldClassType.getName().equals("short") || fieldClassType.getName().equals("double") || fieldClassType.getName().equals("float")))) {
 
             if (fieldClassType == Integer.class || (fieldClassType.isPrimitive() && fieldClassType.getName().equals("int"))) {
-                fieldInfo.numberConverter = "javax.faces.Integer";
+                fieldInfo.numberConverter = "jakarta.faces.Integer";
                 fieldInfo.numberType = FieldNumberTypeEnum.Integer;
             } else if (fieldClassType == Long.class || (fieldClassType.isPrimitive() && fieldClassType.getName().equals("long"))) {
-                fieldInfo.numberConverter = "javax.faces.Long";
+                fieldInfo.numberConverter = "jakarta.faces.Long";
                 fieldInfo.numberType = FieldNumberTypeEnum.Long;
             } else if (fieldClassType == Byte.class || (fieldClassType.isPrimitive() && fieldClassType.getName().equals("byte"))) {
-                fieldInfo.numberConverter = "javax.faces.Byte";
+                fieldInfo.numberConverter = "jakarta.faces.Byte";
                 fieldInfo.numberType = FieldNumberTypeEnum.Byte;
             } else if (fieldClassType == Short.class || (fieldClassType.isPrimitive() && fieldClassType.getName().equals("short"))) {
-                fieldInfo.numberConverter = "javax.faces.Short";
+                fieldInfo.numberConverter = "jakarta.faces.Short";
                 fieldInfo.numberType = FieldNumberTypeEnum.Short;
             } else if (fieldClassType == Double.class || (fieldClassType.isPrimitive() && fieldClassType.getName().equals("double"))) {
-                fieldInfo.numberConverter = "javax.faces.Double";
+                fieldInfo.numberConverter = "jakarta.faces.Double";
                 fieldInfo.numberType = FieldNumberTypeEnum.Double;
             } else if (fieldClassType == Float.class || (fieldClassType.isPrimitive() && fieldClassType.getName().equals("float"))) {
-                fieldInfo.numberConverter = "javax.faces.Float";
+                fieldInfo.numberConverter = "jakarta.faces.Float";
                 fieldInfo.numberType = FieldNumberTypeEnum.Float;
             } else if (fieldClassType == BigDecimal.class) {
-                fieldInfo.numberConverter = "javax.faces.BigDecimal";
+                fieldInfo.numberConverter = "jakarta.faces.BigDecimal";
                 fieldInfo.numberType = FieldNumberTypeEnum.BigDecimal;
             }
 

@@ -45,8 +45,8 @@ import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;

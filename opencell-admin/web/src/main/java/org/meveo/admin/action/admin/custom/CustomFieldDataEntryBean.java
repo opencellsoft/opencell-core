@@ -76,12 +76,12 @@ import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -719,7 +719,7 @@ public class CustomFieldDataEntryBean implements Serializable {
                 // Fail validation on non empty values only if it does not have inherited value
                 if (cfValues == null || cfValues.isEmpty()) {
                     if (!customFieldInstanceService.hasInheritedOnlyCFValue(entity, cft.getCode())) {
-                        FacesMessage msg = new FacesMessage(resourceMessages.getString("javax.faces.component.UIInput.REQUIRED", cft.getDescription()));
+                        FacesMessage msg = new FacesMessage(resourceMessages.getString("jakarta.faces.component.UIInput.REQUIRED", cft.getDescription()));
                         msg.setSeverity(FacesMessage.SEVERITY_ERROR);
                         fc.addMessage(null, msg);
                         valid = false;
@@ -730,7 +730,7 @@ public class CustomFieldDataEntryBean implements Serializable {
                             if (customFieldInstanceService.hasInheritedOnlyCFValue(entity, cft.getCode())) {
                                 break;
                             }
-                            FacesMessage msg = new FacesMessage(resourceMessages.getString("javax.faces.component.UIInput.REQUIRED", cft.getDescription()));
+                            FacesMessage msg = new FacesMessage(resourceMessages.getString("jakarta.faces.component.UIInput.REQUIRED", cft.getDescription()));
                             msg.setSeverity(FacesMessage.SEVERITY_ERROR);
                             fc.addMessage(null, msg);
                             valid = false;

@@ -17,7 +17,7 @@
  */
 package org.meveo.admin.exception;
 
-import javax.ejb.ApplicationException;
+import jakarta.ejb.ApplicationException;
 
 /**
  * Failed to communicate to a remote Opencell instance

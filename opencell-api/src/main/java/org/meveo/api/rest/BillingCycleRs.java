@@ -32,8 +32,8 @@ import org.meveo.api.dto.BillingCycleDto;
 import org.meveo.api.dto.response.BillingCyclesResponseDto;
 import org.meveo.api.dto.response.GetBillingCycleResponse;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * @author Edward P. Legaspi

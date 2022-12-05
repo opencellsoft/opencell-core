@@ -2,8 +2,8 @@ package org.meveo.apiv2.article.service;
 
 import java.util.Optional;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.model.article.ArticleMapping;

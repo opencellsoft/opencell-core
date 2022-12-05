@@ -18,36 +18,28 @@
 
 package org.meveo.commons.persistence.oracle;
 
-import java.util.List;
-
-import org.hibernate.QueryException;
-import org.hibernate.engine.spi.Mapping;
-import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.hibernate.type.LongType;
-import org.hibernate.type.Type;
-
 /**
  * A search function for a Custom field of type Long
  */
 public class LongOracleJsonSearchFunction extends OracleJsonSearchFunction {
 
-    @Override
-    public Type getReturnType(Type firstArgumentType, Mapping mapping) throws QueryException {
-        return LongType.INSTANCE;
-    }
-
-    @Override
-    public String getCastType() {
-        return "number(38,0)";
-    }
-
-    @Override
-    public String getValuePropertyName() {
-        return "long";
-    }
-
-    @Override
-    public String render(Type firstArgumentType, List args, SessionFactoryImplementor factory) throws QueryException {
-        return super.render(firstArgumentType, args, factory);
-    }
+//    @Override
+//    public Type getReturnType(Type firstArgumentType, Mapping mapping) throws QueryException {
+//        return LongType.INSTANCE;
+//    }
+//
+//    @Override
+//    public String getCastType() {
+//        return "number(38,0)";
+//    }
+//
+//    @Override
+//    public String getValuePropertyName() {
+//        return "long";
+//    }
+//
+//    @Override
+//    public String render(Type firstArgumentType, List args, SessionFactoryImplementor factory) throws QueryException {
+//        return super.render(firstArgumentType, args, factory);
+//    }
 }

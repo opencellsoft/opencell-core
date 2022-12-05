@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.faces.context.FacesContext;
-import javax.faces.model.DataModel;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.model.DataModel;
 
 //import org.ajax4jsf.model.DataVisitor;
 //import org.ajax4jsf.model.ExtendedDataModel;

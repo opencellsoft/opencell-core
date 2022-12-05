@@ -2,9 +2,9 @@ package org.meveo.api.rest.catalog.impl;
 
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.core.Response;
 
 import org.meveo.api.cpq.ProductApi;
 import org.meveo.api.cpq.ProductLineApi;

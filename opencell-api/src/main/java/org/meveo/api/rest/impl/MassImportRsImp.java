@@ -8,7 +8,7 @@ import org.meveo.api.rest.MassImportRs;
 import org.meveo.api.rest.admin.impl.FileImportForm;
 import org.meveo.api.rest.admin.impl.FileUploadForm;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.List;
 
 public class MassImportRsImp extends BaseRs implements MassImportRs {

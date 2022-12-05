@@ -3,8 +3,8 @@ package org.meveo.service.cpq;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ejb.Stateless;
-import javax.persistence.NoResultException;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.NoResultException;
 
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.contract.BillingRule;

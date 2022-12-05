@@ -22,7 +22,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriBuilder;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpEntity;

@@ -35,8 +35,8 @@ import org.meveo.api.dto.response.tax.TaxClassResponseDto;
 import org.meveo.api.dto.tax.TaxClassDto;
 import org.meveo.api.rest.IBaseRs;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * @author Mohammed

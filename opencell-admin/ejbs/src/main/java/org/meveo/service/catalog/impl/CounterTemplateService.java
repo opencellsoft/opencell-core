@@ -20,8 +20,8 @@ package org.meveo.service.catalog.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import javax.ejb.Stateless;
-import javax.persistence.Query;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.Query;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;

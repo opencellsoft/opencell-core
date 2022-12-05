@@ -17,14 +17,15 @@
  */
 package org.meveo.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.meveo.model.audit.AuditableFieldHistory;
 import org.meveo.security.MeveoUser;
 
-import javax.persistence.Embedded;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
-import java.util.HashSet;
-import java.util.Set;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Transient;
 
 /**
  * Base class for entities that track creation/modification of the record

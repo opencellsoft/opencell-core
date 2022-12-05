@@ -18,7 +18,7 @@
 
 package org.meveo.api.sequence;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.api.dto.sequence.GenericSequenceDto;
 import org.meveo.model.sequence.GenericSequence;

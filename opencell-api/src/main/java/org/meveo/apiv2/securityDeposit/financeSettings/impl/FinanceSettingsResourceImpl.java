@@ -11,8 +11,8 @@ import org.meveo.model.settings.OpenOrderSetting;
 import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 import org.meveo.service.settings.impl.OpenOrderSettingService;
 
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Response;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

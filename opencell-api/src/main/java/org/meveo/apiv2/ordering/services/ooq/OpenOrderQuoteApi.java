@@ -31,9 +31,9 @@ import org.meveo.service.order.OpenOrderService;
 import org.meveo.service.order.OpenOrderTemplateService;
 import org.meveo.service.settings.impl.OpenOrderSettingService;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;

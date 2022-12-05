@@ -33,8 +33,8 @@ import org.meveo.api.dto.response.CounterTemplatesResponseDto;
 import org.meveo.api.dto.response.catalog.GetCounterTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * Web service for managing {@link org.meveo.model.catalog.CounterTemplate}.

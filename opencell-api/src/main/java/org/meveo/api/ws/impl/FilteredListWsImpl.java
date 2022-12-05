@@ -20,9 +20,9 @@ package org.meveo.api.ws.impl;
 
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.jws.WebService;
+import jakarta.inject.Inject;
+import jakarta.interceptor.Interceptors;
+import jakarta.jws.WebService;
 
 import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.response.billing.FilteredListResponseDto;

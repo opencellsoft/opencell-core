@@ -3,8 +3,8 @@ package org.meveo.apiv2.quote;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import org.immutables.value.Value;
 import org.meveo.api.dto.cpq.QuoteAttributeDTO;

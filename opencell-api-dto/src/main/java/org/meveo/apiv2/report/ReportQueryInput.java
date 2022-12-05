@@ -7,7 +7,7 @@ import org.immutables.value.Value.Style;
 import org.meveo.model.report.query.QueryVisibilityEnum;
 import org.meveo.model.report.query.SortOrderEnum;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 

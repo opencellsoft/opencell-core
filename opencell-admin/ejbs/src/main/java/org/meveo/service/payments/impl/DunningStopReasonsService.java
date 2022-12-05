@@ -1,6 +1,6 @@
 package org.meveo.service.payments.impl;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.model.dunning.DunningStopReason;
 import org.meveo.service.base.PersistenceService;

@@ -35,8 +35,8 @@ import org.meveo.api.dto.response.billing.AccountingCodeGetResponseDto;
 import org.meveo.api.dto.response.billing.AccountingCodeListResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * API for managing AccountingCode entity.

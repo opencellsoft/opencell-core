@@ -3,10 +3,10 @@ package org.meveo.service.cpq.order;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.ejb.Stateless;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.Query;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.NonUniqueResultException;
+import jakarta.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;

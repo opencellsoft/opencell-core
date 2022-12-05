@@ -22,8 +22,8 @@ import org.meveo.model.admin.FileType;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.PersistenceService;
 
-import javax.ejb.Stateless;
-import javax.persistence.Query;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.Query;
 import java.util.List;
 
 /**

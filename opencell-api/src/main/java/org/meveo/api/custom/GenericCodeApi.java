@@ -19,8 +19,8 @@ import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.SequenceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 
 import java.util.Optional;
 

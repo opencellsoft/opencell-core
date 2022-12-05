@@ -17,8 +17,8 @@
  */
 package org.meveo.admin.action.admin.module;
 
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.module.MeveoModule;

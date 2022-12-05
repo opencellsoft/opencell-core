@@ -20,9 +20,9 @@ package org.meveo.service.notification;
 
 import java.util.HashMap;
 
-import javax.ejb.Asynchronous;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Asynchronous;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.jobs.JobLauncherEnum;

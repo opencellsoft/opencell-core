@@ -21,8 +21,8 @@ package org.meveo.api.generic.wf;
 import static java.util.UUID.randomUUID;
 import static java.util.Optional.ofNullable;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;

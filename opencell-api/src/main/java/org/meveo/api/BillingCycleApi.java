@@ -35,8 +35,8 @@ import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.script.ScriptInstanceService;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 import java.util.function.BiFunction;
 
 /**

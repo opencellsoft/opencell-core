@@ -24,8 +24,8 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.primefaces.model.LazyDataModel;
 
-import javax.enterprise.context.ConversationScoped;
-import javax.inject.Named;
+import jakarta.enterprise.context.ConversationScoped;
+import jakarta.inject.Named;
 
 /**
  * @author Abdellatif BARI

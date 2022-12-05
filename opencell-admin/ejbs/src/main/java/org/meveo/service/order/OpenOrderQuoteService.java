@@ -4,7 +4,7 @@ import org.meveo.model.ordering.OpenOrderQuote;
 import org.meveo.model.ordering.OpenOrderQuoteStatusEnum;
 import org.meveo.service.base.BusinessService;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 @Stateless
 public class OpenOrderQuoteService extends BusinessService<OpenOrderQuote> {

@@ -18,10 +18,10 @@
 
 package org.meveo.api.rest.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.ws.rs.QueryParam;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.interceptor.Interceptors;
+import jakarta.ws.rs.QueryParam;
 
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.PdfInvoiceResponse;

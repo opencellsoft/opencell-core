@@ -22,9 +22,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.jws.WebService;
+import jakarta.inject.Inject;
+import jakarta.interceptor.Interceptors;
+import jakarta.jws.WebService;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BillingCycleApi;

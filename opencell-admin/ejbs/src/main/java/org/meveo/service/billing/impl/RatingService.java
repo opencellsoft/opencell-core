@@ -30,10 +30,10 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.ejb.EJB;
-import javax.inject.Inject;
-import javax.persistence.Query;
-import javax.ws.rs.core.Response;
+import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
+import jakarta.persistence.Query;
+import jakarta.ws.rs.core.Response;
 
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;

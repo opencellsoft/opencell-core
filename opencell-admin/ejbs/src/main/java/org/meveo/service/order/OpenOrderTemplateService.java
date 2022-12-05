@@ -3,7 +3,7 @@ package org.meveo.service.order;
 import org.meveo.model.ordering.OpenOrderTemplate;
 import org.meveo.service.base.BusinessService;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 @Stateless
 public class OpenOrderTemplateService extends BusinessService<OpenOrderTemplate> {

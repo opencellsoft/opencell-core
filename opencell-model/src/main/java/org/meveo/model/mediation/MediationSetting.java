@@ -4,17 +4,18 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
+import org.hibernate.type.NumericBooleanConverter;
 import org.meveo.model.AuditableEntity;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 /**
  * 
@@ -29,7 +30,7 @@ import org.meveo.model.AuditableEntity;
 public class MediationSetting extends AuditableEntity {
 
     @Column(name = "enable_edr_versioning")
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
 	private boolean enableEdrVersioning = Boolean.FALSE;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "mediationSetting", orphanRemoval = true)

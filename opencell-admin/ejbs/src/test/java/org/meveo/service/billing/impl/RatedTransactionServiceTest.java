@@ -29,8 +29,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 
 import org.junit.Assert;
 import org.junit.Before;

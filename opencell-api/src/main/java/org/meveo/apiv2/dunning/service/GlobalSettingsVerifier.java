@@ -4,8 +4,8 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.model.settings.GlobalSettings;
 import org.meveo.service.settings.impl.GlobalSettingsService;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 
 @Stateless
 public class GlobalSettingsVerifier {

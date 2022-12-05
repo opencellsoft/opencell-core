@@ -18,13 +18,13 @@
 
 package org.meveo.model.crm.custom;
 
-import org.apache.commons.lang3.StringUtils;
-import org.meveo.model.crm.CustomTableWrapper;
-import org.meveo.model.crm.EntityReferenceWrapper;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.meveo.model.crm.CustomTableWrapper;
+import org.meveo.model.crm.EntityReferenceWrapper;
 
 /**
  * @author Edward P. Legaspi

@@ -7,7 +7,7 @@ import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.model.settings.MaximumValidityUnitEnum;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 @Value.Immutable
 @Value.Style(jdkOnly = true)

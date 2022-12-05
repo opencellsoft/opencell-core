@@ -18,9 +18,9 @@ import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.TypedQuery;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
+import jakarta.persistence.TypedQuery;
 
 import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.commons.utils.ListUtils;

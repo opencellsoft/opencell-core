@@ -20,7 +20,7 @@ package org.meveo.export;
 
 import java.lang.reflect.Modifier;
 
-import javax.persistence.Inheritance;
+import jakarta.persistence.Inheritance;
 
 import org.meveo.model.IAuditable;
 import org.meveo.model.IEntity;

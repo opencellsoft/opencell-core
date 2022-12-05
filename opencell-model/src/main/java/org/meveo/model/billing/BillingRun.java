@@ -18,6 +18,7 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -26,30 +27,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.hibernate.type.NumericBooleanConverter;
+import org.hibernate.type.SqlTypes;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -60,6 +43,27 @@ import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 /**
  * Billing run
@@ -262,7 +266,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     /**
      * Selected billing accounts (identifiers)
      */
-    @Type(type = "longText")
+    @JdbcTypeCode(Types.LONGVARCHAR)
     @Column(name = "selected_billing_accounts")
     private String selectedBillingAccounts;
 
@@ -287,7 +291,6 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     /**
      * Custom field values in JSON format
      */
-    @Type(type = "cfjson")
     @Column(name = "cf_values", columnDefinition = "jsonb")
     private CustomFieldValues cfValues;
 
@@ -314,7 +317,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @Column(name = "reference_date")
     private ReferenceDateEnum referenceDate = ReferenceDateEnum.TODAY;
 
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "skip_validation_script")
     private Boolean skipValidationScript = false;
 
@@ -327,7 +330,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     /**
      * To decide whether or not dates should be recomputed at invoice validation.
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "compute_dates_validation")
     private Boolean computeDatesAtValidation;
 
@@ -341,21 +344,21 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     /**
      * To indicates that invoice minimum job has already been run on the BR.
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "minimum_applied")
     private Boolean minimumApplied;
 
     /**
      * To indicates that invoicing threshold job has already been run on the BR.
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "threshold_checked")
     private Boolean thresholdChecked;
 
     /**
      * To indicates that that invoice discounts job has already been run on the BR.
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "discount_applied")
     private Boolean discountApplied;
 
@@ -370,7 +373,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     /**
      * Filtering option used in exceptional billing run.
      */
-    @Type(type = "json")
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "filters", columnDefinition = "jsonb")
     private Map<String, String> filters;
 
@@ -403,11 +406,11 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     /**
      * i18n Description
      */
-    @Type(type = "json")
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "description_i18n", columnDefinition = "jsonb")
     private Map<String, String> descriptionI18n;
 	
-	@Type(type = "numeric_boolean")
+	@Convert(converter = NumericBooleanConverter.class)
     @Column(name = "is_quarantine")
     private Boolean isQuarantine;
 	
@@ -425,7 +428,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     /**
      * To decide whether or not generate account oeprations.
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "generate_ao", nullable = false)
     private Boolean generateAO = false;
     

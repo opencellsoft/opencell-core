@@ -5,7 +5,7 @@ import org.meveo.model.IEnable;
 import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.service.base.PersistenceService;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 /**
  * Wallet Operation Aggregation Settings Service.

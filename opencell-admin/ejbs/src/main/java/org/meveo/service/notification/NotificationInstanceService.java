@@ -18,7 +18,7 @@
 
 package org.meveo.service.notification;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.NotificationCacheContainerProvider;

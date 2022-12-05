@@ -8,8 +8,8 @@ import org.meveo.service.base.PersistenceService;
 
 import java.util.Arrays;
 
-import javax.ejb.Stateless;
-import javax.persistence.NoResultException;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.NoResultException;
 
 @Stateless
 public class DunningActionInstanceService extends PersistenceService<DunningActionInstance> {

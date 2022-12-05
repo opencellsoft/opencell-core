@@ -20,10 +20,10 @@ package org.meveo.model.sequence;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Size;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Size;
 
 /**
  * Class use for storing sequence data. This sequence is use by RUM and to generate customer number.

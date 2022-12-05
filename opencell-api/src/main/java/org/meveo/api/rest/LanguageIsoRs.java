@@ -32,8 +32,8 @@ import org.meveo.api.dto.LanguageIsoDto;
 import org.meveo.api.dto.response.GetLanguageIsoResponse;
 import org.meveo.api.dto.response.GetLanguagesIsoResponse;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * * Web service for managing {@link org.meveo.model.billing.Language}.

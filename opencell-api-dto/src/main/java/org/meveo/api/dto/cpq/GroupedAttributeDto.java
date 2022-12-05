@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.cpq.Attribute;

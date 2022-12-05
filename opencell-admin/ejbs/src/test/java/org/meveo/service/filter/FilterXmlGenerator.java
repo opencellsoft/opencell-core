@@ -25,7 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.DiscriminatorValue;
+import jakarta.persistence.DiscriminatorValue;
 
 import org.junit.Test;
 import org.meveo.admin.exception.FilterException;

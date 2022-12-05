@@ -17,10 +17,10 @@
  */
 package org.meveo.admin.jsf.converter;
 
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.FacesConverter;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.convert.Converter;
+import jakarta.faces.convert.FacesConverter;
 
 /**
  * String converter, that converts empty string to null if needed for backend.
@@ -44,8 +44,8 @@ public class NullableStringConverter implements Converter {
 	 * @return the given value as String. In case of an empty String, null is
 	 *         returned.
 	 * 
-	 * @see javax.faces.convert.Converter#getAsObject(javax.faces.context.FacesContext,
-	 *      javax.faces.component.UIComponent, java.lang.String)
+	 * @see jakarta.faces.convert.Converter#getAsObject(jakarta.faces.context.FacesContext,
+	 *      jakarta.faces.component.UIComponent, java.lang.String)
 	 */
 	@Override
 	public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String value) {
@@ -89,8 +89,8 @@ public class NullableStringConverter implements Converter {
 	 *            the uicomponent to show the value
 	 * @return the String-converted parameter
 	 * 
-	 * @see javax.faces.convert.Converter#getAsString(javax.faces.context.FacesContext,
-	 *      javax.faces.component.UIComponent, java.lang.Object)
+	 * @see jakarta.faces.convert.Converter#getAsString(jakarta.faces.context.FacesContext,
+	 *      jakarta.faces.component.UIComponent, java.lang.Object)
 	 */
 	@Override
 	public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object value) {

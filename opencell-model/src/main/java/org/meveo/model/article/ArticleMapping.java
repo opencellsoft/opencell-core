@@ -1,15 +1,15 @@
 package org.meveo.model.article;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.scripts.ScriptInstance;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
-import static javax.persistence.FetchType.LAZY;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "billing_article_mapping")

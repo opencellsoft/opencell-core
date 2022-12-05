@@ -8,7 +8,7 @@ import org.meveo.api.ws.impl.ExceptionProcessorWs;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import javax.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolation;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;

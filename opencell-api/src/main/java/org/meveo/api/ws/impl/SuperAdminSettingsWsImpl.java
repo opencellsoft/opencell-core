@@ -18,11 +18,11 @@
 
 package org.meveo.api.ws.impl;
 
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.jws.WebService;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.ws.handler.MessageContext;
+import jakarta.inject.Inject;
+import jakarta.interceptor.Interceptors;
+import jakarta.jws.WebService;
+import jakarta.servlet..http.HttpServletResponse;
+import jakarta.xml.ws.handler.MessageContext;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.CountryIsoApi;

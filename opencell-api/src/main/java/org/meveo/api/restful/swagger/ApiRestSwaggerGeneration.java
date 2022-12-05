@@ -21,12 +21,12 @@ import org.meveo.api.restful.swagger.service.Apiv1SwaggerGetOperation;
 import org.meveo.api.restful.swagger.service.Apiv1SwaggerPostOperation;
 import org.meveo.api.restful.swagger.service.Apiv1SwaggerPutOperation;
 
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.*;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.*;
 
 import java.util.Collections;
 import java.util.Map;

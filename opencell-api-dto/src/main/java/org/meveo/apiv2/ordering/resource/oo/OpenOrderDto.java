@@ -5,7 +5,7 @@ import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.apiv2.ordering.resource.order.ThresholdInput;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Date;
 import java.util.List;
 

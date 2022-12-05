@@ -23,7 +23,7 @@ import org.iban4j.IbanFormat;
 import org.iban4j.IbanUtil;
 import org.meveo.api.BaseApi;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 /**
  * @author Mounir Bahije

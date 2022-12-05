@@ -9,9 +9,9 @@ import org.meveo.service.admin.impl.FileTypeService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.crm.impl.AccountEntitySearchService;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.BadRequestException;
 import java.util.Date;
 import java.util.Objects;
 

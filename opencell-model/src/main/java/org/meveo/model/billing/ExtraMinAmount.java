@@ -3,8 +3,6 @@ package org.meveo.model.billing;
 import java.io.Serializable;
 import java.util.Map;
 
-import javax.persistence.Transient;
-
 import org.meveo.model.crm.IInvoicingMinimumApplicable;
 /**
  * A class to store extra amount generated to achieve the min amount billable for an account

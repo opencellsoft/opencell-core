@@ -30,7 +30,7 @@ import org.meveo.model.jaxb.account.BankCoordinates;
 import org.meveo.model.jaxb.account.BillingAccounts;
 import org.meveo.model.jaxb.account.Name;
 
-import javax.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.*;
 
 
 /**

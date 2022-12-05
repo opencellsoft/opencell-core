@@ -17,10 +17,10 @@
  */
 package org.meveo.model.listeners;
 
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-
 import org.meveo.model.AccountEntity;
+
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 
 public class AccountCodeGenerationListener {
 

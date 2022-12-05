@@ -20,8 +20,8 @@ package org.meveo.admin.jsf.converter;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
-import javax.faces.context.FacesContext;
-import javax.faces.convert.FacesConverter;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.convert.FacesConverter;
 
 @FacesConverter(value = "bigDecimal2DigitsConverter", managed = true)
 public class BigDecimal2DigitsConverter extends BigDecimalConverter {

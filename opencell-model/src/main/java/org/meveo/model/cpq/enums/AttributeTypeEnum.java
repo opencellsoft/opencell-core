@@ -1,6 +1,5 @@
 package org.meveo.model.cpq.enums;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 

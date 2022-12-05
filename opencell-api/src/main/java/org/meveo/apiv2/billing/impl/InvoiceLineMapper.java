@@ -1,10 +1,10 @@
 package org.meveo.apiv2.billing.impl;
 
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
-import javax.ws.rs.ForbiddenException;
-import javax.ws.rs.NotFoundException;
+import jakarta.inject.Inject;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.NonUniqueResultException;
+import jakarta.ws.rs.ForbiddenException;
+import jakarta.ws.rs.NotFoundException;
 
 import org.meveo.apiv2.billing.ImmutableInvoiceLine;
 import org.meveo.apiv2.ordering.ResourceMapper;

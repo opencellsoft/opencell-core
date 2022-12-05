@@ -19,8 +19,8 @@ package org.meveo.service.billing.impl;
 
 import java.util.List;
 
-import javax.ejb.Stateless;
-import javax.persistence.NoResultException;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.NoResultException;
 
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.model.billing.TradingLanguage;

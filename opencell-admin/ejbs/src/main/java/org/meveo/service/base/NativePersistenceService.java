@@ -17,6 +17,8 @@
  */
 package org.meveo.service.base;
 
+import static java.util.stream.Collectors.joining;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
@@ -39,24 +41,11 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.persistence.EntityManager;
-import javax.persistence.FlushModeType;
-import javax.persistence.Query;
-
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.FlushMode;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.internal.SessionFactoryImpl;
-import org.hibernate.metadata.ClassMetadata;
-import org.hibernate.persister.entity.AbstractEntityPersister;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StringType;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.ValidationException;
@@ -78,14 +67,20 @@ import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.expressions.NativeExpressionFactory;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.MeveoParamBean;
 
-import static java.util.stream.Collectors.joining;
+import jakarta.enterprise.event.Event;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.FlushModeType;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
+import jakarta.persistence.Table;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods working directly with native DB tables
@@ -153,13 +148,13 @@ public class NativePersistenceService extends BaseService {
         try {
             Session session = getEntityManager().unwrap(Session.class);
             StringBuilder selectQuery = new StringBuilder("select * from ").append(tableName).append(" e where id=:id");
-            SQLQuery query = session.createSQLQuery(selectQuery.toString());
+            NativeQuery query = session.createNativeQuery(selectQuery.toString());
             query.setParameter("id", id);
-            query.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
-            query.setFlushMode(FlushMode.COMMIT);
-            query.addScalar("id", new LongType());
-            query.addScalar("code", new StringType());
-            query.addScalar("description", new StringType());
+            query.setResultListTransformer(AliasToEntityMapResultTransformer.INSTANCE);// AliasToEntityOrderedMapResultTransformer.INSTANCE);
+            query.setFlushMode(FlushModeType.COMMIT);
+            query.addScalar("id", Long.class);
+            query.addScalar("code", String.class);
+            query.addScalar("description", String.class);
 
 
             Map<String, Object> values = (Map<String, Object>) query.uniqueResult();
@@ -1011,8 +1006,8 @@ public class NativePersistenceService extends BaseService {
     public List<Map<String, Object>> list(String tableName, PaginationConfiguration config) {
         tableName = addCurrentSchema(tableName);
         QueryBuilder queryBuilder = getQuery(tableName, config, null);
-        SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), true);
-        return query.setFlushMode(FlushMode.COMMIT).list();
+        NativeQuery query = queryBuilder.getNativeQuery(getEntityManager(), true);
+        return query.setFlushMode(FlushModeType.COMMIT).list();
     }
 
     /**
@@ -1027,8 +1022,8 @@ public class NativePersistenceService extends BaseService {
     public List listAsObjects(String tableName, PaginationConfiguration config) {
         tableName = addCurrentSchema(tableName);
         QueryBuilder queryBuilder = getQuery(tableName, config, null);
-        SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), false);
-        return query.setFlushMode(FlushMode.COMMIT).list();
+        NativeQuery query = queryBuilder.getNativeQuery(getEntityManager(), false);
+        return query.setFlushMode(FlushModeType.COMMIT).list();
     }
 
     /**
@@ -1335,12 +1330,19 @@ public class NativePersistenceService extends BaseService {
         }
     }
 
+    /**
+     * Determine a corresponding table name for an entity class
+     * 
+     * @param entityClass Entity class
+     * @return A corresponding table name
+     */
     public String getTableNameForClass(Class entityClass) {
-        SessionFactory sessionFactory = ((Session) getEntityManager().getDelegate()).getSessionFactory();
-        ClassMetadata classMetadata = sessionFactory.getClassMetadata(entityClass);
-        SessionFactoryImpl sessionFactoryImpl = (SessionFactoryImpl) sessionFactory;
-        AbstractEntityPersister entityPersister = (AbstractEntityPersister) sessionFactoryImpl.getEntityPersister(classMetadata.getEntityName());
-        return entityPersister.getTableName();
+        
+        Table tableAnnotation = (Table) entityClass.getAnnotation(Table.class);
+        if (tableAnnotation!=null) {
+            return tableAnnotation.name();
+        }
+        return null;
     }
 
     public boolean validateRecordExistance(CustomFieldTemplate field, Long id) {
@@ -1366,21 +1368,23 @@ public class NativePersistenceService extends BaseService {
 
     public boolean validateRecordExistanceByTableName(String tableName, Long id) {
         tableName = addCurrentSchema(tableName);
-        Session session = getEntityManager().unwrap(Session.class);
         StringBuilder selectQuery = new StringBuilder("select ").append(FIELD_ID).append(" from ").append(tableName).append(" e where ").append(FIELD_ID).append("=:id");
-        SQLQuery query = session.createSQLQuery(selectQuery.toString());
-        query.setParameter("id", id);
-        return query.setFlushMode(FlushMode.COMMIT).uniqueResult() != null;
+        
+        try {
+            getEntityManager().createNativeQuery(selectQuery.toString()).setParameter("id", id).setFlushMode(FlushModeType.COMMIT).getSingleResult();
+            return true;
+        } catch (NoResultException e) {
+            return false;
+        }
     }
 
     @SuppressWarnings("unchecked")
     public List<BigInteger> filterExistingRecordsOnTable(String tableName, List<Long> ids) {
         tableName = addCurrentSchema(tableName);
-        Session session = getEntityManager().unwrap(Session.class);
+
         StringBuilder selectQuery = new StringBuilder("select ").append(FIELD_ID).append(" from ").append(tableName).append(" e where ").append(FIELD_ID).append(" in (:ids)");
-        SQLQuery query = session.createSQLQuery(selectQuery.toString());
-        query.setParameterList("ids", ids);
-        return (List<BigInteger>) query.setFlushMode(FlushMode.COMMIT).list();
+
+        return (List<BigInteger>) getEntityManager().createNativeQuery(selectQuery.toString()).setParameter("ids", ids).setFlushMode(FlushModeType.COMMIT).getResultList();
     }
 
     /**

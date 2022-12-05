@@ -30,10 +30,10 @@ import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.job.Job;
 import org.slf4j.Logger;
 
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.inject.Inject;
+import jakarta.interceptor.Interceptors;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;

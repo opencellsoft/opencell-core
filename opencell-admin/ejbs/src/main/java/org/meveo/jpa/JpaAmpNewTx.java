@@ -24,7 +24,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.interceptor.InterceptorBinding;
+import jakarta.interceptor.InterceptorBinding;
 
 /**
  * Annotation to bind interceptor that in case of application managed persistence context (GUI and secondary tenants. See EntityManagerProvider.getEntityManager()), a new EM will be

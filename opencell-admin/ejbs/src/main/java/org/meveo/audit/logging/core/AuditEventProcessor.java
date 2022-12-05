@@ -18,7 +18,7 @@
 
 package org.meveo.audit.logging.core;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.audit.logging.dto.AuditEvent;

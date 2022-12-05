@@ -33,15 +33,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.SerializationUtils;
@@ -51,7 +42,6 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.GDPRInfoDto;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.QueryBuilder;
@@ -74,7 +64,7 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
-import org.meveo.model.persistence.CustomFieldJsonTypeDescriptor;
+import org.meveo.model.persistence.CustomFieldJsonDataType;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.custom.CustomEntityTemplateService;
@@ -89,6 +79,15 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.inject.Inject;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
 
 /**
  * @author Wassim Drira
@@ -816,26 +815,23 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @return
      */
     public List getReferencedEntities(CustomFieldTemplate customField, String code, Class entityClass) {
-    	
-    	// Case of encrypted customfields in DB
-		if (CustomFieldJsonTypeDescriptor.TRUE_STR.equalsIgnoreCase(
-						ParamBean.getInstance().getProperty(CustomFieldJsonTypeDescriptor.ENCRYPT_CUSTOM_FIELDS_PROPERTY,
-								CustomFieldJsonTypeDescriptor.FALSE_STR)) && !StringUtils.isBlank(ParamBean.getInstance().getProperty(CustomFieldJsonTypeDescriptor.OPENCELL_SHA_KEY_PROPERTY, null))) {
-				QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a");
-				Query query = queryBuilder.getQuery(getEntityManager());
-				List<BusinessCFEntity> resultList = (List<BusinessCFEntity>) query.getResultList();
 
-			for (BusinessCFEntity entity : resultList) {
-				if (entity.getCfValues() != null && entity.getCfValues().getValues() != null 
-						&& entity.getCfValues().getValues().get(customField.getCode()) != null
-						&& code.equalsIgnoreCase(((EntityReferenceWrapper)entity.getCfValues().getValues().get(customField.getCode())).getCode())) {
-					
-					return resultList;
-				}
-			}
+        // Case of encrypted customfields in DB
+        if (CustomFieldJsonDataType.IS_ENCRYPT_CF) {
+            QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a");
+            Query query = queryBuilder.getQuery(getEntityManager());
+            List<BusinessCFEntity> resultList = (List<BusinessCFEntity>) query.getResultList();
 
-			return null;
-		}
+            for (BusinessCFEntity entity : resultList) {
+                if (entity.getCfValues() != null && entity.getCfValues().getValues() != null && entity.getCfValues().getValues().get(customField.getCode()) != null
+                        && code.equalsIgnoreCase(((EntityReferenceWrapper) entity.getCfValues().getValues().get(customField.getCode())).getCode())) {
+
+                    return resultList;
+                }
+            }
+
+            return null;
+        }
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a");
         queryBuilder.addCriterion("entityFromJson(cf_values," + customField.getCode() + ",entity)", "=", code, true);
         Query query = queryBuilder.getQuery(getEntityManager());

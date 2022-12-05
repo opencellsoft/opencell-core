@@ -24,11 +24,11 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.inject.Inject;
+import jakarta.interceptor.Interceptors;
 
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.poi.ss.usermodel.Cell;

@@ -1,6 +1,6 @@
 package org.meveo.apiv2.report;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import org.immutables.value.Value.Immutable;
 import org.immutables.value.Value.Style;

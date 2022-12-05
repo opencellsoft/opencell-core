@@ -17,8 +17,8 @@
  */
 package org.meveo.service.catalog.impl;
 
-import javax.ejb.Stateless;
-import javax.inject.Named;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Named;
 
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.service.base.PersistenceService;

@@ -38,11 +38,11 @@ import org.meveo.service.generic.wf.GWFTransitionActionService;
 import org.meveo.service.generic.wf.GWFTransitionService;
 import org.meveo.service.generic.wf.GenericWorkflowService;
 
-import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet..http.HttpServletRequest;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;

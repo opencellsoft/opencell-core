@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Response;
 
 import org.meveo.apiv2.settings.GlobalSettingsInput;
 import org.meveo.apiv2.settings.globalSettings.GlobalSettingsResource;

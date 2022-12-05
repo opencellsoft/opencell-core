@@ -20,7 +20,7 @@ package org.meveo.service.metrics.configuration;
 
 import java.util.List;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.metrics.configuration.MetricsConfiguration;

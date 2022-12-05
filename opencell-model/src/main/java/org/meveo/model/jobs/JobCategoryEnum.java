@@ -17,10 +17,10 @@
  */
 package org.meveo.model.jobs;
 
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
 import org.meveo.commons.utils.JobCategoryTypeAdapter;
 import org.meveo.commons.utils.MeveoEnum;
+
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlJavaTypeAdapter(JobCategoryTypeAdapter.class)
 @MeveoEnum(identifier = JobCategoryEnum.class)

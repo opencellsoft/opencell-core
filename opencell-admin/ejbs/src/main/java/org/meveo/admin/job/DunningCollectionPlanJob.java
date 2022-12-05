@@ -11,10 +11,10 @@ import org.meveo.model.settings.GlobalSettings;
 import org.meveo.service.job.Job;
 import org.meveo.service.settings.impl.GlobalSettingsService;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.inject.Inject;
 
 @Stateless
 public class DunningCollectionPlanJob extends Job {

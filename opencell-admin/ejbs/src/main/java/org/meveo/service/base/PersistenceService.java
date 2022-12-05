@@ -43,32 +43,13 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.OneToMany;
-import javax.persistence.Query;
-import javax.persistence.Tuple;
-import javax.persistence.TupleElement;
-import javax.persistence.TypedQuery;
-import javax.persistence.metamodel.Attribute;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.ForbiddenException;
-import javax.ws.rs.NotFoundException;
-
 import org.apache.commons.io.IOUtils;
 import org.hibernate.LockMode;
-import org.hibernate.SQLQuery;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.query.NativeQuery;
+import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.ImageUploadEventHandler;
@@ -116,6 +97,25 @@ import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.notification.GenericNotificationService;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.enterprise.event.Event;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.NonUniqueResultException;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Query;
+import jakarta.persistence.Tuple;
+import jakarta.persistence.TupleElement;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.metamodel.Attribute;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.ForbiddenException;
+import jakarta.ws.rs.NotFoundException;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
@@ -1280,9 +1280,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @SuppressWarnings("unchecked")
     public List<Map<String, Object>> executeNativeSelectQuery(String query, Map<String, Object> params) {
         Session session = getEntityManager().unwrap(Session.class);
-        SQLQuery q = session.createSQLQuery(query);
+        NativeQuery q = session.createNativeQuery(query);
 
-        q.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
+        q.setResultListTransformer(AliasToEntityMapResultTransformer.INSTANCE); //  AliasToEntityOrderedMapResultTransformer.INSTANCE);
 
         if (params != null) {
             for (Map.Entry<String, Object> entry : params.entrySet()) {
@@ -1306,7 +1306,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         Session session = getEntityManager().unwrap(Session.class);
         NativeQuery q = session.createNativeQuery(query);
         
-        q.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
+        q.setResultListTransformer(AliasToEntityMapResultTransformer.INSTANCE); //  AliasToEntityOrderedMapResultTransformer.INSTANCE);
         q.setFetchSize(10000);
         q.setReadOnly(true);
         q.setLockMode("a", LockMode.NONE);

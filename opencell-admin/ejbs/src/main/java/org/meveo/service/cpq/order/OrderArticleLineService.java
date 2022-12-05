@@ -2,7 +2,7 @@ package org.meveo.service.cpq.order;
 
 import java.util.List;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.model.cpq.commercial.OrderArticleLine;
 import org.meveo.service.base.BusinessService;

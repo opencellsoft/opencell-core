@@ -23,11 +23,11 @@ import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionManagement;
+import jakarta.ejb.TransactionManagementType;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
 
 import org.hibernate.Session;
 import org.meveo.jpa.EntityManagerProvider;

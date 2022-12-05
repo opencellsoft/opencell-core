@@ -21,8 +21,8 @@ package org.tmf.dsmapi.catalog.resource.order;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 import org.meveo.commons.utils.CustomDateSerializer;
 

@@ -1,7 +1,7 @@
 package org.meveo.apiv2.accountreceivable.deferralPayments;
 
 import static java.util.Arrays.asList;
-import static javax.ws.rs.core.Response.ok;
+import static jakarta.ws.rs.core.Response.ok;
 
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
@@ -15,8 +15,8 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.payments.impl.AccountOperationService;
 
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Response;
 import java.util.Date;
 
 public class AccountReceivableDeferralPaymentsResourceImpl implements AccountReceivableDeferralPaymentsResource {

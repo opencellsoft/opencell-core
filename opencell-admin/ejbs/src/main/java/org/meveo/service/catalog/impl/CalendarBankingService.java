@@ -21,9 +21,9 @@ package org.meveo.service.catalog.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.Stateless;
-import javax.inject.Named;
-import javax.persistence.Query;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Named;
+import jakarta.persistence.Query;
 
 import org.meveo.model.catalog.CalendarBanking;
 import org.meveo.model.shared.DateUtils;

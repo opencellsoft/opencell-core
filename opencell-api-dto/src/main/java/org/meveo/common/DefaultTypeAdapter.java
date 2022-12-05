@@ -18,7 +18,7 @@
 
 package org.meveo.common;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 public final class DefaultTypeAdapter extends XmlAdapter<Object, Object> {
     public DefaultTypeAdapter() {

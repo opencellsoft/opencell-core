@@ -18,7 +18,7 @@
 
 package org.meveo.service.tax;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.base.BusinessService;

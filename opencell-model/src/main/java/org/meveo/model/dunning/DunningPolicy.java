@@ -1,16 +1,29 @@
 package org.meveo.model.dunning;
 
-import static javax.persistence.FetchType.LAZY;
+import static jakarta.persistence.FetchType.LAZY;
+
+import java.util.List;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
+import org.hibernate.type.NumericBooleanConverter;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.admin.Currency;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.List;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "dunning_policy")
@@ -48,29 +61,29 @@ public class DunningPolicy extends EnableEntity {
     private DunningDetermineLevelBy determineLevelBy;
 
     @Column(name = "include_due_invoices_in_threshold")
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     private boolean includeDueInvoicesInThreshold;
 
     @Column(name = "total_dunning_levels")
     private Integer totalDunningLevels;
 
     @Column(name = "include_pay_reminder")
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     private boolean includePayReminder;
 
     @Column(name = "attach_invoices_to_emails")
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     private boolean attachInvoicesToEmails;
 
     @Column(name = "policy_priority")
     private Integer policyPriority;
 
     @Column(name = "is_default_policy")
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     private boolean isDefaultPolicy;
 
     @Column(name = "is_active_policy")
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     private boolean isActivePolicy;
 
     @OneToMany(mappedBy = "dunningPolicy", fetch = LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

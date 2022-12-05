@@ -7,10 +7,10 @@ import org.meveo.apiv2.generic.security.parser.IdParser;
 import org.meveo.commons.utils.StringUtils;
 import org.slf4j.Logger;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.interceptor.InvocationContext;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+import jakarta.interceptor.InvocationContext;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;

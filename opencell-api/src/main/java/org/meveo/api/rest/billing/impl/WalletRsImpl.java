@@ -35,9 +35,9 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.WalletTemplate;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.interceptor.Interceptors;
 
 /**
  * Wallet operation and balance related REST API

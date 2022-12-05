@@ -14,8 +14,8 @@ import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.bi.FlatFile;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;

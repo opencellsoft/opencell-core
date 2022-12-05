@@ -21,33 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
+import org.hibernate.type.NumericBooleanConverter;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
@@ -71,6 +49,29 @@ import org.meveo.model.payments.PaymentPlanPolicy;
 import org.meveo.model.sequence.GenericSequence;
 import org.meveo.model.shared.InterBankTitle;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
 /**
  * Application tenant configuration
  * 
@@ -91,8 +92,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     private static final long serialVersionUID = 1L;
 
     /**
-     * A hardcoded ID of a current provider/tenant. Each provider/tenant has its's own schema and all should have same ID for fast retrieval instead of ordering and taking a first
-     * record
+     * A hardcoded ID of a current provider/tenant. Each provider/tenant has its's own schema and all should have same ID for fast retrieval instead of ordering and taking a first record
      */
     public static final long CURRENT_PROVIDER_ID = 1L;
 
@@ -115,7 +115,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
      * Is it enabled. Deprecated in 5.3 for not use
      */
     @Deprecated
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "disabled", nullable = false)
     @NotNull
     private boolean disabled;
@@ -144,21 +144,21 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     /**
      * Does application support multiple countries
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "multicountry_flag")
     private boolean multicountryFlag;
 
     /**
      * Does application support multiple currencies
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "multicurrency_flag")
     private boolean multicurrencyFlag;
 
     /**
      * Does application support multiple languages
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "multilanguage_flag")
     private boolean multilanguageFlag;
 
@@ -229,33 +229,33 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     /**
      * The Maximum Delay
      */
-    
+
     @Column(name = "maximum_delay")
     private Integer maximumDelay;
 
     @Column(name = "current_matching_code")
     private String currentMatchingCode = "A";
-    
+
     public Integer getMaximumDelay() {
-		return maximumDelay;
-	}
+        return maximumDelay;
+    }
 
-	public void setMaximumDelay(Integer maximumDelay) {
-		this.maximumDelay = maximumDelay;
-	}
+    public void setMaximumDelay(Integer maximumDelay) {
+        this.maximumDelay = maximumDelay;
+    }
 
-	@Column(name = "maximum_deferral_per_invoice")
-	private Integer maximumDeferralPerInvoice;
-		 
-	public Integer getMaximumDeferralPerInvoice() {
-		return maximumDeferralPerInvoice;
-	}
-	
-	public void setMaximumDeferralPerInvoice(Integer maximumDeferralPerInvoice) {
-		this.maximumDeferralPerInvoice = maximumDeferralPerInvoice;
-	}
+    @Column(name = "maximum_deferral_per_invoice")
+    private Integer maximumDeferralPerInvoice;
 
-	/**
+    public Integer getMaximumDeferralPerInvoice() {
+        return maximumDeferralPerInvoice;
+    }
+
+    public void setMaximumDeferralPerInvoice(Integer maximumDeferralPerInvoice) {
+        this.maximumDeferralPerInvoice = maximumDeferralPerInvoice;
+    }
+
+    /**
      * The invoice amount rounding mode
      */
     @Column(name = "invoice_rounding_mode", nullable = false)
@@ -271,26 +271,26 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
 
     @Embedded
     private PaymentPlanPolicy paymentPlanPolicy = new PaymentPlanPolicy();
-    
+
     public PaymentPlanPolicy getPaymentPlanPolicy() {
-		return paymentPlanPolicy;
-	}
+        return paymentPlanPolicy;
+    }
 
-	public void setPaymentPlanPolicy(PaymentPlanPolicy paymentPlanPolicy) {
-		this.paymentPlanPolicy = paymentPlanPolicy;
-	}
+    public void setPaymentPlanPolicy(PaymentPlanPolicy paymentPlanPolicy) {
+        this.paymentPlanPolicy = paymentPlanPolicy;
+    }
 
-	/**
+    /**
      * Is application running in B2B or B2C mode. In B2B (enterprise=true) mode amounts without tax are used for rating and invoicing. In B2C mode amounts with tax are used.
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "entreprise")
     private boolean entreprise = false;
 
     /**
      * In automatic invoicing invoice preInvoicing status is skipped and invoice is advanced to postInvoiced status.
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "automatic_invoicing")
     private boolean automaticInvoicing = false;
 
@@ -304,14 +304,14 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
      * Deprecated in 5.3 for not use
      */
     @Deprecated
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "amount_validation")
     private boolean amountValidation = false;
 
     /**
      * With account level duplication, accounts will default to the name and other properties of the parent account.
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "level_duplication")
     private boolean levelDuplication = false;
 
@@ -326,7 +326,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     /**
      * Shall Rated transactions with Zero amount be displayed in an XML invoice
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "display_free_tx_in_invoice")
     private boolean displayFreeTransacInInvoice = false;
 
@@ -362,14 +362,13 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     /**
      * Should revenue be recognized
      */
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "recognize_revenue")
     private boolean recognizeRevenue;
 
     /**
      * Custom field values in JSON format
      */
-    @Type(type = "cfjson")
     @Column(name = "cf_values", columnDefinition = "jsonb")
     private CustomFieldValues cfValues;
 
@@ -388,16 +387,15 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     @JoinColumn(name = "gdpr_config_id")
     private GdprConfiguration gdprConfiguration;
 
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "payment_deferral")
     private boolean paymentDeferral;
 
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "payment_plan")
     private boolean paymentPlan;
 
-
-	/**
+    /**
      * RUM number sequence
      */
     @Embedded
@@ -417,22 +415,21 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     @Size(max = 500)
     private String cdrDeduplicationKeyEL;
 
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "functional_currency_flag")
     private boolean functionalCurrencyFlag = false;
-    
-    
-    @Type(type = "numeric_boolean")
- 	@Column(name = "activate_cascading_discounts ")
- 	private boolean activateCascadingDiscounts=true;
-    
+
+    @Convert(converter = NumericBooleanConverter.class)
+    @Column(name = "activate_cascading_discounts ")
+    private boolean activateCascadingDiscounts = true;
+
     /**
      * RGAA regulation
      */
     @Column(name = "portal_message", length = 500)
     @Size(max = 500)
     protected String portalMessage;
-    
+
     public String getCode() {
         return code;
     }
@@ -638,7 +635,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     public void setDiscountAccountingCode(String discountAccountingCode) {
         this.discountAccountingCode = discountAccountingCode;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
 
@@ -854,8 +851,8 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     }
 
     /**
-     * Check if this is a main provider A hardcoded ID = 1 of a current provider/tenant. Each provider/tenant has its's own schema and all should have same ID for fast retrieval
-     * instead of ordering and taking a first record
+     * Check if this is a main provider A hardcoded ID = 1 of a current provider/tenant. Each provider/tenant has its's own schema and all should have same ID for fast retrieval instead of ordering and taking a first
+     * record
      * 
      * @return True if its a provider with ID=1
      */
@@ -863,19 +860,19 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
         return id != null && id == CURRENT_PROVIDER_ID;
     }
 
-	/**
-	 * @return the cdrDeduplicationKeyEL
-	 */
-	public String getCdrDeduplicationKeyEL() {
-		return cdrDeduplicationKeyEL;
-	}
+    /**
+     * @return the cdrDeduplicationKeyEL
+     */
+    public String getCdrDeduplicationKeyEL() {
+        return cdrDeduplicationKeyEL;
+    }
 
-	/**
-	 * @param cdrDeduplicationKeyEL the cdrDeduplicationKeyEL to set
-	 */
-	public void setCdrDeduplicationKeyEL(String cdrDeduplicationKeyEL) {
-		this.cdrDeduplicationKeyEL = cdrDeduplicationKeyEL;
-	}
+    /**
+     * @param cdrDeduplicationKeyEL the cdrDeduplicationKeyEL to set
+     */
+    public void setCdrDeduplicationKeyEL(String cdrDeduplicationKeyEL) {
+        this.cdrDeduplicationKeyEL = cdrDeduplicationKeyEL;
+    }
 
     public boolean isMulticurrencyFlag() {
         return multicurrencyFlag;
@@ -889,15 +886,15 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
         this.functionalCurrencyFlag = functionalCurrencyFlag;
     }
 
-	public boolean isActivateCascadingDiscounts() {
-		return activateCascadingDiscounts;
-	}
+    public boolean isActivateCascadingDiscounts() {
+        return activateCascadingDiscounts;
+    }
 
-	public void setActivateCascadingDiscounts(boolean activateCascadingDiscounts) {
-		this.activateCascadingDiscounts = activateCascadingDiscounts;
-	}
-    
-	public String getPortalMessage() {
+    public void setActivateCascadingDiscounts(boolean activateCascadingDiscounts) {
+        this.activateCascadingDiscounts = activateCascadingDiscounts;
+    }
+
+    public String getPortalMessage() {
         return portalMessage;
     }
 

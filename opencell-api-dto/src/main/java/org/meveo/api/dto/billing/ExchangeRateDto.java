@@ -3,7 +3,7 @@ package org.meveo.api.dto.billing;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 public class ExchangeRateDto {
 

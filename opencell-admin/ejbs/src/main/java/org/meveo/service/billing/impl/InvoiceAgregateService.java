@@ -21,9 +21,9 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 
-import javax.ejb.Stateless;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.BillingRun;

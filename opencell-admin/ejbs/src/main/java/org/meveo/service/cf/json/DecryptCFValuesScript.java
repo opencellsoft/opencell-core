@@ -3,7 +3,6 @@ package org.meveo.service.cf.json;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

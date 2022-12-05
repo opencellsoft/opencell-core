@@ -2,10 +2,10 @@ package org.meveo.service.cpq;
 
 import org.meveo.api.dto.cpq.xml.QuoteXmlDto;
 
-import javax.ejb.Stateless;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
+import jakarta.ejb.Stateless;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
 import java.io.StringWriter;
 
 @Stateless

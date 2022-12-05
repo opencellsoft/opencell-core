@@ -32,8 +32,8 @@ import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.FileFormatService;
 import org.meveo.service.admin.impl.FileTypeService;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;

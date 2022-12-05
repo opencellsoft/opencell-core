@@ -4,8 +4,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.enterprise.inject.spi.CDI;
-import javax.faces.component.UIComponent;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.faces.component.UIComponent;
 
 import org.meveo.security.AccessScopeEnum;
 import org.meveo.util.view.PageAccessHandler;

@@ -2,14 +2,22 @@ package org.meveo.model.securityDeposit;
 
 import java.math.BigDecimal;
 
-import javax.persistence.*;
-import javax.validation.constraints.Digits;
-
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
+import org.hibernate.type.NumericBooleanConverter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.settings.OpenOrderSetting;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Digits;
 
 @Entity
 @Table(name = "finance_settings")
@@ -22,7 +30,7 @@ public class FinanceSettings extends BusinessEntity {
      */
     private static final long serialVersionUID = -7662503000202423539L;
 
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "use_security_deposit")
     private boolean useSecurityDeposit = true;
 
@@ -34,7 +42,7 @@ public class FinanceSettings extends BusinessEntity {
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     private BigDecimal maxAmountPerCustomer;
 
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "auto_refund")
     private boolean autoRefund = false;
 
@@ -42,7 +50,7 @@ public class FinanceSettings extends BusinessEntity {
     @JoinColumn(name = "open_order_settings_id")
     private OpenOrderSetting openOrderSetting;
 
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "activate_dunning")
     private boolean activateDunning = false;
 

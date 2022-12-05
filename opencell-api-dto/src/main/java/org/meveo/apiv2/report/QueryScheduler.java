@@ -7,7 +7,7 @@ import org.meveo.apiv2.models.Resource;
 import org.meveo.model.admin.User;
 import org.meveo.model.report.query.QueryVisibilityEnum;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 

@@ -12,7 +12,7 @@ import org.meveo.apiv2.rating.resource.WalletOperationResource;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;

@@ -1,10 +1,10 @@
 package org.meveo.admin.job;
 
-import static javax.ejb.TransactionAttributeType.NEVER;
+import static jakarta.ejb.TransactionAttributeType.NEVER;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.utils.CustomFieldTemplateUtils;

@@ -5,8 +5,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.inject.Inject;
-import javax.persistence.Entity;
+import jakarta.inject.Inject;
+import jakarta.persistence.Entity;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.api.exception.MeveoApiException;

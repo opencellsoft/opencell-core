@@ -32,8 +32,8 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.shared.Title;
 import org.meveo.service.catalog.impl.TitleService;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 import java.util.List;
 import java.util.function.BiFunction;
 

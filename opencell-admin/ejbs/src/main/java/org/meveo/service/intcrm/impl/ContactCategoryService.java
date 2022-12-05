@@ -1,6 +1,6 @@
 package org.meveo.service.intcrm.impl;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.model.communication.contact.ContactCategory;
 import org.meveo.service.base.BusinessService;

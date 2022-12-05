@@ -18,34 +18,41 @@
 
 package org.meveo.model.finance;
 
-import java.util.*;
-
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
+import org.hibernate.type.NumericBooleanConverter;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.annotation.ImageType;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.scripts.ScriptInstance;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 /**
  * ReportExtract can either be an SQL or a Java Script. In case of SQL, we need to provide an sql that returns a list of records. On the other hand if it is a Java script, we can
@@ -90,7 +97,7 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance scriptInstance;
 
-    @Type(type = "longText")
+    @JdbcTypeCode(Types.LONGVARCHAR)
     @Column(name = "sql_query")
     private String sqlQuery;
 
@@ -102,7 +109,7 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
     @Column(name = "result_type", length = 10)
     private ReportExtractResultTypeEnum reportExtractResultType = ReportExtractResultTypeEnum.CSV;
 
-    @Type(type = "longText")
+    @JdbcTypeCode(Types.LONGVARCHAR)
     @Column(name = "style")
     private String style;
 
@@ -120,21 +127,21 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
     @Column(name = "custom_table_code", length = 100)
     private String customTableCode;
 
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "accumulate")
     private boolean accumulate;
 
     @Column(name = "decimal_separator", length = 1)
     private String decimalSeparator;
 
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "generate_empty_report")
     private boolean generateEmptyReport;
 
     @Column(name = "maximum_line")
     private Long maximumLine;
 
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "include_headers")
     private boolean includeHeaders;
 

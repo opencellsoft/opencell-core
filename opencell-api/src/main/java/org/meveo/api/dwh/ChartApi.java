@@ -33,8 +33,8 @@ import org.meveo.model.dwh.*;
 import org.meveocrm.services.dwh.ChartService;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 

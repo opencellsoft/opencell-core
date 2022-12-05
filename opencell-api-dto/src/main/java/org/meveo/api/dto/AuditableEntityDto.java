@@ -24,8 +24,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.meveo.api.dto.audit.AuditableFieldDto;
 import org.meveo.model.AuditableEntity;
 
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.annotation.*;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.annotation.*;
 import java.util.List;
 
 /**

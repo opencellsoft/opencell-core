@@ -9,7 +9,7 @@ import org.meveo.api.restful.pagingFiltering.PagingAndFilteringRest;
 import org.meveo.apiv2.generic.core.GenericRequestMapper;
 import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
 
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 import java.util.*;
 
 /**

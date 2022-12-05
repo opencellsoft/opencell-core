@@ -18,7 +18,7 @@ package org.jboss.seam.international.status;
 
 import java.io.Serializable;
 
-import javax.faces.application.FacesMessage.Severity;
+import jakarta.faces.application.FacesMessage.Severity;
 
 /**
  * An object representing a message that needs to be displayed to the User.

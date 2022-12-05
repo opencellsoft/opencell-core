@@ -1,6 +1,6 @@
 package org.meveo.apiv2.mediation;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;

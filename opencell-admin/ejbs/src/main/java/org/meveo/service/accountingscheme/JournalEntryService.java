@@ -49,10 +49,10 @@ import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.Query;
-import javax.transaction.Transactional;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
+import jakarta.persistence.Query;
+import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;

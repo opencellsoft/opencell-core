@@ -1,10 +1,18 @@
 package org.meveo.model.intcrm;
 
-import org.hibernate.annotations.Type;
+import org.hibernate.type.NumericBooleanConverter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.communication.contact.Contact;
 
-import javax.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "crm_address_book_contact")
@@ -26,7 +34,7 @@ public class AddressBookContact extends BaseEntity {
     private String position;
 
     @Column(name = "main_contact")
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     protected Boolean mainContact = Boolean.FALSE;
 
     public AddressBookContact() {

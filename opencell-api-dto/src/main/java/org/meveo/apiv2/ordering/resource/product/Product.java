@@ -23,8 +23,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
 
-import javax.annotation.Nullable;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.annotation.Nullable;
+import jakarta.xml.bind.annotation.XmlType;
 import java.math.BigDecimal;
 import java.util.List;
 

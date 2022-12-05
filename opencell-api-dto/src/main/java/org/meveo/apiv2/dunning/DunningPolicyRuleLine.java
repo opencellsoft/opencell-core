@@ -8,7 +8,7 @@ import org.meveo.model.dunning.PolicyConditionOperatorEnum;
 import org.meveo.model.dunning.PolicyConditionRuleJointEnum;
 import org.meveo.model.dunning.PolicyConditionTargetEnum;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 @Value.Immutable
 @Value.Style(jdkOnly = true)

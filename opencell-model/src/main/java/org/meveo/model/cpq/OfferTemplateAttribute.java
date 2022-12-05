@@ -1,21 +1,22 @@
 package org.meveo.model.cpq;
 
-import static javax.persistence.EnumType.STRING;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import static jakarta.persistence.EnumType.STRING;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
+import org.hibernate.type.NumericBooleanConverter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.OfferTemplate;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "offer_template_attribute")
@@ -53,19 +54,19 @@ public class OfferTemplateAttribute extends BaseEntity {
    /**
 	  * Mandatory
 	  */
-	 @Type(type = "numeric_boolean")
+	 @Convert(converter = NumericBooleanConverter.class)
 	 @Column(name = "mandatory")
 	 @NotNull
 	 private boolean mandatory=Boolean.FALSE;
 	 /**
 	 * Display
 	 */
-	@Type(type = "numeric_boolean")
+	@Convert(converter = NumericBooleanConverter.class)
 	@Column(name = "display")
 	@NotNull
 	private boolean display;
 	
-	@Type(type = "numeric_boolean")
+	@Convert(converter = NumericBooleanConverter.class)
 	@Column(name = "read_only")
 	private Boolean readOnly = Boolean.FALSE;
 	

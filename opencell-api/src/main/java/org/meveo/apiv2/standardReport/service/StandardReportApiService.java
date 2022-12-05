@@ -6,8 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import javax.inject.Inject;
-import javax.ws.rs.*;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.*;
 
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.BusinessApiException;

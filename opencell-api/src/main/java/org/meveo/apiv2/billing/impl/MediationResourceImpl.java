@@ -3,10 +3,10 @@ package org.meveo.apiv2.billing.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
+import jakarta.inject.Inject;
+import jakarta.interceptor.Interceptors;
+import jakarta.servlet..http.HttpServletRequest;
+import jakarta.ws.rs.core.Context;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;

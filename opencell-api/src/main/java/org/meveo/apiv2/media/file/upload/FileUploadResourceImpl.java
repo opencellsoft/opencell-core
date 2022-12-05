@@ -4,9 +4,9 @@ import org.meveo.admin.storage.StorageFactory;
 import org.meveo.api.admin.FilesApi;
 import org.meveo.apiv2.media.MediaFile;
 
-import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;

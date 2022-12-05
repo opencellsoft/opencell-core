@@ -10,10 +10,10 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.service.accountingscheme.JournalEntryService;
 import org.meveo.service.payments.impl.AccountOperationService;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.inject.Inject;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;

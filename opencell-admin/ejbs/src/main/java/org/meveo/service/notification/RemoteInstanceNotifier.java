@@ -18,8 +18,8 @@
 
 package org.meveo.service.notification;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 
 import org.slf4j.Logger;
 

@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.validation.ValidationException;
-import javax.ws.rs.NotFoundException;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
+import jakarta.validation.ValidationException;
+import jakarta.ws.rs.NotFoundException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.util.Strings;

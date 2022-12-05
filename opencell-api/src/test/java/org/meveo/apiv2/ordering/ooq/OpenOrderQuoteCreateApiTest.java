@@ -38,8 +38,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import javax.annotation.Nullable;
-import javax.ws.rs.core.Link;
+import jakarta.annotation.Nullable;
+import jakarta.ws.rs.core.Link;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;

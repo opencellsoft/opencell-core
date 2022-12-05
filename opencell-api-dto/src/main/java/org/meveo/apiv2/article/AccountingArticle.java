@@ -3,8 +3,8 @@ package org.meveo.apiv2.article;
 import java.math.BigDecimal;
 import java.util.List;
 
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
 
 import org.immutables.value.Value;
 import org.meveo.api.dto.CustomFieldsDto;

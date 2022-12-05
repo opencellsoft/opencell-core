@@ -23,9 +23,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.model.dwh.Chart;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 /**
  * The Class ChartDto.

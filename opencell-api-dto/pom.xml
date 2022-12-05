@@ -47,7 +47,7 @@
         
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-client</artifactId>
+            <artifactId>resteasy-core</artifactId>
             <scope>provided</scope>
         </dependency>
         
@@ -86,14 +86,14 @@
 
 	<build>
 		<plugins>
-		<plugin>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <useIncrementalCompilation>false</useIncrementalCompilation>
-                    <forceJavacCompilerUse>true</forceJavacCompilerUse>
-                    	<release>11</release>
-                    </configuration>
-                </plugin>         
+			<plugin>
+	            <artifactId>maven-compiler-plugin</artifactId>
+	            <configuration>
+	                <useIncrementalCompilation>false</useIncrementalCompilation>
+	            <forceJavacCompilerUse>true</forceJavacCompilerUse>
+	            	<release>11</release>
+	            </configuration>
+	        </plugin>         
                 
 
 			<plugin>

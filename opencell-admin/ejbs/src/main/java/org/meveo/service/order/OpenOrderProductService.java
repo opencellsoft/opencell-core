@@ -4,7 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.meveo.model.ordering.OpenOrderProduct;
 import org.meveo.service.base.PersistenceService;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 import java.util.List;
 
 @Stateless

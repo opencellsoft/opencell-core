@@ -3,7 +3,7 @@ package org.meveo.apiv2.generic;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.commons.utils.StringUtils;
 
-import javax.ws.rs.NotFoundException;
+import jakarta.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;

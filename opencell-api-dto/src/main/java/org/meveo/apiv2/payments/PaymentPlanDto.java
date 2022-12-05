@@ -7,9 +7,9 @@ import org.meveo.model.payments.ActionOnRemainingAmountEnum;
 import org.meveo.model.payments.RecurrenceUnitEnum;
 import org.meveo.model.payments.plan.PaymentPlanStatusEnum;
 
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;

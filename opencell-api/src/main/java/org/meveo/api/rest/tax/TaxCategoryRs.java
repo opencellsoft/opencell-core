@@ -35,8 +35,8 @@ import org.meveo.api.dto.response.tax.TaxCategoryResponseDto;
 import org.meveo.api.dto.tax.TaxCategoryDto;
 import org.meveo.api.rest.IBaseRs;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 
 /**@author Mohammed
  * REST interface definition of Tax category API

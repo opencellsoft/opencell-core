@@ -2,7 +2,7 @@ package org.meveo.apiv2.billing.service;
 
 import static java.util.Optional.ofNullable;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.billing.RatedTransaction;

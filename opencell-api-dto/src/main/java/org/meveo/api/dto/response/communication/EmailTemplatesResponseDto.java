@@ -21,7 +21,7 @@ package org.meveo.api.dto.response.communication;
 import org.meveo.api.dto.communication.EmailTemplateDto;
 import org.meveo.api.dto.response.SearchResponse;
 
-import javax.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.*;
 import java.util.List;
 
 /**

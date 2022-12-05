@@ -34,8 +34,8 @@ import org.meveo.api.dto.response.GetCalendarResponse;
 import org.meveo.api.dto.response.ListCalendarResponse;
 import org.meveo.api.serialize.RestDateParam;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 import java.util.Date;
 
 /**

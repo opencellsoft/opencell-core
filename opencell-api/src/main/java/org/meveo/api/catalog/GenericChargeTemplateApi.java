@@ -18,8 +18,8 @@
 
 package org.meveo.api.catalog;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;

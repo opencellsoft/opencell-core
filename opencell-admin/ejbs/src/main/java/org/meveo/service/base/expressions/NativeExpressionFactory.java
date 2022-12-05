@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.JoinType;
 
 import org.meveo.admin.util.pagination.FilterOperatorEnum;
 import org.meveo.commons.utils.QueryBuilder;

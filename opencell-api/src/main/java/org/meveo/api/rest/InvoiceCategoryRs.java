@@ -33,8 +33,8 @@ import org.meveo.api.dto.response.GetInvoiceCategoryResponse;
 import org.meveo.api.dto.response.InvoiceCategoryResponseDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * Web service for managing {@link org.meveo.model.billing.InvoiceCategory}.

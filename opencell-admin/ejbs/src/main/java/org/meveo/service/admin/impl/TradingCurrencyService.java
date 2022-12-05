@@ -17,10 +17,10 @@
  */
 package org.meveo.service.admin.impl;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.persistence.NoResultException;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.persistence.NoResultException;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.model.billing.ExchangeRate;

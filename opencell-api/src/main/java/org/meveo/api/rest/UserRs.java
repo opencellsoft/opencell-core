@@ -38,8 +38,8 @@ import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * Web service for managing {@link org.meveo.model.admin.User}. User has a unique username that is use for update, search and remove operation.

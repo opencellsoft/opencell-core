@@ -2,8 +2,8 @@ package org.meveo.api.cpq;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;

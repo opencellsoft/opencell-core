@@ -28,8 +28,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;

@@ -1,15 +1,16 @@
 package org.meveo.model.securityDeposit;
 
-import org.hibernate.annotations.Type;
+import org.hibernate.type.NumericBooleanConverter;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.validation.constraints.Size;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.Size;
 
 @Embeddable
 public class AuxiliaryAccounting {
 
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "use_auxiliary_accounting")
     private boolean useAuxiliaryAccounting = false;
 

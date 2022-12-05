@@ -2,7 +2,7 @@ package org.meveo.admin.job;
 
 import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
-import static javax.ejb.TransactionAttributeType.REQUIRED;
+import static jakarta.ejb.TransactionAttributeType.REQUIRED;
 import static org.meveo.model.dunning.DunningLevelInstanceStatusEnum.DONE;
 import static org.meveo.model.payments.ActionChannelEnum.EMAIL;
 import static org.meveo.model.payments.ActionChannelEnum.LETTER;
@@ -28,9 +28,9 @@ import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.payments.impl.*;
 import org.meveo.service.script.ScriptInstanceService;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.inject.Inject;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;

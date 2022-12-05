@@ -19,10 +19,10 @@ package org.meveo.service.billing.impl;
 
 import java.util.Date;
 
-import javax.ejb.Stateless;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import javax.persistence.TemporalType;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
+import jakarta.persistence.TemporalType;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.ICounterEntity;

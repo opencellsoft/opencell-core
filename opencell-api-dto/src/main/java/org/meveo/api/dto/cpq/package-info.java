@@ -4,5 +4,5 @@ package org.meveo.api.dto.cpq;
 
 import org.meveo.api.jaxb.DateTimeAdapter;
 
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;

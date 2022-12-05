@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 
 import java.io.Serializable;
 
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 
 
 /**

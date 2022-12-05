@@ -2,7 +2,7 @@ package org.meveo.service.mediation;
 
 import java.util.ArrayList;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.exception.MissingParameterException;

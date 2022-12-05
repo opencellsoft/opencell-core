@@ -32,9 +32,9 @@ import org.meveo.service.payments.impl.PaymentGatewayRumSequenceService;
 import org.meveo.service.payments.impl.PaymentGatewayService;
 import org.meveo.util.PaymentGatewayClass;
 
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

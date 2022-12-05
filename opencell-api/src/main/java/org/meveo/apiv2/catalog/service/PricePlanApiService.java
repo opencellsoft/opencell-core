@@ -6,8 +6,8 @@ package org.meveo.apiv2.catalog.service;
 import java.util.List;
 import java.util.Map;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 

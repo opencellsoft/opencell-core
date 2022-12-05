@@ -20,7 +20,7 @@ package org.meveo.service.audit;
 
 import org.meveo.model.BaseEntity;
 
-import javax.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.RequestScoped;
 import java.util.HashSet;
 import java.util.Set;
 

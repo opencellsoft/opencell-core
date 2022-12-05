@@ -17,7 +17,7 @@
  */
 package org.meveo.service.base;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.model.BusinessEntity;
 

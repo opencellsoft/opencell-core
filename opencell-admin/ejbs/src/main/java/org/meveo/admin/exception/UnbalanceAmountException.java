@@ -19,7 +19,7 @@ package org.meveo.admin.exception;
 
 import java.math.BigDecimal;
 
-import javax.ejb.ApplicationException;
+import jakarta.ejb.ApplicationException;
 
 @ApplicationException(rollback = true)
 public class UnbalanceAmountException extends Exception {

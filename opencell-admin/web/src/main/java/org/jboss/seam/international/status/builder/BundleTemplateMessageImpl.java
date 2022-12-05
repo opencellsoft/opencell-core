@@ -18,8 +18,8 @@ package org.jboss.seam.international.status.builder;
 
 import java.util.Locale;
 
-import javax.faces.application.FacesMessage.Severity;
-import javax.inject.Inject;
+import jakarta.faces.application.FacesMessage.Severity;
+import jakarta.inject.Inject;
 
 import org.jboss.seam.international.status.ApplicationBundles;
 import org.jboss.seam.international.status.Message;

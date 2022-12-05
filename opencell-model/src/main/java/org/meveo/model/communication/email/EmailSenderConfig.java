@@ -17,13 +17,14 @@
  */
 package org.meveo.model.communication.email;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.Type;
+import org.hibernate.type.NumericBooleanConverter;
 import org.meveo.model.communication.MessageSenderConfig;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @DiscriminatorValue("EMAIL")
@@ -46,7 +47,7 @@ public class EmailSenderConfig extends MessageSenderConfig {
     @Size(max = 50)
     private String password;
 
-    @Type(type = "numeric_boolean")
+    @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "use_ssl")
     private Boolean useSSL;
 

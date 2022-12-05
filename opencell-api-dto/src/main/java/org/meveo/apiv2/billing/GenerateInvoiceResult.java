@@ -6,7 +6,7 @@ import org.immutables.value.Value.Immutable;
 import org.immutables.value.Value.Style;
 import org.meveo.apiv2.models.Resource;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.math.BigDecimal;
 
 @Immutable

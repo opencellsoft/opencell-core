@@ -26,8 +26,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-import javax.ejb.Stateful;
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateful;
+import jakarta.ejb.Stateless;
 
 import org.meveo.audit.logging.annotations.IgnoreAudit;
 import org.meveo.audit.logging.dto.MethodWithParameter;

@@ -2,7 +2,7 @@ package org.meveo.apiv2.quote.service;
 
 import java.util.Optional;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.cpq.offer.QuoteOffer;

@@ -18,7 +18,7 @@
 
 package org.meveo.util.view.composite;
 
-import javax.faces.component.FacesComponent;
+import jakarta.faces.component.FacesComponent;
 
 /**
  * Backing UINamingContainer for searchField.xhtml composite component.

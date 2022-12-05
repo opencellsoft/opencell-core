@@ -17,7 +17,7 @@
  */
 package org.meveo.admin.exception;
 
-import javax.ejb.ApplicationException;
+import jakarta.ejb.ApplicationException;
 
 /**
  * A business exception that will not rollback the DB transaction

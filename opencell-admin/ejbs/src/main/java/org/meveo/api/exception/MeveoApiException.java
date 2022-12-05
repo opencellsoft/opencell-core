@@ -18,7 +18,7 @@
 
 package org.meveo.api.exception;
 
-import javax.ejb.ApplicationException;
+import jakarta.ejb.ApplicationException;
 
 import org.meveo.api.ApiErrorCodeEnum;
 import org.meveo.api.MeveoApiErrorCodeEnum;

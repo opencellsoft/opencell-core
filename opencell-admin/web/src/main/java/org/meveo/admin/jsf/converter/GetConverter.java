@@ -19,14 +19,14 @@ package org.meveo.admin.jsf.converter;
 
 import java.math.BigDecimal;
 
-import javax.faces.convert.ByteConverter;
-import javax.faces.convert.Converter;
-import javax.faces.convert.DoubleConverter;
-import javax.faces.convert.FloatConverter;
-import javax.faces.convert.IntegerConverter;
-import javax.faces.convert.LongConverter;
-import javax.faces.convert.ShortConverter;
-import javax.inject.Named;
+import jakarta.faces.convert.ByteConverter;
+import jakarta.faces.convert.Converter;
+import jakarta.faces.convert.DoubleConverter;
+import jakarta.faces.convert.FloatConverter;
+import jakarta.faces.convert.IntegerConverter;
+import jakarta.faces.convert.LongConverter;
+import jakarta.faces.convert.ShortConverter;
+import jakarta.inject.Named;
 
 import org.meveo.commons.utils.StringUtils;
 

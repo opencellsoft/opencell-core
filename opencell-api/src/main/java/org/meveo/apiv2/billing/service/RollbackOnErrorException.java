@@ -1,6 +1,6 @@
 package org.meveo.apiv2.billing.service;
 
-import javax.ejb.ApplicationException;
+import jakarta.ejb.ApplicationException;
 
 import org.meveo.apiv2.billing.ProcessCdrListResult;
 

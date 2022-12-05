@@ -20,7 +20,7 @@ package org.meveo.api.dto.response;
 
 import org.meveo.api.dto.CustomEntityTemplateDto;
 
-import javax.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 

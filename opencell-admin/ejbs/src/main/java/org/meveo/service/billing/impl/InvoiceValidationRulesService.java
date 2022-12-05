@@ -6,7 +6,7 @@ import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceValidationRule;
 import org.meveo.service.base.BusinessService;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 import java.util.List;
 import java.util.Objects;
 

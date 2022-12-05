@@ -5,10 +5,10 @@ import static java.util.Optional.ofNullable;
 
 import java.util.*;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.persistence.FlushModeType;
-import javax.ws.rs.*;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
+import jakarta.persistence.FlushModeType;
+import jakarta.ws.rs.*;
 
 import org.meveo.admin.exception.*;
 import org.meveo.admin.util.pagination.PaginationConfiguration;

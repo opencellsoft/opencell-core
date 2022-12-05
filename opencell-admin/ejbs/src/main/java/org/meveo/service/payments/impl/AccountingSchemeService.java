@@ -17,7 +17,7 @@
  */
 package org.meveo.service.payments.impl;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.model.payments.AccountingScheme;
 import org.meveo.service.base.BusinessService;

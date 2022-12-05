@@ -18,8 +18,8 @@
 
 package org.meveo.admin.action.catalog;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.model.billing.ProductInstance;

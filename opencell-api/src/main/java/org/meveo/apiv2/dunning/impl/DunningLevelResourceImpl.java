@@ -1,12 +1,12 @@
 package org.meveo.apiv2.dunning.impl;
 
-import static javax.ws.rs.core.Response.ok;
+import static jakarta.ws.rs.core.Response.ok;
 
 import java.util.Optional;
 
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.ResponseBuilder;
 
 import org.meveo.apiv2.dunning.resource.DunningLevelResource;
 import org.meveo.apiv2.dunning.service.DunningLevelApiService;

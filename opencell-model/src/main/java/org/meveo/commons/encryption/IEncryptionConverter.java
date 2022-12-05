@@ -21,7 +21,7 @@
  */
 package org.meveo.commons.encryption;
 
-import javax.persistence.AttributeConverter;
+import jakarta.persistence.AttributeConverter;
 
 /**
  * @author melyoussoufi

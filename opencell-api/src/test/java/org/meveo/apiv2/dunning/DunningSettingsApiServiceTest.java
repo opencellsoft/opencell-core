@@ -4,7 +4,7 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 
-import javax.ws.rs.BadRequestException;
+import jakarta.ws.rs.BadRequestException;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;

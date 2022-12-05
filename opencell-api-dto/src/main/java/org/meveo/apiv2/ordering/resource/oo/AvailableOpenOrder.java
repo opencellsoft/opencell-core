@@ -3,7 +3,7 @@ package org.meveo.apiv2.ordering.resource.oo;
 import java.util.Date;
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.immutables.value.Value;
 

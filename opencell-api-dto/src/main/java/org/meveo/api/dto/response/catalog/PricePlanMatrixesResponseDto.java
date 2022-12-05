@@ -21,9 +21,9 @@ package org.meveo.api.dto.response.catalog;
 import org.meveo.api.dto.catalog.PricePlansDto;
 import org.meveo.api.dto.response.SearchResponse;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 /**
  * The Class PricePlanMatrixesResponseDto.

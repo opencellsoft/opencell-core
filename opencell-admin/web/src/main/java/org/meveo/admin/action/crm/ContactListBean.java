@@ -18,7 +18,7 @@
 
 package org.meveo.admin.action.crm;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.communication.contact.Contact;

@@ -21,12 +21,12 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.enterprise.context.Conversation;
-import javax.enterprise.context.ConversationScoped;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.FacesConverter;
-import javax.inject.Inject;
+import jakarta.enterprise.context.Conversation;
+import jakarta.enterprise.context.ConversationScoped;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.convert.FacesConverter;
+import jakarta.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 @ConversationScoped
 @FacesConverter(value = "org.jboss.seam.faces.conversion.ObjectConverter", managed = true)
-public class ObjectConverter implements javax.faces.convert.Converter, Serializable {
+public class ObjectConverter implements jakarta.faces.convert.Converter, Serializable {
 
     private static final long serialVersionUID = -406332789399557968L;
     private final Map<String, Object> converterMap = new HashMap<>();

@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.catalog.PricePlanMatrixValue;

@@ -18,7 +18,7 @@
 
 package org.meveo.admin.action;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.meveo.admin.action.admin.custom.CustomFieldDataEntryBean;
 import org.meveo.admin.exception.BusinessException;

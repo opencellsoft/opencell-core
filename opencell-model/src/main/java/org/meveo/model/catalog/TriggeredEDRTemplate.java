@@ -18,24 +18,26 @@
 
 package org.meveo.model.catalog;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.Size;
+import java.sql.Types;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.scripts.ScriptInstance;
+
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.Size;
 
 /**
  * A rule for new EDR creation for a processed EDR
@@ -58,7 +60,7 @@ public class TriggeredEDRTemplate extends BusinessEntity {
     /**
      * Expression to determine subscription code
      */
-    @Type(type = "longText")
+    @JdbcTypeCode(Types.LONGVARCHAR)
     @Column(name = "subscription_el")
     @Size(max = 2000)
     private String subscriptionEl;
@@ -80,7 +82,7 @@ public class TriggeredEDRTemplate extends BusinessEntity {
     /**
      * Expression to determine quantity of new EDR
      */
-    @Type(type = "longText")
+    @JdbcTypeCode(Types.LONGVARCHAR)
     @Column(name = "quantity_el")
     @Size(max = 2000)
     private String quantityEl;
@@ -88,7 +90,7 @@ public class TriggeredEDRTemplate extends BusinessEntity {
     /**
      * Expression to determine parameter 1 of new EDR
      */
-    @Type(type = "longText")
+    @JdbcTypeCode(Types.LONGVARCHAR)
     @Column(name = "param_1_el")
     @Size(max = 2000)
     private String param1El;
@@ -96,7 +98,7 @@ public class TriggeredEDRTemplate extends BusinessEntity {
     /**
      * Expression to determine parameter 2 of new EDR
      */
-    @Type(type = "longText")
+    @JdbcTypeCode(Types.LONGVARCHAR)
     @Column(name = "param_2_el")
     @Size(max = 2000)
     private String param2El;
@@ -104,7 +106,7 @@ public class TriggeredEDRTemplate extends BusinessEntity {
     /**
      * Expression to determine parameter 3 of new EDR
      */
-    @Type(type = "longText")
+    @JdbcTypeCode(Types.LONGVARCHAR)
     @Column(name = "param_3_el")
     @Size(max = 2000)
     private String param3El;
@@ -112,7 +114,7 @@ public class TriggeredEDRTemplate extends BusinessEntity {
     /**
      * Expression to determine parameter 4 of new EDR
      */
-    @Type(type = "longText")
+    @JdbcTypeCode(Types.LONGVARCHAR)
     @Column(name = "param_4_el")
     @Size(max = 2000)
     private String param4El;
@@ -121,7 +123,7 @@ public class TriggeredEDRTemplate extends BusinessEntity {
      * Expression to compute the OpencellInstance code so the instance on which the EDR is triggered can be inferred from the Offer or whatever.
      * It overrides the value on meveoInstance.
      */
-    @Type(type = "longText")
+    @JdbcTypeCode(Types.LONGVARCHAR)
     @Column(name = "opencell_instance_el")
     @Size(max = 2000)
     private String opencellInstanceEL;

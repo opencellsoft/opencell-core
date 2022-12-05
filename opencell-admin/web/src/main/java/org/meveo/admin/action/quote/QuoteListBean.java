@@ -19,8 +19,8 @@ package org.meveo.admin.action.quote;
 
 import java.util.Map;
 
-import javax.enterprise.context.ConversationScoped;
-import javax.inject.Named;
+import jakarta.enterprise.context.ConversationScoped;
+import jakarta.inject.Named;
 
 import org.meveo.admin.action.order.OrderListBean;
 

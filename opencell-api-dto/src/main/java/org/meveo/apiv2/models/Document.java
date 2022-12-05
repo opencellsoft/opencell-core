@@ -23,7 +23,7 @@ import org.meveo.model.document.DocumentCategory;
 import org.meveo.model.document.DocumentStatus;
 import org.meveo.model.payments.CustomerAccount;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;

@@ -50,17 +50,17 @@ import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-import javax.ejb.AsyncResult;
-import javax.ejb.Asynchronous;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
+import jakarta.ejb.AsyncResult;
+import jakarta.ejb.Asynchronous;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.Query;
+import org.hibernate.query.NativeQuery;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
@@ -206,15 +206,11 @@ public class CustomTableService extends NativePersistenceService {
     @Override
     public void enable(String tableName, Long id) throws BusinessException {
         super.enable(tableName, id);
-        Map<String, Object> values = findById(tableName, id);
     }
 
     @Override
     public void enable(String tableName, Set<Long> ids) throws BusinessException {
         super.enable(tableName, ids);
-        for (Long id : ids) {
-            Map<String, Object> values = findById(tableName, id);
-        }
     }
 
     @Override
@@ -267,7 +263,7 @@ public class CustomTableService extends NativePersistenceService {
         try {
             QueryBuilder queryBuilder = getQuery(customEntityTemplate.getDbTablename(), config, null);
 
-            SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), true);
+            NativeQuery query = queryBuilder.getNativeQuery(getEntityManager(), true);
 
             int firstRow = 0;
             int nrItemsFound = 0;

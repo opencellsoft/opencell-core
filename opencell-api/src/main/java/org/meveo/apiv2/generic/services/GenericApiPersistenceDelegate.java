@@ -5,8 +5,8 @@ import static org.meveo.apiv2.generic.services.PersistenceServiceHelper.getPersi
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
+import jakarta.ejb.Stateless;
+import jakarta.interceptor.Interceptors;
 
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.generic.security.interceptor.SecuredBusinessEntityCheckInterceptor;

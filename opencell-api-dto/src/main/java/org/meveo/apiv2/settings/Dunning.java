@@ -3,7 +3,7 @@ package org.meveo.apiv2.settings;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immutables.value.Value;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 @Value.Immutable
 @Value.Style(jdkOnly = true)

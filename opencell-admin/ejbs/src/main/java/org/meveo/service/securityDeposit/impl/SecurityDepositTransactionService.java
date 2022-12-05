@@ -3,9 +3,9 @@ package org.meveo.service.securityDeposit.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ejb.Stateless;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
 
 import org.meveo.model.securityDeposit.SecurityDepositTransaction;
 import org.meveo.service.base.BusinessService;

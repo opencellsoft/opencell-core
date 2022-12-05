@@ -18,7 +18,7 @@
 
 package org.meveo.api;
 
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.meveo.common.DefaultTypeAdapter;
 

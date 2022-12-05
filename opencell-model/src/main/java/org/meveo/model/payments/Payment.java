@@ -17,12 +17,18 @@
  */
 package org.meveo.model.payments;
 
-import org.hibernate.annotations.Type;
+import java.math.BigDecimal;
+import java.sql.Types;
+
+import org.hibernate.annotations.JdbcTypeCode;
 import org.meveo.model.dunning.DunningDocument;
 
-import java.math.BigDecimal;
-
-import javax.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 @DiscriminatorValue(value = "P")
@@ -52,7 +58,7 @@ public class Payment extends AccountOperation {
     /**
      * Comments Text free if litigation or special conditions
      */
-    @Type(type = "longText")
+    @JdbcTypeCode(Types.LONGVARCHAR)
     @Column(name = "comment_text")
     private String comment;
 
