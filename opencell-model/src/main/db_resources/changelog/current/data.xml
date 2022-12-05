@@ -13904,7 +13904,6 @@ public class CdrFlatFileImportScript extends Script {
         File[] fileList = dir.listFiles();
         try {
             for(File fileInput : fileList) {
-                String extension = FilenameUtils.getExtension(fileInput.getName());
                 if (!FilenameUtils.getExtension(fileInput.getName()).equals("csv")) {
                     continue;
                 }
