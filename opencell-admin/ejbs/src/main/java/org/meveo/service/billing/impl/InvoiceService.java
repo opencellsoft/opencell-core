@@ -28,6 +28,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
 import static org.meveo.model.shared.DateUtils.setTimeToZero;
 import static org.meveo.service.base.ValueExpressionWrapper.*;
+import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -107,6 +108,7 @@ import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.admin.storage.StorageFactory;
 import org.meveo.admin.util.PdfWaterMark;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.CategoryInvoiceAgregateDto;
 import org.meveo.api.dto.RatedTransactionDto;
@@ -206,6 +208,7 @@ import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.scripts.ScriptParameter;
 import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.model.shared.DateUtils;
@@ -442,6 +445,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
     
     @Inject 
     private LinkedInvoiceService linkedInvoiceService;
+    
+    @Inject
+    private ResourceBundle resourceMessages;
 
     @PostConstruct
     private void init() {
@@ -1398,13 +1404,25 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
                 methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
                 methodContext.put("billingRun", invoice.getBillingRun());
-                methodContext.put("ruleValues", invoice.getRejectedByRule());
                 while(validationRuleIterator.hasNext() && noValidationError) {
                     InvoiceValidationRule validationRule = validationRuleIterator.next();
                     if(dateBetween(invoice.getInvoiceDate(), validationRule.getValidFrom(), validationRule.getValidTo())) {
                         if(validationRule.getType() == ValidationRuleTypeEnum.SCRIPT) {
                             ScriptInterface validationRuleScript =
                                     scriptInstanceService.getScriptInstance(validationRule.getValidationScript());
+                            ScriptInstance scriptInstance = scriptInstanceService.findByCode(validationRule.getValidationScript());
+                            List<ScriptParameter> parameters = scriptInstance.getScriptParameters();
+                            for (Map.Entry<String, String> entry : validationRule.getRuleValues().entrySet()) {
+                                String key = entry.getKey();
+                                Object value = entry.getValue();
+                                scriptInstance.getScriptParameters().stream().forEach(sp -> {
+                            		if (validationRule.getRuleValues().containsKey(sp.getCode())) {
+                            			methodContext.put(sp.getCode(), (sp.isCollection())? scriptInstanceService.parseListFromString(String.valueOf(validationRule.getRuleValues().get(sp.getCode())), sp.getClassName(), sp.getValuesSeparator())
+                        								: scriptInstanceService.parseObjectFromString(String.valueOf(validationRule.getRuleValues().get(sp.getCode())), sp.getClassName()));
+                            		}
+                            	});
+                        
+                            }
                             if(validationRuleScript != null) {
                                 try {
                                     validationRuleScript.execute(methodContext);

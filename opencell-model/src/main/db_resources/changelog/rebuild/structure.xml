@@ -16693,6 +16693,13 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
 
     </changeSet>
+    <changeSet id="#INTRD-11780_20221128_fk" author="AdilElJaouhari">
+        <addForeignKeyConstraint baseTableName="billing_invoice"
+                                 baseColumnNames="invoice_validation_rule_id"
+                                 constraintName="fk_billing_invoice_validation_rule"
+                                 referencedTableName="billing_invoice_validation_rule"
+                                 referencedColumnNames="id" />
+    </changeSet>
     
     <!-- end fk -->
 
