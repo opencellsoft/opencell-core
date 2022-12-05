@@ -16697,13 +16697,6 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
 
     </changeSet>
-    <changeSet id="#INTRD-11780_20221128_fk" author="AdilElJaouhari">
-        <addForeignKeyConstraint baseTableName="billing_invoice"
-                                 baseColumnNames="invoice_validation_rule_id"
-                                 constraintName="fk_billing_invoice_validation_rule"
-                                 referencedTableName="billing_invoice_validation_rule"
-                                 referencedColumnNames="id" />
-    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -17667,8 +17660,14 @@
             <column name="validation_el" type="${type.text}" />
         </createTable>
     </changeSet>
-    
-    
+	
+    <changeSet id="#INTRD-11780_20221128_fk" author="AdilElJaouhari">
+        <addForeignKeyConstraint baseTableName="billing_invoice"
+                                 baseColumnNames="invoice_validation_rule_id"
+                                 constraintName="fk_billing_invoice_validation_rule"
+                                 referencedTableName="billing_invoice_validation_rule"
+                                 referencedColumnNames="id" />
+    </changeSet>
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
