@@ -128,7 +128,7 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                         ofNullable(collectionPlan.getPauseDuration()).orElse(0) + levelInstance.getDaysOverdue());
                 if (levelInstance.getLevelStatus() != DunningLevelInstanceStatusEnum.DONE
                         && !collectionPlan.getRelatedInvoice().getPaymentStatus().equals(PAID)
-                        && dueDate.before(dateToCompare)) {
+                        && dateToCompare.before(today)) {
                     nextLevel = index + 1;
                     for (int i = 0; i < levelInstance.getActions().size(); i++) {
                         DunningActionInstance actionInstance = levelInstance.getActions().get(i);
