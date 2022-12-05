@@ -39,7 +39,7 @@ public class CompareInvoiceAmountScript extends Script {
 		String withOrWithTaxParameter = (String) context.get("withOrWithoutTax");
 		BigDecimal value = (BigDecimal) context.get("value");
 		String operator = (String) context.get("operator");
-		if(operator == "=") {
+		if("=".equals(operator)) {
 			operator = "==";
 		}
 		
