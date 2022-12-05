@@ -389,7 +389,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		
 		//add missing attribute instances
 		AttributeInstance attributeInstance=null;
-		for(ProductVersionAttribute productVersionAttribute:product.getCurrentVersion().getAttributes()) {
+		for(ProductVersionAttribute productVersionAttribute : productVersion.getAttributes()) {
 			Attribute attribute=productVersionAttribute.getAttribute();
 			if(!instantiatedAttributes.containsKey(attribute.getCode())) {
 				attributeInstance = new AttributeInstance(currentUser);
@@ -467,7 +467,9 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			serviceInstance.setSubscriptionDate(offer.getSubscription().getSubscriptionDate());
 			serviceInstance.setEndAgreementDate(offer.getSubscription().getEndAgreementDate());
 			serviceInstance.setRateUntilDate(offer.getSubscription().getEndAgreementDate());
-			serviceInstance.setProductVersion(product.getCurrentVersion());
+			ProductVersion productVersion = productService.getCurrentPublishedVersion(serviceInstance.getCode(),
+							deliveryDate != null ? deliveryDate : serviceInstance.getSubscriptionDate()).orElse(null);
+			serviceInstance.setProductVersion(productVersion);
 			if (deliveryDate != null) {
 				serviceInstance.setDeliveryDate(deliveryDate);
 			} else {
@@ -490,7 +492,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			}
 			//add missing attribute instances
 			AttributeInstance attributeInstance=null;
-			for(ProductVersionAttribute productVersionAttribute:product.getCurrentVersion().getAttributes()) {
+			for(ProductVersionAttribute productVersionAttribute : productVersion.getAttributes()) {
 				Attribute attribute=productVersionAttribute.getAttribute();
 				if(!instantiatedAttributes.containsKey(attribute.getCode())) {
 					attributeInstance = new AttributeInstance(currentUser);
