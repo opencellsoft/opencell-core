@@ -30,6 +30,7 @@ import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
@@ -293,17 +294,18 @@ public class AccountsManagementApiService {
 
         List<Long> createdCounterInstances = new ArrayList<>();
 
-        List<ServiceInstance> serviceInstances = serviceInstanceService.findByCodeAndCodeSubscription(dto.getProductCode(), dto.getSubscriptionCode());
+        List<ServiceInstance> serviceInstances = new ArrayList<>(
+                serviceInstanceService.findByCodeAndCodeSubscription(dto.getProductCode(), dto.getSubscriptionCode()));
 
         if (CollectionUtils.isEmpty(serviceInstances)) {
-            throw new BusinessApiException("No service instance found for [code=" + dto.getProductCode() + ", subscription codd=" + dto.getSubscriptionCode() + "]");
+            throw new EntityDoesNotExistsException("No service instance found for [code=" + dto.getProductCode() + ", subscription codd=" + dto.getSubscriptionCode() + "]");
         }
 
         // si level SI, on boucle et on traite pour chaque serviceInstance retrouvé
         // si level subscritpion : on traite le premier en respectant un critere de date à voir
         if (serviceInstances.size() > 1 && CounterTemplateLevel.SU == counterTemplate.getCounterLevel()) {
             serviceInstances.sort(Comparator.comparing(ServiceInstance::getStatusDate));
-            CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstances.get(0), counterTemplate, false);
+            CounterInstance counterInstance = counterInstanceService.counterInstanciationWithoutForceCommit(serviceInstances.get(0), counterTemplate, false);
             processCounterInstanceAndPeriod(counterInstance, dto, serviceInstances.get(0), counterTemplate, createdCounterInstances);
         } else {
             serviceInstances.forEach(si -> {
@@ -352,7 +354,7 @@ public class AccountsManagementApiService {
         }
 
         if (StringUtils.isBlank(dto.getProductCode())) {
-            throw new BusinessApiException("ServiceInstance code is mandatory");
+            throw new BusinessApiException("Product code is mandatory");
         }
 
         if (StringUtils.isBlank(dto.getSubscriptionCode())) {
@@ -386,18 +388,11 @@ public class AccountsManagementApiService {
                     throw new BusinessApiException("UserAccount code is mandatory");
                 }
                 break;
-            case SU:
-                if (StringUtils.isBlank(dto.getSubscriptionCode())) {
-                    throw new BusinessApiException("Subscription code is mandatory");
-                }
-                break;
         }
         return counterTemplate;
     }
 
     private void processCounterInstanceAndPeriod(CounterInstance counterInstance, CounterInstanceDto dto, ServiceInstance si, CounterTemplate counterTemplate, List<Long> createdCounterInstances) {
-        counterInstanceService.create(counterInstance);
-
         createdCounterInstances.add(counterInstance.getId());
 
         dto.getChargeInstances().forEach(s -> {
@@ -405,7 +400,7 @@ public class AccountsManagementApiService {
 
             if (!productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(dto.getProductCode(), charge.getCode(), counterTemplate.getCode())) {
                 throw new BusinessApiException("ChargeInstance with [type=" + charge.getChargeType() + ", code=" + charge.getCode()
-                        + "] is not linked to Product [code" + si.getCode()
+                        + "] is not linked to Product [code=" + si.getCode()
                         + "] and CounterTemplate [code=" + counterTemplate.getCode() + "]");
             }
 
@@ -434,7 +429,14 @@ public class AccountsManagementApiService {
                     }
                 });
 
-                counterInstanceService.createCounterPeriodIfMissing(counterInstance, periodDto.getStartDate(), periodDto.getEndDate(), charge);
+                // fetch existing counterPeriod to check overlapping
+                CounterPeriod existingCounterPeriod = counterInstanceService.getCounterPeriodByDate(counterInstance, startP);
+
+                if (existingCounterPeriod == null) {
+                    counterInstanceService.createPeriod(counterInstance, charge.getChargeDate(), periodDto.getStartDate(), charge, periodDto.getValue(), periodDto.getLevel(), false);
+                } else {
+                    counterInstanceService.updatePeriod(existingCounterPeriod, counterInstance, charge.getChargeDate(), periodDto.getStartDate(), charge, periodDto.getValue(), periodDto.getLevel());
+                }
 
                 periodes.add(new DateRange(startP, endP));
             });
