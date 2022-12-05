@@ -48,4 +48,29 @@ public class DirectoriesConstants {
 	 */
 	public static final String JASPER_ROOT_FOLDER = "jasper";
 
+	/**
+	 * Tunnel Root Folder
+	 */
+	public static final String TUNNEL_ROOT_FOLDER = "tunnel";
+
+	/**
+	 * Media Subfolder
+	 */
+	public static final String MEDIA_SUBFOLDER = "media";
+
+	/**
+	 * Contracts Subfolder
+	 */
+	public static final String CONTRACTS_SUBFOLDER = "contracts";
+
+	/**
+	 * Offers Contracts Subfolder
+	 */
+	public static final String OFFERS_CONTRACTS_SUBFOLDER = "offers";
+
+	/**
+	 * Mandate Contract Subfolder
+	 */
+	public static final String MANDATE_CONTRACT_SUBFOLDER = "mandate";
+
 }
