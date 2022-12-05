@@ -101,7 +101,7 @@ public class CounterInstanceCRUDApiTest {
         CounterInstance mockNewInstance = new CounterInstance();
         mockNewInstance.setId(1L);
         Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
-        Mockito.when(counterInstanceService.counterInstanciation(any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), eq(false))).thenReturn(mockNewInstance);
         Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
         Mockito.when(chargeInstanceService.findByCode("AUTRE")).thenReturn(new RecurringChargeInstance());
 
@@ -203,7 +203,7 @@ public class CounterInstanceCRUDApiTest {
         CounterInstance mockNewInstance = new CounterInstance();
         mockNewInstance.setId(1L);
         Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(false);
-        Mockito.when(counterInstanceService.counterInstanciation(any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), eq(false))).thenReturn(mockNewInstance);
         Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {
@@ -232,7 +232,7 @@ public class CounterInstanceCRUDApiTest {
         CounterInstance mockNewInstance = new CounterInstance();
         mockNewInstance.setId(1L);
         Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
-        Mockito.when(counterInstanceService.counterInstanciation(any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), eq(false))).thenReturn(mockNewInstance);
         Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {
@@ -263,7 +263,7 @@ public class CounterInstanceCRUDApiTest {
         CounterInstance mockNewInstance = new CounterInstance();
         mockNewInstance.setId(1L);
         Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
-        Mockito.when(counterInstanceService.counterInstanciation(any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), eq(false))).thenReturn(mockNewInstance);
         Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {
@@ -294,7 +294,7 @@ public class CounterInstanceCRUDApiTest {
         CounterInstance mockNewInstance = new CounterInstance();
         mockNewInstance.setId(1L);
         Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
-        Mockito.when(counterInstanceService.counterInstanciation(any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), eq(false))).thenReturn(mockNewInstance);
         Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {
@@ -325,7 +325,7 @@ public class CounterInstanceCRUDApiTest {
         CounterInstance mockNewInstance = new CounterInstance();
         mockNewInstance.setId(1L);
         Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
-        Mockito.when(counterInstanceService.counterInstanciation(any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), eq(false))).thenReturn(mockNewInstance);
         Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {
@@ -356,7 +356,7 @@ public class CounterInstanceCRUDApiTest {
         CounterInstance mockNewInstance = new CounterInstance();
         mockNewInstance.setId(1L);
         Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
-        Mockito.when(counterInstanceService.counterInstanciation(any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), eq(false))).thenReturn(mockNewInstance);
         Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {
@@ -387,7 +387,7 @@ public class CounterInstanceCRUDApiTest {
         CounterInstance mockNewInstance = new CounterInstance();
         mockNewInstance.setId(1L);
         Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
-        Mockito.when(counterInstanceService.counterInstanciation(any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), eq(false))).thenReturn(mockNewInstance);
         Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {
@@ -418,7 +418,7 @@ public class CounterInstanceCRUDApiTest {
         CounterInstance mockNewInstance = new CounterInstance();
         mockNewInstance.setId(1L);
         Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
-        Mockito.when(counterInstanceService.counterInstanciation(any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), eq(false))).thenReturn(mockNewInstance);
         Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {
@@ -449,7 +449,7 @@ public class CounterInstanceCRUDApiTest {
         CounterInstance mockNewInstance = new CounterInstance();
         mockNewInstance.setId(1L);
         Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
-        Mockito.when(counterInstanceService.counterInstanciation(any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), eq(false))).thenReturn(mockNewInstance);
         Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {
@@ -480,7 +480,7 @@ public class CounterInstanceCRUDApiTest {
         CounterInstance mockNewInstance = new CounterInstance();
         mockNewInstance.setId(1L);
         Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
-        Mockito.when(counterInstanceService.counterInstanciation(any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), eq(false))).thenReturn(mockNewInstance);
         Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {
@@ -511,7 +511,7 @@ public class CounterInstanceCRUDApiTest {
         CounterInstance mockNewInstance = new CounterInstance();
         mockNewInstance.setId(1L);
         Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
-        Mockito.when(counterInstanceService.counterInstanciation(any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), eq(false))).thenReturn(mockNewInstance);
         Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {
@@ -542,7 +542,7 @@ public class CounterInstanceCRUDApiTest {
         CounterInstance mockNewInstance = new CounterInstance();
         mockNewInstance.setId(1L);
         Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
-        Mockito.when(counterInstanceService.counterInstanciation(any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), eq(false))).thenReturn(mockNewInstance);
         Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {
@@ -573,7 +573,7 @@ public class CounterInstanceCRUDApiTest {
         CounterInstance mockNewInstance = new CounterInstance();
         mockNewInstance.setId(1L);
         Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
-        Mockito.when(counterInstanceService.counterInstanciation(any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), eq(false))).thenReturn(mockNewInstance);
         Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {
@@ -604,7 +604,7 @@ public class CounterInstanceCRUDApiTest {
         CounterInstance mockNewInstance = new CounterInstance();
         mockNewInstance.setId(1L);
         Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
-        Mockito.when(counterInstanceService.counterInstanciation(any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), eq(false))).thenReturn(mockNewInstance);
         Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {

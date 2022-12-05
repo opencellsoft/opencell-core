@@ -309,7 +309,7 @@ public class AccountsManagementApiService {
             processCounterInstanceAndPeriod(counterInstance, dto, serviceInstances.get(0), counterTemplate, createdCounterInstances);
         } else {
             serviceInstances.forEach(si -> {
-                CounterInstance counterInstance = counterInstanceService.counterInstanciation(si, counterTemplate, false);
+                CounterInstance counterInstance = counterInstanceService.counterInstanciationWithoutForceCommit(si, counterTemplate, false);
                 processCounterInstanceAndPeriod(counterInstance, dto, si, counterTemplate, createdCounterInstances);
             });
         }
