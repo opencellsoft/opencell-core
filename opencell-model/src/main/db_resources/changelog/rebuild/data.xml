@@ -7467,14 +7467,6 @@
         <insert tableName="billing_seq_invoice">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq" />
             <column name="version" valueNumeric="0" />
-            <column name="code" value="DRAFT" />
-            <column name="sequence_size" valueNumeric="5" />
-            <column name="created" valueDate="2016-09-14 00:00:00.000" />
-            <column name="creator" value="OPENCELL.ADMIN" />
-        </insert>
-        <insert tableName="billing_seq_invoice">
-            <column name="id" valueSequenceNext="bill_seq_invoice_seq" />
-            <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2016-09-14 00:00:00.000" />
             <column name="sequence_size" valueNumeric="9" />
             <column name="code" value="COM" />
@@ -7537,28 +7529,13 @@
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2016-09-14 00:00:00.000" />
             <column name="code" value="QUOTE" />
-            <column name="description" value="Invoice for quote" />
+            <column name="description" value="Quote" />
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="invoice_sequence_id"
 					valueComputed="(SELECT id from billing_seq_invoice where code = 'QUOTE')" />
             <column name="matching_auto" valueNumeric="0" />
             <column name="uuid" value="InvoiceType-QUOTE" />
         </insert>
-        <insert tableName="billing_invoice_type">
-            <column name="id" valueNumeric="-4" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="2016-09-14 00:00:00.000" />
-            <column name="code" value="DRAFT" />
-            <column name="description" value="Draft invoice" />
-            <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="occ_template_id" value="-25" />
-            <column name="matching_auto" valueNumeric="0" />
-            <column name="use_self_sequence" valueNumeric="0" />
-            <column name="prefix_el" value="DRAFT_" />
-            <column name="uuid" value="INVOICE_TYPE-4" />
-            <column name="invoice_sequence_id"
-					valueComputed="(SELECT id from billing_seq_invoice where code = 'DRAFT')" />
-        </insert>       
         <insert tableName="billing_invoice_type_applies_to">
             <column name="invoice_type_id" value="-1" />
             <column name="applies_to_id" value="-2" />
@@ -10024,6 +10001,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="INTRD-11124_20221109" author="aelmalki" />
     <changeSet id="#INTR-11598_20221116" author="TarikFA." />
 	<changeSet id="#INTRD-11745_20221130" author="TarikFA." />
+	<changeSet id="#INTRD-12024_20221202" author="aeljaouhari" />
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

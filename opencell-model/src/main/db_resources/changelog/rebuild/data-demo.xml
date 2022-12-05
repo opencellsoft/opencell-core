@@ -2469,7 +2469,7 @@
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="opencell.admin" />
 			<column name="code" value="SECURITY_DEPOSIT" />
-			<column name="description" value="SD - Security Deposit" />
+			<column name="description" value="Security Deposit" />
 			<column name="invoice_sequence_id" valueNumeric="-6" />
 			<column name="occ_template_id" valueNumeric="-52" />
 			<column name="uuid" value="InvoiceType-SECURITY_DEPOSIT" />
@@ -2636,6 +2636,29 @@
 		</insert>
 		
 		
+	</changeSet>
+	
+	<changeSet id="#INTRD-12024_20221202_build" author="aeljaouhari">	
+		<insert tableName="billing_seq_invoice">
+			<column name="id" valueNumeric="-9" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="COMMERCIAL_ORDER" />
+			<column name="description" value="Commercial order" />
+			<column name="sequence_size" valueNumeric="9" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+		<insert tableName="billing_invoice_type">
+			<column name="id" valueNumeric="-9" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="COMMERCIAL_ORDER" />
+			<column name="description" value="Commercial order" />
+			<column name="invoice_sequence_id" valueNumeric="-9" />
+			<column name="occ_template_id" valueNumeric="-25" />
+			<column name="uuid" value="InvoiceType-COMMERCIAL_ORDER" />
+		</insert>	
 	</changeSet>
     
 

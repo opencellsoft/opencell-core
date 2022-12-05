@@ -206,8 +206,8 @@ public interface InvoiceResource {
 	responses = {
 	@ApiResponse(responseCode = "200", description = "invoice successfully rejected"),
 	@ApiResponse(responseCode = "403", description = "error when rejecting invoice") })
-	Response rejectInvoiceLine(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id);
-	
+	Response rejectInvoiceLine(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id,
+			@Parameter(description = "invoice reject reason", required = false) RejectReasonInput input);	
 	
 	/**
 	 * @param id

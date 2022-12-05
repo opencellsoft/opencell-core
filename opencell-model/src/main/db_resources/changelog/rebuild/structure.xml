@@ -4917,6 +4917,10 @@
 			<column name="channel" type="varchar(255)" />
 			<column name="trading_language_id" type="bigint" />
 			<column name="is_active" type="${type.boolean}" defaultValueNumeric="1" />
+
+            <column name="textcontent_i18n" type="${type.json}"/>
+            <column name="subject_i18n" type="${type.json}"/>
+            <column name="htmlcontent_i18n" type="${type.json}"/>
         </createTable>
         <addForeignKeyConstraint baseColumnNames="trading_language_id" baseTableName="com_message_template" constraintName="fk_language_message_template" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_language" />
