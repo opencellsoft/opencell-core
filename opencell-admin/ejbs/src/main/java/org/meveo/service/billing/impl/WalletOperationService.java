@@ -37,6 +37,8 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import com.google.common.collect.Lists;
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InsufficientBalanceException;
 import org.meveo.api.dto.billing.WalletOperationDto;
@@ -859,16 +861,33 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         getEntityManager().createNamedQuery("WalletOperation.detachWOsFromSubscription").setParameter("subscription", subscription).executeUpdate();
     }
 
-    
+
     /**
      * Get a list of wallet operations to be invoiced/converted to rated transactions up to a given date. WalletOperation.invoiceDate< date
-     * 
-     * @param invoicingDate Invoicing date
-     * @param nbToRetrieve Number of items to retrieve for processing
-     * @return A list of Wallet operation ids
+     *
+     * @param woIds WO ids
+     * @return A list of WalletOperation
      */
     public List<WalletOperation> getDiscountWalletOperation(List<Long> woIds) {
-        return getEntityManager().createNamedQuery("WalletOperation.discountWalletOperation", WalletOperation.class).setParameter("woIds", woIds).getResultList();
+        if (CollectionUtils.isEmpty(woIds)) {
+            return Collections.emptyList();
+        }
+        List<WalletOperation> wosToProcess = new ArrayList<>(woIds.size());
+
+        // Due to jpa (or maybe db limitation), we cannot pass huge ids in one query, partition it if it is more than 5000 entries
+        List<List<Long>> subWoIds = Lists.partition(woIds, 5000);
+
+        log.info("GetDiscountWalletOperation : process {} wo in {} partitions with 5000 each", woIds.size(), subWoIds.size());
+
+        subWoIds.forEach(partition -> {
+                    log.info("\t Process partition with {}", partition.size());
+                    wosToProcess.addAll(getEntityManager().createNamedQuery("WalletOperation.discountWalletOperation", WalletOperation.class)
+                            .setParameter("woIds", partition)
+                            .getResultList());
+                }
+        );
+
+        return wosToProcess;
     }
 
     public WalletOperation findWoByRatedTransactionId(Long rtId) {
