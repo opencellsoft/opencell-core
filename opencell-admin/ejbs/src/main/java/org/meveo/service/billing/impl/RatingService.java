@@ -122,12 +122,15 @@ import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.cpq.ContractItemService;
 import org.meveo.service.cpq.ContractService;
+import org.meveo.service.mediation.MediationsettingService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.catalog.TriggeredEdrScript;
 import org.meveo.service.script.catalog.TriggeredEdrScriptInterface;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
+
+import com.google.common.collect.Lists;
 
 /**
  * Rate charges such as {@link org.meveo.model.catalog.OneShotChargeTemplate}, {@link org.meveo.model.catalog.RecurringChargeTemplate} and {@link org.meveo.model.catalog.UsageChargeTemplate}. Generate the
@@ -425,6 +428,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         return ratedEDRResult;
     }
 
+    @Inject
+    private MediationsettingService mediationsettingService;
     /**
      * Instantiate new EDRs if charge has triggerEDRTemplate. EDRs are NOT persisted.
      *
@@ -531,6 +536,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 }
             }
         }
+        mediationsettingService.applyEdrVersioningRule(triggredEDRs, null, false, true);
         return triggredEDRs;
 
     }
