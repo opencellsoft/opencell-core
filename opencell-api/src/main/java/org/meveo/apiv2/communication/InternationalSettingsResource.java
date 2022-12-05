@@ -4,6 +4,8 @@ package org.meveo.apiv2.communication;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.api.dto.communication.EmailTemplateDto;
+import org.meveo.api.dto.communication.EmailTemplatePatchDto;
+import org.meveo.api.rest.PATCH;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.PUT;
@@ -29,4 +31,17 @@ public interface InternationalSettingsResource {
             }
     )
     EmailTemplateDto update(@PathParam("EmailTemplateCode") String emailTemplateCode, EmailTemplateDto emailTemplateDto);
+
+    @PATCH
+    @Path("/EmailTemplate/{EmailTemplateCode}")
+    @Operation(
+            summary = "Update an EmailTemplate",
+            tags = { "email", "email_template", "communication" },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "the email template successfully updated"),
+                    @ApiResponse(responseCode = "404", description = "The EmailTemplateCode does not exists"),
+                    @ApiResponse(responseCode = "400", description = "An error happened while updating EmailTemplate")
+            }
+    )
+    EmailTemplateDto partialUpdate(@PathParam("EmailTemplateCode") String emailTemplateCode, EmailTemplatePatchDto emailTemplateDto);
 }

@@ -3,6 +3,7 @@ package org.meveo.apiv2.communication.impl;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.communication.EmailTemplateDto;
+import org.meveo.api.dto.communication.EmailTemplatePatchDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.communication.InternationalSettingsResource;
 import org.meveo.apiv2.communication.service.InternationalSettingsApiService;
@@ -35,6 +36,18 @@ public class InternationalSettingsResourceImpl implements InternationalSettingsR
 
         Optional<EmailTemplate> updatedEmailTemplate = internationalSettingsApiService
                 .update(emailTemplate.getId(), emailTemplateMapper.toEntity(emailTemplateDto, emailTemplate));
+
+        return updatedEmailTemplate.map(EmailTemplateMapper::toEmailTemplateDto).orElse(null);
+    }
+
+    @Override
+    public EmailTemplateDto partialUpdate(String emailTemplateCode, EmailTemplatePatchDto emailTemplatePatchDto) {
+
+        EmailTemplate emailTemplate = ofNullable(emailTemplateService.findByCode(emailTemplateCode))
+                .orElseThrow(() -> new EntityDoesNotExistsException(EmailTemplate.class, emailTemplateCode));
+
+        Optional<EmailTemplate> updatedEmailTemplate = internationalSettingsApiService
+                .update(emailTemplate.getId(), emailTemplateMapper.fromPatchtoDto(emailTemplatePatchDto, emailTemplate));
 
         return updatedEmailTemplate.map(EmailTemplateMapper::toEmailTemplateDto).orElse(null);
     }

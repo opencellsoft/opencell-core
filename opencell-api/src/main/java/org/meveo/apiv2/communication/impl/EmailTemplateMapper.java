@@ -1,6 +1,7 @@
 package org.meveo.apiv2.communication.impl;
 
 import org.meveo.api.dto.communication.EmailTemplateDto;
+import org.meveo.api.dto.communication.EmailTemplatePatchDto;
 import org.meveo.api.dto.communication.TranslatedHtmlContentDto;
 import org.meveo.api.dto.communication.TranslatedSubjectDto;
 import org.meveo.api.dto.communication.TranslatedTextContentDto;
@@ -167,4 +168,29 @@ public class EmailTemplateMapper {
         return values;
     }
 
+    public EmailTemplate fromPatchtoDto(EmailTemplatePatchDto emailTemplatePatchDto, EmailTemplate emailTemplate) {
+
+        List<String> supportedLanguages = tradingLanguageService.listLanguageCodes();
+
+        if (emailTemplatePatchDto.getSubject() != null) {
+            emailTemplate.setSubject(emailTemplatePatchDto.getSubject());
+        }
+        if (emailTemplatePatchDto.getTextContent() != null) {
+            emailTemplate.setTextContent(emailTemplatePatchDto.getTextContent());
+        }
+        if (emailTemplatePatchDto.getHtmlContent() != null) {
+            emailTemplate.setHtmlContent(emailTemplatePatchDto.getHtmlContent());
+        }
+        if (emailTemplatePatchDto.getTranslatedSubject() != null) {
+            emailTemplate.setTranslatedSubject(convertSubjectsToMap(emailTemplatePatchDto.getTranslatedSubject(), supportedLanguages));
+        }
+        if (emailTemplatePatchDto.getTranslatedHtmlContent() != null) {
+            emailTemplate.setTranslatedHtmlContent(convertHtmlTranslationsToMap(emailTemplatePatchDto.getTranslatedHtmlContent(), supportedLanguages));
+        }
+        if (emailTemplatePatchDto.getTranslatedTextContent() != null) {
+            emailTemplate.setTranslatedTextContent(convertTextTranslationsToMap(emailTemplatePatchDto.getTranslatedTextContent(), supportedLanguages));
+        }
+
+        return emailTemplate;
+    }
 }
