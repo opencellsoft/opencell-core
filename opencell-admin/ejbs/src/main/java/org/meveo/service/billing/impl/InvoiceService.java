@@ -1413,15 +1413,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
                                     scriptInstanceService.getScriptInstance(validationRule.getValidationScript());
                             ScriptInstance scriptInstance = scriptInstanceService.findByCode(validationRule.getValidationScript());
                             if(scriptInstance != null && !MapUtils.isEmpty(validationRule.getRuleValues())){
-	                            for (Map.Entry<String, String> entry : validationRule.getRuleValues().entrySet()) {
-	                                scriptInstance.getScriptParameters().stream().forEach(sp -> {
-	                            		if (validationRule.getRuleValues().containsKey(sp.getCode())) {
-	                            			methodContext.put(sp.getCode(), (sp.isCollection())? scriptInstanceService.parseListFromString(String.valueOf(validationRule.getRuleValues().get(sp.getCode())), sp.getClassName(), sp.getValuesSeparator())
-	                        								: scriptInstanceService.parseObjectFromString(String.valueOf(validationRule.getRuleValues().get(sp.getCode())), sp.getClassName()));
-	                            		}
-	                            	});
-	                        
-	                            }
+                                scriptInstance.getScriptParameters().stream().forEach(sp -> {
+                            		if (validationRule.getRuleValues().containsKey(sp.getCode())) {
+                            			methodContext.put(sp.getCode(), (sp.isCollection())? scriptInstanceService.parseListFromString(String.valueOf(validationRule.getRuleValues().get(sp.getCode())), sp.getClassName(), sp.getValuesSeparator())
+                        								: scriptInstanceService.parseObjectFromString(String.valueOf(validationRule.getRuleValues().get(sp.getCode())), sp.getClassName()));
+                            		}
+                            	});	                        	                            
                             }
                             if(validationRuleScript != null) {
                                 try {
