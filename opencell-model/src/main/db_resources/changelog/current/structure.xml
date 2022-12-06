@@ -14841,5 +14841,9 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="htmlcontent_i18n" type="${type.json}"/>
         </addColumn>
     </changeSet>
+    
+	<changeSet id="INTRD_12001_20221205" author="TarikFA.">
+		<modifyDataType tableName="meveo_script_instance" columnName="description" newDataType="text"/>
+	</changeSet>
 
 </databaseChangeLog>
