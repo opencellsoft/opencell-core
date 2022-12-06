@@ -1,6 +1,7 @@
 package org.meveo.apiv2.communication.service;
 
 import org.meveo.api.dto.communication.EmailTemplateDto;
+import org.meveo.api.dto.communication.EmailTemplatePatchDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.communication.impl.EmailTemplateMapper;
 import org.meveo.apiv2.ordering.services.ApiService;
@@ -74,5 +75,15 @@ public class InternationalSettingsApiService implements ApiService<EmailTemplate
     @Override
     public Optional<EmailTemplate> findByCode(String code) {
         return Optional.empty();
+    }
+
+    public Optional<EmailTemplate> checkAndUpdate(String emailTemplateCode, EmailTemplatePatchDto emailTemplatePatchDto) {
+
+        EmailTemplate emailTemplate = emailTemplateService.findByCode(emailTemplateCode);
+
+        if (emailTemplate == null) {
+            throw new EntityDoesNotExistsException(EmailTemplate.class, emailTemplateCode);
+        }
+        return update(emailTemplate.getId(), emailTemplateMapper.fromPatchtoDto(emailTemplatePatchDto, emailTemplate));
     }
 }

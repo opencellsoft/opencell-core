@@ -28,10 +28,9 @@ public class InternationalSettingsResourceImpl implements InternationalSettingsR
     @Override
     public EmailTemplateDto partialUpdate(String emailTemplateCode, EmailTemplatePatchDto emailTemplatePatchDto) {
 
-        EmailTemplate emailTemplate = emailTemplateService.findByCode(emailTemplateCode);
 
         Optional<EmailTemplate> updatedEmailTemplate = internationalSettingsApiService
-                .update(emailTemplate.getId(), emailTemplateMapper.fromPatchtoDto(emailTemplatePatchDto, emailTemplate));
+                .checkAndUpdate(emailTemplateCode,emailTemplatePatchDto);
 
         return updatedEmailTemplate.map(EmailTemplateMapper::toEmailTemplateDto).orElse(null);
     }
