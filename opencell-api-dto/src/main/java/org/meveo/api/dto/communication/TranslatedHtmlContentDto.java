@@ -7,9 +7,6 @@ import java.io.Serializable;
 
 public class TranslatedHtmlContentDto implements Serializable {
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = -4686792860854718893L;
-
     /** The language code. */
     @Schema(description = "The language code")
     private String languageCode;
