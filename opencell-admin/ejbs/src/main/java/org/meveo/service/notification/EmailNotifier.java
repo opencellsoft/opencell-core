@@ -32,12 +32,14 @@ import javax.mail.MessagingException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.communication.impl.EmailSender;
+import org.meveo.service.communication.impl.InternationalSettingsService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.slf4j.Logger;
 
@@ -64,6 +66,9 @@ public class EmailNotifier {
 
     @Inject
     private CurrentUserProvider currentUserProvider;
+
+    @Inject
+    private InternationalSettingsService internationalSettingsService;
 
     /**
      * Send email message as fired notification result
@@ -110,12 +115,20 @@ public class EmailNotifier {
             String body = null;
             String subject = null;
             String htmlBody = null;
+
             if (notification != null && notification.getEmailTemplate() != null) {
-                subject = (String) ValueExpressionWrapper.evaluateExpression(notification.getEmailTemplate().getSubject(), userMap, String.class);
+                EmailTemplate emailTemplate = notification.getEmailTemplate();
+
+                String languageCode = lastCurrentUser.getLocale();
+                String emailSubject = internationalSettingsService.resolveSubject(emailTemplate,languageCode);
+                String emailContent = internationalSettingsService.resolveEmailContent(emailTemplate,languageCode);
+                String htmlContent = internationalSettingsService.resolveHtmlContent(emailTemplate,languageCode);
+
+                subject = (String) ValueExpressionWrapper.evaluateExpression(emailSubject, userMap, String.class);
                 if (!StringUtils.isBlank(notification.getEmailTemplate().getHtmlContent())) {
-                    htmlBody = (String) ValueExpressionWrapper.evaluateExpression(notification.getEmailTemplate().getHtmlContent(), userMap, String.class);
+                    htmlBody = (String) ValueExpressionWrapper.evaluateExpression(htmlContent, userMap, String.class);
                 } else {
-                    body = (String) ValueExpressionWrapper.evaluateExpression(notification.getEmailTemplate().getTextContent(), userMap, String.class);
+                    body = (String) ValueExpressionWrapper.evaluateExpression(emailContent, userMap, String.class);
                 }
             }
 
