@@ -52,6 +52,7 @@ import org.meveo.apiv2.billing.InvoiceLinesToReplicate;
 import org.meveo.apiv2.billing.InvoiceMatchedOperation;
 import org.meveo.apiv2.billing.InvoicePatchInput;
 import org.meveo.apiv2.billing.Invoices;
+import org.meveo.apiv2.billing.RejectReasonInput;
 import org.meveo.apiv2.billing.resource.InvoiceResource;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
 import org.meveo.apiv2.billing.service.InvoiceSubTotalsApiService;
@@ -317,9 +318,9 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	}
 
 	@Override
-	public Response rejectInvoiceLine(Long id) {
+	public Response rejectInvoiceLine(Long id, RejectReasonInput invoiceLinesReject) {
 		Invoice invoice = findInvoiceEligibleToUpdate(id);
-		invoiceApiService.rejectInvoice(invoice);
+		invoiceApiService.rejectInvoice(invoice, invoiceLinesReject);
 		return Response.created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())
                 .build();
 	}

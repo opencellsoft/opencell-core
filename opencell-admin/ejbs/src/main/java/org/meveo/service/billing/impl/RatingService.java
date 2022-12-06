@@ -122,12 +122,15 @@ import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.cpq.ContractItemService;
 import org.meveo.service.cpq.ContractService;
+import org.meveo.service.mediation.MediationsettingService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.catalog.TriggeredEdrScript;
 import org.meveo.service.script.catalog.TriggeredEdrScriptInterface;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
+
+import com.google.common.collect.Lists;
 
 /**
  * Rate charges such as {@link org.meveo.model.catalog.OneShotChargeTemplate}, {@link org.meveo.model.catalog.RecurringChargeTemplate} and {@link org.meveo.model.catalog.UsageChargeTemplate}. Generate the
@@ -425,6 +428,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         return ratedEDRResult;
     }
 
+    @Inject
+    private MediationsettingService mediationsettingService;
     /**
      * Instantiate new EDRs if charge has triggerEDRTemplate. EDRs are NOT persisted.
      *
@@ -531,6 +536,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 }
             }
         }
+        mediationsettingService.applyEdrVersioningRule(triggredEDRs, null, false, true);
         return triggredEDRs;
 
     }
@@ -851,9 +857,12 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             wo.setPricePlanMatrixVersion(ppmVersion);
             if (!ppmVersion.isMatrix()) {
                 if (appProvider.isEntreprise()) {
-                	priceWithoutTax = ppmVersion.getAmountWithoutTax();
+                	priceWithoutTax = ppmVersion.getPrice();
                 } else {
-                	priceWithTax = ppmVersion.getAmountWithTax();
+                	priceWithTax = ppmVersion.getPrice();
+                }
+                if(wo.getUnitAmountWithoutTax() == null) {
+                    wo.setUnitAmountWithoutTax(priceWithoutTax);
                 }
                 if (ppmVersion.getPriceEL() != null) {
                     priceWithoutTax = evaluateAmountExpression(ppmVersion.getPriceEL(), wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax);
@@ -870,6 +879,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     } else {
                         priceWithTax = pricePlanMatrixLine.getValue();
                     }
+                    if(wo.getUnitAmountWithoutTax() == null) {
+                        wo.setUnitAmountWithoutTax(priceWithoutTax);
+                    }
                     String amountEL = ppmVersion.getPriceEL();
                     String amountELPricePlanMatrixLine = pricePlanMatrixLine.getValueEL();
                     if (!StringUtils.isBlank(amountEL)) {
@@ -879,7 +891,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                         priceWithoutTax = evaluateAmountExpression(amountELPricePlanMatrixLine, wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax);
                     }
                 }
-                if (priceWithoutTax == null) {
+                if (priceWithoutTax == null && priceWithTax == null) {
                     throw new PriceELErrorException("no price for price plan version " + ppmVersion.getId() + "and charge instance : " + wo.getChargeInstance());
                 }
             }

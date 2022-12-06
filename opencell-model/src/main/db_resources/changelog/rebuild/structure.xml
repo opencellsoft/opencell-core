@@ -4917,6 +4917,10 @@
 			<column name="channel" type="varchar(255)" />
 			<column name="trading_language_id" type="bigint" />
 			<column name="is_active" type="${type.boolean}" defaultValueNumeric="1" />
+
+            <column name="textcontent_i18n" type="${type.json}"/>
+            <column name="subject_i18n" type="${type.json}"/>
+            <column name="htmlcontent_i18n" type="${type.json}"/>
         </createTable>
         <addForeignKeyConstraint baseColumnNames="trading_language_id" baseTableName="com_message_template" constraintName="fk_language_message_template" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_language" />
@@ -16693,6 +16697,7 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
 
     </changeSet>
+<<<<<<< HEAD
     <changeSet id="#INTRD-11780_20221128_fk" author="AdilElJaouhari">
         <addForeignKeyConstraint baseTableName="billing_invoice"
                                  baseColumnNames="invoice_validation_rule_id"
@@ -16701,6 +16706,8 @@
                                  referencedColumnNames="id" />
     </changeSet>
     
+=======
+>>>>>>> 184b60ca23f9073812286fd78c964e240a9bd670
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -17665,8 +17672,14 @@
             <column name="rule_values" type="${type.json}" />
         </createTable>
     </changeSet>
-    
-    
+	
+    <changeSet id="#INTRD-11780_20221128_fk" author="AdilElJaouhari">
+        <addForeignKeyConstraint baseTableName="billing_invoice"
+                                 baseColumnNames="invoice_validation_rule_id"
+                                 constraintName="fk_billing_invoice_validation_rule"
+                                 referencedTableName="billing_invoice_validation_rule"
+                                 referencedColumnNames="id" />
+    </changeSet>
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
@@ -18930,6 +18943,7 @@
     <changeSet id="#INTRD-242_20221121" author="AdilElJaouhari" />
     <changeSet id="#INTRD-11780_20221128" author="AdilElJaouhari" />
     <changeSet id="#INTRD-12043_20221121" author="HatimOUDAD"/>
+	<changeSet id="INTRD-11732_20221130" author="MehdiBOURRAS" />
     
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
