@@ -222,7 +222,7 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             //if true then validation is ignored, if false or missing then invoice goes through validation process (false as default value)
-            if(putData.getSkipValidation() == null || !putData.getSkipValidation()) {
+            if(!putData.isSkipValidation()) {
                 invoiceApi.rebuildInvoice(putData.getInvoiceId(), false);
             }
             invoiceApi.validateInvoice(putData.getInvoiceId(), putData.getGenerateAO(), putData.getRefreshExchangeRate(), true);

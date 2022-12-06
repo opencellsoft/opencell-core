@@ -34,7 +34,7 @@ public class ValidateInvoiceRequestDto extends BaseEntityDto {
     /**
      * if true then validation is ignored, if false or missing then invoice goes through validation process (false as default value)
      */
-    private Boolean skipValidation = false;
+    private boolean skipValidation = false;
     
     /**
      * Gets the invoice id.
@@ -70,11 +70,12 @@ public class ValidateInvoiceRequestDto extends BaseEntityDto {
         this.refreshExchangeRate = refreshExchangeRate;
     }
 
-    public Boolean getSkipValidation() {
+    public boolean isSkipValidation() {
         return skipValidation;
     }
 
-    public void setSkipValidation(Boolean skipValidation) {
+    public void setSkipValidation(boolean skipValidation) {
         this.skipValidation = skipValidation;
     }
+    
 }
