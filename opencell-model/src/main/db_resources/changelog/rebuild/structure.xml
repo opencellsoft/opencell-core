@@ -16697,7 +16697,6 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
 
     </changeSet>
-<<<<<<< HEAD
     <changeSet id="#INTRD-11780_20221128_fk" author="AdilElJaouhari">
         <addForeignKeyConstraint baseTableName="billing_invoice"
                                  baseColumnNames="invoice_validation_rule_id"
@@ -16705,9 +16704,6 @@
                                  referencedTableName="billing_invoice_validation_rule"
                                  referencedColumnNames="id" />
     </changeSet>
-    
-=======
->>>>>>> 184b60ca23f9073812286fd78c964e240a9bd670
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
