@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -175,6 +176,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     private String addFields(String query, List<String> fields, String sortBy) {
         Set<String> groupByField = new TreeSet<>();
         List<String> aggFields = new ArrayList<>();
+        Set<String> fetchJoins = new HashSet<>();
         StringBuilder queryField = new StringBuilder();
         for (String field : fields) {
             Matcher matcher = pattern.matcher(field);
@@ -186,6 +188,9 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
                 }
             } else {
                 queryField.append("a." + field);
+                if(field.contains(".")) {
+                	fetchJoins.add(field.substring(0, field.indexOf(".")));
+                }
             }
             queryField.append(" ,");
         }
@@ -197,7 +202,9 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         StringBuilder generatedQuery = new StringBuilder("select ")
                 .append(queryField.deleteCharAt(queryField.length() - 1))
                 .append(" ")
-                .append(query);
+                .append(query)
+                .append(" ")
+        		.append(fetchJoins.stream().map(e -> "left join a." + e).collect(joining(" ")));
         if(!groupByField.isEmpty()) {
             generatedQuery.append(" group by ");
             generatedQuery.append(groupByField.stream().map(field -> "a." + field).collect(joining(", ")));
