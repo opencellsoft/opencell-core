@@ -87,6 +87,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -1411,17 +1412,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             ScriptInterface validationRuleScript =
                                     scriptInstanceService.getScriptInstance(validationRule.getValidationScript());
                             ScriptInstance scriptInstance = scriptInstanceService.findByCode(validationRule.getValidationScript());
-                            List<ScriptParameter> parameters = scriptInstance.getScriptParameters();
-                            for (Map.Entry<String, String> entry : validationRule.getRuleValues().entrySet()) {
-                                String key = entry.getKey();
-                                Object value = entry.getValue();
-                                scriptInstance.getScriptParameters().stream().forEach(sp -> {
-                            		if (validationRule.getRuleValues().containsKey(sp.getCode())) {
-                            			methodContext.put(sp.getCode(), (sp.isCollection())? scriptInstanceService.parseListFromString(String.valueOf(validationRule.getRuleValues().get(sp.getCode())), sp.getClassName(), sp.getValuesSeparator())
-                        								: scriptInstanceService.parseObjectFromString(String.valueOf(validationRule.getRuleValues().get(sp.getCode())), sp.getClassName()));
-                            		}
-                            	});
-                        
+                            if(scriptInstance != null && !MapUtils.isEmpty(validationRule.getRuleValues())){
+	                            for (Map.Entry<String, String> entry : validationRule.getRuleValues().entrySet()) {
+	                                scriptInstance.getScriptParameters().stream().forEach(sp -> {
+	                            		if (validationRule.getRuleValues().containsKey(sp.getCode())) {
+	                            			methodContext.put(sp.getCode(), (sp.isCollection())? scriptInstanceService.parseListFromString(String.valueOf(validationRule.getRuleValues().get(sp.getCode())), sp.getClassName(), sp.getValuesSeparator())
+	                        								: scriptInstanceService.parseObjectFromString(String.valueOf(validationRule.getRuleValues().get(sp.getCode())), sp.getClassName()));
+	                            		}
+	                            	});
+	                        
+	                            }
                             }
                             if(validationRuleScript != null) {
                                 try {
