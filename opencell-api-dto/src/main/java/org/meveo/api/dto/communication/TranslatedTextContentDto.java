@@ -6,13 +6,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 
-@XmlRootElement(name = "translatedTextContent")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class TranslatedTextContentDto {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = -4686792860854718893L;
+public class TranslatedTextContentDto implements Serializable {
 
     /** The language code. */
     @Schema(description = "The language code")

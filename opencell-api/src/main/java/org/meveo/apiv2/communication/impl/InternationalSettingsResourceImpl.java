@@ -6,7 +6,6 @@ import org.meveo.api.dto.communication.EmailTemplateDto;
 import org.meveo.apiv2.communication.InternationalSettingsResource;
 import org.meveo.apiv2.communication.service.InternationalSettingsApiService;
 import org.meveo.model.communication.email.EmailTemplate;
-import org.meveo.service.communication.impl.EmailTemplateService;
 
 import javax.inject.Inject;
 
@@ -16,23 +15,12 @@ import java.util.Optional;
 public class InternationalSettingsResourceImpl implements InternationalSettingsResource {
 
     @Inject
-    EmailTemplateService emailTemplateService;
-
-    @Inject
     InternationalSettingsApiService internationalSettingsApiService;
-
-    @Inject
-    EmailTemplateMapper emailTemplateMapper;
-
 
     @Override
     public EmailTemplateDto update(String emailTemplateCode, EmailTemplateDto emailTemplateDto) {
 
-        EmailTemplate emailTemplate = emailTemplateService.findByCode(emailTemplateCode);
-
-        Optional<EmailTemplate> updatedEmailTemplate = internationalSettingsApiService
-                .update(emailTemplate.getId(), emailTemplateMapper.toEntity(emailTemplateDto, emailTemplate));
-
+        Optional<EmailTemplate> updatedEmailTemplate = internationalSettingsApiService.checkAndUpdate(emailTemplateCode,emailTemplateDto);
         return updatedEmailTemplate.map(EmailTemplateMapper::toEmailTemplateDto).orElse(null);
     }
 
