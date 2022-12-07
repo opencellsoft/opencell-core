@@ -665,6 +665,12 @@
 		</dependency>
 		
 		<dependency>
+  <groupId>net.avalara.avatax</groupId>
+  <artifactId>avatax-rest-v2-api-java_2.11</artifactId>
+  <version>22.11.0</version>
+</dependency>
+		
+		<dependency>
 		  <groupId>com.stripe</groupId>
 		  <artifactId>stripe-java</artifactId>
 		  <version>${version.stripe-sdk}</version>

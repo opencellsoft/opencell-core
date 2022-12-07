@@ -43,6 +43,8 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.IInvoiceable;
+import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.UserAccount;
@@ -55,6 +57,8 @@ import org.meveo.model.tax.TaxMapping;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.InvoiceLineService;
+import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.script.billing.TaxScriptService;
@@ -79,6 +83,12 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
 
     @Inject
     private AccountingArticleService accountingArticleService;
+    
+    @Inject
+    private WalletOperationService walletOperationService;
+    
+    @Inject
+    private InvoiceLineService invoiceLineService;
     
     private static boolean IS_DETERMINE_TAX_CLASS_FROM_AA = true;
 
@@ -683,17 +693,45 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @throws NoTaxException Were not able to determine a tax
      */
     public Object[] checkIfTaxHasChanged(Tax tax, boolean isExonerated, Seller seller, BillingAccount billingAccount, Date operationDate, TaxClass taxClass, UserAccount userAccount, Tax taxZero) throws NoTaxException {
-
-        if (isExonerated) {
-            return new Object[] { taxZero, false };
-
-        } else {
-
-            TaxInfo recalculatedTaxInfo = determineTax(taxClass, seller, billingAccount, userAccount, operationDate, null, isExonerated, false, tax);
-
-            Tax recalculatedTax = recalculatedTaxInfo.tax;
-
-            return new Object[] { recalculatedTax, tax == null ? true : recalculatedTax!=null && !tax.getId().equals(recalculatedTax.getId()) };
-        }
+    	return checkIfTaxHasChangedWO(tax, isExonerated, seller, billingAccount, operationDate, taxClass, userAccount, taxZero,null);
+       
     }
+    
+    
+	public Object[] checkIfTaxHasChanged(Tax tax, boolean isExonerated, Seller seller, BillingAccount billingAccount,
+			Date operationDate, TaxClass taxClass, UserAccount userAccount, Tax taxZero, IInvoiceable iinvoiceable)
+			throws NoTaxException {
+		List<WalletOperation> wo = walletOperationService.listByRatedTransactionId(iinvoiceable.getId());
+		return checkIfTaxHasChangedWO(tax, isExonerated, seller, billingAccount, operationDate, taxClass, userAccount,
+				taxZero, wo.get(0));
+	}
+
+	public Object[] checkIfTaxHasChanged(Tax tax, boolean isExonerated, Seller seller, BillingAccount billingAccount,
+			Date operationDate, TaxClass taxClass, UserAccount userAccount, Tax taxZero, InvoiceLine invoiceLine)
+			throws NoTaxException {
+
+		List<WalletOperation> wo = walletOperationService.listByRatedTransactionId(
+				invoiceLineService.refreshOrRetrieve(invoiceLine).getRatedTransactions().get(0).getId());
+		return checkIfTaxHasChangedWO(tax, isExonerated, seller, billingAccount, operationDate, taxClass, userAccount,
+				taxZero, wo.get(0));
+
+	}
+
+	public Object[] checkIfTaxHasChangedWO(Tax tax, boolean isExonerated, Seller seller, BillingAccount billingAccount,
+			Date operationDate, TaxClass taxClass, UserAccount userAccount, Tax taxZero,
+			WalletOperation walletOperation) throws NoTaxException {
+		if (isExonerated) {
+			return new Object[] { taxZero, false };
+
+		} else {
+
+			TaxInfo recalculatedTaxInfo = determineTax(taxClass, seller, billingAccount, userAccount, operationDate,
+					walletOperation, isExonerated, false, tax);
+
+			Tax recalculatedTax = recalculatedTaxInfo.tax;
+
+			return new Object[] { recalculatedTax,
+					tax == null ? true : recalculatedTax != null && !tax.getId().equals(recalculatedTax.getId()) };
+		}
+	}   
 }
