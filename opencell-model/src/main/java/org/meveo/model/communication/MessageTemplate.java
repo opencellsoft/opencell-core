@@ -18,7 +18,6 @@
 package org.meveo.model.communication;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.persistence.Cacheable;
@@ -89,7 +88,7 @@ public abstract class MessageTemplate extends BusinessEntity {
 
     @Type(type = "json")
     @Column(name = "textcontent_i18n", columnDefinition = "jsonb")
-    private Map<String,String> translatedTextContent = new HashMap<>();
+    private Map<String,String> translatedTextContent;
 
     public String getTextContent() {
         return textContent;
@@ -141,6 +140,14 @@ public abstract class MessageTemplate extends BusinessEntity {
 
     public void setType(MessageTemplateTypeEnum type) {
         this.type = type;
+    }
+
+    public Map<String, String> getTranslatedTextContent() {
+        return translatedTextContent;
+    }
+
+    public void setTranslatedTextContent(Map<String, String> translatedTextContent) {
+        this.translatedTextContent = translatedTextContent;
     }
 
 }
