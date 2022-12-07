@@ -3,9 +3,6 @@ package org.meveo.api.dto.communication;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 public class TranslatedTextContentDto implements Serializable {
