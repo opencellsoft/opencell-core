@@ -893,14 +893,13 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
         private LinkedHashMap<String, Object> toCSVLineRecords(PricePlanMatrixVersion ppv) {
             LinkedHashMap<String, Object> CSVLineRecords = new LinkedHashMap<>();
-            CSVLineRecords.put("id", ppv.getId());
             CSVLineRecords.put("label", ppv.getLabel());
             CSVLineRecords.put("amount", ppv.getPrice());
             return CSVLineRecords;
         }
 
         private CsvSchema buildPricePlanVersionCsvSchema() {
-            return CsvSchema.builder().addColumn("id", CsvSchema.ColumnType.STRING).addColumn("label", CsvSchema.ColumnType.STRING)
+            return CsvSchema.builder().addColumn("label", CsvSchema.ColumnType.STRING)
                 .addColumn("amount", CsvSchema.ColumnType.NUMBER_OR_STRING).build().withColumnSeparator(';').withLineSeparator("\n").withoutQuoteChar().withHeader();
         }
 
