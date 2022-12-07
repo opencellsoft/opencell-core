@@ -534,7 +534,8 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 		if (StringUtils.isBlank(scriptInstanceCode)) {
 			AmountOfMoney amountOfMoney = new AmountOfMoney();
 			amountOfMoney.setAmount(ctsAmount);
-			amountOfMoney.setCurrencyCode(getProviderService().getProvider().getCurrency().getCurrencyCode());
+			String currencyCode=customerAccount.getTradingCurrency().getCurrencyCode()!=null?customerAccount.getTradingCurrency().getCurrencyCode():getProviderService().getProvider().getCurrency().getCurrencyCode();
+			amountOfMoney.setCurrencyCode(currencyCode);
 			Customer customer = new Customer();
 			customer.setBillingAddress(getBillingAddress(customerAccount));
 			if("true".equals(paramBean().getProperty("ingenico.CreatePayment.includeDeviceData", "true"))) {
