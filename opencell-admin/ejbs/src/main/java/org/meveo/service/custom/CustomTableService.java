@@ -1134,5 +1134,12 @@ public class CustomTableService extends NativePersistenceService {
         }
         throw new InvalidParameterException("Invalid id value found: " + id);
     }
+    
+    public List<Map<String, Object>> exportCustomTable(CustomEntityTemplate customEntityTemplate) throws BusinessException {
+            PaginationConfiguration pagination = new PaginationConfiguration(null, 1, null, null, null, FIELD_ID, SortOrder.DESCENDING);
+            QueryBuilder queryBuilder = getQuery(customEntityTemplate.getDbTablename(), pagination, null);
+            SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), true);
+            return query.list();
+    } 
 
 }
