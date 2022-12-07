@@ -349,6 +349,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     }
     @Override
     public void createMandate(CustomerAccount customerAccount,String iban,String mandateReference) throws BusinessException {
+    	log.info("Ingenico createMandate CA={},mandatereference={}",customerAccount.getCode(),mandateReference);
     	try {
     		BankAccountIban bankAccountIban=new BankAccountIban(); 
     		bankAccountIban.setIban(iban);
@@ -357,28 +358,32 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     		if(customerAccount.getContactInformation() != null ) {
     			contactDetails.setEmailAddress(customerAccount.getContactInformation().getEmail()); 
     		}
-    		
     		MandateAddress address=new MandateAddress();
     		if (customerAccount.getAddress() != null) {
-    		address.setCity(customerAccount.getAddress().getCity());
-    		address.setCountryCode(customerAccount.getAddress().getCountry() == null ? null : customerAccount.getAddress().getCountry().getCountryCode());
-    		address.setStreet(customerAccount.getAddress().getAddress1());
+    		address.setCity(formatIngenicoData(customerAccount.getAddress().getCity(), true));
+    		address.setCountryCode(customerAccount.getAddress().getCountry() == null ? null : customerAccount.getAddress().getCountry().getCountryCode()); 
+    		String address1=customerAccount.getAddress().getAddress1();
+    		address.setStreet(formatIngenicoData(address1, false));
     		address.setZip(customerAccount.getAddress().getZipCode());
     		}
     		MandatePersonalName name = new MandatePersonalName();
-    		MandatePersonalInformation personalInformation =new MandatePersonalInformation();
+    		MandatePersonalInformation  personalInformation =new MandatePersonalInformation();
+    		boolean isEntreprise=getProviderService().getProvider().isEntreprise();
     		if (customerAccount.getName() != null) {
-    			name.setFirstName(customerAccount.getName().getFirstName());
-    			name.setSurname(customerAccount.getName().getLastName()); 
-    			personalInformation.setTitle(customerAccount.getName().getTitle() == null ? "" : customerAccount.getName().getTitle().getDescription());
+    			name.setFirstName(isEntreprise?"-":formatIngenicoData(customerAccount.getName().getFirstName(), false));
+    			name.setSurname(formatIngenicoData(customerAccount.getName().getLastName(), true)); 
+    			personalInformation.setTitle(isEntreprise?"Mr":(customerAccount.getName().getTitle() == null ? "" : customerAccount.getName().getTitle().getDescription()));
     		}  
+    		
     		personalInformation.setName(name);
     		MandateCustomer customer=new MandateCustomer();
     		customer.setBankAccountIban(bankAccountIban);
     		customer.setContactDetails(contactDetails);
     		customer.setMandateAddress(address);
     		customer.setPersonalInformation(personalInformation);
-
+    		if(isEntreprise) {
+    			customer.setCompanyName(formatIngenicoData(customerAccount.getName().getLastName(), true));
+    		}
     		
     		CreateMandateRequest body = new CreateMandateRequest();
     		body.setUniqueMandateReference(mandateReference);
@@ -386,16 +391,40 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     		body.setCustomerReference(customerAccount.getExternalRef1()); 
     		body.setRecurrenceType("RECURRING");
     		body.setSignatureType("UNSIGNED");
-
+    		  ObjectMapper mapper = new ObjectMapper(); 
+              String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body);
+    		log.debug("createMandate body={}",jsonString);
     	    getClient().merchant(paymentGateway.getMarchandId()).mandates().create(body); 
 
-    	}catch (ApiException ev) { 
+    	} catch (ApiException ev) { 
     		throw new MeveoApiException("Connection to ingenico is not allowed");
-    	}catch (Exception e) {
-    		throw new BusinessException(e.getMessage());
+    	} catch (Exception e) { 
+    		throw new MeveoApiException(e.getMessage());
     	}
 
     }
+    
+    /**
+	 * Ingenico Sepa does not support some characters when creating the mandate, it throws invalid format if data contains "/","&",digits (in the city field), and accents
+	 * @param data
+	 * @param stripDigits
+	 */
+	private String formatIngenicoData(String data, boolean stripDigits) {
+		String formatData = paramBean().getProperty("ingenico.formatData", "true");
+		String insuportedCharaters = paramBean().getProperty("ingenico.formatData.insupportedCharacters.", "/,&");
+		if(Boolean.parseBoolean(formatData)) {
+			for(String character:insuportedCharaters.split(",")) {
+				data=data.replaceAll(character, " ");
+				data = org.apache.commons.lang3.StringUtils.stripAccents(data);
+			}
+			
+			data = org.apache.commons.lang3.StringUtils.stripAccents(data);
+			if(stripDigits) {
+				data=data.replaceAll("\\d", "");
+			}
+		}
+		return data;
+	}
 
     @Override
     public void approveSepaDDMandate(String token,Date signatureDate) throws BusinessException {
@@ -505,7 +534,8 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 		if (StringUtils.isBlank(scriptInstanceCode)) {
 			AmountOfMoney amountOfMoney = new AmountOfMoney();
 			amountOfMoney.setAmount(ctsAmount);
-			amountOfMoney.setCurrencyCode(getProviderService().getProvider().getCurrency().getCurrencyCode());
+			String currencyCode=customerAccount.getTradingCurrency().getCurrencyCode()!=null?customerAccount.getTradingCurrency().getCurrencyCode():getProviderService().getProvider().getCurrency().getCurrencyCode();
+			amountOfMoney.setCurrencyCode(currencyCode);
 			Customer customer = new Customer();
 			customer.setBillingAddress(getBillingAddress(customerAccount));
 			if("true".equals(paramBean().getProperty("ingenico.CreatePayment.includeDeviceData", "true"))) {
