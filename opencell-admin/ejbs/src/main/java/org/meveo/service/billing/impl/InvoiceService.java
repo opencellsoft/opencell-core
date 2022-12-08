@@ -1455,12 +1455,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             }
                         } else {
                             Object validationResult =
-                                    evaluateExpression(validationRule.getValidationEL(), null, Boolean.class);
+                                    evaluateExpression(validationRule.getValidationEL(),
+                                            Map.of("invoice", invoice), Boolean.class);
                             try {
                                 if(!((Boolean) validationResult)) {
                                     noValidationError = true;
                                     if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.SUSPECT) {
                                         invoice.setStatus(InvoiceStatusEnum.SUSPECT);
+                                        invoice.setRejectReason("An error has occurred evaluating rule [id="
+                                                + validationRule.getId() + ", " + validationRule.getDescription());
                                         invoice.setRejectedByRule(validationRule);
                                     }
                                     if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.REJECTED) {
