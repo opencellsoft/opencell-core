@@ -95,6 +95,7 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
             throw new MissingParameterException("fileToImport");
         }
 
+        //Fix issue when getting import root directory
         String importRootDir = paramBeanFactory.getDefaultChrootDir() + File.separator + "imports/priceplan_versions";
         String importTempDir = importRootDir + File.separator + "temp" + System.currentTimeMillis();
         File zipFile = new File(importRootDir + File.separator + importPricePlanVersionsDto.getFileToImport());
