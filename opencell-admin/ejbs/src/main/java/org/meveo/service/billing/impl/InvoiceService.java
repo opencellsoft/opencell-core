@@ -227,6 +227,7 @@ import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.communication.impl.EmailSender;
+import org.meveo.service.communication.impl.InternationalSettingsService;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
@@ -456,6 +457,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
+
+    @Inject
+    private InternationalSettingsService internationalSettingsService;
 
     @PostConstruct
     private void init() {
@@ -3621,12 +3625,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 log.warn("The Seller or it's contact information is null!!");
                 return false;
             }
+            String languageCode = billingAccount.getCustomerAccount().getTradingLanguage().getLanguage().getLanguageCode();
+            String emailSubject = internationalSettingsService.resolveSubject(emailTemplate,languageCode);
+            String emailContent = internationalSettingsService.resolveEmailContent(emailTemplate,languageCode);
+            String htmlContent = internationalSettingsService.resolveHtmlContent(emailTemplate,languageCode);
             if (electronicBilling && mailingTypeEnum.equals(mailingType)) {
                 Map<Object, Object> params = new HashMap<>();
                 params.put("invoice", invoice);
-                String subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
-                String content = evaluateExpression(emailTemplate.getTextContent(), params, String.class);
-                String contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
+                String subject = evaluateExpression(emailSubject, params, String.class);
+                String content = evaluateExpression(emailContent, params, String.class);
+                String contentHtml = evaluateExpression(htmlContent, params, String.class);
                 String from = seller.getContactInformation().getEmail();
                 emailSender.send(from, Arrays.asList(from), to, cc, null, subject, content, contentHtml, files, null, false);
                 entityUpdatedEventProducer.fire(invoice);
