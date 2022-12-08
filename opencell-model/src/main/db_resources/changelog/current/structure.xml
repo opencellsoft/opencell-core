@@ -14680,4 +14680,10 @@ order by date_trunc('month', i.invoice_date) DESC
                       oldColumnName="rgaa_message" 
                       columnDataType="varchar(500)"/>
     </changeSet>
+    
+    <changeSet id="#2038-20221130" author="Mbarek-Ay">
+       <createSequence sequenceName="crm_address_book_contact_seq" startValue="1" />
+       <modifyDataType columnName="last_run_date" newDataType="datetime" tableName="bi_data_collector"/>
+    </changeSet>
+    
 </databaseChangeLog>
