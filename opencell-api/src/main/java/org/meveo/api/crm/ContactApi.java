@@ -214,10 +214,6 @@ public class ContactApi extends BaseApi {
             missingParameters.add("email or code");
         }
 
-        if(postData.getAddressBookContacts() == null || postData.getAddressBookContacts().isEmpty()){
-            missingParameters.add("AddressBookContacts");
-        }
-
         handleMissingParameters();
 
         String code = null;
@@ -245,6 +241,7 @@ public class ContactApi extends BaseApi {
                         if(abcDto.getAddressBook() == null || abcDto.getAddressBook().get("id") == null){
                             new BusinessException("addressBook contact id is required to assigne contact to an address book");
                         }
+                        if(abcDto.getAddressBook()!=null) {
                         AddressBook addressBookServiceById = addressBookService.findById(abcDto.getAddressBook().get("id"));
                         if(addressBookServiceById == null){
                             throw new EntityDoesNotExistsException("addressBook with id "+abcDto.getAddressBook().get("id")+" does not exist");
@@ -268,7 +265,7 @@ public class ContactApi extends BaseApi {
                             AddressBookContact addressBookContact = new AddressBookContact(addressBookServiceById, contact, abcDto.getPosition(), abcDto.getMainContact());
                             addressBookContactService.create(addressBookContact);
                         }
-                    });
+                    }});
             List<AddressBookContact> abcs = addressBookContactService.findByContact(contact);
             abcs.stream()
                     .filter(abc -> addressBookContacts.stream()
