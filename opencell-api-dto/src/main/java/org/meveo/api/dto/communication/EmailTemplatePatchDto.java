@@ -1,8 +1,6 @@
 package org.meveo.api.dto.communication;
 
 
-import org.meveo.model.communication.email.EmailTemplate;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
