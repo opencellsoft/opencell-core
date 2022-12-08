@@ -18,6 +18,17 @@
 
 package org.meveo.admin.action.frontend;
 
+import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.service.crm.impl.ProviderService;
+import org.slf4j.Logger;
+
+import javax.inject.Inject;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -28,18 +39,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
-
-import javax.inject.Inject;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.meveo.commons.utils.ParamBeanFactory;
-import org.meveo.service.crm.impl.ProviderService;
-import org.slf4j.Logger;
 
 /* originally from @author BalusC in LGPL licence
 ** @link http://balusc.blogspot.com/2009/02/fileservlet-supporting-resume-and.html
@@ -52,7 +51,7 @@ public class FrontendServlet extends HttpServlet {
      */
     private static final long serialVersionUID = -3071886877749196748L;
     private static final int DEFAULT_BUFFER_SIZE = 10240; // ..bytes = 10KB.
-    private static final long DEFAULT_EXPIRE_TIME = 604800000L; // ..ms = 1 week.
+    private static final long DEFAULT_EXPIRE_TIME = 600000L; // 10h | 604800000L = 1 week.
     private static final String MULTIPART_BOUNDARY = "MULTIPART_BYTERANGES";
 
     @Inject
