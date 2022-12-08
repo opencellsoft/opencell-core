@@ -315,7 +315,9 @@ public class QueryBuilder {
     }
 
     private static void addInnerJoinTag(StringBuilder query) {
-        query.append(INNER_JOINS);
+    	if(query.indexOf(INNER_JOINS) == -1) {
+    		query.append(INNER_JOINS);
+    	}
     }
 
     /**
@@ -407,8 +409,10 @@ public class QueryBuilder {
     public void addSearchWildcardOrFilters(String tableNameAlias, String[] fields, Object value) {
         startOrClause();
         Stream.of(fields).forEach(field -> {
+        	String concatenatedFields = tableNameAlias+"."+field;
+        	concatenatedFields = createExplicitInnerJoins(concatenatedFields);
             String param = convertFieldToParam(tableNameAlias + "." + field);
-            addSqlCriterion(tableNameAlias + "." + field + " like :" + param, param, "%" + value + "%");
+            addSqlCriterion(concatenatedFields + " like :" + param, param, "%" + value + "%");
         });
         endOrClause();
     }
@@ -418,8 +422,10 @@ public class QueryBuilder {
         String valueStr = "%" + String.valueOf(value).toLowerCase() + "%";
         startOrClause();
         Stream.of(fields).forEach(field -> {
+        	String concatenatedFields = tableNameAlias+"."+field;
+        	concatenatedFields = createExplicitInnerJoins(concatenatedFields);
             String param = convertFieldToParam(tableNameAlias + "." + field);
-            addSqlCriterion("lower(" + tableNameAlias + "." + field + ") like :" + param, param, valueStr);
+            addSqlCriterion("lower(" + concatenatedFields + ") like :" + param, param, valueStr);
         });
         endOrClause();
     }
@@ -1076,24 +1082,25 @@ public class QueryBuilder {
      * @return instance of Query builder.
      */
     public QueryBuilder addValueIsGreaterThanField(String field, Object value, boolean optional) {
-
+    	String concatenatedFields = createExplicitInnerJoins(field);
         if (value instanceof Double) {
-            addCriterion(field, " > ", BigDecimal.valueOf((Double) value), false, optional);
+            addCriterion(concatenatedFields, " > ", BigDecimal.valueOf((Double) value), false, optional);
         } else if (value instanceof Number) {
-            addCriterion(field, " > ", value, false, optional);
+            addCriterion(concatenatedFields, " > ", value, false, optional);
         } else if (value instanceof Date) {
-            addCriterionDateRangeFromTruncatedToDay(field, (Date) value, optional, true);
+            addCriterionDateRangeFromTruncatedToDay(concatenatedFields, (Date) value, optional, true);
         }
         return this;
     }
 
     public QueryBuilder addValueIsGreaterThanOrEqualField(String field, Object value, boolean optional) {
+    	String concatenatedFields = createExplicitInnerJoins(field);
         if (value instanceof Double) {
-            addCriterion(field, " >= ", BigDecimal.valueOf((Double) value), false, optional);
+            addCriterion(concatenatedFields, " >= ", BigDecimal.valueOf((Double) value), false, optional);
         } else if (value instanceof Number) {
-            addCriterion(field, " >= ", value, false, optional);
+            addCriterion(concatenatedFields, " >= ", value, false, optional);
         } else if (value instanceof Date) {
-            addCriterionDateRangeFromTruncatedToDay(field, (Date) value, optional,false);
+            addCriterionDateRangeFromTruncatedToDay(concatenatedFields, (Date) value, optional,false);
         }
         return this;
     }
@@ -1108,13 +1115,13 @@ public class QueryBuilder {
      * @return instance of Query builder.
      */
     public QueryBuilder addValueIsLessThanField(String field, Object value, boolean inclusive, boolean isFieldValueOptional) {
-
+    	String concatenatedFields = createExplicitInnerJoins(field);
         if (value instanceof Double) {
-            addCriterion(field, inclusive ? " <= " : " < ", BigDecimal.valueOf((Double) value), true, isFieldValueOptional);
+            addCriterion(concatenatedFields, inclusive ? " <= " : " < ", BigDecimal.valueOf((Double) value), true, isFieldValueOptional);
         } else if (value instanceof Number) {
-            addCriterion(field, inclusive ? " <= " : " < ", value, true, isFieldValueOptional);
+            addCriterion(concatenatedFields, inclusive ? " <= " : " < ", value, true, isFieldValueOptional);
         } else if (value instanceof Date) {
-            addCriterionDateRangeToTruncatedToDay(field, (Date) value, inclusive, isFieldValueOptional);
+            addCriterionDateRangeToTruncatedToDay(concatenatedFields, (Date) value, inclusive, isFieldValueOptional);
         }
         return this;
     }
