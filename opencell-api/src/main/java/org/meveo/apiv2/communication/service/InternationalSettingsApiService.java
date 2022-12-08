@@ -1,20 +1,23 @@
 package org.meveo.apiv2.communication.service;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.communication.EmailTemplateDto;
 import org.meveo.api.dto.communication.EmailTemplatePatchDto;
+import org.meveo.api.dto.communication.sms.SMSTemplateDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.communication.impl.EmailTemplateMapper;
-import org.meveo.apiv2.ordering.services.ApiService;
+import org.meveo.apiv2.communication.impl.SMSTemplateMapper;
 import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.communication.sms.SMSTemplate;
 import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.communication.impl.InternationalSettingsService;
+import org.meveo.service.communication.impl.SMSTemplateService;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
-public class InternationalSettingsApiService implements ApiService<EmailTemplate> {
+@Stateless
+public class InternationalSettingsApiService  {
 
     @Inject
     InternationalSettingsService internationalSettingsService;
@@ -25,65 +28,57 @@ public class InternationalSettingsApiService implements ApiService<EmailTemplate
     @Inject
     EmailTemplateMapper emailTemplateMapper;
 
-    @Override
-    public List<EmailTemplate> list(Long offset, Long limit, String sort, String orderBy, String filter) {
-        return Collections.emptyList();
+    @Inject
+    SMSTemplateMapper smsTemplateMapper;
+
+    @Inject
+    SMSTemplateService smsTemplateService;
+
+
+    public EmailTemplate update(EmailTemplate emailTemplate) {
+        return internationalSettingsService.update(emailTemplate);
     }
 
-    @Override
-    public Long getCount(String filter) {
-        return null;
+    public EmailTemplateDto checkAndUpdate(String emailTemplateCode, EmailTemplateDto emailTemplateDto) {
+
+        EmailTemplate emailTemplate = checkEmailTemplate(emailTemplateCode);
+        return EmailTemplateMapper.toEmailTemplateDto(update(emailTemplateMapper.toEntity(emailTemplateDto, emailTemplate)));
+
     }
 
-    @Override
-    public Optional<EmailTemplate> findById(Long id) {
-        return Optional.empty();
+    public EmailTemplateDto checkAndUpdate(String emailTemplateCode, EmailTemplatePatchDto emailTemplatePatchDto) {
+
+        EmailTemplate emailTemplate = checkEmailTemplate(emailTemplateCode);
+        return EmailTemplateMapper.toEmailTemplateDto(update(emailTemplateMapper.fromPatchDtoToEntity(emailTemplatePatchDto, emailTemplate)));
+
     }
 
-    @Override
-    public EmailTemplate create(EmailTemplate baseEntity) {
-        return null;
-    }
-
-    @Override
-    public Optional<EmailTemplate> update(Long id, EmailTemplate emailTemplate) {
-        internationalSettingsService.update(emailTemplate);
-        return Optional.of(emailTemplate);
-    }
-
-    public Optional<EmailTemplate> checkAndUpdate(String emailTemplateCode, EmailTemplateDto emailTemplateDto) {
+    private EmailTemplate checkEmailTemplate(String emailTemplateCode) {
 
         EmailTemplate emailTemplate = emailTemplateService.findByCode(emailTemplateCode);
 
         if (emailTemplate == null) {
             throw new EntityDoesNotExistsException(EmailTemplate.class, emailTemplateCode);
         }
-        return update(emailTemplate.getId(), emailTemplateMapper.toEntity(emailTemplateDto, emailTemplate));
+        return emailTemplate;
+    }
+
+    public SMSTemplateDto checkAndCreateSMSTemplate(SMSTemplateDto smsTemplateDto) {
+
+        checkSMSTemplateInput(smsTemplateDto);
+
+        return smsTemplateMapper.fromEntityToDto(smsTemplateService.createAndReturnEntity(smsTemplateMapper.fromDtoToEntity(smsTemplateDto)));
 
     }
 
-    @Override
-    public Optional<EmailTemplate> patch(Long id, EmailTemplate baseEntity) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<EmailTemplate> delete(Long id) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<EmailTemplate> findByCode(String code) {
-        return Optional.empty();
-    }
-
-    public Optional<EmailTemplate> checkAndUpdate(String emailTemplateCode, EmailTemplatePatchDto emailTemplatePatchDto) {
-
-        EmailTemplate emailTemplate = emailTemplateService.findByCode(emailTemplateCode);
-
-        if (emailTemplate == null) {
-            throw new EntityDoesNotExistsException(EmailTemplate.class, emailTemplateCode);
+    private void checkSMSTemplateInput(SMSTemplateDto smsTemplateDto) {
+        if(smsTemplateDto.getCode() == null || smsTemplateDto.getCode().isEmpty()){
+            throw new BusinessException("the code is invalid");
         }
-        return update(emailTemplate.getId(), emailTemplateMapper.fromPatchtoDto(emailTemplatePatchDto, emailTemplate));
+
+        SMSTemplate smsTemplate = smsTemplateService.findByCode(smsTemplateDto.getCode());
+        if (smsTemplate != null) {
+            throw new BusinessException("The SMS template already exists");
+        }
     }
 }
