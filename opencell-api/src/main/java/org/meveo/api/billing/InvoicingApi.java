@@ -112,8 +112,18 @@ public class InvoicingApi extends BaseApi {
         billingRun.setInvoiceDate(dto.getInvoiceDate());
         billingRun.setLastTransactionDate(dto.getLastTransactionDate());
         billingRun.setSkipValidationScript(dto.getSkipValidationScript());
-        billingRun.setRejectAutoAction(dto.getRejectAutoAction());
-        billingRun.setSuspectAutoAction(dto.getSuspectAutoAction());
+        if(dto.getRejectAutoAction() == null) {
+            billingRun.setRejectAutoAction(BillingRunAutomaticActionEnum.MANUAL_ACTION);
+        }
+        else {
+            billingRun.setRejectAutoAction(dto.getRejectAutoAction());
+        }        
+        if(dto.getRejectAutoAction() == null) {
+            billingRun.setSuspectAutoAction(BillingRunAutomaticActionEnum.AUTOMATIC_VALIDATION);
+        }
+        else {
+            billingRun.setSuspectAutoAction(dto.getSuspectAutoAction());
+        }
         if (dto.getInvoiceDate() == null) {
             if (billingCycle.getInvoiceDateProductionDelayEL() != null) {
                 billingRun.setInvoiceDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), InvoiceService.resolveInvoiceDateDelay(billingCycle.getInvoiceDateProductionDelayEL(), billingRun)));
