@@ -3671,6 +3671,10 @@
             <column name="cf_values" type="${type.json}" />
             <column name="description_i18n" type="${type.json}" />
             <column name="composite" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="taxation_category_id" type="bigint" >            
+            	<constraints nullable="false" />
+			</column>
+			<column name="vatex_id" type="bigint" /> 
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-195">
@@ -6699,6 +6703,13 @@
 		    <column name="exclude_from_aged_trial_balance" type="${type.boolean}" defaultValueNumeric="0">
 		    	<constraints nullable="false" />
 		    </column>
+		    <column name="invoice_code_type_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="vat_payment_option_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+		    
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-318">
@@ -17707,7 +17718,7 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             <column name="code" type="varchar(255)">
-                <constraints unique="true" nullable="false" uniqueConstraintName="iso_icd_unique"/>
+                <constraints unique="true" nullable="false" uniqueConstraintName="untdid_unit_unique"/>
             </column>
             <column name="description" type="varchar(255)"/>
 
@@ -17720,7 +17731,199 @@
             </column>
 
         </createTable>
+        
+        <createTable tableName="UNTDID_1001_INVOICE_CODE_TYPE">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_ar_payment_plan" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="iso_1001_code_type_unique"/>
+            </column>
+
+            <!-- Simple fields -->           
+            <column name="EN16931_interpretation" type="varchar(20)">
+                <constraints nullable="false" />
+            </column>
+            <column name="name" type="varchar(500)">
+                <constraints nullable="true" />
+            </column>
+
+        </createTable>
+        
+        <createTable tableName="UNTDID_2475_VAT_PAYMENT_OPTION">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_ar_payment_plan" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="iso_2475_payment_option_unique"/>
+            </column>
+
+            <!-- Simple fields -->           
+            <column name="2005_code" type="varchar(10)">
+                <constraints nullable="false" />
+            </column>
+             <column name="2005_value" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+             <column name="2475_code" type="varchar(10)">
+                <constraints nullable="false" />
+            </column>
+             <column name="2475_value" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+        
+        <createTable tableName="UNTDID_4451_INVOICE_SUBJECT_CODE">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_ar_payment_plan" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="iso_4451_subject_code_unique"/>
+            </column>
+
+            <!-- Simple fields -->           
+            <column name="EN16931_interpretation" type="varchar(20)">
+                <constraints nullable="false" />
+            </column>
+            <column name="code_name" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+        
+        <createTable tableName="UNTDID_5305_TAXATION_CATEGORY">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_ar_payment_plan" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="iso_5305_taxation_category_unique"/>
+            </column>
+
+            <!-- Simple fields -->           
+            <column name="semantic_model" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+            <column name="name" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+        
+        <createTable tableName="UNTDID_VATEX">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_ar_payment_plan" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="untdid_vatex_unique"/>
+            </column>
+
+            <!-- Simple fields -->           
+            <column name="remark" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+            <column name="code_name" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+        
+        <createTable tableName="UNTDID_4461_PAYMENT_MEANS">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_ar_payment_plan" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="untdid_4461_payment_unique"/>
+            </column>
+
+            <!-- Simple fields -->           
+            <column name="usage_in_EN16931" type="varchar(500)">
+                <constraints nullable="true" />
+            </column>
+            <column name="code_name" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+        
+         <createTable tableName="UNTDID_5189_ALLOWANCE_CODE">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_ar_payment_plan" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(10)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="untdid_5189_allowance_code_unique"/>
+            </column>
+
+            <!-- Simple fields -->           
+            <column name="description" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+            <column name="code_name" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+        
+        
     </changeSet>
+    
+    
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
