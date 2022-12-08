@@ -456,9 +456,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
-    
-    @Inject
-    private ResourceBundle resourceMessages;
 
     @PostConstruct
     private void init() {
