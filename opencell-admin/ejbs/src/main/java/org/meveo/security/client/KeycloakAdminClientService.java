@@ -41,7 +41,6 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.keycloak.KeycloakPrincipal;
-import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
@@ -67,7 +66,6 @@ import org.keycloak.representations.idm.authorization.RolePolicyRepresentation;
 import org.keycloak.representations.idm.authorization.ScopePermissionRepresentation;
 import org.keycloak.representations.idm.authorization.ScopeRepresentation;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ElementAlreadyExistsException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidParameterException;
 import org.meveo.admin.exception.UsernameAlreadyExistsException;
@@ -84,6 +82,8 @@ import org.meveo.security.MeveoUser;
 import org.meveo.security.UserGroup;
 import org.meveo.security.keycloak.AuthenticationProvider;
 import org.slf4j.Logger;
+import org.wildfly.security.http.oidc.OidcPrincipal;
+import org.wildfly.security.http.oidc.OidcSecurityContext;
 
 /**
  * Keycloak management services - user, api access rules and secured entities management (last two implemented as authorization resources) <br/>
@@ -182,12 +182,14 @@ public class KeycloakAdminClientService implements Serializable {
      * @param keycloakAdminClientConfig keycloak admin client config.
      * @return instance of Keycloak.
      */
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "unchecked" })
     private Keycloak getKeycloakClient(KeycloakAdminClientConfig keycloakAdminClientConfig) {
-        KeycloakSecurityContext session = ((KeycloakPrincipal) ctx.getCallerPrincipal()).getKeycloakSecurityContext();
+
+        OidcPrincipal<OidcSecurityContext> oidcPrincipal = (OidcPrincipal<OidcSecurityContext>) ctx.getCallerPrincipal();
+        String tokenString = oidcPrincipal.getOidcSecurityContext().getTokenString();
 
         KeycloakBuilder keycloakBuilder = KeycloakBuilder.builder().serverUrl(keycloakAdminClientConfig.getServerUrl()).realm(keycloakAdminClientConfig.getRealm()).grantType(OAuth2Constants.CLIENT_CREDENTIALS)
-            .clientId(keycloakAdminClientConfig.getClientId()).clientSecret(keycloakAdminClientConfig.getClientSecret()).authorization(session.getTokenString());
+            .clientId(keycloakAdminClientConfig.getClientId()).clientSecret(keycloakAdminClientConfig.getClientSecret()).authorization(tokenString);
 
         keycloakBuilder.resteasyClient(new ResteasyClientProxyBuilder().connectionPoolSize(200).maxPooledPerRoute(200).build());
 

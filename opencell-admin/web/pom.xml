@@ -499,7 +499,6 @@
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-authz-client</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <!-- End of libraries included in Jboss -->

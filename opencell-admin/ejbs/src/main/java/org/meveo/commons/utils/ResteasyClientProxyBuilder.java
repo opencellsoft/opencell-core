@@ -19,14 +19,14 @@
 package org.meveo.commons.utils;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * The Class ResteasyClientProxyBuilder is an extension of ResteasyClientBuilder , witch set a default  proxyHost and proxyPort  , from a JVM variables values 
  */
-public class ResteasyClientProxyBuilder extends ResteasyClientBuilder {
+public class ResteasyClientProxyBuilder extends ResteasyClientBuilderImpl {
 
 //    protected Logger log = LoggerFactory.getLogger(this.getClass());
 

@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -345,7 +344,7 @@ public class UserApi extends BaseApi {
 
     public CurrentUserDto getCurrentUser() throws MeveoApiException, BusinessException {
 
-        Map<String, Set<String>> rolesByApplication = currentUserProvider.getRolesByApplication(currentUser);
+        Map<String, List<String>> rolesByApplication = currentUserProvider.getRolesByApplication(currentUser);
         CurrentUserDto dto = new CurrentUserDto(currentUser, rolesByApplication);
 
         return dto;
