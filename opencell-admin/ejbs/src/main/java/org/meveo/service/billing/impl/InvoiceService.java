@@ -215,6 +215,8 @@ import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
@@ -447,6 +449,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
     
     @Inject 
     private LinkedInvoiceService linkedInvoiceService;
+    
+    @Inject
+    private ResourceBundle resourceMessages;
+
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
     
     @Inject
     private ResourceBundle resourceMessages;
@@ -2762,7 +2771,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (rejectReasonInput != null) {
         	invoice.setRejectReason(rejectReasonInput.getRejectReason());
         } else {
-        	invoice.setRejectReason(null);
+        	invoice.setRejectReason(resourceMessages.getString("invoice.reject.reason.default.reason", currentUser.getFullNameOrUserName()));
         }
         
         update(invoice);
