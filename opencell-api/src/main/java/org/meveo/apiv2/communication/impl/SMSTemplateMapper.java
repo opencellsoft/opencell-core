@@ -19,7 +19,7 @@ public class SMSTemplateMapper {
             smsTemplate.setCode(smsTemplateDto.getCode());
         }
         if (smsTemplateDto.getTextContent() != null) {
-            smsTemplate.setCode(smsTemplateDto.getTextContent());
+            smsTemplate.setTextContent(smsTemplateDto.getTextContent());
         }
         if (smsTemplateDto.getTranslatedTextContent() != null) {
             smsTemplate.setTranslatedTextContent(translationsUtils.convertTextTranslationsToMap(smsTemplateDto.getTranslatedTextContent()));
