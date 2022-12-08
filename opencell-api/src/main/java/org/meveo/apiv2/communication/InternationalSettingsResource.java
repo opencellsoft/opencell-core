@@ -58,4 +58,17 @@ public interface InternationalSettingsResource {
             }
     )
     SMSTemplateDto create(SMSTemplateDto smsTemplateDto);
+
+    @PUT
+    @Path("/SMSTemplate/{SMSTemplateCode}")
+    @Operation(
+            summary = "Update an EmailTemplate",
+            tags = { "email", "email_template", "communication" },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "the sms template successfully updated"),
+                    @ApiResponse(responseCode = "404", description = "The SMS Template does not exists"),
+                    @ApiResponse(responseCode = "400", description = "An error happened while updating SMSTemplate")
+            }
+    )
+    SMSTemplateDto update(@PathParam("SMSTemplateCode") String smsTemplateCode, SMSTemplateDto smsTemplateDto);
 }

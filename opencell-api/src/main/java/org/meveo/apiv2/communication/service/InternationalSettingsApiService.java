@@ -35,21 +35,21 @@ public class InternationalSettingsApiService  {
     SMSTemplateService smsTemplateService;
 
 
-    public EmailTemplate update(EmailTemplate emailTemplate) {
+    public EmailTemplate updateEmailTemplate(EmailTemplate emailTemplate) {
         return internationalSettingsService.update(emailTemplate);
     }
 
-    public EmailTemplateDto checkAndUpdate(String emailTemplateCode, EmailTemplateDto emailTemplateDto) {
+    public EmailTemplateDto checkAndUpdateEmailTemplate(String emailTemplateCode, EmailTemplateDto emailTemplateDto) {
 
         EmailTemplate emailTemplate = checkEmailTemplate(emailTemplateCode);
-        return EmailTemplateMapper.toEmailTemplateDto(update(emailTemplateMapper.toEntity(emailTemplateDto, emailTemplate)));
+        return EmailTemplateMapper.toEmailTemplateDto(updateEmailTemplate(emailTemplateMapper.toEntity(emailTemplateDto, emailTemplate)));
 
     }
 
-    public EmailTemplateDto checkAndUpdate(String emailTemplateCode, EmailTemplatePatchDto emailTemplatePatchDto) {
+    public EmailTemplateDto checkAndUpdateEmailTemplate(String emailTemplateCode, EmailTemplatePatchDto emailTemplatePatchDto) {
 
         EmailTemplate emailTemplate = checkEmailTemplate(emailTemplateCode);
-        return EmailTemplateMapper.toEmailTemplateDto(update(emailTemplateMapper.fromPatchDtoToEntity(emailTemplatePatchDto, emailTemplate)));
+        return EmailTemplateMapper.toEmailTemplateDto(updateEmailTemplate(emailTemplateMapper.fromPatchDtoToEntity(emailTemplatePatchDto, emailTemplate)));
 
     }
 
@@ -63,13 +63,6 @@ public class InternationalSettingsApiService  {
         return emailTemplate;
     }
 
-    public SMSTemplateDto checkAndCreateSMSTemplate(SMSTemplateDto smsTemplateDto) {
-
-        checkSMSTemplateInput(smsTemplateDto);
-
-        return smsTemplateMapper.fromEntityToDto(smsTemplateService.createAndReturnEntity(smsTemplateMapper.fromDtoToEntity(smsTemplateDto)));
-
-    }
 
     private void checkSMSTemplateInput(SMSTemplateDto smsTemplateDto) {
         if(smsTemplateDto.getCode() == null || smsTemplateDto.getCode().isEmpty()){
@@ -81,4 +74,45 @@ public class InternationalSettingsApiService  {
             throw new BusinessException("The SMS template already exists");
         }
     }
+
+    public SMSTemplateDto checkAndCreateSMSTemplate(SMSTemplateDto smsTemplateDto) {
+
+        checkSMSTemplateInput(smsTemplateDto);
+
+        return createSMSTemplate(smsTemplateMapper.fromDtoToEntity(smsTemplateDto, null));
+
+    }
+
+    private SMSTemplateDto createSMSTemplate(SMSTemplate smsTemplate) {
+
+        return smsTemplateMapper.fromEntityToDto(internationalSettingsService.createSMSTemplate(smsTemplate));
+    }
+
+
+    public SMSTemplateDto checkAndUpdateSMSTemplate(String smsTemplateCode, SMSTemplateDto smsTemplateDto) {
+
+        SMSTemplate smsTemplate = checkSMSTemplateUpdateInput(smsTemplateCode);
+
+        return updateSMSTemplate(smsTemplateMapper.fromDtoToEntity(smsTemplateDto, smsTemplate));
+
+    }
+
+    private SMSTemplateDto updateSMSTemplate(SMSTemplate smsTemplate) {
+
+        return smsTemplateMapper.fromEntityToDto(internationalSettingsService.updateSMSTemplate(smsTemplate));
+    }
+
+    private SMSTemplate checkSMSTemplateUpdateInput(String smsTemplateCode) {
+        if (smsTemplateCode == null || smsTemplateCode.isEmpty()) {
+            throw new BusinessException("SMS Template Code is invalid");
+        }
+
+        SMSTemplate smsTemplate = smsTemplateService.findByCode(smsTemplateCode);
+        if (smsTemplate == null) {
+            throw new BusinessException("The SMS Template with code " + smsTemplateCode + " does not exist ");
+        }
+        return smsTemplate;
+    }
+
+
 }

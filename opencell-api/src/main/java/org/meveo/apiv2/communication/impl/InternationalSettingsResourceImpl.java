@@ -19,14 +19,14 @@ public class InternationalSettingsResourceImpl implements InternationalSettingsR
     @Override
     public EmailTemplateDto update(String emailTemplateCode, EmailTemplateDto emailTemplateDto) {
 
-        return internationalSettingsApiService.checkAndUpdate(emailTemplateCode,emailTemplateDto);
+        return internationalSettingsApiService.checkAndUpdateEmailTemplate(emailTemplateCode,emailTemplateDto);
     }
 
     @Override
     public EmailTemplateDto partialUpdate(String emailTemplateCode, EmailTemplatePatchDto emailTemplatePatchDto) {
 
         return internationalSettingsApiService
-                .checkAndUpdate(emailTemplateCode, emailTemplatePatchDto);
+                .checkAndUpdateEmailTemplate(emailTemplateCode, emailTemplatePatchDto);
 
     }
 
@@ -34,6 +34,12 @@ public class InternationalSettingsResourceImpl implements InternationalSettingsR
 
         return internationalSettingsApiService
                 .checkAndCreateSMSTemplate(smsTemplateDto);
+    }
+
+    @Override
+    public SMSTemplateDto update(String smsTemplateCode, SMSTemplateDto smsTemplateDto) {
+        return internationalSettingsApiService
+                .checkAndUpdateSMSTemplate(smsTemplateCode, smsTemplateDto);
     }
 
 
