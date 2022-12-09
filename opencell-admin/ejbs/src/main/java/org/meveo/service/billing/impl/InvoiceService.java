@@ -6985,7 +6985,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 					.reduce(BigDecimal::add).get();
 			//if balance is well calculated and balance=0, we don't need to recalculate
 			if ((sum.add(invoiceBalance)).compareTo(invoice.getAmountWithTax()) == 0) {
-				if (BigDecimal.ZERO.compareTo(invoiceBalance)==0) {
+				CommercialOrder commercialOrder = advInvoices.get(0).getCommercialOrder();
+				if (BigDecimal.ZERO.compareTo(invoiceBalance)==0 && !(commercialOrder!=null && commercialOrder.equals(invoice.getCommercialOrder()))) {
 					return;
 				} 
 			}
@@ -7021,10 +7022,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     }
                 }
                 invoice.setInvoiceBalance(remainingAmount);
-				List<Long> toRemove = invoice.getLinkedInvoices().stream()
+				invoice.getLinkedInvoices().stream()
 						.filter(il -> ZERO.compareTo(il.getAmount()) == 0 && InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(il.getType()))
-						.map(il -> il.getLinkedInvoiceValue().getId()).collect(Collectors.toList());
-				linkedInvoiceService.deleteByIdInvoiceAndLinkedInvoice(invoice.getId(), toRemove);
+						.forEach(li -> linkedInvoiceService.remove(li));
 	        }
     }
 
