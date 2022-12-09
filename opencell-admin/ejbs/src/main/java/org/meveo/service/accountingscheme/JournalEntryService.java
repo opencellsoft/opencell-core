@@ -284,8 +284,8 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             firstEntry.setTradingCurrency(((RecordedInvoice) ao).getInvoice() != null && ((RecordedInvoice) ao).getInvoice().getTradingCurrency() != null
                     ? ((RecordedInvoice) ao).getInvoice().getTradingCurrency().getCurrencyCode() : null);
 
-            firstEntry.setTradingAmount(((RecordedInvoice) ao).getInvoice() != null ? ((RecordedInvoice) ao).getInvoice().getAmountWithTax() : null);            
-            
+            firstEntry.setTradingAmount(ao.getTransactionCategory() == OperationCategoryEnum.DEBIT ? amount.negate() : amount);
+
         }
         Map<String, String> accountingInfo = addAccountingInfo(customerAccount);
         if(accountingInfo != null && !accountingInfo.isEmpty()) {
