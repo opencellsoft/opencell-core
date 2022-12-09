@@ -3,12 +3,14 @@ package org.meveo.apiv2.communication;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.communication.EmailTemplateDto;
 import org.meveo.api.dto.communication.EmailTemplatePatchDto;
 import org.meveo.api.dto.communication.sms.SMSTemplateDto;
 import org.meveo.api.rest.PATCH;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -62,8 +64,8 @@ public interface InternationalSettingsResource {
     @PUT
     @Path("/SMSTemplate/{SMSTemplateCode}")
     @Operation(
-            summary = "Update an EmailTemplate",
-            tags = { "email", "email_template", "communication" },
+            summary = "Update an SMSTemplate",
+            tags = { "email", "sms_template", "communication" },
             responses = {
                     @ApiResponse(responseCode = "200", description = "the sms template successfully updated"),
                     @ApiResponse(responseCode = "404", description = "The SMS Template does not exists"),
@@ -71,4 +73,17 @@ public interface InternationalSettingsResource {
             }
     )
     SMSTemplateDto update(@PathParam("SMSTemplateCode") String smsTemplateCode, SMSTemplateDto smsTemplateDto);
+
+    @DELETE
+    @Path("/SMSTemplate/{SMSTemplateCode}")
+    @Operation(
+            summary = "Delete an SMSTemplate",
+            tags = { "sms", "sms_template", "communication" },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "the sms template successfully deleted"),
+                    @ApiResponse(responseCode = "404", description = "The SMS Template does not exists"),
+                    @ApiResponse(responseCode = "400", description = "An error happened while deleting SMSTemplate")
+            }
+    )
+    ActionStatus delete(@PathParam("SMSTemplateCode") String smsTemplateCode);
 }

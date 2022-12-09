@@ -63,15 +63,14 @@ public class InternationalSettingsApiService  {
         return emailTemplate;
     }
 
-
     private void checkSMSTemplateInput(SMSTemplateDto smsTemplateDto) {
-        if(smsTemplateDto.getCode() == null || smsTemplateDto.getCode().isEmpty()){
-            throw new BusinessException("the code is invalid");
+        if (smsTemplateDto.getCode() == null || smsTemplateDto.getCode().isEmpty()) {
+            throw new BusinessException("Unrecognized field CODE");
         }
 
         SMSTemplate smsTemplate = smsTemplateService.findByCode(smsTemplateDto.getCode());
         if (smsTemplate != null) {
-            throw new BusinessException("The SMS template already exists");
+            throw new BusinessException("SMSTemplate with code " + smsTemplate.getCode() + " already exists");
         }
     }
 
@@ -91,7 +90,7 @@ public class InternationalSettingsApiService  {
 
     public SMSTemplateDto checkAndUpdateSMSTemplate(String smsTemplateCode, SMSTemplateDto smsTemplateDto) {
 
-        SMSTemplate smsTemplate = checkSMSTemplateUpdateInput(smsTemplateCode);
+        SMSTemplate smsTemplate = checkSMSTemplateToUpdateOrDelete(smsTemplateCode);
 
         return updateSMSTemplate(smsTemplateMapper.fromDtoToEntity(smsTemplateDto, smsTemplate));
 
@@ -102,7 +101,7 @@ public class InternationalSettingsApiService  {
         return smsTemplateMapper.fromEntityToDto(internationalSettingsService.updateSMSTemplate(smsTemplate));
     }
 
-    private SMSTemplate checkSMSTemplateUpdateInput(String smsTemplateCode) {
+    private SMSTemplate checkSMSTemplateToUpdateOrDelete(String smsTemplateCode) {
         if (smsTemplateCode == null || smsTemplateCode.isEmpty()) {
             throw new BusinessException("SMS Template Code is invalid");
         }
@@ -115,4 +114,10 @@ public class InternationalSettingsApiService  {
     }
 
 
+    public void checkAndDeleteSMSTemplate(String smsTemplateCode) {
+
+        SMSTemplate smsTemplate = checkSMSTemplateToUpdateOrDelete(smsTemplateCode);
+        smsTemplateService.remove(smsTemplate);
+
+    }
 }
