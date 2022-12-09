@@ -69,6 +69,7 @@ import org.meveo.api.dto.custom.CustomTableRecordDto;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.apiv2.generic.GenericFieldDetails;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
@@ -1134,12 +1135,24 @@ public class CustomTableService extends NativePersistenceService {
         }
         throw new InvalidParameterException("Invalid id value found: " + id);
     }
-    
-    public List<Map<String, Object>> exportCustomTable(CustomEntityTemplate customEntityTemplate) throws BusinessException {
-            PaginationConfiguration pagination = new PaginationConfiguration(null, 1, null, null, null, FIELD_ID, SortOrder.DESCENDING);
-            QueryBuilder queryBuilder = getQuery(customEntityTemplate.getDbTablename(), pagination, null);
-            SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), true);
-            return query.list();
-    } 
+
+	public List<Map<String, Object>> exportCustomTable(CustomEntityTemplate customEntityTemplate) throws BusinessException {
+		PaginationConfiguration pagination = new PaginationConfiguration(null, 0, null, null, null, FIELD_ID, SortOrder.ASCENDING);
+		QueryBuilder queryBuilder = getQuery(customEntityTemplate.getDbTablename(), pagination, null);
+		SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), true);
+		return query.list();
+	}
+	
+	public List<CustomFieldTemplate> getCFTs(CustomEntityTemplate cet) {
+		Map<String, CustomFieldTemplate> map = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo());
+		if (map == null || map.isEmpty()) {
+			throw new ValidationException("No fields are defined for custom table", "customTable.noFields");
+		}
+		List<CustomFieldTemplate> cfts = new ArrayList<>();
+		cfts.add(new CustomFieldTemplate(FIELD_ID, FIELD_ID, CustomFieldTypeEnum.LONG));
+		cfts.addAll(map.values());
+
+		return cfts;
+	}
 
 }
