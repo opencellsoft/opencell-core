@@ -4086,7 +4086,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
         
-        if(invoice.getBillingRun() == null) {
+        if(invoice.getBillingRun() == null && invoice.getInvoiceType() != null && !invoice.getInvoiceType().getCode().equals("ADV")) {
             applyAdvanceInvoice(invoice, checkAdvanceInvoice(invoice));
         }
     }
@@ -6929,26 +6929,36 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return Collections.emptyList();
         }
         // check balance when invoicing plan created from order ==> adv from order must have balance set
-        List<Invoice> invoicesAdv = null;
-        if(invoice.getCommercialOrder() != null) {
-	        invoicesAdv = this.getEntityManager().createNamedQuery("Invoice.findValidatedInvoiceAdvWithOrder")
+        List<Invoice> invoicesAdv  = this.getEntityManager().createNamedQuery("Invoice.findValidatedInvoiceAdvOrder")
+                .setParameter("billingAccountId", invoice.getBillingAccount().getId())
+                .setParameter("commercialOrder", invoice.getCommercialOrder())
+                .getResultList();
+        /* if(invoice.getCommercialOrder() != null) {
+	        invoicesAdv.addAll(this.getEntityManager().createNamedQuery("Invoice.findValidatedInvoiceAdvWithOrder")
 	                                                            .setParameter("billingAccountId", invoice.getBillingAccount().getId())
 	                                                            .setParameter("commercialOrder", invoice.getCommercialOrder())
-	                                                            .getResultList();
-        }else {
-	        invoicesAdv = this.getEntityManager().createNamedQuery("Invoice.findValidatedInvoiceAdvWithoutOrder")
-                    .setParameter("billingAccountId", invoice.getBillingAccount().getId())
-                    .getResultList();
+	                                                            .getResultList() );
         }
         
-        sort(invoicesAdv, (inv1, inv2) -> {
+       sort(invoicesAdv, (inv1, inv2) -> {
+            int compCommercialOrder = 0;
+            if(inv1.getCommercialOrder() != null && inv2.getCommercialOrder() == null) {
+                compCommercialOrder = 1;
+            }else if(inv1.getCommercialOrder() == null && inv2.getCommercialOrder() != null) {
+                compCommercialOrder = -1;
+            }else {
+                compCommercialOrder = inv1.getCommercialOrder().getId().compareTo(inv2.getCommercialOrder().getId());
+            }
+            if(compCommercialOrder != 0) {
+                return compCommercialOrder;
+            }
             int compCreationDate = inv1.getAuditable().getCreated().compareTo(inv2.getAuditable().getCreated());
             if(compCreationDate != 0) {
                 return compCreationDate;
             }
             return inv1.getInvoiceBalance().compareTo(inv2.getInvoiceBalance());
                 
-        });
+        });*/
         return invoicesAdv;
     }
     
@@ -6975,9 +6985,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
    }
     
     public void applyAdvanceInvoice(Invoice invoice, List<Invoice> advInvoices) {
-    	if(InvoiceTypeService.DEFAULT_ADVANCE_CODE.equals(invoice.getInvoiceType().getCode())) {
-    		return;
-    	}
 		BigDecimal invoiceBalance = invoice.getInvoiceBalance();
 		if (invoiceBalance != null) {
 			BigDecimal sum = invoice.getLinkedInvoices().stream()
