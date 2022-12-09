@@ -198,9 +198,7 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	
 	@Type(type = "numeric_boolean")
 	@Column(name = "apply_by_article")
-	private boolean applyByArticle=false;
-	
-	
+	private boolean applyByArticle = true;
 	
 	/**
 	 * 
