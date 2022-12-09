@@ -11,6 +11,7 @@ import org.meveo.api.rest.PATCH;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -86,4 +87,17 @@ public interface InternationalSettingsResource {
             }
     )
     ActionStatus delete(@PathParam("SMSTemplateCode") String smsTemplateCode);
+
+    @GET
+    @Path("/SMSTemplate/{SMSTemplateCode}")
+    @Operation(
+            summary = "Get an SMSTemplate",
+            tags = {"sms", "sms_template", "communication"},
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "the sms template successfully returned"),
+                    @ApiResponse(responseCode = "404", description = "The SMS Template does not exists"),
+                    @ApiResponse(responseCode = "400", description = "An error happened while getting SMSTemplate")
+            }
+    )
+    SMSTemplateDto get(@PathParam("SMSTemplateCode") String smsTemplateCode);
 }
