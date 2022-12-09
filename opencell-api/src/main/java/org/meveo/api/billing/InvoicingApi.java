@@ -119,7 +119,7 @@ public class InvoicingApi extends BaseApi {
         else {
             billingRun.setRejectAutoAction(dto.getRejectAutoAction());
         }        
-        if(dto.getRejectAutoAction() == null) {
+        if(dto.getSuspectAutoAction() == null) {
             billingRun.setSuspectAutoAction(BillingRunAutomaticActionEnum.AUTOMATIC_VALIDATION);
         }
         else {
