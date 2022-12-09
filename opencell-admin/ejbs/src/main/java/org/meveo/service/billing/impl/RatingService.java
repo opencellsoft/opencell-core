@@ -310,7 +310,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         	}else {
         		Calendar invoicingCalendar = CalendarService.initializeCalendar(chargeInstance.getInvoicingCalendar(), defaultInitDate, chargeInstance);
         		invoicingDate = invoicingCalendar.nextCalendarDate(applicationDate);
-        	
+        	}
         }
         ParamBean.setReload(true);
         String extraParam = edr != null ? paramBeanFactory.getInstance().getPropertyAsBoolean("edr.propagate.extraParameter", false) ? edr.getExtraParameter(): edr.getParameter4() : null;
