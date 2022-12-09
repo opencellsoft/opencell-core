@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
@@ -217,7 +218,7 @@ public class GenericFileExportManager {
                             }
 
                             //cell.setCellValue(applyTransformation(fieldDetails.get(key), value));
-                            if (value instanceof Integer) {
+                            if (value instanceof Integer || value instanceof BigInteger) {
                                 applyNumericFormat(wb, cell);
                             } else if (value instanceof Long || value instanceof BigDecimal || value instanceof Double || value instanceof Float) {
                                 applyBigDecimalFormat(wb, cell);
