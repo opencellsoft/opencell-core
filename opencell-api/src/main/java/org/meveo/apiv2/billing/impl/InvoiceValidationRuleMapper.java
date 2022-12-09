@@ -26,6 +26,7 @@ public class InvoiceValidationRuleMapper extends ResourceMapper<InvoiceValidatio
         invoiceValidationRule.setValidFrom(invoiceValidationRuleDto.getValidFrom());
         invoiceValidationRule.setValidTo(invoiceValidationRuleDto.getValidTo());
         invoiceValidationRule.setFailStatus(invoiceValidationRuleDto.getFailStatus());
+        invoiceValidationRule.setRuleValues(invoiceValidationRuleDto.getRuleValues());
 
         return invoiceValidationRule;
     }
@@ -69,6 +70,10 @@ public class InvoiceValidationRuleMapper extends ResourceMapper<InvoiceValidatio
 
         if (invoiceValidationRuleDto.getValidTo() != null) {
             invoiceValidationRule.setValidTo(invoiceValidationRuleDto.getValidTo());
+        }
+        
+        if (invoiceValidationRuleDto.getRuleValues() != null) {
+            invoiceValidationRule.setRuleValues(invoiceValidationRuleDto.getRuleValues());
         }
 
 

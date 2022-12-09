@@ -267,7 +267,7 @@ public class KeycloakAdminClientService implements Serializable {
      */
     public String createUser(String userName, String firstName, String lastName, String email, String password, String userGroup, Collection<String> roles, String providerToOverride)
             throws InvalidParameterException, ElementNotFoundException, UsernameAlreadyExistsException {
-        return createOrUpdateUser(userName, firstName, lastName, email, password, userGroup, roles, providerToOverride, false);
+        return createOrUpdateUser(userName, firstName, lastName, email, password, userGroup, roles, providerToOverride, false, null);
     }
 
     /**
@@ -284,9 +284,9 @@ public class KeycloakAdminClientService implements Serializable {
      * @throws InvalidParameterException Missing fields
      * @throws ElementNotFoundException User was not found
      */
-    public String updateUser(String userName, String firstName, String lastName, String email, String password, String userGroup, Collection<String> roles)
+    public String updateUser(String userName, String firstName, String lastName, String email, String password, String userGroup, Collection<String> roles, Map<String, String> attributes)
             throws InvalidParameterException, ElementNotFoundException, UsernameAlreadyExistsException {
-        return createOrUpdateUser(userName, firstName, lastName, email, password, userGroup, roles, null, true);
+        return createOrUpdateUser(userName, firstName, lastName, email, password, userGroup, roles, null, true, attributes);
     }
 
     /**
@@ -306,7 +306,7 @@ public class KeycloakAdminClientService implements Serializable {
      * @throws UsernameAlreadyExistsException User with such username already exists
      * @throws ElementNotFoundException User was not found
      */
-    private String createOrUpdateUser(String userName, String firstName, String lastName, String email, String password, String userGroup, Collection<String> roles, String providerToOverride, boolean isUpdate)
+    private String createOrUpdateUser(String userName, String firstName, String lastName, String email, String password, String userGroup, Collection<String> roles, String providerToOverride, boolean isUpdate, Map<String, String> pAttributes)
             throws InvalidParameterException, ElementNotFoundException, UsernameAlreadyExistsException {
 
         KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
@@ -379,9 +379,77 @@ public class KeycloakAdminClientService implements Serializable {
             user.setAttributes(attributes);
         }
 
-        // Determine user groups and validate that they exist
+        //Check if update and attributes are not empty then add the list to user object
+        if(isUpdate && pAttributes != null && !pAttributes.isEmpty()) {
+            Map<String, List<String>> attributes = user.getAttributes();
 
+            for (Map.Entry<String, String> entry : pAttributes.entrySet()) {
+                attributes.put(entry.getKey(), Arrays.asList(entry.getValue()));
+            }
+
+            user.setAttributes(attributes);
+        }
+
+        List<RoleRepresentation> rolesToAdd = checkAndBuildRoles(roles, realmResource);
+        List<GroupRepresentation> groupsToAdd = checkAndBuildGroups(userGroup, realmResource);
+
+        String userId = null;
+
+        // Update current user
+        if (isUpdate) {
+            userId = user.getId();
+            usersResource.get(userId).update(user);
+        } else {
+            // Create a new user
+            Response response = usersResource.create(user);
+
+            if (response.getStatus() != Status.CREATED.getStatusCode()) {
+                log.error("Keycloak user creation or update with http status.code={} and reason={}", response.getStatus(), response.getStatusInfo().getReasonPhrase());
+
+                if (response.getStatus() == HttpStatus.SC_CONFLICT) {
+                    try {
+                        UserRepresentation existingUser = getUserRepresentationByUsername(usersResource, userName);
+                        log.warn("A user with username {} and id {} already exists in Keycloak", userName, existingUser.getId());
+                        throw new UsernameAlreadyExistsException(userName);
+                        // Some other field is causing a conflict
+                    } catch (ElementNotFoundException e) {
+                        throw new BusinessException("Unable to create user with httpStatusCode=" + response.getStatus() + " and reason=" + response.getStatusInfo().getReasonPhrase());
+                    }
+                } else {
+                    throw new BusinessException("Unable to create user with httpStatusCode=" + response.getStatus() + " and reason=" + response.getStatusInfo().getReasonPhrase());
+                }
+            }
+
+            userId = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
+        }
+
+        log.debug("User {} created or updated in Keycloak with userId: {}", user.getUsername(), userId);
+
+        updateGroups(groupsToAdd, isUpdate, usersResource, user, userId);
+        updateRoles(rolesToAdd, isUpdate, usersResource, user, userId);
+
+        // Define password credential
+        if (password != null) {
+            CredentialRepresentation credential = new CredentialRepresentation();
+            credential.setTemporary(false);
+            credential.setType(CredentialRepresentation.PASSWORD);
+            credential.setValue(password);
+            usersResource.get(userId).resetPassword(credential);// Set password credential
+        }
+
+        return userId;
+    }
+
+    /**
+     * Check and build groups
+     * @param userGroup User Group
+     * @param realmResource {@link RealmResource}
+     * @return List of {@link GroupRepresentation}
+     */
+    private List<GroupRepresentation> checkAndBuildGroups(String userGroup, RealmResource realmResource) {
+        // Determine user groups and validate that they exist
         List<GroupRepresentation> groupsToAdd = new ArrayList<>();
+
         if (userGroup != null) {
             GroupsResource groupResource = realmResource.groups();
 
@@ -395,8 +463,19 @@ public class KeycloakAdminClientService implements Serializable {
             groupsToAdd.add(groupMatched);
         }
 
+        return groupsToAdd;
+    }
+
+    /**
+     * Check and build roles
+     * @param roles User Group
+     * @param realmResource {@link RealmResource}
+     * @return List of {@link RoleRepresentation}
+     */
+    private static List<RoleRepresentation> checkAndBuildRoles(Collection<String> roles, RealmResource realmResource) {
         // Determine roles requested and validate that they exist
         List<RoleRepresentation> rolesToAdd = new ArrayList<>();
+
         if (roles != null && !roles.isEmpty()) {
             RolesResource rolesResource = realmResource.roles();
 
@@ -410,99 +489,47 @@ public class KeycloakAdminClientService implements Serializable {
             }
         }
 
-        String userId = null;
+        return rolesToAdd;
+    }
 
-        // Update current user
+    /**
+     * Update Keycloak roles
+     * @param rolesToAdd Roles to add
+     * @param isUpdate Is update mode
+     * @param usersResource {@link org.keycloak.admin.client.resource.UserResource}
+     * @param user {@link UserRepresentation}
+     * @param userId User Id
+     */
+    private static void updateRoles(List<RoleRepresentation> rolesToAdd, boolean isUpdate, UsersResource usersResource, UserRepresentation user, String userId) {
+        // Check if the roles to add exists already in the current roles then remove it from the roles to add
         if (isUpdate) {
-
-            userId = user.getId();
-            usersResource.get(userId).update(user);
-
-            // Create a new user
-        } else {
-
-            Response response = usersResource.create(user);
-
-            if (response.getStatus() != Status.CREATED.getStatusCode()) {
-                log.error("Keycloak user creation or update with http status.code={} and reason={}", response.getStatus(), response.getStatusInfo().getReasonPhrase());
-
-                if (response.getStatus() == HttpStatus.SC_CONFLICT) {
-                    try {
-                        UserRepresentation existingUser = getUserRepresentationByUsername(usersResource, userName);
-
-                        log.warn("A user with username {} and id {} already exists in Keycloak", userName, existingUser.getId());
-                        throw new UsernameAlreadyExistsException(userName);
-
-                        // Some other field is causing a conflict
-                    } catch (ElementNotFoundException e) {
-                        throw new BusinessException("Unable to create user with httpStatusCode=" + response.getStatus() + " and reason=" + response.getStatusInfo().getReasonPhrase());
-
-                    }
-
-                } else {
-                    throw new BusinessException("Unable to create user with httpStatusCode=" + response.getStatus() + " and reason=" + response.getStatusInfo().getReasonPhrase());
-                }
-            }
-
-            userId = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
+            List<RoleRepresentation> currentRoles = usersResource.get(user.getId()).roles().realmLevel().listAll();
+            rolesToAdd.removeAll(currentRoles);
         }
+        if (!rolesToAdd.isEmpty()) {
+            usersResource.get(userId).roles().realmLevel().add(rolesToAdd);
+        }
+    }
 
-        log.debug("User {} created or updated in Keycloak with userId: {}", user.getUsername(), userId);
-
-        // ---------- Set/update user groups
-
-        // Determine new user groups to add or remove
-        List<GroupRepresentation> groupsToDelete = new ArrayList<>();
-
+    /**
+     * Update Keycloak Groups
+     * @param groupsToAdd Groups to add
+     * @param isUpdate Is update mode
+     * @param usersResource {@link org.keycloak.admin.client.resource.UserResource}
+     * @param user {@link UserRepresentation}
+     * @param userId User id
+     */
+    private void updateGroups(List<GroupRepresentation> groupsToAdd, boolean isUpdate, UsersResource usersResource, UserRepresentation user, String userId) {
+        // Check if the groups to add exists already in the current groups then remove it from the groups to add
         if (isUpdate) {
             List<GroupRepresentation> currentGroups = usersResource.get(user.getId()).groups();
-            groupsToDelete.addAll(currentGroups);
-            groupsToDelete.removeAll(groupsToAdd);
             groupsToAdd.removeAll(currentGroups);
-        }
-
-        if (!groupsToDelete.isEmpty()) {
-            for (GroupRepresentation group : groupsToDelete) {
-                usersResource.get(userId).leaveGroup(group.getId());
-            }
         }
         if (!groupsToAdd.isEmpty()) {
             for (GroupRepresentation group : groupsToAdd) {
                 usersResource.get(userId).joinGroup(group.getId());
             }
         }
-
-        // ---------- Set/update roles
-
-        // Determine new roles to add or remove
-        List<RoleRepresentation> rolesToDelete = new ArrayList<>();
-
-        if (isUpdate) {
-            List<RoleRepresentation> currentRoles = usersResource.get(user.getId()).roles().realmLevel().listAll();
-            rolesToDelete.addAll(currentRoles);
-            rolesToDelete.removeAll(rolesToAdd);
-            rolesToAdd.removeAll(currentRoles);
-        }
-
-        if (!rolesToAdd.isEmpty()) {
-            usersResource.get(userId).roles().realmLevel().add(rolesToAdd);
-        }
-        if (!rolesToDelete.isEmpty()) {
-            usersResource.get(userId).roles().realmLevel().remove(rolesToDelete);
-        }
-
-        // ---------- Define password credential
-        if (password != null) {
-            CredentialRepresentation credential = new CredentialRepresentation();
-            credential.setTemporary(false);
-            credential.setType(CredentialRepresentation.PASSWORD);
-            credential.setValue(password);
-
-            // Set password credential
-            usersResource.get(userId).resetPassword(credential);
-        }
-        return userId;
-
     }
 
     /**

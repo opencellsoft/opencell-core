@@ -53,7 +53,7 @@ public class FrontendServlet extends HttpServlet {
      */
     private static final long serialVersionUID = -3071886877749196748L;
     private static final int DEFAULT_BUFFER_SIZE = 10240; // ..bytes = 10KB.
-    private static final long DEFAULT_EXPIRE_TIME = 604800000L; // ..ms = 1 week.
+    private static final long DEFAULT_EXPIRE_TIME = 60000L; // 1H // 604800000L ..ms = 1 week.
     private static final String MULTIPART_BOUNDARY = "MULTIPART_BYTERANGES";
 
     @Inject

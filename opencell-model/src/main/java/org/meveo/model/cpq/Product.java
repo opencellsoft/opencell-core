@@ -576,7 +576,9 @@ public class Product extends ServiceCharge {
 
 	/**
 	 * @return the currentVersion
+	 * @deprecated Should load version by code and date instead
 	 */
+	@Deprecated
 	public ProductVersion getCurrentVersion() {
 		return currentVersion;
 	}

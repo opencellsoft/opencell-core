@@ -202,7 +202,7 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
             }
             if(billingAccount.getContactInformation() != null && billingAccount.getContactInformation().getEmail() != null) {
                 collectionPlanService.sendNotification(seller.getContactInformation().getEmail(),
-                        billingAccount.getContactInformation().getEmail(), emailTemplate, params, attachments);
+                        billingAccount, emailTemplate, params, attachments);
             } else {
                 throw new BusinessException("Billing account email is missing");
             }

@@ -10222,7 +10222,31 @@
                 "name": "HEAD"
               }
             ]
-          }
+          },
+          {
+            "name": "Api V2 International Settings",
+            "ownerManagedAccess": false,
+            "attributes": {},
+            "_id": "f68e7377-a3d6-4a4d-922b-ac145c39c157",
+            "uris": [
+              "/api/rest/v2/setting/internationalSettings/*"
+            ],
+            "scopes": [
+              {
+                "name": "DELETE"
+              },
+              {
+                "name": "GET"
+              },
+              {
+                "name": "POST"
+              },
+              {
+                "name": "PUT"
+              },
+              {
+                "name": "PATCH"
+              }
         ],
         "policies": [
           {

@@ -128,7 +128,7 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                         ofNullable(collectionPlan.getPauseDuration()).orElse(0) + levelInstance.getDaysOverdue());
                 if (levelInstance.getLevelStatus() != DunningLevelInstanceStatusEnum.DONE
                         && !collectionPlan.getRelatedInvoice().getPaymentStatus().equals(PAID)
-                        && dueDate.before(dateToCompare)) {
+                        && dateToCompare.before(today)) {
                     nextLevel = index + 1;
                     for (int i = 0; i < levelInstance.getActions().size(); i++) {
                         DunningActionInstance actionInstance = levelInstance.getActions().get(i);
@@ -286,7 +286,7 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
             if (billingAccount.getContactInformation() != null && billingAccount.getContactInformation().getEmail() != null) {
                 try {
                     collectionPlanService.sendNotification(seller.getContactInformation().getEmail(),
-                            billingAccount.getContactInformation().getEmail(), emailTemplate, params, attachments);
+                            billingAccount, emailTemplate, params, attachments);
                 } catch (Exception exception) {
                     throw new BusinessException(exception.getMessage());
                 }

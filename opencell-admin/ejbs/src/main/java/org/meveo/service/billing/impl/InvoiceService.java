@@ -28,6 +28,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
 import static org.meveo.model.shared.DateUtils.setTimeToZero;
 import static org.meveo.service.base.ValueExpressionWrapper.*;
+import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -86,6 +87,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -107,6 +109,7 @@ import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.admin.storage.StorageFactory;
 import org.meveo.admin.util.PdfWaterMark;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.CategoryInvoiceAgregateDto;
 import org.meveo.api.dto.RatedTransactionDto;
@@ -207,10 +210,13 @@ import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.scripts.ScriptParameter;
 import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
@@ -221,6 +227,7 @@ import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.communication.impl.EmailSender;
+import org.meveo.service.communication.impl.InternationalSettingsService;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
@@ -443,6 +450,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
     
     @Inject 
     private LinkedInvoiceService linkedInvoiceService;
+    
+    @Inject
+    private ResourceBundle resourceMessages;
+
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
+
+    @Inject
+    private InternationalSettingsService internationalSettingsService;
 
     @PostConstruct
     private void init() {
@@ -1405,6 +1422,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         if(validationRule.getType() == ValidationRuleTypeEnum.SCRIPT) {
                             ScriptInterface validationRuleScript =
                                     scriptInstanceService.getScriptInstance(validationRule.getValidationScript());
+                            ScriptInstance scriptInstance = scriptInstanceService.findByCode(validationRule.getValidationScript());
+                            if(scriptInstance != null && !MapUtils.isEmpty(validationRule.getRuleValues())){
+                                scriptInstance.getScriptParameters().stream().forEach(sp -> {
+                            		if (validationRule.getRuleValues().containsKey(sp.getCode())) {
+                            			methodContext.put(sp.getCode(), (sp.isCollection())? scriptInstanceService.parseListFromString(String.valueOf(validationRule.getRuleValues().get(sp.getCode())), sp.getClassName(), sp.getValuesSeparator())
+                        								: scriptInstanceService.parseObjectFromString(String.valueOf(validationRule.getRuleValues().get(sp.getCode())), sp.getClassName()));
+                            		}
+                            	});	                        	                            
+                            }
                             if(validationRuleScript != null) {
                                 try {
                                     validationRuleScript.execute(methodContext);
@@ -1430,12 +1456,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             }
                         } else {
                             Object validationResult =
-                                    evaluateExpression(validationRule.getValidationEL(), null, Boolean.class);
+                                    evaluateExpression(validationRule.getValidationEL(),
+                                            Map.of("invoice", invoice), Boolean.class);
                             try {
                                 if(!((Boolean) validationResult)) {
                                     noValidationError = true;
                                     if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.SUSPECT) {
                                         invoice.setStatus(InvoiceStatusEnum.SUSPECT);
+                                        invoice.setRejectReason("An error has occurred evaluating rule [id="
+                                                + validationRule.getId() + ", " + validationRule.getDescription());
                                         invoice.setRejectedByRule(validationRule);
                                     }
                                     if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.REJECTED) {
@@ -2746,7 +2775,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (rejectReasonInput != null) {
         	invoice.setRejectReason(rejectReasonInput.getRejectReason());
         } else {
-        	invoice.setRejectReason(null);
+        	invoice.setRejectReason(resourceMessages.getString("invoice.reject.reason.default.reason", currentUser.getFullNameOrUserName()));
         }
         
         update(invoice);
@@ -3596,12 +3625,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 log.warn("The Seller or it's contact information is null!!");
                 return false;
             }
+            String languageCode = billingAccount.getCustomerAccount().getTradingLanguage().getLanguage().getLanguageCode();
+            String emailSubject = internationalSettingsService.resolveSubject(emailTemplate,languageCode);
+            String emailContent = internationalSettingsService.resolveEmailContent(emailTemplate,languageCode);
+            String htmlContent = internationalSettingsService.resolveHtmlContent(emailTemplate,languageCode);
             if (electronicBilling && mailingTypeEnum.equals(mailingType)) {
                 Map<Object, Object> params = new HashMap<>();
                 params.put("invoice", invoice);
-                String subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
-                String content = evaluateExpression(emailTemplate.getTextContent(), params, String.class);
-                String contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
+                String subject = evaluateExpression(emailSubject, params, String.class);
+                String content = evaluateExpression(emailContent, params, String.class);
+                String contentHtml = evaluateExpression(htmlContent, params, String.class);
                 String from = seller.getContactInformation().getEmail();
                 emailSender.send(from, Arrays.asList(from), to, cc, null, subject, content, contentHtml, files, null, false);
                 entityUpdatedEventProducer.fire(invoice);

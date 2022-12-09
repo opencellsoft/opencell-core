@@ -16697,13 +16697,6 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
 
     </changeSet>
-    <changeSet id="#INTRD-11780_20221128_fk" author="AdilElJaouhari">
-        <addForeignKeyConstraint baseTableName="billing_invoice"
-                                 baseColumnNames="invoice_validation_rule_id"
-                                 constraintName="fk_billing_invoice_validation_rule"
-                                 referencedTableName="billing_invoice_validation_rule"
-                                 referencedColumnNames="id" />
-    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -17665,10 +17658,17 @@
             </column>
             <column name="validation_script" type="${type.text}" />
             <column name="validation_el" type="${type.text}" />
+            <column name="rule_values" type="${type.json}" />
         </createTable>
     </changeSet>
-    
-    
+	
+    <changeSet id="#INTRD-11780_20221128_fk" author="AdilElJaouhari">
+        <addForeignKeyConstraint baseTableName="billing_invoice"
+                                 baseColumnNames="invoice_validation_rule_id"
+                                 constraintName="fk_billing_invoice_validation_rule"
+                                 referencedTableName="billing_invoice_validation_rule"
+                                 referencedColumnNames="id" />
+    </changeSet>
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
@@ -18931,6 +18931,8 @@
     <changeSet id="#INTRD-11775_20221120" author="hichamELHALOUI" />
     <changeSet id="#INTRD-242_20221121" author="AdilElJaouhari" />
     <changeSet id="#INTRD-11780_20221128" author="AdilElJaouhari" />
+    <changeSet id="#INTRD-12043_20221121" author="HatimOUDAD"/>
+	<changeSet id="INTRD-11732_20221130" author="MehdiBOURRAS" />
     
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->

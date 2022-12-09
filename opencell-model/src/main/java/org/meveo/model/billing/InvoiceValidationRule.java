@@ -1,12 +1,24 @@
 package org.meveo.model.billing;
 
+import java.util.Date;
+import java.util.Map;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.Date;
 
 @Entity
 @Table(name = "billing_invoice_validation_rule", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
@@ -43,6 +55,10 @@ public class InvoiceValidationRule extends BusinessEntity {
 
     @Column(name = "validation_el")
     private String validationEL;
+    
+    @Type(type = "json")
+    @Column(name = "rule_values", columnDefinition = "jsonb")
+    private Map<String, String> ruleValues;
 
     public InvoiceType getInvoiceType() {
         return invoiceType;
@@ -107,4 +123,12 @@ public class InvoiceValidationRule extends BusinessEntity {
     public void setFailStatus(InvoiceValidationStatusEnum failStatus) {
         this.failStatus = failStatus;
     }
+
+	public Map<String, String> getRuleValues() {
+		return ruleValues;
+	}
+
+	public void setRuleValues(Map<String, String> ruleValues) {
+		this.ruleValues = ruleValues;
+	}
 }
