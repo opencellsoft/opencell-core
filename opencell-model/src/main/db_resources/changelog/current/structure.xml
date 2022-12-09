@@ -14850,7 +14850,7 @@ order by date_trunc('month', i.invoice_date) DESC
     </changeSet>
     
 	<changeSet id="INTRD_12001_20221205" author="TarikFA.">
-		<modifyDataType tableName="meveo_script_instance" columnName="description" newDataType="text"/>
+		<modifyDataType tableName="meveo_script_instance" columnName="description" newDataType="varchar(1000)"/>
 	</changeSet>
 
 </databaseChangeLog>
