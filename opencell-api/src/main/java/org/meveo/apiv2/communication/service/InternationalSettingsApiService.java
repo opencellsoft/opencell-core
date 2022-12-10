@@ -90,7 +90,7 @@ public class InternationalSettingsApiService  {
 
     public SMSTemplateDto checkAndUpdateSMSTemplate(String smsTemplateCode, SMSTemplateDto smsTemplateDto) {
 
-        SMSTemplate smsTemplate = checkSMSTemplateToUpdateOrDelete(smsTemplateCode);
+        SMSTemplate smsTemplate = checkSMSTemplate(smsTemplateCode);
 
         return updateSMSTemplate(smsTemplateMapper.fromDtoToEntity(smsTemplateDto, smsTemplate));
 
@@ -101,7 +101,7 @@ public class InternationalSettingsApiService  {
         return smsTemplateMapper.fromEntityToDto(internationalSettingsService.updateSMSTemplate(smsTemplate));
     }
 
-    private SMSTemplate checkSMSTemplateToUpdateOrDelete(String smsTemplateCode) {
+    private SMSTemplate checkSMSTemplate(String smsTemplateCode) {
         if (smsTemplateCode == null || smsTemplateCode.isEmpty()) {
             throw new BusinessException("SMS Template Code is invalid");
         }
@@ -116,8 +116,13 @@ public class InternationalSettingsApiService  {
 
     public void checkAndDeleteSMSTemplate(String smsTemplateCode) {
 
-        SMSTemplate smsTemplate = checkSMSTemplateToUpdateOrDelete(smsTemplateCode);
+        SMSTemplate smsTemplate = checkSMSTemplate(smsTemplateCode);
         smsTemplateService.remove(smsTemplate);
 
+    }
+
+    public SMSTemplateDto checkAndGetSMSTemplate(String smsTemplateCode) {
+
+        return smsTemplateMapper.fromEntityToDto(checkSMSTemplate(smsTemplateCode));
     }
 }

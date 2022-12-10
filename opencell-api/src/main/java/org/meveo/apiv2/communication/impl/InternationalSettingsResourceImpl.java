@@ -52,5 +52,11 @@ public class InternationalSettingsResourceImpl implements InternationalSettingsR
         return new ActionStatus(ActionStatusEnum.SUCCESS, "SMS Template with code " + smsTemplateCode + " was deleted successfully");
     }
 
+    @Override
+    public SMSTemplateDto get(String smsTemplateCode) {
+        return  internationalSettingsApiService
+                .checkAndGetSMSTemplate(smsTemplateCode);
+    }
+
 
 }
