@@ -5,7 +5,7 @@ import org.meveo.service.base.BusinessService;
 
 public class SMSTemplateService extends BusinessService<SMSTemplate> {
 
-    public SMSTemplate createAndReturnEntity(SMSTemplate smsTemplate) {
+    public SMSTemplate createSMSTemplate(SMSTemplate smsTemplate) {
         super.create(smsTemplate);
         return smsTemplate;
     }

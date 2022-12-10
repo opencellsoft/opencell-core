@@ -1,13 +1,20 @@
 package org.meveo.service.communication.impl;
 
 import org.meveo.model.communication.email.EmailTemplate;
-import org.meveo.service.base.BusinessService;
+import org.meveo.model.communication.sms.SMSTemplate;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import java.util.Map;
 
 @Stateless
-public class InternationalSettingsService extends BusinessService<EmailTemplate> {
+public class InternationalSettingsService {
+
+    @Inject
+    EmailTemplateService emailTemplateService;
+
+    @Inject
+    SMSTemplateService smsTemplateService;
 
 
     public String resolveSubject(EmailTemplate emailTemplate, String languageCode) {
@@ -28,5 +35,20 @@ public class InternationalSettingsService extends BusinessService<EmailTemplate>
         return emailTemplate.getTranslatedHtmlContent().entrySet().stream().filter(
                         translation -> translation.getKey().equals(languageCode))
                 .map(Map.Entry::getValue).findFirst().orElse(emailTemplate.getHtmlContent());
+    }
+
+    public EmailTemplate update(EmailTemplate emailTemplate) {
+
+        return emailTemplateService.update(emailTemplate);
+    }
+
+    public SMSTemplate createSMSTemplate(SMSTemplate smsTemplate) {
+
+        return smsTemplateService.createSMSTemplate(smsTemplate);
+    }
+
+    public SMSTemplate updateSMSTemplate(SMSTemplate smsTemplate) {
+
+        return smsTemplateService.update(smsTemplate);
     }
 }

@@ -11,9 +11,11 @@ public class SMSTemplateMapper {
     @Inject
     private TranslationsUtils translationsUtils;
 
-    public SMSTemplate fromDtoToEntity(SMSTemplateDto smsTemplateDto) {
+    public SMSTemplate fromDtoToEntity(SMSTemplateDto smsTemplateDto, SMSTemplate smsTemplate) {
 
-        SMSTemplate smsTemplate = new SMSTemplate();
+        if (smsTemplate == null) {
+            smsTemplate = new SMSTemplate();
+        }
 
         if (smsTemplateDto.getCode() != null) {
             smsTemplate.setCode(smsTemplateDto.getCode());
