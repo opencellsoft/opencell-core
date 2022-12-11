@@ -26,6 +26,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
+import org.keycloak.representations.idm.UserRepresentation;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidParameterException;
@@ -147,5 +148,9 @@ public class UserService extends PersistenceService<User> {
     public boolean isUserBelongsGroup(String belongsToUserGroup) {
         // TODO finish checking the hierarchy
         return belongsToUserGroup.equalsIgnoreCase(currentUser.getUserGroup());
+    }
+
+    public UserRepresentation getUserRepresentationByUsername(String username) throws ElementNotFoundException {
+        return keycloakAdminClientService.getUserRepresentationByUsername(username);
     }
 }
