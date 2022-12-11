@@ -31,6 +31,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.catalog.ChargeTemplateStatusEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.admin.impl.SellerService;
@@ -136,6 +137,9 @@ public class OneShotChargeTemplateApi extends ChargeTemplateApi<OneShotChargeTem
         if (chargeTemplate == null) {
             throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, postData.getCode());
         }
+
+        // Internal note updatable only for Draft and Active Charge template
+		super.checkInternalNote(chargeTemplate, postData);
 
         chargeTemplate = dtoToEntity(postData, chargeTemplate);
 
