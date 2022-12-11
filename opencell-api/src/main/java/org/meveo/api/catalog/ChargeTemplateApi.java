@@ -34,6 +34,7 @@ import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.exception.InvalidValueException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
@@ -237,7 +238,7 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
     	// Internal note updatable only for Draft and Active Charge template
 		if (postData.getInternalNote() != null && !postData.getInternalNote().equals(entity.getInternalNote()) && 
 				!Arrays.asList(ChargeTemplateStatusEnum.DRAFT, ChargeTemplateStatusEnum.ACTIVE).contains(entity.getStatus())) {
-			throw new BusinessException("Cannot modify internalNote if charge is not DRAFT or ACTIVATED");
+			throw new InvalidValueException("Cannot modify internalNote if charge is not DRAFT or ACTIVATED");
 		}
     }
 
