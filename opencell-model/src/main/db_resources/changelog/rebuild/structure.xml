@@ -3672,7 +3672,7 @@
             <column name="description_i18n" type="${type.json}" />
             <column name="composite" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="taxation_category_id" type="bigint" >            
-            	<constraints nullable="false" />
+            	<constraints nullable="true" />
 			</column>
 			<column name="vatex_id" type="bigint" /> 
         </createTable>
@@ -6704,10 +6704,10 @@
 		    	<constraints nullable="false" />
 		    </column>
 		    <column name="invoice_code_type_id" type="bigint">
-                <constraints nullable="false" />
+                <constraints nullable="true" />
             </column>
             <column name="vat_payment_option_id" type="bigint">
-                <constraints nullable="false" />
+                <constraints nullable="true" />
             </column>
 		    
         </createTable>
@@ -16708,6 +16708,7 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
 
     </changeSet>
+    
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -17684,7 +17685,7 @@
         <createTable tableName="ISO_ICD">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_ar_payment_plan" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_iso_icd" />
             </column>
             <column name="version" type="int4" />
             <column name="created" type="datetime">
@@ -17708,7 +17709,7 @@
         <createTable tableName="UNTDID_UNIT">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_ar_payment_plan" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_untdid_unit" />
             </column>
             <column name="version" type="int4" />
             <column name="created" type="datetime">
@@ -17735,7 +17736,7 @@
         <createTable tableName="UNTDID_1001_INVOICE_CODE_TYPE">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_ar_payment_plan" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_1001_invoice_type" />
             </column>
             <column name="version" type="int4" />
             <column name="created" type="datetime">
@@ -17761,7 +17762,7 @@
         <createTable tableName="UNTDID_2475_VAT_PAYMENT_OPTION">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_ar_payment_plan" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_2475_vat_payment" />
             </column>
             <column name="version" type="int4" />
             <column name="created" type="datetime">
@@ -17793,7 +17794,7 @@
         <createTable tableName="UNTDID_4451_INVOICE_SUBJECT_CODE">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_ar_payment_plan" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_4451_invoice_subject" />
             </column>
             <column name="version" type="int4" />
             <column name="created" type="datetime">
@@ -17819,7 +17820,7 @@
         <createTable tableName="UNTDID_5305_TAXATION_CATEGORY">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_ar_payment_plan" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_5305_taxation_category" />
             </column>
             <column name="version" type="int4" />
             <column name="created" type="datetime">
@@ -17845,7 +17846,7 @@
         <createTable tableName="UNTDID_VATEX">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_ar_payment_plan" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_untdid_vatex" />
             </column>
             <column name="version" type="int4" />
             <column name="created" type="datetime">
@@ -17871,7 +17872,7 @@
         <createTable tableName="UNTDID_4461_PAYMENT_MEANS">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_ar_payment_plan" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_4461_payment_means" />
             </column>
             <column name="version" type="int4" />
             <column name="created" type="datetime">
@@ -17897,7 +17898,7 @@
          <createTable tableName="UNTDID_5189_ALLOWANCE_CODE">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_ar_payment_plan" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_5189_allowance_code" />
             </column>
             <column name="version" type="int4" />
             <column name="created" type="datetime">
@@ -17919,6 +17920,36 @@
             </column>
 
         </createTable>
+        
+        <addForeignKeyConstraint baseTableName="billing_tax"
+                                 baseColumnNames="taxation_category_id"
+                                 constraintName="fk_billing_tax_5305_taxation_category"
+                                 referencedTableName="UNTDID_5305_TAXATION_CATEGORY"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+        <addForeignKeyConstraint baseTableName="billing_tax"
+                                 baseColumnNames="vatex_id"
+                                 constraintName="fk_billing_tax_vatex"
+                                 referencedTableName="UNTDID_VATEX"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+                                 
+        <addForeignKeyConstraint baseTableName="BILLING_INVOICE_TYPE"
+                                 baseColumnNames="invoice_code_type_id"
+                                 constraintName="fk_billing_invoice_1001_invoice"
+                                 referencedTableName="UNTDID_1001_INVOICE_CODE_TYPE"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+        <addForeignKeyConstraint baseTableName="BILLING_INVOICE_TYPE"
+                                 baseColumnNames="vat_payment_option_id"
+                                 constraintName="fk_billing_invoice_2475_vat"
+                                 referencedTableName="UNTDID_2475_VAT_PAYMENT_OPTION"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
         
         
     </changeSet>
