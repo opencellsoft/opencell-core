@@ -456,7 +456,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             List<Object> response = new ArrayList<>();
             int size = fields.size();
             for (Object result : executionResult) {
-                Map<String, Object> item = new HashMap<>();
+                Map<String, Object> item = new LinkedHashMap<>();
                 if(fields.size() == 1) {
                     item.put(fields.get(0), result);
                 } else {
