@@ -29,4 +29,19 @@ public class TaxationCategory {
 	  @Size(max = 20)
 	  private String semanticModel;
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getSemanticModel() {
+		return semanticModel;
+	}
+
+	public void setSemanticModel(String semanticModel) {
+		this.semanticModel = semanticModel;
+	}
 }
