@@ -15371,6 +15371,54 @@ public class CdrFlatFileImportScript extends Script {
 	<changeSet id="INTRD-11124_20221109" author="aelmalki" />
     <changeSet id="#INTR-11598_20221116" author="TarikFA." />
 
+
+	<changeSet id="#default_theme_20221212" author="Ilham-Chafik">
+		<insert tableName="tnl_custom_style">
+			<column name="id" valueNumeric="1" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="DEFAULT_HEADER" />
+			<column name="creator" value="opencell.admin" />
+			<column name="logo" value="tunnel/media/HEADER_LOGO.png" />
+			<column name="fav_icon" value="tunnel/media/FAV_ICON.png" />
+			<column name="font" value="DM Sans" />
+			<column name="background_color" value="#9E2E2A" />
+			<column name="text_color" value="#7A1B18" />
+			<column name="type" value="HEADER" />
+		</insert>
+		<insert tableName="tnl_custom_style">
+			<column name="id" valueNumeric="2" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="DEFAULT_BODY" />
+			<column name="creator" value="opencell.admin" />
+			<column name="font" value="Avenir" />
+			<column name="primary_color" value="#9E2E2A" />
+			<column name="secondary_color" value="#FFFFFF" />
+			<column name="type" value="BODY" />
+		</insert>
+		<insert tableName="tnl_custom_style">
+			<column name="id" valueNumeric="3" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="DEFAULT_FOOTER" />
+			<column name="creator" value="opencell.admin" />
+			<column name="logo" value="tunnel/media/FOOTER_LOGO.png" />
+			<column name="font" value="DM Sans" />
+			<column name="background_color" value="#9E2E2A" />
+			<column name="text_color" value="#FFFFFF" />
+			<column name="type" value="FOOTER" />
+		</insert>
+
+		<insert tableName="tnl_theme">
+			<column name="id" valueNumeric="1" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="DEFAULT_THEME" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+	</changeSet>
+
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
