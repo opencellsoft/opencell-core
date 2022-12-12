@@ -374,7 +374,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     			name.setSurname(formatIngenicoData(customerAccount.getName().getLastName(), true)); 
     			personalInformation.setTitle(isEntreprise?"Mr":(customerAccount.getName().getTitle() == null ? "" : customerAccount.getName().getTitle().getDescription()));
     		}  
-    		
+
     		personalInformation.setName(name);
     		MandateCustomer customer=new MandateCustomer();
     		customer.setBankAccountIban(bankAccountIban);
@@ -384,17 +384,19 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     		if(isEntreprise) {
     			customer.setCompanyName(formatIngenicoData(customerAccount.getName().getLastName(), true));
     		}
-    		
+
     		CreateMandateRequest body = new CreateMandateRequest();
     		body.setUniqueMandateReference(mandateReference);
     		body.setCustomer(customer);
     		body.setCustomerReference(customerAccount.getExternalRef1()); 
     		body.setRecurrenceType("RECURRING");
     		body.setSignatureType("UNSIGNED");
-    		  ObjectMapper mapper = new ObjectMapper(); 
-              String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body);
-    		log.info("createMandate body={}",jsonString);
-    	    getClient().merchant(paymentGateway.getMarchandId()).mandates().create(body); 
+    		if(log.isDebugEnabled()) {
+    			ObjectMapper mapper = new ObjectMapper(); 
+    			String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body);
+    			log.debug("createMandate body={}",jsonString);
+    		}
+    		getClient().merchant(paymentGateway.getMarchandId()).mandates().create(body); 
 
     	} catch (ApiException ev) { 
     		throw new MeveoApiException("Connection to ingenico is not allowed");
