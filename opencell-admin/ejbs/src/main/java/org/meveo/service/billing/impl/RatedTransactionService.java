@@ -1492,13 +1492,20 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     /**
-     * @param ratedTransaction
-     * @param unitAmountWithoutTax
-     * @param quantity
-     * @return
+     * Update the rated transaction
+     *
+     * @param ratedTransaction the rated transaction
+     * @param description the description
+     * @param unitAmountWithoutTax the unit amount without tax
+     * @param quantity the quantity
+     * @param param1 the param1
+     * @param param2 the param2
+     * @param param3 the param3
+     * @param paramExtra the param extra
      */
-    public void updateRatedTransaction(RatedTransaction ratedTransaction, BigDecimal unitAmountWithoutTax,
+    public void updateRatedTransaction(RatedTransaction ratedTransaction, String description, BigDecimal unitAmountWithoutTax,
             BigDecimal quantity, String param1, String param2, String param3, String paramExtra) {
+        ratedTransaction.setDescription(description);
         BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(unitAmountWithoutTax, unitAmountWithoutTax,
                 ratedTransaction.getTaxPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
         BigDecimal AmountWithoutTax = unitAmountWithoutTax.multiply(quantity);
