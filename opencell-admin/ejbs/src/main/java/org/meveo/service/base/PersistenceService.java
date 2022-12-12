@@ -1077,7 +1077,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                 filters.putAll(cfFilters);
 
                 ExpressionFactory expressionFactory = new ExpressionFactory(queryBuilder, "a");
-                filters.keySet().stream().filter(key -> filters.get(key) != null && !"$OPERATOR".equalsIgnoreCase(key)).forEach(key -> expressionFactory.addFilters(key, filters.get(key)));
+                filters.keySet().stream().sorted((k1, k2) -> org.apache.commons.lang3.StringUtils.countMatches(k2, ".") - org.apache.commons.lang3.StringUtils.countMatches(k1, "."))
+                						 .filter(key -> filters.get(key) != null && !"$OPERATOR".equalsIgnoreCase(key))
+                						 .forEach(key -> expressionFactory.addFilters(key, filters.get(key)));
                 for (String cft : cfFilters.keySet()) {
                     filters.remove(cft);
                 }
