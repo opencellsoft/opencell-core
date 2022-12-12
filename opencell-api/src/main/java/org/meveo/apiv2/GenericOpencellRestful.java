@@ -50,6 +50,7 @@ import org.meveo.apiv2.cpq.impl.CommercialOrderResourceImpl;
 import org.meveo.apiv2.cpq.impl.CpqContractResourceImpl;
 import org.meveo.apiv2.cpq.impl.CpqQuoteResourceImpl;
 import org.meveo.apiv2.crm.impl.ContactCategoryResourceImpl;
+import org.meveo.apiv2.customtable.CustomTableResourceImpl;
 import org.meveo.apiv2.document.DocumentResourceImpl;
 import org.meveo.apiv2.dunning.action.DunningActionImpl;
 import org.meveo.apiv2.dunning.impl.CollectionPlanStatusResourceImpl;
@@ -156,8 +157,8 @@ public class GenericOpencellRestful extends Application {
                 OpenOrderTemplateResourceImpl.class, AccountingResourceImpl.class, PaymentPlanResourceImpl.class, MediationSettingResourceImpl.class,
                 OpenOrderQuoteResourceImpl.class, CpqQuoteResourceImpl.class, CommercialOrderResourceImpl.class,
                 SearchPriceLineByAttributeResourceImpl.class, InvoiceLinesResourceImpl.class, CpqContractResourceImpl.class, OpenOrderResourceImpl.class,
-                ContactCategoryResourceImpl.class, WalletOperationResourceImpl.class, InvoiceValidationRulesResourceImpl.class, InternationalSettingsResourceImpl.class)
-                .collect(Collectors.toSet());
+                ContactCategoryResourceImpl.class, WalletOperationResourceImpl.class, InvoiceValidationRulesResourceImpl.class, InternationalSettingsResourceImpl.class, 
+                CustomTableResourceImpl.class).collect(Collectors.toSet());
         if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
             resources.add(GenericApiLoggingFilter.class);
             log.info(

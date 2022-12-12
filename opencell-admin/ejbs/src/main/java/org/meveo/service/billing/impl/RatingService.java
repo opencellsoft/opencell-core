@@ -1483,7 +1483,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
     public void applyDiscount(RatingResult ratingResult, WalletOperation walletOperation, boolean isVirtual) {
     	ChargeInstance chargeInstance = walletOperation.getChargeInstance();
-    	HashSet<DiscountPlanInstance> discountPlanInstances = new HashSet<DiscountPlanInstance>();
+    	HashSet<DiscountPlanInstance> discountPlanInstances = new HashSet<>();
     	if(chargeInstance.getServiceInstance() != null) {
     		discountPlanInstances.addAll(chargeInstance.getServiceInstance().getAllDiscountPlanInstances());
     	}
@@ -1494,8 +1494,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     		discountPlanInstances.addAll(walletOperation.getSubscription().getUserAccount().getBillingAccount().getAllDiscountPlanInstances());
     	}
     	var accountingArticle = walletOperation.getAccountingArticle()!=null?walletOperation.getAccountingArticle():accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance);
-    	List<DiscountPlanItem>  applicableDiscountPlanItems = new ArrayList<DiscountPlanItem>();
-    	List<DiscountPlanItem>  fixedDiscountPlanItems = new ArrayList<DiscountPlanItem>();
+    	List<DiscountPlanItem>  applicableDiscountPlanItems = new ArrayList<>();
+    	List<DiscountPlanItem>  fixedDiscountPlanItems = new ArrayList<>();
     	if(!discountPlanInstances.isEmpty()) {
     		DiscountPlan discountPlan =null;
     		Date operationDate=walletOperation.getOperationDate()!=null?walletOperation.getOperationDate():new Date();

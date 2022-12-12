@@ -126,7 +126,7 @@ public class StorageFactory {
             }
 
             S3Client client =
-                    S3Client.builder().region(Region.of(region))
+                    S3Client.builder().forcePathStyle(true).region(Region.of(region))
                     .endpointOverride(URI.create(endpointUrl))
                             .credentialsProvider(
                                     StaticCredentialsProvider.create(

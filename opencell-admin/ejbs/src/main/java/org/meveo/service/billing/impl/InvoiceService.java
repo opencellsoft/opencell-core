@@ -89,6 +89,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.LockMode;
@@ -5913,14 +5914,27 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     }
                     em.flush();
 
+                    final int maxValue =
+                            ParamBean.getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
                     Date now = new Date();
                     for (Object[] aggregateAndILIds : ilMassUpdates) {
                         List<Long> ilIds = (List<Long>) aggregateAndILIds[1];
-                        SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndILIds[0];
-                        em.createNamedQuery("InvoiceLine.updateWithInvoice").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("now", now)
-                            .setParameter("invoiceAgregateF", subCategoryAggregate).setParameter("ids", ilIds).executeUpdate();
-                        em.createNamedQuery("RatedTransaction.linkRTWithInvoice").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("now", now)
-                            .setParameter("ids", ilIds).executeUpdate();
+                        ListUtils.partition(ilIds, maxValue).forEach(ids -> {
+                            SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndILIds[0];
+                            em.createNamedQuery("InvoiceLine.updateWithInvoice")
+                                    .setParameter("billingRun", billingRun)
+                                    .setParameter("invoice", invoice)
+                                    .setParameter("now", now)
+                                    .setParameter("invoiceAgregateF", subCategoryAggregate)
+                                    .setParameter("ids", ids)
+                                    .executeUpdate();
+                            em.createNamedQuery("RatedTransaction.linkRTWithInvoice")
+                                    .setParameter("billingRun", billingRun)
+                                    .setParameter("invoice", invoice)
+                                    .setParameter("now", now)
+                                    .setParameter("ids", ids)
+                                    .executeUpdate();
+                        });
                     }
 
                     for (Object[] aggregateAndILs : ilUpdates) {
@@ -7027,11 +7041,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         break;
                     }
                 }
-                invoice.setInvoiceBalance(remainingAmount);
-				List<Long> toRemove = invoice.getLinkedInvoices().stream()
-						.filter(il -> ZERO.compareTo(il.getAmount()) == 0 && InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(il.getType()))
-						.map(il -> il.getLinkedInvoiceValue().getId()).collect(Collectors.toList());
-				linkedInvoiceService.deleteByIdInvoiceAndLinkedInvoice(invoice.getId(), toRemove);
+            invoice.setInvoiceBalance(remainingAmount);
+            List<Long> toRemove = invoice.getLinkedInvoices().stream()
+                    .filter(linkedInvoice -> (linkedInvoice.getAmount() == null || ZERO.compareTo(linkedInvoice.getAmount()) == 0) && InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(linkedInvoice.getType()))
+                    .map(il -> il.getLinkedInvoiceValue().getId()).collect(Collectors.toList());
+            linkedInvoiceService.deleteByIdInvoiceAndLinkedInvoice(invoice.getId(), toRemove);
 	        }
     }
 
@@ -7044,14 +7058,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		invoice.setInvoiceBalance(null);
 		if (invoice.getLinkedInvoices() != null) {
 			Predicate<LinkedInvoice> advFilter = i -> InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(i.getType());
-			Stream<LinkedInvoice> advances = invoice.getLinkedInvoices().stream().filter(advFilter);
 			if (delete) {
-				advances.forEach(li -> li.getLinkedInvoiceValue().setInvoiceBalance(li.getLinkedInvoiceValue().getInvoiceBalance().add(li.getAmount())));
+				invoice.getLinkedInvoices().stream().filter(advFilter).forEach(li -> li.getLinkedInvoiceValue().setInvoiceBalance(li.getLinkedInvoiceValue().getInvoiceBalance().add(li.getAmount())));
 				linkedInvoiceService.deleteByInvoiceIdAndType(invoice.getId(), InvoiceTypeEnum.ADVANCEMENT_PAYMENT);
 				invoice.getLinkedInvoices().removeIf(advFilter);
 			} else {
 				for (Invoice i : advInvoices) {
-					advances.filter(li -> li.getLinkedInvoiceValue().getId() == i.getId()).findAny().ifPresent(li -> {
+					invoice.getLinkedInvoices().stream().filter(advFilter).filter(li -> li.getLinkedInvoiceValue().getId() == i.getId()).findAny().ifPresent(li -> {
 						i.setInvoiceBalance(i.getInvoiceBalance().add(li.getAmount()));
 						li.setAmount(ZERO);
 					});
