@@ -6597,7 +6597,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         
         
-        if(toUpdate.getInvoiceType() != null && toUpdate.getCommercialOrder() == null) {
+        if(toUpdate.getInvoiceType() != null) {
            InvoiceType advType = invoiceTypeService.findByCode("ADV");
            if(advType != null && "ADV".equals(toUpdate.getInvoiceType().getCode())) {
                boolean isAccountingArticleAdt = toUpdate.getInvoiceLines() != null && toUpdate.getInvoiceLines().stream().allMatch(il -> il.getAccountingArticle() != null && il.getAccountingArticle().getCode().equals("ADV-STD"));
