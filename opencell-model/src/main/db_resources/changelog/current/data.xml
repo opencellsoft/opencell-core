@@ -13920,7 +13920,7 @@ public class CdrFlatFileImportScript extends Script {
 
 	<changeSet id="#default_theme_20221212" author="Ilham-Chafik">
 		<insert tableName="tnl_custom_style">
-			<column name="id" valueNumeric="1" />
+			<column name="id" valueNumeric="-1" />
 			<column name="version" value="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="code" value="DEFAULT_HEADER" />
@@ -13933,7 +13933,7 @@ public class CdrFlatFileImportScript extends Script {
 			<column name="type" value="HEADER" />
 		</insert>
 		<insert tableName="tnl_custom_style">
-			<column name="id" valueNumeric="2" />
+			<column name="id" valueNumeric="-2" />
 			<column name="version" value="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="code" value="DEFAULT_BODY" />
@@ -13944,7 +13944,7 @@ public class CdrFlatFileImportScript extends Script {
 			<column name="type" value="BODY" />
 		</insert>
 		<insert tableName="tnl_custom_style">
-			<column name="id" valueNumeric="3" />
+			<column name="id" valueNumeric="-3" />
 			<column name="version" value="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="code" value="DEFAULT_FOOTER" />
@@ -13957,7 +13957,7 @@ public class CdrFlatFileImportScript extends Script {
 		</insert>
 
 		<insert tableName="tnl_theme">
-			<column name="id" valueNumeric="1" />
+			<column name="id" valueNumeric="-1" />
 			<column name="version" value="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="code" value="DEFAULT_THEME" />
