@@ -72,16 +72,16 @@ public class HypertextSectionRsImpl extends BaseRs implements HypertextSectionRs
     }
 
     @Override
-    public ActionStatus createOrUpdate(List<HypertextSectionDto> sectionsDto) {
+    public List<HypertextSection> createOrUpdate(List<HypertextSectionDto> sectionsDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
+        List<HypertextSection> sections = null;
         try {
-            sectionApi.createOrUpdate(sectionsDto);
+            sections = sectionApi.createOrUpdate(sectionsDto);
         } catch (Exception e) {
             processException(e, result);
         }
 
-        return result;
+        return sections;
     }
 
 

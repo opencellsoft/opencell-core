@@ -105,6 +105,17 @@ public class ThemeApi extends BaseCrudApi<Theme, ThemeDto> {
 
         dtoToEntity(postData, theme);
 
+        CustomStyle header = customStyleApi.update(postData.getHeader());
+        CustomStyle body = customStyleApi.update(postData.getBody());
+        CustomStyle footer = customStyleApi.update(postData.getFooter());
+
+        header.setHypertextSections(null);
+        body.setHypertextSections(null);
+        footer.setHypertextSections(null);
+        theme.setHeader(header);
+        theme.setBody(body);
+        theme.setFooter(footer);
+
         themeService.update(theme);
 
         return theme;

@@ -26,8 +26,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.tunnel.ThemeDto;
-import org.meveo.api.dto.tunnel.TunnelCustomizationDto;
 import org.meveo.api.rest.IBaseRs;
+import org.meveo.model.tunnel.Theme;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -66,7 +66,7 @@ public interface ThemeRs extends IBaseRs {
                     )
             }
     )
-    ActionStatus create(@Parameter(description = "tunnel dto for a new insertion", required = true)
+    Theme create(@Parameter(description = "tunnel dto for a new insertion", required = true)
                                 ThemeDto themeDto);
 
 
@@ -94,7 +94,7 @@ public interface ThemeRs extends IBaseRs {
                     )
             }
     )
-    ActionStatus update(ThemeDto themeDto);
+    Theme update(ThemeDto themeDto);
 
 
     /**
