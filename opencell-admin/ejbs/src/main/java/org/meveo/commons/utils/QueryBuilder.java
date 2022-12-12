@@ -22,18 +22,21 @@ import static org.meveo.service.base.PersistenceService.FROM_JSON_FUNCTION;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -98,6 +101,7 @@ public class QueryBuilder {
     private int nbCriteriaInOrClause;
 
     private Map<String, JoinWrapper> innerJoins = new HashMap<>();
+    private Set<InnerJoin> rootInnerJoins = new HashSet<>();
 
     private InnerJoin rootInnerJoin;
 
@@ -131,14 +135,15 @@ public class QueryBuilder {
     }
 
     public String formatInnerJoins(){
-        return innerJoins.values().isEmpty() ? "" : innerJoins.values().stream()
-                .map(jw -> format(alias, jw.getRootInnerJoin(), q.toString().startsWith(FROM)))
+        return rootInnerJoins.isEmpty() ? "" : rootInnerJoins.stream()
+                .map(rij -> format(alias, rij, q.toString().startsWith(FROM)))
                 .collect(Collectors.joining(" ", " ", " "));
     }
 
     public String formatInnerJoins(boolean doFetch){
-        return innerJoins.values().isEmpty() ? "" : innerJoins.values().stream()
-                .map(jw -> format(alias, jw.getRootInnerJoin(), doFetch))
+    	var i = this.alias;
+        return rootInnerJoins.isEmpty() ? "" : rootInnerJoins.stream()
+                .map(rij -> format(alias, rij, doFetch))
                 .collect(Collectors.joining(" ", " ", " "));
     }
 
@@ -151,7 +156,7 @@ public class QueryBuilder {
                 .map(next -> {
                     if(!next.getNextInnerJoins().isEmpty())
                         return format(innerJoin.getAlias(), next, doFetch);
-					return String.format(joinType.toString() + " join %s%s.%s %s", shouldFetch, innerJoin.getAlias(), next.getName(), next.getAlias());
+					return String.format("left join %s%s.%s %s", shouldFetch, innerJoin.getAlias(), next.getName(), next.getAlias());
                 })
                 .collect(Collectors.joining(" ", sql, ""));
     }
@@ -165,17 +170,25 @@ public class QueryBuilder {
 
         String joinAlias = "";
         InnerJoin rootInnerJoin = null;
-
-        for(int i = fields.length - 2; i >= 0; i--){
-            InnerJoin innerJoin = new InnerJoin(fields[i]);
-            if(i == fields.length - 2){
+        InnerJoin subInnerJoin = null;
+        List<InnerJoin> lookForInnerJoin = new ArrayList<>(rootInnerJoins);
+        for(AtomicInteger index = new AtomicInteger(); index.get() <= fields.length - 2; index.incrementAndGet()) {
+        	int i = index.get();
+        	InnerJoin innerJoin = lookForInnerJoin.stream().filter(rij -> rij.getName().equals(fields[index.get()])).findFirst().orElse(new InnerJoin(fields[index.get()])); 
+        	if(i == 0) {
+        		rootInnerJoin = innerJoin;
+        	} else {
+        		subInnerJoin.next(innerJoin);
+        	}
+        	if(i == fields.length - 2){
                 joinAlias = innerJoin.getAlias()+ "." + fields[i + 1];
-            }else {
-                innerJoin.next(rootInnerJoin);
             }
-            rootInnerJoin = innerJoin;
+        	subInnerJoin = innerJoin;
+        	lookForInnerJoin = innerJoin.getNextInnerJoins();
         }
-
+        
+        rootInnerJoins.add(rootInnerJoin);
+        
         return new JoinWrapper(rootInnerJoin, joinAlias);
     }
 
@@ -315,7 +328,9 @@ public class QueryBuilder {
     }
 
     private static void addInnerJoinTag(StringBuilder query) {
-        query.append(INNER_JOINS);
+        if(query.indexOf(INNER_JOINS) == -1) {
+        	query.append(INNER_JOINS);
+        }
     }
 
     /**
