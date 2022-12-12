@@ -4166,6 +4166,7 @@
             <column name="attribute_id" type="bigint"/>
             <column name="attribute_duration_id" type="bigint"/>
             <column name="attribute_calendar_id" type="bigint"/>
+            <column name="internal_note" type="${type.longtext}" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-208">
@@ -18934,6 +18935,8 @@
     <changeSet id="#INTRD-12043_20221121" author="HatimOUDAD"/>
 	<changeSet id="INTRD-11732_20221130" author="MehdiBOURRAS" />
     <changeSet id="#12201_20221212" author="zelmeliani" />
+	<changeSet id="#INTR-112153_20221209_new_field" author="a.rouaguebe" />
+
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
