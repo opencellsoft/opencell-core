@@ -391,10 +391,12 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     		body.setCustomerReference(customerAccount.getExternalRef1()); 
     		body.setRecurrenceType("RECURRING");
     		body.setSignatureType("UNSIGNED");
-    		  ObjectMapper mapper = new ObjectMapper(); 
-              String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body);
+    		if(log.isDebugEnabled()) {
+    		ObjectMapper mapper = new ObjectMapper(); 
+    		String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body);
     		log.debug("createMandate body={}",jsonString);
-    	    getClient().merchant(paymentGateway.getMarchandId()).mandates().create(body); 
+    		}
+    		getClient().merchant(paymentGateway.getMarchandId()).mandates().create(body); 
 
     	} catch (ApiException ev) { 
     		throw new MeveoApiException("Connection to ingenico is not allowed");
