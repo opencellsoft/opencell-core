@@ -22,6 +22,7 @@ import static java.util.Set.of;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
+import static org.meveo.commons.utils.ParamBean.getInstance;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -77,6 +78,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.util.IOUtils;
 import org.hibernate.Session;
@@ -886,8 +888,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 paymentMethod = ((Order) entityToInvoice).getPaymentMethod();
             } else {
                 // Calculate customer account balance
-                boolean isBalanceDue = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.limitByDueDate", true);
-                boolean isBalanceLitigation = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.includeLitigation", false);
+                boolean isBalanceDue = getInstance().getPropertyAsBoolean("invoice.balance.limitByDueDate", true);
+                boolean isBalanceLitigation = getInstance().getPropertyAsBoolean("invoice.balance.includeLitigation", false);
                 if (isBalanceLitigation) {
                     balance = customerAccountService.customerAccountBalanceDue(ba.getCustomerAccount(), isBalanceDue ? invoiceDate : null);
                 } else {
@@ -995,8 +997,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     if ((entityToInvoice instanceof Order) && (billingAccount == null || !billingAccount.getId().equals(rtGroup.getBillingAccount().getId()))) {
                         billingAccount = rtGroup.getBillingAccount();
                         // Balance are calculated on CA level and will be the same for all rated transactions of same order
-                        boolean isBalanceDue = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.due", true);
-                        boolean isBalanceLitigation = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.litigation", false);
+                        boolean isBalanceDue = getInstance().getPropertyAsBoolean("invoice.balance.due", true);
+                        boolean isBalanceLitigation = getInstance().getPropertyAsBoolean("invoice.balance.litigation", false);
                         if (isBalanceLitigation) {
                             balance = customerAccountService.customerAccountBalanceDue(billingAccount.getCustomerAccount(), isBalanceDue ? invoiceDate : null);
                         } else {
@@ -4169,8 +4171,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         BigDecimal netToPay = invoice.getAmountWithTax();
         if (!isEnterprise && invoiceDTO.isIncludeBalance() != null && invoiceDTO.isIncludeBalance()) {
             // Calculate customer account balance
-            boolean isBalanceDue = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.due", true);
-            boolean isBalanceLitigation = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.litigation", false);
+            boolean isBalanceDue = getInstance().getPropertyAsBoolean("invoice.balance.due", true);
+            boolean isBalanceLitigation = getInstance().getPropertyAsBoolean("invoice.balance.litigation", false);
             BigDecimal balance = null;
             if (isBalanceLitigation) {
                 balance = customerAccountService.customerAccountBalanceDue(invoice.getBillingAccount().getCustomerAccount(), isBalanceDue ? invoice.getDueDate() : null);
@@ -5068,8 +5070,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 paymentMethod = ((Order) entityToInvoice).getPaymentMethod();
             } else {
                 // Calculate customer account balance
-                boolean isBalanceDue = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.limitByDueDate", true);
-                boolean isBalanceLitigation = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.includeLitigation", false);
+                boolean isBalanceDue = getInstance().getPropertyAsBoolean("invoice.balance.limitByDueDate", true);
+                boolean isBalanceLitigation = getInstance().getPropertyAsBoolean("invoice.balance.includeLitigation", false);
                 if (isBalanceLitigation) {
                     balance = customerAccountService.customerAccountBalanceDue(ba.getCustomerAccount(), isBalanceDue ? invoiceDate : null);
                 } else {
@@ -5147,8 +5149,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     if (entityToInvoice instanceof Order) {
                         if (billingAccount == null || !billingAccount.getId().equals(invoiceLinesGroup.getBillingAccount().getId())) {
                             billingAccount = invoiceLinesGroup.getBillingAccount();
-                            boolean isBalanceDue = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.due", true);
-                            boolean isBalanceLitigation = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.litigation", false);
+                            boolean isBalanceDue = getInstance().getPropertyAsBoolean("invoice.balance.due", true);
+                            boolean isBalanceLitigation = getInstance().getPropertyAsBoolean("invoice.balance.litigation", false);
                             if (isBalanceLitigation) {
                                 balance = customerAccountService.customerAccountBalanceDue(billingAccount.getCustomerAccount(), isBalanceDue ? invoiceDate : null);
                             } else {
@@ -5230,13 +5232,26 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     em.flush();
 
                     Date now = new Date();
+                    final int maxValue =
+                            getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
                     for (Object[] aggregateAndILIds : ilMassUpdates) {
                         List<Long> ilIds = (List<Long>) aggregateAndILIds[1];
-                        SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndILIds[0];
-                        em.createNamedQuery("InvoiceLine.updateWithInvoice").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("now", now)
-                            .setParameter("invoiceAgregateF", subCategoryAggregate).setParameter("ids", ilIds).executeUpdate();
-                        em.createNamedQuery("RatedTransaction.linkRTWithInvoice").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("now", now)
-                            .setParameter("ids", ilIds).executeUpdate();
+                        ListUtils.partition(ilIds, maxValue).forEach(ids -> {
+                            SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndILIds[0];
+                            em.createNamedQuery("InvoiceLine.updateWithInvoice")
+                                    .setParameter("billingRun", billingRun)
+                                    .setParameter("invoice", invoice)
+                                    .setParameter("now", now)
+                                    .setParameter("invoiceAgregateF", subCategoryAggregate)
+                                    .setParameter("ids", ids)
+                                    .executeUpdate();
+                            em.createNamedQuery("RatedTransaction.linkRTWithInvoice")
+                                    .setParameter("billingRun", billingRun)
+                                    .setParameter("invoice", invoice)
+                                    .setParameter("now", now)
+                                    .setParameter("ids", ids)
+                                    .executeUpdate();
+                        });
                     }
 
                     for (Object[] aggregateAndILs : ilUpdates) {
@@ -5624,8 +5639,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         BigDecimal netToPay = invoice.getAmountWithTax();
         if (!isEnterprise && isIncludeBalance != null && isIncludeBalance) {
             // Calculate customer account balance
-            boolean isBalanceDue = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.due", true);
-            boolean isBalanceLitigation = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.litigation", false);
+            boolean isBalanceDue = getInstance().getPropertyAsBoolean("invoice.balance.due", true);
+            boolean isBalanceLitigation = getInstance().getPropertyAsBoolean("invoice.balance.litigation", false);
             BigDecimal balance = null;
             if (isBalanceLitigation) {
                 balance = customerAccountService.customerAccountBalanceDue(invoice.getBillingAccount().getCustomerAccount(), isBalanceDue ? invoice.getDueDate() : null);
