@@ -286,16 +286,16 @@ public class UserApi extends BaseApi {
      */
     private void getKeycloakAttributesByUsername(UserDto userDto) {
         UserRepresentation userRepresentation = userService.getUserRepresentationByUsername(userDto.getUsername());
-        Map<String, List<String>> pAttributes = userRepresentation.getAttributes();
+        Map<String, List<String>> keycloakAttributes = userRepresentation.getAttributes();
 
-        if(pAttributes != null && !pAttributes.isEmpty()) {
-            Map<String, String> s = new HashMap<>();
+        if(keycloakAttributes != null && !keycloakAttributes.isEmpty()) {
+            Map<String, String> attributes = new HashMap<>();
 
-            for (Map.Entry<String, List<String>> entry : pAttributes.entrySet()) {
-                s.put(entry.getKey(), String.join(", ", entry.getValue()));
+            for (Map.Entry<String, List<String>> entry : keycloakAttributes.entrySet()) {
+                attributes.put(entry.getKey(), String.join(", ", entry.getValue()));
             }
 
-            userDto.setAttributes(s);
+            userDto.setAttributes(attributes);
         }
     }
 
