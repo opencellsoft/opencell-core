@@ -1,0 +1,32 @@
+package org.meveo.model.billing;
+
+import javax.persistence.Cacheable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ObservableEntity;
+
+@Entity
+@ObservableEntity
+@Cacheable
+@ExportIdentifier({ "code" })
+@Table(name = "untdid_5305_taxation_category", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "untdid_5305_taxation_category_seq"), })
+
+public class TaxationCategory {
+	
+	@Column(name = "name", length = 500)
+	  @Size(max = 20)
+	  private String name;
+	  
+	  @Column(name = "semantic_model", length = 500)
+	  @Size(max = 20)
+	  private String semanticModel;
+
+}

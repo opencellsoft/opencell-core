@@ -14842,8 +14842,9 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
     
-    <changeSet id="#INTRD-10544_20221207-rebuild" author="HatimOUDAD">
-        <createTable tableName="ISO_ICD">
+    <changeSet id="#INTRD-10544_20221207" author="HatimOUDAD"> 
+        <createSequence sequenceName="iso_icd_seq" startValue="1" />
+        <createTable tableName="iso_icd">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_iso_icd" />
@@ -14867,7 +14868,9 @@ order by date_trunc('month', i.invoice_date) DESC
 
         </createTable>
         
-        <createTable tableName="UNTDID_UNIT">
+        
+        <createSequence sequenceName="untdid_unit_seq" startValue="1" />
+        <createTable tableName="untdid_unit">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_untdid_unit" />
@@ -14894,7 +14897,8 @@ order by date_trunc('month', i.invoice_date) DESC
 
         </createTable>
         
-        <createTable tableName="UNTDID_1001_INVOICE_CODE_TYPE">
+        <createSequence sequenceName="untdid_1001_invoice_code_type_seq" startValue="1" />
+        <createTable tableName="untdid_1001_invoice_code_type">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_1001_invoice_type" />
@@ -14920,7 +14924,8 @@ order by date_trunc('month', i.invoice_date) DESC
 
         </createTable>
         
-        <createTable tableName="UNTDID_2475_VAT_PAYMENT_OPTION">
+        <createSequence sequenceName="untdid_2475_vat_payment_option_seq" startValue="1" />
+        <createTable tableName="untdid_2475_vat_payment_option">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_2475_vat_payment" />
@@ -14952,7 +14957,8 @@ order by date_trunc('month', i.invoice_date) DESC
 
         </createTable>
         
-        <createTable tableName="UNTDID_4451_INVOICE_SUBJECT_CODE">
+        <createSequence sequenceName="untdid_4451_invoice_subject_code_seq" startValue="1" />
+        <createTable tableName="untdid_4451_invoice_subject_code">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_4451_invoice_subject" />
@@ -14978,7 +14984,8 @@ order by date_trunc('month', i.invoice_date) DESC
 
         </createTable>
         
-        <createTable tableName="UNTDID_5305_TAXATION_CATEGORY">
+        <createSequence sequenceName="untdid_5305_taxation_category_seq" startValue="1" />
+        <createTable tableName="untdid_5305_taxation_category">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_5305_taxation_category" />
@@ -15004,7 +15011,8 @@ order by date_trunc('month', i.invoice_date) DESC
 
         </createTable>
         
-        <createTable tableName="UNTDID_VATEX">
+        <createSequence sequenceName="untdid_vatex_seq" startValue="1" />
+        <createTable tableName="untdid_vatex">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_untdid_vatex" />
@@ -15030,7 +15038,8 @@ order by date_trunc('month', i.invoice_date) DESC
 
         </createTable>
         
-        <createTable tableName="UNTDID_4461_PAYMENT_MEANS">
+        <createSequence sequenceName="untdid_4461_payment_means_seq" startValue="1" />
+        <createTable tableName="untdid_4461_payment_means">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_4461_payment_means" />
@@ -15056,7 +15065,8 @@ order by date_trunc('month', i.invoice_date) DESC
 
         </createTable>
         
-         <createTable tableName="UNTDID_5189_ALLOWANCE_CODE">
+        <createSequence sequenceName="untdid_5189_allowance_code_seq" startValue="1" />
+         <createTable tableName="untdid_5189_allowance_code">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_5189_allowance_code" />

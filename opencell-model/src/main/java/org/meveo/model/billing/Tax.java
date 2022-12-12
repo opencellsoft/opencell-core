@@ -103,6 +103,14 @@ public class Tax extends BusinessCFEntity {
     @JoinTable(name = "billing_tax_composition",
             joinColumns = @JoinColumn(name = "main_tax_id"), inverseJoinColumns = @JoinColumn(name = "sub_tax_id"))
     private List<Tax> subTaxes;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "taxation_category_id")
+    private TaxationCategory taxationCategory;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vatex_id")
+    private VatExemption vatex;
 
     public Tax() {
 
@@ -207,4 +215,20 @@ public class Tax extends BusinessCFEntity {
         }
         return true;
     }
+
+	public TaxationCategory getTaxationCategory() {
+		return taxationCategory;
+	}
+
+	public void setTaxationCategory(TaxationCategory taxationCategory) {
+		this.taxationCategory = taxationCategory;
+	}
+
+	public VatExemption getVatex() {
+		return vatex;
+	}
+
+	public void setVatex(VatExemption vatex) {
+		this.vatex = vatex;
+	}
 }

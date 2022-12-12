@@ -17681,8 +17681,9 @@
                                  referencedColumnNames="id" />
     </changeSet>
     
-    <changeSet id="#INTRD-10544_20221207-rebuild" author="HatimOUDAD">
-        <createTable tableName="ISO_ICD">
+    <changeSet id="#INTRD-10544_20221207-rebuild" author="HatimOUDAD">   
+        <createSequence sequenceName="iso_icd_seq" startValue="1" />
+        <createTable tableName="iso_icd">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_iso_icd" />
@@ -17706,7 +17707,9 @@
 
         </createTable>
         
-        <createTable tableName="UNTDID_UNIT">
+        
+        <createSequence sequenceName="untdid_unit_seq" startValue="1" />
+        <createTable tableName="untdid_unit">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_untdid_unit" />
@@ -17733,7 +17736,8 @@
 
         </createTable>
         
-        <createTable tableName="UNTDID_1001_INVOICE_CODE_TYPE">
+        <createSequence sequenceName="untdid_1001_invoice_code_type_seq" startValue="1" />
+        <createTable tableName="untdid_1001_invoice_code_type">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_1001_invoice_type" />
@@ -17759,7 +17763,8 @@
 
         </createTable>
         
-        <createTable tableName="UNTDID_2475_VAT_PAYMENT_OPTION">
+        <createSequence sequenceName="untdid_2475_vat_payment_option_seq" startValue="1" />
+        <createTable tableName="untdid_2475_vat_payment_option">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_2475_vat_payment" />
@@ -17791,7 +17796,8 @@
 
         </createTable>
         
-        <createTable tableName="UNTDID_4451_INVOICE_SUBJECT_CODE">
+        <createSequence sequenceName="untdid_4451_invoice_subject_code_seq" startValue="1" />
+        <createTable tableName="untdid_4451_invoice_subject_code">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_4451_invoice_subject" />
@@ -17817,7 +17823,8 @@
 
         </createTable>
         
-        <createTable tableName="UNTDID_5305_TAXATION_CATEGORY">
+        <createSequence sequenceName="untdid_5305_taxation_category_seq" startValue="1" />
+        <createTable tableName="untdid_5305_taxation_category">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_5305_taxation_category" />
@@ -17843,7 +17850,8 @@
 
         </createTable>
         
-        <createTable tableName="UNTDID_VATEX">
+        <createSequence sequenceName="untdid_vatex_seq" startValue="1" />
+        <createTable tableName="untdid_vatex">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_untdid_vatex" />
@@ -17869,7 +17877,8 @@
 
         </createTable>
         
-        <createTable tableName="UNTDID_4461_PAYMENT_MEANS">
+        <createSequence sequenceName="untdid_4461_payment_means_seq" startValue="1" />
+        <createTable tableName="untdid_4461_payment_means">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_4461_payment_means" />
@@ -17895,7 +17904,8 @@
 
         </createTable>
         
-         <createTable tableName="UNTDID_5189_ALLOWANCE_CODE">
+        <createSequence sequenceName="untdid_5189_allowance_code_seq" startValue="1" />
+         <createTable tableName="untdid_5189_allowance_code">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_5189_allowance_code" />
@@ -17924,29 +17934,29 @@
         <addForeignKeyConstraint baseTableName="billing_tax"
                                  baseColumnNames="taxation_category_id"
                                  constraintName="fk_billing_tax_5305_taxation_category"
-                                 referencedTableName="UNTDID_5305_TAXATION_CATEGORY"
+                                 referencedTableName="untdid_5305_taxation_category"
                                  referencedColumnNames="id"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
         <addForeignKeyConstraint baseTableName="billing_tax"
                                  baseColumnNames="vatex_id"
                                  constraintName="fk_billing_tax_vatex"
-                                 referencedTableName="UNTDID_VATEX"
+                                 referencedTableName="untdid_vatex"
                                  referencedColumnNames="id"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
                                  
-        <addForeignKeyConstraint baseTableName="BILLING_INVOICE_TYPE"
+        <addForeignKeyConstraint baseTableName="billing_invoice_type"
                                  baseColumnNames="invoice_code_type_id"
                                  constraintName="fk_billing_invoice_1001_invoice"
-                                 referencedTableName="UNTDID_1001_INVOICE_CODE_TYPE"
+                                 referencedTableName="untdid_1001_invoice_code_type"
                                  referencedColumnNames="id"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
-        <addForeignKeyConstraint baseTableName="BILLING_INVOICE_TYPE"
+        <addForeignKeyConstraint baseTableName="billing_invoice_type"
                                  baseColumnNames="vat_payment_option_id"
                                  constraintName="fk_billing_invoice_2475_vat"
-                                 referencedTableName="UNTDID_2475_VAT_PAYMENT_OPTION"
+                                 referencedTableName="untdid_2475_vat_payment_option"
                                  referencedColumnNames="id"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
@@ -19218,6 +19228,7 @@
     <changeSet id="#INTRD-242_20221121" author="AdilElJaouhari" />
     <changeSet id="#INTRD-11780_20221128" author="AdilElJaouhari" />
 	<changeSet id="INTRD-11732_20221130" author="MehdiBOURRAS" />
+	<changeSet id="#INTRD-10544_20221207" author="HatimOUDAD" /> 
     
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
