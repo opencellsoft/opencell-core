@@ -99,7 +99,7 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
         setStatusEnum(pricePlanMatrixVersion.getStatus());
         setStatusDate(pricePlanMatrixVersion.getStatusDate());
         setValidity(pricePlanMatrixVersion.getValidity());
-        setPrice(pricePlanMatrixVersion.getPrice());
+        setPrice(pricePlanMatrixVersion.isMatrix()? BigDecimal.ZERO : pricePlanMatrixVersion.getPrice());
         setAmountWithoutTax(pricePlanMatrixVersion.getAmountWithoutTax());
         setAmountWithTax(pricePlanMatrixVersion.getAmountWithTax());
         setPriceEL(pricePlanMatrixVersion.getPriceEL());
