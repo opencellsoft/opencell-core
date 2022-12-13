@@ -14862,5 +14862,9 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="internal_note" type="${type.longtext}" />
         </addColumn>
 	</changeSet>
+	
+	 <changeSet id="#2038-20221130" author="Mbarek-Ay">
+       <createSequence sequenceName="crm_address_book_contact_seq" startValue="1" />
+    </changeSet>
 
 </databaseChangeLog>
