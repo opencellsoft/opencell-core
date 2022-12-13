@@ -13961,6 +13961,9 @@ public class CdrFlatFileImportScript extends Script {
 			<column name="version" value="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="code" value="DEFAULT_THEME" />
+			<column name="header" value="-1" />
+			<column name="body" value="-2" />
+			<column name="footer" value="-3" />
 			<column name="creator" value="opencell.admin" />
 		</insert>
 	</changeSet>
