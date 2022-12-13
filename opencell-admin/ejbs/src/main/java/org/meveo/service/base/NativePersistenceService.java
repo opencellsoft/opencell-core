@@ -794,6 +794,7 @@ public class NativePersistenceService extends BaseService {
         if (filters != null && !filters.isEmpty()) {
             NativeExpressionFactory nativeExpressionFactory = new NativeExpressionFactory(queryBuilder, "a");
             filters.keySet().stream()
+            		.sorted((k1, k2) -> org.apache.commons.lang3.StringUtils.countMatches(k2, ".") - org.apache.commons.lang3.StringUtils.countMatches(k1, "."))
                     .filter(key -> filters.get(key) != null)
                     .forEach(key -> nativeExpressionFactory.addFilters(key, filters.get(key)));
 
@@ -851,6 +852,7 @@ public class NativePersistenceService extends BaseService {
         if (filters != null && !filters.isEmpty()) {
             NativeExpressionFactory nativeExpressionFactory = new NativeExpressionFactory(queryBuilder, "a");
             filters.keySet().stream()
+            		.sorted((k1, k2) -> org.apache.commons.lang3.StringUtils.countMatches(k2, ".") - org.apache.commons.lang3.StringUtils.countMatches(k1, "."))
                     .filter(key -> filters.get(key) != null)
                     .forEach(key -> nativeExpressionFactory.addFilters(key, filters.get(key)));
 
@@ -889,6 +891,7 @@ public class NativePersistenceService extends BaseService {
         if (filters != null && !filters.isEmpty()) {
             NativeExpressionFactory nativeExpressionFactory = new NativeExpressionFactory(queryBuilder, "a");
             filters.keySet().stream()
+            		.sorted((k1, k2) -> org.apache.commons.lang3.StringUtils.countMatches(k2, ".") - org.apache.commons.lang3.StringUtils.countMatches(k1, "."))
                     .filter(key -> filters.get(key) != null)
                     .forEach(key -> nativeExpressionFactory.addFilters(key, filters.get(key)));
         }
