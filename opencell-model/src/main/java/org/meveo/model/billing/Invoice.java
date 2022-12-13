@@ -156,10 +156,7 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.findWithFuntionalCurrencyDifferentFromOne", query = "SELECT i FROM Invoice i JOIN Provider p ON p.currency.id = i.tradingCurrency.currency.id WHERE i.lastAppliedRate <> :EXPECTED_RATE"),
 })
 @NamedNativeQueries({
-	@NamedNativeQuery(name = "Invoice.rollbackAdvance", query = "UPDATE billing_invoice  SET invoice_balance = invoice_balance + LI.amount\n"
-			+ "FROM (SELECT BLI.linked_invoice_id, BLI.amount FROM billing_linked_invoices BLI\n"
-			+ "		JOIN billing_invoice I ON I.id = BLI.id WHERE I.billing_run_id = :billingRunId) LI\n"
-			+ "WHERE LI.linked_invoice_id = id")
+	@NamedNativeQuery(name = "Invoice.rollbackAdvance", query = "UPDATE billing_invoice  SET invoice_balance = invoice_balance + LI.amount FROM (SELECT BLI.linked_invoice_id, BLI.amount FROM billing_linked_invoices BLI 	JOIN billing_invoice I ON I.id = BLI.id WHERE I.billing_run_id = :billingRunId) LI WHERE LI.linked_invoice_id = id")
 })
 public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISearchable {
 
