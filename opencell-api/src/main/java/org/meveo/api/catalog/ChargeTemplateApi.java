@@ -237,7 +237,7 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
     	// Internal note updatable only for Draft and Active Charge template
 		if (postData.getInternalNote() != null && !postData.getInternalNote().equals(entity.getInternalNote()) && 
 				!Arrays.asList(ChargeTemplateStatusEnum.DRAFT, ChargeTemplateStatusEnum.ACTIVE).contains(entity.getStatus())) {
-			throw new BusinessException("Cannot modify internalNote if charge is not DRAFT or ACTIVATED");
+			throw new InvalidParameterException("Cannot modify internalNote if charge is not DRAFT or ACTIVATED");
 		}
     }
 
