@@ -361,7 +361,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     		MandateAddress address=new MandateAddress();
     		if (customerAccount.getAddress() != null) {
     		address.setCity(formatIngenicoData(customerAccount.getAddress().getCity(), true));
-    		address.setCountryCode(customerAccount.getAddress().getCountry() == null ? null : customerAccount.getAddress().getCountry().getCountryCode()); 
+    		address.setCountryCode(customerAccount.getAddress().getCountry() != null?customerAccount.getAddress().getCountry().getCountryCode():null); 
     		String address1=customerAccount.getAddress().getAddress1();
     		address.setStreet(formatIngenicoData(address1, false));
     		address.setZip(customerAccount.getAddress().getZipCode());
@@ -370,11 +370,21 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     		MandatePersonalInformation  personalInformation =new MandatePersonalInformation();
     		boolean isEntreprise=getProviderService().getProvider().isEntreprise();
     		if (customerAccount.getName() != null) {
-    			name.setFirstName(isEntreprise?"-":formatIngenicoData(customerAccount.getName().getFirstName(), false));
     			name.setSurname(formatIngenicoData(customerAccount.getName().getLastName(), true)); 
-    			personalInformation.setTitle(isEntreprise?"Mr":(customerAccount.getName().getTitle() == null ? "" : customerAccount.getName().getTitle().getDescription()));
+    			String title=null;
+    			String firstName=null;
+    			if(!isEntreprise) {
+    				firstName=formatIngenicoData(customerAccount.getName().getFirstName(), false);
+    				if(customerAccount.getName().getTitle()!=null){
+    					title=customerAccount.getName().getTitle().getDescription();
+    				}
+    			}else {
+    				title="Mr";
+    				firstName="-";	
+    			}
+    			name.setFirstName(firstName);
+    			personalInformation.setTitle(title);
     		}  
-    		
     		personalInformation.setName(name);
     		MandateCustomer customer=new MandateCustomer();
     		customer.setBankAccountIban(bankAccountIban);
@@ -391,11 +401,9 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     		body.setCustomerReference(customerAccount.getExternalRef1()); 
     		body.setRecurrenceType("RECURRING");
     		body.setSignatureType("UNSIGNED");
-    		if(log.isDebugEnabled()) {
     		ObjectMapper mapper = new ObjectMapper(); 
     		String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body);
-    		log.debug("createMandate body={}",jsonString);
-    		}
+    		log.info("createMandate body={}",jsonString);
     		getClient().merchant(paymentGateway.getMarchandId()).mandates().create(body); 
 
     	} catch (ApiException ev) { 
