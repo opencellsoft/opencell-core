@@ -1466,4 +1466,25 @@ public class KeycloakAdminClientService implements Serializable {
         }
         return null;
     }
+
+    /**
+     * Get user representation by username
+     * @param username Username
+     * @return {@link UserRepresentation}
+     */
+    public UserRepresentation getUserRepresentationByUsername(String username) throws ElementNotFoundException {
+        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
+
+        RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
+        UsersResource usersResource = realmResource.users();
+
+        List<UserRepresentation> users = usersResource.search(username, true);
+        for (UserRepresentation userRepresentation : users) {
+            if (username.equalsIgnoreCase(userRepresentation.getUsername())) {
+                return userRepresentation;
+            }
+        }
+        throw new ElementNotFoundException("No user found with username " + username);
+    }
 }

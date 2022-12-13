@@ -124,16 +124,16 @@ public class EmailNotifier {
                 String emailContent = internationalSettingsService.resolveEmailContent(emailTemplate,languageCode);
                 String htmlContent = internationalSettingsService.resolveHtmlContent(emailTemplate,languageCode);
 
-                subject = (String) ValueExpressionWrapper.evaluateExpression(emailSubject, userMap, String.class);
+                subject = ValueExpressionWrapper.evaluateExpression(emailSubject, userMap, String.class);
                 if (!StringUtils.isBlank(notification.getEmailTemplate().getHtmlContent())) {
-                    htmlBody = (String) ValueExpressionWrapper.evaluateExpression(htmlContent, userMap, String.class);
+                    htmlBody = ValueExpressionWrapper.evaluateExpression(htmlContent, userMap, String.class);
                 } else {
-                    body = (String) ValueExpressionWrapper.evaluateExpression(emailContent, userMap, String.class);
+                    body = ValueExpressionWrapper.evaluateExpression(emailContent, userMap, String.class);
                 }
             }
 
             List<String> to = new ArrayList<>();
-            to.add((String) ValueExpressionWrapper.evaluateExpression(notification.getEmailToEl(), userMap, String.class));
+            to.add(ValueExpressionWrapper.evaluateExpression(notification.getEmailToEl(), userMap, String.class));
            
             String result = context.containsKey("EMAIL_TO_LIST") ? (String)context.get("EMAIL_TO_LIST") : "" ;
             for (String mail : result.split(",")) {

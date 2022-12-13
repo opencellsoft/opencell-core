@@ -291,6 +291,10 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private ChargeTemplateStatusEnum status = ChargeTemplateStatusEnum.DRAFT;
+
+    @Type(type = "longText")
+    @Column(name = "internal_note")
+    private String internalNote;
     
     public String getInputUnitEL() {
         return inputUnitEL;
@@ -641,4 +645,14 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     public void setRoundingEdrNbDecimal(int roundingEdrNbDecimal) {
         this.roundingEdrNbDecimal = roundingEdrNbDecimal;
     }
+
+	public String getInternalNote() {
+		return internalNote;
+	}
+
+	public void setInternalNote(String internalNote) {
+		this.internalNote = internalNote;
+	}
+
+    
 }
