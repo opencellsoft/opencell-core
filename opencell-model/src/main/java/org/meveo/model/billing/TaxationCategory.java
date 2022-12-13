@@ -21,13 +21,13 @@ import org.meveo.model.ObservableEntity;
 
 public class TaxationCategory {
 	
-	@Column(name = "name", length = 500)
-	  @Size(max = 20)
-	  private String name;
-	  
-	  @Column(name = "semantic_model", length = 500)
-	  @Size(max = 20)
-	  private String semanticModel;
+    @Column(name = "name", length = 500)
+    @Size(max = 20)
+    private String name;
+  
+    @Column(name = "semantic_model", length = 500)
+    @Size(max = 20)
+    private String semanticModel;
 
 	public String getName() {
 		return name;

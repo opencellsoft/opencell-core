@@ -20,13 +20,13 @@ import org.meveo.model.ObservableEntity;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "untdid_vatex_seq"), })
 public class VatExemption {
 	
-	  @Column(name = "code_name", length = 500)
-	  @Size(max = 20)
-	  private String codeName;
+	@Column(name = "code_name", length = 500)
+	@Size(max = 20)
+	private String codeName;
 	  
-	  @Column(name = "remark", length = 500)
-	  @Size(max = 20)
-	  private String remark;
+	@Column(name = "remark", length = 500)
+	@Size(max = 20)
+	private String remark;
 
 	public String getCodeName() {
 		return codeName;
