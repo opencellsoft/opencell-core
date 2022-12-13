@@ -1,7 +1,9 @@
 package org.meveo.apiv2.finance.service;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -75,8 +77,8 @@ public class ReportingApiService implements ApiService<AccountOperation> {
 		
 		Date reportStartDate = targetPeriod.getFrom();
 		Date reportEndDate = targetPeriod.getTo();
-		Date earliestDate = new Date(0);
-		Date reportEndDateInclusive = DateUtils.addDaysToDate(reportEndDate, 1);
+		LocalDate earliestDate = LocalDate.ofEpochDay(365);
+		LocalDate reportEndDateInclusive = Instant.ofEpochMilli(DateUtils.addDaysToDate(reportEndDate, 1).getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
 		if (limit != null) {
 			log.info("Computing Trial Balances during {} => {} ...", reportStartDate, reportEndDate);
 		}

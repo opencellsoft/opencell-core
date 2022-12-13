@@ -89,6 +89,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.LockMode;
@@ -227,6 +228,7 @@ import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.communication.impl.EmailSender;
+import org.meveo.service.communication.impl.InternationalSettingsService;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
@@ -456,6 +458,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
+
+    @Inject
+    private InternationalSettingsService internationalSettingsService;
 
     @PostConstruct
     private void init() {
@@ -3621,12 +3626,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 log.warn("The Seller or it's contact information is null!!");
                 return false;
             }
+            String languageCode = billingAccount.getCustomerAccount().getTradingLanguage().getLanguage().getLanguageCode();
+            String emailSubject = internationalSettingsService.resolveSubject(emailTemplate,languageCode);
+            String emailContent = internationalSettingsService.resolveEmailContent(emailTemplate,languageCode);
+            String htmlContent = internationalSettingsService.resolveHtmlContent(emailTemplate,languageCode);
             if (electronicBilling && mailingTypeEnum.equals(mailingType)) {
                 Map<Object, Object> params = new HashMap<>();
                 params.put("invoice", invoice);
-                String subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
-                String content = evaluateExpression(emailTemplate.getTextContent(), params, String.class);
-                String contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
+                String subject = evaluateExpression(emailSubject, params, String.class);
+                String content = evaluateExpression(emailContent, params, String.class);
+                String contentHtml = evaluateExpression(htmlContent, params, String.class);
                 String from = seller.getContactInformation().getEmail();
                 emailSender.send(from, Arrays.asList(from), to, cc, null, subject, content, contentHtml, files, null, false);
                 entityUpdatedEventProducer.fire(invoice);
@@ -4078,7 +4087,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
         
-        if(invoice.getBillingRun() == null) {
+        if(invoice.getBillingRun() == null && invoice.getInvoiceType() != null && !invoice.getInvoiceType().getCode().equals("ADV")) {
             applyAdvanceInvoice(invoice, checkAdvanceInvoice(invoice));
         }
     }
@@ -5905,14 +5914,27 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     }
                     em.flush();
 
+                    final int maxValue =
+                            ParamBean.getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
                     Date now = new Date();
                     for (Object[] aggregateAndILIds : ilMassUpdates) {
                         List<Long> ilIds = (List<Long>) aggregateAndILIds[1];
-                        SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndILIds[0];
-                        em.createNamedQuery("InvoiceLine.updateWithInvoice").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("now", now)
-                            .setParameter("invoiceAgregateF", subCategoryAggregate).setParameter("ids", ilIds).executeUpdate();
-                        em.createNamedQuery("RatedTransaction.linkRTWithInvoice").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("now", now)
-                            .setParameter("ids", ilIds).executeUpdate();
+                        ListUtils.partition(ilIds, maxValue).forEach(ids -> {
+                            SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndILIds[0];
+                            em.createNamedQuery("InvoiceLine.updateWithInvoice")
+                                    .setParameter("billingRun", billingRun)
+                                    .setParameter("invoice", invoice)
+                                    .setParameter("now", now)
+                                    .setParameter("invoiceAgregateF", subCategoryAggregate)
+                                    .setParameter("ids", ids)
+                                    .executeUpdate();
+                            em.createNamedQuery("RatedTransaction.linkRTWithInvoice")
+                                    .setParameter("billingRun", billingRun)
+                                    .setParameter("invoice", invoice)
+                                    .setParameter("now", now)
+                                    .setParameter("ids", ids)
+                                    .executeUpdate();
+                        });
                     }
 
                     for (Object[] aggregateAndILs : ilUpdates) {
@@ -6921,26 +6943,36 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return Collections.emptyList();
         }
         // check balance when invoicing plan created from order ==> adv from order must have balance set
-        List<Invoice> invoicesAdv = null;
-        if(invoice.getCommercialOrder() != null) {
-	        invoicesAdv = this.getEntityManager().createNamedQuery("Invoice.findValidatedInvoiceAdvWithOrder")
+        List<Invoice> invoicesAdv  = this.getEntityManager().createNamedQuery("Invoice.findValidatedInvoiceAdvOrder")
+                .setParameter("billingAccountId", invoice.getBillingAccount().getId())
+                .setParameter("commercialOrder", invoice.getCommercialOrder())
+                .getResultList();
+        /* if(invoice.getCommercialOrder() != null) {
+	        invoicesAdv.addAll(this.getEntityManager().createNamedQuery("Invoice.findValidatedInvoiceAdvWithOrder")
 	                                                            .setParameter("billingAccountId", invoice.getBillingAccount().getId())
 	                                                            .setParameter("commercialOrder", invoice.getCommercialOrder())
-	                                                            .getResultList();
-        }else {
-	        invoicesAdv = this.getEntityManager().createNamedQuery("Invoice.findValidatedInvoiceAdvWithoutOrder")
-                    .setParameter("billingAccountId", invoice.getBillingAccount().getId())
-                    .getResultList();
+	                                                            .getResultList() );
         }
         
-        sort(invoicesAdv, (inv1, inv2) -> {
+       sort(invoicesAdv, (inv1, inv2) -> {
+            int compCommercialOrder = 0;
+            if(inv1.getCommercialOrder() != null && inv2.getCommercialOrder() == null) {
+                compCommercialOrder = 1;
+            }else if(inv1.getCommercialOrder() == null && inv2.getCommercialOrder() != null) {
+                compCommercialOrder = -1;
+            }else {
+                compCommercialOrder = inv1.getCommercialOrder().getId().compareTo(inv2.getCommercialOrder().getId());
+            }
+            if(compCommercialOrder != 0) {
+                return compCommercialOrder;
+            }
             int compCreationDate = inv1.getAuditable().getCreated().compareTo(inv2.getAuditable().getCreated());
             if(compCreationDate != 0) {
                 return compCreationDate;
             }
             return inv1.getInvoiceBalance().compareTo(inv2.getInvoiceBalance());
                 
-        });
+        });*/
         return invoicesAdv;
     }
     
@@ -6967,9 +6999,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
    }
     
     public void applyAdvanceInvoice(Invoice invoice, List<Invoice> advInvoices) {
-    	if(InvoiceTypeService.DEFAULT_ADVANCE_CODE.equals(invoice.getInvoiceType().getCode())) {
-    		return;
-    	}
 		BigDecimal invoiceBalance = invoice.getInvoiceBalance();
 		if (invoiceBalance != null) {
 			BigDecimal sum = invoice.getLinkedInvoices().stream()
@@ -7012,11 +7041,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         break;
                     }
                 }
-                invoice.setInvoiceBalance(remainingAmount);
-				List<Long> toRemove = invoice.getLinkedInvoices().stream()
-						.filter(il -> ZERO.compareTo(il.getAmount()) == 0 && InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(il.getType()))
-						.map(il -> il.getLinkedInvoiceValue().getId()).collect(Collectors.toList());
-				linkedInvoiceService.deleteByIdInvoiceAndLinkedInvoice(invoice.getId(), toRemove);
+            invoice.setInvoiceBalance(remainingAmount);
+            List<Long> toRemove = invoice.getLinkedInvoices().stream()
+                    .filter(linkedInvoice -> (linkedInvoice.getAmount() == null || ZERO.compareTo(linkedInvoice.getAmount()) == 0) && InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(linkedInvoice.getType()))
+                    .map(il -> il.getLinkedInvoiceValue().getId()).collect(Collectors.toList());
+            linkedInvoiceService.deleteByIdInvoiceAndLinkedInvoice(invoice.getId(), toRemove);
 	        }
     }
 
@@ -7029,14 +7058,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		invoice.setInvoiceBalance(null);
 		if (invoice.getLinkedInvoices() != null) {
 			Predicate<LinkedInvoice> advFilter = i -> InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(i.getType());
-			Stream<LinkedInvoice> advances = invoice.getLinkedInvoices().stream().filter(advFilter);
 			if (delete) {
-				advances.forEach(li -> li.getLinkedInvoiceValue().setInvoiceBalance(li.getLinkedInvoiceValue().getInvoiceBalance().add(li.getAmount())));
+				invoice.getLinkedInvoices().stream().filter(advFilter).forEach(li -> li.getLinkedInvoiceValue().setInvoiceBalance(li.getLinkedInvoiceValue().getInvoiceBalance().add(li.getAmount())));
 				linkedInvoiceService.deleteByInvoiceIdAndType(invoice.getId(), InvoiceTypeEnum.ADVANCEMENT_PAYMENT);
 				invoice.getLinkedInvoices().removeIf(advFilter);
 			} else {
 				for (Invoice i : advInvoices) {
-					advances.filter(li -> li.getLinkedInvoiceValue().getId() == i.getId()).findAny().ifPresent(li -> {
+					invoice.getLinkedInvoices().stream().filter(advFilter).filter(li -> li.getLinkedInvoiceValue().getId() == i.getId()).findAny().ifPresent(li -> {
 						i.setInvoiceBalance(i.getInvoiceBalance().add(li.getAmount()));
 						li.setAmount(ZERO);
 					});

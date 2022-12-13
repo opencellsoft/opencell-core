@@ -14848,5 +14848,19 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="htmlcontent_i18n" type="${type.json}"/>
         </addColumn>
     </changeSet>
+    
+	<changeSet id="INTRD_12001_20221205" author="TarikFA.">
+		<modifyDataType tableName="meveo_script_instance" columnName="description" newDataType="varchar(1000)"/>
+	</changeSet>
+
+    <changeSet id="#12201_20221212" author="zelmeliani">
+        <renameTable newTableName="billing_redirection_rule" oldTableName="cpq_billing_rule"/>
+    </changeSet>
+
+	<changeSet id="#INTR-112153_20221209_new_field" author="a.rouaguebe">
+		<addColumn tableName="cat_charge_template">
+            <column name="internal_note" type="${type.longtext}" />
+        </addColumn>
+	</changeSet>
 
 </databaseChangeLog>

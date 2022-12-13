@@ -10222,7 +10222,47 @@
                 "name": "HEAD"
               }
             ]
-          }
+          },
+          {
+            "name": "Api V2 International Settings",
+            "ownerManagedAccess": false,
+            "attributes": {},
+            "_id": "f68e7377-a3d6-4a4d-922b-ac145c39c157",
+            "uris": [
+              "/api/rest/v2/setting/internationalSettings/*"
+            ],
+            "scopes": [
+              {
+                "name": "DELETE"
+              },
+              {
+                "name": "GET"
+              },
+              {
+                "name": "POST"
+              },
+              {
+                "name": "PUT"
+              },
+              {
+                "name": "PATCH"
+              }
+           ]
+          },
+		  {
+			"name": "Api V2 CustomTable - export",
+			"ownerManagedAccess": false,
+			"attributes": {},
+			"_id": "f20b7f19-1c27-492b-bfa3-7003c044fb3c",
+			"uris": [
+				"/api/rest/v2/customTable/export/"
+			],
+			"scopes": [
+				{
+					"name": "POST"
+				}
+			]
+		 }
         ],
         "policies": [
           {

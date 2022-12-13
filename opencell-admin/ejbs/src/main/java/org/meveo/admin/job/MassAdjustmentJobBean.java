@@ -36,7 +36,7 @@ public class MassAdjustmentJobBean extends BaseJobBean {
 	protected ResourceBundle resourceMessages;
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    @TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public JobExecutionResultImpl execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
     	log.debug("Running MassAdjustmentJob with parameter={}", jobInstance.getParametres());
     	
@@ -56,7 +56,7 @@ public class MassAdjustmentJobBean extends BaseJobBean {
         BigDecimal totalAWoTProcessed = BigDecimal.ZERO;
         BigDecimal totalAWTProcessed = BigDecimal.ZERO;
         int totalLinesProcessed = 0;
-        int totalImpactedBA = impactedInvoices.stream().map(Invoice::getBillingAccount).mapToInt(i -> 1).sum();
+        int totalImpactedBA = impactedInvoices.stream().map(Invoice::getBillingAccount).distinct().mapToInt(i -> 1).sum();
         
         for (Invoice invoice : impactedInvoices) {
         	Invoice adjustment = invoiceService.createAdjustment(invoice, invoiceLinesToAdjustIds);

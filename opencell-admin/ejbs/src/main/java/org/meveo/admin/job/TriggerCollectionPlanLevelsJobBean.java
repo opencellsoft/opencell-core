@@ -286,7 +286,7 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
             if (billingAccount.getContactInformation() != null && billingAccount.getContactInformation().getEmail() != null) {
                 try {
                     collectionPlanService.sendNotification(seller.getContactInformation().getEmail(),
-                            billingAccount.getContactInformation().getEmail(), emailTemplate, params, attachments);
+                            billingAccount, emailTemplate, params, attachments);
                 } catch (Exception exception) {
                     throw new BusinessException(exception.getMessage());
                 }
