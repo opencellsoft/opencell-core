@@ -2730,7 +2730,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 	public void validateInvoice(Invoice invoice) {
 		invoice.setStatus(InvoiceStatusEnum.VALIDATED);
-		update(invoice);
+		serviceSingleton.assignInvoiceNumber(invoice, true);
 	}
     
     /**
@@ -6773,13 +6773,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
         duplicatedInvoice.setLinkedInvoices(of(linkedInvoice));
         getEntityManager().flush();
 
+        duplicatedInvoice.setOpenOrderNumber(StringUtils.EMPTY);
+
         if (invoiceLinesIds != null && !invoiceLinesIds.isEmpty()) {
             calculateInvoice(duplicatedInvoice);
         }
         else {
             update(duplicatedInvoice);
         }
-
+        
         return duplicatedInvoice;
     }
     
