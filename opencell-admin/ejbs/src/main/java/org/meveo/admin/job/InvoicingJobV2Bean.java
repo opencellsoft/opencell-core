@@ -157,6 +157,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
             billingRun.setPrAmountTax(amountTax);
             billingRun.setStatus(DRAFT_INVOICES);
             prevalidatedAutomaticPrevBRStatus = true;
+            billingRunService.applyThreshold(billingRun.getId());
             invoiceService.applyligibleInvoiceForAdvancement(billingRun.getId());
         }
         if(billingRun.getStatus() == DRAFT_INVOICES && billingRun.getProcessType() == FULL_AUTOMATIC) {
