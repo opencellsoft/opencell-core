@@ -296,7 +296,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         EntityManager em = getEntityManager();
         if (!em.contains(entity)) { // https://vladmihalcea.com/jpa-persist-and-merge/
-            entity = getEntityManager().merge(entity); // here could also use session.update(); see https://vladmihalcea.com/how-to-optimize-the-merge-operation-using-update-while-batching-with-jpa-and-hibernate/
+            entity = em.merge(entity); // here could also use session.update(); see https://vladmihalcea.com/how-to-optimize-the-merge-operation-using-update-while-batching-with-jpa-and-hibernate/
         }
 
         return entity;
@@ -550,7 +550,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         EntityManager em = getEntityManager();
         if (!em.contains(entity)) { // https://vladmihalcea.com/jpa-persist-and-merge/
-            entity = getEntityManager().merge(entity); // here could also use session.update(); see https://vladmihalcea.com/how-to-optimize-the-merge-operation-using-update-while-batching-with-jpa-and-hibernate/
+            entity = em.merge(entity); // here could also use session.update(); see https://vladmihalcea.com/how-to-optimize-the-merge-operation-using-update-while-batching-with-jpa-and-hibernate/
         }
     
         // Andrius K. Commented out for now as solution is not currently used. Please don't remove it.

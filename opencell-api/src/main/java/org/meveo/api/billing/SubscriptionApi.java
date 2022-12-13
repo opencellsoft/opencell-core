@@ -2875,7 +2875,7 @@ public class SubscriptionApi extends BaseApi {
         } else {
         	subscriptionService.createWithoutNotif(subscription);
         }
-        subscriptionService.getEntityManager().flush();
+        subscriptionService.commit();
         userAccount.getSubscriptions().add(subscription);
 
         if (postData.getProducts() != null) {
