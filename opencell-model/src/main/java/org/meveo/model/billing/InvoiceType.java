@@ -151,6 +151,14 @@ public class InvoiceType extends BusinessCFEntity {
     @OneToMany(mappedBy = "invoiceType", fetch = FetchType.EAGER)
     private List<InvoiceValidationRule> invoiceValidationRules;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoice_code_type_id")
+    private InvoiceCodeType invoiceCodeType;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vat_payment_option_id")
+    private VatPaymentOption vatPaymentOption;
+    
     public ScriptInstance getInvoiceValidationScript() {
 		return invoiceValidationScript;
 	}
@@ -378,6 +386,22 @@ public class InvoiceType extends BusinessCFEntity {
 
 	public void setInvoiceValidationRules(List<InvoiceValidationRule> invoiceValidationRules) {
 		this.invoiceValidationRules = invoiceValidationRules;
+	}
+
+	public InvoiceCodeType getInvoiceCodeType() {
+		return invoiceCodeType;
+	}
+
+	public void setInvoiceCodeType(InvoiceCodeType invoiceCodeType) {
+		this.invoiceCodeType = invoiceCodeType;
+	}
+
+	public VatPaymentOption getVatPaymentOption() {
+		return vatPaymentOption;
+	}
+
+	public void setVatPaymentOption(VatPaymentOption vatPaymentOption) {
+		this.vatPaymentOption = vatPaymentOption;
 	}
 
 }
