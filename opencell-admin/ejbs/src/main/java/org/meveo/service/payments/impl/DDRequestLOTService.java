@@ -51,7 +51,6 @@ import org.meveo.model.payments.DDRequestBuilder;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.DDRequestLotOp;
-import org.meveo.model.payments.DDRequestOpStatusEnum;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentLevelEnum;
 import org.meveo.model.payments.PaymentMethod;
@@ -347,9 +346,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 			return prefix + "recordedInvoice.ca";
 		}
 		prefix = "CA.code:"+ca.getCode()+" AO.id:" + accountOperation.getId() + " : ";
-		if (ca.getName() == null && ca.getCustomer().getName() == null ) {
-			return prefix + "ca.name";
-		}
+		// UPDATE INTRD-9135 : Le ca.name ne doit pas être obligatoire si le customer name n’est pas renseigné et cela ne doit pas bloquer la génération du fichier de prélèvement pour l’account operation concerné
 		PaymentMethod preferedPaymentMethod = ca.getPreferredPaymentMethod();
 		if (preferedPaymentMethod != null && preferedPaymentMethod instanceof DDPaymentMethod) {
 			if (((DDPaymentMethod) preferedPaymentMethod).getMandateIdentification() == null) {
@@ -392,9 +389,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 		if (bankCoordinates.getIcs() == null) {
 			return prefix + "bankCoordinates.ics";
 		}
-		if (accountOperation.getReference() == null) {
-			return prefix + "accountOperation.reference";
-		}
+		// UPDATE INTRD-9135 : accountOperation.reference ne doit pas être rendu obligatoire pour le déclenchement du prélèvement.
 		if (ca.getDescription() == null) {
 			return prefix + "ca.description";
 		}
