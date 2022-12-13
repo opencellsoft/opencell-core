@@ -7006,7 +7006,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 					.reduce(BigDecimal::add).get();
 			//if balance is well calculated and balance=0, we don't need to recalculate
 			if ((sum.add(invoiceBalance)).compareTo(invoice.getAmountWithTax()) == 0) {
-				CommercialOrder commercialOrder = advInvoices.get(0).getCommercialOrder();
+				CommercialOrder commercialOrder = CollectionUtils.isNotEmpty(advInvoices) ? advInvoices.get(0).getCommercialOrder() : null;
 				if (BigDecimal.ZERO.compareTo(invoiceBalance)==0 && !(commercialOrder!=null && commercialOrder.equals(invoice.getCommercialOrder()))) {
 					return;
 				} 
