@@ -197,7 +197,7 @@ public class GenericFileExportManager {
                                 } else if (value instanceof String && (value.toString().startsWith("0.00"))) { // specific case for formula field, wich have a String type with 0.00 value
                                     cell.setCellValue(0.00);
                                 } else {
-                                    cell.setCellValue(value.toString());
+                                    cell.setCellValue(extractStringValue(value));
                                 }
 
                             } else if (MapUtils.isNotEmpty(fieldDetail.getMappings())) {
@@ -213,7 +213,7 @@ public class GenericFileExportManager {
                                 } else if (value instanceof Long || value instanceof BigDecimal || value instanceof Double || value instanceof Float || value instanceof Integer) {
                                     cell.setCellValue(value.toString());
                                 } else {
-                                    cell.setCellValue(value.toString());
+                                    cell.setCellValue(extractStringValue(value));
                                 }
                             }
 
@@ -306,6 +306,10 @@ public class GenericFileExportManager {
     
     private String extractValue(String key, GenericFieldDetails fieldDetail) {
 		return fieldDetail == null ? key : fieldDetail.getHeader() != null ? fieldDetail.getHeader() : fieldDetail.getName();
+	}
+    
+    private String extractStringValue(Object value) {
+    	 return value == null ? StringUtils.EMPTY : value.toString();
 	}
 
     private void applyBigDecimalFormat(Workbook outWorkbook, Cell cell) {
