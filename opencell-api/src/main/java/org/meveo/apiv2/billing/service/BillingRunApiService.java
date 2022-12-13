@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.billing.BillingRun;
@@ -204,10 +205,10 @@ public class BillingRunApiService implements ApiService<BillingRun> {
             ratedTransactionService.uninvoiceRTs(billingRun);
             invoiceLineService.deleteInvoiceLines(billingRun);
             invoiceLineService.deleteByAssociatedInvoice(invoiceService.getInvoicesByBR(billingRun.getId()));
+            rollBackAdvances(billingRun);
             invoiceService.deleteInvoices(billingRun);
             invoiceAgregateService.deleteInvoiceAgregates(billingRun);
             billingRun.setStatus(CANCELED);
-            rollBackAdvances(billingRun);
             billingRunService.update(billingRun);
             return of(billingRun);
         } catch (Exception exception) {
@@ -215,12 +216,13 @@ public class BillingRunApiService implements ApiService<BillingRun> {
         }
 	}
 	 private void rollBackAdvances(BillingRun billingRun) {
-		 invoiceService.getEntityManager().createNativeQuery("Invoice.rollbackAdvance").setParameter("billingRunId", billingRun.getId()).executeUpdate();
-		 if(CollectionUtils.isNotEmpty(billingRun.getInvoices())) {
-			 removeLinkedAdvances(billingRun);
-		 }
+		 invoiceService.rollBackAdvances(billingRun);
+		 removeLinkedAdvances(billingRun);
 	 }
 	 private void removeLinkedAdvances(BillingRun billingRun) {
-		 linkedInvoiceService.getEntityManager().createNamedQuery("Invoice.rollbackAdvance").setParameter("invoiceIds", billingRun.getInvoices().stream().map(Invoice::getId).collect(Collectors.toList())).executeUpdate();
+         List<Invoice> invoices = invoiceService.findByBillingRun(billingRun);
+         if(CollectionUtils.isNotEmpty(invoices)) {
+             linkedInvoiceService.removeLinkedAdvances(invoices.stream().map(Invoice::getId).collect(Collectors.toList()));
+         }
 	 }
 }

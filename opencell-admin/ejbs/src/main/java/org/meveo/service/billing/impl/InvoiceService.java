@@ -7066,5 +7066,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			}
 		}
 	}
+	
+	public void rollBackAdvances(BillingRun billingRun) {
+	    getEntityManager().createNamedQuery("Invoice.rollbackAdvance") .setParameter("billingRunId", billingRun.getId()).executeUpdate();
+	}
 
 }

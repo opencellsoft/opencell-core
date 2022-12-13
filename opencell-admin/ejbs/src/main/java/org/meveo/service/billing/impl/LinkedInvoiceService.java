@@ -18,10 +18,12 @@
 package org.meveo.service.billing.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceTypeEnum;
 import org.meveo.model.billing.LinkedInvoice;
 import org.meveo.service.base.PersistenceService;
@@ -52,6 +54,9 @@ public class LinkedInvoiceService extends PersistenceService<LinkedInvoice> {
         .setParameter("type", type)
         .executeUpdate();
 		
+	}
+	public void removeLinkedAdvances(List<Long> advInvoices) {
+	    getEntityManager().createNamedQuery("LinkedInvoice.removeLinkedAdvances").setParameter("invoiceIds", advInvoices).executeUpdate();
 	}
     
 }
