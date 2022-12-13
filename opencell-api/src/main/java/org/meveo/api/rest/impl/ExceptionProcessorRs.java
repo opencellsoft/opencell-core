@@ -39,7 +39,6 @@ public class ExceptionProcessorRs extends ExceptionProcessorWs {
             String str = status.getErrorCode().toString();
             if ("MISSING_PARAMETER".equals(str)//
                     || "INVALID_PARAMETER".equals(str)//
-                    || "INVALID_VALUE".equals(str)//
                     || "INVALID_ENUM_VALUE".equals(str)//
                     || "INVALID_IMAGE_DATA".equals(str)) {
                 throw new BadRequestException(status);

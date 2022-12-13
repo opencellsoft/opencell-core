@@ -57,11 +57,6 @@ public enum MeveoApiErrorCodeEnum implements ApiErrorCodeEnum {
      * Invalid parameter or field value passed
      */
     INVALID_PARAMETER,
-    
-    /**
-     * Invalid parameter or field value passed
-     */
-    INVALID_VALUE,
 
     /**
      * Parameter or field value does not correspond to a valid Enum value option
