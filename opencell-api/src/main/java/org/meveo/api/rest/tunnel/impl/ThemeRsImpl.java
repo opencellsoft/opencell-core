@@ -43,33 +43,33 @@ public class ThemeRsImpl extends BaseRs implements ThemeRs {
 
 
     @Override
-    public ActionStatus create(ThemeDto postData) {
+    public Theme create(ThemeDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
+        Theme theme = new Theme();
         try {
-            Theme theme = themeApi.create(postData);
+            theme = themeApi.create(postData);
             result.setEntityCode(theme.getCode());
             result.setEntityId(theme.getId());
         } catch (Exception e) {
             processException(e, result);
         }
 
-        return result;
+        return theme;
     }
 
     @Override
-    public ActionStatus update(ThemeDto postData) {
+    public Theme update(ThemeDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
+        Theme theme = new Theme();
         try {
-            Theme theme = themeApi.update(postData);
+            theme = themeApi.update(postData);
             result.setEntityCode(theme.getCode());
             result.setEntityId(theme.getId());
         } catch (Exception e) {
             processException(e, result);
         }
 
-        return result;
+        return theme;
     }
 
     @Override

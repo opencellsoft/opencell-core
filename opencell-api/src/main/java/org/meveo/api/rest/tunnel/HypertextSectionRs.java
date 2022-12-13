@@ -26,6 +26,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.tunnel.HypertextSectionDto;
 import org.meveo.api.rest.IBaseRs;
+import org.meveo.model.tunnel.HypertextSection;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -118,6 +119,6 @@ public interface HypertextSectionRs extends IBaseRs {
                     )
             }
     )
-    ActionStatus createOrUpdate(List<HypertextSectionDto> sectionsDto);
+    List<HypertextSection> createOrUpdate(List<HypertextSectionDto> sectionsDto);
 
 }

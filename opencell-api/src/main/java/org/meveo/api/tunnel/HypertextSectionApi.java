@@ -32,6 +32,7 @@ import org.meveo.service.tunnel.HypertextSectionService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -88,15 +89,20 @@ public class HypertextSectionApi extends BaseCrudApi<HypertextSection, Hypertext
         return entity;
     }
 
-    public void createOrUpdate(List<HypertextSectionDto> postData) {
+    public List<HypertextSection> createOrUpdate(List<HypertextSectionDto> postData) {
+        List<HypertextSection>  sections = new ArrayList<>();
         for (HypertextSectionDto sectionDto: postData) {
             HypertextSection entity = sectionService.findByCode(sectionDto.getCode());
             if (entity == null) {
-                create(sectionDto);
+                entity = create(sectionDto);
             } else {
-                update(sectionDto);
+                entity = update(sectionDto);
             }
+            entity.setCustomStyle(null);
+            sections.add(entity);
         }
+
+        return sections;
     }
 
 
