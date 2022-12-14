@@ -19,6 +19,7 @@
 package org.meveo.service.billing.impl;
 
 import org.meveo.model.admin.Seller;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.*;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.rating.EDR;
@@ -180,6 +181,7 @@ public class AggregatedWalletOperation {
 	 * List of wallet operations.
 	 */
 	private List<Long> walletOperationsIds;
+	private AccountingArticle accountingArticle;
 
 	public AggregatedWalletOperation(String walletOpsIds, Long sellerId, Integer year, Integer month, Integer day, Tax tax, InvoiceSubCategory invoiceSubCategory, Object id,
 									 BigDecimal amountWithTax, BigDecimal amountWithoutTax, BigDecimal amountTax, TaxClass taxClass, BigDecimal quantity, BigDecimal unitAmountWithoutTax,
@@ -583,5 +585,13 @@ public class AggregatedWalletOperation {
 
 	public void setWallet(WalletInstance wallet) {
 		this.wallet = wallet;
+	}
+
+	public AccountingArticle getAccountingArticle() {
+		return accountingArticle;
+	}
+
+	public void setAccountingArticle(AccountingArticle accountingArticle) {
+		this.accountingArticle = accountingArticle;
 	}
 }
