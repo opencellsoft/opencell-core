@@ -19,6 +19,7 @@
 package org.meveo.api.catalog;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,6 +39,7 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.ChargeTemplateStatusEnum;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UnitOfMeasure;
@@ -214,6 +216,11 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
                 throw new RuntimeException(e);
             }
         }
+
+        if(postData.getInternalNote() != null) {
+        	chargeTemplate.setInternalNote(StringUtils.isBlank(postData.getInternalNote()) ? null : postData.getInternalNote());
+        }
+
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), chargeTemplate, isNew);
@@ -224,6 +231,14 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+    }
+
+    protected void checkInternalNote(ChargeTemplate entity, ChargeTemplateDto postData) {
+    	// Internal note updatable only for Draft and Active Charge template
+		if (postData.getInternalNote() != null && !postData.getInternalNote().equals(entity.getInternalNote()) && 
+				!Arrays.asList(ChargeTemplateStatusEnum.DRAFT, ChargeTemplateStatusEnum.ACTIVE).contains(entity.getStatus())) {
+			throw new InvalidParameterException("Cannot modify internalNote if charge is not DRAFT or ACTIVATED");
+		}
     }
 
     private UnitOfMeasure checkUnitOfMeasure(String ratingUnitOfMeasureCode) throws EntityDoesNotExistsException {
