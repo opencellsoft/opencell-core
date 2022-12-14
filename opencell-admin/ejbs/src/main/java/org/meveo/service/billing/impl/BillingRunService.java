@@ -1100,13 +1100,24 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
             }
 
-            if(entity instanceof CommercialOrder && ((CommercialOrder)entity).getBillingCycle() != null){
+            if(entity instanceof CommercialOrder
+                    && ((CommercialOrder)entity).getBillingCycle() != null
+                    && ((CommercialOrder)entity).getBillingAccount().getInvoicingThreshold() == null
+                    && ((CommercialOrder)entity).getBillingAccount().getCustomerAccount().getInvoicingThreshold() == null
+                    && ((CommercialOrder)entity).getBillingAccount().getCustomerAccount().getCustomer().getInvoicingThreshold() == null
+            ){
                 BillingCycle bc = ((CommercialOrder)entity).getBillingCycle();
                 threshold = bc.getInvoicingThreshold();
                 checkThreshold = bc.getCheckThreshold();
                 isThresholdPerEntity = bc.isThresholdPerEntity();
             }
-            else if(entity instanceof Subscription && ((Subscription)entity).getBillingCycle() != null){
+            else if(entity instanceof Subscription
+                   && ((Subscription)entity).getBillingCycle() != null
+                    && ((Subscription)entity).getUserAccount().getBillingAccount().getInvoicingThreshold() == null
+                    && ((Subscription)entity).getUserAccount().getBillingAccount().getCustomerAccount().getInvoicingThreshold() == null
+                    && ((Subscription)entity).getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getInvoicingThreshold() == null
+
+            ){
 
                 BillingCycle bc = ((Subscription)entity).getBillingCycle();
                 threshold = bc.getInvoicingThreshold();
