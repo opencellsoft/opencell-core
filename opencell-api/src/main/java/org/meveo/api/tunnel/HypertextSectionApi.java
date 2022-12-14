@@ -98,7 +98,7 @@ public class HypertextSectionApi extends BaseCrudApi<HypertextSection, Hypertext
             } else {
                 entity = update(sectionDto);
             }
-            entity.setCustomStyle(null);
+            entity.getCustomStyle().setHypertextSections(null);
             sections.add(entity);
         }
 
