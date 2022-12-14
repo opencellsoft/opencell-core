@@ -9022,6 +9022,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="open_order_id" type="bigint"/>
+            <column name="agreement_date_setting" type="varchar(20)"/>
         </createTable>
     </changeSet>
 
@@ -18809,6 +18810,7 @@
     <changeSet id="INTRD-11433_20221110" author="AbdelmounaimAkadid" />
     <changeSet id="#INTRD-11310_20221110" author="ZBariki" />
     <changeSet id="#2038-20221130" author="Mbarek-Ay"/>
+    <changeSet id="#INTR-12252_20221212_agreement_date" author="a.rouaguebe" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
