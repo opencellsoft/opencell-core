@@ -6938,7 +6938,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if(invoice.getInvoiceType() != null) {
             String invoiceTypeCode = invoice.getInvoiceType().getCode();
             OperationCategoryEnum occCategoryOperation = invoice.getInvoiceType().getOccTemplate() != null ? invoice.getInvoiceType().getOccTemplate().getOccCategory() : null;
-            if(invoiceTypeCode.equals("ADV") || invoiceTypeCode.equals("SECURITY_DEPOSIT")  || (occCategoryOperation != null && occCategoryOperation.equals(OperationCategoryEnum.CREDIT))) {
+            if(invoiceTypeCode.equals("ADJ") || invoiceTypeCode.equals("ADV") || invoiceTypeCode.equals("SECURITY_DEPOSIT") || (occCategoryOperation != null && occCategoryOperation.equals(OperationCategoryEnum.CREDIT))) {
                 return Collections.emptyList();
             }
         }else {
