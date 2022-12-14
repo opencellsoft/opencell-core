@@ -13,6 +13,7 @@ import org.meveo.apiv2.ordering.common.LinkGenerator;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 public class AccountsManagementResourceImpl implements AccountsManagementResource {
 
@@ -36,13 +37,23 @@ public class AccountsManagementResourceImpl implements AccountsManagementResourc
 
     @Override
     public Response createCounterInstance(CounterInstanceDto dto) {
-        Long newInstanceId = accountsManagementApiService.createCounterInstance(dto);
+        List<Long> newInstanceIds = accountsManagementApiService.createCounterInstance(dto);
         ActionStatus createdStatus = new ActionStatus();
         createdStatus.setStatus(ActionStatusEnum.SUCCESS);
-        createdStatus.setEntityId(newInstanceId);
-        createdStatus.setMessage("New CounterInstance is created with ID " + newInstanceId);
+        createdStatus.setMessage(newInstanceIds.size() + " new CounterInstance is created  " + newInstanceIds);
 
-        return Response.created(LinkGenerator.getUriBuilderFromResource(AccountsManagementResource.class, newInstanceId).build())
+        return Response.created(LinkGenerator.getUriBuilderFromResource(AccountsManagementResource.class, newInstanceIds.toString()).build())
+                .entity(createdStatus).build();
+    }
+
+    @Override
+    public Response updateCounterInstance(Long id, CounterInstanceDto dto) {
+        List<Long> updatedInstanceIds = accountsManagementApiService.updateCounterInstance(id, dto);
+        ActionStatus createdStatus = new ActionStatus();
+        createdStatus.setStatus(ActionStatusEnum.SUCCESS);
+        createdStatus.setMessage(updatedInstanceIds.size() + " updated CounterInstance " + updatedInstanceIds);
+
+        return Response.created(LinkGenerator.getUriBuilderFromResource(AccountsManagementResource.class, updatedInstanceIds.toString()).build())
                 .entity(createdStatus).build();
     }
 }

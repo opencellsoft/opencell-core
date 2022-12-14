@@ -22,6 +22,8 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -1257,5 +1259,9 @@ public class DateUtils {
         public String toString() {
             return calendar.getCode() + " #" + priority + " value:" + value;
         }
+    }
+
+    public static Date fromLocalDate(LocalDate localDate) {
+        return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 }
