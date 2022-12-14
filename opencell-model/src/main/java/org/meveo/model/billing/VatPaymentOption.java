@@ -15,8 +15,7 @@ import org.meveo.model.ObservableEntity;
 @Entity
 @ObservableEntity
 @Cacheable
-@ExportIdentifier({ "code" })
-@Table(name = "untdid_vatex", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@Table(name = "untdid_vatex")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "untdid_vatex_seq"), })
 public class VatPaymentOption {
 	

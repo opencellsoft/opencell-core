@@ -15,8 +15,7 @@ import org.meveo.model.ObservableEntity;
 @Entity
 @ObservableEntity
 @Cacheable
-@ExportIdentifier({ "code" })
-@Table(name = "untdid_5305_taxation_category", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@Table(name = "untdid_5305_taxation_category")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "untdid_5305_taxation_category_seq"), })
 
 public class TaxationCategory {

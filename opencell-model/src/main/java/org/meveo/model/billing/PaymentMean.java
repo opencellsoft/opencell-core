@@ -15,17 +15,17 @@ import org.meveo.model.ObservableEntity;
 @Entity
 @ObservableEntity
 @Cacheable
-@Table(name = "untdid_vatex")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "untdid_vatex_seq"), })
-public class VatExemption {
+@Table(name = "untdid_4461_payment_means")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "untdid_5189_allowance_code_seq"), })
+public class PaymentMean {
 	
 	@Column(name = "code_name", length = 500)
 	@Size(max = 20)
 	private String codeName;
 	  
-	@Column(name = "remark", length = 500)
+	@Column(name = "usage_in_EN16931", length = 500)
 	@Size(max = 20)
-	private String remark;
+	private String usageEN16931;
 
 	public String getCodeName() {
 		return codeName;
@@ -35,12 +35,12 @@ public class VatExemption {
 		this.codeName = codeName;
 	}
 
-	public String getRemark() {
-		return remark;
+	public String getUsageEN16931() {
+		return usageEN16931;
 	}
 
-	public void setRemark(String remark) {
-		this.remark = remark;
+	public void setUsage_in_EN16931(String usageEN16931) {
+		this.usageEN16931 = usageEN16931;
 	}
-
+	
 }
