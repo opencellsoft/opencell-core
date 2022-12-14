@@ -190,7 +190,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     private WalletOperationService walletOperationService;
     @Inject
     private MethodCallingUtils methodCallingUtils;
-
+    @Inject
+    private RecurringRatingService recurringRatingService;
     /**
      * @param level level enum
      * @param chargeCode charge's code
@@ -295,18 +296,23 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         Date invoicingDate = null;
         if (chargeInstance.getInvoicingCalendar() != null) {
 
-            Date defaultInitDate = null;
-            RecurringChargeInstance charge = (RecurringChargeInstance) PersistenceUtils.initializeAndUnproxy(chargeInstance);
-            if (chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING && charge.getSubscriptionDate() != null) {
-                defaultInitDate = charge.getSubscriptionDate();
-            } else if (chargeInstance.getServiceInstance() != null) {
-                defaultInitDate = chargeInstance.getServiceInstance().getSubscriptionDate();
-            } else if (chargeInstance != null && chargeInstance.getSubscription() != null) {
-                defaultInitDate = chargeInstance.getSubscription().getSubscriptionDate();
-            }
+        	Date defaultInitDate = null;
+        	RecurringChargeInstance charge = (RecurringChargeInstance) PersistenceUtils.initializeAndUnproxy(chargeInstance);
+        	if (chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING && charge.getSubscriptionDate() != null) {
+        		defaultInitDate = charge.getSubscriptionDate();
+        	} else if (chargeInstance.getServiceInstance() != null) {
+        		defaultInitDate = chargeInstance.getServiceInstance().getSubscriptionDate();
+        	} else if (chargeInstance != null && chargeInstance.getSubscription() != null) {
+        		defaultInitDate = chargeInstance.getSubscription().getSubscriptionDate();
+        	}
 
-            Calendar invoicingCalendar = CalendarService.initializeCalendar(chargeInstance.getInvoicingCalendar(), defaultInitDate, chargeInstance);
-            invoicingDate = invoicingCalendar.nextCalendarDate(applicationDate);
+        	boolean isApplyInAdvance = recurringRatingService.isApplyInAdvance(charge);
+        	if(isApplyInAdvance) {
+        		invoicingDate=applicationDate;
+        	}else {
+        		Calendar invoicingCalendar = CalendarService.initializeCalendar(chargeInstance.getInvoicingCalendar(), defaultInitDate, chargeInstance);
+        		invoicingDate = invoicingCalendar.nextCalendarDate(applicationDate);
+        	}
         }
         ParamBean.setReload(true);
         String extraParam = edr != null ? paramBeanFactory.getInstance().getPropertyAsBoolean("edr.propagate.extraParameter", false) ? edr.getExtraParameter(): edr.getParameter4() : null;
