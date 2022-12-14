@@ -2730,7 +2730,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 	public void validateInvoice(Invoice invoice) {
 		invoice.setStatus(InvoiceStatusEnum.VALIDATED);
-		update(invoice);
+		serviceSingleton.assignInvoiceNumber(invoice, true);
 	}
     
     /**
@@ -6611,7 +6611,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         
         
-        if(toUpdate.getInvoiceType() != null && toUpdate.getCommercialOrder() == null) {
+        if(toUpdate.getInvoiceType() != null) {
            InvoiceType advType = invoiceTypeService.findByCode("ADV");
            if(advType != null && "ADV".equals(toUpdate.getInvoiceType().getCode())) {
                boolean isAccountingArticleAdt = toUpdate.getInvoiceLines() != null && toUpdate.getInvoiceLines().stream().allMatch(il -> il.getAccountingArticle() != null && il.getAccountingArticle().getCode().equals("ADV-STD"));
@@ -6773,13 +6773,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
         duplicatedInvoice.setLinkedInvoices(of(linkedInvoice));
         getEntityManager().flush();
 
+        duplicatedInvoice.setOpenOrderNumber(StringUtils.EMPTY);
+
         if (invoiceLinesIds != null && !invoiceLinesIds.isEmpty()) {
             calculateInvoice(duplicatedInvoice);
         }
         else {
             update(duplicatedInvoice);
         }
-
+        
         return duplicatedInvoice;
     }
     
@@ -7006,7 +7008,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 					.reduce(BigDecimal::add).get();
 			//if balance is well calculated and balance=0, we don't need to recalculate
 			if ((sum.add(invoiceBalance)).compareTo(invoice.getAmountWithTax()) == 0) {
-				if (BigDecimal.ZERO.compareTo(invoiceBalance)==0) {
+				CommercialOrder commercialOrder = CollectionUtils.isNotEmpty(advInvoices) ? advInvoices.get(0).getCommercialOrder() : null;
+				if (BigDecimal.ZERO.compareTo(invoiceBalance)==0 && !(commercialOrder!=null && commercialOrder.equals(invoice.getCommercialOrder()))) {
 					return;
 				} 
 			}
@@ -7078,6 +7081,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 					};
 			}
 		}
+	}
+	
+	public void rollBackAdvances(BillingRun billingRun) {
+	    getEntityManager().createNamedQuery("Invoice.rollbackAdvance") .setParameter("billingRunId", billingRun.getId()).executeUpdate();
 	}
 
 }

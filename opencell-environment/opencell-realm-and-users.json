@@ -65,7 +65,11 @@
           "client": {
             "opencell-web": [
               "superAdministrateur",
-              "apiSuperAdministrateur"
+              "apiSuperAdministrateur",
+              "genApiFull.create",
+              "genApiFull.delete",
+              "genApiFull.list",
+              "genApiFull.update"
             ]
           }
         },
@@ -991,15 +995,12 @@
             "client": {
               "opencell-web": [
                 "apiUseWorkflow",
-                "genApiFull.create",
                 "apiCreateInvoice",
                 "apiUseReport",
                 "apiReportingManagement",
                 "apiUseJob",
                 "apiIntegration",
-                "genApiFull.delete",
                 "apiWorkflowManager",
-                "genApiFull.list",
                 "apiBillingManagement",
                 "apiFinanceManagement",
                 "apiUserManagement",
@@ -1013,8 +1014,7 @@
                 "apiCpqManagement",
                 "inboundAccess",
                 "apiAdministrationManagement",
-                "apiUseScript",
-                "genApiFull.update"
+                "apiUseScript"
               ]
             }
           },

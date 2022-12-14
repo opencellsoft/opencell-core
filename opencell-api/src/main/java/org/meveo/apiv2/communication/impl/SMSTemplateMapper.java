@@ -26,6 +26,9 @@ public class SMSTemplateMapper {
         if (smsTemplateDto.getTranslatedTextContent() != null) {
             smsTemplate.setTranslatedTextContent(translationsUtils.convertTextTranslationsToMap(smsTemplateDto.getTranslatedTextContent()));
         }
+        if (smsTemplateDto.getMedia() != null) {
+            smsTemplateDto.setMedia(smsTemplate.getMedia());
+        }
 
         return smsTemplate;
     }
@@ -36,6 +39,7 @@ public class SMSTemplateMapper {
         smsTemplateDto.setId(smsTemplate.getId());
         smsTemplateDto.setCode(smsTemplate.getCode());
         smsTemplateDto.setTextContent(smsTemplate.getTextContent());
+        smsTemplateDto.setMedia(smsTemplate.getMedia());
         smsTemplateDto.setTranslatedTextContent(TranslationsUtils.convertToTranslatedTextDto(smsTemplate.getTranslatedTextContent()));
 
         return smsTemplateDto;
