@@ -54,7 +54,7 @@ public class InternationalSettingsResourceImpl implements InternationalSettingsR
 
     @Override
     public SMSTemplateDto get(String smsTemplateCode) {
-        return  internationalSettingsApiService
+        return internationalSettingsApiService
                 .checkAndGetSMSTemplate(smsTemplateCode);
     }
 

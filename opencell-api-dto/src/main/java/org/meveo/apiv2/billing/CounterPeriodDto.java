@@ -25,10 +25,10 @@ public interface CounterPeriodDto {
     BigDecimal getLevel();
 
     @NotNull
-    Date getPeriodStartDate();
+    Date getStartDate();
 
     @NotNull
-    Date getPeriodEndDate();
+    Date getEndDate();
 
     @Nullable
     BigDecimal getValue();
