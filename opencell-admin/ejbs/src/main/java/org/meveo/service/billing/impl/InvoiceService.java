@@ -6686,7 +6686,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoiceAgregates.addAll(invoice.getInvoiceAgregates());
         }
 
-        var invoiceLines = new ArrayList<InvoiceLine>();
+        List<InvoiceLine> invoiceLines = new ArrayList<InvoiceLine>();
         if (invoiceLinesIds != null && !invoiceLinesIds.isEmpty()) {
             invoiceLines.addAll(invoiceLinesService.findByInvoiceAndIds(invoice, invoiceLinesIds));
         }
@@ -6798,10 +6798,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         setInvoiceLines(invoice, invoiceLines);
         detach(invoice);
 
-        var adjustmentInvoice = new Invoice(invoice);
+        Invoice adjustmentInvoice = new Invoice(invoice);
         this.create(adjustmentInvoice);
 
-        updateInvoiceLines(invoice, invoiceLines, adjustmentInvoice);
+        duplicateInvoiceLines(invoice, invoiceLines, adjustmentInvoice);
         populateAdjustmentInvoice(invoice, adjustmentInvoice);
         calculateOrUpdateInvoice(invoiceLinesIds, adjustmentInvoice);
 
@@ -6829,7 +6829,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
     }
 
-    private Invoice updateInvoiceLines(Invoice invoice, List<InvoiceLine> invoiceLines, Invoice adjustmentInvoice) {
+    private Invoice duplicateInvoiceLines(Invoice invoice, List<InvoiceLine> invoiceLines, Invoice adjustmentInvoice) {
 
         for (InvoiceLine invoiceLine : invoiceLines) {
             invoiceLinesService.detach(invoiceLine);
