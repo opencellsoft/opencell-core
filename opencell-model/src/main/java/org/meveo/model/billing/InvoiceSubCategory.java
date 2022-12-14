@@ -73,6 +73,7 @@ public class InvoiceSubCategory extends BusinessCFEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accounting_code_id")
+    @Deprecated
     private AccountingCode accountingCode;
 
     @ManyToOne(fetch = FetchType.LAZY)

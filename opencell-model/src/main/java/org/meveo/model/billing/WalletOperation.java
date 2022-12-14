@@ -555,6 +555,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accounting_code_id")
+    @Deprecated
     private AccountingCode accountingCode;
 
     /**
