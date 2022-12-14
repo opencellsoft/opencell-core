@@ -53,5 +53,8 @@ public class LinkedInvoiceService extends PersistenceService<LinkedInvoice> {
         .executeUpdate();
 		
 	}
+	public void removeLinkedAdvances(List<Long> advInvoices) {
+	    getEntityManager().createNamedQuery("LinkedInvoice.removeLinkedAdvances").setParameter("invoiceIds", advInvoices).executeUpdate();
+	}
     
 }

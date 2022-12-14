@@ -89,6 +89,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.LockMode;
@@ -2729,7 +2730,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 	public void validateInvoice(Invoice invoice) {
 		invoice.setStatus(InvoiceStatusEnum.VALIDATED);
-		update(invoice);
+		serviceSingleton.assignInvoiceNumber(invoice, true);
 	}
     
     /**
@@ -5913,14 +5914,27 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     }
                     em.flush();
 
+                    final int maxValue =
+                            ParamBean.getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
                     Date now = new Date();
                     for (Object[] aggregateAndILIds : ilMassUpdates) {
                         List<Long> ilIds = (List<Long>) aggregateAndILIds[1];
-                        SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndILIds[0];
-                        em.createNamedQuery("InvoiceLine.updateWithInvoice").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("now", now)
-                            .setParameter("invoiceAgregateF", subCategoryAggregate).setParameter("ids", ilIds).executeUpdate();
-                        em.createNamedQuery("RatedTransaction.linkRTWithInvoice").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("now", now)
-                            .setParameter("ids", ilIds).executeUpdate();
+                        ListUtils.partition(ilIds, maxValue).forEach(ids -> {
+                            SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndILIds[0];
+                            em.createNamedQuery("InvoiceLine.updateWithInvoice")
+                                    .setParameter("billingRun", billingRun)
+                                    .setParameter("invoice", invoice)
+                                    .setParameter("now", now)
+                                    .setParameter("invoiceAgregateF", subCategoryAggregate)
+                                    .setParameter("ids", ids)
+                                    .executeUpdate();
+                            em.createNamedQuery("RatedTransaction.linkRTWithInvoice")
+                                    .setParameter("billingRun", billingRun)
+                                    .setParameter("invoice", invoice)
+                                    .setParameter("now", now)
+                                    .setParameter("ids", ids)
+                                    .executeUpdate();
+                        });
                     }
 
                     for (Object[] aggregateAndILs : ilUpdates) {
@@ -6597,7 +6611,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         
         
-        if(toUpdate.getInvoiceType() != null && toUpdate.getCommercialOrder() == null) {
+        if(toUpdate.getInvoiceType() != null) {
            InvoiceType advType = invoiceTypeService.findByCode("ADV");
            if(advType != null && "ADV".equals(toUpdate.getInvoiceType().getCode())) {
                boolean isAccountingArticleAdt = toUpdate.getInvoiceLines() != null && toUpdate.getInvoiceLines().stream().allMatch(il -> il.getAccountingArticle() != null && il.getAccountingArticle().getCode().equals("ADV-STD"));
@@ -6759,13 +6773,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
         duplicatedInvoice.setLinkedInvoices(of(linkedInvoice));
         getEntityManager().flush();
 
+        duplicatedInvoice.setOpenOrderNumber(StringUtils.EMPTY);
+
         if (invoiceLinesIds != null && !invoiceLinesIds.isEmpty()) {
             calculateInvoice(duplicatedInvoice);
         }
         else {
             update(duplicatedInvoice);
         }
-
+        
         return duplicatedInvoice;
     }
     
@@ -6992,7 +7008,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 					.reduce(BigDecimal::add).get();
 			//if balance is well calculated and balance=0, we don't need to recalculate
 			if ((sum.add(invoiceBalance)).compareTo(invoice.getAmountWithTax()) == 0) {
-				if (BigDecimal.ZERO.compareTo(invoiceBalance)==0) {
+				CommercialOrder commercialOrder = CollectionUtils.isNotEmpty(advInvoices) ? advInvoices.get(0).getCommercialOrder() : null;
+				if (BigDecimal.ZERO.compareTo(invoiceBalance)==0 && !(commercialOrder!=null && commercialOrder.equals(invoice.getCommercialOrder()))) {
 					return;
 				} 
 			}
@@ -7027,11 +7044,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         break;
                     }
                 }
-                invoice.setInvoiceBalance(remainingAmount);
-				List<Long> toRemove = invoice.getLinkedInvoices().stream()
-						.filter(il -> ZERO.compareTo(il.getAmount()) == 0 && InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(il.getType()))
-						.map(il -> il.getLinkedInvoiceValue().getId()).collect(Collectors.toList());
-				linkedInvoiceService.deleteByIdInvoiceAndLinkedInvoice(invoice.getId(), toRemove);
+            invoice.setInvoiceBalance(remainingAmount);
+            List<Long> toRemove = invoice.getLinkedInvoices().stream()
+                    .filter(linkedInvoice -> (linkedInvoice.getAmount() == null || ZERO.compareTo(linkedInvoice.getAmount()) == 0) && InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(linkedInvoice.getType()))
+                    .map(il -> il.getLinkedInvoiceValue().getId()).collect(Collectors.toList());
+            linkedInvoiceService.deleteByIdInvoiceAndLinkedInvoice(invoice.getId(), toRemove);
 	        }
     }
 
@@ -7064,6 +7081,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 					};
 			}
 		}
+	}
+	
+	public void rollBackAdvances(BillingRun billingRun) {
+	    getEntityManager().createNamedQuery("Invoice.rollbackAdvance") .setParameter("billingRunId", billingRun.getId()).executeUpdate();
 	}
 
 }
