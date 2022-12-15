@@ -1,6 +1,8 @@
 package org.meveo.admin.job;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,17 +77,24 @@ public class MassAdjustmentJobBean extends BaseJobBean {
 			totalAmountWT = totalAmountWT.add(invoiceLine.getAmountWithTax());
 			invoiceLineService.update(invoiceLine);
 		}
-        
+		
         jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.initial.lines", invoiceLinesToAdjust.size()));
         jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.processed.lines", totalLinesProcessed));
-        jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.inital.awot", totalAmountWoT));
-        jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.initial.awt", totalAmountWT));
-        jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.processed.awot", totalAWoTProcessed));
-        jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.processed.awt", totalAWTProcessed));
+        jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.inital.awot", formatDecimal(totalAmountWoT)));
+        jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.initial.awt", formatDecimal(totalAmountWT)));
+        jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.processed.awot", formatDecimal(totalAWoTProcessed)));
+        jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.processed.awt", formatDecimal(totalAWTProcessed)));
         jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.impacted.invoices", impactedInvoices.size()));
         jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.impacted.ba", totalImpactedBA));
         
         return jobExecutionResult;
+    }
+    
+    private String formatDecimal(BigDecimal bd) {
+    	NumberFormat formatter = new DecimalFormat();  
+    	formatter.setGroupingUsed(false);
+
+    	return formatter.format(bd).replace(",", ".");
     }
 
 }

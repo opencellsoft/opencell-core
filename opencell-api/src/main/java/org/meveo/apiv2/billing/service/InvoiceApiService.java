@@ -454,8 +454,8 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
         }
 	    
 	    try {
-	        adjInvoice = invoiceService.createAdjustment(invoice, invoiceLinesToReplicate.getInvoiceLinesIds());
-    	    
+	        adjInvoice = invoiceService.createAdjustment(invoice, invoiceLinesToReplicate);
+
     	    if (invoice.getLinkedInvoices() != null) {
     	        invoice.getLinkedInvoices().size();
             }

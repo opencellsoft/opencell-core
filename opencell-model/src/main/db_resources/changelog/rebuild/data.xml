@@ -10033,6 +10033,38 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferAmountScript')" />
 		</insert>
     </changeSet>
+    
+    <changeSet id="INTRD-12266_20221214_rebuild" author="aeljaouhari">
+        <insert tableName="meveo_script_instance">
+        	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+        	<column name="code" value="org.meveo.service.script.validation.ValidateCreditCategoryScript" />
+        	<column name="script">
+        		<![CDATA[   package org.meveo.service.script.validation;
+            		public class ValidateCreditCategory extends ValidateCreditCategoryScript {}]]>
+        	</column>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="src_type" value="JAVA" />
+            <column name="description" value="The customer (customer account actually) credit category must not be in the provided list for the rule to pass.If customer credit category is in the list, the rule will fail.If credit category list is empty, then rule will always pass."/>
+            <column name="description_i18n">
+				<![CDATA[{"EN":"<p>The customer's (customer account actually) credit category must not be in the provided list for the rule to pass.</p><p>If customer's credit category is in the list, the rule will fail.</p><p>If credit category list is empty, then rule will always pass.</p>","FR":"<p>Le catégorie de crédit du client (customer account) ne doit pas être dans la liste fournie pour que la règle passe.</p><p>Si la catégorie de crédit du client est dans la liste, la règle va échouer.</p><p>Si la liste de catégories de crédit est vide, la règle passera toujours.</p>"}]]>
+			</column>
+			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='INVOICE_VALIDATION')" />
+        </insert>
+
+		<insert tableName="meveo_script_parameter">
+			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="CheckCreditCategory" />
+			<column name="description_i18n" value='{"FR":"Catégories de crédit interdites","EN":"Forbidden credit categories"}'/>
+			<column name="class_name" value="org.meveo.model.payments.CreditCategory" />
+			<column name="mandatory" valueNumeric="0" />
+			<column name="values_separator" value="\|" />
+			<column name="collection" valueNumeric="1" />
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateCreditCategoryScript')" />
+		</insert>
+    </changeSet>
 
 	<changeSet id="#INTRD-6484" author="hichamElHaloui"/>
 	<changeSet id="#INTRD-6668_20220421" author="TarikRabeh" />
@@ -10084,6 +10116,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="#INTRD-11745_20221130" author="TarikFA." />
 	<changeSet id="#INTRD-12024_20221202" author="aeljaouhari" />
 	<changeSet id="INTRD_12001_20221205" author="TarikFA." />
+	<changeSet id="INTRD-12266_20221214" author="aeljaouhari" />
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

@@ -39,6 +39,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -131,8 +133,8 @@ import org.meveo.model.shared.DateUtils;
                                 + " org.meveo.model.billing.InvoicePaymentStatusEnum.PPAID, org.meveo.model.billing.InvoicePaymentStatusEnum.DISPUTED)"),
         @NamedQuery(name = "Invoice.detachAOFromInvoice", query = "UPDATE Invoice set recordedInvoice = null where recordedInvoice = :ri"),
         @NamedQuery(name = "Invoice.sumInvoiceableAmountByBR", query =
-        "select sum(inv.amountWithoutTax), sum(inv.amountWithTax), inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id "
-                + "FROM Invoice inv where inv.billingRun.id=:billingRunId group by inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id"),
+        "select sum(inv.amountWithoutTax), sum(inv.amountWithTax), inv.subscription.id, inv.commercialOrder.id , inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id "
+                + "FROM Invoice inv where inv.billingRun.id=:billingRunId group by inv.subscription.id, inv.commercialOrder.id , inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id"),
 
         @NamedQuery(name = "Invoice.sumAmountsByBR", query = "select sum(inv.amountTax),sum(inv.amountWithoutTax), sum(inv.amountWithTax) FROM Invoice inv where inv.billingRun.id=:billingRunId and inv.status <> 'CANCELED'"),
         @NamedQuery(name = "Invoice.billingAccountsByBr", query = "select distinct inv.billingAccount from Invoice inv where inv.billingRun.id=:billingRunId and inv.status <> 'CANCELED'"),
@@ -151,8 +153,10 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.findValidatedInvoiceAdvOrder", query = "select inv from Invoice inv  where  (inv.commercialOrder is null or inv.commercialOrder=:commercialOrder) and inv.status='VALIDATED' and inv.invoiceType.code = 'ADV' and inv.invoiceBalance > 0 and inv.billingAccount.id =:billingAccountId order by inv.commercialOrder, inv.auditable.created ASC"),
         @NamedQuery(name = "Invoice.findValidatedInvoiceAdvWithoutOrder", query = "select inv from Invoice inv  where  inv.commercialOrder is null  and inv.status='VALIDATED' and inv.invoiceType.code = 'ADV' and inv.invoiceBalance > 0 and inv.billingAccount.id =:billingAccountId"),
         @NamedQuery(name = "Invoice.findValidatedInvoiceAdvWithOrder", query = "select inv from Invoice inv  where  inv.commercialOrder=:commercialOrder and inv.status='VALIDATED' and inv.invoiceType.code = 'ADV' and inv.invoiceBalance > 0 and inv.billingAccount.id =:billingAccountId"),
-        @NamedQuery(name = "Invoice.findWithFuntionalCurrencyDifferentFromOne", query = "SELECT i FROM Invoice i JOIN Provider p ON p.currency.id = i.tradingCurrency.currency.id WHERE i.lastAppliedRate <> :EXPECTED_RATE")
-
+        @NamedQuery(name = "Invoice.findWithFuntionalCurrencyDifferentFromOne", query = "SELECT i FROM Invoice i JOIN Provider p ON p.currency.id = i.tradingCurrency.currency.id WHERE i.lastAppliedRate <> :EXPECTED_RATE"),
+})
+@NamedNativeQueries({
+	@NamedNativeQuery(name = "Invoice.rollbackAdvance", query = "update billing_invoice set invoice_balance = invoice_balance + li.amount from (select bli.linked_invoice_id, bli.amount from billing_linked_invoices bli join billing_invoice i on i.id = bli.id where i.billing_run_id = :billingRunId and bli.type = 'ADVANCEMENT_PAYMENT') li where li.linked_invoice_id = id")
 })
 public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISearchable {
 

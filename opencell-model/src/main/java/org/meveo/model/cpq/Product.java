@@ -107,6 +107,7 @@ public class Product extends ServiceCharge {
 		this.priceVersionDateSetting = copy.getPriceVersionDateSetting();
 		this.getUuid();
 		this.setProductModel(copy.isModel != null && copy.isModel == Boolean.TRUE ? copy : null);
+		this.agreementDateSetting = copy.agreementDateSetting;
 	}
 
 
@@ -257,6 +258,11 @@ public class Product extends ServiceCharge {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_model_id")
     private Product productModel;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "agreement_date_setting")
+    private AgreementDateSettingEnum agreementDateSetting;
+    
 
 	/**
 	 * @return the status
@@ -702,7 +708,20 @@ public class Product extends ServiceCharge {
 	public void setOfferComponents(Set<OfferComponent> offerComponents) {
 		this.offerComponents = offerComponents;
 	}
-	
-	
+
+	/**
+	 * @return the agreementDateSetting
+	 */
+	public AgreementDateSettingEnum getAgreementDateSetting() {
+		return agreementDateSetting;
+	}
+
+	/**
+	 * @param agreementDateSetting the agreementDateSetting to set
+	 */
+	public void setAgreementDateSetting(AgreementDateSettingEnum agreementDateSetting) {
+		this.agreementDateSetting = agreementDateSetting;
+	}
+
 
 }
