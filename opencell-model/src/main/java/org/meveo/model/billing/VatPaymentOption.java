@@ -9,6 +9,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 
@@ -17,7 +18,7 @@ import org.meveo.model.ObservableEntity;
 @Cacheable
 @Table(name = "untdid_vatex")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "untdid_vatex_seq"), })
-public class VatPaymentOption {
+public class VatPaymentOption extends AuditableEntity{
 	
 	@Column(name = "2005_code", length = 10)
 	@Size(max = 10)

@@ -9,6 +9,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 
@@ -17,7 +18,7 @@ import org.meveo.model.ObservableEntity;
 @Cacheable
 @Table(name = "untdid_4461_payment_means")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "untdid_5189_allowance_code_seq"), })
-public class PaymentMean {
+public class PaymentMean extends AuditableEntity{
 	
 	@Column(name = "code_name", length = 500)
 	@Size(max = 20)
