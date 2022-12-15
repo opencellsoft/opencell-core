@@ -92,7 +92,8 @@ import org.meveo.model.tax.TaxCategory;
         @NamedQuery(name = "BillingAccount.getUnbilledByBC", query = "select ba.id from BillingAccount ba where ba.billingCycle=:billingCycle and (ba.nextInvoiceDate is null or ba.nextInvoiceDate<:maxNextInvoiceDate) and (ba.billingRun is null OR ba.billingRun<>:billingRun)"),
         @NamedQuery(name = "BillingAccount.getUnbilledByBCWithStartDate", query = "select ba.id from BillingAccount ba where ba.billingCycle=:billingCycle and (ba.nextInvoiceDate is null or ba.nextInvoiceDate>=:minNextInvoiceDate) and (ba.nextInvoiceDate is null or ba.nextInvoiceDate<:maxNextInvoiceDate) and (ba.billingRun is null OR ba.billingRun<>:billingRun)"),
         @NamedQuery(name = "BillingAccount.getBillingAccountsWithMinAmountELNotNullByBA", query = "select ba from BillingAccount ba where ba.minimumAmountEl is not null AND ba.status = org.meveo.model.billing.AccountStatusEnum.ACTIVE AND ba=:billingAccount"),
-        @NamedQuery(name = "BillingAccount.getCountByParent", query = "select count(*) from BillingAccount ba where ba.customerAccount=:parent") })
+        @NamedQuery(name = "BillingAccount.getCountByParent", query = "select count(*) from BillingAccount ba where ba.customerAccount=:parent"),
+		@NamedQuery(name = "BillingAccount.getCountByCreditCategory", query = "select count(*) from BillingAccount ba where ba.id=:id and ba.customerAccount.creditCategory.id in (:creditCategoryIds)") })
 public class BillingAccount extends AccountEntity implements IInvoicingMinimumApplicable, IBillableEntity, IWFEntity, IDiscountable, ICounterEntity {
 
     private static final long serialVersionUID = 1L;
