@@ -63,7 +63,7 @@ public class CustomTableResourceImpl implements CustomTableResource {
 			pattern = "#,##0.00";
 		}
 		if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
-			pattern = "MM/dd/yyyy";
+			pattern = "dd/MM/yyyy";
 		}
 		return pattern;
 	}
