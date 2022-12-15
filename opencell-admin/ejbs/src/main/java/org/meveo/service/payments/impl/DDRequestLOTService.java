@@ -344,7 +344,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 			return prefix + "recordedInvoice.ca";
 		}
 		prefix = "CA.code:"+ca.getCode()+" AO.id:" + accountOperation.getId() + " : ";
-		// UPDATE INTRD-9135 : Le ca.name ne doit pas être obligatoire si le customer name n’est pas renseigné et cela ne doit pas bloquer la génération du fichier de prélèvement pour l’account operation concerné
+		// UPDATE INTRD-9135 : Le ca.name must not be mandatory if the customer name is not provided and this must not block the generation of the direct debit file for the account operation concerned
 		PaymentMethod preferedPaymentMethod = ca.getPreferredPaymentMethod();
 		if (preferedPaymentMethod != null && preferedPaymentMethod instanceof DDPaymentMethod) {
 			if (((DDPaymentMethod) preferedPaymentMethod).getMandateIdentification() == null) {
@@ -387,7 +387,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 		if (bankCoordinates.getIcs() == null) {
 			return prefix + "bankCoordinates.ics";
 		}
-		// UPDATE INTRD-9135 : accountOperation.reference ne doit pas être rendu obligatoire pour le déclenchement du prélèvement.
+		// UPDATE INTRD-9135 : accountOperation.reference should not be made mandatory for triggering direct debit.
 		if (ca.getDescription() == null) {
 			return prefix + "ca.description";
 		}
