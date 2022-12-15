@@ -341,7 +341,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 			throw new BusinessException("Seal couldn't be calculated for merchantId=" + paymentGateway.getMarchandId(),
 					e);
 		}
-
+        log.info("getHostedCheckoutUrl data:{} seal:{}",data,result.getSeal());
 		return response;
 	}
 
