@@ -6516,22 +6516,23 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (input.getExternalRef() != null) {
             toUpdate.setExternalRef(input.getExternalRef());
         }
-        if (input.getInvoiceDate() != null && !toUpdate.isUseCurrentRate()) {
+        if (input.getInvoiceDate() != null) {
             toUpdate.setInvoiceDate(input.getInvoiceDate());
-
-            BigDecimal currentRate = null;
-            if (toUpdate.getTradingCurrency() != null) {
-                ExchangeRate exchangeRate = toUpdate.getTradingCurrency().getExchangeRate(input.getInvoiceDate());
-                if (exchangeRate != null) {
-                    currentRate = exchangeRate.getExchangeRate();
+            if(!toUpdate.isUseCurrentRate()) {
+                BigDecimal currentRate = null;
+                if (toUpdate.getTradingCurrency() != null) {
+                    ExchangeRate exchangeRate = toUpdate.getTradingCurrency().getExchangeRate(input.getInvoiceDate());
+                    if (exchangeRate != null) {
+                        currentRate = exchangeRate.getExchangeRate();
+                    }
                 }
+                BigDecimal lastAppliedRate = currentRate != null ? currentRate : ONE;
+
+                toUpdate.setLastAppliedRate(lastAppliedRate);
+                toUpdate.setLastAppliedRateDate(new Date());
+
+                refreshInvoiceLineAndAggregateAmounts(toUpdate);
             }
-            BigDecimal lastAppliedRate = currentRate != null ? currentRate : ONE;
-
-            toUpdate.setLastAppliedRate(lastAppliedRate);
-            toUpdate.setLastAppliedRateDate(new Date());
-
-            refreshInvoiceLineAndAggregateAmounts(toUpdate);
         }
 
         //if the dueDate == null, it will be calculated at the level of the method invoiceService.calculateInvoice(updateInvoice)
