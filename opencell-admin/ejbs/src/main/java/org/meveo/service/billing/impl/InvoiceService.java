@@ -6318,6 +6318,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     .setParameter("billingRunId", billingRunId)
                     .getResultList();
     }
+    public List<Long> getInvoicesByBRNotValidatedInvoices(Long billingRunId) {
+        return getEntityManager().createNamedQuery("Invoice.loadByBillingRunNotValidatedInvoices", Long.class)
+                    .setParameter("billingRunId", billingRunId)
+                    .getResultList();
+    }
     
     public void checkAndUpdatePaymentStatus(Invoice entity,InvoicePaymentStatusEnum oldInvoicePaymentStatusEnum, InvoicePaymentStatusEnum newInvoicePaymentStatusEnum) {
         if (!oldInvoicePaymentStatusEnum.equals(newInvoicePaymentStatusEnum)) {

@@ -191,7 +191,7 @@ public class BillingRunApiService implements ApiService<BillingRun> {
             ratedTransactionService.deleteSupplementalRTs(billingRun);
             ratedTransactionService.uninvoiceRTs(billingRun);
             invoiceLineService.deleteInvoiceLines(billingRun);
-            invoiceLineService.deleteByAssociatedInvoice(invoiceService.getInvoicesByBR(billingRun.getId()));
+            invoiceLineService.deleteByAssociatedInvoice(invoiceService.getInvoicesByBRNotValidatedInvoices(billingRun.getId()));
             invoiceService.deleteInvoices(billingRun);
             invoiceAgregateService.deleteInvoiceAgregates(billingRun);
             billingRun.setStatus(CANCELED);
