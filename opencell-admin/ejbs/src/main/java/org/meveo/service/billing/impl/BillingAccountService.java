@@ -557,4 +557,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         if (StringUtils.isNotBlank(entities))
             throw new BusinessException("Cannot delete this billing account , because is still referenced");
     }
+    
+    public long getCountByCreditCategory(Long baId, List<Long> creditCategoryIds) {
+        return getEntityManager().createNamedQuery("BillingAccount.getCountByCreditCategory", Long.class).setParameter("id", baId).setParameter("creditCategoryIds", creditCategoryIds).getSingleResult();
+    }
 }

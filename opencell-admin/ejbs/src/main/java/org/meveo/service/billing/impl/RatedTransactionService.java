@@ -35,7 +35,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -57,7 +56,6 @@ import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -96,7 +94,6 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.cpq.AttributeValue;
-import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.contract.BillingRule;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -189,12 +186,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     @Inject
     private MinAmountService minAmountService;
-
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
-    @Inject
-    private InvoiceLineService invoiceLineService;
 
     @Inject
     private AccountingArticleService accountingArticleService;
@@ -377,20 +368,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         em.createNamedQuery("WalletOperation.massUpdateWithRTInfoFromPendingTable" + (EntityManagerProvider.isDBOracle() ? "Oracle" : "")).executeUpdate();
         em.createNamedQuery("WalletOperation.deletePendingTable").executeUpdate();
         return lstRatedTransaction;
-    }
-
-    private Optional<AccountingArticle> getAccountingArticle(WalletOperation walletOperation) {
-        ServiceInstance serviceInstance = walletOperation.getServiceInstance() != null
-                ? serviceInstanceService.findById(walletOperation.getServiceInstance().getId()) : null;
-        ChargeInstance chargeInstance = walletOperation.getChargeInstance() != null
-                ? chargeInstanceService.findById(walletOperation.getChargeInstance().getId()) : null;
-        Product product = serviceInstance != null
-                ? serviceInstance.getProductVersion() != null
-                ? serviceInstance.getProductVersion().getProduct() : null : null;
-        ChargeTemplate charge = chargeInstance != null ? chargeInstance.getChargeTemplate() : null;
-        List<AttributeValue> attributeValues = fromAttributeInstances(serviceInstance);
-        Map<String, Object> attributes = fromAttributeValue(attributeValues);
-        return accountingArticleService.getAccountingArticle(product, charge, attributes, walletOperation);
     }
 
     private List<AttributeValue> fromAttributeInstances(ServiceInstance serviceInstance) {
@@ -1433,12 +1410,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param chargeInstanceCode
      * @param unitAmountWithoutTax
      * @param quantity
+     * @param description
      * @return
      */
     public RatedTransaction createRatedTransaction(String billingAccountCode, String userAccountCode,
-            String subscriptionCode, String serviceInstanceCode, String chargeInstanceCode, Date usageDate,
-            BigDecimal unitAmountWithoutTax, BigDecimal quantity, String param1, String param2, String param3, String paramExtra) {
-
+            String subscriptionCode, String serviceInstanceCode, String chargeInstanceCode,
+                                                   Date usageDate, BigDecimal unitAmountWithoutTax, BigDecimal quantity,
+                                                   String param1, String param2, String param3,
+                                                   String paramExtra, String description) {
         String errors = "";
         if (billingAccountCode == null) {
             errors = errors + " billingAccountCode,";
@@ -1480,10 +1459,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         BigDecimal AmountWithoutTax = unitAmountWithoutTax.multiply(quantity);
         BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(AmountWithoutTax, AmountWithoutTax, taxPercent,
                 appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+        ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
+        String rtDescription = description != null && !description.isBlank()
+                ? description : chargeTemplate.getDescriptionOrCode();
         RatedTransaction rt = new RatedTransaction(usageDate, unitAmounts[0], unitAmounts[1], unitAmounts[2], quantity,
                 amounts[0], amounts[1], amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount, userAccount,
-                null, param1, param2, param3, paramExtra, null, subscription, null, null, null, subscription.getOffer(), null,
-                serviceInstance.getCode(), serviceInstance.getCode(), null, null, subscription.getSeller(), taxInfo.tax,
+                null, param1, param2, param3, paramExtra, null, subscription, null,
+                null, null, subscription.getOffer(), null,
+                chargeTemplate.getCode(), rtDescription, null, null, subscription.getSeller(), taxInfo.tax,
                 taxPercent, serviceInstance, taxClass, null, RatedTransactionTypeEnum.MANUAL, chargeInstance, null);
         rt.setAccountingArticle(accountingArticle);
         create(rt);
@@ -1492,13 +1475,20 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     /**
-     * @param ratedTransaction
-     * @param unitAmountWithoutTax
-     * @param quantity
-     * @return
+     * Update the rated transaction
+     *
+     * @param ratedTransaction the rated transaction
+     * @param description the description
+     * @param unitAmountWithoutTax the unit amount without tax
+     * @param quantity the quantity
+     * @param param1 the param1
+     * @param param2 the param2
+     * @param param3 the param3
+     * @param paramExtra the param extra
      */
-    public void updateRatedTransaction(RatedTransaction ratedTransaction, BigDecimal unitAmountWithoutTax,
+    public void updateRatedTransaction(RatedTransaction ratedTransaction, String description, BigDecimal unitAmountWithoutTax,
             BigDecimal quantity, String param1, String param2, String param3, String paramExtra) {
+        ratedTransaction.setDescription(description);
         BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(unitAmountWithoutTax, unitAmountWithoutTax,
                 ratedTransaction.getTaxPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
         BigDecimal AmountWithoutTax = unitAmountWithoutTax.multiply(quantity);
@@ -1676,22 +1666,22 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration);
 
         final String unitAmount = aggregationConfiguration.isAggregationPerUnitAmount() ?
-                "(case when sum(rt.quantity)=0 then sum(rt.amountWithoutTax) else (sum(rt.amountWithoutTax) / sum(rt.quantity)) end) as unit_amount_without_tax, (case when sum(rt.quantity)=0 then sum(rt.amountWithTax) else (sum(rt.amountWithTax) / sum(rt.quantity)) end)  as unit_amount_with_tax," :
+                "(case when sum(rt.quantity)=0 then sum(rt.amountWithoutTax) else (sum(rt.amountWithoutTax) / sum(rt.quantity)) end) as unit_amount_without_tax, (case when sum(rt.quantity)=0 then sum(rt.amountWithTax) else (sum(rt.amountWithTax) / sum(rt.quantity)) end) as unit_amount_with_tax," :
                 "rt.unitAmountWithoutTax as unit_amount_without_tax, rt.unitAmountWithTax as unit_amount_with_tax,  ";
-        final String unitAmountGroupBy = aggregationConfiguration.isAggregationPerUnitAmount() ? "" : " rt.unitAmountWithoutTax, rt.unitAmountWithTax,  ";
+        final String unitAmountGroupBy = aggregationConfiguration.isAggregationPerUnitAmount() ? "unit_amount_without_tax, unit_amount_with_tax, " : " rt.unitAmountWithoutTax, rt.unitAmountWithTax, ";
         String query =
                 "SELECT string_agg_long(rt.id) as rated_transaction_ids, rt.billingAccount.id as billing_account__id, rt.accountingCode.id as accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, "
                         + unitAmount + " SUM(rt.amountWithoutTax) as sum_without_tax, SUM(rt.amountWithTax) as sum_with_tax, rt.offerTemplate.id as offer_id, rt.serviceInstance.id as service_instance_id, "
                         + usageDateAggregation + " as usage_date, min(rt.startDate) as start_date, max(rt.endDate) as end_date, rt.orderNumber as order_number, "
                         + " s.id as subscription_id, s.order.id as commercial_order_id, rt.taxPercent as tax_percent, rt.tax.id as tax_id, "
                         + " rt.infoOrder.order.id as order_id, rt.infoOrder.productVersion.id as product_version_id, rt.infoOrder.orderLot.id as order_lot_id, "
-                        + " rt.chargeInstance.id as charge_instance_id, rt.parameter2 as parameter_2, rt.accountingArticle.id as article_id, rt.discountedRatedTransaction as discounted_ratedtransaction_id"
+                        + " rt.chargeInstance.id as charge_instance_id, rt.accountingArticle.id as article_id, rt.discountedRatedTransaction as discounted_ratedtransaction_id"
                         + " FROM RatedTransaction rt left join rt.subscription s WHERE " + entityCondition
                         + " AND rt.status = 'OPEN' AND :firstTransactionDate <= rt.usageDate AND rt.usageDate < :lastTransactionDate"
                         + " and (rt.invoicingDate is NULL or rt.invoicingDate < :invoiceUpToDate) AND rt.accountingArticle.ignoreAggregation = false"
                         + " GROUP BY rt.billingAccount.id, rt.accountingCode.id, rt.description, rt.offerTemplate.id, rt.serviceInstance.id, " + unitAmountGroupBy
                         + usageDateAggregation + ", rt.startDate, rt.endDate, rt.orderNumber, s.id,  s.order.id, rt.taxPercent, rt.tax.id, "
-                        + " rt.infoOrder.order.id, rt.infoOrder.productVersion.id, rt.infoOrder.orderLot.id, rt.chargeInstance.id, rt.parameter2, rt.accountingArticle.id, rt.discountedRatedTransaction, rt.amountWithoutTax"
+                        + " rt.infoOrder.order.id, rt.infoOrder.productVersion.id, rt.infoOrder.orderLot.id, rt.chargeInstance.id, rt.accountingArticle.id, rt.discountedRatedTransaction, rt.amountWithoutTax"
                         + " order by rt.amountWithoutTax desc";
         List<Map<String, Object>> groupedRTsWithAggregation = getSelectQueryAsMap(query, params);
         groupedRTsWithAggregation.addAll(getGroupedRTsWithoutAggregation(billingRun, be, lastTransactionDate));
@@ -1753,7 +1743,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         " rt.startDate as start_date, rt.endDate as end_date, rt.orderNumber as order_number, " +
                         " s.id as subscription_id, s.order.id as commercial_order_id, rt.taxPercent as tax_percent, rt.tax.id as tax_id," +
                         " rt.infoOrder.order.id as order_id, rt.infoOrder.productVersion.id as product_version_id, rt.infoOrder.orderLot.id as order_lot_id," +
-                        " rt.chargeInstance.id as charge_instance_id, rt.parameter2 as parameter_2, rt.accountingArticle.id as article_id," +
+                        " rt.chargeInstance.id as charge_instance_id, rt.accountingArticle.id as article_id," +
                         " rt.discountedRatedTransaction as discounted_ratedtransaction_id" +
                         " FROM RatedTransaction rt left join rt.subscription s " +
                         " WHERE" + entityCondition + "AND rt.status = 'OPEN' AND :firstTransactionDate <= rt.usageDate " +
@@ -1890,7 +1880,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return null;
         }
         expression = expression.replace("\\", "");
-        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        Map<Object, Object> userMap = new HashMap<>();
         userMap.put("rt", rt);
         Boolean code = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
         if (code != null) {
@@ -1904,7 +1894,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return null;
         }
         expression = expression.replace("\\", "");
-        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        Map<Object, Object> userMap = new HashMap<>();
         userMap.put("rt", rt);
         String code = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
         if (code != null) {

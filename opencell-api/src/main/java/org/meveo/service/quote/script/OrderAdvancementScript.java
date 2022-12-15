@@ -84,9 +84,9 @@ OrderAdvancementScript extends ModuleScript {
             if(orderProgress == 100) {
                 if(commercialOrder.getRateInvoiced() < 100) {
                     if(isOneShot100Payment(commercialOrder.getInvoicingPlan().getInvoicingPlanItems())){
-                    	createIlsAndInvoice(commercialOrder,groupedPricesToBill,null, nextDay, firstTransactionDate, invoiceDate,true);
+                    	createIlsAndInvoice(commercialOrder,groupedPricesToBill,null, nextDay, firstTransactionDate, invoiceDate,true, true);
                     }
-                    generateGlobalInvoice(commercialOrder,groupedPricesToBill, nextDay, firstTransactionDate, invoiceDate);
+                    generateGlobalInvoice(commercialOrder,groupedPricesToBill, nextDay, firstTransactionDate, invoiceDate, true);
                     commercialOrder.setOrderProgressTmp(orderProgress);
                     commercialOrder.setRateInvoiced(100);
                 }
@@ -109,9 +109,9 @@ OrderAdvancementScript extends ModuleScript {
                     throw new BusinessException("the invoicing plan rate is grater than remaining rate to invoice");
                 }
                 if(newRateInvoiced.compareTo(BigDecimal.valueOf(100)) == 0){
-                	generateGlobalInvoice(commercialOrder, groupedPricesToBill,nextDay, firstTransactionDate, invoiceDate);
+                	generateGlobalInvoice(commercialOrder, groupedPricesToBill,nextDay, firstTransactionDate, invoiceDate, true);
                 }else {
-                    createIlsAndInvoice(commercialOrder,groupedPricesToBill,invoicingPlanItem.getRateToBill(), nextDay, firstTransactionDate, invoiceDate, true);
+                    createIlsAndInvoice(commercialOrder,groupedPricesToBill,invoicingPlanItem.getRateToBill(), nextDay, firstTransactionDate, invoiceDate, true, false);
                 }
                 commercialOrder.setRateInvoiced(newRateInvoiced.intValue());
                 commercialOrder.setOrderProgressTmp(orderProgress);
@@ -134,7 +134,7 @@ OrderAdvancementScript extends ModuleScript {
 //                );
 //    }
 
-    private void createIlsAndInvoice(CommercialOrder commercialOrder, List<Object[]> groupedPricesToBill,BigDecimal rateToBill,Date nextDay, Date firstTransactionDate, Date invoiceDate, boolean isDepositInvoice) {
+    private void createIlsAndInvoice(CommercialOrder commercialOrder, List<Object[]> groupedPricesToBill,BigDecimal rateToBill,Date nextDay, Date firstTransactionDate, Date invoiceDate, boolean isDepositInvoice, boolean isBillOver) {
     	BigDecimal taxRate=null;
     	BigDecimal totalAmountWithoutTax=null;
     	BigDecimal totalAmountWithTax=null;
@@ -142,13 +142,26 @@ OrderAdvancementScript extends ModuleScript {
     	BigDecimal totalQuantity=null;
     	Map<Long,InvoiceLine> orderToInvoiceLine=new HashMap<Long, InvoiceLine>();
     	InvoiceLine discountedInvoiceLine=null;
+    	 AccountingArticle defaultAccountingArticle = null;
+    	 if(!isBillOver) {
+    	     defaultAccountingArticle = getDefaultAccountingArticle();
+    	 }
+    	 
     	for (Object[] groupedOrderPrice : groupedPricesToBill) {
 			Long orderArticleLineId = (Long) groupedOrderPrice[0];
 			Long discountedOrderPriceId = (Long) groupedOrderPrice[1];
-			taxRate = (BigDecimal) groupedOrderPrice[2];
-			totalAmountWithoutTax = (BigDecimal) groupedOrderPrice[3];
-			totalAmountWithTax = (BigDecimal) groupedOrderPrice[4];
-			totalAmountTax = (BigDecimal) groupedOrderPrice[5];
+			if(!isBillOver) {
+				taxRate = BigDecimal.ZERO;
+				totalAmountWithoutTax = (BigDecimal) groupedOrderPrice[4];
+				totalAmountWithTax = (BigDecimal) groupedOrderPrice[4];
+				totalAmountTax = BigDecimal.ZERO;
+			}else {
+				taxRate = (BigDecimal) groupedOrderPrice[2];
+				totalAmountWithoutTax = (BigDecimal) groupedOrderPrice[3];
+				totalAmountWithTax = (BigDecimal) groupedOrderPrice[4];
+				totalAmountTax = (BigDecimal) groupedOrderPrice[5];
+			}
+			
 			totalQuantity = (BigDecimal) groupedOrderPrice[6];
 			OrderArticleLine orderArticleLine = null;
             if(orderArticleLineId!=null) {
@@ -169,7 +182,7 @@ OrderAdvancementScript extends ModuleScript {
                 	 
                 }
                 
-                InvoiceLine invoiceLine=createInvoiceLine(commercialOrder, orderArticleLine.getAccountingArticle(),orderArticleLine.getOrderProduct().getProductVersion(),orderArticleLine.getOrderProduct().getOrderOffer(), totalAmountWithoutTax, totalAmountWithTax, totalAmountTax, taxRate,discountedInvoiceLine!=null?discountedInvoiceLine.getId():null);
+                InvoiceLine invoiceLine=createInvoiceLine(commercialOrder, defaultAccountingArticle != null ? defaultAccountingArticle : orderArticleLine.getAccountingArticle(),orderArticleLine.getOrderProduct().getProductVersion(),orderArticleLine.getOrderProduct().getOrderOffer(), totalAmountWithoutTax, totalAmountWithTax, totalAmountTax, taxRate,discountedInvoiceLine!=null?discountedInvoiceLine.getId():null);
                 
                orderToInvoiceLine.put(orderArticleLineId, invoiceLine);
            
@@ -198,8 +211,8 @@ OrderAdvancementScript extends ModuleScript {
         return invoicingPlanItems.size() == 1 && invoicingPlanItems.get(0).getRateToBill().doubleValue() == BigDecimal.valueOf(100).doubleValue();
     }
 
-    private void generateGlobalInvoice(CommercialOrder commercialOrder,List<Object[]>  groupedPricesToBill, Date nextDay, Date firstTransactionDate, Date invoiceDate) {
-        createIlsAndInvoice(commercialOrder,groupedPricesToBill, BigDecimal.valueOf(100), nextDay, firstTransactionDate, invoiceDate, false);
+    private void generateGlobalInvoice(CommercialOrder commercialOrder,List<Object[]>  groupedPricesToBill, Date nextDay, Date firstTransactionDate, Date invoiceDate, boolean isBillOver) {
+        createIlsAndInvoice(commercialOrder,groupedPricesToBill, BigDecimal.valueOf(100), nextDay, firstTransactionDate, invoiceDate, false, isBillOver);
     }
     
     private AccountingArticle getDefaultAccountingArticle() {
