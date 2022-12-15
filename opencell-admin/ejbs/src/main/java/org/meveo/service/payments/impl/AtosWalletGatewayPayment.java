@@ -326,7 +326,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         }
 
         if (!StringUtils.isBlank(hostedCheckoutInput.getAutomaticReturnUrl())) {
-            data += "|automaticResponseURL=" + hostedCheckoutInput.getAutomaticReturnUrl();
+            data += "|automaticResponseUrl=" + hostedCheckoutInput.getAutomaticReturnUrl();
         }
 
         if (!StringUtils.isBlank(hostedCheckoutInput.getReturnContext())) {
@@ -344,7 +344,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         } catch (SealCalculationException e) {
             throw new BusinessException("Seal couldn't be calculated for merchantId=" + paymentGateway.getMarchandId(), e);
         }
-
+        log.info("getHostedCheckoutUrl data:{} seal:{}",data,result.getSeal());
         return response;
     }
 
