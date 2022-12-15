@@ -18,7 +18,7 @@ import org.meveo.model.ObservableEntity;
 @Cacheable
 @Table(name = "iso_icd")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "iso_icd_seq"), })
-public class isoicd extends AuditableEntity {
+public class IsoIcd extends AuditableEntity {
 	
 	@Column(name = "code", length = 5)
 	@Size(max = 10)
