@@ -232,7 +232,7 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     }
 
     public BigDecimal getPrice() {
-    	return isMatrix? BigDecimal.ZERO : price;
+    	return isMatrix? null : price;
     }
 
     public void setPrice(BigDecimal price) {
