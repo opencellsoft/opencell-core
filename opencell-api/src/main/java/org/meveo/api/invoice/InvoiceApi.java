@@ -607,7 +607,7 @@ public class InvoiceApi extends BaseApi {
         	} else if(createSD) {
         		SecurityDepositTemplate defaultSDTemplate = securityDepositTemplateService.getDefaultSDTemplate();
         		Long count = securityDepositService.countPerTemplate(defaultSDTemplate);
-        		securityDepositService.createSD(invoice, defaultSDTemplate, count);
+        		securityDepositService.createSecurityDeposit(invoice, defaultSDTemplate, count);
         		
         		//Get SD Template number of instantiation and update it after creating a new SD
         		SecurityDepositTemplate sdt = invoiceService.updateSDTemplate(defaultSDTemplate);
