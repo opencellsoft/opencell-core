@@ -146,6 +146,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
+import org.meveo.model.cpq.AgreementDateSettingEnum;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
@@ -599,6 +600,11 @@ public class SubscriptionApi extends BaseApi {
         // ignoring postData.getEndAgreementDate() if subscription.getAutoEndOfEngagement is true
         if (subscription.getAutoEndOfEngagement() == null || !subscription.getAutoEndOfEngagement()) {
             subscription.setEndAgreementDate(postData.getEndAgreementDate());
+            for(ServiceInstance si : subscription.getServiceInstances()) {
+            	if(si.getProductVersion() != null && AgreementDateSettingEnum.INHERIT.equals(si.getProductVersion().getProduct().getAgreementDateSetting())) {
+            		si.setEndAgreementDate(subscription.getEndAgreementDate());
+            	}
+            };
         }
         if (postData.getProducts() != null) {
             for (ProductDto productDto : postData.getProducts().getProducts()) {
@@ -2069,6 +2075,9 @@ public class SubscriptionApi extends BaseApi {
             ServiceInstance serviceToUpdate = serviceInstanceService.getSingleServiceInstance(serviceToUpdateDto.getId(), serviceToUpdateDto.getCode(), subscription);
 
             if (serviceToUpdateDto.getEndAgreementDate() != null) {
+            	if(AgreementDateSettingEnum.INHERIT.equals(serviceToUpdate.getProductVersion().getProduct().getAgreementDateSetting())) {
+            		throw new InvalidParameterException("endAgreementDate cannot be updated for INHERIT agreement date setting");
+            	}
                 serviceToUpdate.setEndAgreementDate(serviceToUpdateDto.getEndAgreementDate());
             }
 

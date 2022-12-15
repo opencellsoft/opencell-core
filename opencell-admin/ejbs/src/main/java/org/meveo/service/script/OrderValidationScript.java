@@ -21,6 +21,7 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
+import org.meveo.model.cpq.AgreementDateSettingEnum;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.CommercialOrderEnum;
@@ -143,7 +144,9 @@ public class OrderValidationScript extends Script {
         serviceInstance.setCode(product.getCode());
         serviceInstance.setQuantity(orderProduct.getQuantity());
         serviceInstance.setSubscriptionDate(subscription.getSubscriptionDate());
-        serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
+        if(!AgreementDateSettingEnum.MANUAL.equals(orderProduct.getProductVersion().getProduct().getAgreementDateSetting())) {
+        	serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
+        }
         serviceInstance.setRateUntilDate(subscription.getEndAgreementDate());
         serviceInstance.setProductVersion(orderProduct.getProductVersion());
 
