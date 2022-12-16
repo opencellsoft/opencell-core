@@ -192,6 +192,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     @Inject
     private BillingRulesService billingRulesService;
+
+    @Inject
+    private AccountingCodeService accountingCodeService;
     
     /**
      * Check if Billing account has any not yet billed Rated transactions
@@ -490,6 +493,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             create(ratedTransaction);
             updateAggregatedWalletOperations(aggregatedWo.getWalletOperationsIds(), ratedTransaction);
         }
+        ratedTransaction.setAccountingCode(accountingCodeService.refreshOrRetrieve(aggregatedWo.getAccountingCode()));
 
         return ratedTransaction;
     }
