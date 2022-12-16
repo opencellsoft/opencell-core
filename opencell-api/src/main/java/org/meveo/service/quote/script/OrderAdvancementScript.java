@@ -150,10 +150,18 @@ OrderAdvancementScript extends ModuleScript {
     	for (Object[] groupedOrderPrice : groupedPricesToBill) {
 			Long orderArticleLineId = (Long) groupedOrderPrice[0];
 			Long discountedOrderPriceId = (Long) groupedOrderPrice[1];
-			taxRate = (BigDecimal) groupedOrderPrice[2];
-			totalAmountWithoutTax = (BigDecimal) groupedOrderPrice[3];
-			totalAmountWithTax = (BigDecimal) groupedOrderPrice[4];
-			totalAmountTax = (BigDecimal) groupedOrderPrice[5];
+			if(!isBillOver) {
+				taxRate = BigDecimal.ZERO;
+				totalAmountWithoutTax = (BigDecimal) groupedOrderPrice[4];
+				totalAmountWithTax = (BigDecimal) groupedOrderPrice[4];
+				totalAmountTax = BigDecimal.ZERO;
+			}else {
+				taxRate = (BigDecimal) groupedOrderPrice[2];
+				totalAmountWithoutTax = (BigDecimal) groupedOrderPrice[3];
+				totalAmountWithTax = (BigDecimal) groupedOrderPrice[4];
+				totalAmountTax = (BigDecimal) groupedOrderPrice[5];
+			}
+			
 			totalQuantity = (BigDecimal) groupedOrderPrice[6];
 			OrderArticleLine orderArticleLine = null;
             if(orderArticleLineId!=null) {
