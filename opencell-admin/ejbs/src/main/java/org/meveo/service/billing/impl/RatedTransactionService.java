@@ -416,7 +416,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         Subscription sub;
         ServiceInstance si;
         ChargeInstance ci;
-        String code;
+        String code = aggregatedWo.getCode();
         String description;
         InvoiceSubCategory isc;
 
@@ -435,13 +435,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ua = (aggregatedWo.getUserAccount() == null && sub != null) ? sub.getUserAccount() : userAccountService.refreshOrRetrieve(aggregatedWo.getUserAccount());
         ba = (aggregatedWo.getBillingAccount() == null && ua != null) ? ua.getBillingAccount() : billingAccountService.refreshOrRetrieve(aggregatedWo.getBillingAccount());
         seller = (aggregatedWo.getSeller() == null && sub != null) ? sub.getSeller() : sellerService.refreshOrRetrieve(aggregatedWo.getSeller());
-        if (ci != null) {
-            code = ci.getCode();
-        } else if (si != null) {
-            code = si.getCode();
-        } else {
-            code = isc.getCode();
+        if (StringUtils.isBlank(code)) {
+            if (ci != null) {
+                code = ci.getCode();
+            } else if (si != null) {
+                code = si.getCode();
+            } else {
+                code = isc.getCode();
+            }
         }
+
         description = (aggregatedWo.getDescription() != null) ? aggregatedWo.getDescription() : aggregatedWo.getComputedDescription();
 
         ratedTransaction.setOrderNumber(aggregatedWo.getOrderNumber());
