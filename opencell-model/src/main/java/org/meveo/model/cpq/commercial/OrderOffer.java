@@ -30,6 +30,7 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
@@ -43,6 +44,7 @@ import org.meveo.model.cpq.offer.QuoteOffer;
  *
  */
 @Entity
+@WorkflowedEntity
 @CustomFieldEntity(cftCodePrefix = "OrderOffer",inheritCFValuesFrom = "quoteOffer")
 @Table(name = "cpq_order_offer", uniqueConstraints = @UniqueConstraint(columnNames = {"code", "order_id"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
