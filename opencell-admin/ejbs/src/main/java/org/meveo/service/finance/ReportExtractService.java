@@ -192,7 +192,9 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             List<Map<String, Object>> resultList = readGeneratedFile(resultContext.get("DIR") + File.separator + resultContext.get("FILENAME"), ofNullable(entity.getFileSeparator()).orElse(";"));
             reportExtractExecutionResult.setErrorMessage((String) resultContext.getOrDefault(ReportExtractScript.ERROR_MESSAGE, ""));
             reportExtractExecutionResult.setLineCount((int) resultContext.getOrDefault(ReportExtractScript.LINE_COUNT, 0));
-
+            if (!filename.equals(resultContext.get("FILENAME"))) {
+                filename = (String) resultContext.get("FILENAME");
+            }
             if (entity.getCustomTableCode() != null && resultList != null && !resultList.isEmpty()) {
                 storeDataInCT(entity.getCustomTableCode(), resultList, entity.isAccumulate());
             }
