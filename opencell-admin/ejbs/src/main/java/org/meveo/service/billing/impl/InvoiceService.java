@@ -20,8 +20,10 @@ package org.meveo.service.billing.impl;
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.sort;
 import static java.util.Comparator.comparingInt;
+import static java.util.Optional.ofNullable;
 import static java.util.Set.of;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -557,7 +559,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             List<Invoice> invoices = q.getResultList();
             return invoices;
         } catch (Exception e) {
-            return Collections.emptyList();
+            return emptyList();
         }
     }
 
@@ -579,7 +581,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             log.info("getInvoices: founds {} invoices with BA_code={} and type={} ", invoices.size(), billingAccount.getCode(), invoiceType);
             return invoices;
         } catch (Exception e) {
-            return Collections.emptyList();
+            return emptyList();
         }
     }
 
@@ -679,7 +681,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         } catch (Exception ex) {
             log.error("failed to get invoices with no account operation", ex);
         }
-        return Collections.emptyList();
+        return emptyList();
     }
 
     /**
@@ -717,7 +719,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         } catch (Exception ex) {
             log.error("failed to get invoices with amount and with no account operation", ex);
         }
-        return Collections.emptyList();
+        return emptyList();
     }
 
     /**
@@ -1587,7 +1589,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return (List<Invoice>) qb.getQuery(getEntityManager()).getResultList();
         } catch (NoResultException e) {
             log.warn("failed to find by billingRun", e);
-            return Collections.emptyList();
+            return emptyList();
         }
     }
 
@@ -2459,7 +2461,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         } catch (Exception ex) {
             log.error("failed to get invoices with no account operation", ex);
         }
-        return Collections.emptyList();
+        return emptyList();
     }
 
     /**
@@ -2568,7 +2570,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         // Create missing rated transactions up to a last transaction date
-        List<Invoice> invoices = Collections.emptyList();
+        List<Invoice> invoices = emptyList();
         if (useV11Process) {
             MinAmountForAccounts minAmountForAccounts = invoiceLinesService.isMinAmountForAccountsActivated(entity, applyMinimumModeEnum);
             // Create invoice lines from grouped and filtered RT
@@ -3439,7 +3441,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return resultList;
         } catch (NoResultException e) {
             log.warn("error while getting user account list by billing account", e);
-            return Collections.emptyList();
+            return emptyList();
         }
     }
 
@@ -3948,7 +3950,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         
         if (billingAccount.getDiscountPlanInstances() != null && !billingAccount.getDiscountPlanInstances().isEmpty()) {
-            addApplicableDiscount(billingAccountApplicableDiscountPlanItems,  subscription.getDiscountPlanInstances(), billingAccount, customerAccount, invoice);
+            List<DiscountPlanInstance> discountPlanInstances = ofNullable(subscription)
+                    .map(Subscription::getDiscountPlanInstances)
+                    .orElse(emptyList());
+            addApplicableDiscount(billingAccountApplicableDiscountPlanItems,
+                    discountPlanInstances, billingAccount, customerAccount, invoice);
         }
 
         BigDecimal otherDiscount = ZERO;
@@ -5021,7 +5027,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         List<Invoice> invoices = getEntityManager().createNamedQuery("Invoice.findWithFuntionalCurrencyDifferentFromOne")
                 .setParameter("EXPECTED_RATE", ONE).getResultList();
 
-        Optional.ofNullable(invoices).orElse(Collections.emptyList())
+        ofNullable(invoices).orElse(emptyList())
                 .forEach(invoice ->
                         refreshConvertedAmounts(invoice, null, invoice.getTradingCurrency().getCurrentRateFromDate())
                 );
@@ -5779,7 +5785,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 throw e instanceof BusinessException ? (BusinessException) e : new BusinessException(e);
             }
         }
-        return Collections.emptyList();
+        return emptyList();
     }
 
     @SuppressWarnings("unchecked")
@@ -5860,10 +5866,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     appendInvoiceAggregatesIL(entityToInvoice, invoiceLinesGroup.getBillingAccount(), invoice, invoiceLinesGroup.getInvoiceLines(), false, invoiceAggregateProcessingInfo, !allIlsInOneRun);
                     if(invoice.getOpenOrderNumber() != null) {
                         OpenOrder openOrder = openOrderService.findByOpenOrderNumber(invoice.getOpenOrderNumber());
-                        Optional.ofNullable(openOrder)
+                        ofNullable(openOrder)
                                 .map(OpenOrder::getExternalReference)
                                 .ifPresent(invoice::setExternalRef);
-                        BigDecimal initialAmount = Optional.ofNullable(openOrder.getInitialAmount()).orElse(ZERO);
+                        BigDecimal initialAmount = ofNullable(openOrder.getInitialAmount()).orElse(ZERO);
                         BigDecimal invoicedAmount = computeInvoicedAmount(openOrder, invoiceLinesGroup.getInvoiceLines());
                         openOrderService.updateBalance(openOrder.getId(), initialAmount.subtract(invoicedAmount));
                     }
@@ -7021,10 +7027,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
             String invoiceTypeCode = invoice.getInvoiceType().getCode();
             OperationCategoryEnum occCategoryOperation = invoice.getInvoiceType().getOccTemplate() != null ? invoice.getInvoiceType().getOccTemplate().getOccCategory() : null;
             if(invoiceTypeCode.equals("ADJ") || invoiceTypeCode.equals("ADV") || invoiceTypeCode.equals("SECURITY_DEPOSIT") || (occCategoryOperation != null && occCategoryOperation.equals(OperationCategoryEnum.CREDIT))) {
-                return Collections.emptyList();
+                return emptyList();
             }
         }else {
-            return Collections.emptyList();
+            return emptyList();
         }
         // check balance when invoicing plan created from order ==> adv from order must have balance set
         List<Invoice> invoicesAdv  = this.getEntityManager().createNamedQuery("Invoice.findValidatedInvoiceAdvOrder")
