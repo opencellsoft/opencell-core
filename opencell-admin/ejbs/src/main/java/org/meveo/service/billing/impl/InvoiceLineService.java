@@ -757,7 +757,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         if (resource.getEndDate() != null) {
             datePeriod.setTo(resource.getEndDate());
         }
-        
+        if(resource.getLabel()==null && invoiceLine.getAccountingArticle()!=null) {
+            invoiceLine.setLabel(!StringUtils.isBlank(invoiceLine.getAccountingArticle().getDescription())?invoiceLine.getAccountingArticle().getDescription():invoiceLine.getAccountingArticle().getCode());
+        }
 
 		if(invoiceLine.getTax()==null  && accountingArticle != null
                 && invoiceLine.getBillingAccount() != null && !invoiceLine.getTaxMode().equals(RATE))  {
