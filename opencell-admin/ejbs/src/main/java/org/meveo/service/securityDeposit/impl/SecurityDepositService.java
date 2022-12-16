@@ -31,7 +31,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.meveo.model.payments.PaymentMethodEnum.CARD;
 import static org.meveo.model.payments.PaymentMethodEnum.DIRECTDEBIT;
@@ -462,20 +461,21 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         return recordedInvoice;
     }
 
-    public void createSD(Invoice invoice, SecurityDepositTemplate defaultSDTemplate, Long count) {
-        SecurityDeposit sd = new SecurityDeposit();            
-        sd.setTemplate(defaultSDTemplate);        
+    public void createSecurityDeposit(Invoice invoice, SecurityDepositTemplate defaultSDTemplate, Long count) {
+        SecurityDeposit securityDeposit = new SecurityDeposit();
+        securityDeposit.setTemplate(defaultSDTemplate);
         String securityDepositName = defaultSDTemplate.getTemplateName();
-        sd.setCode(securityDepositName + "-" + count);
-        sd.setAmount(invoice.getAmountWithTax());
-        sd.setStatus(SecurityDepositStatusEnum.VALIDATED);
-        sd.setCustomerAccount(invoice.getBillingAccount().getCustomerAccount());
+        securityDeposit.setCode(securityDepositName + "-" + count);
+        securityDeposit.setAmount(invoice.getAmountWithTax());
+        securityDeposit.setStatus(SecurityDepositStatusEnum.VALIDATED);
+        securityDeposit.setCustomerAccount(invoice.getBillingAccount().getCustomerAccount());
+        securityDeposit.setBillingAccount(invoice.getBillingAccount());
         if (providerService.getProvider().getCode() != null) {
             Provider provider = providerService.findByCode(providerService.getProvider().getCode());
-            sd.setCurrency(provider.getCurrency()); 
+            securityDeposit.setCurrency(provider.getCurrency());
         }
-        sd.setSecurityDepositInvoice(invoice);
-        create(sd);
+        securityDeposit.setSecurityDepositInvoice(invoice);
+        create(securityDeposit);
     }
 
 }
