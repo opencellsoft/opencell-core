@@ -8772,4 +8772,10 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateCreditCategoryScript')" />
 		</insert>
     </changeSet>
+
+	<changeSet id="#INTRD-12335_20221216" author="Bourras">
+		<update tableName="billing_invoice_sub_cat">
+			<column name="accounting_code_id" value="null"/>
+		</update>
+	</changeSet>
 </databaseChangeLog>
