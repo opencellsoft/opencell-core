@@ -1133,7 +1133,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
 
 	public void deleteInvoiceLines(BillingRun billingRun) {
-		List<Long> invoiceLinesIds = loadInvoiceLinesIdByBillingRun(billingRun.getId());
+		List<Long> invoiceLinesIds = loadInvoiceLinesByBillingRunNotValidatedInvoices(billingRun.getId());
         if(!invoiceLinesIds.isEmpty()) {
             detachRatedTransactions(invoiceLinesIds);
             getEntityManager()
