@@ -22,7 +22,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -2124,6 +2126,8 @@ public class SubscriptionApi extends BaseApi {
                 throw e;
             }
             
+            Map<String,AttributeInstance> instantiatedAttributes = new HashMap<>();
+            
             serviceToUpdate.getAttributeInstances().clear();
             if(postData.getAttributeInstances() != null) {
                 postData.getAttributeInstances().forEach(attributeInstanceDto -> {
@@ -2146,8 +2150,12 @@ public class SubscriptionApi extends BaseApi {
                         attributeInstance.setDateValue(attributeInstanceDto.getDateValue());
                     if(attributeInstanceDto.getDoubleValue() != null)
                         attributeInstance.setDoubleValue(attributeInstanceDto.getDoubleValue());
-                    attributeInstanceService.create(attributeInstance);
-                    serviceToUpdate.getAttributeInstances().add(attributeInstance);
+                    
+                    instantiatedAttributes.put(attributeInstance.getAttribute().getCode(),attributeInstance);
+                });
+                instantiatedAttributes.values().forEach(ia -> {
+                	attributeInstanceService.create(ia);
+                	serviceToUpdate.getAttributeInstances().add(ia);
                 });
             }
 
