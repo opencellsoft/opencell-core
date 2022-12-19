@@ -406,6 +406,31 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
                 }
             }
             break;
+        case CARD:
+        	
+        	if (!StringUtils.isBlank(getTokenId())) {
+                paymentMethod.setTokenId(getTokenId());
+            }
+        	if (!StringUtils.isBlank(getMonthExpiration())) {
+        		((CardPaymentMethod) paymentMethod).setMonthExpiration(getMonthExpiration());
+            }
+        	if (!StringUtils.isBlank(getYearExpiration())) {
+        		((CardPaymentMethod) paymentMethod).setYearExpiration(getYearExpiration());
+            }  
+        	if (!StringUtils.isBlank(getCardNumber())) {
+        		((CardPaymentMethod) paymentMethod).setHiddenCardNumber(CardPaymentMethod.hideCardNumber(getCardNumber()));
+            } 
+        	if (!StringUtils.isBlank(getOwner())) {
+        		((CardPaymentMethod) paymentMethod).setOwner(getOwner());
+            }
+        	if (!StringUtils.isBlank(getCardType())) {
+        		((CardPaymentMethod) paymentMethod).setCardType(getCardType());
+            }
+        	if (!StringUtils.isBlank(getIssueNumber())) {
+        		((CardPaymentMethod) paymentMethod).setIssueNumber(getIssueNumber());
+            }
+        	
+        break; 	
         default:
             break;
         }
