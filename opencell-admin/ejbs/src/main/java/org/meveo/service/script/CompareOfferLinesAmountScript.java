@@ -13,10 +13,10 @@ import org.meveo.service.billing.impl.InvoiceLineService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 @SuppressWarnings("serial")
-public class CompareOfferAmountScript  extends Script{
+public class CompareOfferLinesAmountScript extends Script{
 
     private static final Logger LOG = LoggerFactory.getLogger(CompareOfferAmountScript.class);
     
@@ -26,7 +26,7 @@ public class CompareOfferAmountScript  extends Script{
     private final String VALUE = "value";
     private final String INVOICE = "CONTEXT_ENTITY";
     
-    private final String query = "select sum(AMOUNT), offerTemplate.id from InvoiceLine where invoice.id = :invoiceId and offerTemplate.code in (:offers) group by offerTemplate.id having sum(AMOUNT) OPERATOR :value";
+    private final String query = "select id from InvoiceLine where invoice.id = :invoiceId and offerTemplate.code in (:offers) group by offerTemplate.id having (AMOUNT OPERATOR :value";
 
     private InvoiceLineService invoiceLineService = (InvoiceLineService) getServiceInterface("InvoiceLineService");
     
@@ -45,10 +45,10 @@ public class CompareOfferAmountScript  extends Script{
         
         List<OfferTemplate> offers = (List<OfferTemplate>) methodContext.get(OFFERS);
         
-        List<Object[]> result = invoiceLineService.getEntityManager().createQuery(finalQuery)
+        List<Object[]> result = invoiceLineService.getEntityManager().createNamedQuery(finalQuery)
                                                     .setParameter("invoiceId", invoiceId)
                                                     .setParameter("offers", offers.stream().map(OfferTemplate::getCode).collect(Collectors.toList()))
-                                                    .setParameter("value", methodContext.get(VALUE))
+                                                    .setParameter("value", methodContext.get(OPERATOR))
                                                         .getResultList();
         methodContext.put(Script.RESULT_VALUE, CollectionUtils.isEmpty(result));
         

@@ -395,7 +395,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             EmailTemplate emailTemplate = success ? emailTemplateService.findByCode(SUCCESS_TEMPLATE_CODE) :
                     emailTemplateService.findByCode(FAILURE_TEMPLATE_CODE);
 
-            String languageCode = currentUser.getLocale();
+            String languageCode = appProvider.getLanguage().getLanguageCode();
             String emailSubject = internationalSettingsService.resolveSubject(emailTemplate, languageCode);
             String emailContent = internationalSettingsService.resolveEmailContent(emailTemplate, languageCode);
             String htmlContent = internationalSettingsService.resolveHtmlContent(emailTemplate, languageCode);
