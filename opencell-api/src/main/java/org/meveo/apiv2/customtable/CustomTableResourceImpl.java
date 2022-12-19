@@ -41,7 +41,7 @@ public class CustomTableResourceImpl implements CustomTableResource {
 				() -> new NotFoundException("The custom table code " + customTableCode + " does not have custom fields"));
 
 		String filePath = genericExportManager.export(customTableCode, customTableService.exportCustomTable(cet),
-				fileFormat, getGenericFieldDetails(cfts), getOrdredColumn(cfts), null);
+				fileFormat, getGenericFieldDetails(cfts), getOrdredColumn(cfts), "FR");
 
 		return Response.ok()
 				.entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"\"}, \"data\":{ \"filePath\":\"" + filePath + "\"}}")
@@ -63,7 +63,7 @@ public class CustomTableResourceImpl implements CustomTableResource {
 			pattern = "#,##0.00";
 		}
 		if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
-			pattern = "MM/dd/yyyy";
+			pattern = "dd/MM/yyyy";
 		}
 		return pattern;
 	}
