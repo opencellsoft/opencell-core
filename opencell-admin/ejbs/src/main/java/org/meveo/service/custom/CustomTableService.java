@@ -1140,7 +1140,8 @@ public class CustomTableService extends NativePersistenceService {
 		PaginationConfiguration pagination = new PaginationConfiguration(null, 0, null, null, null, FIELD_ID, SortOrder.ASCENDING);
 		QueryBuilder queryBuilder = getQuery(customEntityTemplate.getDbTablename(), pagination, null);
 		SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), true);
-		return query.list();
+		List<Map<String, Object>> data = query.list();
+		return (data.isEmpty()? null : data);
 	}
 	
 	public List<CustomFieldTemplate> getCFTs(CustomEntityTemplate cet) {
