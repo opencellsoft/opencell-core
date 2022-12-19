@@ -22,6 +22,7 @@ import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
@@ -72,6 +73,8 @@ import org.meveo.service.order.OrderService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
+
+import static java.math.BigDecimal.ZERO;
 
 /**
  * The Class BillingRunService.
@@ -841,8 +844,22 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         Map<Class, Map<Long, Map<Long, Amounts>>> positiveILAmounts = getAmountsMap(invoiceLinesService.getTotalPositiveILAmountsByBR(billingRun));
         Map<Class, Map<Long, Map<Long, Amounts>>> invoiceableAmounts = getAmountsMap(invoiceService.getTotalInvoiceableAmountByBR(billingRun));
 
-        Set<Long> billableEntitieIds = invoiceableAmounts.get(BillingAccount.class).keySet();
+        Set<Long> billableEntitieIds = invoiceableAmounts.get(Subscription.class).keySet();
         Set<Long> rejectedBillingAccounts = new HashSet<>();
+
+        invoicesToRemove.addAll(getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(Subscription.class),
+                positiveRTAmounts.get(Subscription.class), invoiceableAmounts.get(Subscription.class),
+            Subscription.class, rejectedBillingAccounts, positiveILAmounts.get(Subscription.class)));
+
+        billableEntitieIds = invoiceableAmounts.get(CommercialOrder.class).keySet();
+
+        invoicesToRemove.addAll(getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(CommercialOrder.class),
+                positiveRTAmounts.get(CommercialOrder.class), invoiceableAmounts.get(CommercialOrder.class),
+            CommercialOrder.class, rejectedBillingAccounts, positiveILAmounts.get(CommercialOrder.class)));
+
+        billableEntitieIds = invoiceableAmounts.get(BillingAccount.class).keySet();
+
+
         invoicesToRemove.addAll(getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(BillingAccount.class),
                 positiveRTAmounts.get(BillingAccount.class), invoiceableAmounts.get(BillingAccount.class),
             BillingAccount.class, rejectedBillingAccounts, positiveILAmounts.get(BillingAccount.class)));
@@ -875,17 +892,23 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      */
     @SuppressWarnings("rawtypes")
     private Map<Class, Map<Long, Map<Long, Amounts>>> getAmountsMap(List<Object[]> resultSet) {
+        Map<Long, Map<Long, Amounts>> subscriptionsAmounts = new HashMap<>();
+        Map<Long, Map<Long, Amounts>> commercialOrdersAmounts = new HashMap<>();
         Map<Long, Map<Long, Amounts>> baAmounts = new HashMap<>();
         Map<Long, Map<Long, Amounts>> caAmounts = new HashMap<>();
         Map<Long, Map<Long, Amounts>> custAmounts = new HashMap<>();
         for (Object[] result : resultSet) {
             Amounts amounts = new Amounts((BigDecimal) result[0], (BigDecimal) result[1]);
-            Long invoiceId = (Long) result[2];
 
-            Long baId = (Long) result[3];
-            Long caId = (Long) result[4];
-            Long custId = (Long) result[5];
+            Long subscriptionId = (Long) result[2];
+            Long commercialOrderId = (Long) result[3];
+            Long invoiceId = (Long) result[4];
+            Long baId = (Long) result[5];
+            Long caId = (Long) result[6];
+            Long custId = (Long) result[7];
 
+            addInvoiceAmounts(subscriptionsAmounts, amounts, invoiceId, subscriptionId);
+            addInvoiceAmounts(commercialOrdersAmounts, amounts, invoiceId, commercialOrderId);
             addInvoiceAmounts(baAmounts, amounts, invoiceId, baId);
             addInvoiceAmounts(caAmounts, amounts, invoiceId, caId);
             addInvoiceAmounts(custAmounts, amounts, invoiceId, custId);
@@ -895,6 +918,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         accountsAmounts.put(BillingAccount.class, baAmounts);
         accountsAmounts.put(CustomerAccount.class, caAmounts);
         accountsAmounts.put(Customer.class, custAmounts);
+        accountsAmounts.put(CommercialOrder.class, commercialOrdersAmounts);
+        accountsAmounts.put(Subscription.class, subscriptionsAmounts);
         return accountsAmounts;
     }
 
@@ -921,20 +946,61 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     @SuppressWarnings("rawtypes")
     private List<Long> getInvoicesToRemoveByAccount(Collection<Long> billableEntities, Map<Long, Map<Long, Amounts>> discountThresholdAmounts, Map<Long, Map<Long, Amounts>> positiveRTThresholdAmounts,
             Map<Long, Map<Long, Amounts>> invoiceableThresholdAmounts, Class clazz, Set<Long> rejectedBillingAccounts, Map<Long, Map<Long, Amounts>> positiveILThresholdAmounts) {
-        List<Long> invoicesToRemove = new ArrayList<>();
+      List<Long> invoicesToRemove = new ArrayList<>();
         List<Long> alreadyProcessedEntities = new ArrayList<>();
+        List<Long> alreadyProcessedOrders = new ArrayList<>();
+        List<Long> alreadyProcessedSubscriptions = new ArrayList<>();
+
         for (Long billableEntityId : billableEntities) {
             BigDecimal threshold = null;
             ThresholdOptionsEnum checkThreshold = null;
             boolean isThresholdPerEntity = false;
-            AccountEntity entity = getEntity(billableEntityId, clazz);
-            Long entityId = entity.getId();
-            if (alreadyProcessedEntities.contains(entityId)) {
-                break;
+            Object entity;
+            Long entityId = billableEntityId;
+
+            if (clazz.equals(CommercialOrder.class)) {
+                entity = commercialOrderService.findById(billableEntityId);
+
+                if (alreadyProcessedOrders.contains(billableEntityId)) {
+                    break;
+                } else {
+                    alreadyProcessedOrders.add(billableEntityId);
+                }
+
+            } else if (clazz.equals(Subscription.class)) {
+                if (alreadyProcessedSubscriptions.contains(billableEntityId)) {
+                    break;
+                } else {
+                    alreadyProcessedSubscriptions.add(billableEntityId);
+                }
+                entity = billableEntityId != null ? subscriptionService.findById(billableEntityId) : null;
+
             } else {
-                alreadyProcessedEntities.add(entityId);
+
+                entity = getEntity(billableEntityId, clazz);
+                 entityId = ((AccountEntity) entity).getId();
+                if (alreadyProcessedEntities.contains(entityId)) {
+                    break;
+                } else {
+                    alreadyProcessedEntities.add(entityId);
+                }
+
             }
-            if (entity instanceof BillingAccount) {
+
+            if(entity instanceof CommercialOrder && ((CommercialOrder)entity).getBillingCycle() != null){
+                BillingCycle bc = ((CommercialOrder)entity).getBillingCycle();
+                threshold = bc.getInvoicingThreshold();
+                checkThreshold = bc.getCheckThreshold();
+                isThresholdPerEntity = bc.isThresholdPerEntity();
+            }
+            else if(entity instanceof Subscription && ((Subscription)entity).getBillingCycle() != null){
+
+                BillingCycle bc = ((Subscription)entity).getBillingCycle();
+                threshold = bc.getInvoicingThreshold();
+                checkThreshold = bc.getCheckThreshold();
+                isThresholdPerEntity = bc.isThresholdPerEntity();
+            }
+             else if (entity instanceof BillingAccount) {
                 BillingAccount ba = (BillingAccount) entity;
                 threshold = ba.getInvoicingThreshold();
                 checkThreshold = ba.getCheckThreshold();
@@ -965,13 +1031,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             case POSITIVE_RT:
                 Map<Long, Amounts> thresholdAmounts = positiveRTThresholdAmounts.get(entityId);
                 if (thresholdAmounts != null) {
-                    checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntities, billableEntityId, threshold, isThresholdPerEntity, thresholdAmounts);
+                    checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntities, billableEntityId, threshold, isThresholdPerEntity, thresholdAmounts, clazz);
                 }
                 break;
             case AFTER_DISCOUNT:
                 thresholdAmounts = invoiceableThresholdAmounts.get(entityId);
                 if (thresholdAmounts != null) {
-                    checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntities, billableEntityId, threshold, isThresholdPerEntity, thresholdAmounts);
+                    checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntities, billableEntityId, threshold, isThresholdPerEntity, thresholdAmounts, clazz);
                 }
                 break;
             case BEFORE_DISCOUNT:
@@ -981,13 +1047,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                     if (discountAmounts != null) {
                         thresholdAmounts.keySet().stream().forEach(x -> thresholdAmounts.get(x).addAmounts((discountAmounts.get(x) != null) ? discountAmounts.get(x).negate() : null));
                     }
-                    checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntities, billableEntityId, threshold, isThresholdPerEntity, thresholdAmounts);
+                    checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntities, billableEntityId, threshold, isThresholdPerEntity, thresholdAmounts, clazz);
                 }
                 break;
             case POSITIVE_IL :
                 thresholdAmounts = positiveILThresholdAmounts.get(entityId);
                 if (thresholdAmounts != null) {
-                    checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntities, billableEntityId, threshold, isThresholdPerEntity, thresholdAmounts);
+                    checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntities, billableEntityId, threshold, isThresholdPerEntity, thresholdAmounts, clazz);
                 }
                 break;
             default:
@@ -998,15 +1064,30 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     }
 
     private void checkThresholdInvoices(Collection<Long> rejectedBillingAccounts, List<Long> invoicesToRemove, Collection<Long> billableEntities, Long billableEntityId, BigDecimal threshold, boolean isThresholdPerEntity,
-            Map<Long, Amounts> thresholdAmounts) {
-        if (isThresholdPerEntity) {
-            BigDecimal totalAmount = BigDecimal.ZERO;
+            Map<Long, Amounts> thresholdAmounts, Class clazz) {
+                if (isThresholdPerEntity) {
+            BigDecimal totalAmount = ZERO;
             for (Amounts amounts : thresholdAmounts.values()) {
                 totalAmount = totalAmount.add((appProvider.isEntreprise()) ? amounts.getAmountWithoutTax() : amounts.getAmountWithTax());
             }
             if (totalAmount.compareTo(threshold) < 0) {
                 invoicesToRemove.addAll(thresholdAmounts.keySet());
-                rejectedBillingAccounts.addAll(billableEntities);
+                if(clazz.equals(CommercialOrder.class) )
+                {
+                    rejectedBillingAccounts.addAll(billableEntities.stream()
+                            .map(commercialOrderService::findById)
+                            .filter(Objects::nonNull)
+                            .map(commercialOrder->commercialOrder.getBillingAccount().getId()).collect(Collectors.toList()));
+
+                }else if(clazz.equals(Subscription.class)){
+                    rejectedBillingAccounts.addAll(billableEntities.stream()
+                            .map(subscriptionService::findById)
+                            .filter(Objects::nonNull)
+                            .map(subscription->subscription.getUserAccount().getBillingAccount().getId()).collect(Collectors.toList()));
+                }else {
+                    rejectedBillingAccounts.addAll(billableEntities);
+                }
+
             }
         } else {
             thresholdAmounts.keySet().forEach(x -> {
@@ -1014,7 +1095,16 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 BigDecimal amount = (appProvider.isEntreprise()) ? amounts.getAmountWithoutTax() : amounts.getAmountWithTax();
                 if (amount.compareTo(threshold) < 0) {
                     invoicesToRemove.add(x);
+
+                    if(clazz.equals(CommercialOrder.class) )
+                {
+                    rejectedBillingAccounts.add(commercialOrderService.findById(billableEntityId).getBillingAccount().getId());
+
+                }else if(clazz.equals(Subscription.class)){
+                     rejectedBillingAccounts.add(subscriptionService.findById(billableEntityId).getUserAccount().getBillingAccount().getId());
+                }else {
                     rejectedBillingAccounts.add(billableEntityId);
+                }
                 }
             });
         }
