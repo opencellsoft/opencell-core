@@ -8772,4 +8772,64 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateCreditCategoryScript')" />
 		</insert>
     </changeSet>
+    <changeSet id="INTRD-12267_20221219" author="aeljaouhari">
+        <insert tableName="meveo_script_instance">
+        	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+        	<column name="code" value="org.meveo.service.script.validation.ValidateCustomerAge" />
+        	<column name="script">
+        		<![CDATA[   package org.meveo.service.script.validation;
+            		public class ValidateCustomerAge extends ValidateCustomerAgeScript {}]]>
+        	</column>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="src_type" value="JAVA" />
+            <column name="description" value="The invoice’s customer (Customer/Group, Customer Account/Payer, Billing account) age is compared to a provided number of days. Age is computed at invoice date. For the invoice to be valid, age must pass the test."/>
+            <column name="description_i18n">
+				<![CDATA[{"EN":"<p>The invoice’s customer (Customer/Group, Customer Account/Payer, Billing account) age is compared to a provided number of days.</p><p>Age is computed at invoice date.</p><p>For the invoice to be valid, age must pass the test.</p>","FR":"<p>L’âge du client (Customer/Groupe, Customer Account/Compte payeur, Billing account/Compte de facturation) est comparé au nombre de jours indiqué.</p><p>L'âge est calculé à la date de facture.</p><p>Pour que la facture soit valide, l'âge doit passer le test.</p>"}]]>
+			</column>
+			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='INVOICE_VALIDATION')" />
+        </insert>
+
+		<insert tableName="meveo_script_parameter">
+			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="referenceDate" />
+			<column name="description_i18n" value='{"FR":"Date à tester","EN":"Date to test"}'/>
+			<column name="class_name" value="java.lang.String" />
+			<column name="mandatory" valueNumeric="1" />
+			<column name="default_value" value="Billling Account subscription" />
+			<column name="allowed_values" value="Customer creation|Customer Account creation|Billing Account creation|Billing Account subscription" />
+			<column name="values_separator" value="\|" />
+			<column name="collection" valueNumeric="0" />
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateCustomerAge')" />
+		</insert>
+	
+		<insert tableName="meveo_script_parameter">
+			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="operator" />
+			<column name="description_i18n" value='{"FR":"Operateur de comparaison","EN":"Comparison operator"}'/>
+			<column name="class_name" value="java.lang.String" />
+			<column name="default_value" value=">" />
+			<column name="mandatory" valueNumeric="1" />
+			<column name="allowed_values" value="&lt;|≤|=|≠|&gt;|≥" />
+			<column name="values_separator" value="\|" />
+			<column name="collection" valueNumeric="0" />
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateCustomerAge')" />
+		</insert>
+
+		<insert tableName="meveo_script_parameter">
+			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="age" />
+			<column name="description_i18n" value='{"FR":"Âge en jour","EN":"Age in days"}'/>
+			<column name="class_name" value="java.lang.Integer" />
+			<column name="default_value" value="30" />
+			<column name="mandatory" valueNumeric="1" />
+			<column name="values_separator" value="\|" />
+			<column name="collection" valueNumeric="0" />
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateCustomerAge')" />
+		</insert>
+    </changeSet>
 </databaseChangeLog>
