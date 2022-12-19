@@ -17698,7 +17698,6 @@
             <column name="code" type="varchar(255)">
                 <constraints unique="true" nullable="false" uniqueConstraintName="iso_icd_unique"/>
             </column>
-            <column name="description" type="varchar(255)"/>
 
             <!-- Simple fields -->           
             <column name="scheme_name" type="varchar(500)">
@@ -17776,9 +17775,6 @@
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="code" type="varchar(255)">
-                <constraints unique="true" nullable="false" uniqueConstraintName="iso_2475_payment_option_unique"/>
-            </column>
 
             <!-- Simple fields -->           
             <column name="2005_code" type="varchar(10)">
