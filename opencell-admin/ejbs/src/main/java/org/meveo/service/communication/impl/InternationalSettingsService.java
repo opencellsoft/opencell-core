@@ -19,22 +19,22 @@ public class InternationalSettingsService {
 
     public String resolveSubject(EmailTemplate emailTemplate, String languageCode) {
 
-        return emailTemplate.getTranslatedSubject().entrySet().stream().filter(
+        return emailTemplate.getTranslatedSubject() != null ? emailTemplate.getTranslatedSubject().entrySet().stream().filter(
                         translation -> translation.getKey().equals(languageCode))
-                .map(Map.Entry::getValue).findFirst().orElse(emailTemplate.getSubject());
+                .map(Map.Entry::getValue).findFirst().orElse(emailTemplate.getSubject()) : emailTemplate.getSubject();
 
     }
 
     public String resolveEmailContent(EmailTemplate emailTemplate, String languageCode) {
-        return emailTemplate.getTranslatedTextContent().entrySet().stream().filter(
+        return emailTemplate.getTranslatedTextContent() != null ? emailTemplate.getTranslatedTextContent().entrySet().stream().filter(
                         translation -> translation.getKey().equals(languageCode))
-                .map(Map.Entry::getValue).findFirst().orElse(emailTemplate.getTextContent());
+                .map(Map.Entry::getValue).findFirst().orElse(emailTemplate.getTextContent()) : emailTemplate.getTextContent();
     }
 
     public String resolveHtmlContent(EmailTemplate emailTemplate, String languageCode) {
-        return emailTemplate.getTranslatedHtmlContent().entrySet().stream().filter(
+        return emailTemplate.getTranslatedHtmlContent() != null ? emailTemplate.getTranslatedHtmlContent().entrySet().stream().filter(
                         translation -> translation.getKey().equals(languageCode))
-                .map(Map.Entry::getValue).findFirst().orElse(emailTemplate.getHtmlContent());
+                .map(Map.Entry::getValue).findFirst().orElse(emailTemplate.getHtmlContent()) : emailTemplate.getHtmlContent();
     }
 
     public EmailTemplate update(EmailTemplate emailTemplate) {
