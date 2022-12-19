@@ -75,6 +75,7 @@ import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.job.JobExecutionResultService;
 import org.meveo.service.job.JobExecutionService;
@@ -183,6 +184,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     @Inject
     private JobExecutionResultService jobExecutionResultService;
+
+    @Inject
+    private CommercialOrderService commercialOrderService;
     
     private static final  int rtPaginationSize = 30000;
 
