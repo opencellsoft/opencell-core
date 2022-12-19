@@ -584,6 +584,8 @@ public class InvoiceApi extends BaseApi {
         if(brGenerateAO || generateAO) {
             invoiceService.generateRecordedInvoiceAO(invoiceId);
         }
+        
+        serviceSingleton.triggersJobs();
 
         Date today = new Date();
         invoice = invoiceService.refreshOrRetrieve(invoice);
