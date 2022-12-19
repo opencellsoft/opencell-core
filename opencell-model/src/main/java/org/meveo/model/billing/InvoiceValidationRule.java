@@ -10,6 +10,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -24,6 +26,7 @@ import org.meveo.model.BusinessEntity;
 @Table(name = "billing_invoice_validation_rule", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_invoice_validation_rule_seq"), })
+@NamedQueries({@NamedQuery(name = "InvoiceValidationRule.lastInsertedId", query = "select max(rule.id) from InvoiceValidationRule rule")})
 public class InvoiceValidationRule extends BusinessEntity {
 
     @ManyToOne(fetch = FetchType.EAGER)

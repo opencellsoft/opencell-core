@@ -51,5 +51,10 @@ public class InvoiceValidationRulesService extends BusinessService<InvoiceValida
 
     }
 
+    public Long returnLastId() {
+        Object result = this.getEntityManager().createNamedQuery("InvoiceValidationRule.lastInsertedId").getSingleResult();
+        return result != null ? (Long) result : 0;
+    }
+
 
 }
