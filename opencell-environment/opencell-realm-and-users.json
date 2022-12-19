@@ -65,7 +65,11 @@
           "client": {
             "opencell-web": [
               "superAdministrateur",
-              "apiSuperAdministrateur"
+              "apiSuperAdministrateur",
+              "genApiFull.create",
+              "genApiFull.delete",
+              "genApiFull.list",
+              "genApiFull.update"
             ]
           }
         },
@@ -991,15 +995,12 @@
             "client": {
               "opencell-web": [
                 "apiUseWorkflow",
-                "genApiFull.create",
                 "apiCreateInvoice",
                 "apiUseReport",
                 "apiReportingManagement",
                 "apiUseJob",
                 "apiIntegration",
-                "genApiFull.delete",
                 "apiWorkflowManager",
-                "genApiFull.list",
                 "apiBillingManagement",
                 "apiFinanceManagement",
                 "apiUserManagement",
@@ -1013,8 +1014,7 @@
                 "apiCpqManagement",
                 "inboundAccess",
                 "apiAdministrationManagement",
-                "apiUseScript",
-                "genApiFull.update"
+                "apiUseScript"
               ]
             }
           },
@@ -10229,7 +10229,9 @@
             "attributes": {},
             "_id": "f68e7377-a3d6-4a4d-922b-ac145c39c157",
             "uris": [
-              "/api/rest/v2/setting/internationalSettings/*"
+              "/api/rest/v2/setting/internationalSettings/*",
+              "/api/rest/v2/setting/internationalSettings/EmailTemplate/*",
+              "/api/rest/v2/setting/internationalSettings/SMSTemplate/*"
             ],
             "scopes": [
               {
@@ -16066,6 +16068,18 @@
               "resources": "[\"GenApi Pkg settings - fud\"]",
               "scopes": "[\"POST\"]",
               "applyPolicies": "[\"Role genApiPkg_settings.list\"]"
+            }
+          },
+          {
+            "id": "e1b24c27-8880-4a48-a51d-cfb97f3c4168",
+            "name": "Api V2 International Settings - Update",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Api V2 International Settings\"\"]",
+              "scopes": "[\"PUT\",\"DELETE\",\"POST\",\"PATCH\"]",
+              "applyPolicies": "[\"Role apiAdministrationManagement\"]"
             }
           },
           {

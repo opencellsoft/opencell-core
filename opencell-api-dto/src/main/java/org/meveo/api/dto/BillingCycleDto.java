@@ -191,7 +191,6 @@ public class BillingCycleDto extends BusinessEntityDto {
     @XmlElement
     private String billingRunValidationScriptCode;
     
-    @JsonDeserialize(using = FilterListDeserializer.class)
     private Map<String, String> filters;
 
     public String getLastTransactionDateDelayEL() {

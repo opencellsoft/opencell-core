@@ -37,6 +37,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
+import org.meveo.model.cpq.AgreementDateSettingEnum;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.OfferTemplateAttribute;
 import org.meveo.model.cpq.Product;
@@ -345,7 +346,9 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		serviceInstance.setCode(product.getCode());
 		serviceInstance.setQuantity(quantity);
 		serviceInstance.setSubscriptionDate(subscription.getSubscriptionDate());
-		serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
+		if(!AgreementDateSettingEnum.MANUAL.equals(product.getAgreementDateSetting())) {
+			serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
+		}
 		serviceInstance.setRateUntilDate(subscription.getEndAgreementDate());
 		ProductVersion productVersion = productService.getCurrentPublishedVersion(serviceInstance.getCode(),
 						deliveryDate != null ? deliveryDate : serviceInstance.getSubscriptionDate())
@@ -459,7 +462,9 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			serviceInstance.setCode(product.getCode());
 			serviceInstance.setQuantity(quantity);
 			serviceInstance.setSubscriptionDate(offer.getSubscription().getSubscriptionDate());
-			serviceInstance.setEndAgreementDate(offer.getSubscription().getEndAgreementDate());
+			if(AgreementDateSettingEnum.INHERIT.equals(orderProduct.getProductVersion().getProduct().getAgreementDateSetting())) {
+				serviceInstance.setEndAgreementDate(offer.getSubscription().getEndAgreementDate());
+			}
 			serviceInstance.setRateUntilDate(offer.getSubscription().getEndAgreementDate());
 			ProductVersion productVersion = productService.getCurrentPublishedVersion(serviceInstance.getCode(),
 							deliveryDate != null ? deliveryDate : serviceInstance.getSubscriptionDate()).orElse(null);

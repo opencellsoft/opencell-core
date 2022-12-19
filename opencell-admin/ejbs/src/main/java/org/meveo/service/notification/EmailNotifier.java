@@ -33,6 +33,7 @@ import javax.mail.MessagingException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.security.MeveoUser;
@@ -41,6 +42,7 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.communication.impl.EmailSender;
 import org.meveo.service.communication.impl.InternationalSettingsService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
 /**
@@ -69,6 +71,10 @@ public class EmailNotifier {
 
     @Inject
     private InternationalSettingsService internationalSettingsService;
+
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
 
     /**
      * Send email message as fired notification result
@@ -119,7 +125,7 @@ public class EmailNotifier {
             if (notification != null && notification.getEmailTemplate() != null) {
                 EmailTemplate emailTemplate = notification.getEmailTemplate();
 
-                String languageCode = lastCurrentUser.getLocale();
+                String languageCode = appProvider.getLanguage().getLanguageCode();
                 String emailSubject = internationalSettingsService.resolveSubject(emailTemplate,languageCode);
                 String emailContent = internationalSettingsService.resolveEmailContent(emailTemplate,languageCode);
                 String htmlContent = internationalSettingsService.resolveHtmlContent(emailTemplate,languageCode);

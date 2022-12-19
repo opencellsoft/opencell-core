@@ -1078,7 +1078,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             	OpenOrder openOrder = openOrderService.findOpenOrderCompatibleForIL(invoiceLine, configuration);
         		if (openOrder != null) {
         			invoiceLine.setOpenOrderNumber(openOrder.getOpenOrderNumber());
-        			openOrder.setBalance(openOrder.getBalance().subtract(invoiceLine.getAmountWithTax()));
+        			openOrder.setBalance(openOrder.getBalance().subtract(invoiceLine.getAmountWithoutTax()));
         		}
             }
             invoiceLines.add(invoiceLine);
@@ -1133,7 +1133,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
 
 	public void deleteInvoiceLines(BillingRun billingRun) {
-		List<Long> invoiceLinesIds = loadInvoiceLinesIdByBillingRun(billingRun.getId());
+		List<Long> invoiceLinesIds = loadInvoiceLinesByBillingRunNotValidatedInvoices(billingRun.getId());
         if(!invoiceLinesIds.isEmpty()) {
             detachRatedTransactions(invoiceLinesIds);
             getEntityManager()

@@ -29,11 +29,11 @@ public class CompareInvoiceAmountScript extends Script {
 			LOG.info("{}={}", entry.getKey(), entry.getValue());
 		});
 		
-		if(!context.containsKey("invoice")) {
-			throw new MissingParameterException("invoice");
-		}
 		
-		Invoice invoice = (Invoice) context.get("invoice");
+		Invoice invoice = (Invoice) context.get(Script.CONTEXT_ENTITY);
+		if(invoice == null) {
+			throw new MissingParameterException(Script.CONTEXT_ENTITY);
+		}
 		LOG.info("Invoice amoutWithoutTax={}, amountWithTax={}", invoice.getAmountWithoutTax(), invoice.getAmountWithTax());
 
 		String withOrWithTaxParameter = (String) context.get("withOrWithoutTax");
