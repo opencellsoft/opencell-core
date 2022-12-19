@@ -267,7 +267,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	
 	@Override
 	public Response updateInvoiceLine(Long id, Long lineId, InvoiceLineInput invoiceLineInput) {
-		Invoice invoice = findInvoiceEligibleToUpdate(id);
+		Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
 		invoiceApiService.updateLine(invoice, invoiceLineInput, lineId);
 		if(invoiceLineInput.getSkipValidation() == null || !invoiceLineInput.getSkipValidation()) {
 			invoiceApiService.rebuildInvoice(invoice);
