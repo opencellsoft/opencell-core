@@ -563,7 +563,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accounting_code_id")
-    @Deprecated
+    @Deprecated(since="12", forRemoval = true)
     private AccountingCode accountingCode;
 
     /**
