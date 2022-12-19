@@ -39,11 +39,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.TradingCountry;
-import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxCategory;
@@ -271,6 +267,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @return Tax to apply
      * @throws BusinessException General business exception
      */
+    @Deprecated
     public TaxInfo determineTax(TaxClass taxClass, Seller seller, BillingAccount billingAccount, UserAccount userAccount, Date date, boolean checkExoneration, boolean ignoreNoTax) throws BusinessException {
 
         try {
@@ -290,7 +287,71 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
                 TaxMapping taxMapping = findBestTaxMappingMatch(taxCategory, taxClass, seller, billingAccount, date);
 
                 if (taxMapping.getTaxEL() != null) {
-                    tax = evaluateTaxExpression(taxMapping.getTaxEL(), seller, billingAccount, taxCategory, taxClass, date);
+                    tax = evaluateTaxExpression(taxMapping.getTaxEL(), seller, billingAccount, taxCategory, taxClass, date, null);
+                }
+
+                if (taxMapping.getTaxScript() != null) {
+
+                    if (taxScriptService.isApplicable(taxMapping.getTaxScript().getCode(), userAccount, seller, taxClass, date)) {
+                        List<Tax> taxes = taxScriptService.computeTaxes(taxMapping.getTaxScript().getCode(), userAccount, seller, taxClass, date);
+                        if (!taxes.isEmpty()) {
+                            tax = taxes.get(0);
+                        }
+                    }
+                }
+
+                if (tax == null) {
+                    tax = taxMapping.getTax();
+                }
+            }
+
+            taxInfo.tax = tax;
+
+            return taxInfo;
+
+        } catch (BusinessException e) {
+            if (ignoreNoTax) {
+                return null;
+            }
+            throw e;
+        }
+    }
+
+    /**
+     * Determine applicable tax for a given seller/buyer and tax category and class combination. Considers when Billing Account is exonerated.
+     *
+     * @param taxClass Tax class
+     * @param seller Seller
+     * @param billingAccount Billing account
+     * @param userAccount User account
+     * @param date Date to determine tax validity
+     * @param walletOperation WalletOperation
+     * @param checkExoneration Check if billing account is exonerated
+     * @param ignoreNoTax Should exception be thrown if no tax was matched. True - exception will be ignored and NULL returned. False - IncorrectChargeTemplateException will be
+     *        thrown.
+     * @return Tax to apply
+     * @throws BusinessException General business exception
+     */
+    public TaxInfo determineTax(TaxClass taxClass, Seller seller, BillingAccount billingAccount, UserAccount userAccount, Date date, WalletOperation walletOperation, boolean checkExoneration, boolean ignoreNoTax) throws BusinessException {
+
+        try {
+            TaxInfo taxInfo = new TaxInfo();
+            taxInfo.taxClass = taxClass;
+
+            Tax tax = null;
+
+            if (checkExoneration && billingAccountService.isExonerated(billingAccount)) {
+                tax = taxService.getZeroTax();
+
+            } else {
+
+                TaxCategory taxCategory = getTaxCategory(billingAccount);
+                taxInfo.taxCategory = taxCategory;
+
+                TaxMapping taxMapping = findBestTaxMappingMatch(taxCategory, taxClass, seller, billingAccount, date);
+
+                if (taxMapping.getTaxEL() != null) {
+                    tax = evaluateTaxExpression(taxMapping.getTaxEL(), seller, billingAccount, taxCategory, taxClass, date, walletOperation);
                 }
 
                 if (taxMapping.getTaxScript() != null) {
@@ -369,7 +430,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
             .setParameter("sellerCountry", sellersCountry).setParameter("buyerCountry", buyersCountry).setParameter("applicationDate", applicationDate).setFlushMode(FlushModeType.COMMIT).getResultList();
 
         for (TaxMapping taxMapping : taxMappings) {
-            if (taxMapping.getFilterEL() == null || evaluateBooleanExpression(taxMapping.getFilterEL(), seller, billingAccount, taxCategory, taxClass, applicationDate)) {
+            if (taxMapping.getFilterEL() == null || evaluateBooleanExpression(taxMapping.getFilterEL(), seller, billingAccount, taxCategory, taxClass, applicationDate, null)) {
                 return taxMapping;
             }
         }
@@ -397,13 +458,13 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @param date Date
      * @return Tax
      */
-    private Tax evaluateTaxExpression(String expression, Seller seller, BillingAccount billingAccount, TaxCategory taxCategory, TaxClass taxClass, Date date) throws BusinessException {
+    private Tax evaluateTaxExpression(String expression, Seller seller, BillingAccount billingAccount, TaxCategory taxCategory, TaxClass taxClass, Date date, WalletOperation walletOperation) throws BusinessException {
 
         if (StringUtils.isBlank(expression)) {
             return null;
         }
 
-        Map<Object, Object> userMap = constructElContext(expression, seller, billingAccount, taxCategory, taxClass, date);
+        Map<Object, Object> userMap = constructElContext(expression, seller, billingAccount, taxCategory, taxClass, date, walletOperation);
 
         String taxCode = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
 
@@ -430,16 +491,17 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @param taxCategory Tax category
      * @param taxClass Tax class
      * @param date Date
+     * @param walletOperation WalletOperation
      * @return true/false True if expression is matched
      * @throws BusinessException Business exception
      */
-    private boolean evaluateBooleanExpression(String expression, Seller seller, BillingAccount billingAccount, TaxCategory taxCategory, TaxClass taxClass, Date date) throws BusinessException {
+    private boolean evaluateBooleanExpression(String expression, Seller seller, BillingAccount billingAccount, TaxCategory taxCategory, TaxClass taxClass, Date date, WalletOperation walletOperation) throws BusinessException {
 
         if (StringUtils.isBlank(expression)) {
             return true;
         }
 
-        Map<Object, Object> userMap = constructElContext(expression, seller, billingAccount, taxCategory, taxClass, date);
+        Map<Object, Object> userMap = constructElContext(expression, seller, billingAccount, taxCategory, taxClass, date, walletOperation);
 
         return ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
 
@@ -456,7 +518,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @param date Date
      * @return A map of variables
      */
-    private Map<Object, Object> constructElContext(String expression, Seller seller, BillingAccount billingAccount, TaxCategory taxCategory, TaxClass taxClass, Date date) {
+    private Map<Object, Object> constructElContext(String expression, Seller seller, BillingAccount billingAccount, TaxCategory taxCategory, TaxClass taxClass, Date date, WalletOperation walletOperation) {
 
         Map<Object, Object> userMap = new HashMap<Object, Object>();
 
@@ -481,6 +543,10 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
         }
         if (expression.indexOf(ValueExpressionWrapper.VAR_TAX_CLASS) >= 0) {
             userMap.put(ValueExpressionWrapper.VAR_TAX_CLASS, taxClass);
+        }
+
+        if (expression.indexOf(ValueExpressionWrapper.VAR_WALLET_OPERATION) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_WALLET_OPERATION, walletOperation);
         }
 
         return userMap;
