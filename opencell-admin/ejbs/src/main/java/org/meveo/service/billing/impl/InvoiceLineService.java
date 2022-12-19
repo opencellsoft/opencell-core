@@ -8,6 +8,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 import static org.meveo.model.billing.InvoiceLineTaxModeEnum.RATE;
+import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
 import java.math.BigDecimal;
@@ -54,6 +55,7 @@ import org.meveo.model.billing.ExtraMinAmount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.billing.InvoiceLineTaxModeEnum;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.MinAmountData;
@@ -889,7 +891,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
      */
     public InvoiceLine getInvoiceLineForUpdate(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineResource, Long invoiceLineId) {
         InvoiceLine invoiceLine = findInvoiceLine(invoice, invoiceLineId);
-        invoiceLine = initInvoiceLineFromResource(invoiceLineResource, invoiceLine);
+		final InvoiceStatusEnum status = invoice.getStatus();
+        if(VALIDATED.equals(status)) {
+        	return invoiceLine;
+        }else {
+            invoiceLine = initInvoiceLineFromResource(invoiceLineResource, invoiceLine);
+        }
         return invoiceLine;
     }
 
