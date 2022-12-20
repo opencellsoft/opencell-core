@@ -403,7 +403,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
     public PricePlanMatrixVersionDto load(Long id) {
         PricePlanMatrixVersion pricePlanMatrixVersion = findById(id);
-        return new PricePlanMatrixVersionDto(pricePlanMatrixVersion);
+        return new PricePlanMatrixVersionDto(pricePlanMatrixVersion, true);
     }
 
     @SuppressWarnings("unchecked")
