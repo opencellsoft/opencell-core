@@ -43,7 +43,7 @@ public class CustomTableResourceImpl implements CustomTableResource {
 		List<Map<String, Object>> data = ofNullable(customTableService.exportCustomTable(cet)).orElseThrow(
 				() -> new NotFoundException("The custom table code " + customTableCode + " is empty"));
 
-		String filePath = genericExportManager.export(customTableCode, data, fileFormat, getGenericFieldDetails(cfts), getOrdredColumn(cfts), null);
+		String filePath = genericExportManager.export(customTableCode, data, fileFormat, getGenericFieldDetails(cfts), getOrdredColumn(cfts), "FR");
 
 		return Response.ok()
 				.entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"\"}, \"data\":{ \"filePath\":\"" + filePath + "\"}}")
