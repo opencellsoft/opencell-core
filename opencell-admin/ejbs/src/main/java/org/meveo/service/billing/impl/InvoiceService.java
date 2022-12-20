@@ -5346,8 +5346,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
         final String invoiceTypeCode = (invoiceTypeCodeInput != null && !invoiceTypeCodeInput.isEmpty() && !invoiceTypeCodeInput.isBlank()) ? resource.getInvoiceTypeCode() : "COM";
         InvoiceType invoiceType = (InvoiceType) tryToFindByEntityClassAndCode(InvoiceType.class, invoiceTypeCode);
         String comment = resource.getComment(); 
+        
+        Seller seller;
+        if(resource.getSeller() != null) {
+        	seller = (Seller) tryToFindByEntityClassAndCodeOrId(Seller.class, resource.getSeller().getCode(), resource.getSeller().getId());
+        } else {
+        	seller = billingAccount.getCustomerAccount().getCustomer().getSeller();
+        }
+        
+        if(seller == null) {
+        	throw new BusinessApiException("Billing account " + billingAccountCode + " doesn't have a default seller. Please provide a seller for this invoice.");
+        }
+        
 
-        Invoice invoice = initBasicInvoiceInvoice(amountWithTax, invoiceDate, order, billingAccount, invoiceType, comment);
+        Invoice invoice = initBasicInvoiceInvoice(amountWithTax, invoiceDate, order, billingAccount, invoiceType, comment, seller);
         invoice.updateAudit(currentUser);
         getEntityManager().persist(invoice);
         postCreate(invoice);
@@ -5359,7 +5371,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if(advType == null) {
             throw new EntityDoesNotExistsException(InvoiceType.class, "SECURITY_DEPOSIT");
         }
-        Invoice invoice = initBasicInvoiceInvoice(securityDepositInput.getAmount(), new Date(), null, securityDepositInput.getBillingAccount(), advType, "");
+        Seller defaultSeller = securityDepositInput.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+		Invoice invoice = initBasicInvoiceInvoice(securityDepositInput.getAmount(), new Date(), null, securityDepositInput.getBillingAccount(), advType, "", defaultSeller);
         invoice.updateAudit(currentUser);
         getEntityManager().persist(invoice);
         postCreate(invoice);
@@ -5376,7 +5389,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param comment Comment
      * @return {@link Invoice}
      */
-    private Invoice initBasicInvoiceInvoice(final BigDecimal amountWithTax, final Date invoiceDate, Order order, BillingAccount billingAccount, InvoiceType advType, String comment) {
+    private Invoice initBasicInvoiceInvoice(final BigDecimal amountWithTax, final Date invoiceDate, Order order, BillingAccount billingAccount, InvoiceType advType, String comment, Seller seller) {
         Invoice invoice = new Invoice();
         invoice.setInvoiceType(advType);
         invoice.setBillingAccount(billingAccount);
@@ -5394,7 +5407,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Date dueDate = calculateDueDate(invoice, billingAccount.getBillingCycle(), billingAccount, billingAccount.getCustomerAccount(), order);
         invoice.setDueDate(dueDate);
         setInitialCollectionDate(invoice, billingAccount.getBillingCycle(), null);
-        invoice.setSeller(billingAccount.getCustomerAccount().getCustomer().getSeller());
+        invoice.setSeller(seller);
         invoice.setStatus(InvoiceStatusEnum.NEW);
         invoice.setAmountWithoutTaxBeforeDiscount(BigDecimal.ZERO);
         invoice.setComment(comment);
