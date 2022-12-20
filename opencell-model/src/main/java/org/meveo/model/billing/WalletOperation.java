@@ -682,6 +682,9 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         this.parameter3 = criteria3;
         this.parameterExtra = criteriaExtra;
         this.inputQuantity = inputQuantity;
+        OrderInfo orderInfo = new OrderInfo();
+        orderInfo.setOrder(chargeInstance.getSubscription()!= null ? chargeInstance.getSubscription().getOrder() : null );
+        this.infoOrder = orderInfo;
 
         // TODO AKK in what case prevails customized description of chargeInstance??
 
