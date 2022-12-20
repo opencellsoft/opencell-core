@@ -1283,8 +1283,9 @@ public class InvoiceApi extends BaseApi {
     	return invoiceToDto(invoiceService.duplicate(invoice), false, false, false);
     }
 
-    public void rebuildInvoice(Long invoiceId, boolean save) {
+    public Invoice rebuildInvoice(Long invoiceId, boolean save) {
         Invoice invoice = invoiceService.findById(invoiceId);
         invoiceService.rebuildInvoice(invoice, save);
+        return invoice;
     }
 }

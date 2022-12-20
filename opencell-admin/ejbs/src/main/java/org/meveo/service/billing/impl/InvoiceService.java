@@ -1436,6 +1436,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             }
                             if(validationRuleScript != null) {
                                 try {
+                                    methodContext.put(Script.RESULT_VALUE, validationRule.getFailStatus());
                                     validationRuleScript.execute(methodContext);
                                     Object status = methodContext.get(Script.INVOICE_VALIDATION_STATUS);
                                     if (status != null && status instanceof InvoiceValidationStatusEnum) {
