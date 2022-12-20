@@ -145,7 +145,7 @@ public class InvoiceValidationRulesResourceImpl implements InvoiceValidationRule
             String value = invoiceValidationRule.getType().equals(ValidationRuleTypeEnum.SCRIPT) ? invoiceValidationRule.getValidationScript()
                     : invoiceValidationRule.getValidationEL();
 
-            Long ruleId = invoiceValidationRulesService.returnLastId();
+            Long ruleId = invoiceValidationRulesService.nextSequenceId();
 
             invoiceValidationRule.setDescription("Rule " + ruleId + ": "
                     + invoiceValidationRule.getFailStatus().toString() + " if " + invoiceValidationRule.getType().toString() + " "
