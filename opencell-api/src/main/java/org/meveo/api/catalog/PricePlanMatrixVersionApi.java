@@ -346,7 +346,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
 
         if(totalCount > 0) {
             pricePlanMatrixVersionService.list(paginationConfiguration).stream().forEach(version -> {
-                result.getPpmVersions().add(new PricePlanMatrixVersionDto(version));
+                result.getPpmVersions().add(new PricePlanMatrixVersionDto(version, true));
             });
         }
         return result;
