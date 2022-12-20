@@ -1452,8 +1452,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                                             invoice.setRejectReason((String) methodContext.get(Script.INVOICE_VALIDATION_REASON));
                                             invoice.setRejectedByRule(validationRule);
                                             noValidationError = false;
-                                        }else if(InvoiceValidationStatusEnum.VALID.equals(status)) {
-                                            invoice.setStatus(InvoiceStatusEnum.VALIDATED);
                                         }
                                     }
                                 } catch (Exception exception) {
