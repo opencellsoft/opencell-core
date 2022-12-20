@@ -33,13 +33,18 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.NoTaxException;
 import org.meveo.admin.util.ResourceBundle;
-import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.TradingCountry;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxCategory;
@@ -75,6 +80,12 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
     
     @Inject
     private SellerService sellerService;
+    
+    private static boolean IS_DETERMINE_TAX_CLASS_FROM_AA = true;
+
+    static {
+        IS_DETERMINE_TAX_CLASS_FROM_AA = ParamBean.getInstance().getBooleanValue("taxes.determineTaxClassFromAA", true);
+    }
 
     @Override
     public void create(TaxMapping entity) throws BusinessException {
@@ -235,6 +246,46 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
 
         return determineTax(taxClass, chargeInstance.getSeller(), chargeInstance.getUserAccount().getBillingAccount(), chargeInstance.getUserAccount(), date, true, false);
     }
+    
+    /**
+     * Determine applicable tax for a given wallet operation. Considers when Billing Account is exonerated.
+     * 
+     * @param walletOperation wallet operation
+     * @return Tax to apply
+     * @throws NoTaxException Unable to determine a tax
+     */
+    public TaxInfo determineTax(WalletOperation walletOperation) throws NoTaxException {
+
+        ChargeInstance chargeInstance = walletOperation.getChargeInstance();
+        Date date = walletOperation.getOperationDate();
+        TaxClass taxClass = chargeInstance.getTaxClassResolved();
+
+        try {
+            if (IS_DETERMINE_TAX_CLASS_FROM_AA) {
+            	 AccountingArticle accountingArticle=walletOperation.getAccountingArticle();
+            	 if(accountingArticle==null) {
+            		 accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance);
+            	 }
+                if (accountingArticle != null) {
+                    taxClass = accountingArticle.getTaxClass();
+                    chargeInstance.setTaxClassResolved(taxClass);
+                }
+            }
+            if (taxClass == null) {
+                if (chargeInstance.getChargeTemplate().getTaxClassEl() != null) {
+                    taxClass = evaluateTaxClassExpression(chargeInstance.getChargeTemplate().getTaxClassEl(), chargeInstance);
+                }
+                if (taxClass == null) {
+                    taxClass = chargeInstance.getChargeTemplate().getTaxClass();
+                }
+                chargeInstance.setTaxClassResolved(taxClass);
+            }
+        } catch (BusinessException e) {
+            throw new BusinessException(e);
+        }
+
+        return determineTax(taxClass, chargeInstance.getSeller(), chargeInstance.getUserAccount().getBillingAccount(), chargeInstance.getUserAccount(), date, walletOperation, true, false);
+    }
 
     /**
      * Determine applicable tax for a given charge template. Considers when Billing Account is exonerated.
@@ -284,7 +335,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
                 TaxCategory taxCategory = getTaxCategory(billingAccount);
                 taxInfo.taxCategory = taxCategory;
 
-                TaxMapping taxMapping = findBestTaxMappingMatch(taxCategory, taxClass, seller, billingAccount, date);
+                TaxMapping taxMapping = findBestTaxMappingMatch(taxCategory, taxClass, seller, billingAccount, date,null);
 
                 if (taxMapping.getTaxEL() != null) {
                     tax = evaluateTaxExpression(taxMapping.getTaxEL(), seller, billingAccount, taxCategory, taxClass, date, null);
@@ -348,7 +399,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
                 TaxCategory taxCategory = getTaxCategory(billingAccount);
                 taxInfo.taxCategory = taxCategory;
 
-                TaxMapping taxMapping = findBestTaxMappingMatch(taxCategory, taxClass, seller, billingAccount, date);
+                TaxMapping taxMapping = findBestTaxMappingMatch(taxCategory, taxClass, seller, billingAccount, date,walletOperation);
 
                 if (taxMapping.getTaxEL() != null) {
                     tax = evaluateTaxExpression(taxMapping.getTaxEL(), seller, billingAccount, taxCategory, taxClass, date, walletOperation);
@@ -416,7 +467,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @param applicationDate Date to consider for match
      * @return A best matched Tax mapping
      */
-    public TaxMapping findBestTaxMappingMatch(TaxCategory taxCategory, TaxClass taxClass, Seller seller, BillingAccount billingAccount, Date applicationDate) {
+    public TaxMapping findBestTaxMappingMatch(TaxCategory taxCategory, TaxClass taxClass, Seller seller, BillingAccount billingAccount, Date applicationDate, WalletOperation walletOperation) {
     	seller = sellerService.refreshOrRetrieve(seller);
     	billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
     	Hibernate.initialize(seller);
@@ -430,7 +481,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
             .setParameter("sellerCountry", sellersCountry).setParameter("buyerCountry", buyersCountry).setParameter("applicationDate", applicationDate).setFlushMode(FlushModeType.COMMIT).getResultList();
 
         for (TaxMapping taxMapping : taxMappings) {
-            if (taxMapping.getFilterEL() == null || evaluateBooleanExpression(taxMapping.getFilterEL(), seller, billingAccount, taxCategory, taxClass, applicationDate, null)) {
+            if (taxMapping.getFilterEL() == null || evaluateBooleanExpression(taxMapping.getFilterEL(), seller, billingAccount, taxCategory, taxClass, applicationDate, walletOperation)) {
                 return taxMapping;
             }
         }
