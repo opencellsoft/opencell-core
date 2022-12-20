@@ -986,16 +986,15 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 }
 
             }
+            
+            if(entity instanceof Subscription && ((Subscription)entity).getBillingCycle() != null){
 
-            if(entity instanceof CommercialOrder && ((CommercialOrder)entity).getBillingCycle() != null){
-                BillingCycle bc = ((CommercialOrder)entity).getBillingCycle();
+                BillingCycle bc = ((Subscription)entity).getBillingCycle();
                 threshold = bc.getInvoicingThreshold();
                 checkThreshold = bc.getCheckThreshold();
                 isThresholdPerEntity = bc.isThresholdPerEntity();
-            }
-            else if(entity instanceof Subscription && ((Subscription)entity).getBillingCycle() != null){
-
-                BillingCycle bc = ((Subscription)entity).getBillingCycle();
+            }else if(entity instanceof CommercialOrder && ((CommercialOrder)entity).getBillingCycle() != null){
+                BillingCycle bc = ((CommercialOrder)entity).getBillingCycle();
                 threshold = bc.getInvoicingThreshold();
                 checkThreshold = bc.getCheckThreshold();
                 isThresholdPerEntity = bc.isThresholdPerEntity();
