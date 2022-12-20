@@ -17,8 +17,6 @@
  */
 package org.meveo.model.shared;
 
-import static org.meveo.model.shared.DateUtils.setTimeToZero;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DateFormat;
