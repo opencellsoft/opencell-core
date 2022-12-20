@@ -280,7 +280,9 @@ public class GenericFileExportManager {
         if (StringUtils.isNotBlank(fieldDetail.getTransformation())) {
             if (value instanceof Long || value instanceof BigDecimal || value instanceof Double || value instanceof Float || value instanceof Integer) {
                 DecimalFormatSymbols symbols = "FR".equals(locale) ? new DecimalFormatSymbols(Locale.FRENCH) : new DecimalFormatSymbols(Locale.ENGLISH);
-                return new DecimalFormat(fieldDetail.getTransformation(), symbols).format(value);
+                DecimalFormat formatter = new DecimalFormat(fieldDetail.getTransformation(), symbols);
+                formatter.setGroupingUsed(false);
+                return formatter.format(value);
             }
 
             if (value instanceof Date) {

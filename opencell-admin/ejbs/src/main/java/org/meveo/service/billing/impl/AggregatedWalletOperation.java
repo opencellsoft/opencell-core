@@ -182,6 +182,7 @@ public class AggregatedWalletOperation {
 	 */
 	private List<Long> walletOperationsIds;
 	private AccountingArticle accountingArticle;
+	private AccountingCode accountingCode;
 
 	public AggregatedWalletOperation(String walletOpsIds, Long sellerId, Integer year, Integer month, Integer day, Tax tax, InvoiceSubCategory invoiceSubCategory, Object id,
 									 BigDecimal amountWithTax, BigDecimal amountWithoutTax, BigDecimal amountTax, TaxClass taxClass, BigDecimal quantity, BigDecimal unitAmountWithoutTax,
@@ -593,5 +594,13 @@ public class AggregatedWalletOperation {
 
 	public void setAccountingArticle(AccountingArticle accountingArticle) {
 		this.accountingArticle = accountingArticle;
+	}
+
+	public AccountingCode getAccountingCode() {
+		return accountingCode;
+	}
+
+	public void setAccountingCode(AccountingCode accountingCode) {
+		this.accountingCode = accountingCode;
 	}
 }
