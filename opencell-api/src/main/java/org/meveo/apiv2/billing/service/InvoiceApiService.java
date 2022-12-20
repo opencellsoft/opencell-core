@@ -125,7 +125,7 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 
 	@Override
 	public Optional<Invoice> findByCode(String code) {
-		throw new BadRequestException("Use invoice number and type");
+		return ofNullable(invoiceService.findByInvoiceNumber(code));
 	}
 
 	/**
