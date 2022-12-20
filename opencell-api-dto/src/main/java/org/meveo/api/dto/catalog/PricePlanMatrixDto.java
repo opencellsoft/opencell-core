@@ -233,7 +233,7 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
      * @param pricePlan Price plan entity
      * @param customFieldInstances Custom field values
      */
-    public PricePlanMatrixDto(PricePlanMatrix pricePlan, CustomFieldsDto customFieldInstances) {
+    public PricePlanMatrixDto(PricePlanMatrix pricePlan, CustomFieldsDto customFieldInstances, boolean returnPricePlanMatrixLine) {
         super(pricePlan);
 
         eventCode = pricePlan.getEventCode();
@@ -286,7 +286,7 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
         parameter2El = pricePlan.getParameter2El();
         parameter3El = pricePlan.getParameter3El();
         versions = pricePlan.getVersions().stream()
-                .map(version -> new PricePlanMatrixVersionDto(version))
+                .map(version -> new PricePlanMatrixVersionDto(version, returnPricePlanMatrixLine))
                 .collect(Collectors.toList());
     }
 
