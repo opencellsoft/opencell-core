@@ -2957,6 +2957,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public void rebuildInvoice(Invoice invoice, boolean save) {
         invoice = findById(invoice.getId());
+        invoice.setStatus(InvoiceStatusEnum.DRAFT);
         applyAutomaticInvoiceCheck(Arrays.asList(invoice), true);
         if (save) {
             update(invoice);
