@@ -192,6 +192,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     @Inject
     private BillingRulesService billingRulesService;
+
+    @Inject
+    private AccountingCodeService accountingCodeService;
     
     /**
      * Check if Billing account has any not yet billed Rated transactions
@@ -493,6 +496,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             create(ratedTransaction);
             updateAggregatedWalletOperations(aggregatedWo.getWalletOperationsIds(), ratedTransaction);
         }
+        ratedTransaction.setAccountingArticle(accountingArticleService.refreshOrRetrieve(aggregatedWo.getAccountingArticle()));
+        ratedTransaction.setAccountingCode(accountingCodeService.refreshOrRetrieve(aggregatedWo.getAccountingCode()));
 
         return ratedTransaction;
     }
@@ -1749,7 +1754,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         " rt.chargeInstance.id as charge_instance_id, rt.accountingArticle.id as article_id," +
                         " rt.discountedRatedTransaction as discounted_ratedtransaction_id" +
                         " FROM RatedTransaction rt left join rt.subscription s " +
-                        " WHERE" + entityCondition + "AND rt.status = 'OPEN' AND :firstTransactionDate <= rt.usageDate " +
+                        " WHERE " + entityCondition + " AND rt.status = 'OPEN' AND :firstTransactionDate <= rt.usageDate " +
                         " AND rt.usageDate < :lastTransactionDate AND (rt.invoicingDate is NULL or rt.invoicingDate < :invoiceUpToDate) " +
                         " AND rt.accountingArticle.ignoreAggregation = true";
         return getSelectQueryAsMap(query, params);

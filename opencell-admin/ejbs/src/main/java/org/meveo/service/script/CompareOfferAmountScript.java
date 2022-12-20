@@ -26,7 +26,7 @@ public class CompareOfferAmountScript  extends Script{
     private final String VALUE = "value";
     private final String INVOICE = "CONTEXT_ENTITY";
     
-    private final String query = "select sum(AMOUNT), offerTemplate.id from InvoiceLine where invoice.id = :invoiceId and offerTemplate.code in (:offers) group by offerTemplate.id having (sum(AMOUNT) OPERATOR :value";
+    private final String query = "select sum(AMOUNT), offerTemplate.id from InvoiceLine where invoice.id = :invoiceId and offerTemplate.code in (:offers) group by offerTemplate.id having sum(AMOUNT) OPERATOR :value";
 
     private InvoiceLineService invoiceLineService = (InvoiceLineService) getServiceInterface("InvoiceLineService");
     
@@ -45,10 +45,10 @@ public class CompareOfferAmountScript  extends Script{
         
         List<OfferTemplate> offers = (List<OfferTemplate>) methodContext.get(OFFERS);
         
-        List<Object[]> result = invoiceLineService.getEntityManager().createNamedQuery(finalQuery)
+        List<Object[]> result = invoiceLineService.getEntityManager().createQuery(finalQuery)
                                                     .setParameter("invoiceId", invoiceId)
                                                     .setParameter("offers", offers.stream().map(OfferTemplate::getCode).collect(Collectors.toList()))
-                                                    .setParameter("value", methodContext.get(OPERATOR))
+                                                    .setParameter("value", methodContext.get(VALUE))
                                                         .getResultList();
         methodContext.put(Script.RESULT_VALUE, CollectionUtils.isEmpty(result));
         

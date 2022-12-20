@@ -771,6 +771,7 @@ public class WalletOperationPeriod extends BaseEntity implements ICustomFieldEnt
         result.setCreated(created);
         result.setUpdated(updated);
         result.setTaxClass(taxClass);
+        result.setAccountingCode(accountingCode);
         result.setAccountingArticle(accountingArticle);
         return result;
     }
