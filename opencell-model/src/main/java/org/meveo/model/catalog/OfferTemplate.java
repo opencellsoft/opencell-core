@@ -39,6 +39,7 @@ import javax.persistence.QueryHint;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
@@ -207,6 +208,47 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @Column(name = "generate_quote_edr_per_product")
     private boolean generateQuoteEdrPerProduct;
     
+    /**
+    * Display
+    */
+    @Type(type = "numeric_boolean")
+    @Column(name = "display")
+    @NotNull
+    private boolean display;
+    
+    /**
+     * sequence for Offer Template and attribute
+     */
+    @Column(name = "sequence")
+    protected Integer sequence = 0;
+    
+    /**
+     * @return the display
+     */
+    public boolean isDisplay() {
+        return display;
+    }
+    
+    /**
+     * @param display the display to set
+     */
+    public void setDisplay(boolean display) {
+        this.display = display;
+    }
+
+    /**
+     * @return the sequence
+     */
+    public Integer getSequence() {
+        return sequence;
+    }
+    
+    /**
+     * @param sequence the sequence to set
+     */
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
+    }
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "offerTemplate", orphanRemoval = true)
     private List<OfferTemplateAttribute> offerAttributes = new ArrayList<>();
