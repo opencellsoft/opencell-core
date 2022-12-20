@@ -8910,7 +8910,6 @@ Only offer actually present on invoice will be tested."}'/>
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateCustomerAge')" />
 		</insert>
     </changeSet>
-    </changeSet>
 
 	<changeSet id="#INTRD-12335_20221216" author="Bourras">
 		<update tableName="billing_invoice_sub_cat">
