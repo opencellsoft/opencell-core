@@ -14882,9 +14882,7 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             <column name="code" type="varchar(255)">
-                <constraints unique="true" nullable="false" uniqueConstraintName="untdid_unit_unique"/>
             </column>
-            <column name="description" type="varchar(255)"/>
 
             <!-- Simple fields -->           
             <column name="source" type="varchar(10)">
@@ -14970,10 +14968,7 @@ order by date_trunc('month', i.invoice_date) DESC
                 <constraints unique="true" nullable="false" uniqueConstraintName="iso_4451_subject_code_unique"/>
             </column>
 
-            <!-- Simple fields -->           
-            <column name="EN16931_interpretation" type="varchar(20)">
-                <constraints nullable="false" />
-            </column>
+            <!-- Simple fields -->    
             <column name="code_name" type="varchar(500)">
                 <constraints nullable="false" />
             </column>
@@ -15026,7 +15021,7 @@ order by date_trunc('month', i.invoice_date) DESC
 
             <!-- Simple fields -->           
             <column name="remark" type="varchar(500)">
-                <constraints nullable="false" />
+                <constraints nullable="true" />
             </column>
             <column name="code_name" type="varchar(500)">
                 <constraints nullable="false" />
@@ -15080,9 +15075,6 @@ order by date_trunc('month', i.invoice_date) DESC
 
             <!-- Simple fields -->           
             <column name="description" type="varchar(500)">
-                <constraints nullable="false" />
-            </column>
-            <column name="code_name" type="varchar(500)">
                 <constraints nullable="false" />
             </column>
 
