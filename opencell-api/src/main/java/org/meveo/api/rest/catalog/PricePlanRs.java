@@ -20,6 +20,7 @@ package org.meveo.api.rest.catalog;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -109,7 +110,9 @@ public interface PricePlanRs extends IBaseRs {
             @ApiResponse(responseCode="200", description = "the price plan is successfully retreived",content = @Content(schema = @Schema(implementation = GetPricePlanResponseDto.class))),
             @ApiResponse(responseCode = "400", description = "Internat error")
     })
-    GetPricePlanResponseDto find(@Parameter(description = "The price plan code", required = true) @QueryParam("pricePlanCode") String pricePlanCode);
+    GetPricePlanResponseDto find(@Parameter(description = "The price plan code", required = true) @QueryParam("pricePlanCode") String pricePlanCode,
+                                 @Parameter(description = "Indicate if returning pricePlanMatrixLine") @DefaultValue("true")
+                                 @QueryParam("returnPricePlanMatrixLine") boolean returnPricePlanMatrixLine);
 
     /**
      * Remove an existing price plan matrix with a given code

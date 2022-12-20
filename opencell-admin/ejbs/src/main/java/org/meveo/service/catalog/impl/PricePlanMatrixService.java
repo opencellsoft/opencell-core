@@ -707,13 +707,13 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         createPP(pricePlan);
     }
 
-    public PricePlanMatrixDto findPricePlanMatrix(String pricePlanCode) {
+    public PricePlanMatrixDto findPricePlanMatrix(String pricePlanCode, boolean returnPricePlanMatrixLine) {
         PricePlanMatrix pricePlanMatrix = findByCode(pricePlanCode);
         if (pricePlanMatrix == null) {
             throw new EntityDoesNotExistsException(PricePlanMatrix.class, pricePlanCode);
         }
 
-        return new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+        return new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), returnPricePlanMatrixLine);
     }
 
     public PricePlanMatrix duplicatePricePlanMatrix(PricePlanMatrix pricePlanMatrix, PricePlanMatrixVersion pricePlanMatrixVersion, String pricePlanMatrixNewCode, PriceVersionTypeEnum priceVersionType) {
