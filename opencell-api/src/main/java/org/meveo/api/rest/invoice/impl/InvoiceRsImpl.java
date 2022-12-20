@@ -33,6 +33,8 @@ import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.invoice.InvoiceRs;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 
@@ -222,10 +224,13 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             //if true then validation is ignored, if false or missing then invoice goes through validation process (false as default value)
+            Invoice invoice = null;
             if(!putData.isSkipValidation()) {
-                invoiceApi.rebuildInvoice(putData.getInvoiceId(), false);
+                invoice = invoiceApi.rebuildInvoice(putData.getInvoiceId(), false);
             }
-            invoiceApi.validateInvoice(putData.getInvoiceId(), putData.getGenerateAO(), putData.getRefreshExchangeRate(), true);
+            if(invoice == null || (invoice.getStatus() != InvoiceStatusEnum.REJECTED && invoice.getStatus() != InvoiceStatusEnum.SUSPECT))
+                invoiceApi.validateInvoice(putData.getInvoiceId(), putData.getGenerateAO(), putData.getRefreshExchangeRate(), true);
+            
         } catch (Exception e) {
             processException(e, result);
         }

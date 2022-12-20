@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceValidationStatusEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.slf4j.Logger;
@@ -26,7 +27,7 @@ public class CompareOfferAmountScript  extends Script{
     private final String VALUE = "value";
     private final String INVOICE = "CONTEXT_ENTITY";
     
-    private final String query = "select sum(AMOUNT), offerTemplate.id from InvoiceLine where invoice.id = :invoiceId and offerTemplate.code in (:offers) group by offerTemplate.id having sum(AMOUNT) OPERATOR :value";
+    private final String query = "select sum(AMOUNT), offerTemplate.id from InvoiceLine where invoice.id = :invoiceId and offerTemplate.code in (:offers) group by offerTemplate.id having not(sum(AMOUNT) OPERATOR :value)";
 
     private InvoiceLineService invoiceLineService = (InvoiceLineService) getServiceInterface("InvoiceLineService");
     
@@ -50,7 +51,7 @@ public class CompareOfferAmountScript  extends Script{
                                                     .setParameter("offers", offers.stream().map(OfferTemplate::getCode).collect(Collectors.toList()))
                                                     .setParameter("value", methodContext.get(VALUE))
                                                         .getResultList();
-        methodContext.put(Script.RESULT_VALUE, CollectionUtils.isEmpty(result));
+        methodContext.put(Script.INVOICE_VALIDATION_STATUS, CollectionUtils.isEmpty(result) ? InvoiceValidationStatusEnum.VALID : (InvoiceValidationStatusEnum) methodContext.get(Script.RESULT_VALUE));
         
     }
     
