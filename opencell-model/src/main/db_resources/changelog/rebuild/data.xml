@@ -10143,7 +10143,7 @@ Only offer actually present on invoice will be tested."}'/>
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmountScript')" />
 		</insert>
     </changeSet>    
-    
+
     <changeSet id="INTRD-12267_20221219_rebuild" author="aeljaouhari">
         <insert tableName="meveo_script_instance">
         	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
@@ -10176,7 +10176,7 @@ Only offer actually present on invoice will be tested."}'/>
 			<column name="collection" valueNumeric="0" />
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateCustomerAge')" />
 		</insert>
-	
+
 		<insert tableName="meveo_script_parameter">
 			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
 			<column name="version" valueNumeric="0" />
@@ -10257,6 +10257,7 @@ Only offer actually present on invoice will be tested."}'/>
 	<changeSet id="INTRD_12001_20221205" author="TarikFA." />
 	<changeSet id="INTRD-12266_20221214" author="aeljaouhari" />
 	<changeSet id="INTRD-12267_20221219" author="aeljaouhari" />
+	<changeSet id="#INTRD-12335_20221216" author="Bourras"/>
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

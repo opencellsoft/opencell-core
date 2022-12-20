@@ -8772,8 +8772,8 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateCreditCategoryScript')" />
 		</insert>
     </changeSet>
-    
-    <changeSet id="INTRD-12103_20221215_rebuild" author="HichamHANINE">	
+
+    <changeSet id="INTRD-12103_20221215_rebuild" author="HichamHANINE">
         <insert tableName="meveo_script_instance">
         	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
         	<column name="code" value="org.meveo.service.script.CompareOfferLinesAmountScript" />
@@ -8810,7 +8810,7 @@ Only offer actually present on invoice will be tested."}'/>
 			<column name="collection" valueNumeric="1" />
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmountScript')" />
 		</insert>
-		
+
 		<insert tableName="meveo_script_parameter">
 			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
 			<column name="version" valueNumeric="0" />
@@ -8882,7 +8882,7 @@ Only offer actually present on invoice will be tested."}'/>
 			<column name="collection" valueNumeric="0" />
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateCustomerAge')" />
 		</insert>
-	
+
 		<insert tableName="meveo_script_parameter">
 			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
 			<column name="version" valueNumeric="0" />
@@ -8909,5 +8909,12 @@ Only offer actually present on invoice will be tested."}'/>
 			<column name="collection" valueNumeric="0" />
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateCustomerAge')" />
 		</insert>
-    </changeSet>    
+    </changeSet>
+    </changeSet>
+
+	<changeSet id="#INTRD-12335_20221216" author="Bourras">
+		<update tableName="billing_invoice_sub_cat">
+			<column name="accounting_code_id" value="null"/>
+		</update>
+	</changeSet>
 </databaseChangeLog>
