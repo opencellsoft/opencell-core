@@ -1065,118 +1065,120 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         List<Long> alreadyProcessedSubscriptions = new ArrayList<>();
 
         for (Long billableEntityId : billableEntities) {
-            BigDecimal threshold = null;
-            ThresholdOptionsEnum checkThreshold = null;
-            boolean isThresholdPerEntity = false;
-            Object entity;
-            Long entityId = billableEntityId;
+            if (billableEntityId != null) {
+                BigDecimal threshold = null;
+                ThresholdOptionsEnum checkThreshold = null;
+                boolean isThresholdPerEntity = false;
+                Object entity;
+                Long entityId = billableEntityId;
 
-            if (clazz.equals(CommercialOrder.class)) {
-                entity = commercialOrderService.findById(billableEntityId);
+                if (clazz.equals(CommercialOrder.class)) {
+                    entity = commercialOrderService.findById(billableEntityId);
 
-                if (alreadyProcessedOrders.contains(billableEntityId)) {
-                    break;
-                } else {
-                    alreadyProcessedOrders.add(billableEntityId);
-                }
-
-            } else if (clazz.equals(Subscription.class)) {
-                if (alreadyProcessedSubscriptions.contains(billableEntityId)) {
-                    break;
-                } else {
-                    alreadyProcessedSubscriptions.add(billableEntityId);
-                }
-                entity = billableEntityId != null ? subscriptionService.findById(billableEntityId) : null;
-
-            } else {
-
-                entity = getEntity(billableEntityId, clazz);
-                 entityId = ((AccountEntity) entity).getId();
-                if (alreadyProcessedEntities.contains(entityId)) {
-                    break;
-                } else {
-                    alreadyProcessedEntities.add(entityId);
-                }
-
-            }
-
-            if(entity instanceof Subscription
-                   && ((Subscription)entity).getBillingCycle() != null
-            ){
-
-                BillingCycle bc = ((Subscription)entity).getBillingCycle();
-                threshold = bc.getInvoicingThreshold();
-                checkThreshold = bc.getCheckThreshold();
-                isThresholdPerEntity = bc.isThresholdPerEntity();
-            }
-            else if(entity instanceof CommercialOrder
-                    && ((CommercialOrder)entity).getBillingCycle() != null
-            ){
-                BillingCycle bc = ((CommercialOrder)entity).getBillingCycle();
-                threshold = bc.getInvoicingThreshold();
-                checkThreshold = bc.getCheckThreshold();
-                isThresholdPerEntity = bc.isThresholdPerEntity();
-            }
-
-             else if (entity instanceof BillingAccount) {
-                BillingAccount ba = (BillingAccount) entity;
-                threshold = ba.getInvoicingThreshold();
-                checkThreshold = ba.getCheckThreshold();
-                isThresholdPerEntity = ba.isThresholdPerEntity();
-                if (threshold == null && ba.getBillingCycle() != null) {
-                    threshold = ba.getBillingCycle().getInvoicingThreshold();
-                    checkThreshold = ba.getBillingCycle().getCheckThreshold();
-                    isThresholdPerEntity = ba.getBillingCycle().isThresholdPerEntity();
-                }
-            } else if (entity instanceof CustomerAccount) {
-                threshold = ((CustomerAccount) entity).getInvoicingThreshold();
-                checkThreshold = ((CustomerAccount) entity).getCheckThreshold();
-                isThresholdPerEntity = ((CustomerAccount) entity).isThresholdPerEntity();
-            } else if (entity instanceof Customer) {
-                threshold = ((Customer) entity).getInvoicingThreshold();
-                checkThreshold = ((Customer) entity).getCheckThreshold();
-                isThresholdPerEntity = ((Customer) entity).isThresholdPerEntity();
-            }
-
-            if (threshold != null && checkThreshold == null) {
-                checkThreshold = ThresholdOptionsEnum.AFTER_DISCOUNT;
-            }
-            if (threshold == null || checkThreshold == null) {
-                break;
-            }
-
-            switch (checkThreshold) {
-            case POSITIVE_RT:
-                Map<Long, Amounts> thresholdAmounts = positiveRTThresholdAmounts.get(entityId);
-                if (thresholdAmounts != null) {
-                    checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntities, billableEntityId, threshold, isThresholdPerEntity, thresholdAmounts, clazz);
-                }
-                break;
-            case AFTER_DISCOUNT:
-                thresholdAmounts = invoiceableThresholdAmounts.get(entityId);
-                if (thresholdAmounts != null) {
-                    checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntities, billableEntityId, threshold, isThresholdPerEntity, thresholdAmounts, clazz);
-                }
-                break;
-            case BEFORE_DISCOUNT:
-                thresholdAmounts = invoiceableThresholdAmounts.get(entityId);
-                Map<Long, Amounts> discountAmounts = discountThresholdAmounts.get(entityId);
-                if (thresholdAmounts != null) {
-                    if (discountAmounts != null) {
-                        thresholdAmounts.keySet().stream().forEach(x -> thresholdAmounts.get(x).addAmounts((discountAmounts.get(x) != null) ? discountAmounts.get(x).negate() : null));
+                    if (alreadyProcessedOrders.contains(billableEntityId)) {
+                        break;
+                    } else {
+                        alreadyProcessedOrders.add(billableEntityId);
                     }
-                    checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntities, billableEntityId, threshold, isThresholdPerEntity, thresholdAmounts, clazz);
+
+                } else if (clazz.equals(Subscription.class)) {
+                    if (alreadyProcessedSubscriptions.contains(billableEntityId)) {
+                        break;
+                    } else {
+                        alreadyProcessedSubscriptions.add(billableEntityId);
+                    }
+                    entity = billableEntityId != null ? subscriptionService.findById(billableEntityId) : null;
+
+                } else {
+
+                    entity = getEntity(billableEntityId, clazz);
+                     entityId = ((AccountEntity) entity).getId();
+                    if (alreadyProcessedEntities.contains(entityId)) {
+                        break;
+                    } else {
+                        alreadyProcessedEntities.add(entityId);
+                    }
+
                 }
-                break;
-            case POSITIVE_IL :
-                thresholdAmounts = positiveILThresholdAmounts.get(entityId);
-                if (thresholdAmounts != null) {
-                    checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntities, billableEntityId, threshold, isThresholdPerEntity, thresholdAmounts, clazz);
+
+                if(entity instanceof Subscription
+                       && ((Subscription)entity).getBillingCycle() != null
+                ){
+
+                    BillingCycle bc = ((Subscription)entity).getBillingCycle();
+                    threshold = bc.getInvoicingThreshold();
+                    checkThreshold = bc.getCheckThreshold();
+                    isThresholdPerEntity = bc.isThresholdPerEntity();
                 }
-                break;
-            default:
-                break;
-            }
+                else if(entity instanceof CommercialOrder
+                        && ((CommercialOrder)entity).getBillingCycle() != null
+                ){
+                    BillingCycle bc = ((CommercialOrder)entity).getBillingCycle();
+                    threshold = bc.getInvoicingThreshold();
+                    checkThreshold = bc.getCheckThreshold();
+                    isThresholdPerEntity = bc.isThresholdPerEntity();
+                }
+
+                 else if (entity instanceof BillingAccount) {
+                    BillingAccount ba = (BillingAccount) entity;
+                    threshold = ba.getInvoicingThreshold();
+                    checkThreshold = ba.getCheckThreshold();
+                    isThresholdPerEntity = ba.isThresholdPerEntity();
+                    if (threshold == null && ba.getBillingCycle() != null) {
+                        threshold = ba.getBillingCycle().getInvoicingThreshold();
+                        checkThreshold = ba.getBillingCycle().getCheckThreshold();
+                        isThresholdPerEntity = ba.getBillingCycle().isThresholdPerEntity();
+                    }
+                } else if (entity instanceof CustomerAccount) {
+                    threshold = ((CustomerAccount) entity).getInvoicingThreshold();
+                    checkThreshold = ((CustomerAccount) entity).getCheckThreshold();
+                    isThresholdPerEntity = ((CustomerAccount) entity).isThresholdPerEntity();
+                } else if (entity instanceof Customer) {
+                    threshold = ((Customer) entity).getInvoicingThreshold();
+                    checkThreshold = ((Customer) entity).getCheckThreshold();
+                    isThresholdPerEntity = ((Customer) entity).isThresholdPerEntity();
+                }
+
+                if (threshold != null && checkThreshold == null) {
+                    checkThreshold = ThresholdOptionsEnum.AFTER_DISCOUNT;
+                }
+                if (threshold == null || checkThreshold == null) {
+                    break;
+                }
+
+                switch (checkThreshold) {
+                case POSITIVE_RT:
+                    Map<Long, Amounts> thresholdAmounts = positiveRTThresholdAmounts.get(entityId);
+                    if (thresholdAmounts != null) {
+                        checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntities, billableEntityId, threshold, isThresholdPerEntity, thresholdAmounts, clazz);
+                    }
+                    break;
+                case AFTER_DISCOUNT:
+                    thresholdAmounts = invoiceableThresholdAmounts.get(entityId);
+                    if (thresholdAmounts != null) {
+                        checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntities, billableEntityId, threshold, isThresholdPerEntity, thresholdAmounts, clazz);
+                    }
+                    break;
+                case BEFORE_DISCOUNT:
+                    thresholdAmounts = invoiceableThresholdAmounts.get(entityId);
+                    Map<Long, Amounts> discountAmounts = discountThresholdAmounts.get(entityId);
+                    if (thresholdAmounts != null) {
+                        if (discountAmounts != null) {
+                            thresholdAmounts.keySet().stream().forEach(x -> thresholdAmounts.get(x).addAmounts((discountAmounts.get(x) != null) ? discountAmounts.get(x).negate() : null));
+                        }
+                        checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntities, billableEntityId, threshold, isThresholdPerEntity, thresholdAmounts, clazz);
+                    }
+                    break;
+                case POSITIVE_IL :
+                    thresholdAmounts = positiveILThresholdAmounts.get(entityId);
+                    if (thresholdAmounts != null) {
+                        checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntities, billableEntityId, threshold, isThresholdPerEntity, thresholdAmounts, clazz);
+                    }
+                    break;
+                default:
+                    break;
+                }
+            }            
         }
         return invoicesToRemove;
     }
