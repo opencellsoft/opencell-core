@@ -844,7 +844,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         Map<Class, Map<Long, Map<Long, Amounts>>> positiveILAmounts = getAmountsMap(invoiceLinesService.getTotalPositiveILAmountsByBR(billingRun));
         Map<Class, Map<Long, Map<Long, Amounts>>> invoiceableAmounts = getAmountsMap(invoiceService.getTotalInvoiceableAmountByBR(billingRun));
 
-        Set<Long> billableEntitieIds = BillingAccount.get(Subscription.class).keySet();
+        Set<Long> billableEntitieIds = invoiceableAmounts.get(BillingAccount.class).keySet();
         Set<Long> rejectedBillingAccounts = new HashSet<>();
         BillingCycle billingCycle=billingRun.getBillingCycle();
         BillingEntityTypeEnum bCType=billingCycle!=null?billingCycle.getType():null;
