@@ -78,6 +78,8 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 	private SellerService sellerService;
 
 	private boolean automaticMandateCreation;
+	
+	private static String dateParamName = "dateIN";
 
     public PaymentMethodService() {
         ParamBean bean = ParamBean.getInstance();
@@ -108,7 +110,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         // Mark other payment methods as not preferred
         if (paymentMethod.isPreferred()) {
             getEntityManager().createNamedQuery("PaymentMethod.updatePreferredPaymentMethod").setParameter("id", paymentMethod.getId())
-                .setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
+                .setParameter("ca", paymentMethod.getCustomerAccount()).setParameter(dateParamName, new Date()).executeUpdate();
         }
     }
 
@@ -244,7 +246,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         // Mark other payment methods as not preferred
         if (paymentMethod.isPreferred()) {
             getEntityManager().createNamedQuery("PaymentMethod.updatePreferredPaymentMethod").setParameter("id", paymentMethod.getId())
-                .setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
+                .setParameter("ca", paymentMethod.getCustomerAccount()).setParameter(dateParamName, new Date()).executeUpdate();
         }
 
         return paymentMethod;
@@ -271,8 +273,8 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
         if (wasPreferred) {
             Long minId = (Long) getEntityManager().createNamedQuery("PaymentMethod.updateFirstPaymentMethodToPreferred1").setParameter("caId", caId).getSingleResult();
-            getEntityManager().createNamedQuery("PaymentMethod.updateFirstPaymentMethodToPreferred2").setParameter("id", minId).setParameter("caId", caId).executeUpdate();
-            getEntityManager().createNamedQuery("PaymentMethod.updateFirstPaymentMethodToPreferred3").setParameter("id", minId).setParameter("caId", caId).executeUpdate();
+            getEntityManager().createNamedQuery("PaymentMethod.updateFirstPaymentMethodToPreferred2").setParameter("id", minId).setParameter("caId", caId).setParameter(dateParamName, new Date()).executeUpdate();
+            getEntityManager().createNamedQuery("PaymentMethod.updateFirstPaymentMethodToPreferred3").setParameter("id", minId).setParameter("caId", caId).setParameter(dateParamName, new Date()).executeUpdate();
         }
     }
 
