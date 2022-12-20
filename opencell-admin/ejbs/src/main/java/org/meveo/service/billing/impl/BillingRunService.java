@@ -844,7 +844,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         Map<Class, Map<Long, Map<Long, Amounts>>> positiveILAmounts = getAmountsMap(invoiceLinesService.getTotalPositiveILAmountsByBR(billingRun));
         Map<Class, Map<Long, Map<Long, Amounts>>> invoiceableAmounts = getAmountsMap(invoiceService.getTotalInvoiceableAmountByBR(billingRun));
 
-        Set<Long> billableEntitieIds = invoiceableAmounts.get(BillingAccount.class).keySet();
+        Set<Long> billableEntitieIds = null;
         Set<Long> rejectedBillingAccounts = new HashSet<>();
         BillingCycle billingCycle=billingRun.getBillingCycle();
         BillingEntityTypeEnum bCType=billingCycle!=null?billingCycle.getType():null;
@@ -861,6 +861,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                     CommercialOrder.class, rejectedBillingAccounts, positiveILAmounts.get(CommercialOrder.class),bCType));
         	}
         }
+        billableEntitieIds = invoiceableAmounts.get(BillingAccount.class).keySet();
       
 		invoicesToRemove
 				.addAll(getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(BillingAccount.class),
@@ -1108,6 +1109,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     @SuppressWarnings("rawtypes")
     private AccountEntity getEntity(Long billableEntityId, Class clazz) {
         BillingAccount billingAccount = billingAccountService.findById(billableEntityId);
+        if(billingAccount==null){
+        	return null;
+        }
         if (CustomerAccount.class.equals(clazz)) {
             return billingAccount.getCustomerAccount();
         } else if (Customer.class.equals(clazz)) {
