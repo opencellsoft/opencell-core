@@ -959,9 +959,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     private List<Long> getInvoicesToRemoveByAccount(Collection<Long> billableEntities, Map<Long, Map<Long, Amounts>> discountThresholdAmounts, Map<Long, Map<Long, Amounts>> positiveRTThresholdAmounts,
             Map<Long, Map<Long, Amounts>> invoiceableThresholdAmounts, Class clazz, Set<Long> rejectedBillingAccounts, Map<Long, Map<Long, Amounts>> positiveILThresholdAmounts, BillingEntityTypeEnum bCType) {
       List<Long> invoicesToRemove = new ArrayList<>();
-        List<Long> alreadyProcessedEntities = new ArrayList<>();
-        List<Long> alreadyProcessedOrders = new ArrayList<>();
-        List<Long> alreadyProcessedSubscriptions = new ArrayList<>();
+       
 
         for (Long billableEntityId : billableEntities) {
             BigDecimal threshold = null;
@@ -974,31 +972,15 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             }
             if (clazz.equals(CommercialOrder.class)) {
                 entity = commercialOrderService.findById(billableEntityId);
-
-                if (alreadyProcessedOrders.contains(billableEntityId)) {
-                    break;
-                } else {
-                    alreadyProcessedOrders.add(billableEntityId);
-                }
-
             } else if (clazz.equals(Subscription.class)) {
-                if (alreadyProcessedSubscriptions.contains(billableEntityId)) {
-                    break;
-                } else {
-                    alreadyProcessedSubscriptions.add(billableEntityId);
-                }
                 entity = billableEntityId != null ? subscriptionService.findById(billableEntityId) : null;
-
             } else {
 
                 entity = getEntity(billableEntityId, clazz);
-                 entityId = ((AccountEntity) entity).getId();
-                if (alreadyProcessedEntities.contains(entityId)) {
-                    break;
-                } else {
-                    alreadyProcessedEntities.add(entityId);
-                }
-
+            }
+            log.debug("getInvoicesToRemoveByAccount entityId={},clazz={},entity found=",entityId,clazz.toString(),entity!=null?"true":"false");
+            if(entity==null) {
+            	continue;
             }
             
             if(entity instanceof Subscription && ((Subscription)entity).getBillingCycle() != null){
