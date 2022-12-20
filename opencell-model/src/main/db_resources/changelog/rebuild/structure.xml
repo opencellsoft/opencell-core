@@ -18940,6 +18940,8 @@
 	<changeSet id="#INTR-112153_20221209_new_field" author="a.rouaguebe" />
     <changeSet id="#2038-20221130" author="Mbarek-Ay"/>
 	<changeSet id="#INTR-12252_20221212_agreement_date" author="a.rouaguebe" />
+    <changeSet id="#INTRD-12466_20222012" author="bourras" />
+
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

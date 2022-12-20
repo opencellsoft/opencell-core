@@ -555,6 +555,10 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accounting_code_id")
+    /**
+     *  @deprecated  (since version 12)
+     */
+    @Deprecated(since = "version 12")
     private AccountingCode accountingCode;
 
     /**
@@ -1196,6 +1200,9 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         result.setTaxClass(taxClass);
         result.setFullRatingPeriod(fullRatingPeriod);
         result.setChargeMode(chargeMode);
+        /**
+         *  @deprecated  (since version 12)
+         */
         result.setAccountingCode(accountingCode);
 
         return result;
@@ -1490,15 +1497,17 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     }
 
     /**
-     * @return Accounting code
+     *  @deprecated  (since version 12)
      */
+    @Deprecated(since = "version 12", forRemoval = true)
     public AccountingCode getAccountingCode() {
         return accountingCode;
     }
 
     /**
-     * @param accountingCode Accounting code
+     *  @deprecated  (since version 12)
      */
+    @Deprecated(since = "version 12", forRemoval = true)
     public void setAccountingCode(AccountingCode accountingCode) {
         this.accountingCode = accountingCode;
     }
