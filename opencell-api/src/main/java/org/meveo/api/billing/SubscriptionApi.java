@@ -2133,7 +2133,7 @@ public class SubscriptionApi extends BaseApi {
                 postData.getAttributeInstances().forEach(attributeInstanceDto -> {
                 	long count = postData.getAttributeInstances().stream().filter(e -> attributeInstanceDto.getAttributeCode().equals(e.getAttributeCode())).count();
                 	if(count > 1) {
-                		throw new InvalidParameterException("Cannot instanciate twice the same attribute {" + attributeInstanceDto.getAttributeCode() + "}");
+                		throw new InvalidParameterException("Cannot instantiate twice the same attribute {" + attributeInstanceDto.getAttributeCode() + "}");
                 	}
                     var attributeInstance = new AttributeInstance();
                     attributeInstance.setSubscription(subscription);
@@ -3177,7 +3177,7 @@ public class SubscriptionApi extends BaseApi {
                 .map(ai -> {
                 	long count = productDto.getAttributeInstances().stream().filter(e -> ai.getOrderAttributeCode().equals(e.getOrderAttributeCode())).count();
                 	if(count > 1) {
-                		throw new InvalidParameterException("Cannot instanciate twice the same attribute {" + ai.getOrderAttributeCode() + "}");
+                		throw new InvalidParameterException("Cannot instantiate twice the same attribute {" + ai.getOrderAttributeCode() + "}");
                 	}
                     OrderAttribute orderAttribute = new OrderAttribute();
                     String attributeCode = ai.getAttributeCode() != null ? ai.getAttributeCode() : ai.getOrderAttributeCode() != null ? ai.getOrderAttributeCode() : null;
