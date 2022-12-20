@@ -51,4 +51,8 @@ public interface BasicInvoice extends Resource {
 	@Nullable
 	String getComment();
 
+	@Schema(description = "The Seller")
+	@Nullable
+	Resource getSeller();
+
 }
