@@ -1321,4 +1321,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 .setParameter("ids", invoicesIds)
                 .executeUpdate();
     }
+    
+    public long getCountBySubscriptionAge(Long invoiceId, String referenceDate, String operator, Date limitDate) {
+    	String query = "select count(*) from InvoiceLine il where il.invoice.id=:id and referenceDate operator :limitDate";
+        return getEntityManager().createQuery(query.replace("operator", operator).replace("referenceDate", referenceDate), Long.class)
+        		.setParameter("id", invoiceId)
+        		.setParameter("limitDate", limitDate)
+        		.getSingleResult();
+    }
 }

@@ -6,8 +6,10 @@ import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceValidationStatusEnum;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.script.Script;
+import org.meveo.service.script.ScriptUtils;
 
 public class ValidateCustomerAgeScript extends Script {
 
@@ -30,10 +32,13 @@ public class ValidateCustomerAgeScript extends Script {
 
 		long counter = billingAccountService.getCountByCustomerAge(invoice.getBillingAccount().getId(),
 				buildReferenceDateExpression(String.valueOf(context.get("referenceDate"))),
-				buildOperator(String.valueOf(context.get("operator"))),
+				ScriptUtils.buildOperator(String.valueOf(context.get("operator"))),
 				buildLimitDate(invoice, (Integer) context.get("age")));
 
-		context.put(Script.RESULT_VALUE, counter == 0);
+		context.put(Script.INVOICE_VALIDATION_STATUS, counter == 0 ? InvoiceValidationStatusEnum.VALID : InvoiceValidationStatusEnum.REJECTED);
+		
+		log.info("Result Processing ValidateCustomerAgeScript {}", context.get(Script.INVOICE_VALIDATION_STATUS));
+
 	}
 
 	private Date buildLimitDate(Invoice invoice, Integer age) {
@@ -63,25 +68,6 @@ public class ValidateCustomerAgeScript extends Script {
 			break;
 		}
 		return referenceDateExpression;
-	}
-
-	private String buildOperator(String operator) {
-		String operatorExpression;
-		switch (operator) {
-		case "≤":
-			operatorExpression = "<=";
-			break;
-		case "≠":
-			operatorExpression = "<>";
-			break;
-		case "≥":
-			operatorExpression = ">=";
-			break;
-		default:
-			operatorExpression = ">";
-			break;
-		}
-		return operatorExpression;
 	}
 
 }

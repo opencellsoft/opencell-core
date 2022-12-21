@@ -6,14 +6,16 @@ import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.Invoice;
-import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.model.billing.InvoiceValidationStatusEnum;
+import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.script.Script;
+import org.meveo.service.script.ScriptUtils;
 
 public class ValidateSubscriptionAgeScript extends Script {
 
 	private static final long serialVersionUID = 1L;
 
-	private BillingAccountService billingAccountService = (BillingAccountService) getServiceInterface(BillingAccountService.class.getSimpleName());
+	private InvoiceLineService invoiceLineService = (InvoiceLineService) getServiceInterface(InvoiceLineService.class.getSimpleName());
 
 	@Override
 	public void execute(Map<String, Object> context) throws BusinessException {
@@ -28,12 +30,14 @@ public class ValidateSubscriptionAgeScript extends Script {
 
 		log.info("Process ValidateSubscriptionAgeScript {}", invoice);
 
-		long counter = billingAccountService.getCountByCustomerAge(invoice.getBillingAccount().getId(),
+		long counter = invoiceLineService.getCountBySubscriptionAge(invoice.getId(),
 				buildReferenceDateExpression(String.valueOf(context.get("referenceDate"))),
-				buildOperator(String.valueOf(context.get("operator"))),
+				ScriptUtils.buildOperator(String.valueOf(context.get("operator"))),
 				buildLimitDate(invoice, (Integer) context.get("age")));
 
-		context.put(Script.RESULT_VALUE, counter == 0);
+		context.put(Script.INVOICE_VALIDATION_STATUS, counter > 0 ? InvoiceValidationStatusEnum.VALID : InvoiceValidationStatusEnum.REJECTED);
+		
+		log.info("Result Processing ValidateSubscriptionAgeScript {}", context.get(Script.INVOICE_VALIDATION_STATUS));
 	}
 
 	private Date buildLimitDate(Invoice invoice, Integer age) {
@@ -47,7 +51,7 @@ public class ValidateSubscriptionAgeScript extends Script {
 		String referenceDateExpression;
 		switch (referenceDate) {
 		case "Subscription creation":
-			referenceDateExpression = "il.auditable.created";
+			referenceDateExpression = "il.subscription.auditable.created";
 			break;
 		case "Subscription date":
 			referenceDateExpression = "il.subscription.subscriptionDate";
@@ -57,25 +61,6 @@ public class ValidateSubscriptionAgeScript extends Script {
 			break;
 		}
 		return referenceDateExpression;
-	}
-
-	private String buildOperator(String operator) {
-		String operatorExpression;
-		switch (operator) {
-		case "≤":
-			operatorExpression = "<=";
-			break;
-		case "≠":
-			operatorExpression = "<>";
-			break;
-		case "≥":
-			operatorExpression = ">=";
-			break;
-		default:
-			operatorExpression = ">";
-			break;
-		}
-		return operatorExpression;
 	}
 
 }
