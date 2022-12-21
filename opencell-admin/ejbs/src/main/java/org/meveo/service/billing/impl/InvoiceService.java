@@ -1444,7 +1444,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                                             invoice.setStatus(InvoiceStatusEnum.REJECTED);
                                             invoice.setRejectReason("An error has occurred evaluating rule [id=" + validationRule.getId() + ", "
                                                     + validationRule.getDescription() + ", script=" + validationRule.getValidationScript()
-                                                    + ": " + methodContext.get(Script.INVOICE_VALIDATION_REASON));
+                                                    + methodContext.get(Script.INVOICE_VALIDATION_REASON) == null ? "" : ": " + methodContext.get(Script.INVOICE_VALIDATION_REASON));
                                             invoice.setRejectedByRule(validationRule);
                                             noValidationError = false;
                                         } else if (InvoiceValidationStatusEnum.SUSPECT.equals(status)) {
