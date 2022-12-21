@@ -27,4 +27,8 @@ import org.meveo.service.base.BusinessService;
  */
 @Stateless
 public class EmailTemplateService extends BusinessService<EmailTemplate> {
+    public EmailTemplate createEmailTemplate(EmailTemplate emailTemplate) {
+        create(emailTemplate);
+        return emailTemplate;
+    }
 }
