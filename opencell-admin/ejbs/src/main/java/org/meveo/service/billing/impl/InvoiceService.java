@@ -1444,7 +1444,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                                             invoice.setStatus(InvoiceStatusEnum.REJECTED);
                                             invoice.setRejectReason("An error has occurred evaluating rule [id=" + validationRule.getId() + ", "
                                                     + validationRule.getDescription() + ", script=" + validationRule.getValidationScript()
-                                                    + ": " + methodContext.get(Script.INVOICE_VALIDATION_REASON));
+                                                    + methodContext.get(Script.INVOICE_VALIDATION_REASON) == null ? "" : ": " + methodContext.get(Script.INVOICE_VALIDATION_REASON));
                                             invoice.setRejectedByRule(validationRule);
                                             noValidationError = false;
                                         } else if (InvoiceValidationStatusEnum.SUSPECT.equals(status)) {
@@ -2957,6 +2957,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public void rebuildInvoice(Invoice invoice, boolean save) {
         invoice = findById(invoice.getId());
+        invoice.setStatus(InvoiceStatusEnum.DRAFT);
         applyAutomaticInvoiceCheck(Arrays.asList(invoice), true);
         if (save) {
             update(invoice);
@@ -5035,8 +5036,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     private void refreshInvoiceLineAndAggregateAmounts(Invoice invoice) {
-        invoice.getInvoiceLines()
-                .forEach(invoiceLine -> invoiceLinesService.update(invoiceLine));
         invoice.getInvoiceAgregates()
                 .stream()
                 .filter(invoiceAggregate -> invoiceAggregate instanceof TaxInvoiceAgregate)
@@ -5932,6 +5931,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             }
                         }
                     }
+
+                    for(LinkedInvoice inv: invoice.getLinkedInvoices()) {
+                    	linkedInvoiceService.detach(inv);
+                    }
                     em.flush();
 
                     final int maxValue =
@@ -6563,7 +6566,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             PaymentMethod pm = (PaymentMethod) tryToFindByEntityClassAndId(PaymentMethod.class, pmId);
             toUpdate.setPaymentMethod(pm);
         }
-        if (invoiceResource.getListLinkedInvoices() != null) {
+        if (CollectionUtils.isNotEmpty(invoiceResource.getListLinkedInvoices())) {
             List<Long> toUpdateLinkedInvoice = toUpdate.getLinkedInvoices().stream()
                     .map(li -> li.getLinkedInvoiceValue().getId()).collect(Collectors.toList());
             
@@ -6589,9 +6592,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 Invoice invoiceTmp = findById(invoiceId);
                 if (invoiceTmp == null) {
                     throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
-                }
-                if(invoiceTmp.getInvoiceType() != null && invoiceTmp.getInvoiceType().getCode().equals("ADV")) {
-                    throw new BusinessApiException("The invoice of type Advance can not be linked manually");
                 }
                 if (!toUpdate.getInvoiceType().getAppliesTo().contains(invoiceTmp.getInvoiceType())) {
                     throw new BusinessApiException("InvoiceId " + invoiceId + " cant be linked");

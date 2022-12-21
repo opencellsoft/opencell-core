@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceValidationStatusEnum;
 import org.meveo.model.payments.CreditCategory;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.script.Script;
@@ -34,10 +35,12 @@ public class ValidateCreditCategoryScript extends Script {
 		if (creditCategories != null && !creditCategories.isEmpty()) {
 			List<Long> creditCategorytIds = creditCategories.stream().map(CreditCategory::getId).collect(Collectors.toList());
 			long counter = billingAccountService.getCountByCreditCategory(invoice.getBillingAccount().getId(), creditCategorytIds);
-			context.put(Script.RESULT_VALUE, counter == 0);
+			context.put(Script.INVOICE_VALIDATION_STATUS, counter == 0 ? InvoiceValidationStatusEnum.VALID : InvoiceValidationStatusEnum.REJECTED);
 		} else {
-			context.put(Script.RESULT_VALUE, Boolean.TRUE);
+			context.put(Script.INVOICE_VALIDATION_STATUS, InvoiceValidationStatusEnum.VALID);
 		}
+
+		log.info("Result Processing ValidateCreditCategoryScript {}", context.get(Script.INVOICE_VALIDATION_STATUS));
     }
 
 }
