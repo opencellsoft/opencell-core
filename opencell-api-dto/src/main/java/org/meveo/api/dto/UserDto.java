@@ -20,6 +20,7 @@ package org.meveo.api.dto;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -101,6 +102,9 @@ public class UserDto extends AuditableEntityDto {
 
     /** The custom fields. */
     private CustomFieldsDto customFields;
+
+    @XmlElement()
+    private Map<String, String> attributes;
 
     /**
      * Instantiates a new user dto.
@@ -313,6 +317,13 @@ public class UserDto extends AuditableEntityDto {
 
     public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
+    }
+
+    public Map<String, String> getAttributes() {
+        return attributes;
+    }
+    public void setAttributes(Map<String, String> attributes) {
+        this.attributes = attributes;
     }
 
     @Override

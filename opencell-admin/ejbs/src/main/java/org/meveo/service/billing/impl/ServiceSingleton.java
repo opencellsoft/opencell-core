@@ -592,11 +592,10 @@ public class ServiceSingleton {
         		invoice = invoiceService.update(invoice);
         	}
         }
-        triggersJobs();
         return invoice;
     }
 
-    private void triggersJobs() {
+    public void triggersJobs() {
         Arrays.asList("DunningCollectionPlan_Job", "TriggerCollectionPlanLevelsJob_Job", "TriggerReminderDunningLevel_Job").stream()
                 .map(jobInstanceService::findByCode)
                 .filter(Objects::nonNull)

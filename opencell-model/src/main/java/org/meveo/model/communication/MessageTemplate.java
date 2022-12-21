@@ -18,6 +18,7 @@
 package org.meveo.model.communication;
 
 import java.util.Date;
+import java.util.Map;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -35,6 +36,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
@@ -80,6 +82,22 @@ public abstract class MessageTemplate extends BusinessEntity {
         return media;
     }
 
+    @Type(type = "longText")
+    @Column(name = "textcontent")
+    private String textContent;
+
+    @Type(type = "json")
+    @Column(name = "textcontent_i18n", columnDefinition = "jsonb")
+    private Map<String,String> translatedTextContent;
+
+    public String getTextContent() {
+        return textContent;
+    }
+
+    public void setTextContent(String textContent) {
+        this.textContent = textContent;
+    }
+
     public void setMedia(MediaEnum media) {
         this.media = media;
     }
@@ -122,6 +140,14 @@ public abstract class MessageTemplate extends BusinessEntity {
 
     public void setType(MessageTemplateTypeEnum type) {
         this.type = type;
+    }
+
+    public Map<String, String> getTranslatedTextContent() {
+        return translatedTextContent;
+    }
+
+    public void setTranslatedTextContent(Map<String, String> translatedTextContent) {
+        this.translatedTextContent = translatedTextContent;
     }
 
 }

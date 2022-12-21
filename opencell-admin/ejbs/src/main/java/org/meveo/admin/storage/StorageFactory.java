@@ -126,7 +126,7 @@ public class StorageFactory {
             }
 
             S3Client client =
-                    S3Client.builder().region(Region.of(region))
+                    S3Client.builder().forcePathStyle(true).region(Region.of(region))
                     .endpointOverride(URI.create(endpointUrl))
                             .credentialsProvider(
                                     StaticCredentialsProvider.create(
@@ -1240,7 +1240,7 @@ public class StorageFactory {
     public static File[] sortFiles(File[] files, String sortingOption) {
         if (files != null && files.length > 0 && !StringUtils.isBlank(sortingOption)) {
             if (SortingFilesEnum.ALPHA.name().equals(sortingOption)) {
-                Arrays.sort(files, (a, b) -> a.getName().compareTo(b.getName()));
+                Arrays.sort(files, (a, b) -> a.getName().compareToIgnoreCase(b.getName()));
             } else if (SortingFilesEnum.CREATION_DATE.name().equals(sortingOption)) {
                 Arrays.sort(files, (a, b) -> Long.compare(a.lastModified(), b.lastModified()));
             }

@@ -1410,7 +1410,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     public String cancelInvoice() throws BusinessException {
-        invoiceService.cancelInvoiceAndRts(entity);
+        invoiceService.cancelInvoiceAndRts(entity, null);
         return saveOrUpdate(false);
     }
 

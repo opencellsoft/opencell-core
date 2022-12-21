@@ -2,6 +2,7 @@ package org.meveo.apiv2.report.query.service;
 
 import static java.util.Optional.empty;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -42,13 +43,19 @@ public class QuerySchedulerApiService implements ApiService<QueryScheduler> {
     @Override
     public QueryScheduler create(QueryScheduler entity) {
         try {
-        	for(User user: entity.getUsersToNotify()) {
-        		if(userService.findById(user.getId()) == null) {
-        			throw new NotFoundException("The user with id {" + user.getId() + "} does not exists");
+        	List<User> usersToNotify = new ArrayList<>();
+        	for(User element: entity.getUsersToNotify()) {
+        		User user = userService.findByUsername(element.getUserName(), false);
+        		if(user == null && element.getId() != null) {
+        			user = userService.findById(element.getId());
         		}
-        		user.setVersion(userService.findById(user.getId()).getVersion());
+        		if(user == null) {
+        			throw new NotFoundException("The user with id {" + element.getId() + "} or userName {" + element.getUserName() + "} does not exists");
+        		}
+        		usersToNotify.add(user);
         	}
-        	
+        	entity.setUsersToNotify(usersToNotify);
+
         	ReportQuery reportQuery = entity.getReportQuery();
         	String code = reportQuery.getCode() + "_Job";
 			JobInstance jobInstance = jobInstanceService.findByCode(code);

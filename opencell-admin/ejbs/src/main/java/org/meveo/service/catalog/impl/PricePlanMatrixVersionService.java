@@ -226,14 +226,13 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
             newPv.setValidity(new DatePeriod(newFrom, newTo));
             newPv.setCurrentVersion(lastCurrentVersion != null ? ++lastCurrentVersion : getLastVersion(pricePlanMatrix) + 1);
 
-            if ("id;label;amount".equals(header)) {
+            if ("label;amount".equals(header)) {
                 String firstLine = lnr.readLine();
                 String[] split = firstLine.split(";");
                 newPv.setMatrix(false);
-                newPv.setLabel(split[1]);
-                newPv.setAmountWithoutTax(new BigDecimal(convertToDecimalFormat(split[2])));
+                newPv.setLabel(split[0]);
+                newPv.setAmountWithoutTax(new BigDecimal(convertToDecimalFormat(split[1])));
                 create(newPv);
-
             } else if (StringUtils.isNotBlank(header)) {
                 // File name pattern: [Price plan version identifier]_-_[Charge name]_-_[Charge code]_-_[Label of the price version]_-_[Status of price version]_-_[start
                 // date time stamp]_-_[end date time stamp]
@@ -657,9 +656,6 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                 Map<String, Object> CSVLineRecord = new HashMap<>();
 
                 LinkedHashMap<String, Integer> CSVLineRecordPosition = new LinkedHashMap<>();
-
-                CSVLineRecord.put("id", line.getId());
-                CSVLineRecordPosition.put("id", 0);
                 line.getPricePlanMatrixValues().iterator().forEachRemaining(ppmv -> {
 
                     String value = resolveValue(ppmv, ppmv.getPricePlanMatrixColumn().getType());
@@ -789,10 +785,11 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         private void buildPriceGridExcel(Set<LinkedHashMap<String, Object>> csvLineRecords, XSSFSheet sheet) {
         	List<String> attributeNames = (csvLineRecords.stream().map(LinkedHashMap::keySet).flatMap(Collection::stream).collect(Collectors.toList())).stream().distinct().collect(Collectors.toList());
         	 var header = sheet.createRow(0);
-             header.createCell(0).setCellValue("id");
           
              for (String dynamicAttribute : attributeNames) {
-                 if (!dynamicAttribute.equals("id")) {
+                 if(header.getLastCellNum() < 0) {
+                     header.createCell(0).setCellValue(dynamicAttribute);
+                 } else {
                      header.createCell(header.getLastCellNum()).setCellValue(dynamicAttribute);
                  }
              }
@@ -807,7 +804,6 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
         private void buildSimplePricePlanExcelHeader(XSSFSheet sheet) {
             var baseRow = sheet.createRow(0);
-            baseRow.createCell(0).setCellValue("id");
             baseRow.createCell(1).setCellValue("label");
             baseRow.createCell(2).setCellValue("amount");
         }
@@ -821,10 +817,6 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                 for (String key : lineRecord.keySet()) {
 
                     Object cellValue = lineRecord.get(key);
-
-                    if (key.equals("id")) {
-                        row.createCell(0).setCellValue((Long) cellValue);
-                    }
                     if (key.equals("label")) {
                         row.createCell(1).setCellValue(cellValue != null ? String.valueOf(cellValue) : "");
                     }
@@ -843,10 +835,16 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                 XSSFRow row = sheet.createRow(lineNumber++);
                 for (String key : attributeNames) {
                     Object cellValue = lineRecord.get(key);
-                    if (key.equals("id")) {
-                        row.createCell(0).setCellValue((Long) cellValue);
+                    String value = "";
+
+                    if(cellValue != null) {
+                        value = String.valueOf(cellValue);
+                    }
+
+                    if(row.getLastCellNum() < 0) {
+                        row.createCell(0).setCellValue(value);
                     } else {
-                        row.createCell(row.getLastCellNum()).setCellValue(cellValue != null ? String.valueOf(cellValue) : "");
+                        row.createCell(row.getLastCellNum()).setCellValue(value);
                     }
                 }
             }
@@ -893,14 +891,13 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
         private LinkedHashMap<String, Object> toCSVLineRecords(PricePlanMatrixVersion ppv) {
             LinkedHashMap<String, Object> CSVLineRecords = new LinkedHashMap<>();
-            CSVLineRecords.put("id", ppv.getId());
             CSVLineRecords.put("label", ppv.getLabel());
             CSVLineRecords.put("amount", ppv.getPrice());
             return CSVLineRecords;
         }
 
         private CsvSchema buildPricePlanVersionCsvSchema() {
-            return CsvSchema.builder().addColumn("id", CsvSchema.ColumnType.STRING).addColumn("label", CsvSchema.ColumnType.STRING)
+            return CsvSchema.builder().addColumn("label", CsvSchema.ColumnType.STRING)
                 .addColumn("amount", CsvSchema.ColumnType.NUMBER_OR_STRING).build().withColumnSeparator(';').withLineSeparator("\n").withoutQuoteChar().withHeader();
         }
 
@@ -912,7 +909,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                 dynamicColumns = columns.stream().distinct().filter(v -> !v.equals("id") && !v.equals("description[text]") && !v.equals("priceWithoutTax[number]"))
                     .collect(Collectors.toList());
             }
-            return CsvSchema.builder().addColumn(new CsvSchema.Column(0, "id")).addColumns(dynamicColumns, CsvSchema.ColumnType.NUMBER_OR_STRING)
+            return CsvSchema.builder().addColumns(dynamicColumns, CsvSchema.ColumnType.NUMBER_OR_STRING)
                 .addColumn("description[text]", CsvSchema.ColumnType.STRING).addColumn("priceWithoutTax[number]", CsvSchema.ColumnType.NUMBER_OR_STRING).build()
                 .withColumnSeparator(';').withLineSeparator("\n").withoutQuoteChar().withHeader();
         }

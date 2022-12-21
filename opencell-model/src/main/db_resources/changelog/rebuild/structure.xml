@@ -151,12 +151,12 @@
                     return odciconst.success;
                   end;
                 --
-                end;
+                end;        
         </createProcedure>
         <createProcedure>
             create or replace function listagg_clob( agg varchar2 )
             return clob
-            parallel_enable aggregate using listagg_clob_t;
+            parallel_enable aggregate using listagg_clob_t;        
         </createProcedure>
     </changeSet>
 
@@ -458,6 +458,7 @@
         <createSequence sequenceName="open_order_seq"/>
         <createSequence sequenceName="cpq_billing_rule_seq" startValue="1" />
         <createSequence sequenceName="meveo_script_parameter_seq"/>
+        <createSequence sequenceName="crm_address_book_contact_seq" startValue="1" />
     </changeSet>
     <changeSet id="rebuild-str-seq-2" author="AndriusKarpavicius" dbms="mysql">
         <createTable tableName="adm_custom_generic_entity_code_seq">
@@ -3100,6 +3101,7 @@
             <column name="open_order_number" type="varchar(255)" />
             <column name= "invoice_balance" type="numeric(23, 12)" />
             <column name="use_current_rate" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="invoice_validation_rule_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -4163,6 +4165,7 @@
             <column name="attribute_id" type="bigint"/>
             <column name="attribute_duration_id" type="bigint"/>
             <column name="attribute_calendar_id" type="bigint"/>
+            <column name="internal_note" type="${type.longtext}" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-208">
@@ -4914,6 +4917,10 @@
 			<column name="channel" type="varchar(255)" />
 			<column name="trading_language_id" type="bigint" />
 			<column name="is_active" type="${type.boolean}" defaultValueNumeric="1" />
+
+            <column name="textcontent_i18n" type="${type.json}"/>
+            <column name="subject_i18n" type="${type.json}"/>
+            <column name="htmlcontent_i18n" type="${type.json}"/>
         </createTable>
         <addForeignKeyConstraint baseColumnNames="trading_language_id" baseTableName="com_message_template" constraintName="fk_language_message_template" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_language" />
@@ -6084,7 +6091,7 @@
             <column name="code" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
-            <column name="description" type="varchar(255)" />
+            <column name="description" type="varchar(1000)" />
             <column name="script" type="${type.text}" />
             <column name="script_instance_cat_id" type="bigint" />
             <column name="creator" type="varchar(100)" />
@@ -7746,7 +7753,7 @@
             <column name="updater" type="varchar(100)" />
             <column name="description_i18n" type="${type.json}">
                 <constraints nullable="true" />
-            </column>
+            </column>            
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-371">
@@ -9027,6 +9034,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="open_order_id" type="bigint"/>
+            <column name="agreement_date_setting" type="varchar(20)"/>
         </createTable>
     </changeSet>
 
@@ -12261,7 +12269,7 @@
                        constraintName="open_order_tags_pkey"
                        tableName="open_order_tags"/>
     </changeSet>
-
+    
     <changeSet id="#INTRD-10683_20221107_rebuild" author="AdilElJaouhari">
         <createTable tableName="meveo_script_parameter">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -12297,7 +12305,7 @@
             </column>
         </createTable>
     </changeSet>
-
+    
     <!-- end tables -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-def-val-1">
@@ -17386,7 +17394,7 @@
     </changeSet>
 
 	<changeSet id="#INTRD-8753_20220727_001" author="anas.rouaguebe">
-		<createTable tableName="cpq_billing_rule">
+		<createTable tableName="billing_redirection_rule">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_rule_pkey" />
             </column>
@@ -17591,7 +17599,7 @@
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
-
+    
     <changeSet id="#INTRD-10541_20221013_build" author="TarikFA.">
     	<createTable tableName="billing_linked_invoices">
             <column name="id" type="bigint" >
@@ -17603,9 +17611,9 @@
             <column name="amount" type="numeric(23, 12)" />
             <column name="type" type="varchar(50)" />
     	</createTable>
-
+    	
         <addPrimaryKey columnNames="id, linked_invoice_id" constraintName="billing_linked_invoices_pkey" tableName="billing_linked_invoices" />
-
+    	
 		<addForeignKeyConstraint constraintName="invoice_id_fk"
                                  baseColumnNames="id"
                                  baseTableName="billing_linked_invoices"
@@ -17617,14 +17625,14 @@
                                  baseTableName="billing_linked_invoices"
                                  referencedTableName="billing_invoice"
                                  referencedColumnNames="id" />
-
+    	
     </changeSet>
-
+    
     <changeSet id="#INTRD-10768-20221108-validationrule" author="a.rouaguebe">
         <createSequence sequenceName="billing_invoice_validation_rule_seq" startValue="1" />
         <createTable tableName="billing_invoice_validation_rule">
             <column name="id" type="bigint" >
-                <constraints nullable="false"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_validation_rule_pkey" />
             </column>
             <column name="version" type="int4" />
             <column name="created" type="datetime">
@@ -17651,10 +17659,17 @@
             </column>
             <column name="validation_script" type="${type.text}" />
             <column name="validation_el" type="${type.text}" />
+            <column name="rule_values" type="${type.json}" />
         </createTable>
     </changeSet>
 
-
+    <changeSet id="#INTRD-11780_20221128_fk" author="AdilElJaouhari">
+        <addForeignKeyConstraint baseTableName="billing_invoice"
+                                 baseColumnNames="invoice_validation_rule_id"
+                                 constraintName="fk_billing_invoice_validation_rule"
+                                 referencedTableName="billing_invoice_validation_rule"
+                                 referencedColumnNames="id" />
+    </changeSet>
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
@@ -18870,7 +18885,7 @@
     <changeSet id="#INTRD-9451_20220902" author="KhalidHORRI" />
     <changeSet author="AndriusKarpavicius" id="#INTRD-10253_20221027" dbms="oracle" />
 
-
+	<changeSet id="#INTRD-11841_20221214-reports" author="HichamHANINE" />
 	<changeSet id="#INTRD-86_20220815" author="AbdellatifBARI" />
 	<changeSet id="#INTRD-7301_20220820_order" author="zelmeliani" />
 	<changeSet id="#INTRD-7301_20220820_subscription" author="zelmeliani" />
@@ -19108,6 +19123,15 @@
     <changeSet id="#INTRD-10683_20221107" author="AdilElJaouhari" />
     <changeSet id="#INTRD-11775_20221120" author="hichamELHALOUI" />
     <changeSet id="#INTRD-242_20221121" author="AdilElJaouhari" />
+    <changeSet id="#INTRD-11780_20221128" author="AdilElJaouhari" />
+    <changeSet id="#INTRD-12043_20221121" author="HatimOUDAD"/>
+	<changeSet id="INTRD-11732_20221130" author="MehdiBOURRAS" />
+    <changeSet id="#12201_20221212" author="zelmeliani" />
+	<changeSet id="#INTR-112153_20221209_new_field" author="a.rouaguebe" />
+    <changeSet id="#2038-20221130" author="Mbarek-Ay"/>
+	<changeSet id="#INTR-12252_20221212_agreement_date" author="a.rouaguebe" />
+    <changeSet id="#INTRD-12466_20222012" author="bourras" />
+
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

@@ -86,6 +86,7 @@ public class UsageChargeTemplateApi extends ChargeTemplateApi<UsageChargeTemplat
         if (chargeTemplate == null) {
             throw new EntityDoesNotExistsException(UsageChargeTemplate.class, postData.getCode());
         }
+        super.checkInternalNote(chargeTemplate, postData);
         chargeTemplate = dtoToEntity(postData, chargeTemplate);
         return usageChargeTemplateService.update(chargeTemplate);
     }

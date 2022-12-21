@@ -65,7 +65,11 @@
           "client": {
             "opencell-web": [
               "superAdministrateur",
-              "apiSuperAdministrateur"
+              "apiSuperAdministrateur",
+              "genApiFull.create",
+              "genApiFull.delete",
+              "genApiFull.list",
+              "genApiFull.update"
             ]
           }
         },
@@ -991,15 +995,12 @@
             "client": {
               "opencell-web": [
                 "apiUseWorkflow",
-                "genApiFull.create",
                 "apiCreateInvoice",
                 "apiUseReport",
                 "apiReportingManagement",
                 "apiUseJob",
                 "apiIntegration",
-                "genApiFull.delete",
                 "apiWorkflowManager",
-                "genApiFull.list",
                 "apiBillingManagement",
                 "apiFinanceManagement",
                 "apiUserManagement",
@@ -1013,8 +1014,7 @@
                 "apiCpqManagement",
                 "inboundAccess",
                 "apiAdministrationManagement",
-                "apiUseScript",
-                "genApiFull.update"
+                "apiUseScript"
               ]
             }
           },
@@ -10222,7 +10222,49 @@
                 "name": "HEAD"
               }
             ]
-          }
+          },
+          {
+            "name": "Api V2 International Settings",
+            "ownerManagedAccess": false,
+            "attributes": {},
+            "_id": "f68e7377-a3d6-4a4d-922b-ac145c39c157",
+            "uris": [
+              "/api/rest/v2/setting/internationalSettings/*",
+              "/api/rest/v2/setting/internationalSettings/EmailTemplate/*",
+              "/api/rest/v2/setting/internationalSettings/SMSTemplate/*"
+            ],
+            "scopes": [
+              {
+                "name": "DELETE"
+              },
+              {
+                "name": "GET"
+              },
+              {
+                "name": "POST"
+              },
+              {
+                "name": "PUT"
+              },
+              {
+                "name": "PATCH"
+              }
+           ]
+          },
+		  {
+			"name": "Api V2 CustomTable - export",
+			"ownerManagedAccess": false,
+			"attributes": {},
+			"_id": "f20b7f19-1c27-492b-bfa3-7003c044fb3c",
+			"uris": [
+				"/api/rest/v2/customTable/export/"
+			],
+			"scopes": [
+				{
+					"name": "POST"
+				}
+			]
+		 }
         ],
         "policies": [
           {
@@ -16026,6 +16068,18 @@
               "resources": "[\"GenApi Pkg settings - fud\"]",
               "scopes": "[\"POST\"]",
               "applyPolicies": "[\"Role genApiPkg_settings.list\"]"
+            }
+          },
+          {
+            "id": "e1b24c27-8880-4a48-a51d-cfb97f3c4168",
+            "name": "Api V2 International Settings - Update",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Api V2 International Settings\"\"]",
+              "scopes": "[\"PUT\",\"DELETE\",\"POST\",\"PATCH\"]",
+              "applyPolicies": "[\"Role apiAdministrationManagement\"]"
             }
           },
           {

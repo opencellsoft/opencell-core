@@ -557,4 +557,19 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         if (StringUtils.isNotBlank(entities))
             throw new BusinessException("Cannot delete this billing account , because is still referenced");
     }
+    
+    public long getCountByCreditCategory(Long baId, List<Long> creditCategoryIds) {
+        return getEntityManager().createNamedQuery("BillingAccount.getCountByCreditCategory", Long.class)
+        		.setParameter("id", baId)
+        		.setParameter("creditCategoryIds", creditCategoryIds)
+        		.getSingleResult();
+    }
+    
+    public long getCountByCustomerAge(Long baId, String referenceDate, String operator, Date limitDate) {
+    	String query = "select count(*) from BillingAccount ba where ba.id=:id and not referenceDate operator :limitDate";
+        return getEntityManager().createQuery(query.replace("operator", operator).replace("referenceDate", referenceDate), Long.class)
+        		.setParameter("id", baId)
+        		.setParameter("limitDate", limitDate)
+        		.getSingleResult();
+    }
 }

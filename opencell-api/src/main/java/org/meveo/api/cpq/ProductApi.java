@@ -302,6 +302,10 @@ public class ProductApi extends BaseApi {
 				createProductChargeTemplateMappings(product, productDto.getProductChargeTemplateMappingDto());
 			}
 
+			if(productDto.getAgreementDateSetting() != null) {
+				product.setAgreementDateSetting(productDto.getAgreementDateSetting());
+			}
+
 			var publishedVersion = versions.stream()
 											.filter(pv -> pv.getStatus().equals(VersionStatusEnum.PUBLISHED))
 												.sorted( (pv1, pv2) -> pv2.getValidity().compareFieldTo(pv1.getValidity())).collect(Collectors.toList());
@@ -697,6 +701,8 @@ public class ProductApi extends BaseApi {
 		product.setModel(productDto.getModel());
 		product.setModelChildren(productDto.getModelChildren());
 		product.setDiscountFlag(productDto.isDiscountFlag());
+
+		product.setAgreementDateSetting(productDto.getAgreementDateSetting());
 		
 		if(productDto.getPriceVersionDateSetting() != null) {
 			product.setPriceVersionDateSetting(productDto.getPriceVersionDateSetting());

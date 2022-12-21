@@ -651,6 +651,9 @@ public class Subscription extends BusinessCFEntity implements IInvoicingMinimumA
      */
     public String getOrderNumber() {
         String orderNumber = null;
+        if(this.order != null){
+            orderNumber = this.order.getOrderNumber();
+        }
         if (serviceInstances != null && !serviceInstances.isEmpty()) {
             orderNumber = serviceInstances.get(0).getOrderNumber();
         }
