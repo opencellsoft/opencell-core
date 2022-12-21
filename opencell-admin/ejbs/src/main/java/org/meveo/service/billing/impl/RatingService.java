@@ -122,12 +122,15 @@ import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.cpq.ContractItemService;
 import org.meveo.service.cpq.ContractService;
+import org.meveo.service.mediation.MediationsettingService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.catalog.TriggeredEdrScript;
 import org.meveo.service.script.catalog.TriggeredEdrScriptInterface;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
+
+import com.google.common.collect.Lists;
 
 /**
  * Rate charges such as {@link org.meveo.model.catalog.OneShotChargeTemplate}, {@link org.meveo.model.catalog.RecurringChargeTemplate} and {@link org.meveo.model.catalog.UsageChargeTemplate}. Generate the
@@ -190,6 +193,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     private WalletOperationService walletOperationService;
     @Inject
     private MethodCallingUtils methodCallingUtils;
+    
+    @Inject
+    private RecurringRatingService recurringRatingService;
 
     /**
      * @param level level enum
@@ -304,9 +310,13 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             } else if (chargeInstance != null && chargeInstance.getSubscription() != null) {
                 defaultInitDate = chargeInstance.getSubscription().getSubscriptionDate();
             }
-
-            Calendar invoicingCalendar = CalendarService.initializeCalendar(chargeInstance.getInvoicingCalendar(), defaultInitDate, chargeInstance);
-            invoicingDate = invoicingCalendar.nextCalendarDate(applicationDate);
+            boolean isApplyInAdvance = recurringRatingService.isApplyInAdvance(charge);
+        	if(isApplyInAdvance) {
+        		invoicingDate=applicationDate;
+        	}else {
+        		Calendar invoicingCalendar = CalendarService.initializeCalendar(chargeInstance.getInvoicingCalendar(), defaultInitDate, chargeInstance);
+        		invoicingDate = invoicingCalendar.nextCalendarDate(applicationDate);
+        	}
         }
         ParamBean.setReload(true);
         String extraParam = edr != null ? paramBeanFactory.getInstance().getPropertyAsBoolean("edr.propagate.extraParameter", false) ? edr.getExtraParameter(): edr.getParameter4() : null;
@@ -425,6 +435,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         return ratedEDRResult;
     }
 
+    @Inject
+    private MediationsettingService mediationsettingService;
     /**
      * Instantiate new EDRs if charge has triggerEDRTemplate. EDRs are NOT persisted.
      *
@@ -531,6 +543,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 }
             }
         }
+        mediationsettingService.applyEdrVersioningRule(triggredEDRs, null, false, true);
         return triggredEDRs;
 
     }
@@ -851,9 +864,12 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             wo.setPricePlanMatrixVersion(ppmVersion);
             if (!ppmVersion.isMatrix()) {
                 if (appProvider.isEntreprise()) {
-                	priceWithoutTax = ppmVersion.getAmountWithoutTax();
+                	priceWithoutTax = ppmVersion.getPrice();
                 } else {
-                	priceWithTax = ppmVersion.getAmountWithTax();
+                	priceWithTax = ppmVersion.getPrice();
+                }
+                if(wo.getUnitAmountWithoutTax() == null) {
+                    wo.setUnitAmountWithoutTax(priceWithoutTax);
                 }
                 if (ppmVersion.getPriceEL() != null) {
                     priceWithoutTax = evaluateAmountExpression(ppmVersion.getPriceEL(), wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax);
@@ -865,7 +881,14 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, wo);
                 if(pricePlanMatrixLine!=null) {
                     wo.setPricePlanMatrixLine(pricePlanMatrixLine);
-                	priceWithoutTax = pricePlanMatrixLine.getValue();
+                    if(appProvider.isEntreprise()) {
+                        priceWithoutTax = pricePlanMatrixLine.getValue();
+                    } else {
+                        priceWithTax = pricePlanMatrixLine.getValue();
+                    }
+                    if(wo.getUnitAmountWithoutTax() == null) {
+                        wo.setUnitAmountWithoutTax(priceWithoutTax);
+                    }
                     String amountEL = ppmVersion.getPriceEL();
                     String amountELPricePlanMatrixLine = pricePlanMatrixLine.getValueEL();
                     if (!StringUtils.isBlank(amountEL)) {
@@ -875,7 +898,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                         priceWithoutTax = evaluateAmountExpression(amountELPricePlanMatrixLine, wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax);
                     }
                 }
-                if (priceWithoutTax == null) {
+                if (priceWithoutTax == null && priceWithTax == null) {
                     throw new PriceELErrorException("no price for price plan version " + ppmVersion.getId() + "and charge instance : " + wo.getChargeInstance());
                 }
             }
@@ -1467,7 +1490,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
     public void applyDiscount(RatingResult ratingResult, WalletOperation walletOperation, boolean isVirtual) {
     	ChargeInstance chargeInstance = walletOperation.getChargeInstance();
-    	HashSet<DiscountPlanInstance> discountPlanInstances = new HashSet<DiscountPlanInstance>();
+    	HashSet<DiscountPlanInstance> discountPlanInstances = new HashSet<>();
     	if(chargeInstance.getServiceInstance() != null) {
     		discountPlanInstances.addAll(chargeInstance.getServiceInstance().getAllDiscountPlanInstances());
     	}
@@ -1478,8 +1501,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     		discountPlanInstances.addAll(walletOperation.getSubscription().getUserAccount().getBillingAccount().getAllDiscountPlanInstances());
     	}
     	var accountingArticle = walletOperation.getAccountingArticle()!=null?walletOperation.getAccountingArticle():accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance);
-    	List<DiscountPlanItem>  applicableDiscountPlanItems = new ArrayList<DiscountPlanItem>();
-    	List<DiscountPlanItem>  fixedDiscountPlanItems = new ArrayList<DiscountPlanItem>();
+    	List<DiscountPlanItem>  applicableDiscountPlanItems = new ArrayList<>();
+    	List<DiscountPlanItem>  fixedDiscountPlanItems = new ArrayList<>();
     	if(!discountPlanInstances.isEmpty()) {
     		DiscountPlan discountPlan =null;
     		Date operationDate=walletOperation.getOperationDate()!=null?walletOperation.getOperationDate():new Date();

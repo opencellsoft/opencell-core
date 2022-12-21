@@ -726,7 +726,7 @@ public final class FileUtils {
                 }
 
                 for (String extension : extensions) {
-                    if (extension != null && (name.endsWith(extension) || "*".equals(extension)) && (fileNameFilterUpper == null || nameUpper.contains(fileNameFilterUpper))) {
+                    if (extension != null && (name.toUpperCase().endsWith(extension.toUpperCase()) || "*".equals(extension)) && (fileNameFilterUpper == null || nameUpper.contains(fileNameFilterUpper))) {
                         return true;
                     }
                 }

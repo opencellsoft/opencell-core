@@ -22,6 +22,7 @@ import static java.util.Optional.ofNullable;
 import static org.meveo.commons.utils.NumberUtils.toPlainString;
 import static org.meveo.commons.utils.StringUtils.getDefaultIfNull;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.storage.StorageFactory;
 import org.meveo.commons.utils.InvoiceCategoryComparatorUtils;
@@ -475,7 +476,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     protected Element createSubscriptionsSection(Document doc, UserAccount userAccount, List<RatedTransaction> ratedTransactions, boolean isVirtual, boolean ignoreUA,
                                                  List<InvoiceLine> invoiceLines) {
 
-        List<Subscription> subscriptions = ratedTransactions != null ? getSubscriptions(userAccount, isVirtual, ratedTransactions)
+        List<Subscription> subscriptions = CollectionUtils.isNotEmpty(ratedTransactions) ? getSubscriptions(userAccount, isVirtual, ratedTransactions)
                 : getSubscriptionsFromIls(invoiceLines);
         if (subscriptions == null || subscriptions.isEmpty()) {
             return null;
@@ -2560,7 +2561,8 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             addCustomFields(userAccount, doc, userAccountTag);
         }
         if (invoiceConfiguration.isDisplaySubscriptions()) {
-            Element subscriptionsTag = createSubscriptionsSection(doc, userAccount, null, isVirtual, ignoreUA, invoiceLines);
+        	List<RatedTransaction> ratedTransactions = ratedTransactionService.listRatedTransactionsByInvoice(invoice);
+            Element subscriptionsTag = createSubscriptionsSection(doc, userAccount, ratedTransactions, isVirtual, ignoreUA, invoiceLines);
             if (subscriptionsTag != null
                     && subscriptionsTag.getChildNodes() != null && subscriptionsTag.getChildNodes().getLength() != 0) {
                 userAccountTag.appendChild(subscriptionsTag);

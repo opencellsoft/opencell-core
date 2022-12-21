@@ -787,7 +787,7 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
      * @param clazzName
      * @return the object or the entity parsed
      */
-	private <T> List<T> parseListFromString(String value, String clazzName, String separator) {
+	public <T> List<T> parseListFromString(String value, String clazzName, String separator) {
 		try {
 			return (List<T>) Arrays.stream(value.split(separator)).map(val -> parseObjectFromString(val, clazzName)).collect(Collectors.toList());
 		} catch (Exception e) {
@@ -801,7 +801,7 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
      * @param clazzName
      * @return the object or the entity parsed
      */
-    private <T> T parseObjectFromString(String value, String clazzName) {
+    public <T> T parseObjectFromString(String value, String clazzName) {
         try {
             Class<T> clazz = (Class<T>) Class.forName(clazzName);
             return (clazzName.startsWith("org.meveo.model"))? (T) baseEntityService.tryToFindByEntityClassAndId((Class<? extends IEntity>) clazz, Long.parseLong(value)) 

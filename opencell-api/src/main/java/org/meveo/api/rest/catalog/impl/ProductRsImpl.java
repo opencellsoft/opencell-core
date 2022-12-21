@@ -46,6 +46,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 			if(response.getCurrentProductVersion() != null)
 				result.setCurrentProductVersion(response.getCurrentProductVersion());
 			result.setDiscountList(response.getDiscountList());
+			result.setAgreementDateSetting(response.getAgreementDateSetting());
 			return Response.ok(result).build();
         } catch(MeveoApiException e) {
 		       return errorResponse(e, result.getActionStatus());

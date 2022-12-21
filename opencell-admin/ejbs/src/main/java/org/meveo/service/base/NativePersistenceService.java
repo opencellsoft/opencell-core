@@ -768,10 +768,10 @@ public class NativePersistenceService extends BaseService {
         if(!aggFields.isEmpty()) {
             config.getFetchFields().remove("id");
         }
-        
+
         List<String> fetch = (config != null && config.getFetchFields() != null) ? config.getFetchFields().stream().filter(s -> s.contains(".")).map(s -> s.substring(0, s.lastIndexOf("."))).distinct().collect(Collectors.toList()) : Collections.emptyList();
         Map<String, String> fetchAlias = fetch.stream().collect(Collectors.toMap(Function.identity(), s -> QueryBuilder.getJoinAlias("a", s, false)));
-        
+
          String fieldsToRetrieve = (config != null && config.getFetchFields() != null) ? retrieveFields(config.getFetchFields(), predicate.negate()) : "";
         if(fieldsToRetrieve.isEmpty() && aggFields.isEmpty()) {
             fieldsToRetrieve = "*";
@@ -800,6 +800,7 @@ public class NativePersistenceService extends BaseService {
         if (filters != null && !filters.isEmpty()) {
             NativeExpressionFactory nativeExpressionFactory = new NativeExpressionFactory(queryBuilder, "a");
             filters.keySet().stream()
+            		.sorted((k1, k2) -> org.apache.commons.lang3.StringUtils.countMatches(k2, ".") - org.apache.commons.lang3.StringUtils.countMatches(k1, "."))
                     .filter(key -> filters.get(key) != null)
                     .forEach(key -> nativeExpressionFactory.addFilters(key, filters.get(key)));
 
@@ -815,6 +816,58 @@ public class NativePersistenceService extends BaseService {
         // log.trace("Filters is {}", filters);
         // log.trace("Query is {}", queryBuilder.getSqlString());
         // log.trace("Query params are {}", queryBuilder.getParams());
+        return queryBuilder;
+
+    }
+
+    /**
+     * Get Query without adding dependencies left join
+     * @param tableName Table name
+     * @param config {@link PaginationConfiguration}
+     * @param id Id
+     * @return {@link QueryBuilder}
+     */
+    public QueryBuilder getQueryWithoutDependencies(String tableName, PaginationConfiguration config, Long id) {
+        tableName = addCurrentSchema(tableName);
+        Predicate<String> predicate = field -> this.checkAggFunctions(field.toUpperCase().trim());
+        String aggFields = (config != null && config.getFetchFields() != null) ? aggregationFields(config.getFetchFields(), predicate) : "";
+        if(!aggFields.isEmpty()) {
+            config.getFetchFields().remove("id");
+        }
+
+        String fieldsToRetrieve = (config != null && config.getFetchFields() != null) ? retrieveFields(config.getFetchFields(), predicate.negate()) : "";
+        if(fieldsToRetrieve.isEmpty() && aggFields.isEmpty()) {
+            fieldsToRetrieve = "*";
+        }
+
+        StringBuilder sql = new StringBuilder("select " + buildFields(fieldsToRetrieve, aggFields) + " from " + tableName + " a ");
+        sql.append(" ");
+        QueryBuilder queryBuilder = new QueryBuilder(sql.toString(), "a");
+
+        if(id != null) {
+            queryBuilder.addSql(" a.id ='"+id+"'");
+        }
+
+        if (config == null) {
+            return queryBuilder;
+        }
+        Map<String, Object> filters = config.getFilters();
+
+        if (filters != null && !filters.isEmpty()) {
+            NativeExpressionFactory nativeExpressionFactory = new NativeExpressionFactory(queryBuilder, "a");
+            filters.keySet().stream()
+                    .filter(key -> filters.get(key) != null)
+                    .forEach(key -> nativeExpressionFactory.addFilters(key, filters.get(key)));
+
+        }
+
+        if(aggFields.isEmpty()) {
+            queryBuilder.addPaginationConfiguration(config, "a");
+        }
+        if (!aggFields.isEmpty() && !fieldsToRetrieve.isEmpty()) {
+            queryBuilder.addGroupCriterion(fieldsToRetrieve);
+        }
+
         return queryBuilder;
 
     }
@@ -857,6 +910,7 @@ public class NativePersistenceService extends BaseService {
         if (filters != null && !filters.isEmpty()) {
             NativeExpressionFactory nativeExpressionFactory = new NativeExpressionFactory(queryBuilder, "a");
             filters.keySet().stream()
+            		.sorted((k1, k2) -> org.apache.commons.lang3.StringUtils.countMatches(k2, ".") - org.apache.commons.lang3.StringUtils.countMatches(k1, "."))
                     .filter(key -> filters.get(key) != null)
                     .forEach(key -> nativeExpressionFactory.addFilters(key, filters.get(key)));
 
@@ -895,6 +949,7 @@ public class NativePersistenceService extends BaseService {
         if (filters != null && !filters.isEmpty()) {
             NativeExpressionFactory nativeExpressionFactory = new NativeExpressionFactory(queryBuilder, "a");
             filters.keySet().stream()
+            		.sorted((k1, k2) -> org.apache.commons.lang3.StringUtils.countMatches(k2, ".") - org.apache.commons.lang3.StringUtils.countMatches(k1, "."))
                     .filter(key -> filters.get(key) != null)
                     .forEach(key -> nativeExpressionFactory.addFilters(key, filters.get(key)));
         }

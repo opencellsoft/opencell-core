@@ -42,6 +42,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.LinkedInvoice;
 import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionAction;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.service.billing.impl.InvoiceLineService;
@@ -272,8 +273,8 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 	/**
 	 * @param invoice
 	 */
-	public void rejectInvoice(Invoice invoice) {
-		invoiceService.rejectInvoice(invoice);
+	public void rejectInvoice(Invoice invoice, RejectReasonInput rejectReasonInput) {
+		invoiceService.rejectInvoice(invoice, rejectReasonInput);
 	}
 
 	/**
@@ -286,8 +287,8 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 	/**
 	 * @param invoice
 	 */
-	public void cancelInvoice(Invoice invoice) {
-		invoiceService.cancelInvoiceWithoutDelete(invoice);
+	public void cancelInvoice(Invoice invoice, RatedTransactionAction rtAction) {
+		invoiceService.cancelInvoiceWithoutDeleteAndRTAction(invoice, rtAction);
 	}
 
 	/**
@@ -356,6 +357,9 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
     public Optional<List<GenerateInvoiceResult>> generate(GenerateInvoiceRequestDto invoice, boolean isDraft) {
 		IBillableEntity entity = invoiceService.getBillableEntity(invoice.getTargetCode(), invoice.getTargetType(),
 				invoice.getOrderNumber(), invoice.getBillingAccountCode());
+		if(entity == null ){
+			throw new NotFoundException("BillableEntity does not exists");
+		}
     	Filter ratedTransactionFilter = null;
 		if(invoice.getFilter() != null) {
 			ratedTransactionFilter = getFilterFromInput(invoice.getFilter());
@@ -450,8 +454,8 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
         }
 	    
 	    try {
-	        adjInvoice = invoiceService.createAdjustment(invoice, invoiceLinesToReplicate.getInvoiceLinesIds());
-    	    
+	        adjInvoice = invoiceService.createAdjustment(invoice, invoiceLinesToReplicate);
+
     	    if (invoice.getLinkedInvoices() != null) {
     	        invoice.getLinkedInvoices().size();
             }
