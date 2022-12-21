@@ -103,7 +103,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                         result.setReport("Exceptional Billing filters returning no invoice line to process");
                     }
                     executeBillingRun(billingRun, jobInstance, result,
-                            billingRun.getBillingCycle() != null ? billingRun.getBillingCycle().getBillingRunValidationScript() : null);
+                            billingRun.getBillingCycle() != null ? billingRun.getBillingCycle().getBillingRunValidationScript() : null, true);
                     initAmounts();
                 }
             }
@@ -142,7 +142,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         return billingRun.getExceptionalILIds().size();
     }
 
-    private void executeBillingRun(BillingRun billingRun, JobInstance jobInstance, JobExecutionResultImpl result, ScriptInstance billingRunValidationScript) {
+    private void executeBillingRun(BillingRun billingRun, JobInstance jobInstance, JobExecutionResultImpl result, ScriptInstance billingRunValidationScript, boolean v11Process) {
     	boolean prevalidatedAutomaticPrevBRStatus = false;
         if(billingRun.getStatus() == INVOICE_LINES_CREATED
                 && (billingRun.getProcessType() == AUTOMATIC || billingRun.getProcessType() == FULL_AUTOMATIC)) {
@@ -150,7 +150,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         }
         if(billingRun.getStatus() == PREVALIDATED) {
             billingRun.setStatus(INVOICES_CREATED);
-            billingRunService.createAggregatesAndInvoiceWithIl(billingRun, 1, 0, jobInstance.getId(), result);
+            billingRunService.createAggregatesAndInvoiceWithIl(billingRun, 1, 0, jobInstance.getId(), result, v11Process );
             billingRun = billingRunService.refreshOrRetrieve(billingRun);
             billingRun.setPrAmountWithTax(amountWithTax);
             billingRun.setPrAmountWithoutTax(amountWithoutTax);

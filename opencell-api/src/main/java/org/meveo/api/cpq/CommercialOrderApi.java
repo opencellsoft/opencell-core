@@ -41,10 +41,7 @@ import org.meveo.event.qualifier.AdvancementRateIncreased;
 import org.meveo.event.qualifier.StatusUpdated;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionTerminationReason;
-import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
@@ -58,12 +55,7 @@ import org.meveo.model.order.Order;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
-import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.InvoiceTypeService;
-import org.meveo.service.billing.impl.ServiceSingleton;
-import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.billing.impl.TerminationReasonService;
-import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.billing.impl.*;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.cpq.AttributeService;
@@ -129,6 +121,9 @@ public class CommercialOrderApi extends BaseApi {
 	
 	@Inject
 	private DiscountPlanService discountPlanService;
+
+	@Inject
+	private BillingCycleService billingCycleService;
 
 	@Inject
 	@StatusUpdated
@@ -235,7 +230,11 @@ public class CommercialOrderApi extends BaseApi {
 		}
 		order.setOrderInvoiceType(invoiceTypeService.getDefaultCommercialOrder());
 		processOrderLot(orderDto, order);
-		
+		if(StringUtils.isNotBlank(orderDto.getBillingCycleCode())) {
+			BillingCycle bc=billingCycleService.findByCode(orderDto.getBillingCycleCode());
+			order.setBillingCycle(bc);
+		}
+
 		//Set the sales person name
 		order.setSalesPersonName(orderDto.getSalesPersonName());
 		commercialOrderService.create(order);
@@ -417,6 +416,12 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 		}
 		populateCustomFields(orderDto.getCustomFields(), order, false);
 		processOrderLot(orderDto, order);
+		if(StringUtils.isNotBlank(orderDto.getBillingCycleCode())) {
+			final BillingCycle bc=billingCycleService.findByCode(orderDto.getBillingCycleCode());
+			if(bc == null)
+				throw new EntityDoesNotExistsException(BillingCycle.class, orderDto.getBillingCycleCode());
+			order.setBillingCycle(bc);
+		}
 		commercialOrderService.update(order);
 		CommercialOrderDto dto = new CommercialOrderDto(order);
 		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(order,CustomFieldInheritanceEnum.INHERIT_NO_MERGE));

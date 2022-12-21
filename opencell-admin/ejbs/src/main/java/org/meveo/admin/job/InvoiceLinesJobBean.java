@@ -86,7 +86,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                     for(BillingRun billingRun : billingRuns) {
                         billingRunExtensionService.updateBillingRun(billingRun.getId(),
                                 null, null, CREATING_INVOICE_LINES, null);
-                        List<? extends IBillableEntity> billableEntities = billingRunService.getEntitiesToInvoice(billingRun);
+                        List<? extends IBillableEntity> billableEntities = billingRunService.getEntitiesToInvoice(billingRun, true);
                         Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
 						if (nbRuns == -1) {
 							nbRuns = (long) Runtime.getRuntime().availableProcessors();

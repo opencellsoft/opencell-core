@@ -85,6 +85,8 @@ public class CommercialOrderDto extends BaseEntityDto {
     
     @Schema(description = "The sales person name")
 	private String salesPersonName;
+	@Schema(description = "Order billing cycle")
+ 	private String billingCycleCode;
 	
 	public CommercialOrderDto() {
 	}
@@ -123,6 +125,7 @@ public class CommercialOrderDto extends BaseEntityDto {
 			this.accessDto = new AccessDto(order.getAccess(), null);
 		if(order.getOrderLots() != null)
 			orderLotCodes = order.getOrderLots().stream().map(OrderLot::getCode).collect(Collectors.toSet());
+		this.billingCycleCode=order.getBillingCycle()!=null?order.getBillingCycle().getCode():null;
 	}
 	
 	/**
@@ -438,5 +441,13 @@ public class CommercialOrderDto extends BaseEntityDto {
 	 */
 	public void setSalesPersonName(String salesPersonName) {
 		this.salesPersonName = salesPersonName;
+	}
+
+	public String getBillingCycleCode() {
+		return billingCycleCode;
+	}
+
+	public void setBillingCycleCode(String billingCycleCode) {
+		this.billingCycleCode = billingCycleCode;
 	}
 }

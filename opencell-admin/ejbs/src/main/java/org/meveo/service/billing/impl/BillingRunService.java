@@ -141,6 +141,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     private OrderService orderService;
 
     @Inject
+    private CommercialOrderService commercialOrderService;
+
+    @Inject
     private JobInstanceService jobInstanceService;
 
     @Inject
@@ -665,7 +668,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @return the entity objects
      */
     @SuppressWarnings("unchecked")
-	public List<? extends IBillableEntity> getEntitiesToInvoice(BillingRun billingRun) {
+	public List<? extends IBillableEntity> getEntitiesToInvoice(BillingRun billingRun, boolean v11Process) {
 
         BillingCycle billingCycle = billingRun.getBillingCycle();
 
@@ -683,7 +686,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             }
 
             if (billingCycle.getType() == BillingEntityTypeEnum.ORDER) {
-                return orderService.findOrders(billingCycle, startDate, endDate);
+                return v11Process ? commercialOrderService.findCommercialOrders(billingCycle, startDate, endDate): orderService.findOrders(billingCycle, startDate, endDate);
             }
 
             return billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
@@ -802,10 +805,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param billingRuns list
      * @return ratedTransaction list
      */
-    public List<RatedTransaction> loadRTsByBillingRuns(List<BillingRun> billingRuns){
+    public List<RatedTransaction> loadRTsByBillingRuns(List<BillingRun> billingRuns, boolean v11Process){
         List<RatedTransaction> ratedTransactions = new ArrayList<>();
         for(BillingRun billingRun : billingRuns) {
-            List<? extends IBillableEntity> billableEntities = getEntitiesToInvoice(billingRun);
+            List<? extends IBillableEntity> billableEntities = getEntitiesToInvoice(billingRun, v11Process );
             for (IBillableEntity be :  billableEntities){
                 ratedTransactions.addAll(ratedTransactionService.listRTsToInvoice(be, new Date(0), billingRun.getLastTransactionDate(), billingRun.getInvoiceDate(),
                         billingRun.isExceptionalBR() ? createFilter(billingRun, false) : null, rtPaginationSize));
@@ -1567,8 +1570,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createAggregatesAndInvoiceWithIl(BillingRun billingRun, long nbRuns, long waitingMillis,
-                                                 Long jobInstanceId, JobExecutionResultImpl jobExecutionResult) throws BusinessException {
-        List<? extends IBillableEntity> entities = getEntitiesToInvoice(billingRun);
+                                                 Long jobInstanceId, JobExecutionResultImpl jobExecutionResult, boolean v11Process) throws BusinessException {
+        List<? extends IBillableEntity> entities = getEntitiesToInvoice(billingRun, v11Process);
         billingRun.setBillableBillingAcountNumber(entities.size());
         SubListCreator<? extends IBillableEntity> subListCreator;
         try {
