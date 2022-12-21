@@ -6593,9 +6593,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (invoiceTmp == null) {
                     throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
                 }
-                if(invoiceTmp.getInvoiceType() != null && invoiceTmp.getInvoiceType().getCode().equals("ADV")) {
-                    throw new BusinessApiException("The invoice of type Advance can not be linked manually");
-                }
                 if (!toUpdate.getInvoiceType().getAppliesTo().contains(invoiceTmp.getInvoiceType())) {
                     throw new BusinessApiException("InvoiceId " + invoiceId + " cant be linked");
                 }
