@@ -5932,6 +5932,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             }
                         }
                     }
+
+                    for(LinkedInvoice inv: invoice.getLinkedInvoices()) {
+                    	linkedInvoiceService.detach(inv);
+                    }
                     em.flush();
 
                     final int maxValue =
@@ -6563,7 +6567,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             PaymentMethod pm = (PaymentMethod) tryToFindByEntityClassAndId(PaymentMethod.class, pmId);
             toUpdate.setPaymentMethod(pm);
         }
-        if (invoiceResource.getListLinkedInvoices() != null) {
+        if (CollectionUtils.isNotEmpty(invoiceResource.getListLinkedInvoices())) {
             List<Long> toUpdateLinkedInvoice = toUpdate.getLinkedInvoices().stream()
                     .map(li -> li.getLinkedInvoiceValue().getId()).collect(Collectors.toList());
             

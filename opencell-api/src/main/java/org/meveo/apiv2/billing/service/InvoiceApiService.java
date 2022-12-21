@@ -310,7 +310,6 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 		}
         Invoice updateInvoice = invoiceService.update(invoice, input, invoiceResource);
         invoiceService.calculateInvoice(updateInvoice);
-        invoiceService.updateBillingRunStatistics(updateInvoice);
 
         return updateInvoice;
     }
