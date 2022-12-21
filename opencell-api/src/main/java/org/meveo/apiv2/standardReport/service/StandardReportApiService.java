@@ -118,8 +118,20 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
 	 * @param customerAccountCode
 	 * @return Count of aged receivables
 	 */
-	public Long getCountAgedReceivables(String customerAccountCode) {
-		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
-        return recordedInvoiceService.getCountAgedReceivables(customerAccount);
+	public Long getCountAgedReceivables(String customerAccountCode, String customerAccountDescription, String sellerCode, String sellerDescription, String invoiceNumber, String tradingCurrency, 
+			Date startDueDate, Date endDueDate, Date startDate) {
+		if(invoiceNumber != null && invoiceService.findByInvoiceNumber(invoiceNumber) == null) {
+			throw new NotFoundException("Invoice number : " + invoiceNumber + " does not exits");
+		}
+
+		if (startDueDate != null && endDueDate != null && startDueDate.after(endDueDate)) {
+			throw new BadRequestException("End due date must be after start due date");
+		}
+
+		if (startDueDate != null && endDueDate == null) {
+			endDueDate = startDueDate;
+		}
+		
+        return recordedInvoiceService.getCountAgedReceivables(customerAccountCode, customerAccountDescription, sellerCode, sellerDescription, invoiceNumber, tradingCurrency, startDueDate, endDueDate, startDate);
 	}
 }
