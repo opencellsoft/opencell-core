@@ -457,6 +457,7 @@
         <createSequence sequenceName="open_order_product_seq"/>
         <createSequence sequenceName="open_order_seq"/>
         <createSequence sequenceName="cpq_billing_rule_seq" startValue="1" />
+        <createSequence sequenceName="crm_address_book_contact_seq" startValue="1" />
     </changeSet>
 
 
@@ -7551,6 +7552,7 @@
             <column name="decimal_separator" type="varchar(1)" defaultValue="." />
             <column name="generate_empty_report" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="maximum_line" type="bigint" defaultValueNumeric="0" />
+            <column name="include_headers" type="${type.boolean}" defaultValueNumeric="1"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-360">
@@ -9020,6 +9022,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="open_order_id" type="bigint"/>
+            <column name="agreement_date_setting" type="varchar(20)"/>
         </createTable>
     </changeSet>
 
@@ -10230,6 +10233,8 @@
             <column name="oneshot_total_amount" type="numeric(23, 12)" />
             <column name="discount_plan_id" type="bigint"/>
             <column name="sales_person_name" type="varchar(52)" />
+            <column name="billing_cycle_id" type="bigint" />
+            <column name="billing_run_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-475" author="NabilOUACHI">
@@ -18730,6 +18735,7 @@
     <changeSet author="AbdelmounaimAkadid" id="#INTRD-828-create-view" dbms="postgresql"/>
     <changeSet author="AbdelmounaimAkadid" id="#INTRD-828-create-view-oracle" dbms="oracle"/>
     <changeSet id="INTRD-2371_19102021" author="AbdelkaderBouazza" />
+    <changeSet id="#INTRD-8859_20220802" author="hichamELHALOUI" />
     <changeSet id="#INTRD-8106_20220630" author="TarikFA." />
     <changeSet id="#INTRD-8027_20220629" author="aelmalki" />
 	<changeSet id="#INTRD-8580_20220714" author="aelmalki" />
@@ -18805,6 +18811,11 @@
     <changeSet id="#INTRD-10957_20221026" author="Mbarek-Ay"/>
     <changeSet id="INTRD-11433_20221110" author="AbdelmounaimAkadid" />
     <changeSet id="#INTRD-11310_20221110" author="ZBariki" />
+    <changeSet id="#2038-20221130" author="Mbarek-Ay"/>
+    <changeSet id="#INTR-12252_20221212_agreement_date" author="a.rouaguebe" />
+	<changeSet id="#INTRD-11775_20221120" author="hichamELHALOUI" />
+    <changeSet id="#INTRD-11841_20221214-reports" author="HichamHANINE" />
+
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

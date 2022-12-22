@@ -213,11 +213,7 @@ public class ContactApi extends BaseApi {
         if ((postData.getContactInformation() == null || StringUtils.isBlank(postData.getContactInformation().getEmail())) && StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("email or code");
         }
-
-        if(postData.getAddressBookContacts() == null || postData.getAddressBookContacts().isEmpty()){
-            missingParameters.add("AddressBookContacts");
-        }
-
+        
         handleMissingParameters();
 
         String code = null;
@@ -243,7 +239,7 @@ public class ContactApi extends BaseApi {
             addressBookContacts.stream()
                     .forEach(abcDto -> {
                         if(abcDto.getAddressBook() == null || abcDto.getAddressBook().get("id") == null){
-                            new BusinessException("addressBook contact id is required to assigne contact to an address book");
+                           throw new BusinessException("addressBook contact id is required to assigne contact to an address book");
                         }
                         AddressBook addressBookServiceById = addressBookService.findById(abcDto.getAddressBook().get("id"));
                         if(addressBookServiceById == null){
@@ -502,10 +498,6 @@ public class ContactApi extends BaseApi {
             // missingParameters.add("code");
         }
 
-        if(postData.getAddressBookContacts() == null || postData.getAddressBookContacts().isEmpty()){
-            missingParameters.add("AddressBookContacts");
-        }
-
         handleMissingParameters();
 
         String code = null;
@@ -518,6 +510,9 @@ public class ContactApi extends BaseApi {
         Contact contact = contactService.findByCode(code);
 
         if (contact == null) {
+        	if(postData.getAddressBookContacts() == null || postData.getAddressBookContacts().isEmpty()){
+                missingParameters.add("AddressBookContacts");
+            }
             return create(postData);
         } else {
             return update(postData);

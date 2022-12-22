@@ -127,11 +127,12 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.findByStatusAndBR", query = "from Invoice inv where inv.status in (:statusList) and inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.listUnpaidInvoicesIds", query = "SELECT inv.id FROM Invoice inv "
                                 + " WHERE inv.dueDate <= NOW() AND inv.status = org.meveo.model.billing.InvoiceStatusEnum.VALIDATED "
-                                + " AND inv.paymentStatus not in (org.meveo.model.billing.InvoicePaymentStatusEnum.PAID, org.meveo.model.billing.InvoicePaymentStatusEnum.PPAID)"),
+                                + " AND inv.paymentStatus not in (org.meveo.model.billing.InvoicePaymentStatusEnum.PAID,"
+                                + " org.meveo.model.billing.InvoicePaymentStatusEnum.PPAID, org.meveo.model.billing.InvoicePaymentStatusEnum.DISPUTED)"),
         @NamedQuery(name = "Invoice.detachAOFromInvoice", query = "UPDATE Invoice set recordedInvoice = null where recordedInvoice = :ri"),
         @NamedQuery(name = "Invoice.sumInvoiceableAmountByBR", query =
-        "select sum(inv.amountWithoutTax), sum(inv.amountWithTax), inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id "
-                + "FROM Invoice inv where inv.billingRun.id=:billingRunId group by inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id"),
+        "select sum(inv.amountWithoutTax), sum(inv.amountWithTax), inv.subscription.id, inv.commercialOrder.id , inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id "
+                + "FROM Invoice inv where inv.billingRun.id=:billingRunId group by inv.subscription.id, inv.commercialOrder.id , inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id"),
 
         @NamedQuery(name = "Invoice.sumAmountsByBR", query = "select sum(inv.amountTax),sum(inv.amountWithoutTax), sum(inv.amountWithTax) FROM Invoice inv where inv.billingRun.id=:billingRunId and inv.status <> 'CANCELED'"),
         @NamedQuery(name = "Invoice.billingAccountsByBr", query = "select distinct inv.billingAccount from Invoice inv where inv.billingRun.id=:billingRunId and inv.status <> 'CANCELED'"),
@@ -140,8 +141,10 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.deleteByIds", query = "delete from Invoice inv where inv.id IN (:invoicesIds)"),
         @NamedQuery(name = "Invoice.excludePrpaidInvoices", query = "select inv.id from Invoice inv where inv.id IN (:invoicesIds) and inv.prepaid=false"),
         @NamedQuery(name = "Invoice.countRejectedByBillingRun", query = "select count(id) from Invoice where billingRun.id =:billingRunId and status = org.meveo.model.billing.InvoiceStatusEnum.REJECTED"),
+        @NamedQuery(name = "Invoice.countSuspectByBillingRun", query = "select count(id) from Invoice where billingRun.id =:billingRunId and status = org.meveo.model.billing.InvoiceStatusEnum.SUSPECT"),
         @NamedQuery(name = "Invoice.getInvoiceTypeANDRecordedInvoiceID", query = "select inv.invoiceType.code, inv.recordedInvoice.id from Invoice inv where inv.id =:id"),
         @NamedQuery(name = "Invoice.initAmounts", query = "UPDATE Invoice inv set inv.amount = 0, inv.amountTax = 0, inv.amountWithTax = 0, inv.amountWithoutTax = 0, inv.netToPay = 0, inv.discountAmount = 0, inv.amountWithoutTaxBeforeDiscount = 0 where inv.id = :invoiceId"),
+        @NamedQuery(name = "Invoice.loadByBillingRunNotValidatedInvoices", query = "SELECT inv.id FROM Invoice inv WHERE inv.billingRun.id = :billingRunId AND inv.status <> org.meveo.model.billing.InvoiceStatusEnum.VALIDATED "),
         @NamedQuery(name = "Invoice.loadByBillingRun", query = "SELECT inv.id FROM Invoice inv WHERE inv.billingRun.id = :billingRunId"),
         @NamedQuery(name = "Invoice.findLinkedInvoicesByIdAndType", query = "SELECT inv.invoiceNumber, inv.invoiceDate, linkedinv.amount FROM Invoice inv inner join LinkedInvoice linkedinv on inv.id = linkedinv.linkedInvoiceValue.id where linkedinv.id.id = :invoiceId and inv.invoiceType.code =: invoiceTypeCode"),
         @NamedQuery(name = "Invoice.findInvoiceEligibleAdv", query = "select bi, adv from Invoice bi inner join  BillingAccount bba on bi.billingAccount.id = bba.id inner join Invoice adv on adv.billingAccount.id = bba.id inner join InvoiceType  it on it.id = adv.invoiceType.id"

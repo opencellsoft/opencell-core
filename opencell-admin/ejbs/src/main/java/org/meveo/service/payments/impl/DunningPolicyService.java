@@ -65,15 +65,15 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
             throw new BusinessException(exception.getMessage());
         }
     }
-
     public List<Invoice> findEligibleInvoicesForPolicy(DunningPolicy policy) {
+
         policy = refreshOrRetrieve(policy);
         if (policy == null) {
             throw new BusinessException("Policy does not exists");
         }
         if(policy.getDunningPolicyRules() != null && !policy.getDunningPolicyRules().isEmpty()) {
             try {
-                String query = "SELECT inv FROM Invoice inv WHERE inv.paymentStatus = 'PENDING' AND inv.dunningCollectionPlanTriggered = false AND "
+                String query = "SELECT inv FROM Invoice inv WHERE (inv.paymentStatus = 'UNPAID' OR inv.paymentStatus = 'PPAID')  AND inv.dunningCollectionPlanTriggered = false AND "
                         + buildPolicyRulesFilter(policy.getDunningPolicyRules());
                 return (List<Invoice>) invoiceService.executeSelectQuery(query, null);
             } catch (Exception exception) {
@@ -259,9 +259,10 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
         DunningCollectionPlanStatus collectionPlanStatus = collectionPlanStatusService.findByStatus(DunningCollectionPlanStatusEnum.ACTIVE);
         for (Map.Entry<DunningPolicy, List<Invoice>> entry : eligibleInvoice.entrySet()) {
             DunningPolicy policy = refreshOrRetrieve(entry.getKey());
+            boolean policyIsReminderExists = doesPolicyContainReminder(policy.getDunningLevels());
             Optional<DunningPolicyLevel> firstLevel = policy.getDunningLevels()
                     .stream()
-                    .filter(policyLevel -> policyLevel.getSequence() == 1 && !policyLevel.getDunningLevel().isReminder())
+                    .filter(policyLevel -> ((policyIsReminderExists && policyLevel.getSequence() == 1) || ( policyLevel.getSequence() == 0)) && !policyLevel.getDunningLevel().isReminder())
                     .findFirst();
             if(!firstLevel.isEmpty()) {
                 Integer dayOverDue = firstLevel.map(policyLevel -> policyLevel.getDunningLevel().getDaysOverdue()).get();
@@ -272,10 +273,14 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
                         .forEach(invoice ->
                                 collectionPlanService.createCollectionPlanFrom(invoice, policy, dayOverDue, collectionPlanStatus));
             } else {
-                log.error("No level with sequence = 1 configured for policy" + policy.getPolicyName());
+                log.error("No level configured do meet the conditions for policy" + policy.getPolicyName());
             }
         }
     }
+    
+    private boolean doesPolicyContainReminder(List<DunningPolicyLevel> dunningLevels) {
+    	return dunningLevels.stream().anyMatch(policyLevel -> policyLevel.getDunningLevel().isReminder());
+	}
 
     private boolean invoiceEligibilityCheck(Invoice invoice, DunningPolicy policy, Integer dayOverDue) {
         boolean dayOverDueAndThresholdCondition;

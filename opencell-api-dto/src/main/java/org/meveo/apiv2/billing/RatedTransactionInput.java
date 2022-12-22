@@ -48,4 +48,7 @@ public interface RatedTransactionInput extends Resource {
 
     @Nullable
 	String getParameterExtra();
+
+	@Nullable
+	String getDescription();
 }

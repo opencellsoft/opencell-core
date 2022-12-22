@@ -46,6 +46,7 @@ import org.meveo.model.filter.Filter;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.LinkedInvoiceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.filter.FilterService;
 
@@ -70,6 +71,9 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 
 	@Inject
     protected RatedTransactionService ratedTransactionService;
+
+	@Inject
+	private LinkedInvoiceService linkedInvoiceService;
 	
 	private List<String> fieldToFetch = asList("invoiceLines");
 
@@ -352,6 +356,9 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
     public Optional<List<GenerateInvoiceResult>> generate(GenerateInvoiceRequestDto invoice, boolean isDraft) {
 		IBillableEntity entity = invoiceService.getBillableEntity(invoice.getTargetCode(), invoice.getTargetType(),
 				invoice.getOrderNumber(), invoice.getBillingAccountCode());
+		if(entity == null ){
+			throw new NotFoundException("BillableEntity does not exists");
+		}
     	Filter ratedTransactionFilter = null;
 		if(invoice.getFilter() != null) {
 			ratedTransactionFilter = getFilterFromInput(invoice.getFilter());
@@ -455,6 +462,7 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
     	        invoice.setLinkedInvoices(new HashSet<>());
     	    }
     	    LinkedInvoice linkedInvoice = new LinkedInvoice(invoice, adjInvoice);
+			linkedInvoiceService.create(linkedInvoice);
     	    invoice.getLinkedInvoices().add(linkedInvoice);
     	    invoiceService.update(invoice);
 	    }

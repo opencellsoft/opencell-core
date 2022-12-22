@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
@@ -27,15 +28,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.AdvancementRateIncreased;
 import org.meveo.model.RatingResult;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.AttributeInstance;
-import org.meveo.model.billing.DiscountPlanInstance;
-import org.meveo.model.billing.InstanceStatusEnum;
-import org.meveo.model.billing.RecurringChargeInstance;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionChargeInstance;
-import org.meveo.model.billing.SubscriptionStatusEnum;
-import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
@@ -44,9 +37,11 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
+import org.meveo.model.cpq.AgreementDateSettingEnum;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.OfferTemplateAttribute;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.CommercialOrderEnum;
@@ -57,12 +52,14 @@ import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.cpq.commercial.ProductActionTypeEnum;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
+import org.meveo.model.order.Order;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.DiscountPlanInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
+import org.meveo.service.cpq.ProductService;
 
 /**
  * @author Tarik FA.
@@ -86,6 +83,9 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
     private DiscountPlanService discountPlanService;
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;
+
+	@Inject
+	private ProductService productService;
 
 	@Override
 	public void create(CommercialOrder entity) throws BusinessException {
@@ -341,15 +341,21 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		return serviceInstance;
 	}
 
-	public ServiceInstance processProduct(Subscription subscription, Product product, BigDecimal quantity, List<OrderAttribute> orderAttributes, OrderProduct orderProduct, Date deliveryDate) {
-
+	public ServiceInstance processProduct(Subscription subscription, Product product, BigDecimal quantity,
+										  List<OrderAttribute> orderAttributes, OrderProduct orderProduct, Date deliveryDate) {
 		ServiceInstance serviceInstance = new ServiceInstance();
 		serviceInstance.setCode(product.getCode());
 		serviceInstance.setQuantity(quantity);
 		serviceInstance.setSubscriptionDate(subscription.getSubscriptionDate());
-		serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
+		if(!AgreementDateSettingEnum.MANUAL.equals(product.getAgreementDateSetting())) {
+			serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
+		}
 		serviceInstance.setRateUntilDate(subscription.getEndAgreementDate());
-		serviceInstance.setProductVersion(product.getCurrentVersion());
+		ProductVersion productVersion = productService.getCurrentPublishedVersion(serviceInstance.getCode(),
+				deliveryDate != null ? deliveryDate : serviceInstance.getSubscriptionDate())
+				.orElseThrow(() -> new BusinessException("No product version found for subscription code: " + subscription.getCode()));
+		serviceInstance.setProductVersion(productVersion);
+		serviceInstance.setOrderNumber(subscription.getOrderNumber());
 		if (deliveryDate != null) {
 			serviceInstance.setDeliveryDate(deliveryDate);
 		} else {
@@ -381,7 +387,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		
 		//add missing attribute instances
 		AttributeInstance attributeInstance=null;
-		for(ProductVersionAttribute productVersionAttribute:product.getCurrentVersion().getAttributes()) {
+		for(ProductVersionAttribute productVersionAttribute : productVersion.getAttributes()) {
 			Attribute attribute=productVersionAttribute.getAttribute();
 			if(!instantiatedAttributes.containsKey(attribute.getCode())) {
 				attributeInstance = new AttributeInstance(currentUser);
@@ -457,9 +463,13 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			serviceInstance.setCode(product.getCode());
 			serviceInstance.setQuantity(quantity);
 			serviceInstance.setSubscriptionDate(offer.getSubscription().getSubscriptionDate());
-			serviceInstance.setEndAgreementDate(offer.getSubscription().getEndAgreementDate());
+			if(AgreementDateSettingEnum.INHERIT.equals(orderProduct.getProductVersion().getProduct().getAgreementDateSetting())) {
+				serviceInstance.setEndAgreementDate(offer.getSubscription().getEndAgreementDate());
+			}
 			serviceInstance.setRateUntilDate(offer.getSubscription().getEndAgreementDate());
-			serviceInstance.setProductVersion(product.getCurrentVersion());
+			ProductVersion productVersion = productService.getCurrentPublishedVersion(serviceInstance.getCode(),
+							deliveryDate != null ? deliveryDate : serviceInstance.getSubscriptionDate()).orElse(null);
+			serviceInstance.setProductVersion(productVersion);
 			if (deliveryDate != null) {
 				serviceInstance.setDeliveryDate(deliveryDate);
 			} else {
@@ -482,7 +492,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			}
 			//add missing attribute instances
 			AttributeInstance attributeInstance=null;
-			for(ProductVersionAttribute productVersionAttribute:product.getCurrentVersion().getAttributes()) {
+			for(ProductVersionAttribute productVersionAttribute : productVersion.getAttributes()) {
 				Attribute attribute=productVersionAttribute.getAttribute();
 				if(!instantiatedAttributes.containsKey(attribute.getCode())) {
 					attributeInstance = new AttributeInstance(currentUser);
@@ -602,4 +612,39 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		}
 		 
 	}
+
+	    public List<CommercialOrder> findCommercialOrders(BillingCycle billingCycle, Date startdate, Date endDate) {
+        try {
+            QueryBuilder qb = new QueryBuilder(CommercialOrder.class, "co", null);
+            qb.addCriterionEntity("co.billingCycle.id", billingCycle.getId());
+            return (List<CommercialOrder>) qb.getQuery(getEntityManager()).getResultList();
+
+        } catch (Exception ex) {
+            log.error("failed to find billable commercial orders", ex);
+        }
+
+        return null;
+    }
+
+	public List<CommercialOrder> findByCodeOrExternalId(Collection<String> codeOrExternalId) {
+
+        TypedQuery<CommercialOrder> query = getEntityManager().createNamedQuery("CommercialOrder.listByCodeOrExternalId", CommercialOrder.class).setParameter("code", codeOrExternalId);
+
+        return query.getResultList();
+    }
+
+	public CommercialOrder findByCodeOrExternalId(String codeOrExternalId) {
+
+        TypedQuery<CommercialOrder> query = getEntityManager().createNamedQuery("CommercialOrder.findByCodeOrExternalId", CommercialOrder.class).setParameter("code", codeOrExternalId);
+
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            log.debug("No {} of code/externalId {} found", CommercialOrder.class.getSimpleName(), codeOrExternalId);
+            return null;
+        } catch (NonUniqueResultException e) {
+            log.error("More than one entity of type {} with code/externalId {} found", CommercialOrder.class, codeOrExternalId);
+            return null;
+        }
+    }
 }

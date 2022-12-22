@@ -35,7 +35,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -57,7 +56,6 @@ import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -96,6 +94,7 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.contract.BillingRule;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
@@ -189,16 +188,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     private MinAmountService minAmountService;
 
     @Inject
-    private ParamBeanFactory paramBeanFactory;
-
-    @Inject
-    private InvoiceLineService invoiceLineService;
-
-    @Inject
     private AccountingArticleService accountingArticleService;
 
     @Inject
     private BillingRulesService billingRulesService;
+
+    @Inject
+    private AccountingCodeService accountingCodeService;
     
     /**
      * Check if Billing account has any not yet billed Rated transactions
@@ -377,20 +373,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return lstRatedTransaction;
     }
 
-    private Optional<AccountingArticle> getAccountingArticle(WalletOperation walletOperation) {
-        ServiceInstance serviceInstance = walletOperation.getServiceInstance() != null
-                ? serviceInstanceService.findById(walletOperation.getServiceInstance().getId()) : null;
-        ChargeInstance chargeInstance = walletOperation.getChargeInstance() != null
-                ? chargeInstanceService.findById(walletOperation.getChargeInstance().getId()) : null;
-        Product product = serviceInstance != null
-                ? serviceInstance.getProductVersion() != null
-                ? serviceInstance.getProductVersion().getProduct() : null : null;
-        ChargeTemplate charge = chargeInstance != null ? chargeInstance.getChargeTemplate() : null;
-        List<AttributeValue> attributeValues = fromAttributeInstances(serviceInstance);
-        Map<String, Object> attributes = fromAttributeValue(attributeValues);
-        return accountingArticleService.getAccountingArticle(product, charge, attributes, walletOperation);
-    }
-
     private List<AttributeValue> fromAttributeInstances(ServiceInstance serviceInstance) {
         if (serviceInstance == null) {
             return Collections.emptyList();
@@ -438,7 +420,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         Subscription sub;
         ServiceInstance si;
         ChargeInstance ci;
-        String code;
+        String code = aggregatedWo.getCode();
         String description;
         InvoiceSubCategory isc;
 
@@ -457,13 +439,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ua = (aggregatedWo.getUserAccount() == null && sub != null) ? sub.getUserAccount() : userAccountService.refreshOrRetrieve(aggregatedWo.getUserAccount());
         ba = (aggregatedWo.getBillingAccount() == null && ua != null) ? ua.getBillingAccount() : billingAccountService.refreshOrRetrieve(aggregatedWo.getBillingAccount());
         seller = (aggregatedWo.getSeller() == null && sub != null) ? sub.getSeller() : sellerService.refreshOrRetrieve(aggregatedWo.getSeller());
-        if (ci != null) {
-            code = ci.getCode();
-        } else if (si != null) {
-            code = si.getCode();
-        } else {
-            code = isc.getCode();
+        if (StringUtils.isBlank(code)) {
+            if (ci != null) {
+                code = ci.getCode();
+            } else if (si != null) {
+                code = si.getCode();
+            } else {
+                code = isc.getCode();
+            }
         }
+
         description = (aggregatedWo.getDescription() != null) ? aggregatedWo.getDescription() : aggregatedWo.getComputedDescription();
 
         ratedTransaction.setOrderNumber(aggregatedWo.getOrderNumber());
@@ -511,6 +496,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             create(ratedTransaction);
             updateAggregatedWalletOperations(aggregatedWo.getWalletOperationsIds(), ratedTransaction);
         }
+        ratedTransaction.setAccountingArticle(accountingArticleService.refreshOrRetrieve(aggregatedWo.getAccountingArticle()));
+        ratedTransaction.setAccountingCode(accountingCodeService.refreshOrRetrieve(aggregatedWo.getAccountingCode()));
 
         return ratedTransaction;
     }
@@ -1029,6 +1016,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         } else if (entityToInvoice instanceof Order) {
             query = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumber", RatedTransaction.class).setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber());
+        }else if (entityToInvoice instanceof CommercialOrder) {
+            query = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumber", RatedTransaction.class).setParameter("orderNumber", ((CommercialOrder) entityToInvoice).getOrderNumber());
         }
         if (query != null) {
             if (rtPageSize != null) {
@@ -1425,12 +1414,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param chargeInstanceCode
      * @param unitAmountWithoutTax
      * @param quantity
+     * @param description
      * @return
      */
     public RatedTransaction createRatedTransaction(String billingAccountCode, String userAccountCode,
-            String subscriptionCode, String serviceInstanceCode, String chargeInstanceCode, Date usageDate,
-            BigDecimal unitAmountWithoutTax, BigDecimal quantity, String param1, String param2, String param3, String paramExtra) {
-
+            String subscriptionCode, String serviceInstanceCode, String chargeInstanceCode,
+                                                   Date usageDate, BigDecimal unitAmountWithoutTax, BigDecimal quantity,
+                                                   String param1, String param2, String param3,
+                                                   String paramExtra, String description) {
         String errors = "";
         if (billingAccountCode == null) {
             errors = errors + " billingAccountCode,";
@@ -1472,10 +1463,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         BigDecimal AmountWithoutTax = unitAmountWithoutTax.multiply(quantity);
         BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(AmountWithoutTax, AmountWithoutTax, taxPercent,
                 appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+        ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
+        String rtDescription = description != null && !description.isBlank()
+                ? description : chargeTemplate.getDescriptionOrCode();
         RatedTransaction rt = new RatedTransaction(usageDate, unitAmounts[0], unitAmounts[1], unitAmounts[2], quantity,
                 amounts[0], amounts[1], amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount, userAccount,
-                null, param1, param2, param3, paramExtra, null, subscription, null, null, null, subscription.getOffer(), null,
-                serviceInstance.getCode(), serviceInstance.getCode(), null, null, subscription.getSeller(), taxInfo.tax,
+                null, param1, param2, param3, paramExtra, null, subscription, null,
+                null, null, subscription.getOffer(), null,
+                chargeTemplate.getCode(), rtDescription, null, null, subscription.getSeller(), taxInfo.tax,
                 taxPercent, serviceInstance, taxClass, null, RatedTransactionTypeEnum.MANUAL, chargeInstance, null);
         rt.setAccountingArticle(accountingArticle);
         create(rt);
@@ -1683,7 +1678,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         + " and (rt.invoicingDate is NULL or rt.invoicingDate < :invoiceUpToDate) AND rt.accountingArticle.ignoreAggregation = false"
                         + " GROUP BY rt.billingAccount.id, rt.accountingCode.id, rt.description, rt.offerTemplate.id, rt.serviceInstance.id, " + unitAmountGroupBy
                         + usageDateAggregation + ", rt.startDate, rt.endDate, rt.orderNumber, s.id,  s.order.id, rt.taxPercent, rt.tax.id, "
-                        + " rt.infoOrder.order.id, rt.infoOrder.productVersion.id, rt.infoOrder.orderLot.id, rt.chargeInstance.id, rt.parameter2, rt.accountingArticle.id, rt.discountedRatedTransaction";
+                        + " rt.infoOrder.order.id, rt.infoOrder.productVersion.id, rt.infoOrder.orderLot.id, rt.chargeInstance.id, rt.parameter2, rt.accountingArticle.id, rt.discountedRatedTransaction, rt.amountWithoutTax"
+                        + " order by rt.amountWithoutTax desc";
         List<Map<String, Object>> groupedRTsWithAggregation = getSelectQueryAsMap(query, params);
         groupedRTsWithAggregation.addAll(getGroupedRTsWithoutAggregation(billingRun, be, lastTransactionDate));
         return groupedRTsWithAggregation;
@@ -1707,6 +1703,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             entityCondition = " rt.billingAccount.id =:entityKey ";
         } else if (be instanceof Order) {
             params.put("entityKey", ((Order) be).getOrderNumber());
+            entityCondition = " rt.orderNumber =:entityKey ";
+        } else if (be instanceof CommercialOrder) {
+            params.put("entityKey", ((CommercialOrder) be).getOrderNumber());
             entityCondition = " rt.orderNumber =:entityKey ";
         }
         return entityCondition;
@@ -1744,7 +1743,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         " rt.chargeInstance.id as charge_instance_id, rt.parameter2 as parameter_2, rt.accountingArticle.id as article_id," +
                         " rt.discountedRatedTransaction as discounted_ratedtransaction_id" +
                         " FROM RatedTransaction rt left join rt.subscription s " +
-                        " WHERE" + entityCondition + "AND rt.status = 'OPEN' AND :firstTransactionDate <= rt.usageDate " +
+                        " WHERE " + entityCondition + " AND rt.status = 'OPEN' AND :firstTransactionDate <= rt.usageDate " +
                         " AND rt.usageDate < :lastTransactionDate AND (rt.invoicingDate is NULL or rt.invoicingDate < :invoiceUpToDate) " +
                         " AND rt.accountingArticle.ignoreAggregation = true";
         return getSelectQueryAsMap(query, params);
@@ -1878,7 +1877,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return null;
         }
         expression = expression.replace("\\", "");
-        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        Map<Object, Object> userMap = new HashMap<>();
         userMap.put("rt", rt);
         Boolean code = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
         if (code != null) {
@@ -1892,7 +1891,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return null;
         }
         expression = expression.replace("\\", "");
-        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        Map<Object, Object> userMap = new HashMap<>();
         userMap.put("rt", rt);
         String code = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
         if (code != null) {

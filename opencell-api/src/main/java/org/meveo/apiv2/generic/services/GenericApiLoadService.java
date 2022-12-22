@@ -108,7 +108,7 @@ public class GenericApiLoadService {
     }
 
 	public List<Map<String, Object>> findAggregatedPaginatedRecords(Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFieldsAlias) {
-		List<List<Object>> list = (List<List<Object>>) nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig, null)
+		List<List<Object>> list = (List<List<Object>>) nativePersistenceService.getQueryWithoutDependencies(entityClass.getCanonicalName(), searchConfig, null)
 				.addPaginationConfiguration(searchConfig, "a").find(nativePersistenceService.getEntityManager()).stream().map(ObjectArrays -> Arrays.asList(ObjectArrays)).collect(toList());
 		return list.stream().map(line -> addResultLine(line, genericFieldsAlias != null ? genericFieldsAlias.iterator() : searchConfig.getFetchFields().iterator())).collect(toList());
 	}
@@ -119,7 +119,7 @@ public class GenericApiLoadService {
     }
 
 	public int getAggregatedRecordsCount(Class entityClass, PaginationConfiguration searchConfig) {
-		return nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig, null)
+		return nativePersistenceService.getQueryWithoutDependencies(entityClass.getCanonicalName(), searchConfig, null)
 				.find(nativePersistenceService.getEntityManager()).size();
 	}
 	private Map<String, Object> addResultLine(List<Object> line, Iterator<String> iterator) {
@@ -188,7 +188,7 @@ public class GenericApiLoadService {
     }
 
 	public String export(Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields,
-                         List<GenericFieldDetails> genericFieldDetails, String fileFormat, String entityName) throws ClassNotFoundException {
+                         List<GenericFieldDetails> genericFieldDetails, String fileFormat, String entityName, String locale) throws ClassNotFoundException {
 
 		// SearchResult searchResult = persistenceDelegate.list(entityClass, searchConfig);
 		Map<String, GenericFieldDetails> fieldDetails = new HashMap<>();
@@ -232,7 +232,8 @@ public class GenericApiLoadService {
 			return resultLines;
 		};
 
-		return genericExportManager.export(entityName, list.stream().map(originalLine).collect(toList()), fileFormat, fieldDetails, genericFieldDetails.stream().map(GenericFieldDetails::getName).collect(Collectors.toList()));
+		return genericExportManager.export(entityName, list.stream().map(originalLine).collect(toList()), fileFormat, fieldDetails,
+                genericFieldDetails.stream().map(GenericFieldDetails::getName).collect(Collectors.toList()), locale);
 	}
 
 	private String nameOrHeader(GenericFieldDetails x) {

@@ -31,7 +31,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.meveo.model.payments.PaymentMethodEnum.CARD;
 import static org.meveo.model.payments.PaymentMethodEnum.DIRECTDEBIT;
@@ -40,6 +39,11 @@ import static org.meveo.model.payments.PaymentMethodEnum.DIRECTDEBIT;
 public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
     private static final String OCC_TEMPLATE_ADJ_SD_CODE = "ADJ_SD";
+
+    private static final String OCC_PAY_SD_TEMPLATE = "PAY_SD";
+
+    @Inject
+    AccountOperationService accountOperationService;
 
     @Inject
     private AuditLogService auditLogService;
@@ -79,10 +83,6 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
     @Inject
     private RatedTransactionService ratedTransactionService;
-
-    /** The OCCTemplate service. */
-	@Inject
-	private OCCTemplateService oCCTemplateService;
 
     @Inject
     private OCCTemplateService occTemplateService;
@@ -313,7 +313,8 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         checkSecurityDepositPaymentAmount(securityDeposit, securityDepositPaymentInput.getAmount(), recordedInvoice);
         checkSecurityDepositSubscription(securityDeposit, recordedInvoice);
         checkSecurityDepositServiceInstance(securityDeposit, recordedInvoice);
-        matchSecurityDepositPayments(securityDeposit, recordedInvoice, securityDepositPaymentInput.getAmount());
+        Long securityDepositAOId = createSecurityDepositPaymentAccountOperation(securityDeposit, securityDepositPaymentInput.getAmount());
+        matchSecurityDepositPayments(securityDeposit, recordedInvoice, securityDepositAOId, securityDepositPaymentInput.getAmount());
         logPaymentHistory(securityDepositPaymentInput, securityDeposit);
 
         DebitSecurityDeposit(securityDeposit, securityDepositPaymentInput.getAmount());
@@ -325,6 +326,30 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
         auditLogService.trackOperation("DEBIT", new Date(), securityDeposit, securityDeposit.getCode());
 
+    }
+
+    public Long createSecurityDepositPaymentAccountOperation(SecurityDeposit securityDeposit, BigDecimal amount) {
+
+        OCCTemplate occTemplate = occTemplateService.findByCode(OCC_PAY_SD_TEMPLATE);
+
+        Payment securityDepositPaymentAccountOperation = new Payment();
+        securityDepositPaymentAccountOperation.setAmount(amount);
+        securityDepositPaymentAccountOperation.setDepositDate(new Date());
+        securityDepositPaymentAccountOperation.setPaymentMethod(PaymentMethodEnum.CHECK);
+        securityDepositPaymentAccountOperation.setCustomerAccount(securityDeposit.getCustomerAccount());
+        securityDepositPaymentAccountOperation.setUnMatchingAmount(amount);
+        securityDepositPaymentAccountOperation.setTransactionCategory(OperationCategoryEnum.CREDIT);
+        securityDepositPaymentAccountOperation.setCode("PAY_SD");
+        securityDepositPaymentAccountOperation.setCollectionDate(new Date());
+        securityDepositPaymentAccountOperation.setMatchingStatus(MatchingStatusEnum.P);
+        securityDepositPaymentAccountOperation.setDescription("Payment by security deposit");
+        securityDepositPaymentAccountOperation.setType("P");
+        securityDepositPaymentAccountOperation.setReference(securityDeposit.getCode());
+        securityDepositPaymentAccountOperation.setJournal(occTemplate != null ? occTemplate.getJournal() : null);
+        securityDepositPaymentAccountOperation.setTransactionDate(new Date());
+        securityDepositPaymentAccountOperation.setAccountingDate(new Date());
+
+        return accountOperationService.createAndReturnReference(securityDepositPaymentAccountOperation);
     }
 
     private void logPaymentHistory(SecurityDepositPaymentInput securityDepositPaymentInput, SecurityDeposit securityDeposit) {
@@ -346,15 +371,12 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         update(securityDeposit);
     }
 
-    private void matchSecurityDepositPayments(SecurityDeposit securityDeposit, AccountOperation accountOperation, BigDecimal amount)  {
+    private void matchSecurityDepositPayments(SecurityDeposit securityDeposit, AccountOperation accountOperation, Long securityDepositAOId, BigDecimal amount)  {
 
         CustomerAccount customerAccount = securityDeposit.getCustomerAccount();
 
-        List<Long> aosIdsToMatch = securityDepositTransactionService.getSecurityDepositTransactionBySecurityDepositId(securityDeposit.getId())
-                .stream().filter(securityDepositTransaction ->OperationCategoryEnum.CREDIT.equals(securityDepositTransaction.getAccountOperation().getTransactionCategory()))
-                .filter(securityDepositTransaction -> securityDepositTransaction.getAccountOperation().getMatchingStatus() == MatchingStatusEnum.O || securityDepositTransaction.getAccountOperation().getMatchingStatus() == MatchingStatusEnum.P)
-                .map(securityDepositTransaction -> securityDepositTransaction.getAccountOperation().getId())
-                        .collect(Collectors.toList());
+        List<Long> aosIdsToMatch = new ArrayList<>();
+        aosIdsToMatch.add(securityDepositAOId);
         aosIdsToMatch.add(accountOperation.getId());
 
         try {
@@ -412,14 +434,14 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
 
     void checkSecurityDepositPaymentAmount(SecurityDeposit securityDeposit, BigDecimal amount, AccountOperation accountOperation) {
+
         if (amount.compareTo(securityDeposit.getCurrentBalance()) > 0) {
             throw new InvalidParameterException("The amount to be paid must be less than or equal to the current security deposit balance");
         }
 
-        if (amount.compareTo(accountOperation.getAmount()) > 0) {
+        if (amount.compareTo(accountOperation.getAmount()) > 0 || amount.compareTo(accountOperation.getUnMatchingAmount()) > 0) {
             throw new InvalidParameterException("The amount to be paid must be less than or equal to the unpaid amount of the invoice");
         }
-
 
     }
 
@@ -439,20 +461,21 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         return recordedInvoice;
     }
 
-    public void createSD(Invoice invoice, SecurityDepositTemplate defaultSDTemplate, Long count) {
-        SecurityDeposit sd = new SecurityDeposit();            
-        sd.setTemplate(defaultSDTemplate);        
+    public void createSecurityDeposit(Invoice invoice, SecurityDepositTemplate defaultSDTemplate, Long count) {
+        SecurityDeposit securityDeposit = new SecurityDeposit();
+        securityDeposit.setTemplate(defaultSDTemplate);
         String securityDepositName = defaultSDTemplate.getTemplateName();
-        sd.setCode(securityDepositName + "-" + count);
-        sd.setAmount(invoice.getAmountWithTax());
-        sd.setStatus(SecurityDepositStatusEnum.VALIDATED);
-        sd.setCustomerAccount(invoice.getBillingAccount().getCustomerAccount());
+        securityDeposit.setCode(securityDepositName + "-" + count);
+        securityDeposit.setAmount(invoice.getAmountWithTax());
+        securityDeposit.setStatus(SecurityDepositStatusEnum.VALIDATED);
+        securityDeposit.setCustomerAccount(invoice.getBillingAccount().getCustomerAccount());
+        securityDeposit.setBillingAccount(invoice.getBillingAccount());
         if (providerService.getProvider().getCode() != null) {
             Provider provider = providerService.findByCode(providerService.getProvider().getCode());
-            sd.setCurrency(provider.getCurrency()); 
+            securityDeposit.setCurrency(provider.getCurrency());
         }
-        sd.setSecurityDepositInvoice(invoice);
-        create(sd);
+        securityDeposit.setSecurityDepositInvoice(invoice);
+        create(securityDeposit);
     }
 
 }
