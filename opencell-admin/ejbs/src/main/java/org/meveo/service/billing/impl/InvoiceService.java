@@ -1449,7 +1449,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                                             noValidationError = false;
                                         } else if (InvoiceValidationStatusEnum.SUSPECT.equals(status)) {
                                             invoice.setStatus(InvoiceStatusEnum.SUSPECT);
-                                            invoice.setRejectReason((String) methodContext.get(Script.INVOICE_VALIDATION_REASON));
+                                            invoice.setRejectReason("Suspected by rule " + validationRule.getDescription());
                                             invoice.setRejectedByRule(validationRule);
                                             noValidationError = false;
                                         }
@@ -5932,9 +5932,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         }
                     }
 
-                    for(LinkedInvoice inv: invoice.getLinkedInvoices()) {
-                    	linkedInvoiceService.detach(inv);
-                    }
+//                    for(LinkedInvoice inv: invoice.getLinkedInvoices()) {
+//                    	linkedInvoiceService.detach(inv);
+//                    }
                     em.flush();
 
                     final int maxValue =
@@ -6592,6 +6592,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 Invoice invoiceTmp = findById(invoiceId);
                 if (invoiceTmp == null) {
                     throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
+                }
+                if(invoiceTmp.getInvoiceType() != null && invoiceTmp.getInvoiceType().getCode().equals("ADV")) {
+                    throw new BusinessApiException("The invoice of type Advance can not be linked manually");
                 }
                 if (!toUpdate.getInvoiceType().getAppliesTo().contains(invoiceTmp.getInvoiceType())) {
                     throw new BusinessApiException("InvoiceId " + invoiceId + " cant be linked");
