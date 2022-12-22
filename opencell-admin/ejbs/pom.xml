@@ -758,7 +758,6 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
-            <scope>runtime</scope>
         </dependency>
 
         <dependency>
