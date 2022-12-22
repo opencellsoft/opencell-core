@@ -18,7 +18,7 @@ import org.meveo.model.ObservableEntity;
 @Cacheable
 @Table(name = "untdid_4451_invoice_subject_code")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "untdid_5189_allowance_code_seq"), })
-public class invoiceSubject extends AuditableEntity{
+public class UntdidInvoiceSubjectCode extends AuditableEntity{
 	
 	@Column(name = "code_name", length = 500)
 	@Size(max = 20)

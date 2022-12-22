@@ -16,17 +16,17 @@ import org.meveo.model.ObservableEntity;
 @Entity
 @ObservableEntity
 @Cacheable
-@Table(name = "untdid_5189_allowance_code")
+@Table(name = "untdid_4461_payment_means")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "untdid_5189_allowance_code_seq"), })
-public class Allowance extends AuditableEntity{
+public class UntdidPaymentMeans extends AuditableEntity{
 	
 	@Column(name = "code_name", length = 500)
 	@Size(max = 20)
 	private String codeName;
 	  
-	@Column(name = "description", length = 500)
+	@Column(name = "usage_in_EN16931", length = 500)
 	@Size(max = 20)
-	private String description;
+	private String usageEN16931;
 
 	public String getCodeName() {
 		return codeName;
@@ -36,11 +36,12 @@ public class Allowance extends AuditableEntity{
 		this.codeName = codeName;
 	}
 
-	public String getDescription() {
-		return description;
+	public String getUsageEN16931() {
+		return usageEN16931;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setUsage_in_EN16931(String usageEN16931) {
+		this.usageEN16931 = usageEN16931;
 	}
+	
 }

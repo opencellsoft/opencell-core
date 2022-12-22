@@ -18,30 +18,30 @@ import org.meveo.model.ObservableEntity;
 @Cacheable
 @Table(name = "untdid_vatex")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "untdid_vatex_seq"), })
-public class VatExemption extends AuditableEntity{
+public class UntdidInvoiceCodeType extends AuditableEntity{
 	
-	@Column(name = "code_name", length = 500)
+	@Column(name = "en16931_interpretation", length = 20)
 	@Size(max = 20)
-	private String codeName;
+	private String interpretation16931;
 	  
-	@Column(name = "remark", length = 500)
+	@Column(name = "name", length = 500)
 	@Size(max = 20)
-	private String remark;
+	private String name;
 
-	public String getCodeName() {
-		return codeName;
+	public String getInterpretation16931() {
+		return interpretation16931;
 	}
 
-	public void setCodeName(String codeName) {
-		this.codeName = codeName;
+	public void setInterpretation16931(String interpretation16931) {
+		this.interpretation16931 = interpretation16931;
 	}
 
-	public String getRemark() {
-		return remark;
+	public String getName() {
+		return name;
 	}
 
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
+	public void setName(String name) {
+		this.name = name;
+	}	
 
 }
