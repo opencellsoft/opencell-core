@@ -9,7 +9,7 @@
 		<groupId>com.opencellsoft</groupId>
 		<artifactId>opencell</artifactId>
 		<relativePath>../pom.xml</relativePath>
-		<version>10.4.22</version>
+		<version>10.4.22-490-9f1cbfd</version>
 	</parent>
 	<artifactId>opencell-api</artifactId>
 	<name>Opencell API</name>
