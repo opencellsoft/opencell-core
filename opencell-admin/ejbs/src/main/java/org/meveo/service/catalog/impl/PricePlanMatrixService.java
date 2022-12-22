@@ -41,6 +41,8 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
+import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
+import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -51,6 +53,7 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.enums.PriceVersionTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
@@ -708,7 +711,27 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
             throw new EntityDoesNotExistsException(PricePlanMatrix.class, pricePlanCode);
         }
 
-        return new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), returnPricePlanMatrixLine);
+        PricePlanMatrixDto pricePlanMatrixDto = new PricePlanMatrixDto(pricePlanMatrix,
+                entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), false);
+
+        List<PricePlanMatrixVersionDto> versionsDto = new ArrayList<>();
+
+        for (PricePlanMatrixVersion ppmVersion : pricePlanMatrix.getVersions()) {
+            PricePlanMatrixVersionDto ppmVersionDto = new PricePlanMatrixVersionDto(ppmVersion, false);
+
+            List<PricePlanMatrixLine> ppmLines = getEntityManager().createNamedQuery("PricePlanMatrixLine.findByPricePlanMatrixVersion")
+                    .setParameter("pricePlanMatrixVersion", ppmVersion).getResultList();
+
+            if (returnPricePlanMatrixLine) {
+                ppmVersionDto.setLines(ppmLines.stream().map(PricePlanMatrixLineDto::new).collect(Collectors.toSet()));
+            }
+
+            versionsDto.add(ppmVersionDto);
+        }
+
+        pricePlanMatrixDto.setVersions(versionsDto);
+
+        return pricePlanMatrixDto;
     }
 
     public PricePlanMatrix duplicatePricePlanMatrix(PricePlanMatrix pricePlanMatrix, PricePlanMatrixVersion pricePlanMatrixVersion, String pricePlanMatrixNewCode, PriceVersionTypeEnum priceVersionType) {
