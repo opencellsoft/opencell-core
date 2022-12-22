@@ -290,6 +290,14 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
                 .collect(Collectors.toList());
     }
 
+    public List<PricePlanMatrixVersionDto> getVersions() {
+        return versions;
+    }
+
+    public void setVersions(List<PricePlanMatrixVersionDto> versions) {
+        this.versions = versions;
+    }
+
     /**
      * Gets the event code.
      *
