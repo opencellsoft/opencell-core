@@ -9067,6 +9067,19 @@ Only offer actually present on invoice will be tested."}'/>
 		<delete tableName="dwh_report_extract_params">
 			<where> reportextract_id IN (-31, -32, -33, -34 )</where>
 		</delete>
+		<delete tableName="dwh_report_extract">
+	        <where>code IN ('KPIAgedBalanceReporting', 'KPICustomerRevenuReporting', 'KPICustomersPerDunningReport', 'KPICustomersPerOfferReport')</where>
+	    </delete>
+		<delete tableName="meveo_script_instance">
+	        <where>code IN ('org.meveo.service.script.presale.KPIAgedBalanceReporting', 'org.meveo.service.script.presale.KPICustomerRevenuReporting', 'org.meveo.service.script.presale.KPICustomerPerDunningReporting', 'org.meveo.service.script.presale.KPICustomerPerOfferReporting')</where>
+	    </delete>
+
+
+    </changeSet>
+	<changeSet id="#12569_20221222" author="HichamELHALOUI">
+		<delete tableName="dwh_report_extract_params">
+			<where> reportextract_id IN (-31, -32, -33, -34 )</where>
+		</delete>
 		<delete tableName="dwh_report_extract_execution">
 	        <where>report_extract_id IN (-31, -32, -33, -34 )</where>
 	    </delete>

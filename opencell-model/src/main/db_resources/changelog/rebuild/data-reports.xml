@@ -1570,7 +1570,7 @@ order by edr.STATUS, edr.id DESC]]>
     <changeSet id="#5425_20200930 - Failed to execute some report extract" author="Mohamed-Ali-HAMMAL"/>
     <changeSet id="#12569_20221222" author="HichamELHALOUI"/>
     <changeSet id="#12573_20221223" author="HichamELHALOUI"/>
-            
+
        <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data-reports" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data-reports.xml'</sql>
