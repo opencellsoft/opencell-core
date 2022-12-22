@@ -707,7 +707,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
                     // A price discount is applied to a default price by a contract
                     if (contractItem != null && ContractRateTypeEnum.PERCENTAGE.equals(contractItem.getContractRateType()) ) {
-                        if(contractItem.getRate() > 0){
+                        if(contractItem.getRate() != null && contractItem.getRate() > 0){
                             BigDecimal amount = unitPriceWithoutTax.abs().multiply(BigDecimal.valueOf(contractItem.getRate()).divide(HUNDRED));
                             if (amount != null && unitPriceWithoutTax.compareTo(amount) > 0)
                                 unitPriceWithoutTax = unitPriceWithoutTax.subtract(amount);
