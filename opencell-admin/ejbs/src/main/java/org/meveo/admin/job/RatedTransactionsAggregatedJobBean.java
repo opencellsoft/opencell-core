@@ -77,7 +77,7 @@ public class RatedTransactionsAggregatedJobBean extends IteratorBasedJobBean<Agg
         invoicingDate = new Date();
         List<AggregatedWalletOperation> aggregatedWo = walletOperationService.listToInvoiceIdsWithGrouping(invoicingDate, aggregationSettings);
 
-        return Optional.of(new SynchronizedIterator<AggregatedWalletOperation>(aggregatedWo));
+        return Optional.of(new SynchronizedIterator<>(aggregatedWo));
     }
 
     /**
