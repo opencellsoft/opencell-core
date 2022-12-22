@@ -5932,9 +5932,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         }
                     }
 
-//                    for(LinkedInvoice inv: invoice.getLinkedInvoices()) {
-//                    	linkedInvoiceService.detach(inv);
-//                    }
                     em.flush();
 
                     final int maxValue =
