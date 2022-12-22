@@ -2793,6 +2793,10 @@ public class SubscriptionApi extends BaseApi {
                 }
             }
         }
+        
+        if (seller == null) {
+        	throw new BusinessApiException("User account " + userAccount.getCode() + " doesn't have a default seller. Please provide a seller for this subscription.");
+        }
 
         Subscription subscription = new Subscription();
 
