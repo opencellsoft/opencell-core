@@ -2648,8 +2648,9 @@ public class SubscriptionApi extends BaseApi {
         if(!StringUtils.isBlank(postData.getProductToInstantiateDto())) {
             List<ProductToInstantiateDto> products=postData.getProductToInstantiateDto();
             if(products!=null && !products.isEmpty()) {
-                for(ProductToInstantiateDto productDto:products)
+                for(ProductToInstantiateDto productDto:products) {
                     processProduct(subscription,productDto);
+                }
             }
         }
         return subscription;
