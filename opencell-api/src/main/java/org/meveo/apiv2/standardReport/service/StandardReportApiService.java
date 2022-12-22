@@ -12,8 +12,6 @@ import javax.ws.rs.*;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.apiv2.ordering.services.ApiService;
-import org.meveo.model.crm.Provider;
-import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.billing.impl.*;
 import org.meveo.service.payments.impl.CustomerAccountService;
