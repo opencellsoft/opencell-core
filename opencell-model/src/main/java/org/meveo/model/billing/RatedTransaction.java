@@ -177,7 +177,10 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.invalidateRTByInvoice", query = "UPDATE RatedTransaction r set r.invoice=null, r.status='OPEN' WHERE r.invoice=:invoice"),
         @NamedQuery(name = "RatedTransaction.markAsProcessed", query = "UPDATE RatedTransaction rt set rt.status='PROCESSED' WHERE rt.id in (:listOfIds)"),
         @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableByRtIdInBatch", query = "SELECT new org.meveo.admin.async.AmountsToInvoice(r.billingAccount.id, sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r WHERE r.status='OPEN' AND r.id in (:ids) group by r.billingAccount.id"),
-        @NamedQuery(name = "RatedTransaction.BillingAccountByRTIds", query = "SELECT DISTINCT rt.billingAccount FROM RatedTransaction rt WHERE rt.id in (:ids)"),
+        //ORACLE COMPATIBILITY : Oracle does not support DISTINCT with SELECT query that have CLOB (ORA-00932)
+        //SELECT DISTINCT rt.billingAccount FROM RatedTransaction rt WHERE rt.id in (:ids) not compatible with ORACLE since billingAccount has a CLOB field = cfValues
+        @NamedQuery(name = "RatedTransaction.BillingAccountByRTIds", query =
+                "SELECT ba FROM BillingAccount ba WHERE ba.id IN (SELECT DISTINCT rt.billingAccount.id FROM RatedTransaction rt WHERE rt.id in (:ids))"),
         @NamedQuery(name = "RatedTransaction.linkRTWithInvoiceLine", query = "UPDATE RatedTransaction rt set rt.status='PROCESSED', rt.invoiceLine.id = :il WHERE rt.id in :ids"),
         @NamedQuery(name = "RatedTransaction.linkRTWithInvoice", query = "UPDATE RatedTransaction rt set rt.invoice = :invoice, rt.billingRun = :billingRun, rt.status = 'BILLED', rt.updated = :now WHERE rt.invoiceLine.id in :ids"),
         @NamedQuery(name = "RatedTransaction.detachRTFromSubCat", query = "UPDATE RatedTransaction r SET r.invoiceAgregateF = null WHERE r.id IN (:rtIds)"),})
