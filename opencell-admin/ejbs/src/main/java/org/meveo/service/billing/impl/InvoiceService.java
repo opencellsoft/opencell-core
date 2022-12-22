@@ -1421,7 +1421,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 methodContext.put("billingRun", invoice.getBillingRun());
                 while(validationRuleIterator.hasNext() && noValidationError) {
                     InvoiceValidationRule validationRule = validationRuleIterator.next();
-                    if(dateBetween(invoice.getInvoiceDate(), validationRule.getValidFrom(), validationRule.getValidTo())) {
+                    if(DateUtils.isWithinDateWithoutTime(invoice.getInvoiceDate(), validationRule.getValidFrom(), validationRule.getValidTo())) {
                         if(validationRule.getType() == ValidationRuleTypeEnum.SCRIPT) {
                             ScriptInterface validationRuleScript =
                                     scriptInstanceService.getScriptInstance(validationRule.getValidationScript());
@@ -1489,11 +1489,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
             update(invoice);
             commit();
         }
-    }
-
-    private boolean dateBetween(Date invoiceDate, Date dateFrom, Date dateTo) {
-        return setTimeToZero(invoiceDate).after(setTimeToZero(dateFrom))
-                && setTimeToZero(invoiceDate).before(setTimeToZero(dateTo));
     }
 
     /**
