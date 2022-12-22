@@ -69,6 +69,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -625,6 +626,10 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             invoiceCopy.setId(null);
             invoiceCopy.assignTemporaryInvoiceNumber();
             serviceSingleton.assignInvoiceNumberVirtual(invoiceCopy);
+            PaymentMethod preferedPaymentMethod = invoiceCopy.getBillingAccount().getCustomerAccount().getPreferredPaymentMethod();
+            if (preferedPaymentMethod != null) {
+                invoiceCopy.setPaymentMethodType(preferedPaymentMethod.getPaymentType());
+            }
             getPersistenceService().create(invoiceCopy);
 
             for (RatedTransaction rtCopy : ratedTransactionCopy) {
@@ -747,6 +752,10 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	        
     	}
     	entity.setBillingAccount(billingAccountService.findById(entity.getBillingAccount().getId()));
+        PaymentMethod preferedPaymentMethod = entity.getBillingAccount().getCustomerAccount().getPreferredPaymentMethod();
+        if (preferedPaymentMethod != null) {
+            entity.setPaymentMethodType(preferedPaymentMethod.getPaymentType());
+        }
     	if(entity.getInvoiceNumber() == null) {
 	        entity = serviceSingleton.assignInvoiceNumberVirtual(entity);
 	        try {
