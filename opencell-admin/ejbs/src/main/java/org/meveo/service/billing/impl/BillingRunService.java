@@ -188,8 +188,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     @Inject
     private JobExecutionResultService jobExecutionResultService;
 
-    @Inject
-    private CommercialOrderService commercialOrderService;
     
     private static final  int rtPaginationSize = 30000;
 
