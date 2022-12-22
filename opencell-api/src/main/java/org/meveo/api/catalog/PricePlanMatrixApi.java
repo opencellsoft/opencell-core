@@ -458,14 +458,13 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
      * 
      * @see org.meveo.api.ApiService#find(java.lang.String)
      */
-    @Override
-    public PricePlanMatrixDto find(String pricePlanCode) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
+    public PricePlanMatrixDto find(String pricePlanCode, boolean returnPricePlanMatrixLine) throws MeveoApiException {
         if (StringUtils.isBlank(pricePlanCode)) {
             missingParameters.add("pricePlanCode");
             handleMissingParameters();
         }
 
-        return  pricePlanMatrixService.findPricePlanMatrix(pricePlanCode);
+        return  pricePlanMatrixService.findPricePlanMatrix(pricePlanCode, returnPricePlanMatrixLine);
     }
 
     public List<PricePlanMatrixDto> list(String eventCode) throws MeveoApiException {
@@ -481,7 +480,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
 
         List<PricePlanMatrixDto> pricePlanDtos = new ArrayList<>();
         for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
-            pricePlanDtos.add(new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+            pricePlanDtos.add(new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), true));
         }
 
         return pricePlanDtos;
@@ -495,7 +494,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         if (pricePlanMatrices != null) {
             for (PricePlanMatrix pricePlanMatrix : pricePlanMatrices) {
                 result.getPricePlanMatrixes().getPricePlanMatrix()
-                        .add(new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+                        .add(new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), true));
             }
         }
 
@@ -518,7 +517,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
             priceVersionTypeEnum = PriceVersionTypeEnum.valueOf(priceVersionType);
         }
     	PricePlanMatrix duplicate = pricePlanMatrixService.duplicatePricePlanMatrix(ppm, ppmv, pricePlanMatrixNewCode, priceVersionTypeEnum);
-    	return new PricePlanMatrixDto(pricePlanMatrixService.findById(duplicate.getId()), null);
+    	return new PricePlanMatrixDto(pricePlanMatrixService.findById(duplicate.getId()), null, true);
     }
 
 }
