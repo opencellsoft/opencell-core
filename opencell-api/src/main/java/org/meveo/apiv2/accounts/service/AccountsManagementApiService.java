@@ -389,6 +389,19 @@ public class AccountsManagementApiService {
                 }
                 break;
         }
+
+        // Period start and end date
+        if (CollectionUtils.isNotEmpty(dto.getCounterPeriods())) {
+            dto.getCounterPeriods().forEach(periodDto -> {
+                if(StringUtils.isBlank(periodDto.getCode())) {
+                    throw new BusinessApiException("Period code is mandatory");
+                }
+
+                if (periodDto.getStartDate() == null || periodDto.getEndDate() == null) {
+                    throw new BusinessApiException("Period Start and End date are mandatory");
+                }
+            });
+        }
         return counterTemplate;
     }
 
