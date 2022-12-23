@@ -8976,5 +8976,18 @@ Only offer actually present on invoice will be tested."}'/>
 			<column name="collection" valueNumeric="0" />
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateSubscriptionAge')" />
 		</insert>
-    </changeSet> 
+    </changeSet>
+	<changeSet id="#12569_20221222" author="HichamELHALOUI">
+		<delete tableName="dwh_report_extract_params">
+			<where> reportextract_id IN (-32, -34 )</where>
+		</delete>
+		<delete tableName="dwh_report_extract">
+	        <where>code IN ('KPIAgedBalanceReporting', 'KPICustomerRevenuReporting', 'KPICustomersPerDunningReport', 'KPICustomersPerOfferReport')</where>
+	    </delete>
+		<delete tableName="meveo_script_instance">
+	        <where>code IN ('org.meveo.service.script.presale.KPIAgedBalanceReporting', 'org.meveo.service.script.presale.KPICustomerRevenuReporting', 'org.meveo.service.script.presale.KPICustomerPerDunningReporting', 'org.meveo.service.script.presale.KPICustomerPerOfferReporting')</where>
+	    </delete>
+
+
+	</changeSet>
 </databaseChangeLog>
