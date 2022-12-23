@@ -298,7 +298,7 @@ public class AccountsManagementApiService {
                 serviceInstanceService.findByCodeAndCodeSubscription(dto.getProductCode(), dto.getSubscriptionCode()));
 
         if (CollectionUtils.isEmpty(serviceInstances)) {
-            throw new EntityDoesNotExistsException("No service instance found for [code=" + dto.getProductCode() + ", subscription codd=" + dto.getSubscriptionCode() + "]");
+            throw new EntityDoesNotExistsException("No service instance found for [product code=" + dto.getProductCode() + ", subscription code=" + dto.getSubscriptionCode() + "]");
         }
 
         // si level SI, on boucle et on traite pour chaque serviceInstance retrouvé
