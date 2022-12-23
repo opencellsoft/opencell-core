@@ -35,7 +35,7 @@ public class ValidateCreditCategoryScript extends Script {
 		if (creditCategories != null && !creditCategories.isEmpty()) {
 			List<Long> creditCategorytIds = creditCategories.stream().map(CreditCategory::getId).collect(Collectors.toList());
 			long counter = billingAccountService.getCountByCreditCategory(invoice.getBillingAccount().getId(), creditCategorytIds);
-			context.put(Script.INVOICE_VALIDATION_STATUS, counter == 0 ? InvoiceValidationStatusEnum.VALID : InvoiceValidationStatusEnum.REJECTED);
+			context.put(Script.INVOICE_VALIDATION_STATUS, counter == 0 ? InvoiceValidationStatusEnum.VALID : (InvoiceValidationStatusEnum) context.get(Script.RESULT_VALUE));
 		} else {
 			context.put(Script.INVOICE_VALIDATION_STATUS, InvoiceValidationStatusEnum.VALID);
 		}
