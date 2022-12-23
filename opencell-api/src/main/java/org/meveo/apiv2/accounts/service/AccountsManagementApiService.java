@@ -390,7 +390,7 @@ public class AccountsManagementApiService {
                 break;
         }
 
-        // Period start and end date
+        // Period validations
         if (CollectionUtils.isNotEmpty(dto.getCounterPeriods())) {
             dto.getCounterPeriods().forEach(periodDto -> {
                 if(StringUtils.isBlank(periodDto.getCode())) {
