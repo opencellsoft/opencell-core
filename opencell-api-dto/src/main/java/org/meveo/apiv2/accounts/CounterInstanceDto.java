@@ -14,7 +14,7 @@ import java.util.Set;
 @JsonDeserialize(as = ImmutableCounterInstanceDto.class)
 public interface CounterInstanceDto {
 
-    @NotNull
+    @Nullable
     String getCounterTemplateCode();
 
     @Nullable
@@ -26,10 +26,10 @@ public interface CounterInstanceDto {
     @Nullable
     String getUserAccountCode();
 
-    @NotNull
+    @Nullable
     String getSubscriptionCode();
 
-    @NotNull
+    @Nullable
     String getProductCode();
 
     @Nullable

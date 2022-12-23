@@ -214,7 +214,7 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 		if (oneShotChargeTemplates == null || oneShotChargeTemplates.isEmpty()) {
 			return Collections.emptyList();
 		}
-		return oneShotChargeTemplates.stream().filter(os -> os.getOneShotChargeTemplateType().equals(OneShotChargeTemplateTypeEnum.OTHER)).collect(Collectors.toList());
+		return oneShotChargeTemplates.stream().filter(os -> OneShotChargeTemplateTypeEnum.OTHER.equals(os.getOneShotChargeTemplateType())).collect(Collectors.toList());
 	}
 
 }

@@ -1442,14 +1442,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
                                     if (status != null && status instanceof InvoiceValidationStatusEnum) {
                                         if (InvoiceValidationStatusEnum.REJECTED.equals(status)) {
                                             invoice.setStatus(InvoiceStatusEnum.REJECTED);
-                                            invoice.setRejectReason("An error has occurred evaluating rule [id=" + validationRule.getId() + ", "
-                                                    + validationRule.getDescription() + ", script=" + validationRule.getValidationScript()
-                                                    + methodContext.get(Script.INVOICE_VALIDATION_REASON) == null ? "" : ": " + methodContext.get(Script.INVOICE_VALIDATION_REASON));
+                                            invoice.setRejectReason("Rejected by rule " + validationRule.getDescription());
                                             invoice.setRejectedByRule(validationRule);
                                             noValidationError = false;
                                         } else if (InvoiceValidationStatusEnum.SUSPECT.equals(status)) {
                                             invoice.setStatus(InvoiceStatusEnum.SUSPECT);
-                                            invoice.setRejectReason((String) methodContext.get(Script.INVOICE_VALIDATION_REASON));
+                                            invoice.setRejectReason("Suspected by rule " + validationRule.getDescription());
                                             invoice.setRejectedByRule(validationRule);
                                             noValidationError = false;
                                         }
@@ -1464,18 +1462,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
                                             Map.of("invoice", invoice), Boolean.class);
                             try {
                                 if(!((Boolean) validationResult)) {
-                                    noValidationError = true;
+                                    noValidationError = false;
                                     if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.SUSPECT) {
                                         invoice.setStatus(InvoiceStatusEnum.SUSPECT);
-                                        invoice.setRejectReason("An error has occurred evaluating rule [id="
-                                                + validationRule.getId() + ", " + validationRule.getDescription());
+                                        invoice.setRejectReason("Rejected by rule " + validationRule.getDescription());
                                         invoice.setRejectedByRule(validationRule);
                                     }
                                     if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.REJECTED) {
                                         invoice.setStatus(InvoiceStatusEnum.REJECTED);
                                         invoice.setRejectedByRule(validationRule);
-                                        invoice.setRejectReason("An error has occurred evaluating rule [id="
-                                                + validationRule.getId() + ", " + validationRule.getDescription());
+                                        invoice.setRejectReason("Suspected by rule " + validationRule.getDescription());
                                     }
                                 }
                             } catch (Exception exception) {
@@ -5927,9 +5923,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         }
                     }
 
-                    for(LinkedInvoice inv: invoice.getLinkedInvoices()) {
-                    	linkedInvoiceService.detach(inv);
-                    }
                     em.flush();
 
                     final int maxValue =
@@ -6587,6 +6580,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 Invoice invoiceTmp = findById(invoiceId);
                 if (invoiceTmp == null) {
                     throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
+                }
+                if(invoiceTmp.getInvoiceType() != null && invoiceTmp.getInvoiceType().getCode().equals("ADV")) {
+                    throw new BusinessApiException("The invoice of type Advance can not be linked manually");
                 }
                 if (!toUpdate.getInvoiceType().getAppliesTo().contains(invoiceTmp.getInvoiceType())) {
                     throw new BusinessApiException("InvoiceId " + invoiceId + " cant be linked");
