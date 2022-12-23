@@ -1,8 +1,8 @@
 package org.meveo.apiv2.dunning.service;
 
 import org.meveo.api.exception.BusinessApiException;
-import org.meveo.model.settings.GlobalSettings;
-import org.meveo.service.settings.impl.GlobalSettingsService;
+import org.meveo.model.securityDeposit.FinanceSettings;
+import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -11,12 +11,17 @@ import javax.inject.Inject;
 public class GlobalSettingsVerifier {
 
     @Inject
-    private GlobalSettingsService globalSettingsService;
+    private FinanceSettingsService financeSettingsService;
 
+    /**
+     * Check if dunning is enabled
+     *
+     * @throws BusinessApiException in case dunning is disabled
+     */
     public void checkActivateDunning() {
-        GlobalSettings lastOne = globalSettingsService.findLastOne();
-        if(lastOne != null && !lastOne.getActivateDunning()) {
-            throw new BusinessApiException("The action is not possible, GlobalSettings.activateDunning is disabled");
+        FinanceSettings settings = financeSettingsService.findLastOne();
+        if(settings != null && !settings.isActivateDunning()) {
+            throw new BusinessApiException("The action is not possible, FinanceSettings.activateDunning is disabled");
         }
     }
 }
