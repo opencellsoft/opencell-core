@@ -74,7 +74,7 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
         }
         if(policy.getDunningPolicyRules() != null && !policy.getDunningPolicyRules().isEmpty()) {
             try {
-                String query = "SELECT inv FROM Invoice inv WHERE (inv.paymentStatus = 'UNPAID' OR inv.paymentStatus = 'PPAID') AND inv.dunningCollectionPlanTriggered = false AND "
+                String query = "SELECT inv FROM Invoice inv WHERE inv.id = 55 and (inv.paymentStatus = 'UNPAID' OR inv.paymentStatus = 'PPAID') AND inv.dunningCollectionPlanTriggered = false AND "
                         + buildPolicyRulesFilter(policy.getDunningPolicyRules());
                 return (List<Invoice>) invoiceService.executeSelectQuery(query, null);
             } catch (Exception exception) {
@@ -296,7 +296,7 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
         }
         long daysDiff = TimeUnit.DAYS.convert((today.getTime() - dueDate.getTime()), TimeUnit.MILLISECONDS);
         if (policy.getDetermineLevelBy().equals(DunningDetermineLevelBy.DAYS_OVERDUE)) {
-            dayOverDueAndThresholdCondition = (dayOverDue.longValue() == daysDiff);
+            dayOverDueAndThresholdCondition = (dayOverDue.longValue() <= daysDiff);
         } else {
             BigDecimal minBalance = ofNullable(invoice.getRecordedInvoice())
                                             .map(RecordedInvoice::getUnMatchingAmount)
