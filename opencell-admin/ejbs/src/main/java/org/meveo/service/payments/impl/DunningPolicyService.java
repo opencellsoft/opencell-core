@@ -296,7 +296,7 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
         }
         long daysDiff = TimeUnit.DAYS.convert((today.getTime() - dueDate.getTime()), TimeUnit.MILLISECONDS);
         if (policy.getDetermineLevelBy().equals(DunningDetermineLevelBy.DAYS_OVERDUE)) {
-            dayOverDueAndThresholdCondition = (dayOverDue.longValue() == daysDiff);
+            dayOverDueAndThresholdCondition = (dayOverDue.longValue() <= daysDiff);
         } else {
             BigDecimal minBalance = ofNullable(invoice.getRecordedInvoice())
                                             .map(RecordedInvoice::getUnMatchingAmount)
