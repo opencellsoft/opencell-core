@@ -7,6 +7,7 @@ import org.meveo.apiv2.billing.ExceptionalBillingRun;
 import org.meveo.apiv2.billing.ImmutableExceptionalBillingRun;
 import org.meveo.apiv2.ordering.ResourceMapper;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunAutomaticActionEnum;
 
 public class InvoicingMapper extends ResourceMapper<ExceptionalBillingRun, BillingRun> {
 
@@ -15,8 +16,18 @@ public class InvoicingMapper extends ResourceMapper<ExceptionalBillingRun, Billi
         BillingRun billingRun = new BillingRun();
         billingRun.setInvoiceDate(resource.getInvoiceDate());
         billingRun.setCollectionDate(resource.getCollectionDate());
-        billingRun.setSuspectAutoAction(resource.getSuspectAutoAction());
-        billingRun.setRejectAutoAction(resource.getRejectAutoAction());
+        if(resource.getRejectAutoAction() == null) {
+            billingRun.setRejectAutoAction(BillingRunAutomaticActionEnum.MANUAL_ACTION);
+        }
+        else {
+            billingRun.setRejectAutoAction(resource.getRejectAutoAction());
+        }        
+        if(resource.getSuspectAutoAction() == null) {
+            billingRun.setSuspectAutoAction(BillingRunAutomaticActionEnum.AUTOMATIC_VALIDATION);
+        }
+        else {
+            billingRun.setSuspectAutoAction(resource.getSuspectAutoAction());
+        }
         billingRun.setSkipValidationScript(resource.isSkipValidationScript());
         billingRun.setUuid(randomUUID().toString());
         billingRun.setStatus(NEW);

@@ -7,19 +7,19 @@ import java.util.Map;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceValidationStatusEnum;
-import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptUtils;
 
-public class ValidateCustomerAgeScript extends Script {
+public class ValidateSubscriptionAgeScript extends Script {
 
 	private static final long serialVersionUID = 1L;
 
-	private BillingAccountService billingAccountService = (BillingAccountService) getServiceInterface(BillingAccountService.class.getSimpleName());
+	private InvoiceLineService invoiceLineService = (InvoiceLineService) getServiceInterface(InvoiceLineService.class.getSimpleName());
 
 	@Override
 	public void execute(Map<String, Object> context) throws BusinessException {
-		log.info("ValidateCustomerAgeScript EXECUTE context {}", context);
+		log.info("ValidateSubscriptionAgeScript EXECUTE context {}", context);
 
 		Invoice invoice = (Invoice) context.get(Script.CONTEXT_ENTITY);
 
@@ -28,17 +28,16 @@ public class ValidateCustomerAgeScript extends Script {
 			throw new BusinessException("No Invoice passed as CONTEXT_ENTITY");
 		}
 
-		log.info("Process ValidateCustomerAgeScript {}", invoice);
+		log.info("Process ValidateSubscriptionAgeScript {}", invoice);
 
-		long counter = billingAccountService.getCountByCustomerAge(invoice.getBillingAccount().getId(),
+		long counter = invoiceLineService.getCountBySubscriptionAge(invoice.getId(),
 				buildReferenceDateExpression(String.valueOf(context.get("referenceDate"))),
 				ScriptUtils.buildOperator(String.valueOf(context.get("operator"))),
 				buildLimitDate(invoice, (Integer) context.get("age")));
 
-		context.put(Script.INVOICE_VALIDATION_STATUS, counter == 0 ? InvoiceValidationStatusEnum.VALID : InvoiceValidationStatusEnum.REJECTED);
+		context.put(Script.INVOICE_VALIDATION_STATUS, counter > 0 ? InvoiceValidationStatusEnum.VALID : InvoiceValidationStatusEnum.REJECTED);
 		
-		log.info("Result Processing ValidateCustomerAgeScript {}", context.get(Script.INVOICE_VALIDATION_STATUS));
-
+		log.info("Result Processing ValidateSubscriptionAgeScript {}", context.get(Script.INVOICE_VALIDATION_STATUS));
 	}
 
 	private Date buildLimitDate(Invoice invoice, Integer age) {
@@ -51,20 +50,14 @@ public class ValidateCustomerAgeScript extends Script {
 	private String buildReferenceDateExpression(String referenceDate) {
 		String referenceDateExpression;
 		switch (referenceDate) {
-		case "Customer creation":
-			referenceDateExpression = "ba.customerAccount.customer.auditable.created";
+		case "Subscription creation":
+			referenceDateExpression = "il.subscription.auditable.created";
 			break;
-		case "Customer Account creation":
-			referenceDateExpression = "ba.customerAccount.auditable.created";
-			break;
-		case "Billing Account creation":
-			referenceDateExpression = "ba.auditable.created";
-			break;
-		case "Billing Account subscription":
-			referenceDateExpression = "ba.subscriptionDate";
+		case "Subscription date":
+			referenceDateExpression = "il.subscription.subscriptionDate";
 			break;
 		default:
-			referenceDateExpression = "ba.subscriptionDate";
+			referenceDateExpression = "il.subscription.subscriptionDate";
 			break;
 		}
 		return referenceDateExpression;

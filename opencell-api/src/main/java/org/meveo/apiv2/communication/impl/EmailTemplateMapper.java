@@ -22,15 +22,28 @@ public class EmailTemplateMapper {
         emailTemplateDto.setHtmlContent(emailTemplate.getHtmlContent());
         emailTemplateDto.setSubject(emailTemplate.getSubject());
         emailTemplateDto.setTextContent(emailTemplate.getTextContent());
-        emailTemplateDto.setTranslatedHtmlContent(TranslationsUtils.convertToTranslatedHtmlDto(emailTemplate.getTranslatedHtmlContent()));
-        emailTemplateDto.setTranslatedSubject(TranslationsUtils.convertToTranslatedSubjectDto(emailTemplate.getTranslatedSubject()));
-        emailTemplateDto.setTranslatedTextContent(TranslationsUtils.convertToTranslatedTextDto(emailTemplate.getTranslatedTextContent()));
+
+        if (emailTemplate.getTranslatedHtmlContent() != null) {
+            emailTemplateDto.setTranslatedHtmlContent(TranslationsUtils.convertToTranslatedHtmlDto(emailTemplate.getTranslatedHtmlContent()));
+        }
+        if (emailTemplate.getTranslatedSubject() != null) {
+            emailTemplateDto.setTranslatedSubject(TranslationsUtils.convertToTranslatedSubjectDto(emailTemplate.getTranslatedSubject()));
+        }
+        if (emailTemplate.getTranslatedTextContent() != null) {
+            emailTemplateDto.setTranslatedTextContent(TranslationsUtils.convertToTranslatedTextDto(emailTemplate.getTranslatedTextContent()));
+        }
 
         return emailTemplateDto;
     }
 
     public EmailTemplate toEntity(EmailTemplateDto emailTemplateDto, EmailTemplate emailTemplate) {
 
+        if (emailTemplate == null) {
+            emailTemplate = new EmailTemplate();
+        }
+        if (emailTemplateDto.getCode() != null) {
+            emailTemplate.setCode(emailTemplateDto.getCode());
+        }
         if (emailTemplateDto.getSubject() != null) {
             emailTemplate.setSubject(emailTemplateDto.getSubject());
         }
@@ -52,8 +65,6 @@ public class EmailTemplateMapper {
 
         return emailTemplate;
     }
-
-
 
     public EmailTemplate fromPatchDtoToEntity(EmailTemplatePatchDto emailTemplatePatchDto, EmailTemplate emailTemplate) {
 

@@ -833,6 +833,10 @@ public class DateUtils {
         return !dateToCheck.before(startDate) && !dateToCheck.after(endDate);
     }
 
+    public static boolean isWithinDateWithoutTime(Date dateToCheck, Date startDate, Date endDate) {
+        return isWithinDate(setTimeToZero(dateToCheck), setTimeToZero(startDate), setTimeToZero(endDate));
+    }
+    
     /**
      * Determine overlap between two date period. Null date values in both input and calculated date period mean open dates.
      * 

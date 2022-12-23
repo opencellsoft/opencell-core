@@ -150,7 +150,7 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.loadByBillingRun", query = "SELECT inv.id FROM Invoice inv WHERE inv.billingRun.id = :billingRunId"),
         @NamedQuery(name = "Invoice.findLinkedInvoicesByIdAndType", query = "SELECT inv.invoiceNumber, inv.invoiceDate, linkedinv.amount FROM Invoice inv inner join LinkedInvoice linkedinv on inv.id = linkedinv.linkedInvoiceValue.id where linkedinv.id.id = :invoiceId and inv.invoiceType.code =: invoiceTypeCode"),
         @NamedQuery(name = "Invoice.findInvoiceEligibleAdv", query = "select bi, adv from Invoice bi inner join  BillingAccount bba on bi.billingAccount.id = bba.id inner join Invoice adv on adv.billingAccount.id = bba.id inner join InvoiceType  it on it.id = adv.invoiceType.id"
-                + " where bi.billingRun.id = :billingRunId and it.code = 'ADV' and adv.status = 'VALIDATED' and adv.invoiceBalance > 0 and bi.status = 'DRAFT' order by bi.id, adv.auditable.created, adv.invoiceBalance"),
+                + " where bi.billingRun.id = :billingRunId and it.code = 'ADV' and adv.status = 'VALIDATED' and adv.invoiceBalance > 0 and bi.status in ('DRAFT', 'REJECTED', 'SUSPECT') order by bi.id, adv.auditable.created, adv.invoiceBalance"),
         @NamedQuery(name = "Invoice.findValidatedInvoiceAdvOrder", query = "select inv from Invoice inv  where  (inv.commercialOrder is null or inv.commercialOrder=:commercialOrder) and inv.status='VALIDATED' and inv.invoiceType.code = 'ADV' and inv.invoiceBalance > 0 and inv.billingAccount.id =:billingAccountId order by inv.commercialOrder, inv.auditable.created ASC"),
         @NamedQuery(name = "Invoice.findValidatedInvoiceAdvWithoutOrder", query = "select inv from Invoice inv  where  inv.commercialOrder is null  and inv.status='VALIDATED' and inv.invoiceType.code = 'ADV' and inv.invoiceBalance > 0 and inv.billingAccount.id =:billingAccountId"),
         @NamedQuery(name = "Invoice.findValidatedInvoiceAdvWithOrder", query = "select inv from Invoice inv  where  inv.commercialOrder=:commercialOrder and inv.status='VALIDATED' and inv.invoiceType.code = 'ADV' and inv.invoiceBalance > 0 and inv.billingAccount.id =:billingAccountId"),
@@ -364,7 +364,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     /**
      * Linked invoices
      */
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "id", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "id", cascade = CascadeType.PERSIST)
     private Set<LinkedInvoice> linkedInvoices = new HashSet<>();
 
     /**

@@ -1421,7 +1421,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 methodContext.put("billingRun", invoice.getBillingRun());
                 while(validationRuleIterator.hasNext() && noValidationError) {
                     InvoiceValidationRule validationRule = validationRuleIterator.next();
-                    if(dateBetween(invoice.getInvoiceDate(), validationRule.getValidFrom(), validationRule.getValidTo())) {
+                    if(DateUtils.isWithinDateWithoutTime(invoice.getInvoiceDate(), validationRule.getValidFrom(), validationRule.getValidTo())) {
                         if(validationRule.getType() == ValidationRuleTypeEnum.SCRIPT) {
                             ScriptInterface validationRuleScript =
                                     scriptInstanceService.getScriptInstance(validationRule.getValidationScript());
@@ -1436,6 +1436,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             }
                             if(validationRuleScript != null) {
                                 try {
+                                    methodContext.put(Script.RESULT_VALUE, validationRule.getFailStatus());
                                     validationRuleScript.execute(methodContext);
                                     Object status = methodContext.get(Script.INVOICE_VALIDATION_STATUS);
                                     if (status != null && status instanceof InvoiceValidationStatusEnum) {
@@ -1443,12 +1444,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
                                             invoice.setStatus(InvoiceStatusEnum.REJECTED);
                                             invoice.setRejectReason("An error has occurred evaluating rule [id=" + validationRule.getId() + ", "
                                                     + validationRule.getDescription() + ", script=" + validationRule.getValidationScript()
-                                                    + ": " + methodContext.get(Script.INVOICE_VALIDATION_REASON));
+                                                    + methodContext.get(Script.INVOICE_VALIDATION_REASON) == null ? "" : ": " + methodContext.get(Script.INVOICE_VALIDATION_REASON));
                                             invoice.setRejectedByRule(validationRule);
                                             noValidationError = false;
                                         } else if (InvoiceValidationStatusEnum.SUSPECT.equals(status)) {
                                             invoice.setStatus(InvoiceStatusEnum.SUSPECT);
-                                            invoice.setRejectReason((String) methodContext.get(Script.INVOICE_VALIDATION_REASON));
+                                            invoice.setRejectReason("Suspected by rule " + validationRule.getDescription());
                                             invoice.setRejectedByRule(validationRule);
                                             noValidationError = false;
                                         }
@@ -1488,11 +1489,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
             update(invoice);
             commit();
         }
-    }
-
-    private boolean dateBetween(Date invoiceDate, Date dateFrom, Date dateTo) {
-        return setTimeToZero(invoiceDate).after(setTimeToZero(dateFrom))
-                && setTimeToZero(invoiceDate).before(setTimeToZero(dateTo));
     }
 
     /**
@@ -2956,6 +2952,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public void rebuildInvoice(Invoice invoice, boolean save) {
         invoice = findById(invoice.getId());
+        invoice.setStatus(InvoiceStatusEnum.DRAFT);
         applyAutomaticInvoiceCheck(Arrays.asList(invoice), true);
         if (save) {
             update(invoice);
@@ -5034,8 +5031,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     private void refreshInvoiceLineAndAggregateAmounts(Invoice invoice) {
-        invoice.getInvoiceLines()
-                .forEach(invoiceLine -> invoiceLinesService.update(invoiceLine));
         invoice.getInvoiceAgregates()
                 .stream()
                 .filter(invoiceAggregate -> invoiceAggregate instanceof TaxInvoiceAgregate)
@@ -5931,6 +5926,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             }
                         }
                     }
+
                     em.flush();
 
                     final int maxValue =
@@ -6562,7 +6558,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             PaymentMethod pm = (PaymentMethod) tryToFindByEntityClassAndId(PaymentMethod.class, pmId);
             toUpdate.setPaymentMethod(pm);
         }
-        if (invoiceResource.getListLinkedInvoices() != null) {
+        if (CollectionUtils.isNotEmpty(invoiceResource.getListLinkedInvoices())) {
             List<Long> toUpdateLinkedInvoice = toUpdate.getLinkedInvoices().stream()
                     .map(li -> li.getLinkedInvoiceValue().getId()).collect(Collectors.toList());
             

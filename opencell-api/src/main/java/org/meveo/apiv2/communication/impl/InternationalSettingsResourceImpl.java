@@ -19,6 +19,22 @@ public class InternationalSettingsResourceImpl implements InternationalSettingsR
     InternationalSettingsApiService internationalSettingsApiService;
 
     @Override
+    public EmailTemplateDto create(String emailTemplateCode, EmailTemplateDto emailTemplateDto) {
+        return internationalSettingsApiService.checkAndCreateEmailTemplate(emailTemplateCode, emailTemplateDto);
+    }
+
+    @Override
+    public EmailTemplateDto getEmailTemplate(String emailTemplateCode) {
+        return internationalSettingsApiService.checkAndGetEmailTemplate(emailTemplateCode);
+    }
+
+    @Override
+    public ActionStatus deleteEmailTemplate(String emailTemplateCode) {
+        internationalSettingsApiService.checkAndDeleteEmailTemplate(emailTemplateCode);
+        return new ActionStatus(ActionStatusEnum.SUCCESS, "Email Template with code " + emailTemplateCode + " was deleted successfully");
+    }
+
+    @Override
     public EmailTemplateDto update(String emailTemplateCode, EmailTemplateDto emailTemplateDto) {
 
         return internationalSettingsApiService.checkAndUpdateEmailTemplate(emailTemplateCode,emailTemplateDto);
