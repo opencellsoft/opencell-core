@@ -11646,4 +11646,44 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		]]>
 		</sql>
 		</changeSet>
+		
+		<changeSet id="#INTRD-12085_20221221" author="HatimOUDAD">
+	
+				<update tableName="billing_tax">
+					<column name="taxation_category_id" value="1" />
+					<where> id in (-1,-2,-3,-4,-5)</where>
+				</update>
+				
+				<update tableName="billing_invoice_type">
+					<column name="vat_payment_option_id" value="1" />
+					<where> id in (-1,-2,-3,-4,-5,-6,-7,-8,-9)</where>
+				</update>	
+				
+				<update tableName="billing_invoice_type">
+					<column name="invoice_code_type_id" value="30" />
+					<where>  id = -6</where>
+				</update>
+				<update tableName="billing_invoice_type">
+					<column name="invoice_code_type_id" value="19" />
+					<where>  id = -7</where>
+				</update>
+				<update tableName="billing_invoice_type">
+					<column name="invoice_code_type_id" value="19" />
+					<where>  id = -8</where>			
+				</update>
+				
+				<update tableName="billing_invoice_type">
+					<column name="invoice_code_type_id" value="18" />
+					<where>  id = -1</where>
+				</update>
+				<update tableName="billing_invoice_type">
+					<column name="invoice_code_type_id" value="19" />
+					<where>  id = -2</where>
+				</update>
+				<update tableName="billing_invoice_type">
+					<column name="invoice_code_type_id" value="23" />
+					<where>  id = -5</where>
+				</update>
+			
+		</changeSet>
 </databaseChangeLog>

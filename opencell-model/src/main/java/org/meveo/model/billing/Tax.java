@@ -106,11 +106,11 @@ public class Tax extends BusinessCFEntity {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "taxation_category_id")
-    private TaxationCategory taxationCategory;
+    private UntdidTaxationCategory untdidTaxationCategory;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vatex_id")
-    private VatExemption vatex;
+    private UntdidVatex untdidVatex;
 
     public Tax() {
 
@@ -122,6 +122,8 @@ public class Tax extends BusinessCFEntity {
         this.setAuditable(tax.getAuditable());
         this.accountingCode = tax.getAccountingCode();
         this.percent = tax.getPercent();
+        this.untdidTaxationCategory = tax.getUntdidTaxationCategory();
+        this.untdidVatex = tax.getUntdidVatex();
     }
 
     public AccountingCode getAccountingCode() {
@@ -216,19 +218,21 @@ public class Tax extends BusinessCFEntity {
         return true;
     }
 
-	public TaxationCategory getTaxationCategory() {
-		return taxationCategory;
+	public UntdidTaxationCategory getUntdidTaxationCategory() {
+		return untdidTaxationCategory;
 	}
 
-	public void setTaxationCategory(TaxationCategory taxationCategory) {
-		this.taxationCategory = taxationCategory;
+	public void setUntdidTaxationCategory(UntdidTaxationCategory untdidTaxationCategory) {
+		this.untdidTaxationCategory = untdidTaxationCategory;
 	}
 
-	public VatExemption getVatex() {
-		return vatex;
+	public UntdidVatex getUntdidVatex() {
+		return untdidVatex;
 	}
 
-	public void setVatex(VatExemption vatex) {
-		this.vatex = vatex;
+	public void setUntdidVatex(UntdidVatex untdidVatex) {
+		this.untdidVatex = untdidVatex;
 	}
+
+	
 }

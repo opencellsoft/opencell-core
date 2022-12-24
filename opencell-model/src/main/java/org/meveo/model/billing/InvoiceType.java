@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+3 * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
  * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
@@ -153,11 +153,11 @@ public class InvoiceType extends BusinessCFEntity {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_code_type_id")
-    private InvoiceCodeType invoiceCodeType;
+    private UntdidInvoiceCodeType untdidInvoiceCodeType;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vat_payment_option_id")
-    private VatPaymentOption vatPaymentOption;
+    private UntdidVatPaymentOption untdidVatPaymentOption;
     
     public ScriptInstance getInvoiceValidationScript() {
 		return invoiceValidationScript;
@@ -388,20 +388,19 @@ public class InvoiceType extends BusinessCFEntity {
 		this.invoiceValidationRules = invoiceValidationRules;
 	}
 
-	public InvoiceCodeType getInvoiceCodeType() {
-		return invoiceCodeType;
+	public UntdidInvoiceCodeType getUntdidInvoiceCodeType() {
+		return untdidInvoiceCodeType;
 	}
 
-	public void setInvoiceCodeType(InvoiceCodeType invoiceCodeType) {
-		this.invoiceCodeType = invoiceCodeType;
+	public void setUntdidInvoiceCodeType(UntdidInvoiceCodeType untdidInvoiceCodeType) {
+		this.untdidInvoiceCodeType = untdidInvoiceCodeType;
 	}
 
-	public VatPaymentOption getVatPaymentOption() {
-		return vatPaymentOption;
+	public UntdidVatPaymentOption getUntdidVatPaymentOption() {
+		return untdidVatPaymentOption;
 	}
 
-	public void setVatPaymentOption(VatPaymentOption vatPaymentOption) {
-		this.vatPaymentOption = vatPaymentOption;
+	public void setUntdidVatPaymentOption(UntdidVatPaymentOption untdidVatPaymentOption) {
+		this.untdidVatPaymentOption = untdidVatPaymentOption;
 	}
-
 }

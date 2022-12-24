@@ -59,6 +59,14 @@ public class TaxDto extends BusinessEntityDto {
 
     /** Sub taxes */
     private List<TaxDto> subTaxes;
+    
+    /** untdidTaxationCategory */
+    private UntdidTaxationCategoryDto untdidTaxationCategoryDto;
+    
+    /** untdidVatexDto */
+    private UntdidVatexDto untdidVatexDto;
+    
+    
 
     /**
      * Instantiates a new tax dto.
@@ -95,6 +103,17 @@ public class TaxDto extends BusinessEntityDto {
                     .map(subTax -> new TaxDto(subTax.getId()))
                     .collect(toList());
         }
+        
+        untdidTaxationCategoryDto = new UntdidTaxationCategoryDto();
+        untdidTaxationCategoryDto.setName(tax.getUntdidTaxationCategory().getName());
+        untdidTaxationCategoryDto.setSemanticModel(tax.getUntdidTaxationCategory().getSemanticModel());
+        setUntdidTaxationCategoryDto(untdidTaxationCategoryDto);
+        
+        untdidVatexDto = new UntdidVatexDto();
+        untdidVatexDto.setCode( tax.getUntdidVatex().getCode());
+        untdidVatexDto.setCodeName(tax.getUntdidVatex().getCodeName());
+        untdidVatexDto.setRemark(tax.getUntdidVatex().getRemark());
+        setUntdidVatexDto(untdidVatexDto);
     }
 
     public TaxDto(Long id) {
@@ -189,7 +208,23 @@ public class TaxDto extends BusinessEntityDto {
         this.subTaxes = subTaxes;
     }
 
-    @Override
+    public UntdidTaxationCategoryDto getUntdidTaxationCategoryDto() {
+		return untdidTaxationCategoryDto;
+	}
+
+	public void setUntdidTaxationCategoryDto(UntdidTaxationCategoryDto untdidTaxationCategoryDto) {
+		this.untdidTaxationCategoryDto = untdidTaxationCategoryDto;
+	}
+
+	public UntdidVatexDto getUntdidVatexDto() {
+		return untdidVatexDto;
+	}
+
+	public void setUntdidVatexDto(UntdidVatexDto untdidVatexDto) {
+		this.untdidVatexDto = untdidVatexDto;
+	}
+
+	@Override
     public String toString() {
         return "TaxDto [code=" + getCode() + ", description=" + getDescription() + ", percent=" + percent + ", accountingCode=" + accountingCode + ", languageDescriptions=" + languageDescriptions + ", customFields="
                 + customFields + "]";

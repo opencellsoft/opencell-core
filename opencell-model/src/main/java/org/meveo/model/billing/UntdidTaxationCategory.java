@@ -10,16 +10,19 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
 
+@CustomFieldEntity(cftCodePrefix = "UntdidTaxationCategory")
 @Entity
-@ObservableEntity
-@Cacheable
 @Table(name = "untdid_5305_taxation_category")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "untdid_5305_taxation_category_seq"), })
 
-public class UntdidTaxationCategory extends AuditableEntity{
+public class UntdidTaxationCategory extends BaseEntity{
 	
     @Column(name = "name", length = 500)
     @Size(max = 20)
