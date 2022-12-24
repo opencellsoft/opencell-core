@@ -21,12 +21,10 @@ import org.meveo.model.ObservableEntity;
 public class UntdidInvoiceSubjectCode extends AuditableEntity{
 	
 	@Column(name = "code_name", length = 500)
-	@Size(max = 20)
 	private String codeName;
 	  
-	@Column(name = "usage_in_EN16931", length = 500)
-	@Size(max = 20)
-	private String usageEN16931;
+	@Column(name = "code", length = 10)
+	private String code;
 
 	public String getCodeName() {
 		return codeName;
@@ -36,12 +34,14 @@ public class UntdidInvoiceSubjectCode extends AuditableEntity{
 		this.codeName = codeName;
 	}
 
-	public String getUsageEN16931() {
-		return usageEN16931;
+	public String getCode() {
+		return code;
 	}
 
-	public void setUsage_in_EN16931(String usageEN16931) {
-		this.usageEN16931 = usageEN16931;
+	public void setCode(String code) {
+		this.code = code;
 	}
+
+	
 	
 }

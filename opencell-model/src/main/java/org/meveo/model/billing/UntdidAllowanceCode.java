@@ -20,20 +20,18 @@ import org.meveo.model.ObservableEntity;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "untdid_5189_allowance_code_seq"), })
 public class UntdidAllowanceCode extends AuditableEntity{
 	
-	@Column(name = "code_name", length = 500)
-	@Size(max = 20)
-	private String codeName;
+	@Column(name = "code", length = 10)
+	private String code;
 	  
 	@Column(name = "description", length = 500)
-	@Size(max = 20)
 	private String description;
 
-	public String getCodeName() {
-		return codeName;
+	public String getCode() {
+		return code;
 	}
 
-	public void setCodeName(String codeName) {
-		this.codeName = codeName;
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	public String getDescription() {

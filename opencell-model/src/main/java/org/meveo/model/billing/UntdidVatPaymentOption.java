@@ -17,7 +17,7 @@ import org.meveo.model.ObservableEntity;
 @Entity
 @ObservableEntity
 @Cacheable
-@Table(name = "untdid_vatex")
+@Table(name = "untdid_2475_vat_payment_option")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "untdid_vatex_seq"), })
 public class UntdidVatPaymentOption extends BaseEntity{
 	

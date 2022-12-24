@@ -17,16 +17,17 @@ import org.meveo.model.ObservableEntity;
 @Entity
 @ObservableEntity
 @Cacheable
-@Table(name = "untdid_vatex")
+@Table(name = "untdid_1001_invoice_code_type")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "untdid_vatex_seq"), })
 public class UntdidInvoiceCodeType extends BaseEntity{
 	
+	@Column(name = "code", length = 10)
+	private String code;
+	
 	@Column(name = "en16931_interpretation", length = 20)
-	@Size(max = 20)
 	private String interpretation16931;
 	  
 	@Column(name = "name", length = 500)
-	@Size(max = 20)
 	private String name;
 
 	public String getInterpretation16931() {
@@ -43,6 +44,13 @@ public class UntdidInvoiceCodeType extends BaseEntity{
 
 	public void setName(String name) {
 		this.name = name;
-	}	
+	}
 
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}	
 }
