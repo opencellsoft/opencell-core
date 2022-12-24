@@ -104,16 +104,20 @@ public class TaxDto extends BusinessEntityDto {
                     .collect(toList());
         }
         
-        untdidTaxationCategoryDto = new UntdidTaxationCategoryDto();
-        untdidTaxationCategoryDto.setName(tax.getUntdidTaxationCategory().getName());
-        untdidTaxationCategoryDto.setSemanticModel(tax.getUntdidTaxationCategory().getSemanticModel());
-        setUntdidTaxationCategoryDto(untdidTaxationCategoryDto);
+        if(tax.getUntdidTaxationCategory() != null) {
+	        untdidTaxationCategoryDto = new UntdidTaxationCategoryDto();
+	        untdidTaxationCategoryDto.setName(tax.getUntdidTaxationCategory().getName());
+	        untdidTaxationCategoryDto.setSemanticModel(tax.getUntdidTaxationCategory().getSemanticModel());
+	        setUntdidTaxationCategoryDto(untdidTaxationCategoryDto);
+        }
         
-        untdidVatexDto = new UntdidVatexDto();
-        untdidVatexDto.setCode( tax.getUntdidVatex().getCode());
-        untdidVatexDto.setCodeName(tax.getUntdidVatex().getCodeName());
-        untdidVatexDto.setRemark(tax.getUntdidVatex().getRemark());
-        setUntdidVatexDto(untdidVatexDto);
+        if(tax.getUntdidVatex() != null) {
+	        untdidVatexDto = new UntdidVatexDto();
+	        untdidVatexDto.setCode( tax.getUntdidVatex().getCode());
+	        untdidVatexDto.setCodeName(tax.getUntdidVatex().getCodeName());
+	        untdidVatexDto.setRemark(tax.getUntdidVatex().getRemark());
+	        setUntdidVatexDto(untdidVatexDto);
+        }
     }
 
     public TaxDto(Long id) {

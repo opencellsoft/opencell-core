@@ -4,13 +4,9 @@ import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.Size;
-
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
-import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 
 @Entity
@@ -20,6 +16,11 @@ import org.meveo.model.ObservableEntity;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "untdid_5189_allowance_code_seq"), })
 public class UntdidInvoiceSubjectCode extends AuditableEntity{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8577308821246643756L;
+
 	@Column(name = "code_name", length = 500)
 	private String codeName;
 	  

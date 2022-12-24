@@ -14,6 +14,8 @@ import org.meveo.model.billing.UntdidInvoiceCodeType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UntdidInvoiceCodeTypeDto extends BaseEntityDto {
 	
+	private String code;
+	
 	private String interpretation16931;
 	
 	private String name;
@@ -24,14 +26,16 @@ public class UntdidInvoiceCodeTypeDto extends BaseEntityDto {
 		super();
 	}
 
-	public UntdidInvoiceCodeTypeDto(String interpretation16931, String name) {
+	public UntdidInvoiceCodeTypeDto(String code, String interpretation16931, String name) {
 		super();
+		this.code = code;
 		this.interpretation16931 = interpretation16931;
 		this.name = name;
 	}
 	
 	public UntdidInvoiceCodeTypeDto(UntdidInvoiceCodeType invoiceCodeType) {
 		if(invoiceCodeType != null) {
+			this.code = invoiceCodeType.getCode();
 			this.interpretation16931 = invoiceCodeType.getInterpretation16931();
 			this.name= invoiceCodeType.getName();
 		}

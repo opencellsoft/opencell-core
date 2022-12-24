@@ -228,7 +228,6 @@ public class TaxApi extends BaseApi {
         TaxDto result;
 
         Tax tax = taxService.findByCode(taxCode);
-        tax.getUntdidVatex().getCode();
         if (tax == null) {
             throw new EntityDoesNotExistsException(Tax.class, taxCode);
         }

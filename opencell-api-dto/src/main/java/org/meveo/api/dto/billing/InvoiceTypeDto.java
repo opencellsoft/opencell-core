@@ -162,8 +162,10 @@ public class InvoiceTypeDto extends BusinessEntityDto {
         customFields = customFieldInstances;
         this.useSelfSequence = invoiceType.isUseSelfSequence();
         this.excludeFromAgedTrialBalance = invoiceType.isExcludeFromAgedTrialBalance();
-        this.untdidInvoiceCodeTypeDto = new UntdidInvoiceCodeTypeDto(invoiceType.getUntdidInvoiceCodeType());
-        this.untdidVatPaymentOptionDto = new UntdidVatPaymentOptionDto(invoiceType.getUntdidVatPaymentOption());
+        if(invoiceType.getUntdidInvoiceCodeType() != null)
+        	this.untdidInvoiceCodeTypeDto = new UntdidInvoiceCodeTypeDto(invoiceType.getUntdidInvoiceCodeType());
+        if(invoiceType.getUntdidVatPaymentOption() != null)
+        	this.untdidVatPaymentOptionDto = new UntdidVatPaymentOptionDto(invoiceType.getUntdidVatPaymentOption());
     }
 
     /**
@@ -489,15 +491,15 @@ public class InvoiceTypeDto extends BusinessEntityDto {
 		return untdidInvoiceCodeTypeDto;
 	}
 
-	public void setUntdidInvoiceCodeType(UntdidInvoiceCodeTypeDto untdidInvoiceCodeTypeDto) {
+	public void setUntdidInvoiceCodeTypeDto(UntdidInvoiceCodeTypeDto untdidInvoiceCodeTypeDto) {
 		this.untdidInvoiceCodeTypeDto = untdidInvoiceCodeTypeDto;
 	}
 
-	public UntdidVatPaymentOptionDto getUntdidVatPaymentOption() {
+	public UntdidVatPaymentOptionDto getUntdidVatPaymentOptionDto() {
 		return untdidVatPaymentOptionDto;
 	}
 
-	public void setUntdidVatPaymentOption(UntdidVatPaymentOptionDto untdidVatPaymentOptionDto) {
+	public void setUntdidVatPaymentOptionDto(UntdidVatPaymentOptionDto untdidVatPaymentOptionDto) {
 		this.untdidVatPaymentOptionDto = untdidVatPaymentOptionDto;
 	}
 	

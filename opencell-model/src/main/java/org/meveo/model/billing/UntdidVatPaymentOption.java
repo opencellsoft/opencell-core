@@ -18,23 +18,19 @@ import org.meveo.model.ObservableEntity;
 @ObservableEntity
 @Cacheable
 @Table(name = "untdid_2475_vat_payment_option")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "untdid_vatex_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "untdid_2475_vat_payment_option_seq"), })
 public class UntdidVatPaymentOption extends BaseEntity{
 	
-	@Column(name = "2005_code", length = 10)
-	@Size(max = 10)
+	@Column(name = "code_2005", length = 10)
 	private String code2005;
 	  
-	@Column(name = "2005_value", length = 500)
-	@Size(max = 500)
+	@Column(name = "value_2005", length = 500)
 	private String value2005;
 	
-	@Column(name = "2475_code", length = 10)
-	@Size(max = 10)
+	@Column(name = "code_2475", length = 10)
 	private String code2475;
 	
-	@Column(name = "2475_value", length = 500)
-	@Size(max = 500)
+	@Column(name = "value_2475", length = 500)
 	private String value2475;
 
 	public String getCode2005() {

@@ -35,11 +35,12 @@ public class UntdidVatPaymentOptionDto extends BaseEntityDto {
 	}
 	
 	public UntdidVatPaymentOptionDto(UntdidVatPaymentOption untdidVatPaymentOption) {
-		
-		this.code2005 = untdidVatPaymentOption.getCode2005();
-		this.value2005 = untdidVatPaymentOption.getValue2005();
-		this.code2475 = untdidVatPaymentOption.getCode2475();
-		this.value2475 = untdidVatPaymentOption.getValue2475();
+		if(untdidVatPaymentOption != null) {
+			this.code2005 = untdidVatPaymentOption.getCode2005();
+			this.value2005 = untdidVatPaymentOption.getValue2005();
+			this.code2475 = untdidVatPaymentOption.getCode2475();
+			this.value2475 = untdidVatPaymentOption.getValue2475();
+		}
 	}
 
 

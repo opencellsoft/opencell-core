@@ -14935,17 +14935,17 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
 
-            <!-- Simple fields -->           
-            <column name="2005_code" type="varchar(10)">
+             <!-- Simple fields -->           
+            <column name="code_2005" type="varchar(10)">
                 <constraints nullable="false" />
             </column>
-             <column name="2005_value" type="varchar(500)">
+             <column name="value_2005" type="varchar(500)">
                 <constraints nullable="false" />
             </column>
-             <column name="2475_code" type="varchar(10)">
+             <column name="code_2475" type="varchar(10)">
                 <constraints nullable="false" />
             </column>
-             <column name="2475_value" type="varchar(500)">
+             <column name="value_2475" type="varchar(500)">
                 <constraints nullable="false" />
             </column>
 
