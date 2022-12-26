@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.InternalServerErrorException;
@@ -257,7 +258,6 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 		// Update Invoice Line
 		invoiceLinesService.update(invoiceLine);
 		invoiceService.calculateInvoice(invoice);
-		invoiceService.updateBillingRunStatistics(invoice);
 	}
 
 	/**
@@ -303,7 +303,6 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 		return invoiceService.createInvoiceV11(input.getInvoice(), input.getSkipValidation(), input.getIsDraft(),
 				input.getIsVirtual(), input.getIsIncludeBalance(), input.getIsAutoValidation(), invoice);
 	}
-	
 	public Invoice update(Invoice invoice, Invoice input, org.meveo.apiv2.billing.Invoice invoiceResource) {
 		if(invoiceResource.getCustomFields() != null) {
 			populateCustomFieldsForGenericApi(invoiceResource.getCustomFields(), input, true);

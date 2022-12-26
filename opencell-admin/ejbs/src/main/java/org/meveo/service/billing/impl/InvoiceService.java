@@ -2692,7 +2692,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
     
     public void updateBillingRunStatistics(Invoice invoice) {
-        invoice = refreshOrRetrieve(invoice);
+//        invoice = refreshOrRetrieve(invoice);
         if(invoice != null) {
             if (invoice.getBillingRun() != null) {
                 billingRunService.updateBillingRunStatistics(invoice.getBillingRun());
@@ -5855,7 +5855,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                     if (invoiceAggregateProcessingInfo.invoice == null) {
                         if (existingInvoice != null) {
+                            existingInvoice.getInvoiceAgregates().clear();
                             cleanInvoiceAggregates(existingInvoice.getId());
+                            updateNoCheck(existingInvoice);
                             invoiceAggregateProcessingInfo.invoice = existingInvoice;
                         } else {
                             // TODO check instantiateInvoice(entityToInvoice
@@ -5922,45 +5924,60 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     } else {
                         for (InvoiceAgregate invoiceAggregate : invoice.getInvoiceAgregates()) {
                             if (invoiceAggregate.getId() == null) {
-                                em.persist(invoiceAggregate);
+                                invoiceAgregateService.createWithoutNotif(invoiceAggregate);
                             }
                         }
                     }
-
-                    em.flush();
+                    /*for (LinkedInvoice inv : invoice.getLinkedInvoices()) {
+                        linkedInvoiceService.detach(inv);
+                    }*/
+//                    em.flush();
 
                     final int maxValue =
                             ParamBean.getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
                     Date now = new Date();
+                    List<Long> invLineIds = new ArrayList<Long>();
+                    List<SubCategoryInvoiceAgregate> subCategoryAggregates = new ArrayList<>();
                     for (Object[] aggregateAndILIds : ilMassUpdates) {
                         List<Long> ilIds = (List<Long>) aggregateAndILIds[1];
                         ListUtils.partition(ilIds, maxValue).forEach(ids -> {
+                            invLineIds.addAll(ids);
                             SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndILIds[0];
-                            em.createNamedQuery("InvoiceLine.updateWithInvoice")
-                                    .setParameter("billingRun", billingRun)
-                                    .setParameter("invoice", invoice)
-                                    .setParameter("now", now)
-                                    .setParameter("invoiceAgregateF", subCategoryAggregate)
-                                    .setParameter("ids", ids)
-                                    .executeUpdate();
-                            em.createNamedQuery("RatedTransaction.linkRTWithInvoice")
-                                    .setParameter("billingRun", billingRun)
-                                    .setParameter("invoice", invoice)
-                                    .setParameter("now", now)
-                                    .setParameter("ids", ids)
-                                    .executeUpdate();
+                            subCategoryAggregates.add(subCategoryAggregate);
+//                            em.createNamedQuery("InvoiceLine.updateWithInvoice")
+//                                    .setParameter("billingRun", billingRun)
+//                                    .setParameter("invoice", invoice)
+//                                    .setParameter("now", now)
+//                                    .setParameter("invoiceAgregateF", subCategoryAggregate)
+//                                    .setParameter("ids", ids)
+//                                    .executeUpdate();
+//                            em.createNamedQuery("RatedTransaction.linkRTWithInvoice")
+//                                    .setParameter("billingRun", billingRun)
+//                                    .setParameter("invoice", invoice)
+//                                    .setParameter("now", now)
+//                                    .setParameter("ids", ids)
+//                                    .executeUpdate();
                         });
                     }
+                    invoiceLinesService.updateWithInvoice(billingRun, invoice, now, subCategoryAggregates, invLineIds);
+                    ratedTransactionService.linkRTWithInvoice(billingRun, invoice, now, invLineIds);
 
                     for (Object[] aggregateAndILs : ilUpdates) {
                         SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndILs[0];
                         List<InvoiceLine> invoiceLines = (List<InvoiceLine>) aggregateAndILs[1];
                         for (InvoiceLine invoiceLine : invoiceLines) {
-                            em.createNamedQuery("InvoiceLine.updateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("now", now)
+                          /*  em.createNamedQuery("InvoiceLine.updateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("now", now)
                                 .setParameter("amountWithoutTax", invoiceLine.getAmountWithoutTax()).setParameter("amountWithTax", invoiceLine.getAmountWithTax()).setParameter("amountTax", invoiceLine.getAmountTax())
                                 .setParameter("tax", invoiceLine.getTax()).setParameter("taxPercent", invoiceLine.getTaxRate()).setParameter("invoiceAgregateF", subCategoryAggregate)
                                 .setParameter("id", invoiceLine.getId()).executeUpdate();
+                            invoiceLine.setBillingRun(billingRun);*/
+                            invoiceLine.setInvoice(invoice);
+                            invoiceLine.setStatus(InvoiceLineStatusEnum.BILLED);
+                            invoiceLine.getAuditable().setUpdated(new Date());
+                            invoiceLine.setInvoiceAggregateF(subCategoryAggregate);
+                            invoiceLinesService.updateNoCheck(invoiceLine);
                         }
+                        invoice.setInvoiceLines(new ArrayList<InvoiceLine>(invoiceLines));
                     }
                 }
             }
@@ -6023,7 +6040,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     private void applyExchangeRateToInvoiceLineAndAggregate(List<Invoice> invoices) {
-        invoices = refreshOrRetrieve(invoices);
+//        invoices = refreshOrRetrieve(invoices);
         invoices.forEach(invoice -> refreshInvoiceLineAndAggregateAmounts(invoice));
     }
 
@@ -6048,6 +6065,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         getEntityManager().createNamedQuery("RatedTransaction.deleteInvoiceAggrByInvoice").setParameter("invoiceId", invoiceId).executeUpdate();
         getEntityManager().createNamedQuery("InvoiceLine.deleteInvoiceAggrByInvoice").setParameter("invoiceId", invoiceId).executeUpdate();
         getEntityManager().createNamedQuery("InvoiceAggregate.updateByInvoiceIds").setParameter("invoicesIds", Arrays.asList(invoiceId)).executeUpdate();
+        invoiceAgregateService.deleteInvoiceAgregates(List.of(invoiceId));
     }
 
     @SuppressWarnings("unchecked")
@@ -7105,7 +7123,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     
     public void applyAdvanceInvoice(Invoice invoice, List<Invoice> advInvoices) {
 		BigDecimal invoiceBalance = invoice.getInvoiceBalance();
-		if (invoiceBalance != null) {
+		if (invoiceBalance != null)  {
 			BigDecimal sum = invoice.getLinkedInvoices().stream()
 					.filter(i -> InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(i.getType())).map(x -> x.getAmount())
 					.reduce(BigDecimal::add).get();

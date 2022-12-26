@@ -349,6 +349,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
                 .build();
 	}
 	
+	@Transactional
 	@Override
 	public Response update(Long id, org.meveo.apiv2.billing.Invoice invoiceResource) {
 		final Invoice invoice = findInvoiceEligibleToUpdate(id);

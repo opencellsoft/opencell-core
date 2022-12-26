@@ -47,6 +47,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.meveo.admin.async.SubListCreator;
@@ -1991,6 +1992,23 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         } catch (NoResultException e) {
         	log.error(e.getMessage());
             return null;
+        }
+	}
+	
+	@SuppressWarnings("unchecked")
+    public void linkRTWithInvoice(BillingRun billingRun, Invoice invoice, Date now, List<Long> ilIds) {
+	    if(CollectionUtils.isEmpty(ilIds)) return;
+	    //UPDATE RatedTransaction rt set rt.status='PROCESSED', rt.invoiceLine.id = :il WHERE rt.id in :ids
+	    QueryBuilder qb = new QueryBuilder("select rt from RatedTransaction rt", "rt");
+        qb.addCriterionInList("invoiceLine.id ", ilIds, "in", false);
+        final Query query = qb.getQuery(getEntityManager());
+        List<RatedTransaction> ratedTransactions = query.getResultList();
+        for (RatedTransaction ratedTransaction : ratedTransactions) {
+            ratedTransaction.setStartDate(now);
+            ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
+//            ratedTransaction.setInvoiceLine(null);
+            ratedTransaction.setInvoice(invoice);
+            ratedTransaction.setBillingRun(billingRun);
         }
 	}
     

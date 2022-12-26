@@ -55,6 +55,7 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.ExtraMinAmount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceLine;
+import org.meveo.model.billing.InvoiceLineStatusEnum;
 import org.meveo.model.billing.InvoiceLineTaxModeEnum;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
@@ -64,6 +65,7 @@ import org.meveo.model.billing.MinAmountForAccounts;
 import org.meveo.model.billing.MinAmountsResult;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCurrency;
@@ -1330,5 +1332,19 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         		.setParameter("id", invoiceId)
         		.setParameter("limitDate", limitDate)
         		.getSingleResult();
+    }
+    
+    public void updateWithInvoice(BillingRun billingRun, Invoice invoice, Date now, List<SubCategoryInvoiceAgregate> SubCategoryInvoiceAgregates, List<Long> ilIds) {
+        List<InvoiceLine> invLines = this.findByIds(ilIds);
+            for (SubCategoryInvoiceAgregate subCate : SubCategoryInvoiceAgregates) {
+                for (InvoiceLine invoiceLine : invLines) {
+                    invoiceLine.setInvoiceAggregateF(subCate);
+                    invoiceLine.setBillingRun(billingRun);
+                    invoiceLine.setStatus(InvoiceLineStatusEnum.BILLED);
+                    invoiceLine.getAuditable().setUpdated(now);
+                    invoiceLine.setInvoice(invoice);
+                    this.update(invoiceLine);
+            }
+        }
     }
 }
