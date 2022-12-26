@@ -669,10 +669,21 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                         ppmv.getPricePlanMatrixColumn().getPosition());
 
                 });
-                CSVLineRecord.put("description[text]", line.getDescription());
-                CSVLineRecordPosition.put("description[text]", Integer.MAX_VALUE - 1);
-                CSVLineRecord.put("priceWithoutTax[number]", line.getPriceWithoutTax());
-                CSVLineRecordPosition.put("priceWithoutTax[number]", Integer.MAX_VALUE);
+
+                //Check if any of line contains an EL value, then add new column
+                if(!line.getValueEL().isEmpty()) {
+                    CSVLineRecord.put("description[text]", line.getDescription());
+                    CSVLineRecordPosition.put("description[text]", Integer.MAX_VALUE - 2);
+                    CSVLineRecord.put("priceWithoutTax[number]", line.getPriceWithoutTax());
+                    CSVLineRecordPosition.put("priceWithoutTax[number]", Integer.MAX_VALUE - 1);
+                    CSVLineRecord.put("unitPriceEL[text]", line.getValueEL());
+                    CSVLineRecordPosition.put("unitPriceEL[text]", Integer.MAX_VALUE);
+                } else {
+                    CSVLineRecord.put("description[text]", line.getDescription());
+                    CSVLineRecordPosition.put("description[text]", Integer.MAX_VALUE - 1);
+                    CSVLineRecord.put("priceWithoutTax[number]", line.getPriceWithoutTax());
+                    CSVLineRecordPosition.put("priceWithoutTax[number]", Integer.MAX_VALUE);
+                }
                 CSVLineRecords.add(copyToSortedMap(CSVLineRecord, CSVLineRecordPosition));
             });
             return CSVLineRecords;
@@ -912,9 +923,18 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                 dynamicColumns = columns.stream().distinct().filter(v -> !v.equals("id") && !v.equals("description[text]") && !v.equals("priceWithoutTax[number]"))
                     .collect(Collectors.toList());
             }
-            return CsvSchema.builder().addColumns(dynamicColumns, CsvSchema.ColumnType.NUMBER_OR_STRING)
-                .addColumn("description[text]", CsvSchema.ColumnType.STRING).addColumn("priceWithoutTax[number]", CsvSchema.ColumnType.NUMBER_OR_STRING).build()
-                .withColumnSeparator(';').withLineSeparator("\n").withoutQuoteChar().withHeader();
+
+            //Build default columns
+            CsvSchema.Builder columns = CsvSchema.builder().addColumns(dynamicColumns, CsvSchema.ColumnType.NUMBER_OR_STRING)
+                .addColumn("description[text]", CsvSchema.ColumnType.STRING)
+                .addColumn("priceWithoutTax[number]", CsvSchema.ColumnType.NUMBER_OR_STRING);
+
+            //Check if the dynamic columns contains a unitPriceEl, then add new column
+            if(dynamicColumns.contains("unitPriceEL[text]")) {
+                columns.addColumn("unitPriceEL[text]", CsvSchema.ColumnType.STRING);
+            }
+
+            return columns.build().withColumnSeparator(';').withLineSeparator("\n").withoutQuoteChar().withHeader();
         }
 
         private String archiveFiles(Set<Path> filesPath) {
