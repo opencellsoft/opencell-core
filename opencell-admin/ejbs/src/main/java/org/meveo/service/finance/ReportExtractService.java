@@ -190,7 +190,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             Map<String, Object> resultContext = scriptInstanceService.execute(entity.getScriptInstance().getCode(), context);
             List<Map<String, Object>> resultList = readGeneratedFile(resultContext.get("DIR") + File.separator + resultContext.get("FILENAME"), ofNullable(entity.getFileSeparator()).orElse(";"));
             String errorMessage = (String) resultContext.getOrDefault(ReportExtractScript.ERROR_MESSAGE, "");
-            if(!StringUtils.isBlank(errorMessage)) {
+            if(StringUtils.isNotBlank(errorMessage)) {
                 reportExtractExecutionResult.setErrorMessage(errorMessage);
             }
             reportExtractExecutionResult.setLineCount((int) resultContext.getOrDefault(ReportExtractScript.LINE_COUNT, 0));
