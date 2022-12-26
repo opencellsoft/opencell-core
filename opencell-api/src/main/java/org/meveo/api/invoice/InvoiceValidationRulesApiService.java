@@ -27,9 +27,8 @@ public class InvoiceValidationRulesApiService implements ApiService<InvoiceValid
 
     @Override
     public Optional<InvoiceValidationRule> update(Long id, InvoiceValidationRule invoiceValidationRule) {
-    	invoiceValidationRulesService.update(invoiceValidationRule);
     	invoiceValidationRulesService.updateInvoiceTypePriority(invoiceValidationRule);
-        return Optional.ofNullable(invoiceValidationRule);
+        return Optional.ofNullable(invoiceValidationRulesService.update(invoiceValidationRule));
     }
 
     @Override
