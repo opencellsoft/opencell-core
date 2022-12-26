@@ -929,11 +929,6 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                 .addColumn("description[text]", CsvSchema.ColumnType.STRING)
                 .addColumn("priceWithoutTax[number]", CsvSchema.ColumnType.NUMBER_OR_STRING);
 
-            //Check if the dynamic columns contains a unitPriceEl, then add new column
-            if(dynamicColumns.contains("unitPriceEL[text]")) {
-                columns.addColumn("unitPriceEL[text]", CsvSchema.ColumnType.STRING);
-            }
-
             return columns.build().withColumnSeparator(';').withLineSeparator("\n").withoutQuoteChar().withHeader();
         }
 
