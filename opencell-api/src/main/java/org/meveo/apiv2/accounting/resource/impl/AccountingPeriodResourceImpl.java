@@ -75,6 +75,12 @@ public class AccountingPeriodResourceImpl implements AccountingPeriodResource {
                 .build();
 	}
 
+	@Override
+	public Response updateStatus(String fiscalYear, String status) {
+		final AccountingPeriod accountingPeriod = accountingPeriodApiService.findByFiscalYear(fiscalYear).orElseThrow(NotFoundException::new);
+		return Response.ok().entity(toResourceAccountingPeriodWithLink(accountingPeriodMapper.toResource(accountingPeriodApiService.updateStatus(accountingPeriod, status, fiscalYear)))).build();
+	}
+
 	// Those checks are deprecated, regarding to the need of this issue : INTRD-8245 / INTRD-9452
 	private void checkRequiredParameters(org.meveo.apiv2.accounting.AccountingPeriod entity) {
 		if (entity.getUseSubAccountingPeriods() != null && entity.getUseSubAccountingPeriods()) {
