@@ -35,7 +35,7 @@ public interface InternationalSettingsResource {
                     @ApiResponse(responseCode = "400", description = "An error happened while creating EmailTemplate")
             }
     )
-    EmailTemplateDto create(@PathParam("EmailTemplateCode") String emailTemplateCode, EmailTemplateDto emailTemplateDto);
+    EmailTemplateDto create(EmailTemplateDto emailTemplateDto);
 
     @GET
     @Path("/EmailTemplate/{EmailTemplateCode}")
