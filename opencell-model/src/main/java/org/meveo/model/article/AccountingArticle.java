@@ -15,6 +15,8 @@ import org.meveo.model.accountingScheme.*;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.UntdidAllowanceCode;
+import org.meveo.model.billing.UntdidPaymentMeans;
 import org.meveo.model.tax.TaxClass;
 
 @Entity@CustomFieldEntity(cftCodePrefix = "Article")
@@ -80,13 +82,27 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     @OneToMany(mappedBy = "accountingArticle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AccountingCodeMapping> accountingCodeMappings;
     
-
     /**
      * Ignore aggregation
      */
     @Type(type = "numeric_boolean")
     @Column(name = "ignore_aggregation", nullable = false)
     private boolean ignoreAggregation;
+
+    /**
+     * UntdidPaymentMeans
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "allowance_code")
+    private UntdidAllowanceCode allowanceCode;
+    
+    public UntdidAllowanceCode getAllowanceCode() {
+        return allowanceCode;
+    }
+
+    public void setAllowanceCode(UntdidAllowanceCode allowanceCode) {
+        this.allowanceCode = allowanceCode;
+    }
 
     public AccountingArticle() {
     }
