@@ -25,8 +25,8 @@ public class InvoiceValidationRulesService extends BusinessService<InvoiceValida
 
         if (invoiceValidationRule.getPriority() == null) {
             invoiceValidationRule.setPriority(invoiceType.getInvoiceValidationRules() != null ? invoiceType.getInvoiceValidationRules().size() + 1 : null);
-        } else {
-            reorderInvoiceValidationRules(invoiceValidationRule, false);
+        } else if (invoiceValidationRule.isToReorder()) {
+        	reorderInvoiceValidationRules(invoiceValidationRule, false);
         }
     }
 
@@ -42,20 +42,17 @@ public class InvoiceValidationRulesService extends BusinessService<InvoiceValida
 			invoiceValidationRule.setPriority(invoiceValidationRules.size() + 1);
 		}
 
-		List<InvoiceValidationRule> invoiceValidationRulesToUpdate = new ArrayList<>();
 		Predicate<InvoiceValidationRule> ruleFilter = rule -> rule.getPriority() >= rulePriority;
 		Predicate<InvoiceValidationRule> ruleFilterRemove = rule -> rule.getPriority() > rulePriority;
 
 		invoiceValidationRules.stream().filter(remove ? ruleFilterRemove : ruleFilter).distinct()
 				.forEach(currentRule -> {
-					currentRule = retrieveIfNotManaged(currentRule);
-					currentRule.setPriority(remove ? currentRule.getPriority() - 1 : currentRule.getPriority() + 1);
-					invoiceValidationRulesToUpdate.add(invoiceValidationRule);
+					if (!currentRule.getId().equals(invoiceValidationRule.getId())) {
+						currentRule = refreshOrRetrieve(currentRule);
+						currentRule.setPriority(remove ? currentRule.getPriority() - 1 : currentRule.getPriority() + 1);
+						update(currentRule);
+					}
 				});
-
-		invoiceValidationRulesToUpdate.stream()
-				.filter(validationRule -> !Objects.equals(validationRule.getId(), invoiceValidationRule.getId())).distinct()
-				.forEach(this::update);
 	}
 
     public Long nextSequenceId() {

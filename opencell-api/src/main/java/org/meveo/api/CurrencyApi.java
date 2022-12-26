@@ -91,7 +91,11 @@ import org.meveo.service.crm.impl.ProviderService;
 @Stateless
 public class CurrencyApi extends BaseApi {
 
-	@Inject
+    private static final String EXCHANGE_RATE_DIR = "imports/exchangeRate/";
+    private static final String LINE = "Line ";
+    private static final String CFO_ROLE = "CFO";
+
+    @Inject
     private CurrencyService currencyService;
 
     @Inject
@@ -112,9 +116,6 @@ public class CurrencyApi extends BaseApi {
     @Inject
     private FilesApi filesApi;
     
-    private static final String EXCHANGE_RATE_DIR = "imports/exchangeRate/";
-    private static final String LINE = "Line ";
-
     public String getProviderRootDir() {
         return paramBeanFactory.getDefaultChrootDir();
     }
@@ -408,7 +409,7 @@ public class CurrencyApi extends BaseApi {
         }
 
         // We can modify only the future rates
-        if (exchangeRate.getFromDate().compareTo(setTimeToZero(new Date())) <= 0) {
+        if (exchangeRate.getFromDate().compareTo(setTimeToZero(new Date())) <= 0 && !currentUser.hasRole(CFO_ROLE)) {
             throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.future"));
         }
 

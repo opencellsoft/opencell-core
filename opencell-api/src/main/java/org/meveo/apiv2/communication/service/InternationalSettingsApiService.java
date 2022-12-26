@@ -63,9 +63,9 @@ public class InternationalSettingsApiService  {
     }
 
 
-    public EmailTemplateDto checkAndCreateEmailTemplate(String emailTemplateCode, EmailTemplateDto emailTemplateDto) {
-        checkEmailTemplateCreation(emailTemplateCode);
-        emailTemplateDto.setCode(emailTemplateCode);
+    public EmailTemplateDto checkAndCreateEmailTemplate(EmailTemplateDto emailTemplateDto) {
+        checkEmailTemplateCreation(emailTemplateDto.getCode());
+        emailTemplateDto.setCode(emailTemplateDto.getCode());
         return EmailTemplateMapper.toEmailTemplateDto(createEmailTemplate(emailTemplateMapper.toEntity(emailTemplateDto, null)));
     }
 

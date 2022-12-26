@@ -11,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
@@ -59,6 +60,9 @@ public class InvoiceValidationRule extends BusinessEntity {
     @Type(type = "json")
     @Column(name = "rule_values", columnDefinition = "jsonb")
     private Map<String, String> ruleValues;
+    
+    @Transient
+    private boolean toReorder;
 
     public InvoiceType getInvoiceType() {
         return invoiceType;
@@ -130,5 +134,13 @@ public class InvoiceValidationRule extends BusinessEntity {
 
 	public void setRuleValues(Map<String, String> ruleValues) {
 		this.ruleValues = ruleValues;
+	}
+
+	public boolean isToReorder() {
+		return toReorder;
+	}
+
+	public void setToReorder(boolean toReorder) {
+		this.toReorder = toReorder;
 	}
 }
