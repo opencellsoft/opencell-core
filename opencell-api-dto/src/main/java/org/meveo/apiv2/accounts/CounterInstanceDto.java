@@ -6,7 +6,6 @@ import org.immutables.value.Value;
 import org.meveo.apiv2.billing.CounterPeriodDto;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Value.Immutable
