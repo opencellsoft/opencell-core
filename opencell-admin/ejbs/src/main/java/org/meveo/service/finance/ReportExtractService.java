@@ -120,7 +120,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
                 continue;
             }
 
-            if (StringUtils.isNotBlank(pair.getValue())) {
+            if (!StringUtils.isBlank(pair.getValue())) {
                 if (pair.getKey().toString().endsWith("_DATE")) {
                     context.put(pair.getKey().toString(), DateUtils.parseDateWithPattern(pair.getValue().toString(), ParamBean.getInstance().getDateFormat()));
                 } else {
