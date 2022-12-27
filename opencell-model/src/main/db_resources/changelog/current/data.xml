@@ -8987,7 +8987,15 @@ Only offer actually present on invoice will be tested."}'/>
 		<delete tableName="meveo_script_instance">
 	        <where>code IN ('org.meveo.service.script.presale.KPIAgedBalanceReporting', 'org.meveo.service.script.presale.KPICustomerRevenuReporting', 'org.meveo.service.script.presale.KPICustomerPerDunningReporting', 'org.meveo.service.script.presale.KPICustomerPerOfferReporting')</where>
 	    </delete>
-
-
 	</changeSet>
+	<changeSet id="#12573_20221223" author="HichamELHALOUI">
+		<delete tableName="dwh_report_extract">
+	        <where>code = 'CustomersPerDunningReport'</where>
+	    </delete>
+		<delete tableName="meveo_script_instance">
+	        <where>code = 'org.meveo.service.script.presale.CustomerPerDunningReporting'</where>
+	    </delete>
+	</changeSet>
+
+
 </databaseChangeLog>

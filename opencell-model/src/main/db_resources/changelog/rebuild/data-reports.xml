@@ -1429,34 +1429,6 @@ order by edr.STATUS, edr.id DESC]]>
             <column name="params" value="31/01/2019"></column>
         </insert>
         <insert tableName="meveo_script_instance">
-            <column name="id" valueNumeric="-14"/>
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="org.meveo.service.script.presale.CustomerPerDunningReporting" />
-            <column name="description" value="Customer Per Dunnning Reporting Script" />
-            <column name="src_type" value="JAVA" />
-            <column name="script">
-                <![CDATA[
-                package org.meveo.service.script.presale; import java.io.File; import java.util.List; import java.util.Map; import org.meveo.admin.exception.BusinessException; import org.meveo.commons.utils.CsvBuilder; import org.meveo.model.payments.CustomerAccount; import org.meveo.service.payments.impl.CustomerAccountService; import org.meveo.service.script.finance.ReportExtractScript; import org.slf4j.Logger; import org.slf4j.LoggerFactory; /** * @author anasseh * */ public class CustomerPerDunningReporting extends ReportExtractScript { private static final Logger log = LoggerFactory.getLogger(CustomerPerDunningReporting.class); private CustomerAccountService customerAccountService = (CustomerAccountService) getServiceInterface(CustomerAccountService.class.getSimpleName()); @Override public void execute(Map<String, Object> executeContext) throws BusinessException { try { log.debug("execute executeContext:{}", executeContext); List<CustomerAccount> rows = (List<CustomerAccount>) customerAccountService.executeSelectQuery("from CustomerAccount ca order by ca.dunningLevel", null); log.debug("execute rows size:{}", rows == null ? null : rows.size()); String dirOutput = String.valueOf(executeContext.get(ReportExtractScript.DIR)); String filename = String.valueOf(executeContext.get(CustomerPerDunningReporting.FILENAME)); CsvBuilder csvBuilder = new CsvBuilder(";", false); String[] header = { "CA_DESC", "C_DESC", "LEVEL" }; csvBuilder.appendValues(header); csvBuilder.startNewLine(); for (CustomerAccount ca : rows) { csvBuilder.appendValue(ca.getDescription()); csvBuilder.appendValue(ca.getCustomer().getDescription()); csvBuilder.appendValue("" + ca.getDunningLevel()); csvBuilder.startNewLine(); } csvBuilder.toFile(dirOutput + File.separator + filename); log.debug("execute file generated:{}", dirOutput + File.separator + filename); } catch (Exception e) { log.error("Error on CustomerPerDunningReporting:", e); throw new BusinessException(e.getMessage()); } } }
-                ]]>
-            </column>
-        </insert>
-
-        <insert tableName="dwh_report_extract">
-            <column name="id" valueNumeric="-29" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="CustomersPerDunningReport" />
-            <column name="description" value="Customer per dunning level" />
-            <column name="category" value="Dunning"></column>
-            <column name="script_type" value="JAVA"></column>
-            <column name="filename_format" value="CustomersPerDunning-[yyyy_MM_dd].csv"></column>
-            <column name="result_type" value="CSV"></column>
-            <column name="uuid" value="CustomersPerDunningReport_UUID"></column>
-            <column name="script_instance_id" value="-14"></column>
-        </insert>
-        <insert tableName="meveo_script_instance">
             <column name="id" valueNumeric="-15"/>
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueNumeric="0" />
@@ -1597,6 +1569,7 @@ order by edr.STATUS, edr.id DESC]]>
     <changeSet id="#5417_20200929 - Error while running CUSTOMERS_PER_SELLER report extracts" author="Mohamed-Ali-HAMMAL"/>
     <changeSet id="#5425_20200930 - Failed to execute some report extract" author="Mohamed-Ali-HAMMAL"/>
     <changeSet id="#12569_20221222" author="HichamELHALOUI"/>
+    <changeSet id="#12573_20221223" author="HichamELHALOUI"/>
             
        <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data-reports" author="AbdelmounaimAkadid">
