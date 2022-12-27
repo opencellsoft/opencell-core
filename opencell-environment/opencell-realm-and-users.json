@@ -16077,7 +16077,7 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "resources": "[\"Api V2 International Settings\"\"]",
+              "resources": "[\"Api V2 International Settings\"]",
               "scopes": "[\"PUT\",\"DELETE\",\"POST\",\"PATCH\"]",
               "applyPolicies": "[\"Role apiAdministrationManagement\"]"
             }

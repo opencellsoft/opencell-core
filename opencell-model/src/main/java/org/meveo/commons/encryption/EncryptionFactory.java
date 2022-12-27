@@ -139,29 +139,53 @@ public class EncryptionFactory {
 
     public static String encrypt(String clearText){
         try {
-            String algorithm = KeystoreManager.retrieveCredential(ENCRYPTION_ALGO_PROP);
-            String secretKey = KeystoreManager.retrieveCredential(ENCRYPTION_KEY_PROP);
-            String algoKey = algorithm + SEPARATOR + secretKey;
-            String hashAlgoKey = getHashOfAlgoKey(algoKey);
-
-            String completePrefix = PREFIX + hashAlgoKey;
-
-            cipher = Cipher.getInstance(algorithm);
-            cipher.init(Cipher.ENCRYPT_MODE, defineKey(secretKey), ivParameterSpec);
-
-            // add algorithm and secret key if they do not exist in the keystore
-            // the format is as follows : encrypt.algorithm.hash1 is as alias, and algorithm or key is as password
-            if (! KeystoreManager.existCredential(ENCRYPTION_ALGO_PROP + "." + completePrefix)) {
-                KeystoreManager.addCredential(ENCRYPTION_ALGO_PROP + "." + completePrefix, algorithm);
-                KeystoreManager.addCredential(ENCRYPTION_KEY_PROP + "." + completePrefix, secretKey);
-            }
-
+            String completePrefix = buildCipherAndGetPrefix();
             return completePrefix + SEPARATOR
                     + Base64.getEncoder().encodeToString(cipher.doFinal(clearText.getBytes()));
         } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException e) {
-            log.error("Error while encrypting: " + e.getMessage(), e);
+            log.error("Error while encrypting: {}", e.getMessage(), e);
         }
         return null;
+    }
+
+    /**
+     * Encrypt value without adding Opencell custom prefix
+     * Use to keep interoperability with old AesEncrypt with use "AES" prefix
+     * /!\ CAREFULNESS : PLEASE DONT USE IT TO OTHER CONTEXT, THE CIPHER DATA CANNOT BE DECRYPTED /!\
+     *
+     * @param clearText clear content
+     * @return encrypted value without prefix
+     * @deprecated Only for "FNAC FR" Migration (from 9.8.6 to 13.1.1)
+     */
+    @Deprecated
+    public static String encryptWithoutPrefix(String clearText) {
+        try {
+            buildCipherAndGetPrefix();
+            return Base64.getEncoder().encodeToString(cipher.doFinal(clearText.getBytes()));
+        } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+            log.error("Error while encrypting without prefix: {}", e.getMessage(), e);
+        }
+        return null;
+    }
+
+    private static String buildCipherAndGetPrefix() throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException {
+        String algorithm = KeystoreManager.retrieveCredential(ENCRYPTION_ALGO_PROP);
+        String secretKey = KeystoreManager.retrieveCredential(ENCRYPTION_KEY_PROP);
+        String algoKey = algorithm + SEPARATOR + secretKey;
+        String hashAlgoKey = getHashOfAlgoKey(algoKey);
+
+        String completePrefix = PREFIX + hashAlgoKey;
+
+        cipher = Cipher.getInstance(algorithm);
+        cipher.init(Cipher.ENCRYPT_MODE, defineKey(secretKey), ivParameterSpec);
+
+        // add algorithm and secret key if they do not exist in the keystore
+        // the format is as follows : encrypt.algorithm.hash1 is as alias, and algorithm or key is as password
+        if (!KeystoreManager.existCredential(ENCRYPTION_ALGO_PROP + "." + completePrefix)) {
+            KeystoreManager.addCredential(ENCRYPTION_ALGO_PROP + "." + completePrefix, algorithm);
+            KeystoreManager.addCredential(ENCRYPTION_KEY_PROP + "." + completePrefix, secretKey);
+        }
+        return completePrefix;
     }
 
     public static String decrypt(String encryptedText){
