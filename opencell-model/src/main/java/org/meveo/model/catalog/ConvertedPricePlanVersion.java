@@ -1,0 +1,113 @@
+package org.meveo.model.catalog;
+
+import java.math.BigDecimal;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.meveo.model.AuditableEntity;
+import org.meveo.model.billing.TradingCurrency;
+
+@Entity
+@Table(name = "cpq_converted_price_plan_version")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "cpq_converted_price_plan_version_seq") })
+public class ConvertedPricePlanVersion extends AuditableEntity {
+	
+	private static final long serialVersionUID = 6114895863558742249L;
+
+	@Column(name = "converted_price")
+	private BigDecimal convertedPrice;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "trading_currency_id", nullable = false)
+	private TradingCurrency tradingCurrency;
+	
+	@Column(name = "rate")
+	private BigDecimal rate;
+	
+	@Column(name = "use_for_billing_accounts")
+	private boolean useForBillingAccounts;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "price_plan_matrix_version_id")
+	private PricePlanMatrixVersion pricePlanMatrixVersion;
+
+	/**
+	 * @return the convertedPrice
+	 */
+	public BigDecimal getConvertedPrice() {
+		return convertedPrice;
+	}
+
+	/**
+	 * @param convertedPrice the convertedPrice to set
+	 */
+	public void setConvertedPrice(BigDecimal convertedPrice) {
+		this.convertedPrice = convertedPrice;
+	}
+
+	/**
+	 * @return the tradingCurrency
+	 */
+	public TradingCurrency getTradingCurrency() {
+		return tradingCurrency;
+	}
+
+	/**
+	 * @param tradingCurrency the tradingCurrency to set
+	 */
+	public void setTradingCurrency(TradingCurrency tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
+	}
+
+	/**
+	 * @return the rate
+	 */
+	public BigDecimal getRate() {
+		return rate;
+	}
+
+	/**
+	 * @param rate the rate to set
+	 */
+	public void setRate(BigDecimal rate) {
+		this.rate = rate;
+	}
+
+	/**
+	 * @return the useForBillingAccounts
+	 */
+	public boolean isUseForBillingAccounts() {
+		return useForBillingAccounts;
+	}
+
+	/**
+	 * @param useForBillingAccounts the useForBillingAccounts to set
+	 */
+	public void setUseForBillingAccounts(boolean useForBillingAccounts) {
+		this.useForBillingAccounts = useForBillingAccounts;
+	}
+
+	/**
+	 * @return the pricePlanMatrixVersion
+	 */
+	public PricePlanMatrixVersion getPricePlanMatrixVersion() {
+		return pricePlanMatrixVersion;
+	}
+
+	/**
+	 * @param pricePlanMatrixVersion the pricePlanMatrixVersion to set
+	 */
+	public void setPricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion) {
+		this.pricePlanMatrixVersion = pricePlanMatrixVersion;
+	}
+
+}

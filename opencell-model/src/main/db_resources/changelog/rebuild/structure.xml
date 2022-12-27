@@ -459,6 +459,7 @@
         <createSequence sequenceName="cpq_billing_rule_seq" startValue="1" />
         <createSequence sequenceName="meveo_script_parameter_seq"/>
         <createSequence sequenceName="crm_address_book_contact_seq" startValue="1" />
+        <createSequence sequenceName="cpq_converted_price_plan_version_seq" startValue="1" />
     </changeSet>
 
 
@@ -17671,6 +17672,28 @@
                                  constraintName="fk_billing_invoice_validation_rule"
                                  referencedTableName="billing_invoice_validation_rule"
                                  referencedColumnNames="id" />
+    </changeSet>
+
+	<changeSet id="#INTRD-12609_20221227_converted_ppv" author="a.rouaguebe">
+        <createTable tableName="cpq_converted_price_plan_version">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_converted_price_plan_version_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="creator" type="varchar(100)" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="updater" type="varchar(100)" />
+            <column name="price_plan_matrix_version_id" type="bigint" />
+            <column name="converted_price" type="numeric(23, 12)" />
+            <column name="trading_currency_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="rate" type="numeric(23, 12)" />
+            <column name="use_for_billing_accounts" type="${type.boolean}"/>
+        </createTable>
     </changeSet>
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
