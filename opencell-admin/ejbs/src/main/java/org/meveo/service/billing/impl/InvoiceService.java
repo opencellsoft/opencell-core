@@ -6781,10 +6781,57 @@ public class InvoiceService extends PersistenceService<Invoice> {
         List<InvoiceLineRTs> invoiceLineRTs = invoiceLinesToReplicate.getInvoiceLinesRTs();
 
         if (invoiceLineRTs != null && !invoiceLineRTs.isEmpty()) {
-            return createAdjustmentFromInvoiceLinesRTs(invoice, invoiceLineRTs);
+            return createAdjustmentFromRatedTransactions(invoice, invoiceLineRTs);
         } else {
             return createAdjustment(invoice, invoiceLinesToReplicate.getInvoiceLinesIds());
         }
+    }
+
+    private Invoice createAdjustmentFromRatedTransactions(Invoice invoice, List<InvoiceLineRTs> invoiceLineRTs) {
+
+        List<Long> invoiceLinesIds = invoiceLineRTs.stream().map(InvoiceLineRTs::getInvoiceLineId).collect(toList());
+
+        Invoice adjustmentInvoice = duplicateAndUpdateInvoiceLines(invoice, invoiceLineRTs, invoiceLinesIds);
+        populateAdjustmentInvoice(invoice, adjustmentInvoice);
+        calculateOrUpdateInvoice(invoiceLinesIds, adjustmentInvoice);
+
+        return adjustmentInvoice;
+    }
+
+    private Invoice duplicateAndUpdateInvoiceLines(Invoice invoice, List<InvoiceLineRTs> invoiceLineRTs, List<Long> invoiceLinesIds) {
+
+        invoice = refreshOrRetrieve(invoice);
+
+        var invoiceAgregates = new ArrayList<InvoiceAgregate>();
+        if (invoice.getInvoiceAgregates() != null) {
+            invoiceAgregates.addAll(invoice.getInvoiceAgregates());
+        }
+
+        List<InvoiceLine> invoiceLines = new ArrayList<InvoiceLine>();
+        if (invoiceLinesIds != null && !invoiceLinesIds.isEmpty()) {
+            invoiceLines.addAll(invoiceLinesService.findByInvoiceAndIds(invoice, invoiceLinesIds));
+        }
+        else if (invoice.getInvoiceLines() != null) {
+            invoiceLines.addAll(invoice.getInvoiceLines());
+        }
+
+        detach(invoice);
+
+        var duplicateInvoice = new Invoice(invoice);
+        this.create(duplicateInvoice);
+
+        updateInvoiceLinesAmountFromRatedTransactions(invoiceLineRTs, invoiceLines);
+
+        for (InvoiceLine invoiceLine : invoiceLines) {
+            invoiceLinesService.detach(invoiceLine);
+            InvoiceLine duplicateInvoiceLine = new InvoiceLine(invoiceLine, duplicateInvoice);
+            duplicateInvoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
+            duplicateInvoiceLine.setRatedTransactions(invoiceLine.getRatedTransactions());
+            invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);
+            duplicateInvoice.getInvoiceLines().add(duplicateInvoiceLine);
+        }
+
+        return duplicateInvoice;
     }
 
     @JpaAmpNewTx
@@ -6798,28 +6845,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return adjustmentInvoice;
     }
 
-    private Invoice createAdjustmentFromInvoiceLinesRTs(Invoice invoice, List<InvoiceLineRTs> invoiceLinesRTs) {
-
-        invoice = refreshOrRetrieve(invoice);
-
-        List<Long> invoiceLinesIds = invoiceLinesRTs.stream().map(InvoiceLineRTs::getInvoiceLineId).collect(toList());
-        List<InvoiceLine> invoiceLines = invoiceLinesService.findByInvoiceAndIds(invoice, invoiceLinesIds);
-
-        updateInvoiceLinesAmountFromRatedTransactions(invoiceLinesRTs, invoiceLines);
-
-        setInvoiceLines(invoice, invoiceLines);
-        detach(invoice);
-
-        Invoice adjustmentInvoice = new Invoice(invoice);
-        this.create(adjustmentInvoice);
-
-        duplicateInvoiceLines(invoice, invoiceLines, adjustmentInvoice);
-        populateAdjustmentInvoice(invoice, adjustmentInvoice);
-        calculateOrUpdateInvoice(invoiceLinesIds, adjustmentInvoice);
-
-        return adjustmentInvoice;
-
-    }
 
     private void updateInvoiceLinesAmountFromRatedTransactions(List<InvoiceLineRTs> invoiceLinesRTs, List<InvoiceLine> invoiceLines) {
 
@@ -6837,25 +6862,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoiceLine.setAmountWithTax(amountWithTax);
                 invoiceLine.setAmountWithoutTax(amountWithoutTax);
                 invoiceLine.setAmountTax(amountTax);
+                invoiceLine.setRatedTransactions(ratedTransactions);
             }
-        }
-    }
-
-    private Invoice duplicateInvoiceLines(Invoice invoice, List<InvoiceLine> invoiceLines, Invoice adjustmentInvoice) {
-
-        for (InvoiceLine invoiceLine : invoiceLines) {
-            invoiceLinesService.detach(invoiceLine);
-            InvoiceLine duplicateInvoiceLine = new InvoiceLine(invoiceLine, adjustmentInvoice);
-            duplicateInvoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
-            invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);
-            adjustmentInvoice.getInvoiceLines().add(duplicateInvoiceLine);
-        }
-        return adjustmentInvoice;
-    }
-
-    private static void setInvoiceLines(Invoice invoice, List<InvoiceLine> invoiceLines) {
-        if (invoiceLines == null || invoiceLines.isEmpty()) {
-            invoiceLines.addAll(invoice.getInvoiceLines());
         }
     }
 
