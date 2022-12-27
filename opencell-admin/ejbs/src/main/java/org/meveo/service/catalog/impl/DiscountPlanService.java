@@ -256,7 +256,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     			discountWalletOperation.setDiscountValue(discountValue);
     			discountWalletOperation.setSequence(discountPlanItem.getFinalSequence());
     			discountWalletOperation.setDiscountedAmount(discountedAmount);
-				discountWalletOperation.setOrderNumber(walletOperation.getOrderNumber());
+				discountWalletOperation.setOrderNumber(walletOperation != null ? walletOperation.getOrderNumber() : null);
     			
     			if(!isVirtual) {
     				discountWalletOperation.setSubscription(subscription);

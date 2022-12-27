@@ -57,7 +57,9 @@ public class FinanceSettingsService extends BusinessService<FinanceSettings> {
 
     public FinanceSettings findLastOne() {
         try {
-            TypedQuery<FinanceSettings> query = getEntityManager().createQuery("from FinanceSettings f order by f.id desc", entityClass).setMaxResults(1);
+            TypedQuery<FinanceSettings> query = getEntityManager()
+                    .createQuery("from FinanceSettings f order by f.id desc", entityClass)
+                    .setMaxResults(1);
             return query.getSingleResult();
         } catch (NoResultException e) {
             log.debug("No {} found", getEntityClass().getSimpleName());

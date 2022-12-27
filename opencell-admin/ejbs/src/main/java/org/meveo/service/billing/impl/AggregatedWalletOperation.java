@@ -158,7 +158,7 @@ public class AggregatedWalletOperation {
 
 	private Subscription subscription;
 	private ServiceInstance serviceInstance;
-	private OfferTemplate offer;
+	private OfferTemplate offerTemplate;
 	private UserAccount userAccount;
 	private BillingAccount billingAccount;
 	private Seller seller;
@@ -488,12 +488,12 @@ public class AggregatedWalletOperation {
 		this.serviceInstance = serviceInstance;
 	}
 
-	public OfferTemplate getOffer() {
-		return offer;
+	public OfferTemplate getOfferTemplate() {
+		return offerTemplate;
 	}
 
-	public void setOffer(OfferTemplate offer) {
-		this.offer = offer;
+	public void setOfferTemplate(OfferTemplate offer) {
+		this.offerTemplate = offer;
 	}
 
 	public UserAccount getUserAccount() {
