@@ -1,6 +1,5 @@
 package org.meveo.service.script;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -13,8 +12,9 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.meveo.commons.utils.StringUtils;
 
-import org.apache.commons.lang3.StringUtils;
+
 
 @SuppressWarnings("serial")
 public class CompareOfferLinesAmountScript extends Script{
@@ -39,10 +39,9 @@ public class CompareOfferLinesAmountScript extends Script{
             LOG.info("{}={}", entry.getKey(), entry.getValue());
         });
         
-        checkScriptParams(methodContext, new String[] {OFFERS, WITH_OR_WITHOUT_TAX, OPERATOR, VALUE, INVOICE});
         Long invoiceId = ((Invoice) methodContext.get(INVOICE)).getId();
-        String finalQuery = query.replaceAll("AMOUNT",  "amount" + StringUtils.capitalize((String)methodContext.get(WITH_OR_WITHOUT_TAX)))
-                                 .replace("OPERATOR", (String)methodContext.get(OPERATOR));
+        String finalQuery = query.replaceAll("AMOUNT",  "amount" + StringUtils.camelcase((String)methodContext.get(WITH_OR_WITHOUT_TAX)))
+                                 .replace("OPERATOR", ScriptUtils.buildOperator(String.valueOf(methodContext.get(OPERATOR))));
         
         List<OfferTemplate> offers = (List<OfferTemplate>) methodContext.get(OFFERS);
         
@@ -50,31 +49,10 @@ public class CompareOfferLinesAmountScript extends Script{
                                                     .setParameter("invoiceId", invoiceId)
                                                     .setParameter("offers", offers.stream().map(OfferTemplate::getId).collect(Collectors.toList()))
                                                     .setParameter("value", methodContext.get(VALUE))
-                                                        .getResultList();
+                                                    .getResultList();
         methodContext.put(Script.INVOICE_VALIDATION_STATUS, CollectionUtils.isEmpty(result) ? InvoiceValidationStatusEnum.VALID : (InvoiceValidationStatusEnum) methodContext.get(Script.RESULT_VALUE));
         
     }
     
-    @SuppressWarnings("unchecked")
-    private void checkScriptParams(Map<String, Object> context, String ...params) {
-        List<String> errors = new ArrayList<>();
-        if(params.length == 0) {
-            throw new BusinessException("params : invoice, offers, withOrWithoutTax, operator, value are mandatory" );
-        }
-        for(String param: params) {
-            if(context.get(param) == null) {
-                errors.add(param);
-            }else if(context.get(param) != null && context.get(param) instanceof List) {
-                if(CollectionUtils.isEmpty((List<OfferTemplate>)context.get(param))){
-                    errors.add(param);
-                }
-            }
-        }
-        if(CollectionUtils.isNotEmpty(errors)) {
-            if(errors.size() > 1)
-                throw new BusinessException("param : " + errors + " is mandatory");
-            else
-                throw new BusinessException("params : " + errors + " are mandatory");
-        }
-    }
+    
 }
