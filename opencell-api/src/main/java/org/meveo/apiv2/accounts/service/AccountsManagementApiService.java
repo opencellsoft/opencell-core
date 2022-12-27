@@ -457,6 +457,10 @@ public class AccountsManagementApiService {
     private ChargeInstance getAndValidateChargeWithProduct(CounterInstanceDto dto, ServiceInstance si, CounterTemplate counterTemplate, String s) {
         ChargeInstance charge = chargeInstanceService.findByCode(s);
 
+        if (charge == null) {
+            throw new EntityDoesNotExistsException("No ChargeInstance found with code : " + dto.getCounterTemplateCode());
+        }
+
         if (!productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(dto.getProductCode(), charge.getCode(), counterTemplate.getCode())) {
             throw new BusinessApiException("ChargeInstance with [type=" + charge.getChargeType() + ", code=" + charge.getCode()
                     + "] is not linked to Product [code=" + si.getCode()
