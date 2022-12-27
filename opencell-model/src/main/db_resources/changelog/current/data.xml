@@ -8981,6 +8981,9 @@ Only offer actually present on invoice will be tested."}'/>
 		<delete tableName="dwh_report_extract_params">
 			<where> reportextract_id IN (-31, -32, -33, -34 )</where>
 		</delete>
+		<delete tableName="dwh_report_extract_execution">
+	        <where>report_extract_id IN (-31, -32, -33, -34 )</where>
+	    </delete>
 		<delete tableName="dwh_report_extract">
 	        <where>code IN ('KPIAgedBalanceReporting', 'KPICustomerRevenuReporting', 'KPICustomersPerDunningReport', 'KPICustomersPerOfferReport')</where>
 	    </delete>
