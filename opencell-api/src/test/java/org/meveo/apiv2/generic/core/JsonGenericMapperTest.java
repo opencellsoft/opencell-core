@@ -61,7 +61,7 @@ public class JsonGenericMapperTest {
         // When
         String expected = jsonGenericMapper.toJson(null, BigDecimal.class, param, null);
         // Then
-        assertThat(expected).isEqualTo("0.00");
+        assertThat(expected).isEqualTo("0");
     }
 
     @Test
