@@ -8979,7 +8979,7 @@ Only offer actually present on invoice will be tested."}'/>
     </changeSet>
 	<changeSet id="#12569_20221222" author="HichamELHALOUI">
 		<delete tableName="dwh_report_extract_params">
-			<where> reportextract_id IN (-32, -34 )</where>
+			<where> reportextract_id IN (-31, -32, -33, -34 )</where>
 		</delete>
 		<delete tableName="dwh_report_extract">
 	        <where>code IN ('KPIAgedBalanceReporting', 'KPICustomerRevenuReporting', 'KPICustomersPerDunningReport', 'KPICustomersPerOfferReport')</where>
