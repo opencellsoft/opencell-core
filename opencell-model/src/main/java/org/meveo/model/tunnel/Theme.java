@@ -36,7 +36,7 @@ import java.util.Date;
         @Parameter(name = "sequence_name", value = "tnl_theme_seq"),})
 public class Theme extends BusinessEntity {
 
-    private static final long serialVersionUID = -6831399734977276174L;
+    private static final long serialVersionUID = 4480222913397611615L;
 
     private String name;
 

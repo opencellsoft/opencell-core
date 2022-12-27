@@ -21,11 +21,14 @@ package org.meveo.service.tunnel;
 import org.meveo.model.tunnel.Theme;
 import org.meveo.service.base.BusinessService;
 
+import javax.ejb.Stateless;
+
 /**
  * Theme service implementation.
  *
  * @author Ilham CHAFIK
  *
  */
+@Stateless
 public class ThemeService extends BusinessService<Theme> {
 }

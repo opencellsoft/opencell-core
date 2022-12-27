@@ -38,7 +38,7 @@ import java.util.Map;
         @Parameter(name = "sequence_name", value = "tnl_hypertext_section_seq"),})
 public class HypertextSection extends BusinessEntity {
 
-    private static final long serialVersionUID = -6831399734977276174L;
+    private static final long serialVersionUID = -7694479925404870779L;
 
     /**
      * Translated label in JSON format with language code as a key and translated description as a value

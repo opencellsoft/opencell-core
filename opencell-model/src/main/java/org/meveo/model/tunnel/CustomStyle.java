@@ -38,7 +38,7 @@ import java.util.Map;
         @Parameter(name = "sequence_name", value = "tnl_custom_style_seq"),})
 public class CustomStyle extends BusinessEntity {
 
-    private static final long serialVersionUID = -6831399734977276174L;
+    private static final long serialVersionUID = 4220329388104137161L;
 
     @Column(name = "logo")
     private String logo;

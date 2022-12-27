@@ -44,7 +44,7 @@ import java.util.Map;
         @Parameter(name = "sequence_name", value = "tnl_customization_seq"),})
 public class TunnelCustomization extends BusinessEntity {
 
-    private static final long serialVersionUID = -6831399734977276174L;
+    private static final long serialVersionUID = -8925360361913782589L;
 
     /**
      * Translated rgpd in JSON format with language code as a key and translated description as a value

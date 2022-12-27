@@ -35,7 +35,7 @@ import javax.persistence.*;
         @Parameter(name = "sequence_name", value = "tnl_electronic_signature_seq"),})
 public class ElectronicSignature extends BusinessEntity {
 
-    private static final long serialVersionUID = -6831399734977276174L;
+    private static final long serialVersionUID = -486975805495499262L;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "electronic_signature")

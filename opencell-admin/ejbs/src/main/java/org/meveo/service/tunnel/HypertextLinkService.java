@@ -21,8 +21,11 @@ package org.meveo.service.tunnel;
 import org.meveo.model.tunnel.HypertextLink;
 import org.meveo.service.base.BusinessService;
 
+import javax.ejb.Stateless;
+
 /**
  * @author Ilham CHAFIK
  */
+@Stateless
 public class HypertextLinkService extends BusinessService<HypertextLink> {
 }
