@@ -179,8 +179,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     private DiscountPlanItemService discountPlanItemService;
     @Inject
     private AccountingArticleService accountingArticleService;
-    @Inject
-    private WalletOperationService walletOperationService;
     @Inject 
     private ChargeInstanceService<ChargeInstance> chargeInstanceService;
 
@@ -346,11 +344,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
         RatingResult ratedEDRResult = new RatingResult();
         ratedEDRResult.addWalletOperation(walletOperation);
-        if(!isVirtual) {
-        	walletOperationService.create(walletOperation);
-        }else {
-        	walletOperation.setUuid(UUID.randomUUID().toString());
-        }
+
     	applyDiscount(ratedEDRResult, walletOperation, isVirtual);
         
         return ratedEDRResult;
