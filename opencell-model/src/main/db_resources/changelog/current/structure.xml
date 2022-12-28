@@ -15121,4 +15121,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </update>
     </changeSet>
 
+	<changeSet id="#INTRD-12478_20221226" author="AdilElJaouhari">
+		<addColumn tableName="billing_cycle">
+			<column name="priority" type="int4" defaultValueNumeric="0" />
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>
