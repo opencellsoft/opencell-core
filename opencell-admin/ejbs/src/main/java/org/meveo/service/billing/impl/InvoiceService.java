@@ -1491,10 +1491,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return false if validation EL fails, true else
      */
 	private boolean validateRuleEL(Invoice invoice, boolean noValidationError, InvoiceValidationRule validationRule) {
-		invoice.setRejectReason(null);
-		Object validationResult = evaluateExpression(validationRule.getValidationEL(), Map.of("invoice", invoice), Boolean.class);
 		try {
-		    if(!((Boolean) validationResult)) {
+			invoice.setRejectReason(null);
+			Object validationResult = evaluateExpression(validationRule.getValidationEL(), Map.of("invoice", invoice), Boolean.class);
+			if (!((Boolean) validationResult)) {
 		        if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.SUSPECT) {
 		            invoice.setStatus(InvoiceStatusEnum.SUSPECT);
 		            invoice.setRejectedByRule(validationRule);
