@@ -61,6 +61,21 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements OneShotCharge
     }
 
     @Override
+    public ActionStatus createOrUpdateExisting(OneShotChargeTemplateDto postData) {
+
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            result.setEntityId(oneShotChargeTemplateApi.createOrUpdateExisting(postData).getId());
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+
+    @Override
     public ActionStatus update(OneShotChargeTemplateDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
