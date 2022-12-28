@@ -10066,7 +10066,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		</insert>
     </changeSet>
     
-    <changeSet id="INTRD-12103_20221215_rebuild" author="HichamHANINE">	
+    <changeSet id="INTRD-12103_20221215_rebuild" author="HichamHANINE">    
         <insert tableName="meveo_script_instance">
         	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
         	<column name="code" value="org.meveo.service.script.CompareOfferLinesAmountScript" />
@@ -10103,16 +10103,16 @@ Only offer actually present on invoice will be tested."}'/>
 			<column name="collection" valueNumeric="1" />
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmountScript')" />
 		</insert>
-		
+
 		<insert tableName="meveo_script_parameter">
 			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
 			<column name="version" valueNumeric="0" />
 			<column name="code" value="withOrWithoutTax" />
 			<column name="description_i18n" value='{"FR":"Montant à tester","EN":"Amount to test"}'/>
 			<column name="class_name" value="java.lang.String" />
-			<column name="default_value" value="withoutTax" />
+			<column name="default_value" value="without tax" />
 			<column name="mandatory" valueNumeric="1" />
-			<column name="allowed_values" value="withoutTax|withTax" />
+			<column name="allowed_values" value="without tax|with tax" />
 			<column name="values_separator" value="\|" />
 			<column name="collection" valueNumeric="0" />
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmountScript')" />
@@ -10125,7 +10125,7 @@ Only offer actually present on invoice will be tested."}'/>
 			<column name="class_name" value="java.lang.String" />
 			<column name="default_value" value=">" />
 			<column name="mandatory" valueNumeric="1" />
-			<column name="allowed_values" value="&lt;|&lt;=|=|!=|&gt;|&gt;=" />
+			<column name="allowed_values" value="&lt;|≤|=|≠|&gt;|≥" />
 			<column name="values_separator" value="\|" />
 			<column name="collection" valueNumeric="0" />
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmountScript')" />
@@ -10142,8 +10142,8 @@ Only offer actually present on invoice will be tested."}'/>
 			<column name="collection" valueNumeric="0" />
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmountScript')" />
 		</insert>
-    </changeSet>    
-
+    </changeSet>
+    
     <changeSet id="INTRD-12267_20221219_rebuild" author="aeljaouhari">
         <insert tableName="meveo_script_instance">
         	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
