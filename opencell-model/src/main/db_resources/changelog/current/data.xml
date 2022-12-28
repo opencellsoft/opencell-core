@@ -8992,7 +8992,13 @@ Only offer actually present on invoice will be tested."}'/>
 	    </delete>
 	</changeSet>
 	<changeSet id="#12573_20221223" author="HichamELHALOUI">
-		<delete tableName="dwh_report_extract">
+		<delete tableName="dwh_report_extract_params">
+			<where> reportextract_id = -29</where>
+		</delete>
+	    <delete tableName="dwh_report_extract_execution">
+	        <where>report_extract_id = -29</where>
+	    </delete>
+	    <delete tableName="dwh_report_extract">
 	        <where>code = 'CustomersPerDunningReport'</where>
 	    </delete>
 		<delete tableName="meveo_script_instance">
