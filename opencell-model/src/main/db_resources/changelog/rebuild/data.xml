@@ -3741,10 +3741,10 @@
             <column name="created" valueDate="2015-03-19 00:04:07.579" />
             <column name="version" valueNumeric="1" />
             <column name="country_code" value="RE" />
-            <column name="description" value="RÃ©union" />
+            <column name="description" value="Réunion" />
             <column name="currency_id" valueNumeric="5" />
             <column name="language_id" valueNumeric="2" />
-            <column name="description_i18n" value='{"FRA":"Réunion","ENG":"RÃ©union"}' />
+            <column name="description_i18n" value='{"FRA":"Réunion","ENG":"Réunion"}' />
         </insert>
         <insert tableName="adm_country">
             <column name="id" valueNumeric="178" />
