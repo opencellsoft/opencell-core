@@ -7100,6 +7100,27 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			cancelInvoiceAdvances(invoice, advInvoices, false);
 		} 
         if(CollectionUtils.isNotEmpty(advInvoices)) {
+        	sort(advInvoices, (inv1, inv2) -> {
+                int compCommercialOrder = 0;
+                if(inv1.getCommercialOrder() != null && inv2.getCommercialOrder() == null) {
+                    compCommercialOrder = -1;
+                }else if(inv1.getCommercialOrder() == null && inv2.getCommercialOrder() != null) {
+                    compCommercialOrder = 1;
+                }else if(inv1.getCommercialOrder() == null && inv2.getCommercialOrder() == null) {
+                	compCommercialOrder = 0;
+                }else {
+                    compCommercialOrder = inv1.getCommercialOrder().getId().compareTo(inv2.getCommercialOrder().getId());
+                }
+                if(compCommercialOrder != 0) {
+                    return compCommercialOrder;
+                }
+                int compCreationDate = inv1.getAuditable().getCreated().compareTo(inv2.getAuditable().getCreated());
+                if(compCreationDate != 0) {
+                    return compCreationDate;
+                }
+                return inv1.getInvoiceBalance().compareTo(inv2.getInvoiceBalance());
+                    
+            });
                 BigDecimal remainingAmount = invoice.getAmountWithTax();
                 for(Invoice adv : advInvoices){
                     if(adv.getInvoiceBalance() == null) {
