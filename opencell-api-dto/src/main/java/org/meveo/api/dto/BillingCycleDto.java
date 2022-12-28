@@ -192,6 +192,9 @@ public class BillingCycleDto extends BusinessEntityDto {
     private String billingRunValidationScriptCode;
     
     private Map<String, String> filters;
+    
+    @XmlElement
+    private Integer priority;
 
     public String getLastTransactionDateDelayEL() {
 		return lastTransactionDateDelayEL;
@@ -272,6 +275,7 @@ public class BillingCycleDto extends BusinessEntityDto {
             computeDatesAtValidation = billingCycleEntity.getComputeDatesAtValidation() == null ? null : billingCycleEntity.getComputeDatesAtValidation();
             billingRunValidationScriptCode=billingCycleEntity.getBillingRunValidationScript()!=null?billingCycleEntity.getBillingRunValidationScript().getCode():null;
             filters = billingCycleEntity.getFilters();
+            priority = billingCycleEntity.getPriority();
         }
     }
 
@@ -675,5 +679,13 @@ public class BillingCycleDto extends BusinessEntityDto {
 
 	public void setFilters(Map<String, String> filters) {
 		this.filters = filters;
+	}
+
+	public Integer getPriority() {
+		return priority;
+	}
+
+	public void setPriority(Integer priority) {
+		this.priority = priority;
 	}
 }

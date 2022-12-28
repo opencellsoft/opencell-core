@@ -2927,6 +2927,7 @@
             <column name="filters" type="${type.json}">
             	<constraints nullable="true" />
             </column>
+            <column name="priority" type="int4" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-172">
@@ -18941,7 +18942,7 @@
     <changeSet id="#2038-20221130" author="Mbarek-Ay"/>
 	<changeSet id="#INTR-12252_20221212_agreement_date" author="a.rouaguebe" />
     <changeSet id="#INTRD-12466_20222012" author="bourras" />
-
+	<changeSet id="#INTRD-12478_20221226" author="AdilElJaouhari" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
