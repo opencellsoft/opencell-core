@@ -7152,9 +7152,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     }
                 }
             invoice.setInvoiceBalance(remainingAmount);
-            invoice.getLinkedInvoices().stream()
-            	.filter(il -> ZERO.compareTo(il.getAmount()) == 0 && InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(il.getType()))
-            	.forEach(li -> linkedInvoiceService.remove(li));
+            invoice.getLinkedInvoices().removeIf(il -> ZERO.compareTo(il.getAmount()) == 0 && InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(il.getType()));
 	        }
     }
 
