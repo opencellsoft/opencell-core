@@ -367,4 +367,13 @@ public class StringUtils {
         }
         return new String(currentChars) + "A";
     }
+    
+    public static String camelcase(String strIn) {
+        String[] strList = org.apache.commons.lang3.StringUtils.split(strIn);
+        String strOut = "";
+        for(String elementStr:strList){  
+            strOut = org.apache.commons.lang3.StringUtils.join(strOut, org.apache.commons.lang3.StringUtils.capitalize(elementStr));
+        }  
+        return strOut;
+    }
 }
