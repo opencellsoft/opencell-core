@@ -7056,32 +7056,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 .setParameter("billingAccountId", invoice.getBillingAccount().getId())
                 .setParameter("commercialOrder", invoice.getCommercialOrder())
                 .getResultList();
-        /* if(invoice.getCommercialOrder() != null) {
-	        invoicesAdv.addAll(this.getEntityManager().createNamedQuery("Invoice.findValidatedInvoiceAdvWithOrder")
-	                                                            .setParameter("billingAccountId", invoice.getBillingAccount().getId())
-	                                                            .setParameter("commercialOrder", invoice.getCommercialOrder())
-	                                                            .getResultList() );
-        }
-        
-       sort(invoicesAdv, (inv1, inv2) -> {
-            int compCommercialOrder = 0;
-            if(inv1.getCommercialOrder() != null && inv2.getCommercialOrder() == null) {
-                compCommercialOrder = 1;
-            }else if(inv1.getCommercialOrder() == null && inv2.getCommercialOrder() != null) {
-                compCommercialOrder = -1;
-            }else {
-                compCommercialOrder = inv1.getCommercialOrder().getId().compareTo(inv2.getCommercialOrder().getId());
-            }
-            if(compCommercialOrder != 0) {
-                return compCommercialOrder;
-            }
-            int compCreationDate = inv1.getAuditable().getCreated().compareTo(inv2.getAuditable().getCreated());
-            if(compCreationDate != 0) {
-                return compCreationDate;
-            }
-            return inv1.getInvoiceBalance().compareTo(inv2.getInvoiceBalance());
-                
-        });*/
         return invoicesAdv;
     }
     
@@ -7110,9 +7084,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public void applyAdvanceInvoice(Invoice invoice, List<Invoice> advInvoices) {
 		BigDecimal invoiceBalance = invoice.getInvoiceBalance();
 		if (invoiceBalance != null) {
+			CommercialOrder orderInvoice = invoice.getCommercialOrder();
 			BigDecimal sum = invoice.getLinkedInvoices().stream()
-					.filter(i -> InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(i.getType())).map(x -> x.getAmount())
-					.reduce(BigDecimal::add).get();
+					.filter(i -> InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(i.getType()))
+					.filter(li -> (orderInvoice != null && orderInvoice.equals(li.getLinkedInvoiceValue().getCommercialOrder())) || (orderInvoice == null && li.getLinkedInvoiceValue().getCommercialOrder() == null))
+					.map(x -> x.getAmount())
+					.reduce(BigDecimal::add).orElse(ZERO);
 			//if balance is well calculated and balance=0, we don't need to recalculate
 			if ((sum.add(invoiceBalance)).compareTo(invoice.getAmountWithTax()) == 0) {
 				CommercialOrder commercialOrder = CollectionUtils.isNotEmpty(advInvoices) ? advInvoices.get(0).getCommercialOrder() : null;
