@@ -46,11 +46,43 @@ public class InternationalSettingsApiService  {
 
     }
 
+    private void checkEmailTemplateCreation(String emailTemplateCode) {
+
+        if (emailTemplateCode == null || emailTemplateCode.isEmpty()) {
+            throw new BusinessException("emailTemplateCode is not valid");
+        }
+
+        EmailTemplate emailTemplate = emailTemplateService.findByCode(emailTemplateCode);
+        if (emailTemplate != null) {
+            throw new BusinessException("EmailTemplate with code " + emailTemplateCode + " already exists");
+        }
+    }
+
+    private EmailTemplate createEmailTemplate(EmailTemplate emailTemplate) {
+        return emailTemplateService.createEmailTemplate(emailTemplate);
+    }
+
+
+    public EmailTemplateDto checkAndCreateEmailTemplate(EmailTemplateDto emailTemplateDto) {
+        checkEmailTemplateCreation(emailTemplateDto.getCode());
+        emailTemplateDto.setCode(emailTemplateDto.getCode());
+        return EmailTemplateMapper.toEmailTemplateDto(createEmailTemplate(emailTemplateMapper.toEntity(emailTemplateDto, null)));
+    }
+
     public EmailTemplateDto checkAndUpdateEmailTemplate(String emailTemplateCode, EmailTemplatePatchDto emailTemplatePatchDto) {
 
         EmailTemplate emailTemplate = checkEmailTemplate(emailTemplateCode);
         return EmailTemplateMapper.toEmailTemplateDto(updateEmailTemplate(emailTemplateMapper.fromPatchDtoToEntity(emailTemplatePatchDto, emailTemplate)));
 
+    }
+
+    public void checkAndDeleteEmailTemplate(String emailTemplateCode) {
+        EmailTemplate emailTemplate = checkEmailTemplate(emailTemplateCode);
+        emailTemplateService.remove(emailTemplate.getId());
+    }
+
+    public EmailTemplateDto checkAndGetEmailTemplate(String emailTemplateCode) {
+        return EmailTemplateMapper.toEmailTemplateDto(checkEmailTemplate(emailTemplateCode));
     }
 
     private EmailTemplate checkEmailTemplate(String emailTemplateCode) {
@@ -125,4 +157,5 @@ public class InternationalSettingsApiService  {
 
         return smsTemplateMapper.fromEntityToDto(checkSMSTemplate(smsTemplateCode));
     }
+
 }

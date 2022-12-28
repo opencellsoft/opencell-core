@@ -65,6 +65,7 @@ import org.meveo.model.catalog.CounterTypeEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -126,9 +127,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     @Inject
     private MethodCallingUtils methodCallingUtils;
 
-    public CounterInstance counterInstanciation(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual) {
+    public CounterInstance counterInstanciation(ServiceInstance serviceInstance, CounterTemplate counterTemplate, ChargeInstance chargeInstance, boolean isVirtual) {
 
-        CounterInstance counterInstance = instantiateCounter(counterTemplate, serviceInstance, isVirtual);
+        CounterInstance counterInstance = instantiateCounter(counterTemplate, serviceInstance, chargeInstance, isVirtual);
 
         // Need a commit, so when creating counter periods in the same TX, counter instance is already present in DB
         commit();
@@ -144,37 +145,37 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return new created Instance
      * @since v.14 (
      */
-    public CounterInstance counterInstanciationWithoutForceCommit(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual) {
-        return instantiateCounter(counterTemplate, serviceInstance, isVirtual);
+    public CounterInstance counterInstanciationWithoutForceCommit(ServiceInstance serviceInstance, CounterTemplate counterTemplate, ChargeInstance chargeInstance, boolean isVirtual) {
+        return instantiateCounter(counterTemplate, serviceInstance, chargeInstance, isVirtual);
     }
 
-    private CounterInstance instantiateCounter(CounterTemplate counterTemplate, ServiceInstance serviceInstance, boolean isVirtual) {
+    private CounterInstance instantiateCounter(CounterTemplate counterTemplate, ServiceInstance serviceInstance, ChargeInstance chargeInstance, boolean isVirtual) {
         CounterInstance counterInstance = null;
 
         switch (counterTemplate.getCounterLevel()) {
             case CUST:
 
-                counterInstance = instantiateCounter(customerService, serviceInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer(), counterTemplate, isVirtual);
+                counterInstance = instantiateCounter(customerService, serviceInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer(), counterTemplate, chargeInstance, isVirtual);
                 break;
 
             case CA:
-                counterInstance = instantiateCounter(customerAccountService, serviceInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount(), counterTemplate, isVirtual);
+                counterInstance = instantiateCounter(customerAccountService, serviceInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount(), counterTemplate, chargeInstance, isVirtual);
                 break;
 
             case BA:
-                counterInstance = instantiateCounter(billingAccountService, serviceInstance.getSubscription().getUserAccount().getBillingAccount(), counterTemplate, isVirtual);
+                counterInstance = instantiateCounter(billingAccountService, serviceInstance.getSubscription().getUserAccount().getBillingAccount(), counterTemplate, chargeInstance, isVirtual);
                 break;
 
             case UA:
-                counterInstance = instantiateCounter(userAccountService, serviceInstance.getSubscription().getUserAccount(), counterTemplate, isVirtual);
+                counterInstance = instantiateCounter(userAccountService, serviceInstance.getSubscription().getUserAccount(), counterTemplate, chargeInstance, isVirtual);
                 break;
 
             case SU:
-                counterInstance = instantiateCounter(subscriptionService, serviceInstance.getSubscription(), counterTemplate, isVirtual);
+                counterInstance = instantiateCounter(subscriptionService, serviceInstance.getSubscription(), counterTemplate, chargeInstance, isVirtual);
                 break;
 
             case SI:
-                counterInstance = instantiateCounter(serviceInstanceService, serviceInstance, counterTemplate, isVirtual);
+                counterInstance = instantiateCounter(serviceInstanceService, serviceInstance, counterTemplate, chargeInstance, isVirtual);
                 break;
         }
         return counterInstance;
@@ -190,9 +191,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return a counter instance
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private CounterInstance instantiateCounter(BusinessService service, ICounterEntity entity, CounterTemplate counterTemplate, boolean isVirtual) {
+    private CounterInstance instantiateCounter(BusinessService service, ICounterEntity entity, CounterTemplate counterTemplate, ChargeInstance chargeInstance, boolean isVirtual) {
         CounterInstance counterInstance = new CounterInstance();
-        if (!entity.getCounters().containsKey(counterTemplate.getCode())) {
+        if (!entity.getCounters().containsKey(counterTemplate.getCode()) || !entity.getCounters().get(counterTemplate.getCode()).getChargeInstances().contains(chargeInstance)) {
             counterInstance.setCounterTemplate(counterTemplate);
 
             if (entity instanceof Customer) {
@@ -208,6 +209,8 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
             } else if (entity instanceof ServiceInstance) {
                 counterInstance.setServiceInstance((ServiceInstance) entity);
             }
+
+            counterInstance.getChargeInstances().add(chargeInstance);
 
             if (!isVirtual) {
                 create(counterInstance);
@@ -267,12 +270,12 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return CounterPeriod instance or NULL if counter period can not be created because of calendar limitations
      * @throws CounterInstantiationException Failure to create a counter period
      */
-    public CounterPeriod createPeriod(CounterInstance counterInstance, Date chargeDate, Date initDate, ChargeInstance chargeInstance, BigDecimal value, BigDecimal level, boolean forceFlush) throws CounterInstantiationException {
+    public CounterPeriod createPeriod(CounterInstance counterInstance, Date chargeDate, Date initDate, ChargeInstance chargeInstance, BigDecimal value, BigDecimal level, boolean forceFlush, Date periodEndDate, boolean isApiCreation) throws CounterInstantiationException {
 
         CounterPeriod counterPeriod = null;
         CounterTemplate counterTemplate = counterInstance.getCounterTemplate();
 
-        counterPeriod = instantiateCounterPeriod(new CounterPeriod(), counterTemplate, chargeDate, initDate, chargeInstance, value, level);
+        counterPeriod = instantiateCounterPeriod(new CounterPeriod(), counterTemplate, chargeDate, initDate, chargeInstance, value, level, periodEndDate, isApiCreation);
 
         if (counterPeriod != null) {
             counterPeriod.setCounterInstance(counterInstance);
@@ -291,8 +294,8 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         return counterPeriod;
     }
 
-    public CounterPeriod updatePeriod(CounterPeriod period, CounterInstance counterInstance, Date chargeDate, Date initDate, ChargeInstance chargeInstance, BigDecimal value, BigDecimal level) {
-        CounterPeriod updateCounterPeriod = instantiateCounterPeriod(period, counterInstance.getCounterTemplate(), chargeDate, initDate, chargeInstance, value, level);
+    public CounterPeriod updatePeriod(CounterPeriod period, CounterInstance counterInstance, Date chargeDate, Date initDate, ChargeInstance chargeInstance, BigDecimal value, BigDecimal level, Date periodEndDate, boolean isApiCreation) {
+        CounterPeriod updateCounterPeriod = instantiateCounterPeriod(period, counterInstance.getCounterTemplate(), chargeDate, initDate, chargeInstance, value, level, periodEndDate, isApiCreation);
         if (updateCounterPeriod != null) {
             updateCounterPeriod.setCounterInstance(counterInstance);
             counterPeriodService.update(updateCounterPeriod);
@@ -320,7 +323,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         if (counterInstance.getId() == null) {
             CounterTemplate counterTemplate = counterInstance.getCounterTemplate();
 
-            counterPeriod = instantiateCounterPeriod(counterPeriod, counterTemplate, chargeDate, initDate, chargeInstance, value, level);
+            counterPeriod = instantiateCounterPeriod(counterPeriod, counterTemplate, chargeDate, initDate, chargeInstance, value, level, null, false);
 
             if (counterPeriod != null) {
                 counterPeriod.setCounterInstance(counterInstance);
@@ -353,10 +356,12 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @param chargeDate Charge date
      * @param initDate Initial date, used for period start/end date calculation
      * @param chargeInstance charge instance to associate counter with
+     * @param periodEndDate USED ONLY FOR API Creation : used to create specific period by using date sent by API
+     * @param isApiCreation true only for API Creation
      * @return a counter period or NULL if counter period can not be created because of calendar limitations
      * @throws CounterInstantiationException Failure to create counter period
      */
-    private CounterPeriod instantiateCounterPeriod(CounterPeriod counterPeriod, CounterTemplate counterTemplate, Date chargeDate, Date initDate, ChargeInstance chargeInstance, BigDecimal value, BigDecimal level) throws CounterInstantiationException {
+    private CounterPeriod instantiateCounterPeriod(CounterPeriod counterPeriod, CounterTemplate counterTemplate, Date chargeDate, Date initDate, ChargeInstance chargeInstance, BigDecimal value, BigDecimal level, Date periodEndDate, boolean isApiCreation) throws CounterInstantiationException {
         Calendar cal = counterTemplate.getCalendar();
         if (!StringUtils.isBlank(counterTemplate.getCalendarCodeEl())) {
             cal = getCalendarFromEl(counterTemplate.getCalendarCodeEl(), chargeInstance);
@@ -364,12 +369,22 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         try {
             cal = CalendarService.initializeCalendar(cal, initDate, chargeInstance, chargeInstance.getServiceInstance());
 
-            Date startDate = cal.previousCalendarDate(chargeDate);
+            Date startDate = null;
+            Date endDate = null;
+
+            if (isApiCreation) {
+                startDate = DateUtils.setTimeToZero(initDate);
+                endDate = DateUtils.setTimeToZero(periodEndDate);
+            } else {
+                startDate = cal.previousCalendarDate(chargeDate);
+                endDate = cal.nextCalendarDate(startDate);
+            }
+
             if (startDate == null) {
                 log.warn("Can't create counter {} for the date {} (not in calendar)", counterTemplate.getCode(), chargeDate);
                 return null;
             }
-            Date endDate = cal.nextCalendarDate(startDate);
+
             counterPeriod.setPeriodStartDate(startDate);
             counterPeriod.setPeriodEndDate(endDate);
 
@@ -522,7 +537,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         if (counterPeriod != null) {
             return counterPeriod;
         }
-        return createPeriod(counterInstance, date, initDate, chargeInstance, value, level, forceFlush);
+        return createPeriod(counterInstance, date, initDate, chargeInstance, value, level, forceFlush, null,false);
     }
 
     /**

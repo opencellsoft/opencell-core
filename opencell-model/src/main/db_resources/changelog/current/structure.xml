@@ -15114,4 +15114,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </update>
     </changeSet>
 
+    <changeSet id="#INTRD-12466_20222012" author="bourras">
+        <update tableName="global_settings">
+            <column name="activate_dunning" value="1"/>
+            <where>id=1</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>

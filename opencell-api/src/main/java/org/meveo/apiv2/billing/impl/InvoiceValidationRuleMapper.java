@@ -39,6 +39,7 @@ public class InvoiceValidationRuleMapper extends ResourceMapper<InvoiceValidatio
 
         if (invoiceValidationRuleDto.getPriority() != null) {
             invoiceValidationRule.setPriority(invoiceValidationRuleDto.getPriority());
+            invoiceValidationRule.setToReorder(!invoiceValidationRuleDto.getPriority().equals(invoiceValidationRule.getPriority()));
         }
 
         if (invoiceType != null) {

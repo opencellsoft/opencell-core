@@ -1249,7 +1249,6 @@
             <column name="created" valueDate="2015-03-19 00:04:19.724" />
             <column name="code" value="CMP_DATA" />
             <column name="description" value="Consumption Data" />
-            <column name="accounting_code_id" valueNumeric="-1" />
             <column name="discount" valueNumeric="0.00" />
             <column name="invoice_category_id" valueNumeric="-1" />
             <column name="uuid" value="CMP_DATA" />
@@ -1260,7 +1259,6 @@
             <column name="created" valueDate="2015-03-19 00:04:19.744" />
             <column name="code" value="SUB_DATA" />
             <column name="description" value="Subscription Data" />
-            <column name="accounting_code_id" valueNumeric="-2" />
             <column name="discount" valueNumeric="0.00" />
             <column name="invoice_category_id" valueNumeric="-2" />
             <column name="uuid" value="SUB_DATA" />

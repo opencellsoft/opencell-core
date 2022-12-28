@@ -16073,11 +16073,11 @@
           {
             "id": "e1b24c27-8880-4a48-a51d-cfb97f3c4168",
             "name": "Api V2 International Settings - Update",
-            "type": "scope",
+            "type": "resource",
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "resources": "[\"Api V2 International Settings\"\"]",
+              "resources": "[\"Api V2 International Settings\"]",
               "scopes": "[\"PUT\",\"DELETE\",\"POST\",\"PATCH\"]",
               "applyPolicies": "[\"Role apiAdministrationManagement\"]"
             }

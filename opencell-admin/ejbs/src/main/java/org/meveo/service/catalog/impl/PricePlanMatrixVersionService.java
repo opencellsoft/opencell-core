@@ -181,33 +181,36 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
         if (importItem.getStatus() == VersionStatusEnum.PUBLISHED) {
             List<PricePlanMatrixVersion> pvs = findEndDates(pricePlanMatrix, newFrom);
+
             for (PricePlanMatrixVersion pv : pvs) {
-
                 DatePeriod validity = pv.getValidity();
-                Date oldFrom = DateUtils.truncateTime(validity.getFrom());
-                Date oldTo = DateUtils.truncateTime(validity.getTo());
 
-                if (newFrom.compareTo(oldFrom) <= 0 && ((newTo != null && oldTo != null && newTo.compareTo(oldTo) >= 0) || newTo == null)) {
+                if(validity == null) {
                     remove(pv);
-                }
-                // Scenario 8
-                else if (newFrom.compareTo(oldFrom) > 0 && newTo != null && oldTo != null && newTo.compareTo(oldTo) < 0) {
-                    pv.setValidity(new DatePeriod(oldFrom, newFrom));
-                    update(pv);
-                    PricePlanMatrixVersion duplicatedPv = duplicate(pv, pricePlanMatrix, new DatePeriod(newTo, oldTo), VersionStatusEnum.PUBLISHED, PriceVersionTypeEnum.FIXED, true);
-                    lastCurrentVersion = duplicatedPv.getCurrentVersion();
                 } else {
-                    boolean validityHasChanged = false;
-                    if (newFrom.compareTo(oldFrom) > 0 && ((oldTo != null && newFrom.compareTo(oldTo) < 0) || oldTo == null)) {
-                        validity.setTo(newFrom);
-                        validityHasChanged = true;
-                    }
-                    if (newTo != null && newTo.compareTo(oldFrom) > 0 && validity.getTo() != null && newTo.compareTo(DateUtils.truncateTime(validity.getTo())) < 0) {
-                        validity.setFrom(newTo);
-                        validityHasChanged = true;
-                    }
-                    if (validityHasChanged) {
+                    Date oldFrom = DateUtils.truncateTime(validity.getFrom());
+                    Date oldTo = DateUtils.truncateTime(validity.getTo());
+
+                    if (newFrom.compareTo(oldFrom) <= 0 && ((newTo != null && oldTo != null && newTo.compareTo(oldTo) >= 0) || newTo == null)) {
+                        remove(pv);
+                    } else if (newFrom.compareTo(oldFrom) > 0 && newTo != null && oldTo != null && newTo.compareTo(oldTo) < 0) {// Scenario 8
+                        pv.setValidity(new DatePeriod(oldFrom, newFrom));
                         update(pv);
+                        PricePlanMatrixVersion duplicatedPv = duplicate(pv, pricePlanMatrix, new DatePeriod(newTo, oldTo), VersionStatusEnum.PUBLISHED, PriceVersionTypeEnum.FIXED, true);
+                        lastCurrentVersion = duplicatedPv.getCurrentVersion();
+                    } else {
+                        boolean validityHasChanged = false;
+                        if (newFrom.compareTo(oldFrom) > 0 && ((oldTo != null && newFrom.compareTo(oldTo) < 0) || oldTo == null)) {
+                            validity.setTo(newFrom);
+                            validityHasChanged = true;
+                        }
+                        if (newTo != null && newTo.compareTo(oldFrom) > 0 && validity.getTo() != null && newTo.compareTo(DateUtils.truncateTime(validity.getTo())) < 0) {
+                            validity.setFrom(newTo);
+                            validityHasChanged = true;
+                        }
+                        if (validityHasChanged) {
+                            update(pv);
+                        }
                     }
                 }
             }
@@ -666,10 +669,21 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                         ppmv.getPricePlanMatrixColumn().getPosition());
 
                 });
-                CSVLineRecord.put("description[text]", line.getDescription());
-                CSVLineRecordPosition.put("description[text]", Integer.MAX_VALUE - 1);
-                CSVLineRecord.put("priceWithoutTax[number]", line.getPriceWithoutTax());
-                CSVLineRecordPosition.put("priceWithoutTax[number]", Integer.MAX_VALUE);
+
+                //Check if any of line contains an EL value, then add new column
+                if(!line.getValueEL().isEmpty()) {
+                    CSVLineRecord.put("description[text]", line.getDescription());
+                    CSVLineRecordPosition.put("description[text]", Integer.MAX_VALUE - 2);
+                    CSVLineRecord.put("priceWithoutTax[number]", line.getPriceWithoutTax());
+                    CSVLineRecordPosition.put("priceWithoutTax[number]", Integer.MAX_VALUE - 1);
+                    CSVLineRecord.put("unitPriceEL[text]", line.getValueEL());
+                    CSVLineRecordPosition.put("unitPriceEL[text]", Integer.MAX_VALUE);
+                } else {
+                    CSVLineRecord.put("description[text]", line.getDescription());
+                    CSVLineRecordPosition.put("description[text]", Integer.MAX_VALUE - 1);
+                    CSVLineRecord.put("priceWithoutTax[number]", line.getPriceWithoutTax());
+                    CSVLineRecordPosition.put("priceWithoutTax[number]", Integer.MAX_VALUE);
+                }
                 CSVLineRecords.add(copyToSortedMap(CSVLineRecord, CSVLineRecordPosition));
             });
             return CSVLineRecords;
@@ -909,9 +923,13 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                 dynamicColumns = columns.stream().distinct().filter(v -> !v.equals("id") && !v.equals("description[text]") && !v.equals("priceWithoutTax[number]"))
                     .collect(Collectors.toList());
             }
-            return CsvSchema.builder().addColumns(dynamicColumns, CsvSchema.ColumnType.NUMBER_OR_STRING)
-                .addColumn("description[text]", CsvSchema.ColumnType.STRING).addColumn("priceWithoutTax[number]", CsvSchema.ColumnType.NUMBER_OR_STRING).build()
-                .withColumnSeparator(';').withLineSeparator("\n").withoutQuoteChar().withHeader();
+
+            //Build default columns
+            CsvSchema.Builder columns = CsvSchema.builder().addColumns(dynamicColumns, CsvSchema.ColumnType.NUMBER_OR_STRING)
+                .addColumn("description[text]", CsvSchema.ColumnType.STRING)
+                .addColumn("priceWithoutTax[number]", CsvSchema.ColumnType.NUMBER_OR_STRING);
+
+            return columns.build().withColumnSeparator(';').withLineSeparator("\n").withoutQuoteChar().withHeader();
         }
 
         private String archiveFiles(Set<Path> filesPath) {
