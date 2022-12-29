@@ -121,4 +121,20 @@ public interface HypertextSectionRs extends IBaseRs {
     )
     List<HypertextSection> createOrUpdate(List<HypertextSectionDto> sectionsDto);
 
+    @DELETE
+    @Path("/{code}")
+    @Operation(
+            summary=" Deletes the section with the specified code. ",
+            description=" Deletes the section with the specified code. ",
+            operationId="    DELETE_HypertextSection_{code}",
+            responses= {
+                    @ApiResponse(description=" Request processing status ",
+                            content=@Content(
+                                    schema=@Schema(
+                                            implementation= ActionStatus.class
+                                    )
+                            )
+                    )}
+    )
+    ActionStatus delete(@PathParam("code") String code);
 }

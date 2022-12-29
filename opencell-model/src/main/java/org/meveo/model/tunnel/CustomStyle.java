@@ -68,7 +68,7 @@ public class CustomStyle extends BusinessEntity {
     @Column(name = "secondary_color")
     private String secondaryColor;
 
-    @OneToMany(mappedBy = "customStyle", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "customStyle")
     private List<HypertextSection> hypertextSections;
 
     @Enumerated(EnumType.STRING)

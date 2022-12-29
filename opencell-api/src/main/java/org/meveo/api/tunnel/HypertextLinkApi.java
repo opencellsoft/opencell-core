@@ -34,6 +34,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Ilham CHAFIK
@@ -117,8 +118,42 @@ public class HypertextLinkApi extends BaseCrudApi<HypertextLink, HypertextLinkDt
         return entity;
     }
 
+    public void delete(String linkCode) {
+        if (linkCode == null)
+            missingParameters.add("code");
+        handleMissingParameters();
+
+        HypertextLink link = linkService.findByCode(linkCode);
+        if (link == null) {
+            throw new EntityDoesNotExistsException(HypertextLink.class, linkCode);
+        }
+
+        linkService.remove(link);
+    }
+
+    public void deleteMany(List<String> linksCodes) {
+
+        List<HypertextLink> sections = linkService.findByCodes(linksCodes);
+        linkService.remove(sections.stream().map(HypertextLink::getId).collect(Collectors.toSet()));
+    }
+
 
     public void createOrUpdate(List<HypertextLinkDto> postData) {
+        List<String> sectionCodes = postData.stream().map(HypertextLinkDto::getHypertextSectionCode)
+                .collect(Collectors.toList());
+
+        List<HypertextSection> sections = sectionService.findByCodes(sectionCodes);
+        List<String> linksCodes = sections.stream().flatMap(s -> s.getLinks().stream())
+                .collect(Collectors.toList())
+                .stream().map(HypertextLink::getCode).collect(Collectors.toList());
+
+        List<String> postdataCodes = postData.stream().map(HypertextLinkDto::getCode).collect(Collectors.toList());
+        List<String> toDelete = linksCodes.stream()
+                .filter(element -> !postdataCodes.contains(element))
+                .collect(Collectors.toList());
+
+        if (toDelete.size() > 0)   deleteMany(toDelete);
+
         for (HypertextLinkDto linkDto: postData) {
             HypertextLink entity = linkService.findByCode(linkDto.getCode());
             if (entity == null) {
