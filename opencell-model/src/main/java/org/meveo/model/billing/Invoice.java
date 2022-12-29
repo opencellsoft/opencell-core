@@ -364,7 +364,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     /**
      * Linked invoices
      */
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "id", cascade = CascadeType.PERSIST)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "id", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private Set<LinkedInvoice> linkedInvoices = new HashSet<>();
 
     /**

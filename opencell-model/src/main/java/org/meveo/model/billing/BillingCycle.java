@@ -214,6 +214,12 @@ public class BillingCycle extends BusinessCFEntity {
     @Type(type = "json")
     @Column(name = "filters", columnDefinition = "jsonb")
     private Map<String, String> filters;
+    
+    /**
+     *  Higher priority macth with lowest priority value
+     */
+    @Column(name = "priority")
+    private int priority = 0;
 
     /**
      * @return Invoicing calendar
@@ -485,6 +491,14 @@ public class BillingCycle extends BusinessCFEntity {
 
 	public void setFilters(Map<String, String> filters) {
 		this.filters = filters;
+	}
+
+	public int getPriority() {
+		return priority;
+	}
+
+	public void setPriority(int priority) {
+		this.priority = priority;
 	}
 	
 }

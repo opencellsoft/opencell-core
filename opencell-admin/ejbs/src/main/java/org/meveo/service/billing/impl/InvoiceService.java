@@ -6781,10 +6781,57 @@ public class InvoiceService extends PersistenceService<Invoice> {
         List<InvoiceLineRTs> invoiceLineRTs = invoiceLinesToReplicate.getInvoiceLinesRTs();
 
         if (invoiceLineRTs != null && !invoiceLineRTs.isEmpty()) {
-            return createAdjustmentFromInvoiceLinesRTs(invoice, invoiceLineRTs);
+            return createAdjustmentFromRatedTransactions(invoice, invoiceLineRTs);
         } else {
             return createAdjustment(invoice, invoiceLinesToReplicate.getInvoiceLinesIds());
         }
+    }
+
+    private Invoice createAdjustmentFromRatedTransactions(Invoice invoice, List<InvoiceLineRTs> invoiceLineRTs) {
+
+        List<Long> invoiceLinesIds = invoiceLineRTs.stream().map(InvoiceLineRTs::getInvoiceLineId).collect(toList());
+
+        Invoice adjustmentInvoice = duplicateAndUpdateInvoiceLines(invoice, invoiceLineRTs, invoiceLinesIds);
+        populateAdjustmentInvoice(invoice, adjustmentInvoice);
+        calculateOrUpdateInvoice(invoiceLinesIds, adjustmentInvoice);
+
+        return adjustmentInvoice;
+    }
+
+    private Invoice duplicateAndUpdateInvoiceLines(Invoice invoice, List<InvoiceLineRTs> invoiceLineRTs, List<Long> invoiceLinesIds) {
+
+        invoice = refreshOrRetrieve(invoice);
+
+        var invoiceAgregates = new ArrayList<InvoiceAgregate>();
+        if (invoice.getInvoiceAgregates() != null) {
+            invoiceAgregates.addAll(invoice.getInvoiceAgregates());
+        }
+
+        List<InvoiceLine> invoiceLines = new ArrayList<InvoiceLine>();
+        if (invoiceLinesIds != null && !invoiceLinesIds.isEmpty()) {
+            invoiceLines.addAll(invoiceLinesService.findByInvoiceAndIds(invoice, invoiceLinesIds));
+        }
+        else if (invoice.getInvoiceLines() != null) {
+            invoiceLines.addAll(invoice.getInvoiceLines());
+        }
+
+        detach(invoice);
+
+        var duplicateInvoice = new Invoice(invoice);
+        this.create(duplicateInvoice);
+
+        updateInvoiceLinesAmountFromRatedTransactions(invoiceLineRTs, invoiceLines);
+
+        for (InvoiceLine invoiceLine : invoiceLines) {
+            invoiceLinesService.detach(invoiceLine);
+            InvoiceLine duplicateInvoiceLine = new InvoiceLine(invoiceLine, duplicateInvoice);
+            duplicateInvoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
+            duplicateInvoiceLine.setRatedTransactions(invoiceLine.getRatedTransactions());
+            invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);
+            duplicateInvoice.getInvoiceLines().add(duplicateInvoiceLine);
+        }
+
+        return duplicateInvoice;
     }
 
     @JpaAmpNewTx
@@ -6798,28 +6845,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return adjustmentInvoice;
     }
 
-    private Invoice createAdjustmentFromInvoiceLinesRTs(Invoice invoice, List<InvoiceLineRTs> invoiceLinesRTs) {
-
-        invoice = refreshOrRetrieve(invoice);
-
-        List<Long> invoiceLinesIds = invoiceLinesRTs.stream().map(InvoiceLineRTs::getInvoiceLineId).collect(toList());
-        List<InvoiceLine> invoiceLines = invoiceLinesService.findByInvoiceAndIds(invoice, invoiceLinesIds);
-
-        updateInvoiceLinesAmountFromRatedTransactions(invoiceLinesRTs, invoiceLines);
-
-        setInvoiceLines(invoice, invoiceLines);
-        detach(invoice);
-
-        Invoice adjustmentInvoice = new Invoice(invoice);
-        this.create(adjustmentInvoice);
-
-        duplicateInvoiceLines(invoice, invoiceLines, adjustmentInvoice);
-        populateAdjustmentInvoice(invoice, adjustmentInvoice);
-        calculateOrUpdateInvoice(invoiceLinesIds, adjustmentInvoice);
-
-        return adjustmentInvoice;
-
-    }
 
     private void updateInvoiceLinesAmountFromRatedTransactions(List<InvoiceLineRTs> invoiceLinesRTs, List<InvoiceLine> invoiceLines) {
 
@@ -6837,25 +6862,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoiceLine.setAmountWithTax(amountWithTax);
                 invoiceLine.setAmountWithoutTax(amountWithoutTax);
                 invoiceLine.setAmountTax(amountTax);
+                invoiceLine.setRatedTransactions(ratedTransactions);
             }
-        }
-    }
-
-    private Invoice duplicateInvoiceLines(Invoice invoice, List<InvoiceLine> invoiceLines, Invoice adjustmentInvoice) {
-
-        for (InvoiceLine invoiceLine : invoiceLines) {
-            invoiceLinesService.detach(invoiceLine);
-            InvoiceLine duplicateInvoiceLine = new InvoiceLine(invoiceLine, adjustmentInvoice);
-            duplicateInvoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
-            invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);
-            adjustmentInvoice.getInvoiceLines().add(duplicateInvoiceLine);
-        }
-        return adjustmentInvoice;
-    }
-
-    private static void setInvoiceLines(Invoice invoice, List<InvoiceLine> invoiceLines) {
-        if (invoiceLines == null || invoiceLines.isEmpty()) {
-            invoiceLines.addAll(invoice.getInvoiceLines());
         }
     }
 
@@ -7048,32 +7056,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 .setParameter("billingAccountId", invoice.getBillingAccount().getId())
                 .setParameter("commercialOrder", invoice.getCommercialOrder())
                 .getResultList();
-        /* if(invoice.getCommercialOrder() != null) {
-	        invoicesAdv.addAll(this.getEntityManager().createNamedQuery("Invoice.findValidatedInvoiceAdvWithOrder")
-	                                                            .setParameter("billingAccountId", invoice.getBillingAccount().getId())
-	                                                            .setParameter("commercialOrder", invoice.getCommercialOrder())
-	                                                            .getResultList() );
-        }
-        
-       sort(invoicesAdv, (inv1, inv2) -> {
-            int compCommercialOrder = 0;
-            if(inv1.getCommercialOrder() != null && inv2.getCommercialOrder() == null) {
-                compCommercialOrder = 1;
-            }else if(inv1.getCommercialOrder() == null && inv2.getCommercialOrder() != null) {
-                compCommercialOrder = -1;
-            }else {
-                compCommercialOrder = inv1.getCommercialOrder().getId().compareTo(inv2.getCommercialOrder().getId());
-            }
-            if(compCommercialOrder != 0) {
-                return compCommercialOrder;
-            }
-            int compCreationDate = inv1.getAuditable().getCreated().compareTo(inv2.getAuditable().getCreated());
-            if(compCreationDate != 0) {
-                return compCreationDate;
-            }
-            return inv1.getInvoiceBalance().compareTo(inv2.getInvoiceBalance());
-                
-        });*/
         return invoicesAdv;
     }
     
@@ -7102,9 +7084,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public void applyAdvanceInvoice(Invoice invoice, List<Invoice> advInvoices) {
 		BigDecimal invoiceBalance = invoice.getInvoiceBalance();
 		if (invoiceBalance != null) {
+			CommercialOrder orderInvoice = invoice.getCommercialOrder();
 			BigDecimal sum = invoice.getLinkedInvoices().stream()
-					.filter(i -> InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(i.getType())).map(x -> x.getAmount())
-					.reduce(BigDecimal::add).get();
+					.filter(i -> InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(i.getType()))
+					.filter(li -> (orderInvoice != null && orderInvoice.equals(li.getLinkedInvoiceValue().getCommercialOrder())) || (orderInvoice == null && li.getLinkedInvoiceValue().getCommercialOrder() == null))
+					.map(x -> x.getAmount())
+					.reduce(BigDecimal::add).orElse(ZERO);
 			//if balance is well calculated and balance=0, we don't need to recalculate
 			if ((sum.add(invoiceBalance)).compareTo(invoice.getAmountWithTax()) == 0) {
 				CommercialOrder commercialOrder = CollectionUtils.isNotEmpty(advInvoices) ? advInvoices.get(0).getCommercialOrder() : null;
@@ -7115,6 +7100,27 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			cancelInvoiceAdvances(invoice, advInvoices, false);
 		} 
         if(CollectionUtils.isNotEmpty(advInvoices)) {
+        	sort(advInvoices, (inv1, inv2) -> {
+                int compCommercialOrder = 0;
+                if(inv1.getCommercialOrder() != null && inv2.getCommercialOrder() == null) {
+                    compCommercialOrder = -1;
+                }else if(inv1.getCommercialOrder() == null && inv2.getCommercialOrder() != null) {
+                    compCommercialOrder = 1;
+                }else if(inv1.getCommercialOrder() == null && inv2.getCommercialOrder() == null) {
+                	compCommercialOrder = 0;
+                }else {
+                    compCommercialOrder = inv1.getCommercialOrder().getId().compareTo(inv2.getCommercialOrder().getId());
+                }
+                if(compCommercialOrder != 0) {
+                    return compCommercialOrder;
+                }
+                int compCreationDate = inv1.getAuditable().getCreated().compareTo(inv2.getAuditable().getCreated());
+                if(compCreationDate != 0) {
+                    return compCreationDate;
+                }
+                return inv1.getInvoiceBalance().compareTo(inv2.getInvoiceBalance());
+                    
+            });
                 BigDecimal remainingAmount = invoice.getAmountWithTax();
                 for(Invoice adv : advInvoices){
                     if(adv.getInvoiceBalance() == null) {
@@ -7144,10 +7150,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     }
                 }
             invoice.setInvoiceBalance(remainingAmount);
-            List<Long> toRemove = invoice.getLinkedInvoices().stream()
-                    .filter(linkedInvoice -> (linkedInvoice.getAmount() == null || ZERO.compareTo(linkedInvoice.getAmount()) == 0) && InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(linkedInvoice.getType()))
-                    .map(il -> il.getLinkedInvoiceValue().getId()).collect(Collectors.toList());
-            linkedInvoiceService.deleteByIdInvoiceAndLinkedInvoice(invoice.getId(), toRemove);
+            invoice.getLinkedInvoices().removeIf(il -> ZERO.compareTo(il.getAmount()) == 0 && InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(il.getType()));
 	        }
     }
 

@@ -14872,6 +14872,13 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="agreement_date_setting" type="varchar(20)"/>
         </addColumn>
 	</changeSet>
+	
+	<changeSet id="#INTR-12382_20221219" author="HichamHANINE">
+		<addColumn tableName="cat_offer_template">
+            <column name="sequence" type="INT4" defaultValue="0" />
+			<column name="display" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+	</changeSet>
 
     <changeSet id="#INTRD-11841_20221214-reports" author="HichamHANINE">
         <update tableName="meveo_script_instance">
@@ -15153,5 +15160,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
        
     </changeSet>
+
+	<changeSet id="#INTRD-12478_20221226" author="AdilElJaouhari">
+		<addColumn tableName="billing_cycle">
+			<column name="priority" type="int4" defaultValueNumeric="0" />
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>
