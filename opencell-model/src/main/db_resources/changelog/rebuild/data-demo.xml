@@ -1139,6 +1139,7 @@
             <column name="description" value="5 Percent Tax" />
             <column name="tax_percentage" valueNumeric="5.000000000000" />
             <column name="uuid" value="tax-2" />
+            <column name="taxation_category_id" value="1" />
         </insert>
         <insert tableName="billing_tax">
             <column name="id" valueNumeric="-3" />
@@ -1148,6 +1149,7 @@
             <column name="description" value="18 Percent Tax" />
             <column name="tax_percentage" valueNumeric="18.000000000000" />
             <column name="uuid" value="tax-3" />
+            <column name="taxation_category_id" value="1" />
         </insert>        
         <insert tableName="billing_tax">
             <column name="id" value="-4"/>
@@ -1159,6 +1161,7 @@
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_tax_tax_10" />
            <column name="version" valueNumeric="0" />
+           <column name="taxation_category_id" value="1" />
         </insert>
         <insert tableName="billing_tax">
             <column name="id" value="-5"/>
@@ -1170,6 +1173,7 @@
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_tax_tax_20" />
            <column name="version" valueNumeric="0" />
+           <column name="taxation_category_id" value="1" />
         </insert>
     </changeSet>    
     
@@ -2473,6 +2477,8 @@
 			<column name="invoice_sequence_id" valueNumeric="-6" />
 			<column name="occ_template_id" valueNumeric="-52" />
 			<column name="uuid" value="InvoiceType-SECURITY_DEPOSIT" />
+			<column name="vat_payment_option_id" value="1" />
+			<column name="invoice_code_type_id" value="30" />
 		</insert>
 		<insert tableName="billing_invoice_cat">
 			<column name="id" value='-4'/>
@@ -2614,6 +2620,8 @@
             <column name="matching_auto" valueNumeric="0" />
             <column name="uuid" value="InvoiceType-ADJ-REF" />
             <column name="invoice_accountable" value="1" />
+            <column name="vat_payment_option_id" value="1" />
+            <column name="invoice_code_type_id" value="19" />
 		</insert>
 		
 		<insert tableName="billing_invoice_type">
@@ -2628,6 +2636,8 @@
             <column name="matching_auto" valueNumeric="0" />
             <column name="uuid" value="InvoiceType-ADJ-INV" />
             <column name="invoice_accountable" value="1" />
+            <column name="vat_payment_option_id" value="1" />
+            <column name="invoice_code_type_id" value="19" />
 		</insert>
 		
 		<insert tableName="billing_invoice_type_applies_to">
@@ -2658,6 +2668,7 @@
 			<column name="invoice_sequence_id" valueNumeric="-9" />
 			<column name="occ_template_id" valueNumeric="-25" />
 			<column name="uuid" value="InvoiceType-COMMERCIAL_ORDER" />
+			<column name="vat_payment_option_id" value="1" />
 		</insert>	
 	</changeSet>
     
