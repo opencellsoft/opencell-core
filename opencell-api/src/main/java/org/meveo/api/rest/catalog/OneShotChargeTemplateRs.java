@@ -219,6 +219,24 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
 	)
     ActionStatus createOrUpdate(OneShotChargeTemplateDto postData);
 
+	@POST
+	@Path("/createOrUpdateExisting")
+	@Operation(
+			summary = "Create or Update a one short charge template",
+			tags = {"ChargeTemplates"},
+			description = "Create or Update a one short charge template",
+			operationId = "POST_OneShotChargeTemplate_createOrUpdateExisting",
+			responses = {
+					@ApiResponse(description = " Request processing status ",
+							content = @Content(
+									schema = @Schema(
+											implementation = ActionStatus.class
+									)
+							)
+					)}
+	)
+	ActionStatus createOrUpdateExisting(OneShotChargeTemplateDto postData);
+
     /**
      * Enable a One shot charge template with a given code
      * 
