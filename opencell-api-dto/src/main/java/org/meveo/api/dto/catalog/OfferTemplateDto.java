@@ -167,6 +167,28 @@ public class OfferTemplateDto extends ProductOfferingDto {
     @Schema(description = "allow to generate each edr per product")
     protected Boolean generateQuoteEdrPerProduct = Boolean.FALSE;
 
+    @Schema(description = "sequence of the Offer Template")
+    private Integer sequence = 0;
+
+    public Integer getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
+    }
+
+    public boolean isDisplay() {
+        return display;
+    }
+
+    public void setDisplay(boolean display) {
+        this.display = display;
+    }
+
+    @Schema(description = "display of the Offer Template")
+    private boolean display;
+    
     /**
      * Instantiates a new offer template dto.
      */
@@ -186,6 +208,8 @@ public class OfferTemplateDto extends ProductOfferingDto {
         id = offerTemplate.getId();
         statusDate=offerTemplate.getStatusDate();
         isModel=offerTemplate.getIsModel();
+        sequence=offerTemplate.getSequence();
+        display=offerTemplate.isDisplay();
 
         if (offerTemplate.getBusinessOfferModel() != null) {
             setBomCode(offerTemplate.getBusinessOfferModel().getCode());
