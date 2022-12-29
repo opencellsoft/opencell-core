@@ -57,8 +57,8 @@ public class HypertextLink extends BusinessEntity {
     @Column(name = "display_icon")
     private Boolean displayIcon;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "hypertext_section_id")
+    @ManyToOne
+    @JoinColumn(name = "hypertext_section_id", nullable = false)
     private HypertextSection hypertextSection;
 
     public Map<String, String> getLabel() {

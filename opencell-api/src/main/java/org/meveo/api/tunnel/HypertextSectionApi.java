@@ -24,17 +24,14 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.tunnel.CustomStyle;
-import org.meveo.model.tunnel.HypertextSection;
-import org.meveo.model.tunnel.TunnelCustomization;
+import org.meveo.model.tunnel.*;
 import org.meveo.service.tunnel.CustomStyleService;
 import org.meveo.service.tunnel.HypertextSectionService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Ilham CHAFIK
@@ -89,16 +86,55 @@ public class HypertextSectionApi extends BaseCrudApi<HypertextSection, Hypertext
         return entity;
     }
 
+    public void delete(String sectionCode) {
+        if (sectionCode == null)
+            missingParameters.add("code");
+        handleMissingParameters();
+
+        HypertextSection section = sectionService.findByCode(sectionCode);
+        if (section == null) {
+            throw new EntityDoesNotExistsException(HypertextSection.class, sectionCode);
+        }
+
+        sectionService.remove(section.getId());
+    }
+
+    public void deleteMany(List<String> sectionCodes) {
+
+        List<HypertextSection> sections = sectionService.findByCodes(sectionCodes);
+        sectionService.remove(sections.stream().map(HypertextSection::getId).collect(Collectors.toSet()));
+    }
+
     public List<HypertextSection> createOrUpdate(List<HypertextSectionDto> postData) {
         List<HypertextSection>  sections = new ArrayList<>();
+
+        List<String> stylesCodes = postData.stream().map(HypertextSectionDto::getCustomStyleCode)
+                .collect(Collectors.toList());
+
+        List<CustomStyle> allStyles = customStyleService.findByCodes(stylesCodes);
+        List<String> sectionsCodes = allStyles.stream().flatMap(cs -> cs.getHypertextSections().stream())
+                .collect(Collectors.toList())
+                .stream().map(HypertextSection::getCode).collect(Collectors.toList());
+        List<String> postdataCodes = postData.stream().map(HypertextSectionDto::getCode).collect(Collectors.toList());
+
+        List<String> toDelete = sectionsCodes.stream()
+                .filter(element -> !postdataCodes.contains(element))
+                .collect(Collectors.toList());
+
+        for (String sc: toDelete) {
+            delete(sc);
+        }
+
         for (HypertextSectionDto sectionDto: postData) {
             HypertextSection entity = sectionService.findByCode(sectionDto.getCode());
+
             if (entity == null) {
                 entity = create(sectionDto);
             } else {
                 entity = update(sectionDto);
             }
             entity.getCustomStyle().setHypertextSections(null);
+            entity.setLinks(new ArrayList<>());
             sections.add(entity);
         }
 

@@ -47,10 +47,10 @@ public class HypertextSection extends BusinessEntity {
     @Column(name = "label", columnDefinition = "jsonb")
     private Map<String, String> label;
 
-    @OneToMany(mappedBy = "hypertextSection", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "hypertextSection", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<HypertextLink> links;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "custom_style_id")
     private CustomStyle customStyle;
 

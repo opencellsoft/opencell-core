@@ -84,5 +84,18 @@ public class HypertextSectionRsImpl extends BaseRs implements HypertextSectionRs
         return sections;
     }
 
+    @Override
+    public ActionStatus delete(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            sectionApi.delete(code);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
 
 }
