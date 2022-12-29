@@ -458,6 +458,7 @@
         <createSequence sequenceName="open_order_seq"/>
         <createSequence sequenceName="cpq_billing_rule_seq" startValue="1" />
         <createSequence sequenceName="meveo_script_parameter_seq"/>
+        <createSequence sequenceName="crm_address_book_contact_seq" startValue="1" />
     </changeSet>
 
 
@@ -2662,7 +2663,6 @@
             <column name="minimum_charge_template_id" type="bigint" />
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
-            <column name="icd_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-165">
@@ -2927,6 +2927,7 @@
             <column name="filters" type="${type.json}">
             	<constraints nullable="true" />
             </column>
+            <column name="priority" type="int4" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-172">
@@ -3850,7 +3851,6 @@
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
             <column name="is_consumer" type="${type.boolean}" defaultValueNumeric="1"/>
-            <column name="icd_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-201">
@@ -4172,6 +4172,7 @@
             <column name="attribute_id" type="bigint"/>
             <column name="attribute_duration_id" type="bigint"/>
             <column name="attribute_calendar_id" type="bigint"/>
+            <column name="internal_note" type="${type.longtext}" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-208">
@@ -4441,6 +4442,8 @@
             <column name="is_model" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="offer_model_id" type="bigint"/>
             <column name="generate_quote_edr_per_product" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="sequence" type="INT4" defaultValue="0" />
+			<column name="display" type="${type.boolean}" defaultValueNumeric="0"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-217">
@@ -5417,7 +5420,6 @@
                 <constraints nullable="true"/>
             </column>
 			<column name="current_matching_code" type="varchar(255)" />
-			<column name="icd_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-250">
@@ -5516,7 +5518,6 @@
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
             <column name="minimum_article_id" type="bigint" />
-            <column name="icd_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-252">
@@ -6099,7 +6100,7 @@
             <column name="code" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
-            <column name="description" type="varchar(255)" />
+            <column name="description" type="varchar(1000)" />
             <column name="script" type="${type.text}" />
             <column name="script_instance_cat_id" type="bigint" />
             <column name="creator" type="varchar(100)" />
@@ -6713,7 +6714,6 @@
             <column name="vat_payment_option_id" type="bigint">
                 <constraints nullable="true" />
             </column>
-		    <column name="invoice_subject_code" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-318">
@@ -7390,7 +7390,6 @@
             <column name="document_id" type="bigint"/>
             <column name="cf_values" type="${type.json}" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}" />
-            <column name="payment_means" type="bigint" />
         </createTable>
     </changeSet>
 
@@ -9050,6 +9049,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="open_order_id" type="bigint"/>
+            <column name="agreement_date_setting" type="varchar(20)"/>
         </createTable>
     </changeSet>
 
@@ -10064,7 +10064,6 @@
             <column name="cf_values" type="${type.json}" />
             <column name="ignore_aggregation" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="open_order_id" type="bigint"/>
-            <column name="allowance_code" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-467" author="NabilOUACHI">
@@ -16714,7 +16713,6 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
 
     </changeSet>
-    
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -17411,7 +17409,7 @@
     </changeSet>
 
 	<changeSet id="#INTRD-8753_20220727_001" author="anas.rouaguebe">
-		<createTable tableName="cpq_billing_rule">
+		<createTable tableName="billing_redirection_rule">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_rule_pkey" />
             </column>
@@ -17676,6 +17674,7 @@
             </column>
             <column name="validation_script" type="${type.text}" />
             <column name="validation_el" type="${type.text}" />
+            <column name="rule_values" type="${type.json}" />
         </createTable>
     </changeSet>
 	
@@ -19224,7 +19223,7 @@
     <changeSet id="#INTRD-9451_20220902" author="KhalidHORRI" />
     <changeSet author="AndriusKarpavicius" id="#INTRD-10253_20221027" dbms="oracle" />
 
-
+	<changeSet id="#INTRD-11841_20221214-reports" author="HichamHANINE" />
 	<changeSet id="#INTRD-86_20220815" author="AbdellatifBARI" />
 	<changeSet id="#INTRD-7301_20220820_order" author="zelmeliani" />
 	<changeSet id="#INTRD-7301_20220820_subscription" author="zelmeliani" />
@@ -19271,10 +19270,18 @@
     <changeSet id="#INTRD-11775_20221120" author="hichamELHALOUI" />
     <changeSet id="#INTRD-242_20221121" author="AdilElJaouhari" />
     <changeSet id="#INTRD-11780_20221128" author="AdilElJaouhari" />
+    <changeSet id="#INTRD-12043_20221121" author="HatimOUDAD"/>
 	<changeSet id="INTRD-11732_20221130" author="MehdiBOURRAS" />
+    <changeSet id="#12201_20221212" author="zelmeliani" />
+	<changeSet id="#INTR-112153_20221209_new_field" author="a.rouaguebe" />
+    <changeSet id="#2038-20221130" author="Mbarek-Ay"/>
+	<changeSet id="#INTR-12252_20221212_agreement_date" author="a.rouaguebe" />
+    <changeSet id="#INTRD-12466_20222012" author="bourras" />
+	<changeSet id="#INTRD-12478_20221226" author="AdilElJaouhari" />
 	<changeSet id="#INTRD-10544_20221207" author="HatimOUDAD" /> 
-    <changeSet id="#INTRD-12405_20221226" author="HichamHANINE" />
 
+	<changeSet id="#INTR-12382_20221219" author="HichamHANINE" />
+	
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
