@@ -84,21 +84,6 @@ public class OneShotChargeTemplateApi extends ChargeTemplateApi<OneShotChargeTem
         return chargeTemplate;
     }
 
-    public OneShotChargeTemplate createOrUpdateExisting(OneShotChargeTemplateDto oneShotChargeTemplateDto) {
-
-        checkOneChargeTemplateDto(oneShotChargeTemplateDto);
-        OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(oneShotChargeTemplateDto.getCode());
-
-        if (chargeTemplate != null) {
-            super.checkInternalNote(chargeTemplate, oneShotChargeTemplateDto);
-            return oneShotChargeTemplateService.update(dtoToEntity(oneShotChargeTemplateDto, chargeTemplate));
-        } else {
-            chargeTemplate = dtoToEntity(oneShotChargeTemplateDto, null);
-            oneShotChargeTemplateService.create(chargeTemplate);
-            return chargeTemplate;
-        }
-    }
-
     private void checkOneChargeTemplateDto(OneShotChargeTemplateDto postData) {
 
         if (StringUtils.isBlank(postData.getCode())) {
