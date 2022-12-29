@@ -459,6 +459,7 @@
         <createSequence sequenceName="cpq_billing_rule_seq" startValue="1" />
         <createSequence sequenceName="meveo_script_parameter_seq"/>
         <createSequence sequenceName="crm_address_book_contact_seq" startValue="1" />
+       <createSequence sequenceName="cpq_converted_price_plan_matrix_line_sq" startValue="1" />
     </changeSet>
 
 
@@ -12358,6 +12359,27 @@
             WHERE o.status = 'OPEN') o
         </createView>
     </changeSet>
+    
+    <changeSet id="#INTRD-12614_20221227_BUILD_TABLE" author="TarikFA.">
+       <createTable tableName="cpq_converted_price_plan_matrix_line">
+       		<column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_converted_plan_matrix_line" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            
+            <column name="converted_value" type="numeric(23, 12)" />
+            <column name="trading_currency_id" type="bigint" />
+            <column name="rate" type="numeric(23, 12)" />
+            <column name="use_for_billing_accounts" type="${type.boolean}" />
+            <column name="price_plan_matrix_line_id" type="bigint" />
+       </createTable>
+    </changeSet>
 
     <!-- start uk -->
 
@@ -16703,6 +16725,27 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
 
     </changeSet>
+    
+    
+     <changeSet id="#INTRD-12614_20221227_fk" author="hichamELHALOUI">
+        <addForeignKeyConstraint baseTableName="cpq_converted_price_plan_matrix_line"
+                                 baseColumnNames="trading_currency_id"
+                                 constraintName="fk_cpq_converted_price_plan_matrix_line_id"
+                                 referencedTableName="billing_trading_currency"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+                                 
+                                 
+        <addForeignKeyConstraint baseTableName="cpq_converted_price_plan_matrix_line"
+                                 baseColumnNames="price_plan_matrix_line_id"
+                                 constraintName="fk_price_plan_matrix_line_id"
+                                 referencedTableName="cpq_price_plan_matrix_line"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
+                                 
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -17675,6 +17718,8 @@
                                  referencedTableName="billing_invoice_validation_rule"
                                  referencedColumnNames="id" />
     </changeSet>
+    
+    
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
@@ -18944,8 +18989,8 @@
     <changeSet id="#2038-20221130" author="Mbarek-Ay"/>
 	<changeSet id="#INTR-12252_20221212_agreement_date" author="a.rouaguebe" />
     <changeSet id="#INTRD-12466_20222012" author="bourras" />
+    <changeSet id="#INTRD-12614_20221227" author="TarikFA." />
 	<changeSet id="#INTRD-12478_20221226" author="AdilElJaouhari" />
-
 	<changeSet id="#INTR-12382_20221219" author="HichamHANINE" />
 	
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
