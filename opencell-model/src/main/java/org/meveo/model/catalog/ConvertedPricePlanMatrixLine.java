@@ -27,14 +27,14 @@ public class ConvertedPricePlanMatrixLine  extends AuditableEntity {
 	private BigDecimal convertedValue;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "trading_currencey_id")
+    @JoinColumn(name = "trading_currency_id")
 	private TradingCurrency tradingCurrency;
 
     @Column(name = "rate", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal rate;
 
 	@Type(type = "numeric_boolean")
-    @Column(name = "useForBillingAccounts")
+    @Column(name = "use_for_billing_accounts")
 	private boolean useForBillingAccounts;
 
     @ManyToOne(fetch = FetchType.LAZY)

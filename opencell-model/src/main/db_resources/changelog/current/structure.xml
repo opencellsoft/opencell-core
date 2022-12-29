@@ -15129,14 +15129,14 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="updater" type="varchar(100)" />
             
             <column name="converted_value" type="numeric(23, 12)" />
-            <column name="trading_currencey_id" type="bigint" />
+            <column name="trading_currency_id" type="bigint" />
             <column name="rate" type="numeric(23, 12)" />
-            <column name="useForBillingAccounts" type="${type.boolean}" />
+            <column name="use_for_billing_accounts" type="${type.boolean}" />
             <column name="price_plan_matrix_line_id" type="bigint" />
        </createTable>
        
         <addForeignKeyConstraint baseTableName="cpq_converted_price_plan_matrix_line"
-                                 baseColumnNames="trading_currencey_id"
+                                 baseColumnNames="trading_currency_id"
                                  constraintName="fk_cpq_converted_price_plan_matrix_line_id"
                                  referencedTableName="billing_trading_currency"
                                  referencedColumnNames="id"
