@@ -89,10 +89,7 @@ import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldValue;
-import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.crm.custom.*;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.shared.DateUtils;
@@ -132,7 +129,7 @@ public abstract class BaseApi {
 
 	protected static final String DEFAULT_SORT_ORDER_ID = "id";
 
-    protected Logger log = LoggerFactory.getLogger(this.getClass());
+    protected static Logger log = LoggerFactory.getLogger(BaseApi.class);
 
     private static final int limitDefaultValue = 100;
 
@@ -521,7 +518,7 @@ public abstract class BaseApi {
             // Validate that value is valid (min/max, regexp). When
             // value is a list or a map, check separately each value
             if (!isEmpty && (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.DOUBLE || cft.getFieldType() == CustomFieldTypeEnum.BOOLEAN
-                    || cft.getFieldType() == CustomFieldTypeEnum.LONG || cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY)) {
+                    || cft.getFieldType() == CustomFieldTypeEnum.LONG || cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY || cft.getFieldType() == CustomFieldTypeEnum.URL)) {
 
                 List valuesToCheck = new ArrayList<>();
 
@@ -617,6 +614,27 @@ public abstract class BaseApi {
                         // requires.
                         ((CustomEntityInstanceDto) valueToCheck).setCetCode(CustomFieldTemplate.retrieveCetCode(cft.getEntityClazz()));
                         customEntityInstanceApi.validateEntityInstanceDto((CustomEntityInstanceDto) valueToCheck);
+                    }
+                    else if (cft.getFieldType() == CustomFieldTypeEnum.URL)
+                    {
+                        if (cft.getMaxValue() == null) {
+                            cft.setMaxValue(CustomFieldTemplate.DEFAULT_MAX_LENGTH_URL);
+                        }
+
+                        UrlReferenceWrapper urlValue = (UrlReferenceWrapper) valueToCheck;
+                        if(urlValue.getUrl() == null) { urlValue.setUrl("");}
+
+                         if (urlValue.getUrl().length() > cft.getMaxValue()) {
+                            throw new InvalidParameterException("This URL is not allowed a length longer than "+cft.getMaxValue());
+
+                        }
+
+
+                        if( (cft.getRegExp()!= null && !cft.getRegExp().isEmpty() && !urlValue.getUrl().matches(cft.getRegExp()))
+                                || (cft.getRegExp()== null && !urlValue.containsValidURL()) ) {
+
+                            throw new InvalidParameterException("Wrong URL format. URL should match regular expression " + (cft.getRegExp() == null ? "": cft.getRegExp()) );
+                        }
                     }
                 }
             }
@@ -751,6 +769,9 @@ public abstract class BaseApi {
             // } else {
             // Other type values that are of some other DTO type (e.g.
             // CustomEntityInstanceDto for child entity type) are not converted
+        }
+        else if(cfDto.getUrlReferenceValue() != null){
+            return cfDto.getUrlReferenceValue().toWrapper();
         }
         return null;
     }

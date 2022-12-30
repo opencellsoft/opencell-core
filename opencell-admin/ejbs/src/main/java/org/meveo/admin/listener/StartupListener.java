@@ -22,6 +22,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
 
+import org.meveo.service.job.JobExecutionResultService;
 import org.slf4j.Logger;
 
 @Startup
@@ -33,10 +34,17 @@ public class StartupListener {
 
     @Inject
     private Logger log;
+    
+    @Inject
+    private JobExecutionResultService jobExecutionResultService;
 
     @PostConstruct
     private void init() {
         log.info("Thank you for running Opencell Community code. For Commercial Grade Support, please purchase an Opencell subscription from https://opencellsoft.com/");
+
+        jobExecutionResultService.getEntityManager().createNamedQuery("JobExecutionResult.cancelAllRunningJobs").executeUpdate();
+        
+        
 
         applicationInitializer.init();
     }

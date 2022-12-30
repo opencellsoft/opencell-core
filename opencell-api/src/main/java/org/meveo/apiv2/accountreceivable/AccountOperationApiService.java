@@ -183,7 +183,7 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 				.map(AccountOperation::getCode)
 				.collect(Collectors.toSet());
 
-		Set<String> unExpectedAoCodes = Stream.of("CRD_SD", "DEB_SD", "REF_SD")
+		Set<String> unExpectedAoCodes = Stream.of("CRD_SD", "REF_SD")
 				.collect(Collectors.toSet());
 
 		if (!Collections.disjoint(unExpectedAoCodes, aoCodes)) {

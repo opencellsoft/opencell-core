@@ -8,6 +8,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -20,6 +22,9 @@ import org.meveo.model.admin.Currency;
 @Entity
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "security_deposit_templat_seq"), })
+@NamedQueries({
+    @NamedQuery(name = "SecurityDepositTemplate.findByTemplateName", query = "SELECT sdt FROM SecurityDepositTemplate sdt where sdt.templateName=:templateName")
+})
 public class SecurityDepositTemplate extends BusinessEntity {
 
     /**

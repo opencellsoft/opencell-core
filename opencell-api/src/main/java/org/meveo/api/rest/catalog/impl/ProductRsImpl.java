@@ -3,6 +3,7 @@ package org.meveo.api.rest.catalog.impl;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.cpq.ProductApi;
@@ -45,6 +46,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 			if(response.getCurrentProductVersion() != null)
 				result.setCurrentProductVersion(response.getCurrentProductVersion());
 			result.setDiscountList(response.getDiscountList());
+			result.setAgreementDateSetting(response.getAgreementDateSetting());
 			return Response.ok(result).build();
         } catch(MeveoApiException e) {
 		       return errorResponse(e, result.getActionStatus());
@@ -205,6 +207,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	        }
 	}
 
+	@Transactional
 	public Response duplicateProduct(String productCode, boolean duplicateHierarchy, boolean preserveCode) { 
 		GetProductDtoResponse result = new GetProductDtoResponse();
 		try {

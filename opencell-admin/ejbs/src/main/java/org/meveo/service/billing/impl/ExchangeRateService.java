@@ -13,6 +13,7 @@ import org.meveo.api.dto.ExchangeRateDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.ExchangeRate;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.shared.DateUtils;
@@ -84,7 +85,61 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
         return exchangeRate;
     }
 
-        private void updateTradingCurrencyForExchangeRate(TradingCurrency tradingCurrency, Set<ExchangeRate> exchangeRates){
+    public ExchangeRate createCurrentRateWithImpotFile(Date fromDate , BigDecimal exchangeRateValue , TradingCurrency tradingCurrency) {
+        if (fromDate == null) {
+            throw new MeveoApiException(resourceMessages.getString("error.exchangeRate.fromDate.empty"));
+        } 
+        // User cannot set a rate in a paste date
+        if (fromDate.before(DateUtils.setTimeToZero(new Date()))) {
+            throw new MeveoApiException(resourceMessages.getString("The date must not be in the past"));
+        }               
+        
+        if (exchangeRateValue != null) {
+            if (exchangeRateValue.compareTo(BigDecimal.ZERO) <= 0) {
+                throw new MeveoApiException(resourceMessages.getString("error.exchangeRate.exchangeRate.incorrect"));
+            }
+            
+            if (exchangeRateValue.compareTo(new BigDecimal("9999999999")) > 0) {
+                throw new MeveoApiException(resourceMessages.getString("The exchange rate decimals must be limited to 6 digits and the fractional part to 9,999,999,999"));
+            }
+            
+            BigDecimal fracExchangeRate = exchangeRateValue.subtract(new BigDecimal(exchangeRateValue.toBigInteger()));
+            if (fracExchangeRate.toString().length() > 8) {
+                throw new MeveoApiException(resourceMessages.getString("The exchange rate decimals must be limited to 6 digits and the fractional part to 9,999,999,999"));
+            }
+        }
+        
+        // Check if a user choose a date that is already taken
+        if (findByFromDate(fromDate, tradingCurrency.getId()) != null) {
+            throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.isAlreadyTaken"));
+        }
+        
+        ExchangeRate exchangeRate = new ExchangeRate();
+        List<ExchangeRate> listExchangeRate = tradingCurrency.getExchangeRates();
+        if (fromDate.compareTo(DateUtils.setTimeToZero(new Date())) == 0) {
+            exchangeRate.setCurrentRate(true);
+            for (ExchangeRate elementExchangeRate : listExchangeRate) {
+                elementExchangeRate.setCurrentRate(false);
+            }
+            tradingCurrency.setExchangeRates(listExchangeRate);
+            tradingCurrency.setCurrentRate(exchangeRateValue);
+            tradingCurrency.setCurrentRateFromDate(DateUtils.setTimeToZero(new Date()));
+            tradingCurrency.setCurrentRateUpdater(currentUser.getUserName());
+        } else {
+            exchangeRate.setCurrentRate(false);
+        }
+        exchangeRate.setTradingCurrency(tradingCurrency);
+        exchangeRate.setExchangeRate(exchangeRateValue);
+        exchangeRate.setFromDate(fromDate);
+        create(exchangeRate);
+
+        Set<ExchangeRate> exchangeRates = new HashSet<>(tradingCurrency.getExchangeRates());
+        exchangeRates.add(exchangeRate);
+        updateTradingCurrencyForExchangeRate(exchangeRate.getTradingCurrency(), exchangeRates);
+        return exchangeRate;
+    }
+    
+    private void updateTradingCurrencyForExchangeRate(TradingCurrency tradingCurrency, Set<ExchangeRate> exchangeRates){
 
         if(tradingCurrency != null
                 && (tradingCurrency.getCurrentRateFromDate() == null ||
@@ -126,12 +181,19 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
                 .setParameter("sysDate", DateUtils.setTimeToZero(new Date()))
                 .getResultList();
     }
-    
-    public void updateCurrentRateForTradingCurrency(Long exchangeRateId) {
+
+    public void updateCurrentRateForTradingCurrency(Long exchangeRateId, Currency functionalCurrency) {
         ExchangeRate exchangeRate = findById(exchangeRateId);
         TradingCurrency tradingCurrency = exchangeRate.getTradingCurrency();
-        if(tradingCurrency != null) {
-            if(tradingCurrency.getCurrentRate().equals(ONE)) {
+        if (exchangeRate.isCurrentRate()) {
+            log.warn("ExchangeRate already marked as current rate [id={}, currency={}, rate={}]",
+                    exchangeRate.getId(), exchangeRate.getTradingCurrency().getCurrencyCode(), exchangeRate.getExchangeRate());
+            return;
+        }
+        if (tradingCurrency != null) {
+            if (tradingCurrency.getCurrency().getId().equals(functionalCurrency.getId())) { // if functional currency of provider
+                tradingCurrencyService.updateFunctionalCurrency(tradingCurrency);
+            } else {
                 List<ExchangeRate> listExchangeRate = tradingCurrency.getExchangeRates();
                 for (ExchangeRate elementExchangeRate : listExchangeRate) {
                     elementExchangeRate.setCurrentRate(false);
@@ -143,8 +205,6 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
                 tradingCurrency.setCurrentRateUpdater(currentUser.getUserName());
                 exchangeRate.setTradingCurrency(tradingCurrency);
                 update(exchangeRate);
-            } else {
-                tradingCurrencyService.updateFunctionalCurrency(tradingCurrency);
             }
         }
     }

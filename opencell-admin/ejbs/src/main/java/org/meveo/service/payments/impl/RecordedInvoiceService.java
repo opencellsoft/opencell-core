@@ -18,14 +18,19 @@
 package org.meveo.service.payments.impl;
 
 import static java.util.Optional.ofNullable;
-import static org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID;
 import static org.meveo.model.billing.InvoicePaymentStatusEnum.PENDING;
 import static org.meveo.model.billing.InvoicePaymentStatusEnum.PPAID;
+import static org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID;
 import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
 import static org.meveo.model.shared.DateUtils.setDateToEndOfDay;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -56,6 +61,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.InvoiceTypeService;
 
 /**
  * RecordedInvoice service implementation.
@@ -256,19 +262,23 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
      * @throws ImportInvoiceException import invoice exception
      * @throws BusinessException business exception.
      */
-    public void generateRecordedInvoice(Invoice invoice) throws InvoiceExistException, ImportInvoiceException, BusinessException {
+    public RecordedInvoice generateRecordedInvoice(Invoice invoice, OCCTemplate givenOccTemplate) throws InvoiceExistException, ImportInvoiceException, BusinessException {
 
     	if (invoice.getInvoiceType().isInvoiceAccountable() && VALIDATED.equals(invoice.getStatus())) {
-    		@SuppressWarnings("unchecked")
-            List<CategoryInvoiceAgregate> cats = (List<CategoryInvoiceAgregate>) invoiceAgregateService.listByInvoiceAndType(invoice, "R");
+
             List<RecordedInvoiceCatAgregate> listRecordedInvoiceCatAgregate = new ArrayList<>();
+            
+            boolean useInvoiceBalance = invoice.getInvoiceBalance()!=null && !InvoiceTypeService.DEFAULT_ADVANCE_CODE.equals(invoice.getInvoiceType().getCode());
 
             BigDecimal remainingAmountWithoutTaxForRecordedIncoice = invoice.getAmountWithoutTax();
-            BigDecimal remainingAmountWithTaxForRecordedIncoice = invoice.getAmountWithTax();
+            BigDecimal remainingAmountWithTaxForRecordedIncoice = useInvoiceBalance?invoice.getInvoiceBalance() : invoice.getAmountWithTax();
             BigDecimal remainingAmountTaxForRecordedIncoice = invoice.getAmountTax();
-
+           
             boolean allowMultipleAOperInvoice = "true".equalsIgnoreCase(ParamBean.getInstance().getProperty("ao.generateMultipleAOperInvoice", "true"));
-            if (allowMultipleAOperInvoice) {
+            //cannot dispatch invoiceBalance between categories, if this is needed by a client, we will have to decide how to change all amounts according to invoiceBalance.
+            if (allowMultipleAOperInvoice && !useInvoiceBalance) {
+        		@SuppressWarnings("unchecked")
+                List<CategoryInvoiceAgregate> cats = (List<CategoryInvoiceAgregate>) invoiceAgregateService.listByInvoiceAndType(invoice, "R");
                 for (CategoryInvoiceAgregate catAgregate : cats) {
                     BigDecimal remainingAmountWithoutTaxForCat = BigDecimal.ZERO;
                     BigDecimal remainingAmountWithTaxForCat = BigDecimal.ZERO;
@@ -314,29 +324,33 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             }
 
             OCCTemplate occTemplate = null;
-            if (remainingAmountWithTaxForRecordedIncoice != null && remainingAmountWithTaxForRecordedIncoice.compareTo(BigDecimal.ZERO) < 0) {
-                String occTemplateCode = evaluateStringExpression(invoice.getInvoiceType().getOccTemplateNegativeCodeEl(), invoice, invoice.getBillingRun());
-                if (!StringUtils.isBlank(occTemplateCode)) {
-                    occTemplate = occTemplateService.findByCode(occTemplateCode);
-                }
-
-                if (occTemplate == null) {
-                    occTemplate = invoice.getInvoiceType().getOccTemplateNegative();
-                }
-
-            } else {
-                String occTemplateCode = evaluateStringExpression(invoice.getInvoiceType().getOccTemplateCodeEl(), invoice, invoice.getBillingRun());
-                if (!StringUtils.isBlank(occTemplateCode)) {
-                    occTemplate = occTemplateService.findByCode(occTemplateCode);
-                }
-
-                if (occTemplate == null) {
-                    occTemplate = invoice.getInvoiceType().getOccTemplate();
-                    if (occTemplate == null) {
-                        return;
+            if (givenOccTemplate == null) {
+                if (remainingAmountWithTaxForRecordedIncoice != null && remainingAmountWithTaxForRecordedIncoice.compareTo(BigDecimal.ZERO) < 0) {
+                    String occTemplateCode = evaluateStringExpression(invoice.getInvoiceType().getOccTemplateNegativeCodeEl(), invoice, invoice.getBillingRun());
+                    if (!StringUtils.isBlank(occTemplateCode)) {
+                        occTemplate = occTemplateService.findByCode(occTemplateCode);
                     }
-                }
 
+                    if (occTemplate == null) {
+                        occTemplate = invoice.getInvoiceType().getOccTemplateNegative();
+                    }
+
+                } else {
+                    String occTemplateCode = evaluateStringExpression(invoice.getInvoiceType().getOccTemplateCodeEl(), invoice, invoice.getBillingRun());
+                    if (!StringUtils.isBlank(occTemplateCode)) {
+                        occTemplate = occTemplateService.findByCode(occTemplateCode);
+                    }
+
+                    if (occTemplate == null) {
+                        occTemplate = invoice.getInvoiceType().getOccTemplate();
+                        if (occTemplate == null) {
+                            return null;
+                        }
+                    }
+
+                }
+            } else {
+                occTemplate = givenOccTemplate;
             }
 
             RecordedInvoice recordedInvoice = createRecordedInvoice(remainingAmountWithoutTaxForRecordedIncoice, remainingAmountWithTaxForRecordedIncoice,
@@ -358,11 +372,15 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                         invoice.getPaymentStatus() + " - newPaymentStatus : " + currentStatus + "]");
                 invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), currentStatus);
             }
+
+            return recordedInvoice;
     	} else if(!VALIDATED.equals(invoice.getStatus())) {
     		log.warn(" Invoice status is not validated : id {}, status {}", invoice.getId(), invoice.getStatus());
     	} else {
     		log.warn(" Invoice type is not accountable : {} ", invoice.getInvoiceType());
     	}
+
+        return null;
     }
 
     @Override
@@ -474,8 +492,11 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
     }
 
     @SuppressWarnings("unchecked")
-    public List<Object[]> getAgedReceivables(CustomerAccount customerAccount, Date startDate, Date startDueDate, Date endDueDate, PaginationConfiguration paginationConfiguration,
-                                             Integer stepInDays, Integer numberOfPeriods, String invoiceNumber, String customerAccountDescription) {
+    public List<Object[]> getAgedReceivables(String customerAccountCode, String sellerCode, Date startDate, Date startDueDate, Date endDueDate, PaginationConfiguration paginationConfiguration,
+                                             Integer stepInDays, Integer numberOfPeriods, String invoiceNumber, String customerAccountDescription, String sellerDescription, String tradingCurrency, String functionalCurrency) {
+        if(functionalCurrency != null && !functionalCurrency.equals(appProvider.getCurrency().getCurrencyCode()))
+            return Collections.emptyList();
+
     	String datePattern = "yyyy-MM-dd";
         StringBuilder query = new StringBuilder("Select ao.customerAccount.id, sum (case when ao.dueDate >= '")
                 .append(DateUtils.formatDateWithPattern(startDate, datePattern))
@@ -516,34 +537,32 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                     .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then ao.unMatchingAmount else 0 end ) as sum_90_up_awt,")
                     .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then ao.taxAmount else 0 end ) as sum_90_up_tax,");
         }
-        query.append(" ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.dueDate, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.invoice.billingAccount.id ")
+        query.append(" ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.seller.description, ao.seller.code, ao.dueDate, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.invoice.billingAccount.id ")
                 .append("from ")
                 .append(RecordedInvoice.class.getSimpleName())
                 .append(" as ao");
         QueryBuilder qb = new QueryBuilder(query.toString());
         qb.addSql("(ao.matchingStatus='"+MatchingStatusEnum.O+"' or ao.matchingStatus='"+MatchingStatusEnum.P+"') ");
-        ofNullable(customerAccount).ifPresent(ca -> qb.addSql("ao.customerAccount.code = '" + ca.getCode() +"'"));
-        ofNullable(customerAccountDescription).ifPresent(caDescription
-                -> qb.addSql("ao.customerAccount.description = '" + caDescription +"'"));
+        qb.addSql("ao.invoice.invoiceType.excludeFromAgedTrialBalance = false");
+        ofNullable(customerAccountCode).ifPresent(ca -> qb.addSql("UPPER(ao.customerAccount.code) like '%" + customerAccountCode.toUpperCase() +"%'"));
+        ofNullable(customerAccountDescription).ifPresent(caDescription -> qb.addSql("UPPER(ao.customerAccount.description) like '%" + caDescription.toUpperCase() +"%'"));
+        ofNullable(sellerDescription).ifPresent(sDescription -> qb.addSql("UPPER(ao.seller.description) like ('%" + sDescription.toUpperCase() +"%')"));
+        ofNullable(sellerCode).ifPresent(sel -> qb.addSql("UPPER(ao.seller.code) like '%" + sellerCode.toUpperCase() +"%'"));
         ofNullable(invoiceNumber).ifPresent(invNumber -> qb.addSql("ao.invoice.invoiceNumber = '" + invNumber +"'"));
+        ofNullable(tradingCurrency).ifPresent(fc -> qb.addSql("ao.invoice.tradingCurrency.currency.currencyCode = '" + fc + "'"));
 
         if (startDueDate != null && endDueDate != null) {
             qb.addSql("(ao.dueDate >= '" + DateUtils.formatDateWithPattern(startDueDate, datePattern)
                     + "' and ao.dueDate <= '" + DateUtils.formatDateWithPattern(endDueDate, datePattern) + "')");
         }
 
-        if(DateUtils.compare(startDate, new Date()) < 0) {
-            var datePatternHours = "yyyy-MM-dd HH:mm:ss";
-        	qb.addSql("ao.invoice.status = '" + VALIDATED + "' and ao.invoice.statusDate <= '"
-                    + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "'");
-        	qb.addSql("(ao.invoice.paymentStatus = '" + PENDING + "' or (ao.invoice.paymentStatus = '"
-                    + PPAID +"' and ao.invoice.paymentStatusDate <= '"
-                    + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "') " +
-                    "or (ao.invoice.paymentStatus ='" + UNPAID +"' and ao.invoice.paymentStatusDate <= '"
-                            + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "'))");
+        if (DateUtils.compare(startDate, new Date()) < 0) {
+            qb.addSql("ao.invoice.status = '" + VALIDATED + "' and ao.invoice.invoiceDate <= '"
+                    + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), "yyyy-MM-dd HH:mm:ss") + "'");
+            qb.addSql("(ao.invoice.paymentStatus = '" + PENDING + "' or ao.invoice.paymentStatus = '" + PPAID + "' or ao.invoice.paymentStatus ='" + UNPAID + "')");
         }
 
-        qb.addGroupCriterion("ao.customerAccount.id, ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.dueDate, ao.amount, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.invoice.billingAccount.id ");
+        qb.addGroupCriterion("ao.customerAccount.id, ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.seller.description, ao.seller.code, ao.dueDate, ao.amount, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.invoice.billingAccount.id ");
         qb.addPaginationConfiguration(paginationConfiguration);
 
         return qb.getQuery(getEntityManager()).getResultList();

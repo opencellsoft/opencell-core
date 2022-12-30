@@ -29,7 +29,32 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.PostLoad;
+import javax.persistence.PostPersist;
+import javax.persistence.PostUpdate;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 import javax.validation.ValidationException;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -90,8 +115,8 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.draftNoPdfByBR", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NULL and inv.temporaryInvoiceNumber IS NOT NULL and inv.pdfFilename IS NULL and inv.xmlFilename IS NOT NULL and inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.allNoPdfByBR", query = "select inv.id from Invoice inv where inv.pdfFilename IS NULL and inv.xmlFilename IS NOT NULL and inv.billingRun.id=:billingRunId"),
 
-        @NamedQuery(name = "Invoice.invoicesToNumberSummary", query = "select inv.invoiceType.id, inv.seller.id, inv.invoiceDate, count(inv) from Invoice inv where inv.billingRun.id=:billingRunId group by inv.invoiceType.id, inv.seller.id, inv.invoiceDate"),
-        @NamedQuery(name = "Invoice.byBrItSelDate", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.invoiceType.id=:invoiceTypeId and inv.seller.id = :sellerId and inv.invoiceDate=:invoiceDate order by inv.id"),
+        @NamedQuery(name = "Invoice.invoicesToNumberSummary", query = "select inv.invoiceType.id, inv.seller.id, inv.invoiceDate, count(inv) from Invoice inv where inv.billingRun.id=:billingRunId AND inv.status in (org.meveo.model.billing.InvoiceStatusEnum.DRAFT, org.meveo.model.billing.InvoiceStatusEnum.SUSPECT) group by inv.invoiceType.id, inv.seller.id, inv.invoiceDate"),
+        @NamedQuery(name = "Invoice.byBrItSelDate", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.invoiceType.id=:invoiceTypeId and inv.seller.id = :sellerId and inv.invoiceDate=:invoiceDate AND inv.status in (org.meveo.model.billing.InvoiceStatusEnum.DRAFT, org.meveo.model.billing.InvoiceStatusEnum.SUSPECT) order by inv.id"),
         @NamedQuery(name = "Invoice.billingAccountIdByBrItSelDate", query = "select distinct inv.billingAccount.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.invoiceType.id=:invoiceTypeId and inv.seller.id = :sellerId and inv.invoiceDate=:invoiceDate"),
         @NamedQuery(name = "Invoice.nullifyInvoiceFileNames", query = "update Invoice inv set inv.pdfFilename = null , inv.xmlFilename = null where inv.billingRun = :billingRun"),
         @NamedQuery(name = "Invoice.nullifyInvoiceXMLFileNames", query = "update Invoice inv set inv.xmlFilename = null where inv.billingRun = :billingRun"),
@@ -104,11 +129,12 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.findByStatusAndBR", query = "from Invoice inv where inv.status in (:statusList) and inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.listUnpaidInvoicesIds", query = "SELECT inv.id FROM Invoice inv "
                                 + " WHERE inv.dueDate <= NOW() AND inv.status = org.meveo.model.billing.InvoiceStatusEnum.VALIDATED "
-                                + " AND inv.paymentStatus not in (org.meveo.model.billing.InvoicePaymentStatusEnum.PAID, org.meveo.model.billing.InvoicePaymentStatusEnum.PPAID)"),
+                                + " AND inv.paymentStatus not in (org.meveo.model.billing.InvoicePaymentStatusEnum.PAID,"
+                                + " org.meveo.model.billing.InvoicePaymentStatusEnum.PPAID, org.meveo.model.billing.InvoicePaymentStatusEnum.DISPUTED)"),
         @NamedQuery(name = "Invoice.detachAOFromInvoice", query = "UPDATE Invoice set recordedInvoice = null where recordedInvoice = :ri"),
         @NamedQuery(name = "Invoice.sumInvoiceableAmountByBR", query =
-        "select sum(inv.amountWithoutTax), sum(inv.amountWithTax), inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id "
-                + "FROM Invoice inv where inv.billingRun.id=:billingRunId group by inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id"),
+        "select sum(inv.amountWithoutTax), sum(inv.amountWithTax), inv.subscription.id, inv.commercialOrder.id , inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id "
+                + "FROM Invoice inv where inv.billingRun.id=:billingRunId group by inv.subscription.id, inv.commercialOrder.id , inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id"),
 
         @NamedQuery(name = "Invoice.sumAmountsByBR", query = "select sum(inv.amountTax),sum(inv.amountWithoutTax), sum(inv.amountWithTax) FROM Invoice inv where inv.billingRun.id=:billingRunId and inv.status <> 'CANCELED'"),
         @NamedQuery(name = "Invoice.billingAccountsByBr", query = "select distinct inv.billingAccount from Invoice inv where inv.billingRun.id=:billingRunId and inv.status <> 'CANCELED'"),
@@ -117,10 +143,21 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.deleteByIds", query = "delete from Invoice inv where inv.id IN (:invoicesIds)"),
         @NamedQuery(name = "Invoice.excludePrpaidInvoices", query = "select inv.id from Invoice inv where inv.id IN (:invoicesIds) and inv.prepaid=false"),
         @NamedQuery(name = "Invoice.countRejectedByBillingRun", query = "select count(id) from Invoice where billingRun.id =:billingRunId and status = org.meveo.model.billing.InvoiceStatusEnum.REJECTED"),
+        @NamedQuery(name = "Invoice.countSuspectByBillingRun", query = "select count(id) from Invoice where billingRun.id =:billingRunId and status = org.meveo.model.billing.InvoiceStatusEnum.SUSPECT"),
         @NamedQuery(name = "Invoice.getInvoiceTypeANDRecordedInvoiceID", query = "select inv.invoiceType.code, inv.recordedInvoice.id from Invoice inv where inv.id =:id"),
         @NamedQuery(name = "Invoice.initAmounts", query = "UPDATE Invoice inv set inv.amount = 0, inv.amountTax = 0, inv.amountWithTax = 0, inv.amountWithoutTax = 0, inv.netToPay = 0, inv.discountAmount = 0, inv.amountWithoutTaxBeforeDiscount = 0 where inv.id = :invoiceId"),
-        @NamedQuery(name = "Invoice.loadByBillingRun", query = "SELECT inv.id FROM Invoice inv WHERE inv.billingRun.id = :billingRunId")
-
+        @NamedQuery(name = "Invoice.loadByBillingRunNotValidatedInvoices", query = "SELECT inv.id FROM Invoice inv WHERE inv.billingRun.id = :billingRunId AND inv.status <> org.meveo.model.billing.InvoiceStatusEnum.VALIDATED "),
+        @NamedQuery(name = "Invoice.loadByBillingRun", query = "SELECT inv.id FROM Invoice inv WHERE inv.billingRun.id = :billingRunId"),
+        @NamedQuery(name = "Invoice.findLinkedInvoicesByIdAndType", query = "SELECT inv.invoiceNumber, inv.invoiceDate, linkedinv.amount FROM Invoice inv inner join LinkedInvoice linkedinv on inv.id = linkedinv.linkedInvoiceValue.id where linkedinv.id.id = :invoiceId and inv.invoiceType.code =: invoiceTypeCode"),
+        @NamedQuery(name = "Invoice.findInvoiceEligibleAdv", query = "select bi, adv from Invoice bi inner join  BillingAccount bba on bi.billingAccount.id = bba.id inner join Invoice adv on adv.billingAccount.id = bba.id inner join InvoiceType  it on it.id = adv.invoiceType.id"
+                + " where bi.billingRun.id = :billingRunId and it.code = 'ADV' and adv.status = 'VALIDATED' and adv.invoiceBalance > 0 and bi.status = 'DRAFT' order by bi.id, adv.auditable.created, adv.invoiceBalance"),
+        @NamedQuery(name = "Invoice.findValidatedInvoiceAdvOrder", query = "select inv from Invoice inv  where  (inv.commercialOrder is null or inv.commercialOrder=:commercialOrder) and inv.status='VALIDATED' and inv.invoiceType.code = 'ADV' and inv.invoiceBalance > 0 and inv.billingAccount.id =:billingAccountId order by inv.commercialOrder, inv.auditable.created ASC"),
+        @NamedQuery(name = "Invoice.findValidatedInvoiceAdvWithoutOrder", query = "select inv from Invoice inv  where  inv.commercialOrder is null  and inv.status='VALIDATED' and inv.invoiceType.code = 'ADV' and inv.invoiceBalance > 0 and inv.billingAccount.id =:billingAccountId"),
+        @NamedQuery(name = "Invoice.findValidatedInvoiceAdvWithOrder", query = "select inv from Invoice inv  where  inv.commercialOrder=:commercialOrder and inv.status='VALIDATED' and inv.invoiceType.code = 'ADV' and inv.invoiceBalance > 0 and inv.billingAccount.id =:billingAccountId"),
+        @NamedQuery(name = "Invoice.findWithFuntionalCurrencyDifferentFromOne", query = "SELECT i FROM Invoice i JOIN Provider p ON p.currency.id = i.tradingCurrency.currency.id WHERE i.lastAppliedRate <> :EXPECTED_RATE"),
+})
+@NamedNativeQueries({
+	@NamedNativeQuery(name = "Invoice.rollbackAdvance", query = "update billing_invoice set invoice_balance = invoice_balance + li.amount from (select bli.linked_invoice_id, bli.amount from billing_linked_invoices bli join billing_invoice i on i.id = bli.id where i.billing_run_id = :billingRunId and bli.type = 'ADVANCEMENT_PAYMENT') li where li.linked_invoice_id = id")
 })
 public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISearchable {
 
@@ -327,9 +364,8 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     /**
      * Linked invoices
      */
-    @ManyToMany
-    @JoinTable(name = "billing_linked_invoices", joinColumns = { @JoinColumn(name = "id") }, inverseJoinColumns = { @JoinColumn(name = "linked_invoice_id") })
-    private Set<Invoice> linkedInvoices = new HashSet<>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "id", cascade = CascadeType.ALL)
+    private Set<LinkedInvoice> linkedInvoices = new HashSet<>();
 
     /**
      * Orders that produced rated transactions that were included in the invoice
@@ -702,6 +738,23 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Size(max = 255)
 	private String openOrderNumber;
 
+    @Column(name = "invoice_balance", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal invoiceBalance;
+    
+    /**
+     * Indicates if the current rate has already been applied.
+     */
+    @Column(name = "use_current_rate")
+    @Type(type = "numeric_boolean")
+    private boolean useCurrentRate = false;
+    
+    /**
+     * Rejected rule validation invoice
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoice_validation_rule_id")
+    private InvoiceValidationRule rejectedByRule;
+
     public Invoice() {
 	}
 
@@ -785,13 +838,15 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         		this.tradingLanguage = customerAccount.getTradingLanguage() != null ? customerAccount.getTradingLanguage() : this.getSeller().getTradingLanguage();
         	}
         }
-        if(this.id == null) {
-            if(this.lastAppliedRate == null) {
-                this.lastAppliedRate = this.tradingCurrency != null && this.tradingCurrency.getCurrentRate() != null
-                        ? this.tradingCurrency.getCurrentRate() : ONE;
+        if (this.id == null) {
+            if (this.lastAppliedRateDate == null) {
+                this.lastAppliedRateDate = invoiceDate;
             }
-            if(this.lastAppliedRateDate == null) {
-                this.lastAppliedRateDate = new Date();
+            if (this.lastAppliedRate == null) {
+                if (this.tradingCurrency != null) {
+                    ExchangeRate rate = this.tradingCurrency.getExchangeRate(invoiceDate);
+                    this.lastAppliedRate = rate != null ? rate.getExchangeRate() : ONE;
+                }
             }
         }
         BigDecimal appliedRate = getAppliedRate();
@@ -1199,11 +1254,11 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         return null;
     }
 
-    public Set<Invoice> getLinkedInvoices() {
+    public Set<LinkedInvoice> getLinkedInvoices() {
         return linkedInvoices;
     }
 
-    public void setLinkedInvoices(Set<Invoice> linkedInvoices) {
+    public void setLinkedInvoices(Set<LinkedInvoice> linkedInvoices) {
         this.linkedInvoices = linkedInvoices;
     }
 
@@ -1833,6 +1888,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 		this.openOrderNumber = openOrderNumber;
 	}
 
+	public boolean isUseCurrentRate() {
+		return useCurrentRate;
+	}
+
+	public void setUseCurrentRate(boolean useCurrentRate) {
+		this.useCurrentRate = useCurrentRate;
+	}
+
 
 	/**
      * Check if an invoice can be refreshed
@@ -1851,4 +1914,22 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public BigDecimal getAppliedRate() {
         return this.lastAppliedRate != null && !this.lastAppliedRate.equals(ZERO) ? this.lastAppliedRate : ONE;
     }
+
+
+    public BigDecimal getInvoiceBalance() {
+        return invoiceBalance;
+    }
+
+
+    public void setInvoiceBalance(BigDecimal invoiceBalance) {
+        this.invoiceBalance = invoiceBalance;
+    }
+
+	public InvoiceValidationRule getRejectedByRule() {
+		return rejectedByRule;
+	}
+
+	public void setRejectedByRule(InvoiceValidationRule rejectedByRule) {
+		this.rejectedByRule = rejectedByRule;
+	}
 }

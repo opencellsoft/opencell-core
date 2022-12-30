@@ -95,7 +95,7 @@ public class Product extends ServiceCharge {
 		this.brand = null;
 		this.currentVersion = null;
 		this.pricePlanMatrixColumns = new ArrayList<>();
-		this.offerComponents = new ArrayList<>();
+		this.offerComponents = new HashSet<>();
 		this.articleMappingLines = new ArrayList<>();
 		this.commercialRuleLines = new ArrayList<>();
 		this.commercialRuleHeader = new ArrayList<>();
@@ -107,6 +107,7 @@ public class Product extends ServiceCharge {
 		this.priceVersionDateSetting = copy.getPriceVersionDateSetting();
 		this.getUuid();
 		this.setProductModel(copy.isModel != null && copy.isModel == Boolean.TRUE ? copy : null);
+		this.agreementDateSetting = copy.agreementDateSetting;
 	}
 
 
@@ -219,7 +220,7 @@ public class Product extends ServiceCharge {
      * offer component
      */  
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) 
-    private List<OfferComponent> offerComponents = new ArrayList<>();
+    private Set<OfferComponent> offerComponents = new HashSet<>();
 
 	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ProductChargeTemplateMapping> productCharges = new ArrayList<>();
@@ -257,6 +258,11 @@ public class Product extends ServiceCharge {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_model_id")
     private Product productModel;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "agreement_date_setting")
+    private AgreementDateSettingEnum agreementDateSetting;
+    
 
 	/**
 	 * @return the status
@@ -562,20 +568,7 @@ public class Product extends ServiceCharge {
 	}
 
 
-	/**
-	 * @return the offerComponents
-	 */
-	public List<OfferComponent> getOfferComponents() {
-		return offerComponents;
-	}
-
-
-	/**
-	 * @param offerComponents the offerComponents to set
-	 */
-	public void setOfferComponents(List<OfferComponent> offerComponents) {
-		this.offerComponents = offerComponents;
-	}
+	 
 
 	public List<ProductChargeTemplateMapping> getProductCharges() {
 		return productCharges;
@@ -589,7 +582,9 @@ public class Product extends ServiceCharge {
 
 	/**
 	 * @return the currentVersion
+	 * @deprecated Should load version by code and date instead
 	 */
+	@Deprecated
 	public ProductVersion getCurrentVersion() {
 		return currentVersion;
 	}
@@ -705,5 +700,28 @@ public class Product extends ServiceCharge {
 	public void setProductModel(Product productModel) {
 		this.productModel = productModel;
 	}
+
+	public Set<OfferComponent> getOfferComponents() {
+		return offerComponents;
+	}
+
+	public void setOfferComponents(Set<OfferComponent> offerComponents) {
+		this.offerComponents = offerComponents;
+	}
+
+	/**
+	 * @return the agreementDateSetting
+	 */
+	public AgreementDateSettingEnum getAgreementDateSetting() {
+		return agreementDateSetting;
+	}
+
+	/**
+	 * @param agreementDateSetting the agreementDateSetting to set
+	 */
+	public void setAgreementDateSetting(AgreementDateSettingEnum agreementDateSetting) {
+		this.agreementDateSetting = agreementDateSetting;
+	}
+
 
 }

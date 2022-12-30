@@ -34,8 +34,8 @@ public class RatedTransactionResourceImpl implements RatedTransactionResource {
 	@Override
 	public Response updateRatedTransaction(Long id, RatedTransactionInput input) {
 		final RatedTransaction ratedTransaction = findRatedTransactionEligibleToUpdate(id);
-		ratedTransactionApiService.update(ratedTransaction,input.getUnitAmountWithoutTax(), input.getQuantity()
-				);
+		ratedTransactionApiService.update(ratedTransaction, input.getDescription(), input.getUnitAmountWithoutTax(), input.getQuantity(), input.getParameter1(),
+				input.getParameter2(), input.getParameter3(), input.getParameterExtra());
 
 		return Response.ok().entity(LinkGenerator.getUriBuilderFromResource(RatedTransactionResource.class, id).build())
 				.build();

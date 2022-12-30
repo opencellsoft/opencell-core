@@ -13,8 +13,6 @@ import org.meveo.model.securityDeposit.ValidityPeriodUnit;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-
 @Value.Immutable
 @Value.Style(jdkOnly = true)
 @JsonDeserialize(as = ImmutableSecurityDepositInput.class)
@@ -25,11 +23,11 @@ public interface SecurityDepositInput extends Resource {
 
     @NotNull
     Resource getTemplate();
-
+ 
     @Nullable
     Resource getCurrency();
 
-    @NotNull
+    @Nullable
     Resource getCustomerAccount();
 
     @Nullable
@@ -64,4 +62,10 @@ public interface SecurityDepositInput extends Resource {
     
     @Nullable
     String getCancelReason();
+
+    @Nullable
+    Resource getLinkedInvoice();
+    
+    @NotNull
+    Resource getBillingAccount();
 }

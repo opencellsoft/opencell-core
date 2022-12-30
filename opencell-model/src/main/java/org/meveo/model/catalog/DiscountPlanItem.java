@@ -74,7 +74,8 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 @NamedQueries({
 		@NamedQuery(name = "DiscountPlanItem.getActiveDiscountPlanItem", query = "SELECT dpi from DiscountPlanItem dpi where dpi.disabled is false and dpi.discountPlan.id=:discountPlanId order by dpi.priority ASC, id", hints = {
             @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
-		@NamedQuery(name = "DiscountPlanItem.getFixedDiscountPlanItemsByDP", query = "SELECT SUM(dpi.discountValue) FROM DiscountPlanItem dpi WHERE dpi.discountPlan.id = :discountPlanId AND dpi.discountPlanItemType='FIXED'"),
+		@NamedQuery(name = "DiscountPlanItem.getFixedDiscountPlanItemsByDP", query = "SELECT dpi from DiscountPlanItem dpi where dpi.disabled is false and dpi.discountPlan.id=:discountPlanId AND dpi.discountPlanItemType='FIXED' order by dpi.priority ASC, id", hints = {
+	            @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
 	    @NamedQuery(name = "DiscountPlanItem.getMaxSequence", query = "SELECT max(dpi.sequence) from DiscountPlanItem dpi where dpi.discountPlan.id=:discountPlanId")
 })
 public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity {
@@ -197,9 +198,7 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	
 	@Type(type = "numeric_boolean")
 	@Column(name = "apply_by_article")
-	private boolean applyByArticle=false;
-	
-	
+	private boolean applyByArticle = true;
 	
 	/**
 	 * 

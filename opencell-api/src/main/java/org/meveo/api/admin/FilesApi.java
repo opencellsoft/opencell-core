@@ -21,12 +21,15 @@ package org.meveo.api.admin;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.meveo.admin.storage.StorageFactory;
 import org.meveo.admin.util.FlatFileValidator;
 import org.meveo.admin.util.DirectoriesConstants;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.admin.FileDto;
 import org.meveo.api.dto.admin.FileRequestDto;
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
@@ -40,13 +43,20 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.zip.ZipOutputStream;
 
+import static java.lang.String.format;
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 
 /**
@@ -59,6 +69,7 @@ import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 @Stateless
 public class FilesApi extends BaseApi {
 
+    public static final String FILE_DOES_NOT_EXISTS = "File does not exists: ";
     @Inject
     private FlatFileValidator flatFileValidator;
 
@@ -108,15 +119,15 @@ public class FilesApi extends BaseApi {
             subDirOUT, subDirERR, subDirWARN, catDirIN, catDirOUT, catDirKO, subDirKO, meterDirIN, meterDirOUT, meterDirKO, invoicePdfDir, invoiceXmlDir, jasperDir, priceplanVersionsDir);
         for (String custDirs : filePaths) {
             File subDir = new File(custDirs);
-            if (!subDir.exists()) {
-                subDir.mkdirs();
+            if (!StorageFactory.existsDirectory(subDir)) {
+                StorageFactory.mkdirs(subDir);
             }
         }
     }
 
     public List<FileDto> listFiles(String dir) throws BusinessApiException {
         if (!StringUtils.isBlank(dir)) {
-            dir = getProviderRootDir() + File.separator + dir;
+            dir = getProviderRootDir() + File.separator + normalizePath(dir);
         } else {
             dir = getProviderRootDir();
         }
@@ -129,11 +140,19 @@ public class FilesApi extends BaseApi {
 
         List<FileDto> result = new ArrayList<FileDto>();
 
-        if (folder.listFiles() != null && folder.listFiles().length > 0) {
-            List<File> files = Arrays.asList(folder.listFiles());
-            if (files != null) {
+        if (! StorageFactory.isS3Activated()) {
+            if (folder.listFiles() != null && Objects.requireNonNull(folder.listFiles()).length > 0) {
+                List<File> files = Arrays.asList(Objects.requireNonNull(folder.listFiles()));
                 for (File file : files) {
                     result.add(new FileDto(file));
+                }
+            }
+        }
+        else {
+            if (Objects.requireNonNull(StorageFactory.listSubFoldersAndFiles(folder)).size() > 0) {
+                Map<String, Date> map = Objects.requireNonNull(StorageFactory.listSubFoldersAndFiles(folder));
+                for (Map.Entry<String, Date> entry : map.entrySet()) {
+                    result.add(new FileDto(entry.getKey(), entry.getValue()));
                 }
             }
         }
@@ -141,17 +160,36 @@ public class FilesApi extends BaseApi {
         return result;
     }
 
+    /**
+     * Remove any directory above the provider directory root
+     * @param dir
+     * @return
+     */
+    private String normalizePath(String dir) {
+        if (dir == null) {
+            throw new BusinessApiException("Invalid parameter, file or directory is null");
+        }
+        File dirFile = new File(getProviderRootDir() + File.separator + dir);
+        Path path = dirFile.toPath();
+        path = path.normalize();
+        String prefix = getProviderRootDir().replace("./", "");
+        if (!path.toString().contains(prefix)) {
+            throw new EntityDoesNotExistsException(FILE_DOES_NOT_EXISTS + dir);
+        }
+        return dir;
+    }
+
     public void createDir(String dir) throws BusinessApiException {
-        File file = new File(getProviderRootDir() + File.separator + dir);
-        if (!file.exists()) {
-            file.mkdirs();
+        File file = new File(getProviderRootDir() + File.separator + normalizePath(dir));
+        if (!StorageFactory.existsDirectory(file)) {
+            StorageFactory.createDirectory(file);
         }
     }
 
     public void zipFile(String filePath) throws BusinessApiException {
-        File file = new File(getProviderRootDir() + File.separator + filePath);
+        File file = new File(getProviderRootDir() + File.separator + normalizePath(filePath));
         if (!file.exists()) {
-            throw new BusinessApiException("File does not exists: " + file.getPath());
+            throw new BusinessApiException(FILE_DOES_NOT_EXISTS + file.getPath());
         }
 
         try {
@@ -166,15 +204,16 @@ public class FilesApi extends BaseApi {
      * @throws BusinessApiException business exception.
      */
     public void zipDir(String dir) throws BusinessApiException {
-        File file = new File(getProviderRootDir() + File.separator + (isLocalDir(dir) ? "" : dir));
-        if (!file.exists()) {
+        String normalizedDir = (isLocalDir(dir) ? "" : normalizePath(dir));
+        File file = new File(getProviderRootDir() + File.separator + normalizedDir);
+        if (!StorageFactory.existsDirectory(file)) {
             throw new BusinessApiException("Directory does not exists: " + file.getPath());
         }
         File zipFile = new File(FilenameUtils.removeExtension(file.getParent() + File.separator + file.getName()) + ".zip");
-        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipFile))) {
+        try (ZipOutputStream zos = new ZipOutputStream(Objects.requireNonNull(StorageFactory.getOutputStream(zipFile)))) {
             FileUtils.addDirToArchive(getProviderRootDir(), file.getPath(), zos);
             zos.flush();
-            if(isLocalDir(dir))
+            if (isLocalDir(dir))
                 Files.move(zipFile.toPath(), Paths.get(getProviderRootDir() + File.separator + zipFile.getName()), ATOMIC_MOVE);
         } catch (IOException e) {
             throw new BusinessApiException("Error zipping directory: " + file.getName() + ". " + e.getMessage());
@@ -193,14 +232,14 @@ public class FilesApi extends BaseApi {
      * @throws BusinessApiException business api exeption.
      */
     public FlatFile uploadFile(byte[] data, String filename, String fileFormat) throws BusinessApiException {
-        File file = new File(getProviderRootDir() + File.separator + filename);
-        try (FileOutputStream fop = new FileOutputStream(file)){
+        File file = new File(getProviderRootDir() + File.separator + normalizePath(filename));
+        try (OutputStream fop = StorageFactory.getOutputStream(file)){
 //            if (!file.exists()) {
 //                file.createNewFile();
 //            }
 
-            ;
 
+            assert fop != null;
             fop.write(data);
             fop.close();
             
@@ -208,7 +247,7 @@ public class FilesApi extends BaseApi {
                 // unzip
                 // get parent dir
                 String parentDir = file.getParent();
-                FileUtils.unzipFile(parentDir, new FileInputStream(file));
+                FileUtils.unzipFile(parentDir, StorageFactory.getInputStream(file));
             }
 
             if (!StringUtils.isBlank(fileFormat)) {
@@ -228,28 +267,32 @@ public class FilesApi extends BaseApi {
      * @throws MeveoApiException
      */
     public void uploadFileBase64(FileRequestDto postData) throws MeveoApiException {
-        if (postData == null || StringUtils.isBlank(postData.getFilepath())) {
+        if (postData == null) {
+            throw new InvalidParameterException("Body request is empty");
+        }
+        if (StringUtils.isBlank(postData.getFilepath())) {
             missingParameters.add("filepath");
         }
-        if (postData == null || StringUtils.isBlank(postData.getContent())) {
+        if (StringUtils.isBlank(postData.getContent())) {
             missingParameters.add("content");
         }
 
         handleMissingParametersAndValidate(postData);
 
-        String filepath = getProviderRootDir() + File.separator + postData.getFilepath();
+
+        String filepath = getProviderRootDir() + File.separator + normalizePath(postData.getFilepath());
         File file = new File(filepath);
-        FileOutputStream fop = null;
+        OutputStream fop = null;
         try {
 
             File parent = file.getParentFile();
             if (parent == null) {
                 throw new BusinessApiException("Invalid path : " + filepath);
             }
-
-            parent.mkdirs();
-            file.createNewFile();
-            fop = new FileOutputStream(file);
+            StorageFactory.mkdirs(parent);
+            StorageFactory.createNewFile(file);
+            fop = StorageFactory.getOutputStream(file);
+            assert fop != null;
             fop.write(Base64.decodeBase64(postData.getContent()));
             fop.flush();
 
@@ -272,13 +315,13 @@ public class FilesApi extends BaseApi {
             throw new BusinessApiException("filePath is required ! ");
         }
 
-        File file = new File(getProviderRootDir() + File.separator + filePath);
-        if (!FileUtils.isValidZip(file)) {
+        File file = new File(getProviderRootDir() + File.separator + normalizePath(filePath));
+        if (!StorageFactory.isValidZip(file)) {
             suppressFile(filePath);
             throw new BusinessApiException("The zipped file is invalid ! ");
         }
 
-        try(FileInputStream fileInputStream = new FileInputStream(file)) {
+        try(InputStream fileInputStream = StorageFactory.getInputStream(file)) {
             String parentDir = file.getParent();
             FileUtils.unzipFile(parentDir, fileInputStream);
         } catch (Exception e) {
@@ -290,27 +333,27 @@ public class FilesApi extends BaseApi {
     }
 
     public void suppressFile(String filePath) throws BusinessApiException {
-        String filename = getProviderRootDir() + File.separator + filePath;
+        String filename = getProviderRootDir() + File.separator + normalizePath(filePath);
         File file = new File(filename);
 
-        if (file.exists()) {
+        if (StorageFactory.exists(file)) {
             try {
-                file.delete();
+                StorageFactory.delete(file);
             } catch (Exception e) {
                 throw new BusinessApiException("Error suppressing file: " + filename + ". " + e.getMessage());
             }
         } else {
-            throw new BusinessApiException("File does not exists: " + filename);
+            throw new BusinessApiException(FILE_DOES_NOT_EXISTS + filename);
         }
     }
 
     public void suppressDir(String dir) throws BusinessApiException {
-        String filename = getProviderRootDir() + File.separator + dir;
+        String filename = getProviderRootDir() + File.separator + normalizePath(dir);
         File file = new File(filename);
 
-        if (file.exists()) {
+        if (StorageFactory.existsDirectory(file)) {
             try {
-                org.apache.commons.io.FileUtils.deleteDirectory(file);
+                StorageFactory.deleteDirectory(file);
             } catch (Exception e) {
                 throw new BusinessApiException("Error suppressing file: " + filename + ". " + e.getMessage());
             }
@@ -325,14 +368,11 @@ public class FilesApi extends BaseApi {
      * @throws BusinessApiException business exception.
      */
     public void downloadFile(String filePath, HttpServletResponse response) throws BusinessApiException {
-        File file = new File(getProviderRootDir() + File.separator + filePath);
-        if (!file.exists()) {
-            throw new BusinessApiException("File does not exists: " + file.getPath());
-        }
+        File file = checkAndGetExistingFile(filePath);
 
-        try (FileInputStream fis = new FileInputStream(file)) {
+        try (InputStream fis = StorageFactory.getInputStream(file)) {
             response.setContentType(Files.probeContentType(file.toPath()));
-            response.setContentLength((int) file.length());
+            response.setContentLength((int) StorageFactory.length(file));
             response.addHeader("Content-disposition", "attachment;filename=\"" + file.getName() + "\"");
             IOUtils.copy(fis, response.getOutputStream());
             response.flushBuffer();
@@ -341,4 +381,30 @@ public class FilesApi extends BaseApi {
         }
     }
 
+    /**
+     * Check existing file with two format (Java format and also SQL format) depends on the type of ReportExtract
+     *
+     * @param filePath File Path
+     * @return The existing File {@link File}
+     */
+    private File checkAndGetExistingFile(String filePath) {
+
+        File javaXMlFormatFile = (filePath.contains(getProviderRootDir().replace("\\", "/"))) ?
+                new File(filePath) : new File(getProviderRootDir() + File.separator + normalizePath(filePath));
+        if (StorageFactory.exists(javaXMlFormatFile)) {
+            return javaXMlFormatFile;
+        } else {
+            String[] fileNameParts = filePath.split("\\.");
+            if (fileNameParts.length > 1) {
+                File sqlXMlFormatFile = new File((".").concat(filePath.split("\\.")[1] + "_" + format("%04d", 0) + "." + filePath.split("\\.")[2]));
+                if (sqlXMlFormatFile.exists()) {
+                    return sqlXMlFormatFile;
+                } else {
+                    throw new BusinessApiException(FILE_DOES_NOT_EXISTS + javaXMlFormatFile.getPath());
+                }
+            } else {
+                throw new BusinessApiException(FILE_DOES_NOT_EXISTS + javaXMlFormatFile.getPath());
+            }
+        }
+    }
 }

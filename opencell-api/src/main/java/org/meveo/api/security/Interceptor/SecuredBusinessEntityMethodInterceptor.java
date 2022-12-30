@@ -297,17 +297,19 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 
             for (SecuredEntity securedEntity : securedEntities) {
 
-                String propertyToFilterPath = getCriteriaPath(fieldName, propertyToFilterClass, securedEntity.getEntityClass(), useIdIfAvailable && securedEntity.getId() != null);
-                if (propertyToFilterPath == null) {
+                List<String> propertyToFilterPaths = getCriteriaPath(fieldName, propertyToFilterClass, securedEntity.getEntityClass(), useIdIfAvailable && securedEntity.getId() != null);
+                if (propertyToFilterPaths == null) {
                     continue;
                 }
 
-                if (newFilterCriteria.containsKey(propertyToFilterPath)) {
-                    newFilterCriteria.get(propertyToFilterPath).add(useIdIfAvailable && securedEntity.getId() != null ? securedEntity.getId().toString() : securedEntity.getCode());
-                } else {
-                    List<String> list = new ArrayList<>();
-                    list.add(useIdIfAvailable && securedEntity.getId() != null ? securedEntity.getId().toString() : securedEntity.getCode());
-                    newFilterCriteria.put(propertyToFilterPath, list);
+                for (String propertyToFilterPath : propertyToFilterPaths) {
+                    if (newFilterCriteria.containsKey(propertyToFilterPath)) {
+                        newFilterCriteria.get(propertyToFilterPath).add(useIdIfAvailable && securedEntity.getId() != null ? securedEntity.getId().toString() : securedEntity.getCode());
+                    } else {
+                        List<String> list = new ArrayList<>();
+                        list.add(useIdIfAvailable && securedEntity.getId() != null ? securedEntity.getId().toString() : securedEntity.getCode());
+                        newFilterCriteria.put(propertyToFilterPath, list);
+                    }
                 }
             }
 
@@ -394,16 +396,24 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
      * @return A property hierarchy traversal path. E.g. if user has access to Customer and a rule is applied on Subscription's userAccount property, a method would return
      *         "userAccount.billingAccount.customerAccount.customer.code"
      */
-    private String getCriteriaPath(String propertyName, String tryToAccessEntityClass, String allowedToAccessEntityClass, boolean isFilterValueIDBased) {
+    private List<String> getCriteriaPath(String propertyName, String tryToAccessEntityClass, String allowedToAccessEntityClass, boolean isFilterValueIDBased) {
 
-        String[] classHierarchyByPosition = new String[] { "billingAccount", "customerAccount", "customer", "seller" };
+        boolean considerSellerAsParent = paramBeanFactory.getInstance().getPropertyAsBoolean("accessible.entity.allows.access.childs.seller", true);
+
+        String[][] classHierarchyByPosition = new String[][] { { "billingAccount" }, { "customerAccount" }, { "customer" },
+                (considerSellerAsParent ? new String[] { "seller", "seller.seller" } : new String[] { "seller" }) };
 
         Map<String, Integer> classHierarchyByClass = Map.of("UserAccount", 0, "BillingAccount", 1, "CustomerAccount", 2, "Customer", 3, "Seller", 4);
+
+        // Additional properties to consider when climbing up the hierarchy. Should match the classHierarchyByPosition.
+        Map<String, String[]> additionalHierarchyProperties = considerSellerAsParent ? Map.of("Seller", new String[] { "seller" }) : new HashMap<String, String[]>();
 
         int posTryAccess = classHierarchyByClass.get(tryToAccessEntityClass);
         int posAllowed = classHierarchyByClass.get(allowedToAccessEntityClass);
 
         String codeOrIdField = isFilterValueIDBased ? "id" : "code";
+
+        List<String> criteriaPaths = new ArrayList<String>();
 
         // User is allowed to access UserAccount, but tries to access Customer, it wont be permitted
         if (posAllowed < posTryAccess) {
@@ -411,17 +421,23 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 
             // User is allowed to access Customer and is accessing a customer
         } else if (posAllowed == posTryAccess) {
-            if (propertyName.equals("code")) {
-                return codeOrIdField;
-            } else {
-                return propertyName + "." + codeOrIdField;
+
+            String propertyPath = propertyName.equals("code") ? codeOrIdField : (propertyName + "." + codeOrIdField);
+
+            criteriaPaths.add(propertyPath);
+
+            if (additionalHierarchyProperties.containsKey(tryToAccessEntityClass)) {
+
+                for (String additionalHierarchy : additionalHierarchyProperties.get(tryToAccessEntityClass)) {
+                    criteriaPaths.add(additionalHierarchy + "." + propertyPath);
+                }
             }
 
             // User is allowed to access Customer and is accessing a userAccount - need to construct the whole hierarchy to climb up
         } else {
 
             // Check if seller is considered as parent entity
-            if ("Seller".equals(allowedToAccessEntityClass) && !paramBeanFactory.getInstance().getPropertyAsBoolean("accessible.entity.allows.access.childs.seller", true)) {
+            if ("Seller".equals(allowedToAccessEntityClass) && !considerSellerAsParent) {
                 return null;
             }
 
@@ -429,12 +445,24 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
                 propertyName = null;
             }
 
+            criteriaPaths.add(propertyName);
+
             for (int i = posTryAccess; i < posAllowed; i++) {
-                propertyName = (propertyName == null ? "" : propertyName + ".") + classHierarchyByPosition[i];
+                List<String> paths = new ArrayList<String>();
+                String[] classHierarchyPaths = classHierarchyByPosition[i];
+                for (String classHierarchyPath : classHierarchyPaths) {
+                    for (String path : criteriaPaths) {
+                        path = (path == null ? "" : path + ".") + classHierarchyPath;
+                        paths.add(path);
+                    }
+                }
+                criteriaPaths = paths;
             }
-            propertyName = propertyName + "." + codeOrIdField;
-            return propertyName;
+            for (int i = 0; i < criteriaPaths.size(); i++) {
+                criteriaPaths.set(i, criteriaPaths.get(i) + "." + codeOrIdField);
+            }
         }
 
+        return criteriaPaths;
     }
 }

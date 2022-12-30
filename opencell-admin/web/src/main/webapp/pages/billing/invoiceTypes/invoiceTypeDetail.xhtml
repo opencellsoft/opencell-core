@@ -70,6 +70,7 @@
             <hftl:formField id="emailTemplateId" required="#{invoiceTypeBean.entity.mailingType!=null}" label="#{messages['emailTemplate']}" field="emailTemplate"
                             valueLabelField="code" popup="true"
                             popupId="searchEmailTemplatePopup"/>
+            <hftl:formField label="#{messages['invoiceType.excludeFromAgedTrialBalance']}" field="excludeFromAgedTrialBalance"  />
             <hftl:formField label="#{messages['invoiceType.appliesTo']}" field="appliesTo" listType="pickUpList" valueLabelField="code" dualListModel="#{invoiceTypeBean.dualListModel}" newLine="true"
                 id="appliesTo" />
             <hftl:formField label="#{messages['invoiceType.pdfFilenameEl']}" field="pdfFilenameEL" textArea="true" rows="1" maxlength="2000" />

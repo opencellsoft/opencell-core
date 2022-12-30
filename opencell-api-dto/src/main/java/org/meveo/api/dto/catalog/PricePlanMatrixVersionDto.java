@@ -3,6 +3,7 @@ package org.meveo.api.dto.catalog;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.cpq.enums.PriceVersionTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -58,12 +59,29 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
     @Schema(description = "The amount with tax")
     @Deprecated
     private BigDecimal amountWithTax;
-    
+
+    /**
+     * Field was deprecated in 12 version. Use 'priceEL' field instead.
+     */
+    @Deprecated
+    @Schema(description = "The amount without tax EL")
+    private String amountWithoutTaxEL;
+
+    /**
+     * Field was deprecated in 12 version. Use 'priceEL' field instead.
+     */
+    @Deprecated
+    @Schema(description = "The amount with tax EL")
+    private String amountWithTaxEL;
+
     @Schema(description = "The Price EL")
     private String priceEL;
     
     @Schema(description = "The priority")
     protected int priority=0;
+
+    @Schema(description = "The price version type, can be PERCENTAGE or FIXED.")
+    private PriceVersionTypeEnum priceVersionType;
 
     private Set<PricePlanMatrixColumnDto> columns;
 
@@ -81,7 +99,7 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
         setStatusEnum(pricePlanMatrixVersion.getStatus());
         setStatusDate(pricePlanMatrixVersion.getStatusDate());
         setValidity(pricePlanMatrixVersion.getValidity());
-        setPrice(pricePlanMatrixVersion.getPrice());
+        setPrice(pricePlanMatrixVersion.isMatrix()? BigDecimal.ZERO : pricePlanMatrixVersion.getPrice());
         setAmountWithoutTax(pricePlanMatrixVersion.getAmountWithoutTax());
         setAmountWithTax(pricePlanMatrixVersion.getAmountWithTax());
         setPriceEL(pricePlanMatrixVersion.getPriceEL());
@@ -96,6 +114,7 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
                     .map(PricePlanMatrixColumnDto::new)
                     .collect(Collectors.toSet());
         }
+        setPriceVersionType(pricePlanMatrixVersion.getPriceVersionType());
     }
 
     public String getPricePlanMatrixCode() {
@@ -178,6 +197,22 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
         this.amountWithTax = amountWithTax;
     }
 
+    public String getAmountWithoutTaxEL() {
+        return amountWithoutTaxEL;
+    }
+
+    public void setAmountWithoutTaxEL(String amountWithoutTaxEL) {
+        this.amountWithoutTaxEL = amountWithoutTaxEL;
+    }
+
+    public String getAmountWithTaxEL() {
+        return amountWithTaxEL;
+    }
+
+    public void setAmountWithTaxEL(String amountWithTaxEL) {
+        this.amountWithTaxEL = amountWithTaxEL;
+    }
+
     public String getPriceEL() {
         return priceEL;
     }
@@ -229,6 +264,12 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
 	public void setId(Long id) {
 		this.id = id;
 	}
-    
-    
+
+    public PriceVersionTypeEnum getPriceVersionType() {
+        return priceVersionType;
+    }
+
+    public void setPriceVersionType(PriceVersionTypeEnum priceVersionType) {
+        this.priceVersionType = priceVersionType;
+    }
 }

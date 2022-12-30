@@ -31,6 +31,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.storage.StorageFactory;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.admin.FileFormat;
@@ -131,6 +132,7 @@ public class FlatFileProcessingJob extends Job {
         String filenameVariableName = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ORIGIN_FILENAME);
         String formatTransfo = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FORMAT_TRANSFO);
         String errorAction = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ERROR_ACTION);
+
         Map<String, Object> initContext = new HashMap<String, Object>();
         if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_VARIABLES) != null) {
             initContext = (Map<String, Object>) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_VARIABLES);
@@ -179,8 +181,8 @@ public class FlatFileProcessingJob extends Job {
         fileExtensions.add(fileNameExtension);
 
         File f = new File(inputDir);
-        if (!f.exists()) {
-            f.mkdirs();
+        if (!StorageFactory.existsDirectory(f)) {
+            StorageFactory.mkdirs(f);
         }
 
         String inputDirParent = f.getParent();
@@ -189,25 +191,26 @@ public class FlatFileProcessingJob extends Job {
         archiveDir = archiveDir != null ? archiveDir : inputDirParent + File.separator + "archive";
 
         f = new File(outputDir);
-        if (!f.exists()) {
+        if (!StorageFactory.existsDirectory(f)) {
             log.debug("outputDir {} not exist", outputDir);
-            f.mkdirs();
+            StorageFactory.mkdirs(f);
             log.debug("outputDir {} creation ok", outputDir);
         }
         f = new File(rejectDir);
-        if (!f.exists()) {
+        if (!StorageFactory.existsDirectory(f)) {
             log.debug("rejectDir {} not exist", rejectDir);
-            f.mkdirs();
+            StorageFactory.mkdirs(f);
             log.debug("rejectDir {} creation ok", rejectDir);
         }
         f = new File(archiveDir);
-        if (!f.exists()) {
+        if (!StorageFactory.existsDirectory(f)) {
             log.debug("archiveDir {} not exist", archiveDir);
-            f.mkdirs();
+            StorageFactory.mkdirs(f);
             log.debug("archiveDir {} creation ok", archiveDir);
         }
 
-        File[] files = FileUtils.listFilesByNameFilter(inputDir, fileExtensions, fileNameFilter);
+        String sortingOption = (String) this.getParamOrCFValue(jobInstance, CF_SORTING_OPTION);
+        File[] files = FileUtils.listFilesByNameFilter(inputDir, fileExtensions, fileNameFilter, sortingOption);
         if (files == null || files.length == 0) {
             log.debug("There is no file in {} with extension {} to by processed by FlatFileProcessing {} job", inputDir, fileExtensions, result.getJobInstance().getCode());
             return result;
@@ -217,7 +220,7 @@ public class FlatFileProcessingJob extends Job {
                 break;
             }
             // File might have been processed by another mediation job, so continue with a next file
-            if (!file.exists()) {
+            if (!StorageFactory.exists(file)) {
                 continue;
             }
 
@@ -467,6 +470,21 @@ public class FlatFileProcessingJob extends Job {
         oneFilePerJob.setValueRequired(false);
         oneFilePerJob.setGuiPosition("tab:Configuration:0;fieldGroup:Execution configuration:0;field:2");
         result.put("oneFilePerJob", oneFilePerJob);
+
+        CustomFieldTemplate processingOrder = new CustomFieldTemplate();
+        processingOrder.setCode(CF_SORTING_OPTION);
+        processingOrder.setAppliesTo(JOB_FLAT_FILE_PROCESSING_JOB);
+        processingOrder.setActive(true);
+        processingOrder.setDefaultValue(SortingFilesEnum.ALPHA.name());
+        processingOrder.setDescription(resourceMessages.getString("flatFile.processingOrder"));
+        processingOrder.setFieldType(CustomFieldTypeEnum.LIST);
+        processingOrder.setValueRequired(false);
+        Map<String, String> listValuesProcessingOrder = new HashMap();
+        listValuesProcessingOrder.put(SortingFilesEnum.ALPHA.name(), resourceMessages.getString("flatFile.alphabeticFileNameOrder"));
+        listValuesProcessingOrder.put(SortingFilesEnum.CREATION_DATE.name(), resourceMessages.getString("flatFile.creationDateFileOrder"));
+        processingOrder.setListValues(listValuesProcessingOrder);
+        processingOrder.setGuiPosition("tab:Configuration:0;fieldGroup:Execution configuration:0;field:3");
+        result.put(CF_SORTING_OPTION, processingOrder);
 
         return result;
     }

@@ -128,35 +128,55 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
     public CounterInstance counterInstanciation(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual) {
 
+        CounterInstance counterInstance = instantiateCounter(counterTemplate, serviceInstance, isVirtual);
+
+        // Need a commit, so when creating counter periods in the same TX, counter instance is already present in DB
+        commit();
+
+        return counterInstance;
+    }
+
+    /**
+     * New transactionnal method, used for new API CounterInstance, to avoid force commit added in existing one
+     * @param serviceInstance service instance
+     * @param counterTemplate template
+     * @param isVirtual effectif creation or simulate one
+     * @return new created Instance
+     * @since v.14 (
+     */
+    public CounterInstance counterInstanciationWithoutForceCommit(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual) {
+        return instantiateCounter(counterTemplate, serviceInstance, isVirtual);
+    }
+
+    private CounterInstance instantiateCounter(CounterTemplate counterTemplate, ServiceInstance serviceInstance, boolean isVirtual) {
         CounterInstance counterInstance = null;
 
         switch (counterTemplate.getCounterLevel()) {
-        case CUST:
+            case CUST:
 
-            counterInstance = instantiateCounter(customerService, serviceInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer(), counterTemplate, isVirtual);
-            break;
+                counterInstance = instantiateCounter(customerService, serviceInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer(), counterTemplate, isVirtual);
+                break;
 
-        case CA:
-            counterInstance = instantiateCounter(customerAccountService, serviceInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount(), counterTemplate, isVirtual);
-            break;
+            case CA:
+                counterInstance = instantiateCounter(customerAccountService, serviceInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount(), counterTemplate, isVirtual);
+                break;
 
-        case BA:
-            counterInstance = instantiateCounter(billingAccountService, serviceInstance.getSubscription().getUserAccount().getBillingAccount(), counterTemplate, isVirtual);
-            break;
+            case BA:
+                counterInstance = instantiateCounter(billingAccountService, serviceInstance.getSubscription().getUserAccount().getBillingAccount(), counterTemplate, isVirtual);
+                break;
 
-        case UA:
-            counterInstance = instantiateCounter(userAccountService, serviceInstance.getSubscription().getUserAccount(), counterTemplate, isVirtual);
-            break;
+            case UA:
+                counterInstance = instantiateCounter(userAccountService, serviceInstance.getSubscription().getUserAccount(), counterTemplate, isVirtual);
+                break;
 
-        case SU:
-            counterInstance = instantiateCounter(subscriptionService, serviceInstance.getSubscription(), counterTemplate, isVirtual);
-            break;
+            case SU:
+                counterInstance = instantiateCounter(subscriptionService, serviceInstance.getSubscription(), counterTemplate, isVirtual);
+                break;
 
-        case SI:
-            counterInstance = instantiateCounter(serviceInstanceService, serviceInstance, counterTemplate, isVirtual);
-            break;
+            case SI:
+                counterInstance = instantiateCounter(serviceInstanceService, serviceInstance, counterTemplate, isVirtual);
+                break;
         }
-
         return counterInstance;
     }
 
@@ -165,7 +185,6 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * 
      * @param service the business service to manage the entity that counter is instantiated for
      * @param entity the business entity Entity to instantiate the counter for
-     * @param clazz the class of the business entity
      * @param counterTemplate the counter template
      * @param isVirtual is virtual
      * @return a counter instance
@@ -248,17 +267,21 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return CounterPeriod instance or NULL if counter period can not be created because of calendar limitations
      * @throws CounterInstantiationException Failure to create a counter period
      */
-    private CounterPeriod createPeriod(CounterInstance counterInstance, Date chargeDate, Date initDate, ChargeInstance chargeInstance) throws CounterInstantiationException {
+    public CounterPeriod createPeriod(CounterInstance counterInstance, Date chargeDate, Date initDate, ChargeInstance chargeInstance, BigDecimal value, BigDecimal level, boolean forceFlush) throws CounterInstantiationException {
 
         CounterPeriod counterPeriod = null;
         CounterTemplate counterTemplate = counterInstance.getCounterTemplate();
 
-        counterPeriod = instantiateCounterPeriod(counterTemplate, chargeDate, initDate, chargeInstance);
+        counterPeriod = instantiateCounterPeriod(new CounterPeriod(), counterTemplate, chargeDate, initDate, chargeInstance, value, level);
 
         if (counterPeriod != null) {
             counterPeriod.setCounterInstance(counterInstance);
             counterPeriodService.create(counterPeriod);
-            getEntityManager().flush();
+
+            if (forceFlush) {
+                // AK only here because during service activation, initial counter period is created for every charge instance, but problem arise when two charges use same counter
+                getEntityManager().flush();
+            }
 
             // AK is this really needed?
             // counterInstance.getCounterPeriods().add(counterPeriod);
@@ -266,6 +289,18 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         }
 
         return counterPeriod;
+    }
+
+    public CounterPeriod updatePeriod(CounterPeriod period, CounterInstance counterInstance, Date chargeDate, Date initDate, ChargeInstance chargeInstance, BigDecimal value, BigDecimal level) {
+        CounterPeriod updateCounterPeriod = instantiateCounterPeriod(period, counterInstance.getCounterTemplate(), chargeDate, initDate, chargeInstance, value, level);
+        if (updateCounterPeriod != null) {
+            updateCounterPeriod.setCounterInstance(counterInstance);
+            counterPeriodService.update(updateCounterPeriod);
+
+            return updateCounterPeriod;
+        }
+
+        return null;
     }
 
     /**
@@ -278,14 +313,14 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return CounterPeriod instance or NULL if counter period can not be created because of calendar limitations
      * @throws CounterInstantiationException Failure to create a counter period
      */
-    private CounterPeriod createPeriodVirtual(CounterInstance counterInstance, Date chargeDate, Date initDate, ChargeInstance chargeInstance) throws CounterInstantiationException {
+    private CounterPeriod createPeriodVirtual(CounterInstance counterInstance, Date chargeDate, Date initDate, ChargeInstance chargeInstance, BigDecimal value, BigDecimal level) throws CounterInstantiationException {
 
         CounterPeriod counterPeriod = null;
         // It is a pure virtual counter instance as when simulating rating from quote
         if (counterInstance.getId() == null) {
             CounterTemplate counterTemplate = counterInstance.getCounterTemplate();
 
-            counterPeriod = instantiateCounterPeriod(counterTemplate, chargeDate, initDate, chargeInstance);
+            counterPeriod = instantiateCounterPeriod(counterPeriod, counterTemplate, chargeDate, initDate, chargeInstance, value, level);
 
             if (counterPeriod != null) {
                 counterPeriod.setCounterInstance(counterInstance);
@@ -294,7 +329,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
             // It is a real counter instance, just need to create a copy of the counter period for a virtual rating purpose. This is done so counter current values are the same.
         } else {
 
-            CounterPeriod realCounterPeriod = getOrCreateCounterPeriod(counterInstance, chargeDate, initDate, chargeInstance);
+            CounterPeriod realCounterPeriod = getOrCreateCounterPeriod(counterInstance, chargeDate, initDate, chargeInstance, value, level, true);
 
             if (realCounterPeriod != null) {
                 try {
@@ -321,9 +356,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return a counter period or NULL if counter period can not be created because of calendar limitations
      * @throws CounterInstantiationException Failure to create counter period
      */
-    private CounterPeriod instantiateCounterPeriod(CounterTemplate counterTemplate, Date chargeDate, Date initDate, ChargeInstance chargeInstance) throws CounterInstantiationException {
-
-        CounterPeriod counterPeriod = new CounterPeriod();
+    private CounterPeriod instantiateCounterPeriod(CounterPeriod counterPeriod, CounterTemplate counterTemplate, Date chargeDate, Date initDate, ChargeInstance chargeInstance, BigDecimal value, BigDecimal level) throws CounterInstantiationException {
         Calendar cal = counterTemplate.getCalendar();
         if (!StringUtils.isBlank(counterTemplate.getCalendarCodeEl())) {
             cal = getCalendarFromEl(counterTemplate.getCalendarCodeEl(), chargeInstance);
@@ -342,12 +375,21 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
             BigDecimal initialValue = counterTemplate.getCeiling();
 
-            if (!StringUtils.isBlank(counterTemplate.getCeilingExpressionEl()) && chargeInstance != null) {
-                initialValue = evaluateCeilingElExpression(counterTemplate.getCeilingExpressionEl(), chargeInstance);
+            // if value is set, that means that we use API payload to force value
+            if (value != null) {
+                counterPeriod.setValue(value);
+            } else {
+                if (!StringUtils.isBlank(counterTemplate.getCeilingExpressionEl()) && chargeInstance != null) {
+                    initialValue = evaluateCeilingElExpression(counterTemplate.getCeilingExpressionEl(), chargeInstance);
+                }
+                counterPeriod.setValue(initialValue);
             }
 
-            counterPeriod.setValue(initialValue);
-            counterPeriod.setLevel(initialValue);
+            if (level != null) {
+                counterPeriod.setLevel(level);
+            } else {
+                counterPeriod.setLevel(initialValue);
+            }
 
             counterPeriod.setCode(counterTemplate.getCode());
             counterPeriod.setDescription(counterTemplate.getDescription());
@@ -355,6 +397,8 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
             counterPeriod.setAccumulator(counterTemplate.getAccumulator());
             counterPeriod.setAccumulatorType(counterTemplate.getAccumulatorType());
             counterPeriod.setNotificationLevels(counterTemplate.getNotificationLevels(), initialValue);
+
+            log.trace("Instantiated a new counter period {}-{} for counter template {} and charge instance {}", startDate, endDate, counterTemplate.getId(), chargeInstance.getId());
 
             return counterPeriod;
 
@@ -388,7 +432,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @param date Date
      * @return A counter period matched or NULL if no match found
      */
-    private CounterPeriod getCounterPeriodByDate(CounterInstance counterInstance, Date date) {
+    public CounterPeriod getCounterPeriodByDate(CounterInstance counterInstance, Date date) {
         Query query = getEntityManager().createNamedQuery("CounterPeriod.findByPeriodDate");
         query.setParameter("counterInstance", counterInstance);
         query.setParameter("date", date, TemporalType.TIMESTAMP);
@@ -425,16 +469,16 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @throws CounterInstantiationException Failure to create counter period
      */
     @ConcurrencyLock
-    public void createCounterPeriodIfMissing(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance) throws CounterInstantiationException {
-        methodCallingUtils.callMethodInNewTx(() -> createCounterPeriodIfMissing_noLock(counterInstance, date, initDate, chargeInstance));
+    public void createCounterPeriodIfMissing(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance, BigDecimal value, BigDecimal level, boolean forceFlush) throws CounterInstantiationException {
+        methodCallingUtils.callMethodInNewTx(() -> createCounterPeriodIfMissing_noLock(counterInstance, date, initDate, chargeInstance, value, level, forceFlush));
     }
-    
+
     /**
-     * Create a counter period for a given date. A check is done and no period will be created if one is already present. NOTE: Runs in same Transaction
+     * Create a counter period for a given date. A check is done and no period will be created if one is already present.
      * 
      * <br/>
      * <br/>
-     * <u>Method does a concurrency lock by counterInstance.id value</u>
+     * <u>Method does NOT DO a concurrency lock by counterInstance.id value and runs in the same TX</u>
      *
      * @param counterInstance Counter instance
      * @param date Date to match
@@ -442,9 +486,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @param chargeInstance Charge instance to associate counter with
      * @throws CounterInstantiationException Failure to create counter period
      */
-    @ConcurrencyLock
-    public void createCounterPeriodIfMissingInSameTX(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance) throws CounterInstantiationException {
-        createCounterPeriodIfMissing_noLock(counterInstance, date, initDate, chargeInstance);
+    public void createCounterPeriodIfMissingInSameTX(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance, BigDecimal value, BigDecimal level) throws CounterInstantiationException {
+
+        createCounterPeriodIfMissing_noLock(counterInstance, date, initDate, chargeInstance, value, level, true);
     }
 
     /**
@@ -457,8 +501,8 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @param chargeInstance Charge instance to associate counter with
      * @throws CounterInstantiationException Failure to create counter period
      */
-    private void createCounterPeriodIfMissing_noLock(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance) throws CounterInstantiationException {
-        getOrCreateCounterPeriod(counterInstance, date, initDate, chargeInstance);
+    private void createCounterPeriodIfMissing_noLock(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance, BigDecimal value, BigDecimal level, boolean forceFlush) throws CounterInstantiationException {
+        getOrCreateCounterPeriod(counterInstance, date, initDate, chargeInstance, value, level, forceFlush);
     }
 
     /**
@@ -468,16 +512,17 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @param date Date to match
      * @param initDate initial date.
      * @param chargeInstance Charge instance to associate counter with
+     * @param forceFlush default as true, to keep original behavior, and false only from new added API CounterInstance @since v14.0
      * @return Found or created counter period or NULL if counter period can not be created because of calendar limitations
      * @throws CounterInstantiationException Failure to create counter period
      */
-    private CounterPeriod getOrCreateCounterPeriod(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance) throws CounterInstantiationException {
+    private CounterPeriod getOrCreateCounterPeriod(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance, BigDecimal value, BigDecimal level, boolean forceFlush) throws CounterInstantiationException {
         CounterPeriod counterPeriod = getCounterPeriodByDate(counterInstance, date);
 
         if (counterPeriod != null) {
             return counterPeriod;
         }
-        return createPeriod(counterInstance, date, initDate, chargeInstance);
+        return createPeriod(counterInstance, date, initDate, chargeInstance, value, level, forceFlush);
     }
 
     /**
@@ -487,17 +532,16 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @param date Date to match
      * @param initDate initial date.
      * @param chargeInstance Charge instance to associate counter with
-     * @param serviceInstance the Service instance of charge instance
      * @return Found or created counter period
      * @throws CounterInstantiationException Failure to create counter period
      */
-    private CounterPeriod getOrCreateCounterPeriodVirtual(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance) throws CounterInstantiationException {
+    private CounterPeriod getOrCreateCounterPeriodVirtual(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance, BigDecimal value, BigDecimal level) throws CounterInstantiationException {
         CounterPeriod counterPeriod = getCounterPeriodVirtualByDate(counterInstance.getId(), counterInstance.getCode(), date);
 
         if (counterPeriod != null) {
             return counterPeriod;
         }
-        return createPeriodVirtual(counterInstance, date, initDate, chargeInstance);
+        return createPeriodVirtual(counterInstance, date, initDate, chargeInstance, value, level);
     }
 
     /**
@@ -511,7 +555,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @param date Date of event
      * @param initDate initial date.
      * @param value Value to deduce
-     * @return deduce counter value.
+     * @return Deduced counter value.
      * @throws CounterValueInsufficientException counter value insufficient exception.
      * @throws CounterInstantiationException Failure to create a new counter period
      */
@@ -535,14 +579,14 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @param date Date of event
      * @param initDate initial date.
      * @param value Value to deduce
-     * @return deduce counter value.
+     * @return Deduced counter value.
      * @throws CounterValueInsufficientException counter value insufficient exception.
      * @throws CounterInstantiationException Failure to create a new counter period
      */
     private BigDecimal deduceCounterValue_noLock(CounterInstance counterInstance, Date date, Date initDate, BigDecimal value) throws CounterValueInsufficientException, CounterInstantiationException {
 
         counterInstance = retrieveIfNotManaged(counterInstance);
-        CounterPeriod counterPeriod = getOrCreateCounterPeriod(counterInstance, date, initDate, null);
+        CounterPeriod counterPeriod = getOrCreateCounterPeriod(counterInstance, date, initDate, null, null, null, true);
         if (counterPeriod == null || counterPeriod.getValue().compareTo(value) < 0) {
             throw new CounterValueInsufficientException();
 
@@ -595,16 +639,16 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return CounterValueChangeInfo Counter value change summary - the previous, deduced and new counter value
      * @throws CounterInstantiationException Failure to create a new counter period
      */
-    private CounterValueChangeInfo deduceCounterValue_noLock(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance, BigDecimal valueToDeduce, boolean isVirtual)
+    public CounterValueChangeInfo deduceCounterValue_noLock(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance, BigDecimal valueToDeduce, boolean isVirtual)
             throws CounterInstantiationException {
 
         CounterPeriod counterPeriod = null;
         // In case of virtual operation only instantiate a counter period, don't create it
         if (isVirtual) {
-            counterPeriod = getOrCreateCounterPeriodVirtual(counterInstance, date, initDate, chargeInstance);
+            counterPeriod = getOrCreateCounterPeriodVirtual(counterInstance, date, initDate, chargeInstance, null, null);
 
         } else {
-            counterPeriod = getOrCreateCounterPeriod(counterInstance, date, initDate, chargeInstance);
+            counterPeriod = getOrCreateCounterPeriod(counterInstance, date, initDate, chargeInstance, null, null, true);
         }
 
         if (counterPeriod == null) {
@@ -835,75 +879,77 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * <br/>
      * <u>Method does a concurrency lock by chargeInstance.id value</u>
      * 
-     * @param counterInstance Counter instance
-     * @param date Date of event for counter period calculation
-     * @param initDate initial date for counter period calculation
      * @param chargeInstance Charge instance counter is associated to
-     * @param valueToDeduce Value to deduce. In case counter is an accumulator counter, counter value will be incremented instead od reduced
+     * @param walletOperations Wallet operations to increment accumulate counter for
      * @param isVirtual Is this a virtual operation - no counter period entity exists nor should be persisted
-     * @return CounterValueChangeInfo Counter value change summary - the previous, deduced and new counter value
+     * @return A list of Counter value change summary - the previous, deduced and new counter value
      * @throws CounterInstantiationException Failure to create a new counter period
      */
-    @ConcurrencyLock
     public List<CounterValueChangeInfo> incrementAccumulatorCounterValue(ChargeInstance chargeInstance, List<WalletOperation> walletOperations, boolean isVirtual) throws CounterInstantiationException {
-        try {
-            return methodCallingUtils.callCallableInNewTx(() -> incrementAccumulatorCounterValue_noLock(chargeInstance, walletOperations, isVirtual));
+        List<CounterValueChangeInfo> counterValueChangeInfos = new ArrayList<CounterValueChangeInfo>();
 
-        } catch (CounterInstantiationException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        for (CounterInstance counterInstance : chargeInstance.getAccumulatorCounterInstances()) {
+
+            try {
+                counterValueChangeInfos.addAll(MethodCallingUtils.executeFunctionLocked(counterInstance.getId(), () -> {
+                    List<CounterValueChangeInfo> values = methodCallingUtils.callCallableInNewTx(() -> incrementAccumulatorCounterValue_noLock(counterInstance, chargeInstance, walletOperations, isVirtual));
+                    return values;
+                }));
+            } catch (CounterInstantiationException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
         }
+        return counterValueChangeInfos;
+
     }
 
     /**
      * INTERNAL METHOD. To be called within a lock of incrementAccumulatorCounterValue().<br/>
      * Increment accumulator counter by a given value. Will instantiate a counter period if one was not created yet matching the given date
      *
-     * @param counterInstance Counter instance
-     * @param date Date of event for counter period calculation
-     * @param initDate initial date for counter period calculation
+     * @param counterInstance Counter instance to increment
      * @param chargeInstance Charge instance counter is associated to
-     * @param valueToDeduce Value to deduce. In case counter is an accumulator counter, counter value will be incremented instead od reduced
+     * @param walletOperations Wallet operations to increment accumulate counter for.
      * @param isVirtual Is this a virtual operation - no counter period entity exists nor should be persisted
-     * @return CounterValueChangeInfo Counter value change summary - the previous, deduced and new counter value
+     * @return A list of Counter value change summary - the previous, deduced and new counter value
      * @throws CounterInstantiationException Failure to create a new counter period
      */
-    private List<CounterValueChangeInfo> incrementAccumulatorCounterValue_noLock(ChargeInstance chargeInstance, List<WalletOperation> walletOperations, boolean isVirtual) throws CounterInstantiationException {
+    private List<CounterValueChangeInfo> incrementAccumulatorCounterValue_noLock(CounterInstance counterInstance, ChargeInstance chargeInstance, List<WalletOperation> walletOperations, boolean isVirtual)
+            throws CounterInstantiationException {
 
         List<CounterValueChangeInfo> counterValueChangeInfos = new ArrayList<CounterValueChangeInfo>();
 
-        for (CounterInstance counterInstance : chargeInstance.getAccumulatorCounterInstances()) {
+        CounterPeriod counterPeriod = null;
 
-            CounterPeriod counterPeriod = null;
+        for (WalletOperation wo : walletOperations) {
 
-            for (WalletOperation wo : walletOperations) {
+            // In case of virtual operation only instantiate a counter period, don't create it
+            if (isVirtual) {
+                counterPeriod = getOrCreateCounterPeriodVirtual(counterInstance, wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance, null, null);
 
-                // In case of virtual operation only instantiate a counter period, don't create it
-                if (isVirtual) {
-                    counterPeriod = getOrCreateCounterPeriodVirtual(counterInstance, wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance);
+            } else {
+                counterPeriod = getOrCreateCounterPeriod(counterInstance, wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance, null, null, true);
+            }
 
-                } else {
-                    counterPeriod = getOrCreateCounterPeriod(counterInstance, wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance);
-                }
+            if (counterPeriod == null) {
+                continue;
+            }
+            CounterValueChangeInfo counterValueChangeInfo = accumulateCounterValue(counterPeriod, wo, isVirtual);
+            counterValueChangeInfos.add(counterValueChangeInfo);
 
-                if (counterPeriod == null) {
-                    continue;
-                }
-                CounterValueChangeInfo counterValueChangeInfo = accumulateCounterValue(counterPeriod, wo, isVirtual);
-                counterValueChangeInfos.add(counterValueChangeInfo);
+            if (counterValueChangeInfo.isChange()) {// && (auditOrigin.getAuditOrigin() == ChangeOriginEnum.API || auditOrigin.getAuditOrigin() == ChangeOriginEnum.INBOUND_REQUEST)) {
+                counterUpdatesTracking.addCounterPeriodChange(counterPeriod, counterValueChangeInfo);
+            }
 
-                if (counterValueChangeInfo.isChange()) {// && (auditOrigin.getAuditOrigin() == ChangeOriginEnum.API || auditOrigin.getAuditOrigin() == ChangeOriginEnum.INBOUND_REQUEST)) {
-                    counterUpdatesTracking.addCounterPeriodChange(counterPeriod, counterValueChangeInfo);
-                }
+            // Fire notifications if counter value matches trigger value and counter value is tracked
+            if (!isVirtual && counterPeriod.getNotificationLevels() != null) {
+                List<Entry<String, BigDecimal>> counterPeriodEventLevels = counterPeriod.getMatchedNotificationLevels(counterValueChangeInfo.getPreviousValue(), counterValueChangeInfo.getNewValue());
 
-                // Fire notifications if counter value matches trigger value and counter value is tracked
-                if (!isVirtual && counterPeriod.getNotificationLevels() != null) {
-                    List<Entry<String, BigDecimal>> counterPeriodEventLevels = counterPeriod.getMatchedNotificationLevels(counterValueChangeInfo.getPreviousValue(), counterValueChangeInfo.getNewValue());
-
-                    if (counterPeriodEventLevels != null && !counterPeriodEventLevels.isEmpty()) {
-                        triggerCounterPeriodEvent(counterPeriod, counterPeriodEventLevels);
-                    }
+                if (counterPeriodEventLevels != null && !counterPeriodEventLevels.isEmpty()) {
+                    triggerCounterPeriodEvent(counterPeriod, counterPeriodEventLevels);
                 }
             }
         }
@@ -911,6 +957,14 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         return counterValueChangeInfos;
     }
 
+    /**
+     * Increment accumulator counter value for a given counter period
+     * 
+     * @param counterPeriod Counter period
+     * @param walletOperation Wallet operation to get amount to increment by
+     * @param isVirtual Is this a virtual operation - no counter period entity exists nor should be persisted
+     * @return Counter value change summary - the previous, deduced and new counter value
+     */
     private CounterValueChangeInfo accumulateCounterValue(CounterPeriod counterPeriod, WalletOperation walletOperation, boolean isVirtual) {
 
         BigDecimal previousValue = counterPeriod.getValue();

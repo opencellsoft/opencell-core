@@ -328,11 +328,16 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-
+            
+            <dependency>
+                <groupId>net.sf.jasperreports</groupId>
+                <artifactId>jasperreports-fonts</artifactId>
+                <version>6.20.0</version>
+            </dependency>
             <dependency>
                 <groupId>net.sf.jasperreports</groupId>
                 <artifactId>jasperreports</artifactId>
-                <version>6.19.1</version>
+                <version>6.20.0</version>
             </dependency>
 
             <dependency>
@@ -351,8 +356,8 @@
             <dependency>
                 <groupId>jaxen</groupId>
                 <artifactId>jaxen</artifactId>
-                <version>1.1.6</version>
-                <scope>provided</scope>
+                 <version>1.1.6</version>
+                 <scope>provided</scope>
             </dependency>
 
             <dependency>

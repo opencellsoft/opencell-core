@@ -105,6 +105,8 @@ public class UserBean extends CustomFieldBean<User> {
     private BusinessEntity selectedEntity;
     private BaseBean<?> selectedAccountBean;
 
+    private Map<String, String> securedEntityFilter = new HashMap<>();
+
     /**
      * Password
      */
@@ -209,12 +211,12 @@ public class UserBean extends CustomFieldBean<User> {
 
         if (passwordsDoNotMatch) {
             messages.error(new BundleKey("messages", "save.passwordsDoNotMatch"));
-                return null;
-            }
+            return null;
+        }
 
         if (!StringUtils.isBlank(password)) {
             entity.setPassword(password);
-            }
+        }
 
         if (this.getUserGroupSelectedNode() != null) {
             UserGroup userGroup = (UserGroup) this.getUserGroupSelectedNode().getData();
@@ -303,14 +305,14 @@ public class UserBean extends CustomFieldBean<User> {
             List<SecuredEntity> securedEntities = securedBusinessEntityService.getSecuredEntitiesForUser(username);
             if (securedEntities != null) {
                 for (SecuredEntity securedEntity : securedEntities) {
-                detailedSecuredEntity = new DetailedSecuredEntity(securedEntity);
+                    detailedSecuredEntity = new DetailedSecuredEntity(securedEntity);
                     businessEntity = securedBusinessEntityService.getEntityByCode(securedEntity.getEntityClass(), securedEntity.getEntityCode());
                     if (businessEntity != null) {
-                detailedSecuredEntity.setDescription(businessEntity.getDescription());
+                        detailedSecuredEntity.setDescription(businessEntity.getDescription());
                     }
-                detailedSecuredEntities.add(detailedSecuredEntity);
+                    detailedSecuredEntities.add(detailedSecuredEntity);
+                }
             }
-        }
         }
         return detailedSecuredEntities;
     }
@@ -325,7 +327,7 @@ public class UserBean extends CustomFieldBean<User> {
     public void deleteSecuredEntity(SecuredEntity selectedSecuredEntity) throws BusinessException {
         securedBusinessEntityService.remove(selectedSecuredEntity.getId());
         messages.info(new BundleKey("messages", "securedEntity.deleted"));
-            }
+    }
 
     /**
      * This will set the correct account bean based on the selected type(Seller, Customer, etc.)
@@ -334,6 +336,7 @@ public class UserBean extends CustomFieldBean<User> {
         if (!StringUtils.isBlank(getSecuredEntityType())) {
             setSelectedAccountBean(accountBeanMap.get(getSecuredEntityType()));
         }
+        securedEntityFilter.clear();
     }
 
     /**
@@ -353,8 +356,8 @@ public class UserBean extends CustomFieldBean<User> {
             securedBusinessEntityService.addSecuredEntityForUser(securedEntity, username);
 
             messages.info(new BundleKey("messages", "securedEntity.created"));
-                }
-            }
+        }
+    }
 
     @ActionMethod
     public void enableOrDisable(SecuredEntity selectedSecuredEntity, boolean disable) throws BusinessException {
@@ -413,5 +416,24 @@ public class UserBean extends CustomFieldBean<User> {
 
     public void showHidePassword() {
         this.showPassword = !this.showPassword;
+    }
+
+    public Map<String, String> getSecuredEntityFilter() {
+        return securedEntityFilter;
+    }
+
+    public void setSecuredEntityFilter(Map<String, String> securedEntityFilter) {
+        this.securedEntityFilter = securedEntityFilter;
+    }
+
+    public void filterAccounts() {
+        selectedAccountBean.getFilters().clear();
+        selectedAccountBean.getFilters().putAll(securedEntityFilter);
+        selectedAccountBean.search();
+    }
+
+    public void cleanAccountsFilter() {
+        securedEntityFilter.clear();
+        selectedAccountBean.getFilters().clear();
     }
 }

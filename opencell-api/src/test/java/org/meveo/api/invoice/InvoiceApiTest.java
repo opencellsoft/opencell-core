@@ -1,5 +1,9 @@
 package org.meveo.api.invoice;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Date;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,9 +18,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 @RunWith(MockitoJUnitRunner.class)
 public class InvoiceApiTest {
 
@@ -29,12 +30,12 @@ public class InvoiceApiTest {
     @Mock
     private ServiceSingleton serviceSingleton;
 
-    private Long invoiceId = 1L;
+    private Long invoiceId = 10000L;
     private BigDecimal rate = new BigDecimal(1.12);
     private Date rateDate = new Date();
 
     @Test
-    public void shouldRefreshAndValidateInvoice() throws ImportInvoiceException, InvoiceExistException {
+    public void shouldRefreshAndValidateInvoice() throws ImportInvoiceException, InvoiceExistException ,IOException{
         Invoice invoice = new Invoice();
         invoice.setId(invoiceId);
         invoice.setInvoiceNumber("INV_NUMB1");
@@ -50,8 +51,13 @@ public class InvoiceApiTest {
 
         Mockito.when(invoiceService.refreshOrRetrieve(Mockito.any(Invoice.class))).thenReturn(invoice);
 
-        String invNumber = invoiceApi.validateInvoice(invoiceId, false, true);
-
-        Assert.assertEquals("INV_NUMB1", invNumber);
+        Mockito.when(invoiceService.findById(invoiceId)).thenReturn(invoice);
+                
+        try {
+            String invNumber = invoiceApi.validateInvoice(invoiceId, false, true, true);
+            Assert.assertEquals("INV_NUMB1", invNumber);
+        } catch (Exception e) {
+            Assert.fail("Error during validate invoice : " + e.getMessage());
+        }
     }
 }

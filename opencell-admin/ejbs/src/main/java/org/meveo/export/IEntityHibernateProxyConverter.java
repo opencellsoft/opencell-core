@@ -68,7 +68,7 @@ public class IEntityHibernateProxyConverter implements Converter {
 
         // Export directly ID value if instructed so
         if (exportImportConfig.isExportIdOnly(baseClass)) {
-            writer.addAttribute("id", ((HibernateProxy) object).getHibernateLazyInitializer().getIdentifier().toString());
+            writer.addAttribute("idEntity", ((HibernateProxy) object).getHibernateLazyInitializer().getIdentifier().toString());
 
             // Retrieve an entity from a hibernate proxy and send it for processing to another converter.
         } else {

@@ -80,12 +80,12 @@
 											</p:selectOneMenu>
 										</hftl:decorateFormField>
 										<hftl:decorateFormField fieldId="codeSearchField" label="#{messages['BusinessEntity.code']}" rendered="#{userRoleBean.selectedAccountBean != null}">
-											<p:inputText id="codeSearchField" value="#{userRoleBean.selectedAccountBean.filters['code']}" size="20" maxlength="40" disabled="false" />
+											<p:inputText id="codeSearchField" value="#{userRoleBean.securedEntityFilter['code']}" size="20" maxlength="40" disabled="false" />
 										</hftl:decorateFormField>
 									</p:outputPanel>
 									<h:panelGroup layout="block" styleClass="search-panel-actions" rendered="#{userRoleBean.selectedAccountBean != null}">
-										<p:commandButton id="buttonSearch" value="#{messages['commons.search']}" update="@form" />
-										<p:commandButton id="buttonClear" action="#{userRoleBean.selectedAccountBean.clean}" value="#{messages['commons.clean']}"
+										<p:commandButton id="buttonSearch" value="#{messages['commons.search']}" action="#{userRoleBean.filterAccounts}" process="codeSearchField @this" update="@form" />
+										<p:commandButton id="buttonClear" action="#{userRoleBean.cleanAccountsFilter}" process="@this" value="#{messages['commons.clean']}"
 											update=":#{p:component('securedEntitiesDialogPanel')}" />
 									</h:panelGroup>
 								</h:panelGroup>

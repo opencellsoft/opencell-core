@@ -41,7 +41,8 @@ public class AgedReceivableMapperTest {
                 new BigDecimal(100), new BigDecimal(80), new BigDecimal(20),
                 ZERO, ZERO, ZERO,
                 DunningLevelEnum.R1, new Name(new Title(), "TEST", "TEST"),
-                "CA_DESCRIPTION", new Date(), "EUR", 1L, "INV_1000", new BigDecimal(100), "CA_CODE", new BigDecimal(100), 1L};
+                "CA_DESCRIPTION", "SELLER_DESCRIPTION", "SELLER_CODE",
+                new Date(), "EUR", 1L, "INV_1000", new BigDecimal(100), "CA_CODE", new BigDecimal(100), 1L};
         input.add(agedReceivable);
         List<AgedReceivableDto> response = mapper.buildDynamicResponse(input, 2);
 

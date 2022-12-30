@@ -45,7 +45,8 @@ import org.meveo.model.ExportIdentifier;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "wf_status_seq") })
 @NamedQueries({
-    @NamedQuery(name = "WFStatus.findByCodeAndGWF", query = "From WFStatus where code=:code and genericWorkflow=:genericWorkflow") })
+    @NamedQuery(name = "WFStatus.findByCodeAndGWF", query = "From WFStatus where code=:code and genericWorkflow=:genericWorkflow"),
+    @NamedQuery(name = "WFStatus.deleteByGenericWorkflow", query = "delete from WFStatus wfs where wfs.genericWorkflow.id=:genericWorkflowId")})
 public class WFStatus extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;

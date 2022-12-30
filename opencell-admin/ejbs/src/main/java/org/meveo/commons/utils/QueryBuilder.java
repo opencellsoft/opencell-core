@@ -21,17 +21,22 @@ import static org.meveo.service.base.PersistenceService.FROM_JSON_FUNCTION;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.Stack;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -39,15 +44,17 @@ import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.JoinType;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.meveo.admin.util.pagination.FilterOperatorEnum;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.security.keycloak.CurrentUserProvider;
-import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 /**
  * Query builder class for building JPA queries.
@@ -66,9 +73,20 @@ import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
  * @lastModifiedVersion 12.x
  */
 public class QueryBuilder {
+	
+	private class NestedQuery {
+		FilterOperatorEnum operator = FilterOperatorEnum.AND;
+		boolean hasOneOrMoreCriteria = false;
+
+		public NestedQuery(FilterOperatorEnum operator, boolean hasOneOrMoreCriteria) {
+			super();
+			this.operator = operator;
+			this.hasOneOrMoreCriteria = hasOneOrMoreCriteria;
+		} 
+	}
 
     public static final String INNER_JOINS = "{innerJoins}";
-    protected StringBuffer q;
+    protected StringBuilder q;
 
     protected String alias;
 
@@ -77,10 +95,13 @@ public class QueryBuilder {
     private boolean hasOneOrMoreCriteria;
 
     private boolean inOrClause;
+    
+    private Stack<NestedQuery> nestedClauses = new Stack<>();
 
     private int nbCriteriaInOrClause;
 
     private Map<String, JoinWrapper> innerJoins = new HashMap<>();
+    private Set<InnerJoin> rootInnerJoins = new HashSet<>();
 
     private InnerJoin rootInnerJoin;
 
@@ -95,20 +116,34 @@ public class QueryBuilder {
     public static final String  JOIN_AS = " as ";
     
     private static Set<String> joinAlias = new TreeSet<String>();
+    
+    private JoinType joinType = JoinType.INNER ;
+    
+    private FilterOperatorEnum filterOperator = FilterOperatorEnum.AND;
 
-    public Class<?> getEntityClass() {
+
+	public JoinType getJoinType() {
+		return joinType;
+	}
+
+	public void setJoinType(JoinType joinType) {
+		this.joinType = joinType;
+	}
+
+	public Class<?> getEntityClass() {
         return clazz;
     }
 
     public String formatInnerJoins(){
-        return innerJoins.values().isEmpty() ? "" : innerJoins.values().stream()
-                .map(jw -> format(alias, jw.getRootInnerJoin(), q.toString().startsWith(FROM)))
+        return rootInnerJoins.isEmpty() ? "" : rootInnerJoins.stream()
+                .map(rij -> format(alias, rij, q.toString().startsWith(FROM)))
                 .collect(Collectors.joining(" ", " ", " "));
     }
 
     public String formatInnerJoins(boolean doFetch){
-        return innerJoins.values().isEmpty() ? "" : innerJoins.values().stream()
-                .map(jw -> format(alias, jw.getRootInnerJoin(), doFetch))
+    	var i = this.alias;
+        return rootInnerJoins.isEmpty() ? "" : rootInnerJoins.stream()
+                .map(rij -> format(alias, rij, doFetch))
                 .collect(Collectors.joining(" ", " ", " "));
     }
 
@@ -121,7 +156,7 @@ public class QueryBuilder {
                 .map(next -> {
                     if(!next.getNextInnerJoins().isEmpty())
                         return format(innerJoin.getAlias(), next, doFetch);
-                    return String.format("inner join %s%s.%s %s", shouldFetch, innerJoin.getAlias(), next.getName(), next.getAlias());
+					return String.format("left join %s%s.%s %s", shouldFetch, innerJoin.getAlias(), next.getName(), next.getAlias());
                 })
                 .collect(Collectors.joining(" ", sql, ""));
     }
@@ -135,17 +170,25 @@ public class QueryBuilder {
 
         String joinAlias = "";
         InnerJoin rootInnerJoin = null;
-
-        for(int i = fields.length - 2; i >= 0; i--){
-            InnerJoin innerJoin = new InnerJoin(fields[i]);
-            if(i == fields.length - 2){
+        InnerJoin subInnerJoin = null;
+        List<InnerJoin> lookForInnerJoin = new ArrayList<>(rootInnerJoins);
+        for(AtomicInteger index = new AtomicInteger(); index.get() <= fields.length - 2; index.incrementAndGet()) {
+        	int i = index.get();
+        	InnerJoin innerJoin = lookForInnerJoin.stream().filter(rij -> rij.getName().equals(fields[index.get()])).findFirst().orElse(new InnerJoin(fields[index.get()])); 
+        	if(i == 0) {
+        		rootInnerJoin = innerJoin;
+        	} else {
+        		subInnerJoin.next(innerJoin);
+        	}
+        	if(i == fields.length - 2){
                 joinAlias = innerJoin.getAlias()+ "." + fields[i + 1];
-            }else {
-                innerJoin.next(rootInnerJoin);
             }
-            rootInnerJoin = innerJoin;
+        	subInnerJoin = innerJoin;
+        	lookForInnerJoin = innerJoin.getNextInnerJoins();
         }
-
+        
+        rootInnerJoins.add(rootInnerJoin);
+        
         return new JoinWrapper(rootInnerJoin, joinAlias);
     }
 
@@ -186,7 +229,7 @@ public class QueryBuilder {
      * @param alias Alias of a main table
      */
     public QueryBuilder(String sql, String alias) {
-        q = new StringBuffer(sql);
+        q = new StringBuilder(sql);
         this.alias = alias;
         params = new HashMap<String, Object>();
         hasOneOrMoreCriteria = false;
@@ -195,6 +238,7 @@ public class QueryBuilder {
         }
         inOrClause = false;
         nbCriteriaInOrClause = 0;
+        addInnerJoinTag(q);
     }
 
     /**
@@ -203,13 +247,34 @@ public class QueryBuilder {
      * @param qb Query builder.
      */
     public QueryBuilder(QueryBuilder qb) {
-        this.q = new StringBuffer(qb.q);
+        this.q = new StringBuilder(qb.q);
         this.alias = qb.alias;
         this.params = new HashMap<String, Object>(qb.params);
         this.hasOneOrMoreCriteria = qb.hasOneOrMoreCriteria;
         this.inOrClause = qb.inOrClause;
         this.nbCriteriaInOrClause = qb.nbCriteriaInOrClause;
     }
+    
+    
+	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, JoinType joinType) {
+		this(getInitQuery(clazz, alias, fetchFields), alias);
+    	this.clazz = clazz;
+		this.joinType = joinType != null ? joinType : JoinType.INNER;
+	}
+
+	/**
+	 * Contructor 
+	 * 
+	 * @param clazz Class for which query is created.
+     * @param alias Alias of a main table.
+     * @param fetchFields Additional (list/map type) fields to fetch
+	 * @param joinType
+	 * @param filterOperator Operator to build where statement
+	 */
+	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, JoinType joinType, FilterOperatorEnum filterOperator) {
+		this(clazz, alias, fetchFields, joinType);
+    	this.filterOperator = filterOperator;
+	}
 
     /**
      * Constructor.
@@ -263,7 +328,9 @@ public class QueryBuilder {
     }
 
     private static void addInnerJoinTag(StringBuilder query) {
-        query.append(INNER_JOINS);
+        if(query.indexOf(INNER_JOINS) == -1) {
+        	query.append(INNER_JOINS);
+        }
     }
 
     /**
@@ -291,7 +358,7 @@ public class QueryBuilder {
 	 * @param fetchField
 	 * @return
 	 */
-	private static String getJoinAlias(String alias, String fetchField, boolean checkExisting) {
+	public static String getJoinAlias(String alias, String fetchField, boolean checkExisting) {
 		String result = alias+"_"+fetchField.replaceAll("\\.", "_");
 		if(checkExisting) {
 			if(joinAlias.contains(result)) {
@@ -308,7 +375,7 @@ public class QueryBuilder {
 	/**
      * @return string buffer for SQL
      */
-    public StringBuffer getSqlStringBuffer() {
+    public StringBuilder getSqlStringBuffer() {
         return q;
     }
 
@@ -328,6 +395,9 @@ public class QueryBuilder {
     public QueryBuilder addPaginationConfiguration(PaginationConfiguration paginationConfiguration, String sortAlias) {
         this.paginationSortAlias = sortAlias;
         this.paginationConfiguration = paginationConfiguration;
+        if(paginationConfiguration.getJoinType() != null) {
+        	this.joinType=paginationConfiguration.getJoinType();
+        }
         return this;
     }
 
@@ -352,8 +422,10 @@ public class QueryBuilder {
     public void addSearchWildcardOrFilters(String tableNameAlias, String[] fields, Object value) {
         startOrClause();
         Stream.of(fields).forEach(field -> {
+        	String concatenatedFields = tableNameAlias+"."+field;
+        	concatenatedFields = createExplicitInnerJoins(concatenatedFields);
             String param = convertFieldToParam(tableNameAlias + "." + field);
-            addSqlCriterion(tableNameAlias + "." + field + " like :" + param, param, "%" + value + "%");
+            addSqlCriterion(concatenatedFields + " like :" + param, param, "%" + value + "%");
         });
         endOrClause();
     }
@@ -363,8 +435,10 @@ public class QueryBuilder {
         String valueStr = "%" + String.valueOf(value).toLowerCase() + "%";
         startOrClause();
         Stream.of(fields).forEach(field -> {
+        	String concatenatedFields = tableNameAlias+"."+field;
+        	concatenatedFields = createExplicitInnerJoins(concatenatedFields);
             String param = convertFieldToParam(tableNameAlias + "." + field);
-            addSqlCriterion("lower(" + tableNameAlias + "." + field + ") like :" + param, param, valueStr);
+            addSqlCriterion("lower(" + concatenatedFields + ") like :" + param, param, valueStr);
         });
         endOrClause();
     }
@@ -389,13 +463,33 @@ public class QueryBuilder {
         if (param != null && StringUtils.isBlank(value)) {
             return this;
         }
+        
+        if(!nestedClauses.empty()) {
+        	NestedQuery currentNF = nestedClauses.pop();
+        	if(currentNF.hasOneOrMoreCriteria) {
+        		if (FilterOperatorEnum.OR.equals(currentNF.operator)) {
+	                q.append(" or ");
+	            } else {
+	                q.append(" and ");
+	            }
+        	}
+        	q.append(sql);
+        	if (param != null) {
+                params.put(param, value);
+            }
+        	currentNF.hasOneOrMoreCriteria = true;
+        	nestedClauses.add(currentNF);
+        	return this;
+        }
 
         if (hasOneOrMoreCriteria) {
-            if (inOrClause && nbCriteriaInOrClause != 0) {
-                q.append(" or ");
-            } else {
-                q.append(" and ");
-            }
+        	if(!sql.startsWith(" or ")) {
+	            if (FilterOperatorEnum.OR.equals(this.filterOperator) || (inOrClause && nbCriteriaInOrClause != 0)) {
+	                q.append(" or ");
+	            } else {
+	                q.append(" and ");
+	            }
+        	}
         } else {
             q.append(" where ");
         }
@@ -428,7 +522,7 @@ public class QueryBuilder {
         }
 
         if (hasOneOrMoreCriteria) {
-            if (inOrClause && nbCriteriaInOrClause != 0) {
+            if (FilterOperatorEnum.OR.equals(this.filterOperator) || (inOrClause && nbCriteriaInOrClause != 0)) {
                 q.append(" or ");
             } else {
                 q.append(" and ");
@@ -496,7 +590,7 @@ public class QueryBuilder {
             return this;
         }
 
-        StringBuffer sql = new StringBuffer();
+        StringBuilder sql = new StringBuilder();
         String param = convertFieldToParam(field);
         Object nvalue = value;
 
@@ -634,7 +728,7 @@ public class QueryBuilder {
         if (isFieldValueOptional) {
             return addSqlCriterion("(" + field + " IS NULL or (" + field + " " + condition + ":" + param + "))", param, listValue);
         } else {
-            return addSqlCriterion(field + " " + condition + ":" + param, param, listValue);
+            return addSqlCriterion(field + " " + condition + "(:" + param + ")", param, listValue);
         }
     }
 
@@ -676,7 +770,7 @@ public class QueryBuilder {
             v = "%" + v;
         }
 
-        StringBuffer sql = new StringBuffer();
+        StringBuilder sql = new StringBuilder();
 
         if (caseInsensitive && (value instanceof String)) {
             sql.append("lower(" + field + ")");
@@ -1001,24 +1095,25 @@ public class QueryBuilder {
      * @return instance of Query builder.
      */
     public QueryBuilder addValueIsGreaterThanField(String field, Object value, boolean optional) {
-
+    	String concatenatedFields = createExplicitInnerJoins(field);
         if (value instanceof Double) {
-            addCriterion(field, " > ", BigDecimal.valueOf((Double) value), false, optional);
+            addCriterion(concatenatedFields, " > ", BigDecimal.valueOf((Double) value), false, optional);
         } else if (value instanceof Number) {
-            addCriterion(field, " > ", value, false, optional);
+            addCriterion(concatenatedFields, " > ", value, false, optional);
         } else if (value instanceof Date) {
-            addCriterionDateRangeFromTruncatedToDay(field, (Date) value, optional, true);
+            addCriterionDateRangeFromTruncatedToDay(concatenatedFields, (Date) value, optional, true);
         }
         return this;
     }
 
     public QueryBuilder addValueIsGreaterThanOrEqualField(String field, Object value, boolean optional) {
+    	String concatenatedFields = createExplicitInnerJoins(field);
         if (value instanceof Double) {
-            addCriterion(field, " >= ", BigDecimal.valueOf((Double) value), false, optional);
+            addCriterion(concatenatedFields, " >= ", BigDecimal.valueOf((Double) value), false, optional);
         } else if (value instanceof Number) {
-            addCriterion(field, " >= ", value, false, optional);
+            addCriterion(concatenatedFields, " >= ", value, false, optional);
         } else if (value instanceof Date) {
-            addCriterionDateRangeFromTruncatedToDay(field, (Date) value, optional,false);
+            addCriterionDateRangeFromTruncatedToDay(concatenatedFields, (Date) value, optional,false);
         }
         return this;
     }
@@ -1033,13 +1128,13 @@ public class QueryBuilder {
      * @return instance of Query builder.
      */
     public QueryBuilder addValueIsLessThanField(String field, Object value, boolean inclusive, boolean isFieldValueOptional) {
-
+    	String concatenatedFields = createExplicitInnerJoins(field);
         if (value instanceof Double) {
-            addCriterion(field, inclusive ? " <= " : " < ", BigDecimal.valueOf((Double) value), true, isFieldValueOptional);
+            addCriterion(concatenatedFields, inclusive ? " <= " : " < ", BigDecimal.valueOf((Double) value), true, isFieldValueOptional);
         } else if (value instanceof Number) {
-            addCriterion(field, inclusive ? " <= " : " < ", value, true, isFieldValueOptional);
+            addCriterion(concatenatedFields, inclusive ? " <= " : " < ", value, true, isFieldValueOptional);
         } else if (value instanceof Date) {
-            addCriterionDateRangeToTruncatedToDay(field, (Date) value, inclusive, isFieldValueOptional);
+            addCriterionDateRangeToTruncatedToDay(concatenatedFields, (Date) value, inclusive, isFieldValueOptional);
         }
         return this;
     }
@@ -1231,6 +1326,32 @@ public class QueryBuilder {
         return this;
     }
 
+    public QueryBuilder startNestedFilter(FilterOperatorEnum operator) {
+    	if(!nestedClauses.empty()) {
+    		NestedQuery parentNF = nestedClauses.peek();
+    		if(parentNF.hasOneOrMoreCriteria) {
+    			q.append(" " + parentNF.operator + " ");
+    		}
+    	} else if (hasOneOrMoreCriteria) {
+    		q.append(" " + filterOperator + " ");
+    	} else {
+    		q.append(" where ");
+    	}
+    	q.append(" (");
+    	nestedClauses.add(new NestedQuery(operator, false));
+    	return this;
+    }
+
+    public QueryBuilder endNestedFilter() {
+    	q.append(")");
+    	nestedClauses.pop();
+    	if(!nestedClauses.empty()) {
+    		nestedClauses.peek().hasOneOrMoreCriteria = true;
+    	}
+    	hasOneOrMoreCriteria = true;
+    	return this;
+    }
+
     /**
      * Get a JPA query object
      * 
@@ -1249,7 +1370,7 @@ public class QueryBuilder {
         return result;
     }
 
-    public void setQ(StringBuffer q) {
+    public void setQ(StringBuilder q) {
         this.q = q;
     }
 
@@ -1395,6 +1516,34 @@ public class QueryBuilder {
     public List find(EntityManager em) {
         Query query = getQuery(em);
         return query.getResultList();
+    }
+
+    public String getQueryAsString() {
+        applyOrdering(paginationSortAlias);
+
+        String query = toStringQuery();
+
+        for (Map.Entry<String, Object> e : params.entrySet()) {
+            query = query.replaceAll(":" + e.getKey(), paramToString(e.getValue()));
+        }
+        return query;
+    }
+
+    public static String paramToString(Object param) {
+        if (param instanceof Collection) {
+            StringBuilder params = new StringBuilder();
+            ((Collection<?>) param).forEach(v -> {
+                params.append("'").append(v).append("',");
+            });
+            params.setLength(params.length() - 1);
+            return params.toString();
+        } else if (param instanceof String || param instanceof Enum) {
+            return "'" + param + "'";
+        } else if (param instanceof Date) {
+            return "'" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(param) + "'";
+        } else {
+            return param.toString();
+        }
     }
 
     /**

@@ -19,7 +19,12 @@
 package org.meveo.api.crm;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -48,6 +53,7 @@ import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.model.billing.Country;
 import org.meveo.model.communication.contact.Contact;
+import org.meveo.model.communication.contact.ContactCategory;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.intcrm.AddressBook;
@@ -57,7 +63,6 @@ import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.CountryService;
-import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
@@ -65,6 +70,7 @@ import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.intcrm.impl.AdditionalDetailsService;
 import org.meveo.service.intcrm.impl.AddressBookContactService;
 import org.meveo.service.intcrm.impl.AddressBookService;
+import org.meveo.service.intcrm.impl.ContactCategoryService;
 import org.meveo.service.intcrm.impl.ContactService;
 
 import com.opencsv.exceptions.CsvException;
@@ -104,6 +110,9 @@ public class ContactApi extends BaseApi {
     @Inject
     CustomerCategoryService customerCategoryService;
 
+    @Inject
+    ContactCategoryService contactCategoryService;
+
     @TransactionAttribute
     public Contact create(ContactDto postData) throws MeveoApiException, BusinessException {
 
@@ -124,6 +133,10 @@ public class ContactApi extends BaseApi {
             // missingParameters.add("code");
         } else if (postData.getContactInformation() == null || StringUtils.isBlank(postData.getContactInformation().getEmail())) {
             missingParameters.add("email");
+        }
+
+        if(postData.getAddressBookContacts() == null || postData.getAddressBookContacts().isEmpty()){
+            missingParameters.add("AddressBookContacts");
         }
 
         handleMissingParameters();
@@ -182,13 +195,25 @@ public class ContactApi extends BaseApi {
             throw new BusinessException("addressBook with id " + addressBookServiceById.getId() + " has already a main contact assigned.");
         }
     }
+    private void checkMainContactExistance(AddressBookContactDto abcDto, AddressBook addressBookServiceById, Contact contact) {
+        List<AddressBookContact> mainContact = addressBookContactService.getMainContact(addressBookServiceById.getId());
+        if (abcDto.getMainContact() && !mainContact.isEmpty() && !isTheSameAddressBook(mainContact, contact)) {
+            throw new BusinessException("addressBook with id " + addressBookServiceById.getId() + " has already a main contact assigned.");
+        }
+    }
+
+    private boolean isTheSameAddressBook(List<AddressBookContact> mainContact, Contact contact) {
+        return mainContact.stream()
+                .filter(x -> x.getMainContact())
+                .anyMatch(x -> x.getContact().getId() == contact.getId());
+    }
 
     public Contact update(ContactDto postData) throws MeveoApiException, BusinessException {
 
         if ((postData.getContactInformation() == null || StringUtils.isBlank(postData.getContactInformation().getEmail())) && StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("email or code");
         }
-
+        
         handleMissingParameters();
 
         String code = null;
@@ -212,19 +237,22 @@ public class ContactApi extends BaseApi {
     private void updateContactAddressBook(Contact contact, Set<AddressBookContactDto> addressBookContacts) {
         if(addressBookContacts != null && !addressBookContacts.isEmpty()){
             addressBookContacts.stream()
-                    .filter(abcDto -> abcDto.getAddressBook().containsKey("id"))
                     .forEach(abcDto -> {
+                        if(abcDto.getAddressBook() == null || abcDto.getAddressBook().get("id") == null){
+                            throw new BusinessException("addressBook contact id is required to assigne contact to an address book");
+                        }
                         AddressBook addressBookServiceById = addressBookService.findById(abcDto.getAddressBook().get("id"));
                         if(addressBookServiceById == null){
                             throw new EntityDoesNotExistsException("addressBook with id "+abcDto.getAddressBook().get("id")+" does not exist");
                         }
-                        checkMainContactExistance(abcDto, addressBookServiceById);
+                        checkMainContactExistance(abcDto, addressBookServiceById, contact);
                         // update existing
                         if(abcDto.getId() != null){
                             AddressBookContact addressBookContact = addressBookContactService.findById(abcDto.getId());
                             if(addressBookContact == null){
                                 throw new EntityDoesNotExistsException("addressBookContact with id "+abcDto.getId()+" does not exist");
                             }
+                            addressBookContact.setContact(contact);
                             if(abcDto.getPosition() != null){
                                 addressBookContact.setPosition(abcDto.getPosition());
                             }
@@ -240,9 +268,11 @@ public class ContactApi extends BaseApi {
             List<AddressBookContact> abcs = addressBookContactService.findByContact(contact);
             abcs.stream()
                     .filter(abc -> addressBookContacts.stream()
-                            .filter(addressBookContactDto -> abc.getId().equals(addressBookContactDto.getId()))
-                            .filter(addressBookContactDto -> abc.getAddressBook().getId().equals(addressBookContactDto.getAddressBook().get("id")))
-                            .findFirst()
+                            .filter(addressBookContactDto -> abc.getId() != null && abc.getId().equals(addressBookContactDto.getId()))
+                            .filter(addressBookContactDto -> abc.getAddressBook() != null
+                                    && addressBookContactDto.getAddressBook() != null
+                                    && abc.getAddressBook().getId().equals(addressBookContactDto.getAddressBook().get("id"))
+                            ).findFirst()
                             .isEmpty())
                     .forEach(abc -> addressBookContactService.remove(abc.getId()));
 
@@ -314,6 +344,17 @@ public class ContactApi extends BaseApi {
                     customer = contactService.createCustomerFromContact(contact);
                 }
             }
+        }
+
+        if(postData.getContactCategoryCodes() != null) {
+        	contact.getContactCategories().clear();
+        	postData.getContactCategoryCodes().forEach(ccCode -> {
+        		var cc = contactCategoryService.findByCode(ccCode);
+        		if(cc == null) {
+        			throw new EntityDoesNotExistsException(ContactCategory.class, ccCode);
+        		}
+        		contact.getContactCategories().add(cc);
+        	});
         }
     }
 
@@ -456,7 +497,7 @@ public class ContactApi extends BaseApi {
             missingParameters.add("email or code");
             // missingParameters.add("code");
         }
-
+        
         handleMissingParameters();
 
         String code = null;
@@ -469,6 +510,9 @@ public class ContactApi extends BaseApi {
         Contact contact = contactService.findByCode(code);
 
         if (contact == null) {
+        	if(postData.getAddressBookContacts() == null || postData.getAddressBookContacts().isEmpty()){
+                missingParameters.add("AddressBookContacts");
+            }
             return create(postData);
         } else {
             return update(postData);

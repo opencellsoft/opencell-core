@@ -63,7 +63,7 @@ public class SecuredBusinessEntityService extends PersistenceService<SecuredEnti
         if (entityClass == null) {
             return null;
         }
-        return getEntityByCode(entityClass.getName(), code);
+        return getEntityByCode(ReflectionUtils.getCleanClassName(entityClass.getName()), code);
     }
 
     public BusinessEntity getEntityByCode(String entityClassName, String code) {

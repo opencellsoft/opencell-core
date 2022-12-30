@@ -53,7 +53,7 @@ import org.meveo.api.dto.account.CustomersDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
-import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.sequence.GenericSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
@@ -77,6 +77,8 @@ import org.meveo.export.CustomBigDecimalConverter;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.catalog.ProductChargeTemplateMapping;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
@@ -205,6 +207,8 @@ public class CustomerApi extends AccountEntityApi {
         }
 
         customerService.create(customer);
+        customer.getAddressbook().setCustomer(customer);
+        addressBookService.update(customer.getAddressbook());
 
         return customer;
     }
@@ -844,6 +848,8 @@ public class CustomerApi extends AccountEntityApi {
         xstream.omitField(AccountOperationDto.class, "accountingCode");
         xstream.omitField(AccountOperationDto.class, "accountCodeClientSide");
         xstream.omitField(PaymentMethodDto.class, "tokenId");
+        xstream.omitField(ProductChargeTemplateMapping.class, "chargeTemplate");
+        xstream.omitField(Attribute.class, "productVersionAttributes");
 
         String accountHierarchy = xstream.toXML(result);
 
@@ -885,6 +891,9 @@ public class CustomerApi extends AccountEntityApi {
 
     public void anonymizeGdpr(String customerCode) throws BusinessException {
         Customer entity = customerService.findByCode(customerCode);
+        if(entity == null) {
+        	throw new EntityDoesNotExistsException(Customer.class, customerCode);
+        }
         gdprService.anonymize(entity);
     }
 

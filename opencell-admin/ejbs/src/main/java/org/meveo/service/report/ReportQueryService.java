@@ -24,7 +24,6 @@ import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
-import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Format;
@@ -66,6 +65,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.FilterConverter;
 import org.meveo.service.communication.impl.EmailSender;
 import org.meveo.service.communication.impl.EmailTemplateService;
+import org.meveo.service.communication.impl.InternationalSettingsService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.util.ApplicationProvider;
 
@@ -85,6 +85,9 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
 
     @Inject
     private JobInstanceService jobInstanceService;
+
+    @Inject
+    private InternationalSettingsService internationalSettingsService;
 
     @Inject
     @ApplicationProvider
@@ -339,7 +342,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             QueryExecutionResult executionResult = asyncResult.get();
             if(executionResult != null && sendNotification) {
             	if(currentUser.getEmail() != null) {
-                    notifyUser(executionResult.getId(), reportQuery.getCode(), currentUser.getEmail(), currentUser.getFullNameOrUserName(), true,
+                    notifyUser(executionResult.getId(), reportQuery.getCode(), currentUser, true,
                             executionResult.getStartDate(), executionResult.getExecutionDuration(),
                             executionResult.getLineCount(), null);
             	}
@@ -347,7 +350,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                 	Set<String> setEmails = new HashSet<String>(emails);
                     for(String email : setEmails) {
                     	if(email != null && !email.equalsIgnoreCase(currentUser.getEmail())) {
-                        	notifyUser(executionResult.getId(), reportQuery.getCode(), email, currentUser.getFullNameOrUserName(), true,
+                        	notifyUser(executionResult.getId(), reportQuery.getCode(), currentUser, true,
                                     executionResult.getStartDate(), executionResult.getExecutionDuration(),
                                     executionResult.getLineCount(), null);
                     	}
@@ -359,22 +362,24 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         } catch (Exception exception) {
         	if(sendNotification) {
 	            long duration = new Date().getTime() - startDate.getTime();
-	            notifyUser(reportQuery.getId(), reportQuery.getCode(), currentUser.getEmail(), currentUser.getFullNameOrUserName(), false,
+	            notifyUser(reportQuery.getId(), reportQuery.getCode(), currentUser, false,
 	                    startDate, duration, null, exception.getMessage());
         	}
             log.error("Failed to execute async report query", exception);
         }
     }
 
-    private void notifyUser(Long reportQueryId, String reportQueryName, String userEmail, String userName, boolean success,
+    private void notifyUser(Long reportQueryId, String reportQueryName, MeveoUser meveoUser, boolean success,
                             Date startDate, long duration, Integer lineCount, String error) {
-        EmailTemplate emailTemplate;
         String contentHtml = null;
         String content = null;
         String subject;
         String portalResultLink = paramBeanFactory.getInstance().getProperty("portal.host.queryUri", "https://integration.d2.opencell.work/opencell/frontend/DEMO/portal/finance/reports/query-tool/query-runs-results/").concat(reportQueryId+"/show");
 
         Format format = new SimpleDateFormat("yyyy-M-dd hh:mm:ss");
+
+        String userName = currentUser.getFullNameOrUserName();
+        String userEmail = currentUser.getEmail();
         Map<Object, Object> params = new HashMap<>();
         params.put("userName", userName);
         params.put("reportQueryName", reportQueryName);
@@ -386,17 +391,23 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
 	    
         params.put("duration", String.format("%02d",durationSecond / 3600)+"h "+String.format("%02d",durationSecond / 60 % 60)+"m "+String.format("%02d",durationSecond % 60)+"s");
         try {
-        	
+
+            EmailTemplate emailTemplate = success ? emailTemplateService.findByCode(SUCCESS_TEMPLATE_CODE) :
+                    emailTemplateService.findByCode(FAILURE_TEMPLATE_CODE);
+
+            String languageCode = appProvider.getLanguage().getLanguageCode();
+            String emailSubject = internationalSettingsService.resolveSubject(emailTemplate, languageCode);
+            String emailContent = internationalSettingsService.resolveEmailContent(emailTemplate, languageCode);
+            String htmlContent = internationalSettingsService.resolveHtmlContent(emailTemplate, languageCode);
+
             if(success) {
-                emailTemplate = emailTemplateService.findByCode(SUCCESS_TEMPLATE_CODE);
                 params.put("lineCount", lineCount);
-                contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
-                subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
+                contentHtml = evaluateExpression(htmlContent, params, String.class);
+                subject = evaluateExpression(emailSubject, params, String.class);
             } else {
-                emailTemplate = emailTemplateService.findByCode(FAILURE_TEMPLATE_CODE);
                 params.put("error", error);
-                content = evaluateExpression(emailTemplate.getTextContent(), params, String.class);
-                subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
+                content = evaluateExpression(emailContent, params, String.class);
+                subject = evaluateExpression(emailSubject, params, String.class);
             }
             emailSender.send(ofNullable(appProvider.getEmail()).orElse(DEFAULT_EMAIL_ADDRESS),
                     null, asList(userEmail), subject, content, contentHtml);
@@ -445,7 +456,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             List<Object> response = new ArrayList<>();
             int size = fields.size();
             for (Object result : executionResult) {
-                Map<String, Object> item = new HashMap<>();
+                Map<String, Object> item = new LinkedHashMap<>();
                 if(fields.size() == 1) {
                     item.put(fields.get(0), result);
                 } else {

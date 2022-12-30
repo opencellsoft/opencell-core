@@ -34,6 +34,7 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.cpq.enums.PriceVersionTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 
 /**
@@ -41,8 +42,8 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
  * @version 10.0
  */
 @SuppressWarnings("serial")
-@ExportIdentifier({"pricePlanMatrix", "currentVersion"})
 @Entity
+@ExportIdentifier({"pricePlanMatrix.code", "currentVersion"})
 @Table(name = "cpq_price_plan_version", uniqueConstraints = @UniqueConstraint(columnNames = { "ppm_id", "current_version" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_price_plan_version_seq") })
@@ -54,6 +55,8 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
         @NamedQuery(name = "PricePlanMatrixVersion.getPricePlanVersionsByIds", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where p.id IN (:ids) order by p.id desc"),
         @NamedQuery(name = "PricePlanMatrixVersion.getPublishedVersionValideForDate", query = "select v from PricePlanMatrixVersion v left join v.pricePlanMatrix m where m.code=:pricePlanMatrixCode and v.status=org.meveo.model.cpq.enums.VersionStatusEnum.PUBLISHED and (v.validity.from is null or v.validity.from<=:operationDate) and (v.validity.to is null or v.validity.to>:operationDate)"),
         @NamedQuery(name = "PricePlanMatrixVersion.findEndDates", query = "from PricePlanMatrixVersion p where p.status='PUBLISHED' and p.pricePlanMatrix=:pricePlanMatrix and (p.validity.to >= :date or p.validity.to is null) order by p.validity.from desc"),
+        @NamedQuery(name = "PricePlanMatrixVersion.findByPricePlan", query = "select p from PricePlanMatrixVersion p where p.pricePlanMatrix=:priceplan and p.status<>'CLOSED'"),
+        @NamedQuery(name = "PricePlanMatrixVersion.findByPricePlans", query = "select p from PricePlanMatrixVersion p where p.pricePlanMatrix in :priceplans and p.status<>'CLOSED'"),
     })
 public class PricePlanMatrixVersion extends AuditableEntity {
 
@@ -115,6 +118,13 @@ public class PricePlanMatrixVersion extends AuditableEntity {
      */
     @Column(name = "priority")
     private int priority = 0;
+    /**
+     * The price
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "price_version_type")
+    @NotNull
+    private PriceVersionTypeEnum priceVersionType = PriceVersionTypeEnum.FIXED;
 
     public PricePlanMatrixVersion() {
     }
@@ -125,7 +135,6 @@ public class PricePlanMatrixVersion extends AuditableEntity {
         this.currentVersion = 1;
         this.label = copy.label;
         this.statusDate = new Date();
-        this.validity = copy.validity;
         this.isMatrix = copy.isMatrix;
         this.price = copy.price;
         this.priceEL = copy.priceEL;
@@ -223,7 +232,7 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     }
 
     public BigDecimal getPrice() {
-        return price;
+    	return isMatrix? null : price;
     }
 
     public void setPrice(BigDecimal price) {
@@ -232,22 +241,22 @@ public class PricePlanMatrixVersion extends AuditableEntity {
 
     @Deprecated
     public BigDecimal getAmountWithoutTax() {
-        return price;
+        return getPrice();
     }
 
     @Deprecated
     public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
-        this.price = amountWithoutTax;
+        setPrice(amountWithoutTax);
     }
 
     @Deprecated
     public BigDecimal getAmountWithTax() {
-        return price;
+        return getPrice();
     }
 
     @Deprecated
     public void setAmountWithTax(BigDecimal amountWithTax) {
-        this.price = amountWithTax;
+        setPrice(amountWithTax);
     }
 
     /**
@@ -289,6 +298,14 @@ public class PricePlanMatrixVersion extends AuditableEntity {
         this.priceEL = priceEL;
     }
 
+    public PriceVersionTypeEnum getPriceVersionType() {
+        return priceVersionType;
+    }
+
+    public void setPriceVersionType(PriceVersionTypeEnum priceVersionType) {
+        this.priceVersionType = priceVersionType;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -302,8 +319,6 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (!super.equals(obj))
-            return false;
         if (!(obj instanceof PricePlanMatrixVersion))
             return false;
         PricePlanMatrixVersion other = (PricePlanMatrixVersion) obj;
@@ -313,4 +328,6 @@ public class PricePlanMatrixVersion extends AuditableEntity {
                 && Objects.equals(pricePlanMatrix, other.pricePlanMatrix) && priority == other.priority && status == other.status
                 && Objects.equals(statusChangeLog, other.statusChangeLog) && Objects.equals(statusDate, other.statusDate) && Objects.equals(validity, other.validity);
     }
+
+
 }

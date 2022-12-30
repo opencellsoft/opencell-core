@@ -19,9 +19,11 @@ package org.meveo.service.admin.impl;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
+import javax.ws.rs.BadRequestException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
 import org.meveo.service.base.PersistenceService;
 
@@ -72,5 +74,21 @@ public class CurrencyService extends PersistenceService<Currency> {
 		} catch (NoResultException e) {
 			return null;
 		}
+	}
+
+	public Currency tryToFindByCodeOrId(Currency currency) {
+		if (currency == null) {
+			return null;
+		}
+		Currency result = null;
+		if (StringUtils.isNotBlank(currency.getCurrencyCode())) {
+			result = findByCode(currency.getCurrencyCode());
+		} else if (currency.getId() != null) {
+			result = findById(currency.getId());
+		}
+		if (result == null) {
+			throw new BadRequestException("No Currency found with Id: "+currency.getId()+" or Code :"+currency.getCurrencyCode());
+		}
+		return result;
 	}
 }

@@ -24,6 +24,7 @@ import org.apache.commons.collections.map.HashedMap;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.meveo.apiv2.billing.impl.InvoiceValidationRulesResourceImpl;
 import org.meveo.apiv2.accounting.resource.impl.AccountingPeriodResourceImpl;
 import org.meveo.apiv2.accounting.resource.impl.AccountingResourceImpl;
 import org.meveo.apiv2.accountreceivable.accountOperation.AccountReceivableResourceImpl;
@@ -44,9 +45,12 @@ import org.meveo.apiv2.billing.service.RollbackOnErrorExceptionMapper;
 import org.meveo.apiv2.catalog.resource.DiscountPlanResourceImpl;
 import org.meveo.apiv2.catalog.resource.PricePlanMatrixResourceImpl;
 import org.meveo.apiv2.catalog.resource.PricePlanResourceImpl;
+import org.meveo.apiv2.communication.impl.InternationalSettingsResourceImpl;
 import org.meveo.apiv2.cpq.impl.CommercialOrderResourceImpl;
 import org.meveo.apiv2.cpq.impl.CpqContractResourceImpl;
 import org.meveo.apiv2.cpq.impl.CpqQuoteResourceImpl;
+import org.meveo.apiv2.crm.impl.ContactCategoryResourceImpl;
+import org.meveo.apiv2.customtable.CustomTableResourceImpl;
 import org.meveo.apiv2.document.DocumentResourceImpl;
 import org.meveo.apiv2.dunning.action.DunningActionImpl;
 import org.meveo.apiv2.dunning.impl.CollectionPlanStatusResourceImpl;
@@ -88,6 +92,7 @@ import org.meveo.apiv2.ordering.resource.product.ProductResourceImpl;
 import org.meveo.apiv2.payments.resource.PaymentPlanResourceImpl;
 import org.meveo.apiv2.price.search.SearchPriceLineByAttributeResourceImpl;
 import org.meveo.apiv2.quote.impl.QuoteOfferResourceImpl;
+import org.meveo.apiv2.rating.impl.WalletOperationResourceImpl;
 import org.meveo.apiv2.refund.RefundResourceImpl;
 import org.meveo.apiv2.report.query.impl.ReportQueryResourceImpl;
 import org.meveo.apiv2.securityDeposit.financeSettings.impl.FinanceSettingsResourceImpl;
@@ -151,8 +156,9 @@ public class GenericOpencellRestful extends Application {
                 OpenOrderSettingResourceImpl.class, GlobalSettingsResourceImpl.class, Apiv2SwaggerGeneration.class,
                 OpenOrderTemplateResourceImpl.class, AccountingResourceImpl.class, PaymentPlanResourceImpl.class, MediationSettingResourceImpl.class,
                 OpenOrderQuoteResourceImpl.class, CpqQuoteResourceImpl.class, CommercialOrderResourceImpl.class,
-                SearchPriceLineByAttributeResourceImpl.class, InvoiceLinesResourceImpl.class, CpqContractResourceImpl.class, OpenOrderResourceImpl.class)
-                .collect(Collectors.toSet());
+                SearchPriceLineByAttributeResourceImpl.class, InvoiceLinesResourceImpl.class, CpqContractResourceImpl.class, OpenOrderResourceImpl.class,
+                ContactCategoryResourceImpl.class, WalletOperationResourceImpl.class, InvoiceValidationRulesResourceImpl.class, InternationalSettingsResourceImpl.class, 
+                CustomTableResourceImpl.class).collect(Collectors.toSet());
         if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
             resources.add(GenericApiLoggingFilter.class);
             log.info(
@@ -183,12 +189,12 @@ public class GenericOpencellRestful extends Application {
                     VERSION_INFO.add(versionInfo);
                 } catch (ParseException | IOException e) {
                     log.warn(e.toString());
-                    log.error("error = {}", e);
+                    log.error("error = {}", e.getMessage(), e);
                 }
             });
         } catch (IOException e) {
             log.warn("There was a problem loading version information");
-            log.error("error = {}", e);
+            log.error("error = {}", e.getMessage(), e);
         }
     }
 

@@ -18,21 +18,26 @@
 
 package org.meveo.api.billing;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.billing.RatedTransactionListResponseDto;
+import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
+import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.billing.impl.RatedTransactionService;
-import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * RatedTransactionApi : An API for Rated transaction services.
@@ -47,6 +52,8 @@ public class RatedTransactionApi extends BaseApi {
     /** The rated transaction service. */
     @Inject
     private RatedTransactionService ratedTransactionService;
+    @Inject
+    private AuditLogService auditLogService;
 
     /**
      * List Rated transactions given the filtering criteria
@@ -118,25 +125,50 @@ public class RatedTransactionApi extends BaseApi {
      * @throws InvalidParameterException can throw InvalidParameterException
      */
     public void cancelRatedTransactions(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {
+
+        List<RatedTransaction> ratedTransactions = getRatedTransactionsFromPaginationConfig(pagingAndFiltering);
+
+        if (!canCancelRatedTransactions(ratedTransactions)) {
+            throw new InvalidParameterException("Only rated transactions in statuses OPEN, REJECTED can be cancelled");
+        }
+
+        List<Long> ratedTransactionsToCancel = retreiveRatedTrasactionsIdsToCancel(ratedTransactions);
+
+        ratedTransactionService.cancelRatedTransactions(ratedTransactionsToCancel);
+        Date dateOperation = new Date();
+        String ids = ratedTransactionsToCancel.size() == 1 ? "id = " + ratedTransactionsToCancel.get(0).toString() : "ids " + ratedTransactionsToCancel.toString();
+        String detail = auditLogService.getDefaultMessage(RatedTransactionStatusEnum.CANCELED.name(), dateOperation, new RatedTransaction(), ids, null);
+        auditLogService.trackOperation(RatedTransactionStatusEnum.CANCELED.name(), dateOperation, new RatedTransaction(), null, detail);
+
+    }
+
+    private List<RatedTransaction> getRatedTransactionsFromPaginationConfig(PagingAndFiltering pagingAndFiltering) {
+
         if (pagingAndFiltering == null) {
             pagingAndFiltering = new PagingAndFiltering();
         }
 
-        List<Long> rsToCancelIds = retreiveRatedTrasactionsToCancel(pagingAndFiltering);
-        ratedTransactionService.cancelRatedTransactions(rsToCancelIds);
+        PaginationConfiguration paginationConfig = toPaginationConfiguration(pagingAndFiltering.getSortBy(), SortOrder.ASCENDING, null, pagingAndFiltering, RatedTransaction.class);
+        return ratedTransactionService.list(paginationConfig);
+    }
+
+    private boolean canCancelRatedTransactions(List<RatedTransaction> ratedTransactions) {
+
+        return ratedTransactions.stream().allMatch(ratedTransaction ->
+                (ratedTransaction.getStatus().equals(RatedTransactionStatusEnum.OPEN)) ||
+                        (ratedTransaction.getStatus().equals(RatedTransactionStatusEnum.REJECTED)));
+
     }
 
     /**
      * 
      * Retrieves, filter and construct a list of Rated Transactions ids to cancel according to query and PagingAndFiltering values.
      * 
-     * @param pagingAndFiltering Contains all filters, specially the query filter
      * @return list of Rated Transactions ids to cancel
      * @throws InvalidParameterException can throw invalid parameter Exception
      */
-    private List<Long> retreiveRatedTrasactionsToCancel(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {
-        PaginationConfiguration paginationConfig = toPaginationConfiguration(pagingAndFiltering.getSortBy(), SortOrder.ASCENDING, null, pagingAndFiltering, RatedTransaction.class);
-        List<RatedTransaction> ratedTransactions = ratedTransactionService.list(paginationConfig);
+    private List<Long> retreiveRatedTrasactionsIdsToCancel(List<RatedTransaction> ratedTransactions) throws InvalidParameterException, ActionForbiddenException {
+
         List<Long> rsToCancelIds = new ArrayList<Long>(ratedTransactions.size());
         for (RatedTransaction rt : ratedTransactions) {
             rsToCancelIds.add(rt.getId());

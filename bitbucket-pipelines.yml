@@ -26,8 +26,8 @@ pipelines:                 # More info here: https://confluence.atlassian.com/bi
     sonar:
       - step: *build-test-sonarcloud
   branches:
-#    '{integration,*.X}':
-#      - step: *build-test-sonarcloud
+    '{dev,*.X,*-sonar-*}':
+      - step: *build-test-sonarcloud
     'release/*':
       - step: *build-test-sonarcloud
       - step: *mirror-to-github

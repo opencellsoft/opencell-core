@@ -61,7 +61,11 @@
           "client": {
             "opencell-web": [
               "superAdministrateur",
-              "apiSuperAdministrateur"
+              "apiSuperAdministrateur",
+              "genApiFull.create",
+              "genApiFull.delete",
+              "genApiFull.list",
+              "genApiFull.update"
             ]
           }
         },
@@ -84,6 +88,9 @@
         "description": "${role_default-roles}",
         "composite": true,
         "composites": {
+          "realm": [
+            "administrator"
+          ],
           "client": {
             "opencell-web": [
               "uma_protection"
@@ -105,7 +112,6 @@
               "administrateur"
             ],
             "opencell-portal": [
-              "PORTAL_USER",
               "ADMIN"
             ]
           }
@@ -985,15 +991,12 @@
             "client": {
               "opencell-web": [
                 "apiUseWorkflow",
-                "genApiFull.create",
                 "apiCreateInvoice",
                 "apiUseReport",
                 "apiReportingManagement",
                 "apiUseJob",
                 "apiIntegration",
-                "genApiFull.delete",
                 "apiWorkflowManager",
-                "genApiFull.list",
                 "apiBillingManagement",
                 "apiFinanceManagement",
                 "apiUserManagement",
@@ -1007,8 +1010,7 @@
                 "apiCpqManagement",
                 "inboundAccess",
                 "apiAdministrationManagement",
-                "apiUseScript",
-                "genApiFull.update"
+                "apiUseScript"
               ]
             }
           },
@@ -2116,7 +2118,6 @@
                 "administrateur"
               ],
               "opencell-portal": [
-                "PORTAL_USER",
                 "ADMIN"
               ]
             }
@@ -2805,6 +2806,24 @@
           "attributes": {}
         },
         {
+          "id": "5b93cef8-2c9d-4316-a344-56cfab806e2b",
+          "name": "OPERATIONS",
+          "description": "OPERATIONS role",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "3eeadcfd-ace4-44e0-ba78-9a4d0505eef8",
+          "attributes": {}
+        },
+        {
+          "id": "60aadeb7-099f-4e70-adbf-de56869e8ae6",
+          "name": "SETTINGS",
+          "description": "SETTINGS role",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "3eeadcfd-ace4-44e0-ba78-9a4d0505eef8",
+          "attributes": {}
+        },
+        {
           "id": "67002106-8ad5-4b57-bd7f-f0cf36ea8331",
           "name": "ADMIN",
           "description": "Accès à tout",
@@ -2813,8 +2832,16 @@
             "client": {
               "opencell-portal": [
                 "QUERY_MANAGER",
+                "PORTAL_USER",
+                "MENU_QUOTES",
+                "ADVANCED_USER",
+                "QUERY_USER",
                 "FINANCE_MANAGER",
-                "PORTAL_USER"
+                "CFO",
+                "C_CARE",
+                "SALES",
+                "PRODUCT/ADV",
+                "MARKETING_MANAGER"
               ]
             }
           },
@@ -9146,6 +9173,9 @@
               },
               {
                 "name": "PUT"
+              },
+              {
+                "name": "PATCH"
               }
             ]
           },
@@ -14963,13 +14993,13 @@
           },
           {
             "id": "c766f724-7362-4b4a-b9bd-cc184709e61b",
-            "name": "Api V1 Configuration - System - update",
+            "name": "Api V1 Configuration - System - all",
             "type": "scope",
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
               "resources": "[\"Api V1 Configuration - System\"]",
-              "scopes": "[\"PUT\"]",
+              "scopes": "[\"POST\",\"PUT\",\"GET\",\"DELETE\"]",
               "applyPolicies": "[\"Role apiSuperAdminManagement\"]"
             }
           },
@@ -15004,7 +15034,7 @@
             "decisionStrategy": "AFFIRMATIVE",
             "config": {
               "resources": "[\"Api V1 Billing - Invoices and AO\"]",
-              "scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
+              "scopes": "[\"PUT\",\"DELETE\",\"POST\",\"PATCH\"]",
               "applyPolicies": "[\"Role apiCreateInvoice\",\"Role apiBillingManagement\"]"
             }
           },

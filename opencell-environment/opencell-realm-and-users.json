@@ -65,7 +65,11 @@
           "client": {
             "opencell-web": [
               "superAdministrateur",
-              "apiSuperAdministrateur"
+              "apiSuperAdministrateur",
+              "genApiFull.create",
+              "genApiFull.delete",
+              "genApiFull.list",
+              "genApiFull.update"
             ]
           }
         },
@@ -88,6 +92,9 @@
         "description": "${role_default-roles}",
         "composite": true,
         "composites": {
+          "realm": [
+            "administrator"
+          ],
           "client": {
             "opencell-web": [
               "uma_protection"
@@ -106,23 +113,10 @@
           "client": {
             "opencell-web": [
               "apiAdministrateur",
-              "administrateur",
-              "apiSuperAdministrateur",
-              "inboundAccess"
+              "administrateur"
             ],
             "opencell-portal": [
-              "PORTAL_USER",
-              "ADMIN",
-              "QUERY_MANAGER",
-              "MENU_QUOTES",
-              "ADVANCED_USER",
-              "QUERY_USER",
-              "FINANCE_MANAGER",
-              "CFO",
-              "C_CARE",
-              "SALES",
-              "PRODUCT/ADV",
-              "MARKETING_MANAGER"
+              "ADMIN"
             ]
           }
         },
@@ -1001,15 +995,12 @@
             "client": {
               "opencell-web": [
                 "apiUseWorkflow",
-                "genApiFull.create",
                 "apiCreateInvoice",
                 "apiUseReport",
                 "apiReportingManagement",
                 "apiUseJob",
                 "apiIntegration",
-                "genApiFull.delete",
                 "apiWorkflowManager",
-                "genApiFull.list",
                 "apiBillingManagement",
                 "apiFinanceManagement",
                 "apiUserManagement",
@@ -1023,8 +1014,7 @@
                 "apiCpqManagement",
                 "inboundAccess",
                 "apiAdministrationManagement",
-                "apiUseScript",
-                "genApiFull.update"
+                "apiUseScript"
               ]
             }
           },
@@ -2132,7 +2122,6 @@
                 "administrateur"
               ],
               "opencell-portal": [
-                "PORTAL_USER",
                 "ADMIN"
               ]
             }
@@ -2928,6 +2917,24 @@
           "id": "0112378b-82dc-44c6-8001-281662b2c4ba",
           "name": "C_CARE",
           "description": "accès aux écrans Customer Care",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "3eeadcfd-ace4-44e0-ba78-9a4d0505eef8",
+          "attributes": {}
+        },
+        {
+          "id": "5b93cef8-2c9d-4316-a344-56cfab806e2b",
+          "name": "OPERATIONS",
+          "description": "OPERATIONS role",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "3eeadcfd-ace4-44e0-ba78-9a4d0505eef8",
+          "attributes": {}
+        },
+        {
+          "id": "60aadeb7-099f-4e70-adbf-de56869e8ae6",
+          "name": "SETTINGS",
+          "description": "SETTINGS role",
           "composite": false,
           "clientRole": true,
           "containerId": "3eeadcfd-ace4-44e0-ba78-9a4d0505eef8",
@@ -10099,6 +10106,12 @@
             "scopes": [
               {
                 "name": "POST"
+              },
+              {
+                "name": "PUT"
+              },
+              {
+                "name": "DELETE"
               }
             ]
           },
@@ -10209,7 +10222,49 @@
                 "name": "HEAD"
               }
             ]
-          }
+          },
+          {
+            "name": "Api V2 International Settings",
+            "ownerManagedAccess": false,
+            "attributes": {},
+            "_id": "f68e7377-a3d6-4a4d-922b-ac145c39c157",
+            "uris": [
+              "/api/rest/v2/setting/internationalSettings/*",
+              "/api/rest/v2/setting/internationalSettings/EmailTemplate/*",
+              "/api/rest/v2/setting/internationalSettings/SMSTemplate/*"
+            ],
+            "scopes": [
+              {
+                "name": "DELETE"
+              },
+              {
+                "name": "GET"
+              },
+              {
+                "name": "POST"
+              },
+              {
+                "name": "PUT"
+              },
+              {
+                "name": "PATCH"
+              }
+           ]
+          },
+		  {
+			"name": "Api V2 CustomTable - export",
+			"ownerManagedAccess": false,
+			"attributes": {},
+			"_id": "f20b7f19-1c27-492b-bfa3-7003c044fb3c",
+			"uris": [
+				"/api/rest/v2/customTable/export/"
+			],
+			"scopes": [
+				{
+					"name": "POST"
+				}
+			]
+		 }
         ],
         "policies": [
           {
@@ -15346,13 +15401,13 @@
           },
           {
             "id": "c766f724-7362-4b4a-b9bd-cc184709e61b",
-            "name": "Api V1 Configuration - System - update",
+            "name": "Api V1 Configuration - System - all",
             "type": "scope",
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
               "resources": "[\"Api V1 Configuration - System\"]",
-              "scopes": "[\"PUT\"]",
+              "scopes": "[\"POST\",\"PUT\",\"GET\",\"DELETE\"]",
               "applyPolicies": "[\"Role apiSuperAdminManagement\"]"
             }
           },
@@ -16013,6 +16068,18 @@
               "resources": "[\"GenApi Pkg settings - fud\"]",
               "scopes": "[\"POST\"]",
               "applyPolicies": "[\"Role genApiPkg_settings.list\"]"
+            }
+          },
+          {
+            "id": "e1b24c27-8880-4a48-a51d-cfb97f3c4168",
+            "name": "Api V2 International Settings - Update",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Api V2 International Settings\"\"]",
+              "scopes": "[\"PUT\",\"DELETE\",\"POST\",\"PATCH\"]",
+              "applyPolicies": "[\"Role apiAdministrationManagement\"]"
             }
           },
           {

@@ -23,15 +23,18 @@ import static org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID;
 import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
@@ -78,6 +81,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.*;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.communication.email.MailingTypeEnum;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.generic.wf.WorkflowInstance;
@@ -88,6 +92,9 @@ import org.meveo.model.payments.PaymentHistory;
 import org.meveo.model.payments.PaymentScheduleInstance;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.WriteOff;
+import org.meveo.model.securityDeposit.SecurityDeposit;
+import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
+import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
@@ -100,6 +107,9 @@ import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.generic.wf.WorkflowInstanceService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.securityDeposit.impl.SecurityDepositService;
+import org.meveo.service.securityDeposit.impl.SecurityDepositTemplateService;
+import org.meveo.util.ApplicationProvider;
 import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 /**
@@ -159,7 +169,16 @@ public class InvoiceApi extends BaseApi {
 
     @Inject
     private DiscountPlanService discountPlanService;
-
+    
+    @Inject
+    private SecurityDepositTemplateService securityDepositTemplateService;
+    
+    @Inject
+    private SecurityDepositService securityDepositService;
+    
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
     /**
      * Create an invoice based on the DTO object data and current user
      *
@@ -530,26 +549,90 @@ public class InvoiceApi extends BaseApi {
      * @throws BusinessException business exception
      * @throws InvoiceExistException Invoice already exists exception
      * @throws ImportInvoiceException Failed to import invoice exception
+     * @throws IOException 
      */
+    @TransactionAttribute
     public String validateInvoice(Long invoiceId, boolean generateAO, boolean refreshExchangeRate) throws MissingParameterException,
-            EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
+            EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException, IOException {
+    	return validateInvoice(invoiceId, generateAO, refreshExchangeRate, true);
+    }
+    
+    /**
+     * 
+     * @param invoiceId invoice id
+     * @param generateAO generate AO, default value false
+     * @param refreshExchangeRate refresh exchange rate
+     *
+     * @return invoice number.
+     * @throws MissingParameterException missing parameter exception
+     * @throws EntityDoesNotExistsException entity does not exist exception
+     * @throws BusinessException business exception
+     * @throws InvoiceExistException Invoice already exists exception
+     * @throws ImportInvoiceException Failed to import invoice exception
+     * @throws IOException 
+     */
+    @TransactionAttribute
+    public String validateInvoice(Long invoiceId, boolean generateAO, boolean refreshExchangeRate, boolean createSD) throws MissingParameterException,
+            EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException, IOException {
         if (StringUtils.isBlank(invoiceId)) {
             missingParameters.add("invoiceId");
         }
         handleMissingParameters();
-        Invoice invoice = serviceSingleton.validateAndAssignInvoiceNumber(invoiceId, refreshExchangeRate);
-        if(generateAO) {
+        serviceSingleton.validateAndAssignInvoiceNumber(invoiceId, refreshExchangeRate);
+
+        Invoice invoice = invoiceService.findById(invoiceId);
+        Boolean brGenerateAO = Optional.ofNullable(invoice.getBillingRun()).map(BillingRun::getGenerateAO).orElse(false);
+        if(brGenerateAO || generateAO) {
             invoiceService.generateRecordedInvoiceAO(invoiceId);
         }
+        
+        serviceSingleton.triggersJobs();
+
         Date today = new Date();
         invoice = invoiceService.refreshOrRetrieve(invoice);
+        
+        //Create SD
+        if (invoice.getInvoiceType() != null && "SECURITY_DEPOSIT".equals(invoice.getInvoiceType().getCode()) && createSD) {
+        	Optional<SecurityDeposit> osd = securityDepositService.getSecurityDepositByInvoiceId(invoice.getId());
+        	if(osd.isPresent()) {
+        		SecurityDeposit securityDeposit = osd.get();
+        		securityDeposit.setAmount(invoice.getAmountWithoutTax());
+        		securityDeposit.setBillingAccount(invoice.getBillingAccount());
+        		securityDeposit.setCustomerAccount(invoice.getBillingAccount().getCustomerAccount());
+        		securityDeposit.setStatus(SecurityDepositStatusEnum.VALIDATED);
+        		securityDepositService.update(securityDeposit);
+        		
+        		//Get SD Template number of instantiation and update it after creating a new SD
+        		SecurityDepositTemplate sdt = invoiceService.updateSDTemplate(securityDeposit.getTemplate());
+        		securityDepositTemplateService.update(sdt);
+        		
+        	} else if(createSD) {
+        		SecurityDepositTemplate defaultSDTemplate = securityDepositTemplateService.getDefaultSDTemplate();
+        		Long count = securityDepositService.countPerTemplate(defaultSDTemplate);
+        		securityDepositService.createSecurityDeposit(invoice, defaultSDTemplate, count);
+        		
+        		//Get SD Template number of instantiation and update it after creating a new SD
+        		SecurityDepositTemplate sdt = invoiceService.updateSDTemplate(defaultSDTemplate);
+        		securityDepositTemplateService.update(sdt);
+        	}
+        }
+        
         if(invoice.getDueDate().after(today) && invoice.getStatus() == VALIDATED){
             updatePaymentStatus(invoice, today, PENDING);
         }else if(invoice.getDueDate().before(today) && invoice.getStatus() == VALIDATED) {
             updatePaymentStatus(invoice, today, UNPAID);
         }
+        
+        if (invoiceService.isInvoiceXmlExist(invoice)) {
+            invoiceService.deleteInvoiceXml(invoice);
+        }
+        if (invoiceService.isInvoicePdfExist(invoice)) {
+        	invoiceService.deleteInvoicePdf(invoice);
+        }
         return invoice.getInvoiceNumber();
     }
+
+    
 
     private void updatePaymentStatus(Invoice invoice, Date today, InvoicePaymentStatusEnum pending) {
         log.info("[Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 
@@ -1116,8 +1199,8 @@ public class InvoiceApi extends BaseApi {
         categoryInvoiceAgregates.sort(Comparator.comparing(CategoryInvoiceAgregateDto::getCategoryInvoiceCode));
         taxAggregates.sort(Comparator.comparing(TaxInvoiceAggregateDto::getTaxCode));
 
-        for (Invoice inv : invoice.getLinkedInvoices()) {
-            listInvoiceIdToLink.add(inv.getId());
+        for (LinkedInvoice inv : invoice.getLinkedInvoices()) {
+            listInvoiceIdToLink.add(inv.getLinkedInvoiceValue().getId());
         }
 
         if (!categoryInvoiceAgregates.isEmpty()) {
@@ -1198,5 +1281,11 @@ public class InvoiceApi extends BaseApi {
     	Invoice invoice = invoiceService.findById(invoiceId);
     	if(invoice == null) throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
     	return invoiceToDto(invoiceService.duplicate(invoice), false, false, false);
+    }
+
+    public Invoice rebuildInvoice(Long invoiceId, boolean save) {
+        Invoice invoice = invoiceService.findById(invoiceId);
+        invoiceService.rebuildInvoice(invoice, save);
+        return invoice;
     }
 }

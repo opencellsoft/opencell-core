@@ -22,6 +22,7 @@ import static java.util.Optional.ofNullable;
 import static org.meveo.commons.utils.NumberUtils.toPlainString;
 import static org.meveo.commons.utils.StringUtils.getDefaultIfNull;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.storage.StorageFactory;
 import org.meveo.commons.utils.InvoiceCategoryComparatorUtils;
@@ -54,6 +55,7 @@ import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.crm.impl.AccountEntitySearchService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
@@ -78,6 +80,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -87,13 +90,14 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A default implementation of XML invoice creation.
- * 
  * To extend a default implementation:
  * <ul>
  * <li>Create java class type script that will extend XmlInvoiceCreatorScript</li>
@@ -175,6 +179,8 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     protected static String DEFAULT_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
 
     protected Logger log = LoggerFactory.getLogger(getClass());
+    @Inject
+    private AccountEntitySearchService accountEntitySearchService;
 
     /**
      * Create XML invoice and store its content in a file. Note: Just creates a file - does not update invoice with file information
@@ -186,11 +192,9 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * @return DOM element xml file
      * @throws BusinessException            business exception
      * @throws ParserConfigurationException parsing exception
-     * @throws SAXException                 sax exception
-     * @throws IOException                  IO exception
      */
     public File createDocumentAndFile(Invoice invoice, boolean isVirtual, String fullXmlFilePath,
-                                      boolean rtBillingProcess) throws BusinessException, ParserConfigurationException, SAXException, IOException {
+                                      boolean rtBillingProcess) throws BusinessException, ParserConfigurationException {
         Document doc = createDocument(invoice, isVirtual, rtBillingProcess);
         return createFile(doc, invoice, fullXmlFilePath);
     }
@@ -239,10 +243,8 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * @return DOM element XML DOM document
      * @throws BusinessException            business exception
      * @throws ParserConfigurationException parsing exception
-     * @throws SAXException                 sax exception
-     * @throws IOException                  IO exception
      */
-    public Document createDocument(Invoice invoice, boolean isVirtual, boolean rtBillingProcess) throws BusinessException, ParserConfigurationException, SAXException, IOException {
+    public Document createDocument(Invoice invoice, boolean isVirtual, boolean rtBillingProcess) throws BusinessException, ParserConfigurationException {
 
         invoice = invoiceService.retrieveIfNotManaged(invoice);
         boolean isInvoiceAdjustment = invoiceTypeService.getListAdjustementCode().contains(invoice.getInvoiceType().getCode());
@@ -277,6 +279,62 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     }
 
     /**
+     * Get user accounts
+     *
+     * @param invoiceAgregates Invoice agregates
+     * @return user accounts list
+     */
+    private Set<UserAccount> getUserAccounts(List<InvoiceAgregate> invoiceAgregates) {
+        Set<UserAccount> userAccounts = new HashSet<>();
+        if (invoiceAgregates != null && !invoiceAgregates.isEmpty()) {
+            for (InvoiceAgregate invoiceAgregate : invoiceAgregates) {
+                if (invoiceAgregate instanceof CategoryInvoiceAgregate && ((CategoryInvoiceAgregate) invoiceAgregate).getUserAccount() != null) {
+                    userAccounts.add(((CategoryInvoiceAgregate) invoiceAgregate).getUserAccount());
+                }
+            }
+        }
+        return userAccounts;
+    }
+
+    /**
+     * Get user accounts
+     *
+     * @param invoice              Invoice to convert
+     * @param invoiceConfiguration Invoice configuration
+     * @return user accounts list
+     */
+    protected Set<UserAccount> getUserAccounts(Invoice invoice, InvoiceConfiguration invoiceConfiguration) {
+        Set<UserAccount> userAccounts = new HashSet<>();
+        if (invoice.getSubscription() != null) {
+            userAccounts.add(invoice.getSubscription().getUserAccount());
+        }
+        if (userAccounts.isEmpty()) {
+            if (invoiceConfiguration.isDisplayUserAccountHierarchy()) {
+                userAccounts.addAll(invoice.getBillingAccount().getParentUserAccounts());
+            } else {
+                userAccounts.addAll(invoice.getBillingAccount().getUsersAccounts());
+            }
+        }
+        userAccounts.addAll(getUserAccounts(invoice.getInvoiceAgregates()));
+        return userAccounts;
+    }
+
+
+    /**
+     * Get user accounts
+     *
+     * @param invoice Invoice to convert
+     * @return user accounts list
+     */
+    protected Set<UserAccount> getUserAccounts(Invoice invoice) {
+        Set<UserAccount> userAccounts = new HashSet<>();
+        userAccounts.addAll(invoice.getBillingAccount().getUsersAccounts());
+        userAccounts.addAll(getUserAccounts(invoice.getInvoiceAgregates()));
+        return userAccounts;
+    }
+
+
+    /**
      * Create invoice/details/userAccounts DOM element
      *
      * @param doc                  XML invoice DOM
@@ -290,25 +348,20 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
         Element userAccountsTag = doc.createElement("userAccounts");
         String invoiceLanguageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
-        if(invoiceConfiguration.isDisplayUserAccountHierarchy()) {
-        	List<UserAccount> userAccounts = invoice.getBillingAccount().getUsersAccounts();
-        	for(UserAccount userAccount : userAccounts) {
-        		if(userAccount.getParentUserAccount() == null) {
-                    Element userAccountTag = createUserAccountSection(doc, invoice, userAccount, ratedTransactions, isVirtual, false, invoiceLanguageCode, invoiceConfiguration);
-                    createUserAccountChildSection(doc, invoice, userAccount, ratedTransactions, isVirtual, false, invoiceLanguageCode, invoiceConfiguration, userAccounts, userAccountTag);
-                    userAccountsTag.appendChild(userAccountTag);
-        		}
-        	}
-        	
-        }else {
-            for (UserAccount userAccount : invoice.getBillingAccount().getUsersAccounts()) {
+        Set<UserAccount> userAccounts = getUserAccounts(invoice);
+        for (UserAccount userAccount : userAccounts) {
+            if (!invoiceConfiguration.isDisplayUserAccountHierarchy() || userAccount.getParentUserAccount() == null) {
                 Element userAccountTag = createUserAccountSection(doc, invoice, userAccount, ratedTransactions, isVirtual, false, invoiceLanguageCode, invoiceConfiguration);
-                if (userAccountTag == null) {
-                    continue;
+                if (invoiceConfiguration.isDisplayUserAccountHierarchy()) {
+                    createUserAccountChildSection(doc, invoice, userAccount, ratedTransactions, isVirtual, false, invoiceLanguageCode, invoiceConfiguration,
+                            userAccounts.stream().collect(Collectors.toList()), userAccountTag);
                 }
-                userAccountsTag.appendChild(userAccountTag);
+                if (userAccountTag != null) {
+                    userAccountsTag.appendChild(userAccountTag);
+                }
             }
         }
+
         // Generate invoice lines for Categories/RTs that are not linked to User account
         Element userAccountTag = createUserAccountSection(doc, invoice, null, ratedTransactions, isVirtual, userAccountsTag.getChildNodes().getLength() == 0, invoiceLanguageCode, invoiceConfiguration);
         if (userAccountTag != null) {
@@ -368,7 +421,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      *                             subscriptions be returned. Used as true when aggregation by user account is turned off - system property invoice.aggregateByUA=false
      * @param invoiceLanguageCode
      * @param invoiceConfiguration Invoice configuration
-     * @return
+     * @return Element
      */
     public Element createUserAccountSection(Document doc, Invoice invoice, UserAccount userAccount, List<RatedTransaction> ratedTransactions, boolean isVirtual, boolean ignoreUA, String invoiceLanguageCode,
             InvoiceConfiguration invoiceConfiguration) {
@@ -390,7 +443,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             addCustomFields(userAccount, doc, userAccountTag);
         }
         if (invoiceConfiguration.isDisplaySubscriptions()) {
-            Element subscriptionsTag = createSubscriptionsSection(doc, invoice, userAccount, ratedTransactions, isVirtual, ignoreUA, invoiceConfiguration, null);
+            Element subscriptionsTag = createSubscriptionsSection(doc, userAccount, ratedTransactions, isVirtual, ignoreUA, null);
             if (subscriptionsTag != null) {
                 userAccountTag.appendChild(subscriptionsTag);
             }
@@ -413,19 +466,17 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * Create invoice/details/userAccounts/userAccount/subscriptions DOM element
      *
      * @param doc                  XML invoice DOM
-     * @param invoice              Invoice to convert
      * @param userAccount          User account
      * @param ratedTransactions    Rated transactions
      * @param isVirtual            Is this a virtual invoice. If true, no invoice, invoice aggregate nor RT information is persisted in DB
      * @param ignoreUA             Shall UA be ignored and all subscriptions be returned. Used as true when aggregation by user account is turned off - system property
      *                             invoice.aggregateByUA=false
-     * @param invoiceConfiguration Invoice configuration
      * @return DOM element
      */
-    protected Element createSubscriptionsSection(Document doc, Invoice invoice, UserAccount userAccount, List<RatedTransaction> ratedTransactions, boolean isVirtual, boolean ignoreUA,
-            InvoiceConfiguration invoiceConfiguration, List<InvoiceLine> invoiceLines) {
+    protected Element createSubscriptionsSection(Document doc, UserAccount userAccount, List<RatedTransaction> ratedTransactions, boolean isVirtual, boolean ignoreUA,
+                                                 List<InvoiceLine> invoiceLines) {
 
-        List<Subscription> subscriptions = ratedTransactions != null ? getSubscriptions(invoice, userAccount, isVirtual, ignoreUA, ratedTransactions)
+        List<Subscription> subscriptions = CollectionUtils.isNotEmpty(ratedTransactions) ? getSubscriptions(userAccount, isVirtual, ratedTransactions)
                 : getSubscriptionsFromIls(invoiceLines);
         if (subscriptions == null || subscriptions.isEmpty()) {
             return null;
@@ -462,14 +513,12 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * @param doc                  XML invoice DOM
      * @param invoice              Invoice to convert
      * @param ratedTransactions    Rated transactions
-     * @param isVirtual            Is this a virtual invoice. If true, no invoice, invoice aggregate nor RT information is persisted in DB
-     * @param invoiceConfiguration Invoice configuration
      * @param invoiceLines         Invoice lines
      * @return DOM element
      */
-    protected Element createOffersSection(Document doc, Invoice invoice, List<RatedTransaction> ratedTransactions, boolean isVirtual, InvoiceConfiguration invoiceConfiguration, List<InvoiceLine> invoiceLines) {
+    protected Element createOffersSection(Document doc, Invoice invoice, List<RatedTransaction> ratedTransactions, List<InvoiceLine> invoiceLines) {
 
-        List<OfferTemplate> offers = ratedTransactions != null ? getOffers(invoice, isVirtual, ratedTransactions)
+        List<OfferTemplate> offers = ratedTransactions != null ? getOffers(ratedTransactions)
                 : getOffersFromILs(invoiceLines);
         if (offers == null || offers.isEmpty()) {
             return null;
@@ -496,11 +545,10 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * Create invoice/header/billingAccount/billingCycle DOM element
      *
      * @param doc          XML invoice DOM
-     * @param invoice      Invoice to convert
      * @param billingCycle Billing cycle
      * @return DOM element
      */
-    protected Element createBillingCycleSection(Document doc, Invoice invoice, BillingCycle billingCycle) {
+    protected Element createBillingCycleSection(Document doc, BillingCycle billingCycle) {
 
         Element billingCycleTag = doc.createElement("billingCycle");
         billingCycleTag.setAttribute("id", billingCycle.getId().toString());
@@ -514,23 +562,20 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * Create invoice/services DOM element
      *
      * @param doc                  XML invoice DOM
-     * @param invoice              Invoice to convert
      * @param ratedTransactions    Rated transactions
-     * @param isVirtual            Is this a virtual invoice. If true, no invoice, invoice aggregate nor RT information is persisted in DB
-     * @param invoiceConfiguration Invoice configuration
      * @param invoiceLines         invoice Lines
      * @return DOM element
      */
-    protected Element createServicesSection(Document doc, Invoice invoice, List<RatedTransaction> ratedTransactions, boolean isVirtual, InvoiceConfiguration invoiceConfiguration, List<InvoiceLine> invoiceLines) {
+    protected Element createServicesSection(Document doc, List<RatedTransaction> ratedTransactions, List<InvoiceLine> invoiceLines) {
 
-        Map<String, List<ServiceInstance>> services = ratedTransactions != null ? getServices(invoice, isVirtual, ratedTransactions) : getServicesFromILs(invoiceLines);
+        Map<String, List<ServiceInstance>> services = ratedTransactions != null ? getServices(ratedTransactions) : getServicesFromILs(invoiceLines);
         if (services == null || services.isEmpty()) {
             return null;
         }
         Element servicesTag = doc.createElement("services");
         for (Entry<String, List<ServiceInstance>> serviceInfo : services.entrySet()) {
             for (ServiceInstance serviceInstance : serviceInfo.getValue()) {
-                Element serviceTag = createServiceSection(doc, invoice, serviceInstance, serviceInfo.getKey(), false);
+                Element serviceTag = createServiceSection(doc, serviceInstance, serviceInfo.getKey(), false);
                 if (serviceTag != null) {
                     servicesTag.appendChild(serviceTag);
                 }
@@ -544,13 +589,12 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * element
      *
      * @param doc             XML invoice DOM
-     * @param invoice         Invoice to convert
      * @param serviceInstance Service instance
      * @param offerCode       Offer code
      * @param isShort         If true will not include custom fields
      * @return DOM element
      */
-    protected Element createServiceSection(Document doc, Invoice invoice, ServiceInstance serviceInstance, String offerCode, boolean isShort) {
+    protected Element createServiceSection(Document doc, ServiceInstance serviceInstance, String offerCode, boolean isShort) {
 
         Element serviceTag = doc.createElement("service");
         serviceTag.setAttribute("id", serviceInstance.getId().toString());
@@ -577,20 +621,18 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * @param doc                  XML invoice DOM
      * @param invoice              Invoice to convert
      * @param ratedTransactions    Rated transactions
-     * @param isVirtual            Is this a virtual invoice. If true, no invoice, invoice aggregate nor RT information is persisted in DB
-     * @param invoiceConfiguration Invoice configuration
      * @return DOM element
      */
-    protected Element createPricePlansSection(Document doc, Invoice invoice, List<RatedTransaction> ratedTransactions, boolean isVirtual, InvoiceConfiguration invoiceConfiguration) {
+    protected Element createPricePlansSection(Document doc, Invoice invoice, List<RatedTransaction> ratedTransactions) {
 
-        List<PricePlanMatrix> pricePlans = getPricePlans(invoice, isVirtual, ratedTransactions);
+        List<PricePlanMatrix> pricePlans = getPricePlans(ratedTransactions);
         if (pricePlans == null || pricePlans.isEmpty()) {
             return null;
         }
         String invoiceLanguageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
         Element pricePlansTag = doc.createElement("priceplans");
         for (PricePlanMatrix pricePlan : pricePlans) {
-            Element pricePlanTag = createPricePlanSection(doc, invoice, pricePlan, false, invoiceLanguageCode);
+            Element pricePlanTag = createPricePlanSection(doc, pricePlan, false, invoiceLanguageCode);
             if (pricePlanTag != null) {
                 pricePlansTag.appendChild(pricePlanTag);
             }
@@ -603,13 +645,12 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * DOM element
      *
      * @param doc                 XML invoice DOM
-     * @param invoice             Invoice to convert
      * @param pricePlan           Price plan
      * @param isShort             If true will not include custom fields
      * @param invoiceLanguageCode Invoice language - language code
      * @return DOM element
      */
-    protected Element createPricePlanSection(Document doc, Invoice invoice, PricePlanMatrix pricePlan, boolean isShort, String invoiceLanguageCode) {
+    protected Element createPricePlanSection(Document doc, PricePlanMatrix pricePlan, boolean isShort, String invoiceLanguageCode) {
         Element pricePlanTag = doc.createElement("pricePlan");
         pricePlanTag.setAttribute("code", pricePlan.getCode());
         String translationKey = "PP_" + pricePlan.getCode() + "_" + invoiceLanguageCode;
@@ -663,7 +704,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             }
         }
     }
-
     /**
      * Create invoice/header/[Seller,customer,customerAccount,billingAccount, userAccount]/address DOM element
      *
@@ -676,65 +716,69 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
         Element addressTag = doc.createElement("address");
         Element address1 = doc.createElement("address1");
-        if (account.getAddress() != null && account.getAddress().getAddress1() != null) {
-            Text adress1Txt = this.createTextNode(doc, account.getAddress().getAddress1());
-            address1.appendChild(adress1Txt);
-        }
-        addressTag.appendChild(address1);
-        Element address2 = doc.createElement("address2");
-        if (account.getAddress() != null && account.getAddress().getAddress2() != null) {
-            Text adress2Txt = this.createTextNode(doc, account.getAddress().getAddress2());
-            address2.appendChild(adress2Txt);
-        }
-        addressTag.appendChild(address2);
-        Element address3 = doc.createElement("address3");
-        if (account.getAddress() != null && account.getAddress().getAddress3() != null) {
-            Text adress3Txt = this.createTextNode(doc, account.getAddress().getAddress3() != null ? account.getAddress().getAddress3() : "");
-            address3.appendChild(adress3Txt);
-        }
-        addressTag.appendChild(address3);
-        Element city = doc.createElement("city");
-        if (account.getAddress() != null && account.getAddress().getCity() != null) {
-            Text cityTxt = this.createTextNode(doc, account.getAddress().getCity() != null ? account.getAddress().getCity() : "");
-            city.appendChild(cityTxt);
-        }
-        addressTag.appendChild(city);
-        Element postalCode = doc.createElement("postalCode");
-        if (account.getAddress() != null && account.getAddress().getZipCode() != null) {
-            Text postalCodeTxt = this.createTextNode(doc, account.getAddress().getZipCode() != null ? account.getAddress().getZipCode() : "");
-            postalCode.appendChild(postalCodeTxt);
-        }
-        addressTag.appendChild(postalCode);
-        Element state = doc.createElement("state");
-        if (account.getAddress() != null && account.getAddress().getState() != null) {
-            Text stateTxt = this.createTextNode(doc, account.getAddress().getState());
-            state.appendChild(stateTxt);
-        }
-        addressTag.appendChild(state);
-        Element country = doc.createElement("country");
-        Element countryName = doc.createElement("countryName");
-        if (account.getAddress() != null && account.getAddress().getCountry() != null) {
-            Text countryTxt = this.createTextNode(doc, account.getAddress().getCountry() != null ? account.getAddress().getCountry().getCountryCode() : "");
-            country.appendChild(countryTxt);
-            String translationKey = "C_" + account.getAddress().getCountry() + "_" + invoiceLanguageCode;
-            String descTranslated = descriptionMap.get(translationKey);
-            if (descTranslated == null) {
-                Country countrybyCode = account.getAddress().getCountry();
-                if (countrybyCode != null && countrybyCode.getDescriptionI18n() != null && countrybyCode.getDescriptionI18n().get(invoiceLanguageCode) != null) {
-                    // get country description by language code
-                    descTranslated = countrybyCode.getDescriptionI18n().get(invoiceLanguageCode);
-                } else if (countrybyCode != null) {
-                    descTranslated = countrybyCode.getDescription();
-                } else {
-                    descTranslated = "";
-                }
-                descriptionMap.put(translationKey, descTranslated);
+        if (account != null) {
+            account = accountEntitySearchService.retrieveIfNotManaged(account);
+            if (account.getAddress() != null && account.getAddress().getAddress1() != null) {
+                Text adress1Txt = this.createTextNode(doc, account.getAddress().getAddress1());
+                address1.appendChild(adress1Txt);
             }
-            Text countryNameTxt = this.createTextNode(doc, descTranslated);
-            countryName.appendChild(countryNameTxt);
+            addressTag.appendChild(address1);
+            Element address2 = doc.createElement("address2");
+            if (account.getAddress() != null && account.getAddress().getAddress2() != null) {
+                Text adress2Txt = this.createTextNode(doc, account.getAddress().getAddress2());
+                address2.appendChild(adress2Txt);
+            }
+            addressTag.appendChild(address2);
+            Element address3 = doc.createElement("address3");
+            if (account.getAddress() != null && account.getAddress().getAddress3() != null) {
+                Text adress3Txt = this.createTextNode(doc, account.getAddress().getAddress3() != null ? account.getAddress().getAddress3() : "");
+                address3.appendChild(adress3Txt);
+            }
+            addressTag.appendChild(address3);
+            Element city = doc.createElement("city");
+            if (account.getAddress() != null && account.getAddress().getCity() != null) {
+                Text cityTxt = this.createTextNode(doc, account.getAddress().getCity() != null ? account.getAddress().getCity() : "");
+                city.appendChild(cityTxt);
+            }
+            addressTag.appendChild(city);
+            Element postalCode = doc.createElement("postalCode");
+            if (account.getAddress() != null && account.getAddress().getZipCode() != null) {
+                Text postalCodeTxt = this.createTextNode(doc, account.getAddress().getZipCode() != null ? account.getAddress().getZipCode() : "");
+                postalCode.appendChild(postalCodeTxt);
+            }
+            addressTag.appendChild(postalCode);
+            Element state = doc.createElement("state");
+            if (account.getAddress() != null && account.getAddress().getState() != null) {
+                Text stateTxt = this.createTextNode(doc, account.getAddress().getState());
+                state.appendChild(stateTxt);
+            }
+            addressTag.appendChild(state);
+            Element country = doc.createElement("country");
+            Element countryName = doc.createElement("countryName");
+            if (account.getAddress() != null && account.getAddress().getCountry() != null) {
+                Text countryTxt = this.createTextNode(doc, account.getAddress().getCountry() != null ? account.getAddress().getCountry().getCountryCode() : "");
+                country.appendChild(countryTxt);
+                String translationKey = "C_" + account.getAddress().getCountry() + "_" + invoiceLanguageCode;
+                String descTranslated = descriptionMap.get(translationKey);
+                if (descTranslated == null) {
+                    Country countrybyCode = account.getAddress().getCountry();
+                    if (countrybyCode != null && countrybyCode.getDescriptionI18n() != null && countrybyCode.getDescriptionI18n().get(invoiceLanguageCode) != null) {
+                        // get country description by language code
+                        descTranslated = countrybyCode.getDescriptionI18n().get(invoiceLanguageCode);
+                    } else if (countrybyCode != null) {
+                        descTranslated = countrybyCode.getDescription();
+                    } else {
+                        descTranslated = "";
+                    }
+                    descriptionMap.put(translationKey, descTranslated);
+                }
+                Text countryNameTxt = this.createTextNode(doc, descTranslated);
+                countryName.appendChild(countryNameTxt);
+            }
+            addressTag.appendChild(country);
+            addressTag.appendChild(countryName);
         }
-        addressTag.appendChild(country);
-        addressTag.appendChild(countryName);
+        
         return addressTag;
     }
 
@@ -750,7 +794,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
         Element nameTag = doc.createElement("name");
         Element quality = doc.createElement("quality");
-        if (account.getName() != null && account.getName().getTitle() != null) {
+        if (account !=null && account.getName() != null && account.getName().getTitle() != null) {
             String translationKey = "T_" + account.getName().getTitle().getCode() + "_" + invoiceLanguageCode;
             String descTranslated = descriptionMap.get(translationKey);
             if (descTranslated == null) {
@@ -764,19 +808,15 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             quality.appendChild(titleTxt);
         }
         nameTag.appendChild(quality);
-        if (account.getName() != null && account.getName().getFirstName() != null) {
+        if (account !=null && account.getName() != null && account.getName().getFirstName() != null) {
             Element firstName = doc.createElement("firstName");
             Text firstNameTxt = this.createTextNode(doc, account.getName().getFirstName());
             firstName.appendChild(firstNameTxt);
             nameTag.appendChild(firstName);
         }
         Element name = doc.createElement("name");
-        if (account.getName() != null && account.getName().getLastName() != null) {
+        if (account !=null && account.getName() != null && account.getName().getLastName() != null) {
             Text nameTxt = this.createTextNode(doc, account.getName().getLastName());
-            name.appendChild(nameTxt);
-        }
-        if(account.getIsCompany()) {
-            Text nameTxt = this.createTextNode(doc, account.getDescription());
             name.appendChild(nameTxt);
         }
         nameTag.appendChild(name);
@@ -1048,7 +1088,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             return categoryInvoiceAgregate.getUserAccount() == null;
         } else {
             Long uaId = userAccount.getId();
-            return categoryInvoiceAgregate != null && categoryInvoiceAgregate.getUserAccount() != null && uaId != null && uaId.equals(categoryInvoiceAgregate.getUserAccount().getId());
+            return categoryInvoiceAgregate.getUserAccount() != null && uaId != null && uaId.equals(categoryInvoiceAgregate.getUserAccount().getId());
         }
     }
 
@@ -1081,7 +1121,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Element categoryTag=null;
         for (CategoryInvoiceAgregate categoryInvoiceAgregate : categoryInvoiceAgregates) {
         	if(categoryInvoiceAgregate.getInvoiceCategory()!=null) {
-        		categoryTag = createDetailsUAInvoiceCategorySection(doc, invoice, categoryInvoiceAgregate, ratedTransactions, isVirtual, invoiceDateFormat, invoiceDateTimeFormat, invoiceLanguageCode,
+        		categoryTag = createDetailsUAInvoiceCategorySection(doc, categoryInvoiceAgregate, ratedTransactions, isVirtual, invoiceDateFormat, invoiceDateTimeFormat, invoiceLanguageCode,
         				invoiceConfiguration);
         	}
             if (categoryTag != null) {
@@ -1096,10 +1136,9 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      *
      * @param doc                  XML invoice DOM
      * @param invoice              Invoice to convert
-     * @param invoiceConfiguration Invoice configuration
      * @return DOM element
      */
-    protected Element createAmountTaxSection(Document doc, Invoice invoice, InvoiceConfiguration invoiceConfiguration) {
+    protected Element createAmountTaxSection(Document doc, Invoice invoice) {
 
         Element taxes = doc.createElement("taxes");
         boolean exoneratedFromTaxes = billingAccountService.isExonerated(invoice.getBillingAccount());
@@ -1141,9 +1180,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                 Element taxAmount = doc.createElement("amount");
                 taxAmount.appendChild(this.createTextNode(doc, toPlainString(taxInvoiceAgregate.getAmountTax())));
                 tax.appendChild(taxAmount);
-                Element amountHT = doc.createElement("amountHT");
-                amountHT.appendChild(this.createTextNode(doc, toPlainString(taxInvoiceAgregate.getAmountWithoutTax())));
-                tax.appendChild(amountHT);
                 Element amountWithoutTax = doc.createElement("amountWithoutTax");
                 amountWithoutTax.appendChild(this.createTextNode(doc, toPlainString(taxInvoiceAgregate.getAmountWithoutTax())));
                 tax.appendChild(amountWithoutTax);
@@ -1161,10 +1197,9 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      *
      * @param doc                  XML invoice DOM
      * @param invoice              Invoice to convert
-     * @param invoiceConfiguration Invoice configuration
      * @return DOM element
      */
-    protected Element createHeaderCategoriesSection(Document doc, Invoice invoice, InvoiceConfiguration invoiceConfiguration) {
+    protected Element createHeaderCategoriesSection(Document doc, Invoice invoice) {
 
     	String billingAccountLanguage = invoice.getBillingAccount().getTradingLanguage().getLanguageCode();
         LinkedHashMap<String, XMLInvoiceHeaderCategoryDTO> headerCategories = new LinkedHashMap<>();
@@ -1214,8 +1249,8 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         for (XMLInvoiceHeaderCategoryDTO xmlInvoiceHeaderCategoryDTO : headerCategories.values()) {
             Element category = doc.createElement("category");
             category.setAttribute("label", xmlInvoiceHeaderCategoryDTO.getDescription());
-            category.setAttribute("code", xmlInvoiceHeaderCategoryDTO != null && xmlInvoiceHeaderCategoryDTO.getCode() != null ? xmlInvoiceHeaderCategoryDTO.getCode() : "");
-            category.setAttribute("sortIndex", xmlInvoiceHeaderCategoryDTO != null && xmlInvoiceHeaderCategoryDTO.getSortIndex() != null ? xmlInvoiceHeaderCategoryDTO.getSortIndex() + "" : "");
+            category.setAttribute("code", xmlInvoiceHeaderCategoryDTO.getCode() != null ? xmlInvoiceHeaderCategoryDTO.getCode() : "");
+            category.setAttribute("sortIndex", xmlInvoiceHeaderCategoryDTO.getSortIndex() != null ? xmlInvoiceHeaderCategoryDTO.getSortIndex() + "" : "");
             Element amountWithoutTax = doc.createElement("amountWithoutTax");
             amountWithoutTax.appendChild(this.createTextNode(doc, toPlainString(xmlInvoiceHeaderCategoryDTO.getAmountWithoutTax())));
             category.appendChild(amountWithoutTax);
@@ -1244,7 +1279,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                     subCategory.setAttribute("amountWithoutTax", toPlainString(subCatInvoiceAgregate.getAmountWithoutTax()));
                     subCategory.setAttribute("amountTax", toPlainString(subCatInvoiceAgregate.getAmountTax()));
                     subCategory.setAttribute("sortIndex",
-                            subCatInvoiceAgregate != null && subCatInvoiceAgregate.getInvoiceSubCategory() != null && subCatInvoiceAgregate.getInvoiceSubCategory().getSortIndex() != null
+                            subCatInvoiceAgregate.getInvoiceSubCategory() != null && subCatInvoiceAgregate.getInvoiceSubCategory().getSortIndex() != null
                                     ? subCatInvoiceAgregate.getInvoiceSubCategory().getSortIndex().toString()
                                     : "");
                     if (subCatInvoiceAgregate.getAmountsByTax() != null && !subCatInvoiceAgregate.getAmountsByTax().isEmpty()) {
@@ -1275,14 +1310,13 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      *
      * @param doc                  XML invoice DOM
      * @param invoice              Invoice to convert
-     * @param invoiceConfiguration Invoice configuration
      * @return DOM element
      */
-    protected Element createDiscountsSection(Document doc, Invoice invoice, InvoiceConfiguration invoiceConfiguration) {
+    protected Element createDiscountsSection(Document doc, Invoice invoice) {
 
         Element discounts = doc.createElement("discounts");
-        List<SubCategoryInvoiceAgregate> discountInvoiceAgregates = new ArrayList<>();
-        discountInvoiceAgregates = invoice.getDiscountAgregates();
+        List<SubCategoryInvoiceAgregate> discountInvoiceAgregates = invoice.getDiscountAgregates();
+
         for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : discountInvoiceAgregates) {
             Element discount = doc.createElement("discount");
             discount.setAttribute("discountPlanCode", subCategoryInvoiceAgregate.getDiscountPlanItem().getDiscountPlan().getCode());
@@ -1304,15 +1338,15 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * @param linkedInvoices Linked invoices
      * @return A space separated list of invoice numbers
      */
-    private String getLinkedInvoicesnumberAsString(List<Invoice> linkedInvoices) {
+    private String getLinkedInvoicesnumberAsString(List<LinkedInvoice> linkedInvoices) {
         if (linkedInvoices == null || linkedInvoices.isEmpty()) {
             return "";
         }
-        String result = "";
-        for (Invoice inv : linkedInvoices) {
-            result += inv.getInvoiceNumber() + " ";
+        StringBuilder result = new StringBuilder();
+        for (LinkedInvoice inv : linkedInvoices) {
+            result.append(inv.getLinkedInvoiceValue().getInvoiceNumber()).append(" ");
         }
-        return result;
+        return result.toString();
     }
 
     /**
@@ -1322,7 +1356,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * @param invoice             Invoice to convert
      * @param isVirtual           Is this a virtual invoice. If true, no invoice, invoice aggregate nor RT information is persisted in DB
      * @param isInvoiceAdjustment Is this an adjustment invoice
-     * @param doc                 XML invoice DOM Builder
      * @return DOM element DOM element
      */
     protected Element createInvoiceSection(Document doc, Invoice invoice, boolean isVirtual, boolean isInvoiceAdjustment, DocumentBuilder docBuilder) {
@@ -1333,19 +1366,19 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             ratedTransactions = getRatedTransactions(invoice, isVirtual);
         }
         if (invoiceConfiguration.isDisplayOffers()) {
-            Element offersTag = createOffersSection(doc, invoice, ratedTransactions, isVirtual, invoiceConfiguration, null);
+            Element offersTag = createOffersSection(doc, invoice, ratedTransactions, null);
             if (offersTag != null) {
                 invoiceTag.appendChild(offersTag);
             }
         }
         if (invoiceConfiguration.isDisplayServices()) {
-            Element servicesTag = createServicesSection(doc, invoice, ratedTransactions, isVirtual, invoiceConfiguration, null);
+            Element servicesTag = createServicesSection(doc, ratedTransactions, null);
             if (servicesTag != null) {
                 invoiceTag.appendChild(servicesTag);
             }
         }
         if (invoiceConfiguration.isDisplayPricePlans()) {
-            Element pricePlansTag = createPricePlansSection(doc, invoice, ratedTransactions, isVirtual, invoiceConfiguration);
+            Element pricePlansTag = createPricePlansSection(doc, invoice, ratedTransactions);
             if (pricePlansTag != null) {
                 invoiceTag.appendChild(pricePlansTag);
             }
@@ -1372,13 +1405,13 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         ofNullable(invoice.getExternalRef()).ifPresent(externalRef
                 -> invoiceTag.setAttribute("externalReference", externalRef));
         if (isInvoiceAdjustment) {
-            Set<Invoice> linkedInvoices = invoice.getLinkedInvoices();
+            Set<LinkedInvoice> linkedInvoices = invoice.getLinkedInvoices();
             invoiceTag.setAttribute("adjustedInvoiceNumber", getLinkedInvoicesnumberAsString(new ArrayList<>(linkedInvoices)));
         }
         BillingCycle billingCycle = null;
-        Invoice linkedInvoice = invoiceService.getLinkedInvoice(invoice);
-        if (isInvoiceAdjustment && linkedInvoice != null && linkedInvoice.getBillingRun() != null) {
-            billingCycle = linkedInvoice.getBillingRun().getBillingCycle();
+        LinkedInvoice linkedInvoice = invoiceService.getLinkedInvoice(invoice);
+        if (isInvoiceAdjustment && linkedInvoice != null && linkedInvoice.getLinkedInvoiceValue().getBillingRun() != null) {
+            billingCycle = linkedInvoice.getLinkedInvoiceValue().getBillingRun().getBillingCycle();
         } else {
             if (invoice.getBillingRun() != null && invoice.getBillingRun().getBillingCycle() != null) {
                 billingCycle = invoice.getBillingRun().getBillingCycle();
@@ -1391,12 +1424,12 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         if (header != null) {
             invoiceTag.appendChild(header);
         }
-        Element amountTag = createAmountSection(doc, invoice, invoiceConfiguration);
+        Element amountTag = createAmountSection(doc, invoice);
         if (amountTag != null) {
             invoiceTag.appendChild(amountTag);
         }
         if (invoiceConfiguration.isDisplayOrders()) {
-            Element ordersTag = createOrdersSection(doc, invoice, invoiceConfiguration, docBuilder);
+            Element ordersTag = createOrdersSection(doc, invoice, docBuilder);
             if (ordersTag != null) {
                 invoiceTag.appendChild(ordersTag);
             }
@@ -1439,7 +1472,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         billingAccountTag.setAttribute("registrationNo", getDefaultIfNull(billingAccount.getRegistrationNo(), ""));
         billingAccountTag.setAttribute("vatNo", getDefaultIfNull(billingAccount.getVatNo(), ""));
         if (invoiceConfiguration.isDisplayBillingCycle()) {
-            Element bcTag = createBillingCycleSection(doc, invoice, billingCycle);
+            Element bcTag = createBillingCycleSection(doc, billingCycle);
             if (bcTag != null) {
                 billingAccountTag.appendChild(bcTag);
             }
@@ -1488,12 +1521,9 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      *
      * @param doc                  XML invoice DOM
      * @param invoice              Invoice to convert
-     * @param linkedInvoice        Linked invoice
-     * @param isInvoiceAdjustment  Is this adjustment invoice
-     * @param invoiceConfiguration Invoice configuration
      * @return DOM element
      */
-    protected Element createCustomerAccountSection(Document doc, Invoice invoice, Invoice linkedInvoice, boolean isInvoiceAdjustment, InvoiceConfiguration invoiceConfiguration) {
+    protected Element createCustomerAccountSection(Document doc, Invoice invoice) {
 
         Element customerAccountTag = doc.createElement("customerAccount");
         CustomerAccount customerAccount = invoice.getBillingAccount().getCustomerAccount();
@@ -1508,6 +1538,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         customerAccountTag.setAttribute("externalRef1", getDefaultIfNull(customerAccount.getExternalRef1(), ""));
         customerAccountTag.setAttribute("externalRef2", getDefaultIfNull(customerAccount.getExternalRef2(), ""));
         customerAccountTag.setAttribute("currency", getDefaultIfNull(invoice.getBillingAccount().getTradingCurrency().getCurrencyCode(), ""));
+        customerAccountTag.setAttribute("currencySymbol", getDefaultIfNull(invoice.getBillingAccount().getTradingCurrency().getSymbol(), ""));
         customerAccountTag.setAttribute("language", getDefaultIfNull(languageDescription, ""));
         customerAccountTag.setAttribute("jobTitle", getDefaultIfNull(customerAccount.getJobTitle(), ""));
         customerAccountTag.setAttribute("registrationNo", getDefaultIfNull(customerAccount.getRegistrationNo(), ""));
@@ -1566,10 +1597,9 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      *
      * @param doc                  XML invoice DOM
      * @param invoice              Invoice to convert
-     * @param invoiceConfiguration Invoice configuration
      * @return DOM element
      */
-    protected Element createCustomerSection(Document doc, Invoice invoice, InvoiceConfiguration invoiceConfiguration) {
+    protected Element createCustomerSection(Document doc, Invoice invoice) {
     	
     	Customer customer = invoice.getBillingAccount().getCustomerAccount().getCustomer();
         CustomerBrand customerBrand = customer.getCustomerBrand();
@@ -1606,10 +1636,9 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      *
      * @param doc                  XML invoice DOM
      * @param provider             Provider
-     * @param invoiceConfiguration Invoice configuration
      * @return DOM element
      */
-    protected Element createProviderSection(Document doc, Provider provider, InvoiceConfiguration invoiceConfiguration) {
+    protected Element createProviderSection(Document doc, Provider provider) {
 
         Element providerTag = doc.createElement("provider");
         providerTag.setAttribute("code", provider.getCode());
@@ -1639,14 +1668,11 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
     /**
      * Create invoice/orders DOM element
-     *
-     * @param doc                  XML invoice DOM
      * @param invoice              Invoice to convert
-     * @param invoiceConfiguration Invoice configuration
      * @param doc                  XML invoice DOM Builder
      * @return DOM element
      */
-    protected Element createOrdersSection(Document doc, Invoice invoice, InvoiceConfiguration invoiceConfiguration, DocumentBuilder docBuilder) {
+    protected Element createOrdersSection(Document doc, Invoice invoice, DocumentBuilder docBuilder) {
 
         Element ordersTag = doc.createElement("orders");
         List<Order> orders = invoice.getOrders();
@@ -1680,34 +1706,79 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      *
      * @param doc                  XML invoice DOM
      * @param invoice              Invoice to convert
-     * @param invoiceConfiguration Invoice configuration
      * @return DOM element
      */
-    protected Element createAmountSection(Document doc, Invoice invoice, InvoiceConfiguration invoiceConfiguration) {
+    protected Element createAmountSection(Document doc, Invoice invoice) {
 
         Element amount = doc.createElement("amount");
+
         Element currency = doc.createElement("currency");
-        Text currencyTxt = this.createTextNode(doc, invoice.getBillingAccount().getTradingCurrency().getCurrencyCode());
-        currency.appendChild(currencyTxt);
+        Element currencySymbol = doc.createElement("currencySymbol");
+        Text currencyCodeValue = this.createTextNode(doc, invoice.getBillingAccount().getTradingCurrency().getCurrencyCode());
+        Text currencySymbolValue = this.createTextNode(doc, StringUtils.isNotBlank(invoice.getBillingAccount().getTradingCurrency().getSymbol())
+                        ? invoice.getBillingAccount().getTradingCurrency().getSymbol()
+                        : invoice.getBillingAccount().getTradingCurrency().getCurrencyCode());
+        currency.appendChild(currencyCodeValue);
+        currencySymbol.appendChild(currencySymbolValue);
         amount.appendChild(currency);
+        amount.appendChild(currencySymbol);
+
         Element amountWithoutTax = doc.createElement("amountWithoutTax");
         amountWithoutTax.appendChild(this.createTextNode(doc, toPlainString(invoice.getAmountWithoutTax())));
         amount.appendChild(amountWithoutTax);
+
         Element amountWithTax = doc.createElement("amountWithTax");
         Text amountWithTaxTxt = this.createTextNode(doc, toPlainString(invoice.getAmountWithTax()));
         amountWithTax.appendChild(amountWithTaxTxt);
         amount.appendChild(amountWithTax);
+
         Element balance = doc.createElement("balance");
         balance.appendChild(this.createTextNode(doc, toPlainString(invoice.getDueBalance())));
         amount.appendChild(balance);
+
+        Element advances = createAndPopulateAdvancesSection(doc, invoice);
+        if (advances != null) {
+            amount.appendChild(advances);
+        }
+
         Element netToPayElement = doc.createElement("netToPay");
         netToPayElement.appendChild(this.createTextNode(doc, toPlainString(invoice.getNetToPay())));
         amount.appendChild(netToPayElement);
-        Element taxes = createAmountTaxSection(doc, invoice, invoiceConfiguration);
+
+        Element taxes = createAmountTaxSection(doc, invoice);
         if (taxes != null) {
             amount.appendChild(taxes);
         }
+
         return amount;
+    }
+
+    private Element createAndPopulateAdvancesSection(Document doc, Invoice invoice) {
+
+        List<Object[]> advanceLinkedInvoices = invoiceService.findLinkedInvoicesByIdAndType(invoice.getId(), "ADV");
+
+        if (advanceLinkedInvoices != null && !advanceLinkedInvoices.isEmpty()) {
+
+            return populateAdvancesSection(doc, advanceLinkedInvoices);
+        }
+        return null;
+    }
+
+    private Element populateAdvancesSection(Document doc, List<Object[]> advanceLinkedInvoices) {
+
+        Element advances = doc.createElement("advances");
+
+        for (Object[] advancedLinkedInvoice : advanceLinkedInvoices) {
+
+            Element advance = doc.createElement("advance");
+
+            advance.setAttribute("invoiceNumber", advancedLinkedInvoice[0] != null ? advancedLinkedInvoice[0].toString() : "");
+            advance.setAttribute("invoiceDate", advancedLinkedInvoice[1] != null ? new SimpleDateFormat("dd/MM/yyyy").format(advancedLinkedInvoice[1]) : "");
+            advance.setAttribute("amountWithTax", advancedLinkedInvoice[2] != null ? advancedLinkedInvoice[2].toString() : "");
+
+            advances.appendChild(advance);
+        }
+        return advances;
     }
 
     /**
@@ -1723,12 +1794,12 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
         Element header = doc.createElement("header");
         if (invoiceConfiguration.isDisplayProvider()) {
-            Element providerTag = createProviderSection(doc, appProvider, invoiceConfiguration);
+            Element providerTag = createProviderSection(doc, appProvider);
             if (providerTag != null) {
                 header.appendChild(providerTag);
             }
         }
-        Element customerTag = createCustomerSection(doc, invoice, invoiceConfiguration);
+        Element customerTag = createCustomerSection(doc, invoice);
         if (customerTag != null) {
             header.appendChild(customerTag);
         }
@@ -1736,12 +1807,12 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         if (sellerTag != null) {
             header.appendChild(sellerTag);
         }
-        Invoice linkedInvoice = invoiceService.getLinkedInvoice(invoice);
-        Element customerAccountTag = createCustomerAccountSection(doc, invoice, linkedInvoice, isInvoiceAdjustment, invoiceConfiguration);
+        LinkedInvoice linkedInvoice = invoiceService.getLinkedInvoice(invoice);
+        Element customerAccountTag = createCustomerAccountSection(doc, invoice);
         if (customerAccountTag != null) {
             header.appendChild(customerAccountTag);
         }
-        Element billingAccountTag = createBillingAccountSection(doc, invoice, linkedInvoice, isInvoiceAdjustment, invoiceConfiguration);
+        Element billingAccountTag = createBillingAccountSection(doc, invoice, linkedInvoice != null ? linkedInvoice.getLinkedInvoiceValue() : null, isInvoiceAdjustment, invoiceConfiguration);
         if (billingAccountTag != null) {
             header.appendChild(billingAccountTag);
         }
@@ -1766,13 +1837,13 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             header.appendChild(paymentMethod);
         }
         Element comment = doc.createElement("comment");
-        comment.appendChild(doc.createComment(getDefaultIfNull(invoice.getComment(), " ")));
+        comment.appendChild(doc.createCDATASection(getDefaultIfNull(invoice.getComment(), " ")));
         header.appendChild(comment);
-        Element categoriesTag = createHeaderCategoriesSection(doc, invoice, invoiceConfiguration);
+        Element categoriesTag = createHeaderCategoriesSection(doc, invoice);
         if (categoriesTag != null) {
             header.appendChild(categoriesTag);
         }
-        Element discountsTag = createDiscountsSection(doc, invoice, invoiceConfiguration);
+        Element discountsTag = createDiscountsSection(doc, invoice);
         if (discountsTag != null) {
             header.appendChild(discountsTag);
         }
@@ -1824,23 +1895,11 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * @return DOM element
      */
     protected Element createDetailsSection(Document doc, Invoice invoice, List<RatedTransaction> ratedTransactions, boolean isVirtual, InvoiceConfiguration invoiceConfiguration, List<InvoiceLine> invoiceLines) {
-        ParamBean paramBean = paramBeanFactory.getInstance();
-        String invoiceDateFormat = paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN);
-        String invoiceDateTimeFormat = paramBean.getProperty("invoice.dateTimeFormat", DEFAULT_DATE_TIME_PATTERN);
-        String invoiceLanguageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
         Element detail = doc.createElement("detail");
         Element userAccountsTag = ratedTransactions != null ? createUserAccountsSection(doc, invoice, ratedTransactions, isVirtual, invoiceConfiguration)
                 :  createUserAccountsSectionIL(doc, invoice, invoiceLines, isVirtual, invoiceConfiguration);
         if (userAccountsTag != null) {
             detail.appendChild(userAccountsTag);
-        }
-        if (invoiceLines != null && !invoiceLines.isEmpty()) {
-            Element lines = doc.createElement("lines");
-            for (InvoiceLine invoiceLine : invoiceLines) {
-                ofNullable(createILSection(doc, invoice, invoiceLine, invoiceDateFormat,
-                        invoiceDateTimeFormat, invoiceConfiguration, invoiceLanguageCode)).ifPresent(lines::appendChild);
-            }
-            detail.appendChild(lines);
         }
         return detail;
     }
@@ -1850,12 +1909,11 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      *
      * @param doc                   XML invoice DOM
      * @param edr                   EDR
-     * @param invoiceConfiguration  Invoice configuration
      * @param invoiceDateFormat     Date format
      * @param invoiceDateTimeFormat Timestamp format
      * @return DOM element
      */
-    protected Element createEDRSection(Document doc, EDR edr, InvoiceConfiguration invoiceConfiguration, String invoiceDateFormat, String invoiceDateTimeFormat) {
+    protected Element createEDRSection(Document doc, EDR edr, String invoiceDateFormat, String invoiceDateTimeFormat) {
 
         Element edrInfo = doc.createElement("edr");
         edrInfo.setAttribute("originRecord", edr.getOriginRecord() != null ? edr.getOriginRecord() : "");
@@ -1933,7 +1991,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * Create invoice/details/userAccounts/userAccount/categories/category/subcategories/subcategory/line DOM element
      *
      * @param doc                   XML invoice DOM
-     * @param invoice               Invoice to convert
      * @param ratedTransaction      Rated transaction
      * @param invoiceDateFormat     Date format
      * @param invoiceDateTimeFormat Timestamp format
@@ -1941,8 +1998,8 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * @param invoiceLanguageCode   Invoice language - language code
      * @return DOM element
      */
-    protected Element createRTSection(Document doc, Invoice invoice, RatedTransaction ratedTransaction, String invoiceDateFormat, String invoiceDateTimeFormat, InvoiceConfiguration invoiceConfiguration,
-            String invoiceLanguageCode) {
+    protected Element createRTSection(Document doc, RatedTransaction ratedTransaction, String invoiceDateFormat, String invoiceDateTimeFormat, InvoiceConfiguration invoiceConfiguration,
+                                      String invoiceLanguageCode) {
 
         Element line = doc.createElement("line");
         Date periodStartDateRT = ratedTransaction.getStartDate();
@@ -2003,7 +2060,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         line.appendChild(usageDate);
         addCustomFields(ratedTransaction, doc, line);
         if (ratedTransaction.getPriceplan() != null) {
-            Element ppTag = createPricePlanSection(doc, invoice, ratedTransaction.getPriceplan(), true, invoiceLanguageCode);
+            Element ppTag = createPricePlanSection(doc, ratedTransaction.getPriceplan(), true, invoiceLanguageCode);
             if (ppTag != null) {
                 line.appendChild(ppTag);
             }
@@ -2021,7 +2078,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         }
         EDR edr = ratedTransaction.getEdr();
         if (invoiceConfiguration.isDisplayEdrs() && edr != null) {
-            Element edrTag = createEDRSection(doc, edr, invoiceConfiguration, invoiceDateFormat, invoiceDateTimeFormat);
+            Element edrTag = createEDRSection(doc, edr, invoiceDateFormat, invoiceDateTimeFormat);
             if (edrTag != null) {
                 line.appendChild(edrTag);
             }
@@ -2029,7 +2086,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         ServiceInstance serviceInstance = ratedTransaction.getServiceInstance();
         if (serviceInstance != null) {
             String offerCode = ratedTransaction.getOfferTemplate() != null ? ratedTransaction.getOfferTemplate().getCode() : null;
-            Element serviceTag = createServiceSection(doc, invoice, serviceInstance, offerCode, true);
+            Element serviceTag = createServiceSection(doc, serviceInstance, offerCode, true);
             if (serviceTag != null) {
                 line.appendChild(serviceTag);
             }
@@ -2041,7 +2098,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * Create invoice/details/userAccounts/userAccount/categories/category/subcategories/subcategory DOM element
      *
      * @param doc                   XML invoice DOM
-     * @param invoice               Invoice to convert
      * @param subCatInvoiceAgregate Invoice subcategory aggregate
      * @param ratedTransactions     Rated transactions
      * @param isVirtual             Is this a virtual invoice. If true, no invoice, invoice aggregate nor RT information is persisted in DB
@@ -2051,7 +2107,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * @param invoiceConfiguration  Invoice configuration
      * @return DOM element
      */
-    protected Element createUAInvoiceSubcategorySection(Document doc, Invoice invoice, SubCategoryInvoiceAgregate subCatInvoiceAgregate, List<RatedTransaction> ratedTransactions, boolean isVirtual,
+    protected Element createUAInvoiceSubcategorySection(Document doc, SubCategoryInvoiceAgregate subCatInvoiceAgregate, List<RatedTransaction> ratedTransactions, boolean isVirtual,
             String invoiceDateFormat, String invoiceDateTimeFormat, String invoiceLanguageCode, InvoiceConfiguration invoiceConfiguration) {
 
         InvoiceSubCategory invoiceSubCat = subCatInvoiceAgregate.getInvoiceSubCategory();
@@ -2079,7 +2135,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                     && !((ratedTransaction.getWallet() == null && walletId == null) || (walletId != null && walletId.equals(ratedTransaction.getWallet().getId()))))) {
                 continue;
             }
-            Element rtTag = createRTSection(doc, invoice, ratedTransaction, invoiceDateFormat, invoiceDateTimeFormat, invoiceConfiguration, invoiceLanguageCode);
+            Element rtTag = createRTSection(doc, ratedTransaction, invoiceDateFormat, invoiceDateTimeFormat, invoiceConfiguration, invoiceLanguageCode);
             if (rtTag != null) {
                 subCategory.appendChild(rtTag);
             }
@@ -2092,7 +2148,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * Create invoice/details/userAccounts/userAccount/categories/category DOM element
      *
      * @param doc                     XML invoice DOM
-     * @param invoice                 Invoice to convert
      * @param categoryInvoiceAgregate Invoice category aggregate
      * @param ratedTransactions       Rated transactions
      * @param isVirtual               Is this a virtual invoice. If true, no invoice, invoice aggregate nor RT information is persisted in DB
@@ -2102,7 +2157,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * @param invoiceConfiguration    Invoice configuration
      * @return DOM element
      */
-    protected Element createDetailsUAInvoiceCategorySection(Document doc, Invoice invoice, CategoryInvoiceAgregate categoryInvoiceAgregate, List<RatedTransaction> ratedTransactions, boolean isVirtual,
+    protected Element createDetailsUAInvoiceCategorySection(Document doc, CategoryInvoiceAgregate categoryInvoiceAgregate, List<RatedTransaction> ratedTransactions, boolean isVirtual,
             String invoiceDateFormat, String invoiceDateTimeFormat, String invoiceLanguageCode, InvoiceConfiguration invoiceConfiguration) {
 
         InvoiceCategory invoiceCategory = categoryInvoiceAgregate.getInvoiceCategory();
@@ -2132,7 +2187,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             if (subCatInvoiceAgregate.isDiscountAggregate()) {
                 continue;
             }
-            Element subCategory = createUAInvoiceSubcategorySection(doc, invoice, subCatInvoiceAgregate, ratedTransactions, isVirtual, invoiceDateFormat, invoiceDateTimeFormat, invoiceLanguageCode, invoiceConfiguration);
+            Element subCategory = createUAInvoiceSubcategorySection(doc, subCatInvoiceAgregate, ratedTransactions, isVirtual, invoiceDateFormat, invoiceDateTimeFormat, invoiceLanguageCode, invoiceConfiguration);
             if (subCategory != null) {
                 subCategories.appendChild(subCategory);
             }
@@ -2158,12 +2213,10 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     /**
      * Get a list of offers referenced from RTs
      *
-     * @param invoice           Invoice to convert
-     * @param isVirtual         Is this a virtual invoice. If true, no invoice, invoice aggregate nor RT information is persisted in DB
      * @param ratedTransactions Rated transactions
      * @return A list of price plans referenced from RTs
      */
-    protected List<OfferTemplate> getOffers(Invoice invoice, boolean isVirtual, List<RatedTransaction> ratedTransactions) {
+    protected List<OfferTemplate> getOffers(List<RatedTransaction> ratedTransactions) {
 
         // TODO Need to check performance, maybe its quick enough to avoid searching DB in non-virtual cases
         // if (isVirtual) {
@@ -2183,12 +2236,10 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     /**
      * Get a list of service instances referenced from RTs
      *
-     * @param invoice           Invoice to convert
-     * @param isVirtual         Is this a virtual invoice. If true, no invoice, invoice aggregate nor RT information is persisted in DB
      * @param ratedTransactions Rated transactions
      * @return list of service instances referenced from RTs
      */
-    protected Map<String, List<ServiceInstance>> getServices(Invoice invoice, boolean isVirtual, List<RatedTransaction> ratedTransactions) {
+    protected Map<String, List<ServiceInstance>> getServices(List<RatedTransaction> ratedTransactions) {
 
         // TODO Need to check performance, maybe its quick enough to avoid searching DB in non-virtual cases
         // if (isVirtual) {
@@ -2196,11 +2247,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Set<Long> serviceInstanceIds = new HashSet<>();
         for (RatedTransaction ratedTransaction : ratedTransactions) {
             if (ratedTransaction.getServiceInstance() != null && ratedTransaction.getOfferTemplate() != null && !serviceInstanceIds.contains(ratedTransaction.getServiceInstance().getId())) {
-                List<ServiceInstance> services = servicesByOffer.get(ratedTransaction.getOfferTemplate().getCode());
-                if (services == null) {
-                    services = new ArrayList<>();
-                    servicesByOffer.put(ratedTransaction.getOfferTemplate().getCode(), services);
-                }
+                List<ServiceInstance> services = servicesByOffer.computeIfAbsent(ratedTransaction.getOfferTemplate().getCode(), k -> new ArrayList<>());
                 services.add(ratedTransaction.getServiceInstance());
                 serviceInstanceIds.add(ratedTransaction.getServiceInstance().getId());
             }
@@ -2212,12 +2259,10 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     /**
      * Get a list of price plans referenced from RTs
      *
-     * @param invoice           Invoice to convert
-     * @param isVirtual         Is this a virtual invoice. If true, no invoice, invoice aggregate nor RT information is persisted in DB
      * @param ratedTransactions Rated transactions
      * @return A list of price plans referenced from RTs
      */
-    protected List<PricePlanMatrix> getPricePlans(Invoice invoice, boolean isVirtual, List<RatedTransaction> ratedTransactions) {
+    protected List<PricePlanMatrix> getPricePlans(List<RatedTransaction> ratedTransactions) {
 
         // TODO Need to check performance, maybe its quick enough to avoid searching DB in non-virtual cases
         List<PricePlanMatrix> pps = new ArrayList<>();
@@ -2235,15 +2280,13 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     /**
      * Get a list of subscriptions that are being invoiced - referenced from RTs
      *
-     * @param invoice           Invoice to convert
      * @param userAccount       User account
-     * @param isVirtual         Is this a virtual invoice. If true, no invoice, invoice aggregate nor RT information is persisted in DB
      * @param ignoreUA          Shall UA be ignored and all subscriptions be returned. Used as true when aggregation by user account is turned off - system property
      *                          invoice.aggregateByUA=false
      * @param ratedTransactions Rated transactions
      * @return A list of subscription that are being invoiced - referenced from RTs
      */
-    protected List<Subscription> getSubscriptions(Invoice invoice, UserAccount userAccount, boolean isVirtual, boolean ignoreUA, List<RatedTransaction> ratedTransactions) {
+    protected List<Subscription> getSubscriptions(UserAccount userAccount, boolean ignoreUA, List<RatedTransaction> ratedTransactions) {
 
         // TODO Need to check performance, maybe its quick enough to avoid searching DB in non-virtual cases
         List<Subscription> subscriptions = new ArrayList<>();
@@ -2278,13 +2321,13 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             invoiceLines = invoice.getInvoiceLines();
         }
         if (invoiceConfiguration.isDisplayOffers()) {
-            Element offersTag = createOffersSection(doc, invoice, null, isVirtual, invoiceConfiguration, invoiceLines);
+            Element offersTag = createOffersSection(doc, invoice, null, invoiceLines);
             if (offersTag != null) {
                 invoiceTag.appendChild(offersTag);
             }
         }
         if (invoiceConfiguration.isDisplayServices()) {
-            Element servicesTag = createServicesSection(doc, invoice, null, isVirtual, invoiceConfiguration, invoiceLines);
+            Element servicesTag = createServicesSection(doc, null, invoiceLines);
             if (servicesTag != null) {
                 invoiceTag.appendChild(servicesTag);
             }
@@ -2296,21 +2339,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             }
         }
         return invoiceTag;
-    }
-
-    /**
-     * Get a list of invoice lines included in the invoice
-     *
-     * @param invoice   Invoice to convert
-     * @param isVirtual Is this a virtual invoice. If true, no invoice, invoice aggregate nor IL information is persisted in DB
-     * @return A list of invoice lines included in the invoice
-     */
-    protected List<InvoiceLine> getInvoiceLines(Invoice invoice, boolean isVirtual) {
-        List<InvoiceLine> invoiceLines = invoice.getDraftInvoiceLines();
-        if (!isVirtual) {
-            invoiceLines.addAll(invoiceLineService.getInvoiceLinesByInvoice(invoice, appProvider.isDisplayFreeTransacInInvoice()));
-        }
-        return invoiceLines;
     }
 
     /**
@@ -2343,11 +2371,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         for (InvoiceLine invoiceLine : invoiceLines) {
             if (invoiceLine.getServiceInstance() != null && invoiceLine.getOfferTemplate() != null
                     && !serviceInstanceIds.contains(invoiceLine.getServiceInstance().getId())) {
-                List<ServiceInstance> services = servicesByOffer.get(invoiceLine.getOfferTemplate().getCode());
-                if (services == null) {
-                    services = new ArrayList<>();
-                    servicesByOffer.put(invoiceLine.getOfferTemplate().getCode(), services);
-                }
+                List<ServiceInstance> services = servicesByOffer.computeIfAbsent(invoiceLine.getOfferTemplate().getCode(), k -> new ArrayList<>());
                 services.add(invoiceLine.getServiceInstance());
                 serviceInstanceIds.add(invoiceLine.getServiceInstance().getId());
             }
@@ -2378,13 +2402,11 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * Create invoice/details/userAccounts/userAccount/categories/category/subcategories/subcategory/line DOM element
      *
      * @param doc                   XML invoice DOM
-     * @param invoice               Invoice to convert
      * @param invoiceLine           invoice Line
      * @param invoiceDateFormat     Date format
      * @return DOM element
      */
-    protected Element createILSection(Document doc, Invoice invoice, InvoiceLine invoiceLine, String invoiceDateFormat,
-                                      String invoiceDateTimeFormat, InvoiceConfiguration invoiceConfiguration, String invoiceLanguageCode) {
+    protected Element createILSection(Document doc, InvoiceLine invoiceLine, String invoiceDateFormat, InvoiceConfiguration invoiceConfiguration) {
         Element line;
         line = doc.createElement("line");
         Date periodStartDate = invoiceLine != null
@@ -2393,7 +2415,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                 && invoiceLine.getValidity() != null ? invoiceLine.getValidity().getTo() : null;
         line.setAttribute("periodEndDate", DateUtils.formatDateWithPattern(periodEndDate, invoiceDateFormat));
         line.setAttribute("periodStartDate", DateUtils.formatDateWithPattern(periodStartDate, invoiceDateFormat));
-        line.setAttribute("taxPercent", invoiceLine.getTaxRate().toPlainString());
+        line.setAttribute("taxPercent", invoiceLine.getTaxRate() != null ? invoiceLine.getTaxRate().toPlainString() : "");
         line.setAttribute("sortIndex", "");
         line.setAttribute("code", invoiceLine.getOrderRef());
         Element label = doc.createElement("label");
@@ -2433,7 +2455,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
         if (serviceInstance != null) {
             String offerCode = invoiceLine.getOfferTemplate() != null ? invoiceLine.getOfferTemplate().getCode() : null;
-            Element serviceTag = createServiceSection(doc, invoice, serviceInstance, offerCode, true);
+            Element serviceTag = createServiceSection(doc, serviceInstance, offerCode, true);
             if (serviceTag != null) {
                 line.appendChild(serviceTag);
             }
@@ -2486,31 +2508,18 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
         Element userAccountsTag = doc.createElement("userAccounts");
         String invoiceLanguageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
-        
-        if(invoiceConfiguration.isDisplayUserAccountHierarchy()) {
-        	List<UserAccount> parentUserAccounts = invoice.getBillingAccount().getParentUserAccounts();
-        	for(UserAccount parentUserAccount : parentUserAccounts) {
-                    Element userAccountTag = createUserAccountSectionIL(doc, invoice, parentUserAccount,
-                            invoiceLines, isVirtual, false, invoiceLanguageCode, invoiceConfiguration);
-                    if (userAccountTag == null) {
-                        continue;
-                    }
+        Set<UserAccount> userAccounts = getUserAccounts(invoice, invoiceConfiguration);
+        for (UserAccount userAccount : userAccounts) {
+            Element userAccountTag = createUserAccountSectionIL(doc, invoice, userAccount,
+                    invoiceLines, isVirtual, false, invoiceLanguageCode, invoiceConfiguration);
+            if (userAccountTag != null) {
+                if (invoiceConfiguration.isDisplayUserAccountHierarchy()) {
                     createUserAccountChildSectionIL(doc, invoice, invoiceLines, isVirtual,
-                            invoiceLanguageCode, invoiceConfiguration, parentUserAccount.getUserAccounts(), userAccountTag);
-                    userAccountsTag.appendChild(userAccountTag);        		
-        		}
-
-        } else {
-            for (UserAccount userAccount : invoice.getBillingAccount().getUsersAccounts()) {
-                Element userAccountTag = createUserAccountSectionIL(doc, invoice, userAccount, invoiceLines, isVirtual,
-                        false, invoiceLanguageCode, invoiceConfiguration);
-                if (userAccountTag == null) {
-                    continue;
+                            invoiceLanguageCode, invoiceConfiguration, userAccount.getUserAccounts(), userAccountTag);
                 }
                 userAccountsTag.appendChild(userAccountTag);
             }
         }
-
         Element userAccountTag = createUserAccountSectionIL(doc, invoice, null, invoiceLines, isVirtual,
                 userAccountsTag.getChildNodes().getLength() == 0, invoiceLanguageCode, invoiceConfiguration);
         if (userAccountTag != null) {
@@ -2541,7 +2550,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         }
         Element userAccountTag = doc.createElement("userAccount");
         if (userAccount == null) {
-            return null;
+        	 userAccountTag.setAttribute("description", "-");
         } else {
             userAccountTag.setAttribute("id", userAccount.getId() + "");
             userAccountTag.setAttribute("code", userAccount.getCode());
@@ -2552,21 +2561,20 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             addCustomFields(userAccount, doc, userAccountTag);
         }
         if (invoiceConfiguration.isDisplaySubscriptions()) {
-            Element subscriptionsTag = createSubscriptionsSection(doc, invoice, userAccount, null, isVirtual, ignoreUA, invoiceConfiguration, invoiceLines);
+        	List<RatedTransaction> ratedTransactions = ratedTransactionService.listRatedTransactionsByInvoice(invoice);
+            Element subscriptionsTag = createSubscriptionsSection(doc, userAccount, ratedTransactions, isVirtual, ignoreUA, invoiceLines);
             if (subscriptionsTag != null
                     && subscriptionsTag.getChildNodes() != null && subscriptionsTag.getChildNodes().getLength() != 0) {
                 userAccountTag.appendChild(subscriptionsTag);
             }
         }
-        if (userAccount != null) {
-            Element nameTag = createNameSection(doc, userAccount, invoiceLanguageCode);
-            if (nameTag != null) {
-                userAccountTag.appendChild(nameTag);
-            }
-            Element addressTag = createAddressSection(doc, userAccount, invoiceLanguageCode);
-            if (addressTag != null) {
-                userAccountTag.appendChild(addressTag);
-            }
+        Element nameTag = createNameSection(doc, userAccount, invoiceLanguageCode);
+        if (nameTag != null) {
+            userAccountTag.appendChild(nameTag);
+        }
+        Element addressTag = createAddressSection(doc, userAccount, invoiceLanguageCode);
+        if (addressTag != null) {
+            userAccountTag.appendChild(addressTag);
         }
         userAccountTag.appendChild(categoriesTag);
         return userAccountTag;
@@ -2651,8 +2659,8 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             if (subCatInvoiceAgregate.isDiscountAggregate()) {
                 continue;
             }
-            Element subCategory = createUAInvoiceSubcategorySectionIL(doc, invoice, subCatInvoiceAgregate, invoiceLines,
-                    isVirtual, invoiceDateFormat, invoiceDateTimeFormat, invoiceLanguageCode, invoiceConfiguration);
+            Element subCategory = createUAInvoiceSubcategorySectionIL(doc, subCatInvoiceAgregate, invoiceLines,
+                    isVirtual, invoiceDateFormat, invoiceDateTimeFormat , invoiceConfiguration);
             if (subCategory != null) {
                 subCategories.appendChild(subCategory);
             }
@@ -2664,7 +2672,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * Create invoice/details/userAccounts/userAccount/categories/category/subcategories/subcategory DOM element
      *
      * @param doc                   XML invoice DOM
-     * @param invoice               Invoice to convert
      * @param subCatInvoiceAggregate Invoice subcategory aggregate
      * @param invoiceLines          invoice lines
      * @param isVirtual             Is this a virtual invoice. If true, no invoice, invoice aggregate nor RT information is persisted in DB
@@ -2672,9 +2679,9 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * @param invoiceLanguageCode   Invoice language - language code
      * @return DOM element
      */
-    protected Element createUAInvoiceSubcategorySectionIL(Document doc, Invoice invoice, SubCategoryInvoiceAgregate subCatInvoiceAggregate,
+    protected Element createUAInvoiceSubcategorySectionIL(Document doc, SubCategoryInvoiceAgregate subCatInvoiceAggregate,
                                                           List<InvoiceLine> invoiceLines, boolean isVirtual, String invoiceDateFormat,
-                                                          String invoiceDateTimeFormat, String invoiceLanguageCode, InvoiceConfiguration invoiceConfiguration) {
+                                                          String invoiceLanguageCode, InvoiceConfiguration invoiceConfiguration) {
         InvoiceSubCategory invoiceSubCat = subCatInvoiceAggregate.getInvoiceSubCategory();
         if (isVirtual) {
             invoiceLines = subCatInvoiceAggregate.getInvoiceLinesToAssociate();
@@ -2699,7 +2706,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                     && invoiceLine.getAccountingArticle() != null && !invoiceLine.getAccountingArticle().getInvoiceSubCategory().getId().equals(invoiceSubCat.getId()))) {
                 continue;
             }
-            Element ilTag = createILSection(doc, invoice, invoiceLine, invoiceDateFormat, invoiceDateTimeFormat, invoiceConfiguration, invoiceLanguageCode);
+            Element ilTag = createILSection(doc, invoiceLine, invoiceDateFormat, invoiceConfiguration);
             if (ilTag != null) {
                 subCategory.appendChild(ilTag);
             }
@@ -2709,11 +2716,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     }
 
     private Text createTextNode(Document doc, String data) {
-        if (data != null) {
-            return doc.createTextNode(data);
-        } else {
-            return doc.createTextNode("");
-        }
+        return doc.createTextNode(Objects.requireNonNullElse(data, ""));
     }
 
 }

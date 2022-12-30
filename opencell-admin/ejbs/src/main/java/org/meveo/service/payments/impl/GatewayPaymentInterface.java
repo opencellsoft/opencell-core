@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.payment.HostedCheckoutInput;
+import org.meveo.api.dto.payment.HostedCheckoutStatusResponseDto;
 import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
@@ -202,6 +203,21 @@ public interface GatewayPaymentInterface {
      */
     public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput)  throws BusinessException;
 
+    /**
+     * You can retrieve the current status of the hosted checkout by doing a get on the hostedCheckoutId.
+     *  When a payment has been created during the hosted checkout session the details are returned in this object.
+     *  
+     * @param id
+     * @return HostedCheckoutStatusResponseDto
+     * @throws BusinessException
+     */
+    public HostedCheckoutStatusResponseDto getHostedCheckoutStatus(String id)  throws BusinessException;
+     /**
+      *  Create an invoice on PSP
+      * @param invoice
+      * @return
+      * @throws BusinessException
+      */
     public String createInvoice(Invoice invoice)  throws BusinessException;
     
     

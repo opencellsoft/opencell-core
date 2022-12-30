@@ -1,0 +1,111 @@
+{
+	"info": {
+		"_postman_id": "1b1b1335-fba6-43c4-9a32-7b3e9bbe5d84",
+		"name": "Exchangerate",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "import ExchangeRate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"is.fail\"] = jsonData.actionStatus.status === \"SUCCESS\";"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const escapeJava = (data) =>  {",
+							"  ",
+							"  data = data.replace(/\\\\/g, '\\\\\\\\');",
+							"  data = data.replace(/(\\n)/g, '\\\\n');",
+							"  data = data.replace(/(\\t)/g, '\\\\t');",
+							"  data = data.replace(/(\\r)/g, '\\\\r');",
+							"  data = data.replace(/\"/g, '\\\\\"');",
+							"  ",
+							" // console.log('escapeJava -> data : ', data);",
+							"  return data;",
+							"};",
+							"",
+							"let script = `package org.meveo.service.script;",
+							"",
+							"import java.util.Map;",
+							"import org.meveo.admin.exception.BusinessException;",
+							"",
+							"public class TestDummuyScript extends Script {",
+							"    @Override",
+							"    public void execute(Map<String, Object> methodContext) throws BusinessException {",
+							"",
+							"        log.debug(\" TestDummuyScript >>> methodContext = {} \", methodContext);",
+							"    }",
+							"}`",
+							"pm.variables.set('TestDummuyScript', escapeJava(script));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data; boundary=---------------------------416179487918248840543625547982"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "-----------------------------416179487918248840543625547982\r\nContent-Disposition: form-data; name=\"filename\"\r\n\r\n20220623_export_1658485654.csv\r\n-----------------------------416179487918248840543625547982\r\nContent-Disposition: form-data; name=\"fileUrl\"\r\n\r\nundefined\r\n-----------------------------416179487918248840543625547982\r\nContent-Disposition: form-data; name=\"uploadedFile\"; filename=\"20220623_export.csv\"\r\nContent-Type: application/x-zip-compressed\r\n\r\nCurrency Code,Date,Exchange Rate\r\nUSD,2022-11-16,52.000000\r\nUSD,2025-12-20,53.000000\r\nEUR,2022-10-14,122.314100\r\nEUR,2025-2-15,100.314100\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/opencell/api/rest/currency/importExchangeRate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"opencell",
+						"api",
+						"rest",
+						"currency",
+						"importExchangeRate"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

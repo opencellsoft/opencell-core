@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.criteria.JoinType;
+
 /**
  * @author Andrius
  * @author Edward P. Legaspi(edward.legaspi@manaty.net)
@@ -64,6 +66,13 @@ public class PaginationConfiguration implements Serializable {
      * Sort field and order repeated multiple times
      */
     private Object[] ordering;
+    
+    private JoinType joinType;
+
+    /**
+     * Operator to use when building where statement
+     */
+    private FilterOperatorEnum filterOperator = FilterOperatorEnum.AND;
 
     /**
      * 
@@ -101,8 +110,16 @@ public class PaginationConfiguration implements Serializable {
         }
 
         this.ordering = sortValues.size() > 0 ? sortValues.toArray() : null;
+        if (filters != null) {
+        	this.filterOperator = (FilterOperatorEnum) filters.getOrDefault("$operator", FilterOperatorEnum.AND);
+        }
     }
 
+    public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, Set<String> groupBy, Set<String> having, JoinType joinType, Object... sortFieldsAndOrder) {
+    	this(firstRow, numberOfRows, filters, fullTextFilter, fetchFields, groupBy, having, sortFieldsAndOrder);
+    	this.joinType=joinType;
+    }
+    
     /**
      * Constructor
      *
@@ -115,24 +132,9 @@ public class PaginationConfiguration implements Serializable {
      * @param sortFieldsAndOrder Sort field and order repeated multiple times
      */
     public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, Set<String> groupBy, Set<String> having, Object... sortFieldsAndOrder) {
-        this.firstRow = firstRow;
-        this.numberOfRows = numberOfRows;
-        this.filters = filters;
-        this.fullTextFilter = fullTextFilter;
-        this.fetchFields = fetchFields;
+        this(firstRow, numberOfRows, filters, fullTextFilter, fetchFields, sortFieldsAndOrder);
         this.groupBy = groupBy;
         this.having = having;
-
-        List<Object> sortValues = new ArrayList<Object>();
-        for (int i = 0; i < sortFieldsAndOrder.length; i = i + 2) {
-            if (sortFieldsAndOrder[i] == null) {
-                continue;
-            }
-            sortValues.add(sortFieldsAndOrder[i]);
-            sortValues.add(sortFieldsAndOrder[i + 1] == null ? SortOrder.ASCENDING : sortFieldsAndOrder[i + 1]);
-        }
-
-        this.ordering = sortValues.size() > 0 ? sortValues.toArray() : null;
     }
 
     /**
@@ -271,4 +273,20 @@ public class PaginationConfiguration implements Serializable {
     public String toString() {
         return String.format("PaginationConfiguration [firstRow=%s, numberOfRows=%s, fullTextFilter=%s, filters=%s, fetchFields=%s, ordering=%s]", firstRow, numberOfRows, fullTextFilter, filters, fetchFields, ordering);
     }
+
+	public JoinType getJoinType() {
+		return joinType;
+	}
+
+	public void setJoinType(JoinType joinType) {
+		this.joinType = joinType;
+	}
+
+	public FilterOperatorEnum getFilterOperator() {
+		return filterOperator;
+	}
+
+	public void setFilterOperator(FilterOperatorEnum filterOperator) {
+		this.filterOperator = filterOperator;
+	}
 }

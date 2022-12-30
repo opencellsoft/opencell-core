@@ -358,6 +358,10 @@ public class InvoiceTypeApi extends BaseCrudApi<InvoiceType, InvoiceTypeDto> {
             entity.setXmlFilenameEL(StringUtils.isEmpty(dto.getXmlFilenameEL()) ? null : dto.getXmlFilenameEL());
         }
 
+        if(dto.getExcludeFromAgedTrialBalance() != null) {
+        	entity.setExcludeFromAgedTrialBalance(dto.getExcludeFromAgedTrialBalance());
+        }
+
         // populate customFields
         try {
             populateCustomFields(dto.getCustomFields(), entity, isNew, true);

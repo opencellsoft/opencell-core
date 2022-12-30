@@ -49,11 +49,13 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 	private static final long serialVersionUID = 8115890992793236496L;
 	
 	private Long quoteAttributeId;
-    
+
+	private String quoteAttributeType;
+
     private String quoteAttributeCode;
 
     private List<QuoteAttributeDTO> linkedQuoteAttribute = new ArrayList<>();
-    
+
     private String stringValue;
 
 	private Double doubleValue;
@@ -63,7 +65,7 @@ public class QuoteAttributeDTO extends BaseEntityDto{
     private CustomFieldsDto customFields;
 
 	@Schema(description = "The boolean value")
-	private Boolean booleanValue;	
+	private Boolean booleanValue;
 
 	/**
 	 * @return the quoteAttributeCode
@@ -71,19 +73,20 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 	public String getQuoteAttributeCode() {
 		return quoteAttributeCode;
 	}
-	
+
 	public QuoteAttributeDTO() {
 		super();
 	}
 
-	public QuoteAttributeDTO(QuoteAttribute quoteAttribue) {
+	public QuoteAttributeDTO(QuoteAttribute quoteAttribute) {
 		super();
-		quoteAttributeId=quoteAttribue.getId();
-		quoteAttributeCode=quoteAttribue.getAttribute().getCode();
-		stringValue =quoteAttribue.getStringValue();
-		dateValue =quoteAttribue.getDateValue();
-		doubleValue =quoteAttribue.getDoubleValue();
-		booleanValue = quoteAttribue.getBooleanValue();
+		quoteAttributeId=quoteAttribute.getId();
+		quoteAttributeCode=quoteAttribute.getAttribute().getCode();
+		quoteAttributeType = quoteAttribute.getAttribute().getAttributeType().toString();
+		stringValue =quoteAttribute.getStringValue();
+		dateValue =quoteAttribute.getDateValue();
+		doubleValue =quoteAttribute.getDoubleValue();
+		booleanValue = quoteAttribute.getBooleanValue();
 	}
 
 	/**
@@ -111,14 +114,14 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 	public String getStringValue() {
 		if(StringUtils.isBlank(stringValue))
 			stringValue=null;
-		
+
 		return stringValue;
 	}
 
 	public void setStringValue(String stringValue) {
 		if(StringUtils.isBlank(stringValue))
 			stringValue=null;
-		
+
 		this.stringValue = stringValue;
 	}
 

@@ -68,7 +68,18 @@ public class CounterInstanceDto extends BusinessEntityDto {
             return;
         }
         periods.sort(Comparator.comparing(CounterPeriod::getPeriodStartDate));
-        List<CounterPeriodDto> counterPeriodDtos = periods.stream().map(CounterPeriodDto::new).collect(Collectors.toList());
+        List<CounterPeriodDto> counterPeriodDtos = periods.stream().map(cp -> {
+            CounterPeriodDto dto = new CounterPeriodDto();
+            dto.setCounterType(cp.getCounterType());
+            dto.setLevel(cp.getLevel());
+            dto.setPeriodEndDate(DateUtils.formatDateWithPattern(cp.getPeriodEndDate(), "yyyy-MM-dd"));
+            dto.setPeriodStartDate(DateUtils.formatDateWithPattern(cp.getPeriodStartDate(), "yyyy-MM-dd"));
+            dto.setValue(cp.getValue());
+            dto.setAccumulatedValues(cp.getAccumulatedValues());
+            dto.setAccumulator(cp.isAccumulator());
+            dto.setAccumulatorType(cp.getAccumulatorType());
+            return dto;
+        }).collect(Collectors.toList());
         this.counterPeriods = new CountersPeriodsDto(counterPeriodDtos);
 
     }

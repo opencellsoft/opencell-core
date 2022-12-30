@@ -133,6 +133,13 @@ public class InvoiceType extends BusinessCFEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "mailing_type")
     private MailingTypeEnum mailingType;
+
+    /**
+     * Exclude this invoiceType from Aged Balance
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "exclude_from_aged_trial_balance")
+    private boolean excludeFromAgedTrialBalance = false;
     
     /**
      * executed for each invoice, Will raise an exception if the invoice is invalid. Context will contain billingRun and invoice.
@@ -141,6 +148,9 @@ public class InvoiceType extends BusinessCFEntity {
     @JoinColumn(name = "invoice_validation_script_id")
     private ScriptInstance invoiceValidationScript;
 
+    @OneToMany(mappedBy = "invoiceType", fetch = FetchType.EAGER)
+    private List<InvoiceValidationRule> invoiceValidationRules;
+    
     public ScriptInstance getInvoiceValidationScript() {
 		return invoiceValidationScript;
 	}
@@ -336,11 +346,38 @@ public class InvoiceType extends BusinessCFEntity {
         this.mailingType = mailingType;
     }
 
-    public boolean isInvoiceAccountable() {
+	/**
+	 * Gets if this invoiceType is excluded for aged balance
+	 * 
+	 * @return
+	 */
+	public boolean isExcludeFromAgedTrialBalance() {
+		return excludeFromAgedTrialBalance;
+	}
+
+	/**
+	 * Sets if this invoiceType is excluded for aged balance
+	 * 
+	 * @param excludeFromAgedTrialBalance
+	 */
+	public void setExcludeFromAgedTrialBalance(boolean excludeFromAgedTrialBalance) {
+		this.excludeFromAgedTrialBalance = excludeFromAgedTrialBalance;
+	}
+
+	public boolean isInvoiceAccountable() {
 		return invoiceAccountable;
 	}
 
 	public void setInvoiceAccountable(boolean invoiceAccountable) {
 		this.invoiceAccountable = invoiceAccountable;
 	}
+
+	public List<InvoiceValidationRule> getInvoiceValidationRules() {
+		return invoiceValidationRules;
+	}
+
+	public void setInvoiceValidationRules(List<InvoiceValidationRule> invoiceValidationRules) {
+		this.invoiceValidationRules = invoiceValidationRules;
+	}
+
 }

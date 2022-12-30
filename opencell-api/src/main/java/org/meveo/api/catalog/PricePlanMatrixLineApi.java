@@ -8,6 +8,7 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanVersionResponseDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
@@ -85,6 +86,9 @@ public class PricePlanMatrixLineApi extends BaseApi {
                         missingParameters.add("pricePlanMatrixValues.ppmColumnCode");
                     }
                 });
+        if(!StringUtils.isBlank(dtoData.getPriceWithoutTax()) && !StringUtils.isBlank(dtoData.getValue())){
+            throw new BusinessApiException("Property 'priceWithoutTax' is deprecated, please use only property 'value'");
+        }
 
         handleMissingParametersAndValidate(dtoData);
     }

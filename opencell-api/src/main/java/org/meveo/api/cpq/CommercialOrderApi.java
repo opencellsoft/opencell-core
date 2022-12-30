@@ -1,5 +1,6 @@
 package org.meveo.api.cpq;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -40,10 +41,7 @@ import org.meveo.event.qualifier.AdvancementRateIncreased;
 import org.meveo.event.qualifier.StatusUpdated;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionTerminationReason;
-import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
@@ -57,12 +55,7 @@ import org.meveo.model.order.Order;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
-import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.InvoiceTypeService;
-import org.meveo.service.billing.impl.ServiceSingleton;
-import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.billing.impl.TerminationReasonService;
-import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.billing.impl.*;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.cpq.AttributeService;
@@ -128,6 +121,9 @@ public class CommercialOrderApi extends BaseApi {
 	
 	@Inject
 	private DiscountPlanService discountPlanService;
+
+	@Inject
+	private BillingCycleService billingCycleService;
 
 	@Inject
 	@StatusUpdated
@@ -216,11 +212,14 @@ public class CommercialOrderApi extends BaseApi {
 		order.setOrderProgress(orderDto.getOrderProgress()!=null?orderDto.getOrderProgress():0);
 		order.setProgressDate(new Date());
 		order.setOrderDate(orderDto.getOrderDate()!=null?orderDto.getOrderDate():new Date());
-		
-    	if(orderDto.getDeliveryDate()!=null && orderDto.getDeliveryDate().before(new Date())) {
-    		throw new MeveoApiException("Delivery date should be in the future");	
-    	}
-    	order.setDeliveryDate(orderDto.getDeliveryDate());
+
+		Date today = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+		if (orderDto.getDeliveryDate() != null && orderDto.getDeliveryDate().before(today) && !formatter.format(orderDto.getDeliveryDate()).equals(formatter.format(today))) {
+			throw new MeveoApiException("Delivery date can't be in the past");
+		}
+		order.setDeliveryDate(orderDto.getDeliveryDate());
         
 		order.setCustomerServiceBegin(orderDto.getCustomerServiceBegin());
 		order.setCustomerServiceDuration(orderDto.getCustomerServiceDuration());
@@ -231,7 +230,11 @@ public class CommercialOrderApi extends BaseApi {
 		}
 		order.setOrderInvoiceType(invoiceTypeService.getDefaultCommercialOrder());
 		processOrderLot(orderDto, order);
-		
+		if(StringUtils.isNotBlank(orderDto.getBillingCycleCode())) {
+			BillingCycle bc=billingCycleService.findByCode(orderDto.getBillingCycleCode());
+			order.setBillingCycle(bc);
+		}
+
 		//Set the sales person name
 		order.setSalesPersonName(orderDto.getSalesPersonName());
 		commercialOrderService.create(order);
@@ -413,6 +416,12 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 		}
 		populateCustomFields(orderDto.getCustomFields(), order, false);
 		processOrderLot(orderDto, order);
+		if(StringUtils.isNotBlank(orderDto.getBillingCycleCode())) {
+			final BillingCycle bc=billingCycleService.findByCode(orderDto.getBillingCycleCode());
+			if(bc == null)
+				throw new EntityDoesNotExistsException(BillingCycle.class, orderDto.getBillingCycleCode());
+			order.setBillingCycle(bc);
+		}
 		commercialOrderService.update(order);
 		CommercialOrderDto dto = new CommercialOrderDto(order);
 		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(order,CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
@@ -686,7 +695,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 				.filter(orderOffer -> orderOffer.getUserAccount() == null)
 				.findFirst();
 		if(order.getUserAccount() == null && optionalOrderOfferWithoutUA.isPresent()){
-			throw new MissingParameterException("Customer has several consumers. You must either select a default consumer on the order, or select a consumer for each order line");
+			throw new MissingParameterException("Customer has no consumer. You must create a consumer for this customer in order to validate the order");
 		}
 		ParamBean paramBean = ParamBean.getInstance();
 		String sellerCode = getSelectedSeller(order).getCode();
@@ -879,16 +888,16 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
         	}	
         	orderOffer.setOfferTemplate(offerTemplate);
     	}
-    	
+
+		DiscountPlan discountPlan=null;
 		if (!StringUtils.isBlank(orderOfferDto.getDiscountPlanCode())) {
-			DiscountPlan discountPlan=null;
 			discountPlan = discountPlanService.findByCode(orderOfferDto.getDiscountPlanCode());
 			if (discountPlan == null) {
 				throw new EntityDoesNotExistsException(DiscountPlan.class, orderOfferDto.getDiscountPlanCode());
 			}
-			orderOffer.setDiscountPlan(discountPlan);
 		}
-		
+		orderOffer.setDiscountPlan(discountPlan);
+
 		if(!StringUtils.isBlank(orderOfferDto.getUserAccountCode())) {
 			UserAccount userAccount = userAccountService.findByCode(orderOfferDto.getUserAccountCode());
 			if (userAccount == null) {

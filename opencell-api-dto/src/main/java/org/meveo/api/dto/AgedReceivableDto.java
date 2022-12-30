@@ -24,6 +24,8 @@ public class AgedReceivableDto extends BaseEntity {
 	private DunningLevelEnum dunningLevel;
 	private String customerAccountName;
 	private String customerAccountDescription;
+	private String sellerDescription;
+	private String sellerCode;
 	private Date dueDate;
 	private List<BigDecimal> netAmountByPeriod;
 	private List<BigDecimal> taxAmountByPeriod;
@@ -211,4 +213,19 @@ public class AgedReceivableDto extends BaseEntity {
 		this.customerId = customerId;
 	}
 
+	public String getSellerDescription() {
+		return sellerDescription;
+	}
+
+	public void setSellerDescription(String sellerDescription) {
+		this.sellerDescription = sellerDescription;
+	}
+
+	public String getSellerCode() {
+		return sellerCode;
+	}
+
+	public void setSellerCode(String sellerCode) {
+		this.sellerCode = sellerCode;
+	}
 }

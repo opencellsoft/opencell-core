@@ -34,7 +34,10 @@ import java.util.Base64;
  */
 public class EncryptionFactory {
 
-    private static final Logger log = LoggerFactory.getLogger(IEncryptable.class);
+    private EncryptionFactory() {
+    }
+
+    private static final Logger log = LoggerFactory.getLogger(EncryptionFactory.class);
 
     private static final IvParameterSpec ivParameterSpec;
 
@@ -97,9 +100,9 @@ public class EncryptionFactory {
     public static void listOfSecurityProviders() {
         //Security listing
         for (Provider provider : Security.getProviders()) {
-            System.out.println("Security provider : " + provider.getName());
+            log.info("Security provider : {}", provider.getName());
             for (Provider.Service service : provider.getServices()) {
-                System.out.println("Algorithm : " + service.getAlgorithm());
+                log.info("Algorithm : {}", service.getAlgorithm());
             }
         }
     }
@@ -107,7 +110,7 @@ public class EncryptionFactory {
     public static void listAlgoBountyCastle() {
         Provider provider = new BouncyCastleProvider();
         for (Provider.Service service : provider.getServices()) {
-            System.out.println("Algorithm: " + service.getAlgorithm());
+            log.info("Algorithm: {}", service.getAlgorithm());
         }
     }
 
@@ -156,7 +159,7 @@ public class EncryptionFactory {
             return completePrefix + SEPARATOR
                     + Base64.getEncoder().encodeToString(cipher.doFinal(clearText.getBytes()));
         } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException e) {
-            e.printStackTrace();
+            log.error("Error while encrypting: " + e.getMessage(), e);
         }
         return null;
     }
@@ -193,7 +196,7 @@ public class EncryptionFactory {
                 }
             }
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException | NoSuchPaddingException | NoSuchAlgorithmException e) {
-            log.error("Error while encrypting: " + e.getLocalizedMessage(), e);
+            log.error("Error while decrypting: " + e.getLocalizedMessage(), e);
             return ON_ERROR_RETURN;
         }
 
@@ -237,15 +240,15 @@ public class EncryptionFactory {
         try {
             String fileKeyStr = getFileKey();
             if (!StringUtils.isBlank(fileKeyStr)) {
-                byte[] fileKey = fileKeyStr.getBytes("UTF-8");
-                byte[] internalKey = INTERNAL_SECRET_KEY.getBytes("UTF-8");
+                byte[] fileKey = fileKeyStr.getBytes(StandardCharsets.UTF_8);
+                byte[] internalKey = INTERNAL_SECRET_KEY.getBytes(StandardCharsets.UTF_8);
                 sha = MessageDigest.getInstance(SHA_256_HASHING);
                 sha.update(fileKey);
                 sha.update(internalKey);
                 hash = sha.digest();
                 return new SecretKeySpec(hash, BUILD_KEY_ALGORITHM);
             } else {
-                throw new Exception("External secret key cannot be null while encrypting / decrypting");
+                throw new EncryptionException("External secret key cannot be null while encrypting / decrypting");
             }
         } catch (Exception e) {
             log.error("Error while building Secret Key: " + e.getLocalizedMessage(), e);

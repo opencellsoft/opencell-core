@@ -29,6 +29,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.storage.StorageFactory;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.cache.CacheContainerProvider;
@@ -46,6 +47,7 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.script.ScriptCompilerService;
 import org.slf4j.Logger;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 /**
  * Takes care of initializing/loading various application services/data
@@ -100,6 +102,9 @@ public class ApplicationInitializer {
     @Inject
     private MetricsConfigurationCacheContainerProvider metricsConfigurationCacheContainerProvider;
 
+    @Inject
+    private StorageFactory storageFactory;
+
     public void init() {
 
         final List<Provider> providers = providerService.list(new PaginationConfiguration("id", SortOrder.ASCENDING));
@@ -118,6 +123,10 @@ public class ApplicationInitializer {
 
             } catch (InterruptedException | ExecutionException | BusinessException e) {
                 log.error("Failed to initialize a provider {}", provider.getCode(), e);
+
+                if (e instanceof ExecutionException && e.getMessage().contains("S3Exception")) {
+                    throw S3Exception.builder().message(e.getMessage()).build();
+                }
             }
             i++;
         }
@@ -162,6 +171,9 @@ public class ApplicationInitializer {
         jobCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
         tenantCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
         metricsConfigurationCacheContainerProvider.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
+
+        // Initialize storage factory
+        storageFactory.init();
 
         // cfValueAcumulator.loadCfAccumulationRules();
 

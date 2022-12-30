@@ -33,12 +33,14 @@ public class SecurityDepositTemplateMapper extends ResourceMapper<org.meveo.apiv
     protected SecurityDepositTemplate toEntity(SecurityDepositTemplate securityDepositTemplate, org.meveo.apiv2.securityDeposit.SecurityDepositTemplate resource) {
         securityDepositTemplate.setTemplateName(resource.getTemplateName());
 
-        if(resource.getCurrency() != null)
+        if(resource.getCurrency() != null && (resource.getCurrency().getId() != null || resource.getCurrency().getCode() != null))
         {
             Currency currency = new Currency();
             currency.setId(resource.getCurrency().getId());
             currency.setCurrencyCode(resource.getCurrency().getCode());
             securityDepositTemplate.setCurrency(currency);
+        } else {
+        	securityDepositTemplate.setCurrency(null);
         }
 
         securityDepositTemplate.setAllowValidityDate(resource.getAllowValidityDate());

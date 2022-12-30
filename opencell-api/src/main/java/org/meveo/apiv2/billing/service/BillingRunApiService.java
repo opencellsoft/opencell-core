@@ -3,27 +3,41 @@ package org.meveo.apiv2.billing.service;
 import static java.util.Arrays.asList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
-import static org.meveo.model.billing.BillingRunStatusEnum.*;
+import static org.meveo.model.billing.BillingRunStatusEnum.CANCELED;
+import static org.meveo.model.billing.BillingRunStatusEnum.CANCELLING;
+import static org.meveo.model.billing.BillingRunStatusEnum.CREATING_INVOICE_LINES;
+import static org.meveo.model.billing.BillingRunStatusEnum.DRAFT_INVOICES;
+import static org.meveo.model.billing.BillingRunStatusEnum.INVOICE_LINES_CREATED;
+import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
+import static org.meveo.model.billing.BillingRunStatusEnum.POSTVALIDATED;
+import static org.meveo.model.billing.BillingRunStatusEnum.PREVALIDATED;
+import static org.meveo.model.billing.BillingRunStatusEnum.REJECTED;
+import static org.meveo.model.billing.BillingRunStatusEnum.VALIDATED;
 import static org.meveo.model.jobs.JobLauncherEnum.API;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.LinkedInvoiceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
@@ -50,6 +64,9 @@ public class BillingRunApiService implements ApiService<BillingRun> {
     
     @Inject
     private InvoiceLineService invoiceLineService;
+    
+    @Inject
+    private LinkedInvoiceService linkedInvoiceService;
 
     private static final String INVOICING_JOB_CODE = "Invoicing_Job_V2";
     private static final String INVOICE_LINES_JOB_CODE = "Invoice_Lines_Job_V2";
@@ -140,20 +157,15 @@ public class BillingRunApiService implements ApiService<BillingRun> {
                 if (billingRun.getStatus() == INVOICE_LINES_CREATED) {
                     billingRun.setStatus(PREVALIDATED);
                 }
-                if (billingRun.getStatus() == DRAFT_INVOICES) {
+                if (billingRun.getStatus() == DRAFT_INVOICES || (billingRun.getStatus() == REJECTED && billingRunService.isBRValid(billingRun))) {
                     billingRun.setStatus(POSTVALIDATED);
                 }
-                if (billingRun.getStatus() == REJECTED) {
-                    if (billingRunService.isBillingRunValid(billingRun)) {
-                        billingRun.setStatus(POSTVALIDATED);
-                    }
-                }
+         
                 if (initialStatus != billingRun.getStatus()) {
                     billingRun.setXmlJobExecutionResultId(null);
                     billingRun.setPdfJobExecutionResultId(null);
                     billingRun = billingRunService.update(billingRun);
                 }
-                
                 if (executeInvoicingJob) {
                     Map<String, Object> jobParams = new HashMap<>();
                     jobParams.put(INVOICING_JOB_PARAMETERS,
@@ -192,7 +204,8 @@ public class BillingRunApiService implements ApiService<BillingRun> {
             ratedTransactionService.deleteSupplementalRTs(billingRun);
             ratedTransactionService.uninvoiceRTs(billingRun);
             invoiceLineService.deleteInvoiceLines(billingRun);
-            invoiceLineService.deleteByAssociatedInvoice(invoiceService.getInvoicesByBR(billingRun.getId()));
+            invoiceLineService.deleteByAssociatedInvoice(invoiceService.getInvoicesByBRNotValidatedInvoices(billingRun.getId()));
+            rollBackAdvances(billingRun);
             invoiceService.deleteInvoices(billingRun);
             invoiceAgregateService.deleteInvoiceAgregates(billingRun);
             billingRun.setStatus(CANCELED);
@@ -202,4 +215,14 @@ public class BillingRunApiService implements ApiService<BillingRun> {
             throw new BusinessException(exception.getMessage());
         }
 	}
+	 private void rollBackAdvances(BillingRun billingRun) {
+		 invoiceService.rollBackAdvances(billingRun);
+		 removeLinkedAdvances(billingRun);
+	 }
+	 private void removeLinkedAdvances(BillingRun billingRun) {
+         List<Invoice> invoices = invoiceService.findByBillingRun(billingRun);
+         if(CollectionUtils.isNotEmpty(invoices)) {
+             linkedInvoiceService.removeLinkedAdvances(invoices.stream().map(Invoice::getId).collect(Collectors.toList()));
+         }
+	 }
 }

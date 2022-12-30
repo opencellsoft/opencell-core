@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.SecuredEntity.SecuredEntityPermissionEnum;
 
@@ -118,11 +119,17 @@ public class SecuredEntityDto extends BaseEntityDto {
     }
 
     /**
-     * Gets the entity class.
+     * Gets the entity class - just a class name, no package.
      *
-     * @return the entity class
+     * @return the entity class without a package
      */
     public String getEntityClass() {
+
+        if (entityClass.lastIndexOf('.') > 0) {
+            entityClass = entityClass.substring(entityClass.lastIndexOf('.') + 1);
+        }
+        entityClass = StringUtils.capitalizeFirstLetter(entityClass);
+
         return entityClass;
     }
 

@@ -5,6 +5,7 @@ import static java.math.BigDecimal.ZERO;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
+import static org.meveo.model.billing.AdjustmentStatusEnum.NOT_ADJUSTED;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -36,9 +37,7 @@ import javax.persistence.PrePersist;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.commons.utils.NumberUtils;
-import org.meveo.model.AuditableEntity;
-import org.meveo.model.DatePeriod;
-import org.meveo.model.ObservableEntity;
+import org.meveo.model.*;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
@@ -60,6 +59,7 @@ import org.meveo.model.cpq.offer.QuoteOffer;
  */
 @Entity
 @ObservableEntity
+@CustomFieldEntity(cftCodePrefix = "InvoiceLine")
 @Table(name = "billing_invoice_line")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_invoice_line_seq")})
@@ -93,7 +93,7 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 		@NamedQuery(name = "InvoiceLine.sumInvoiceableWithMinAmountByCustomer", query = "SELECT sum(il.amountWithoutTax), sum(il.amountWithTax), il.billingAccount.customerAccount.customer.id, il.subscription.seller.id FROM InvoiceLine il WHERE il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate and il.billingAccount.customerAccount.customer=:customer GROUP BY il.subscription.seller.id, il.billingAccount.customerAccount.customer.id"),
 		@NamedQuery(name = "InvoiceLine.sumTotalInvoiceableBySubscription", query = "SELECT new org.meveo.model.billing.Amounts(sum(il.amountWithoutTax), sum(il.amountWithTax), sum(il.amountTax)) FROM InvoiceLine il WHERE il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate and il.subscription=:subscription"),
 		@NamedQuery(name = "InvoiceLine.sumTotalInvoiceableByBA", query = "SELECT new org.meveo.model.billing.Amounts(sum(il.amountWithoutTax), sum(il.amountWithTax), sum(il.amountTax)) FROM InvoiceLine il WHERE il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate and il.billingAccount=:billingAccount"),
-		@NamedQuery(name = "InvoiceLine.sumPositiveILByBillingRun", query = "select sum(il.amountWithoutTax), sum(il.amountWithTax), il.invoice.id, il.billingAccount.id, il.billingAccount.customerAccount.id, il.billingAccount.customerAccount.customer.id FROM InvoiceLine il where il.billingRun.id=:billingRunId and il.amountWithoutTax > 0 and il.status='BILLED' group by il.invoice.id, il.billingAccount.id, il.billingAccount.customerAccount.id, il.billingAccount.customerAccount.customer.id"),
+		@NamedQuery(name = "InvoiceLine.sumPositiveILByBillingRun", query = "select sum(il.amountWithoutTax), sum(il.amountWithTax),il.subscription.id, il.commercialOrder.id, il.invoice.id, il.billingAccount.id, il.billingAccount.customerAccount.id, il.billingAccount.customerAccount.customer.id FROM InvoiceLine il where il.billingRun.id=:billingRunId and il.amountWithoutTax > 0 and il.status='BILLED' group by il.subscription.id, il.commercialOrder.id, il.invoice.id, il.billingAccount.id, il.billingAccount.customerAccount.id, il.billingAccount.customerAccount.customer.id"),
 		@NamedQuery(name = "InvoiceLine.unInvoiceByInvoiceIds", query = "update InvoiceLine il set il.status='OPEN', il.auditable.updated = :now , il.billingRun= null, il.invoice=null, il.accountingArticle=null where il.status=org.meveo.model.billing.InvoiceLineStatusEnum.BILLED and il.invoice.id IN (:invoiceIds)"),
 		@NamedQuery(name = "InvoiceLine.cancelByInvoiceIds", query = "update InvoiceLine il set il.status='CANCELED', il.auditable.updated = :now, il.billingRun= null, il.invoice=null, il.invoiceAggregateF=null WHERE il.invoice.id IN (:invoicesIds)"),
 		@NamedQuery(name = "InvoiceLine.listToInvoiceByCommercialOrder", query = "FROM InvoiceLine il where il.commercialOrder.id=:commercialOrderId AND il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate "),
@@ -116,10 +116,14 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 		@NamedQuery(name = "InvoiceLine.updateTaxForRateTaxMode", query = "UPDATE InvoiceLine il SET il.tax= null WHERE il.id in (:invoiceLinesIds)"),
         @NamedQuery(name = "InvoiceLine.moveToQuarantineBRByInvoiceIds", query = "update InvoiceLine il set il.billingRun=:billingRun where il.invoice.id in (:invoiceIds)"),
         @NamedQuery(name = "InvoiceLine.listByAssociatedInvoice", query = "SELECT il.id FROM InvoiceLine il where il.invoice.id in (:invoiceIds)"),
-        @NamedQuery(name = "InvoiceLine.sumAmountByOpenOrderNumberAndBA", query = "SELECT SUM(il.amountWithTax) FROM InvoiceLine il WHERE il.status = 'BILLED' AND il.openOrderNumber = :openOrderNumber AND il.billingAccount.id = :billingAccountId")
-
+        @NamedQuery(name = "InvoiceLine.sumAmountByOpenOrderNumberAndBA", query = "SELECT SUM(il.amountWithTax) FROM InvoiceLine il WHERE il.status = 'BILLED' AND il.openOrderNumber = :openOrderNumber AND il.billingAccount.id = :billingAccountId"),
+        @NamedQuery(name = "InvoiceLine.findByIdsAndAdjustmentStatus", query = "SELECT il from InvoiceLine il left join fetch il.invoice i left join fetch i.invoiceType WHERE adjustment_status = :status and il.id in (:invoiceLinesIds)"),
+        @NamedQuery(name = "InvoiceLine.findByIdsAndOtherAdjustmentStatus", query = "SELECT il from InvoiceLine il  left join fetch il.invoice i left join fetch i.invoiceType WHERE adjustment_status <> :status and il.id in (:invoiceLinesIds)"),
+        @NamedQuery(name = "InvoiceLine.findByAdjustmentStatus", query = "SELECT il from InvoiceLine il left join fetch il.invoice WHERE adjustment_status = :status"),
+        @NamedQuery(name = "InvoiceLine.findByIdsAndInvoiceType", query = "SELECT il from InvoiceLine il left join fetch il.invoice i left join fetch i.invoiceType WHERE i.invoiceType.code = :invoiceType and il.id in (:invoiceLinesIds)"),
+        @NamedQuery(name = "InvoiceLine.updateForAdjustment", query = "UPDATE InvoiceLine il set adjustment_status=:status, il.auditable.updated = :now  where il.id in :ids"),		
 	})
-public class InvoiceLine extends AuditableEntity {
+public class InvoiceLine extends AuditableCFEntity {
 
 	/**
      * 
@@ -270,6 +274,11 @@ public class InvoiceLine extends AuditableEntity {
     @JoinColumn(name = "discount_plan_item_id")
     private DiscountPlanItem discountPlanItem;
     
+    @Enumerated(EnumType.STRING)
+	@Column(name = "adjustment_status", nullable = false)
+	@NotNull
+	private AdjustmentStatusEnum adjustmentStatus = NOT_ADJUSTED;
+    
     /**
    	 * 
    	 *filled only for price lines related to applied discounts, and contains the application sequence composed by the concatenation of the DP sequence and DPI sequence
@@ -357,6 +366,7 @@ public class InvoiceLine extends AuditableEntity {
 		this.valueDate = valueDate;
 		this.quantity = quantity;
 		this.amountWithoutTax = amountWithoutTax;
+		this.unitPrice = quantity!=null && !BigDecimal.ZERO.equals(quantity)?amountWithoutTax.divide(quantity):amountWithoutTax;
 		this.amountWithTax = amountWithTax;
 		this.amountTax = amountTax;
 		this.status = status;
@@ -401,6 +411,7 @@ public class InvoiceLine extends AuditableEntity {
 		this.taxRecalculated = copy.taxRecalculated;
 		this.taxMode = copy.taxMode;
 		this.status = InvoiceLineStatusEnum.OPEN;
+		this.adjustmentStatus = copy.adjustmentStatus;
 	}
 
 	public Invoice getInvoice() {
@@ -824,6 +835,14 @@ public class InvoiceLine extends AuditableEntity {
 		this.sequence = sequence;
 	}
 
+	public AdjustmentStatusEnum getAdjustmentStatus() {
+		return adjustmentStatus;
+	}
+
+	public void setAdjustmentStatus(AdjustmentStatusEnum adjustmentStatus) {
+		this.adjustmentStatus = adjustmentStatus;
+	}
+
 	@PrePersist
 	@PreUpdate
 	public void prePersistOrUpdate() {
@@ -840,5 +859,24 @@ public class InvoiceLine extends AuditableEntity {
 				this.rawAmount.multiply(appliedRate) : ZERO;
 		this.convertedUnitPrice = this.unitPrice != null ?
 				this.unitPrice.multiply(appliedRate) : ZERO;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		} else if (obj == null) {
+			return false;
+		} else if (!(obj instanceof InvoiceLine)) {
+			return false;
+		}
+
+		InvoiceLine other = (InvoiceLine) obj;
+		return getId() != null && other.getId() != null && getId().equals(other.getId());
+	}
+
+	@Override
+	public int hashCode() {
+		return 961 + ("InvoiceLine" + getId()).hashCode();
 	}
 }

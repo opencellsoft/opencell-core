@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="InvoiceD2"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter.xml"/>
 	<queryString language="xPath">
 		<![CDATA[/invoice/detail/userAccounts/userAccount/categories/category/subCategories/subCategory/line]]>
 	</queryString>
@@ -337,6 +337,9 @@ w/o Tax]]></text>
 				</staticText>
 			</band>
 		</groupHeader>
+	</group>
+	<group name="Group3">
+		<groupExpression><![CDATA[$F{code_line}+$F{unitAmountWithoutTax}]]></groupExpression>
 	</group>
 	<group name="2">
 		<groupExpression><![CDATA[$F{code}+$F{useraccount_code}+$F{unitAmountWithoutTax}+ ((new SimpleDateFormat("dd/MM/yyyy").parse($F{usageDate})).getMonth()+"/"+(new SimpleDateFormat("dd/MM/yyyy").parse($F{usageDate})).getYear())]]></groupExpression>

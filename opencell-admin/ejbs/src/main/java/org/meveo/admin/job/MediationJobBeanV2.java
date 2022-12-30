@@ -136,9 +136,15 @@ public class MediationJobBeanV2 extends IteratorBasedJobBean<Long> {
                 if (EdrService.isDuplicateCheckOn() && edrService.isDuplicateFound(cdr.getOriginBatch(), cdr.getOriginRecord())) {
                      throw new DuplicateException(cdr);
                 }
-                cdrParsingService.createEdrs(edrs, cdr);
                 
-                mediationsettingService.applyEdrVersioningRule(edrs, cdr);
+                for(EDR edr : edrs) {
+                    edrService.create(edr);
+                    cdr.setHeaderEDR(edr);
+                    cdr.setStatus(CDRStatusEnum.PROCESSED);
+                    cdrService.update(cdr);
+                }
+                
+                mediationsettingService.applyEdrVersioningRule(edrs, cdr, false);
                 if (!StringUtils.isBlank(cdr.getRejectReason())) {
                     failedCDR(jobExecutionResult, cdr, cdr.getStatus());
                 }

@@ -52,6 +52,7 @@ import org.meveo.apiv2.billing.InvoiceLinesToReplicate;
 import org.meveo.apiv2.billing.InvoiceMatchedOperation;
 import org.meveo.apiv2.billing.InvoicePatchInput;
 import org.meveo.apiv2.billing.Invoices;
+import org.meveo.apiv2.billing.RejectReasonInput;
 import org.meveo.apiv2.billing.resource.InvoiceResource;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
 import org.meveo.apiv2.billing.service.InvoiceSubTotalsApiService;
@@ -163,11 +164,25 @@ public class InvoiceResourceImpl implements InvoiceResource {
 								MatchingCode matchingCode = matchingCodeService.findById(matchingAmount.getMatchingCode().getId(), List.of("matchingAmounts"));
 								Optional.ofNullable(matchingCode.getMatchingAmounts()).orElse(Collections.emptyList())
 										.forEach(matchingAmountAo -> {
-											if (matchingAmountAo.getAccountOperation().getTransactionCategory() == OperationCategoryEnum.CREDIT &&
-													!PPL_CREATION.equals(matchingAmountAo.getAccountOperation().getCode()) &&
-											 		!matchingAmountAo.getAccountOperation().getId().equals(accountOperation.getId())) {
-												result.add(toResponse(matchingAmountAo.getAccountOperation(), matchingAmountAo, invoice));
+											switch (accountOperation.getTransactionCategory()) {
+												// For payment history, the rule is : when we hava an AO DEBIT we should have AO payment CREDIT and vice versa
+												case DEBIT:
+													if (matchingAmountAo.getAccountOperation().getTransactionCategory() == OperationCategoryEnum.CREDIT &&
+															!PPL_CREATION.equals(matchingAmountAo.getAccountOperation().getCode()) &&
+															!matchingAmountAo.getAccountOperation().getId().equals(accountOperation.getId())) {
+														result.add(toResponse(matchingAmountAo.getAccountOperation(), matchingAmountAo, invoice));
+													}
+													break;
+												case CREDIT:
+													if (matchingAmountAo.getAccountOperation().getTransactionCategory() == OperationCategoryEnum.DEBIT &&
+															!PPL_CREATION.equals(matchingAmountAo.getAccountOperation().getCode()) &&
+															!matchingAmountAo.getAccountOperation().getId().equals(accountOperation.getId())) {
+														result.add(toResponse(matchingAmountAo.getAccountOperation(), matchingAmountAo, invoice));
+													}
+													break;
+												default:
 											}
+
 										});
 							});
 
@@ -253,7 +268,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	
 	@Override
 	public Response updateInvoiceLine(Long id, Long lineId, InvoiceLineInput invoiceLineInput) {
-		Invoice invoice = findInvoiceEligibleToUpdate(id);
+		Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
 		invoiceApiService.updateLine(invoice, invoiceLineInput, lineId);
 		if(invoiceLineInput.getSkipValidation() == null || !invoiceLineInput.getSkipValidation()) {
 			invoiceApiService.rebuildInvoice(invoice);
@@ -303,9 +318,9 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	}
 
 	@Override
-	public Response rejectInvoiceLine(Long id) {
+	public Response rejectInvoiceLine(Long id, RejectReasonInput invoiceLinesReject) {
 		Invoice invoice = findInvoiceEligibleToUpdate(id);
-		invoiceApiService.rejectInvoice(invoice);
+		invoiceApiService.rejectInvoice(invoice, invoiceLinesReject);
 		return Response.created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())
                 .build();
 	}
@@ -319,9 +334,9 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	}
 
 	@Override
-	public Response cancelInvoice(Long id) {
+	public Response cancelInvoice(Long id, RatedTransactionAction rtAction) {
 		Invoice invoice = findInvoiceEligibleToUpdate(id);
-		invoiceApiService.cancelInvoice(invoice);
+		invoiceApiService.cancelInvoice(invoice, rtAction);
 		return Response.created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())
                 .build();
 	}

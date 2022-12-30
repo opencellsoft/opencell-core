@@ -107,6 +107,7 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
         DunningCollectionPlan collectionPlan = collectionPlanService.findById(collectionPlanId);
         Date dateToCompare;
         Date today = new Date();
+        Date dueDate = new Date();
         int index = 0;
         int nextLevel = 0;
         String lastAction = "";
@@ -119,12 +120,15 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
             collectionPlan.setStatus(collectionPlanStatusService.findByStatus(SUCCESS));
             updateCollectionPlan = true;
         } else {
+            if(collectionPlan.getRelatedInvoice() != null && collectionPlan.getRelatedInvoice().getDueDate() != null) {
+                dueDate = collectionPlan.getRelatedInvoice().getDueDate();
+            }
             for (DunningLevelInstance levelInstance : collectionPlan.getDunningLevelInstances()) {
                 dateToCompare = DateUtils.addDaysToDate(collectionPlan.getStartDate(),
                         ofNullable(collectionPlan.getPauseDuration()).orElse(0) + levelInstance.getDaysOverdue());
                 if (levelInstance.getLevelStatus() != DunningLevelInstanceStatusEnum.DONE
                         && !collectionPlan.getRelatedInvoice().getPaymentStatus().equals(PAID)
-                        && today.after(dateToCompare)) {
+                        && dateToCompare.before(today)) {
                     nextLevel = index + 1;
                     for (int i = 0; i < levelInstance.getActions().size(); i++) {
                         DunningActionInstance actionInstance = levelInstance.getActions().get(i);
@@ -282,7 +286,7 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
             if (billingAccount.getContactInformation() != null && billingAccount.getContactInformation().getEmail() != null) {
                 try {
                     collectionPlanService.sendNotification(seller.getContactInformation().getEmail(),
-                            billingAccount.getContactInformation().getEmail(), emailTemplate, params, attachments);
+                            billingAccount, emailTemplate, params, attachments);
                 } catch (Exception exception) {
                     throw new BusinessException(exception.getMessage());
                 }

@@ -115,13 +115,13 @@ public class CounterInstance extends BusinessEntity {
      * Counter periods
      */
     @OneToMany(mappedBy = "counterInstance", fetch = FetchType.LAZY)
-    private List<CounterPeriod> counterPeriods = new ArrayList<CounterPeriod>();
+    private List<CounterPeriod> counterPeriods = new ArrayList<>();
     
     /**
      * usage charges instances
      */
     @OneToMany(mappedBy = "counter", fetch = FetchType.LAZY)
-    private List<UsageChargeInstance> usageChargeInstances = new ArrayList<UsageChargeInstance>();
+    private List<UsageChargeInstance> usageChargeInstances = new ArrayList<>();
     
     /**
      * charge instances related as accumulator counters

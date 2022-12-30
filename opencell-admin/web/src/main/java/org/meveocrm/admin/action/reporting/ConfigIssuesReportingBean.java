@@ -429,7 +429,7 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
 
     @Override
     public IPersistenceService<BaseEntity> getPersistenceService() {
-        return getPersistenceService();
+        throw new UnsupportedOperationException();
     }
 
     @Override

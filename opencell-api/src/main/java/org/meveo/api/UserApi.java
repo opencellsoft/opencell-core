@@ -18,16 +18,14 @@
 
 package org.meveo.api;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
+import org.keycloak.representations.idm.UserRepresentation;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.CurrentUserDto;
@@ -41,7 +39,6 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
@@ -90,6 +87,9 @@ public class UserApi extends BaseApi {
             }
             if (StringUtils.isBlank(postData.getEmail())) {
                 missingParameters.add("email");
+            }
+            if (isRequiredRoles && (postData.getRoles() == null || postData.getRoles().isEmpty())) {
+                missingParameters.add("userRole");
             }
 
             handleMissingParameters();
@@ -200,7 +200,7 @@ public class UserApi extends BaseApi {
             populateCustomFields(postData.getCustomFields(), user, false, true);
         }
 
-        userService.update(user);
+        userService.updateUserWithAttributes(user, postData.getAttributes());
 
         // Save secured entities
         if (securedEntities != null) {
@@ -271,11 +271,32 @@ public class UserApi extends BaseApi {
         }
 
         UserDto userDto = new UserDto(user);
+        getKeycloakAttributesByUsername(userDto);
+
         List<SecuredEntity> securedEntities = securedBusinessEntityService.getSecuredEntitiesForUser(username);
         if (securedEntities != null) {
             userDto.setSecuredEntities(securedEntities.stream().map(SecuredEntityDto::new).collect(Collectors.toList()));
         }
         return userDto;
+    }
+
+    /**
+     * Get keycloak attributes by given username
+     * @param userDto {@link UserDto}
+     */
+    private void getKeycloakAttributesByUsername(UserDto userDto) {
+        UserRepresentation userRepresentation = userService.getUserRepresentationByUsername(userDto.getUsername());
+        Map<String, List<String>> keycloakAttributes = userRepresentation.getAttributes();
+
+        if(keycloakAttributes != null && !keycloakAttributes.isEmpty()) {
+            Map<String, String> attributes = new HashMap<>();
+
+            for (Map.Entry<String, List<String>> entry : keycloakAttributes.entrySet()) {
+                attributes.put(entry.getKey(), String.join(", ", entry.getValue()));
+            }
+
+            userDto.setAttributes(attributes);
+        }
     }
 
     public void createOrUpdate(UserDto postData) throws MeveoApiException, BusinessException {
@@ -327,6 +348,7 @@ public class UserApi extends BaseApi {
             List<User> users = userService.list(paginationConfig);
             for (User user : users) {
                 UserDto userDto = new UserDto(user);
+                getKeycloakAttributesByUsername(userDto);
                 if (pagingAndFiltering != null && pagingAndFiltering.hasFieldOption("securedEntities")) {
                     List<SecuredEntity> securedEntities = securedBusinessEntityService.getSecuredEntitiesForUser(user.getUserName());
                     if (securedEntities != null) {

@@ -1,6 +1,7 @@
 package org.meveo.apiv2.securityDeposit;
 
 import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 
 import java.math.BigDecimal;
 
@@ -21,7 +22,7 @@ public interface FinanceSettings extends Resource {
     @Value.Default
     @Schema(description = "use security deposit")
     default Boolean getUseSecurityDeposit() {
-        return FALSE;
+        return TRUE;
     }
 
     @Nullable
@@ -52,4 +53,10 @@ public interface FinanceSettings extends Resource {
 
     @Nullable
     OpenOrderSettingInput getOpenOrderSetting();
+
+    @Value.Default
+    @Schema(description = "Activate dunning")
+    default Boolean getActivateDunning() {
+        return FALSE;
+    }
 }

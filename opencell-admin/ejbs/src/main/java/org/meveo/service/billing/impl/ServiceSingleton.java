@@ -26,11 +26,7 @@ import org.meveo.event.qualifier.InvoiceNumberAssigned;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.CustomGenericEntityCode;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceSequence;
-import org.meveo.model.billing.InvoiceStatusEnum;
-import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.InvoiceTypeSellerSequence;
+import org.meveo.model.billing.*;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.crm.Customer;
@@ -40,6 +36,7 @@ import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentGatewayRumSequence;
+import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.model.sequence.GenericSequence;
 import org.meveo.model.sequence.Sequence;
 import org.meveo.model.sequence.SequenceTypeEnum;
@@ -51,6 +48,7 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.payments.impl.OCCTemplateService;
+import org.meveo.service.securityDeposit.impl.SecurityDepositTemplateService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
@@ -61,6 +59,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -433,6 +432,19 @@ public class ServiceSingleton {
     	return assignInvoiceNumber(invoice, true);
     }
 
+    private BigDecimal getExchangeRate(Invoice invoice) {
+
+        BigDecimal exchangeRateToApply = null;
+
+        if (invoice.getTradingCurrency() != null) {
+
+            ExchangeRate calculatedExchangeRate = invoice.getTradingCurrency().getExchangeRate(invoice.getInvoiceDate());
+
+            exchangeRateToApply = calculatedExchangeRate != null ? calculatedExchangeRate.getExchangeRate() : invoice.getTradingCurrency().getCurrentRate();
+
+        }
+        return exchangeRateToApply;
+    }
 
     public CpqQuote assignCpqQuoteNumber(CpqQuote cpqQuote) {
         InvoiceType invoiceType = invoiceTypeService.retrieveIfNotManaged(cpqQuote.getOrderInvoiceType());
@@ -580,11 +592,10 @@ public class ServiceSingleton {
         		invoice = invoiceService.update(invoice);
         	}
         }
-        triggersJobs();
         return invoice;
     }
 
-    private void triggersJobs() {
+    public void triggersJobs() {
         Arrays.asList("DunningCollectionPlan_Job", "TriggerCollectionPlanLevelsJob_Job", "TriggerReminderDunningLevel_Job").stream()
                 .map(jobInstanceService::findByCode)
                 .filter(Objects::nonNull)
@@ -719,5 +730,14 @@ public class ServiceSingleton {
         sequence.setCurrentNumber(sequence.getCurrentNumber()+1);
 
         return ooqCode;
+    }
+
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public SecurityDepositTemplate incrementSDTemplateInstanciationNumber(SecurityDepositTemplate securityDepositTemplate) throws BusinessException {
+        Integer numberOfInstantiation = securityDepositTemplate.getNumberOfInstantiation();
+        securityDepositTemplate.setNumberOfInstantiation(numberOfInstantiation != null ? numberOfInstantiation + 1 : 1);
+        return securityDepositTemplate;
     }
 }

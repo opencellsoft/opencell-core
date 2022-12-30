@@ -4,15 +4,19 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.model.securityDeposit.SecurityTemplateStatusEnum;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.crm.impl.ProviderService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
+
 import java.util.Date;
 import java.util.Set;
 
@@ -25,10 +29,17 @@ public class SecurityDepositTemplateService extends BusinessService<SecurityDepo
     private FinanceSettingsService financeSettingsService;
 
     @Inject
+    private ProviderService providerService;
+
+    @Inject
     private AuditLogService auditLogService;
 
     @Override public void create(SecurityDepositTemplate entity) throws BusinessException {
-        entity.setCurrency(findCurrencyByIdOrCode(entity));
+        Currency currency = findCurrencyByIdOrCode(entity);
+        if(currency == null) {
+        	currency = providerService.getProvider().getCurrency();
+        }
+		entity.setCurrency(currency);
         checkParameters(entity);
         super.create(entity);
         auditLogService.trackOperation("UPDATE", new Date(), entity, entity.getCode());
@@ -37,7 +48,11 @@ public class SecurityDepositTemplateService extends BusinessService<SecurityDepo
     @Override
     public SecurityDepositTemplate update(SecurityDepositTemplate entity) throws BusinessException {
 
-        entity.setCurrency(findCurrencyByIdOrCode(entity));
+    	Currency currency = findCurrencyByIdOrCode(entity);
+        if(currency == null) {
+        	currency = providerService.getProvider().getCurrency();
+        }
+		entity.setCurrency(currency);
         checkParameters(entity);
         SecurityDepositTemplate updatedSecurityDepositTemplate =  super.update(entity);
         auditLogService.trackOperation("UPDATE", new Date(), updatedSecurityDepositTemplate, updatedSecurityDepositTemplate.getCode());
@@ -90,6 +105,18 @@ public class SecurityDepositTemplateService extends BusinessService<SecurityDepo
         if(financeSettings.getMaxAmountPerSecurityDeposit() != null && securityDepositTemplate.getMaxAmount() != null
         && financeSettings.getMaxAmountPerSecurityDeposit().compareTo(securityDepositTemplate.getMaxAmount()) < 0 )
             throw new InvalidParameterException("max amount cannot exceed thr max amount per SD configured at FinanceSettings");
-
+    }
+    
+    public SecurityDepositTemplate findByTemplateName(String templateName) {
+        try {
+            return (SecurityDepositTemplate) getEntityManager().createNamedQuery("SecurityDepositTemplate.findByTemplateName").setParameter("templateName", templateName).getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("cannot find SecurityDepositTemplate with TemplateName {} - erreur : {}", templateName, e.getMessage());
+            throw new BusinessException("cannot find SecurityDepositTemplate with TemplateName = " + templateName);
+        }
+    }
+    
+    public SecurityDepositTemplate getDefaultSDTemplate() {
+        return findByTemplateName("DEFAULT_SD_TEMPLATE");
     }
 }

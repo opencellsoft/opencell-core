@@ -49,13 +49,14 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
-import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ISearchable;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.cpq.contract.ContractItem;
+import org.meveo.model.payments.DunningLOT;
 import org.meveo.model.scripts.ScriptInstance;
 
 /**
@@ -70,7 +71,6 @@ import org.meveo.model.scripts.ScriptInstance;
 @ObservableEntity
 @Cacheable
 @CustomFieldEntity(cftCodePrefix = "PricePlanMatrix")
-@ExportIdentifier({ "code" })
 @Table(name = "cat_price_plan_matrix", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cat_price_plan_matrix_seq"), })
@@ -371,7 +371,9 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "charge_template_id")
     private ChargeTemplate chargeTemplate;
-    
+
+    @OneToMany(mappedBy = "pricePlan", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<ContractItem> contractItems;
     /**
 	 * Discount plan items
 	 */
@@ -888,5 +890,21 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
 
     public void setChargeTemplate(ChargeTemplate chargeTemplate) {
         this.chargeTemplate = chargeTemplate;
+    }
+
+    public List<ContractItem> getContractItems() {
+        return contractItems;
+    }
+
+    public void setContractItems(List<ContractItem> contractItems) {
+        this.contractItems = contractItems;
+    }
+
+    public List<DiscountPlanItem> getDiscountPlanItems() {
+        return discountPlanItems;
+    }
+
+    public void setDiscountPlanItems(List<DiscountPlanItem> discountPlanItems) {
+        this.discountPlanItems = discountPlanItems;
     }
 }

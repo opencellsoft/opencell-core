@@ -28,6 +28,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.http.client.utils.DateUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.payment.HostedCheckoutInput;
+import org.meveo.api.dto.payment.HostedCheckoutStatusResponseDto;
 import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
@@ -72,6 +73,7 @@ import com.ingenico.connect.gateway.sdk.java.domain.definitions.PaymentProductFi
 import com.ingenico.connect.gateway.sdk.java.domain.errors.definitions.APIError;
 import com.ingenico.connect.gateway.sdk.java.domain.hostedcheckout.CreateHostedCheckoutRequest;
 import com.ingenico.connect.gateway.sdk.java.domain.hostedcheckout.CreateHostedCheckoutResponse;
+import com.ingenico.connect.gateway.sdk.java.domain.hostedcheckout.GetHostedCheckoutResponse;
 import com.ingenico.connect.gateway.sdk.java.domain.hostedcheckout.definitions.HostedCheckoutSpecificInput;
 import com.ingenico.connect.gateway.sdk.java.domain.hostedcheckout.definitions.PaymentProductFiltersHostedCheckout;
 import com.ingenico.connect.gateway.sdk.java.domain.mandates.CreateMandateRequest;
@@ -347,6 +349,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     }
     @Override
     public void createMandate(CustomerAccount customerAccount,String iban,String mandateReference) throws BusinessException {
+    	log.info("Ingenico createMandate CA={},mandatereference={}",customerAccount.getCode(),mandateReference);
     	try {
     		BankAccountIban bankAccountIban=new BankAccountIban(); 
     		bankAccountIban.setIban(iban);
@@ -355,28 +358,43 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     		if(customerAccount.getContactInformation() != null ) {
     			contactDetails.setEmailAddress(customerAccount.getContactInformation().getEmail()); 
     		}
-    		
     		MandateAddress address=new MandateAddress();
     		if (customerAccount.getAddress() != null) {
-    		address.setCity(customerAccount.getAddress().getCity());
-    		address.setCountryCode(customerAccount.getAddress().getCountry() == null ? null : customerAccount.getAddress().getCountry().getCountryCode());
-    		address.setStreet(customerAccount.getAddress().getAddress1());
+    		address.setCity(formatIngenicoData(customerAccount.getAddress().getCity(), true));
+    		address.setCountryCode(customerAccount.getAddress().getCountry() != null?customerAccount.getAddress().getCountry().getCountryCode():null); 
+    		String address1=customerAccount.getAddress().getAddress1();
+    		address.setStreet(formatIngenicoData(address1, false));
     		address.setZip(customerAccount.getAddress().getZipCode());
     		}
     		MandatePersonalName name = new MandatePersonalName();
-    		MandatePersonalInformation personalInformation =new MandatePersonalInformation();
+    		MandatePersonalInformation  personalInformation =new MandatePersonalInformation();
+    		boolean isEntreprise=getProviderService().getProvider().isEntreprise();
     		if (customerAccount.getName() != null) {
-    			name.setFirstName(customerAccount.getName().getFirstName());
-    			name.setSurname(customerAccount.getName().getLastName()); 
-    			personalInformation.setTitle(customerAccount.getName().getTitle() == null ? "" : customerAccount.getName().getTitle().getDescription());
+    			name.setSurname(formatIngenicoData(customerAccount.getName().getLastName(), true)); 
+    			String title=null;
+    			String firstName=null;
+    			if(!isEntreprise) {
+    				firstName=formatIngenicoData(customerAccount.getName().getFirstName(), false);
+    				if(customerAccount.getName().getTitle()!=null){
+    					title=customerAccount.getName().getTitle().getDescription();
+    				}
+    			}else {
+    				title="Mr";
+    				firstName="-";	
+    			}
+    			name.setFirstName(firstName);
+    			personalInformation.setTitle(title);
     		}  
+    		
     		personalInformation.setName(name);
     		MandateCustomer customer=new MandateCustomer();
     		customer.setBankAccountIban(bankAccountIban);
     		customer.setContactDetails(contactDetails);
     		customer.setMandateAddress(address);
     		customer.setPersonalInformation(personalInformation);
-
+    		if(isEntreprise) {
+    			customer.setCompanyName(formatIngenicoData(customerAccount.getName().getLastName(), true));
+    		}
     		
     		CreateMandateRequest body = new CreateMandateRequest();
     		body.setUniqueMandateReference(mandateReference);
@@ -384,16 +402,41 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     		body.setCustomerReference(customerAccount.getExternalRef1()); 
     		body.setRecurrenceType("RECURRING");
     		body.setSignatureType("UNSIGNED");
+    		ObjectMapper mapper = new ObjectMapper(); 
+    		String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body);
+    		log.info("createMandate body={}",jsonString);
+    		getClient().merchant(paymentGateway.getMarchandId()).mandates().create(body); 
 
-    	    getClient().merchant(paymentGateway.getMarchandId()).mandates().create(body); 
-
-    	}catch (ApiException ev) { 
+    	} catch (ApiException ev) { 
     		throw new MeveoApiException("Connection to ingenico is not allowed");
-    	}catch (Exception e) {
-    		throw new BusinessException(e.getMessage());
+    	} catch (Exception e) { 
+    		throw new MeveoApiException(e.getMessage());
     	}
 
     }
+    
+    /**
+	 * Ingenico Sepa does not support some characters when creating the mandate, it throws invalid format if data contains "/","&",digits (in the city field), and accents
+	 * @param data
+	 * @param stripDigits
+	 */
+	private String formatIngenicoData(String data, boolean stripDigits) {
+		String formatData = paramBean().getProperty("ingenico.formatData", "true");
+		String insuportedCharaters = paramBean().getProperty("ingenico.formatData.insupportedCharacters.", "/,&");
+		if(Boolean.parseBoolean(formatData)) {
+			for(String character:insuportedCharaters.split(",")) {
+				data=data.replaceAll(character, " ");
+				data = org.apache.commons.lang3.StringUtils.stripAccents(data);
+			}
+			
+			data = org.apache.commons.lang3.StringUtils.stripAccents(data);
+			if(stripDigits) {
+				data=data.replaceAll("\\d", "");
+			}
+		}
+		return data;
+	}
+ 
 
     @Override
     public void approveSepaDDMandate(String token,Date signatureDate) throws BusinessException {
@@ -444,45 +487,46 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
      * @return the payment response dto
      * @throws BusinessException the business exception
      */
-    private PaymentResponseDto doPayment(DDPaymentMethod ddPaymentMethod, CardPaymentMethod paymentCardToken, Long ctsAmount, CustomerAccount customerAccount, String cardNumber,
-            String ownerName, String cvv, String expirayDate, CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException {
+    private PaymentResponseDto doPayment(DDPaymentMethod ddPaymentMethod, CardPaymentMethod paymentCardToken,
+			Long ctsAmount, CustomerAccount customerAccount, String cardNumber, String ownerName, String cvv,
+			String expirayDate, CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams)
+			throws BusinessException {
 		PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
 		doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.NOT_PROCESSED);
-    	try {
-            
-            CreatePaymentRequest body = buildPaymentRequest(ddPaymentMethod, paymentCardToken, ctsAmount, customerAccount, cardNumber, ownerName, cvv, expirayDate, cardType);
-            getClient();
-            log.info("doPayment REQUEST :"+marshaller.marshal(body));
-            
-            CreatePaymentResponse response = getClient().merchant(paymentGateway.getMarchandId()).payments().create(body);
-            
-            if (response != null) {
-            	log.info("doPayment RESPONSE :"+marshaller.marshal(response));
-              
-                doPaymentResponseDto.setPaymentID(response.getPayment().getId());
-                doPaymentResponseDto.setPaymentStatus(mappingStaus(response.getPayment().getStatus()));
-                if (response.getCreationOutput() != null) {
-                    doPaymentResponseDto.setTransactionId(response.getCreationOutput().getExternalReference());
-                    doPaymentResponseDto.setTokenId(response.getCreationOutput().getToken());
-                    doPaymentResponseDto.setNewToken(response.getCreationOutput().getIsNewToken());
-                }
-                Payment payment = response.getPayment();
-                if (payment != null && response.getPayment().getStatusOutput().getErrors() != null) {
-                    PaymentStatusOutput statusOutput = payment.getStatusOutput();
-                    if (statusOutput != null) {
-                        List<APIError> errors = statusOutput.getErrors();
-                        if (CollectionUtils.isNotEmpty(errors)) {
-                            doPaymentResponseDto.setErrorMessage(errors.toString());
-                            doPaymentResponseDto.setErrorCode(errors.get(0).getId()); 
-                        }
-                    }
-                }
-                return doPaymentResponseDto;
-            } else {
-                throw new BusinessException("Gateway response is null");
-            }
-    	} catch (ApiException e) {
-			log.error("Error on doPayment :",e);
+		try {
+
+			CreatePaymentRequest body = buildPaymentRequest(ddPaymentMethod, paymentCardToken, ctsAmount,
+					customerAccount, cardNumber, ownerName, cvv, expirayDate, cardType);
+
+			CreatePaymentResponse response = getClient().merchant(paymentGateway.getMarchandId()).payments()
+					.create(body);
+
+			if (response != null && response.getPayment() != null) {
+				log.info("doPayment RESPONSE :" + marshaller.marshal(response));
+				Payment paymentResponse = response.getPayment();
+				doPaymentResponseDto.setPaymentID(paymentResponse.getId());
+				doPaymentResponseDto.setPaymentStatus(mappingStaus(paymentResponse.getStatus()));
+				if (response.getCreationOutput() != null) {
+					doPaymentResponseDto.setTransactionId(response.getCreationOutput().getExternalReference());
+					doPaymentResponseDto.setTokenId(response.getCreationOutput().getToken());
+					doPaymentResponseDto.setNewToken(response.getCreationOutput().getIsNewToken() == null ? false
+							: response.getCreationOutput().getIsNewToken());
+				}
+
+				if (paymentResponse.getStatusOutput() != null && paymentResponse.getStatusOutput().getErrors() != null) {
+					PaymentStatusOutput statusOutput = paymentResponse.getStatusOutput();
+						List<APIError> errors = statusOutput.getErrors();
+						if (CollectionUtils.isNotEmpty(errors)) {
+							doPaymentResponseDto.setErrorMessage(errors.toString());
+							doPaymentResponseDto.setErrorCode(errors.get(0).getId());
+						}					
+				}
+				return doPaymentResponseDto;
+			} else {
+				throw new BusinessException("Gateway response is null");
+			}
+		} catch (ApiException e) {
+			log.error("Error on doPayment :", e);
 			doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.ERROR);
 			doPaymentResponseDto.setErrorMessage(e.getResponseBody());
 			if (CollectionUtils.isNotEmpty(e.getErrors())) {
@@ -500,7 +544,8 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 		if (StringUtils.isBlank(scriptInstanceCode)) {
 			AmountOfMoney amountOfMoney = new AmountOfMoney();
 			amountOfMoney.setAmount(ctsAmount);
-			amountOfMoney.setCurrencyCode(getProviderService().getProvider().getCurrency().getCurrencyCode());
+			String currencyCode=customerAccount.getTradingCurrency().getCurrencyCode()!=null?customerAccount.getTradingCurrency().getCurrencyCode():getProviderService().getProvider().getCurrency().getCurrencyCode();
+			amountOfMoney.setCurrencyCode(currencyCode);
 			Customer customer = new Customer();
 			customer.setBillingAddress(getBillingAddress(customerAccount));
 			if("true".equals(paramBean().getProperty("ingenico.CreatePayment.includeDeviceData", "true"))) {
@@ -871,9 +916,12 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			
 			log.info("hostedCheckoutInput.isOneShotPayment(): "+ hostedCheckoutInput.isOneShotPayment());
 			
-			if(hostedCheckoutInput.isOneShotPayment()) {
-				timeMillisWithcustomerAccountId = "oneShot_"+timeMillisWithcustomerAccountId;
-			}
+            boolean isRequiresApproval = "true".equalsIgnoreCase(paramBean().getProperty("ingenico.HostedCheckout.saveCard.RequiresApproval", "true"));
+            
+            if(hostedCheckoutInput.isOneShotPayment()) {
+                timeMillisWithcustomerAccountId = "oneShot_"+timeMillisWithcustomerAccountId;
+                isRequiresApproval = "true".equalsIgnoreCase(paramBean().getProperty("ingenico.HostedCheckout.oneShot.RequiresApproval", "false"));
+            }
 
 			String redirectionUrl;
 
@@ -910,7 +958,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			order.setReferences(orderReferences);
 
 			CardPaymentMethodSpecificInputBase cardPaymentMethodSpecificInputBase = new CardPaymentMethodSpecificInputBase();
-			cardPaymentMethodSpecificInputBase.setRequiresApproval(true);
+			cardPaymentMethodSpecificInputBase.setRequiresApproval(isRequiresApproval);
 			cardPaymentMethodSpecificInputBase.setAuthorizationMode(hostedCheckoutInput.getAuthorizationMode());
 			cardPaymentMethodSpecificInputBase.setTokenize(true);
 			
@@ -940,8 +988,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			CreateHostedCheckoutResponse response = client.merchant(paymentGateway.getMarchandId()).hostedcheckouts().create(body);			
 			log.info("RESPONSE:"+marshaller.marshal(response));
 			redirectionUrl = paramBean().getProperty("ingenico.hostedCheckoutUrl.prefix", "https://payment.") + response.getPartialRedirectUrl();
-
-			return new PaymentHostedCheckoutResponseDto(redirectionUrl, null, null);
+			return new PaymentHostedCheckoutResponseDto(redirectionUrl, null, null,response.getHostedCheckoutId());
 		} catch (Exception e) {
 			log.error("Error on getHostedCheckoutUrl:",e);
 			throw new BusinessException(e.getMessage());
@@ -984,4 +1031,23 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 	public String createInvoice(Invoice invoice) throws BusinessException {
 		 throw new UnsupportedOperationException();
 	}
+
+    @Override
+    public HostedCheckoutStatusResponseDto getHostedCheckoutStatus(String id) throws BusinessException {
+        try {           
+            getClient();           
+            GetHostedCheckoutResponse response = client.merchant(paymentGateway.getMarchandId()).hostedcheckouts().get(id);       
+            log.info("RESPONSE:"+marshaller.marshal(response));
+            HostedCheckoutStatusResponseDto hostedCheckoutStatusResponseDto = new HostedCheckoutStatusResponseDto();
+            hostedCheckoutStatusResponseDto.setHostedCheckoutStatus(response.getStatus());
+            if(response.getCreatedPaymentOutput() != null && response.getCreatedPaymentOutput().getPayment() != null ) {
+                hostedCheckoutStatusResponseDto.setPaymentId(response.getCreatedPaymentOutput().getPayment().getId());
+                hostedCheckoutStatusResponseDto.setPaymentStatus(mappingStaus(response.getCreatedPaymentOutput().getPayment().getStatus()));
+            }
+            return hostedCheckoutStatusResponseDto;
+        } catch (Exception e) {
+            log.error("Error on getHostedCheckoutStatus:",e);
+            throw new BusinessException(e.getMessage());
+        }
+    }
 }

@@ -29,6 +29,7 @@ import javax.persistence.Query;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.payment.HostedCheckoutInput;
+import org.meveo.api.dto.payment.HostedCheckoutStatusResponseDto;
 import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
@@ -82,6 +83,8 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 	private ProviderService providerService;
 
 	private boolean automaticMandateCreation;
+	
+	private static String dateParamName = "dateIN";
 
     public PaymentMethodService() {
         ParamBean bean = ParamBean.getInstance();
@@ -95,6 +98,10 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
         if (paymentMethod instanceof CardPaymentMethod) {
             CardPaymentMethod cardPayment = (CardPaymentMethod) paymentMethod;
+
+            if(cardTokenAlreadyExist(cardPayment)){
+                throw new BusinessException("A card with the same number already exists");
+            }
             if (!cardPayment.isValidForDate(new Date())) {
                 throw new BusinessException("Cant add expired card");
             }
@@ -112,7 +119,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         // Mark other payment methods as not preferred
         if (paymentMethod.isPreferred()) {
             getEntityManager().createNamedQuery("PaymentMethod.updatePreferredPaymentMethod").setParameter("id", paymentMethod.getId())
-                .setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
+                .setParameter("ca", paymentMethod.getCustomerAccount()).setParameter(dateParamName, new Date()).executeUpdate();
         }
     }
 
@@ -207,27 +214,18 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
     /**
      * Test if the card with a TokenId and aoociated to a customer account Exist.
      *
-     * @param paymentMethod Payment Method
      * @return true, if successful
      * @throws BusinessException the business exception
      */
-    public boolean cardTokenExist(PaymentMethod paymentMethod) throws BusinessException {
+    public boolean cardTokenAlreadyExist(CardPaymentMethod cardPaymentMethod) throws BusinessException {
 
-        boolean result = false;
-        if (paymentMethod instanceof CardPaymentMethod) {
-            CardPaymentMethod cardPayment = (CardPaymentMethod) paymentMethod;
-            if ((cardPayment == null) || (cardPayment.getCustomerAccount() == null)) {
-                result = true;
-            }
-            long nbrOfCardCustomerAccount = (long) getEntityManager().createNamedQuery("PaymentMethod.getNumberOfCardCustomerAccount")
-                .setParameter("customerAccountId", cardPayment.getCustomerAccount().getId()).setParameter("monthExpiration", cardPayment.getMonthExpiration())
-                .setParameter("yearExpiration", cardPayment.getYearExpiration()).setParameter("hiddenCardNumber", cardPayment.getHiddenCardNumber())
-                .setParameter("cardType", cardPayment.getCardType()).getSingleResult();
+        long numberOfCardsByAccountAndCardInfo = (long) getEntityManager().createNamedQuery("PaymentMethod.getNumberOfCardCustomerAccount")
+                .setParameter("customerAccountId", cardPaymentMethod.getCustomerAccount().getId())
+                .setParameter("hiddenCardNumber", cardPaymentMethod.getHiddenCardNumber())
+                .setParameter("cardType", cardPaymentMethod.getCardType()).getSingleResult();
 
-            if (nbrOfCardCustomerAccount > 0)
-                result = true;
-        }
-        return result;
+        return numberOfCardsByAccountAndCardInfo > 0;
+
     }
 
 
@@ -245,7 +243,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         // Mark other payment methods as not preferred
         if (paymentMethod.isPreferred()) {
             getEntityManager().createNamedQuery("PaymentMethod.updatePreferredPaymentMethod").setParameter("id", paymentMethod.getId())
-                .setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
+                .setParameter("ca", paymentMethod.getCustomerAccount()).setParameter(dateParamName, new Date()).executeUpdate();
         }
 
         return paymentMethod;
@@ -272,8 +270,8 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
         if (wasPreferred) {
             Long minId = (Long) getEntityManager().createNamedQuery("PaymentMethod.updateFirstPaymentMethodToPreferred1").setParameter("caId", caId).getSingleResult();
-            getEntityManager().createNamedQuery("PaymentMethod.updateFirstPaymentMethodToPreferred2").setParameter("id", minId).setParameter("caId", caId).executeUpdate();
-            getEntityManager().createNamedQuery("PaymentMethod.updateFirstPaymentMethodToPreferred3").setParameter("id", minId).setParameter("caId", caId).executeUpdate();
+            getEntityManager().createNamedQuery("PaymentMethod.updateFirstPaymentMethodToPreferred2").setParameter("id", minId).setParameter("caId", caId).setParameter(dateParamName, new Date()).executeUpdate();
+            getEntityManager().createNamedQuery("PaymentMethod.updateFirstPaymentMethodToPreferred3").setParameter("id", minId).setParameter("caId", caId).setParameter(dateParamName, new Date()).executeUpdate();
         }
     }
 
@@ -316,7 +314,6 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
      * Store payment information in payment gateway and return token id in a payment gateway.
      * Reserved to GlobalCollect platform
      * 
-     * @param ddPaymentMethod Direct debit method
      * @param customerAccount Customer account
      * @throws BusinessException business exception.
      * 
@@ -423,6 +420,36 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         }
         
         return gatewayPaymentInterface.getHostedCheckoutUrl(hostedCheckoutInput);
+    }
+    
+    /**
+     *  Get the hostedCheckout status
+     * @param id the hostedCheckout ID
+     * @param customerAccountCode
+     * @param sellerCode
+     * @return
+     * @throws BusinessException
+     */
+    public HostedCheckoutStatusResponseDto getHostedCheckoutStatus(String id, String customerAccountCode, String sellerCode) throws BusinessException {
+        CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
+        if (customerAccount == null) {
+            throw new BusinessException("Can't found CustomerAccount with code:" + customerAccountCode);
+        }
+
+        Seller seller = null;
+        if (!StringUtils.isBlank(sellerCode)) {
+            seller = sellerService.findByCode(sellerCode);
+            if (seller == null) {
+                throw new BusinessException("Can't found Seller with code:" + sellerCode);
+            }
+        }
+
+        GatewayPaymentInterface gatewayPaymentInterface = null;
+        gatewayPaymentInterface = getGatewayPaymentInterface(customerAccount, seller);
+        if(gatewayPaymentInterface == null) {
+            throw new BusinessException("Can't found the gateway to use");
+        }
+        return gatewayPaymentInterface.getHostedCheckoutStatus(id);
     }
 
     /**

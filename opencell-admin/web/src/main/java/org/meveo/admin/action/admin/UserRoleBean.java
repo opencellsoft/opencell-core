@@ -88,6 +88,8 @@ public class UserRoleBean extends BaseBean<Role> {
     private BusinessEntity selectedEntity;
     private BaseBean<?> selectedAccountBean;
 
+    private Map<String, String> securedEntityFilter = new HashMap<>();
+
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
@@ -173,6 +175,8 @@ public class UserRoleBean extends BaseBean<Role> {
         if (!StringUtils.isBlank(getSecuredEntityType())) {
             setSelectedAccountBean(accountBeanMap.get(getSecuredEntityType()));
         }
+
+        securedEntityFilter.clear();
     }
 
     public List<DetailedSecuredEntity> getSelectedSecuredEntities() {
@@ -321,5 +325,24 @@ public class UserRoleBean extends BaseBean<Role> {
      */
     public void setSelectedEntity(BusinessEntity selectedEntity) {
         this.selectedEntity = selectedEntity;
+    }
+
+    public Map<String, String> getSecuredEntityFilter() {
+        return securedEntityFilter;
+    }
+
+    public void setSecuredEntityFilter(Map<String, String> securedEntityFilter) {
+        this.securedEntityFilter = securedEntityFilter;
+    }
+
+    public void filterAccounts() {
+        selectedAccountBean.getFilters().clear();
+        selectedAccountBean.getFilters().putAll(securedEntityFilter);
+        selectedAccountBean.search();
+    }
+    
+    public void cleanAccountsFilter() {
+        securedEntityFilter.clear();
+        selectedAccountBean.getFilters().clear();
     }
 }

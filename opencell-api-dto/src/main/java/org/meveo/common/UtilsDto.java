@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
@@ -37,6 +38,7 @@ public class UtilsDto {
 		    if(a.getRecurrencePeriodicity()!=null) {
 		    	quotePrice.setRecurrencePeriodicity(a.getRecurrencePeriodicity());
 		    }
+			quotePrice.setCurrencyCode(!StringUtils.isBlank(a.getCurrencyCode())?a.getCurrencyCode():b.getCurrencyCode());
 		    return quotePrice;
         });
         return price;

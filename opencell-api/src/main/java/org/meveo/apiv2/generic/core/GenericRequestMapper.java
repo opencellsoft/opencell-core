@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.assertj.core.util.VisibleForTesting;
+import org.meveo.admin.util.pagination.FilterOperatorEnum;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.apiv2.generic.GenericPagingAndFiltering;
@@ -38,7 +39,7 @@ public class GenericRequestMapper {
     private PaginationConfiguration getPaginationConfiguration(GenericPagingAndFiltering genericPagingAndFiltering) {
         return new PaginationConfiguration(genericPagingAndFiltering.getOffset().intValue(), genericPagingAndFiltering.getLimitOrDefault(GenericHelper.getDefaultLimit()).intValue(),
                 evaluateFilters(genericPagingAndFiltering.getFilters(), entityClass), genericPagingAndFiltering.getFullTextFilter(),
-                computeFetchFields(genericPagingAndFiltering), genericPagingAndFiltering.getGroupBy(), genericPagingAndFiltering.getHaving(),
+                computeFetchFields(genericPagingAndFiltering), genericPagingAndFiltering.getGroupBy(), genericPagingAndFiltering.getHaving(), genericPagingAndFiltering.getJoinType(),
                 genericPagingAndFiltering.getSortBy(), PagingAndFiltering.SortOrder.valueOf(genericPagingAndFiltering.getSortOrder()));
     }
     private List<String> computeFetchFields(GenericPagingAndFiltering genericPagingAndFiltering) {
@@ -64,12 +65,13 @@ public class GenericRequestMapper {
     	return result;
     }
 	   
-    @VisibleForTesting
     public Map<String, Object> evaluateFilters(Map<String, Object> filters, Class<? extends IEntity> entity) {
         return Stream.of(filters.keySet().toArray())
                 .map(key -> {
                     String keyObject = (String) key;
-                    if(!keyObject.startsWith("SQL") && !"$FILTER".equalsIgnoreCase(keyObject)){
+                    if(keyObject.matches("\\$filter[0-9]+$")) {
+                    	return Collections.singletonMap(keyObject, evaluateFilters((Map<String, Object>)filters.get(key), entity));
+                    } else if(!keyObject.startsWith("SQL") && !"$FILTER".equalsIgnoreCase(keyObject) && !"$OPERATOR".equalsIgnoreCase(keyObject)){
 
                     	String fieldName = keyObject.contains(" ") ? keyObject.substring(keyObject.indexOf(" ")).trim() : keyObject;
                     	String[] fields=fieldName.split(" ");
@@ -78,6 +80,14 @@ public class GenericRequestMapper {
                     		filterMapper=new FactoryFilterMapper().create(field, filters.get(key), (String) filters.get("cetCode"), serviceFunction, entity);
                     	}
                     	return Collections.singletonMap(keyObject, filterMapper.map());
+                    } else if ("$OPERATOR".equalsIgnoreCase(keyObject)) {
+                    	String filterOperator = (String) filters.get(keyObject);
+                    	try {
+	                        FilterOperatorEnum enumValue = FilterOperatorEnum.valueOf(filterOperator);
+	                        return Collections.singletonMap(keyObject, enumValue);
+                    	} catch (IllegalArgumentException e) {
+                    		throw new IllegalArgumentException("Invalid $operator value. Accepted value : 'OR', 'AND'", e);
+                    	}
                     }
                     return Collections.singletonMap(keyObject, filters.get(key));
                 })

@@ -58,7 +58,7 @@ public class PDFInvoiceGenerationJobBean extends IteratorBasedJobBean<Long> {
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::convertToPdf, this::convertToPdfBatch, null, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::convertToPdf, this::convertToPdfBatch, null, this::clearJasperReportCache);
     }
 
     /**
@@ -88,6 +88,7 @@ public class PDFInvoiceGenerationJobBean extends IteratorBasedJobBean<Long> {
             BillingRun billingRun = billingRunService.findById(billingRunId);
             if (billingRun != null) {
                 billingRunExtensionService.updateBillingRunWithXMLPDFExecutionResult(billingRunId, null, jobExecutionResult.getId());
+                billingRunService.updateBillingRunJobExecution(billingRun, jobExecutionResult);
                 billingRunService.refreshOrRetrieve(billingRun);
             }
 
@@ -144,5 +145,14 @@ public class PDFInvoiceGenerationJobBean extends IteratorBasedJobBean<Long> {
         }
         return invoiceIds;
 
+    }
+
+    /**
+     * Clear cached Jasper reports
+     * 
+     * @param jobExecutionResult Job execution result
+     */
+    private void clearJasperReportCache(JobExecutionResultImpl jobExecutionResult) {
+        InvoiceService.clearJasperReportCache();
     }
 }

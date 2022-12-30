@@ -9,6 +9,7 @@ import static org.meveo.model.billing.BillingProcessTypesEnum.FULL_AUTOMATIC;
 import static org.meveo.model.billing.BillingRunStatusEnum.*;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -18,6 +19,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.ws.rs.BadRequestException;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.meveo.admin.async.SynchronizedIterator;
@@ -30,8 +32,11 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunAutomaticActionEnum;
 import org.meveo.model.billing.BillingRunStatusEnum;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSequence;
+import org.meveo.model.billing.InvoiceValidationStatusEnum;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
@@ -39,6 +44,7 @@ import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.JobSpeedEnum;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.billing.impl.*;
 
 @Stateless
@@ -86,6 +92,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                 filters.put("inList id", billingRunIds);
             }
             PaginationConfiguration paginationConfiguration = new PaginationConfiguration(filters);
+            paginationConfiguration.setFetchFields(Arrays.asList("billingCycle", "billingCycle.billingRunValidationScript"));
             List<BillingRun> billingRuns = billingRunService.list(paginationConfiguration);
             if (billingRuns.isEmpty()) {
                 List<String> errors = List.of("No valid billing run with status=INVOICE_LINES_CREATED found");
@@ -96,7 +103,8 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                     if(billingRun.isExceptionalBR() && addExceptionalInvoiceLineIds(billingRun) == 0) {
                         result.setReport("Exceptional Billing filters returning no invoice line to process");
                     }
-                    executeBillingRun(billingRun, jobInstance, result);
+                    executeBillingRun(billingRun, jobInstance, result,
+                            billingRun.getBillingCycle() != null ? billingRun.getBillingCycle().getBillingRunValidationScript() : null, true);
                     initAmounts();
                 }
             }
@@ -135,8 +143,9 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         return billingRun.getExceptionalILIds().size();
     }
 
-    private void executeBillingRun(BillingRun billingRun, JobInstance jobInstance, JobExecutionResultImpl result) {
+    private void executeBillingRun(BillingRun billingRun, JobInstance jobInstance, JobExecutionResultImpl result, ScriptInstance billingRunValidationScript, boolean v11Process) {
     	boolean prevalidatedAutomaticPrevBRStatus = false;
+    	boolean firstPassAutomatic = billingRun.getStatus() == INVOICE_LINES_CREATED && billingRun.getProcessType() == AUTOMATIC;
     	
         if(billingRun.getStatus() == INVOICE_LINES_CREATED
                 && (billingRun.getProcessType() == AUTOMATIC || billingRun.getProcessType() == FULL_AUTOMATIC)) {
@@ -144,46 +153,74 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         }
         if(billingRun.getStatus() == PREVALIDATED) {
             billingRun.setStatus(INVOICES_CREATED);
-            billingRunService.createAggregatesAndInvoiceWithIl(billingRun, 1, 0, jobInstance.getId());
+            billingRunService.createAggregatesAndInvoiceWithIl(billingRun, 1, 0, jobInstance.getId(), result, v11Process );
             billingRun = billingRunService.refreshOrRetrieve(billingRun);
             billingRun.setPrAmountWithTax(amountWithTax);
             billingRun.setPrAmountWithoutTax(amountWithoutTax);
             billingRun.setPrAmountTax(amountTax);
             billingRun.setStatus(DRAFT_INVOICES);
             prevalidatedAutomaticPrevBRStatus = true;
+            billingRunService.applyThreshold(billingRun.getId());
+            invoiceService.applyligibleInvoiceForAdvancement(billingRun.getId());
         }
         if(billingRun.getStatus() == DRAFT_INVOICES && billingRun.getProcessType() == FULL_AUTOMATIC) {
             billingRun.setStatus(POSTVALIDATED);
         }
-        if(!billingRunService.isBillingRunValid(billingRun)) {
+        if(billingRunValidationScript != null && billingRun.getBillingCycle() != null) {
+            billingRun.getBillingCycle().setBillingRunValidationScript(billingRunValidationScript);
+        }
+
+		if((billingRun.getRejectAutoAction() != null && 
+		        billingRun.getRejectAutoAction().equals(BillingRunAutomaticActionEnum.MOVE)) 
+		    || (billingRun.getSuspectAutoAction() != null && 
+		        billingRun.getSuspectAutoAction().equals(BillingRunAutomaticActionEnum.MOVE))
+		    || !billingRunService.isBRValid(billingRun)) {
             billingRun.setStatus(REJECTED);
         }
-        
-        if ((billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC || billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC) 
-        		&& (BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus()) 
-        				|| BillingRunStatusEnum.DRAFT_INVOICES.equals(billingRun.getStatus())
-        				|| BillingRunStatusEnum.REJECTED.equals(billingRun.getStatus()))) {
-            billingRunService.applyAutomaticValidationActions(billingRun);
-            if(billingRunService.isBillingRunValid(billingRun)) {
-            	if(billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
-                    billingRun.setStatus(POSTVALIDATED);
-            	}else if(billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC && prevalidatedAutomaticPrevBRStatus) {
-                    billingRun.setStatus(DRAFT_INVOICES);
-            	} else {
-                    billingRun.setStatus(POSTVALIDATED);
-            	}
+		
+		billingRun = billingRunService.update(billingRun);
+		try{
+		    billingRunService.executeBillingRunValidationScript(billingRun);
+		} catch (BusinessException exception) {		    
+		    if(billingRunService.isBillingRunContainingRejectedInvoices(billingRun.getId())) {
+                billingRun.setStatus(REJECTED);
+                billingRunService.update(billingRun);
+                throw new BadRequestException(exception.getMessage());
             }
-
+        }
+		
+		billingRun = billingRunService.refreshOrRetrieve(billingRun);
+		
+		if ((billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC || billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC) 
+                && (BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus()) 
+                        || BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())
+                        || BillingRunStatusEnum.DRAFT_INVOICES.equals(billingRun.getStatus())
+                        || BillingRunStatusEnum.REJECTED.equals(billingRun.getStatus()))) {
+            billingRunService.applyAutomaticValidationActions(billingRun);
+            billingRun = billingRunService.refreshOrRetrieve(billingRun);
+            if(!billingRunService.isBRValid(billingRun)) {
+                billingRun.setStatus(REJECTED);
+            }
+            else {
+                if(billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
+                    billingRun.setStatus(POSTVALIDATED);
+                }else if(billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC && prevalidatedAutomaticPrevBRStatus) {
+                    billingRun.setStatus(DRAFT_INVOICES);
+                } else {
+                    billingRun.setStatus(POSTVALIDATED);
+                }
+            }
         }
         
-        billingRun = billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null,
-                billingRun.getStatus(), null);
-        
-        billingRun = billingRunService.refreshOrRetrieve(billingRun);
-        if(billingRun.getStatus() == POSTVALIDATED) {
+        if(!firstPassAutomatic || billingRun.getStatus() == POSTVALIDATED) {
             assignInvoiceNumberAndIncrementBAInvoiceDatesAndGenerateAO(billingRun, result);
-            billingRun.setStatus(VALIDATED);
+            if(!billingRunService.isBillingRunContainingRejectedInvoices(billingRun.getId())) {
+                billingRun.setStatus(VALIDATED);
+            }else{
+                billingRun.setStatus(REJECTED);
+            }
         }
+		
         billingRunService.update(billingRun);
         billingRunService.updateBillingRunStatistics(billingRun);
         billingRunService.updateBillingRunJobExecution(billingRun, result);

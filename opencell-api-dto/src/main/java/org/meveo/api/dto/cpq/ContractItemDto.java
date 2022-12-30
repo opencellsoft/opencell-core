@@ -34,7 +34,7 @@ public class ContractItemDto extends BusinessEntityDto {
 	@Schema(description = "code of the service template")
 	private String serviceTemplateCode;
 	@Schema(description = "rate of the contract")
-	private int rate;
+	private Double rate;
 	@Schema(description = "amount without tax")
     private BigDecimal amountWithoutTax;
     
@@ -144,13 +144,13 @@ public class ContractItemDto extends BusinessEntityDto {
 	/**
 	 * @return the rate
 	 */
-	public int getRate() {
+	public Double getRate() {
 		return rate;
 	}
 	/**
 	 * @param rate the rate to set
 	 */
-	public void setRate(int rate) {
+	public void setRate(Double rate) {
 		this.rate = rate;
 	}
 	/**

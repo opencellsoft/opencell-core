@@ -165,7 +165,7 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @JoinTable(name = "cpq_offer_template_media", joinColumns = @JoinColumn(name = "offer_template_id"), inverseJoinColumns = @JoinColumn(name = "media_id"))
     private List<Media> medias = new ArrayList<Media>();
 
-    @OneToMany(mappedBy = "targetOfferTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "targetOfferTemplate", fetch = FetchType.LAZY, orphanRemoval = true)
     @OrderBy("id")
     private List<CommercialRuleHeader> commercialRules = new ArrayList<>();
 
@@ -201,6 +201,11 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offer_model_id")
     private OfferTemplate offerModel;
+    
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "generate_quote_edr_per_product")
+    private boolean generateQuoteEdrPerProduct;
     
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "offerTemplate", orphanRemoval = true)
@@ -615,6 +620,14 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 	public void setOfferAttributes(List<OfferTemplateAttribute> offerAttributes) {
 		this.offerAttributes = offerAttributes;
 	}
+
+    public boolean isGenerateQuoteEdrPerProduct() {
+        return generateQuoteEdrPerProduct;
+    }
+
+    public void setGenerateQuoteEdrPerProduct(boolean generateQuoteEdrPerProduct) {
+        this.generateQuoteEdrPerProduct = generateQuoteEdrPerProduct;
+    }
     
     
     

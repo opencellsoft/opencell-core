@@ -157,6 +157,13 @@ public class CustomFieldValue implements Serializable, Cloneable {
     private EntityReferenceWrapper entityReferenceValue;
 
     /**
+     * Entity reference type value
+     */
+    @JsonProperty("url")
+    private UrlReferenceWrapper urlReferenceValue;
+
+
+    /**
      * List of Strings type value
      */
     @JsonProperty("listString")
@@ -486,6 +493,14 @@ public class CustomFieldValue implements Serializable, Cloneable {
      */
     public void setEntityReferenceValue(EntityReferenceWrapper entityReferenceValue) {
         this.entityReferenceValue = entityReferenceValue;
+    }
+
+    public UrlReferenceWrapper getUrlReferenceValue() {
+        return urlReferenceValue;
+    }
+
+    public void setUrlReferenceValue(UrlReferenceWrapper urlReferenceValue) {
+        this.urlReferenceValue = urlReferenceValue;
     }
 
     /**
@@ -895,6 +910,9 @@ public class CustomFieldValue implements Serializable, Cloneable {
             setEntityReferenceValue(new EntityReferenceWrapper((BusinessEntity) value));
             break;
 
+            case URL:
+            setUrlReferenceValue((UrlReferenceWrapper) value);
+            break;
         case CHILD_ENTITY:
             throw new RuntimeException("Child entity type of field supports only list of entities");
 
@@ -1154,6 +1172,11 @@ public class CustomFieldValue implements Serializable, Cloneable {
                     return entityReferenceValue.getCode();
                 }
                 break;
+            case URL:
+                if (urlReferenceValue != null) {
+                    return urlReferenceValue.getUrl();
+                }
+                break;
             case LONG:
                 if (longValue != null) {
                     return longValue.toString();
@@ -1234,7 +1257,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
                 && (listDateValue == null || listDateValue.isEmpty()) && (listLongValue == null || listLongValue.isEmpty()) && (listDoubleValue == null || listDoubleValue.isEmpty())
                 && (listBooleanValue == null || listBooleanValue.isEmpty()) && (listEntityValue == null || listEntityValue.isEmpty()) && (mapStringValue == null || mapStringValue.isEmpty())
                 && (mapDateValue == null || mapDateValue.isEmpty()) && (mapLongValue == null || mapLongValue.isEmpty()) && (mapDoubleValue == null || mapDoubleValue.isEmpty())
-                && (mapBooleanValue == null || mapBooleanValue.isEmpty()) && (mapEntityValue == null || mapEntityValue.isEmpty()) && (entityReferenceValue == null || entityReferenceValue.isEmpty()));
+                && (mapBooleanValue == null || mapBooleanValue.isEmpty()) && (mapEntityValue == null || mapEntityValue.isEmpty()) && (entityReferenceValue == null || entityReferenceValue.isEmpty()) && (urlReferenceValue == null || urlReferenceValue.isEmpty()));
     }
 
     /**
@@ -1397,7 +1420,11 @@ public class CustomFieldValue implements Serializable, Cloneable {
             EntityReferenceWrapper entityReferenceValue = gson.fromJson(sValue, EntityReferenceWrapper.class);
             deserializedValue = entityReferenceValue;
 
-        } else if ("list".equals(type)) {
+        } else if("url".equals(type)){
+            String sValue = serializedValue.substring(firstSeparatorIndex + 1);
+            UrlReferenceWrapper urlReferenceValue = gson.fromJson(sValue, UrlReferenceWrapper.class);
+            deserializedValue = urlReferenceValue;
+        }else if ("list".equals(type)) {
 
             // Type defaults to String
             Type itemType = new TypeToken<List<String>>() {
@@ -1531,6 +1558,8 @@ public class CustomFieldValue implements Serializable, Cloneable {
             return longValue;
         } else if (entityReferenceValue != null) {
             return entityReferenceValue;
+        } else if (urlReferenceValue != null) {
+            return urlReferenceValue;
         }
         return null;
     }
@@ -1592,6 +1621,10 @@ public class CustomFieldValue implements Serializable, Cloneable {
             result.put("entity", entityReferenceValue);
             return result;
         }
+        else if (urlReferenceValue != null) {
+            result.put("url", urlReferenceValue);
+            return result;
+        }
         return null;
     }
 
@@ -1608,6 +1641,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
         longValue = null;
         stringValue = null;
         entityReferenceValue = null;
+        urlReferenceValue = null;
         mapStringValue = null;
         mapDateValue = null;
         mapLongValue = null;
@@ -1653,6 +1687,8 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
         } else if (value instanceof List) {
             setListValue((List) value);
+        } else if (value instanceof UrlReferenceWrapper) {
+            setUrlReferenceValue((UrlReferenceWrapper) value);
         }
     }
 
@@ -1682,6 +1718,9 @@ public class CustomFieldValue implements Serializable, Cloneable {
         }
         if (entityReferenceValue != null) {
             sb.append(", entityReferenceValue=").append(entityReferenceValue);
+        }
+        if (urlReferenceValue != null) {
+            sb.append(", urlReferenceValue=").append(urlReferenceValue);
         }
         List lValue = getListValue();
         if (lValue != null && !lValue.isEmpty()) {
@@ -1850,6 +1889,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
         cloned.doubleValue = doubleValue;
         cloned.stringValue = stringValue;
         cloned.entityReferenceValue = entityReferenceValue;
+        cloned.urlReferenceValue = urlReferenceValue;
 
         cloned.customTableCode = customTableCode;
         cloned.dataFilter = dataFilter;

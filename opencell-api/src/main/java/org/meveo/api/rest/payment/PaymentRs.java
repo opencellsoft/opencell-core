@@ -37,6 +37,7 @@ import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
 import org.meveo.api.dto.payment.DDRequestBuilderDto;
 import org.meveo.api.dto.payment.DDRequestBuilderResponseDto;
+import org.meveo.api.dto.payment.HostedCheckoutStatusResponseDto;
 import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentGatewayDto;
@@ -1165,6 +1166,33 @@ public interface PaymentRs extends IBaseRs {
                                                                  @QueryParam("authenticationAmount") String authenticationAmount,
                                                                  @DefaultValue("") @QueryParam("advancedOptions") String advancedOptions,
                                                                  @DefaultValue("false") @QueryParam("isOneShotPayment") Boolean isOneShotPayment
+    );
+    
+    /**
+     * Get the Hosted Checkout Status .
+     * @param id the hostedCheckout Id
+     * @param customerAccountCode the customerAccount Code    
+     * @param sellerCode the Seller Code   
+     * @return the HostedCheckoutStatusResponseDto
+     */
+    @GET
+    @Path("/paymentGateway/getHostedCheckoutStatus")
+    @Operation(
+            summary=" Get the Hosted Checkout Status. ",
+            description=" Get the Hosted Checkout Status. ",
+            operationId="    GET_Payment_paymentGateway_getHostedCheckoutStatus",
+            responses= {
+                @ApiResponse(description=" the HostedCheckoutStatusResponseDto ",
+                        content=@Content(
+                                    schema=@Schema(
+                                            implementation= HostedCheckoutStatusResponseDto.class
+                                            )
+                                )
+                )}
+    )
+    HostedCheckoutStatusResponseDto getHostedCheckoutStatus(@QueryParam("id") String id,  
+                                                            @QueryParam("ca") String customerAccountCode,                                                                 
+                                                            @QueryParam("seller") String sellerCode                                                                
     );
 
     /************************************************************************************************/

@@ -66,11 +66,15 @@ public class ProductRatingService extends RatingService implements Serializable 
             return ratingResult;
 
         } catch (EJBTransactionRolledbackException e) {
-            revertCounterChanges(ratingResult.getCounterChanges());
+            if (ratingResult != null) {
+                revertCounterChanges(ratingResult.getCounterChanges());
+            }
             throw e;
 
         } catch (Exception e) {
-            revertCounterChanges(ratingResult.getCounterChanges());
+            if (ratingResult != null) {
+                revertCounterChanges(ratingResult.getCounterChanges());
+            }
 
             if (failSilently) {
                 return new RatingResult(e);

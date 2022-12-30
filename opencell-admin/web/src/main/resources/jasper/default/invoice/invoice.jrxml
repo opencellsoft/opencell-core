@@ -317,6 +317,9 @@
 	<field name="openOrderExternalRef" class="java.lang.String">
 		<fieldDescription><![CDATA[/invoice/@externalReference]]></fieldDescription>
 	</field>
+	<field name="paymentMethodType" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/paymentMethod/@type]]></fieldDescription>
+	</field>
 	<group name="1">
 		<groupHeader>
 			<band height="94">
@@ -547,7 +550,7 @@
 									<textFieldExpression><![CDATA[($F{withoutTaxAmount}==null ?0:$F{withoutTaxAmount})]]></textFieldExpression>
 								</textField>
 								<textField>
-									<reportElement x="170" y="0" width="120" height="21" forecolor="#013042" uuid="019075be-f538-46ea-8d85-12026f36efa0"/>
+									<reportElement x="100" y="0" width="120" height="21" forecolor="#013042" uuid="019075be-f538-46ea-8d85-12026f36efa0"/>
 									<box rightPadding="3"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font fontName="Arial" size="9"/>
@@ -579,7 +582,7 @@
 									<textFieldExpression><![CDATA[$F{tvaAmount}==null?0:$F{tvaAmount}]]></textFieldExpression>
 								</textField>
 								<textField>
-									<reportElement x="170" y="0" width="120" height="21" forecolor="#013042" uuid="019075be-f538-46ea-8d85-12026f36efa0"/>
+									<reportElement x="100" y="0" width="120" height="21" forecolor="#013042" uuid="019075be-f538-46ea-8d85-12026f36efa0"/>
 									<box rightPadding="3"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font fontName="Arial" size="9"/>
@@ -597,7 +600,7 @@
 									<imageExpression><![CDATA[$P{logoPath}+"Pictos/total.png"]]></imageExpression>
 								</image>
 								<textField pattern="#,##0.00">
-									<reportElement x="164" y="10" width="70" height="26" forecolor="#FFFFFF" uuid="30d293f2-6ce0-4795-9703-8f82d9ad7916">
+									<reportElement x="175" y="10" width="70" height="26" forecolor="#FFFFFF" uuid="30d293f2-6ce0-4795-9703-8f82d9ad7916">
 										<property name="com.jaspersoft.studio.unit.x" value="px"/>
 										<property name="com.jaspersoft.studio.unit.height" value="px"/>
 										<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -608,7 +611,7 @@
 									<textFieldExpression><![CDATA[$F{withTaxAmount}==null?0:$F{withTaxAmount}]]></textFieldExpression>
 								</textField>
 								<textField>
-									<reportElement x="227" y="10" width="26" height="26" forecolor="#FFFFFF" uuid="354b5b9c-5561-4e2c-98aa-34982692507c">
+									<reportElement x="153" y="10" width="26" height="26" forecolor="#FFFFFF" uuid="354b5b9c-5561-4e2c-98aa-34982692507c">
 										<property name="com.jaspersoft.studio.unit.height" value="px"/>
 										<property name="com.jaspersoft.studio.unit.x" value="px"/>
 										<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -684,6 +687,33 @@
 							<property name="com.jaspersoft.studio.unit.x" value="px"/>
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<printWhenExpression><![CDATA[$F{paymentMethodType}.equals("CHECK")]]></printWhenExpression>
+						</reportElement>
+						<box leftPadding="5"/>
+						<textElement verticalAlignment="Middle">
+							<font fontName="Arial" size="9"/>
+						</textElement>
+						<textFieldExpression><![CDATA["Paiement par chèque"]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement x="1" y="226" width="285" height="11" forecolor="#013042" uuid="58b71501-1db9-4b16-bfae-be7d236cb983">
+							<property name="com.jaspersoft.studio.unit.x" value="px"/>
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<printWhenExpression><![CDATA[$F{paymentMethodType}.equals("CASH")]]></printWhenExpression>
+						</reportElement>
+						<box leftPadding="5"/>
+						<textElement verticalAlignment="Middle">
+							<font fontName="Arial" size="9"/>
+						</textElement>
+						<textFieldExpression><![CDATA["Paiement cash"]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement x="1" y="226" width="285" height="11" forecolor="#013042" uuid="58b71501-1db9-4b16-bfae-be7d236cb983">
+							<property name="com.jaspersoft.studio.unit.x" value="px"/>
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<printWhenExpression><![CDATA[(!$F{paymentMethodType}.equals("CHECK") && !$F{paymentMethodType}.equals("CASH"))]]></printWhenExpression>
 						</reportElement>
 						<box leftPadding="5"/>
 						<textElement verticalAlignment="Middle">
@@ -697,6 +727,7 @@
 							<property name="com.jaspersoft.studio.unit.y" value="px"/>
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<printWhenExpression><![CDATA[(!$F{paymentMethodType}.equals("CHECK") && !$F{paymentMethodType}.equals("CASH"))]]></printWhenExpression>
 						</reportElement>
 						<box leftPadding="5"/>
 						<textElement verticalAlignment="Middle">
@@ -709,6 +740,7 @@
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 							<property name="com.jaspersoft.studio.unit.x" value="px"/>
 							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<printWhenExpression><![CDATA[(!$F{paymentMethodType}.equals("CHECK") && !$F{paymentMethodType}.equals("CASH"))]]></printWhenExpression>
 						</reportElement>
 						<textElement verticalAlignment="Middle">
 							<font fontName="Arial" size="9"/>
@@ -721,6 +753,7 @@
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
 							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<printWhenExpression><![CDATA[(!$F{paymentMethodType}.equals("CHECK") && !$F{paymentMethodType}.equals("CASH"))]]></printWhenExpression>
 						</reportElement>
 						<box leftPadding="5"/>
 						<textElement verticalAlignment="Middle">
@@ -733,6 +766,7 @@
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 							<property name="com.jaspersoft.studio.unit.x" value="px"/>
 							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<printWhenExpression><![CDATA[(!$F{paymentMethodType}.equals("CHECK") && !$F{paymentMethodType}.equals("CASH"))]]></printWhenExpression>
 						</reportElement>
 						<textElement verticalAlignment="Middle">
 							<font fontName="Arial" size="9"/>
@@ -745,6 +779,7 @@
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
 							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<printWhenExpression><![CDATA[(!$F{paymentMethodType}.equals("CHECK") && !$F{paymentMethodType}.equals("CASH"))]]></printWhenExpression>
 						</reportElement>
 						<box leftPadding="5"/>
 						<textElement verticalAlignment="Middle">
@@ -757,6 +792,7 @@
 							<property name="com.jaspersoft.studio.unit.x" value="px"/>
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<printWhenExpression><![CDATA[(!$F{paymentMethodType}.equals("CHECK") && !$F{paymentMethodType}.equals("CASH"))]]></printWhenExpression>
 						</reportElement>
 						<textElement verticalAlignment="Middle">
 							<font fontName="Arial" size="9"/>

@@ -21,11 +21,13 @@ package org.meveo.api.dto.crm;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.meveo.api.dto.BusinessEntityDto;
 
 import org.meveo.model.communication.contact.Contact;
 import org.meveo.model.intcrm.AddressBook;
+import org.meveo.model.intcrm.AddressBookContact;
 
 public class AddressBookDto extends BusinessEntityDto  {
 

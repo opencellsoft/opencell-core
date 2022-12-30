@@ -22,7 +22,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -146,6 +148,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
+import org.meveo.model.cpq.AgreementDateSettingEnum;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
@@ -428,7 +431,7 @@ public class SubscriptionApi extends BaseApi {
 
         handleMissingParametersAndValidate(postData);
 
-        Subscription subscription = Optional.of(postData.getId())
+        Subscription subscription = Optional.ofNullable(postData.getId())
 				.map(id -> subscriptionService.findById(id))
 				.orElse(subscriptionService.findByCodeAndValidityDate(postData.getCode(), postData.getValidityDate()));
         if (subscription == null) {
@@ -599,6 +602,11 @@ public class SubscriptionApi extends BaseApi {
         // ignoring postData.getEndAgreementDate() if subscription.getAutoEndOfEngagement is true
         if (subscription.getAutoEndOfEngagement() == null || !subscription.getAutoEndOfEngagement()) {
             subscription.setEndAgreementDate(postData.getEndAgreementDate());
+            for(ServiceInstance si : subscription.getServiceInstances()) {
+            	if(si.getProductVersion() != null && AgreementDateSettingEnum.INHERIT.equals(si.getProductVersion().getProduct().getAgreementDateSetting())) {
+            		si.setEndAgreementDate(subscription.getEndAgreementDate());
+            	}
+            };
         }
         if (postData.getProducts() != null) {
             for (ProductDto productDto : postData.getProducts().getProducts()) {
@@ -2069,6 +2077,9 @@ public class SubscriptionApi extends BaseApi {
             ServiceInstance serviceToUpdate = serviceInstanceService.getSingleServiceInstance(serviceToUpdateDto.getId(), serviceToUpdateDto.getCode(), subscription);
 
             if (serviceToUpdateDto.getEndAgreementDate() != null) {
+            	if(AgreementDateSettingEnum.INHERIT.equals(serviceToUpdate.getProductVersion().getProduct().getAgreementDateSetting())) {
+            		throw new InvalidParameterException("endAgreementDate cannot be updated for INHERIT agreement date setting");
+            	}
                 serviceToUpdate.setEndAgreementDate(serviceToUpdateDto.getEndAgreementDate());
             }
 
@@ -2115,9 +2126,15 @@ public class SubscriptionApi extends BaseApi {
                 throw e;
             }
             
+            Map<String,AttributeInstance> instantiatedAttributes = new HashMap<>();
+            
             serviceToUpdate.getAttributeInstances().clear();
             if(postData.getAttributeInstances() != null) {
                 postData.getAttributeInstances().forEach(attributeInstanceDto -> {
+                	long count = postData.getAttributeInstances().stream().filter(e -> attributeInstanceDto.getAttributeCode().equals(e.getAttributeCode())).count();
+                	if(count > 1) {
+                		throw new InvalidParameterException("Cannot instantiate twice the same attribute {" + attributeInstanceDto.getAttributeCode() + "}");
+                	}
                     var attributeInstance = new AttributeInstance();
                     attributeInstance.setSubscription(subscription);
                     attributeInstance.setServiceInstance(serviceToUpdate);
@@ -2137,8 +2154,12 @@ public class SubscriptionApi extends BaseApi {
                         attributeInstance.setDateValue(attributeInstanceDto.getDateValue());
                     if(attributeInstanceDto.getDoubleValue() != null)
                         attributeInstance.setDoubleValue(attributeInstanceDto.getDoubleValue());
-                    attributeInstanceService.create(attributeInstance);
-                    serviceToUpdate.getAttributeInstances().add(attributeInstance);
+                    
+                    instantiatedAttributes.put(attributeInstance.getAttribute().getCode(),attributeInstance);
+                });
+                instantiatedAttributes.values().forEach(ia -> {
+                	attributeInstanceService.create(ia);
+                	serviceToUpdate.getAttributeInstances().add(ia);
                 });
             }
 
@@ -3151,9 +3172,13 @@ public class SubscriptionApi extends BaseApi {
         if (product == null) {
             throw new EntityDoesNotExistsException(Product.class,productDto.getProductCode());
         }
-
+        
         List<OrderAttribute> orderAttributes = productDto.getAttributeInstances().stream()
                 .map(ai -> {
+                	long count = productDto.getAttributeInstances().stream().filter(e -> ai.getOrderAttributeCode().equals(e.getOrderAttributeCode())).count();
+                	if(count > 1) {
+                		throw new InvalidParameterException("Cannot instantiate twice the same attribute {" + ai.getOrderAttributeCode() + "}");
+                	}
                     OrderAttribute orderAttribute = new OrderAttribute();
                     String attributeCode = ai.getAttributeCode() != null ? ai.getAttributeCode() : ai.getOrderAttributeCode() != null ? ai.getOrderAttributeCode() : null;
                     
@@ -3171,7 +3196,8 @@ public class SubscriptionApi extends BaseApi {
                     })
                 .collect(Collectors.toList());
 
-        commercialOrderService.processProduct(subscription, product, productDto.getQuantity(), orderAttributes, null, productDto.getDeliveryDate());
+        var serviceInstance = commercialOrderService.processProduct(subscription, product, productDto.getQuantity(), orderAttributes, null, productDto.getDeliveryDate());
+        populateCustomFields(productDto.getCustomFields(), serviceInstance, true);
 
     }
 
