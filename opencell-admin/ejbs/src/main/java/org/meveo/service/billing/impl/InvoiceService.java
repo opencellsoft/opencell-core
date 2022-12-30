@@ -6884,11 +6884,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 BigDecimal amountWithTax = ratedTransactions.stream().map(RatedTransaction::getAmountWithTax).reduce(BigDecimal.ZERO, BigDecimal::add);
                 BigDecimal amountWithoutTax = ratedTransactions.stream().map(RatedTransaction::getAmountWithoutTax).reduce(BigDecimal.ZERO, BigDecimal::add);
                 BigDecimal amountTax = ratedTransactions.stream().map(RatedTransaction::getAmountTax).reduce(BigDecimal.ZERO, BigDecimal::add);
-
+                BigDecimal quantity = ratedTransactions.stream().map(RatedTransaction::getQuantity).reduce(BigDecimal.ZERO, BigDecimal::add);
+                
                 invoiceLine.setAmountWithTax(amountWithTax);
                 invoiceLine.setAmountWithoutTax(amountWithoutTax);
                 invoiceLine.setAmountTax(amountTax);
-                invoiceLine.setRatedTransactions(ratedTransactions);
+                invoiceLine.setQuantity(quantity);
             }
         }
     }
