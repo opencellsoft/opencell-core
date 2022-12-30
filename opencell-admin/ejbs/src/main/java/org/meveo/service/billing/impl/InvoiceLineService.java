@@ -1331,4 +1331,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         		.setParameter("limitDate", limitDate)
         		.getSingleResult();
     }
+
+    public List<Object[]> getTotalDiscountAmountByBR(BillingRun billingRun) {
+		return getEntityManager().createNamedQuery("InvoiceLine.sumAmountsDiscountByBillingAccount")
+				.setParameter("billingRunId", billingRun.getId()).getResultList();
+	}
 }

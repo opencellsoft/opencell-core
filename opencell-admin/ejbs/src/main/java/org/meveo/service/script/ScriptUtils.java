@@ -136,9 +136,15 @@ public abstract class ScriptUtils {
     public static String buildOperator(String operator) {
 		String operatorExpression;
 		switch (operator) {
+		case "<":
+            operatorExpression = "<";
+            break;
 		case "≤":
-			operatorExpression = "<=";
-			break;
+            operatorExpression = "<=";
+            break;
+		case "=":
+            operatorExpression = "=";
+            break;
 		case "≠":
 			operatorExpression = "<>";
 			break;

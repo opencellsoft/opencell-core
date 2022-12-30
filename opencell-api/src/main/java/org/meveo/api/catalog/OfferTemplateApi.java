@@ -376,6 +376,12 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         offerTemplate.setDescription(postData.getDescription());
         offerTemplate.setName(postData.getName());
         offerTemplate.setLongDescription(postData.getLongDescription());
+        
+        if(!LifeCycleStatusEnum.RETIRED.equals(offerTemplate.getLifeCycleStatus())) {
+            offerTemplate.setSequence(postData.getSequence());
+            offerTemplate.setDisplay(postData.isDisplay());  
+        }       
+        
         var datePeriod = new DatePeriod();
 
         datePeriod.setFrom(postData.getNewValidFrom());

@@ -14872,6 +14872,13 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="agreement_date_setting" type="varchar(20)"/>
         </addColumn>
 	</changeSet>
+	
+	<changeSet id="#INTR-12382_20221219" author="HichamHANINE">
+		<addColumn tableName="cat_offer_template">
+            <column name="sequence" type="INT4" defaultValue="0" />
+			<column name="display" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+	</changeSet>
 
     <changeSet id="#INTRD-11841_20221214-reports" author="HichamHANINE">
         <update tableName="meveo_script_instance">
@@ -15113,5 +15120,51 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <where>id=1</where>
         </update>
     </changeSet>
+    
+    <changeSet id="#INTRD-12614_20221227" author="TarikFA.">
+       <createSequence sequenceName="cpq_converted_price_plan_matrix_line_sq" startValue="1" />
+       <createTable tableName="cpq_converted_price_plan_matrix_line">
+       		<column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_converted_plan_matrix_line" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            
+            <column name="converted_value" type="numeric(23, 12)" />
+            <column name="trading_currency_id" type="bigint" />
+            <column name="rate" type="numeric(23, 12)" />
+            <column name="use_for_billing_accounts" type="${type.boolean}" />
+            <column name="price_plan_matrix_line_id" type="bigint" />
+       </createTable>
+       
+        <addForeignKeyConstraint baseTableName="cpq_converted_price_plan_matrix_line"
+                                 baseColumnNames="trading_currency_id"
+                                 constraintName="fk_cpq_converted_price_plan_matrix_line_id"
+                                 referencedTableName="billing_trading_currency"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+                                 
+                                 
+        <addForeignKeyConstraint baseTableName="cpq_converted_price_plan_matrix_line"
+                                 baseColumnNames="price_plan_matrix_line_id"
+                                 constraintName="fk_price_plan_matrix_line_id"
+                                 referencedTableName="cpq_price_plan_matrix_line"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+       
+    </changeSet>
+
+	<changeSet id="#INTRD-12478_20221226" author="AdilElJaouhari">
+		<addColumn tableName="billing_cycle">
+			<column name="priority" type="int4" defaultValueNumeric="0" />
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>
