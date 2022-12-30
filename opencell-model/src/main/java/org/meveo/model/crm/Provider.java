@@ -442,7 +442,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     @CollectionTable(name = "crm_provider_order_line_type", joinColumns = @JoinColumn(name = "provider_id"))
     @Column(name = "order_line_type")
     @Enumerated(EnumType.STRING)
-    private List<OrderLineTypeEnum> orderLineTypes = new ArrayList<OrderLineTypeEnum>();
+    private List<OrderLineTypeEnum> orderLineTypes = new ArrayList<>();
     
     public String getCode() {
         return code;
