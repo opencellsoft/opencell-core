@@ -1655,7 +1655,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         } catch (NoResultException e) {
             throw new NotFoundException("No entity of type "+entity.getSimpleName()+"with "+where+" found");
         } catch (NonUniqueResultException e) {
-        	throw new ForbiddenException("More than one entity of type "+entity.getSimpleName()+"with "+where+" found");
+        	throw new BusinessException("More than one entity of type "+entity.getSimpleName()+" with "+where+" found");
         }
     }
 
