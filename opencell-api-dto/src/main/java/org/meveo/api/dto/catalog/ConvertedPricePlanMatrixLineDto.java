@@ -11,12 +11,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.model.catalog.ConvertedPricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PricePlanMatrixLineDto extends BaseEntityDto {
+public class ConvertedPricePlanMatrixLineDto extends BaseEntityDto {
 
 	/**
 	 * 
@@ -55,16 +56,13 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 
 	@Schema(description = "The EL Value")
 	private String valueEL;
-
-	@Schema(description = "list of converted price plan matrix line")
-	private List<ConvertedPricePlanMatrixLineDto> convertedPricePlanMatrixLines = new ArrayList<>();
 	
-	
+	private List<ConvertedPricePlanMatrixLineDto> convertedPricePlanMatrixLines;
 
-	public PricePlanMatrixLineDto() {
+	public ConvertedPricePlanMatrixLineDto() {
 	}
 
-	public PricePlanMatrixLineDto(PricePlanMatrixLine pricePlanMatrixLine) {
+	public ConvertedPricePlanMatrixLineDto(PricePlanMatrixLine pricePlanMatrixLine) {
 		this.ppmLineId = pricePlanMatrixLine.getId();
 		this.priceWithoutTax = pricePlanMatrixLine.getValue();
 		this.value = pricePlanMatrixLine.getValue();
@@ -172,19 +170,5 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 
 	public void setValue(BigDecimal value) {
 		this.value = value;
-	}
-
-	/**
-	 * @return the convertedPricePlanMatrixLines
-	 */
-	public List<ConvertedPricePlanMatrixLineDto> getConvertedPricePlanMatrixLines() {
-		return convertedPricePlanMatrixLines;
-	}
-
-	/**
-	 * @param convertedPricePlanMatrixLines the convertedPricePlanMatrixLines to set
-	 */
-	public void setConvertedPricePlanMatrixLines(List<ConvertedPricePlanMatrixLineDto> convertedPricePlanMatrixLines) {
-		this.convertedPricePlanMatrixLines = convertedPricePlanMatrixLines;
 	}
 }

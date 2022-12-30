@@ -17,6 +17,7 @@ import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoPricePlanException;
+import org.meveo.api.dto.catalog.ConvertedPricePlanMatrixLineDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixValueDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
@@ -25,6 +26,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
@@ -34,8 +36,11 @@ import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeCategoryEnum;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
+import org.meveo.model.crm.Provider;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.crm.impl.ProviderService;
 
 @Stateless
 public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatrixLine> {
@@ -48,6 +53,9 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
 
     @Inject
     private PricePlanMatrixColumnService pricePlanMatrixColumnService;
+    
+    @Inject
+    private ProviderService providerService;
 
 
     public List<PricePlanMatrixLine> findByPricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion) {
@@ -325,10 +333,20 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         ppmVersion.getLines().clear();
         ppmVersion.getLines().addAll(lines);
     }
-
-    public void updateWithoutDeletePricePlanMatrixLines(PricePlanMatrixVersion ppmVersion, PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {        
+    @Inject
+    private TradingCurrencyService tradingCurrencyService;
+    
+    public void updateWithoutDeletePricePlanMatrixLines(PricePlanMatrixVersion ppmVersion, PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {  
+    	
+    	TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCodeOrId(null, null);
         checkDuplicatePricePlanMatrixValues(dtoData.getPricePlanMatrixLines());
+        Provider provider = providerService.getProvider();
         for (PricePlanMatrixLineDto pricePlanMatrixLineDto : dtoData.getPricePlanMatrixLines()) {
+        	for (ConvertedPricePlanMatrixLineDto convertedPPML : pricePlanMatrixLineDto.getConvertedPricePlanMatrixLines()) {
+				
+			}
+        	
+        	
             PricePlanMatrixLine pricePlanMatrixLine = new PricePlanMatrixLine();
             if(pricePlanMatrixLineDto.getPpmLineId() != null){
                 pricePlanMatrixLine = findById(pricePlanMatrixLineDto.getPpmLineId());
