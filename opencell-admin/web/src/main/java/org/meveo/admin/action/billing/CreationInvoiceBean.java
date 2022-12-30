@@ -72,6 +72,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.admin.impl.SellerService;
@@ -208,7 +209,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     private final static String MODE_DETAILED_W_SERVICES = "detailedWithServices";
 
     private boolean amountsAndlinesUpdated=false;
-    
+
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
@@ -651,6 +652,10 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             invoiceCopy.setId(null);
             invoiceCopy.assignTemporaryInvoiceNumber();
             serviceSingleton.assignInvoiceNumberVirtual(invoiceCopy);
+            PaymentMethod preferedPaymentMethod = invoiceCopy.getBillingAccount().getCustomerAccount().getPreferredPaymentMethod();
+            if (preferedPaymentMethod != null) {
+                invoiceCopy.setPaymentMethodType(preferedPaymentMethod.getPaymentType());
+            }
             getPersistenceService().create(invoiceCopy);
 
             for (RatedTransaction rtCopy : ratedTransactionCopy) {
@@ -725,9 +730,13 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             entity.setSeller(billingAccount.getCustomerAccount().getCustomer().getSeller());
         }
         rts = saveRTs();
-        
+
         invoiceService.postCreate(entity);
-        
+
+        PaymentMethod preferedPaymentMethod = entity.getBillingAccount().getCustomerAccount().getPreferredPaymentMethod();
+        if (preferedPaymentMethod != null) {
+            entity.setPaymentMethodType(preferedPaymentMethod.getPaymentType());
+        }
         if (entity.getInvoiceNumber() == null) {
             entity.setStatus(InvoiceStatusEnum.VALIDATED);
             entity = serviceSingleton.assignInvoiceNumberVirtual(entity);

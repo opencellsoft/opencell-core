@@ -24,6 +24,45 @@ import javax.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 public interface InternationalSettingsResource {
 
+    @POST
+    @Path("/EmailTemplate/{EmailTemplateCode}")
+    @Operation(
+            summary = "Create an EmailTemplate",
+            tags = { "email", "email_template", "communication" },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "the email template successfully created"),
+                    @ApiResponse(responseCode = "404", description = "The EmailTemplateCode already exists"),
+                    @ApiResponse(responseCode = "400", description = "An error happened while creating EmailTemplate")
+            }
+    )
+    EmailTemplateDto create(EmailTemplateDto emailTemplateDto);
+
+    @GET
+    @Path("/EmailTemplate/{EmailTemplateCode}")
+    @Operation(
+            summary = "Get An EmailTemplate",
+            tags = { "email", "email_template", "communication" },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "the email template successfully returned"),
+                    @ApiResponse(responseCode = "404", description = "The EmailTemplateCode does not exist"),
+                    @ApiResponse(responseCode = "400", description = "An error happened while getting EmailTemplate")
+            }
+    )
+    EmailTemplateDto getEmailTemplate(@PathParam("EmailTemplateCode") String emailTemplateCode);
+
+    @DELETE
+    @Path("/EmailTemplate/{EmailTemplateCode}")
+    @Operation(
+            summary = "Delete an EmailTemplate",
+            tags = { "email", "email_template", "communication" },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "the EmailTemplate successfully deleted"),
+                    @ApiResponse(responseCode = "404", description = "The EmailTemplate does not exists"),
+                    @ApiResponse(responseCode = "400", description = "An error happened while deleting EmailTemplate")
+            }
+    )
+    ActionStatus deleteEmailTemplate(@PathParam("EmailTemplateCode") String emailTemplateCode);
+
     @PUT
     @Path("/EmailTemplate/{EmailTemplateCode}")
     @Operation(
@@ -61,6 +100,7 @@ public interface InternationalSettingsResource {
             }
     )
     SMSTemplateDto create(SMSTemplateDto smsTemplateDto);
+
 
     @PUT
     @Path("/SMSTemplate/{SMSTemplateCode}")

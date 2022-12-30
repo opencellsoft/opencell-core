@@ -68,6 +68,14 @@ public interface AccountingPeriodResource {
 					@Parameter(description = "subaccounting period number", required = true) @PathParam("number") String number,
 					@Parameter(description = "status", required = true) @PathParam("status") String status,
 					@Parameter(description = "reason of reopening sub-accounting period" , allowEmptyValue = true) @QueryParam("reason") String reason);
-	
+
+	@PUT
+	@Path("/{fiscalYear}/{status}")
+	@Operation(summary = "update regularUsers status", tags = {
+			"AccountingPeriods" }, description = "Update a SubaccountingPeriod", responses = {
+			@ApiResponse(responseCode = "200", description = "regularUsers status is successfully updated"),
+			@ApiResponse(responseCode = "404", description = "target entity does not exist")})
+	Response updateStatus(@Parameter(description = "fiscalYear of the Invoice", required = true) @PathParam("fiscalYear") String fiscalYear,
+						 	@Parameter(description = "status", required = true) @PathParam("status") String status);
 
 }

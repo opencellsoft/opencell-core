@@ -111,6 +111,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.cpq.BillingRulesService;
@@ -195,6 +196,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     @Inject
     private AccountingCodeService accountingCodeService;
+
+    @Inject
+    private OfferTemplateService offerTemplateService;
+
+    @Inject
+    private ServiceInstanceService getServiceInstanceService;
     
     /**
      * Check if Billing account has any not yet billed Rated transactions
@@ -498,6 +505,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
         ratedTransaction.setAccountingArticle(accountingArticleService.refreshOrRetrieve(aggregatedWo.getAccountingArticle()));
         ratedTransaction.setAccountingCode(accountingCodeService.refreshOrRetrieve(aggregatedWo.getAccountingCode()));
+        ratedTransaction.setOfferTemplate(offerTemplateService.refreshOrRetrieve(aggregatedWo.getOfferTemplate()));
+        ratedTransaction.setServiceInstance(serviceInstanceService.refreshOrRetrieve(aggregatedWo.getServiceInstance()));
 
         return ratedTransaction;
     }

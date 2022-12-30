@@ -758,7 +758,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         if (resource.getEndDate() != null) {
             datePeriod.setTo(resource.getEndDate());
         }
-        
+        if(resource.getLabel()==null && invoiceLine.getAccountingArticle()!=null) {
+            invoiceLine.setLabel(!StringUtils.isBlank(invoiceLine.getAccountingArticle().getDescription())?invoiceLine.getAccountingArticle().getDescription():invoiceLine.getAccountingArticle().getCode());
+        }
 
 		if(invoiceLine.getTax()==null  && accountingArticle != null
                 && invoiceLine.getBillingAccount() != null && !invoiceLine.getTaxMode().equals(RATE))  {
@@ -1320,5 +1322,13 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 .setParameter("now", new Date())
                 .setParameter("ids", invoicesIds)
                 .executeUpdate();
+    }
+    
+    public long getCountBySubscriptionAge(Long invoiceId, String referenceDate, String operator, Date limitDate) {
+    	String query = "select count(*) from InvoiceLine il where il.invoice.id=:id and referenceDate operator :limitDate";
+        return getEntityManager().createQuery(query.replace("operator", operator).replace("referenceDate", referenceDate), Long.class)
+        		.setParameter("id", invoiceId)
+        		.setParameter("limitDate", limitDate)
+        		.getSingleResult();
     }
 }
