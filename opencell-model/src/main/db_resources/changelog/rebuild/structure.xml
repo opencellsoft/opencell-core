@@ -2927,6 +2927,7 @@
             <column name="filters" type="${type.json}">
             	<constraints nullable="true" />
             </column>
+            <column name="priority" type="int4" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-172">
@@ -4437,6 +4438,8 @@
             <column name="is_model" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="offer_model_id" type="bigint"/>
             <column name="generate_quote_edr_per_product" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="sequence" type="INT4" defaultValue="0" />
+			<column name="display" type="${type.boolean}" defaultValueNumeric="0"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-217">
@@ -18941,8 +18944,10 @@
     <changeSet id="#2038-20221130" author="Mbarek-Ay"/>
 	<changeSet id="#INTR-12252_20221212_agreement_date" author="a.rouaguebe" />
     <changeSet id="#INTRD-12466_20222012" author="bourras" />
+	<changeSet id="#INTRD-12478_20221226" author="AdilElJaouhari" />
 
-
+	<changeSet id="#INTR-12382_20221219" author="HichamHANINE" />
+	
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
