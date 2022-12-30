@@ -15167,4 +15167,22 @@ public class AgedBalanceReporting extends ReportExtractScript {
 		</addColumn>
 	</changeSet>
 
+	<changeSet id="#INTRD-12677_20221229" author="AdilElJaouhari">
+		<createTable tableName="crm_provider_order_line_type">
+			<column name="provider_id" type="bigint" />
+			<column name="order_line_type" type="varchar(20)" />
+		</createTable>
+
+		<addForeignKeyConstraint
+			baseTableName="crm_provider_order_line_type"
+			baseColumnNames="provider_id"
+			constraintName="crm_provider_order_line_type_provider_fk"
+			referencedTableName="crm_provider" referencedColumnNames="id" />
+
+		<addUniqueConstraint
+			columnNames="provider_id, order_line_type"
+			constraintName="crm_provider_order_line_type_uk"
+			tableName="crm_provider_order_line_type" />
+	</changeSet>
+	
 </databaseChangeLog>
