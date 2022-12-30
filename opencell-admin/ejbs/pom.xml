@@ -734,13 +734,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-authz-client</artifactId>
-            <version>${version.keycloak}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>com.slimpay</groupId>
             <artifactId>hapiclient</artifactId>
             <version>1.0.3</version>

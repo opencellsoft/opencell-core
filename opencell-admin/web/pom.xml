@@ -496,11 +496,6 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-authz-client</artifactId>
-        </dependency>
-
         <!-- End of libraries included in Jboss -->
 
         <dependency>

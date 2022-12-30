@@ -18,7 +18,6 @@
 
 package org.meveo.commons.utils;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

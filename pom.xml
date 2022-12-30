@@ -25,7 +25,7 @@
         <version.ingenico-connect-sdk>6.31.0</version.ingenico-connect-sdk>
         <version.worldline.onlinepayments-sdk>3.5.0</version.worldline.onlinepayments-sdk>
         <version.paypal-sdk>1.14.0</version.paypal-sdk>
-        <version.keycloak>20.0.1</version.keycloak>
+        <version.keycloak>20.0.2</version.keycloak>
         <version.pdfbox>2.0.27</version.pdfbox>
         <version.barcode>2.1</version.barcode>
         <version.stripe-sdk>20.124.0</version.stripe-sdk>
@@ -468,6 +468,56 @@
                 <groupId>org.keycloak</groupId>
                 <artifactId>keycloak-authz-client</artifactId>
                 <version>${version.keycloak}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.jboss.logging</groupId>
+                        <artifactId>jboss-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.keycloak</groupId>
+                <artifactId>keycloak-admin-client</artifactId>
+                <version>${version.keycloak}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.httpcomponents</groupId>
+                        <artifactId>httpclient</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jboss.spec.javax.ws.rs</groupId>
+                        <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jboss.logging</groupId>
+                        <artifactId>jboss-logging</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jboss.resteasy</groupId>
+                        <artifactId>resteasy-client</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jboss.resteasy</groupId>
+                        <artifactId>resteasy-core-spi</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jboss.resteasy</groupId>
+                        <artifactId>resteasy-multipart-provider</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jboss.resteasy</groupId>
+                        <artifactId>resteasy-jaxb-provider</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jboss.resteasy</groupId>
+                        <artifactId>resteasy-jackson2-provider</artifactId>
+                    </exclusion>
+                    <!-- <exclusion> -->
+                    <!-- <groupId>org.jboss.resteasy</groupId> -->
+                    <!-- <artifactId>resteasy-multipart-provider</artifactId> -->
+                    <!-- </exclusion> -->
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -603,7 +653,6 @@
                 <artifactId>tika-core</artifactId>
                 <version>2.6.0</version>
             </dependency>
-
 
             <dependency>
                 <groupId>org.jboss.resteasy</groupId>

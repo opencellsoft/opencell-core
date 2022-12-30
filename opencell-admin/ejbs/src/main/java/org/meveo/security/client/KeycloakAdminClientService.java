@@ -41,9 +41,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.keycloak.KeycloakPrincipal;
-import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.AuthorizationResource;
 import org.keycloak.admin.client.resource.ClientResource;
 import org.keycloak.admin.client.resource.GroupsResource;
@@ -72,7 +70,6 @@ import org.meveo.admin.exception.UsernameAlreadyExistsException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.commons.utils.ResteasyClientProxyBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.Name;
@@ -81,6 +78,7 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.UserGroup;
 import org.meveo.security.keycloak.AuthenticationProvider;
+import org.meveo.security.keycloak.KeycloakAdminClientConfig;
 import org.slf4j.Logger;
 import org.wildfly.security.http.oidc.OidcPrincipal;
 import org.wildfly.security.http.oidc.OidcSecurityContext;
@@ -140,60 +138,16 @@ public class KeycloakAdminClientService implements Serializable {
     private static final String KC_POLICY_ROLE_PREFIX = "Role ";
 
     /**
-     * Reads the configuration from system property.
-     * 
-     * @return KeycloakAdminClientConfig
-     */
-    private KeycloakAdminClientConfig loadConfig() {
-        KeycloakAdminClientConfig keycloakAdminClientConfig = new KeycloakAdminClientConfig();
-        try {
-            // override from system property.
-            // opencell.keycloak.url-internal is used for internal communication with Keycloak and
-            // opencell.keycloak.url is used for a redirect to login in a browser
-            String keycloakServerUrl = System.getProperty("opencell.keycloak.url-internal");
-            if (StringUtils.isBlank(keycloakServerUrl)) {
-                keycloakServerUrl = System.getProperty("opencell.keycloak.url");
-            }
-            if (!StringUtils.isBlank(keycloakServerUrl)) {
-                keycloakAdminClientConfig.setServerUrl(keycloakServerUrl);
-            }
-            String realm = System.getProperty("opencell.keycloak.realm");
-            if (!StringUtils.isBlank(realm)) {
-                keycloakAdminClientConfig.setRealm(realm);
-            }
-            String clientId = System.getProperty("opencell.keycloak.client");
-            if (!StringUtils.isBlank(clientId)) {
-                keycloakAdminClientConfig.setClientId(clientId);
-            }
-            String clientSecret = System.getProperty("opencell.keycloak.secret");
-            if (!StringUtils.isBlank(clientSecret)) {
-                keycloakAdminClientConfig.setClientSecret(clientSecret);
-            }
-
-            log.trace("Found keycloak configuration: {}", keycloakAdminClientConfig);
-        } catch (Exception e) {
-            log.error("Error: Loading keycloak admin configuration. " + e.getMessage());
-        }
-
-        return keycloakAdminClientConfig;
-    }
-
-    /**
      * @param keycloakAdminClientConfig keycloak admin client config.
      * @return instance of Keycloak.
      */
     @SuppressWarnings({ "unchecked" })
-    private Keycloak getKeycloakClient(KeycloakAdminClientConfig keycloakAdminClientConfig) {
+    public Keycloak getKeycloakClient(KeycloakAdminClientConfig keycloakAdminClientConfig) {
 
         OidcPrincipal<OidcSecurityContext> oidcPrincipal = (OidcPrincipal<OidcSecurityContext>) ctx.getCallerPrincipal();
-        String tokenString = oidcPrincipal.getOidcSecurityContext().getTokenString();
+        String accessToken = oidcPrincipal.getOidcSecurityContext().getTokenString();
 
-        KeycloakBuilder keycloakBuilder = KeycloakBuilder.builder().serverUrl(keycloakAdminClientConfig.getServerUrl()).realm(keycloakAdminClientConfig.getRealm()).grantType(OAuth2Constants.CLIENT_CREDENTIALS)
-            .clientId(keycloakAdminClientConfig.getClientId()).clientSecret(keycloakAdminClientConfig.getClientSecret()).authorization(tokenString);
-
-        keycloakBuilder.resteasyClient(new ResteasyClientProxyBuilder().connectionPoolSize(200).maxPooledPerRoute(200).build());
-
-        return keycloakBuilder.build();
+        return AuthenticationProvider.getKeycloakClient(keycloakAdminClientConfig, accessToken);
     }
 
     /**
@@ -208,7 +162,7 @@ public class KeycloakAdminClientService implements Serializable {
         String lastName = (String) paginationConfig.getFilters().get("lastName");
         String email = (String) paginationConfig.getFilters().get("email");
 
-        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
         Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
 
         RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
@@ -242,7 +196,7 @@ public class KeycloakAdminClientService implements Serializable {
         String lastName = (String) paginationConfig.getFilters().get("lastName");
         String email = (String) paginationConfig.getFilters().get("email");
 
-        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
         Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
 
         RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
@@ -311,7 +265,7 @@ public class KeycloakAdminClientService implements Serializable {
     private String createOrUpdateUser(String userName, String firstName, String lastName, String email, String password, String userGroup, Collection<String> roles, String providerToOverride, boolean isUpdate)
             throws InvalidParameterException, ElementNotFoundException, UsernameAlreadyExistsException {
 
-        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
         Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
 
         RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
@@ -514,7 +468,7 @@ public class KeycloakAdminClientService implements Serializable {
      * @throws ElementNotFoundException No user found with a given username
      */
     public void deleteUser(String username) throws ElementNotFoundException {
-        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
         Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
 
         // Get realm
@@ -540,13 +494,13 @@ public class KeycloakAdminClientService implements Serializable {
      */
     public void deleteRole(String name, boolean isClientRole) {
 
-        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
         Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
 
         // Get realm
         RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
 
-        String clientId = realmResource.clients().findByClientId(keycloakAdminClientConfig.getClientId()).get(0).getId();
+        String clientId = realmResource.clients().findByClientId(keycloakAdminClientConfig.getClientName()).get(0).getId();
         ClientResource client = realmResource.clients().get(clientId);
 
         // Find a role
@@ -575,7 +529,7 @@ public class KeycloakAdminClientService implements Serializable {
      */
     public List<Role> listRoles(PaginationConfiguration paginationConfig) {
 
-        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
         Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
 
         // Get realm
@@ -656,13 +610,13 @@ public class KeycloakAdminClientService implements Serializable {
             throw new InvalidParameterException("Name must be provided to create a role");
         }
 
-        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
         Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
 
         // Get realm
         RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
 
-        String clientId = realmResource.clients().findByClientId(keycloakAdminClientConfig.getClientId()).get(0).getId();
+        String clientId = realmResource.clients().findByClientId(keycloakAdminClientConfig.getClientName()).get(0).getId();
         ClientResource client = realmResource.clients().get(clientId);
 
         RoleResource roleResource = null;
@@ -741,7 +695,7 @@ public class KeycloakAdminClientService implements Serializable {
      */
     public List<UserGroup> listGroups(PaginationConfiguration paginationConfig) {
 
-        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
         Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
 
         RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
@@ -762,7 +716,7 @@ public class KeycloakAdminClientService implements Serializable {
      */
     public UserGroup findGroup(String userGroupName) {
 
-        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
         Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
 
         RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
@@ -784,13 +738,13 @@ public class KeycloakAdminClientService implements Serializable {
      */
     public Role findRole(String roleName, boolean extendedInfo, boolean isClientRole) {
 
-        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
         Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
 
         // Get realm
         RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
 
-        String clientId = realmResource.clients().findByClientId(keycloakAdminClientConfig.getClientId()).get(0).getId();
+        String clientId = realmResource.clients().findByClientId(keycloakAdminClientConfig.getClientName()).get(0).getId();
         ClientResource client = realmResource.clients().get(clientId);
 
         // Create a role
@@ -822,7 +776,7 @@ public class KeycloakAdminClientService implements Serializable {
      */
     public User findUser(String userName, boolean extendedInfo) {
 
-        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
         Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
 
         RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
@@ -957,7 +911,7 @@ public class KeycloakAdminClientService implements Serializable {
 
         Map<String, Set<String>> allManagedEntities = getAPIv2ManagedClassesByPackages();
 
-        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
 
         String accessToken = ((KeycloakPrincipal) ctx.getCallerPrincipal()).getKeycloakSecurityContext().getTokenString();
 
@@ -967,10 +921,10 @@ public class KeycloakAdminClientService implements Serializable {
             // Obtain KC REST resources. Moved here from above as sometime KC gives 401 error if execution takes too long
             Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
             RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
-            String clientId = realmResource.clients().findByClientId(keycloakAdminClientConfig.getClientId()).get(0).getId();
+            String clientId = realmResource.clients().findByClientId(keycloakAdminClientConfig.getClientName()).get(0).getId();
             AuthorizationResource authResource = realmResource.clients().get(clientId).authorization();
 
-            AuthzClient authzClient = AuthenticationProvider.getKcAuthzClient();
+            AuthzClient authzClient = AuthenticationProvider.getKeycloakAuthzClient();
 
             ProtectedResource protectedResource = authzClient.protection(accessToken).resource();
 
@@ -1008,7 +962,7 @@ public class KeycloakAdminClientService implements Serializable {
                 }
 
                 // Create a resource representing a package level, a resource permission and a role based policy
-                createGenericApiAuthorizationResource(packageLevelResourceNamePrefix, packageLevelPermissionNamePrefix, packageLevelRoleNamePrefix, listUris, createUris, fudUris, keycloakAdminClientConfig.getClientId(),
+                createGenericApiAuthorizationResource(packageLevelResourceNamePrefix, packageLevelPermissionNamePrefix, packageLevelRoleNamePrefix, listUris, createUris, fudUris, keycloakAdminClientConfig.getClientName(),
                     clientId, authResource, protectedResource);
 
                 // Remove resources representing a class level, a resource permission and a role based policy
@@ -1053,7 +1007,7 @@ public class KeycloakAdminClientService implements Serializable {
                     // Update and delete
                     fudUris.add("/api/rest/v2/generic/" + entityClassForUrl + "/*");
 
-                    createGenericApiAuthorizationResource(classLevelResourceNamePrefix, classLevelPermissionNamePrefix, classLevelRoleNamePrefix, listUris, createUris, fudUris, keycloakAdminClientConfig.getClientId(),
+                    createGenericApiAuthorizationResource(classLevelResourceNamePrefix, classLevelPermissionNamePrefix, classLevelRoleNamePrefix, listUris, createUris, fudUris, keycloakAdminClientConfig.getClientName(),
                         clientId, authResource, protectedResource);
                 }
 
@@ -1312,7 +1266,7 @@ public class KeycloakAdminClientService implements Serializable {
 
         Map<String, Set<String>> allManagedEntities = getAPIv2ManagedClassesByPackages();
 
-        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
 
         int newPermissionsCreated = 0;
 
@@ -1321,7 +1275,7 @@ public class KeycloakAdminClientService implements Serializable {
             // Obtain KC REST resources. Moved here from above as sometime KC gives 401 error if execution takes too long
             Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
             RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
-            String clientId = realmResource.clients().findByClientId(keycloakAdminClientConfig.getClientId()).get(0).getId();
+            String clientId = realmResource.clients().findByClientId(keycloakAdminClientConfig.getClientName()).get(0).getId();
             ClientResource client = realmResource.clients().get(clientId);
 
             String operationSuffix = "." + accessScope.name().toLowerCase();

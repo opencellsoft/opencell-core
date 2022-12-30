@@ -18,6 +18,7 @@
 
 package org.meveo.security.keycloak;
 
+import java.net.HttpURLConnection;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,18 +33,27 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
 
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.BearerAuthFilter;
+import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.authorization.client.AuthorizationDeniedException;
 import org.keycloak.authorization.client.AuthzClient;
-import org.keycloak.authorization.client.Configuration;
 import org.keycloak.representations.idm.authorization.AuthorizationRequest;
 import org.keycloak.representations.idm.authorization.Permission;
 import org.keycloak.representations.idm.authorization.ResourceRepresentation;
+import org.meveo.commons.utils.ResteasyClientProxyBuilder;
+import org.meveo.model.persistence.JacksonUtil;
 import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
 import org.wildfly.security.http.oidc.OidcPrincipal;
 import org.wildfly.security.http.oidc.OidcSecurityContext;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * Provides methods to deal with currently authenticated user
@@ -210,7 +220,7 @@ public class CurrentUserProvider {
      * 
      * @return Current user implementation
      */
-    @SuppressWarnings({ "rawtypes" })
+    @SuppressWarnings({ "rawtypes", "unused" })
     public MeveoUser getCurrentUser(String providerCode, EntityManager em) {
 
         OidcPrincipal oidcPrincipal = null;
@@ -260,6 +270,7 @@ public class CurrentUserProvider {
      * @param urls A list of URLs to match
      * @return A corresponding set of True/false if the URL is accessible
      */
+    @SuppressWarnings("unchecked")
     public static boolean[] isLinkAccesible(HttpServletRequest request, String scope, String... urls) {
 
         boolean[] result = new boolean[urls.length];
@@ -275,11 +286,25 @@ public class CurrentUserProvider {
 
         String accessTokenString = oidcPrincipal.getOidcSecurityContext().getTokenString();
 
-        Map<String, Object> credentials = new HashMap<String, Object>();
-        credentials.put("secret", System.getProperty("opencell.keycloak.secret"));
-        Configuration configuration = new Configuration(System.getProperty("opencell.keycloak.url"), System.getProperty("opencell.keycloak.realm"), System.getProperty("opencell.keycloak.client"), credentials, null);
+        KeycloakAdminClientConfig kcConnectionConfig = AuthenticationProvider.getKeycloakConfig();
+        AuthzClient authzClient = AuthenticationProvider.getKeycloakAuthzClient();
 
-        AuthzClient authzClient = AuthzClient.create(configuration);
+        // Lookup client id from a client name
+        if (kcConnectionConfig.getClientId() == null) {
+
+            Keycloak keycloak = AuthenticationProvider.getKeycloakClient(kcConnectionConfig, accessTokenString);
+
+            RealmResource realmResource = keycloak.realm(kcConnectionConfig.getRealm());
+            String clientId = realmResource.clients().findByClientId(kcConnectionConfig.getClientName()).get(0).getId();
+            kcConnectionConfig.setClientId(clientId);
+        }
+        // AuthorizationResource authResource = realmResource.clients().get(clientId).authorization();
+
+        ResteasyClient client = new ResteasyClientProxyBuilder().build();
+        ResteasyWebTarget target = client.target(kcConnectionConfig.getServerUrl() + "/admin/realms/" + kcConnectionConfig.getRealm() + "/clients/" + kcConnectionConfig.getClientId() + "/authz/resource-server/resource");
+        target.register(new BearerAuthFilter(accessTokenString));
+        target = target.queryParam("matchingUri", "true");
+        ResteasyWebTarget targetNoUrl = target;
 
         AuthorizationRequest authRequest = new AuthorizationRequest();
         authRequest.setMetadata(new AuthorizationRequest.Metadata());
@@ -290,7 +315,23 @@ public class CurrentUserProvider {
             String url = urls[i];
 
             // Get resources best matching the URL
-            List<ResourceRepresentation> resources = authzClient.protection(accessTokenString).resource().findByMatchingUri(url);
+
+            // List<ResourceRepresentation> resources = authResource.resources().find(null, url, null, null, null, null, null); -- API does not accept matchingUri=true and does not return resource ID.
+            // List<ResourceRepresentation> resources = authzClient.protection(accessTokenString).resource().findByMatchingUri(url); -- API takes client id from a token. So if token was issues to opencell-portal client,
+            // it will return an error that opencell-portal is not a resource server. It ignores the server configuration passed to AuthzClient initiation.
+
+            target = targetNoUrl.queryParam("uri", url);
+
+            Response response = target.request().get();
+            if (response.getStatus() != HttpURLConnection.HTTP_OK) {
+                throw new RuntimeException("Failed to determine an authorization resource for url " + url + " reason:" + response.getStatus() + ", info " + response.getStatusInfo().getReasonPhrase());
+            }
+
+            List<ResourceRepresentation> resources = JacksonUtil.fromString(response.readEntity(String.class), new TypeReference<List<ResourceRepresentation>>() {
+            });
+
+//            List<ResourceRepresentation> resources = response.readEntity(new GenericType<List<ResourceRepresentation>>() { -- Does not work - ID field is not populated
+//            });
 
             List<String> resourceIds = new ArrayList<String>(resources.size());
             urlToResourceMap.put(url, resourceIds);
