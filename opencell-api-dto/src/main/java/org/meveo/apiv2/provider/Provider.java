@@ -77,6 +77,9 @@ public interface Provider {
     
     @Nullable
     Set<String> getPaymentMethods();
+    
+    @Nullable
+    Set<String> getOrderLineTypes();
 
 
     default org.meveo.model.crm.Provider toEntity() {
