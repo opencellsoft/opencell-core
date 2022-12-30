@@ -17675,6 +17675,26 @@
                                  referencedTableName="billing_invoice_validation_rule"
                                  referencedColumnNames="id" />
     </changeSet>
+    
+    <changeSet id="#INTRD-12677_20221229_rebuild" author="AdilElJaouhari">
+		<createTable tableName="crm_provider_order_line_type">
+			<column name="provider_id" type="bigint" />
+			<column name="order_line_type" type="varchar(20)" />
+		</createTable>
+
+		<addForeignKeyConstraint
+			baseTableName="crm_provider_order_line_type"
+			baseColumnNames="provider_id"
+			constraintName="crm_provider_order_line_type_provider_fk"
+			referencedTableName="crm_provider" referencedColumnNames="id" />
+
+		<addUniqueConstraint
+			columnNames="provider_id, order_line_type"
+			constraintName="crm_provider_order_line_type_uk"
+			tableName="crm_provider_order_line_type" />
+	</changeSet>
+    
+    
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
@@ -18947,6 +18967,8 @@
 	<changeSet id="#INTRD-12478_20221226" author="AdilElJaouhari" />
 
 	<changeSet id="#INTR-12382_20221219" author="HichamHANINE" />
+	<changeSet id="#INTRD-12677_20221229" author="AdilElJaouhari" />
+	
 	
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
