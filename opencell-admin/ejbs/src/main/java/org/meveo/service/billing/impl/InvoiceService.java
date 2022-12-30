@@ -6884,11 +6884,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 BigDecimal amountWithTax = ratedTransactions.stream().map(RatedTransaction::getAmountWithTax).reduce(BigDecimal.ZERO, BigDecimal::add);
                 BigDecimal amountWithoutTax = ratedTransactions.stream().map(RatedTransaction::getAmountWithoutTax).reduce(BigDecimal.ZERO, BigDecimal::add);
                 BigDecimal amountTax = ratedTransactions.stream().map(RatedTransaction::getAmountTax).reduce(BigDecimal.ZERO, BigDecimal::add);
-
+                BigDecimal quantity = ratedTransactions.stream().map(RatedTransaction::getQuantity).reduce(BigDecimal.ZERO, BigDecimal::add);
+                
                 invoiceLine.setAmountWithTax(amountWithTax);
                 invoiceLine.setAmountWithoutTax(amountWithoutTax);
                 invoiceLine.setAmountTax(amountTax);
-                invoiceLine.setRatedTransactions(ratedTransactions);
+                invoiceLine.setQuantity(quantity);
             }
         }
     }
@@ -7153,6 +7154,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         continue;
                     }
                     final BigDecimal amount;
+                    Optional<LinkedInvoice> toUpdate = invoice.getLinkedInvoices().stream()
+                            .filter(li -> li.getLinkedInvoiceValue().getId() == adv.getId()).findAny();
+                    if(toUpdate.isPresent() && toUpdate.get().getLinkedInvoiceValue().getCommercialOrder() != null && invoice.getCommercialOrder() == null) continue;
                     if(adv.getInvoiceBalance().compareTo(remainingAmount) >= 0){
                         amount=remainingAmount;
                         adv.setInvoiceBalance( adv.getInvoiceBalance().subtract(remainingAmount));
@@ -7163,10 +7167,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         adv.setInvoiceBalance(BigDecimal.ZERO);
                     }
                     if(amount.intValue() == ZERO.intValue()) continue;
-					Optional<LinkedInvoice> toUpdate = invoice.getLinkedInvoices().stream()
-							.filter(li -> li.getLinkedInvoiceValue().getId() == adv.getId()).findAny();
 					if (toUpdate.isPresent()) {
-						toUpdate.get().setAmount(toUpdate.get().getAmount().add(amount));
+					        toUpdate.get().setAmount(toUpdate.get().getAmount().add(amount));
 					}
 					else {
 						createNewLinkedInvoice(invoice, amount, adv);
