@@ -9092,5 +9092,23 @@ Only offer actually present on invoice will be tested."}'/>
 	    </delete>
 	</changeSet>
 
+	<changeSet id="#INTRD-12677_20221230" author="aeljaouhari">
+		<insert tableName="crm_provider_order_line_type">
+			<column name="provider_id" valueNumeric="1" />
+			<column name="order_line_type" value="CREATE" />
+		</insert>
+		<insert tableName="crm_provider_order_line_type">
+			<column name="provider_id" valueNumeric="1" />
+			<column name="order_line_type" value="AMEND" />
+		</insert>
+		<insert tableName="crm_provider_order_line_type">
+			<column name="provider_id" valueNumeric="1" />
+			<column name="order_line_type" value="TERMINATE" />
+		</insert>
+		<insert tableName="crm_provider_order_line_type">
+			<column name="provider_id" valueNumeric="1" />
+			<column name="order_line_type" value="APPLY_ONE_SHOT" />
+		</insert>
+	</changeSet>
 
 </databaseChangeLog>

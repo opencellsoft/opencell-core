@@ -166,6 +166,7 @@ public class TenantCacheContainerProvider implements Serializable { // CacheCont
         providerCopy.setLanguage(provider.getLanguage() != null ? provider.getLanguage() : null);
         providerCopy.setInvoiceConfiguration(provider.getInvoiceConfiguration() != null ? provider.getInvoiceConfiguration() : null);
         providerCopy.setPaymentMethods(provider.getPaymentMethods());
+        providerCopy.setOrderLineTypes(provider.getOrderLineTypes());
 
         providerCopy.setCfValues(provider.getCFValuesCopy());
 

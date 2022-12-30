@@ -10066,7 +10066,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		</insert>
     </changeSet>
     
-    <changeSet id="INTRD-12103_20221215_rebuild" author="HichamHANINE">	
+    <changeSet id="INTRD-12103_20221215_rebuild" author="HichamHANINE">    
         <insert tableName="meveo_script_instance">
         	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
         	<column name="code" value="org.meveo.service.script.CompareOfferLinesAmountScript" />
@@ -10103,7 +10103,7 @@ Only offer actually present on invoice will be tested."}'/>
 			<column name="collection" valueNumeric="1" />
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmountScript')" />
 		</insert>
-		
+
 		<insert tableName="meveo_script_parameter">
 			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
 			<column name="version" valueNumeric="0" />
@@ -10142,8 +10142,8 @@ Only offer actually present on invoice will be tested."}'/>
 			<column name="collection" valueNumeric="0" />
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmountScript')" />
 		</insert>
-    </changeSet>    
-
+    </changeSet>
+    
     <changeSet id="INTRD-12267_20221219_rebuild" author="aeljaouhari">
         <insert tableName="meveo_script_instance">
         	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
@@ -10265,6 +10265,25 @@ Only offer actually present on invoice will be tested."}'/>
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateSubscriptionAge')" />
 		</insert>
     </changeSet> 
+    
+    <changeSet id="#INTRD-12677_20221230_rebuild" author="aeljaouhari">
+		<insert tableName="crm_provider_order_line_type">
+			<column name="provider_id" valueNumeric="1" />
+			<column name="order_line_type" value="CREATE" />
+		</insert>
+		<insert tableName="crm_provider_order_line_type">
+			<column name="provider_id" valueNumeric="1" />
+			<column name="order_line_type" value="AMEND" />
+		</insert>
+		<insert tableName="crm_provider_order_line_type">
+			<column name="provider_id" valueNumeric="1" />
+			<column name="order_line_type" value="TERMINATE" />
+		</insert>
+		<insert tableName="crm_provider_order_line_type">
+			<column name="provider_id" valueNumeric="1" />
+			<column name="order_line_type" value="APPLY_ONE_SHOT" />
+		</insert>
+	</changeSet>
 
 	<changeSet id="#INTRD-6484" author="hichamElHaloui"/>
 	<changeSet id="#INTRD-6668_20220421" author="TarikRabeh" />
@@ -10320,6 +10339,7 @@ Only offer actually present on invoice will be tested."}'/>
 	<changeSet id="INTRD-12267_20221219" author="aeljaouhari" />
 	<changeSet id="#INTRD-12335_20221216" author="Bourras"/>
 	<changeSet id="INTRD-12268_20221221" author="aeljaouhari" />
+	<changeSet id="#INTRD-12677_20221230" author="aeljaouhari" />
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
