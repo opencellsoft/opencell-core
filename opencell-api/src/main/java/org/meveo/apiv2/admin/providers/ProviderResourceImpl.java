@@ -20,6 +20,7 @@ import org.meveo.model.billing.Language;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.dunning.DunningPauseReason;
+import org.meveo.model.order.OrderLineTypeEnum;
 import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -216,6 +217,10 @@ public class ProviderResourceImpl implements ProviderResource {
 
         if (provider.getCurrentMatchingCode() != null) {
             providerByCode.setCurrentMatchingCode(providerUpdateInfos.getCurrentMatchingCode());
+        }
+        
+        if (provider.getOrderLineTypes() != null) {
+            providerByCode.setOrderLineTypes(provider.getOrderLineTypes().stream().filter(StringUtils::isNotBlank).map(OrderLineTypeEnum::valueOf).collect(Collectors.toList()));
         }
         
         providerService.update(providerByCode);

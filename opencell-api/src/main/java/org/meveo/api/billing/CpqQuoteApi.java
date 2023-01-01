@@ -275,11 +275,22 @@ public class CpqQuoteApi extends BaseApi {
             throw new EntityDoesNotExistsException(BillingAccount.class, quoteDto.getApplicantAccountCode());
         }
         cpqQuote.setApplicantAccount(applicantAccount);
+
+        //Manage Seller
+        Seller seller = null;
         if(StringUtils.isNotBlank(quoteDto.getSellerCode())) {
-            cpqQuote.setSeller(sellerService.findByCode(quoteDto.getSellerCode()));
+            seller = sellerService.findByCode(quoteDto.getSellerCode());
+            if(seller == null) {
+                throw new EntityDoesNotExistsException(Seller.class, quoteDto.getSellerCode());
+            }
         } else {
-        	 cpqQuote.setSeller(applicantAccount.getCustomerAccount().getCustomer().getSeller());
+            seller = applicantAccount.getCustomerAccount().getCustomer().getSeller();
+            if(seller == null) {
+                throw new EntityDoesNotExistsException("No seller found. a seller must be defined either on quote or at customer level");
+            }
         }
+        cpqQuote.setSeller(seller);
+
         if(StringUtils.isNotBlank(quoteDto.getBillableAccountCode())) {
             var billableAccount = billingAccountService.findByCode(quoteDto.getBillableAccountCode());
             if(billableAccount == null) {
@@ -653,6 +664,25 @@ public class CpqQuoteApi extends BaseApi {
         if(StringUtils.isNotBlank(quoteDto.getSellerCode())) {
             quote.setSeller(sellerService.findByCode(quoteDto.getSellerCode()));
         }
+
+        BillingAccount applicantAccount = quote.getApplicantAccount();
+
+        //Manage Seller
+        Seller seller = null;
+        if(StringUtils.isNotBlank(quoteDto.getSellerCode())) {
+            seller = sellerService.findByCode(quoteDto.getSellerCode());
+            if(seller == null) {
+                throw new EntityDoesNotExistsException(Seller.class, quoteDto.getSellerCode());
+            }
+        } else {
+            seller = applicantAccount.getCustomerAccount().getCustomer().getSeller();
+            if(seller == null) {
+                throw new EntityDoesNotExistsException("No seller found. a seller must be defined either on quote or at customer level");
+            }
+        }
+        quote.setSeller(seller);
+
+
         if(StringUtils.isNotBlank(quoteDto.getApplicantAccountCode())) {
             final BillingAccount billingAccount = billingAccountService.findByCode(quoteDto.getApplicantAccountCode());
             if(billingAccount == null)
