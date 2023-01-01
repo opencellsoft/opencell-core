@@ -5,6 +5,7 @@ import static java.lang.Enum.valueOf;
 import static java.util.Optional.ofNullable;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.FilterOperatorEnum;
 import org.meveo.model.BusinessEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +52,9 @@ public class FilterConverter {
 
     private Object convert(Class<?> entity, Map.Entry<String, Object> filterEntry, String fieldName) {
         try {
+        	if("$OPERATOR".equalsIgnoreCase(fieldName)) {
+        		return FilterOperatorEnum.valueOf((String)filterEntry.getValue());
+        	}
         	if(fieldName.matches("\\$filter[0-9]+$")) {
             	return convertFilters((Map<String, Object>)filterEntry.getValue());
             }
