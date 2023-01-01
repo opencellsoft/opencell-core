@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.billing.UntdidTaxationCategoryDto;
+import org.meveo.api.dto.billing.UntdidVatexDto;
 import org.meveo.model.billing.Tax;
 
 /**
@@ -214,4 +216,21 @@ public class TaxDto extends BusinessEntityDto {
         return "TaxDto [code=" + getCode() + ", description=" + getDescription() + ", percent=" + percent + ", accountingCode=" + accountingCode + ", languageDescriptions=" + languageDescriptions + ", customFields="
                 + customFields + "]";
     }
+
+	public UntdidTaxationCategoryDto getUntdidTaxationCategoryDto() {
+		return untdidTaxationCategoryDto;
+	}
+
+	public void setUntdidTaxationCategoryDto(UntdidTaxationCategoryDto untdidTaxationCategoryDto) {
+		this.untdidTaxationCategoryDto = untdidTaxationCategoryDto;
+	}
+
+	public UntdidVatexDto getUntdidVatexDto() {
+		return untdidVatexDto;
+	}
+
+	public void setUntdidVatexDto(UntdidVatexDto untdidVatexDto) {
+		this.untdidVatexDto = untdidVatexDto;
+	}
+    
 }

@@ -1,13 +1,10 @@
 package org.meveo.api.dto.billing;
 
-import javax.persistence.Column;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
-import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.UntdidInvoiceCodeType;
 
 @XmlRootElement()
