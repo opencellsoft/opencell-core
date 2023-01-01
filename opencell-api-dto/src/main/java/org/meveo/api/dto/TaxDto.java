@@ -59,6 +59,12 @@ public class TaxDto extends BusinessEntityDto {
 
     /** Sub taxes */
     private List<TaxDto> subTaxes;
+    
+    /** untdidTaxationCategory */
+    private UntdidTaxationCategoryDto untdidTaxationCategoryDto;
+    
+    /** untdidVatexDto */
+    private UntdidVatexDto untdidVatexDto;
 
     /**
      * Instantiates a new tax dto.
@@ -94,6 +100,20 @@ public class TaxDto extends BusinessEntityDto {
                     stream()
                     .map(subTax -> new TaxDto(subTax.getId()))
                     .collect(toList());
+        }
+        if(tax.getUntdidTaxationCategory() != null) {
+	        untdidTaxationCategoryDto = new UntdidTaxationCategoryDto();
+	        untdidTaxationCategoryDto.setName(tax.getUntdidTaxationCategory().getName());
+	        untdidTaxationCategoryDto.setSemanticModel(tax.getUntdidTaxationCategory().getSemanticModel());
+	        setUntdidTaxationCategoryDto(untdidTaxationCategoryDto);
+        }
+        
+        if(tax.getUntdidVatex() != null) {
+	        untdidVatexDto = new UntdidVatexDto();
+	        untdidVatexDto.setCode( tax.getUntdidVatex().getCode());
+	        untdidVatexDto.setCodeName(tax.getUntdidVatex().getCodeName());
+	        untdidVatexDto.setRemark(tax.getUntdidVatex().getRemark());
+	        setUntdidVatexDto(untdidVatexDto);
         }
     }
 
