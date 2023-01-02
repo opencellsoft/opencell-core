@@ -15440,5 +15440,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
         	<column name="query_parameters" type="${type.json}" />
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD-12794-20230102-counter_instance" author="a.rouaguebe">
+    	<dropPrimaryKey tableName="billing_chrg_inst_counter" constraintName="billing_chrg_inst_counter_pkey" />
+    	<addPrimaryKey columnNames="chrg_instance_id, counter_instance_id" constraintName="billing_chrg_inst_counter_pkey" tableName="billing_chrg_inst_counter" />
+    </changeSet>
 
 </databaseChangeLog>
