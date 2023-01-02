@@ -671,7 +671,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                 });
 
                 //Check if any of line contains an EL value, then add new column
-                if(!line.getValueEL().isEmpty()) {
+                if(!StringUtils.isBlank(line.getValueEL())) {
                     CSVLineRecord.put("description[text]", line.getDescription());
                     CSVLineRecordPosition.put("description[text]", Integer.MAX_VALUE - 2);
                     CSVLineRecord.put("priceWithoutTax[number]", line.getPriceWithoutTax());
