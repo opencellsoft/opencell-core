@@ -17693,4 +17693,175 @@ public class CdrFlatFileImportScript extends Script {
 			
 		</changeSet>
 
+    <changeSet id="#INTRD-12625_20221230" author="Bourras">
+        <sql>
+            create
+            temporary table one_shot_product_charge_association
+           (product_id int, new_charge_id int);
+        </sql>
+        <sql>
+            with inserted as (
+            insert
+            into public.cat_charge_template
+            (id, version, disabled, created, updated, code, description, amount_editable, credit_debit_flag, status,
+             creator, updater, invoice_sub_category,
+             input_unit_description, rating_unit_description, unit_multiplicator, unit_nb_decimal, uuid,
+             rounding_mode, revenue_recog_rule_id, cf_values,
+             description_i18n, charge_type, filter_expression, filter_param_1, filter_param_2, filter_param_3,
+             filter_param_4, priority, trigger_next_charge,
+             trigger_next_charge_el, apply_in_advance, duration_term_in_month, recurrence_type, share_level,
+             subscription_prorata, termination_prorata,
+             calendar_id, subscription_prorata_el, termination_prorata_el, apply_in_advance_el,
+             duration_term_in_month_el, calendar_code_el, immediate_invoicing, type, prorata_on_price_change,
+             input_unitofmeasure, rating_unitofmeasure, input_unit_el
+                , output_unit_el, tax_class_id, tax_class_el, drop_zero_wo, rating_script_id, sort_index_el,
+             apply_terminated_charge_to_date_el
+                , offer_template_id, product_id, service_template_id, price_plan_matrix_id, recurrence_duration_enum,
+             duration_service,
+             recurrence_calendar, calendar_service, usage_service_template_id, surcharge, price_matrix, param1,
+             param1_service_id, param2,
+             param2_service_id, param3, param3_service_id, param4, param4_service_id, dim1_matrix, dim1_matrix_bystep,
+             dim1_matrix_service,
+             dim2_matrix, dim2_matrix_bystep, dim2_matrix_service, dim3_matrix, dim3_matrix_bystep,
+             dim3_matrix_service, attribute_id,
+             attribute_duration_id, attribute_calendar_id, internal_note)
+            select nextval('cat_charge_template_seq')
+                 , chargeTemplate.version
+                 , chargeTemplate.disabled
+                 , chargeTemplate.created
+                 , chargeTemplate.updated
+                 , MD5(random()::text)
+                 , chargeTemplate.description
+                 , chargeTemplate.amount_editable
+                 , chargeTemplate.credit_debit_flag
+                 , chargeTemplate.status
+                 , chargeTemplate.creator
+                 , chargeTemplate.updater
+                 , chargeTemplate.invoice_sub_category
+                 , chargeTemplate.
+                input_unit_description
+                 , chargeTemplate.rating_unit_description
+                 , chargeTemplate.unit_multiplicator
+                 , chargeTemplate.unit_nb_decimal
+                 , chargeTemplate.uuid
+                 , chargeTemplate.rounding_mode
+                 , chargeTemplate.revenue_recog_rule_id
+                 , chargeTemplate.cf_values
+                 , chargeTemplate.
+                description_i18n
+                 , chargeTemplate.charge_type
+                 , chargeTemplate.filter_expression
+                 , chargeTemplate.filter_param_1
+                 , chargeTemplate.filter_param_2
+                 , chargeTemplate.filter_param_3
+                 , chargeTemplate.filter_param_4
+                 , chargeTemplate.priority
+                 , chargeTemplate.trigger_next_charge
+                 , chargeTemplate.
+                trigger_next_charge_el
+                 , chargeTemplate.apply_in_advance
+                 , chargeTemplate.duration_term_in_month
+                 , chargeTemplate.recurrence_type
+                 , chargeTemplate.share_level
+                 , chargeTemplate.subscription_prorata
+                 , chargeTemplate.termination_prorata
+                 , chargeTemplate.
+                calendar_id
+                 , chargeTemplate.subscription_prorata_el
+                 , chargeTemplate.termination_prorata_el
+                 , chargeTemplate.apply_in_advance_el
+                 , chargeTemplate.duration_term_in_month_el
+                 , chargeTemplate.calendar_code_el
+                 , chargeTemplate.
+                immediate_invoicing
+                 , 'INVOICING_PLAN'
+                 , chargeTemplate.prorata_on_price_change
+                 , chargeTemplate.input_unitofmeasure
+                 , chargeTemplate.rating_unitofmeasure
+                 , chargeTemplate.input_unit_el
+                 , chargeTemplate.output_unit_el
+                 , chargeTemplate.tax_class_id
+                 , chargeTemplate.tax_class_el
+                 , chargeTemplate.drop_zero_wo
+                 , chargeTemplate.rating_script_id
+                 , chargeTemplate.sort_index_el
+                 , chargeTemplate.apply_terminated_charge_to_date_el
+                 , chargeTemplate.offer_template_id
+                 , orderProduct.id
+                 , chargeTemplate.service_template_id
+                 , chargeTemplate.price_plan_matrix_id
+                 , chargeTemplate.recurrence_duration_enum
+                 , chargeTemplate.duration_service
+                 , chargeTemplate.
+                recurrence_calendar
+                 , chargeTemplate.calendar_service
+                 , chargeTemplate.usage_service_template_id
+                 , chargeTemplate.surcharge
+                 , chargeTemplate.price_matrix
+                 , chargeTemplate.param1
+                 , chargeTemplate.param1_service_id
+                 , chargeTemplate.param2
+                 , chargeTemplate.
+                param2_service_id
+                 , chargeTemplate.param3
+                 , chargeTemplate.param3_service_id
+                 , chargeTemplate.param4
+                 , chargeTemplate.param4_service_id
+                 , chargeTemplate.dim1_matrix
+                 , chargeTemplate.dim1_matrix_bystep
+                 , chargeTemplate.dim1_matrix_service
+                 , chargeTemplate.
+                dim2_matrix
+                 , chargeTemplate.dim2_matrix_bystep
+                 , chargeTemplate.dim2_matrix_service
+                 , chargeTemplate.dim3_matrix
+                 , chargeTemplate.dim3_matrix_bystep
+                 , chargeTemplate.dim3_matrix_service
+                 , chargeTemplate.attribute_id
+                 , chargeTemplate.
+                attribute_duration_id
+                 , chargeTemplate.attribute_calendar_id
+                 , chargeTemplate.internal_note
+            from public.cpq_commercial_order commercialOrder
+                     inner join public.cpq_order_offer offer
+                                on (offer.order_id = commercialOrder.id)
+                     inner join public.cpq_order_product orderProduct
+                                on (orderProduct.order_offer_id = offer.id)
+                     inner join public.cpq_product_charge_template_mapping productChargeTemplate
+                                on (productChargeTemplate.product_id = orderProduct.id)
+                     inner join public.cat_charge_template chargeTemplate
+                                on (productChargeTemplate.charge_template_id = chargeTemplate.id)
+            where commercialOrder.invoicing_plan_id is not null
+              and chargeTemplate.type = 'OTHER' returning id, product_id
+)
+            insert
+            into one_shot_product_charge_association(product_id, new_charge_id)
+            select inserted.product_id, inserted.id
+            from inserted;
+            insert into public.cpq_product_charge_template_mapping
+                (id, version, product_id, charge_template_id, counter_template_id)
+            select nextval('cpq_product_charge_template_mapping_seq')
+                 , productChargeTemplate.version
+                 , oneshotProductCharge.product_id
+                 , oneshotProductCharge.new_charge_id
+                 , productChargeTemplate.counter_template_id
+            from public.cpq_commercial_order commercialOrder
+                     inner join public.cpq_order_offer offer
+                                on (offer.order_id = commercialOrder.id)
+                     inner join public.cpq_order_product orderProduct
+                                on (orderProduct.order_offer_id = offer.id)
+                     inner join public.cpq_product_charge_template_mapping productChargeTemplate
+                                on (productChargeTemplate.product_id = orderProduct.id)
+                     inner join public.cat_charge_template chargeTemplate
+                                on (productChargeTemplate.charge_template_id = chargeTemplate.id)
+                     inner join one_shot_product_charge_association oneshotProductCharge
+                                on (oneshotProductCharge.product_id = productChargeTemplate.product_id)
+            where commercialOrder.invoicing_plan_id is not null
+              and chargeTemplate.type = 'OTHER';
+        </sql>
+        <sql>
+            drop table one_shot_product_charge_association
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>
