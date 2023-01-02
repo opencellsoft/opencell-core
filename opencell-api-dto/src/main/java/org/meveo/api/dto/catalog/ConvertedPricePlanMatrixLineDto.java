@@ -1,18 +1,11 @@
 package org.meveo.api.dto.catalog;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
-import javax.validation.constraints.PositiveOrZero;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.meveo.api.dto.BaseEntityDto;
-import org.meveo.model.catalog.ConvertedPricePlanMatrixLine;
-import org.meveo.model.catalog.PricePlanMatrixLine;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -24,151 +17,69 @@ public class ConvertedPricePlanMatrixLineDto extends BaseEntityDto {
 	 */
 	private static final long serialVersionUID = -3498847257781821440L;
 
-    @Schema(description = "The price plan line id")
-	private Long ppmLineId;
+    @Schema(description = "converted price value")
+	private BigDecimal convertedValue;
 
-    @Schema(description = "The price without tax")
-    @PositiveOrZero
-	@Deprecated
-	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-	private BigDecimal priceWithoutTax;
+    @Schema(description = "trading currency")
+	private tradingCurrencyDto tradingCurrency;
 
-	@Schema(description = "The value of price without tax or a discount")
-	@PositiveOrZero
-	private BigDecimal value;
+	@Schema(description = "the rate of converted currency")
+    private BigDecimal rate;
+    @Schema(description = "weither is will with billing account or not")
+    private Boolean useForBillingAccounts;
 
-    @Schema(description = "The price plan matrix code")
-	private String pricePlanMatrixCode;
-
-    @Schema(description = "The price plan matrix version")
-	private int pricePlanMatrixVersion;
-
-    @Schema(description = "The description price plan line")
-	private String description;
-
-	private List<PricePlanMatrixValueDto> pricePlanMatrixValues = new ArrayList<PricePlanMatrixValueDto>();
-
-    @Schema(description = "The priority")
-	private Integer priority;
-    
-    @Schema(description = "The Price EL")
-    private String priceEL;
-
-	@Schema(description = "The EL Value")
-	private String valueEL;
 	
-	private List<ConvertedPricePlanMatrixLineDto> convertedPricePlanMatrixLines;
 
 	public ConvertedPricePlanMatrixLineDto() {
 	}
 
-	public ConvertedPricePlanMatrixLineDto(PricePlanMatrixLine pricePlanMatrixLine) {
-		this.ppmLineId = pricePlanMatrixLine.getId();
-		this.priceWithoutTax = pricePlanMatrixLine.getValue();
-		this.value = pricePlanMatrixLine.getValue();
-		this.description = pricePlanMatrixLine.getDescription();
-		this.priority = pricePlanMatrixLine.getPriority();
-		this.priceEL = pricePlanMatrixLine.getValueEL();
-		this.valueEL = pricePlanMatrixLine.getValueEL();
-		this.pricePlanMatrixCode = pricePlanMatrixLine.getPricePlanMatrixVersion().getPricePlanMatrix().getCode();
-		this.pricePlanMatrixVersion = pricePlanMatrixLine.getPricePlanMatrixVersion().getCurrentVersion();
-		pricePlanMatrixValues = pricePlanMatrixLine.getPricePlanMatrixValues()
-				.stream()
-				.map(value -> new PricePlanMatrixValueDto(value))
-				.collect(Collectors.toList());
-	}
-
-	/**
-	 * @return the ppmLineId
-	 */
-	public Long getPpmLineId() {
-		return ppmLineId;
-	}
-
-	/**
-	 * @param ppmLineId the ppmLineId to set
-	 */
-	public void setPpmLineId(Long ppmLineId) {
-		this.ppmLineId = ppmLineId;
-	}
 
 
-	@Deprecated
-	public BigDecimal getPriceWithoutTax() {
-		return priceWithoutTax;
-	}
-	@Deprecated
-	public void setPriceWithoutTax(BigDecimal priceWithoutTax) {
-		this.priceWithoutTax = priceWithoutTax;
-	}
-
-	/**
-	 * @return the pricePlanMatrixValues
-	 */
-	public List<PricePlanMatrixValueDto> getPricePlanMatrixValues() {
-		return pricePlanMatrixValues;
-	}
-
-	/**
-	 * @param pricePlanMatrixValues the pricePlanMatrixValues to set
-	 */
-	public void setPricePlanMatrixValues(List<PricePlanMatrixValueDto> pricePlanMatrixValues) {
-		this.pricePlanMatrixValues = pricePlanMatrixValues;
-	}
-
-	public String getPricePlanMatrixCode() {
-		return pricePlanMatrixCode;
-	}
-
-	public void setPricePlanMatrixCode(String pricePlanMatrixCode) {
-		this.pricePlanMatrixCode = pricePlanMatrixCode;
-	}
-
-	public int getPricePlanMatrixVersion() {
-		return pricePlanMatrixVersion;
-	}
-
-	public void setPricePlanMatrixVersion(int pricePlanMatrixVersion) {
-		this.pricePlanMatrixVersion = pricePlanMatrixVersion;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public Integer getPriority() {
-		return priority;
-	}
-
-	public void setPriority(Integer priority) {
-		this.priority = priority;
-	}
-
-    public String getPriceEL() {
-        return priceEL;
+    public BigDecimal getConvertedValue() {
+        return convertedValue;
     }
 
-    public void setPriceEL(String priceEL) {
-        this.priceEL = priceEL;
+
+
+    public tradingCurrencyDto getTradingCurrency() {
+        return tradingCurrency;
     }
 
-	public String getValueEL() {
-		return valueEL;
-	}
 
-	public void setValueEL(String valueEL) {
-		this.valueEL = valueEL;
-	}
 
-	public BigDecimal getValue() {
-		return value;
-	}
+    public BigDecimal getRate() {
+        return rate;
+    }
 
-	public void setValue(BigDecimal value) {
-		this.value = value;
-	}
+
+
+    public Boolean getUseForBillingAccounts() {
+        return useForBillingAccounts;
+    }
+
+
+
+    public void setConvertedValue(BigDecimal convertedValue) {
+        this.convertedValue = convertedValue;
+    }
+
+
+
+    public void setTradingCurrency(tradingCurrencyDto tradingCurrency) {
+        this.tradingCurrency = tradingCurrency;
+    }
+
+
+
+    public void setRate(BigDecimal rate) {
+        this.rate = rate;
+    }
+
+
+
+    public void setUseForBillingAccounts(Boolean useForBillingAccounts) {
+        this.useForBillingAccounts = useForBillingAccounts;
+    }
+
+	
 }
