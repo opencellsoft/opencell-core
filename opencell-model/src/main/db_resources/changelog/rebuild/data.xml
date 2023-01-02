@@ -13279,6 +13279,17 @@ Only offer actually present on invoice will be tested."}'/>
 			<column name="order_line_type" value="APPLY_ONE_SHOT" />
 		</insert>
 	</changeSet>
+	
+	<changeSet id="#INTRD-12546_20221230_rebuild" author="aeljaouhari">
+		<insert tableName="meveo_script_instance_cat">
+			<column name="id" valueNumeric="-5"/>
+			<column name="version" valueNumeric="0"/>
+			<column name="created" valueDate="${db.current.time}"/>
+			<column name="code" value="INVOICE_SPLIT"/>
+			<column name="description" value="Invoice split"/>
+			<column name="description_i18n" value='{"FR":"Découpage facture","EN":"Invoice split"}'/>
+		</insert>
+	</changeSet>
 
 	<changeSet id="#INTRD-6484" author="hichamElHaloui"/>
 	<changeSet id="#INTRD-6668_20220421" author="TarikRabeh" />
@@ -13335,6 +13346,7 @@ Only offer actually present on invoice will be tested."}'/>
 	<changeSet id="#INTRD-12335_20221216" author="Bourras"/>
 	<changeSet id="INTRD-12268_20221221" author="aeljaouhari" />
 	<changeSet id="#INTRD-12677_20221230" author="aeljaouhari" />
+	<changeSet id="#INTRD-12546_20221230" author="aeljaouhari" />
 
 
 	<changeSet id="#OUTRD-3_20221012-job" author="MohamedChaouki">
