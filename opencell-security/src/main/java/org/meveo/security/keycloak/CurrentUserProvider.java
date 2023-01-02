@@ -49,6 +49,7 @@ import org.meveo.commons.utils.ResteasyClientProxyBuilder;
 import org.meveo.model.persistence.JacksonUtil;
 import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.wildfly.security.http.oidc.OidcPrincipal;
 import org.wildfly.security.http.oidc.OidcSecurityContext;
@@ -70,8 +71,7 @@ public class CurrentUserProvider {
     @Inject
     private Instance<HttpServletRequest> requestInst;
 
-    @Inject
-    private Logger log;
+    private static Logger log = LoggerFactory.getLogger(CurrentUserProvider.class);
 
     /**
      * Contains a current tenant
@@ -287,7 +287,6 @@ public class CurrentUserProvider {
         String accessTokenString = oidcPrincipal.getOidcSecurityContext().getTokenString();
 
         KeycloakAdminClientConfig kcConnectionConfig = AuthenticationProvider.getKeycloakConfig();
-        AuthzClient authzClient = AuthenticationProvider.getKeycloakAuthzClient();
 
         // Lookup client id from a client name
         if (kcConnectionConfig.getClientId() == null) {
@@ -324,14 +323,16 @@ public class CurrentUserProvider {
 
             Response response = target.request().get();
             if (response.getStatus() != HttpURLConnection.HTTP_OK) {
-                throw new RuntimeException("Failed to determine an authorization resource for url " + url + " reason:" + response.getStatus() + ", info " + response.getStatusInfo().getReasonPhrase());
+                result[i] = false;
+                log.error("Failed to determine an authorization resource for url {} reason: {}, info {}", url, response.getStatus(), response.getStatusInfo().getReasonPhrase());
+                continue;
             }
 
             List<ResourceRepresentation> resources = JacksonUtil.fromString(response.readEntity(String.class), new TypeReference<List<ResourceRepresentation>>() {
             });
 
-//            List<ResourceRepresentation> resources = response.readEntity(new GenericType<List<ResourceRepresentation>>() { -- Does not work - ID field is not populated
-//            });
+            // List<ResourceRepresentation> resources = response.readEntity(new GenericType<List<ResourceRepresentation>>() { -- Does not work - ID field is not populated
+            // });
 
             List<String> resourceIds = new ArrayList<String>(resources.size());
             urlToResourceMap.put(url, resourceIds);
@@ -342,26 +343,39 @@ public class CurrentUserProvider {
             }
         }
 
+        if (authRequest.getPermissions() == null || authRequest.getPermissions().getPermissions() == null || authRequest.getPermissions().getPermissions().isEmpty()) {
+            return result;
+        }
+
         try {
+            AuthzClient authzClient = AuthenticationProvider.getKeycloakAuthzClient();
             List<Permission> permissions = authzClient.authorization(accessTokenString).getPermissions(authRequest);
             if (!permissions.isEmpty()) {
 
                 for (int i = 0; i < urls.length; i++) {
                     String url = urls[i];
 
-                    loop1: for (String resourceId : urlToResourceMap.get(url)) {
-                        for (Object permission : permissions) {
-                            if (resourceId.equals(((Map<String, Object>) permission).get("rsid"))) { // .getResourceId())) {
-                                result[i] = true;
-                                break loop1;
+                    List<String> resourceIds = urlToResourceMap.get(url);
+                    if (resourceIds != null) {
+                        loop1: for (String resourceId : resourceIds) {
+                            for (Object permission : permissions) {
+                                if (resourceId.equals(((Map<String, Object>) permission).get("rsid"))) { // .getResourceId())) {
+                                    result[i] = true;
+                                    break loop1;
+                                }
                             }
+                        }
+                        if (result[i] == false) {
+                            log.error("No permission granted for resource {}, url {}", resourceIds, url);
                         }
                     }
                 }
             }
 
         } catch (AuthorizationDeniedException e) {
-            // Nothing was permited
+            if (log.isErrorEnabled()) {
+                log.error("No permissions granted for any of the urls " + urls);
+            }
         }
 
         return result;

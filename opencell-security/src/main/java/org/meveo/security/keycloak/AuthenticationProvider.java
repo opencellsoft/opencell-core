@@ -176,6 +176,8 @@ public class AuthenticationProvider {
      */
     public static Keycloak getKeycloakClient(KeycloakAdminClientConfig keycloakAdminClientConfig, String accessToken) {
 
+        log.error("getKC client");
+        
         if (keycloakAdminClientConfig == null) {
             keycloakAdminClientConfig = getKeycloakConfig();
         }
@@ -183,7 +185,7 @@ public class AuthenticationProvider {
         KeycloakBuilder keycloakBuilder = KeycloakBuilder.builder().serverUrl(keycloakAdminClientConfig.getServerUrl()).realm(keycloakAdminClientConfig.getRealm()).grantType(OAuth2Constants.CLIENT_CREDENTIALS)
             .clientId(keycloakAdminClientConfig.getClientName()).clientSecret(keycloakAdminClientConfig.getClientSecret()).authorization(accessToken);
 
-        keycloakBuilder.resteasyClient(new ResteasyClientProxyBuilder().connectionPoolSize(200).maxPooledPerRoute(200).build());
+        keycloakBuilder.resteasyClient(new ResteasyClientProxyBuilder().connectionPoolSize(2).maxPooledPerRoute(2).build());
 
         return keycloakBuilder.build();
     }
