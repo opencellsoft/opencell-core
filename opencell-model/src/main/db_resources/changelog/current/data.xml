@@ -14919,7 +14919,6 @@ public class CdrFlatFileImportScript extends Script {
 			INSERT INTO public.untdid_1001_invoice_code_type VALUES (42, 0, now(), NULL, 'opencell.admin', NULL, '780', 'Invoice', 'Freight invoice');
 			INSERT INTO public.untdid_1001_invoice_code_type VALUES (43, 0, now(), NULL, 'opencell.admin', NULL, '935', 'Invoice', 'Customs invoice');
 			
-			INSERT INTO public.untdid_2475_vat_payment_option VALUES (1, 0, now(), NULL, 'opencell.admin', NULL, '3', 'Invoice document issue date time', '5', 'Date of invoice');
 			INSERT INTO public.untdid_2475_vat_payment_option VALUES (2, 0, now(), NULL, 'opencell.admin', NULL, '35', 'Delivery date/time, actual', '29', 'Date of delivery of goods to establishments/domicile/site');
 			INSERT INTO public.untdid_2475_vat_payment_option VALUES (3, 0, now(), NULL, 'opencell.admin', NULL, '432', 'Paid to date', '72', 'Payment date');
 			
@@ -15307,7 +15306,6 @@ public class CdrFlatFileImportScript extends Script {
 			INSERT INTO public.untdid_4451_invoice_subject_code VALUES (382, 0, now(), NULL, 'opencell.admin', NULL, 'WHI', 'Warehouse instruction/information');
 			INSERT INTO public.untdid_4451_invoice_subject_code VALUES (383, 0, now(), NULL, 'opencell.admin', NULL, 'ZZZ', 'Mutually defined');
 			
-			INSERT INTO public.untdid_5305_taxation_category VALUES (1, 0, now(), NULL, 'opencell.admin', NULL, 'S', 'Standard rate', 'Standard rate');
 			INSERT INTO public.untdid_5305_taxation_category VALUES (2, 0, now(), NULL, 'opencell.admin', NULL, 'Z', 'Zero rated goods', 'Zero rated goods');
 			INSERT INTO public.untdid_5305_taxation_category VALUES (3, 0, now(), NULL, 'opencell.admin', NULL, 'E', 'Exempt from tax', 'Exempt from tax');
 			INSERT INTO public.untdid_5305_taxation_category VALUES (4, 0, now(), NULL, 'opencell.admin', NULL, 'AE', 'VAT reverse charge', 'VAT Reverse charge');
@@ -17651,19 +17649,11 @@ public class CdrFlatFileImportScript extends Script {
 		
 		<changeSet id="#INTRD-12085_20221221" author="HatimOUDAD">
 	
-				<update tableName="billing_tax">
-					<column name="taxation_category_id" value="1" />
-					<where> id in (-1,-2,-3,-4,-5)</where>
-				</update>
+				
 				<update tableName="billing_tax">
 					<column name="vatex_id" value="57" />
 					<where> tax_percentage = 0</where>
 				</update>
-				
-				<update tableName="billing_invoice_type">
-					<column name="vat_payment_option_id" value="1" />
-					<where> id in (-1,-2,-3,-5,-6,-7,-8,-9)</where>
-				</update>	
 				
 				<update tableName="billing_invoice_type">
 					<column name="invoice_code_type_id" value="30" />
