@@ -215,11 +215,11 @@ public class BillingCycle extends BusinessCFEntity {
     
     @Type(type = "numeric_boolean")
     @Column(name = "disable_aggregation")
-    private boolean disableAggregation = boolean.FALSE;
+    private boolean disableAggregation = false;
     
     @Type(type = "numeric_boolean")
     @Column(name = "use_accounting_article_label")
-    private boolean useAccountingArticleLabel = boolean.FALSE;
+    private boolean useAccountingArticleLabel = false;
     
     @Enumerated(value = EnumType.STRING)
     @Column(name = "date_aggregation")
@@ -227,15 +227,15 @@ public class BillingCycle extends BusinessCFEntity {
     
     @Type(type = "numeric_boolean")
     @Column(name = "aggregate_unit_amounts")
-    private boolean aggregateUnitAmounts = boolean.FALSE;
+    private boolean aggregateUnitAmounts = false;
     
     @Type(type = "numeric_boolean")
     @Column(name = "ignore_subscriptions")
-    private boolean ignoreSubscriptions = boolean.TRUE;
+    private boolean ignoreSubscriptions = true;
     
     @Type(type = "numeric_boolean")
     @Column(name = "ignore_orders")
-    private boolean ignoreOrders = boolean.TRUE;
+    private boolean ignoreOrders = true;
     
     public boolean isThresholdPerEntity() {
         return thresholdPerEntity;
