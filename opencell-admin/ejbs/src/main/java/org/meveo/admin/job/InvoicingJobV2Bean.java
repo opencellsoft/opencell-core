@@ -10,6 +10,7 @@ import static org.meveo.model.billing.BillingRunStatusEnum.*;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -131,7 +132,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
     }
 
     private int addExceptionalInvoiceLineIds(BillingRun billingRun) {
-        Map<String, String> filters = billingRun.getFilters();
+        Map<String, Object> filters = new HashMap<>(billingRun.getFilters());
         QueryBuilder queryBuilder = invoiceLineService.fromFilters(filters);
         List<RatedTransaction> ratedTransactions = queryBuilder.getQuery(ratedTransactionService.getEntityManager()).getResultList();
         billingRun.setExceptionalILIds(ratedTransactions
