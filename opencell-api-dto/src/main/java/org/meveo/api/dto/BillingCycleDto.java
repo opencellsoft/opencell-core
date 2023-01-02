@@ -28,13 +28,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.mapper.FilterListDeserializer;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.ReferenceDateEnum;
 import org.meveo.model.billing.ThresholdOptionsEnum;
-
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * The Class BillingCycleDto.
@@ -272,7 +269,7 @@ public class BillingCycleDto extends BusinessEntityDto {
             }
             languageDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(billingCycleEntity.getDescriptionI18n());
             collectionDateDelayEl = billingCycleEntity.getCollectionDateDelayEl();
-            computeDatesAtValidation = billingCycleEntity.getComputeDatesAtValidation() == null ? null : billingCycleEntity.getComputeDatesAtValidation();
+            computeDatesAtValidation = billingCycleEntity.getComputeDatesAtValidation();
             billingRunValidationScriptCode=billingCycleEntity.getBillingRunValidationScript()!=null?billingCycleEntity.getBillingRunValidationScript().getCode():null;
             filters = billingCycleEntity.getFilters();
             priority = billingCycleEntity.getPriority();
