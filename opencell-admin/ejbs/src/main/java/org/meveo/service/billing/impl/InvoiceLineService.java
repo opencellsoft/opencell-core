@@ -769,13 +769,15 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	        if (isExonerated == null) {
 	            isExonerated = billingAccountService.isExonerated(billingAccount);
 	        }
-			  TaxInfo recalculatedTaxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), 
-					  billingAccount.getCustomerAccount().getCustomer().getSeller(), 
-					  billingAccount, null, 
-					  invoiceLine.getValueDate()!=null?invoiceLine.getValueDate():new Date(), null, 
-				      isExonerated, false, invoiceLine.getTax());
-			  invoiceLine.setTax(recalculatedTaxInfo.tax);
-			  invoiceLine.setTaxRate(recalculatedTaxInfo.tax.getPercent());
+	        
+	        Seller seller = billingAccount.getCustomerAccount().getCustomer().getSeller();
+	        TaxInfo recalculatedTaxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), 
+	            seller == null ? seller : invoiceLine.getInvoice().getSeller(), 
+	            billingAccount, null, 
+	            invoiceLine.getValueDate()!=null?invoiceLine.getValueDate():new Date(), null, 
+	                    isExonerated, false, invoiceLine.getTax());
+	        invoiceLine.setTax(recalculatedTaxInfo.tax);
+	        invoiceLine.setTaxRate(recalculatedTaxInfo.tax.getPercent());
 		}
         if(!appProvider.isEntreprise()) {
             BigDecimal taxAmount = NumberUtils.computeTax(invoiceLine.getAmountWithoutTax(),
