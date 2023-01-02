@@ -15383,8 +15383,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
 
         </createTable>
         
+        <sql>INSERT INTO public.untdid_5305_taxation_category VALUES (1, 0, now(), NULL, 'opencell.admin', NULL, 'S', 'Standard rate', 'Standard rate');
+			INSERT INTO public.untdid_2475_vat_payment_option VALUES (1, 0, now(), NULL, 'opencell.admin', NULL, '3', 'Invoice document issue date time', '5', 'Date of invoice');
+		</sql>
+			
         <addColumn tableName="billing_tax">
-            <column name="taxation_category_id" type="bigint">
+            <column name="taxation_category_id" type="bigint" defaultValueNumeric="1">
              <constraints nullable="false" />
             </column>
             <column name="vatex_id" type="bigint">
@@ -15393,7 +15397,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
          <addColumn tableName="billing_invoice_type">
             <column name="invoice_code_type_id" type="bigint">
             </column>
-             <column name="vat_payment_option_id" type="bigint">
+             <column name="vat_payment_option_id" type="bigint" defaultValueNumeric="1">
              <constraints nullable="false" />
             </column>
         </addColumn>
