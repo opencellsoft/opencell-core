@@ -493,7 +493,7 @@ public class BillingCycle extends BusinessCFEntity {
         this.collectionDateDelayEl = collectionDateDelayEl;
     }
 
-    public boolean getComputeDatesAtValidation() {
+    public boolean isComputeDatesAtValidation() {
         return computeDatesAtValidation;
     }
 
@@ -525,7 +525,7 @@ public class BillingCycle extends BusinessCFEntity {
 		this.priority = priority;
 	}
 	
-	public boolean getDisableAggregation() {
+	public boolean isDisableAggregation() {
         return disableAggregation;
     }
 
@@ -533,7 +533,7 @@ public class BillingCycle extends BusinessCFEntity {
         this.disableAggregation = disableAggregation;
     }
 
-    public boolean getUseAccountingArticleLabel() {
+    public boolean isUseAccountingArticleLabel() {
         return useAccountingArticleLabel;
     }
 
@@ -549,7 +549,7 @@ public class BillingCycle extends BusinessCFEntity {
         this.dateAggregation = dateAggregation;
     }
 
-    public boolean getAggregateUnitAmounts() {
+    public boolean isAggregateUnitAmounts() {
         return aggregateUnitAmounts;
     }
 
@@ -557,7 +557,7 @@ public class BillingCycle extends BusinessCFEntity {
         this.aggregateUnitAmounts = aggregateUnitAmounts;
     }
 
-    public boolean getIgnoreSubscriptions() {
+    public boolean isIgnoreSubscriptions() {
         return ignoreSubscriptions;
     }
 
@@ -565,7 +565,7 @@ public class BillingCycle extends BusinessCFEntity {
         this.ignoreSubscriptions = ignoreSubscriptions;
     }
 
-    public boolean getIgnoreOrders() {
+    public boolean isIgnoreOrders() {
         return ignoreOrders;
     }
 
