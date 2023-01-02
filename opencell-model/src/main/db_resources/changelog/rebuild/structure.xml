@@ -2929,6 +2929,12 @@
             	<constraints nullable="true" />
             </column>
             <column name="priority" type="int4" defaultValueNumeric="0" />
+            <column name="disable_aggregation" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="use_accounting_article_label" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="date_aggregation" type="varchar(255)" defaultValue="NO_DATE_AGGREGATION" />
+            <column name="aggregate_unit_amounts" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="ignore_subscriptions" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-172">
@@ -19293,9 +19299,8 @@
 	<changeSet id="#INTR-12382_20221219" author="HichamHANINE" />
 	<changeSet id="#INTRD-12677_20221229" author="AdilElJaouhari" />
 	<changeSet id="#INTRD-10544_20221207" author="HatimOUDAD" />
-	
-	
     <changeSet id="#INTRD-12720-20221230-query_report" author="a.rouaguebe" />
+	<changeSet id="#INTRD-12668-20230102" author="AmineBENAICHA" />	
 
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
