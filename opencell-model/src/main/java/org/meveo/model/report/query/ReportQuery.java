@@ -35,7 +35,7 @@ public class ReportQuery extends BusinessEntity {
 
     @Type(type = "json")
     @Column(name = "filters", columnDefinition = "jsonb")
-    private Map<String, String> filters;
+    private Map<String, Object> filters;
 
     @Type(type = "longText")
     @Column(name = "generated_query")
@@ -47,6 +47,10 @@ public class ReportQuery extends BusinessEntity {
     @Enumerated(value = STRING)
     @Column(name = "sort_order", length = 15)
     private SortOrderEnum sortOrder;
+
+    @Type(type = "json")
+    @Column(name = "query_parameters", columnDefinition = "jsonb")
+    private Map<String, Object> queryParameters;
 
     public String getTargetEntity() {
         return targetEntity;
@@ -72,11 +76,11 @@ public class ReportQuery extends BusinessEntity {
         this.fields = fields;
     }
 
-    public Map<String, String> getFilters() {
+    public Map<String, Object> getFilters() {
         return filters;
     }
 
-    public void setFilters(Map<String, String> filters) {
+    public void setFilters(Map<String, Object> filters) {
         this.filters = filters;
     }
 
@@ -103,4 +107,19 @@ public class ReportQuery extends BusinessEntity {
     public void setSortOrder(SortOrderEnum sortOrder) {
         this.sortOrder = sortOrder;
     }
+
+	/**
+	 * @return the queryParameters
+	 */
+	public Map<String, Object> getQueryParameters() {
+		return queryParameters;
+	}
+
+	/**
+	 * @param queryParameters the queryParameters to set
+	 */
+	public void setQueryParameters(Map<String, Object> queryParameters) {
+		this.queryParameters = queryParameters;
+	}
+    
 }
