@@ -5,7 +5,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
-import org.meveo.model.billing.UntdidInvoiceCodeType;
 import org.meveo.model.billing.UntdidVatPaymentOption;
 
 @XmlRootElement()
