@@ -308,6 +308,7 @@ public class ProductApi extends BaseApi {
 
 			var publishedVersion = versions.stream()
 											.filter(pv -> pv.getStatus().equals(VersionStatusEnum.PUBLISHED))
+											.filter(pv -> pv.getValidity().getTo() == null || pv.getValidity().getTo().compareTo(new Date()) >= 0)
 												.sorted( (pv1, pv2) -> pv2.getValidity().compareFieldTo(pv1.getValidity())).collect(Collectors.toList());
 			if(publishedVersion.size() >= 1 ) {
 				product.setCurrentVersion(publishedVersion.get(0));
