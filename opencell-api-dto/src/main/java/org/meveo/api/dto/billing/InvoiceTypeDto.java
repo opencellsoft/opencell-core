@@ -119,6 +119,10 @@ public class InvoiceTypeDto extends BusinessEntityDto {
      */
     @Schema(description = "Exclude from Aged Trial Balance")
     private Boolean excludeFromAgedTrialBalance;
+    
+    private UntdidInvoiceCodeTypeDto untdidInvoiceCodeTypeDto;
+    
+    private UntdidVatPaymentOptionDto untdidVatPaymentOptionDto;
 
     /**
      * Instantiates a new invoice type dto.
@@ -158,6 +162,10 @@ public class InvoiceTypeDto extends BusinessEntityDto {
         customFields = customFieldInstances;
         this.useSelfSequence = invoiceType.isUseSelfSequence();
         this.excludeFromAgedTrialBalance = invoiceType.isExcludeFromAgedTrialBalance();
+        if(invoiceType.getUntdidInvoiceCodeType() != null)
+        	this.untdidInvoiceCodeTypeDto = new UntdidInvoiceCodeTypeDto(invoiceType.getUntdidInvoiceCodeType());
+        if(invoiceType.getUntdidVatPaymentOption() != null)
+        	this.untdidVatPaymentOptionDto = new UntdidVatPaymentOptionDto(invoiceType.getUntdidVatPaymentOption());
     }
 
     /**
@@ -477,5 +485,20 @@ public class InvoiceTypeDto extends BusinessEntityDto {
 	 */
 	public void setExcludeFromAgedTrialBalance(Boolean excludeFromAgedTrialBalance) {
 		this.excludeFromAgedTrialBalance = excludeFromAgedTrialBalance;
+	}
+	public UntdidInvoiceCodeTypeDto getUntdidInvoiceCodeTypeDto() {
+		return untdidInvoiceCodeTypeDto;
+	}
+
+	public void setUntdidInvoiceCodeTypeDto(UntdidInvoiceCodeTypeDto untdidInvoiceCodeTypeDto) {
+		this.untdidInvoiceCodeTypeDto = untdidInvoiceCodeTypeDto;
+	}
+
+	public UntdidVatPaymentOptionDto getUntdidVatPaymentOptionDto() {
+		return untdidVatPaymentOptionDto;
+	}
+
+	public void setUntdidVatPaymentOptionDto(UntdidVatPaymentOptionDto untdidVatPaymentOptionDto) {
+		this.untdidVatPaymentOptionDto = untdidVatPaymentOptionDto;
 	}
 }

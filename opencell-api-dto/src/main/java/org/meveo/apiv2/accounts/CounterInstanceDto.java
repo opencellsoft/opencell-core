@@ -32,7 +32,7 @@ public interface CounterInstanceDto {
     String getProductCode();
 
     @Nullable
-    Set<String> getChargeInstances();
+    String getChargeInstanceCode();
 
     @Schema(description = "Counter Periods")
     @Nullable

@@ -38,7 +38,7 @@ public interface ReportQueryInput {
 
     @Nullable
     @Schema(description = "Report query description")
-    Map<String, String> getFilters();
+    Map<String, Object> getFilters();
 
     @Nullable
     @Schema(description = "Sort by")
