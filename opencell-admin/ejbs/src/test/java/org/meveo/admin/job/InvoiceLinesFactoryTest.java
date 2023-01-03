@@ -1,7 +1,6 @@
 package org.meveo.admin.job;
 
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
@@ -19,18 +18,18 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.meveo.admin.job.AggregationConfiguration.DateAggregationOption;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
+import org.meveo.model.billing.DateAggregationOption;
+import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.CommercialOrder;
-import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.BillingAccountService;
