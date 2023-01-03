@@ -75,6 +75,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 
     @SuppressWarnings("unchecked")
 	public boolean applyEdrVersioningRule(List<EDR> edrs, CDR cdr, boolean isVirtual, boolean isTriggeredEdr){
+log.info("MediationsettingService applyEdrVersioningRule {}", isTriggeredEdr);
     	var mediationSettings = this.list();
     	if(CollectionUtils.isNotEmpty(mediationSettings) && mediationSettings.size() > 1)
     		throw new BusinessException("More than one Mediation setting is found");
@@ -98,6 +99,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 					.findFirst();
         	if(edrVersionRuleOption.isPresent()) {
         		var edrVersionRule = edrVersionRuleOption.get();
+log.info("MediationsettingService edrVersionRule {}", edrVersionRule);
 				var errorMsg = String.format(errorMessage, "eventKeyEl", edrVersionRule.getId(), edrVersionRule.getCriteriaEL(), isTriggeredEdr ?  "FROM_TRIGGERED_EDR : " + edr:cdr, "%s");
         		String keyEvent =  (String) evaluateEdrVersion(edrVersionRule.getId(), edrVersionRule.getKeyEL(),edr, cdr, errorMsg , String.class, edrIterate);
         		if(StringUtils.isNotEmpty(keyEvent) && edr.getRejectReason() == null) { // test si cdr est rejete
@@ -111,6 +113,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 					var previousEdr = previousEdrs.get(0);
         			boolean isNewVersion = (boolean) evaluateEdrVersion(edrVersionRule.getId(), edrVersionRule.getIsNewVersionEL(),edr, cdr, errorMsg, Boolean.class, previousEdr, edrIterate);    				
         			if(isNewVersion) {
+log.info("MediationsettingService isNewVersion TRUE");
         				 // liste des edr versioning 
     					if(previousEdr.getStatus() != EDRStatusEnum.RATED) { // all status : OPEN, CANCELLED, REJECTED
         					previousEdr.setStatus(EDRStatusEnum.CANCELLED);
@@ -185,6 +188,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 								}
     						}
         			}else {
+log.info("MediationsettingService isNewVersion FALSE");
         				if(cdr != null) {
     						cdr.setStatus(CDRStatusEnum.DISCARDED);
     						var msgError = "Newer version already exists EDR[id="+previousEdrs.get(0).getId()+"]";

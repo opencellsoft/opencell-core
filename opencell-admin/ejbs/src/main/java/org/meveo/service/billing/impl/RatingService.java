@@ -665,6 +665,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                             if (ppmVersion != null) {
                                 try {
                                     final WalletOperation tmpWalletOperation = bareWalletOperation;
+log.info("loadPrices 1");
                                     PricePlanMatrixLine pricePlanMatrixLine = methodCallingUtils.callCallableInNewTx( () -> pricePlanMatrixVersionService.loadPrices(ppmVersion, tmpWalletOperation));
                                     unitPriceWithoutTax = pricePlanMatrixLine.getValue();
                                     bareWalletOperation.setContract(contract);
@@ -709,6 +710,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                             PricePlanMatrix pricePlanMatrix = contractItem.getPricePlan();
                             PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getPublishedVersionValideForDate(pricePlanMatrix.getCode(), bareWalletOperation.getServiceInstance(), bareWalletOperation.getOperationDate());
                             if (ppmVersion != null) {
+log.info("loadPrices 2");
                                 PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, bareWalletOperation);
                                 BigDecimal discountRate= pricePlanMatrixLine.getValue();
                                 if(discountRate!=null && discountRate.compareTo(BigDecimal.ZERO) > 0 ){
@@ -865,6 +867,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     }
                 }
             } else {
+log.info("loadPrices 3");
                 PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, wo);
                 if(pricePlanMatrixLine!=null) {
                     wo.setPricePlanMatrixLine(pricePlanMatrixLine);
