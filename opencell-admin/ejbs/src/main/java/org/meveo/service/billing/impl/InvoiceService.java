@@ -3239,13 +3239,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         if (billingRun.getComputeDatesAtValidation() != null && !billingRun.getComputeDatesAtValidation()) {
             return;
-        } else if (billingRun.getComputeDatesAtValidation() == null && !billingCycle.getComputeDatesAtValidation()) {
+        } else if (billingRun.getComputeDatesAtValidation() == null && !billingCycle.isComputeDatesAtValidation()) {
             return;
         }
         if (billingRun.getComputeDatesAtValidation() != null && billingRun.getComputeDatesAtValidation()) {
             recalculateDate(invoice, billingRun, billingAccount, billingCycle);
             update(invoice);
-        } else if (billingRun.getComputeDatesAtValidation() == null && billingCycle.getComputeDatesAtValidation()) {
+        } else if (billingRun.getComputeDatesAtValidation() == null && billingCycle.isComputeDatesAtValidation()) {
             recalculateDate(invoice, billingRun, billingAccount, billingCycle);
             update(invoice);
         }
@@ -3277,7 +3277,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         
         if ((billingRun.getComputeDatesAtValidation() != null && billingRun.getComputeDatesAtValidation()) 
-                || (billingRun.getComputeDatesAtValidation() == null && billingCycle.getComputeDatesAtValidation())) {
+                || (billingRun.getComputeDatesAtValidation() == null && billingCycle.isComputeDatesAtValidation())) {
             recalculateDate(invoice, billingRun, billingAccount, billingCycle);
         }
 

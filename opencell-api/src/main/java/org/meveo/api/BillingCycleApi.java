@@ -183,8 +183,8 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         if (dto.getDueDateDelay() != null && StringUtils.isBlank(dto.getDueDateDelayEL())) {
             dto.setDueDateDelayEL(dto.getDueDateDelay().toString());
         }
-        if (dto.getLastTransactionDateDelay() != null && StringUtils.isBlank(dto.getTransactionDateDelayEL())) {
-            dto.setTransactionDateDelayEL(dto.getLastTransactionDateDelay().toString());
+        if (dto.getTransactionDateDelay() != null && StringUtils.isBlank(dto.getTransactionDateDelayEL())) {
+            dto.setTransactionDateDelayEL(dto.getTransactionDateDelay().toString());
         }
         if (dto.getInvoiceDateProductionDelay() != null && StringUtils.isBlank(dto.getInvoiceDateProductionDelayEL())) {
             dto.setInvoiceDateProductionDelayEL(dto.getInvoiceDateProductionDelay().toString());
@@ -211,8 +211,8 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         if (dto.getInvoiceDateProductionDelayEL() != null) {
             entity.setInvoiceDateProductionDelayEL(StringUtils.isEmpty(dto.getInvoiceDateProductionDelayEL()) ? null : dto.getInvoiceDateProductionDelayEL());
         }
-        if (dto.isThresholdPerEntity() != null) {
-        	entity.setThresholdPerEntity(dto.isThresholdPerEntity());
+        if (dto.getThresholdPerEntity() != null) {
+        	entity.setThresholdPerEntity(dto.getThresholdPerEntity());
         }
         if (dto.getInvoicingThreshold() != null) {
             entity.setInvoicingThreshold(dto.getInvoicingThreshold());
@@ -232,13 +232,32 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         if (dto.getCollectionDateDelayEl() != null) {
             entity.setCollectionDateDelayEl(dto.getCollectionDateDelayEl());
         }
-        if (dto.isComputeDatesAtValidation() != null) {
-            entity.setComputeDatesAtValidation(dto.isComputeDatesAtValidation());
+        if (dto.getComputeDatesAtValidation() != null) {
+            entity.setComputeDatesAtValidation(dto.getComputeDatesAtValidation());
         }
 		if (dto.getPriority() != null) {
 			entity.setPriority(dto.getPriority());
 		}
         entity.setFilters(dto.getFilters());
+        
+        if (dto.getDisableAggregation() != null) {
+            entity.setDisableAggregation(dto.getDisableAggregation());
+        }
+        if (dto.getUseAccountingArticleLabel() != null) {
+            entity.setUseAccountingArticleLabel(dto.getUseAccountingArticleLabel());
+        }
+        if (dto.getDateAggregation() != null) {
+            entity.setDateAggregation(dto.getDateAggregation());
+        }
+        if (dto.getAggregateUnitAmounts() != null) {
+            entity.setAggregateUnitAmounts(dto.getAggregateUnitAmounts());
+        }
+        if (dto.getIgnoreSubscriptions() != null) {
+            entity.setIgnoreSubscriptions(dto.getIgnoreSubscriptions());
+        }
+        if (dto.getIgnoreOrders() != null) {
+            entity.setIgnoreOrders(dto.getIgnoreOrders());
+        }
 
        	// populate customFields
         try {
