@@ -1,6 +1,7 @@
 package org.meveo.model.catalog;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -109,4 +110,30 @@ public class ConvertedPricePlanVersion extends AuditableEntity {
 		this.pricePlanMatrixVersion = pricePlanMatrixVersion;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ Objects.hash(convertedPrice, pricePlanMatrixVersion, rate, tradingCurrency, useForBillingAccounts);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ConvertedPricePlanVersion other = (ConvertedPricePlanVersion) obj;
+		return Objects.equals(convertedPrice, other.convertedPrice)
+				&& Objects.equals(pricePlanMatrixVersion, other.pricePlanMatrixVersion)
+				&& Objects.equals(rate, other.rate) && Objects.equals(tradingCurrency, other.tradingCurrency)
+				&& useForBillingAccounts == other.useForBillingAccounts;
+	}
+
+	
+	
 }
