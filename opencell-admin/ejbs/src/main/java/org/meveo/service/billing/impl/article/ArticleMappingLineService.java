@@ -13,6 +13,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.FlushModeType;
 import javax.persistence.Query;
+import javax.persistence.criteria.JoinType;
 import javax.ws.rs.NotFoundException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -40,7 +41,7 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 	public List<ArticleMappingLine> findByProductAndCharge(Product product, ChargeTemplate chargeTemplate,
 														   OfferTemplate offer, String parameter1,
 														   String parameter2, String parameter3) {
-		QueryBuilder queryBuilder = new QueryBuilder(ArticleMappingLine.class, "am", asList("product", "chargeTemplate"));
+		QueryBuilder queryBuilder = new QueryBuilder(ArticleMappingLine.class, "am");
 		if(product != null)
 			queryBuilder.addCriterionEntity("am.product.code", product.getCode());
 		if(chargeTemplate != null)
