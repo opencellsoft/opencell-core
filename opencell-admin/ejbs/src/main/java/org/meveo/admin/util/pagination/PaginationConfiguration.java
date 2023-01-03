@@ -146,14 +146,6 @@ public class PaginationConfiguration implements Serializable {
         this.filters = filters;
     }
 
-//    public PaginationConfiguration(Map<String, Object> filters, List<String> fetchFields) {
-//        this.filters = filters;
-//        this.fetchFields = fetchFields;
-//        if (filters != null) {
-//        	this.filterOperator = (FilterOperatorEnum) filters.getOrDefault("$operator", FilterOperatorEnum.AND);
-//        }
-//    }
-
     /**
      * Constructor
      * 
