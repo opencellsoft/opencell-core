@@ -38,7 +38,7 @@ public interface ReportQuery extends Resource {
 
     @Schema(description = "Report query filters")
     @Nullable
-    Map<String, Object> getFilters();
+    Map<String, String> getFilters();
 
     @Schema(description = "Generated query")
     @Nullable
