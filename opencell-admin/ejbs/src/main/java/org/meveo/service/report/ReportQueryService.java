@@ -1,6 +1,5 @@
 package org.meveo.service.report;
 
-import static java.lang.Double.valueOf;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.Collections.reverse;
@@ -24,9 +23,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Format;
@@ -531,60 +528,22 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         PersistenceService persistenceService = (PersistenceService)
                 getServiceInterface(targetEntity.getSimpleName() + "Service");
         Query result = persistenceService.getEntityManager().createQuery(reportQuery.getGeneratedQuery());
-        if(reportQuery.getFilters() != null && !reportQuery.getFilters().isEmpty()) {
-        	if(reportQuery.getQueryParameters() != null && !reportQuery.getQueryParameters().isEmpty()) {        		
-        		result.getParameters().forEach(p -> {
-        			result.setParameter(p.getName(), convertParameter(p.getParameterType(), reportQuery.getQueryParameters().get(p.getName())));
-        		});
-        	} else {
-				// For Queries created before INTRD-12720
-				FilterConverter converter = new FilterConverter(targetEntity);
-				Map<String, Object> filters = converter.convertFilters(reportQuery.getFilters());
-				for (Entry<String, Object> entry : filters.entrySet()) {
-					if (!(entry.getValue() instanceof Boolean)) {
-						if (entry.getKey().length() > 1 && entry.getKey().contains(" ")) {
-							String[] compareExpression = entry.getKey().split(" ");
-							result.setParameter("a_" + compareExpression[compareExpression.length - 1], entry.getValue());
-						} else {
-							result.setParameter("a_" + entry.getKey(), entry.getValue());
-						}
-					}
-				}
-        	}
+        if (reportQuery.getFilters() != null && !reportQuery.getFilters().isEmpty()) {
+            FilterConverter converter = new FilterConverter(targetEntity);
+            Map<String, Object> filters = converter.convertFilters(reportQuery.getFilters());
+            for (Entry<String, Object> entry : filters.entrySet()) {
+                if(!(entry.getValue() instanceof Boolean)) {
+                    if(entry.getKey().length()>1 && entry.getKey().contains(" ")){
+                        String[] compareExpression = entry.getKey().split(" ");
+                        result.setParameter("a_" + compareExpression[compareExpression.length-1], entry.getValue());
+                    }else{
+                        result.setParameter("a_" + entry.getKey(), entry.getValue());
+                    }
+                }
+            }
         }
         return result;
     }
-    
-    private Object convertParameter(Class<?> pClazz, Object value) {
-    	if(value == null) {
-    		return null;
-    	}
-    	if(Number.class.isAssignableFrom(pClazz)) {
-    		return toNumber(pClazz, (String) value);
-    	}
-    	
-    	return value;
-    }
-    
-	private Object toNumber(Class<?> pClazz, String value) {
-		Method method;
-		if (Long.class.isAssignableFrom(pClazz)) {
-			return Long.valueOf(value);
-		}
-		if (BigInteger.class.isAssignableFrom(pClazz)) {
-			return BigInteger.valueOf(Long.valueOf(value));
-		}
-		if (Integer.class.isAssignableFrom(pClazz)) {
-			return Integer.valueOf(value);
-		}
-		Double doubleValue = valueOf(value);
-		try {
-			method = pClazz.getMethod("valueOf", double.class);
-			return method.invoke(pClazz, doubleValue);
-		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			throw new BusinessException(e);
-		}
-	}
 
     private String createResultFile(List<String> data, String header, String fileName, String extension)
             throws IOException {

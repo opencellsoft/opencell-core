@@ -1669,7 +1669,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                     billingRun.getExceptionalILIds().stream().map(String::valueOf)
                             .collect(joining(",")) + ") AND il.status = 'OPEN'");
         } else {
-        	Map<String, Object> filters = new HashMap<>(billingRun.getFilters());
+            Map<String, String> filters = billingRun.getFilters();
             String filterValue = QueryBuilder.getFilterByKey(filters, "SQL");
             if (!StringUtils.isBlank(filterValue)) {
                 queryBuilder = new QueryBuilder(filterValue);
