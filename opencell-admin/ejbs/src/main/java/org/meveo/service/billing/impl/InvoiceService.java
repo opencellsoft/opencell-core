@@ -1394,7 +1394,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
                         methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
                         methodContext.put("billingRun", invoice.getBillingRun());
-                        script.execute(methodContext);
+                        scriptInstanceService.execute(scriptInstance.getCode(), methodContext);
                         Object status = methodContext.get(Script.INVOICE_VALIDATION_STATUS);
                         if (status != null && status instanceof InvoiceValidationStatusEnum) {
                             if (InvoiceValidationStatusEnum.REJECTED.equals((InvoiceValidationStatusEnum) status)) {
