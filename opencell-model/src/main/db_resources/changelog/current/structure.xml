@@ -15138,7 +15138,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="rate" type="numeric(23, 12)" />
             <column name="use_for_billing_accounts" type="${type.boolean}"/>
         </createTable>
-    </changeSet>s
+    </changeSet>
 
     <changeSet id="#INTRD-12614_20221227" author="TarikFA.">
        <createSequence sequenceName="cpq_converted_price_plan_matrix_line_sq" startValue="1" />
