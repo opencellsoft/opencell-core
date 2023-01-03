@@ -7,7 +7,6 @@ import static java.util.stream.Collectors.toMap;
 import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -20,6 +19,7 @@ import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.DateAggregationOption;
 import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.ServiceInstance;
@@ -186,7 +186,7 @@ public class InvoiceLinesFactory {
      * @param dateAggregationOption a date aggregation option.
      * @return a date
      */
-    private Date getUsageDate(Object usageDate, AggregationConfiguration.DateAggregationOption dateAggregationOption) {
+    private Date getUsageDate(Object usageDate, DateAggregationOption dateAggregationOption) {
     	if(usageDate instanceof Date) {
     		return (Date)usageDate;
     	}
@@ -194,9 +194,9 @@ public class InvoiceLinesFactory {
         	String usageDateString = (String) usageDate;
             if (usageDateString != null) {
                 if (usageDateString.length() == 7) {
-                    if (AggregationConfiguration.DateAggregationOption.MONTH_OF_USAGE_DATE.equals(dateAggregationOption)) {
+                    if (DateAggregationOption.MONTH_OF_USAGE_DATE.equals(dateAggregationOption)) {
                         usageDateString = usageDateString.concat("-01");
-                    } else if (AggregationConfiguration.DateAggregationOption.WEEK_OF_USAGE_DATE.equals(dateAggregationOption)) {
+                    } else if (DateAggregationOption.WEEK_OF_USAGE_DATE.equals(dateAggregationOption)) {
                         int year = Integer.parseInt(usageDateString.split("-")[0]);
                         int week = Integer.parseInt(usageDateString.split("-")[1]);
                         return DateUtils.getFirstDayFromYearAndWeek(year, week);
