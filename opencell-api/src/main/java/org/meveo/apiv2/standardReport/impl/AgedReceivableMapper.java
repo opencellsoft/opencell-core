@@ -127,23 +127,36 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 				+ (name.getLastName() != null ? " " + name.getLastName() : "");
 	}
 
+	/**
+	 * Build dynamic response from list of objects
+	 * @param agedReceivables List of objects
+	 * @param numberOfPeriods Number of periods
+	 * @return List of {@link AgedReceivableDto}
+	 */
 	public List<AgedReceivableDto> buildDynamicResponse(List<Object[]> agedReceivables, int numberOfPeriods) {
 		List<AgedReceivableDto> responseDto = new  ArrayList<>();
+
 		for (int index = 0; index < agedReceivables.size(); index++) {
 			Object[] agedReceivable = agedReceivables.get(index);
 			AgedReceivableDto agedReceivableDto = new AgedReceivableDto();
 			agedReceivableDto.setNotYetDue((BigDecimal) agedReceivable[1]);
+			agedReceivableDto.setSum1To30((BigDecimal)agedReceivable[2]);
+			agedReceivableDto.setSum31To60((BigDecimal) agedReceivable[5]);
+			agedReceivableDto.setSum61To90((BigDecimal)agedReceivable[8]);
+			agedReceivableDto.setSum90Up((BigDecimal)agedReceivable[11]);
 			int sumIndex;
 			int startingSumIndex = 2;
 			agedReceivableDto.setNetAmountByPeriod(new ArrayList<>());
 			agedReceivableDto.setTotalAmountByPeriod(new ArrayList<>());
 			agedReceivableDto.setTaxAmountByPeriod(new ArrayList<>());
+
 			for (sumIndex = 0; sumIndex < numberOfPeriods; sumIndex++) {
 				agedReceivableDto.getNetAmountByPeriod().add((BigDecimal) agedReceivable[startingSumIndex]);
 				agedReceivableDto.getTotalAmountByPeriod().add((BigDecimal) agedReceivable[startingSumIndex + 1]);
 				agedReceivableDto.getTaxAmountByPeriod().add((BigDecimal) agedReceivable[startingSumIndex + 2]);
 				startingSumIndex += 3;
 			}
+
 			agedReceivableDto.setDunningLevel((DunningLevelEnum) agedReceivable[startingSumIndex]);
 			agedReceivableDto.setCustomerAccountName(agedReceivable[++startingSumIndex] == null ? null : getName((Name) agedReceivable[startingSumIndex]));
 			agedReceivableDto.setCustomerAccountDescription((String) agedReceivable[++startingSumIndex]);
@@ -160,8 +173,10 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 			agedReceivableDto.setBilledAmount((BigDecimal) agedReceivable[++startingSumIndex]);
 			agedReceivableDto.setFuncCurrency(Optional.ofNullable(appProvider.getCurrency()).map(Currency::getCurrencyCode).orElse(null));
 			agedReceivableDto.setCustomerAccountCode((String) agedReceivable[++startingSumIndex]);
+
 			if(agedReceivable[++startingSumIndex] != null)
 				agedReceivableDto.setBilledAmount((BigDecimal) agedReceivable[startingSumIndex]);
+
 			agedReceivableDto.setCustomerId((Long) agedReceivable[++startingSumIndex]);
 			responseDto.add(agedReceivableDto);
 		}
