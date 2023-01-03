@@ -50,6 +50,7 @@ import org.hibernate.collection.internal.PersistentBag;
 import org.hibernate.collection.internal.PersistentSet;
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.CollectionUtil;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -71,6 +72,8 @@ import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.communication.impl.InternationalSettingsService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.util.ApplicationProvider;
+
+import com.stripe.model.financialconnections.Session.Filters;
 
 @Stateless
 public class ReportQueryService extends BusinessService<ReportQuery> {
