@@ -112,6 +112,7 @@ public class OrderValidationScript extends Script {
             }
         	commercialOrderService.instanciateDiscountPlans(subscription, discountPlans);
 			subscriptionService.update(subscription);
+			serviceInstanceService.getEntityManager().flush();
 			subscriptionService.activateInstantiatedService(subscription);
         }
 
