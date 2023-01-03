@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -316,7 +315,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 
     @Type(type = "numeric_boolean")
     @Column(name = "skip_validation_script")
-    private Boolean skipValidationScript = false;
+    private Boolean skipValidationScript = Boolean.FALSE;
 
     /**
      * EL to compute invoice.initialCollectionDate delay.
@@ -427,7 +426,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
      */
     @Type(type = "numeric_boolean")
     @Column(name = "generate_ao", nullable = false)
-    private Boolean generateAO = false;
+    private Boolean generateAO = Boolean.FALSE;
     
 	public BillingRun getNextBillingRun() {
 		return nextBillingRun;
@@ -842,10 +841,10 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 		return skipValidationScript.booleanValue();
 	}
 
-	public void setSkipValidationScript(boolean skipValidationScript) {
+	public void setSkipValidationScript(Boolean skipValidationScript) {
 		this.skipValidationScript = skipValidationScript;
 	}
-
+	
 	public Date getCollectionDate() {
 		return collectionDate;
 	}
@@ -1007,5 +1006,4 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 	public void setGenerateAO(Boolean generateAO) {
 		this.generateAO = generateAO;
 	}
-
 }
