@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import org.meveo.api.dto.BusinessEntityDto;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class tradingCurrencyDto extends BusinessEntityDto {
+public class TradingCurrencyDto extends BusinessEntityDto {
 
 	private static final long serialVersionUID = 6733599446700596337L;
 

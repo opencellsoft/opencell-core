@@ -12,7 +12,6 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.Auditable;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.billing.TradingCurrency;
 
@@ -46,7 +45,6 @@ public class ConvertedPricePlanMatrixLine  extends AuditableEntity {
 
 	public ConvertedPricePlanMatrixLine() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     public ConvertedPricePlanMatrixLine(BigDecimal convertedValue, TradingCurrency tradingCurrency, BigDecimal rate, boolean useForBillingAccounts, PricePlanMatrixLine pricePlanMatrixLine) {
