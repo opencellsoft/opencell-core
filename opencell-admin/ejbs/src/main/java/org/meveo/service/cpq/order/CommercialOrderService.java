@@ -217,6 +217,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				}
 				instanciateDiscountPlans(subscription, discountPlans);
 				subscriptionService.update(subscription);
+				serviceInstanceService.getEntityManager().flush();
 				RatingResult ratingResult = subscriptionService.activateInstantiatedService(subscription);
 				offer.setSubscription(subscription);
 				
@@ -235,6 +236,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 					}
 					//Activate Action type
 					if(product.getProductActionType() == ProductActionTypeEnum.ACTIVATE) {
+						serviceInstanceService.getEntityManager().flush();
 						List<ServiceInstance> existingServices = serviceInstanceService.findByCodeSubscriptionAndStatus(product.getProductVersion().getProduct().getCode(), offer.getSubscription());
 						if (existingServices.size() < 1) {
 							processProduct(offer.getSubscription(), product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null);
