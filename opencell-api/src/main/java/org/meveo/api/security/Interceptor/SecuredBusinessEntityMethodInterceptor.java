@@ -405,7 +405,7 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 
         Map<String, Integer> classHierarchyByClass = Map.of("UserAccount", 0, "BillingAccount", 1, "CustomerAccount", 2, "Customer", 3, "Seller", 4);
 
-        // Additional properties to consider when climbing up the hierarchy. Should match the classHierarchyByPosition.
+        // Additional properties to consider when climbing up the hierarchy. Should match the value in classHierarchyByPosition.
         Map<String, String[]> additionalHierarchyProperties = considerSellerAsParent ? Map.of("Seller", new String[] { "seller" }) : new HashMap<String, String[]>();
 
         int posTryAccess = classHierarchyByClass.get(tryToAccessEntityClass);
@@ -429,7 +429,11 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
             if (additionalHierarchyProperties.containsKey(tryToAccessEntityClass)) {
 
                 for (String additionalHierarchy : additionalHierarchyProperties.get(tryToAccessEntityClass)) {
-                    criteriaPaths.add(additionalHierarchy + "." + propertyPath);
+                    if (propertyName.equals("code")) {
+                        criteriaPaths.add(additionalHierarchy + "." + codeOrIdField);
+                    } else {
+                        criteriaPaths.add(propertyName + "." + additionalHierarchy + "." + codeOrIdField);
+                    }
                 }
             }
 
