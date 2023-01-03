@@ -75,6 +75,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 	
     @SuppressWarnings("unchecked")
 	public void applyEdrVersioningRule(List<EDR> edrs, CDR cdr){
+log.info("start applyEdrVersioningRule HERE");
     	var mediationSettings = this.list();
     	if(CollectionUtils.isNotEmpty(mediationSettings) && mediationSettings.size() > 1)
     		throw new BusinessException("More than one Mediation setting is found");
@@ -84,6 +85,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
     	var edrIterate = edrs.iterator();
     	while(edrIterate.hasNext()) {
     		var edr = edrIterate.next();
+log.info("----------START each edr HERE {}", edr);
     		if(edr.getId() == null)
     		    edrService.create(edr);
     		var  errorMessage = "Error evaluating %s  [id= %d, \"%s\"] for CDR: [%s] : %s";
@@ -97,6 +99,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 					.findFirst();
         	if(edrVersionRuleOption.isPresent()) {
         		var edrVersionRule = edrVersionRuleOption.get();
+log.info("edrVersionRule HERE {}", edrVersionRule);
 				var errorMsg = String.format(errorMessage, "eventKeyEl", edrVersionRule.getId(), edrVersionRule.getCriteriaEL(), cdr, "%s");
         		String keyEvent =  (String) evaluateEdrVersion(edrVersionRule.getId(), edrVersionRule.getKeyEL(),edr, cdr, errorMsg , String.class, edrIterate);
         		if(StringUtils.isNotEmpty(keyEvent) && edr.getRejectReason() == null) { // test si cdr est rejete
@@ -110,25 +113,33 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 					var previousEdr = previousEdrs.get(0);
         			boolean isNewVersion = (boolean) evaluateEdrVersion(edrVersionRule.getId(), edrVersionRule.getIsNewVersionEL(),edr, cdr, errorMsg, Boolean.class, previousEdr, edrIterate);    				
         			if(isNewVersion) {
+log.info("edrVersionRule HERE isNewVersion TRUE");
         				 // liste des edr versioning 
     					if(previousEdr.getStatus() != EDRStatusEnum.RATED) { // all status : OPEN, CANCELLED, REJECTED
+log.info("all status : OPEN, CANCELLED, REJECTED HERE");
         					previousEdr.setStatus(EDRStatusEnum.CANCELLED);
         					previousEdr.setRejectReason("Received new version EDR[id=" + edr.getId() + "]");
         					edr.setEventVersion(previousEdr.getEventVersion() + 1);
     					}else { // for status RATED
+log.info("for status RATED HERE");
     						// check if  wallet operation related to EDR is treated
     						var wos = (List<WalletOperation>) walletOperationService.getEntityManager().createQuery("from WalletOperation wo where wo.edr.id=:edrId and  wo.status in ('TREATED', 'TO_RERATE', 'OPEN', 'SCHEDULED' )")
     																	.setParameter("edrId", previousEdr.getId())
     																	.getResultList();
+for (WalletOperation wo : wos) {
+	log.info("wo HERE {}", wo);
+}
     							var billedTransaction = wos.stream().anyMatch(wo -> wo.getRatedTransaction() != null && wo.getRatedTransaction().getStatus() ==  RatedTransactionStatusEnum.BILLED);
     							if(billedTransaction) {
+log.info("billedTransaction HERE TRUE");
     								cdr.setStatus(CDRStatusEnum.DISCARDED);
     								cdr.setRejectReason("EDR[id="+previousEdr.getId()+", eventKey="+keyEvent+"] has already been invoiced");
     								if(edr.getId() != null)
     									edrService.remove(edr);
     								edrIterate.remove();
     								continue;
-    							}else { // find all wallet operation that have a status OPEN 
+    							}else { // find all wallet operation that have a status OPEN
+log.info("billedTransaction HERE FALSE");
 									edr.setStatus(EDRStatusEnum.RATED);
 									edr.setEventVersion(previousEdr.getEventVersion() + 1);
 									previousEdr.setStatus(EDRStatusEnum.CANCELLED);
@@ -181,6 +192,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 								}
     						}
         			}else {
+log.info("edrVersionRule HERE isNewVersion FALSE");
 						cdr.setStatus(CDRStatusEnum.DISCARDED);
 						var msgError = "Newer version already exists EDR[id="+previousEdrs.get(0).getId()+"]";
 						cdr.setRejectReason(msgError);
@@ -191,7 +203,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
         		}
         		
         	}
-        	
+			log.info("----------END each edr HERE {}", edr);
 		}
     }
     

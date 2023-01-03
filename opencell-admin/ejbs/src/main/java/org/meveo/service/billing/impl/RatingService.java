@@ -661,6 +661,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                             if (ppmVersion != null) {
                                 try {
                                     final WalletOperation tmpWalletOperation = bareWalletOperation;
+log.info("loadPrices 1 with tmpWalletOperation {}", tmpWalletOperation);
                                     PricePlanMatrixLine pricePlanMatrixLine = methodCallingUtils.callCallableInNewTx( () -> pricePlanMatrixVersionService.loadPrices(ppmVersion, tmpWalletOperation));
                                     unitPriceWithoutTax = pricePlanMatrixLine.getPriceWithoutTax();
                                 }catch(NoPricePlanException e) {
@@ -813,6 +814,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     }
                 }
             } else {
+log.info("loadPrices 2 with wo {}", wo);
                 PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, wo);
                 if(pricePlanMatrixLine!=null) {
                 	priceWithoutTax = pricePlanMatrixLine.getPriceWithoutTax();
