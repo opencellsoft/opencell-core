@@ -15113,12 +15113,6 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <where>id=1</where>
         </update>
     </changeSet>
-
-	<changeSet id="#INTRD-12720-20221230-query_report" author="a.rouaguebe">
-        <addColumn tableName="report_query">
-        	<column name="query_parameters" type="${type.json}" />
-        </addColumn>
-    </changeSet>
     
     <changeSet id="#INTRD-12794-20230102-counter_instance" author="a.rouaguebe">
     	<dropPrimaryKey tableName="billing_chrg_inst_counter" constraintName="billing_chrg_inst_counter_pkey" />
