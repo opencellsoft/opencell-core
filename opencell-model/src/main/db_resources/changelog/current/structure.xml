@@ -15444,8 +15444,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
 
         </createTable>
         
+        <sql>INSERT INTO public.untdid_5305_taxation_category VALUES (1, 0, now(), NULL, 'opencell.admin', NULL, 'S', 'Standard rate', 'Standard rate');
+			INSERT INTO public.untdid_2475_vat_payment_option VALUES (1, 0, now(), NULL, 'opencell.admin', NULL, '3', 'Invoice document issue date time', '5', 'Date of invoice');
+		</sql>
+			
         <addColumn tableName="billing_tax">
-            <column name="taxation_category_id" type="bigint">
+            <column name="taxation_category_id" type="bigint" defaultValueNumeric="1">
              <constraints nullable="false" />
             </column>
             <column name="vatex_id" type="bigint">
@@ -15454,7 +15458,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
          <addColumn tableName="billing_invoice_type">
             <column name="invoice_code_type_id" type="bigint">
             </column>
-             <column name="vat_payment_option_id" type="bigint">
+             <column name="vat_payment_option_id" type="bigint" defaultValueNumeric="1">
              <constraints nullable="false" />
             </column>
         </addColumn>
@@ -15491,11 +15495,16 @@ public class AgedBalanceReporting extends ReportExtractScript {
         
         
     </changeSet>
-	
-	<changeSet id="#INTRD-12720-20221230-query_report" author="a.rouaguebe">
-        <addColumn tableName="report_query">
-        	<column name="query_parameters" type="${type.json}" />
+    
+    <changeSet id="#INTRD-12668-20230102" author="AmineBENAICHA">
+		<addColumn tableName="billing_cycle">
+            <column name="disable_aggregation" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="use_accounting_article_label" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="date_aggregation" type="varchar(255)" defaultValue="NO_DATE_AGGREGATION" />
+            <column name="aggregate_unit_amounts" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="ignore_subscriptions" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" />
         </addColumn>
-    </changeSet>
+	</changeSet>
 
 </databaseChangeLog>

@@ -21,7 +21,6 @@ package org.meveo.admin.job;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -176,7 +175,7 @@ public class InvoicingJobBean extends BaseJobBean {
         }
 
         if(billingRun.isExceptionalBR()) {
-            QueryBuilder queryBuilder = fromFilters(new HashMap<String, Object>(billingRun.getFilters()));
+            QueryBuilder queryBuilder = fromFilters(billingRun.getFilters());
             billingRun.setExceptionalRTIds(queryBuilder.getIdQuery(ratedTransactionService.getEntityManager()).getResultList());
             if(billingRun.getExceptionalRTIds().size() == 0) {
                 jobExecutionResult.setReport("Exceptional Billing filters returning no rated transaction to process");
@@ -274,7 +273,7 @@ public class InvoicingJobBean extends BaseJobBean {
         return jobExecutionResult;
     }
 
-    private QueryBuilder fromFilters(Map<String, Object> filters) {
+    private QueryBuilder fromFilters(Map<String, String> filters) {
         QueryBuilder queryBuilder;
         String filterValue = QueryBuilder.getFilterByKey(filters, "SQL");
         if (!StringUtils.isBlank(filterValue)) {
