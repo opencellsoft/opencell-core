@@ -422,7 +422,7 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
             // User is allowed to access Customer and is accessing a customer
         } else if (posAllowed == posTryAccess) {
 
-            String propertyPathPattern = propertyName.equals("code") ? codeOrIdField : (propertyName + ".%s" + codeOrIdField);
+            String propertyPathPattern = propertyName.equals("code") ? "%s" + codeOrIdField : (propertyName + ".%s" + codeOrIdField);
             criteriaPaths.add(String.format(propertyPathPattern, ""));
 
             if (additionalHierarchyProperties.containsKey(tryToAccessEntityClass)) {
