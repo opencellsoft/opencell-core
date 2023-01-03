@@ -371,7 +371,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     }
 
     public void productServiceInstanciation(ServiceInstance serviceInstance, Product product, BigDecimal subscriptionAmount, BigDecimal terminationAmount, boolean isVirtual) throws BusinessException {
-
         log.debug("Will instantiate service {} for subscription {} quantity {}", serviceInstance.getCode(), serviceInstance.getSubscription().getCode(), serviceInstance.getQuantity());
 
         Subscription subscription = serviceInstance.getSubscription();
@@ -415,7 +414,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         if (!isVirtual) {
             create(serviceInstance);
-            getEntityManager().flush();
         } else {
             serviceInstance.updateSubscribedTillAndRenewalNotifyDates();
         }
