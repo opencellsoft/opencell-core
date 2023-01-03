@@ -15435,11 +15435,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
         
     </changeSet>
     
-	<changeSet id="#INTRD-12720-20221230-query_report" author="a.rouaguebe">
-        <addColumn tableName="report_query">
-        	<column name="query_parameters" type="${type.json}" />
-        </addColumn>
-    </changeSet>
+
     
     <changeSet id="#INTRD-12668-20230102" author="AmineBENAICHA">
 		<addColumn tableName="billing_cycle">
