@@ -1200,7 +1200,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 	        handleMissingParameters();
 	    }
 		for (OrderProductDto orderProductDto : orderProductDtos) {  
-		    if(orderProductDto.getQuantity() == null || orderProductDto.getQuantity().intValue() == 0 )
+		    if(orderProductDto.getQuantity() == null || orderProductDto.getQuantity().doubleValue() == 0 )
 		        throw new BusinessApiException("The quantity for product code " + orderProductDto.getProductCode() + " must be great than 0" );
 			OrderProduct orderProduct=populateOrderProduct(orderProductDto,orderOffer,null);  
 			orderProductService.create(orderProduct);
