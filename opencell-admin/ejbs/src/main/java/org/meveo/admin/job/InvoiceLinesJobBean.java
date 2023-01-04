@@ -9,7 +9,6 @@ import static org.meveo.model.billing.BillingRunStatusEnum.INVOICE_LINES_CREATED
 import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -21,7 +20,6 @@ import javax.interceptor.Interceptors;
 import org.apache.commons.collections.map.HashedMap;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.job.AggregationConfiguration.DateAggregationOption;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
@@ -29,6 +27,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.DateAggregationOption;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -149,7 +148,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
     	}
 
     private void addExceptionalBillingRunData(BillingRun billingRun) {
-        QueryBuilder queryBuilder = invoiceLinesService.fromFilters(new HashMap<String, Object>(billingRun.getFilters()));
+        QueryBuilder queryBuilder = invoiceLinesService.fromFilters(billingRun.getFilters());
         List<RatedTransaction> ratedTransactions = queryBuilder.getQuery(ratedTransactionService.getEntityManager()).getResultList();
         billingRun.setExceptionalRTIds(ratedTransactions
                 .stream().filter(rt -> (rt.getStatus() == RatedTransactionStatusEnum.OPEN && rt.getBillingRun() == null))
