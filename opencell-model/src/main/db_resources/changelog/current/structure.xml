@@ -15139,6 +15139,17 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="use_for_billing_accounts" type="${type.boolean}"/>
         </createTable>
     </changeSet>
+    
+    <changeSet id="#INTRD-12609_20221227_converted_ppv-fix" author="a.rouaguebe">
+    	<addColumn tableName="cpq_converted_price_plan_version">
+			 <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+		</addColumn>
+    </changeSet>
+    
+    
 
     <changeSet id="#INTRD-12614_20221227" author="TarikFA.">
        <createSequence sequenceName="cpq_converted_price_plan_matrix_line_sq" startValue="1" />
