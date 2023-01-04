@@ -19257,7 +19257,8 @@
 	<changeSet id="#INTR-12382_20221219" author="HichamHANINE" />
 	<changeSet id="#INTRD-12677_20221229" author="AdilElJaouhari" />
 	<changeSet id="#INTRD-10544_20221207" author="HatimOUDAD" /> 
-	<changeSet id="#INTRD-12668-20230102" author="AmineBENAICHA" />	
+	<changeSet id="#INTRD-12668-20230102" author="AmineBENAICHA" />
+    <changeSet id="#INTRD-12544_20230102" author="bourras"/>
 	
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
