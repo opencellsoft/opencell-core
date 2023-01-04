@@ -7095,6 +7095,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         result.stream().forEach(invoices -> {
             Invoice key = (Invoice)invoices[0];
             Invoice adv = (Invoice)invoices[1];
+            if((key.getCommercialOrder() == null && adv.getCommercialOrder() != null) || (! "ADV".equals(adv.getInvoiceType().getCode()))) {
+            	return;
+            }
             if(invoicesWithAdv.get(key) == null) {
                 List<Invoice> advs = new ArrayList<>();
                 advs.add(adv);
