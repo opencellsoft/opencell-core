@@ -15868,13 +15868,6 @@ public class CdrFlatFileImportScript extends Script {
 			<where>code='org.meveo.service.script.CdrFlatFileImportScript'</where>
 		</update>
 	</changeSet>
-
-	<changeSet id="#INTRD-12825_20230104_rebuild" author="aeljaouhari">
-        <update tableName="billing_tax_mapping" >
-            <column name="version" value="0"/>
-            <where>version is null</where>
-        </update>
-	</changeSet>
 	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
