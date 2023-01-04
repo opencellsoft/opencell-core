@@ -17972,7 +17972,7 @@
             </column>
 
             <!-- Simple fields -->           
-            <column name="usage_in_EN16931" type="varchar(500)">
+            <column name="usage_in_en16931" type="varchar(500)">
                 <constraints nullable="true" />
             </column>
             <column name="code_name" type="varchar(500)">

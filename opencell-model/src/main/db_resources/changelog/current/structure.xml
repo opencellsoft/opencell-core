@@ -15431,6 +15431,8 @@ public class AgedBalanceReporting extends ReportExtractScript {
 
         </createTable>
         
+        
+        
         <createSequence sequenceName="untdid_5189_allowance_code_seq" startValue="1" />
          <createTable tableName="untdid_5189_allowance_code">
             <!-- Generic fields -->
@@ -15605,6 +15607,14 @@ public class AgedBalanceReporting extends ReportExtractScript {
 								 referencedColumnNames="id"
 								 deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<dropColumn tableName="untdid_4461_payment_means">
+            <column name="usage_in_EN16931"></column>
+        </dropColumn>
+        <addColumn tableName="untdid_4461_payment_means">
+			<column name="usage_in_en16931" type="varchar(500)">
+                <constraints nullable="true" />
+            </column>
+		</addColumn>
 	</changeSet>
 
 </databaseChangeLog>
