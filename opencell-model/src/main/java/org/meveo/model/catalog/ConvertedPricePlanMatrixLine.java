@@ -40,8 +40,23 @@ public class ConvertedPricePlanMatrixLine  extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "price_plan_matrix_line_id")
 	private PricePlanMatrixLine pricePlanMatrixLine;
+    
+    
 
-	/**
+	public ConvertedPricePlanMatrixLine() {
+        super();
+    }
+
+    public ConvertedPricePlanMatrixLine(BigDecimal convertedValue, TradingCurrency tradingCurrency, BigDecimal rate, boolean useForBillingAccounts, PricePlanMatrixLine pricePlanMatrixLine) {
+        super();
+        this.convertedValue = convertedValue;
+        this.tradingCurrency = tradingCurrency;
+        this.rate = rate;
+        this.useForBillingAccounts = useForBillingAccounts;
+        this.pricePlanMatrixLine = pricePlanMatrixLine;
+    }
+
+    /**
 	 * @return the convertedValue
 	 */
 	public BigDecimal getConvertedValue() {

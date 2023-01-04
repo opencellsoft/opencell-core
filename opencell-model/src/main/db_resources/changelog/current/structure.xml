@@ -15121,6 +15121,25 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </update>
     </changeSet>
     
+    <changeSet id="#INTRD-12609_20221227_converted_ppv" author="a.rouaguebe">
+    	<createSequence sequenceName="cpq_converted_price_plan_version_seq" startValue="1" />
+        <createTable tableName="cpq_converted_price_plan_version">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_converted_price_plan_version_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="price_plan_matrix_version_id" type="bigint" />
+            <column name="converted_price" type="numeric(23, 12)" />
+            <column name="trading_currency_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="rate" type="numeric(23, 12)" />
+            <column name="use_for_billing_accounts" type="${type.boolean}"/>
+        </createTable>
+    </changeSet>
+
     <changeSet id="#INTRD-12614_20221227" author="TarikFA.">
        <createSequence sequenceName="cpq_converted_price_plan_matrix_line_sq" startValue="1" />
        <createTable tableName="cpq_converted_price_plan_matrix_line">
@@ -15128,10 +15147,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_converted_plan_matrix_line" />
             </column>
             <column name="version" type="int4" />
+
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
             <column name="updated" type="datetime" />
+
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             
@@ -15474,11 +15495,21 @@ public class AgedBalanceReporting extends ReportExtractScript {
         
         
     </changeSet>
-	
-	<changeSet id="#INTRD-12720-20221230-query_report" author="a.rouaguebe">
-        <addColumn tableName="report_query">
-        	<column name="query_parameters" type="${type.json}" />
+    
+    <changeSet id="#INTRD-12668-20230102" author="AmineBENAICHA">
+		<addColumn tableName="billing_cycle">
+            <column name="disable_aggregation" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="use_accounting_article_label" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="date_aggregation" type="varchar(255)" defaultValue="NO_DATE_AGGREGATION" />
+            <column name="aggregate_unit_amounts" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="ignore_subscriptions" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" />
         </addColumn>
+    </changeSet>
+    
+    <changeSet id="#INTRD-12794-20230102-counter_instance" author="a.rouaguebe">
+    	<dropPrimaryKey tableName="billing_chrg_inst_counter" constraintName="billing_chrg_inst_counter_pkey" />
+    	<addPrimaryKey columnNames="chrg_instance_id, counter_instance_id" constraintName="billing_chrg_inst_counter_pkey" tableName="billing_chrg_inst_counter" />
     </changeSet>
 
     <changeSet id="#INTRD-12544_20230102" author="bourras">
