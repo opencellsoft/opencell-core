@@ -15516,6 +15516,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <addColumn tableName="cat_offer_template">
             <column name="document_id" type="bigint"/>
         </addColumn>
+        <addForeignKeyConstraint baseColumnNames="document_id" baseTableName="cat_offer_template"
+                                 constraintName="fk_document_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="document"/>
     </changeSet>
+
 
 </databaseChangeLog>
