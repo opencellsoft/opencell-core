@@ -4437,6 +4437,7 @@
             <column name="is_model" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="offer_model_id" type="bigint"/>
             <column name="generate_quote_edr_per_product" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="document_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-217">
@@ -16700,6 +16701,12 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
 
     </changeSet>
+    <changeSet id="#INTRD-12544_20230102_fk" author="bourras">
+        <addForeignKeyConstraint baseColumnNames="document_id" baseTableName="cat_offer_template"
+                                 constraintName="fk_document_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="document"/>
+    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -18942,6 +18949,8 @@
 	<changeSet id="#INTR-12252_20221212_agreement_date" author="a.rouaguebe" />
     <changeSet id="#INTRD-12466_20222012" author="bourras" />
     <changeSet id="#INTRD-12794-20230102-counter_instance" author="a.rouaguebe" />
+    <changeSet id="#INTRD-12720-20221230-query_report" author="a.rouaguebe" />
+    <changeSet id="#INTRD-12544_20230102" author="bourras"/>
 
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
