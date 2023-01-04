@@ -17692,5 +17692,13 @@ public class CdrFlatFileImportScript extends Script {
 			<column name="description_i18n" value='{"FR":"Découpage facture","EN":"Invoice split"}' />
 		</insert>
 	</changeSet>
+	
+	<changeSet id="#INTRD-12825_20230104" author="aeljaouhari">
+        <update tableName="billing_tax_mapping" >
+            <column name="version" value="0"/>
+            <where>version is null</where>
+        </update>
+	</changeSet>
+	
 
 </databaseChangeLog>
