@@ -8699,7 +8699,7 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addPrimaryKey columnNames="chrg_instance_id, indx" constraintName="billing_chrg_inst_counter_pkey" tableName="billing_chrg_inst_counter"/>
+        <addPrimaryKey columnNames="chrg_instance_id, counter_instance_id" constraintName="billing_chrg_inst_counter_pkey" tableName="billing_chrg_inst_counter"/>
     </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-411">           
 	    <createTable tableName="billing_counter_period_values">
@@ -11160,7 +11160,6 @@
             <column name="generated_query" type="${type.text}" />
             <column name="sort_by" type="varchar(255)" />
             <column name="sort_order" type="varchar(15)" />
-            <column name="query_parameters" type="${type.json}" />
         </createTable>
 
         <createTable tableName="report_query_fields">
@@ -18942,6 +18941,7 @@
     <changeSet id="#2038-20221130" author="Mbarek-Ay"/>
 	<changeSet id="#INTR-12252_20221212_agreement_date" author="a.rouaguebe" />
     <changeSet id="#INTRD-12466_20222012" author="bourras" />
+    <changeSet id="#INTRD-12794-20230102-counter_instance" author="a.rouaguebe" />
     <changeSet id="#INTRD-12720-20221230-query_report" author="a.rouaguebe" />
     <changeSet id="#INTRD-12544_20230102" author="bourras"/>
 

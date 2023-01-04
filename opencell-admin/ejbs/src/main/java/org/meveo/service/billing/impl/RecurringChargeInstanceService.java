@@ -215,7 +215,6 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             for (CounterTemplate counterTemplate : serviceChargeTemplateRecurring.getAccumulatorCounterTemplates()) {
                 CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, counterTemplate, chargeInstance, isVirtual);
                 log.debug("Accumulator counter instance {} will be added to charge instance {}", counterInstance, chargeInstance);
-                chargeInstance.addAccumulatorCounterInstance(counterInstance);
             }
             CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, serviceChargeTemplateRecurring.getCounterTemplate(), chargeInstance, isVirtual);
             log.debug("Counter instance {} will be added to charge instance {}", counterInstance, chargeInstance);
