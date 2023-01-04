@@ -119,4 +119,18 @@ public class TradingCurrencyService extends PersistenceService<TradingCurrency> 
             invoiceService.cleanUpInvoiceWithFuntionalCurrencyDifferentFromOne();
         }
     }
+    
+    public TradingCurrency findByTradingCurrencyCodeOrId(String tradingCurrencyCode, Long tradingCurrencyId) {
+	
+	        try {
+	            return getEntityManager().createNamedQuery("TradingCurrency.getByCodeOrId", TradingCurrency.class)
+	            							.setParameter("tradingCurrencyCode", tradingCurrencyCode)
+	            							.setParameter("tradingCurrencyId", tradingCurrencyId)
+	                    .getSingleResult();
+	
+	        } catch (NoResultException e) {
+	            log.warn("Trading currency not found : currency={}", tradingCurrencyCode);
+	            return null;
+	        }
+	    }
 }
