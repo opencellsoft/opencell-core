@@ -386,10 +386,6 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         	portalResultLink = portalResultLink.concat(DEFAULT_URI_PATH).concat(reportQueryId+"/show");
         }
        
-        log.error("portalResultLink build : ", portalResultLink);
-        System.err.println("portalResultLink build : " + portalResultLink);
-
-        
         Format format = new SimpleDateFormat("yyyy-M-dd hh:mm:ss");
 
         String userName = currentUser.getFullNameOrUserName();
