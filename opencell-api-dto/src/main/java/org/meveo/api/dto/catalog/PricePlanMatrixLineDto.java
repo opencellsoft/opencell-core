@@ -56,6 +56,11 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 	@Schema(description = "The EL Value")
 	private String valueEL;
 
+	@Schema(description = "list of converted price plan matrix line")
+	private List<ConvertedPricePlanMatrixLineDto> convertedPricePlanMatrixLines = new ArrayList<>();
+	
+	
+
 	public PricePlanMatrixLineDto() {
 	}
 
@@ -167,5 +172,19 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 
 	public void setValue(BigDecimal value) {
 		this.value = value;
+	}
+
+	/**
+	 * @return the convertedPricePlanMatrixLines
+	 */
+	public List<ConvertedPricePlanMatrixLineDto> getConvertedPricePlanMatrixLines() {
+		return convertedPricePlanMatrixLines;
+	}
+
+	/**
+	 * @param convertedPricePlanMatrixLines the convertedPricePlanMatrixLines to set
+	 */
+	public void setConvertedPricePlanMatrixLines(List<ConvertedPricePlanMatrixLineDto> convertedPricePlanMatrixLines) {
+		this.convertedPricePlanMatrixLines = convertedPricePlanMatrixLines;
 	}
 }
