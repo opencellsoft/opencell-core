@@ -4450,6 +4450,7 @@
             <column name="generate_quote_edr_per_product" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="sequence" type="INT4" defaultValue="0" />
 			<column name="display" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="document_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-217">
@@ -16717,6 +16718,12 @@
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
 
+    </changeSet>
+    <changeSet id="#INTRD-12544_20230102_fk" author="bourras">
+        <addForeignKeyConstraint baseColumnNames="document_id" baseTableName="cat_offer_template"
+                                 constraintName="fk_document_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="document"/>
     </changeSet>
     <!-- end fk -->
 
