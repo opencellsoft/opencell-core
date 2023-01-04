@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceValidationStatusEnum;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +47,7 @@ public class CompareInvoiceAmountScript extends Script {
 		boolean result = ValueExpressionWrapper.evaluateToBoolean("#{invoice.amount" + StringUtils.capitalize(withOrWithTaxParameter) + " " + operator + " " + value + "}",
 				new HashMap<Object, Object>(context));
 
-		context.put(Script.RESULT_VALUE, result);
+		context.put(Script.INVOICE_VALIDATION_STATUS, result ? InvoiceValidationStatusEnum.VALID : (InvoiceValidationStatusEnum) context.get(Script.RESULT_VALUE));
 	}
 
 }
