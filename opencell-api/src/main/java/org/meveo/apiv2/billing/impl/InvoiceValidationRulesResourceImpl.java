@@ -156,13 +156,19 @@ public class InvoiceValidationRulesResourceImpl implements InvoiceValidationRule
 
 	private void checkValidationSriptAndEL(InvoiceValidationRuleDto invoiceValidationRuleDto, ValidationRuleTypeEnum validationRuleType) {
 
+        boolean isTypeScriptAndScriptValidationNotProvided = Objects.equals(validationRuleType, ValidationRuleTypeEnum.SCRIPT) && StringUtils.isBlank(invoiceValidationRuleDto.getValidationScript());
+        boolean isTypeELAndValidationELNotProvided = Objects.equals(validationRuleType, ValidationRuleTypeEnum.EXPRESSION_LANGUAGE) && StringUtils.isBlank(invoiceValidationRuleDto.getValidationEL());
         boolean isValidationScriptAndValidationEL = invoiceValidationRuleDto.getValidationScript() != null && invoiceValidationRuleDto.getValidationEL() != null;
         boolean isValidationScriptAndTypeScript = invoiceValidationRuleDto.getValidationScript() != null && Objects.equals(validationRuleType, ValidationRuleTypeEnum.SCRIPT);
-        boolean isTypeScriptAndScriptValidationNotProvided = Objects.equals(validationRuleType, ValidationRuleTypeEnum.SCRIPT) && StringUtils.isBlank(invoiceValidationRuleDto.getValidationScript());
         boolean isTypeScriptAndValidationELProvided = Objects.equals(validationRuleType, ValidationRuleTypeEnum.SCRIPT) && invoiceValidationRuleDto.getValidationEL() != null;
         boolean isTypeELAndValidationScriptProvided = Objects.equals(validationRuleType, ValidationRuleTypeEnum.EXPRESSION_LANGUAGE) && invoiceValidationRuleDto.getValidationScript() != null;
-        boolean isTypeELAndValidationELNotProvided = Objects.equals(validationRuleType, ValidationRuleTypeEnum.EXPRESSION_LANGUAGE) && StringUtils.isBlank(invoiceValidationRuleDto.getValidationEL());
         
+        if (isTypeScriptAndScriptValidationNotProvided) {
+            throw new InvalidParameterException("Validation script is mandatory for type=SCRIPT");
+        }
+        if (isTypeELAndValidationELNotProvided) {
+            throw new InvalidParameterException("Validation EL is mandatory for type=EL");
+        }
         if (isValidationScriptAndValidationEL) {
             throw new InvalidParameterException("You cannot have both validation script and validation EL");
         }
@@ -178,13 +184,7 @@ public class InvoiceValidationRulesResourceImpl implements InvoiceValidationRule
         if (isTypeELAndValidationScriptProvided) {
             throw new InvalidParameterException("Type is set to EL and validation script is provided instead of validation EL");
         }
-        if (isTypeScriptAndScriptValidationNotProvided) {
-            throw new InvalidParameterException("Validation script is mandatory for type=SCRIPT");
-        }
-        if (isTypeELAndValidationELNotProvided) {
-            throw new InvalidParameterException("Validation EL is mandatory for type=EL");
-        }
-
+       
     }
 
 }
