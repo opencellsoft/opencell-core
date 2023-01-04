@@ -2651,6 +2651,7 @@ public class SubscriptionApi extends BaseApi {
         activateServicesRequestDto.setSubscriptionValidityDate(postData.getValidityDate());
 
         this.create(postData);
+        serviceInstanceService.getEntityManager().flush();
         this.activateServices(activateServicesRequestDto);
     }
 
@@ -3224,6 +3225,7 @@ public class SubscriptionApi extends BaseApi {
                     processProduct(subscription, productDto);
             }
         }
+        serviceInstanceService.getEntityManager().flush();
         subscriptionService.activateInstantiatedService(subscription);
         return subscription;
     }
