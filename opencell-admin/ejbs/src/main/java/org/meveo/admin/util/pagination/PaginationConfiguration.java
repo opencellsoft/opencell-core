@@ -47,6 +47,9 @@ public class PaginationConfiguration implements Serializable {
     /** Search filters (key = field name, value = search pattern or value). */
     private Map<String, Object> filters;
 
+    /** apply fetch to left join fetchFields */
+    private boolean doFetch = true;
+    
     /**
      * Fields that needs to be fetched when selecting (like lists or other entities).
      */
@@ -82,6 +85,10 @@ public class PaginationConfiguration implements Serializable {
     public PaginationConfiguration(String sortField, SortOrder sortOrder) {
         this(null, null, null, null, null, sortField, sortOrder);
     }
+    
+    public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, Object... sortFieldsAndOrder) {
+        this(firstRow, numberOfRows, filters, fullTextFilter, true, fetchFields, sortFieldsAndOrder);
+    }
 
     /**
      * Constructor
@@ -90,14 +97,16 @@ public class PaginationConfiguration implements Serializable {
      * @param numberOfRows Number of rows to retrieve
      * @param filters Search criteria
      * @param fullTextFilter full text filter.
+     * @param doFetch fetch fields or not
      * @param fetchFields Lazy loaded fields to fetch
      * @param sortFieldsAndOrder Sort field and order repeated multiple times
      */
-    public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, Object... sortFieldsAndOrder) {
+    public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, boolean doFetch, List<String> fetchFields, Object... sortFieldsAndOrder) {
         this.firstRow = firstRow;
         this.numberOfRows = numberOfRows;
         this.filters = filters;
         this.fullTextFilter = fullTextFilter;
+        this.doFetch = doFetch;
         this.fetchFields = fetchFields;
 
         List<Object> sortValues = new ArrayList<Object>();
@@ -229,7 +238,15 @@ public class PaginationConfiguration implements Serializable {
         return fullTextFilter;
     }
 
-    public List<String> getFetchFields() {
+    public boolean isDoFetch() {
+		return doFetch;
+	}
+
+	public void setDoFetch(boolean doFetch) {
+		this.doFetch = doFetch;
+	}
+
+	public List<String> getFetchFields() {
         return fetchFields;
     }
 
