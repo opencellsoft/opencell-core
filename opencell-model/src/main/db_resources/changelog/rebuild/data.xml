@@ -15917,7 +15917,7 @@ public class CdrFlatFileImportScript extends Script {
 		</update>
 	</changeSet>
 	
-	<changeSet id="#INTRD-12891_20230105_rebuild" author="aeljaouhari">
+	<changeSet id="#INTRD-12891_20230105" author="aeljaouhari">
 		<insert tableName="meveo_script_instance_cat">
 			<column name="id" valueNumeric="-6" />
 			<column name="version" valueNumeric="0" />
