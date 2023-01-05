@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.UriInfo;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.meveo.admin.exception.BusinessException;
@@ -294,7 +295,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
      * @param async execution type; by default false true : asynchronous execution false : synchronous execution
      * @param emails 
      */
-    public Optional<Object> execute(Long queryId, boolean async, boolean sendNotification, List<String> emails) {
+    public Optional<Object> execute(Long queryId, boolean async, boolean sendNotification, List<String> emails, UriInfo uriInfo) {
     	checkPermissionExist();
         ReportQuery query = findById(queryId).orElseThrow(() ->
                 new NotFoundException("Query with id " + queryId + " does not exists"));
@@ -306,7 +307,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         Class<?> targetEntity = getEntityClass(query.getTargetEntity());
         Optional<Object> result;
         if (async) {
-            reportQueryService.executeAsync(query, targetEntity, currentUser, sendNotification, emails);
+            reportQueryService.executeAsync(query, targetEntity, currentUser, sendNotification, emails, uriInfo);
             result = of("Accepted");
         } else {
             result = of(reportQueryService.execute(query, targetEntity));

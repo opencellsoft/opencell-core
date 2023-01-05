@@ -38,6 +38,7 @@ import javax.ejb.*;
 import javax.inject.Inject;
 import javax.persistence.*;
 import javax.transaction.Transactional;
+import javax.ws.rs.core.UriInfo;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -104,6 +105,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
     private static final String SUCCESS_TEMPLATE_CODE = "REPORT_QUERY_RESULT_SUCCESS";
     private static final String FAILURE_TEMPLATE_CODE = "REPORT_QUERY_RESULT_FAILURE";
     private static final String RESULT_EMPTY_MSG = "Execution of the query doesn't return any data";
+    private static final String DEFAULT_URI_PATH = "/opencell/frontend/DEMO/portal/finance/reports/query-tool/query-runs-results/";
 
     /**
      * List of report queries allowed for the current user.
@@ -322,8 +324,8 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
      * @param currentUser current user
      * @param emails 
      */
-    public void executeAsync(ReportQuery reportQuery, Class<?> targetEntity, MeveoUser currentUser, boolean sendNotification, List<String> emails) {
-        launchAndForget(reportQuery, targetEntity, currentUser, sendNotification, emails);
+    public void executeAsync(ReportQuery reportQuery, Class<?> targetEntity, MeveoUser currentUser, boolean sendNotification, List<String> emails, UriInfo uriInfo) {
+        launchAndForget(reportQuery, targetEntity, currentUser, sendNotification, emails, uriInfo);
     }
 
     /**
@@ -335,7 +337,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
      * @param emails 
      */
     @Asynchronous
-    public void launchAndForget(ReportQuery reportQuery, Class<?> targetEntity, MeveoUser currentUser, boolean sendNotification, List<String> emails) {
+    public void launchAndForget(ReportQuery reportQuery, Class<?> targetEntity, MeveoUser currentUser, boolean sendNotification, List<String> emails, UriInfo uriInfo) {
         Date startDate = new Date();
         try {
             Future<QueryExecutionResult> asyncResult = executeReportQueryAndSaveResult(reportQuery, targetEntity, startDate);
@@ -344,7 +346,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             	if(currentUser.getEmail() != null) {
                     notifyUser(executionResult.getId(), reportQuery.getCode(), currentUser, true,
                             executionResult.getStartDate(), executionResult.getExecutionDuration(),
-                            executionResult.getLineCount(), null);
+                            executionResult.getLineCount(), null, uriInfo);
             	}
             	if(emails != null && !emails.isEmpty()) {
                 	Set<String> setEmails = new HashSet<String>(emails);
@@ -352,7 +354,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                     	if(email != null && !email.equalsIgnoreCase(currentUser.getEmail())) {
                         	notifyUser(executionResult.getId(), reportQuery.getCode(), currentUser, true,
                                     executionResult.getStartDate(), executionResult.getExecutionDuration(),
-                                    executionResult.getLineCount(), null);
+                                    executionResult.getLineCount(), null, uriInfo);
                     	}
                     }
             	}
@@ -363,19 +365,24 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         	if(sendNotification) {
 	            long duration = new Date().getTime() - startDate.getTime();
 	            notifyUser(reportQuery.getId(), reportQuery.getCode(), currentUser, false,
-	                    startDate, duration, null, exception.getMessage());
+	                    startDate, duration, null, exception.getMessage(), uriInfo);
         	}
             log.error("Failed to execute async report query", exception);
         }
     }
 
     private void notifyUser(Long reportQueryId, String reportQueryName, MeveoUser meveoUser, boolean success,
-                            Date startDate, long duration, Integer lineCount, String error) {
+                            Date startDate, long duration, Integer lineCount, String error, UriInfo uriInfo) {
         String contentHtml = null;
         String content = null;
         String subject;
-        String portalResultLink = paramBeanFactory.getInstance().getProperty("portal.host.queryUri", "https://integration.d2.opencell.work/opencell/frontend/DEMO/portal/finance/reports/query-tool/query-runs-results/").concat(reportQueryId+"/show");
-
+        String portalResultLink = paramBeanFactory.getInstance().getProperty("portal.host.queryUri", uriInfo.getBaseUri().toString().replace(uriInfo.getBaseUri().getPath(), "").concat(DEFAULT_URI_PATH));
+        if (portalResultLink.contains(DEFAULT_URI_PATH)) {
+        	portalResultLink = portalResultLink.concat(reportQueryId+"/show");
+        } else {
+        	portalResultLink = portalResultLink.concat(DEFAULT_URI_PATH).concat(reportQueryId+"/show");
+        }
+       
         Format format = new SimpleDateFormat("yyyy-M-dd hh:mm:ss");
 
         String userName = currentUser.getFullNameOrUserName();
