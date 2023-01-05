@@ -46,7 +46,7 @@ public class ExceptionProcessorRs extends ExceptionProcessorWs {
                     || "AUTHENTICATION_AUTHORIZATION_EXCEPTION".equals(str)) {
                 throw new NotAuthorizedException(status);
             } else if ("DELETE_REFERENCED_ENTITY_EXCEPTION".equals(str) //
-                    || "DUPLICATE_ACCESS".equals(str) || "ACTION_FORBIDDEN".equals(str)//
+                    || "ACTION_FORBIDDEN".equals(str)//
                     || "INSUFFICIENT_BALANCE".equals(str)) {
                 throw new ForbiddenException(status);
             } else if ("ENTITY_DOES_NOT_EXISTS_EXCEPTION".equals(str)) {
