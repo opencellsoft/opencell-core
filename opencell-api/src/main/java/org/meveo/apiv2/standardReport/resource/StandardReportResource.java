@@ -4,16 +4,12 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import java.util.Date;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import org.meveo.apiv2.models.ApiException;
 import org.meveo.apiv2.ordering.resource.order.Orders;
 
@@ -22,6 +18,7 @@ import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.meveo.apiv2.standardReport.AgedReceivablesDto;
 
 @Path("/standardReports")
 @Consumes(APPLICATION_JSON)
@@ -60,4 +57,19 @@ public interface StandardReportResource {
                                 @QueryParam("tradingCurrency") String tradingCurrency,
                                 @QueryParam("funcCurrency") String functionalCurrency,
                                 @Context Request request);
+
+    @POST
+    @Path("/AgedReceivables/export/{fileFormat}")
+    @Operation(summary = "Export aged balance",
+                tags = { "AgedReceivables" },
+                description = "Returns aged balance",
+                responses = {
+                                @ApiResponse(responseCode = "200", description = "Exported aged balance ist"),
+                                @ApiResponse(responseCode = "400", description = "No Data Found")
+                            })
+    Response exportAgedReceivables(
+            @Parameter(description = "file format", required = true) @PathParam("fileFormat") String fileFormat,
+            @Parameter(description = "Locale") @QueryParam("locale") String locale,
+            @Parameter(description = "the AgedReceivables input object", required = true) AgedReceivablesDto input,
+            @Context Request request);
 }

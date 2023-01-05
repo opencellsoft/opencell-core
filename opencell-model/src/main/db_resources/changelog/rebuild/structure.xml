@@ -2928,6 +2928,12 @@
             	<constraints nullable="true" />
             </column>
             <column name="priority" type="int4" defaultValueNumeric="0" />
+            <column name="disable_aggregation" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="use_accounting_article_label" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="date_aggregation" type="varchar(255)" defaultValue="NO_DATE_AGGREGATION" />
+            <column name="aggregate_unit_amounts" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="ignore_subscriptions" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-172">
@@ -4444,6 +4450,7 @@
             <column name="generate_quote_edr_per_product" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="sequence" type="INT4" defaultValue="0" />
 			<column name="display" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="document_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-217">
@@ -8621,7 +8628,7 @@
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_tax_mapping_pkey" />
             </column>
-            <column name="version" type="int4" />
+            <column name="version" type="int4" defaultValueNumeric="0" />
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
@@ -8711,7 +8718,7 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addPrimaryKey columnNames="chrg_instance_id, indx" constraintName="billing_chrg_inst_counter_pkey" tableName="billing_chrg_inst_counter"/>
+        <addPrimaryKey columnNames="chrg_instance_id, counter_instance_id" constraintName="billing_chrg_inst_counter_pkey" tableName="billing_chrg_inst_counter"/>
     </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-411">           
 	    <createTable tableName="billing_counter_period_values">
@@ -11172,7 +11179,6 @@
             <column name="generated_query" type="${type.text}" />
             <column name="sort_by" type="varchar(255)" />
             <column name="sort_order" type="varchar(15)" />
-            <column name="query_parameters" type="${type.json}" />
         </createTable>
 
         <createTable tableName="report_query_fields">
@@ -16713,6 +16719,12 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
 
     </changeSet>
+    <changeSet id="#INTRD-12544_20230102_fk" author="bourras">
+        <addForeignKeyConstraint baseColumnNames="document_id" baseTableName="cat_offer_template"
+                                 constraintName="fk_document_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="document"/>
+    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -19247,13 +19259,16 @@
 	<changeSet id="#INTR-12252_20221212_agreement_date" author="a.rouaguebe" />
     <changeSet id="#INTRD-12466_20222012" author="bourras" />
 	<changeSet id="#INTRD-12478_20221226" author="AdilElJaouhari" />
-    <changeSet id="#INTRD-12720-20221230-query_report" author="a.rouaguebe" />
+    <changeSet id="#INTRD-12794-20230102-counter_instance" author="a.rouaguebe" />
 
 	<changeSet id="#INTR-12382_20221219" author="HichamHANINE" />
 	<changeSet id="#INTRD-12677_20221229" author="AdilElJaouhari" />
 	<changeSet id="#INTRD-10544_20221207" author="HatimOUDAD" /> 
-	
-	
+	<changeSet id="#INTRD-12668-20230102" author="AmineBENAICHA" />
+	<changeSet id="#INTRD-10544_20221207" author="HatimOUDAD" />
+    <changeSet id="#INTRD-12544_20230102" author="bourras"/>
+
+
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

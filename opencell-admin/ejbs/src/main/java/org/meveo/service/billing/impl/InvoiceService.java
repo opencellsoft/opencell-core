@@ -1394,7 +1394,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
                         methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
                         methodContext.put("billingRun", invoice.getBillingRun());
-                        script.execute(methodContext);
+                        scriptInstanceService.execute(scriptInstance.getCode(), methodContext);
                         Object status = methodContext.get(Script.INVOICE_VALIDATION_STATUS);
                         if (status != null && status instanceof InvoiceValidationStatusEnum) {
                             if (InvoiceValidationStatusEnum.REJECTED.equals((InvoiceValidationStatusEnum) status)) {
@@ -3239,13 +3239,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         if (billingRun.getComputeDatesAtValidation() != null && !billingRun.getComputeDatesAtValidation()) {
             return;
-        } else if (billingRun.getComputeDatesAtValidation() == null && !billingCycle.getComputeDatesAtValidation()) {
+        } else if (billingRun.getComputeDatesAtValidation() == null && !billingCycle.isComputeDatesAtValidation()) {
             return;
         }
         if (billingRun.getComputeDatesAtValidation() != null && billingRun.getComputeDatesAtValidation()) {
             recalculateDate(invoice, billingRun, billingAccount, billingCycle);
             update(invoice);
-        } else if (billingRun.getComputeDatesAtValidation() == null && billingCycle.getComputeDatesAtValidation()) {
+        } else if (billingRun.getComputeDatesAtValidation() == null && billingCycle.isComputeDatesAtValidation()) {
             recalculateDate(invoice, billingRun, billingAccount, billingCycle);
             update(invoice);
         }
@@ -3277,7 +3277,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         
         if ((billingRun.getComputeDatesAtValidation() != null && billingRun.getComputeDatesAtValidation()) 
-                || (billingRun.getComputeDatesAtValidation() == null && billingCycle.getComputeDatesAtValidation())) {
+                || (billingRun.getComputeDatesAtValidation() == null && billingCycle.isComputeDatesAtValidation())) {
             recalculateDate(invoice, billingRun, billingAccount, billingCycle);
         }
 
@@ -7093,6 +7093,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         result.stream().forEach(invoices -> {
             Invoice key = (Invoice)invoices[0];
             Invoice adv = (Invoice)invoices[1];
+            if((key.getCommercialOrder() == null && adv.getCommercialOrder() != null) || (! "ADV".equals(adv.getInvoiceType().getCode()))) {
+            	return;
+            }
             if(invoicesWithAdv.get(key) == null) {
                 List<Invoice> advs = new ArrayList<>();
                 advs.add(adv);
