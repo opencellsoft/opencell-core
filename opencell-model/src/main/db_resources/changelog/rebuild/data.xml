@@ -9020,11 +9020,10 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="created" valueDate="2021-12-01 00:04:19.913" />
 			<column name="job_category" value="DUNNING" />
 			<column name="job_template" value="TriggerCollectionPlanLevelsJob" />
-			<column name="code" value="TriggerCollectionPlanLevelsJob_Job" />
-
+			<column name="code" value="TriggerCollectionPlanLevelsJob" />
 			<column name="creator" value="OPENCELL.ADMIN" />
 			<column name="timerentity_id" valueNumeric="-1" />
-			<column name="uuid" value="TriggerCollectionPlanLevelsJob_Job" />
+			<column name="uuid" value="TriggerCollectionPlanLevelsJob" />
 		</insert>
 	</changeSet>
 
@@ -15916,6 +15915,8 @@ public class CdrFlatFileImportScript extends Script {
 			<where>code='org.meveo.service.script.CdrFlatFileImportScript'</where>
 		</update>
 	</changeSet>
+
+	<changeSet id="#INTRD-12727_20230105" author="zelmeliani" />
 	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
