@@ -3084,6 +3084,7 @@ public class SubscriptionApi extends BaseApi {
 
         for (AccessDto access : existingSubscriptionDto.getAccesses().getAccess()) {
             access.setSubscription(existingSubscriptionDto.getCode());
+            access.setStartDate(effectiveDate);
         }
         createAccess(existingSubscriptionDto);
 
