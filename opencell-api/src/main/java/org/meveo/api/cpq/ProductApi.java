@@ -12,12 +12,9 @@ import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
 
-import liquibase.pro.packaged.D;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
-import org.assertj.core.util.DateUtil;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
@@ -308,7 +305,7 @@ public class ProductApi extends BaseApi {
 
 			var publishedVersion = versions.stream()
 											.filter(pv -> pv.getStatus().equals(VersionStatusEnum.PUBLISHED))
-											.filter(pv -> pv.getValidity().getTo() == null || pv.getValidity().getTo().compareTo(new Date()) >= 0)
+											.filter(pv -> pv.getValidity().getTo() == null || pv.getValidity().getTo().compareTo(DateUtils.setTimeToZero(new Date()))  >= 0)
 												.sorted( (pv1, pv2) -> pv2.getValidity().compareFieldTo(pv1.getValidity())).collect(Collectors.toList());
 			if(publishedVersion.size() >= 1 ) {
 				product.setCurrentVersion(publishedVersion.get(0));
