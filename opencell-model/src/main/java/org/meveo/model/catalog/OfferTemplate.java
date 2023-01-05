@@ -34,6 +34,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.QueryHint;
 import javax.persistence.Temporal;
@@ -56,6 +57,7 @@ import org.meveo.model.cpq.OfferTemplateAttribute;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
+import org.meveo.model.document.Document;
 
 /**
  * @author Edward P. Legaspi, Andrius Karpavicius
@@ -127,6 +129,10 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "minimum_charge_template_id")
     private OneShotChargeTemplate minimumChargeTemplate;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "document_id")
+    private Document document;
 
     @Embedded
     private SubscriptionRenewal subscriptionRenewal = new SubscriptionRenewal();
@@ -628,7 +634,12 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     public void setGenerateQuoteEdrPerProduct(boolean generateQuoteEdrPerProduct) {
         this.generateQuoteEdrPerProduct = generateQuoteEdrPerProduct;
     }
-    
-    
+
+    public Document getDocument() {
+        return document;
+    }
+    public void setDocument(Document document) {
+        this.document = document;
+    }
     
 }

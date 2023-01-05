@@ -161,11 +161,13 @@ public class OfferTemplateDto extends ProductOfferingDto {
     
     @Schema(description = "Offer template code")
     protected String offerModelCode;
-    
 
-    
+
+
     @Schema(description = "allow to generate each edr per product")
     protected Boolean generateQuoteEdrPerProduct = Boolean.FALSE;
+
+    private DocumentDto document;
 
     /**
      * Instantiates a new offer template dto.
@@ -548,8 +550,12 @@ public class OfferTemplateDto extends ProductOfferingDto {
     public void setGenerateQuoteEdrPerProduct(Boolean generateQuoteEdrPerProduct) {
         this.generateQuoteEdrPerProduct = generateQuoteEdrPerProduct;
     }
+
+    public DocumentDto getDocumentDto() {
+        return document;
+    }
+    public void setDocumentDto(DocumentDto document) {
+        this.document = document;
+    }
 	
-	
-    
-    
 }
