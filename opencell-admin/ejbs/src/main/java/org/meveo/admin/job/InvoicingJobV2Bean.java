@@ -131,7 +131,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
     }
 
     private int addExceptionalInvoiceLineIds(BillingRun billingRun) {
-        Map<String, String> filters = billingRun.getFilters();
+        Map<String, Object> filters = billingRun.getFilters();
         QueryBuilder queryBuilder = invoiceLineService.fromFilters(filters);
         List<RatedTransaction> ratedTransactions = queryBuilder.getQuery(ratedTransactionService.getEntityManager()).getResultList();
         billingRun.setExceptionalILIds(ratedTransactions
