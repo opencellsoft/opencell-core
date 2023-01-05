@@ -159,6 +159,21 @@ public class UserAccount extends AccountEntity implements IInvoicingMinimumAppli
     @Column(name = "is_consumer")
     private Boolean isConsumer=Boolean.TRUE;
 
+    /**
+     * IsoIcd
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "icd_id")
+    private IsoIcd icdId;
+    
+    public IsoIcd getIcdId() {
+        return icdId;
+    }
+
+    public void setIcdId(IsoIcd icdId) {
+        this.icdId = icdId;
+    }
+
     public BillingAccount getBillingAccount() {
         return billingAccount;
     }

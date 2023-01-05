@@ -6983,9 +6983,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     public void triggersCollectionPlanLevelsJob() {
-        JobInstance triggerCollectionPlanLevelsJob_job = jobInstanceService.findByCode("TriggerCollectionPlanLevelsJob_Job");
-        if (triggerCollectionPlanLevelsJob_job != null) {
-            jobExecutionService.executeJob(triggerCollectionPlanLevelsJob_job, Collections.EMPTY_MAP, JobLauncherEnum.TRIGGER);
+        JobInstance triggerCollectionPlanLevelsJob = jobInstanceService.findByCode("TriggerCollectionPlanLevelsJob");
+        if (triggerCollectionPlanLevelsJob != null) {
+            jobExecutionService.executeJob(triggerCollectionPlanLevelsJob, Collections.EMPTY_MAP, JobLauncherEnum.TRIGGER);
         }
     }
 
@@ -7095,6 +7095,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         result.stream().forEach(invoices -> {
             Invoice key = (Invoice)invoices[0];
             Invoice adv = (Invoice)invoices[1];
+            if((key.getCommercialOrder() == null && adv.getCommercialOrder() != null) || (! "ADV".equals(adv.getInvoiceType().getCode()))) {
+            	return;
+            }
             if(invoicesWithAdv.get(key) == null) {
                 List<Invoice> advs = new ArrayList<>();
                 advs.add(adv);
