@@ -90,6 +90,7 @@ import org.meveo.model.shared.Address;
 @NamedQueries({ @NamedQuery(name = "Order.listByBillingRun", query = "select o from Order o where o.billingRun.id=:billingRunId order by o.id"),
         @NamedQuery(name = "Order.listByCodeOrExternalId", query = "select o from Order o where o.code IN :code OR o.externalId IN :code order by o.id"),
         @NamedQuery(name = "Order.findByCodeOrExternalId", query = "select o from Order o left join fetch o.billingRun where o.code = :code OR o.externalId = :code ") })
+@Deprecated
 public class Order extends BusinessCFEntity implements IBillableEntity, IWFEntity, ISearchable {
 
     private static final long serialVersionUID = -9060067698650286828L;
