@@ -24,6 +24,8 @@ import org.meveo.api.dto.billing.SubscriptionsDto;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.UserAccount;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -103,6 +105,20 @@ public class UserAccountDto extends AccountDto {
     private List<UserAccountDto> userAccounts = new ArrayList<>();
 
     /**
+     * The iso ICD Code
+     */
+    @Schema(description = "The iso ICD Code")
+    private String isoICDCode;
+
+    public String getIsoICDCode() {
+        return isoICDCode;
+    }
+
+    public void setIsoICDCode(String isoICDCode) {
+        this.isoICDCode = isoICDCode;
+    }
+    
+    /**
      * Instantiates a new user account dto.
      */
     public UserAccountDto() {
@@ -159,6 +175,10 @@ public class UserAccountDto extends AccountDto {
         	        userAccounts.add(new UserAccountDto(subUserAccount));
         	    }
         	}
+        }
+        
+        if(e.getIcdId() != null) {
+            setIsoICDCode(e.getIcdId().getCode());
         }
     }
 	

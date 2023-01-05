@@ -113,6 +113,8 @@ public class InvoiceTypeDto extends BusinessEntityDto {
     private String mailingType;
 
     private String emailTemplateCode;
+    
+    private String untdidInvoiceSubjectCode;
 
     /**
      * Exclude this invoiceType from Aged Balance
@@ -161,7 +163,10 @@ public class InvoiceTypeDto extends BusinessEntityDto {
         this.emailTemplateCode = invoiceType.getEmailTemplate() != null ? invoiceType.getEmailTemplate().getCode() : null;
         customFields = customFieldInstances;
         this.useSelfSequence = invoiceType.isUseSelfSequence();
-        this.excludeFromAgedTrialBalance = invoiceType.isExcludeFromAgedTrialBalance();
+        this.excludeFromAgedTrialBalance = invoiceType.isExcludeFromAgedTrialBalance();        
+        if (invoiceType.getUntdidInvoiceCodeType() != null) {
+            this.untdidInvoiceSubjectCode = invoiceType.getUntdidInvoiceCodeType().getCode();
+        }
         if(invoiceType.getUntdidInvoiceCodeType() != null)
         	this.untdidInvoiceCodeTypeDto = new UntdidInvoiceCodeTypeDto(invoiceType.getUntdidInvoiceCodeType());
         if(invoiceType.getUntdidVatPaymentOption() != null)
@@ -501,4 +506,15 @@ public class InvoiceTypeDto extends BusinessEntityDto {
 	public void setUntdidVatPaymentOptionDto(UntdidVatPaymentOptionDto untdidVatPaymentOptionDto) {
 		this.untdidVatPaymentOptionDto = untdidVatPaymentOptionDto;
 	}
+
+    public String getUntdidInvoiceSubjectCode() {
+        return untdidInvoiceSubjectCode;
+    }
+
+    public void setUntdidInvoiceSubjectCode(String untdidInvoiceSubjectCode) {
+        this.untdidInvoiceSubjectCode = untdidInvoiceSubjectCode;
+    }
+	
+	
+	
 }
