@@ -395,7 +395,7 @@ public class QueryBuilder {
     public QueryBuilder addPaginationConfiguration(PaginationConfiguration paginationConfiguration, String sortAlias) {
         this.paginationSortAlias = sortAlias;
         this.paginationConfiguration = paginationConfiguration;
-        if(paginationConfiguration.getJoinType() != null) {
+        if(paginationConfiguration != null && paginationConfiguration.getJoinType() != null) {
         	this.joinType=paginationConfiguration.getJoinType();
         }
         return this;
