@@ -228,6 +228,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     public static final String DEPRECATED_FEATURE = "DEPRECATED: This feature is deprecated and will be removed or replaced in a future release";
 
+    public static final String DEPRECATED_ADMIN_MESSAGE = "DEPRECATED: Please, use of the Legacy Admin only the feature you seek hasn't been ported to Portal yet. Legacy Admin is not maintained anymore, features can be missing, obsolete or broken.";
+
     /**
      * Constructor
      */
@@ -1635,12 +1637,12 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return !(from != null && to != null && from.compareTo(to) > 0);
     }
     
-    public static void showDeprecatedWarning() {
+    public static void showDeprecatedWarning(String pWarningMessage) {
     	List<FacesMessage> messageList = FacesContext.getCurrentInstance().getMessageList();
-		if(messageList!=null && messageList.stream().anyMatch(x->FacesMessage.SEVERITY_WARN.equals(x.getSeverity())&& DEPRECATED_FEATURE.equals(x.getSummary()))) {
+		if(messageList!=null && messageList.stream().anyMatch(x -> FacesMessage.SEVERITY_WARN.equals(x.getSeverity()) && pWarningMessage.equals(x.getSummary()))) {
 			return;
     	}
-    	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, DEPRECATED_FEATURE, DEPRECATED_FEATURE));
+    	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, pWarningMessage, pWarningMessage));
     }
 
 }

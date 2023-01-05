@@ -596,7 +596,7 @@ public class ServiceSingleton {
     }
 
     public void triggersJobs() {
-        Arrays.asList("DunningCollectionPlan_Job", "TriggerCollectionPlanLevelsJob_Job", "TriggerReminderDunningLevel_Job").stream()
+        Arrays.asList("DunningCollectionPlan_Job", "TriggerCollectionPlanLevelsJob", "TriggerReminderDunningLevel_Job").stream()
                 .map(jobInstanceService::findByCode)
                 .filter(Objects::nonNull)
                 .forEach(jibInstance -> jobExecutionService.executeJob(jibInstance, null, JobLauncherEnum.TRIGGER));

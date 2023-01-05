@@ -15,17 +15,22 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoPricePlanException;
+import org.meveo.api.dto.catalog.ConvertedPricePlanMatrixLineDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixValueDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.ConvertedPricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixValue;
@@ -34,8 +39,13 @@ import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeCategoryEnum;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
+import org.meveo.model.crm.Provider;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.crm.impl.ProviderService;
+
+import com.paypal.api.payments.Currency;
 
 @Stateless
 public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatrixLine> {
@@ -48,6 +58,15 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
 
     @Inject
     private PricePlanMatrixColumnService pricePlanMatrixColumnService;
+    
+    @Inject
+    private ProviderService providerService;
+    
+    @Inject
+    private ConvertedPricePlanMatrixLineService convertedPricePlanMatrixLineService;
+
+    @Inject
+    private TradingCurrencyService tradingCurrencyService;
 
 
     public List<PricePlanMatrixLine> findByPricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion) {
@@ -234,14 +253,6 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
 
     private List<PricePlanMatrixLine> getMatchedPriceLines(PricePlanMatrixVersion pricePlanMatrixVersion, Set<AttributeValue> attributeValues, WalletOperation walletOperation) {
         List<PricePlanMatrixLine> priceLines = findByPricePlanMatrixVersion(pricePlanMatrixVersion);
-        List<PricePlanMatrixLine> priceLinesSorted = priceLines.stream()
-                .sorted(Comparator.comparing(PricePlanMatrixLine::getId))
-                .collect(Collectors.toList());
-        int i = 0;
-        for (PricePlanMatrixLine ppml : priceLinesSorted) {
-            ppml.setPriority(i++);
-        }
-            
         addBusinessAttributeValues(pricePlanMatrixVersion.getColumns().stream().filter(column->AttributeCategoryEnum.BUSINESS.equals(column.getAttribute().getAttributeCategory())).map(column->column.getAttribute()).collect(Collectors.toList()),attributeValues, walletOperation);
         if(attributeValues.isEmpty()) {
             return priceLines.stream()
@@ -325,10 +336,14 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         ppmVersion.getLines().clear();
         ppmVersion.getLines().addAll(lines);
     }
-
-    public void updateWithoutDeletePricePlanMatrixLines(PricePlanMatrixVersion ppmVersion, PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {        
+    
+    public void updateWithoutDeletePricePlanMatrixLines(PricePlanMatrixVersion ppmVersion, PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {  
+    	
         checkDuplicatePricePlanMatrixValues(dtoData.getPricePlanMatrixLines());
+        Provider provider = providerService.getProvider();
         for (PricePlanMatrixLineDto pricePlanMatrixLineDto : dtoData.getPricePlanMatrixLines()) {
+        	
+        	
             PricePlanMatrixLine pricePlanMatrixLine = new PricePlanMatrixLine();
             if(pricePlanMatrixLineDto.getPpmLineId() != null){
                 pricePlanMatrixLine = findById(pricePlanMatrixLineDto.getPpmLineId());
@@ -340,6 +355,8 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
                 pricePlanMatrixValues.stream().forEach(ppmv -> pricePlanMatrixValueService.create(ppmv));
                 pricePlanMatrixLine.getPricePlanMatrixValues().clear();
                 pricePlanMatrixLine.getPricePlanMatrixValues().addAll(pricePlanMatrixValues);
+                Set<ConvertedPricePlanMatrixLine> convertedPricePlanMatrixLines = getConvertedPricePlanMatrixLine(pricePlanMatrixLineDto, pricePlanMatrixLine, provider);
+                pricePlanMatrixLine.getConvertedPricePlanMatrixLines().addAll(convertedPricePlanMatrixLines);
                 update(pricePlanMatrixLine);
             }
             else {                
@@ -348,12 +365,45 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
                 pricePlanMatrixLineDto.setPpmLineId(pricePlanMatrixLine.getId());
                 Set<PricePlanMatrixValue> pricePlanMatrixValues = getPricePlanMatrixValues(pricePlanMatrixLineDto, pricePlanMatrixLine);
                 pricePlanMatrixValues.stream().forEach(ppmv -> pricePlanMatrixValueService.create(ppmv));
-                pricePlanMatrixLine.getPricePlanMatrixValues().addAll(pricePlanMatrixValues);                
+                pricePlanMatrixLine.getPricePlanMatrixValues().addAll(pricePlanMatrixValues);      
+                Set<ConvertedPricePlanMatrixLine> convertedPricePlanMatrixLines = getConvertedPricePlanMatrixLine(pricePlanMatrixLineDto, pricePlanMatrixLine, provider);
+                pricePlanMatrixLine.getConvertedPricePlanMatrixLines().addAll(convertedPricePlanMatrixLines);          
                 ppmVersion.getLines().add(pricePlanMatrixLine);
             }
+
         }
     }
 
+    private Set<ConvertedPricePlanMatrixLine> getConvertedPricePlanMatrixLine(PricePlanMatrixLineDto pricePlanMatrixLineDto, PricePlanMatrixLine pricePlanMatrixLine,  Provider provider){
+        Set<ConvertedPricePlanMatrixLine> convertedPricePlanMatrixLines = new HashSet<>();
+        List<String> checkDuplicateTradingCurrency = new ArrayList<>();
+        for (ConvertedPricePlanMatrixLineDto convertedPPML : pricePlanMatrixLineDto.getConvertedPricePlanMatrixLines()) {
+            if(convertedPPML.getTradingCurrency() == null) {
+                throw new MissingParameterException("tradingCurrency");
+            }
+            TradingCurrency tradingCurrencyToAdd = tradingCurrencyService.findByTradingCurrencyCodeOrId(convertedPPML.getTradingCurrency().getCode(), convertedPPML.getTradingCurrency().getId()); 
+            if(tradingCurrencyToAdd == null) {
+                throw new MeveoApiException("Trading currency doesn't exist for  ( code : " +  convertedPPML.getTradingCurrency().getCode() + " , id : " + convertedPPML.getTradingCurrency().getId() + " )" );
+            }
+            
+            if( tradingCurrencyToAdd.getCurrency() != null && provider.getCurrency() != null && 
+                    tradingCurrencyToAdd.getCurrency().getId().equals(provider.getCurrency().getId())) {
+                throw new MeveoApiException("The trading currency must not be the same as functional currency");
+            }
+            if(checkDuplicateTradingCurrency.contains(convertedPPML.getTradingCurrency().getCode())) {
+                throw new MeveoApiException(" User should not be able to add an already added TradingCurrency");
+            }else {
+                checkDuplicateTradingCurrency.add(tradingCurrencyToAdd.getCurrencyCode());
+            }
+            ConvertedPricePlanMatrixLine convPPML =  new ConvertedPricePlanMatrixLine(convertedPPML.getConvertedValue(), tradingCurrencyToAdd, convertedPPML.getRate(), convertedPPML.getUseForBillingAccounts(), pricePlanMatrixLine);
+            convertedPricePlanMatrixLineService.create(convPPML);
+            convertedPricePlanMatrixLines.add(convPPML);
+        }
+        
+      pricePlanMatrixLine.getConvertedPricePlanMatrixLines().clear();
+        return convertedPricePlanMatrixLines;
+    }
+    
     private void converterPricePlanMatrixLineFromDto(PricePlanMatrixVersion ppmVersion, PricePlanMatrixLineDto pricePlanMatrixLineDto,
             PricePlanMatrixLine pricePlanMatrixLineUpdate) {
 

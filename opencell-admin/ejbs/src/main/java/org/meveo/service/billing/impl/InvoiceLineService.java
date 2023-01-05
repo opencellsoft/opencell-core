@@ -1011,7 +1011,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
      * filters : Map of filters
      * Return : QueryBuilder
      */
-    public QueryBuilder fromFilters(Map<String, Object> filters) {
+    public QueryBuilder fromFilters(Map<String, String> filters) {
         QueryBuilder queryBuilder;
         String filterValue = QueryBuilder.getFilterByKey(filters, "SQL");
         if (!StringUtils.isBlank(filterValue)) {
