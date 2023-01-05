@@ -15129,4 +15129,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedTableName="document"/>
     </changeSet>
 
+    <changeSet id="#INTRD-12720-20221230-query_report-rework" author="a.rouaguebe">
+        <addColumn tableName="report_query">
+        	<column name="query_parameters" type="${type.json}" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

@@ -38,6 +38,7 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.apiv2.report.VerifyQueryInput;
 import org.meveo.commons.utils.EjbUtils;
+import org.meveo.commons.utils.JoinWrapper;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.report.query.QueryExecutionResultFormatEnum;
@@ -135,27 +136,30 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         PersistenceService persistenceService =
                 (PersistenceService) getServiceInterface(targetEntity.getSimpleName());
         QueryBuilder queryBuilder;
+        List<String> nestedEntities = entity.getFields().stream().filter(e -> e.contains(".")).map(e -> e.substring(0, e.lastIndexOf("."))).distinct().collect(Collectors.toList());
         if (entity.getFilters() != null) {
             Map<String, Object> filters = new FilterConverter(targetEntity).convertFilters(entity.getFilters());
-            queryBuilder = persistenceService.getQuery(new PaginationConfiguration(filters));
+            queryBuilder = persistenceService.getQuery(new PaginationConfiguration(null, null, filters, null, false, nestedEntities));
         } else {
-            queryBuilder = persistenceService.getQuery(new PaginationConfiguration(null));
+            queryBuilder = persistenceService.getQuery(new PaginationConfiguration(null, null, null, null, false, nestedEntities));
         }
         String generatedQuery;
         if (entity.getFields() != null && !entity.getFields().isEmpty()) {
-            generatedQuery = addFields(queryBuilder.getSqlString(), entity.getFields(), entity.getSortBy());
+            generatedQuery = addFields(queryBuilder.getSqlString(false), entity.getFields(), entity.getSortBy());
         } else {
             generatedQuery = queryBuilder.getSqlString();
         }
+//        entity.setFilters(queryBuilder.getParams());
+        entity.setQueryParameters(queryBuilder.getParams());
         if(entity.getSortBy() != null) {
             StringBuilder sortOptions = new StringBuilder(" order by ")
                     .append(!entity.getSortBy().isBlank() ? ("a." + entity.getSortBy()) : "a.id")
                     .append(" ")
                     .append(entity.getSortOrder() != null ? entity.getSortOrder().getLabel()
                             : SortOrderEnum.ASCENDING.getLabel());
-            return generatedQuery.replaceAll("\\s*\\blower\\b\\s*", " ").replaceAll("_\\d+", "") + sortOptions;
+            return generatedQuery + sortOptions;
         }
-        return generatedQuery.replaceAll("\\s*\\blower\\b\\s*", " ").replaceAll("_\\d+", "");
+        return generatedQuery;
     }
     
     @SuppressWarnings("rawtypes")
@@ -202,9 +206,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         StringBuilder generatedQuery = new StringBuilder("select ")
                 .append(queryField.deleteCharAt(queryField.length() - 1))
                 .append(" ")
-                .append(query)
-                .append(" ")
-        		.append(fetchJoins.stream().map(e -> "left join a." + e).collect(joining(" ")));
+                .append(query);
         if(!groupByField.isEmpty()) {
             generatedQuery.append(" group by ");
             generatedQuery.append(groupByField.stream().map(field -> "a." + field).collect(joining(", ")));
