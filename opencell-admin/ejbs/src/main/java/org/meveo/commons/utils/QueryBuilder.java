@@ -344,7 +344,7 @@ public class QueryBuilder {
         if (fetchFields != null && !fetchFields.isEmpty()) {
             for (String fetchField : fetchFields) {
 				String joinAlias = fetchField.contains(JOIN_AS) ? "" : JOIN_AS + getJoinAlias(alias, fetchField, false);
-				query.append(" left join " + alias + "." + fetchField + joinAlias);
+				query.append(" left join fetch " + alias + "." + fetchField + joinAlias);
             }
         }
 
@@ -1664,10 +1664,6 @@ public class QueryBuilder {
     public String getSqlString() {
         return toStringQuery();
     }
-    
-    public String getSqlString(boolean doFetch) {
-        return toStringQuery(doFetch);
-    }
 
     private String toStringQuery() {
         return q.toString().replace(INNER_JOINS, formatInnerJoins());
@@ -1744,22 +1740,18 @@ public class QueryBuilder {
      * @param key the searched key
      * @return the filter value for the provided key.
      */
-    public static String getFilterByKey(Map<String, Object> filters, String key) {
+    public static String getFilterByKey(Map<String, String> filters, String key) {
 
         String value = null;
         if (filters != null && !filters.isEmpty() && !StringUtils.isBlank(key)) {
             Map<String, String> upperCasefilters = filters.entrySet().stream().collect(
                     Collectors.toMap(
                             entry -> entry.getKey().toUpperCase(),
-                            entry -> (String)entry.getValue()
+                            entry -> entry.getValue()
                     )
             );
             value = (upperCasefilters.get(key.toUpperCase()));
         }
         return value;
     }
-    
-    public Map<String, JoinWrapper> getInnerJoins() {
-		return Collections.unmodifiableMap(this.innerJoins);
-	}
 }

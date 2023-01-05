@@ -1,8 +1,6 @@
 package org.meveo.admin.job;
 
-import static java.util.Arrays.stream;
-
-import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.billing.DateAggregationOption;
 
 public class AggregationConfiguration {
 
@@ -60,37 +58,4 @@ public class AggregationConfiguration {
 	public void setAggregationPerUnitAmount(boolean AggregationPerUnitAmount) {
 		this.aggregationPerUnitAmount = AggregationPerUnitAmount;
 	}
-
-	public enum DateAggregationOption {
-		NO_DATE_AGGREGATION("no.date.aggregation"), MONTH_OF_USAGE_DATE("month.of.usage.date"),
-		WEEK_OF_USAGE_DATE("week.of.usage.date"), DAY_OF_USAGE_DATE("day.of.usage.date");
-		private String label;
-
-		/**
-		 * 
-		 */
-		private DateAggregationOption(String label) {
-			setLabel(label);
-		}
-
-		public static DateAggregationOption fromValue(String value) {
-			return stream(DateAggregationOption.values()).filter(option -> option.name().equalsIgnoreCase(value))
-					.findFirst().orElseThrow(() -> new BusinessException());
-		}
-
-		/**
-		 * @return the label
-		 */
-		public String getLabel() {
-			return label;
-		}
-
-		/**
-		 * @param label the label to set
-		 */
-		public void setLabel(String label) {
-			this.label = label;
-		}
-	}
-
 }

@@ -15435,10 +15435,49 @@ public class AgedBalanceReporting extends ReportExtractScript {
         
     </changeSet>
     
-	<changeSet id="#INTRD-12720-20221230-query_report" author="a.rouaguebe">
-        <addColumn tableName="report_query">
-        	<column name="query_parameters" type="${type.json}" />
+
+    
+    <changeSet id="#INTRD-12668-20230102" author="AmineBENAICHA">
+		<addColumn tableName="billing_cycle">
+            <column name="disable_aggregation" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="use_accounting_article_label" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="date_aggregation" type="varchar(255)" defaultValue="NO_DATE_AGGREGATION" />
+            <column name="aggregate_unit_amounts" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="ignore_subscriptions" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" />
         </addColumn>
     </changeSet>
+
+    <changeSet id="#INTRD-12544_20230102" author="bourras">
+        <addColumn tableName="cat_offer_template">
+            <column name="document_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="document_id" baseTableName="cat_offer_template"
+                                 constraintName="fk_document_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="document"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-12794-20230102-counter_instance" author="a.rouaguebe">
+    	<dropPrimaryKey tableName="billing_chrg_inst_counter" constraintName="billing_chrg_inst_counter_pkey" />
+    	<addPrimaryKey columnNames="chrg_instance_id, counter_instance_id" constraintName="billing_chrg_inst_counter_pkey" tableName="billing_chrg_inst_counter" />
+    </changeSet>
+
+    <changeSet id="#INTRD-12544_20230102" author="bourras">
+        <addColumn tableName="cat_offer_template">
+            <column name="document_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="document_id" baseTableName="cat_offer_template"
+                                 constraintName="fk_document_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="document"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-12766_2023015" author="bourras">
+        <addColumn tableName="billing_invoice">
+            <column name="converted_invoice_balance" type="numeric(23, 12)"/>
+        </addColumn>
+    </changeSet>
+
 
 </databaseChangeLog>
