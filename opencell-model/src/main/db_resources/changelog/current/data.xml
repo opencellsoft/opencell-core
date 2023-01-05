@@ -17747,6 +17747,13 @@ public class CdrFlatFileImportScript extends Script {
             <where>version is null</where>
         </update>
 	</changeSet>
-	
+
+    <changeSet id="#INTRD-12727_20230105" author="zelmeliani">
+        <update tableName="meveo_job_instance" >
+    		<column name="code" value="TriggerCollectionPlanLevelsJob"/>
+    		<column name="uuid" value="TriggerCollectionPlanLevelsJob"/>
+    	    <where>code='TriggerCollectionPlanLevelsJob_Job'</where>
+        </update>
+    </changeSet>
 
 </databaseChangeLog>
