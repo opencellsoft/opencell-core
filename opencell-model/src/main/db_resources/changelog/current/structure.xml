@@ -15447,6 +15447,16 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" />
         </addColumn>
     </changeSet>
+
+    <changeSet id="#INTRD-12544_20230102" author="bourras">
+        <addColumn tableName="cat_offer_template">
+            <column name="document_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="document_id" baseTableName="cat_offer_template"
+                                 constraintName="fk_document_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="document"/>
+    </changeSet>
     
     <changeSet id="#INTRD-12794-20230102-counter_instance" author="a.rouaguebe">
     	<dropPrimaryKey tableName="billing_chrg_inst_counter" constraintName="billing_chrg_inst_counter_pkey" />
