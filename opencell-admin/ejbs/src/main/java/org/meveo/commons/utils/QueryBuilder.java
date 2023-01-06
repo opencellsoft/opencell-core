@@ -256,10 +256,14 @@ public class QueryBuilder {
     }
     
     
-	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, JoinType joinType) {
-		this(getInitQuery(clazz, alias, fetchFields), alias);
+	public QueryBuilder(Class<?> clazz, String alias, boolean doFetch, List<String> fetchFields, JoinType joinType) {
+		this(getInitQuery(clazz, alias, doFetch, fetchFields), alias);
     	this.clazz = clazz;
 		this.joinType = joinType != null ? joinType : JoinType.INNER;
+	}
+	
+	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, JoinType joinType) {
+		this(clazz, alias, true, fetchFields, joinType);
 	}
 
 	/**
@@ -272,7 +276,20 @@ public class QueryBuilder {
 	 * @param filterOperator Operator to build where statement
 	 */
 	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, JoinType joinType, FilterOperatorEnum filterOperator) {
-		this(clazz, alias, fetchFields, joinType);
+		this(clazz, alias, true, fetchFields, joinType, filterOperator);
+	}
+
+	/**
+	 * Contructor 
+	 * 
+	 * @param clazz Class for which query is created.
+     * @param alias Alias of a main table.
+     * @param fetchFields Additional (list/map type) fields to fetch
+	 * @param joinType
+	 * @param filterOperator Operator to build where statement
+	 */
+	public QueryBuilder(Class<?> clazz, String alias, boolean doFetch, List<String> fetchFields, JoinType joinType, FilterOperatorEnum filterOperator) {
+		this(clazz, alias, doFetch, fetchFields, joinType);
     	this.filterOperator = filterOperator;
 	}
 
@@ -284,7 +301,7 @@ public class QueryBuilder {
      * @param fetchFields Additional (list/map type) fields to fetch
      */
     public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields) {
-        this(getInitQuery(clazz, alias, fetchFields), alias);
+        this(getInitQuery(clazz, alias, true, fetchFields), alias);
         this.clazz = clazz;
     }
 
@@ -339,12 +356,12 @@ public class QueryBuilder {
      * @param fetchFields list of field need to be fetched.
      * @return SQL query.
      */
-    private static String getInitQuery(Class<?> clazz, String alias, List<String> fetchFields) {
+    private static String getInitQuery(Class<?> clazz, String alias, boolean doFetch, List<String> fetchFields) {
         StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
         if (fetchFields != null && !fetchFields.isEmpty()) {
             for (String fetchField : fetchFields) {
 				String joinAlias = fetchField.contains(JOIN_AS) ? "" : JOIN_AS + getJoinAlias(alias, fetchField, false);
-				query.append(" left join fetch " + alias + "." + fetchField + joinAlias);
+				query.append(" left join " + (doFetch ? "fetch " : "") + alias + "." + fetchField + joinAlias);
             }
         }
 
@@ -1664,6 +1681,10 @@ public class QueryBuilder {
     public String getSqlString() {
         return toStringQuery();
     }
+    
+    public String getSqlString(boolean doFetch) {
+        return toStringQuery(doFetch);
+    }
 
     private String toStringQuery() {
         return q.toString().replace(INNER_JOINS, formatInnerJoins());
@@ -1740,18 +1761,22 @@ public class QueryBuilder {
      * @param key the searched key
      * @return the filter value for the provided key.
      */
-    public static String getFilterByKey(Map<String, String> filters, String key) {
+    public static String getFilterByKey(Map<String, Object> filters, String key) {
 
         String value = null;
         if (filters != null && !filters.isEmpty() && !StringUtils.isBlank(key)) {
-            Map<String, String> upperCasefilters = filters.entrySet().stream().collect(
+            Map<String, Object> upperCasefilters = filters.entrySet().stream().collect(
                     Collectors.toMap(
                             entry -> entry.getKey().toUpperCase(),
                             entry -> entry.getValue()
                     )
             );
-            value = (upperCasefilters.get(key.toUpperCase()));
+            value = (String)(upperCasefilters.get(key.toUpperCase()));
         }
         return value;
     }
+    
+    public Map<String, JoinWrapper> getInnerJoins() {
+		return Collections.unmodifiableMap(this.innerJoins);
+	}
 }

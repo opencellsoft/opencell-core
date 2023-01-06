@@ -11179,6 +11179,7 @@
             <column name="generated_query" type="${type.text}" />
             <column name="sort_by" type="varchar(255)" />
             <column name="sort_order" type="varchar(15)" />
+            <column name="query_parameters" type="${type.json}" />
         </createTable>
 
         <createTable tableName="report_query_fields">
@@ -19267,6 +19268,7 @@
 	<changeSet id="#INTRD-12668-20230102" author="AmineBENAICHA" />
 	<changeSet id="#INTRD-10544_20221207" author="HatimOUDAD" />
     <changeSet id="#INTRD-12544_20230102" author="bourras"/>
+    <changeSet id="#INTRD-12720-20221230-query_report" author="a.rouaguebe" />
 
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
