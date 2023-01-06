@@ -273,7 +273,7 @@ public class InvoicingJobBean extends BaseJobBean {
         return jobExecutionResult;
     }
 
-    private QueryBuilder fromFilters(Map<String, String> filters) {
+    private QueryBuilder fromFilters(Map<String, Object> filters) {
         QueryBuilder queryBuilder;
         String filterValue = QueryBuilder.getFilterByKey(filters, "SQL");
         if (!StringUtils.isBlank(filterValue)) {
