@@ -33,7 +33,7 @@ public class AgedReceivableMapperTest {
         mapper.setAppProvider(provider);
     }
 
-    //@Test
+    @Test
     public void shouldReturnDynamicResponse() {
         int responseDtoSize = 1;
         List<Object[]> input = new ArrayList<>();

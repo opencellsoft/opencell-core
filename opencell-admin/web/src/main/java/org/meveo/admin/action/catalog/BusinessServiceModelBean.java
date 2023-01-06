@@ -48,6 +48,7 @@ public class BusinessServiceModelBean extends GenericModuleBean<BusinessServiceM
 
     public BusinessServiceModelBean() {
         super(BusinessServiceModel.class);
+        showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
     }
 
     @Override

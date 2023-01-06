@@ -54,6 +54,7 @@ public class OccTemplateBean extends BaseBean<OCCTemplate> {
 	 */
 	public OccTemplateBean() {
 		super(OCCTemplate.class);
+		showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
 	}
 
 	/**

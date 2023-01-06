@@ -165,7 +165,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
      */
     public ServiceTemplateBean() {
         super(ServiceTemplate.class);
-
+        showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
     }
 
 

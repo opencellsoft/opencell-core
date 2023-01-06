@@ -50,6 +50,7 @@ import org.meveo.model.ModuleItem;
 @Inheritance(strategy = InheritanceType.JOINED)
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "dwh_chart_seq"), })
+@Deprecated
 public class Chart extends EnableBusinessEntity {
 
     private static final long serialVersionUID = 7127515648757614672L;

@@ -17,53 +17,5 @@ public interface AgedReceivablesDto extends Resource {
 	@Schema(description = "Indicate the customer account code")
 	@Nullable
 	GenericPagingAndFiltering getSearchConfig();
-
-	@Schema(description = "Indicate the customer account code")
-	@Nullable
-	String getCustomerAccountCode();
-
-	@Schema(description = "Indicate the customer account description")
-	@Nullable
-	String getCustomerAccountDescription();
-
-	@Schema(description = "Indicate the seller description")
-	@Nullable
-	String getSellerDescription();
-
-	@Schema(description = "Indicate the seller code")
-	@Nullable
-	String getSellerCode();
-
-	@Schema(description = "Indicate the invoice number")
-	@Nullable
-	String getInvoiceNumber();
-
-	@Schema(description = "Indicate the step in days")
-	@Nullable
-	Integer getStepInDays();
-
-	@Schema(description = "Indicate the number of periods")
-	@Nullable
-	Integer getNumberOfPeriods();
-
-	@Schema(description = "Indicate the trading currency")
-	@Nullable
-	String getTradingCurrency();
-
-	@Schema(description = "Indicate the functional currency")
-	@Nullable
-	String getFunctionalCurrency();
-
-	@Schema(description = "Indicate the start date")
-	@Nullable
-	Date getStartDate();
-
-	@Schema(description = "Indicate the start due date")
-	@Nullable
-	Date getStartDueDate();
-
-	@Schema(description = "Indicate the end due date")
-	@Nullable
-	Date getEndDueDate();
 }
 
