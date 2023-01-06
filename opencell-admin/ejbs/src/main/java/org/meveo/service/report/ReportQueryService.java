@@ -1,6 +1,7 @@
 package org.meveo.service.report;
 
 import static java.lang.Double.valueOf;
+import static java.lang.Enum.valueOf;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.Collections.reverse;
@@ -30,6 +31,7 @@ import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Format;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
@@ -562,6 +564,21 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
     	if(Number.class.isAssignableFrom(pClazz)) {
     		return toNumber(pClazz, (String) value);
     	}
+    	
+    	if (pClazz.isEnum()) {
+            return valueOf((Class<Enum>) pClazz, ((String)value).toUpperCase());
+        }
+    	
+    	if(pClazz.isAssignableFrom(Date.class)) {
+            try {
+				return new SimpleDateFormat("yyyy-MM-dd").parse((String) value);
+			} catch (ParseException e) {
+				log.error(e.getMessage());
+			}
+        }
+        if (Boolean.class.isAssignableFrom(pClazz) || boolean.class.isAssignableFrom(pClazz)) {
+            return Boolean.valueOf((String) value);
+        }
     	
     	return value;
     }
