@@ -184,8 +184,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     private AccountingArticleService accountingArticleService;
 
     @Inject
-    private WalletOperationService walletOperationService;
-    @Inject
     private MethodCallingUtils methodCallingUtils;
     @Inject
     private RecurringRatingService recurringRatingService;
@@ -361,12 +359,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
         RatingResult ratedEDRResult = new RatingResult();
         ratedEDRResult.addWalletOperation(walletOperation);
-        
-        if(!isVirtual) {
-        	walletOperationService.create(walletOperation);
-        }else {
-        	walletOperation.setUuid(UUID.randomUUID().toString());
-        }
+
     	applyDiscount(ratedEDRResult, walletOperation, isVirtual);
         
         return ratedEDRResult;
@@ -638,7 +631,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                         .or(() -> contracts.stream().filter(c -> c.getCustomerAccount() != null).findFirst()) // CA Contract
                         .or(() -> contracts.stream().filter(c -> c.getCustomer() != null).findFirst()) // Customer Contract
                         .orElse(contracts.get(0)); // Seller Contract
-                    
+
                     // To save the first contract containing Rules by priority (BA->CA->Customer->seller) on WalletOperation.rulesContract
                     contractWithRules = contracts.stream().filter(c -> c.getBillingAccount() != null && c.getBillingRules()!=null && !c.getBillingRules().isEmpty()).findFirst() // BA Contract
                             .or(() -> contracts.stream().filter(c -> c.getCustomerAccount() != null && c.getBillingRules()!=null && !c.getBillingRules().isEmpty()).findFirst()) // CA Contract
@@ -651,7 +644,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 ContractItem contractItem = null;
                 if (contract != null && serviceInstance != null) {
                     OfferTemplate offerTemplate = serviceInstance.getSubscription().getOffer();
-                    
+
                     Contract contractMatched = contractItemService.getApplicableContract(contracts, offerTemplate, serviceInstance.getCode(), chargeTemplate);
                     if (contractMatched != null) {
                         contract = contractMatched;
@@ -766,7 +759,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     }
                 }
             }
-            
+
             if (pricePlan != null && pricePlan.getScriptInstance() != null) {
                 log.debug("start to execute script instance for ratePrice {}", pricePlan);
                 executeRatingScript(bareWalletOperation, pricePlan.getScriptInstance(), false);
@@ -1498,7 +1491,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     		DiscountPlan discountPlan =null;
     		Date operationDate=walletOperation.getOperationDate()!=null?walletOperation.getOperationDate():new Date();
     		for(DiscountPlanInstance discountPlanInstance: discountPlanInstances) {
-    			
+
     			if (!discountPlanInstance.isEffective(operationDate) || discountPlanInstance.getStatus().equals(DiscountPlanInstanceStatusEnum.EXPIRED)) {
                     continue;
                 }
