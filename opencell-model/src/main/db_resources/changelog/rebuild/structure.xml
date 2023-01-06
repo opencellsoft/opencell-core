@@ -17637,6 +17637,7 @@
             </column>
             <column name="amount" type="numeric(23, 12)" />
             <column name="type" type="varchar(50)" />
+            <column name="converted_amount" type="numeric(23, 12)"/>
     	</createTable>
     	
         <addPrimaryKey columnNames="id, linked_invoice_id" constraintName="billing_linked_invoices_pkey" tableName="billing_linked_invoices" />
