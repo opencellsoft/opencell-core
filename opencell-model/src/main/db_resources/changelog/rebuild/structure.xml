@@ -19395,7 +19395,7 @@
     <changeSet id="#INTRD-12544_20230102" author="bourras"/>
 	<changeSet id="#INTRD-12405_20221226" author="HichamHANINE" />
     <changeSet id="#INTRD-12544_20230102" author="bourras"/>
-    <changeSet id="#INTRD-12720-20221230-query_report-rework" author="a.rouaguebe" />
+    <changeSet id="#INTRD-12720-20221230-query_report" author="a.rouaguebe" />
 
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
