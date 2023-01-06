@@ -178,7 +178,8 @@
 		<p:menuitem id="dataCollectors" value="#{messages['menu.dataCollector']}" outcome="dataCollectors" />
 	</p:submenu>
 
-	<p:submenu id="customEntities" label="#{messages['menu.customEntities']}" rendered="#{currentUser.hasRoles(customEntityTemplateBean.getAllPermissions())}">
+	<p:submenu id="customEntities" label="#{messages['menu.customEntities']}" rendered="#{currentUser.hasRoles(customEntityTemplateBean.getAllPermissions()) and
+		customEntityTemplateBean.listSortedByName() != null and !customEntityTemplateBean.listSortedByName().isEmpty()}">
 		<c:set var="cetIndex" value="0" />
 		<c:forEach items="#{customEntityTemplateBean.listSortedByName()}" var="cet">
 			<p:menuitem id="cet_#{cetIndex}" outcome="#{cet.storeAsTable?'customTables':'customEntities'}" value="#{cet.name}" rendered="#{currentUser.hasRoles(cet.readPermission,cet.modifyPermission,'ReadAllCE','ModifyAllCE')}">
