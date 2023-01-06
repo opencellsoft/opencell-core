@@ -41,7 +41,7 @@ public class CompareOfferLinesAmountScript extends Script{
         
         Long invoiceId = ((Invoice) methodContext.get(INVOICE)).getId();
         String finalQuery = query.replaceAll("AMOUNT",  "amount" + StringUtils.camelcase((String)methodContext.get(WITH_OR_WITHOUT_TAX)))
-                                 .replace("OPERATOR", ScriptUtils.buildOperator(String.valueOf(methodContext.get(OPERATOR))));
+                                 .replace("OPERATOR", ScriptUtils.buildOperator(String.valueOf(methodContext.get(OPERATOR)), true));
         
         List<OfferTemplate> offers = (List<OfferTemplate>) methodContext.get(OFFERS);
         
