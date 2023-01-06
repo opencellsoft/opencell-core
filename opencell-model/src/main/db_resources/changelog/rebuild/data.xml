@@ -12912,9 +12912,9 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareInvoiceAmount')" />
 			<column name="description_i18n" value='{"FR":"Montant à tester","EN":"Amount to test"}'/>
 			<column name="class_name" value="java.lang.String" />
-			<column name="default_value" value="withoutTax" />
+			<column name="default_value" value="without tax" />
 			<column name="mandatory" valueNumeric="1" />
-			<column name="allowed_values" value="withoutTax|withTax" />
+			<column name="allowed_values" value="without tax|with tax" />
 			<column name="values_separator" value="\|" />
 			<column name="collection" valueNumeric="0" />
 		</insert>
@@ -12928,7 +12928,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="class_name" value="java.lang.String" />
 			<column name="default_value" value=">" />
 			<column name="mandatory" valueNumeric="1" />
-			<column name="allowed_values" value="&lt;|&lt;=|=|!=|&gt;|&gt;=" />
+			<column name="allowed_values" value="&lt;|≤|=|≠|&gt;|≥" />
 			<column name="values_separator" value="\|" />
 			<column name="collection" valueNumeric="0" />
 		</insert>
@@ -12992,9 +12992,9 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="code" value="withOrWithoutTax" />
 			<column name="description_i18n" value='{"FR":"Montant à tester","EN":"Amount to test"}'/>
 			<column name="class_name" value="java.lang.String" />
-			<column name="default_value" value="withoutTax" />
+			<column name="default_value" value="without tax" />
 			<column name="mandatory" valueNumeric="1" />
-			<column name="allowed_values" value="withoutTax|withTax" />
+			<column name="allowed_values" value="without tax|with tax" />
 			<column name="values_separator" value="\|" />
 			<column name="collection" valueNumeric="0" />
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferAmountScript')" />
@@ -13008,7 +13008,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="class_name" value="java.lang.String" />
 			<column name="default_value" value=">" />
 			<column name="mandatory" valueNumeric="1" />
-			<column name="allowed_values" value="&lt;|&lt;=|=|!=|&gt;|&gt;=" />
+			<column name="allowed_values" value="&lt;|≤|=|≠|&gt;|≥" />
 			<column name="values_separator" value="\|" />
 			<column name="collection" valueNumeric="0" />
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferAmountScript')" />

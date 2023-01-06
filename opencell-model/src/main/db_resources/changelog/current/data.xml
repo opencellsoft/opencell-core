@@ -17772,5 +17772,17 @@ public class CdrFlatFileImportScript extends Script {
             <where>code='TriggerCollectionPlanLevelsJob_Job'</where>
         </update>
     </changeSet>
+    
+    <changeSet id="#INTRD-12965_20230105" author="aeljaouhari">
+		<update tableName="meveo_script_parameter">
+			<column name="default_value" value="without tax"/>
+			<column name="allowed_values" value="without tax|with tax" />
+			<where>code = 'withOrWithoutTax'</where>
+		</update>
+		<update tableName="meveo_script_parameter">
+			<column name="allowed_values" value="&lt;|≤|=|≠|&gt;|≥" />
+			<where>code = 'operator'</where>
+		</update>
+	</changeSet>
 
 </databaseChangeLog>
