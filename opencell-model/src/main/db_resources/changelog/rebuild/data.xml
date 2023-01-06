@@ -383,24 +383,6 @@
         </insert>
     </changeSet>
     
-    <changeSet id="#5116_10122020" author="AbdelmounaimAkadid">
-     	<insert tableName="meveo_job_instance">
-            <column name="id" valueNumeric="-30" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="updated" valueDate="${db.current.time}" />
-            <column name="code" value="APIv2PermissionsSyncJob" />
-            <column name="description" value="APIv2PermissionsSyncJob" />
-            <column name="job_category" value="UTILS" />
-            <column name="job_template" value="APIv2PermissionsSyncJob" />
-            <column name="parametres" valueNumeric="null" />
-            <column name="creator" value="opencell.admin" />
-            <column name="updater" value="opencell.admin" />
-            <column name="timerentity_id" value="null" />
-            <column name="uuid" value="APIv2PermissionsSyncJob" />
-       	</insert>
-	</changeSet>
     
     <changeSet author="AndriusKarpavicius" id="rebuild-data-currencies">
         <insert tableName="adm_currency">
@@ -9020,11 +9002,10 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="created" valueDate="2021-12-01 00:04:19.913" />
 			<column name="job_category" value="DUNNING" />
 			<column name="job_template" value="TriggerCollectionPlanLevelsJob" />
-			<column name="code" value="TriggerCollectionPlanLevelsJob_Job" />
-
+			<column name="code" value="TriggerCollectionPlanLevelsJob" />
 			<column name="creator" value="OPENCELL.ADMIN" />
 			<column name="timerentity_id" valueNumeric="-1" />
-			<column name="uuid" value="TriggerCollectionPlanLevelsJob_Job" />
+			<column name="uuid" value="TriggerCollectionPlanLevelsJob" />
 		</insert>
 	</changeSet>
 
@@ -9050,8 +9031,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0"/>
 			<column name="created" valueDate="${db.current.time}"/>
 			<column name="code" value="INVOICE_VALIDATION"/>
-			<column name="description" value="Invoice validation"/>
-			<column name="description_i18n" value='{"FR":"Validation de facture","EN":"Invoice validation"}'/>
+			<column name="description" value="Invoice validation rule"/>
+			<column name="description_i18n" value='{"FR":"Règle de validation de facture","EN":"Invoice validation rule"}'/>
 		</insert>
 		<insert tableName="meveo_script_instance_cat">
 			<column name="id" valueNumeric="-4"/>
@@ -15916,6 +15897,21 @@ public class CdrFlatFileImportScript extends Script {
 			<where>code='org.meveo.service.script.CdrFlatFileImportScript'</where>
 		</update>
 	</changeSet>
+
+	<changeSet id="#INTRD-12727_20230105" author="zelmeliani" />
+	
+	<changeSet id="#INTRD-12891_20230105" author="aeljaouhari">
+		<insert tableName="meveo_script_instance_cat">
+			<column name="id" valueNumeric="-6" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="GLOBAL_INVOICE_VALIDATION" />
+			<column name="description" value="Global invoice validation" />
+			<column name="description_i18n" value='{"FR":"Validation de facture globale","EN":"Global invoice validation"}' />
+		</insert>
+	</changeSet>
+	
+	<changeSet id="#INTRD-12903_20230105" author="TarikFA." />
 	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
