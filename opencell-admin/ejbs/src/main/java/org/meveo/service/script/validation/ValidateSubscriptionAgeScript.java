@@ -32,7 +32,7 @@ public class ValidateSubscriptionAgeScript extends Script {
 
 		long counter = invoiceLineService.getCountBySubscriptionAge(invoice.getId(),
 				buildReferenceDateExpression(String.valueOf(context.get("referenceDate"))),
-				ScriptUtils.buildOperator(String.valueOf(context.get("operator"))),
+				ScriptUtils.buildOperator(String.valueOf(context.get("operator")), true),
 				buildLimitDate(invoice, (Integer) context.get("age")));
 
 		context.put(Script.INVOICE_VALIDATION_STATUS, counter > 0 ? InvoiceValidationStatusEnum.VALID : (InvoiceValidationStatusEnum) context.get(Script.RESULT_VALUE));
