@@ -15621,6 +15621,9 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <addColumn tableName="billing_invoice">
             <column name="converted_invoice_balance" type="numeric(23, 12)"/>
         </addColumn>
+        <addColumn tableName="billing_linked_invoices">
+            <column name="converted_amount" type="numeric(23, 12)"/>
+        </addColumn>
     </changeSet>
 
 </databaseChangeLog>
