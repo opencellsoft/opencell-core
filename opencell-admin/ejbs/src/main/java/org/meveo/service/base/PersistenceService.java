@@ -532,9 +532,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             entityCreatedEventProducer.fire((BaseEntity) entity);
         }
 
-        if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(WorkflowedEntity.class)) {
-            entityInstantiateWFEventProducer.fire((BaseEntity) entity);
-        }
+//        if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(WorkflowedEntity.class)) {
+//            entityInstantiateWFEventProducer.fire((BaseEntity) entity);
+//        }
 
         if (accumulateCF && entity instanceof ICustomFieldEntity) {
             cfValueAccumulator.entityCreated((ICustomFieldEntity) entity);

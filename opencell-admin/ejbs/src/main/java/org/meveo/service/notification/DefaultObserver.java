@@ -141,12 +141,12 @@ public class DefaultObserver {
     }
 
     public void entityInstantiateWF(@Observes @InstantiateWF BusinessEntity e) throws BusinessException {
-        log.debug("Defaut observer: Entity {} with id {} instantiateWF", e.getClass().getName(), e.getId());
-
-        List<GenericWorkflow> genericWorkflows = genericWorkflowService.findByBusinessEntity(e);
-        for (GenericWorkflow genericWorkflow : genericWorkflows) {
-            workflowInstanceService.create(e, genericWorkflow);
-        }
+//        log.debug("Defaut observer: Entity {} with id {} instantiateWF", e.getClass().getName(), e.getId());
+//
+//        List<GenericWorkflow> genericWorkflows = genericWorkflowService.findByBusinessEntity(e);
+//        for (GenericWorkflow genericWorkflow : genericWorkflows) {
+//            workflowInstanceService.create(e, genericWorkflow);
+//        }
     }
 
     public void customEntityChange(@Observes CustomTableEvent e) throws BusinessException {
