@@ -106,7 +106,7 @@ public class SepaRejectedTransactionsJobBean {
                 log.debug("saveDir {} creation ok", archiveDir);
             }
             fileName = file.getName();
-            log.info(file.getName() + " in progress");
+            log.debug(file.getName() + " in progress");
             currentFile = FileUtils.addExtension(file, ".processing_" + EjbUtils.getCurrentClusterNode());
             OperationCategoryEnum operationCategory = OperationCategoryEnum.CREDIT;
             operationCategory = OperationCategoryEnum.valueOf(((String) jobInstance.getCfValue("RejectSepaJob_creditOrDebit")).toUpperCase());
@@ -120,7 +120,7 @@ public class SepaRejectedTransactionsJobBean {
             ddRequestLotService.processRejectFile(ddRejectFileInfos);
 
             FileUtils.moveFile(archiveDir, currentFile, fileName);
-            log.info("Processing " + file.getName() + " done");
+            log.debug("Processing " + file.getName() + " done");
             result.registerSucces();
             result.setNbItemsCorrectlyProcessed(ddRejectFileInfos.getNbItemsOk());
             result.setNbItemsProcessedWithError(ddRejectFileInfos.getNbItemsKo());

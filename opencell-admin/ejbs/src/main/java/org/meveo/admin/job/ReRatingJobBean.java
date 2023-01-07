@@ -60,7 +60,7 @@ public class ReRatingJobBean extends BaseJobBean implements Serializable {
         try {
             List<Long> walletOperationIds = walletOperationService.listToRerate();
 
-            log.info("rerate with useSamePricePlan={} ,#operations={}", useSamePricePlan, walletOperationIds.size());
+            log.debug("rerate with useSamePricePlan={} ,#operations={}", useSamePricePlan, walletOperationIds.size());
             result.setNbItemsToProcess(walletOperationIds.size());
             int i = 0;
             for (Long walletOperationId : walletOperationIds) {

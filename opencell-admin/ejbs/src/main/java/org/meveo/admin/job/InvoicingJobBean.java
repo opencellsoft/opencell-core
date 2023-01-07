@@ -71,7 +71,7 @@ public class InvoicingJobBean extends BaseJobBean {
         try {
             List<BillingRun> billingRuns = getBillingRuns(this.getParamOrCFValue(jobInstance, "billingRuns"));
 
-            log.info("BillingRuns to process={}", billingRuns.size());
+            log.debug("BillingRuns to process={}", billingRuns.size());
             result.setNbItemsToProcess(billingRuns.size());
 
             for (BillingRun billingRun : billingRuns) {

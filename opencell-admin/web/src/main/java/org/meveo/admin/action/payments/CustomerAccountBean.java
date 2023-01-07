@@ -312,7 +312,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
      * @return Edit view
      */
     public String closeCustomerAccount() {
-        log.info("closeAccount customerAccountId:" + entity.getId());
+        log.debug("closeAccount customerAccountId:" + entity.getId());
         try {
             entity = customerAccountService.refreshOrRetrieve(entity);
             customerAccountService.closeCustomerAccount(entity);

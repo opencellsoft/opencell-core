@@ -101,7 +101,7 @@ public class BillingRunJobBean extends BaseJobBean {
             ParamBean param = paramBeanFactory.getInstance();
             String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");
             boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
-            log.info("launchInvoicing allowManyInvoicing={}", isAllowed);
+            log.debug("launchInvoicing allowManyInvoicing={}", isAllowed);
             for (String billingCycleCode : billingCyclesCode) {
                 List<BillingRun> billruns = billingRunService.getBillingRuns(billingCycleCode, POSTVALIDATED, NEW, PREVALIDATED, PREINVOICED);
                 boolean alreadyLaunched = billruns != null && billruns.size() > 0;

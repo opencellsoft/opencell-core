@@ -111,7 +111,7 @@ public class RecurringRatingJobBean extends BaseJobBean implements Serializable 
             List<Long> ids = recurringChargeInstanceService.findRecurringChargeInstancesToRate(InstanceStatusEnum.ACTIVE, rateUntilDate, billingCycles);
             int inputSize = ids.size();
             result.setNbItemsToProcess(inputSize);
-            log.info("RecurringRatingJob - charges to rate={}", inputSize);
+            log.debug("RecurringRatingJob - charges to rate={}", inputSize);
 
             List<Future<String>> futures = new ArrayList<Future<String>>();
             SubListCreator subListCreator = new SubListCreator(ids, nbRuns.intValue());

@@ -105,7 +105,7 @@ public class ImportSubscriptionsJobBean {
         String importDir = paramBeanFactory.getChrootDir() + File.separator + "imports" + File.separator + "subscriptions" + File.separator;
 
         String dirIN = importDir + "input";
-        log.info("dirIN=" + dirIN);
+        log.debug("dirIN=" + dirIN);
         String dirOK = importDir + "output";
         String dirKO = importDir + "reject";
         String prefix = paramBean.getProperty("connectorCRM.importSubscriptions.prefix", "SUB_");
@@ -118,7 +118,7 @@ public class ImportSubscriptionsJobBean {
 
         List<File> files = getFilesToProcess(dir, prefix, ext);
         int numberOfFiles = files.size();
-        log.info("InputFiles job to import={}", numberOfFiles);
+        log.debug("InputFiles job to import={}", numberOfFiles);
 
         for (File file : files) {
             if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
@@ -126,15 +126,15 @@ public class ImportSubscriptionsJobBean {
             }
             File currentFile = null;
             try {
-                log.info("InputFiles job {} in progress...", file.getName());
+                log.debug("InputFiles job {} in progress...", file.getName());
                 currentFile = FileUtils.addExtension(file, ".processing");
 
                 importFile(currentFile, file.getName(), result.getJobInstance().getId());
                 FileUtils.moveFile(dirOK, currentFile, file.getName());
-                log.info("InputFiles job {} done.", file.getName());
+                log.debug("InputFiles job {} done.", file.getName());
             } catch (Exception e) {
                 log.error("failed to import subscriptions", e);
-                log.info("InputFiles job {} failed.", file.getName());
+                log.debug("InputFiles job {} failed.", file.getName());
                 FileUtils.moveFile(dirKO, currentFile, file.getName());
                 log.error("Failed to import subscriptions job", e);
             } finally {
@@ -157,7 +157,7 @@ public class ImportSubscriptionsJobBean {
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     private void importFile(File file, String fileName, Long jobInstanceId) throws JAXBException, Exception {
-        log.info("start import file :" + fileName);
+        log.debug("start import file :" + fileName);
 
         subscriptionsError = new Subscriptions();
         subscriptionsWarning = new Subscriptions();
@@ -199,31 +199,31 @@ public class ImportSubscriptionsJobBean {
 
                 if (checkSubscription == null) {
                     nbSubscriptionsError++;
-                    log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:" + jaxbSubscription.getCode() + ", status:Error");
+                    log.debug("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:" + jaxbSubscription.getCode() + ", status:Error");
                     continue;
                 }
 
                 nbSubscriptionsCreated += subscriptionImportService.importSubscription(checkSubscription, jaxbSubscription, fileName, i);
             } catch (ImportIgnoredException ie) {
-                log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:" + jaxbSubscription.getCode() + ", status:Ignored");
+                log.debug("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:" + jaxbSubscription.getCode() + ", status:Ignored");
                 nbSubscriptionsIgnored++;
             } catch (SubscriptionServiceException se) {
                 createServiceInstanceError(se.getSubscrip(), se.getServiceInst(), se.getMess());
                 nbSubscriptionsError++;
-                log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:" + jaxbSubscription.getCode() + ", status:Error");
+                log.debug("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:" + jaxbSubscription.getCode() + ", status:Error");
             } catch (Exception e) {
 
                 // createSubscriptionError(subscrip,
                 // ExceptionUtils.getRootCause(e).getMessage());
                 createSubscriptionError(jaxbSubscription, e.getMessage());
                 nbSubscriptionsError++;
-                log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:" + jaxbSubscription.getCode() + ", status:Error");
+                log.debug("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:" + jaxbSubscription.getCode() + ", status:Error");
             }
         }
 
         generateReport(fileName);
         createHistory();
-        log.info("end import file ");
+        log.debug("end import file ");
     }
 
     /**

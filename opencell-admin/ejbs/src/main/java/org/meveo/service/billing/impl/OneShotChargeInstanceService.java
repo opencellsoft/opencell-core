@@ -359,7 +359,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
             return;
         }
 
-        log.info("Prepaid matching - setting to TREATED {} wallet operations on wallet {} and creating matching and compensating charges and wallet operations", wos.size(), wallet.getId());
+        log.debug("Prepaid matching - setting to TREATED {} wallet operations on wallet {} and creating matching and compensating charges and wallet operations", wos.size(), wallet.getId());
 
         BigDecimal balanceNoTax = BigDecimal.ZERO;
         BigDecimal balanceWithTax = BigDecimal.ZERO;

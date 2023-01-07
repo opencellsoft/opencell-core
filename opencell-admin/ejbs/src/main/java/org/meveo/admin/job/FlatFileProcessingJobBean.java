@@ -188,7 +188,7 @@ public class FlatFileProcessingJobBean {
                 errors.add(errorDescription);
             }
 
-            log.info("Finished processing FlatFile {}", fileName);
+            log.debug("Finished processing FlatFile {}", fileName);
 
         } catch (Exception e) {
             log.error("Failed to process FlatFile file {}", fileName, e);

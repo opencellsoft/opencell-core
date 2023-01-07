@@ -91,11 +91,11 @@ public class EmailService extends PersistenceService<Email> {
 
 	public void sendEmail(String from, List<String> to, List<String> cc, String subject, String body, List<File> files)
 			throws BusinessException {
-		log.info("start sendEmail details: from:{},to:{},cc:{},subject:{},body:{},files:{}", from, to, cc, subject,
+		log.debug("start sendEmail details: from:{},to:{},cc:{},subject:{},body:{},files:{}", from, to, cc, subject,
 				body, files);
 		MimeMessage message = new MimeMessage(mailSession);
 		if (to == null || to.size() == 0) {
-			log.info("null to emails");
+			log.debug("null to emails");
 			return;
 		}
 		InternetAddress[] toAddress = new InternetAddress[to.size()];
@@ -144,7 +144,7 @@ public class EmailService extends PersistenceService<Email> {
 			e.printStackTrace();
 			throw new BusinessException("Error: " + e.getMessage() + " when send email to " + to);
 		}
-		log.info("successfully sendEmail!");
+		log.debug("successfully sendEmail!");
 	}
 
 	@SuppressWarnings("unchecked")

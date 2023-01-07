@@ -68,7 +68,7 @@ public class TradingCountryBean extends BaseBean<TradingCountry> {
 	public void onCountrySelect(SelectEvent event) {
 		if (event.getObject() instanceof Country) {
 			Country country = (Country) event.getObject();
-			log.info("populatCountries country",
+			log.debug("populatCountries country",
 					country != null ? country.getCountryCode() : null);
 			if (country != null) {
 				entity.setCountry(country);

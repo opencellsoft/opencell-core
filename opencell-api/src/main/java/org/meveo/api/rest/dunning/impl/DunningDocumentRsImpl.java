@@ -43,7 +43,7 @@ public class DunningDocumentRsImpl extends BaseRs implements DunningDocumentRs {
 
     public ActionStatus create(DunningDocumentDto dunningDocumentDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-        log.info("createDunningDocument request={}", dunningDocumentDto);
+        log.debug("createDunningDocument request={}", dunningDocumentDto);
         try {
             DunningDocument dunningDocument = dunningDocumentApi.create(dunningDocumentDto);
             result.setEntityCode(dunningDocument.getCode());
@@ -55,7 +55,7 @@ public class DunningDocumentRsImpl extends BaseRs implements DunningDocumentRs {
     }
 
     public DunningDocumentsListResponseDto listPost(PagingAndFiltering pagingAndFiltering) {
-        log.info("listPostDunningDocument request={}", pagingAndFiltering);
+        log.debug("listPostDunningDocument request={}", pagingAndFiltering);
         try {
             return dunningDocumentApi.list(null, pagingAndFiltering);
         } catch (Exception e) {
@@ -67,7 +67,7 @@ public class DunningDocumentRsImpl extends BaseRs implements DunningDocumentRs {
 
     public ActionStatus addPayments(DunningDocumentDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-        log.info("updateDunningDocument request={}", postData);
+        log.debug("updateDunningDocument request={}", postData);
         try {
             DunningDocument dunningDocument = dunningDocumentApi.addPayments(postData.getDunningDocumentId(), postData.getPayments());
             result.setEntityCode(dunningDocument.getCode());
@@ -79,7 +79,7 @@ public class DunningDocumentRsImpl extends BaseRs implements DunningDocumentRs {
     }
 
     public DunningDocumentResponseDto find(String dunningDocumentCode) {
-        log.info("findDunningDocument dunningDocumentCode={}", dunningDocumentCode);
+        log.debug("findDunningDocument dunningDocumentCode={}", dunningDocumentCode);
         try {
             return dunningDocumentApi.find(dunningDocumentCode);
         } catch (Exception e) {

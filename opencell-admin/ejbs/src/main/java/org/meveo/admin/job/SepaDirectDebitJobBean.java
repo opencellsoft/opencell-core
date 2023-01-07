@@ -166,12 +166,12 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 			List<DDRequestLotOp> ddrequestOps = dDRequestLotOpService.getDDRequestOps(ddRequestBuilder, seller, paymentOrRefundEnum);
 
 			if (CollectionUtils.isNotEmpty(ddrequestOps)) {
-				log.info("ddrequestOps found:" + ddrequestOps.size());
+				log.debug("ddrequestOps found:" + ddrequestOps.size());
 				result.setNbItemsToProcess(ddrequestOps.size());
 
 			} else {
 				final String msg = "ddrequestOps IS EMPTY !";
-				log.info(msg);
+				log.debug(msg);
 				result.setNbItemsToProcess(0);
 				result.registerWarning(msg);
 				return;
@@ -187,19 +187,19 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 						this.updateOperationDateRange(ddrequestLotOp, dateRangeScript);
 					}
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.CREATE) {
-						log.info("start filterAoToPayOrRefund...");
+						log.debug("start filterAoToPayOrRefund...");
 						List<AccountOperation> listAoToPay = this.filterAoToPayOrRefund(ddRequestBuilderInterface, jobInstance, ddrequestLotOp);
-						log.info("end filterAoToPayOrRefund listAoToPay.size:" + listAoToPay.size());
+						log.debug("end filterAoToPayOrRefund listAoToPay.size:" + listAoToPay.size());
 						DDRequestLOT ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp, listAoToPay, ddRequestBuilder, result);
-						log.info("end createDDRquestLot");
+						log.debug("end createDDRquestLot");
 						if (ddRequestLOT != null && "true".equals(paramBeanFactory.getInstance().getProperty("bayad.ddrequest.split", "true"))) {
 							dDRequestLOTService.addItems(ddrequestLotOp, ddRequestLOT, listAoToPay, ddRequestBuilder, result);
-							log.info("end addItems");
+							log.debug("end addItems");
 							dDRequestLOTService.generateDDRquestLotFile(dDRequestLOTService.findById(ddRequestLOT.getId(), Arrays.asList("ddrequestItems") ), ddRequestBuilderInterface, appProvider);
-							log.info("end generateDDRquestLotFile");
+							log.debug("end generateDDRquestLotFile");
 							result.addReport(ddRequestLOT.getRejectedCause());
 							dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, nbRuns, waitingMillis, result);
-							log.info("end createPaymentsOrRefundsForDDRequestLot");
+							log.debug("end createPaymentsOrRefundsForDDRequestLot");
 							if (isEmpty(ddRequestLOT.getRejectedCause())) {
 								result.registerSucces();
 							}

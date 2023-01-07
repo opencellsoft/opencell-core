@@ -54,7 +54,7 @@ public class ReratingService implements Serializable {
      */
     public void rerate(ServiceInstance serviceInstance, Date fromDate) {
 
-        log.info("Will re-rate service instance {} from date {}", serviceInstance, DateUtils.formatAsDate(fromDate));
+        log.debug("Will re-rate service instance {} from date {}", serviceInstance, DateUtils.formatAsDate(fromDate));
 
         // Re-rate each charge instance.
         // Another alternative, in case there are more than one charge of same type is to send offer, service template and a charge type instead of charge instance as parameter

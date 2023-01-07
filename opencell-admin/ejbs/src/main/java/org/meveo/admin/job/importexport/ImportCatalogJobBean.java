@@ -206,7 +206,7 @@ public class ImportCatalogJobBean {
 
                 result.setReport(report);
             } else {
-                log.info("No file to process.");
+                log.debug("No file to process.");
             }
         } catch (Exception e) {
             log.error("Failed to import catalog job", e);

@@ -47,7 +47,7 @@ public class RemoteInstanceNotifier {
 				log.debug("invoke Failed : HTTP error code : "+ response.getStatus());
 			} else {    
 				jsonResponse=response.getEntity();
-				log.info("Response jsonResponse ={}",jsonResponse);				
+				log.debug("Response jsonResponse ={}",jsonResponse);				
 				JSONObject jsonResponseObject = (JSONObject) jsonParser.parse(jsonResponse);
 				JSONObject jsonActionStatus =  (JSONObject) jsonResponseObject.get("actionStatus");
 				String responseStatus  = (String) jsonActionStatus.get("status");

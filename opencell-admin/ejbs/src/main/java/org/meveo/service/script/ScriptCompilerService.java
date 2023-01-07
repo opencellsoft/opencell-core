@@ -91,7 +91,7 @@ public class ScriptCompilerService extends BusinessService<ScriptInstance> {
                 if (script == null) {
                     log.error("Script " + scriptInstance.getCode() + " was not found as a deployed script");
                 } else {
-                    log.info("Initializing script " + scriptInstance.getCode());
+                    log.debug("Initializing script " + scriptInstance.getCode());
                     script.init(new HashMap<String, Object>());
                 }
             } catch (Exception e) {
@@ -184,7 +184,7 @@ public class ScriptCompilerService extends BusinessService<ScriptInstance> {
                 }
             }
         }
-        log.info("compileAll classpath={}", classpath);
+        log.debug("compileAll classpath={}", classpath);
 
     }
 
@@ -458,7 +458,7 @@ public class ScriptCompilerService extends BusinessService<ScriptInstance> {
     public void clearCompiledScripts() {
 
         String currentProvider = currentUser.getProviderCode();
-        log.info("Clear CFTS cache for {}/{} ", currentProvider, currentUser);
+        log.debug("Clear CFTS cache for {}/{} ", currentProvider, currentUser);
         // cftsByAppliesTo.keySet().removeIf(key -> (key.getProvider() == null) ? currentProvider == null : key.getProvider().equals(currentProvider));
         Iterator<Entry<CacheKeyStr, CompiledScript>> iter = compiledScripts.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).entrySet().iterator();
         ArrayList<CacheKeyStr> itemsToBeRemoved = new ArrayList<>();

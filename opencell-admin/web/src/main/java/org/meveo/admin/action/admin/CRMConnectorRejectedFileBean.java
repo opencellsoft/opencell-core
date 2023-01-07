@@ -136,7 +136,7 @@ public class CRMConnectorRejectedFileBean implements Serializable {
             for (File file : files) {
                 d = new Document();
                 d.setFilename(file.getName());
-                log.info("add file #0", file.getName());
+                log.debug("add file #0", file.getName());
                 d.setSize(file.length());
                 d.setCreateDate(new Date(file.lastModified()));
                 d.setAbsolutePath(file.getAbsolutePath());
@@ -147,7 +147,7 @@ public class CRMConnectorRejectedFileBean implements Serializable {
 
     public synchronized String compress(Document document) {
 
-        log.info("start to compress: #0", document.getAbsolutePath());
+        log.debug("start to compress: #0", document.getAbsolutePath());
         String tmpPath = paramBeanFactory.getInstance().getProperty("document.tmp.path", "");
         File tmp = new File(tmpPath);
         if (!tmp.exists()) {
@@ -176,7 +176,7 @@ public class CRMConnectorRejectedFileBean implements Serializable {
         }
 
         list();
-        log.info("end compress...");
+        log.debug("end compress...");
         return null;
     }
 
@@ -189,7 +189,7 @@ public class CRMConnectorRejectedFileBean implements Serializable {
             return null;
         }
         
-        log.info("start to download...");
+        log.debug("start to download...");
         File f = new File(document.getAbsolutePath());
         HttpServletResponse res = (HttpServletResponse) facesContext.getExternalContext().getResponse();
         res.setContentType("application/force-download");
@@ -204,22 +204,22 @@ public class CRMConnectorRejectedFileBean implements Serializable {
             }
             out.flush();
             facesContext.responseComplete();
-            log.info("download over!");
+            log.debug("download over!");
         } catch (Exception e) {
             log.error("Error:#0, when dowload file: #1", e, document.getAbsolutePath());
         }
-        log.info("downloaded successfully!");
+        log.debug("downloaded successfully!");
         return null;
     }
 
     public String delete(Document document) {
-        log.info("start delete...");
+        log.debug("start delete...");
         File file = new File(document.getAbsolutePath());
         if (file.exists()) {
             file.delete();
         }
         list();
-        log.info("end delete...");
+        log.debug("end delete...");
         return null;
     }
 
@@ -266,7 +266,7 @@ public class CRMConnectorRejectedFileBean implements Serializable {
         }
 
         public boolean accept(File dir, String name) {
-            log.info("accept file path #0, name #1.", dir.getPath(), name);
+            log.debug("accept file path #0, name #1.", dir.getPath(), name);
             File file = new File(dir.getAbsoluteFile() + File.separator + name);
             boolean result = true;
             if (name == null) {

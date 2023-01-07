@@ -262,7 +262,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
      * @throws BusinessException business exception
      */
     public void unmatching(Long idMatchingCode) throws BusinessException {
-        log.info("start cancelMatching with id {}", idMatchingCode);
+        log.debug("start cancelMatching with id {}", idMatchingCode);
         PaymentScheduleInstanceItem paymentScheduleInstanceItem = null;
         if (idMatchingCode == null) {
             throw new BusinessException("Error when idMatchingCode is null!");
@@ -275,7 +275,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         List<MatchingAmount> matchingAmounts = matchingCode.getMatchingAmounts();
 
         if (matchingAmounts != null) {
-            log.info("matchingAmounts.size:" + matchingAmounts.size());
+            log.debug("matchingAmounts.size:" + matchingAmounts.size());
             for (MatchingAmount matchingAmount : matchingAmounts) {
                 AccountOperation operation = matchingAmount.getAccountOperation();
                 if (operation.getMatchingStatus() != MatchingStatusEnum.P && operation.getMatchingStatus() != MatchingStatusEnum.L) {
@@ -307,15 +307,15 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 }
                 operation.getMatchingAmounts().remove(matchingAmount);
                 accountOperationService.update(operation);
-                log.info("cancel one accountOperation!");
+                log.debug("cancel one accountOperation!");
             }
         }
-        log.info("remove matching code ....");
+        log.debug("remove matching code ....");
         remove(matchingCode);
 		if (paymentScheduleInstanceItem != null && paymentScheduleInstanceItemService.isApplyAdvPaymentCharge(paymentScheduleInstanceItem)) {
 			paymentScheduleInstanceItemService.applyOneShotRejectPS(paymentScheduleInstanceItem);
 		}
-        log.info("successfully end cancelMatching!");
+        log.debug("successfully end cancelMatching!");
     }
 
     /**
@@ -352,7 +352,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
     public MatchingReturnObject matchOperations(Long customerAccountId, String customerAccountCode, List<Long> operationIds, Long aoToMatchLast, MatchingTypeEnum matchingTypeEnum)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
 
-        log.info("matchOperations   customerAccountId:{}  customerAccountCode:{} operationIds:{} ", new Object[] { customerAccountId, customerAccountCode, operationIds });
+        log.debug("matchOperations   customerAccountId:{}  customerAccountCode:{} operationIds:{} ", new Object[] { customerAccountId, customerAccountCode, operationIds });
         CustomerAccount customerAccount = customerAccountService.findCustomerAccount(customerAccountId, customerAccountCode);
 
         BigDecimal amoutDebit = new BigDecimal(0);
@@ -401,12 +401,12 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         balance = balance.abs();
         BigDecimal matchedAmount = amoutDebit;
 
-        log.info("matchOperations  balance:" + balance);
+        log.debug("matchOperations  balance:" + balance);
 
         if (balance.compareTo(BigDecimal.ZERO) == 0) {
             matching(listOcc, matchedAmount, null, matchingTypeEnum);
             matchingReturnObject.setOk(true);
-            log.info("matchOperations successful : no partial");
+            log.debug("matchOperations successful : no partial");
 
             return matchingReturnObject;
         }
@@ -418,7 +418,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         if (aoToMatchLast != null) {
             matching(listOcc, matchedAmount, accountOperationService.findById(aoToMatchLast), matchingTypeEnum);
             matchingReturnObject.setOk(true);
-            log.info("matchOperations successful :  partial ok (idPartial recu)");
+            log.debug("matchOperations successful :  partial ok (idPartial recu)");
             return matchingReturnObject;
         }
         // debit 200,60 ; credit 150 => balance = 110
@@ -449,17 +449,17 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         if (cptPartialAllowed == 1) {
             matching(listOcc, matchedAmount, accountOperationForPartialMatching, matchingTypeEnum);
             matchingReturnObject.setOk(true);
-            log.info("matchOperations successful :  partial ok (un idPartial possible)");
+            log.debug("matchOperations successful :  partial ok (un idPartial possible)");
             return matchingReturnObject;
         }
 
         if (cptPartialAllowed == 0) {
             throw new BusinessException("matchingService.matchingImpossible");
         }
-        log.info("matchOperations successful :  partial  (plusieurs idPartial possible)");
+        log.debug("matchOperations successful :  partial  (plusieurs idPartial possible)");
         matchingReturnObject.setOk(false);
 
-        // log.info("matchOperations successful customerAccountId:{} customerAccountCode:{} operationIds:{} user:{}",
+        // log.debug("matchOperations successful customerAccountId:{} customerAccountCode:{} operationIds:{} user:{}",
         // customerAccountId, customerAccountCode,
         // operationIds, user == null ? "null" : user.getName());
         log.debug("matchingReturnObject.getPartialMatchingOcc().size:"

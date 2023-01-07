@@ -87,7 +87,7 @@ public class JobTriggerLauncher {
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
         
         try {
-            log.info("launch jobTrigger:{}", jobTrigger);
+            log.debug("launch jobTrigger:{}", jobTrigger);
             HashMap<Object, Object> params = new HashMap<Object, Object>();
             params.put("event", entityOrEvent);
             

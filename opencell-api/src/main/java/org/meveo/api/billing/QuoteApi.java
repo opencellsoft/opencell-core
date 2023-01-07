@@ -394,7 +394,7 @@ public class QuoteApi extends BaseApi {
         if (quote.getStatus() == QuoteStatusEnum.CANCELLED || quote.getStatus() == QuoteStatusEnum.ACCEPTED || quote.getStatus() == QuoteStatusEnum.REJECTED) {
             return quote;
         }
-        log.info("Processing quote {}", quote.getCode());
+        log.debug("Processing quote {}", quote.getCode());
         for (QuoteItem quoteItem : quote.getQuoteItems()) {
             processQuoteItem(quote, quoteItem);
         }
@@ -417,9 +417,9 @@ public class QuoteApi extends BaseApi {
      */
     private void processQuoteItem(Quote quote, QuoteItem quoteItem) throws BusinessException, MeveoApiException {
 
-        log.info("Processing quote item {} {}", quote.getCode(), quoteItem.getItemId());
+        log.debug("Processing quote item {} {}", quote.getCode(), quoteItem.getItemId());
 
-        log.info("Finished processing quote item {} {}", quote.getCode(), quoteItem.getItemId());
+        log.debug("Finished processing quote item {} {}", quote.getCode(), quoteItem.getItemId());
     }
 
     /**
@@ -430,7 +430,7 @@ public class QuoteApi extends BaseApi {
      * @throws BusinessException business exception
      */
     public Quote invoiceQuote(Quote quote) throws BusinessException {
-        log.info("Creating invoices for quote {}", quote.getCode());
+        log.debug("Creating invoices for quote {}", quote.getCode());
         try {
 
             Map<String, List<QuoteInvoiceInfo>> quoteInvoiceInfos = new HashMap<>();
@@ -508,7 +508,7 @@ public class QuoteApi extends BaseApi {
      */
     private QuoteInvoiceInfo preInvoiceQuoteItem(Quote quote, QuoteItem quoteItem) throws BusinessException, MeveoApiException {
 
-        log.info("Processing quote item {} {}", quote.getCode(), quoteItem.getItemId());
+        log.debug("Processing quote item {} {}", quote.getCode(), quoteItem.getItemId());
 
         List<ProductInstance> productInstances = new ArrayList<>();
         Subscription subscription = null;
@@ -587,7 +587,7 @@ public class QuoteApi extends BaseApi {
         // Serialize back the productOrderItem with updated invoice attachments
         quoteItem.setSource(ProductQuoteItem.serializeQuoteItem(productQuoteItem));
 
-        log.info("Finished processing quote item {} {}", quote.getCode(), quoteItem.getItemId());
+        log.debug("Finished processing quote item {} {}", quote.getCode(), quoteItem.getItemId());
 
         return quoteInvoiceInfo;
     }

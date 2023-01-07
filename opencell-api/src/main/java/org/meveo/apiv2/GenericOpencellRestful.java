@@ -58,9 +58,9 @@ public class GenericOpencellRestful extends Application {
                 .collect(Collectors.toSet());
         if(GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")){
             resources.add(GenericApiLoggingFilter.class);
-            log.info("generic api requests logging is enabled, to disable logging for generic api request, put {} to false", GENERIC_API_REQUEST_LOGGING_CONFIG_KEY);
+            log.debug("generic api requests logging is enabled, to disable logging for generic api request, put {} to false", GENERIC_API_REQUEST_LOGGING_CONFIG_KEY);
         }
-        log.info("Opencell OpenAPI definition is accessible in /api/rest/v2/openapi.{type:json|yaml}");
+        log.debug("Opencell OpenAPI definition is accessible in /api/rest/v2/openapi.{type:json|yaml}");
         return resources;
     }
 

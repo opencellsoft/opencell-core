@@ -405,7 +405,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     private void downloadFile(String fileName) {
-        log.info("Requested to download file {}", fileName);
+        log.debug("Requested to download file {}", fileName);
 
         File file = new File(fileName);
 
@@ -429,7 +429,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             out.flush();
             out.close();
             facesContext.responseComplete();
-            log.info("File made available for download");
+            log.debug("File made available for download");
         } catch (Exception e) {
             log.error("Error:#0, when dowload file: #1", e.getMessage(), file.getAbsolutePath());
         } finally {

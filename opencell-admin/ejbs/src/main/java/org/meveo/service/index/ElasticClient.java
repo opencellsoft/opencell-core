@@ -462,7 +462,7 @@ public class ElasticClient {
                 if (++count == maxTries) {
                     throw new BusinessException("Failed to process bulk request in Elastic Search. Pending changes " + queuedChanges.getQueuedChanges(), e);
                 } else {
-                    log.info("Retry to process bulk request in Elastic Search. Try #{}.", count);
+                    log.debug("Retry to process bulk request in Elastic Search. Try #{}.", count);
                 }
             }
         }
@@ -992,7 +992,7 @@ public class ElasticClient {
             return statistics;
         }
 
-        log.info("Started to repopulate Elastic Search for provider {}", providerCode);
+        log.debug("Started to repopulate Elastic Search for provider {}", providerCode);
 
         try {
 
@@ -1026,7 +1026,7 @@ public class ElasticClient {
                 }
             }
 
-            log.info("Finished repopulating Elastic Search for provider {}", providerCode);
+            log.debug("Finished repopulating Elastic Search for provider {}", providerCode);
 
         } catch (Exception e) {
             log.error("Failed to repopulate Elastic Search for provider {}", providerCode, e);
@@ -1056,7 +1056,7 @@ public class ElasticClient {
             return new AsyncResult<ReindexingStatistics>(statistics);
         }
 
-        log.info("Started to repopulate Elastic Search for all providers");
+        log.debug("Started to repopulate Elastic Search for all providers");
 
         try {
 
@@ -1138,7 +1138,7 @@ public class ElasticClient {
             return new AsyncResult<ReindexingStatistics>(statistics);
         }
 
-        log.info("Started to repopulate Elastic Search for {}/{}", entityClass, cetCode);
+        log.debug("Started to repopulate Elastic Search for {}/{}", entityClass, cetCode);
 
         CustomEntityTemplate cet = null;
 
@@ -1161,7 +1161,7 @@ public class ElasticClient {
      */
     private void populateAll(ReindexingStatistics statistics, String classname, CustomEntityTemplate cet) {
 
-        log.info("Started to repopulate Elastic Search for {}/{}", classname, cet != null ? cet.getCode() : null);
+        log.debug("Started to repopulate Elastic Search for {}/{}", classname, cet != null ? cet.getCode() : null);
 
         try {
 
@@ -1169,7 +1169,7 @@ public class ElasticClient {
 
             if (classname.equals(CustomTableRecord.class.getName())) {
 
-                log.info("Started to populate Elastic Search with data from {} table", cet.getDbTablename());
+                log.debug("Started to populate Elastic Search with data from {} table", cet.getDbTablename());
 
                 Object fromId = 0;
 
@@ -1185,11 +1185,11 @@ public class ElasticClient {
                     recordsRemaining = recordsRemaining - INDEX_POPULATE_CT_PAGE_SIZE;
                 }
 
-                log.info("Finished populating Elastic Search with data from {} table. Processed {} records.", cet.getDbTablename(), totalProcessed);
+                log.debug("Finished populating Elastic Search with data from {} table. Processed {} records.", cet.getDbTablename(), totalProcessed);
 
             } else {
 
-                log.info("Started to populate Elastic Search with data from {} entity", classname);
+                log.debug("Started to populate Elastic Search with data from {} entity", classname);
 
                 Object fromId = -1000;
                 int totalProcessed = 0;
@@ -1203,10 +1203,10 @@ public class ElasticClient {
                     hasMore = (int) processedInfo[0] == INDEX_POPULATE_PAGE_SIZE;
                 }
 
-                log.info("Finished populating Elastic Search with data from {} entity. Processed {} records.", classname, totalProcessed);
+                log.debug("Finished populating Elastic Search with data from {} entity. Processed {} records.", classname, totalProcessed);
             }
 
-            log.info("Finished repopulating Elastic Search for {}/{}", classname, cet != null ? cet.getCode() : null);
+            log.debug("Finished repopulating Elastic Search for {}/{}", classname, cet != null ? cet.getCode() : null);
 
         } catch (Exception e) {
             log.error("Failed to repopulate Elastic Search for {}/{}", classname, cet != null ? cet.getCode() : null, e);

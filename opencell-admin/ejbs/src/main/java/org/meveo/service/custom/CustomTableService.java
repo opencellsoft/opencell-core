@@ -483,7 +483,7 @@ public class CustomTableService extends NativePersistenceService {
                 elasticClient.populateAll(currentUser, CustomTableRecord.class, customEntityTemplate.getCode());
             }
 
-            log.info("Imported {} lines to {} table", importedLinesTotal, tableName);
+            log.debug("Imported {} lines to {} table", importedLinesTotal, tableName);
 
         } catch (RuntimeJsonMappingException e) {
             throw new ValidationException("Invalid file format", "message.upload.fail.invalidFormat", e);

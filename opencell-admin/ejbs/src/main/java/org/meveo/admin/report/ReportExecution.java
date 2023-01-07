@@ -104,7 +104,7 @@ public class ReportExecution implements Serializable {
             JasperReport jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
             JasperExportManager.exportReportToPdfFile(jasperPrint, generateFileName(reportName, executionDate));
-            log.info("Created file: " + generateFileName(reportName, executionDate));
+            log.debug("Created file: " + generateFileName(reportName, executionDate));
         } catch (JRException e) {
             log.error("failed to generatePDF,JR exception", e);
         } catch (UnsupportedEncodingException e) {
@@ -131,7 +131,7 @@ public class ReportExecution implements Serializable {
             JasperReport jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
             JasperExportManager.exportReportToPdfFile(jasperPrint, generateFileName(exportFileName, executionDate));
-            log.info("Created file: " + generateFileName(exportFileName, executionDate));
+            log.debug("Created file: " + generateFileName(exportFileName, executionDate));
         } catch (JRException e) {
             log.error("error on generate PDF", e);
         }
@@ -159,13 +159,13 @@ public class ReportExecution implements Serializable {
      */
     @SuppressWarnings("rawtypes")
     public void executeReport(Report report) {
-        log.info("executeReport({})", report.getName());
+        log.debug("executeReport({})", report.getName());
         try {
             Class clazz = Class.forName(report.getProducerClassName());
             Object obj = clazz.newInstance();
             // TODO: Component.getInstance(clazz);
             if (obj instanceof ReportDBSourceProducer) {
-                log.info("executeReport report class is ReportDBSourceProducer");
+                log.debug("executeReport report class is ReportDBSourceProducer");
                 ReportDBSourceProducer reportSourceProducer = (ReportDBSourceProducer) obj;
                 String xmlString = reportSourceProducer.generateXmlString(reportService.getRows(reportSourceProducer.getQuery()));
                 generatePDF(report.getFileName(), report.getName(), xmlString, report.getRecordPath(), report.getSchedule());
@@ -173,15 +173,15 @@ public class ReportExecution implements Serializable {
                 reportService.update(report);
             }
             if (obj instanceof ReportXMLFileSourceProducer) {
-                log.info("executeReport report class is ReportXMLFileSourceProducer");
+                log.debug("executeReport report class is ReportXMLFileSourceProducer");
                 ReportXMLFileSourceProducer reportXMLFileSourceProducer = (ReportXMLFileSourceProducer) obj;
                 reportXMLFileSourceProducer.export(report);
             }
             if (obj instanceof Reporting) {
-                log.info("executeReport report class is Reporting");
+                log.debug("executeReport report class is Reporting");
                 Reporting reporting = (Reporting) obj;
                 reporting.export(report);
-                log.info("computeNextExecutionDate");
+                log.debug("computeNextExecutionDate");
                 report.computeNextExecutionDate();
                 reportService.update(report);
             }

@@ -85,7 +85,7 @@ public class ExportAccountsJobBean {
     public void execute(JobExecutionResultImpl result, String parameter) {
         ParamBean param = paramBeanFactory.getInstance();
         String exportDir = paramBeanFactory.getChrootDir() + File.separator + "exports" + File.separator + "accounts" + File.separator;
-        log.info("exportDir=" + exportDir);
+        log.debug("exportDir=" + exportDir);
         File dir = new File(exportDir);
         if (!dir.exists()) {
             dir.mkdirs();
@@ -114,7 +114,7 @@ public class ExportAccountsJobBean {
             int nbItems;
             for (BillingAccount billingAccount : billingAccounts.getBillingAccount()) {
                 nbItems = billingAccount.getUserAccounts() != null && billingAccount.getUserAccounts().getUserAccount() != null ? billingAccount.getUserAccounts().getUserAccount().size() : 0;
-                log.info("Number of processed userAccounts for the billingAccount {} in ExportAccountsJob is : {}", billingAccount.getCode(), nbItems);
+                log.debug("Number of processed userAccounts for the billingAccount {} in ExportAccountsJob is : {}", billingAccount.getCode(), nbItems);
             }
         }
     }

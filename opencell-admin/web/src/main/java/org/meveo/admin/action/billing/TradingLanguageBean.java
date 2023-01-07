@@ -102,7 +102,7 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
 	public void onLanguageSelect(SelectEvent event) {
 		if (event.getObject() instanceof Language) {
 			Language language = (Language) event.getObject();
-			log.info("populatLanguages language",
+			log.debug("populatLanguages language",
 					language != null ? language.getLanguageCode() : null);
 			if (language != null) {
 				entity.setLanguage(language);

@@ -71,7 +71,7 @@ public class PaynumFile extends AbstractDDRequestBuilder {
         String outputDir = ArConfig.getDDRequestOutputDirectory();
         outputDir = outputDir.replaceAll("\\..", "");
 
-        log.info("DDRequest output directory=" + outputDir);
+        log.debug("DDRequest output directory=" + outputDir);
         File dir = new File(outputDir);
         if (!dir.exists()) {
             dir.mkdirs();

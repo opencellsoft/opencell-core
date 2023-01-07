@@ -74,7 +74,7 @@ public class AuditContext {
 
 		initialize();
 
-		log.info("Initialized AuditContext.");
+		log.debug("Initialized AuditContext.");
 	}
 
 	public boolean initialize() {
@@ -116,10 +116,10 @@ public class AuditContext {
 		reader.getConfig().setClassTag("auditClass", ClassAndMethods.class);
 		auditConfiguration = reader.read(AuditConfiguration.class);
 
-		log.info("Auditing {} classes", auditConfiguration.getClasses().size());
-		log.info("Active handlers are: ");
+		log.debug("Auditing {} classes", auditConfiguration.getClasses().size());
+		log.debug("Active handlers are: ");
 		for (Handler h : auditConfiguration.getHandlers()) {
-			log.info(h.getClass().getName());
+			log.debug(h.getClass().getName());
 		}
 
 		reader.close();

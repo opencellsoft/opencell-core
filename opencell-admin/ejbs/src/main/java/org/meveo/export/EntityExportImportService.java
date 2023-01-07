@@ -318,7 +318,7 @@ public class EntityExportImportService implements Serializable {
             replaceReferencesToTemplates(exportTemplate);
         }
 
-        log.info("Loaded {} export/import templates", exportImportTemplates.size());
+        log.debug("Loaded {} export/import templates", exportImportTemplates.size());
     }
 
     /**
@@ -479,7 +479,7 @@ public class EntityExportImportService implements Serializable {
         Writer fileWriter = null;
         ZipOutputStream zos = null;
         try {
-            log.info("Exporting data to a file {}", filename);
+            log.debug("Exporting data to a file {}", filename);
             FileUtils.forceMkdir(new File(path));
 
             if (asZip) {
@@ -543,7 +543,7 @@ public class EntityExportImportService implements Serializable {
                 }
             }
         }
-        log.info("Entities for export template {} saved to a file {}", exportTemplate.getName(), filename);
+        log.debug("Entities for export template {} saved to a file {}", exportTemplate.getName(), filename);
 
         // Remove entities if was requested so
         if (parameters.containsKey(EXPORT_PARAM_DELETE) && (Boolean) parameters.get(EXPORT_PARAM_DELETE)) {
@@ -597,13 +597,13 @@ public class EntityExportImportService implements Serializable {
     public void serializeEntities(ExportTemplate exportTemplate, Map<String, Object> parameters, DataModel<? extends IEntity> dataModelToExport,
             List<? extends IEntity> selectedEntitiesToExport, ExportImportStatistics exportStats, HierarchicalStreamWriter writer) {
 
-        log.info("Serializing entities from export template {} and data model {} or selected entities {}", exportTemplate.getName(), dataModelToExport != null,
+        log.debug("Serializing entities from export template {} and data model {} or selected entities {}", exportTemplate.getName(), dataModelToExport != null,
             (selectedEntitiesToExport != null && !selectedEntitiesToExport.isEmpty()));
 
         // Get entities to export including related entities grouped by a template name
         RetrievedEntities retrievedEntities = getEntitiesToExport(exportTemplate, parameters, dataModelToExport, selectedEntitiesToExport, 0, PAGE_SIZE);
         if (retrievedEntities.isEmpty()) {
-            log.info("No entities to serialize from export template {}", exportTemplate.getName());
+            log.debug("No entities to serialize from export template {}", exportTemplate.getName());
             return;
         }
 
@@ -719,7 +719,7 @@ public class EntityExportImportService implements Serializable {
             relatedEntitiesByTemplate.clear();
         }
 
-        log.info("Serialized {} entities from export template {}", totalEntityCount, exportTemplate.getName());
+        log.debug("Serialized {} entities from export template {}", totalEntityCount, exportTemplate.getName());
     }
 
     /**
@@ -738,7 +738,7 @@ public class EntityExportImportService implements Serializable {
     public Future<ExportImportStatistics> importEntities(File fileToImport, String filename, boolean preserveId, boolean ignoreNotFoundFK, Provider forceToProvider) {
 
         forceToProvider = appProvider;
-        log.info("Importing file {} and forcing to provider {}", filename, forceToProvider);
+        log.debug("Importing file {} and forcing to provider {}", filename, forceToProvider);
         ExportImportStatistics importStatsTotal = new ExportImportStatistics();
         HierarchicalStreamReader reader = null;
         try {
@@ -817,7 +817,7 @@ public class EntityExportImportService implements Serializable {
             reader = null;
             refreshCaches();
 
-            log.info("Finished importing file {} ", filename);
+            log.debug("Finished importing file {} ", filename);
 
         } catch (Exception e) {
             log.error("Failed to import a file {} ", filename, e);
@@ -852,7 +852,7 @@ public class EntityExportImportService implements Serializable {
     public ExportImportStatistics importEntities(ExportTemplate exportTemplate, HierarchicalStreamReader reader, boolean preserveId, boolean ignoreNotFoundFK,
             Provider forceToProvider) {
 
-        log.info("Importing entities from template {} ignore not found FK={}, forcing import to a provider {}", exportTemplate.getName(), ignoreNotFoundFK, forceToProvider);
+        log.debug("Importing entities from template {} ignore not found FK={}, forcing import to a provider {}", exportTemplate.getName(), ignoreNotFoundFK, forceToProvider);
 
         final Set<String> ignoredFields = new HashSet<String>();
 
@@ -911,7 +911,7 @@ public class EntityExportImportService implements Serializable {
             importStats.addFieldsNotImported(exportTemplate.getName(), ignoredFields);
         }
 
-        log.info("Imported {} entities from {} export template ", totalEntitiesCount, exportTemplate.getName());
+        log.debug("Imported {} entities from {} export template ", totalEntitiesCount, exportTemplate.getName());
 
         return importStats;
     }
@@ -2170,7 +2170,7 @@ public class EntityExportImportService implements Serializable {
     }
 
     private void refreshCaches() {
-        log.info("Initiating cache reload after import ");
+        log.debug("Initiating cache reload after import ");
         walletCacheContainerProvider.refreshCache(null);
         cdrEdrProcessingCacheContainerProvider.refreshCache(null);
         notificationCacheContainerProvider.refreshCache(null);
@@ -2238,7 +2238,7 @@ public class EntityExportImportService implements Serializable {
                 log.error("Failed to delete a temp file {}", file.getAbsolutePath(), e);
             }
         }
-        log.info("Actualized the version of export file {} from {} to {} version", sourceFilename, sourceVersion, finalVersion);
+        log.debug("Actualized the version of export file {} from {} to {} version", sourceFilename, sourceVersion, finalVersion);
 
         return finalFile;
     }
@@ -2319,7 +2319,7 @@ public class EntityExportImportService implements Serializable {
             }
 
             String executionId = resultDto.getExecutionId();
-            log.info("Export file {} uploaded to a remote meveo instance {} with execution id {}", filename, remoteInstance.getCode(), executionId);
+            log.debug("Export file {} uploaded to a remote meveo instance {} with execution id {}", filename, remoteInstance.getCode(), executionId);
 
             return executionId;
 

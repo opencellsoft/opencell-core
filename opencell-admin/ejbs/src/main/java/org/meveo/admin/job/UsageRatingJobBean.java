@@ -86,7 +86,7 @@ public class UsageRatingJobBean extends BaseJobBean {
 
             List<Future<String>> futures = new ArrayList<>();
             SubListCreator<Long> subListCreator = new SubListCreator(edrIds, nbRuns.intValue());
-            log.info("Will rate {} EDRS", edrIds.size());
+            log.debug("Will rate {} EDRS", edrIds.size());
 
             MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {

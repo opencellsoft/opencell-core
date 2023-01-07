@@ -690,7 +690,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      */
     private boolean deleteInternal(Long id, String code, boolean setOkMessages) throws BusinessException {
         try {
-            log.info("Deleting entity {} with id = {}", clazz.getName(), id);
+            log.debug("Deleting entity {} with id = {}", clazz.getName(), id);
             getPersistenceService().remove(id);
 
             if (setOkMessages) {
@@ -706,7 +706,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 if (cause instanceof org.hibernate.exception.ConstraintViolationException) {
 
                     String referencedBy = getPersistenceService().findReferencedByEntities(clazz, id);
-                    log.info("Delete was unsuccessful because entity is used by other entities {}", referencedBy);
+                    log.debug("Delete was unsuccessful because entity is used by other entities {}", referencedBy);
 
                     if (referencedBy != null) {
                         messages.error(new BundleKey("messages", "error.delete.entityUsedWDetails"), code == null ? "" : code, referencedBy);
@@ -848,13 +848,13 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void disable() {
         try {
         	Long currentId = (Long) entity.getId();
-            log.info("Disabling entity {} with id = {}", clazz.getName(), currentId);
+            log.debug("Disabling entity {} with id = {}", clazz.getName(), currentId);
             setObjectId(currentId);
 			entity = getPersistenceService().disable(currentId);
             messages.info(new BundleKey("messages", "disabled.successful"));
 
         } catch (Exception t) {
-            log.info("unexpected exception when disabling!", t);
+            log.debug("unexpected exception when disabling!", t);
             messages.error(new BundleKey("messages", "error.unexpected"));
         }
     }
@@ -867,12 +867,12 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     @ActionMethod
     public void disable(Long id) {
         try {
-            log.info("Disabling entity {} with id = {}", clazz.getName(), id);
+            log.debug("Disabling entity {} with id = {}", clazz.getName(), id);
             getPersistenceService().disable(id);
             messages.info(new BundleKey("messages", "disabled.successful"));
 
         } catch (Throwable t) {
-            log.info("unexpected exception when disabling!", t);
+            log.debug("unexpected exception when disabling!", t);
             messages.error(new BundleKey("messages", "error.unexpected"));
         }
     }
@@ -884,13 +884,13 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void enable() {
         try {
         	Long currentId = (Long) entity.getId();
-            log.info("Enabling entity {} with id = {}", clazz.getName(), currentId);
+            log.debug("Enabling entity {} with id = {}", clazz.getName(), currentId);
             setObjectId(currentId);
             entity = getPersistenceService().enable(currentId);
             messages.info(new BundleKey("messages", "enabled.successful"));
 
         } catch (Exception t) {
-            log.info("unexpected exception when enabling!", t);
+            log.debug("unexpected exception when enabling!", t);
             messages.error(new BundleKey("messages", "error.unexpected"));
         }
     }
@@ -903,12 +903,12 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     @ActionMethod
     public void enable(Long id) {
         try {
-            log.info("Enabling entity {} with id = {}", clazz.getName(), id);
+            log.debug("Enabling entity {} with id = {}", clazz.getName(), id);
             getPersistenceService().enable(id);
             messages.info(new BundleKey("messages", "enabled.successful"));
 
         } catch (Throwable t) {
-            log.info("unexpected exception when enabling!", t);
+            log.debug("unexpected exception when enabling!", t);
             messages.error(new BundleKey("messages", "error.unexpected"));
         }
     }

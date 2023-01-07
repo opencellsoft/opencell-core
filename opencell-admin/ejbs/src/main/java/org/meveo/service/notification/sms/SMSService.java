@@ -29,7 +29,7 @@ public class SMSService {
         SMS sms = buildSmsInfo(communication);
         SMSGateWay smsGateWay = providerInstance();
         MessageResponse response = smsGateWay.send(sms);
-        log.info(format("Account SID %s sent SMS to %s with status %s",
+        log.debug(format("Account SID %s sent SMS to %s with status %s",
                 response.getSid(), response.getSentTo(), response.getStatus()));
         return toResponseDto(response);
     }

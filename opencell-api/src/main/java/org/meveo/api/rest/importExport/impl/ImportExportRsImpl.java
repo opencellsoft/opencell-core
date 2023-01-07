@@ -101,7 +101,7 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
             }
             String executionId = (new Date()).getTime() + "_" + fileName;
 
-            log.info("Received file {} from remote meveo instance. Saved to {} for importing. Execution id {}", fileName, tempFile.getAbsolutePath(), executionId);
+            log.debug("Received file {} from remote meveo instance. Saved to {} for importing. Execution id {}", fileName, tempFile.getAbsolutePath(), executionId);
             Future<ExportImportStatistics> exportImportFuture = entityExportImportService.importEntities(tempFile, fileName.replaceAll(" ", "_"), false, false, appProvider);
 
             executionResults.put(executionId, exportImportFuture);
@@ -148,7 +148,7 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
 
         if (future.isDone()) {
             try {
-                log.info("Remote import execution {} status is {}", executionId, future.get());
+                log.debug("Remote import execution {} status is {}", executionId, future.get());
                 return exportImportStatisticsToDto(executionId, future.get());
 
             } catch (InterruptedException | ExecutionException e) {
@@ -156,7 +156,7 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
                         + " " + e.getMessage());
             }
         } else {
-            log.info("Remote import execution {} status is still in progress", executionId);
+            log.debug("Remote import execution {} status is still in progress", executionId);
             return new ImportExportResponseDto(executionId);
         }
     }

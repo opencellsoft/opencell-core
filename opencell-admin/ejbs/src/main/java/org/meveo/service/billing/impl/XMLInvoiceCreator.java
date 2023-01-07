@@ -271,7 +271,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             StreamResult result = new StreamResult(xmlFile);
             trans.transform(source, result);
 
-            log.info("XML file '{}' produced for invoice {}", invoice.getXmlFilename(), invoice.getInvoiceNumberOrTemporaryNumber());
+            log.debug("XML file '{}' produced for invoice {}", invoice.getXmlFilename(), invoice.getInvoiceNumberOrTemporaryNumber());
 
             return xmlFile;
 

@@ -159,7 +159,7 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 		}
 		if (empty) {
 			mvSeries.set("NO RECORDS", 0);
-			log.info("No measured values found for : " + mq.getCode());
+			log.debug("No measured values found for : " + mq.getCode());
 		}
 		boolean isAdmin = currentUser.hasRole("administrateur");
 		boolean equalUser = chart.getAuditable().isCreator(currentUser) ;
@@ -483,7 +483,7 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 		MeasuredValue beforeMV = (beforeMVs != null && beforeMVs.size() > 0) ? beforeMVs.get(0) : new MeasuredValue();
 		Double beforeValue = beforeMV != null && beforeMV.getValue() != null ? beforeMV.getValue().doubleValue() : new Double("0.00");
 
-		log.info("Current MV : " + currentValue + ", Before MV : " + beforeValue);
+		log.debug("Current MV : " + currentValue + ", Before MV : " + beforeValue);
 		result.setValue(currentValue);
 		result.setDescription("Churn");
 		result.computeDifference(beforeValue);

@@ -189,7 +189,7 @@ public class FilterService extends BusinessService<Filter> {
 
     public String serializeEntities(XStream xstream, Filter filter, List<? extends IEntity> entities) {
         if (entities.isEmpty()) {
-            log.info("No entities to serialize");
+            log.debug("No entities to serialize");
             return "";
         }
 

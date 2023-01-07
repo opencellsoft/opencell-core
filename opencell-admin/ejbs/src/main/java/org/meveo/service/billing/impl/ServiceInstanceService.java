@@ -520,7 +520,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                 effectiveTerminationDate = serviceInstance.getEndAgreementDate();
             }
 
-            log.info("Terminating recurring charge {} with chargedToDate {},  terminationDate {}, endAggrementDate {}, efectiveTerminationDate {}, terminationReason {}", recurringChargeInstance.getId(),
+            log.debug("Terminating recurring charge {} with chargedToDate {},  terminationDate {}, endAggrementDate {}, efectiveTerminationDate {}, terminationReason {}", recurringChargeInstance.getId(),
                 recurringChargeInstance.getChargedToDate(), terminationDate, serviceInstance.getEndAgreementDate(), effectiveTerminationDate, terminationReason.getCode());
 
             // Effective termination date was moved to the future - to the end of agreement
@@ -663,7 +663,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
 
         if (serviceInstance.getId() != null) {
-            log.info("Terminating service {} for {}", serviceInstance.getId(), terminationDate);
+            log.debug("Terminating service {} for {}", serviceInstance.getId(), terminationDate);
         }
 
         // checks if termination date is > now (do not ignore time, as service time is time sensative)

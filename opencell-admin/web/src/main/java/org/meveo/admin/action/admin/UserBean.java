@@ -169,7 +169,7 @@ public class UserBean extends CustomFieldBean<User> {
 
     @Override
     public User initEntity() {
-        log.info("initEntity()");
+        log.debug("initEntity()");
         super.initEntity();
 
         if (entity.getName() == null) {
@@ -180,7 +180,7 @@ public class UserBean extends CustomFieldBean<User> {
     }
 
     public TreeNode getUserGroupRootNode() {
-        log.info("getUserGroupRootNode()");
+        log.debug("getUserGroupRootNode()");
         if (userGroupRootNode == null) {
             userGroupRootNode = new DefaultTreeNode("Root", null);
             List<UserHierarchyLevel> roots;
@@ -300,8 +300,8 @@ public class UserBean extends CustomFieldBean<User> {
     }
 
     public void createMissingDirectories() {
-        log.info("createMissingDirectories() * ");
-        // log.info("Creating required dirs in "+getFilePath());
+        log.debug("createMissingDirectories() * ");
+        // log.debug("Creating required dirs in "+getFilePath());
         String importDir = getFilePath() + File.separator + "imports" + File.separator + "customers" + File.separator;
         String customerDirIN = importDir + "input";
         String customerDirOUT = importDir + "output";
@@ -348,12 +348,12 @@ public class UserBean extends CustomFieldBean<User> {
 
     public void setFile(UploadedFile file) {
         this.file = file;
-        log.info("set file to" + file.getFileName());
+        log.debug("set file to" + file.getFileName());
     }
 
     public void deleteSelectedFile() {
         String folder = getFilePath() + File.separator + (this.selectedFolder == null ? "" : this.selectedFolder);
-        log.info("delete file" + folder + File.separator + selectedFileName);
+        log.debug("delete file" + folder + File.separator + selectedFileName);
         File file = new File(folder + File.separator + selectedFileName);
         if (file.exists()) {
             file.delete();
@@ -538,7 +538,7 @@ public class UserBean extends CustomFieldBean<User> {
                 messages.error("Error while uploading " + file.getFileName());
             }
         } else {
-            log.info("upload file is null");
+            log.debug("upload file is null");
 
         }
     }

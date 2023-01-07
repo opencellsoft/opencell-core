@@ -36,7 +36,7 @@ public class StartupListener {
 
     @PostConstruct
     private void init() {
-        log.info("Thank you for running Opencell Community code. For Commercial Grade Support, please purchase an Opencell subscription from https://opencellsoft.com/");
+        log.debug("Thank you for running Opencell Community code. For Commercial Grade Support, please purchase an Opencell subscription from https://opencellsoft.com/");
 
         applicationInitializer.init();
     }

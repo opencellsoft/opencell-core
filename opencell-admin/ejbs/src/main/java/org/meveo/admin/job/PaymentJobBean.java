@@ -154,10 +154,10 @@ public class PaymentJobBean extends BaseJobBean {
 			AccountOperationFilterScript aoFilterScript = getAOScriptInstance(jobInstance);
 
 			if (aoFilterScript == null) {
-				log.info("native query used");
+				log.debug("native query used");
 				aos = accountOperationService.getAOsToPayOrRefund(paymentMethodType, fromDueDate, toDueDate, paymentOrRefundEnum.getOperationCategoryToProcess(), null);
 			} else {
-				log.info("custom query used");
+				log.debug("custom query used");
 				Map<String, Object> methodContext = new HashMap<>();
 				methodContext.put(AccountOperationFilterScript.FROM_DUE_DATE, fromDueDate);
 				methodContext.put(AccountOperationFilterScript.TO_DUE_DATE, toDueDate);

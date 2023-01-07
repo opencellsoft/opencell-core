@@ -336,10 +336,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
             Object invoiceObject = q.getSingleResult();
             return (Invoice) invoiceObject;
         } catch (NoResultException e) {
-            log.info("Invoice with invoice number {} was not found. Returning null.", invoiceNumber);
+            log.debug("Invoice with invoice number {} was not found. Returning null.", invoiceNumber);
             return null;
         } catch (NonUniqueResultException e) {
-            log.info("Multiple invoices with invoice number {} was found. Returning null.", invoiceNumber);
+            log.debug("Multiple invoices with invoice number {} was found. Returning null.", invoiceNumber);
             return null;
         } catch (Exception e) {
             return null;
@@ -372,10 +372,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         try {
             return (Invoice) qb.getQuery(getEntityManager()).getSingleResult();
         } catch (NoResultException e) {
-            log.info("Invoice with invoice number {} was not found. Returning null.", invoiceNumber);
+            log.debug("Invoice with invoice number {} was not found. Returning null.", invoiceNumber);
             return null;
         } catch (NonUniqueResultException e) {
-            log.info("Multiple invoices with invoice number {} was found. Returning null.", invoiceNumber);
+            log.debug("Multiple invoices with invoice number {} was found. Returning null.", invoiceNumber);
             return null;
         } catch (Exception e) {
             return null;
@@ -428,7 +428,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             q.setParameter("billingAccount", billingAccount);
             q.setParameter("invoiceType", invoiceType);
             List<Invoice> invoices = q.getResultList();
-            log.info("getInvoices: founds {} invoices with BA_code={} and type={} ", invoices.size(), billingAccount.getCode(), invoiceType);
+            log.debug("getInvoices: founds {} invoices with BA_code={} and type={} ", invoices.size(), billingAccount.getCode(), invoiceType);
             return invoices;
         } catch (Exception e) {
             return null;
@@ -1283,7 +1283,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (!sourceFile.exists()) {
                     VirtualFile vfDir = VFS
                         .getChild("content/" + ParamBeanFactory.getAppScopeInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/" + billingTemplateName + File.separator + "invoice");
-                    log.info("default jaspers path :" + vfDir.getPathName());
+                    log.debug("default jaspers path :" + vfDir.getPathName());
                     URL vfPath = VFSUtils.getPhysicalURL(vfDir);
                     sourceFile = new File(vfPath.getPath());
 
@@ -1382,7 +1382,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
             invoice.setPdfFilename(pdfFilename);
 
-            log.info("PDF file '{}' produced for invoice {}", pdfFullFilename, invoice.getInvoiceNumberOrTemporaryNumber());
+            log.debug("PDF file '{}' produced for invoice {}", pdfFullFilename, invoice.getInvoiceNumberOrTemporaryNumber());
 
         } catch (IOException | JRException | TransformerException | ParserConfigurationException | SAXException e) {
             throw new BusinessException("Failed to generate a PDF file for " + pdfFilename, e);

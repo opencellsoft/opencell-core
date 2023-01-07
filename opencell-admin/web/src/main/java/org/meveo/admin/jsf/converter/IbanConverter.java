@@ -57,7 +57,7 @@ public class IbanConverter implements Converter {
 			String lastCaracters = iban.substring(ibanLength - 2, ibanLength);
 			return fisrtCaracters + new String(new char[ibanLength - 6]).replace("\0", "X") + lastCaracters;
 		} else {
-			Log.info("the iban masking is disabled");
+			log.debug("the iban masking is disabled");
 			return iban;
 		}
 	}

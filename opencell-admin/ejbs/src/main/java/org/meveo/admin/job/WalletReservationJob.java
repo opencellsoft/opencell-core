@@ -47,7 +47,7 @@ public class WalletReservationJob extends Job {
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         int rowsUpdated = reservationService.updateExpiredReservation();
         if (rowsUpdated != 0) {
-            log.info(rowsUpdated + " rows updated.");
+            log.debug(rowsUpdated + " rows updated.");
         }
     }
 

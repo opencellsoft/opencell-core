@@ -92,7 +92,7 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
         getPersistenceService().refresh(billingRun);
 
         try {
-            log.info("postReport {}", postReport);
+            log.debug("postReport {}", postReport);
             if (billingRun.getId() == null) {
                 billingRun.setProcessType(BillingProcessTypesEnum.MANUAL);
             }
@@ -161,12 +161,12 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
     }
 
     public String launchRecurringInvoicing() {
-        log.info("launchInvoicing billingRun BillingCycle={}, invoicedate={}, lastTransactionDate={}", entity.getBillingCycle(), entity.getInvoiceDate(), entity.getLastTransactionDate());
+        log.debug("launchInvoicing billingRun BillingCycle={}, invoicedate={}, lastTransactionDate={}", entity.getBillingCycle(), entity.getInvoiceDate(), entity.getLastTransactionDate());
         try {
             ParamBean param = paramBeanFactory.getInstance();
             String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");
             boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
-            log.info("launchInvoicing allowManyInvoicing={}", isAllowed);
+            log.debug("launchInvoicing allowManyInvoicing={}", isAllowed);
 
             if (billingRunService.isActiveBillingRunsExist() && !isAllowed) {
                 messages.error(new BundleKey("messages", "error.invoicing.alreadyLunched"));

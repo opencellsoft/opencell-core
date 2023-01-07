@@ -95,7 +95,7 @@ public class ImportMediationEntityJobBean extends BaseJobBean {
         File currentFile = null;
         ParamBean param = paramBeanFactory.getInstance();
         String importDir = paramBeanFactory.getChrootDir() + File.separator + "exports" + File.separator + "edr" + File.separator;
-        log.info("importDir=" + importDir);
+        log.debug("importDir=" + importDir);
         File dir = new File(importDir);
         String dirOK = importDir + "output";
         String dirKO = importDir + "reject";
@@ -114,11 +114,11 @@ public class ImportMediationEntityJobBean extends BaseJobBean {
                     break;
                 }
                 fileName = file.getName();
-                log.info("InputFiles job " + file.getName() + " in progres");
+                log.debug("InputFiles job " + file.getName() + " in progres");
                 currentFile = FileUtils.addExtension(file, ".processing");
                 importFile(currentFile);
                 FileUtils.moveFile(dirOK, currentFile, file.getName());
-                log.info("InputFiles job " + file.getName() + " done");
+                log.debug("InputFiles job " + file.getName() + " done");
 
                 nbItems++;
             }

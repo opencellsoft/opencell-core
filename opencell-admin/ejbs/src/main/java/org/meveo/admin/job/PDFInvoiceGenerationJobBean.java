@@ -86,7 +86,7 @@ public class PDFInvoiceGenerationJobBean extends BaseJobBean {
             List<Long> invoiceIds = this.fetchInvoiceIdsToProcess(invoicesToProcessEnum, billingRunId);
 
             result.setNbItemsToProcess(invoiceIds.size());
-            log.info("PDFInvoiceGenerationJob number of invoices to process=" + invoiceIds.size());
+            log.debug("PDFInvoiceGenerationJob number of invoices to process=" + invoiceIds.size());
 
             List<Future<String>> futures = new ArrayList<Future<String>>();
             SubListCreator subListCreator = new SubListCreator(invoiceIds, nbRuns.intValue());

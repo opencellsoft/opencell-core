@@ -84,7 +84,7 @@ public class ExportSubscriptionsJobBean {
     public void execute(JobExecutionResultImpl result, String parameter) {
         ParamBean param = paramBeanFactory.getInstance();
         String exportDir = paramBeanFactory.getChrootDir() + File.separator + "exports" + File.separator + "subscriptions" + File.separator;
-        log.info("exportDir=" + exportDir);
+        log.debug("exportDir=" + exportDir);
         File dir = new File(exportDir);
         if (!dir.exists()) {
             dir.mkdirs();
@@ -113,7 +113,7 @@ public class ExportSubscriptionsJobBean {
             int nbItems;
             for (Subscription subscription : subscriptions.getSubscription()) {
                 nbItems = subscription.getAccesses() != null && subscription.getAccesses().getAccess() != null ? subscription.getAccesses().getAccess().size() : 0;
-                log.info("Number of processed accessePoints for the subscription {} in ExportSubscriptionsJob is : {}", subscription.getCode(), nbItems);
+                log.debug("Number of processed accessePoints for the subscription {} in ExportSubscriptionsJob is : {}", subscription.getCode(), nbItems);
             }
         }
     }

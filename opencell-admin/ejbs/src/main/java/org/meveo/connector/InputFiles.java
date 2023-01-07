@@ -45,20 +45,20 @@ public abstract class InputFiles {
 		}
 		List<File> files = getFilesToProcess(dir, prefix, ext);
 		int numberOfFiles = files.size();
-		log.info("InputFiles job " + numberOfFiles + " to import");
+		log.debug("InputFiles job " + numberOfFiles + " to import");
 
 		CountDownLatch latch = new CountDownLatch(numberOfFiles);
 		for (File file : files) {
 			File currentFile = null;
 			try {				
-				log.info("InputFiles job " + file.getName() + " in progres");
+				log.debug("InputFiles job " + file.getName() + " in progres");
 				currentFile = FileUtils.addExtension(file, ".processing");
 				importFile(currentFile, file.getName(), latch);
 				FileUtils.moveFile(dirOK, currentFile, file.getName());
-				log.info("InputFiles job " + file.getName() + " done");
+				log.debug("InputFiles job " + file.getName() + " done");
 
 			} catch (Exception e) {
-				log.info("InputFiles job " + file.getName() + " failed");
+				log.debug("InputFiles job " + file.getName() + " failed");
 				FileUtils.moveFile(dirKO, currentFile, file.getName());
 				log.error("failed to handle files",e);
 			}

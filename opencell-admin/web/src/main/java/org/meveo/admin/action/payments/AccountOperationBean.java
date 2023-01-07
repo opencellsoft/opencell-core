@@ -130,7 +130,7 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
         for (IEntity operation : getSelectedEntities()) {
             operationIds.add((Long) operation.getId());
         }
-        log.info("operationIds    " + operationIds);
+        log.debug("operationIds    " + operationIds);
         if (operationIds.isEmpty()) {
             messages.error(new BundleKey("messages", "customerAccount.matchingUnselectedOperation"));
             return null;

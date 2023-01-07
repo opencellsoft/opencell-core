@@ -501,7 +501,7 @@ public final class FileUtils {
     public static byte[] createZipFile(String sourceFolder) throws Exception {
 
         Logger log = LoggerFactory.getLogger(FileUtils.class);
-        log.info("Creating zip file for {}", sourceFolder);
+        log.debug("Creating zip file for {}", sourceFolder);
 
         ZipOutputStream zos = null;
         ByteArrayOutputStream baos = null;

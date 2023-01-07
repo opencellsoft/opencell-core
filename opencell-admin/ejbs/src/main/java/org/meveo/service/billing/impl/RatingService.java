@@ -430,7 +430,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
                         String subCode = evaluateStringExpression(triggeredEDRTemplate.getSubscriptionEl(), walletOperation, ua, null, edr);
                         sub = subscriptionService.findByCode(subCode);
                         if (sub == null) {
-                            log.info("Could not find subscription for code={} (EL={}) in triggered EDR with code {}", subCode, triggeredEDRTemplate.getSubscriptionEl(), triggeredEDRTemplate.getCode());
+                            log.debug("Could not find subscription for code={} (EL={}) in triggered EDR with code {}", subCode, triggeredEDRTemplate.getSubscriptionEl(), triggeredEDRTemplate.getCode());
                         }
                     } else if (walletOperation.getSubscription() != null) {
                         sub = em.getReference(Subscription.class, walletOperation.getSubscription().getId());
@@ -438,7 +438,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
                     if (sub != null) {
                         newEdr.setSubscription(sub);
-                        log.info("trigger EDR from code {}", triggeredEDRTemplate.getCode());
+                        log.debug("trigger EDR from code {}", triggeredEDRTemplate.getCode());
 
                         if (triggeredEDRTemplate.getTriggeredEdrScript() != null) {
                             newEdr = triggeredEdrScriptService.updateEdr(triggeredEDRTemplate.getTriggeredEdrScript().getCode(), newEdr, walletOperation);
@@ -589,7 +589,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
                     } else {
                         unitPriceWithTaxOverriden = unitPriceWithTaxOverriden.divide(new BigDecimal(sharedQuantity), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
                     }
-                    log.info("charge is shared " + sharedQuantity + " times, so unit price is " + unitPriceWithoutTaxOverridden);
+                    log.debug("charge is shared " + sharedQuantity + " times, so unit price is " + unitPriceWithoutTaxOverridden);
                 }
             }
             // Override wallet operation parameters using PP EL parameters
@@ -743,7 +743,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
      */
     private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan, WalletOperation bareOperation, Long buyerCountryId, TradingCurrency buyerCurrency) throws BusinessException {
         // FIXME: the price plan properties could be null !
-        // log.info("ratePrice rate " + bareOperation);
+        // log.debug("ratePrice rate " + bareOperation);
         Date startDate = bareOperation.getStartDate();
         Date endDate = bareOperation.getEndDate();
 
@@ -793,10 +793,10 @@ public class RatingService extends PersistenceService<WalletOperation> {
                 // logger.info("subscriptionDate=" +bareOperation.getSubscriptionDate() + "->" +DateUtils.addDaysToDate(bareOperation.getSubscriptionDate(),-1));
                 subscriptionAge = DateUtils.monthsBetween(operationDate, DateUtils.addDaysToDate(subscriptionDate, -1));
             }
-            // log.info("subscriptionAge=" + subscriptionAge);
+            // log.debug("subscriptionAge=" + subscriptionAge);
 
             boolean subscriptionMinAgeOK = pricePlan.getMinSubscriptionAgeInMonth() == null || subscriptionAge >= pricePlan.getMinSubscriptionAgeInMonth();
-            // log.info("subscriptionMinAgeOK(" + pricePlan.getMinSubscriptionAgeInMonth() + ")=" +subscriptionMinAgeOK);
+            // log.debug("subscriptionMinAgeOK(" + pricePlan.getMinSubscriptionAgeInMonth() + ")=" +subscriptionMinAgeOK);
             if (!subscriptionMinAgeOK) {
                 log.trace("The subscription age={} is less than the priceplan subscription age min={}", subscriptionAge, pricePlan.getMinSubscriptionAgeInMonth());
                 continue;
@@ -821,7 +821,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
             String criteria1Value = pricePlan.getCriteria1Value();
             boolean criteria1SameInPricePlan = criteria1Value == null || criteria1Value.equals(bareOperation.getParameter1());
-            // log.info("criteria1SameInPricePlan(" + pricePlan.getCriteria1Value() + ")=" + criteria1SameInPricePlan);
+            // log.debug("criteria1SameInPricePlan(" + pricePlan.getCriteria1Value() + ")=" + criteria1SameInPricePlan);
             if (!criteria1SameInPricePlan) {
                 log.trace("The operation param1 {} is not compatible with price plan criteria 1: {}", bareOperation.getParameter1(), criteria1Value);
                 continue;
@@ -829,14 +829,14 @@ public class RatingService extends PersistenceService<WalletOperation> {
             String criteria2Value = pricePlan.getCriteria2Value();
             String parameter2 = bareOperation.getParameter2();
             boolean criteria2SameInPricePlan = criteria2Value == null || criteria2Value.equals(parameter2);
-            // log.info("criteria2SameInPricePlan(" + pricePlan.getCriteria2Value() + ")=" + criteria2SameInPricePlan);
+            // log.debug("criteria2SameInPricePlan(" + pricePlan.getCriteria2Value() + ")=" + criteria2SameInPricePlan);
             if (!criteria2SameInPricePlan) {
                 log.trace("The operation param2 {} is not compatible with price plan criteria 2: {}", parameter2, criteria2Value);
                 continue;
             }
             String criteria3Value = pricePlan.getCriteria3Value();
             boolean criteria3SameInPricePlan = criteria3Value == null || criteria3Value.equals(bareOperation.getParameter3());
-            // log.info("criteria3SameInPricePlan(" + pricePlan.getCriteria3Value() + ")=" + criteria3SameInPricePlan);
+            // log.debug("criteria3SameInPricePlan(" + pricePlan.getCriteria3Value() + ")=" + criteria3SameInPricePlan);
             if (!criteria3SameInPricePlan) {
                 log.trace("The operation param3 {} is not compatible with price plan criteria 3: {}", bareOperation.getParameter3(), criteria3Value);
                 continue;

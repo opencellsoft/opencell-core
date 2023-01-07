@@ -254,7 +254,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
             CreatePaymentResponse response = getClient().merchant(paymentGateway.getMarchandId()).payments().create(body);
             
             if (response != null) {
-            	log.info("doPayment RESPONSE :"+marshaller.marshal(response));
+            	log.debug("doPayment RESPONSE :"+marshaller.marshal(response));
                 PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
                 doPaymentResponseDto.setPaymentID(response.getPayment().getId());
                 doPaymentResponseDto.setPaymentStatus(mappingStaus(response.getPayment().getStatus()));
@@ -515,10 +515,10 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			body.setReferences(references);
 			//body.setCustomer(customer);	
 			getClient();
-			log.info("REQUEST:"+marshaller.marshal(body));
+			log.debug("REQUEST:"+marshaller.marshal(body));
 			PayoutResponse response = client.merchant(paymentGateway.getMarchandId()).payouts().create(body);			
 			if (response != null) {
-				log.info("RESPONSE:"+marshaller.marshal(response));
+				log.debug("RESPONSE:"+marshaller.marshal(response));
 				PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
 				doPaymentResponseDto.setPaymentID(response.getId());
 				doPaymentResponseDto.setPaymentStatus(mappingStaus(response.getStatus()));
@@ -614,9 +614,9 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			body.setCardPaymentMethodSpecificInput(cardPaymentMethodSpecificInput);
 			body.setOrder(order);
 			getClient();
-			log.info("REQUEST:"+marshaller.marshal(body));
+			log.debug("REQUEST:"+marshaller.marshal(body));
 			CreateHostedCheckoutResponse response = client.merchant(paymentGateway.getMarchandId()).hostedcheckouts().create(body);			
-			log.info("RESPONSE:"+marshaller.marshal(response));
+			log.debug("RESPONSE:"+marshaller.marshal(response));
 			redirectionUrl = paramBean().getProperty("ingenico.hostedCheckoutUrl.prefix", "https://payment.") + response.getPartialRedirectUrl();
 			return redirectionUrl;
 

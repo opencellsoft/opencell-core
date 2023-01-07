@@ -153,7 +153,7 @@ public abstract class Job {
 
         JobRunningStatusEnum isRunning = jobCacheContainerProvider.markJobAsRunning(jobInstance.getId(), jobInstance.isLimitToSingleNode());
         if (isRunning == JobRunningStatusEnum.NOT_RUNNING || (isRunning == JobRunningStatusEnum.RUNNING_OTHER && !jobInstance.isLimitToSingleNode())) {
-            log.info("Starting Job {} of type {}  with currentUser {}. Processors available {}, paralel procesors requested {}. Job parameters {}", jobInstance.getCode(), jobInstance.getJobTemplate(),
+            log.debug("Starting Job {} of type {}  with currentUser {}. Processors available {}, paralel procesors requested {}. Job parameters {}", jobInstance.getCode(), jobInstance.getJobTemplate(),
                 currentUser.toString(), Runtime.getRuntime().availableProcessors(), customFieldInstanceService.getCFValue(jobInstance, CF_NB_RUNS, false), jobInstance.getParametres());
 
             try {
@@ -163,7 +163,7 @@ public abstract class Job {
                 log.trace("Job {} of type {} executed. Persisting job execution results", jobInstance.getCode(), jobInstance.getJobTemplate());
 
                 Boolean jobCompleted = jobExecutionService.persistResult(this, executionResult, jobInstance);
-                log.info("Job {} of type {} execution finished. Job completed {}", jobInstance.getCode(), jobInstance.getJobTemplate(), jobCompleted);
+                log.debug("Job {} of type {} execution finished. Job completed {}", jobInstance.getCode(), jobInstance.getJobTemplate(), jobCompleted);
                 eventJobProcessed.fire(executionResult);
 
                 if (jobCompleted != null && jobExecutionService.isJobRunningOnThis(jobInstance)) {
@@ -186,7 +186,7 @@ public abstract class Job {
             }
 
         } else {
-            log.info("Job {} of type {} execution will be skipped. Reason: isRunning={}", jobInstance.getCode(), jobInstance.getJobTemplate(), isRunning);
+            log.debug("Job {} of type {} execution will be skipped. Reason: isRunning={}", jobInstance.getCode(), jobInstance.getJobTemplate(), isRunning);
 
             // Mark job a finished. Applies in cases where execution result was already saved to db - like when executing job from API
             if (!executionResult.isTransient()) {
@@ -227,7 +227,7 @@ public abstract class Job {
     public void cleanTimers() {
 
         Collection<Timer> alltimers = timerService.getTimers();
-        log.info("Canceling job timers for job {}", this.getClass().getName());
+        log.debug("Canceling job timers for job {}", this.getClass().getName());
 
         for (Timer timer : alltimers) {
             try {

@@ -89,11 +89,11 @@ public class ReportBean extends BaseBean<Report> {
 	 * @return back link
 	 */
 	public String executeReport() throws BusinessException {
-		log.info("executeReport()");
+		log.debug("executeReport()");
 		String save = super.saveOrUpdate(true);
 		log.debug("executeReport : after save");
 		reportExecution.executeReport(entity);
-		log.info("executeReport : result = {}", save);
+		log.debug("executeReport : result = {}", save);
 		return save;
 	}
 

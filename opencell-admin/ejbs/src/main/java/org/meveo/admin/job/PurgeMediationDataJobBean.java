@@ -83,24 +83,24 @@ public class PurgeMediationDataJobBean extends BaseJobBean {
             String formattedEndDate = DateUtils.formatDateWithPattern(lastTransactionDate, "yyyy-MM-dd");
             List<WalletOperationStatusEnum> woStatusList = getTargetStatusList(jobInstance, WalletOperationStatusEnum.class, PURGE_MEDIATION_DATA_JOB_WO_STATUS_CF);
             if (!woStatusList.isEmpty()) {
-                log.info("=> starting purge wallet operation between {} and {}", formattedStartDate, formattedEndDate);
+                log.debug("=> starting purge wallet operation between {} and {}", formattedStartDate, formattedEndDate);
                 nbItems = walletOperationService.purge(firstTransactionDate, lastTransactionDate, woStatusList);
-                log.info("==>{} WOs rows purged", nbItems);
+                log.debug("==>{} WOs rows purged", nbItems);
                 report += "WOs :" + nbItems;
             }
             List<RatedTransactionStatusEnum> rtStatusList = getTargetStatusList(jobInstance, RatedTransactionStatusEnum.class, PURGE_MEDIATION_DATA_JOB_RT_STATUS_CF);
             if (!rtStatusList.isEmpty()) {
-                log.info("=> starting purge rated transactions between {} and {}", formattedStartDate, formattedEndDate);
+                log.debug("=> starting purge rated transactions between {} and {}", formattedStartDate, formattedEndDate);
                 long itemsRemoved = ratedTransactionService.purge(firstTransactionDate, lastTransactionDate, rtStatusList);
-                log.info("==>{} RTs rows purged", itemsRemoved);
+                log.debug("==>{} RTs rows purged", itemsRemoved);
                 report += ", RTs : " + itemsRemoved;
                 nbItems += itemsRemoved;
             }
             List<EDRStatusEnum> edrStatusList = getTargetStatusList(jobInstance, EDRStatusEnum.class, PURGE_MEDIATION_DATA_JOB_EDR_STATUS_CF);
             if (!edrStatusList.isEmpty()) {
-                log.info("=> starting purge rated transactions between {} and {}", formattedStartDate, formattedEndDate);
+                log.debug("=> starting purge rated transactions between {} and {}", formattedStartDate, formattedEndDate);
                 long itemsRemoved = edrService.purge(firstTransactionDate, lastTransactionDate, edrStatusList);
-                log.info("==>{} EDRs rows purged ", itemsRemoved);
+                log.debug("==>{} EDRs rows purged ", itemsRemoved);
                 report += ", EDRs : " + itemsRemoved;
                 nbItems += itemsRemoved;
             }

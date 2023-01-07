@@ -70,7 +70,7 @@ public class MeveoMinaFTPListener {
         } catch (Exception e) {
         }
         if (port == null) {
-            log.info("meveo ftp server doesn't start with port {}", portStr);
+            log.debug("meveo ftp server doesn't start with port {}", portStr);
             return;
         }
         FtpServerFactory serverFactory = new FtpServerFactory();

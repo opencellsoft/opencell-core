@@ -103,7 +103,7 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
 	}
 
 	public void populateCurrencies(Currency currency) {
-		log.info("populatCurrencies currency",
+		log.debug("populatCurrencies currency",
 				currency != null ? currency.getCurrencyCode() : null);
 		if (currency != null) {
 			entity.setCurrency(currency);
@@ -114,7 +114,7 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
 	public void onCurrencySelect(SelectEvent event) {
 		if (event.getObject() instanceof Currency) {
 			Currency currency = (Currency) event.getObject();
-			log.info("populatCurrencies currency",
+			log.debug("populatCurrencies currency",
 					currency != null ? currency.getCurrencyCode() : null);
 			if (currency != null) {
 				entity.setCurrency(currency);

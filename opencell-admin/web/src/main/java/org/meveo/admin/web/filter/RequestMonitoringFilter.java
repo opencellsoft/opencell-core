@@ -81,7 +81,7 @@ public class RequestMonitoringFilter extends HttpFilter {
                         String metricsType = metrics.get("metrics_type");
                         String unit = metrics.get("metrics_unit");
 
-                        log.info("Register {} metrics for {} in {}", metricsType, req.getMethod(), name);
+                        log.debug("Register {} metrics for {} in {}", metricsType, req.getMethod(), name);
                         registerMetricsForMethod(name, metricsType, millis, unit);
                     }
                 } else {

@@ -37,7 +37,7 @@ public class MatchingAmountService extends PersistenceService<MatchingAmount> {
 	private AccountOperationService accountOperationService;
 
 	public void unmatching(Long idMatchingAmount) throws BusinessException {
-		log.info("start cancelMatchingAmount with id:#0,user:#1", idMatchingAmount);
+		log.debug("start cancelMatchingAmount with id:#0,user:#1", idMatchingAmount);
         if (idMatchingAmount == null) {
             throw new BusinessException("Error when idMatchingAmount is null!");
         }
@@ -61,9 +61,9 @@ public class MatchingAmountService extends PersistenceService<MatchingAmount> {
 		}
 		operation.getMatchingAmounts().remove(matchingAmount);
 		accountOperationService.updateNoCheck(operation);
-		log.info("cancel one accountOperation!");
+		log.debug("cancel one accountOperation!");
 
-		log.info("successfully end cancelMatching!");
+		log.debug("successfully end cancelMatching!");
 	}
 
 	public MatchingAmount findByCode(String matchingCode) {

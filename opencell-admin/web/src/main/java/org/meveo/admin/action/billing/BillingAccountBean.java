@@ -233,7 +233,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
     }
 
     public String cancelAccount() {
-        log.info("cancelAccount billingAccountId:" + entity.getId());
+        log.debug("cancelAccount billingAccountId:" + entity.getId());
         try {
             entity = billingAccountService.refreshOrRetrieve(entity);
             entity = billingAccountService.billingAccountCancellation(entity, new Date());
@@ -247,7 +247,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
     }
 
     public String closeAccount() {
-        log.info("closeAccount billingAccountId:" + entity.getId());
+        log.debug("closeAccount billingAccountId:" + entity.getId());
         try {
             entity = billingAccountService.closeBillingAccount(entity);
             messages.info(new BundleKey("messages", "close.closeSuccessful"));
@@ -260,7 +260,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
     }
 
     public String generateInvoice() {
-        log.info("generateInvoice billingAccountId:" + entity.getId());
+        log.debug("generateInvoice billingAccountId:" + entity.getId());
         try {
             entity = billingAccountService.refreshOrRetrieve(entity);
 
@@ -312,7 +312,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
      * @return
      */
     public String generateProformaInvoice() {
-        log.info("generateProformaInvoice billingAccountId:" + entity.getId());
+        log.debug("generateProformaInvoice billingAccountId:" + entity.getId());
         try {
             entity = billingAccountService.refreshOrRetrieve(entity);
 

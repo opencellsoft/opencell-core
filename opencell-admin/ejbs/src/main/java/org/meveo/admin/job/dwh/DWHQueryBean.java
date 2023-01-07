@@ -126,7 +126,7 @@ public class DWHQueryBean {
             }
             if (StringUtils.isBlank(mq.getSqlQuery())) {
                 result.registerError("Measurable quantity with code " + measurableQuantityCode + " has no SQL query set.");
-                log.info("Measurable quantity with code {} has no SQL query set.", measurableQuantityCode);
+                log.debug("Measurable quantity with code {} has no SQL query set.", measurableQuantityCode);
                 continue;
             }
 

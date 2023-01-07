@@ -135,7 +135,7 @@ public class MediationReprocessingJobBean {
                 result.addReport(errorDescription);
             }
 
-            log.info("Finished processing mediation");
+            log.debug("Finished processing mediation");
 
         } catch (Exception e) {
             log.error("Failed to process mediation", e);

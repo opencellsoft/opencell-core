@@ -112,7 +112,7 @@ public class QuoteService extends BusinessService<Quote> {
      */
     @SuppressWarnings("unused")
     public List<Invoice> provideQuote(Map<String, List<QuoteInvoiceInfo>> quoteInvoiceInfos, boolean generatePdf, boolean isVirtual) throws BusinessException {
-        log.info("Creating simulated invoice for {}", quoteInvoiceInfos);
+        log.debug("Creating simulated invoice for {}", quoteInvoiceInfos);
 
         List<Invoice> invoices = new ArrayList<>();
 

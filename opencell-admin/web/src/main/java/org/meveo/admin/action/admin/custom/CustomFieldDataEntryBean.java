@@ -971,16 +971,16 @@ public class CustomFieldDataEntryBean implements Serializable {
             // Display a message accordingly on what is set in result
             if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
                 messages.info(new BundleKey("messages", (String) result.get(Script.RESULT_GUI_MESSAGE_KEY)));
-                log.info("A key message to show after entity custom action execution (RESULT_GUI_MESSAGE_KEY) is : {}", (String) result.get(Script.RESULT_GUI_MESSAGE_KEY));
+                log.debug("A key message to show after entity custom action execution (RESULT_GUI_MESSAGE_KEY) is : {}", (String) result.get(Script.RESULT_GUI_MESSAGE_KEY));
 
             } else if (result.containsKey(Script.RESULT_GUI_MESSAGE)) {
                 String message = (String) result.get(Script.RESULT_GUI_MESSAGE);
                 messages.info(message);
-                log.info("A message to show after entity custom action execution (RESULT_GUI_MESSAGE) is : {}", message);
+                log.debug("A message to show after entity custom action execution (RESULT_GUI_MESSAGE) is : {}", message);
 
             } else {
                 messages.info(new BundleKey("messages", "scriptInstance.actionExecutionSuccessfull"), action.getLabel());
-                log.info("A message to show after entity custom action execution is : scriptInstance.actionExecutionSuccessfull");
+                log.debug("A message to show after entity custom action execution is : scriptInstance.actionExecutionSuccessfull");
             }
 
             if (result.containsKey(Script.RESULT_GUI_OUTCOME)) {

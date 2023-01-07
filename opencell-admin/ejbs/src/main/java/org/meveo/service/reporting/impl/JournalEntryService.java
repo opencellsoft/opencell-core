@@ -39,7 +39,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public List<Object> getTaxRecodsBetweenDate(Date startDate, Date endDate) {
 		List<Object> result = null;
-		log.info("getTaxRecodsBetweenDate ( {}, {})", startDate, endDate);
+		log.debug("getTaxRecodsBetweenDate ( {}, {})", startDate, endDate);
 		Query query = getEntityManager()
 				.createQuery(
 						"select a.taxCode, a.taxDescription, a.taxPercent, sum(amountWithoutTax) as amountWithoutTax,  sum(amountTax) as amountTax from "
@@ -49,7 +49,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 				.setParameter("endDate", endDate);
 		log.debug("getTaxRecodsBetweenDate : query={}", query);
 		result = query.getResultList();
-		log.info("getTaxRecodsBetweenDate : {} records", result.size());
+		log.debug("getTaxRecodsBetweenDate : {} records", result.size());
 		return result;
 	}
 
@@ -58,7 +58,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 	public List<Object> getJournalRecords(Date startDate,
 			Date endDate) {
 		List<Object> result = null;
-		log.info("getJournalRecords ( {}, {})", startDate, endDate);
+		log.debug("getJournalRecords ( {}, {})", startDate, endDate);
 		Query query = getEntityManager()
 				.createQuery(
 						"select a.type, a.invoiceDate, a.invoiceNumber,a.customerAccountCode, a.accountingCode, sum(a.amountWithoutTax),sum(a.amountTax),sum(a.amountWithTax) from "
@@ -71,7 +71,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 				.setParameter("endDate", endDate);
 		log.debug("getJournalRecords : query={}", query);
 		result = query.getResultList();
-		log.info("getJournalRecords : {} records", result.size());
+		log.debug("getJournalRecords : {} records", result.size());
 		return result;
 	}
 
@@ -80,7 +80,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 	public List<Object> getSIMPACRecords(Date startDate,
 			Date endDate) {
 		List<Object> result = null;
-		log.info("getSIMPACRecords( {}, {})", startDate, endDate);
+		log.debug("getSIMPACRecords( {}, {})", startDate, endDate);
 		Query query = getEntityManager()
 				.createQuery(
 						"select a.type,a.accountingCode, sum(amountWithoutTax) as amountWithoutTax , sum(amountTax) as amountTax, sum(amountWithTax) as amountWithTax  from "
@@ -93,7 +93,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 				.setParameter("endDate", endDate);
 		log.debug("getSIMPACRecords : query={}", query);
 		result = query.getResultList();
-		log.info("getSIMPACRecords : {} records", result.size());
+		log.debug("getSIMPACRecords : {} records", result.size());
 		return result;
 	}
 }

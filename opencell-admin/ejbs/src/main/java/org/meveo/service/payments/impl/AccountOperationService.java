@@ -477,11 +477,11 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         if (accountOperation == null) {
             throw new BusinessException("accountOperation is null");
         }
-        log.info("addLitigation accountOperation.Reference:" + accountOperation.getReference() + "status:" + accountOperation.getMatchingStatus());
+        log.debug("addLitigation accountOperation.Reference:" + accountOperation.getReference() + "status:" + accountOperation.getMatchingStatus());
 
         accountOperation.setMatchingStatus(MatchingStatusEnum.I);
         update(accountOperation);
-        log.info("addLitigation accountOperation.Reference:" + accountOperation.getReference() + " ok");
+        log.debug("addLitigation accountOperation.Reference:" + accountOperation.getReference() + " ok");
     }
 
     /**
@@ -504,7 +504,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         if (accountOperation == null) {
             throw new BusinessException("accountOperation is null");
         }
-        log.info("cancelLitigation accountOperation.Reference:" + accountOperation.getReference());
+        log.debug("cancelLitigation accountOperation.Reference:" + accountOperation.getReference());
         if (accountOperation.getMatchingStatus() != MatchingStatusEnum.I) {
             throw new BusinessException("accountOperation is not on Litigation");
         }
@@ -518,6 +518,6 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         }
         
         update(accountOperation);
-        log.info("cancelLitigation accountOperation.Reference:" + accountOperation.getReference() + " ok , status:"+ accountOperation.getMatchingStatus());
+        log.debug("cancelLitigation accountOperation.Reference:" + accountOperation.getReference() + " ok , status:"+ accountOperation.getMatchingStatus());
     }
 }

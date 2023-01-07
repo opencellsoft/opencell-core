@@ -86,7 +86,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
         } catch (Exception e) {
             super.processException(e, result.getActionStatus());
         }
-        log.info("generateInvoice Response={}", result);
+        log.debug("generateInvoice Response={}", result);
         return result;
     }
 
@@ -101,7 +101,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
         } catch (Exception e) {
             super.processException(e, result.getActionStatus());
         }
-        log.info("getXMLInvoice Response={}", result);
+        log.debug("getXMLInvoice Response={}", result);
         return result;
     }
 
@@ -116,7 +116,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
         } catch (Exception e) {
             super.processException(e, result.getActionStatus());
         }
-        log.info("getXMLInvoice Response={}", result);
+        log.debug("getXMLInvoice Response={}", result);
         return result;
     }
 
@@ -131,7 +131,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
         } catch (Exception e) {
             super.processException(e, result.getActionStatus());
         }
-        log.info("getPdfInvoice Response={}", result);
+        log.debug("getPdfInvoice Response={}", result);
         return result;
     }
 
@@ -146,7 +146,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
         } catch (Exception e) {
             super.processException(e, result.getActionStatus());
         }
-        log.info("getPdfInvoice Response={}", result);
+        log.debug("getPdfInvoice Response={}", result);
         return result;
     }
 
@@ -210,7 +210,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
         } catch (Exception e) {
             super.processException(e, result.getActionStatus());
         }
-        log.info("generateInvoice Response={}", result);
+        log.debug("generateInvoice Response={}", result);
         return result;
     }
 

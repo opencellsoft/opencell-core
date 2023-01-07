@@ -132,11 +132,11 @@ public class ParamActionBean extends BaseBean<ParamProperty> implements Serializ
     }
 
     public void save() {
-        log.info("update and save paramBean properties " + properties.size());
+        log.debug("update and save paramBean properties " + properties.size());
         ParamBean paramBean = paramBeanFactory.getInstance();
 
         for (ParamProperty property : properties) {
-            log.info(property.getKey() + "->" + property.getValue());
+            log.debug(property.getKey() + "->" + property.getValue());
             paramBean.setProperty(property.getKey(), property.getValue(), property.getCategory());
         }
         paramBean.saveProperties();
@@ -162,7 +162,7 @@ public class ParamActionBean extends BaseBean<ParamProperty> implements Serializ
      * Add new property to properties list
      */
     public void add() {
-        log.info("Add new property:" + this.entity.getKey() + " -> " + this.entity.getValue());
+        log.debug("Add new property:" + this.entity.getKey() + " -> " + this.entity.getValue());
         if (!this.isDataValid()) {
             messages.error(new BundleKey("messages", "properties.add.error"));
             facesContext.validationFailed();

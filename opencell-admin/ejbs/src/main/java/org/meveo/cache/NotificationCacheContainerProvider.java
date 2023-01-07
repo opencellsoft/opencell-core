@@ -97,14 +97,14 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
     private void populateNotificationCache() {
 
         if (!useNotificationCache) {
-            log.info("Notification cache population will be skipped as cache will not be used");
+            log.debug("Notification cache population will be skipped as cache will not be used");
             return;
         }
 
         boolean prepopulateNotificationCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheNotification.prepopulate", "true"));
 
         if (!prepopulateNotificationCache) {
-            log.info("Notification cache pre-population will be skipped");
+            log.debug("Notification cache pre-population will be skipped");
             return;
         }
 
@@ -117,7 +117,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
             addNotificationToCache(notif);
         }
 
-        log.info("Notification cache populated with {} notifications for provider {}.", activeNotifications.size(), provider);
+        log.debug("Notification cache populated with {} notifications for provider {}.", activeNotifications.size(), provider);
     }
 
     /**

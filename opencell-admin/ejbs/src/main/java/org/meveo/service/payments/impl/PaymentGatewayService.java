@@ -101,21 +101,21 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
                 .setParameter("cardTypeValueIN", cardTypeToCheck)
                 .setParameter("sellerIN", seller);
             
-            log.info("paymenTypeValueIN:"+(paymentMethod == null ? PaymentMethodEnum.CARD : paymentMethod.getPaymentType()));
-            log.info("countryValueIN:"+(customerAccount.getAddress() == null ? null : customerAccount.getAddress().getCountry()));
-            log.info("tradingCurrencyValueIN:"+(customerAccount.getTradingCurrency()));
-            log.info("cardTypeValueIN:"+(cardTypeToCheck));
-            log.info("sellerIN:"+(seller == null ?  null : seller.getCode()));
+            log.debug("paymenTypeValueIN:"+(paymentMethod == null ? PaymentMethodEnum.CARD : paymentMethod.getPaymentType()));
+            log.debug("countryValueIN:"+(customerAccount.getAddress() == null ? null : customerAccount.getAddress().getCountry()));
+            log.debug("tradingCurrencyValueIN:"+(customerAccount.getTradingCurrency()));
+            log.debug("cardTypeValueIN:"+(cardTypeToCheck));
+            log.debug("sellerIN:"+(seller == null ?  null : seller.getCode()));
             
                  
             List<PaymentGateway> paymentGateways = (List<PaymentGateway>) query.getResultList();
-            log.info("paymentGateways:"+(paymentGateways == null ? null : paymentGateways.size()));
+            log.debug("paymentGateways:"+(paymentGateways == null ? null : paymentGateways.size()));
             
             if (paymentGateways == null || paymentGateways.isEmpty()) {
                 return null;
             }
             for (PaymentGateway pg : paymentGateways) {
-                log.info("get pg , current :" + pg.getCode());
+                log.debug("get pg , current :" + pg.getCode());
 				if (!StringUtils.isBlank(pg.getApplicationEL())) {
 					if (matchExpression(pg.getApplicationEL(), customerAccount, paymentMethod, pg, seller)) {
 						return pg;
@@ -150,7 +150,7 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
                 return null;
             }
             for (PaymentGateway pg : paymentGateways) {
-                log.info("get pg , current :" + pg.getCode());
+                log.debug("get pg , current :" + pg.getCode());
                 if (!StringUtils.isBlank(pg.getApplicationEL())) {
 	                if (matchExpression(pg.getApplicationEL(), null, null, paymentGateway, seller)) {
 	                    return pg;

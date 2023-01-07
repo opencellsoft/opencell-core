@@ -105,7 +105,7 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
     }
 
     public String serviceInstanciation(ServiceInstance serviceInstance) {
-        log.info("serviceInstanciation serviceInstanceId:" + serviceInstance.getId());
+        log.debug("serviceInstanciation serviceInstanceId:" + serviceInstance.getId());
         try {
             serviceInstanceService.serviceInstanciation(serviceInstance);
 
@@ -120,7 +120,7 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
     }
 
     public String activateService() {
-        log.info("activateService serviceInstanceId:" + entity.getId());
+        log.debug("activateService serviceInstanceId:" + entity.getId());
 
         try {
             entity = serviceInstanceService.refreshOrRetrieve(entity);
@@ -139,7 +139,7 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
     }
 
     public String resiliateService() {
-        log.info("resiliateService serviceInstanceId:" + entity.getId());
+        log.debug("resiliateService serviceInstanceId:" + entity.getId());
 
         try {
             // serviceInstanceService.serviceTermination(serviceInstance, new
@@ -154,7 +154,7 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
     }
 
     public String resiliateWithoutFeeService() {
-        log.info("cancelService serviceInstanceId:" + entity.getId());
+        log.debug("cancelService serviceInstanceId:" + entity.getId());
 
         try {
             // serviceInstanceService.serviceCancellation(serviceInstance, new
@@ -169,7 +169,7 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
     }
 
     public String reactiveService() {
-        log.info("reactiveService serviceInstanceId:" + entity.getId());
+        log.debug("reactiveService serviceInstanceId:" + entity.getId());
 
         try {
             entity = serviceInstanceService.refreshOrRetrieve(entity);
@@ -187,7 +187,7 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
     }
 
     public String suspendService() {
-        log.info("suspendService serviceInstanceId:" + entity.getId());
+        log.debug("suspendService serviceInstanceId:" + entity.getId());
 
         try {
             entity = serviceInstanceService.refreshOrRetrieve(entity);

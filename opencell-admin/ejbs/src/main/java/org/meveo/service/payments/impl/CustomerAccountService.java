@@ -261,7 +261,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
      */
     @MeveoAudit
     public void closeCustomerAccount(CustomerAccount customerAccount) throws BusinessException {
-        log.info("closeCustomerAccount customerAccount {}", (customerAccount == null ? "null" : customerAccount.getCode()));
+        log.debug("closeCustomerAccount customerAccount {}", (customerAccount == null ? "null" : customerAccount.getCode()));
 
         if (customerAccount == null) {
             log.warn("closeCustomerAccount customerAccount is null");
@@ -291,7 +291,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
             customerAccount.setStatus(CustomerAccountStatusEnum.CLOSE);
             customerAccount.setDateStatus(new Date());
             update(customerAccount);
-            log.info("closeCustomerAccount customerAccountCode:" + customerAccount.getCode() + " closed successfully");
+            log.debug("closeCustomerAccount customerAccountCode:" + customerAccount.getCode() + " closed successfully");
         } catch (BusinessException be) {
             throw be;
         }
@@ -306,7 +306,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
      * @throws Exception the exception
      */
     public void closeCustomerAccount(Long customerAccountId, String customerAccountCode) throws BusinessException, Exception {
-        log.info("closeCustomerAccount customerAccountCode {}, customerAccountID {}", customerAccountCode, customerAccountId);
+        log.debug("closeCustomerAccount customerAccountCode {}, customerAccountID {}", customerAccountCode, customerAccountId);
         closeCustomerAccount(findCustomerAccount(customerAccountId, customerAccountCode));
     }
 
@@ -320,7 +320,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
      */
     @MeveoAudit
     public void transferAccount(CustomerAccount fromCustomerAccount, CustomerAccount toCustomerAccount, BigDecimal amount) throws BusinessException {
-        log.info("transfertAccount fromCustomerAccount {} toCustomerAccount {} amount {}", (fromCustomerAccount == null ? "null" : fromCustomerAccount.getCode()),
+        log.debug("transfertAccount fromCustomerAccount {} toCustomerAccount {} amount {}", (fromCustomerAccount == null ? "null" : fromCustomerAccount.getCode()),
             (toCustomerAccount == null ? "null" : toCustomerAccount.getCode()), amount);
 
         if (fromCustomerAccount == null) {
@@ -344,7 +344,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
             otherCreditAndChargeService.addOCC(occTransferAccountDebit, descTransfertFrom + " " + toCustomerAccount.getCode(), fromCustomerAccount, amount, new Date());
             otherCreditAndChargeService.addOCC(occTransferAccountCredit, descTransfertTo + " " + fromCustomerAccount.getCode(), toCustomerAccount, amount, new Date());
-            log.info("Successful transfertAccount fromCustomerAccountCode:" + fromCustomerAccount.getCode() + " toCustomerAccountCode:" + toCustomerAccount.getCode());
+            log.debug("Successful transfertAccount fromCustomerAccountCode:" + fromCustomerAccount.getCode() + " toCustomerAccountCode:" + toCustomerAccount.getCode());
 
         } catch (Exception e) {
             throw e;
@@ -363,7 +363,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
      * @throws BusinessException business exception
      */
     public void transferAccount(Long fromCustomerAccountId, String fromCustomerAccountCode, Long toCustomerAccountId, String toCustomerAccountCode, BigDecimal amount) throws BusinessException {
-        log.info("transfertAccount fromCustomerAccountCode {} fromCustomerAccountId {} toCustomerAccountCode {} toCustomerAccountId {}, amount {}", fromCustomerAccountCode, fromCustomerAccountId, toCustomerAccountCode,
+        log.debug("transfertAccount fromCustomerAccountCode {} fromCustomerAccountId {} toCustomerAccountCode {} toCustomerAccountId {}, amount {}", fromCustomerAccountCode, fromCustomerAccountId, toCustomerAccountCode,
             +toCustomerAccountId, amount);
         transferAccount(findCustomerAccount(fromCustomerAccountId, fromCustomerAccountCode), findCustomerAccount(toCustomerAccountId, toCustomerAccountCode), amount);
     }
@@ -389,7 +389,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
      * @throws BusinessException business exception.
      */
     public void updateCreditCategory(Long id, String code, String creditCategory) throws BusinessException {
-        log.info("start updateCreditCategory with id:" + id + ",code:" + code);
+        log.debug("start updateCreditCategory with id:" + id + ",code:" + code);
         if (creditCategory == null) {
             log.warn("Error when required creditCategory is null!");
             throw new BusinessException("Error when required creditCategory is null");
@@ -400,7 +400,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         }
 
         update(customerAccount);
-        log.info("successfully end updateCreditCategory!");
+        log.debug("successfully end updateCreditCategory!");
     }
 
     /**
@@ -413,7 +413,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
      */
     @MeveoAudit
     public void updateDunningLevel(Long id, String code, DunningLevelEnum dunningLevel) throws BusinessException {
-        log.info("start updateDunningLevel with id:" + id + ",code:" + code);
+        log.debug("start updateDunningLevel with id:" + id + ",code:" + code);
         if (dunningLevel == null) {
             log.warn("Error when required dunningLevel is null!");
             throw new BusinessException("Error when required dunningLevel is null");
@@ -422,7 +422,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         customerAccount.setDunningLevel(dunningLevel);
         customerAccount.setDateDunningLevel(new Date());
         update(customerAccount);
-        log.info("successfully end updateDunningLevel!");
+        log.debug("successfully end updateDunningLevel!");
     }
 
     /**
@@ -436,10 +436,10 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
      * @throws BusinessException business exception.
      */
     public List<AccountOperation> consultOperations(Long id, String code, Date from, Date to) throws BusinessException {
-        log.info("start consultOperations with id:" + id + ",code:" + code + "from:" + from + ",to:" + to);
+        log.debug("start consultOperations with id:" + id + ",code:" + code + "from:" + from + ",to:" + to);
         CustomerAccount customerAccount = findCustomerAccount(id, code);
         List<AccountOperation> operations = customerAccount.getAccountOperations();
-        log.info("found accountOperation size:" + (operations != null ? operations.size() : 0) + " from customerAccount code:" + code + ",id:" + id);
+        log.debug("found accountOperation size:" + (operations != null ? operations.size() : 0) + " from customerAccount code:" + code + ",id:" + id);
         if (to == null) {
             to = new Date();
         }
@@ -459,8 +459,8 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
                 }
             }
         }
-        log.info("found effective operations size:" + (operations != null ? operations.size() : 0) + " from customerAccount code:" + code + ",id:" + id);
-        log.info("successfully end consultOperations");
+        log.debug("found effective operations size:" + (operations != null ? operations.size() : 0) + " from customerAccount code:" + code + ",id:" + id);
+        log.debug("successfully end consultOperations");
         return operations;
     }
 
@@ -474,7 +474,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
      */
     public CustomerAccount findCustomerAccount(Long id, String code) throws BusinessException {
 
-        log.info("findCustomerAccount with code:" + code + ",id:" + id);
+        log.debug("findCustomerAccount with code:" + code + ",id:" + id);
 
         if ((code == null || code.equals("")) && (id == null || id == 0)) {
             log.warn("Error: require code and id are null!");
@@ -722,7 +722,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
      * @throws BusinessException business exception
      */
     public void transferAccount(String fromCustomerAccountCode, String toCustomerAccountCode, BigDecimal amount) throws BusinessException {
-        log.info("transfer an amount {} from account {} to the account {} ", fromCustomerAccountCode, toCustomerAccountCode, amount);
+        log.debug("transfer an amount {} from account {} to the account {} ", fromCustomerAccountCode, toCustomerAccountCode, amount);
 
         CustomerAccount fromCustomerAccount = findByCode(fromCustomerAccountCode);
         if (fromCustomerAccount == null) {

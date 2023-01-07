@@ -107,13 +107,13 @@ public class RatedTransactionsJobBean extends BaseJobBean {
     }
 
     private void removeZeroWalletOperation() {
-        log.info("Remove wellet oprations rated to 0");
+        log.debug("Remove wellet oprations rated to 0");
         walletOperationService.removeZeroWalletOperation();
     }
 
     private void executeWithoutAggregation(JobExecutionResultImpl result, Long nbRuns, Long waitingMillis) throws Exception {
         List<Long> walletOperations = walletOperationService.listToRate(new Date(), PROCESS_NR_IN_JOB_RUN);
-        log.info("WalletOperations to convert into rateTransactions={}", walletOperations.size());
+        log.debug("WalletOperations to convert into rateTransactions={}", walletOperations.size());
         result.setNbItemsToProcess(walletOperations.size());
 
         SubListCreator<Long> subListCreator = new SubListCreator<>(walletOperations, nbRuns.intValue());
@@ -158,7 +158,7 @@ public class RatedTransactionsJobBean extends BaseJobBean {
             return;
         }
 
-        log.info("Aggregated walletOperations to convert into rateTransactions={}", aggregatedWo.size());
+        log.debug("Aggregated walletOperations to convert into rateTransactions={}", aggregatedWo.size());
         result.setNbItemsToProcess(aggregatedWo.size());
 
         SubListCreator<AggregatedWalletOperation> subListCreator = new SubListCreator<>(aggregatedWo, nbRuns.intValue());

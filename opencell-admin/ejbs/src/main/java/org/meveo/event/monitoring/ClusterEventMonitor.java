@@ -75,7 +75,7 @@ public class ClusterEventMonitor implements MessageListener {
                 if (EjbUtils.getCurrentClusterNode().equals(eventDto.getSourceNode())) {
                     return;
                 }
-                log.info("Received cluster synchronization event message {}", eventDto);
+                log.debug("Received cluster synchronization event message {}", eventDto);
 
                 processClusterEvent(eventDto);
 

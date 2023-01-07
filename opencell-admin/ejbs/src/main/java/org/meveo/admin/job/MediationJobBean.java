@@ -184,7 +184,7 @@ public class MediationJobBean {
                 result.addReport(errorDescription);
             }
 
-            log.info("Finished processing mediation {}", fileName);
+            log.debug("Finished processing mediation {}", fileName);
 
         } catch (Exception e) {
             log.error("Failed to process mediation file {}", fileName, e);

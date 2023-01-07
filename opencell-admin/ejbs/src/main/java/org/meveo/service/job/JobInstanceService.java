@@ -206,11 +206,11 @@ public class JobInstanceService extends BusinessService<JobInstance> {
     @Override
     public void remove(JobInstance jobInstance) throws BusinessException {
 
-        log.info("remove jobInstance {}, id={}", jobInstance.getJobTemplate(), jobInstance.getId());
+        log.debug("remove jobInstance {}, id={}", jobInstance.getJobTemplate(), jobInstance.getId());
 
         String providerCode = currentUser.getProviderCode();
         if (jobInstance.getId() == null) {
-            log.info("removing jobInstance entity with null id, something is wrong");
+            log.debug("removing jobInstance entity with null id, something is wrong");
 
         } else if (jobTimers.containsKey(new CacheKeyLong(providerCode, jobInstance.getId()))) {
             try {
@@ -234,7 +234,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
     public JobInstance enable(JobInstance jobInstance) throws BusinessException {
         jobInstance = super.enable(jobInstance);
 
-        log.info("Enabling jobInstance {}, id={}", jobInstance.getJobTemplate(), jobInstance.getId());
+        log.debug("Enabling jobInstance {}, id={}", jobInstance.getJobTemplate(), jobInstance.getId());
         scheduleUnscheduleJob(jobInstance);
 
         clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.enable);
@@ -246,7 +246,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
     public JobInstance disable(JobInstance jobInstance) throws BusinessException {
         jobInstance = super.disable(jobInstance);
 
-        log.info("Disabling jobInstance {}, id={}", jobInstance.getJobTemplate(), jobInstance.getId());
+        log.debug("Disabling jobInstance {}, id={}", jobInstance.getJobTemplate(), jobInstance.getId());
         scheduleUnscheduleJob(jobInstance);
 
         clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.disable);
@@ -263,7 +263,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
                 Timer timer = jobTimers.get(new CacheKeyLong(providerCode, jobInstanceId));
                 timer.cancel();
                 jobTimers.remove(new CacheKeyLong(providerCode, jobInstanceId));
-                log.info("Cancelled timer id={}", jobInstanceId);
+                log.debug("Cancelled timer id={}", jobInstanceId);
 
             } catch (Exception ex) {
                 log.error("Failed to cancel timer id={}", jobInstanceId, ex);
@@ -288,14 +288,14 @@ public class JobInstanceService extends BusinessService<JobInstance> {
             }
 
             ScheduleExpression scheduleExpression = getScheduleExpression(jobInstance.getTimerEntity());
-            log.info("Scheduling job {} of type {} for {}", jobInstance.getCode(), jobInstance.getJobTemplate(), scheduleExpression);
+            log.debug("Scheduling job {} of type {} for {}", jobInstance.getCode(), jobInstance.getJobTemplate(), scheduleExpression);
 
             // detach(jobInstance);
             jobTimers.put(new CacheKeyLong(currentUser.getProviderCode(), jobInstance.getId()), job.createTimer(scheduleExpression, jobInstance));
             return true;
 
         } else {
-            log.info("Job {} of type {} is inactive, has no timer or is not destined to run on node {} and will not be scheduled", jobInstance.getCode(),
+            log.debug("Job {} of type {} is inactive, has no timer or is not destined to run on node {} and will not be scheduled", jobInstance.getCode(),
                 jobInstance.getJobTemplate(), currentNode);
         }
 

@@ -56,7 +56,7 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
         // queryBuilder.addCriterionEntity("m.measurableQuantity", mq);
         // Query query = queryBuilder.getQuery(em);
         //
-        // log.info("> MeasuredValueService > getByDate > query 1 > {}", query.toString());
+        // log.debug("> MeasuredValueService > getByDate > query 1 > {}", query.toString());
 
         if (date == null || period == null || mq == null) {
             return null;

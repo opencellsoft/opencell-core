@@ -179,7 +179,7 @@ public class SubscriptionImportService extends ImportService {
                 subscriptionService.terminateSubscription(subscription,
                     DateUtils.parseDateWithPattern(jaxbSubscription.getStatus().getDate(), paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")),
                     subscriptionTerminationType, subscription.getOrderNumber());
-                log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:" + jaxbSubscription.getCode() + ", status:Terminated");
+                log.debug("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:" + jaxbSubscription.getCode() + ", status:Terminated");
 
                 return 0;
             } else {
@@ -204,7 +204,7 @@ public class SubscriptionImportService extends ImportService {
             populateCustomFields(jaxbSubscription.getCustomFields().getCustomField(), subscription);
         }
 
-        log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:" + jaxbSubscription.getCode() + ", status:Created");
+        log.debug("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:" + jaxbSubscription.getCode() + ", status:Created");
 
         for (org.meveo.model.jaxb.subscription.ServiceInstance serviceInst : checkSubscription.serviceInsts) {
             try {
@@ -254,10 +254,10 @@ public class SubscriptionImportService extends ImportService {
                 throw new SubscriptionServiceException(jaxbSubscription, serviceInst, e.getMessage());
             }
 
-            log.info("File:" + fileName + ", typeEntity:ServiceInstance, index:" + i + ", code:" + serviceInst.getCode() + ", status:Actived");
+            log.debug("File:" + fileName + ", typeEntity:ServiceInstance, index:" + i + ", code:" + serviceInst.getCode() + ", status:Actived");
         }
 
-        log.info("accessPoints.size=" + checkSubscription.accessPoints.size());
+        log.debug("accessPoints.size=" + checkSubscription.accessPoints.size());
 
         for (Access jaxbAccessPoint : checkSubscription.accessPoints) {
             org.meveo.model.mediation.Access access = new org.meveo.model.mediation.Access();
@@ -271,7 +271,7 @@ public class SubscriptionImportService extends ImportService {
             // }
 
             accessService.create(access);
-            log.info("File:" + fileName + ", typeEntity:access, index:" + i + ", AccessUserId:" + access.getAccessUserId());
+            log.debug("File:" + fileName + ", typeEntity:access, index:" + i + ", AccessUserId:" + access.getAccessUserId());
         }
 
         return 1;

@@ -267,7 +267,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 			outputDir = outputDir + File.separator + additionalOutputDir;
 			outputDir = outputDir.replaceAll(DOUBLE_POINT, EMPTY_STRING);
 
-			log.info("DDRequest output directory=" + outputDir);
+			log.debug("DDRequest output directory=" + outputDir);
 			File dir = new File(outputDir);
 			if (!dir.exists()) {
 				dir.mkdirs();
@@ -413,7 +413,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 	 */
 	private void addPaymentInformation(CustomerDirectDebitInitiationV02 Message, DDRequestItem dDRequestItem, Provider appProvider) throws Exception {
 
-		log.info("addPaymentInformation dDRequestItem id=" + dDRequestItem.getId());
+		log.debug("addPaymentInformation dDRequestItem id=" + dDRequestItem.getId());
 		ParamBean paramBean = ParamBean.getInstanceByProvider(appProvider.getCode());
 		PaymentInstructionInformation4 paymentInformation = new PaymentInstructionInformation4();
 		Message.getPmtInf().add(paymentInformation);
@@ -538,7 +538,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 	 */
 	private void addSctPaymentInformation(CustomerCreditTransferInitiationV03 message, DDRequestItem ddrequestItem, Provider appProvider) throws Exception {
 
-		log.info("addPaymentInformation dDRequestItem id=" + ddrequestItem.getId());
+		log.debug("addPaymentInformation dDRequestItem id=" + ddrequestItem.getId());
 
 		PaymentInstructionInformation3 paymentInformation = new PaymentInstructionInformation3();
 		message.getPmtInf().add(paymentInformation);

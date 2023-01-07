@@ -277,17 +277,17 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
     public void delete(Long id) {
         try {
             entity = getPersistenceService().findById(id);
-            log.info(String.format("Deleting entity %s with id = %s", entity.getClass().getName(), id));
+            log.debug(String.format("Deleting entity %s with id = %s", entity.getClass().getName(), id));
             // entity.getDunningPlan().getTransitions().remove(entity);
             getPersistenceService().remove(id);
             entity = null;
             messages.info(new BundleKey("messages", "delete.successful"));
         } catch (Throwable t) {
             if (t.getCause() instanceof EntityExistsException) {
-                log.info("delete was unsuccessful because entity is used in the system", t);
+                log.debug("delete was unsuccessful because entity is used in the system", t);
                 messages.error(new BundleKey("messages", "error.delete.entityUsed"));
             } else {
-                log.info("unexpected exception when deleting!", t);
+                log.debug("unexpected exception when deleting!", t);
                 messages.error(new BundleKey("messages", "error.delete.unexpected"));
             }
         }
@@ -336,7 +336,7 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
             messages.info(new BundleKey("messages", "delete.successful"));
 
         } catch (Exception e) {
-            log.info("Failed to delete!", e);
+            log.debug("Failed to delete!", e);
             messages.error(new BundleKey("messages", "error.delete.unexpected"));
         }
     }

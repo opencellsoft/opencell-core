@@ -55,7 +55,7 @@ public class OtherCreditAndChargeService extends
 	public OtherCreditAndCharge addOCC(String codeOCCTemplate, String descToAppend,
 			CustomerAccount customerAccount, BigDecimal amount, Date dueDate
 			) throws BusinessException {
-		log.info(
+		log.debug(
 				"addOCC  codeOCCTemplate:{}  customerAccount:{} amount:{} dueDate:{}",
 				new Object[] {
 						codeOCCTemplate,
@@ -117,7 +117,7 @@ public class OtherCreditAndChargeService extends
 		
 		create(otherCreditAndCharge);
 		if (customerAccount != null) {
-		    log.info(
+		    log.debug(
 		        "addOCC  codeOCCTemplate:{}  customerAccount:{} amount:{} dueDate:{} Successful",
 		        new Object[] { codeOCCTemplate, customerAccount.getCode(),
 		                amount, dueDate });
@@ -148,7 +148,7 @@ public class OtherCreditAndChargeService extends
 	// customerAccountId, String customerAccountCode, BigDecimal amount, Date
 	// dueDate,
 	// User user) throws BusinessException, Exception {
-	// log.info("addOCC  codeOCCTemplate:{}  customerAccountId:{} customerAccountCode:{} amount:{} dueDate:{4}",
+	// log.debug("addOCC  codeOCCTemplate:{}  customerAccountId:{} customerAccountCode:{} amount:{} dueDate:{4}",
 	// codeOCCTemplate, customerAccountId,
 	// customerAccountCode, amount, dueDate);
 	// CustomerAccount customerAccount =

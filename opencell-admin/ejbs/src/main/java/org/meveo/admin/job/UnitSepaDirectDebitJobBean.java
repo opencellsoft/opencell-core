@@ -123,7 +123,7 @@ public class UnitSepaDirectDebitJobBean {
 		String errorMsg = null;
 		if (!ddrequestItem.hasError()) {
 			if (BigDecimal.ZERO.compareTo(ddrequestItem.getAmount()) == 0) {
-				log.info("invoice: {}  balanceDue:{}  no DIRECTDEBIT transaction", ddrequestItem.getReference(), BigDecimal.ZERO);
+				log.debug("invoice: {}  balanceDue:{}  no DIRECTDEBIT transaction", ddrequestItem.getReference(), BigDecimal.ZERO);
 			} else {
 				automatedPayment = createPaymentOrRefund(ddrequestItem, PaymentMethodEnum.DIRECTDEBIT, ddrequestItem.getAmount(),
 						ddrequestItem.getAccountOperations().get(0).getCustomerAccount(), "ddItem" + ddrequestItem.getId(), ddRequestLOT.getFileName(), ddRequestLOT.getSendDate(),
@@ -186,7 +186,7 @@ public class UnitSepaDirectDebitJobBean {
 			CustomerAccount customerAccount, String reference, String bankLot, Date depositDate, Date bankCollectionDate, Date dueDate, Date transactionDate,
 			List<AccountOperation> occForMatching, boolean isToMatching, MatchingTypeEnum matchingTypeEnum)
 			throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
-		log.info("create payment for amount:" + amount + " paymentMethodEnum:" + paymentMethodEnum + " isToMatching:" + isToMatching + "  customerAccount:"
+		log.debug("create payment for amount:" + amount + " paymentMethodEnum:" + paymentMethodEnum + " isToMatching:" + isToMatching + "  customerAccount:"
 				+ customerAccount.getCode() + "...");
 
 		ParamBean paramBean = paramBeanFactory.getInstance();
@@ -235,11 +235,11 @@ public class UnitSepaDirectDebitJobBean {
 			}
 			aoIds.add(automatedPayment.getId());
 			matchingCodeService.matchOperations(null, customerAccount.getCode(), aoIds, null, MatchingTypeEnum.A);
-			log.info("matching created  for 1 automated Payment/Refund ");
+			log.debug("matching created  for 1 automated Payment/Refund ");
 		} else {
-			log.info("no matching created ");
+			log.debug("no matching created ");
 		}
-		log.info("automated Payment/Refund created for amount:" + automatedPayment.getAmount());
+		log.debug("automated Payment/Refund created for amount:" + automatedPayment.getAmount());
 		return automatedPayment;
 	}
 }

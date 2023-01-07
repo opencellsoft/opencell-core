@@ -728,7 +728,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
         long itemsDeleted = getEntityManager().createNamedQuery("CounterPeriod.purgePeriodsByDate").setParameter("date", date).executeUpdate();
 
-        log.info("Removed {} counter periods which end date is older than a {} date", itemsDeleted, date);
+        log.debug("Removed {} counter periods which end date is older than a {} date", itemsDeleted, date);
 
         return itemsDeleted;
     }

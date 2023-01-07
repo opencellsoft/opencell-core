@@ -217,7 +217,7 @@ public class GenericWorkflowBean extends CustomFieldBean<GenericWorkflow> {
             entity = genericWorkflowService.refreshOrRetrieve(entity);
             messages.info(new BundleKey("messages", "delete.successful"));
         } catch (Exception e) {
-            log.info("Failed to delete!", e);
+            log.debug("Failed to delete!", e);
             messages.error(new BundleKey("messages", "error.delete.unexpected"));
         }
     }

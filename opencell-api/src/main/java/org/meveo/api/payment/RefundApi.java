@@ -90,7 +90,7 @@ public class RefundApi extends BaseApi {
      * @throws MeveoApiException meveo api exception
      */
     public Long createRefund(RefundDto refundDto) throws NoAllOperationUnmatchedException, UnbalanceAmountException, BusinessException, MeveoApiException {
-        log.info("create payment for amount:" + refundDto.getAmount() + " paymentMethodEnum:" + refundDto.getPaymentMethod() + " isToMatching:" + refundDto.isToMatching()
+        log.debug("create payment for amount:" + refundDto.getAmount() + " paymentMethodEnum:" + refundDto.getPaymentMethod() + " isToMatching:" + refundDto.isToMatching()
                 + "  customerAccount:" + refundDto.getCustomerAccountCode() + "...");
 
         if (StringUtils.isBlank(refundDto.getAmount())) {
@@ -151,7 +151,7 @@ public class RefundApi extends BaseApi {
         if (refundDto.isToMatching()) {
             matchRefunds(refundDto, customerAccount, refund);
         } else {
-            log.info("no matching created ");
+            log.debug("no matching created ");
         }
         log.debug("refund created for amount:" + refund.getAmount());
 

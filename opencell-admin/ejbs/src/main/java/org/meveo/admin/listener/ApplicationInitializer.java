@@ -181,7 +181,7 @@ public class ApplicationInitializer {
 
         cfValueAcumulator.loadCfAccumulationRules();
 
-        log.info("Initialized application for provider {}", provider.getCode());
+        log.debug("Initialized application for provider {}", provider.getCode());
 
         return new AsyncResult<Boolean>(Boolean.TRUE);
     }

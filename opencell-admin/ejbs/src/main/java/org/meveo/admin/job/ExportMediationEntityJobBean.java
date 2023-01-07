@@ -116,24 +116,24 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
             String report = "";
             List<EDRStatusEnum> edrStatus = getTargetStatusList(jobInstance, EDRStatusEnum.class, EXPORT_MEDIATION_ENTITY_JOB_EDR_STATUS_CF);
             if (!edrStatus.isEmpty()) {
-                log.info("==> Start exporting EDR ");
+                log.debug("==> Start exporting EDR ");
                 nbItems = exportEDR(jobInstance.getId(), firstTransactionDate, lastTransactionDate, maxResult, edrStatus, exportParentDir, exportFileName);
-                log.info("{} EDRs exported in total", nbItems);
+                log.debug("{} EDRs exported in total", nbItems);
                 report += "EDRs : " + nbItems;
             }
             List<WalletOperationStatusEnum> woStatus = getTargetStatusList(jobInstance, WalletOperationStatusEnum.class, EXPORT_MEDIATION_ENTITY_JOB_WO_STATUS_CF);
             if (!woStatus.isEmpty()) {
-                log.info("==> Start exporting wallet operation ");
+                log.debug("==> Start exporting wallet operation ");
                 long woCount = exportWalletOperation(jobInstance.getId(), firstTransactionDate, lastTransactionDate, maxResult, woStatus, exportParentDir, exportFileName);
-                log.info("{} WOs exported in total", woCount);
+                log.debug("{} WOs exported in total", woCount);
                 nbItems += woCount;
                 report += " WOs : " + woCount;
             }
             List<RatedTransactionStatusEnum> rtStatusList = getTargetStatusList(jobInstance, RatedTransactionStatusEnum.class, EXPORT_MEDIATION_ENTITY_JOB_RT_STATUS_CF);
             if (!rtStatusList.isEmpty()) {
-                log.info("==> Start exporting rated transaction ");
+                log.debug("==> Start exporting rated transaction ");
                 long rtCount = exportRatedTransaction(jobInstance.getId(), firstTransactionDate, lastTransactionDate, maxResult, rtStatusList, exportParentDir, exportFileName);
-                log.info("{} RTs exported in total", rtCount);
+                log.debug("{} RTs exported in total", rtCount);
                 nbItems += rtCount;
                 report += " RTs : " + rtCount;
             }
@@ -181,7 +181,7 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
                 }
 
                 JAXBUtils.marshaller(edrs, new File(dir + File.separator + exportFileName + "_" + timestamp + ".xml"));
-                log.info("{} edr processed", size);
+                log.debug("{} edr processed", size);
                 nbItems += size;
             } else
                 moreToProcess = false;
@@ -342,7 +342,7 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
             result.setLastId(walletOperation.get(size - 1).getId());
             result.setNbItems(size);
             result.setMoreToProcess(true);
-            log.info("{} WOs processed", size);
+            log.debug("{} WOs processed", size);
         }
         return result;
     }
@@ -369,7 +369,7 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
             result.setLastId(ratedTransactions.get(size - 1).getId());
             result.setNbItems(size);
             result.setMoreToProcess(true);
-            log.info("{} RT processed", size);
+            log.debug("{} RT processed", size);
         }
         return result;
     }

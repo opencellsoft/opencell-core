@@ -214,7 +214,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 			ddRequestLOT.setRejectedCause(StringUtils.truncate(allErrors, 255, true));
 			ddRequestLOT.setTotalAmount(totalAmount);
 			update(ddRequestLOT);
-			log.info("Successful createDDRquestLot totalAmount: {}", ddRequestLOT.getTotalAmount());
+			log.debug("Successful createDDRquestLot totalAmount: {}", ddRequestLOT.getTotalAmount());
 
 		} catch (Exception e) {
 			log.error("Failed to sepa direct debit for id {}", ddrequestLotOp.getId(), e);
@@ -245,7 +245,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	 */
 	public void createPaymentsOrRefundsForDDRequestLot(DDRequestLOT ddRequestLOT, Long nbRuns, Long waitingMillis, JobExecutionResultImpl result) throws Exception {
 		ddRequestLOT = refreshOrRetrieve(ddRequestLOT);
-		log.info("createPaymentsForDDRequestLot ddRequestLotId: {}, size:{}", ddRequestLOT.getId(), ddRequestLOT.getDdrequestItems().size());
+		log.debug("createPaymentsForDDRequestLot ddRequestLotId: {}, size:{}", ddRequestLOT.getId(), ddRequestLOT.getDdrequestItems().size());
 		if (ddRequestLOT.isPaymentCreated()) {
 			throw new BusinessException("Payment Already created.");
 		}
@@ -278,7 +278,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 		ddRequestLOT = refreshOrRetrieve(ddRequestLOT);
 		ddRequestLOT.setPaymentCreated(true);
 		update(ddRequestLOT);
-		log.info("Successful createPaymentsForDDRequestLot ddRequestLotId: {}", ddRequestLOT.getId());
+		log.debug("Successful createPaymentsForDDRequestLot ddRequestLotId: {}", ddRequestLOT.getId());
 
 	}
 

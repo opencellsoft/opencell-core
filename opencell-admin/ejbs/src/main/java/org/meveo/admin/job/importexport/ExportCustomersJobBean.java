@@ -84,7 +84,7 @@ public class ExportCustomersJobBean {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, String parameter) {
         String exportDir = paramBeanFactory.getChrootDir() + File.separator + "exports" + File.separator + "customers" + File.separator;
-        log.info("exportDir=" + exportDir);
+        log.debug("exportDir=" + exportDir);
         File dir = new File(exportDir);
         if (!dir.exists()) {
             dir.mkdirs();
@@ -123,11 +123,11 @@ public class ExportCustomersJobBean {
             int nbItems;
             for (org.meveo.model.jaxb.customer.Seller seller : sellers.getSeller()) {
                 nbItems = seller.getCustomers() != null && seller.getCustomers().getCustomer() != null ? seller.getCustomers().getCustomer().size() : 0;
-                log.info("Number of processed customers for the seller {} in ExportCustomersJob is : {}", seller.getCode(), nbItems);
+                log.debug("Number of processed customers for the seller {} in ExportCustomersJob is : {}", seller.getCode(), nbItems);
                 if (nbItems > 0) {
                     for (org.meveo.model.jaxb.customer.Customer customer : seller.getCustomers().getCustomer()) {
                         nbItems = customer.getCustomerAccounts() != null && customer.getCustomerAccounts().getCustomerAccount() != null ? customer.getCustomerAccounts().getCustomerAccount().size() : 0;
-                        log.info("Number of processed customerAccounts for the customer {} in ExportCustomersJob is : {}", customer.getCode(), nbItems);
+                        log.debug("Number of processed customerAccounts for the customer {} in ExportCustomersJob is : {}", customer.getCode(), nbItems);
                     }
                 }
             }

@@ -84,7 +84,7 @@ public class XMLInvoiceGenerationJobBean extends BaseJobBean {
 
             List<Long> invoiceIds = this.fetchInvoiceIdsToProcess(invoicesToProcessEnum, billingRunId);
 
-            log.info("invoices to process={}", invoiceIds == null ? null : invoiceIds.size());
+            log.debug("invoices to process={}", invoiceIds == null ? null : invoiceIds.size());
             List<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
             SubListCreator subListCreator = new SubListCreator(invoiceIds, nbRuns.intValue());
             result.setNbItemsToProcess(subListCreator.getListSize());

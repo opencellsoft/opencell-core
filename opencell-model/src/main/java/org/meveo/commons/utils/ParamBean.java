@@ -116,7 +116,7 @@ public class ParamBean {
                 _propertyFile = System.getProperty("jboss.server.config.dir") + File.separator + name;
             }
         }
-        log.info("Created Parambean for file:" + _propertyFile);
+        log.debug("Created Parambean for file:" + _propertyFile);
         initialize();
     }
 
@@ -305,7 +305,7 @@ public class ParamBean {
      * @param value Property value
      */
     public void setProperty(String property, String value) {
-        log.info("setProperty " + property + "->" + value);
+        log.debug("setProperty " + property + "->" + value);
         if (value == null) {
             value = "";
         }
@@ -344,7 +344,7 @@ public class ParamBean {
     public boolean saveProperties(File file) {
         boolean result = false;
         String fileName = file.getAbsolutePath();
-        log.info("saveProperties to " + fileName);
+        log.debug("saveProperties to " + fileName);
         OutputStream propertyFile = null;
         BufferedWriter bw = null;
         try {
@@ -396,7 +396,7 @@ public class ParamBean {
             }
         }
         // setInstance(new ParamBean(fileName));
-        // log.info("-Fin saveProperties , result:" + result);
+        // log.debug("-Fin saveProperties , result:" + result);
         return result;
     }
 
@@ -457,7 +457,7 @@ public class ParamBean {
      * @param propertiesName System property containing a file name, or a relative filename in Wildfly server's configuration directory
      */
     public static void reload(String propertiesName) {
-        // log.info("Reload");
+        // log.debug("Reload");
         instance = new ParamBean(propertiesName);
     }
 

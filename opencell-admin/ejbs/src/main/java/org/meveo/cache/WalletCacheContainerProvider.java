@@ -115,14 +115,14 @@ public class WalletCacheContainerProvider implements Serializable {
     private void populateWalletIdCache() {
 
         if (!usePrepaidBalanceCache) {
-            log.info("Prepaid balance cache population will be skipped as cache will not be used");
+            log.debug("Prepaid balance cache population will be skipped as cache will not be used");
             return;
         }
 
         boolean prepopulatePrepaidBalanceCache = Boolean.parseBoolean(paramBean.getProperty("cache.cachePrepaidBalance.prepopulate", "true"));
 
         if (!prepopulatePrepaidBalanceCache) {
-            log.info("Prepaid balance cache pre-population will be skipped");
+            log.debug("Prepaid balance cache pre-population will be skipped");
             return;
         }
 
@@ -135,7 +135,7 @@ public class WalletCacheContainerProvider implements Serializable {
             addChargeInstanceNoBalances(charge);
         }
 
-        log.info("Wallet cache populated for provider {} with {} usagecharges", currentProvider, charges.size());
+        log.debug("Wallet cache populated for provider {} with {} usagecharges", currentProvider, charges.size());
     }
 
     /**
@@ -144,14 +144,14 @@ public class WalletCacheContainerProvider implements Serializable {
     private void populateBalanceCache() {
 
         if (!usePrepaidBalanceCache) {
-            log.info("Prepaid balance cache population will be skipped as cache will not be used");
+            log.debug("Prepaid balance cache population will be skipped as cache will not be used");
             return;
         }
 
         boolean prepopulatePrepaidBalanceCache = Boolean.parseBoolean(paramBean.getProperty("cache.cachePrepaidBalance.prepopulate", "true"));
 
         if (!prepopulatePrepaidBalanceCache) {
-            log.info("Prepaid balance cache pre-population will be skipped");
+            log.debug("Prepaid balance cache pre-population will be skipped");
             return;
         }
 
@@ -169,7 +169,7 @@ public class WalletCacheContainerProvider implements Serializable {
             reservedBalanceCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, (BigDecimal) balanceInfo[2]);
         }
 
-        log.info("Wallet cache populated for provider {} with  {} wallets", currentProvider, balanceInfos.size());
+        log.debug("Wallet cache populated for provider {} with  {} wallets", currentProvider, balanceInfos.size());
     }
 
     /**

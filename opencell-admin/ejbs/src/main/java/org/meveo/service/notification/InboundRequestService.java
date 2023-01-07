@@ -62,7 +62,7 @@ public class InboundRequestService extends BusinessService<InboundRequest> {
             itemsDeleted++;
         }
 
-        log.info("Removed {} Inbound requests which date is older then a {} date", itemsDeleted, date);
+        log.debug("Removed {} Inbound requests which date is older then a {} date", itemsDeleted, date);
 
         return itemsDeleted;
     }

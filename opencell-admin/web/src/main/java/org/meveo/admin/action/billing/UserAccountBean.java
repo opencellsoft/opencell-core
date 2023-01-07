@@ -260,7 +260,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     }
 
     public String cancelAccount() {
-        log.info("cancelAccount userAccountId:" + entity.getId());
+        log.debug("cancelAccount userAccountId:" + entity.getId());
         try {
             entity = userAccountService.refreshOrRetrieve(entity);
             entity = userAccountService.userAccountCancellation(entity, new Date());
@@ -274,7 +274,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     }
 
     public String reactivateAccount() {
-        log.info("reactivateAccount userAccountId:" + entity.getId());
+        log.debug("reactivateAccount userAccountId:" + entity.getId());
         try {
             entity = userAccountService.refreshOrRetrieve(entity);
             entity = userAccountService.userAccountReactivation(entity, new Date());

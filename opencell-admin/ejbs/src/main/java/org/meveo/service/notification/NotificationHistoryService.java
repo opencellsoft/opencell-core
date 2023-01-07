@@ -137,7 +137,7 @@ public class NotificationHistoryService extends PersistenceService<NotificationH
                 .setParameter("notification", notification).executeUpdate();
         }
 
-        log.info("Removed {} Notification history records of notification {} which date is older then a {} date", itemsDeleted, notificationCode == null ? "ALL" : notificationCode,
+        log.debug("Removed {} Notification history records of notification {} which date is older then a {} date", itemsDeleted, notificationCode == null ? "ALL" : notificationCode,
             date);
 
         return itemsDeleted;

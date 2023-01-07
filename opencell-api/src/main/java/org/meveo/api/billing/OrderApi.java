@@ -423,7 +423,7 @@ public class OrderApi extends BaseApi {
             return order;
         }
 
-        log.info("Processing order {}", order.getCode());
+        log.debug("Processing order {}", order.getCode());
         
         order.setStartDate(new Date());
         
@@ -446,7 +446,7 @@ public class OrderApi extends BaseApi {
 
     private void processOrderItem(Order order, org.meveo.model.order.OrderItem orderItem) throws BusinessException, MeveoApiException {
 
-        log.info("Processing order item {} {}", order.getCode(), orderItem.getItemId());
+        log.debug("Processing order item {} {}", order.getCode(), orderItem.getItemId());
 
         String orderNumber = order.getOrderNumber();
         orderItem.setStatus(OrderStatusEnum.IN_PROGRESS);
@@ -530,7 +530,7 @@ public class OrderApi extends BaseApi {
         orderItem.setStatus(OrderStatusEnum.COMPLETED);
         orderItemService.update(orderItem);
 
-        log.info("Finished processing order item {} {}", order.getCode(), orderItem.getItemId());
+        log.debug("Finished processing order item {} {}", order.getCode(), orderItem.getItemId());
     }
 
     private Subscription instantiateSubscription(OfferTemplate offerTemplate, org.meveo.model.order.OrderItem orderItem, ProductOrderItem productOrderItem, String orderNumber)

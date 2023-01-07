@@ -179,7 +179,7 @@ public class CustomTableImportJob extends Job {
                 break;
             }
 
-            log.info("Importing data into custom table from file {}", file.getAbsolutePath());
+            log.debug("Importing data into custom table from file {}", file.getAbsolutePath());
             String filename = file.getName();
 
             boolean appendImportedData = filename.contains(CustomTableService.FILE_APPEND);

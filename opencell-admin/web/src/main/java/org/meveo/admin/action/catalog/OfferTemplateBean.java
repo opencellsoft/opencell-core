@@ -570,7 +570,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
     @ActionMethod
     public void saveOfferServiceTemplate() {
-        log.info("saveOfferServiceTemplate getObjectId={}", getObjectId());
+        log.debug("saveOfferServiceTemplate getObjectId={}", getObjectId());
 
         try {
             ServiceTemplate serviceTemplate = null;
@@ -658,7 +658,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
     @ActionMethod
     public void saveOfferProductTemplate() {
-        log.info("saveOfferProductTemplate getObjectId={}", getObjectId());
+        log.debug("saveOfferProductTemplate getObjectId={}", getObjectId());
 
         try {
             ProductTemplate productTemplate = null;
@@ -989,7 +989,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
     @ActionMethod
     public void saveAllowedDiscountPlan() {
-        log.info("save AllowedDiscountPlan getObjectId={}", getObjectId());
+        log.debug("save AllowedDiscountPlan getObjectId={}", getObjectId());
 
         try {
             if (entity.getAllowedDiscountPlans() != null && entity.getAllowedDiscountPlans().contains(allowedDiscountPlan)) {

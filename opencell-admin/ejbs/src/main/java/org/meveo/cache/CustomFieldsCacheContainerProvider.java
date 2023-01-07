@@ -115,14 +115,14 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
     private void populateCFTCache() {
 
         if (!useCFTCache) {
-            log.info("CFT cache population will be skipped as cache will not be used");
+            log.debug("CFT cache population will be skipped as cache will not be used");
             return;
         }
 
         boolean prepopulateCFTCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheCFT.prepopulate", "true"));
 
         if (!prepopulateCFTCache) {
-            log.info("CFT cache pre-population will be skipped");
+            log.debug("CFT cache pre-population will be skipped");
             return;
         }
 
@@ -173,7 +173,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
             cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(lastAppliesTo, cftsSameAppliesTo);
         }
 
-        log.info("CFT cache populated with {} values of provider {}.", cfts.size(), currentProvider);
+        log.debug("CFT cache populated with {} values of provider {}.", cfts.size(), currentProvider);
 
     }
 
@@ -183,14 +183,14 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
     private void populateCETCache() {
 
         if (!useCETCache) {
-            log.info("CET cache population will be skipped as cache will not be used");
+            log.debug("CET cache population will be skipped as cache will not be used");
             return;
         }
 
         boolean prepopulateCETCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheCET.prepopulate", "true"));
 
         if (!prepopulateCETCache) {
-            log.info("CET cache pre-population will be skipped");
+            log.debug("CET cache pre-population will be skipped");
             return;
         }
 
@@ -206,7 +206,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
             cetsByCode.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(new CacheKeyStr(currentProvider, cet.getCode()), cet);
         }
 
-        log.info("CET cache populated with {} values of provider {}.", allCets.size(), currentProvider);
+        log.debug("CET cache populated with {} values of provider {}.", allCets.size(), currentProvider);
     }
 
     /**
@@ -496,7 +496,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
      */
     public void cftsByAppliesToClear() {
         String currentProvider = currentUser.getProviderCode();
-        log.info("Clear CFTS cache for {}/{} ", currentProvider, currentUser);
+        log.debug("Clear CFTS cache for {}/{} ", currentProvider, currentUser);
         // cftsByAppliesTo.keySet().removeIf(key -> (key.getProvider() == null) ? currentProvider == null : key.getProvider().equals(currentProvider));
         Iterator<Entry<CacheKeyStr, Map<String, CustomFieldTemplate>>> iter = cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).entrySet().iterator();
         ArrayList<CacheKeyStr> itemsToBeRemoved = new ArrayList<>();

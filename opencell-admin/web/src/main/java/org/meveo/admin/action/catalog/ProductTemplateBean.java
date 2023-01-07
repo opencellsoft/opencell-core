@@ -426,7 +426,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
     }
 
     public void saveProductChargeTemplate() {
-        log.info("saveProductChargeTemplate getObjectId=" + getObjectId());
+        log.debug("saveProductChargeTemplate getObjectId=" + getObjectId());
 
         try {
             if (productChargeTemplate == null) {

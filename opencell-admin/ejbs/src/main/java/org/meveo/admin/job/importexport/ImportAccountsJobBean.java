@@ -124,7 +124,7 @@ public class ImportAccountsJobBean {
         String importDir = paramBeanFactory.getChrootDir() + File.separator + "imports" + File.separator + "accounts" + File.separator;
         String dirIN = importDir + "input";
 
-        log.info("dirIN=" + dirIN);
+        log.debug("dirIN=" + dirIN);
 
         String dirOK = importDir + "output";
         String dirKO = importDir + "reject";
@@ -138,7 +138,7 @@ public class ImportAccountsJobBean {
         List<File> files = getFilesToProcess(dir, prefix, ext);
         int numberOfFiles = files.size();
 
-        log.info("InputFiles job " + numberOfFiles + " to import");
+        log.debug("InputFiles job " + numberOfFiles + " to import");
 
         for (File file : files) {
             if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
@@ -146,13 +146,13 @@ public class ImportAccountsJobBean {
             }
             File currentFile = null;
             try {
-                log.info("InputFiles job " + file.getName() + " in progres");
+                log.debug("InputFiles job " + file.getName() + " in progres");
                 currentFile = FileUtils.addExtension(file, ".processing");
 
                 importFile(currentFile, file.getName(), result.getJobInstance().getId());
 
                 FileUtils.moveFile(dirOK, currentFile, file.getName());
-                log.info("InputFiles job " + file.getName() + " done");
+                log.debug("InputFiles job " + file.getName() + " done");
             } catch (Exception e) {
                 log.error("InputFiles job " + file.getName() + " failed", e);
                 FileUtils.moveFile(dirKO, currentFile, file.getName());
@@ -189,7 +189,7 @@ public class ImportAccountsJobBean {
 
     private void importFile(File file, String fileName, Long jobInstanceId) throws JAXBException, Exception {
 
-        log.info("start import file : {}", fileName);
+        log.debug("start import file : {}", fileName);
 
         billingAccountsWarning = new BillingAccounts();
         billingAccountsError = new BillingAccounts();
@@ -257,7 +257,7 @@ public class ImportAccountsJobBean {
         generateReport(fileName);
         createHistory();
 
-        log.info("end import file ");
+        log.debug("end import file ");
     }
 
     private boolean billingCheckError(BillingAccount billingAccount) {
@@ -299,17 +299,17 @@ public class ImportAccountsJobBean {
 
                 if (billingAccount == null) {
                     billingAccount = accountImportService.importBillingAccount(billingAccountDto, null);
-                    log.info("file6:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:" + billingAccountDto.getCode() + ", status:Created");
+                    log.debug("file6:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:" + billingAccountDto.getCode() + ", status:Created");
                     nbBillingAccountsCreated++;
                 } else {
-                    log.info("file1:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:" + billingAccountDto.getCode() + ", status:Updated");
+                    log.debug("file1:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:" + billingAccountDto.getCode() + ", status:Updated");
                     billingAccount = accountImportService.updateBillingAccount(billingAccountDto);
                     nbBillingAccountsUpdated++;
                 }
             } catch (ImportWarningException w) {
                 createBillingAccountWarning(billingAccountDto, w.getMessage());
                 nbBillingAccountsWarning++;
-                log.info("file5:" + fileName + ", typeEntity:BillingAccount,  index:" + i + " code:" + billingAccountDto.getCode() + ", status:Warning");
+                log.debug("file5:" + fileName + ", typeEntity:BillingAccount,  index:" + i + " code:" + billingAccountDto.getCode() + ", status:Warning");
             } catch (BusinessException e) {
                 createBillingAccountError(billingAccountDto, e.getMessage());
                 nbBillingAccountsError++;
@@ -369,18 +369,18 @@ public class ImportAccountsJobBean {
 
         if (userAccount != null) {
             nbUserAccountsUpdated++;
-            log.info("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i + ", index:" + j + " code:" + uAccount.getCode() + ", status:Updated");
+            log.debug("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i + ", index:" + j + " code:" + uAccount.getCode() + ", status:Updated");
             accountImportService.updateUserAccount(billingAccount, billingAccountDto, uAccount);
         } else {
             try {
                 userAccount = accountImportService.importUserAccount(billingAccount, billingAccountDto, uAccount, null);
 
-                log.info("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i + ", index:" + j + " code:" + uAccount.getCode() + ", status:Created");
+                log.debug("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i + ", index:" + j + " code:" + uAccount.getCode() + ", status:Created");
                 nbUserAccountsCreated++;
             } catch (ImportWarningException w) {
                 createUserAccountWarning(billingAccountDto, uAccount, w.getMessage());
                 nbUserAccountsWarning++;
-                log.info("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i + ", index:" + j + " code:" + uAccount.getCode() + ", status:Warning");
+                log.debug("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i + ", index:" + j + " code:" + uAccount.getCode() + ", status:Warning");
 
             } catch (BusinessException e) {
                 createUserAccountError(billingAccountDto, uAccount, e.getMessage());

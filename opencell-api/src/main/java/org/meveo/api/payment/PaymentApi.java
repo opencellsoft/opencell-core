@@ -127,7 +127,7 @@ public class PaymentApi extends BaseApi {
      * @throws MeveoApiException opencell api exception
      */
     public Long createPayment(PaymentDto paymentDto) throws NoAllOperationUnmatchedException, UnbalanceAmountException, BusinessException, MeveoApiException {
-        log.info("create payment for amount:" + paymentDto.getAmount() + " paymentMethodEnum:" + paymentDto.getPaymentMethod() + " isToMatching:" + paymentDto.isToMatching()
+        log.debug("create payment for amount:" + paymentDto.getAmount() + " paymentMethodEnum:" + paymentDto.getPaymentMethod() + " isToMatching:" + paymentDto.isToMatching()
                 + "  customerAccount:" + paymentDto.getCustomerAccountCode() + "...");
 
         if (StringUtils.isBlank(paymentDto.getAmount())) {
@@ -203,7 +203,7 @@ public class PaymentApi extends BaseApi {
     				PaymentStatusEnum.ACCEPTED, null, null, null, null,
     				null,null,paymentDto.getListAoIdsForMatching());
         } else {
-            log.info("no matching created ");
+            log.debug("no matching created ");
         }
         log.debug("payment created for amount:" + payment.getAmount());     
         return payment.getId();

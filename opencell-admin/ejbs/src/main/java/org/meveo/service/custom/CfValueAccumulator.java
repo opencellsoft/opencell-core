@@ -260,7 +260,7 @@ public class CfValueAccumulator {
             cfAccumulatorRules.put(providerPrefix + groupedCfts.getKey(), new CfValueAccumulatorRule(groupedCfts.getValue()));
         }
 
-        log.info("CF accumulation rules constructed {}", cfAccumulatorRules);
+        log.debug("CF accumulation rules constructed {}", cfAccumulatorRules);
     }
 
     /**

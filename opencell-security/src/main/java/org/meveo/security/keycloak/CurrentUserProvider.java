@@ -242,7 +242,7 @@ public class CurrentUserProvider {
                 user.updateAudit(currentUser);
                 em.persist(user);
                 em.flush();
-                log.info("A new application user was registered with username {} and name {}", user.getUserName(), user.getName() != null ? user.getName().getFullName() : "");
+                log.debug("A new application user was registered with username {} and name {}", user.getUserName(), user.getName() != null ? user.getName().getFullName() : "");
 
             } catch (ContextNotActiveException e) {
                 // Commented out as no context is available for scheduled jobs to retrieve userAuthTimeProducer instance

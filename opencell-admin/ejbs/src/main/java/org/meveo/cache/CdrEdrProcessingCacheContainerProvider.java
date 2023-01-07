@@ -84,13 +84,13 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
 
         boolean useInMemoryDeduplication = EdrService.DeduplicateEDRTypeEnum.MEMORY.name().equalsIgnoreCase(paramBean.getProperty("mediation.deduplicate", EdrService.DeduplicateEDRTypeEnum.MEMORY.name()));
         if (!useInMemoryDeduplication) {
-            log.info("EDR cache population will be skipped as cache will not be used");
+            log.debug("EDR cache population will be skipped as cache will not be used");
             return;
         }
 
         boolean prepopulateMemoryDeduplication = paramBean.getProperty("mediation.deduplicateInMemory.prepopulate", "true").equals("true");
         if (!prepopulateMemoryDeduplication) {
-            log.info("EDR cache is used, but pre-population will be skipped");
+            log.debug("EDR cache is used, but pre-population will be skipped");
             return;
         }
 
@@ -118,14 +118,14 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
             int retrievedSize = edrCacheKeys.size();
             totalEdrs[0] = totalEdrs[0] + retrievedSize;
 
-            log.info("EDR cache pre-populated with {} EDRs", retrievedSize);
+            log.debug("EDR cache pre-populated with {} EDRs", retrievedSize);
 
             if (retrievedSize < pageSize) {
                 break;
             }
         }
 
-        log.info("Finished to pre-populate EDR cache with {} for provider {}", totalEdrs[0], currentProvider);
+        log.debug("Finished to pre-populate EDR cache with {} for provider {}", totalEdrs[0], currentProvider);
     }
 
     /**

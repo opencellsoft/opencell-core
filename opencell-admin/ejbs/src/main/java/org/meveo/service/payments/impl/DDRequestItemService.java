@@ -75,7 +75,7 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
         for (AccountOperation ao : listAO) {
             ao.setDdRequestItem(ddDequestItem);
         }
-        log.info("ddrequestItem: {} amount {} ", ddDequestItem.getId(), amountToPay);
+        log.debug("ddrequestItem: {} amount {} ", ddDequestItem.getId(), amountToPay);
         return ddDequestItem;
     }
 }

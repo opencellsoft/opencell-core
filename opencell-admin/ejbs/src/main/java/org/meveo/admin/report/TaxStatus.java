@@ -49,10 +49,10 @@ public class TaxStatus extends FileProducer implements Reporting {
     private ParamBeanFactory paramBeanFactory;
 
     public void generateTaxStatusFile(Date startDate, Date endDate, OutputFormatEnum outputFormat) {
-        // log.info("generateTaxStatusFile({},{})", startDate,endDate);
+        // log.debug("generateTaxStatusFile({},{})", startDate,endDate);
         FileWriter writer = null;
         try {
-            // log.info("generateTaxStatusFile : file {}",
+            // log.debug("generateTaxStatusFile : file {}",
             // getFilename(startDate, endDate));
             File file = null;
             if (outputFormat == OutputFormatEnum.PDF) {

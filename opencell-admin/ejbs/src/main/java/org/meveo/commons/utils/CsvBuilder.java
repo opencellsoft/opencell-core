@@ -199,7 +199,7 @@ public class CsvBuilder {
 	 * @param fileName the file name
 	 */
 	public void download(InputStream inputStream, String fileName) {
-		log.info("start to download...");
+		log.debug("start to download...");
 		if (inputStream != null) {
 			try {
 
@@ -214,11 +214,11 @@ public class CsvBuilder {
 				out.flush();
 				out.close();
 				context.responseComplete();
-				log.info("download over!");
+				log.debug("download over!");
 			} catch (Exception e) {
 				log.error("Error:" + e.getMessage() + ", when dowload file: " + fileName);
 			}
-			log.info("downloaded successfully!");
+			log.debug("downloaded successfully!");
 		}
 
 	}

@@ -999,7 +999,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
             nrOfWosToRerate = getEntityManager().createNamedQuery("WalletOperation.setStatusToToRerate").setParameter("now", new Date()).setParameter("woIds", walletOperationIds).executeUpdate();
 
-            log.info("{} out of {} requested Wallet operations are marked for rerating", nrOfWosToRerate, walletOperationIds.size());
+            log.debug("{} out of {} requested Wallet operations are marked for rerating", nrOfWosToRerate, walletOperationIds.size());
         }
         return nrOfWosToRerate;
     }
@@ -1340,7 +1340,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                         + getEntityManager().createNamedQuery("WalletOperation.setStatusToOpenForWosThatAreRelatedByRTsById").setParameter("now", new Date()).setParameter("woIds", walletOperationIds).executeUpdate();
             }
 
-            log.info("{} out of {} requested Wallet operations are canceled/marked for rerating", nrOfWosUpdated, walletOperationIds.size());
+            log.debug("{} out of {} requested Wallet operations are canceled/marked for rerating", nrOfWosUpdated, walletOperationIds.size());
         }
         return nrOfWosUpdated;
     }

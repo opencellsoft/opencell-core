@@ -96,7 +96,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
             if ((resultToPersist.getNbItemsCorrectlyProcessed() + resultToPersist.getNbItemsProcessedWithError() + resultToPersist.getNbItemsProcessedWithWarning()) > 0) {
                 isPersistResult = true;
             } else {
-                log.info("{}/{}: No items were found to process", job.getClass().getName(), jobInstance.getCode());
+                log.debug("{}/{}: No items were found to process", job.getClass().getName(), jobInstance.getCode());
                 isPersistResult = "true".equals(paramBeanFactory.getInstance().getProperty("meveo.job.persistResult", "true"));
             }
             if (isPersistResult) {
@@ -137,7 +137,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
         try {
             if (jobInstance.getFollowingJob() != null) {
                 JobInstance nextJob = jobInstanceService.retrieveIfNotManaged(jobInstance.getFollowingJob());
-                log.info("Executing next job {} for {}", nextJob.getCode(), jobInstance.getCode());
+                log.debug("Executing next job {} for {}", nextJob.getCode(), jobInstance.getCode());
                 executeJobWithParameters(nextJob, null);
             }
         } catch (BusinessException e) {
@@ -166,7 +166,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void manualExecute(JobInstance jobInstance) throws BusinessException {
-        log.info("Manual execute a job {} of type {}", jobInstance.getCode(), jobInstance.getJobTemplate());
+        log.debug("Manual execute a job {} of type {}", jobInstance.getCode(), jobInstance.getJobTemplate());
         try {
             executeJobWithParameters(jobInstance, null);
         } catch (Exception e) {
@@ -185,7 +185,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
      * @throws BusinessException Any exception
      */
     public JobExecutionResultImpl executeJobWithResult(JobInstance jobInstance, Map<String, String> params) throws BusinessException {
-        log.info("Execute a job {}  of type {} with parameters {} ", jobInstance, jobInstance.getJobTemplate(), params);
+        log.debug("Execute a job {}  of type {} with parameters {} ", jobInstance, jobInstance.getJobTemplate(), params);
         try {
             JobExecutionResultImpl jobExecutionResult = new JobExecutionResultImpl();
             jobExecutionResult.setJobInstance(jobInstance);
@@ -213,7 +213,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
      * @throws BusinessException Any exception
      */
     public Long executeJobWithResultId(JobInstance jobInstance, Map<String, String> params) throws BusinessException {
-        log.info("Execute a job {}  of type {} with parameters {} ", jobInstance, jobInstance.getJobTemplate(), params);
+        log.debug("Execute a job {}  of type {} with parameters {} ", jobInstance, jobInstance.getJobTemplate(), params);
         try {
             JobExecutionResultImpl jobExecutionResult = new JobExecutionResultImpl();
             jobExecutionResult.setJobInstance(jobInstance);
@@ -239,7 +239,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
      * @throws BusinessException Any exception
      */
     public void executeJob(JobInstance jobInstance, Map<Object, Object> params) throws BusinessException {
-        log.info("Execute a job {}  of type {} with parameters {} ", jobInstance, jobInstance.getJobTemplate(), params);
+        log.debug("Execute a job {}  of type {} with parameters {} ", jobInstance, jobInstance.getJobTemplate(), params);
         executeJobWithParameters(jobInstance, params);
     }
 
@@ -313,7 +313,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
                 .setParameter("jobInstance", jobInstance).executeUpdate();
         }
 
-        log.info("Removed {} Job execution history of job {} which date is older then a {} date", itemsDeleted, jobName == null ? "ALL" : jobName, date);
+        log.debug("Removed {} Job execution history of job {} which date is older then a {} date", itemsDeleted, jobName == null ? "ALL" : jobName, date);
 
         return itemsDeleted;
     }
@@ -369,7 +369,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
      * @throws BusinessException the business exception
      */
     public void stopJob(JobInstance jobInstance) throws BusinessException {
-        log.info("Stop job {}  of type {}  ", jobInstance, jobInstance.getJobTemplate());
+        log.debug("Stop job {}  of type {}  ", jobInstance, jobInstance.getJobTemplate());
         if (!isJobRunningOnThis(jobInstance)) {
             throw new BusinessException("Job " + jobInstance.getCode() + " currently are not running on this node.");
         }

@@ -321,10 +321,10 @@ public class FlatFileValidator {
         String fileCurrentName = null;
         if (file != null && flatFile != null && !StringUtils.isBlank(inputDirectory)) {
             if (flatFile.getStatus() == FileStatusEnum.BAD_FORMED) {
-                log.info("the file {} is bad formed", flatFile.getFileOriginalName());
+                log.debug("the file {} is bad formed", flatFile.getFileOriginalName());
                 fileCurrentName = moveFile(file, flatFile, rejectDirectory);
             } else {
-                log.info("the file {} is well formed", flatFile.getFileOriginalName());
+                log.debug("the file {} is well formed", flatFile.getFileOriginalName());
                 if (!new File(inputDirectory).exists()) {
                     new File(inputDirectory).mkdirs();
                 }
@@ -466,7 +466,7 @@ public class FlatFileValidator {
                 }
             }
             if (!isValidFileType) {
-                log.info("The file type is invalid");
+                log.debug("The file type is invalid");
                 errors.append("The file type is invalid");
             }
         }
@@ -563,7 +563,7 @@ public class FlatFileValidator {
                 }
 
                 if (flatFileExist) {
-                    log.info("Execute a job {} of type {}", jobInstance.getCode(), jobInstance.getJobTemplate());
+                    log.debug("Execute a job {} of type {}", jobInstance.getCode(), jobInstance.getJobTemplate());
                     jobExecutionService.executeJob(jobInstance, null);
                 }
             } catch (Exception e) {

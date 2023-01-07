@@ -243,7 +243,7 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
         if (!jasperDir.exists()) {
             jasperDir.mkdirs();
         }
-        log.info("Jaspers template used :" + jasperDir.getPath());
+        log.debug("Jaspers template used :" + jasperDir.getPath());
         File[] foldersList = jasperDir.listFiles();
         String commercialRep = null;
         String adjustRep = null;
