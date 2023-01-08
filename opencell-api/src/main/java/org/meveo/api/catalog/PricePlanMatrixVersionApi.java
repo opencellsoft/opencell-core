@@ -391,4 +391,12 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
 
         return entity;
     }
+
+	public void deleteConvertedPricePlanVersion(Long cppvId) {
+		ConvertedPricePlanVersion entity = convertedPricePlanVersionService.findById(cppvId);
+		if(entity == null) {
+			throw new EntityDoesNotExistsException(ConvertedPricePlanVersion.class, cppvId);
+		}
+		convertedPricePlanVersionService.remove(entity);
+	}
 }

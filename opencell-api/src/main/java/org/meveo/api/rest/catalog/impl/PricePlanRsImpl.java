@@ -437,4 +437,16 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 
 	}
 
+	@Override
+	public Response deleteConvertedPricePlanVersion(Long cppvId) {
+		ActionStatus result = new ActionStatus();
+		try {
+            pricePlanMatrixVersionApi.deleteConvertedPricePlanVersion(cppvId);
+			return Response.ok(result).build();
+		} catch (Exception e) {
+			processException(e, result);
+		}
+		return Response.ok(result).build();
+	}
+
 }
