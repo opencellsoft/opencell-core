@@ -21,6 +21,7 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.catalog.GetListPricePlanMatrixVersionResponseDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanVersionResponseDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
@@ -353,13 +354,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
 
     @Transactional
     public ConvertedPricePlanVersion createConvertedPricePlanVersion(ConvertedPricePlanVersionDto dtoData) throws MeveoApiException, BusinessException {
-        if(dtoData.getTradingCurrency() == null || (StringUtils.isBlank(dtoData.getTradingCurrency().getCode()) && dtoData.getTradingCurrency().getId() == null)) {
-            missingParameters.add("tradingCurrency");
-        }
-        if(StringUtils.isBlank(dtoData.getPricePlanMatrixVersionId())) {
-            missingParameters.add("pricePlanMatrixVersionId");
-        }
-        handleMissingParameters();
+        checkMandatoryFields(dtoData);
 
         TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCodeOrId(dtoData.getTradingCurrency().getCode(), dtoData.getTradingCurrency().getId());
         if(tradingCurrency == null) {
@@ -390,5 +385,59 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         convertedPricePlanVersionService.create(entity);
 
         return entity;
+    }
+
+    public ConvertedPricePlanVersion updateConvertedPricePlanVersion(Long cppvId, ConvertedPricePlanVersionDto dtoData) throws MeveoApiException, BusinessException {
+        checkMandatoryFields(dtoData);
+
+        TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCodeOrId(dtoData.getTradingCurrency().getCode(), dtoData.getTradingCurrency().getId());
+        if(tradingCurrency == null) {
+            throw new EntityDoesNotExistsException(TradingCurrency.class, dtoData.getTradingCurrency().getCode(), "code", dtoData.getTradingCurrency().getId()+"", "id");
+        }
+
+        if(appProvider.getCurrency() != null && appProvider.getCurrency().getCurrencyCode().equals(dtoData.getTradingCurrency().getCode())) {
+            throw new InvalidParameterException("Converted PPV currency couldn't be the same as functional currency");
+        }
+
+        PricePlanMatrixVersion ppmv = pricePlanMatrixVersionService.findById(dtoData.getPricePlanMatrixVersionId());
+        if(ppmv == null) {
+            throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, dtoData.getPricePlanMatrixVersionId());
+        }
+
+        log.info(" ##### {}", ppmv.getStatus());
+        if(VersionStatusEnum.PUBLISHED.equals(ppmv.getStatus())) {
+            throw new BusinessApiException("Converted price plan cannot be update for published price plan matrix version");
+        }
+
+        ConvertedPricePlanVersion cppv = ppmv.getConvertedPricePlanMatrixLines()
+                .stream()
+                .filter(e -> e.getId().equals(cppvId))
+                .findFirst()
+                .orElseThrow(() -> new EntityDoesNotExistsException("Converted PPV " + cppvId + " not found for price plan version " + ppmv.getId()));
+
+        // Check if another cppv exists for the new currency
+        if(!cppv.getTradingCurrency().getCurrencyCode().equals(tradingCurrency.getCurrencyCode())
+                && convertedPricePlanVersionService.findByPricePlanVersionAndCurrency(ppmv, tradingCurrency) != null) {
+            throw new BusinessException("Converted price plan version already exist for Price Plan " + ppmv.getId() + " and currecy " + tradingCurrency.getCurrencyCode());
+        }
+
+        cppv.setRate(dtoData.getRate());
+        cppv.setConvertedPrice(dtoData.getConvertedPrice());
+        cppv.setUseForBillingAccounts(dtoData.isUseForBillingAccounts());
+        cppv.setTradingCurrency(tradingCurrency);
+
+        convertedPricePlanVersionService.update(cppv);
+
+        return cppv;
+    }
+
+    private void checkMandatoryFields(ConvertedPricePlanVersionDto dtoData) {
+        if(dtoData.getTradingCurrency() == null || (StringUtils.isBlank(dtoData.getTradingCurrency().getCode()) && dtoData.getTradingCurrency().getId() == null)) {
+            missingParameters.add("tradingCurrency");
+        }
+        if(StringUtils.isBlank(dtoData.getPricePlanMatrixVersionId())) {
+            missingParameters.add("pricePlanMatrixVersionId");
+        }
+        handleMissingParameters();
     }
 }

@@ -437,4 +437,14 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 
 	}
 
+    @Override
+    public Response updateConvertedPricePlanVersion(Long cppvId, ConvertedPricePlanVersionDto postData) {
+        ActionStatus result = new ActionStatus();
+        try {
+            pricePlanMatrixVersionApi.updateConvertedPricePlanVersion(cppvId, postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return Response.ok(result).build();
+    }
 }

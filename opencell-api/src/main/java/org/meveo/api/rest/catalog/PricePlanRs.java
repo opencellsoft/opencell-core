@@ -507,7 +507,25 @@ public interface PricePlanRs extends IBaseRs {
                     @ApiResponse(responseCode = "412", description = "the price plan version is mandatory to create price plan version ")
             })
     Response createConvertedPricePlanVersion(ConvertedPricePlanVersionDto postData);
-    
-    
-    
+
+    /**
+     *
+     * @param cppvId
+     * @param postData
+     * @return
+     */
+    @PUT
+    @Path("/convertedPricePlanVersion/{id}")
+    @Operation(summary = "Create a converted price plan version",
+            tags = { "Price Plan" },
+            description ="Create a converted price plan version",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the converted price plan version successfully created"),
+                    @ApiResponse(responseCode = "404", description = "the price plan version with price plan id  in param does not exist "),
+                    @ApiResponse(responseCode = "404", description = "the trading currency with price plan code or id in param does not exist "),
+                    @ApiResponse(responseCode = "412", description = "the trading currency is mandatory to create price plan version "),
+                    @ApiResponse(responseCode = "412", description = "the price plan version is mandatory to create price plan version ")
+            })
+    Response updateConvertedPricePlanVersion(@Parameter(description = "The converted price plan version id", required = true)  @PathParam("id") Long cppvId, ConvertedPricePlanVersionDto postData);
+
 }
