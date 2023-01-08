@@ -8,10 +8,13 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.billing.TradingCurrency;
 
@@ -19,6 +22,9 @@ import org.meveo.model.billing.TradingCurrency;
 @Table(name = "cpq_converted_price_plan_version")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_converted_price_plan_version_seq") })
+@NamedQueries({
+		@NamedQuery(name = "ConvertedPricePlanVersion.getByPricePlanVersionAndCurrency", query = "SELECT cppv from ConvertedPricePlanVersion cppv where cppv.pricePlanMatrixVersion =:ppmv and cppv.tradingCurrency = :tradingCurrency") 
+})
 public class ConvertedPricePlanVersion extends AuditableEntity {
 	
 	private static final long serialVersionUID = 6114895863558742249L;
@@ -33,6 +39,7 @@ public class ConvertedPricePlanVersion extends AuditableEntity {
 	@Column(name = "rate")
 	private BigDecimal rate;
 	
+	@Type(type = "numeric_boolean")
 	@Column(name = "use_for_billing_accounts")
 	private boolean useForBillingAccounts;
 
