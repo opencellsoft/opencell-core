@@ -49,8 +49,6 @@ public class SellerBean extends CustomFieldBean<Seller> {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String DEFAULT_SELLER_EMAIL = "billing@opencell.com";
-
     /**
      * Injected @{link PricePlanMatrix} service. Extends {@link PersistenceService}.
      */
@@ -92,15 +90,7 @@ public class SellerBean extends CustomFieldBean<Seller> {
         if (entity.getContactInformation() == null) {
             entity.setContactInformation(new ContactInformation());
         }
-        if (entity.getContactInformation().getEmail() == null && isMainSeller(entity.getCode())) {
-            entity.getContactInformation().setEmail(DEFAULT_SELLER_EMAIL);
-        }
         return entity;
-    }
-
-    private boolean isMainSeller(String code) {
-
-        return code == null || code.equals("MAIN_SELLER") || code.equals("SELLER_FR") || code.equals("SELLER_US");
     }
 
     /**
