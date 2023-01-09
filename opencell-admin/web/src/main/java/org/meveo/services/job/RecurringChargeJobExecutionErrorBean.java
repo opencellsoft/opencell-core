@@ -33,6 +33,7 @@ import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.RecurringChargeJobExecutionError;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.job.Job;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.job.RecurringChargeJobExecutionErrorService;
 
@@ -75,7 +76,11 @@ public class RecurringChargeJobExecutionErrorBean extends BaseBean<RecurringChar
 
             jobs = jobs.stream().filter(jobInstance -> {
 
-                Class entityClassForErrorLog = jobInstanceService.getJobByName(jobInstance.getJobTemplate()).getTargetEntityClass(jobInstance);
+                Class entityClassForErrorLog = null;
+                Job job = jobInstanceService.getJobByName(jobInstance.getJobTemplate());
+                if (job != null) {
+                    entityClassForErrorLog = job.getTargetEntityClass(jobInstance);
+                }
                 return entityClassForErrorLog != null && RecurringChargeInstance.class.isAssignableFrom(entityClassForErrorLog);
 
             }).collect(Collectors.toList());
