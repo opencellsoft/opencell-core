@@ -15900,6 +15900,7 @@ public class CdrFlatFileImportScript extends Script {
 	</changeSet>
 	
 	<changeSet id="#INTRD-12903_20230105" author="TarikFA." />
+	<changeSet id="#INTRD-12925_20230106" author="aeljaouhari" />
 	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
