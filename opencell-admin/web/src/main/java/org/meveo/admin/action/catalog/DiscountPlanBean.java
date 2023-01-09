@@ -55,6 +55,7 @@ public class DiscountPlanBean extends CustomFieldBean<DiscountPlan> {
 
 	public DiscountPlanBean() {
 		super(DiscountPlan.class);
+		showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
 	}
 
 	@Override

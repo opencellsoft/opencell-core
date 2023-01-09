@@ -15431,6 +15431,8 @@ public class AgedBalanceReporting extends ReportExtractScript {
 
         </createTable>
         
+        
+        
         <createSequence sequenceName="untdid_5189_allowance_code_seq" startValue="1" />
          <createTable tableName="untdid_5189_allowance_code">
             <!-- Generic fields -->
@@ -15533,5 +15535,98 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedTableName="document"/>
     </changeSet>
 
+	<changeSet id="#INTRD-12405_20221226" author="HichamHANINE">
+		<addColumn tableName="crm_provider">
+			<column name="icd_id" type="bigint"></column>
+		</addColumn>
+		<addColumn tableName="crm_seller">
+			<column name="icd_id" type="bigint"></column>
+		</addColumn>
+		<addColumn tableName="billing_billing_account">
+			<column name="icd_id" type="bigint"></column>
+		</addColumn>
+		<addColumn tableName="billing_user_account">
+			<column name="icd_id" type="bigint"></column>
+		</addColumn>
+		<addColumn tableName="ar_payment_token">
+			<column name="payment_means" type="bigint"></column>
+		</addColumn>
+		<addColumn tableName="billing_invoice_type">
+			<column name="invoice_subject_code" type="bigint"></column>
+		</addColumn>
+		<addColumn tableName="billing_accounting_article">
+			<column name="allowance_code" type="bigint"></column>
+		</addColumn>
+	
+		<addForeignKeyConstraint baseTableName="billing_billing_account"
+								 baseColumnNames="icd_id"
+								 constraintName="fk_billing_account_icd"
+								 referencedTableName="iso_icd"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<addForeignKeyConstraint baseTableName="billing_user_account"
+								 baseColumnNames="icd_id"
+								 constraintName="fk_user_account_icd"
+								 referencedTableName="iso_icd"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<addForeignKeyConstraint baseTableName="crm_seller"
+								 baseColumnNames="icd_id"
+								 constraintName="fk_seller_icd"
+								 referencedTableName="iso_icd"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<addForeignKeyConstraint baseTableName="crm_provider"
+								 baseColumnNames="icd_id"
+								 constraintName="fk_provider_icd"
+								 referencedTableName="iso_icd"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />							 
+		<addForeignKeyConstraint baseTableName="billing_invoice_type"
+								 baseColumnNames="invoice_subject_code"
+								 constraintName="fk_invoice_type_untdid_4451_invoice_subject"
+								 referencedTableName="untdid_4451_invoice_subject_code"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<addForeignKeyConstraint baseTableName="ar_payment_token"
+								 baseColumnNames="payment_means"
+								 constraintName="fk_payment_token_untdid_4461_payment_means"
+								 referencedTableName="untdid_4461_payment_means"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<addForeignKeyConstraint baseTableName="billing_accounting_article"
+								 baseColumnNames="allowance_code"
+								 constraintName="fk_accounting_article_untdid_5189_allowance_code"
+								 referencedTableName="untdid_5189_allowance_code"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<dropColumn tableName="untdid_4461_payment_means">
+            <column name="usage_in_EN16931"></column>
+        </dropColumn>
+        <addColumn tableName="untdid_4461_payment_means">
+			<column name="usage_in_en16931" type="varchar(500)">
+                <constraints nullable="true" />
+            </column>
+		</addColumn>
+	</changeSet>
+
+    <changeSet id="#INTRD-12766_2023015" author="bourras">
+        <addColumn tableName="billing_invoice">
+            <column name="converted_invoice_balance" type="numeric(23, 12)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-12720-20221230-query_report" author="a.rouaguebe">
+      <addColumn tableName="report_query">
+        <column name="query_parameters" type="${type.json}" />
+      </addColumn>
+    </changeSet>
 
 </databaseChangeLog>

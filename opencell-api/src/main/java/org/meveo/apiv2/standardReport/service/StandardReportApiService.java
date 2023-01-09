@@ -63,6 +63,16 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
 		}
     }
 
+	public List<Object[]> getAll() {
+		try {
+			return recordedInvoiceService.getAgedReceivables(null, null, new Date(), null, null,
+					null, null, null, null, null, null, null, null);
+		} catch (Exception exception) {
+			throw new BusinessApiException("Error occurred when listing aged balance report : " + exception.getMessage());
+
+		}
+	}
+
 	@Override
 	public List<RecordedInvoice> list(Long offset, Long limit, String sort, String orderBy, String filter) {
 		// TODO Auto-generated method stub
