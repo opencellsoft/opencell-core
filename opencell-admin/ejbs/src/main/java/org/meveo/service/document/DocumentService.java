@@ -48,4 +48,12 @@ public class DocumentService extends BusinessService<Document> {
         entity.setCategory(fetchedCategory);
         super.create(entity);
     }
+
+    public Document findByFileNameAndType(String fileName, Long fileTypeId) {
+
+        return getEntityManager().createNamedQuery("Document.findByFileNameAndType", Document.class)
+                .setParameter("fileName", fileName)
+                .setParameter("fileTypeId", fileTypeId)
+                .getSingleResult();
+    }
 }

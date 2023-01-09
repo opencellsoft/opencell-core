@@ -15139,6 +15139,17 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="use_for_billing_accounts" type="${type.boolean}"/>
         </createTable>
     </changeSet>
+    
+    <changeSet id="#INTRD-12609_20221227_converted_ppv-fix" author="a.rouaguebe">
+    	<addColumn tableName="cpq_converted_price_plan_version">
+			 <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+		</addColumn>
+    </changeSet>
+    
+    
 
     <changeSet id="#INTRD-12614_20221227" author="TarikFA.">
        <createSequence sequenceName="cpq_converted_price_plan_matrix_line_sq" startValue="1" />
@@ -15511,5 +15522,16 @@ public class AgedBalanceReporting extends ReportExtractScript {
     	<dropPrimaryKey tableName="billing_chrg_inst_counter" constraintName="billing_chrg_inst_counter_pkey" />
     	<addPrimaryKey columnNames="chrg_instance_id, counter_instance_id" constraintName="billing_chrg_inst_counter_pkey" tableName="billing_chrg_inst_counter" />
     </changeSet>
+
+    <changeSet id="#INTRD-12544_20230102" author="bourras">
+        <addColumn tableName="cat_offer_template">
+            <column name="document_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="document_id" baseTableName="cat_offer_template"
+                                 constraintName="fk_document_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="document"/>
+    </changeSet>
+
 
 </databaseChangeLog>
