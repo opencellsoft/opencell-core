@@ -380,6 +380,10 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             throw new BusinessException("Converted price plan version already exist for Price Plan " + ppmv.getId() + " and currency " + tradingCurrency.getCurrencyCode());
         }
 
+        if(ppmv.getPrice()!= null && dtoData.getRate() != null && dtoData.getConvertedPrice() != null && !dtoData.getRate().multiply(ppmv.getPrice()).equals(dtoData.getConvertedPrice())) {
+        	throw new BusinessException("The converted price is inconsistent with the price plan version price and the rate");
+        }
+
         ConvertedPricePlanVersion entity = new ConvertedPricePlanVersion();
         entity.setPricePlanMatrixVersion(ppmv);
         entity.setTradingCurrency(tradingCurrency);
