@@ -464,7 +464,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
                     }
 
                     // Create new T.EDRs
-                    List<EDR> newTEdrs = oneShotRatingService.instantiateTriggeredEDRs(newWO, edr, false);
+                    List<EDR> newTEdrs = oneShotRatingService.instantiateTriggeredEDRs(newWO, edr, false, true);
                     Optional.ofNullable(newTEdrs).orElse(Collections.emptyList())
                             .forEach(newEdr -> edrService.create(newEdr));
 
@@ -493,7 +493,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
                         continue;
                     }
                     // Create new T.EDRs
-                    List<EDR> newTEdrs = oneShotRatingService.instantiateTriggeredEDRs(newWO, edr, false);
+                    List<EDR> newTEdrs = oneShotRatingService.instantiateTriggeredEDRs(newWO, edr, false, true);
                     Optional.ofNullable(newTEdrs).orElse(Collections.emptyList())
                             .forEach(newEdr -> edrService.create(newEdr));
 
