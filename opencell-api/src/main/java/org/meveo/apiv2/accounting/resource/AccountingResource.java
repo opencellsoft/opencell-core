@@ -28,4 +28,17 @@ public interface AccountingResource {
             @ApiResponse(responseCode = "500", description = "Auxiliary account information not correctly evaluated")
     })
     Response getAuxiliaryAccount(@PathParam("customerAccountCode") String customerAccountCode);
+    
+    @GET
+    @Path("/vat/{vat_number}/{country_code}/validate")
+    @Operation(summary = "Get the auxiliary account information corresponding to the giver customer account",
+            tags = {"vat_number", "country_code" },
+            description = "Returns auxiliary account information corresponding to the giver customer account",
+            responses = {
+            @ApiResponse(responseCode = "200", description = "Auxiliary account information are successfully evaluated"),
+            @ApiResponse(responseCode = "404", description = "Customer account not fount"),
+            @ApiResponse(responseCode = "500", description = "Auxiliary account information not correctly evaluated")
+    })
+    Response getValByValNbContryCode(@PathParam("vat_number") String vatNumber,
+            @PathParam("country_code") String countryCode);
 }
