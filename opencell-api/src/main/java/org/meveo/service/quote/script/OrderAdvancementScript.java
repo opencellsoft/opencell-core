@@ -231,7 +231,7 @@ OrderAdvancementScript extends ModuleScript {
 
     private boolean isPriceRelatedToOneShotChargeTemplateOfTypeOther(OrderPrice price) {
         return price.getChargeTemplate().getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.ONESHOT
-                && ((OneShotChargeTemplate) price.getChargeTemplate()).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.INVOICING_PLAN;
+                && ((OneShotChargeTemplate) price.getChargeTemplate()).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.OTHER;
     }
 
 
