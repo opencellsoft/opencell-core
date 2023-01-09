@@ -15473,7 +15473,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedTableName="document"/>
     </changeSet>
 
-    <changeSet id="#INTRD-12766_2023015" author="bourras">
+    <changeSet id="#INTRD-12766_20230105" author="bourras">
         <addColumn tableName="billing_invoice">
             <column name="converted_invoice_balance" type="numeric(23, 12)"/>
         </addColumn>
