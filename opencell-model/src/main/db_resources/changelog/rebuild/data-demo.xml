@@ -2669,6 +2669,13 @@
 			<column name="vat_payment_option_id" value="1" />
 		</insert>	
 	</changeSet>
+
+    <changeSet id="#INTRD-12895_20230109" author="bourras">
+        <update tableName="crm_seller">
+            <column name="email" value="billing@opencell.com"/>
+            <where>email is null and code in ('SELLER_FR','MAIN_SELLER','SELLER_US')</where>
+        </update>
+    </changeSet>
     
 
     <changeSet id="#INTRD-6283_20220404" author="AbdelmounaimAkadid"/>
