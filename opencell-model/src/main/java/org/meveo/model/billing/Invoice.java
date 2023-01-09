@@ -755,6 +755,9 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @JoinColumn(name = "invoice_validation_rule_id")
     private InvoiceValidationRule rejectedByRule;
 
+    @Column(name = "converted_invoice_balance", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedInvoiceBalance;
+
     public Invoice() {
 	}
 
@@ -865,6 +868,9 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         this.convertedAmountWithoutTaxBeforeDiscount =
                 this.amountWithoutTaxBeforeDiscount != null
                         ? this.amountWithoutTaxBeforeDiscount.multiply(appliedRate) : ZERO;
+        this.convertedInvoiceBalance =
+                this.invoiceBalance != null
+                        ? this.invoiceBalance.multiply(appliedRate) : ZERO;
     }
 
     public String getInvoiceNumber() {
@@ -1932,4 +1938,12 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 	public void setRejectedByRule(InvoiceValidationRule rejectedByRule) {
 		this.rejectedByRule = rejectedByRule;
 	}
+
+    public BigDecimal getConvertedInvoiceBalance() {
+        return convertedInvoiceBalance;
+    }
+
+    public void setConvertedInvoiceBalance(BigDecimal convertedInvoiceBalance) {
+        this.convertedInvoiceBalance = convertedInvoiceBalance;
+    }
 }
