@@ -1,5 +1,6 @@
 package org.meveo.api.cpq;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1200,7 +1201,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 	        handleMissingParameters();
 	    }
 		for (OrderProductDto orderProductDto : orderProductDtos) {  
-		    if(orderProductDto.getQuantity() == null || orderProductDto.getQuantity().doubleValue() == 0 )
+		    if(orderProductDto.getQuantity() == null || orderProductDto.getQuantity().equals(BigDecimal.ZERO) )
 		        throw new BusinessApiException("The quantity for product code " + orderProductDto.getProductCode() + " must be great than 0" );
 			OrderProduct orderProduct=populateOrderProduct(orderProductDto,orderOffer,null);  
 			orderProductService.create(orderProduct);
