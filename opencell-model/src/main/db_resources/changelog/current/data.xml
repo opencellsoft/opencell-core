@@ -17774,6 +17774,10 @@ public class CdrFlatFileImportScript extends Script {
     
     <changeSet id="#INTRD-12925_20230106" author="aeljaouhari">
      	<!-- Script :  CompareInvoiceAmount -->
+     	<update tableName="billing_invoice_type">
+     		<column name="invoice_validation_script_id">null</column>
+			<where>invoice_validation_script_id = (SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareInvoiceAmount')</where>
+		</update>                         
 		<delete tableName="meveo_script_parameter">
 			<where>script_instance_id = (SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareInvoiceAmount')</where>
 		</delete>
