@@ -55,6 +55,9 @@ public class LinkedInvoice implements IEntity, Serializable {
     @Enumerated(EnumType.STRING)
     private InvoiceTypeEnum type;
 
+    @Column(name = "converted_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedAmount;
+
 
     public LinkedInvoice(Invoice id, Invoice linkedInvoiceValue) {
         super();
@@ -108,6 +111,14 @@ public class LinkedInvoice implements IEntity, Serializable {
 
     public void setType(InvoiceTypeEnum type) {
         this.type = type;
+    }
+
+    public BigDecimal getConvertedAmount() {
+        return convertedAmount;
+    }
+
+    public void setConvertedAmount(BigDecimal convertedAmount) {
+        this.convertedAmount = convertedAmount;
     }
 
 
