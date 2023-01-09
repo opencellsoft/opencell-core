@@ -1498,12 +1498,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		        if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.SUSPECT) {
 		            invoice.setStatus(InvoiceStatusEnum.SUSPECT);
 		            invoice.setRejectedByRule(validationRule);
-		            if (invoice.getRejectReason() == null) invoice.setRejectReason("Rejected by rule " + validationRule.getDescription());
+		            if (invoice.getRejectReason() == null) invoice.setRejectReason("Suspected by rule " + validationRule.getDescription());
 		        }
 		        if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.REJECTED) {
 		            invoice.setStatus(InvoiceStatusEnum.REJECTED);
 		            invoice.setRejectedByRule(validationRule);
-		            if (invoice.getRejectReason() == null) invoice.setRejectReason("Suspected by rule " + validationRule.getDescription());
+		            if (invoice.getRejectReason() == null) invoice.setRejectReason("Rejected by rule " + validationRule.getDescription());
 		        }
 		        noValidationError = false;
 		    }
