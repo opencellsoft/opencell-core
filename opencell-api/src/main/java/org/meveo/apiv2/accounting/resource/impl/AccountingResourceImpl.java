@@ -5,15 +5,6 @@ import static java.util.Optional.ofNullable;
 import static javax.ws.rs.core.Response.ok;
 import static javax.ws.rs.core.Response.serverError;
 
-import org.apache.xmlbeans.impl.soap.MessageFactory;
-import org.apache.xmlbeans.impl.soap.MimeHeaders;
-import org.apache.xmlbeans.impl.soap.SOAPBody;
-import org.apache.xmlbeans.impl.soap.SOAPConnection;
-import org.apache.xmlbeans.impl.soap.SOAPConnectionFactory;
-import org.apache.xmlbeans.impl.soap.SOAPElement;
-import org.apache.xmlbeans.impl.soap.SOAPEnvelope;
-import org.apache.xmlbeans.impl.soap.SOAPMessage;
-import org.apache.xmlbeans.impl.soap.SOAPPart;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.apiv2.accounting.AuxiliaryAccount;
