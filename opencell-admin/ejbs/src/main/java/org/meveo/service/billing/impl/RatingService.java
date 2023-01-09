@@ -425,7 +425,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         }
 
         for (WalletOperation walletOperation : ratedEDRResult.getWalletOperations()) {
-            List<EDR> triggeredEdrs = instantiateTriggeredEDRs(walletOperation, edr, isVirtual);
+            List<EDR> triggeredEdrs = instantiateTriggeredEDRs(walletOperation, edr, isVirtual, true);
             ratedEDRResult.addTriggeredEDRs(triggeredEdrs);
         }
         return ratedEDRResult;
@@ -446,7 +446,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
      * @throws InvalidELException Failed to evaluate EL expression
      * @throws ElementNotFoundException Subscription as resolved from EL expression was not found
      */
-    public List<EDR> instantiateTriggeredEDRs(WalletOperation walletOperation, EDR edr, boolean isVirtual)
+    public List<EDR> instantiateTriggeredEDRs(WalletOperation walletOperation, EDR edr, boolean isVirtual, boolean evaluatEdrVersioning)
             throws RatingException, InvalidELException, ElementNotFoundException, CommunicateToRemoteInstanceException, ChargingEdrOnRemoteInstanceErrorException {
 
         List<EDR> triggredEDRs = new ArrayList<>();
@@ -539,7 +539,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 }
             }
         }
-        mediationsettingService.applyEdrVersioningRule(triggredEDRs, null, false, true);
+        if(evaluatEdrVersioning)
+            mediationsettingService.applyEdrVersioningRule(triggredEDRs, null, isVirtual, true);
         return triggredEDRs;
 
     }
