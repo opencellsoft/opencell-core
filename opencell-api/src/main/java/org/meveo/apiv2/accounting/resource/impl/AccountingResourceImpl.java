@@ -5,6 +5,7 @@ import static java.util.Optional.ofNullable;
 import static javax.ws.rs.core.Response.ok;
 import static javax.ws.rs.core.Response.serverError;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.apiv2.accounting.AuxiliaryAccount;
@@ -71,8 +72,15 @@ public class AccountingResourceImpl implements AccountingResource {
     }
     
     @Override
-    public Response getValByValNbContryCode(String vatNumber, String countryCode) {        
-        boolean valueValideNodeBoolean = validationByNumberCountryService.getValByValNbCountryCode(vatNumber, countryCode); 
+    public Response getValByValNbContryCode(String vatNumber, String countryCode) {
+        boolean valueValideNodeBoolean = false; 
+        
+        try {
+            valueValideNodeBoolean = validationByNumberCountryService.getValByValNbCountryCode(vatNumber, countryCode); 
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
+        
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         if (valueValideNodeBoolean) {
             return Response.ok(result).build();
