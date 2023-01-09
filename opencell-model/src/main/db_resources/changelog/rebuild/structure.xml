@@ -2665,6 +2665,7 @@
             <column name="minimum_charge_template_id" type="bigint" />
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
+            <column name="icd_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-165">
@@ -3859,6 +3860,7 @@
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
             <column name="is_consumer" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="icd_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-201">
@@ -4452,6 +4454,7 @@
             <column name="generate_quote_edr_per_product" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="sequence" type="INT4" defaultValue="0" />
 			<column name="display" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="document_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-217">
@@ -5428,6 +5431,7 @@
                 <constraints nullable="true"/>
             </column>
 			<column name="current_matching_code" type="varchar(255)" />
+			<column name="icd_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-250">
@@ -5526,6 +5530,7 @@
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
             <column name="minimum_article_id" type="bigint" />
+            <column name="icd_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-252">
@@ -6721,6 +6726,7 @@
             <column name="vat_payment_option_id" type="bigint">
                 <constraints nullable="false" />
             </column>
+		    <column name="invoice_subject_code" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-318">
@@ -7397,6 +7403,7 @@
             <column name="document_id" type="bigint"/>
             <column name="cf_values" type="${type.json}" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}" />
+            <column name="payment_means" type="bigint" />
         </createTable>
     </changeSet>
 
@@ -8629,7 +8636,7 @@
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_tax_mapping_pkey" />
             </column>
-            <column name="version" type="int4" />
+            <column name="version" type="int4" defaultValueNumeric="0" />
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
@@ -10071,6 +10078,7 @@
             <column name="cf_values" type="${type.json}" />
             <column name="ignore_aggregation" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="open_order_id" type="bigint"/>
+            <column name="allowance_code" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-467" author="NabilOUACHI">
@@ -11180,6 +11188,7 @@
             <column name="generated_query" type="${type.text}" />
             <column name="sort_by" type="varchar(255)" />
             <column name="sort_order" type="varchar(15)" />
+            <column name="query_parameters" type="${type.json}" />
         </createTable>
 
         <createTable tableName="report_query_fields">
@@ -16761,6 +16770,12 @@
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
+    <changeSet id="#INTRD-12544_20230102_fk" author="bourras">
+        <addForeignKeyConstraint baseColumnNames="document_id" baseTableName="cat_offer_template"
+                                 constraintName="fk_document_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="document"/>
+    </changeSet>
                                  
     <!-- end fk -->
 
@@ -17958,7 +17973,7 @@
             </column>
 
             <!-- Simple fields -->           
-            <column name="usage_in_EN16931" type="varchar(500)">
+            <column name="usage_in_en16931" type="varchar(500)">
                 <constraints nullable="true" />
             </column>
             <column name="code_name" type="varchar(500)">
@@ -18047,7 +18062,59 @@
             <column name="use_for_billing_accounts" type="${type.boolean}"/>
         </createTable>
     </changeSet>
-
+	
+	<changeSet id="#INTRD-12405_20221226-rebuild" author="HichamHANINE">
+		<addForeignKeyConstraint baseTableName="billing_billing_account"
+								 baseColumnNames="icd_id"
+								 constraintName="fk_billing_account_icd"
+								 referencedTableName="iso_icd"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<addForeignKeyConstraint baseTableName="billing_user_account"
+								 baseColumnNames="icd_id"
+								 constraintName="fk_user_account_icd"
+								 referencedTableName="iso_icd"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<addForeignKeyConstraint baseTableName="crm_seller"
+								 baseColumnNames="icd_id"
+								 constraintName="fk_seller_icd"
+								 referencedTableName="iso_icd"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<addForeignKeyConstraint baseTableName="crm_provider"
+								 baseColumnNames="icd_id"
+								 constraintName="fk_provider_icd"
+								 referencedTableName="iso_icd"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />							 
+		<addForeignKeyConstraint baseTableName="billing_invoice_type"
+								 baseColumnNames="invoice_subject_code"
+								 constraintName="fk_invoice_type_untdid_4451_invoice_subject"
+								 referencedTableName="untdid_4451_invoice_subject_code"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<addForeignKeyConstraint baseTableName="ar_payment_token"
+								 baseColumnNames="payment_means"
+								 constraintName="fk_payment_token_untdid_4461_payment_means"
+								 referencedTableName="untdid_4461_payment_means"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<addForeignKeyConstraint baseTableName="billing_accounting_article"
+								 baseColumnNames="allowance_code"
+								 constraintName="fk_accounting_article_untdid_5189_allowance_code"
+								 referencedTableName="untdid_5189_allowance_code"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+	</changeSet>
+	
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
     <changeSet id="#4140_08042019" author="hznibar">
@@ -19323,7 +19390,12 @@
 	<changeSet id="#INTRD-10544_20221207" author="HatimOUDAD" />
 	
     <changeSet id="#INTRD-12794-20230102-counter_instance" author="a.rouaguebe" />
-	<changeSet id="#INTRD-12668-20230102" author="AmineBENAICHA" />	
+	<changeSet id="#INTRD-12668-20230102" author="AmineBENAICHA" />
+    <changeSet id="#INTRD-12720-20221230-query_report" author="a.rouaguebe" />
+    <changeSet id="#INTRD-12544_20230102" author="bourras"/>
+	<changeSet id="#INTRD-12405_20221226" author="HichamHANINE" />
+    <changeSet id="#INTRD-12544_20230102" author="bourras"/>
+    <changeSet id="#INTRD-12720-20221230-query_report" author="a.rouaguebe" />
 
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->

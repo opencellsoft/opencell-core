@@ -38,6 +38,7 @@ public class RevenueRecognitionRuleBean extends BaseBean<RevenueRecognitionRule>
 
 	public RevenueRecognitionRuleBean() {
 		super(RevenueRecognitionRule.class);
+		showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
 	}
 
 	@Override

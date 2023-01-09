@@ -7,14 +7,13 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceValidationStatusEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 
 @SuppressWarnings("serial")
 public class CompareOfferAmountScript  extends Script{
@@ -41,8 +40,8 @@ public class CompareOfferAmountScript  extends Script{
         
         checkScriptParams(methodContext, new String[] {OFFERS, WITH_OR_WITHOUT_TAX, OPERATOR, VALUE, INVOICE});
         Long invoiceId = ((Invoice) methodContext.get(INVOICE)).getId();
-        String finalQuery = query.replaceAll("AMOUNT",  "amount" + StringUtils.capitalize((String)methodContext.get(WITH_OR_WITHOUT_TAX)))
-                                 .replace("OPERATOR", (String)methodContext.get(OPERATOR));
+        String finalQuery = query.replaceAll("AMOUNT",  "amount" + StringUtils.camelcase((String)methodContext.get(WITH_OR_WITHOUT_TAX)))
+                                 .replace("OPERATOR", ScriptUtils.buildOperator(String.valueOf(methodContext.get(OPERATOR)), true));
         
         List<OfferTemplate> offers = (List<OfferTemplate>) methodContext.get(OFFERS);
         
@@ -50,9 +49,9 @@ public class CompareOfferAmountScript  extends Script{
                                                     .setParameter("invoiceId", invoiceId)
                                                     .setParameter("offers", offers.stream().map(OfferTemplate::getCode).collect(Collectors.toList()))
                                                     .setParameter("value", methodContext.get(VALUE))
-                                                        .getResultList();
-        methodContext.put(Script.INVOICE_VALIDATION_STATUS, CollectionUtils.isEmpty(result) ? InvoiceValidationStatusEnum.VALID : (InvoiceValidationStatusEnum) methodContext.get(Script.RESULT_VALUE));
+                                                    .getResultList();
         
+        methodContext.put(Script.INVOICE_VALIDATION_STATUS, CollectionUtils.isEmpty(result) ? InvoiceValidationStatusEnum.VALID : (InvoiceValidationStatusEnum) methodContext.get(Script.RESULT_VALUE));
     }
     
     @SuppressWarnings("unchecked")

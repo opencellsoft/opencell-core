@@ -49,6 +49,7 @@ public class BusinessProductModelBean extends GenericModuleBean<BusinessProductM
 
     public BusinessProductModelBean() {
         super(BusinessProductModel.class);
+        showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
     }
 
     @Override

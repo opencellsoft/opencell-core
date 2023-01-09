@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceValidationStatusEnum;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -39,12 +39,9 @@ public class CompareInvoiceAmountScript extends Script {
 
 		String withOrWithTaxParameter = (String) context.get("withOrWithoutTax");
 		BigDecimal value = (BigDecimal) context.get("value");
-		String operator = (String) context.get("operator");
-		if("=".equals(operator)) {
-			operator = "==";
-		}
+		String operator = ScriptUtils.buildOperator(String.valueOf(context.get("operator")), false);
 		
-		boolean result = ValueExpressionWrapper.evaluateToBoolean("#{invoice.amount" + StringUtils.capitalize(withOrWithTaxParameter) + " " + operator + " " + value + "}",
+		boolean result = ValueExpressionWrapper.evaluateToBoolean("#{invoice.amount" + StringUtils.camelcase(withOrWithTaxParameter) + " " + operator + " " + value + "}",
 				new HashMap<Object, Object>(context));
 
 		context.put(Script.INVOICE_VALIDATION_STATUS, result ? InvoiceValidationStatusEnum.VALID : (InvoiceValidationStatusEnum) context.get(Script.RESULT_VALUE));

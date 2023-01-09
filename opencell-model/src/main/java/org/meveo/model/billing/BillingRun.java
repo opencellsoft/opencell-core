@@ -371,7 +371,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
      */
     @Type(type = "json")
     @Column(name = "filters", columnDefinition = "jsonb")
-    private Map<String, String> filters;
+    private Map<String, Object> filters;
 
     @Transient
     private List<Long> exceptionalRTIds;
@@ -903,11 +903,11 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 		this.discountApplied = discountApplied;
 	}
 
-    public Map<String, String> getFilters() {
+    public Map<String, Object> getFilters() {
         return filters;
     }
 
-    public void setFilters(Map<String, String> filters) {
+    public void setFilters(Map<String, Object> filters) {
         this.filters = filters;
     }
 

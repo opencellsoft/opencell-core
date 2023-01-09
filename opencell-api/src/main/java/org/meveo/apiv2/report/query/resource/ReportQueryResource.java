@@ -9,6 +9,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.meveo.apiv2.models.ApiException;
 import org.meveo.apiv2.report.QuerySchedulerInput;
@@ -130,7 +131,7 @@ public interface ReportQueryResource {
     Response execute(@Parameter(description = "Query id", required = true) @PathParam("queryId") Long id,
                      @Parameter(description = "Execution type Synchronously or asynchronously")
                      @QueryParam("async") boolean async, @QueryParam("sendNotification") @DefaultValue("true") boolean sendNotification, 
-                     @Parameter(description = "Report query object", required = true) ReportQueryInput reportQuery);
+                     @Parameter(description = "Report query object", required = true) ReportQueryInput reportQuery, @Context UriInfo uriInfo);
     
     @POST
     @Path("/verify")

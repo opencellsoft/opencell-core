@@ -46,6 +46,7 @@ public class DataCollectorBean extends UpdateMapTypeFieldBean<DataCollector> {
 
     public DataCollectorBean() {
         super(DataCollector.class);
+        showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
     }
 
     @Override
