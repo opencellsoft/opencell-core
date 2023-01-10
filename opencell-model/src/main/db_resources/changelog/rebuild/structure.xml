@@ -3111,6 +3111,7 @@
             <column name= "invoice_balance" type="numeric(23, 12)" />
             <column name="use_current_rate" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="invoice_validation_rule_id" type="bigint"/>
+            <column name="converted_invoice_balance" type="numeric(23, 12)"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -19269,7 +19270,7 @@
 	<changeSet id="#INTRD-10544_20221207" author="HatimOUDAD" />
     <changeSet id="#INTRD-12544_20230102" author="bourras"/>
     <changeSet id="#INTRD-12720-20221230-query_report" author="a.rouaguebe" />
-
+	<changeSet id="#INTRD-12766_2023015" author="bourras" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
