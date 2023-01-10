@@ -13651,6 +13651,18 @@
             }
           },
           {
+            "id": "52d0f983-6980-40fc-209b-ed1b59aad199",
+            "name": "Page Custom entities - admin - update",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Page Custom entities\"]",
+              "scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
+              "applyPolicies": "[\"Role administrationManagement\"]"
+            }
+          },
+          {
             "id": "22458ec0-1138-4e1b-9761-a7902f2fcfca",
             "name": "Page Rated transactions - read",
             "type": "scope",
