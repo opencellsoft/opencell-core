@@ -2183,14 +2183,26 @@ public class InvoiceService extends PersistenceService<Invoice> {
             String brPath = billingRun == null ? DateUtils.formatDateWithPattern(invoice.getInvoiceDate(), paramBean.getProperty("meveo.dateTimeFormat.string", "ddMMyyyy_HHmmss")) : billingRun.getId().toString();
 
             xmlFileName = brPath + File.separator + (isInvoiceAdjustment ? paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_") : "")
-                    + (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber());
+                    + getFileNameByStatus(invoice);
         }
 
-        if (xmlFileName != null && !xmlFileName.toLowerCase().endsWith(".xml")) {
+        if (!xmlFileName.toLowerCase().endsWith(".xml")) {
             xmlFileName = xmlFileName + ".xml";
         }
         xmlFileName = StringUtils.normalizeFileName(xmlFileName);
         return xmlFileName;
+    }
+
+    private String getFileNameByStatus(Invoice invoice) {
+
+        if (invoice.getStatus().equals(InvoiceStatusEnum.DRAFT) || invoice.getStatus().equals(InvoiceStatusEnum.NEW)) {
+            return invoice.getInvoiceType().getCode() + "-" + invoice.getId();
+        }
+        if (invoice.getStatus().equals(InvoiceStatusEnum.VALIDATED)) {
+            return invoice.getInvoiceNumber();
+        }
+
+        return (invoice.getInvoiceNumber() != null && !StringUtils.isBlank(invoice.getInvoiceNumber())) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber();
     }
 
     /**
