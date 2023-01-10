@@ -223,6 +223,8 @@ public class MediationsettingService extends PersistenceService<MediationSetting
                 edrs.forEach(e -> {
                     e.setStatus(edr.getStatus());
                     e.setWalletOperation(walletOperation);
+                    e.setEventVersion(edr.getEventVersion());
+                    e.setEventKey(edr.getEventKey());
                     edrService.create(e);
                 });
             }
