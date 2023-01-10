@@ -30,6 +30,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.QueryHint;
 import javax.validation.constraints.Size;
 
+import org.hibernate.jpa.QueryHints;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
 
@@ -47,8 +48,9 @@ import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
         @NamedQuery(name = "UsageChargeInstance.getActiveUsageCharges", query = "SELECT c FROM UsageChargeInstance c where c.status='ACTIVE'  order by c.priority ASC", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
-        @NamedQuery(name = "UsageChargeInstance.getUsageChargesValidesForDateBySubscription", 
-                    query = "SELECT distinct(c) FROM UsageChargeInstance c left join fetch c.chargeTemplate ct left join fetch c.serviceInstance si left join fetch si.attributeInstances ai left join fetch c.currency c1 left join fetch c1.currency c2 left join fetch c.userAccount u left join fetch u.wallet where (c.status='ACTIVE' OR ((c.status='TERMINATED' OR c.status='SUSPENDED') AND c.terminationDate>:terminationDate)) and c.subscription.id=:subscriptionId order by c.priority ASC", hints = {})})
+        @NamedQuery(name = "UsageChargeInstance.getUsageChargesValidesForDateBySubscription",
+                query = "SELECT c FROM UsageChargeInstance c where (c.status='ACTIVE' OR ((c.status='TERMINATED' OR c.status='SUSPENDED') AND c.terminationDate>:terminationDate)) and c.subscription.id=:subscriptionId order by c.priority ASC",
+                hints = {@QueryHint(name = QueryHints.HINT_PASS_DISTINCT_THROUGH, value = "false")})})
 public class UsageChargeInstance extends ChargeInstance {
 
     private static final long serialVersionUID = 1L;
