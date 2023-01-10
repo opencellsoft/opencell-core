@@ -500,7 +500,7 @@ public class UsageRatingService extends RatingService implements Serializable {
 
         RatingResult ratingResult = new RatingResult();
 
-        if (currentRatingDepth < maxDeep) {
+        if (currentRatingDepth <= maxDeep) {
             for (EDR edr : triggeredEDRs) {
                 // Do not throw the errors, but mark EDR as rejected with and error
                 try {
