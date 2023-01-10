@@ -67,6 +67,7 @@ import org.meveo.api.payment.PaymentScheduleApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.payment.PaymentRs;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
+import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
  * The implementation for PaymentRs.
@@ -616,7 +617,8 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
     public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(String customerAccountCode, String returnUrl,
             String locale, String amount, String currencyCode, String authorizationMode, String countryCode,
             Boolean skipAuthentication, String gatewayPaymentName, String variant, String sellerCode,
-            String automaticReturnUrl, String allowedActions, String returnContext, String authenticationAmount, String advancedOptions,Boolean isOneShotPayment) {
+            String automaticReturnUrl, String allowedActions, String returnContext, String authenticationAmount, 
+            String advancedOptions,Boolean isOneShotPayment,String cancelUrl,PaymentMethodEnum paymentMethodType) {
         HostedCheckoutInput hostedCheckoutInput = new HostedCheckoutInput();
         hostedCheckoutInput.setCustomerAccountCode(customerAccountCode);
         hostedCheckoutInput.setReturnUrl(returnUrl);
@@ -635,6 +637,8 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         hostedCheckoutInput.setAuthenticationAmount(authenticationAmount);
         hostedCheckoutInput.setAdvancedOptions(advancedOptions);
         hostedCheckoutInput.setOneShotPayment(isOneShotPayment);
+        hostedCheckoutInput.setCancelUrl(cancelUrl);
+        hostedCheckoutInput.setPaymentMethodType(paymentMethodType);
 
         PaymentHostedCheckoutResponseDto result = new PaymentHostedCheckoutResponseDto();
         try {
