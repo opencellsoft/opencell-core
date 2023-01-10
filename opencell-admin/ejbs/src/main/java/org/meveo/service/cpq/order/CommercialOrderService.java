@@ -237,13 +237,10 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 					if(product.getProductActionType() == ProductActionTypeEnum.ACTIVATE) {
 						serviceInstanceService.getEntityManager().flush();
 						List<ServiceInstance> existingServices = serviceInstanceService.findByCodeSubscriptionAndStatus(product.getProductVersion().getProduct().getCode(), offer.getSubscription());
-						if (existingServices.size() < 1) {
-							processProduct(offer.getSubscription(), product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null);
-							ServiceInstance serviceInstanceToActivate = offer.getSubscription().getServiceInstances().stream().filter(serviceInstance -> product.getProductVersion().getProduct().getCode().equals(serviceInstance.getCode()))
-									  .findAny()
-									  .orElse(null);
-							if(serviceInstanceToActivate != null) {
-								serviceInstanceService.serviceActivation(serviceInstanceToActivate);
+						if (existingServices.stream().filter(si -> si.getStatus() != InstanceStatusEnum.TERMINATED).count() == 0) {
+							ServiceInstance si = processProduct(offer.getSubscription(), product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null);
+							if(si != null) {
+								serviceInstanceService.serviceActivation(si);
 							}
 						} else {
 							List<ServiceInstance> services = serviceInstanceService.findByCodeSubscriptionAndStatus(product.getProductVersion().getProduct().getCode(), offer.getSubscription(), InstanceStatusEnum.INACTIVE, InstanceStatusEnum.PENDING, InstanceStatusEnum.SUSPENDED);
