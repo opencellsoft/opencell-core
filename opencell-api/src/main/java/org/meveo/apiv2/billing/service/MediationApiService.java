@@ -359,7 +359,7 @@ public class MediationApiService {
                         }
                         cdrParsingService.createEdrs(edrs, cdr);
                     }
-                    boolean isVirtualChanged = mediationsettingService.applyEdrVersioningRule(edrs, cdr, isVirtual);
+                    final boolean isVirtualTemp = mediationsettingService.applyEdrVersioningRule(edrs, cdr, isVirtual);
                     // Convert CDR to EDR and create a reservation
                     if (reserve) {
 
@@ -419,7 +419,7 @@ public class MediationApiService {
 
                                 // For STOP_ON_FIRST_FAIL or PROCESS_ALL model if rollback is needed, rating is called in a new TX and will rollback
                             } else {
-                                ratingResult = methodCallingUtils.callCallableInNewTx(() -> usageRatingService.rateUsage(edr, isVirtualChanged, rateTriggeredEdrs, maxDepth, 0, null, false));
+                                ratingResult = methodCallingUtils.callCallableInNewTx(() -> usageRatingService.rateUsage(edr, isVirtualTemp, rateTriggeredEdrs, maxDepth, 0, null, false));
 
                                 if (ratingResult.getWalletOperations() != null) {
                                     walletOperations.addAll(ratingResult.getWalletOperations());
