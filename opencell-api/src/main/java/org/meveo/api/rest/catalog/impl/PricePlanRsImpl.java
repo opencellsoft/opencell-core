@@ -437,7 +437,7 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 
 	}
 
-    @Override
+	@Override
     public Response updateConvertedPricePlanVersion(Long cppvId, ConvertedPricePlanVersionDto postData) {
         ActionStatus result = new ActionStatus();
         try {
@@ -447,4 +447,17 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
         }
         return Response.ok(result).build();
     }
+
+	@Override
+	public Response deleteConvertedPricePlanVersion(Long cppvId) {
+		ActionStatus result = new ActionStatus();
+		try {
+            pricePlanMatrixVersionApi.deleteConvertedPricePlanVersion(cppvId);
+			return Response.ok(result).build();
+		} catch (Exception e) {
+			processException(e, result);
+		}
+		return Response.ok(result).build();
+	}
+
 }
