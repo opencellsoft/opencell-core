@@ -7220,5 +7220,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	public void rollBackAdvances(BillingRun billingRun) {
 	    getEntityManager().createNamedQuery("Invoice.rollbackAdvance") .setParameter("billingRunId", billingRun.getId()).executeUpdate();
 	}
+	
+    public long countInvoicesByValidationRule(Long ruleId) {
+        return getEntityManager().createNamedQuery("Invoice.countByValidationRule", Long.class)
+                    .setParameter("ruleId", ruleId)
+                    .getSingleResult();
+    }
 
 }
