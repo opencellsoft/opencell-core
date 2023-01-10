@@ -409,9 +409,11 @@ public class CurrencyApi extends BaseApi {
         }
 
         // We can modify only the future rates
-        if (exchangeRate.getFromDate().compareTo(setTimeToZero(new Date())) <= 0 && !currentUser.hasRole(CFO_ROLE)) {
+        // AEL Update 09/01/2023 : Since we dont have a CFO role mapping between opencell_portal and opencell_web
+        //                         We trust Portal restrition made in https://opencellsoft.atlassian.net/browse/INTRD-6451
+        /*if (exchangeRate.getFromDate().compareTo(setTimeToZero(new Date())) <= 0 && !currentUser.hasRole(CFO_ROLE)) {
             throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.future"));
-        }
+        }*/
 
         if (postData.getFromDate() == null) {
             throw new MissingParameterException(resourceMessages.getString("error.exchangeRate.fromDate.empty"));

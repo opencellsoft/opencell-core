@@ -1498,12 +1498,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		        if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.SUSPECT) {
 		            invoice.setStatus(InvoiceStatusEnum.SUSPECT);
 		            invoice.setRejectedByRule(validationRule);
-		            if (invoice.getRejectReason() == null) invoice.setRejectReason("Rejected by rule " + validationRule.getDescription());
+		            if (invoice.getRejectReason() == null) invoice.setRejectReason("Suspected by rule " + validationRule.getDescription());
 		        }
 		        if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.REJECTED) {
 		            invoice.setStatus(InvoiceStatusEnum.REJECTED);
 		            invoice.setRejectedByRule(validationRule);
-		            if (invoice.getRejectReason() == null) invoice.setRejectReason("Suspected by rule " + validationRule.getDescription());
+		            if (invoice.getRejectReason() == null) invoice.setRejectReason("Rejected by rule " + validationRule.getDescription());
 		        }
 		        noValidationError = false;
 		    }
@@ -2184,7 +2184,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             String brPath = billingRun == null ? DateUtils.formatDateWithPattern(invoice.getInvoiceDate(), paramBean.getProperty("meveo.dateTimeFormat.string", "ddMMyyyy_HHmmss")) : billingRun.getId().toString();
 
             xmlFileName = brPath + File.separator + (isInvoiceAdjustment ? paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_") : "")
-                    + (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber());
+                    + getFileNameByStatus(invoice);
         }
 
         if (xmlFileName != null && !xmlFileName.toLowerCase().endsWith(".xml")) {
@@ -2193,6 +2193,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
         xmlFileName = StringUtils.normalizeFileName(xmlFileName);
         return xmlFileName;
     }
+
+    private String getFileNameByStatus(Invoice invoice) {
+        if (invoice.getStatus().equals(InvoiceStatusEnum.DRAFT) || invoice.getStatus().equals(InvoiceStatusEnum.NEW)) {
+            return invoice.getInvoiceType().getCode() + "-" + invoice.getId();
+        }
+        if (invoice.getStatus().equals(InvoiceStatusEnum.VALIDATED)) {
+            return invoice.getInvoiceNumber();
+        }
+        return (invoice.getInvoiceNumber() != null && !StringUtils.isBlank(invoice.getInvoiceNumber())) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber();
+    }
+
 
     /**
      * Get a full path to an invoice's PDF file.

@@ -1135,6 +1135,14 @@
           "attributes": {}
         },
         {
+          "id": "e629ad98-8dd7-11ed-a1eb-0242ac120002",
+          "name": "show_obsolete_legacy",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "eeeb2d58-8dd7-11ed-a1eb-0242ac120002",
+          "attributes": {}
+        },
+        {
           "id": "1284fb2e-f0a3-42a3-b3ff-e6537f39a007",
           "name": "languageManagement",
           "composite": false,
@@ -12297,6 +12305,7 @@
               "roles": "[{\"id\":\"opencell-web/useJob\",\"required\":false}]"
             }
           },
+          
           {
             "id": "978e5d5f-f867-40c5-9d11-19e080f8b09e",
             "name": "Role languageManagement",
@@ -14055,6 +14064,18 @@
             "config": {
               "resources": "[\"Page Custom entities\"]",
               "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Role administrationManagement\"]"
+            }
+          },
+          {
+            "id": "52d0f983-6980-40fc-209b-ed1b59aad199",
+            "name": "Page Custom entities - admin - update",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Page Custom entities\"]",
+              "scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
               "applyPolicies": "[\"Role administrationManagement\"]"
             }
           },
