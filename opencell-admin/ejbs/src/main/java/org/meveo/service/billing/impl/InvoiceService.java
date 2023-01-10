@@ -2187,7 +2187,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     + getFileNameByStatus(invoice);
         }
 
-        if (!xmlFileName.toLowerCase().endsWith(".xml")) {
+        if (xmlFileName != null && !xmlFileName.toLowerCase().endsWith(".xml")) {
             xmlFileName = xmlFileName + ".xml";
         }
         xmlFileName = StringUtils.normalizeFileName(xmlFileName);
