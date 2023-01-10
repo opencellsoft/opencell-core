@@ -30,6 +30,7 @@ import org.meveo.api.catalog.PricePlanMatrixVersionApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.DatePeriodDto;
+import org.meveo.api.dto.catalog.ConvertedPricePlanVersionDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixColumnDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
@@ -424,4 +425,26 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 	        return Response.ok(result).build();
 	}
 
+	public Response createConvertedPricePlanVersion(ConvertedPricePlanVersionDto postData) {
+		ActionStatus result = new ActionStatus();
+		try {
+            result.setEntityId(pricePlanMatrixVersionApi.createConvertedPricePlanVersion(postData).getId());
+			return Response.ok(result).build();
+		} catch (Exception e) {
+			processException(e, result);
+		}
+		return Response.ok(result).build();
+
+	}
+
+    @Override
+    public Response updateConvertedPricePlanVersion(Long cppvId, ConvertedPricePlanVersionDto postData) {
+        ActionStatus result = new ActionStatus();
+        try {
+            pricePlanMatrixVersionApi.updateConvertedPricePlanVersion(cppvId, postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return Response.ok(result).build();
+    }
 }
