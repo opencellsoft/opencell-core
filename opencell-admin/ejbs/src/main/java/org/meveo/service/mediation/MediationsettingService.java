@@ -211,22 +211,23 @@ public class MediationsettingService extends PersistenceService<MediationSetting
                     .setParameter("WO_IDS", List.of(walletOperation.getId()))
                     .getResultList();
             if(CollectionUtils.isNotEmpty(tEdrs)) {
-                EDR triggeredEdr = tEdrs.get(0);
-                triggeredEdr.setStatus(EDRStatusEnum.CANCELLED);
-                RatingResult ratingResult = usageRatingService.rateChargeAndInstantiateTriggeredEDRs(walletOperation.getChargeInstance(), edr.getEventDate(), edr.getQuantity(), null, null, null, null, null, null, edr, null, false, true);
-                List<WalletOperation> walletOperations = walletOperationService.getEntityManager().createQuery("from WalletOperation wo where wo.edr.id=:edrId").setParameter("edrId", triggeredEdr.getId()).getResultList();
-                if(CollectionUtils.isNotEmpty(walletOperations)) {
-                    WalletOperation trigWallet  = walletOperations.get(0);
-                    trigWallet.setStatus(WalletOperationStatusEnum.CANCELED);
+                for (EDR triggeredEdr : tEdrs) {
+                    triggeredEdr.setStatus(EDRStatusEnum.CANCELLED);
+                    RatingResult ratingResult = usageRatingService.rateChargeAndInstantiateTriggeredEDRs(walletOperation.getChargeInstance(), edr.getEventDate(), edr.getQuantity(), null, null, null, null, null, null, edr, null, false, true);
+                    List<WalletOperation> walletOperations = walletOperationService.getEntityManager().createQuery("from WalletOperation wo where wo.edr.id=:edrId").setParameter("edrId", triggeredEdr.getId()).getResultList();
+                    if(CollectionUtils.isNotEmpty(walletOperations)) {
+                        WalletOperation trigWallet  = walletOperations.get(0);
+                        trigWallet.setStatus(WalletOperationStatusEnum.CANCELED);
+                    }
+                    List<EDR> edrs = usageRatingService.instantiateTriggeredEDRs(ratingResult.getWalletOperations().get(0), edr, true, false);
+                    edrs.forEach(e -> {
+                        e.setStatus(edr.getStatus());
+                        e.setWalletOperation(walletOperation);
+                        e.setEventVersion(edr.getEventVersion());
+                        e.setEventKey(edr.getEventKey());
+                        edrService.create(e);
+                    });
                 }
-                List<EDR> edrs = usageRatingService.instantiateTriggeredEDRs(ratingResult.getWalletOperations().get(0), edr, true, false);
-                edrs.forEach(e -> {
-                    e.setStatus(edr.getStatus());
-                    e.setWalletOperation(walletOperation);
-                    e.setEventVersion(edr.getEventVersion());
-                    e.setEventKey(edr.getEventKey());
-                    edrService.create(e);
-                });
             }
         }
     }
