@@ -15307,6 +15307,18 @@
             }
           },
           {
+            "id": "ecaac485-44f5-4b96-a421-168177f1bc77",
+            "name": "Api V1 Customization - entities - admin - update",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Api V1 Customization - entities\"]",
+              "scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
+              "applyPolicies": "[\"Role apiAdministrationVisualization\"]"
+            }
+          },
+          {
             "id": "daca7efc-9995-4dbe-a0b0-bd5c90c8fa27",
             "name": "Api V1 Security - User - read",
             "type": "scope",
