@@ -429,6 +429,8 @@ public class ServiceSingleton {
                     invoice.getTradingCurrency().getCurrentRateFromDate());
         }
     	invoice.setStatus(InvoiceStatusEnum.VALIDATED);
+    	invoice.setRejectedByRule(null);
+    	invoice.setRejectReason(null);
     	return assignInvoiceNumber(invoice, true);
     }
 
