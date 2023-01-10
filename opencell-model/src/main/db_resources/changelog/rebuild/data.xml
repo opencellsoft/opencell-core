@@ -15708,132 +15708,84 @@ public class SubscriptionJobNotification extends Script {
 		</insert>
 	</changeSet>
 	<changeSet id="#OUTRD-49-SUB_20220914" author="HamzaBiadi">
-        <!-- Mass Import Subscription Job -->
+        <!-- Subscription Job -->
         <insert tableName="meveo_job_instance">
             <column name="id" valueSequenceNext="meveo_job_instance_seq" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
+            <column name="disabled" valueNumeric="1" />
             <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="massImportSubscriptionJob" />
-            <column name="description" value="massImportSubscriptionJob" />
             <column name="job_category" value="MEDIATION" />
             <column name="job_template" value="FlatFileProcessingJob" />
+            <column name="code" value="massImportSubscriptionJob" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
             <column name="single_node" valueNumeric="1" />
             <column name="verbose_report" valueNumeric="1" />
+            <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
-                <![CDATA[{"nbRuns":[{"long":1}],
-                "waitingMillis":[{"long":0}],
-                "oneFilePerJob":[{"boolean":false}],
-                "FlatFileProcessingJob_inputDir":[{"string":"/imports/massImport/subscription/input"}],
-	            "FlatFileProcessingJob_archiveDir":[{"string":"/imports/massImport/subscription/archive"}],
-                "FlatFileProcessingJob_rejectDir":[{"string":"/imports/massImport/subscription/reject"}],
-	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/massImport/subscription/output"}],
-	            "FlatFileProcessingJob_fileNameExtension":[{"string":"csv"}],
-	            "FlatFileProcessingJob_nbLinesToProcess":[{"long":1}],
-	            "FlatFileProcessingJob_mappingConf":[{"string":"<beanio\r\n\txmlns=\"http://www.beanio.org/2012/03\"\r\n\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\";\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n\t\t\t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_USERACCOUNT_CODE*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_CODE*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_STATUS\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_DESCRIPTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_OFFER_CODE*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SELLER_CODE*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_DATE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ENDAGREEMENTDATE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_TERMINATIONDATE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUB_BC*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUB_INITTERMTYPE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUB_DURATIONTYPE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUB_INITTERMLENGTH\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUB_INITTERMUNIT\"  ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUB_ENDTERMACTION\"  ignore=\"true\" />\r\n\t\t\t<field name=\"OC_SUB_TERMINATIONREASON\"  ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUB_EBILL\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUB_EBILLEMAIL\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUB_EBILLEMAILS\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_USERACCOUNT_CODE\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_CODE\"/>\r\n\t\t\t<field name=\"OC_STATUS\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_DESCRIPTION\" />\r\n\t\t\t<field name=\"OC_OFFER_CODE\" />\r\n\t\t\t<field name=\"OC_SELLER_CODE\" />\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_DATE\" />\r\n\t\t\t<field name=\"OC_ENDAGREEMENTDATE\" />\r\n\t\t\t<field name=\"OC_TERMINATIONDATE\" />\r\n\t\t\t<field name=\"OC_SUB_BC\" />\r\n\t\t\t<field name=\"OC_SUB_INITTERMTYPE\" />\r\n\t\t\t<field name=\"OC_SUB_DURATIONTYPE\" />\r\n\t\t\t<field name=\"OC_SUB_INITTERMLENGTH\" />\r\n\t\t\t<field name=\"OC_SUB_INITTERMUNIT\" />\r\n\t\t\t<field name=\"OC_SUB_ENDTERMACTION\" />\r\n\t\t\t<field name=\"OC_SUB_TERMINATIONREASON\" />\r\n\t\t\t<field name=\"OC_SUB_EBILL\" />\r\n\t\t\t<field name=\"OC_SUB_EBILLEMAIL\" />\r\n\t\t\t<field name=\"OC_SUB_EBILLEMAILS\" />\r\n          \t<field name=\"OC_CFS\" type=\"String\" collection=\"list\" minOccurs=\"0\" maxOccurs=\"unbounded\" />\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}],
-                "FlatFileProcessingJob_scriptsFlow":[{"string":"org.meveo.service.script.SubscriptionMassImportScript"}],
-                "FlatFileProcessingJob_recordVariableName":[{"string":"record"}],
-                "FlatFileProcessingJob_originFilename":[{"string":"origin_filename"}],
-                "FlatFileProcessingJob_formatTransfo":[{"string":"None"}],
-                "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}]}]]>
+                <![CDATA[
+				{"nbRuns": [{"long": 1}], "oneFilePerJob": [{"boolean": false}], "waitingMillis": [{"long": 0}], "FlatFileProcessingJob_inputDir": [{"string": "imports/massImport/subscription/input"}], "FlatFileProcessingJob_outputDir": [{"string": "imports/massImport/subscription/output"}], "FlatFileProcessingJob_rejectDir": [{"string": "imports/massImport/subscription/reject"}], "FlatFileProcessingJob_archiveDir": [{"string": "imports/massImport/subscription/archive"}], "FlatFileProcessingJob_errorAction": [{"string": "CONTINUE"}], "FlatFileProcessingJob_mappingConf": [{"string": "<beanio\r\n\txmlns=\"http://www.beanio.org/2012/03\"\r\n\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\";\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n\t\t\t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_USERACCOUNT_CODE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_CODE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_STATUS\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_DESCRIPTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_OFFER_CODE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SELLER_CODE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_DATE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ENDAGREEMENTDATE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_TERMINATIONDATE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUB_BC\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUB_INITTERMTYPE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUB_DURATIONTYPE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUB_INITTERMLENGTH\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUB_INITTERMUNIT\"  ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUB_ENDTERMACTION\"  ignore=\"true\" />\r\n\t\t\t<field name=\"OC_SUB_TERMINATIONREASON\"  ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUB_EBILL\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUB_EBILLEMAIL\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUB_EBILLEMAILS\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_USERACCOUNT_CODE\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_CODE\"/>\r\n\t\t\t<field name=\"OC_STATUS\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_DESCRIPTION\" />\r\n\t\t\t<field name=\"OC_OFFER_CODE\" />\r\n\t\t\t<field name=\"OC_SELLER_CODE\" />\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_DATE\" />\r\n\t\t\t<field name=\"OC_ENDAGREEMENTDATE\" />\r\n\t\t\t<field name=\"OC_TERMINATIONDATE\" />\r\n\t\t\t<field name=\"OC_SUB_BC\" />\r\n\t\t\t<field name=\"OC_SUB_INITTERMTYPE\" />\r\n\t\t\t<field name=\"OC_SUB_DURATIONTYPE\" />\r\n\t\t\t<field name=\"OC_SUB_INITTERMLENGTH\" />\r\n\t\t\t<field name=\"OC_SUB_INITTERMUNIT\" />\r\n\t\t\t<field name=\"OC_SUB_ENDTERMACTION\" />\r\n\t\t\t<field name=\"OC_SUB_TERMINATIONREASON\" />\r\n\t\t\t<field name=\"OC_SUB_EBILL\" />\r\n\t\t\t<field name=\"OC_SUB_EBILLEMAIL\" />\r\n\t\t\t<field name=\"OC_SUB_EBILLEMAILS\" />\r\n          \t<field name=\"OC_CFS\" type=\"String\" collection=\"list\" minOccurs=\"0\" maxOccurs=\"unbounded\" />\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}], "FlatFileProcessingJob_scriptsFlow": [{"string": "org.meveo.service.script.SubscriptionMassImportScript"}], "FlatFileProcessingJob_formatTransfo": [{"string": "None"}], "FlatFileProcessingJob_originFilename": [{"string": "origin_filename"}], "FlatFileProcessingJob_nbLinesToProcess": [{"long": 1}], "FlatFileProcessingJob_fileNameExtension": [{"string": "csv"}], "FlatFileProcessingJob_recordVariableName": [{"string": "record"}]}
+				]]>
             </column>
         </insert>
-        <!-- Mass Import Service instance Job -->
+        <!-- Service instance Job -->
         <insert tableName="meveo_job_instance">
             <column name="id" valueSequenceNext="meveo_job_instance_seq" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
+            <column name="disabled" valueNumeric="1" />
             <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="massImportServiceInstanceJob" />
-            <column name="description" value="massImportServiceInstanceJob" />
             <column name="job_category" value="MEDIATION" />
             <column name="job_template" value="FlatFileProcessingJob" />
+            <column name="code" value="massImportServiceInstanceJob" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
             <column name="single_node" valueNumeric="1" />
             <column name="verbose_report" valueNumeric="1" />
+            <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
-                <![CDATA[{"nbRuns":[{"long":1}],
-                "waitingMillis":[{"long":0}],
-                "oneFilePerJob":[{"boolean":false}],
-                "FlatFileProcessingJob_inputDir":[{"string":"/imports/massImport/serviceInstance/input"}],
-	            "FlatFileProcessingJob_archiveDir":[{"string":"/imports/massImport/serviceInstance/archive"}],
-                "FlatFileProcessingJob_rejectDir":[{"string":"/imports/massImport/serviceInstance/reject"}],
-	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/massImport/serviceInstance/output"}],
-	            "FlatFileProcessingJob_fileNameExtension":[{"string":"csv"}],
-	            "FlatFileProcessingJob_nbLinesToProcess":[{"long":1}],
-	            "FlatFileProcessingJob_mappingConf":[{"string":"<beanio\r\n\txmlns=\"http://www.beanio.org/2012/03\"\r\n\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\";\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n\t\t\t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_CODE*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SI_CODE*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SI_DESC\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_PRODUCT_CODE*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_PRODUCT_QTY\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_PRODUCT_DELIV_DT\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_CODE\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_SI_CODE\"/>\r\n\t\t\t<field name=\"OC_SI_DESC\"/>\r\n\t\t\t<field name=\"OC_PRODUCT_CODE\" />\r\n\t\t\t<field name=\"OC_PRODUCT_QTY\" />\r\n\t\t\t<field name=\"OC_PRODUCT_DELIV_DT\" />\r\n          \t<field name=\"OC_CFS\" type=\"String\" collection=\"list\" minOccurs=\"0\" maxOccurs=\"unbounded\" />\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}],
-                "FlatFileProcessingJob_scriptsFlow":[{"string":"org.meveo.service.script.ServiceInstanceImportScript"}],
-                "FlatFileProcessingJob_recordVariableName":[{"string":"record"}],
-                "FlatFileProcessingJob_originFilename":[{"string":"origin_filename"}],
-                "FlatFileProcessingJob_formatTransfo":[{"string":"None"}],
-                "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}]}]]>
+                <![CDATA[
+				{"nbRuns": [{"long": 1}], "oneFilePerJob": [{"boolean": false}], "waitingMillis": [{"long": 0}], "FlatFileProcessingJob_inputDir": [{"string": "imports/massImport/serviceInstance/input"}], "FlatFileProcessingJob_outputDir": [{"string": "imports/massImport/serviceInstance/output"}], "FlatFileProcessingJob_rejectDir": [{"string": "imports/massImport/serviceInstance/reject"}], "FlatFileProcessingJob_archiveDir": [{"string": "imports/massImport/serviceInstance/archive"}], "FlatFileProcessingJob_errorAction": [{"string": "CONTINUE"}], "FlatFileProcessingJob_mappingConf": [{"string": "<beanio\r\n\txmlns=\"http://www.beanio.org/2012/03\"\r\n\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\";\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n\t\t\t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_CODE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SI_CODE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SI_DESC\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_PRODUCT_CODE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_PRODUCT_QTY\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_PRODUCT_DELIV_DT\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_CODE\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_SI_CODE\"/>\r\n\t\t\t<field name=\"OC_SI_DESC\"/>\r\n\t\t\t<field name=\"OC_PRODUCT_CODE\" />\r\n\t\t\t<field name=\"OC_PRODUCT_QTY\" />\r\n\t\t\t<field name=\"OC_PRODUCT_DELIV_DT\" />\r\n          \t<field name=\"OC_CFS\" type=\"String\" collection=\"list\" minOccurs=\"0\" maxOccurs=\"unbounded\" />\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}], "FlatFileProcessingJob_scriptsFlow": [{"string": "org.meveo.service.script.ServiceInstanceImportScript"}], "FlatFileProcessingJob_formatTransfo": [{"string": "None"}], "FlatFileProcessingJob_originFilename": [{"string": "origin_filename"}], "FlatFileProcessingJob_nbLinesToProcess": [{"long": 1}], "FlatFileProcessingJob_fileNameExtension": [{"string": "csv"}], "FlatFileProcessingJob_recordVariableName": [{"string": "record"}]}
+				]]>
             </column>
         </insert>
         <!-- Attribute Instance Job -->
         <insert tableName="meveo_job_instance">
             <column name="id" valueSequenceNext="meveo_job_instance_seq" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
+            <column name="disabled" valueNumeric="1" />
             <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="massImportAttributeInstance" />
-            <column name="description" value="massImportAttributeInstance" />
             <column name="job_category" value="MEDIATION" />
             <column name="job_template" value="FlatFileProcessingJob" />
+            <column name="code" value="massImportAttributeInstance" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
             <column name="single_node" valueNumeric="1" />
             <column name="verbose_report" valueNumeric="1" />
+            <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
-                <![CDATA[{"nbRuns":[{"long":1}],
-                "waitingMillis":[{"long":0}],
-                "oneFilePerJob":[{"boolean":false}],
-                "FlatFileProcessingJob_inputDir":[{"string":"/imports/massImport/attributeInstance/input"}],
-	            "FlatFileProcessingJob_archiveDir":[{"string":"/imports/massImport/attributeInstance/archive"}],
-                "FlatFileProcessingJob_rejectDir":[{"string":"/imports/massImport/attributeInstance/reject"}],
-	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/massImport/attributeInstance/output"}],
-	            "FlatFileProcessingJob_fileNameExtension":[{"string":"csv"}],
-	            "FlatFileProcessingJob_nbLinesToProcess":[{"long":1}],
-	            "FlatFileProcessingJob_mappingConf":[{"string":"<beanio\r\n\txmlns=\"http://www.beanio.org/2012/03\"\r\n\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\";\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n\t\t\t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_CODE*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SERVICE_INSTANCE_CODE*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SI_ATTRIB_CODE*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SI_ATTRIB_VALUE\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_CODE\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_SERVICE_INSTANCE_CODE\"/>\r\n\t\t\t<field name=\"OC_SI_ATTRIB_CODE\"/>\r\n\t\t\t<field name=\"OC_SI_ATTRIB_VALUE\" />\r\n          \t<field name=\"OC_CFS\" type=\"String\" collection=\"list\" minOccurs=\"0\" maxOccurs=\"unbounded\" />\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}],
-                "FlatFileProcessingJob_scriptsFlow":[{"string":"org.meveo.service.script.AttributeInstanceImportScript"}],
-                "FlatFileProcessingJob_recordVariableName":[{"string":"record"}],
-                "FlatFileProcessingJob_originFilename":[{"string":"origin_filename"}],
-                "FlatFileProcessingJob_formatTransfo":[{"string":"None"}],
-                "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}]}]]>
+                <![CDATA[
+				{"nbRuns": [{"long": 1}], "oneFilePerJob": [{"boolean": false}], "waitingMillis": [{"long": 0}], "FlatFileProcessingJob_inputDir": [{"string": "imports/massImport/attributeInstance/input"}], "FlatFileProcessingJob_outputDir": [{"string": "imports/massImport/attributeInstance/output"}], "FlatFileProcessingJob_rejectDir": [{"string": "imports/massImport/attributeInstance/reject"}], "FlatFileProcessingJob_archiveDir": [{"string": "imports/massImport/attributeInstance/archive"}], "FlatFileProcessingJob_errorAction": [{"string": "CONTINUE"}], "FlatFileProcessingJob_mappingConf": [{"string": "<beanio\r\n\txmlns=\"http://www.beanio.org/2012/03\"\r\n\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\";\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n\t\t\t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_CODE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SERVICE_INSTANCE_CODE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SI_ATTRIB_CODE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SI_ATTRIB_VALUE\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_CODE\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_SERVICE_INSTANCE_CODE\"/>\r\n\t\t\t<field name=\"OC_SI_ATTRIB_CODE\"/>\r\n\t\t\t<field name=\"OC_SI_ATTRIB_VALUE\" />\r\n          \t<field name=\"OC_CFS\" type=\"String\" collection=\"list\" minOccurs=\"0\" maxOccurs=\"unbounded\" />\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}], "FlatFileProcessingJob_scriptsFlow": [{"string": "org.meveo.service.script.AttributeInstanceImportScript"}], "FlatFileProcessingJob_formatTransfo": [{"string": "None"}], "FlatFileProcessingJob_originFilename": [{"string": "origin_filename"}], "FlatFileProcessingJob_nbLinesToProcess": [{"long": 1}], "FlatFileProcessingJob_fileNameExtension": [{"string": "csv"}], "FlatFileProcessingJob_recordVariableName": [{"string": "record"}]}
+				]]>
             </column>
         </insert>
         <!-- Access Point Job -->
         <insert tableName="meveo_job_instance">
             <column name="id" valueSequenceNext="meveo_job_instance_seq" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
+            <column name="disabled" valueNumeric="1" />
             <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="massImportAccessPoint" />
-            <column name="description" value="massImportAccessPoint" />
             <column name="job_category" value="MEDIATION" />
             <column name="job_template" value="FlatFileProcessingJob" />
+            <column name="code" value="massImportAccessPoint" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
             <column name="single_node" valueNumeric="1" />
             <column name="verbose_report" valueNumeric="1" />
+            <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
-                <![CDATA[{"nbRuns":[{"long":1}],
-                "waitingMillis":[{"long":0}],
-                "oneFilePerJob":[{"boolean":false}],
-                "FlatFileProcessingJob_inputDir":[{"string":"/imports/massImport/accessPoint/input"}],
-	            "FlatFileProcessingJob_archiveDir":[{"string":"/imports/massImport/accessPoint/archive"}],
-                "FlatFileProcessingJob_rejectDir":[{"string":"/imports/massImport/accessPoint/reject"}],
-	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/massImport/accessPoint/output"}],
-	            "FlatFileProcessingJob_fileNameExtension":[{"string":"csv"}],
-	            "FlatFileProcessingJob_nbLinesToProcess":[{"long":1}],
-	            "FlatFileProcessingJob_mappingConf":[{"string":"<beanio\r\n\txmlns=\"http://www.beanio.org/2012/03\"\r\n\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\";\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n\t\t\t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_CODE*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACCESSPOINT_CODE*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACCESSPOINT_STARTDATE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACCESSPOINT_ENDDATE\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_CODE\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ACCESSPOINT_CODE\"/>\r\n\t\t\t<field name=\"OC_ACCESSPOINT_STARTDATE\"/>\r\n\t\t\t<field name=\"OC_ACCESSPOINT_ENDDATE\" />\r\n          \t<field name=\"OC_CFS\" type=\"String\" collection=\"list\" minOccurs=\"0\" maxOccurs=\"unbounded\" />\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}],
-                "FlatFileProcessingJob_scriptsFlow":[{"string":"org.meveo.service.script.AccessPointImportScript"}],
-                "FlatFileProcessingJob_recordVariableName":[{"string":"record"}],
-                "FlatFileProcessingJob_originFilename":[{"string":"origin_filename"}],
-                "FlatFileProcessingJob_formatTransfo":[{"string":"None"}],
-                "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}]}]]>
+                <![CDATA[
+				{"nbRuns": [{"long": 1}], "oneFilePerJob": [{"boolean": false}], "waitingMillis": [{"long": 0}], "FlatFileProcessingJob_inputDir": [{"string": "imports/massImport/accessPoint/input"}], "FlatFileProcessingJob_outputDir": [{"string": "imports/massImport/accessPoint/output"}], "FlatFileProcessingJob_rejectDir": [{"string": "imports/massImport/accessPoint/reject"}], "FlatFileProcessingJob_archiveDir": [{"string": "imports/massImport/accessPoint/archive"}], "FlatFileProcessingJob_errorAction": [{"string": "CONTINUE"}], "FlatFileProcessingJob_mappingConf": [{"string": "<beanio\r\n\txmlns=\"http://www.beanio.org/2012/03\"\r\n\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\";\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n\t\t\t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_CODE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACCESSPOINT_CODE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACCESSPOINT_STARTDATE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACCESSPOINT_ENDDATE\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_CODE\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ACCESSPOINT_CODE\"/>\r\n\t\t\t<field name=\"OC_ACCESSPOINT_STARTDATE\"/>\r\n\t\t\t<field name=\"OC_ACCESSPOINT_ENDDATE\" />\r\n          \t<field name=\"OC_CFS\" type=\"String\" collection=\"list\" minOccurs=\"0\" maxOccurs=\"unbounded\" />\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}], "FlatFileProcessingJob_scriptsFlow": [{"string": "org.meveo.service.script.AccessPointImportScript"}], "FlatFileProcessingJob_formatTransfo": [{"string": "None"}], "FlatFileProcessingJob_originFilename": [{"string": "origin_filename"}], "FlatFileProcessingJob_nbLinesToProcess": [{"long": 1}], "FlatFileProcessingJob_fileNameExtension": [{"string": "csv"}], "FlatFileProcessingJob_recordVariableName": [{"string": "record"}]}
+				]]>
             </column>
         </insert>
 
@@ -18949,5 +18901,7 @@ public class CdrFlatFileImportScript extends Script {
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
     </changeSet>
+
+    <changeSet id="#INTRD-12801_INTRD-12806__20230110" author="AbdellatifBARI" />
     
 </databaseChangeLog>
