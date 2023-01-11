@@ -1583,6 +1583,7 @@
             <column name="uuid" value="MAIN_SELLER" />
             <column name="trading_currency_id" valueNumeric="-1" />
             <column name="trading_language_id" valueNumeric="-1" />
+            <column name="email" value="billing@opencell.com"/>
         </insert>
         <insert tableName="crm_seller">
             <column name="id" valueNumeric="-2" />
@@ -1594,6 +1595,7 @@
             <column name="parent_seller_id" valueNumeric="-1" />
             <column name="trading_currency_id" valueNumeric="-1" />
             <column name="trading_language_id" valueNumeric="-1" />
+            <column name="email" value="billing@opencell.com"/>
         </insert>
         <insert tableName="crm_seller">
             <column name="id" valueNumeric="-3" />
@@ -1605,6 +1607,7 @@
             <column name="parent_seller_id" valueNumeric="-1" />
             <column name="trading_currency_id" valueNumeric="-2" />
             <column name="trading_language_id" valueNumeric="-2" />
+            <column name="email" value="billing@opencell.com"/>
         </insert>
     </changeSet>
 
@@ -2658,13 +2661,6 @@
 			<column name="uuid" value="InvoiceType-COMMERCIAL_ORDER" />
 		</insert>	
 	</changeSet>
-
-    <changeSet id="#INTRD-12895_20230109" author="bourras">
-        <update tableName="crm_seller">
-            <column name="email" value="billing@opencell.com"/>
-            <where>email is null and code in ('SELLER_FR','MAIN_SELLER','SELLER_US')</where>
-        </update>
-    </changeSet>
     
 
     <changeSet id="#INTRD-6283_20220404" author="AbdelmounaimAkadid"/>
