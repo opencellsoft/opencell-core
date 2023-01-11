@@ -3111,6 +3111,7 @@
             <column name= "invoice_balance" type="numeric(23, 12)" />
             <column name="use_current_rate" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="invoice_validation_rule_id" type="bigint"/>
+            <column name="converted_invoice_balance" type="numeric(23, 12)"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
