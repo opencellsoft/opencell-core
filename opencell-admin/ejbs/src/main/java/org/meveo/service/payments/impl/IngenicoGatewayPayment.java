@@ -23,7 +23,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.http.client.utils.DateUtils;
@@ -163,8 +162,6 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         paramBean.getProperty("connect.api.endpoint.scheme", "changeIt");
         paramBean.getProperty("connect.api.integrator", "");
         paramBean.getProperty("connect.api.socketTimeout", "300000");
-        Objects.requireNonNull(ParamBean.getInstance()).setProperty("connect.api.authorizationType","V1HMAC");
-
         CommunicatorConfiguration communicatorConfiguration = new CommunicatorConfiguration(ParamBean.getInstance().getProperties());
         communicatorConfiguration.setApiKeyId(paymentGateway.getApiKey());
         communicatorConfiguration.setSecretApiKey(paymentGateway.getSecretKey());

@@ -338,7 +338,8 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
                 log.warn("Cant find payment gateway");
             }
 
-            if (gatewayPaymentInterface != null && !StringUtils.isBlank(iban) && !StringUtils.isBlank(accountHolderName)){
+            if (gatewayPaymentInterface != null && !StringUtils.isBlank(iban) && !StringUtils.isBlank(accountHolderName) &&
+                    paymentGateway.getApiKey() != null && paymentGateway.getSecretKey() != null) {
                 String tockenID = gatewayPaymentInterface.createSepaDirectDebitToken(customerAccount, alias, accountHolderName, iban);
                 ddpaymentMethod.setTokenId(tockenID);
             }
