@@ -1673,8 +1673,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             String filterValue = QueryBuilder.getFilterByKey(filters, "SQL");
             if (!StringUtils.isBlank(filterValue)) {
                 queryBuilder = new QueryBuilder(filterValue);
-            } else {
-                PaginationConfiguration configuration = new PaginationConfiguration(new HashMap<>(filters));
+            } else {                
+                FilterConverter converter = new FilterConverter(RatedTransaction.class);
+                PaginationConfiguration configuration = new PaginationConfiguration(converter.convertFilters(filters));
                 queryBuilder = ratedTransactionService.getQuery(configuration);
             }
             filter.setPollingQuery(buildPollingQuery(queryBuilder));
