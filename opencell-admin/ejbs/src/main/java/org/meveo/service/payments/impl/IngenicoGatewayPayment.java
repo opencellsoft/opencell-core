@@ -156,7 +156,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     private void connect() {
         ParamBean paramBean = paramBean();
         //Init properties
-        paramBean.getProperty("connect.api.authorizationType", "changeIt");
+        paramBean.getProperty("connect.api.authorizationType", "V1HMAC");
         paramBean.getProperty("connect.api.connectTimeout", "5000");
         paramBean.getProperty("connect.api.endpoint.host", "changeIt");
         paramBean.getProperty("connect.api.endpoint.scheme", "changeIt");
