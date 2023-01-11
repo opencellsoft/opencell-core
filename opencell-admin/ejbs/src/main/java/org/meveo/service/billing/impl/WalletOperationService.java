@@ -958,5 +958,16 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             return null;
         }
     }
+    
+    public WalletOperation findByEdr(Long edrId) {
+        try {
+            return (WalletOperation) getEntityManager().createQuery("SELECT wo FROM WalletOperation wo WHERE wo.edr.id = :edrId")
+                    .setParameter("edrId", edrId)
+                    .setMaxResults(1)
+                    .getSingleResult();
+        } catch (NoResultException exception) {
+            return null;
+        }
+    }
 
 }

@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
@@ -122,6 +121,7 @@ import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.cpq.ContractItemService;
 import org.meveo.service.cpq.ContractService;
+import org.meveo.service.mediation.MediationsettingService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.catalog.TriggeredEdrScript;
@@ -187,6 +187,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     private MethodCallingUtils methodCallingUtils;
     @Inject
     private RecurringRatingService recurringRatingService;
+    @Inject
+    private MediationsettingService mediationsettingService;
 
     /**
      * @param level level enum
@@ -416,7 +418,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         }
 
         for (WalletOperation walletOperation : ratedEDRResult.getWalletOperations()) {
-            List<EDR> triggeredEdrs = instantiateTriggeredEDRs(walletOperation, edr, isVirtual);
+            List<EDR> triggeredEdrs = instantiateTriggeredEDRs(walletOperation, edr, isVirtual, true);
             ratedEDRResult.addTriggeredEDRs(triggeredEdrs);
         }
         return ratedEDRResult;
@@ -435,7 +437,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
      * @throws InvalidELException Failed to evaluate EL expression
      * @throws ElementNotFoundException Subscription as resolved from EL expression was not found
      */
-    public List<EDR> instantiateTriggeredEDRs(WalletOperation walletOperation, EDR edr, boolean isVirtual)
+    public List<EDR> instantiateTriggeredEDRs(WalletOperation walletOperation, EDR edr, boolean isVirtual, boolean evaluatEdrVersioning)
             throws RatingException, InvalidELException, ElementNotFoundException, CommunicateToRemoteInstanceException, ChargingEdrOnRemoteInstanceErrorException {
 
         List<EDR> triggredEDRs = new ArrayList<>();
@@ -528,6 +530,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 }
             }
         }
+        if(evaluatEdrVersioning)
+            mediationsettingService.applyEdrVersioningRule(triggredEDRs, null, isVirtual);
         return triggredEDRs;
 
     }
