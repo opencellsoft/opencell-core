@@ -33,7 +33,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.keystore.KeystoreManager;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -51,10 +50,10 @@ import org.meveo.service.crm.impl.ProviderService;
  */
 @Stateless
 public class PaymentGatewayService extends BusinessService<PaymentGateway> {
-
+	
 	@Inject
 	private ProviderService providerService;
-	
+
     /**
      * Gets the payment gateway.
      *
@@ -67,6 +66,21 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
     public PaymentGateway getPaymentGateway(CustomerAccount customerAccount, PaymentMethod paymentMethod, CreditCardTypeEnum cardType) throws BusinessException {
        return getPaymentGateway(customerAccount, paymentMethod, cardType,customerAccount.getCustomer().getSeller());
     }
+    
+    /**
+     * 
+     * @param customerAccount the customer account
+     * @param paymentMethod the payment method
+     * @param cardType card type
+     * @param seller the seller
+     * @param paymentMethodType the paymentMethod type
+     * @return
+     */
+    public PaymentGateway getPaymentGateway(CustomerAccount customerAccount, PaymentMethod paymentMethod, CreditCardTypeEnum cardType,
+			Seller seller, PaymentMethodEnum paymentMethodType) {
+		
+    	return getAndCheckPaymentGateway(customerAccount, paymentMethod, cardType, seller,null, paymentMethodType);
+	}
     
     /**
      * Gets the payment gateway.
@@ -82,7 +96,21 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
     public PaymentGateway getPaymentGateway(CustomerAccount customerAccount, PaymentMethod paymentMethod, CreditCardTypeEnum cardType,Seller seller) throws BusinessException {
     	return getAndCheckPaymentGateway(customerAccount, paymentMethod, cardType, seller, null);
     }
-
+    
+    /**
+     * Gets the payment gateway.
+     * 
+     * @param customerAccount
+     * @param paymentMethod
+     * @param cardType
+     * @param seller
+     * @param selectedGatewayCode
+     * @return
+     * @throws BusinessException
+     */
+    public PaymentGateway getAndCheckPaymentGateway(CustomerAccount customerAccount, PaymentMethod paymentMethod, CreditCardTypeEnum cardType,Seller seller,String selectedGatewayCode) throws BusinessException {
+    	return getAndCheckPaymentGateway(customerAccount, paymentMethod, cardType, seller, selectedGatewayCode, null);
+    }
     /**
      * Gets the payment gateway.
      *
@@ -94,7 +122,7 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
      * @throws BusinessException the business exception
      */
     @SuppressWarnings("unchecked")
-    public PaymentGateway getAndCheckPaymentGateway(CustomerAccount customerAccount, PaymentMethod paymentMethod, CreditCardTypeEnum cardType,Seller seller,String selectedGatewayCode) throws BusinessException {
+    public PaymentGateway getAndCheckPaymentGateway(CustomerAccount customerAccount, PaymentMethod paymentMethod, CreditCardTypeEnum cardType,Seller seller,String selectedGatewayCode,PaymentMethodEnum paymentMethodType ) throws BusinessException {
         PaymentGateway paymentGateway = null;
         try {        	 
             CreditCardTypeEnum cardTypeToCheck = null;
@@ -117,13 +145,13 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
             
             Query query = getEntityManager()
                 .createQuery(queryStr)
-                .setParameter("paymenTypeValueIN", paymentMethod == null ? PaymentMethodEnum.CARD : paymentMethod.getPaymentType())
+                .setParameter("paymenTypeValueIN", paymentMethod == null ? paymentMethodType : paymentMethod.getPaymentType())
                 .setParameter("countryValueIN", customerAccount.getAddress() == null ? null : customerAccount.getAddress().getCountry())
-                .setParameter("tradingCurrencyValueIN", customerAccount.getTradingCurrency())
+                .setParameter("tradingCurrencyValueIN", providerService.getProvider().getCurrency())
                 .setParameter("cardTypeValueIN", cardTypeToCheck)
                 .setParameter("sellerIN", seller);
             
-            log.info("paymenTypeValueIN:"+(paymentMethod == null ? PaymentMethodEnum.CARD : paymentMethod.getPaymentType()));
+            log.info("paymenTypeValueIN:"+(paymentMethod == null ? paymentMethodType : paymentMethod.getPaymentType()));
             log.info("countryValueIN:"+(customerAccount.getAddress() == null ? null : customerAccount.getAddress().getCountry()));
             log.info("tradingCurrencyValueIN:"+(providerService.getProvider().getCurrency()));
             log.info("cardTypeValueIN:"+(cardTypeToCheck));
@@ -142,9 +170,11 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
             		if(pg.getCode().equals(selectedGatewayCode)) {
             			if (!StringUtils.isBlank(pg.getApplicationEL())) {
             				if (matchExpression(pg.getApplicationEL(), customerAccount, paymentMethod, pg, seller)) {
+            					log.info(" pg {} , rtuerned " ,pg.getCode());
             					return pg;
             				}
             			}else {
+            				log.info(" pg {} , rtuerned " ,pg.getCode());
             				return pg;
             			}
             		}
@@ -152,6 +182,7 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
             			return pg;
             		} 	
             }
+            log.info(" pg {} , rtuerned " ,paymentGateways.get(0).getCode());
             paymentGateway = paymentGateways.get(0);
         } catch (Exception e) {
             log.error("Error on getPaymentGateway:", e);
@@ -183,10 +214,12 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
                 log.info("get pg , current :" + pg.getCode());
                 if (!StringUtils.isBlank(pg.getApplicationEL())) {
 	                if (matchExpression(pg.getApplicationEL(), null, null, paymentGateway, seller)) {
+	                	log.info(" pg {} , rtuerned " ,pg.getCode());
 	                    return pg;
 	                }
                 }
             }
+            log.info(" pg {} , rtuerned " ,paymentGateways.get(0).getCode());
             paymentGateway = paymentGateways.get(0);
         } catch (Exception e) {
             log.error("Error on getPaymentGateway:", e);
@@ -238,5 +271,7 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
 
         super.remove(paymentGateway);
     }
+
+	
 
 }

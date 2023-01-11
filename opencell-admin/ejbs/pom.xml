@@ -672,6 +672,16 @@
             <groupId>com.worldline-solutions</groupId>
             <artifactId>onlinepayments-sdk-java</artifactId>
             <version>${version.worldline.onlinepayments-sdk}</version>
+        </dependency>        
+		<dependency>
+		  <groupId>com.stripe</groupId>
+		  <artifactId>stripe-java</artifactId>
+		  <version>${version.stripe-sdk}</version>
+		</dependency>
+        <dependency>
+           <groupId>com.google.code.gson</groupId>
+           <artifactId>gson</artifactId>
+           <version>2.10</version>
         </dependency>
 
         <dependency>
