@@ -3048,6 +3048,11 @@ public class SubscriptionApi extends BaseApi {
             }
             Subscription terminateSubscription = subscriptionService.terminateSubscription(lastVersionSubscription, effectiveDate, subscriptionTerminationReason, lastVersionSubscription.getOrderNumber());
             isImmediateTerminationOldSub = SubscriptionStatusEnum.RESILIATED == terminateSubscription.getStatus();
+            for(Access access : lastVersionSubscription.getAccessPoints())
+            {
+                access.setEndDate(effectiveDate);
+                accessApi.update(new AccessDto(access, null));
+            }
         }
 
         existingSubscriptionDto.setValidityDate(effectiveDate);

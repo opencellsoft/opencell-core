@@ -112,8 +112,9 @@
         "composites": {
           "client": {
             "opencell-web": [
+              "administrateur",
               "apiAdministrateur",
-              "administrateur"
+              "genApiFull.list"
             ],
             "opencell-portal": [
               "ADMIN"
@@ -15313,6 +15314,18 @@
               "resources": "[\"Api V1 Customization - entities\"]",
               "scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
               "applyPolicies": "[\"Role apiSuperAdminManagement\"]"
+            }
+          },
+          {
+            "id": "ecaac485-44f5-4b96-a421-168177f1bc77",
+            "name": "Api V1 Customization - entities - admin - update",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Api V1 Customization - entities\"]",
+              "scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
+              "applyPolicies": "[\"Role apiAdministrationVisualization\"]"
             }
           },
           {

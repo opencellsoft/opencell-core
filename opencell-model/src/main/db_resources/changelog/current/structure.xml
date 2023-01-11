@@ -15617,7 +15617,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
 		</addColumn>
 	</changeSet>
 
-    <changeSet id="#INTRD-12766_2023015" author="bourras">
+    <changeSet id="#INTRD-12766_20230105" author="bourras">
         <addColumn tableName="billing_invoice">
             <column name="converted_invoice_balance" type="numeric(23, 12)"/>
         </addColumn>
@@ -15628,5 +15628,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <column name="query_parameters" type="${type.json}" />
       </addColumn>
     </changeSet>
+
+    <changeSet id="#INTRD-12766_20230106" author="bourras">
+        <addColumn tableName="billing_linked_invoices">
+            <column name="converted_amount" type="numeric(23, 12)"/>
+        </addColumn>
+    </changeSet>
+
 
 </databaseChangeLog>
