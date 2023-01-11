@@ -305,7 +305,7 @@ public class StripeGatewayPayment implements GatewayPaymentInterface {
 			
 			CustomerCreateParams params = CustomerCreateParams.builder().setAddress(getBillingAddress(customerAccount))
 					.setName(customerAccount.getName().getFullName()).setDescription(customerAccount.getCode())
-					.setPhone(customerAccount.getContactInformationNullSafe().getMobile()).build();
+					.setPhone(customerAccount.getContactInformationNullSafe().getMobile()).setEmail(customerAccount.getContactInformationNullSafe().getEmail()).build();
 
 			stripeCustomer = Customer.create(params);
 			log.info("Customer stripe created :" + stripeCustomer.toJson());
