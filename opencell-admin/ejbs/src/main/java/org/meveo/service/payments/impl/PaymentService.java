@@ -421,8 +421,9 @@ public class PaymentService extends PersistenceService<Payment> {
                 if (!(preferredMethod instanceof DDPaymentMethod)) {
                     throw new PaymentException(PaymentErrorEnum.PAY_METHOD_IS_NOT_DD, "Can not process payment sepa as prefered payment method is " + preferredMethod.getPaymentType());
                 }
-                if (StringUtils.isBlank(((DDPaymentMethod) preferredMethod).getMandateIdentification())) {
-                    throw new PaymentException(PaymentErrorEnum.PAY_SEPA_MANDATE_BLANK, "Can not process payment sepa as Mandate is blank");
+                if (StringUtils.isBlank(((DDPaymentMethod) preferredMethod).getMandateIdentification()) 
+                		&& StringUtils.isBlank(((DDPaymentMethod) preferredMethod).getTokenId()) ) {
+                    throw new PaymentException(PaymentErrorEnum.PAY_SEPA_MANDATE_BLANK, "Can not process payment sepa as Mandate or token is blank");
                 }
                 if (isPayment) {
                     doPaymentResponseDto = gatewayPaymentInterface.doPaymentSepa(((DDPaymentMethod) preferredMethod), ctsAmount, null);
@@ -437,6 +438,13 @@ public class PaymentService extends PersistenceService<Payment> {
              
 			Refund refund = (!isPayment && aoPaymentId != null) ? refundService.findById(aoPaymentId) : null;
 			Payment payment = (isPayment && aoPaymentId != null) ? findById(aoPaymentId) : null;
+
+			if(payment != null) {
+				payment.setReference(doPaymentResponseDto.getPaymentID());
+			}
+			if(refund != null) {
+				refund.setReference(doPaymentResponseDto.getPaymentID());
+			}
 
 			paymentHistoryService.addHistory(customerAccount, payment, refund, ctsAmount, doPaymentResponseDto.getPaymentStatus(),doPaymentResponseDto.getErrorCode(), doPaymentResponseDto.getErrorMessage(),
                     doPaymentResponseDto.getPaymentID(), errorType, operationCat, paymentGateway.getCode(), preferredMethod,aoIdsToPay);
