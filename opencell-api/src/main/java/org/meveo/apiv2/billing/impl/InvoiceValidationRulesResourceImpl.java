@@ -14,6 +14,7 @@ import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceValidationRule;
 import org.meveo.model.billing.ValidationRuleTypeEnum;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.InvoiceValidationRulesService;
 import org.meveo.service.script.ScriptInstanceService;
@@ -33,6 +34,9 @@ public class InvoiceValidationRulesResourceImpl implements InvoiceValidationRule
 
     @Inject
     private InvoiceTypeService invoiceTypeService;
+    
+    @Inject
+    private InvoiceService invoiceService;
 
     @Inject
     private InvoiceValidationRulesService invoiceValidationRulesService;
@@ -89,6 +93,7 @@ public class InvoiceValidationRulesResourceImpl implements InvoiceValidationRule
 
     @Override
     public Response delete(Long id) {
+    	checkRuleAlreadyReferenced(id);
         invoiceValidationRulesApiService.delete(id);
         return Response.ok(buildSucessResponse(id)).build();
     }
@@ -134,6 +139,12 @@ public class InvoiceValidationRulesResourceImpl implements InvoiceValidationRule
         }
     }
 
+    private void checkRuleAlreadyReferenced(Long id) {
+        if (invoiceService.countInvoicesByValidationRule(id) > 0) {
+            throw new BadRequestException("Rule [id= " + id + "] cannot be deleted as it is suspecting or rejecting some invoices. "
+            		+ "Please, validate, correct, or cancel these invoices before deleting the rule.");
+        }
+    }
 
     private void checkCodeAndDescription(InvoiceValidationRule invoiceValidationRule) {
 
