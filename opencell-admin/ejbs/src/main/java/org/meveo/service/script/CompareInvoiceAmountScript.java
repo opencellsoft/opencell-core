@@ -40,9 +40,11 @@ public class CompareInvoiceAmountScript extends Script {
 		String withOrWithTaxParameter = (String) context.get("withOrWithoutTax");
 		BigDecimal value = (BigDecimal) context.get("value");
 		String operator = ScriptUtils.buildOperator(String.valueOf(context.get("operator")), false);
+		Map<Object, Object> contextMap = new HashMap<Object, Object>();
+		contextMap.put("invoice", invoice);
 		
 		boolean result = ValueExpressionWrapper.evaluateToBoolean("#{invoice.amount" + StringUtils.camelcase(withOrWithTaxParameter) + " " + operator + " " + value + "}",
-				new HashMap<Object, Object>(context));
+				contextMap);
 
 		context.put(Script.INVOICE_VALIDATION_STATUS, result ? InvoiceValidationStatusEnum.VALID : (InvoiceValidationStatusEnum) context.get(Script.RESULT_VALUE));
 	}
