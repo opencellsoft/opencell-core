@@ -1014,7 +1014,8 @@
                 "apiCpqManagement",
                 "inboundAccess",
                 "apiAdministrationManagement",
-                "apiUseScript"
+                "apiUseScript",
+                "general_roleManagement"
               ]
             }
           },
