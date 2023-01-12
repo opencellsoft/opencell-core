@@ -644,7 +644,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
                         if (!StringUtils.isBlank(amountEL)) {
                             unitPriceWithoutTaxOverridden = evaluateAmountExpression(amountEL,
                                     bareWalletOperation, bareWalletOperation.getChargeInstance().getUserAccount(),
-                                    null, unitPriceWithoutTaxOverridden);
+                                    null, unitPriceWithoutTaxOverridden).setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
                             if (unitPriceWithoutTaxOverridden == null) {
                                 throw new PriceELErrorException("Can't evaluate price for price plan " + ppmVersion.getId()
                                         + " EL:" + ppmVersion.getAmountWithoutTaxEL());
@@ -807,7 +807,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
         if (walletOperation.getPriceplan() != null) {
             String ratingEl = walletOperation.getPriceplan().getTotalAmountEL();
             if (!StringUtils.isBlank(ratingEl)) {
-                amount = BigDecimal.valueOf(evaluateDoubleExpression(ratingEl, walletOperation, walletOperation.getWallet().getUserAccount(), null, null));
+                amount = new BigDecimal(Double.toString(evaluateDoubleExpression(ratingEl, walletOperation, walletOperation.getWallet().getUserAccount(), null, null)));
             }
         }
 
@@ -828,7 +828,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
         // we override the wo amount if minimum amount el is set on price plan
         if (walletOperation.getPriceplan() != null && !StringUtils.isBlank(walletOperation.getPriceplan().getMinimumAmountEL())) {
-            BigDecimal minimumAmount = BigDecimal.valueOf(evaluateDoubleExpression(walletOperation.getPriceplan().getMinimumAmountEL(), walletOperation, walletOperation.getWallet().getUserAccount(), null, null));
+            BigDecimal minimumAmount = new BigDecimal(Double.toString(evaluateDoubleExpression(walletOperation.getPriceplan().getMinimumAmountEL(), walletOperation, walletOperation.getWallet().getUserAccount(), null, null)));
 
             if ((appProvider.isEntreprise() && walletOperation.getAmountWithoutTax().compareTo(minimumAmount) < 0) || (!appProvider.isEntreprise() && walletOperation.getAmountWithTax().compareTo(minimumAmount) < 0)) {
 
