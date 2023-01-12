@@ -135,6 +135,7 @@ import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenSepaD
 @PaymentGatewayClass
 public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 
+    public static final String CHANGE_IT = "changeIt";
     /** The log. */
     protected Logger log = LoggerFactory.getLogger(IngenicoGatewayPayment.class);
     
@@ -156,10 +157,10 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     private void connect() {
         ParamBean paramBean = paramBean();
         //Init properties
-        paramBean.getProperty("connect.api.authorizationType", "changeIt");
+        paramBean.getProperty("connect.api.authorizationType", "V1HMAC");
         paramBean.getProperty("connect.api.connectTimeout", "5000");
-        paramBean.getProperty("connect.api.endpoint.host", "changeIt");
-        paramBean.getProperty("connect.api.endpoint.scheme", "changeIt");
+        paramBean.getProperty("connect.api.endpoint.host", CHANGE_IT);
+        paramBean.getProperty("connect.api.endpoint.scheme", CHANGE_IT);
         paramBean.getProperty("connect.api.integrator", "");
         paramBean.getProperty("connect.api.socketTimeout", "300000");        
         CommunicatorConfiguration communicatorConfiguration = new CommunicatorConfiguration(ParamBean.getInstance().getProperties());
@@ -728,7 +729,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         threeDSecure.setPriorThreeDSecureData(threeDSecureData);
         threeDSecure.setSkipAuthentication(Boolean.valueOf("true".equals(paramBean().getProperty("ingenico.CreatePayment.SkipAuthentication", "false"))));
         RedirectionData redirectionData = new  RedirectionData();
-        redirectionData.setReturnUrl(paramBean.getProperty("ingenico.urlReturnPayment", "changeIt"));
+        redirectionData.setReturnUrl(paramBean.getProperty("ingenico.urlReturnPayment", CHANGE_IT));
         threeDSecure.setRedirectionData(redirectionData);
         threeDSecure.setChallengeIndicator(paramBean.getProperty("ingenico.3ds.ChallengeIndicator", "no-preference"));
         threeDSecure.setAuthenticationFlow(paramBean.getProperty("ingenico.3ds.AuthenticationFlow", "browser"));
@@ -760,7 +761,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         ParamBean paramBean = paramBean();
         CardPaymentMethodSpecificInput cardPaymentMethodSpecificInput = new CardPaymentMethodSpecificInput();
         cardPaymentMethodSpecificInput.setToken(cardPaymentMethod.getTokenId());
-        cardPaymentMethodSpecificInput.setReturnUrl(paramBean.getProperty("ingenico.urlReturnPayment", "changeIt"));
+        cardPaymentMethodSpecificInput.setReturnUrl(paramBean.getProperty("ingenico.urlReturnPayment", CHANGE_IT));
         cardPaymentMethodSpecificInput.setIsRecurring(Boolean.TRUE);
         cardPaymentMethodSpecificInput.setRecurringPaymentSequenceIndicator("recurring");
         cardPaymentMethodSpecificInput.setAuthorizationMode(getAuthorizationMode());
