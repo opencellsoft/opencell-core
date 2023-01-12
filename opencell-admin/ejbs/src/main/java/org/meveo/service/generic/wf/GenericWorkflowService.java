@@ -21,13 +21,7 @@ import static org.meveo.admin.job.GenericWorkflowJob.GENERIC_WF;
 import static org.meveo.admin.job.GenericWorkflowJob.IWF_ENTITY;
 import static org.meveo.admin.job.GenericWorkflowJob.WF_INS;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -140,7 +134,13 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
 
             int endIndex = genericWorkflow.getTransitions().size();
             if(!genericWorkflow.getTransitions().get(endIndex-1).getToStatus().equalsIgnoreCase(currentStatus)) {
-                int startIndex = IntStream.range(0, endIndex).filter(idx -> genericWorkflow.getTransitions().get(idx).getFromStatus().equals(currentStatus)).findFirst().getAsInt();
+                OptionalInt startTransitionIndex = IntStream.range(0, endIndex).filter(idx -> genericWorkflow.getTransitions().get(idx).getFromStatus().equals(currentStatus)).findFirst();
+                if (startTransitionIndex.isEmpty()) {
+                    log.debug("No transition with {} as fromStatus. So end of workflow is reached for WFInstance {}.", currentStatus, workflowInstance);
+                    // return workflowInstance as it is
+                    return workflowInstance;
+                }
+                int startIndex = startTransitionIndex.getAsInt();
                 List<GWFTransition> listByFromStatus = genericWorkflow.getTransitions().stream().collect(Collectors.toList()).subList(startIndex, endIndex);
                 List<GWFTransition> executedTransition = getExecutedTransitions(genericWorkflow, workflowInstance, listByFromStatus);
 
