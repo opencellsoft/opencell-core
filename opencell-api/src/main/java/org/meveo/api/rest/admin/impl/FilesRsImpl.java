@@ -193,4 +193,17 @@ public class FilesRsImpl extends BaseRs implements FilesRs {
         return result;
     }
 
+    @Override
+    public ActionStatus moveFileOrDirectory(String srcPath, String destPath) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            filesApi.moveFileOrDirectory(srcPath, destPath);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
 }
