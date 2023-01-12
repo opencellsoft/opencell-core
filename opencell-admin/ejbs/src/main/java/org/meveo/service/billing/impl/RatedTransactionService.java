@@ -292,6 +292,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             walletOperation.setRatedTransaction(ratedTransaction);
         }
         updateBAForRT(List.of(ratedTransaction));
+        walletOperationService.update(walletOperation);
         return ratedTransaction;
     }
 

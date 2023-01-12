@@ -58,6 +58,7 @@ import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.CDR;
@@ -501,7 +502,8 @@ public class MediationApiService {
             // Generate automatically RTs
             if (generateRTs && !walletOperations.isEmpty()) {
                 for (WalletOperation walletOperation : walletOperations) {
-                    cdrParsingService.getEntityManager().persist(walletOperation.getEdr());
+                    //cdrParsingService.getEntityManager().persist(walletOperation.getEdr());
+                	if(walletOperation.getId() == null || walletOperation.getStatus() != WalletOperationStatusEnum.OPEN) continue;
                     ratedTransactionService.createRatedTransaction(walletOperation, false);
                 }
             }
