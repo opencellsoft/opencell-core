@@ -160,23 +160,25 @@ public class InvoiceValidationRulesResourceImpl implements InvoiceValidationRule
     }
 
     private void checkCodeAndDescription(InvoiceValidationRule invoiceValidationRule) {
+        Long ruleId = invoiceValidationRulesService.nextSequenceId();
 
         if (invoiceValidationRule.getCode() == null || invoiceValidationRule.getCode().isEmpty()) {
-            invoiceValidationRule.setCode(invoiceValidationRule.getInvoiceType() + "_" + invoiceValidationRule.getPriority());
+            invoiceValidationRule.setCode("RULE_" + ruleId);
         }
 
         if (invoiceValidationRule.getDescription() == null || invoiceValidationRule.getDescription().isEmpty()) {
 
-            String value = invoiceValidationRule.getType().equals(ValidationRuleTypeEnum.SCRIPT) ? invoiceValidationRule.getValidationScript().getCode()
+            String value = invoiceValidationRule.getType().equals(ValidationRuleTypeEnum.SCRIPT) ? getScriptValidationShortCode(invoiceValidationRule.getValidationScript().getCode())
                     : invoiceValidationRule.getValidationEL();
-
-            Long ruleId = invoiceValidationRulesService.nextSequenceId();
 
             invoiceValidationRule.setDescription("Rule " + ruleId + ": "
                     + invoiceValidationRule.getFailStatus().toString() + " if " + invoiceValidationRule.getType().toString() + " "
-                    + "'" + value + "'" +
-                    " fails");
+                    +  value  + " fails");
         }
+    }
+    
+    private String getScriptValidationShortCode(String code) {
+    	return code.substring(code.lastIndexOf('.') + 1);
     }
 
 	private void checkValidationSriptAndEL(InvoiceValidationRuleDto invoiceValidationRuleDto, ValidationRuleTypeEnum validationRuleType) {
