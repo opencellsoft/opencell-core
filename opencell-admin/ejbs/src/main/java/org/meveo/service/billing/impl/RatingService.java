@@ -767,7 +767,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 if (appProvider.isEntreprise()) {
                     priceWithoutTax = ppmVersion.getAmountWithoutTax();
                     if (ppmVersion.getAmountWithoutTaxEL() != null) {
-                        priceWithoutTax = evaluateAmountExpression(ppmVersion.getAmountWithoutTaxEL(), wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax);
+                        priceWithoutTax = evaluateAmountExpression(ppmVersion.getAmountWithoutTaxEL(), wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax).setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
                         if (priceWithoutTax == null) {
                             throw new PriceELErrorException("Can't evaluate price for price plan " + ppmVersion.getId() + " EL:" + ppmVersion.getAmountWithoutTaxEL());
                         }
@@ -776,7 +776,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 } else {
                     priceWithTax = ppmVersion.getAmountWithTax();
                     if (ppmVersion.getAmountWithTaxEL() != null) {
-                        priceWithTax = evaluateAmountExpression(ppmVersion.getAmountWithTaxEL(), wo, wo.getWallet().getUserAccount(), null, priceWithoutTax);
+                        priceWithTax = evaluateAmountExpression(ppmVersion.getAmountWithTaxEL(), wo, wo.getWallet().getUserAccount(), null, priceWithoutTax).setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
                         if (priceWithTax == null) {
                             throw new PriceELErrorException("Can't evaluate price for price plan " + ppmVersion.getId() + " EL:" + ppmVersion.getAmountWithTaxEL());
                         }
@@ -901,7 +901,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         if (walletOperation.getPriceplan() != null) {
             String ratingEl = walletOperation.getPriceplan().getTotalAmountEL();
             if (!StringUtils.isBlank(ratingEl)) {
-                amount = BigDecimal.valueOf(evaluateDoubleExpression(ratingEl, walletOperation, walletOperation.getWallet().getUserAccount(), null, null));
+                amount = new BigDecimal(Double.toString(evaluateDoubleExpression(ratingEl, walletOperation, walletOperation.getWallet().getUserAccount(), null, null)));
             }
         }
 
@@ -922,7 +922,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
         // we override the wo amount if minimum amount el is set on price plan
         if (walletOperation.getPriceplan() != null && !StringUtils.isBlank(walletOperation.getPriceplan().getMinimumAmountEL())) {
-            BigDecimal minimumAmount = BigDecimal.valueOf(evaluateDoubleExpression(walletOperation.getPriceplan().getMinimumAmountEL(), walletOperation, walletOperation.getWallet().getUserAccount(), null, null));
+            BigDecimal minimumAmount = new BigDecimal(Double.toString(evaluateDoubleExpression(walletOperation.getPriceplan().getMinimumAmountEL(), walletOperation, walletOperation.getWallet().getUserAccount(), null, null)));
 
             if ((appProvider.isEntreprise() && walletOperation.getAmountWithoutTax().compareTo(minimumAmount) < 0) || (!appProvider.isEntreprise() && walletOperation.getAmountWithTax().compareTo(minimumAmount) < 0)) {
 
