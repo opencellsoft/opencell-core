@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.meveo.api.invoice.InvoiceValidationRulesApiService;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceValidationRule;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.billing.impl.InvoiceValidationRulesService;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -36,8 +37,10 @@ public class InvoiceValidationRuleApiServiceTest {
         InvoiceValidationRule invoiceValidationRule = new InvoiceValidationRule();
         InvoiceType invoiceType = new InvoiceType();
         invoiceValidationRule.setInvoiceType(invoiceType);
+        ScriptInstance scriptInstance = new ScriptInstance();
+        scriptInstance.setCode("code.script.validation");
         invoiceValidationRule.setPriority(1);
-        invoiceValidationRule.setValidationScript("SCRIPT");
+        invoiceValidationRule.setValidationScript(scriptInstance);
         invoiceValidationRule.setCode("CODE");
         invoiceValidationRule.setDescription("DESCRIPTION");
 
@@ -64,8 +67,10 @@ public class InvoiceValidationRuleApiServiceTest {
         invoiceValidationRule.setId(1L);
         InvoiceType invoiceType = new InvoiceType();
         invoiceValidationRule.setInvoiceType(invoiceType);
+        ScriptInstance scriptInstance = new ScriptInstance();
+        scriptInstance.setCode("code.script.validation");
         invoiceValidationRule.setPriority(1);
-        invoiceValidationRule.setValidationScript("SCRIPT");
+        invoiceValidationRule.setValidationScript(scriptInstance);
         invoiceValidationRule.setCode("CODE");
         invoiceValidationRule.setDescription("DESCRIPTION");
 
