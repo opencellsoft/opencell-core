@@ -9,12 +9,16 @@ import java.net.http.HttpResponse.BodyHandlers;
 import java.util.concurrent.CompletableFuture;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import java.io.StringReader;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
@@ -22,7 +26,13 @@ import org.xml.sax.InputSource;
 
 @Stateless
 public class ValidationByNumberCountryService {
+    
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
+    
     public boolean getValByValNbCountryCode(String valNb, String countryCode) {
+        ParamBean instanceParamBean = paramBeanFactory.getInstance();
+        
         boolean valueValideNodeBoolean = false;
         try {            
             HttpClient client = HttpClient.newHttpClient();
@@ -35,7 +45,7 @@ public class ValidationByNumberCountryService {
                     + "      </urn:checkVat>\r\n"
                     + "   </soapenv:Body>\r\n"
                     + "</soapenv:Envelope>";
-            String uri = "http://ec.europa.eu/taxation_customs/vies/services/checkVatService";
+            String uri = instanceParamBean.getProperty("checkVatService.api", "http://ec.europa.eu/taxation_customs/vies/services/checkVatService");
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(uri))
                     .POST(BodyPublishers.ofString(data))
