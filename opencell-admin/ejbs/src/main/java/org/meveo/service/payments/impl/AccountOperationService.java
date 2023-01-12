@@ -576,7 +576,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 		}
 		
 		String fiscalYear = String.valueOf(DateUtils.getYearFromDate(accountOperation.getAccountingDate()));
-		AccountingPeriod accountingPeriod = accountingPeriodService.findByAccountingPeriodYear(fiscalYear);
+		AccountingPeriod accountingPeriod = accountingPeriodService.findOpenAccountingPeriodByDate(accountOperation.getAccountingDate());
 		if (accountingPeriod == null) {
 			rejectAccountOperation(accountOperation);
 			log.warn("No accounting period has been defined for this year : {}", fiscalYear);
