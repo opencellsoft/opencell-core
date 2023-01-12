@@ -15485,6 +15485,24 @@ public class AgedBalanceReporting extends ReportExtractScript {
         	<column name="query_parameters" type="${type.json}" />
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD-12047-20230112" author="AbdelmounaimAkadid">
+    	<createIndex indexName="idx__cpq_attribute_instance__subscription_id" tableName="cpq_attribute_instance">
+	      	<column name="subscription_id"/>
+	  	</createIndex>
+	  	<createIndex indexName="idx__cpq_attribute_instance__parent_id" tableName="cpq_attribute_instance">
+	      	<column name="parent_id"/>
+	  	</createIndex>
+	  	<createIndex indexName="idx__billing_rated_transaction__origin_billing_account" tableName="billing_rated_transaction">
+	      	<column name="origin_billing_account"/>
+	  	</createIndex>
+	  	<createIndex indexName="idx__billing_rated_transaction__rules_contract_id" tableName="billing_rated_transaction">
+	      	<column name="rules_contract_id"/>
+	  	</createIndex>
+	  	<createIndex indexName="idx__billing_rated_transaction__service_instance_id" tableName="billing_rated_transaction">
+	      	<column name="service_instance_id"/>
+	  	</createIndex>
+    </changeSet>   
 
     <changeSet id="#INTRD-12766_20230106" author="bourras">
         <addColumn tableName="billing_linked_invoices">
