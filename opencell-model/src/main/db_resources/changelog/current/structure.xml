@@ -15634,6 +15634,16 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="converted_amount" type="numeric(23, 12)"/>
         </addColumn>
     </changeSet>
-
-
+    
+    <changeSet id="#INTRD-13065_20230112" author="AdilElJaouhari">
+		<dropColumn columnName="validation_script" tableName="billing_invoice_validation_rule" />
+		<addColumn tableName="billing_invoice_validation_rule">
+			<column name="script_instance_id" type="bigint" />
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="billing_invoice_validation_rule"
+                                 constraintName="fk_validation_rule_meveo_script_instance" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+	</changeSet>
+	
 </databaseChangeLog>
