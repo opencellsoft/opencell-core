@@ -110,16 +110,21 @@ public class InvoiceLinesFactory {
         		if(discountedILId!=null) {
         			InvoiceLine discountedIL = invoiceLineService.findById(discountedILId);
             		invoiceLine.setDiscountedInvoiceLine(discountedIL);
-            		RatedTransaction discountRatedTransaction = ratedTransactionService.findById(Long.valueOf(rtID));
-            		if(discountRatedTransaction!=null) {
-            			invoiceLine.setDiscountPlan(discountRatedTransaction.getDiscountPlan());
-            			invoiceLine.setDiscountPlanItem(discountRatedTransaction.getDiscountPlanItem());
-            			invoiceLine.setDiscountPlanType(discountRatedTransaction.getDiscountPlanType());
-            			invoiceLine.setDiscountValue(discountRatedTransaction.getDiscountValue());
-            			invoiceLine.setSequence(discountRatedTransaction.getSequence());
-            			invoiceLine.setDiscountAmount(invoiceLine.getDiscountAmount().add(discountRatedTransaction.getDiscountValue()));
-                		
-            		}
+            		String[] splitrtId = rtID.split(",");
+            		for (String id : splitrtId) {
+            		    RatedTransaction discountRatedTransaction = ratedTransactionService.findById(Long.valueOf(id));
+                        if(discountRatedTransaction!=null) {
+                            invoiceLine.setDiscountPlan(discountRatedTransaction.getDiscountPlan());
+                            invoiceLine.setDiscountPlanItem(discountRatedTransaction.getDiscountPlanItem());
+                            invoiceLine.setDiscountPlanType(discountRatedTransaction.getDiscountPlanType());
+                            invoiceLine.setDiscountValue(discountRatedTransaction.getDiscountValue());
+                            invoiceLine.setSequence(discountRatedTransaction.getSequence());
+                            invoiceLine.setDiscountAmount(invoiceLine.getDiscountAmount().add(discountRatedTransaction.getDiscountValue()));
+                            break;
+                            
+                        }
+                    }
+            		
         		}
         		
         }
