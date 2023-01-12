@@ -19039,6 +19039,7 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
             <column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='BILLING_RUN_VALIDATION')" />
         </insert>
     </changeSet>
+    <changeSet id="#INTRD-12625_20221230" author="Bourras"/>
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
