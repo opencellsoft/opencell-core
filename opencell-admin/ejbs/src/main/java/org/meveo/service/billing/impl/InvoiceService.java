@@ -5101,8 +5101,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             if (entityToInvoice instanceof Order) {
                 paymentMethod = ((Order) entityToInvoice).getPaymentMethod();
-            } else if (entityToInvoice instanceof CommercialOrder) {
-                paymentMethod = ((CommercialOrder) entityToInvoice).getBillingAccount().getPaymentMethod();
             } else {
                 // Calculate customer account balance
                 boolean isBalanceDue = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.limitByDueDate", true);
@@ -5160,7 +5158,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         while (moreInvoiceLinesExpected) {
 
-            if (entityToInvoice instanceof Order || entityToInvoice instanceof CommercialOrder) {
+            if (entityToInvoice instanceof Order) {
                 billingAccount = null;
                 defaultInvoiceType = null;
             }
