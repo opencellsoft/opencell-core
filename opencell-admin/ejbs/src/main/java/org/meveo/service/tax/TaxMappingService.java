@@ -18,6 +18,7 @@
 
 package org.meveo.service.tax;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +46,7 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.IInvoiceable;
 import org.meveo.model.billing.InvoiceLine;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.UserAccount;
@@ -710,10 +712,15 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
 			Date operationDate, TaxClass taxClass, UserAccount userAccount, Tax taxZero, InvoiceLine invoiceLine)
 			throws NoTaxException {
 
-		List<WalletOperation> wo = walletOperationService.listByRatedTransactionId(
-				invoiceLineService.refreshOrRetrieve(invoiceLine).getRatedTransactions().get(0).getId());
-		return checkIfTaxHasChangedWO(tax, isExonerated, seller, billingAccount, operationDate, taxClass, userAccount,
-				taxZero, wo.get(0));
+        invoiceLine = invoiceLineService.refreshOrRetrieve(invoiceLine);
+        Long ratedTransactionId =  invoiceLine.getRatedTransactions() != null
+                && !invoiceLine.getRatedTransactions().isEmpty()
+                ? invoiceLine.getRatedTransactions().get(0).getId() : null;
+		List<WalletOperation> walletOperations = ratedTransactionId != null ?
+                walletOperationService.listByRatedTransactionId(ratedTransactionId) : Collections.emptyList();
+        WalletOperation walletOperation = !walletOperations.isEmpty() ? walletOperations.get(0) : null;
+		return checkIfTaxHasChangedWO(tax, isExonerated, seller, billingAccount,
+                operationDate, taxClass, userAccount, taxZero, walletOperation);
 
 	}
 
