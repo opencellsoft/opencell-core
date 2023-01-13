@@ -1401,6 +1401,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         invoiceTag.setAttribute("id", invoice.getId() != null ? invoice.getId().toString() : "");
         invoiceTag.setAttribute("customerId", invoice.getBillingAccount().getCustomerAccount().getCustomer().getCode());
         invoiceTag.setAttribute("customerAccountCode", invoice.getBillingAccount().getCustomerAccount().getCode());
+        invoiceTag.setAttribute("status", invoice.getStatus() != null ? invoice.getStatus().name() : "");
         ofNullable(invoice.getOpenOrderNumber()).ifPresent(oon -> invoiceTag.setAttribute("openOrderNumber", oon));
         ofNullable(invoice.getExternalRef()).ifPresent(externalRef
                 -> invoiceTag.setAttribute("externalReference", externalRef));
