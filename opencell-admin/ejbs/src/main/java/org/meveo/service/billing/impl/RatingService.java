@@ -617,7 +617,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
                             if (ppmVersion.getAmountWithoutTaxEL() != null) {
                                 unitPriceWithoutTaxOverridden = evaluateAmountExpression(ppmVersion.getAmountWithoutTaxEL(),
                                         bareWalletOperation, bareWalletOperation.getChargeInstance().getUserAccount(),
-                                        null, unitPriceWithoutTaxOverridden);
+                                        null, unitPriceWithoutTaxOverridden).setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
                                 if (unitPriceWithoutTaxOverridden == null) {
                                     throw new PriceELErrorException("Can't evaluate price for price plan " + ppmVersion.getId()
                                             + " EL:" + ppmVersion.getAmountWithoutTaxEL());
@@ -629,7 +629,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
                             if (ppmVersion.getAmountWithTaxEL() != null) {
                                 unitPriceWithTaxOverriden = evaluateAmountExpression(ppmVersion.getAmountWithTaxEL(),
                                         bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(), null,
-                                        unitPriceWithoutTaxOverridden);
+                                        unitPriceWithoutTaxOverridden).setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
                                 if (unitPriceWithTaxOverriden == null) {
                                     throw new PriceELErrorException("Can't evaluate price for price plan " + ppmVersion.getId()
                                             + " EL:" + ppmVersion.getAmountWithTaxEL());
@@ -662,7 +662,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
                         unitPriceWithoutTaxOverridden = pricePlan.getAmountWithoutTax();
                         if (pricePlan.getAmountWithoutTaxEL() != null) {
                             unitPriceWithoutTaxOverridden = evaluateAmountExpression(pricePlan.getAmountWithoutTaxEL(), bareWalletOperation, bareWalletOperation.getChargeInstance().getUserAccount(), pricePlan,
-                                    unitPriceWithoutTaxOverridden);
+                                    unitPriceWithoutTaxOverridden).setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
                             if (unitPriceWithoutTaxOverridden == null) {
                                 throw new PriceELErrorException("Can't evaluate price for price plan " + pricePlan.getId() + " EL:" + pricePlan.getAmountWithoutTaxEL());
                             }
@@ -672,7 +672,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
                         unitPriceWithTaxOverriden = pricePlan.getAmountWithTax();
                         if (pricePlan.getAmountWithTaxEL() != null) {
                             unitPriceWithTaxOverriden = evaluateAmountExpression(pricePlan.getAmountWithTaxEL(), bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(), pricePlan,
-                                    unitPriceWithoutTaxOverridden);
+                                    unitPriceWithoutTaxOverridden).setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
                             if (unitPriceWithTaxOverriden == null) {
                                 throw new PriceELErrorException("Can't evaluate price for price plan " + pricePlan.getId() + " EL:" + pricePlan.getAmountWithTaxEL());
                             }
