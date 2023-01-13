@@ -177,6 +177,9 @@
 	<field name="invoiceNumber" class="java.lang.String">
 		<fieldDescription><![CDATA[@number]]></fieldDescription>
 	</field>
+	<field name="invoiceStatus" class="java.lang.String">
+		<fieldDescription><![CDATA[@status]]></fieldDescription>
+	</field>
 	<field name="externalRef1" class="java.lang.String">
 		<fieldDescription><![CDATA[/invoice/header/billingAccount/@externalRef1]]></fieldDescription>
 	</field>
@@ -448,6 +451,10 @@
 							</textElement>
 							<text><![CDATA[PRO FORMA]]></text>
 						</staticText>
+						<image>
+							<reportElement x="-57" y="-131" width="179" height="76" uuid="6fc38ccd-29bc-46cb-92c8-66d577b3eefa"/>
+							<imageExpression><![CDATA[$F{invoiceStatus}!="VALIDATED" ? $P{logoPath}+"Pictos/draft.png" : $P{logoPath}+"Pictos/blank.png"]]></imageExpression>
+						</image>
 					</frame>
 					<subreport isUsingCache="true" runToBottom="false">
 						<reportElement positionType="Float" isPrintRepeatedValues="false" x="0" y="98" width="355" height="96" uuid="b44bd58e-33aa-493f-b247-b40b3da8d9e3"/>
