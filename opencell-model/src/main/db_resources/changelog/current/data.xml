@@ -18408,7 +18408,7 @@ public class CdrFlatFileImportScript extends Script {
 		</update>
 		<update tableName="AR_PAYMENT_TOKEN">
 			<column name="PAYMENT_MEANS" valueComputed="(SELECT id from UNTDID_4461_PAYMENT_MEANS where code = '68')"></column>
-			<where>token_type = 'PAYPAL'</where>
+			<where>token_type in ('PAYPAL', 'STRIPE') </where>
 		</update>
 	</changeSet>
 
