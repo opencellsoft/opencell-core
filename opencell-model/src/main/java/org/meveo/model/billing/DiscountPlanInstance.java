@@ -299,6 +299,10 @@ public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEnti
     }
 
     public DiscountPlanInstanceStatusEnum getStatus() {
+        // maybe status is NULL due to app migration
+        if (status == null) {
+            setDiscountPlanInstanceStatus(discountPlan);
+        }
         return status;
     }
 
