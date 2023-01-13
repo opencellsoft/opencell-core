@@ -401,7 +401,7 @@ public class MediationApiService {
                             RatingResult ratingResult = null;
                             // For ROLLBACK_ON_ERROR mode, processing is called within TX, so when error is thrown up, everything will rollback
                             if (cdrProcessingResult.getMode() == ROLLBACK_ON_ERROR) {
-                                ratingResult = usageRatingService.rateUsage(edr, isVirtual, rateTriggeredEdrs, maxDepth, 0, null, true);
+                                ratingResult = usageRatingService.rateUsage(edr, isVirtualTemp, rateTriggeredEdrs, maxDepth, 0, null, true);
                                 if (ratingResult.getRatingException() != null) {
                                     throw ratingResult.getRatingException();
                                 }
@@ -411,7 +411,7 @@ public class MediationApiService {
                                 // For STOP_ON_FIRST_FAIL or PROCESS_ALL model if no rollback is needed (no additional unforeseen data can be created/updated during rating)
                                 // when rating fails, error is not thrown but is simply handled
                             } else if (noNeedToRollback) {
-                                ratingResult = usageRatingService.rateUsage(edr, isVirtual, rateTriggeredEdrs, maxDepth, 0, null, noNeedToRollback);
+                                ratingResult = usageRatingService.rateUsage(edr, isVirtualTemp, rateTriggeredEdrs, maxDepth, 0, null, noNeedToRollback);
                                 if (ratingResult.getRatingException() != null) {
                                     throw ratingResult.getRatingException();
                                 }
