@@ -218,6 +218,9 @@ public class MediationsettingService extends PersistenceService<MediationSetting
                     if(CollectionUtils.isNotEmpty(walletOperations)) {
                         WalletOperation trigWallet  = walletOperations.get(0);
                         trigWallet.setStatus(WalletOperationStatusEnum.CANCELED);
+                        if(trigWallet.getRatedTransaction() != null) {
+                        	trigWallet.getRatedTransaction().setStatus(RatedTransactionStatusEnum.CANCELED);
+                        }
                     }
                     List<EDR> edrs = usageRatingService.instantiateTriggeredEDRs(ratingResult.getWalletOperations().get(0), edr, true, false);
                     edrs.forEach(e -> {
