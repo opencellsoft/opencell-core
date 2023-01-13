@@ -23,6 +23,7 @@ import static java.util.stream.Collectors.joining;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -1687,7 +1688,16 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         String pollingQuery = queryBuilder.getSqlString();
         if(queryBuilder.getParams() != null) {
             for(Map.Entry<String, Object> param : queryBuilder.getParams().entrySet()) {
-                pollingQuery = pollingQuery.replace(":" + param.getKey(), "\'"+ param.getValue() + "\'");
+                Class clazz = param.getValue().getClass();
+                String className = clazz.getName();
+                if(className.contains("Date")) {
+                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                    String paramDate = df.format(param.getValue());
+                    pollingQuery = pollingQuery.replace(":" + param.getKey(), "\'"+ paramDate + "\'");
+                }
+                else {
+                    pollingQuery = pollingQuery.replace(":" + param.getKey(), "\'"+ param.getValue() + "\'");
+                }                
             }
         }
         return pollingQuery;
