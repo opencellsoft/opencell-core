@@ -35,7 +35,7 @@ public class ValidateSubscriptionAgeScript extends Script {
 				ScriptUtils.buildOperator(String.valueOf(context.get("operator")), true),
 				buildLimitDate(invoice, (Integer) context.get("age")));
 
-		context.put(Script.INVOICE_VALIDATION_STATUS, counter > 0 ? InvoiceValidationStatusEnum.VALID : (InvoiceValidationStatusEnum) context.get(Script.RESULT_VALUE));
+		context.put(Script.INVOICE_VALIDATION_STATUS, counter == 0 ? InvoiceValidationStatusEnum.VALID : (InvoiceValidationStatusEnum) context.get(Script.RESULT_VALUE));
 		
 		log.info("Result Processing ValidateSubscriptionAgeScript {}", context.get(Script.INVOICE_VALIDATION_STATUS));
 	}
