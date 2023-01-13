@@ -498,9 +498,13 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
                         continue;
                     }
                     // Create new T.EDRs
-                    List<EDR> newTEdrs = oneShotRatingService.instantiateTriggeredEDRs(newWO, edr, false, true);
-                    Optional.ofNullable(newTEdrs).orElse(Collections.emptyList())
-                            .forEach(newEdr -> edrService.create(newEdr));
+                    List<EDR> edrs = usageRatingService.instantiateTriggeredEDRs(newWO, operationToRerate.getEdr(), false, false);
+                    for (EDR e : edrs) {
+                        e.setWalletOperation(newWO);
+                        e.setEventKey(edr.getEventKey());
+                        e.setEventVersion(edr.getEventVersion() != null ? edr.getEventVersion() : null);
+                        edrService.create(e);
+                    }
 
                 } else if (edr.getStatus() == EDRStatusEnum.RATED &&
                         operationToRerate.getRatedTransaction() != null && operationToRerate.getRatedTransaction().getStatus() == RatedTransactionStatusEnum.BILLED) {
