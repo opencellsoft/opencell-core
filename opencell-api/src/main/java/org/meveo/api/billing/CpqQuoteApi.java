@@ -1864,6 +1864,9 @@ public class CpqQuoteApi extends BaseApi {
                              subscriptionCharge.setOverchargedUnitAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getOverchargedUnitAmountWithoutTax());
                          }
 
+                         if (subscriptionCharge.getSeller() == null) {
+                             setChargeSeller(quoteOffer, subscriptionCharge);
+                         }
                          RatingResult ratingResult = oneShotChargeInstanceService.applyOneShotChargeVirtual(subscriptionCharge, serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity());
                          if (ratingResult != null) {
                              walletOperations.addAll(ratingResult.getWalletOperations());
@@ -1882,27 +1885,31 @@ public class CpqQuoteApi extends BaseApi {
                 // Add recurring charges
                 for (RecurringChargeInstance recurringCharge : serviceInstance.getRecurringChargeInstances()) {
                     try {
-                    	   AccountingArticle recurringArticle = accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), recurringCharge.getChargeTemplate(), attributes,null)
-                                   .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + recurringCharge.getChargeTemplate()));
-                           if (overrodeArticle.keySet().contains(recurringArticle)) {
-                               QuoteArticleLine quoteArticleLine = overrodeArticle.get(recurringArticle).get(0);
-                               recurringCharge.setAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getUnitPriceWithoutTax());
-                               recurringCharge.setAmountWithTax(quoteArticleLine.getQuotePrices().get(0).getAmountWithTax().divide(quoteArticleLine.getQuantity(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
-                               recurringCharge.setApplyDiscountsOnOverridenPrice(quoteArticleLine.getQuotePrices().get(0).getApplyDiscountsOnOverridenPrice());
-                               recurringCharge.setOverchargedUnitAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getOverchargedUnitAmountWithoutTax());
-                           }
-                               Date nextApplicationDate = walletOperationService.getRecurringPeriodEndDate(recurringCharge, recurringCharge.getSubscriptionDate());
-                               RatingResult ratingResult = recurringChargeInstanceService
-                                       .applyRecurringCharge(recurringCharge, nextApplicationDate, false, true, null);
-                               if (ratingResult != null && !ratingResult.getWalletOperations().isEmpty()) {
-                                   walletOperations.addAll(ratingResult.getWalletOperations());
-                               }
+                        AccountingArticle recurringArticle = accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), recurringCharge.getChargeTemplate(), attributes, null)
+                                .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + recurringCharge.getChargeTemplate()));
+                        if (overrodeArticle.keySet().contains(recurringArticle)) {
+                            QuoteArticleLine quoteArticleLine = overrodeArticle.get(recurringArticle).get(0);
+                            recurringCharge.setAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getUnitPriceWithoutTax());
+                            recurringCharge.setAmountWithTax(quoteArticleLine.getQuotePrices().get(0).getAmountWithTax().divide(quoteArticleLine.getQuantity(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+                            recurringCharge.setApplyDiscountsOnOverridenPrice(quoteArticleLine.getQuotePrices().get(0).getApplyDiscountsOnOverridenPrice());
+                            recurringCharge.setOverchargedUnitAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getOverchargedUnitAmountWithoutTax());
+                        }
+                        Date nextApplicationDate = walletOperationService.getRecurringPeriodEndDate(recurringCharge, recurringCharge.getSubscriptionDate());
 
-                    }catch (NoTaxException e) { 
+                        if (recurringCharge.getSeller() == null) {
+                            setChargeSeller(quoteOffer, recurringCharge);
+                        }
+                        RatingResult ratingResult = recurringChargeInstanceService
+                                .applyRecurringCharge(recurringCharge, nextApplicationDate, false, true, null);
+                        if (ratingResult != null && !ratingResult.getWalletOperations().isEmpty()) {
+                            walletOperations.addAll(ratingResult.getWalletOperations());
+                        }
+
+                    } catch (NoTaxException e) {
                         throw new MeveoApiException(e.getMessage());
                     } catch (RatingException e) {
                         log.trace("Failed to apply a recurring charge {}: {}", recurringCharge, e.getRejectionReason());
-                        throw new BusinessException("Failed to apply a subscription charge {}: {}"+recurringCharge.getCode(),e); // e.getBusinessException();
+                        throw new BusinessException("Failed to apply a subscription charge {}: {}" + recurringCharge.getCode(), e); // e.getBusinessException();
                     }
                 }
                 // Add usage charges
@@ -1978,6 +1985,12 @@ public class CpqQuoteApi extends BaseApi {
     quoteEligibleFixedDiscountItems.addAll(offerEligibleFixedDiscountItems);
     return sortedWalletOperations;
 }
+
+    private void setChargeSeller(QuoteOffer quoteOffer, ChargeInstance chargeInstance) {
+        chargeInstance.setSeller(quoteOffer.getQuoteVersion() != null &&
+                quoteOffer.getQuoteVersion().getQuote() != null ? quoteOffer.getQuoteVersion().getQuote().getSeller() : null);
+    }
+
     private void createEDR(Double edrQuantity, Subscription subscription, Map<String, Object> attributes, List<WalletOperation> walletOperations) {
     	if (edrQuantity != null && edrQuantity>0) {
 			EDR edr = new EDR();
