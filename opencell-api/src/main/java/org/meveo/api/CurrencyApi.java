@@ -425,10 +425,12 @@ public class CurrencyApi extends BaseApi {
             throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.isAlreadyTaken"));
         }
 
+        // Commented related to the same reason of comment line 421 "AEL Update 09/01/2023"
+        // BTW, this dubplicated check shall be removed
         // User cannot set a rate in a paste date
-        if (postData.getFromDate().before(setTimeToZero(new Date()))) {
+        /*if (postData.getFromDate().before(setTimeToZero(new Date()))) {
             throw new BusinessApiException(resourceMessages.getString("The date must not be in the past"));
-        }
+        }*/
 	}
     
     private void auditLogUpdateExchangeRate(ExchangeRate exchangeRate,
