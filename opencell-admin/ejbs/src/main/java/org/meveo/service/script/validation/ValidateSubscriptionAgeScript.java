@@ -2,11 +2,14 @@ package org.meveo.service.script.validation;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceValidationStatusEnum;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptUtils;
@@ -29,22 +32,26 @@ public class ValidateSubscriptionAgeScript extends Script {
 		}
 
 		log.info("Process ValidateSubscriptionAgeScript {}", invoice);
-
-		long counter = invoiceLineService.getCountBySubscriptionAge(invoice.getId(),
-				buildReferenceDateExpression(String.valueOf(context.get("referenceDate"))),
-				ScriptUtils.buildOperator(String.valueOf(context.get("operator")), true),
-				buildLimitDate(invoice, (Integer) context.get("age")));
-
-		context.put(Script.INVOICE_VALIDATION_STATUS, counter == 0 ? InvoiceValidationStatusEnum.VALID : (InvoiceValidationStatusEnum) context.get(Script.RESULT_VALUE));
+		
+		long limitDate = buildLimitDate(invoice, (Integer) context.get("age"));
+		String operator = ScriptUtils.buildOperator(String.valueOf(context.get("operator")), false);
+		List<Date> referenceDates = invoiceLineService.getCustomSubscriptionAge(invoice.getId(), buildReferenceDateExpression(String.valueOf(context.get("referenceDate"))));
+		
+		if (referenceDates == null || referenceDates.isEmpty()) {
+			context.put(Script.INVOICE_VALIDATION_STATUS, InvoiceValidationStatusEnum.VALID);
+		} else {
+			boolean result = referenceDates.stream().allMatch(dt -> ValueExpressionWrapper.evaluateToBoolean("#{" + dt.getTime() + " " + operator + " " + limitDate + "}", new HashMap<Object, Object>(context)));
+			context.put(Script.INVOICE_VALIDATION_STATUS, result ? InvoiceValidationStatusEnum.VALID : (InvoiceValidationStatusEnum) context.get(Script.RESULT_VALUE));
+		}
 		
 		log.info("Result Processing ValidateSubscriptionAgeScript {}", context.get(Script.INVOICE_VALIDATION_STATUS));
 	}
 
-	private Date buildLimitDate(Invoice invoice, Integer age) {
+	private long buildLimitDate(Invoice invoice, Integer age) {
 		Calendar c = Calendar.getInstance();
 		c.setTime(invoice.getInvoiceDate());
 		c.add(Calendar.DATE, -age);
-		return c.getTime();
+		return c.getTime().getTime();
 	}
 
 	private String buildReferenceDateExpression(String referenceDate) {
