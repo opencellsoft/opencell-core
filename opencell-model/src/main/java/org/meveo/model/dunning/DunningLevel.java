@@ -107,6 +107,10 @@ public class DunningLevel extends BusinessEntity {
     @Column(name = "end_dunning_level")
     private Boolean isEndOfDunningLevel = Boolean.FALSE;
 
+    @Column(name = "type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private DunningModeEnum type;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "dunning_level_dunning_action", joinColumns = @JoinColumn(name = "dunning_level_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "dunning_action_id", referencedColumnName = "id"))
     private List<DunningAction> dunningActions;
