@@ -20,9 +20,13 @@ public class DunningTemplateService extends BusinessService<DunningTemplate> {
     @Inject
     private TradingLanguageService tradingLanguageService;
 
+    @Inject
+    private DunningSettingsService dunningSettingsService;
+
     @Override
     public void create(DunningTemplate template) throws BusinessException {
         validate(template);
+        template.setType(dunningSettingsService.findLastOne().getDunningMode());
         super.create(template);
     }
 
