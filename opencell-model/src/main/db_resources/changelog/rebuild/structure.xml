@@ -4938,6 +4938,7 @@
 			<column name="channel" type="varchar(255)" />
 			<column name="trading_language_id" type="bigint" />
 			<column name="is_active" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="type_dunning_mode" type="varchar(255)"/>
 
             <column name="textcontent_i18n" type="${type.json}"/>
             <column name="subject_i18n" type="${type.json}"/>
@@ -11558,6 +11559,7 @@
             <column name="attach_overdue_invoices" type="${type.boolean}" defaultValueNumeric="1"/>
             <column name="attach_due_invoices" type="${type.boolean}"  defaultValueNumeric="0"/>
             <column name="dunning_agent_id" type="bigint"/>
+            <column name="type" type="varchar(255)"/>
         </createTable>
     </changeSet>
 
@@ -11597,6 +11599,7 @@
             <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
+            <column name="type" type="varchar(255)"/>
         </createTable>
 
         <createTable tableName="dunning_policy_rule">
@@ -11665,6 +11668,7 @@
             <column name="charge_value" type="numeric(23, 12)" />
             <column name="charge_currency_id" type="bigint" />
             <column name="end_dunning_level" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="type" type="varchar(255)"/>
         </createTable>
     </changeSet>
 
@@ -19427,7 +19431,7 @@
     <changeSet id="#INTRD-12766_20230105" author="bourras"/>
     <changeSet id="#INTRD-12766_20230106" author="bourras"/>
     <changeSet id="#INTRD-13065_20230112" author="AdilElJaouhari" />
-
+    <changeSet id="#INTRD-12781_20230116" author="zelmeliani" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
