@@ -2201,7 +2201,7 @@
             <column name="uuid" value="PROD-STD" />
             <column name="tax_class_id" value="-1" />
             <column name="invoice_sub_category_id" value="-2" />
-            <column name="ALLOWANCE_CODE" valueComputed="(SELECT id FROM UNTDID_5189_ALLOWANCE_CODE Where code = '95')"></column>
+            <column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code Where code = '95')"></column>
         </insert>
 
         <insert tableName="billing_accounting_article">
@@ -2215,7 +2215,7 @@
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_accounting_article-DISC-STD" />
-            <column name="ALLOWANCE_CODE" valueComputed="(SELECT id FROM UNTDID_5189_ALLOWANCE_CODE Where code = '95')"></column>
+            <column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code Where code = '95')"></column>
         </insert>
         <insert tableName="billing_accounting_article">
             <column name="id" value='-3'/>
@@ -2228,7 +2228,7 @@
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_accounting_article-ART-STD" />
-            <column name="ALLOWANCE_CODE" valueComputed="(SELECT id FROM UNTDID_5189_ALLOWANCE_CODE Where code = '95')"></column>
+            <column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code Where code = '95')"></column>
         </insert>
         <insert tableName="billing_accounting_article">
             <column name="id" value='-4'/>
@@ -2241,7 +2241,7 @@
             <column name="created" valueDate="${db.current.time}"/>
             <column name="creator" value="applicationInitializer"/>
             <column name="uuid" value="billing_accounting_article-MIN-STD"/>
-            <column name="ALLOWANCE_CODE" valueComputed="(SELECT id FROM UNTDID_5189_ALLOWANCE_CODE Where code = '95')"></column>
+            <column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code Where code = '95')"></column>
         </insert>        
         
         <insert tableName="cat_discount_plan">
@@ -2517,7 +2517,7 @@
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="opencell.admin" />
 			<column name="uuid" value="billing_accounting_article_art_security_deposit" />
-			<column name="ALLOWANCE_CODE" valueComputed="(SELECT id FROM UNTDID_5189_ALLOWANCE_CODE Where code = '95')"></column>
+			<column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code Where code = '95')"></column>
 		</insert>
 	</changeSet>
     <changeSet id="INTRD-5089_20220215" author="TarikRabeh" />
@@ -2538,7 +2538,7 @@
             <column name="uuid" value="billing_accounting_article-ADV-STD" />
             <column name="accounting_code_id" value="-6" />
             <column name="invoice_type_id" value="-5" />
-            <column name="ALLOWANCE_CODE" valueComputed="(SELECT id FROM UNTDID_5189_ALLOWANCE_CODE Where code = '95')"></column>
+            <column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code Where code = '95')"></column>
         </insert>
     </changeSet>
 
