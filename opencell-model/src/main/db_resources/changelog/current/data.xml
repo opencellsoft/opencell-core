@@ -18403,5 +18403,37 @@ public class CdrFlatFileImportScript extends Script {
 	        <where>code='Inv_Job'</where>
 	    </delete>
     </changeSet>
+	
+	<changeSet id="#INTRD-13122_20220111" author="HichamHANINE">	
+		<update tableName="billing_invoice_type">
+			<column name="invoice_subject_code" valueComputed="(SELECT id FROM untdid_4451_invoice_subject_code where code = 'IND')"></column>
+			<where>CODE in ('COM','ADJ_INV', 'ADJ_REF', 'ADJ', 'SECURITY_DEPOSIT', 'ADV')</where>
+		</update>
+
+		<update tableName="BILLING_ACCOUNTING_ARTICLE">
+			<column name="ALLOWANCE_CODE" valueComputed="(SELECT id FROM UNTDID_5189_ALLOWANCE_CODE Where code = '95')"></column>
+		</update>		
+	
+		<update tableName="AR_PAYMENT_TOKEN">
+			<column name="PAYMENT_MEANS" valueComputed="(SELECT id from UNTDID_4461_PAYMENT_MEANS where code = '10')"></column>
+			<where>token_type = 'CASH'</where>
+		</update>		
+		<update tableName="AR_PAYMENT_TOKEN">
+			<column name="PAYMENT_MEANS" valueComputed="(SELECT id from UNTDID_4461_PAYMENT_MEANS where code = '20')"></column>
+			<where>token_type = 'CHECK'</where>
+		</update>
+		<update tableName="AR_PAYMENT_TOKEN">
+			<column name="PAYMENT_MEANS" valueComputed="(SELECT id from UNTDID_4461_PAYMENT_MEANS where code = '49')"></column>
+			<where>token_type = 'DIRECTDEBIT'</where>
+		</update>
+		<update tableName="AR_PAYMENT_TOKEN">
+			<column name="PAYMENT_MEANS" valueComputed="(SELECT id from UNTDID_4461_PAYMENT_MEANS where code = '54')"></column>
+			<where>token_type = 'CARD'</where>
+		</update>
+		<update tableName="AR_PAYMENT_TOKEN">
+			<column name="PAYMENT_MEANS" valueComputed="(SELECT id from UNTDID_4461_PAYMENT_MEANS where code = '68')"></column>
+			<where>token_type = 'PAYPAL'</where>
+		</update>
+	</changeSet>
 
 </databaseChangeLog>

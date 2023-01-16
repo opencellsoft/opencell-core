@@ -2672,6 +2672,16 @@
 			<column name="vat_payment_option_id" value="1" />
 		</insert>	
 	</changeSet>
+	
+	<changeSet id="#INTRD-13122_20220113" author="HichamHANINE">	
+		<update tableName="billing_invoice_type">
+			<column name="invoice_subject_code" valueComputed="(SELECT id FROM untdid_4451_invoice_subject_code where code = 'IND')"></column>
+			<where>CODE in ('COM','ADJ_INV', 'ADJ_REF', 'ADJ', 'SECURITY_DEPOSIT', 'ADV')</where>
+		</update>
+		<update tableName="BILLING_ACCOUNTING_ARTICLE">
+			<column name="ALLOWANCE_CODE" valueComputed="(SELECT id FROM UNTDID_5189_ALLOWANCE_CODE Where code = '95')"></column>
+		</update>
+	</changeSet>
 
     <changeSet id="#INTRD-6283_20220404" author="AbdelmounaimAkadid"/>
     <changeSet id="#INTRD-6291_20220406" author="AbdelmounaimAkadid"/>
