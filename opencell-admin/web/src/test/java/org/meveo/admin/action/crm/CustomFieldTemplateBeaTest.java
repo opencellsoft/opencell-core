@@ -39,7 +39,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.reflections.Reflections;
 
-//@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class CustomFieldTemplateBeaTest {
     @Mock
     private CustomizedEntityService customizedEntityService;
