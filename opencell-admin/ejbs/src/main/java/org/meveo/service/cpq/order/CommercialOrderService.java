@@ -209,9 +209,6 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				}
 				
 				for (OrderProduct product : offer.getProducts()){
-					if(product.getDiscountPlan()!=null) {
-						discountPlans.add(product.getDiscountPlan());
-					}
 					processProductWithDiscount(subscription, product);
 				}
 				instanciateDiscountPlans(subscription, discountPlans);
