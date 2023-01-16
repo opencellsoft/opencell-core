@@ -15663,5 +15663,20 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="meveo_script_instance" />
 	</changeSet>
+
+    <changeSet id="#INTRD-12781_20230116" author="zelmeliani">
+        <addColumn tableName="ar_dunning_action">
+            <column name="type" type="varchar(255)"/>
+        </addColumn>
+        <addColumn tableName="dunning_level">
+            <column name="type" type="varchar(255)"/>
+        </addColumn>
+        <addColumn tableName="dunning_policy">
+            <column name="type" type="varchar(255)"/>
+        </addColumn>
+        <addColumn tableName="com_message_template">
+            <column name="type_dunning_mode" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
 	
 </databaseChangeLog>
