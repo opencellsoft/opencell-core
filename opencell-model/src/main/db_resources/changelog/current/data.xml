@@ -18407,7 +18407,7 @@ public class CdrFlatFileImportScript extends Script {
 	<changeSet id="#INTRD-13122_20220111" author="HichamHANINE">	
 		<update tableName="billing_invoice_type">
 			<column name="invoice_subject_code" valueComputed="(SELECT id FROM untdid_4451_invoice_subject_code where code = 'IND')"></column>
-			<where>CODE in ('COM','ADJ_INV', 'ADJ_REF', 'ADJ', 'SECURITY_DEPOSIT', 'ADV')</where>
+			<where>code in ('COM','ADJ_INV', 'ADJ_REF', 'ADJ', 'SECURITY_DEPOSIT', 'ADV')</where>
 		</update>
 
 		<update tableName="billing_accounting_article">
