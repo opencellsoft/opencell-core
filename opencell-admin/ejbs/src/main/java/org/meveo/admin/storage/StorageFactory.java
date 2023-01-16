@@ -436,30 +436,6 @@ public class StorageFactory {
         return null;
     }
 
-
-    /**
-     * delete a file in S3 or FileSystem.
-     *
-     * @param file the file
-     */
-    public static void deleteFile(File file) {
-        if (storageType.equals(NFS)) {
-            file.delete();
-        }
-        else if (storageType.equalsIgnoreCase(S3)) {
-            String fullObjectKey = formatFullObjectKey(file.toString());
-
-            Path objectPath = getObjectPath(fullObjectKey);
-
-            try {
-                s3FileSystem.provider().delete(objectPath);
-            }
-            catch (IOException e) {
-                log.error("IOException message : {}", e.getMessage());
-            }
-        }
-    }
-
     /**
      * check existence of a file on File System or S3.
      *
