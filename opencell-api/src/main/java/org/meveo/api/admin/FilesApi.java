@@ -416,13 +416,15 @@ public class FilesApi extends BaseApi {
         String srcName = getProviderRootDir() + File.separator + normalizePath(srcPath);
         File source = new File(srcName);
 
-        String destName = getProviderRootDir() + File.separator + normalizePath(destPath);
+        String[] arrFileName = srcName.split("/");
+        String nameFileOrDir = arrFileName[arrFileName.length - 1];
+        String destName = getProviderRootDir() + File.separator + normalizePath(destPath) + File.separator + nameFileOrDir;
         File dest = new File(destName);
 
         if (StorageFactory.exists(source) || StorageFactory.existsDirectory(source)) {
             if (!StorageFactory.isDirectory(source)) {
                 if (!StorageFactory.exists(dest)) {
-                    if (StorageFactory.existsDirectory(dest.getParentFile())) {
+                    if (!StorageFactory.existsDirectory(dest.getParentFile())) {
                         StorageFactory.mkdirs(dest.getParentFile());
                     }
 
@@ -438,7 +440,7 @@ public class FilesApi extends BaseApi {
                 }
             } else {
                 if (!StorageFactory.existsDirectory(dest)) {
-                    if (StorageFactory.existsDirectory(dest.getParentFile())) {
+                    if (!StorageFactory.existsDirectory(dest.getParentFile())) {
                         StorageFactory.mkdirs(dest.getParentFile());
                     }
 
