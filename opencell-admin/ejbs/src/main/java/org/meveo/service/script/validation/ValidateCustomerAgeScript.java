@@ -2,11 +2,13 @@ package org.meveo.service.script.validation;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceValidationStatusEnum;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptUtils;
@@ -29,23 +31,24 @@ public class ValidateCustomerAgeScript extends Script {
 		}
 
 		log.info("Process ValidateCustomerAgeScript {}", invoice);
+		
+		long limitDate = buildLimitDate(invoice, (Integer) context.get("age"));
+		String operator = ScriptUtils.buildOperator(String.valueOf(context.get("operator")), false);
+		Date referenceDate = billingAccountService.getDateCustomerAge(invoice.getBillingAccount().getId(), buildReferenceDateExpression(String.valueOf(context.get("referenceDate"))));
+		
+		boolean result = ValueExpressionWrapper.evaluateToBoolean("#{" + referenceDate.getTime() + " " + operator + " " + limitDate + "}", new HashMap<Object, Object>(context));
 
-		long counter = billingAccountService.getCountByCustomerAge(invoice.getBillingAccount().getId(),
-				buildReferenceDateExpression(String.valueOf(context.get("referenceDate"))),
-				ScriptUtils.buildOperator(String.valueOf(context.get("operator")), true),
-				buildLimitDate(invoice, (Integer) context.get("age")));
-
-		context.put(Script.INVOICE_VALIDATION_STATUS, counter == 0 ? InvoiceValidationStatusEnum.VALID : (InvoiceValidationStatusEnum) context.get(Script.RESULT_VALUE));
+		context.put(Script.INVOICE_VALIDATION_STATUS, result ? InvoiceValidationStatusEnum.VALID : (InvoiceValidationStatusEnum) context.get(Script.RESULT_VALUE));
 		
 		log.info("Result Processing ValidateCustomerAgeScript {}", context.get(Script.INVOICE_VALIDATION_STATUS));
 
 	}
 
-	private Date buildLimitDate(Invoice invoice, Integer age) {
+	private long buildLimitDate(Invoice invoice, Integer age) {
 		Calendar c = Calendar.getInstance();
 		c.setTime(invoice.getInvoiceDate());
 		c.add(Calendar.DATE, -age);
-		return c.getTime();
+		return c.getTime().getTime();
 	}
 
 	private String buildReferenceDateExpression(String referenceDate) {
