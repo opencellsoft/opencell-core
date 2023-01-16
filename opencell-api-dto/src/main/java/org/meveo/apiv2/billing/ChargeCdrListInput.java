@@ -1,12 +1,9 @@
 package org.meveo.apiv2.billing;
 
-import java.util.List;
-
 import javax.annotation.Nullable;
 
 import org.immutables.value.Value;
 import org.immutables.value.Value.Default;
-import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -59,7 +56,4 @@ public interface ChargeCdrListInput extends CdrListInput {
     default boolean isGenerateRTs() {
         return false;
     }
-
-    @Schema(description = "The list of one shot charges to apply", name = "chargesToApply")
-    List<ApplyOneShotChargeInstanceRequestDto> chargesToApply();
 }
