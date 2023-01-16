@@ -188,7 +188,7 @@ public interface FilesRs extends IBaseRs {
 								)
 				)}
 	)
-    ActionStatus suppressFile(String file);
+    ActionStatus suppressFile(@QueryParam("filePath") String filePath, String file);
 
     /**
      * Suppress the directory 

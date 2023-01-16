@@ -110,11 +110,16 @@ public class FilesRsImpl extends BaseRs implements FilesRs {
     }
 
     @Override
-    public ActionStatus suppressFile(String filePath) {
+    public ActionStatus suppressFile(String filePathAsParam, String filePath) {
         ActionStatus result = new ActionStatus();
 
         try {
-            filesApi.suppressFile(filePath);
+            if (filePathAsParam != null) {
+                filesApi.suppressFile(filePathAsParam);
+            }
+            else {
+                filesApi.suppressFile(filePath);
+            }
         } catch (Exception e) {
             processException(e, result);
         }
