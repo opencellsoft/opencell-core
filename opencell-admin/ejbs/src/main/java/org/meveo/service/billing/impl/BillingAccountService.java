@@ -565,11 +565,10 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         		.getSingleResult();
     }
     
-    public long getCountByCustomerAge(Long baId, String referenceDate, String operator, Date limitDate) {
-    	String query = "select count(*) from BillingAccount ba where ba.id=:id and not referenceDate operator :limitDate";
-        return getEntityManager().createQuery(query.replace("operator", operator).replace("referenceDate", referenceDate), Long.class)
+    public Date getDateCustomerAge(Long baId, String referenceDate) {
+    	String query = "select referenceDate from BillingAccount ba where ba.id=:id";
+        return getEntityManager().createQuery(query.replace("referenceDate", referenceDate), Date.class)
         		.setParameter("id", baId)
-        		.setParameter("limitDate", limitDate)
         		.getSingleResult();
     }
 }
