@@ -16343,12 +16343,13 @@ import org.meveo.service.communication.impl.EmailTemplateService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.meveo.commons.utils.ParamBean;
 
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 public class ImportJobNotification extends Script {
     private static final String USER_CODE = "user";
-    private static final String FROM_EMAIL = "noreply@itnewvision.oc-sb.eu";
+    private static final String FROM_EMAIL = ParamBean.getInstance().getProperty("email.sender", "no_reply@opencellsoft.com");
 
     private static final String MASS_IMPORT_SUCCESS_EMAIL = "MASS_IMPORT_SUCCESS_EMAIL";
     private static final String MASS_IMPORT_FAILURE_EMAIL = "MASS_IMPORT_FAILURE_EMAIL";
@@ -18888,6 +18889,7 @@ public class CdrFlatFileImportScript extends Script {
     <changeSet id="#INTRD-12925_20230106" author="aeljaouhari" />
     <changeSet id="#INTRD-12625_20221230" author="Bourras"/>
     <changeSet id="#INTRD-12906_20230112" author="hichamELHALOUI"/>
+    <changeSet id="#INTRD-13260_20230116" author="hichamELHALOUI"/>
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
