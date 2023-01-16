@@ -213,4 +213,11 @@ public class DunningLevel extends BusinessEntity {
     public void setRelatedPolicies(List<DunningPolicyLevel> relatedPolicies) {
         this.relatedPolicies = relatedPolicies;
     }
+
+    public DunningModeEnum getType() {
+        return type;
+    }
+    public void setType(DunningModeEnum type) {
+        this.type = type;
+    }
 }
