@@ -1031,7 +1031,6 @@ public class StorageFactory {
                 Files.move(Paths.get(srcKey), Paths.get(destKey), StandardCopyOption.ATOMIC_MOVE);
             } catch (IOException e) {
                 log.error("IOException while moving file : {}", e.getMessage());
-                e.printStackTrace();
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
