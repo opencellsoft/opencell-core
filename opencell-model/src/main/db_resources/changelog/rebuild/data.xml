@@ -15854,8 +15854,6 @@ public class CdrFlatFileImportScript extends Script {
 	
 	<changeSet id="#INTRD-12903_20230105" author="TarikFA." />
 	<changeSet id="#INTRD-12925_20230106" author="aeljaouhari" />
-    <changeSet id="#INTRD-12625_20221230" author="Bourras"/>
-    <changeSet id="#INTRD-12906_20230112" author="hichamELHALOUI"/>
     <changeSet id="#INTRD-13260_20230116" author="hichamELHALOUI"/>
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
