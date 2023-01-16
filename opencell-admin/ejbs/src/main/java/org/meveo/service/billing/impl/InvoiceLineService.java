@@ -1327,12 +1327,11 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 .executeUpdate();
     }
     
-    public long getCountBySubscriptionAge(Long invoiceId, String referenceDate, String operator, Date limitDate) {
-    	String query = "select count(*) from InvoiceLine il where il.invoice.id=:id and not referenceDate operator :limitDate";
-        return getEntityManager().createQuery(query.replace("operator", operator).replace("referenceDate", referenceDate), Long.class)
+    public List<Date> getCustomSubscriptionAge(Long invoiceId, String referenceDate) {
+    	String query = "select distinct referenceDate from InvoiceLine il where il.invoice.id=:id";
+        return getEntityManager().createQuery(query.replace("referenceDate", referenceDate), Date.class)
         		.setParameter("id", invoiceId)
-        		.setParameter("limitDate", limitDate)
-        		.getSingleResult();
+        		.getResultList();
     }
 
     public List<Object[]> getTotalDiscountAmountByBR(BillingRun billingRun) {
