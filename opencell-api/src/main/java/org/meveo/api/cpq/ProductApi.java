@@ -215,6 +215,9 @@ public class ProductApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Product.class, productCode);
 			}
 
+			if(product.getStatus() == ProductStatusEnum.ACTIVE &&  !productCode.equals(productDto.getCode()))
+				throw new MeveoApiException("you cannot change the product code after activating it");
+
 			if(!productCode.equalsIgnoreCase(productDto.getCode()) &&  productService.findByCode(productDto.getCode()) != null)
 				throw new EntityAlreadyExistsException(Product.class,productDto.getCode());
 
