@@ -1,5 +1,6 @@
 package org.meveo.apiv2.accounts.service;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,28 +10,49 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
+import javax.annotation.Resource;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.inject.Inject;
 import javax.validation.ValidationException;
 import javax.ws.rs.NotFoundException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.util.Strings;
+import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.job.DateRange;
+import org.meveo.api.billing.SubscriptionApi;
+import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
+import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.apiv2.accounts.AppliedChargeResponseDto;
+import org.meveo.apiv2.accounts.AppliedChargeResponseDto.CdrError;
+import org.meveo.apiv2.accounts.ApplyOneShotChargeListInput;
 import org.meveo.apiv2.accounts.ConsumerInput;
 import org.meveo.apiv2.accounts.CounterInstanceDto;
 import org.meveo.apiv2.accounts.OpenTransactionsActionEnum;
 import org.meveo.apiv2.accounts.ParentInput;
+import org.meveo.apiv2.accounts.ProcessApplyChargeListResult;
+import org.meveo.apiv2.billing.ProcessCdrListModeEnum;
 import org.meveo.apiv2.generic.exception.ConflictException;
+import org.meveo.commons.utils.ListUtils;
+import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
+import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
@@ -47,10 +69,8 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.audit.logging.AuditLogService;
-import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.CounterInstanceService;
-import org.meveo.service.billing.impl.CounterPeriodService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
@@ -107,9 +127,6 @@ public class AccountsManagementApiService {
     private CounterTemplateService counterTemplateService;
 
     @Inject
-    private BillingAccountService billingAccountService;
-
-    @Inject
     private ServiceInstanceService serviceInstanceService;
 
     @Inject
@@ -125,9 +142,19 @@ public class AccountsManagementApiService {
     @Inject
     private RecurringChargeInstanceService recurringChargeInstanceService;
     @Inject
-    private CounterPeriodService counterPeriodService;
-    @Inject
     private ProductChargeTemplateMappingService productChargeTemplateMappingService;
+
+    @Inject
+    private AccountsManagementApiService thisNewTX;
+    
+    @Inject
+    private SubscriptionApi subscriptionApi;
+
+    @Inject
+    private MethodCallingUtils methodCallingUtils;
+
+    @Resource(lookup = "java:jboss/ee/concurrency/executor/job_executor")
+    protected ManagedExecutorService executor;
 
     /**
      * Transfer the subscription from a consumer to an other consumer (UA)
@@ -482,4 +509,119 @@ public class AccountsManagementApiService {
         auditLog.setAction("update");
         auditLogService.create(auditLog);
     }
+
+	public ProcessApplyChargeListResult applyOneShotChargeList(ApplyOneShotChargeListInput postData) {
+		
+		if(postData == null) {
+			throw new InvalidParameterException("The input parameters are required");
+		}
+
+		if(ListUtils.isEmtyCollection(postData.getChargesToApply())) {
+			throw new InvalidParameterException("The charges to apply are required");
+		}
+		
+		postData.getChargesToApply().forEach(c -> c.setGenerateRTs(postData.isGenerateRTs()));
+
+		SynchronizedIterator<ApplyOneShotChargeInstanceRequestDto> syncCharges = new SynchronizedIterator<>(postData.getChargesToApply());
+		
+		ProcessApplyChargeListResult result = new ProcessApplyChargeListResult(ProcessCdrListModeEnum.PROCESS_ALL, syncCharges.getSize());
+		
+		int nbThreads = Runtime.getRuntime().availableProcessors();
+        if (nbThreads > postData.getChargesToApply().size()) {
+            nbThreads = postData.getChargesToApply().size();
+        }
+		
+		List<Runnable> tasks = new ArrayList<Runnable>(nbThreads);
+        List<Future<?>> futures = new ArrayList<>();
+		
+        for (int k = 0; k < nbThreads; k++) {
+        	tasks.add(() -> {
+        		this.thisNewTX.applyOneShotChargeInstance(syncCharges, result, postData.isGenerateRTs(), postData.isReturnWalletOperations(), postData.isReturnWalletOperationDetails(), postData.isVirtual());
+        	});
+		}
+        
+        for (Runnable task : tasks) {
+            futures.add(executor.submit(task));
+        }
+        
+        for (Future<?> future : futures) {
+            try {
+                future.get();
+
+            } catch (InterruptedException | CancellationException e) {
+                log.error("Failed to execute Mediation API async method", e);
+            } catch (ExecutionException e) {
+                log.error("Failed to execute Mediation API async method", e);
+            }
+        }
+		
+		return result;
+	}
+
+	@JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void applyOneShotChargeInstance(SynchronizedIterator<ApplyOneShotChargeInstanceRequestDto> syncCharges, ProcessApplyChargeListResult result, boolean generateRTs, boolean returnWalletOperations, boolean returnWalletOperationDetails,
+			boolean isVirtual) {
+		
+		while(true) {
+			SynchronizedIterator<ApplyOneShotChargeInstanceRequestDto>.NextItem<ApplyOneShotChargeInstanceRequestDto> nextWPosition = syncCharges.nextWPosition();
+			
+			if(nextWPosition == null) {
+				break;
+			}
+			
+			int chargePosition = nextWPosition.getPosition();
+			ApplyOneShotChargeInstanceRequestDto chargeToApply = nextWPosition.getValue();
+			
+			try {
+				log.info("applyOneShotChargeInstance #{}", chargePosition);
+				AppliedChargeResponseDto oshoDto = methodCallingUtils.callCallableInNewTx(() -> {
+					OneShotChargeInstance osho = subscriptionApi.applyOneShotChargeInstance(chargeToApply, isVirtual);
+					return createAppliedChargeResponseDto(osho, returnWalletOperations, returnWalletOperationDetails);
+				});
+					
+				result.addAppliedCharge(chargePosition, oshoDto);
+				result.getStatistics().addSuccess();
+			} catch (Exception e) {
+				log.error("Error" , e);
+				result.getStatistics().addFail();
+				result.addAppliedCharge(chargePosition, createAppliedChargeResponseErrorDto(e.getMessage()));
+			}
+		}
+		
+	}
+
+	private AppliedChargeResponseDto createAppliedChargeResponseDto(OneShotChargeInstance osho, boolean returnWalletOperation, boolean returnWallerOperationDetails) {
+		AppliedChargeResponseDto lDto = new AppliedChargeResponseDto();
+		
+		lDto.setWalletOperationCount(osho.getWalletOperations().size());
+		BigDecimal amountWithTax = BigDecimal.ZERO;
+		BigDecimal amountWithoutTax = BigDecimal.ZERO;
+		BigDecimal amountTax = BigDecimal.ZERO;
+		for (WalletOperation wo : osho.getWalletOperations()) {
+			if(returnWallerOperationDetails) {
+				lDto.getWalletOperations().add(new WalletOperationDto(wo));
+			} else if(returnWalletOperation) {
+				WalletOperationDto woDto = new WalletOperationDto();
+				woDto.setId(wo.getId());
+				lDto.getWalletOperations().add(woDto);
+			}
+			amountWithTax = amountWithTax.add(wo.getAmountWithTax() != null ? wo.getAmountWithTax() : BigDecimal.ZERO);
+            amountWithoutTax = amountWithoutTax.add(wo.getAmountWithoutTax() != null ? wo.getAmountWithoutTax() : BigDecimal.ZERO);
+            amountTax = amountTax.add(wo.getAmountTax() != null ? wo.getAmountTax() : BigDecimal.ZERO);
+		}
+		lDto.setAmountTax(amountTax);
+		lDto.setAmountWithoutTax(amountWithoutTax);
+		lDto.setAmountWithTax(amountWithTax);
+		
+		return lDto;
+	}
+
+	private AppliedChargeResponseDto createAppliedChargeResponseErrorDto(String errorMessage) {
+		AppliedChargeResponseDto lDto = new AppliedChargeResponseDto();
+		
+		lDto.setError(new CdrError(errorMessage));
+		
+		return lDto;
+	}
 }
