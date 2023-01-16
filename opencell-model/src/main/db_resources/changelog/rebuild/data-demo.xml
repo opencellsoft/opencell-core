@@ -1587,6 +1587,7 @@
             <column name="uuid" value="MAIN_SELLER" />
             <column name="trading_currency_id" valueNumeric="-1" />
             <column name="trading_language_id" valueNumeric="-1" />
+            <column name="email" value="billing@opencell.com"/>
         </insert>
         <insert tableName="crm_seller">
             <column name="id" valueNumeric="-2" />
@@ -1598,6 +1599,7 @@
             <column name="parent_seller_id" valueNumeric="-1" />
             <column name="trading_currency_id" valueNumeric="-1" />
             <column name="trading_language_id" valueNumeric="-1" />
+            <column name="email" value="billing@opencell.com"/>
         </insert>
         <insert tableName="crm_seller">
             <column name="id" valueNumeric="-3" />
@@ -1609,6 +1611,7 @@
             <column name="parent_seller_id" valueNumeric="-1" />
             <column name="trading_currency_id" valueNumeric="-2" />
             <column name="trading_language_id" valueNumeric="-2" />
+            <column name="email" value="billing@opencell.com"/>
         </insert>
     </changeSet>
 
@@ -2669,7 +2672,6 @@
 			<column name="vat_payment_option_id" value="1" />
 		</insert>	
 	</changeSet>
-    
 
     <changeSet id="#INTRD-6283_20220404" author="AbdelmounaimAkadid"/>
     <changeSet id="#INTRD-6291_20220406" author="AbdelmounaimAkadid"/>

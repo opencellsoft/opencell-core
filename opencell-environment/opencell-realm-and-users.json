@@ -112,8 +112,9 @@
         "composites": {
           "client": {
             "opencell-web": [
+              "administrateur",
               "apiAdministrateur",
-              "administrateur"
+              "genApiFull.list"
             ],
             "opencell-portal": [
               "ADMIN"

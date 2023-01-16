@@ -18379,5 +18379,29 @@ public class CdrFlatFileImportScript extends Script {
             drop table one_shot_product_charge_association
         </sql>
     </changeSet>
+    <changeSet id="#INTRD-12906_20230112" author="hichamELHALOUI">
+        <delete tableName="adm_script_exec_role">
+            <where>script_instance_id  in (select id from meveo_script_instance where code='org.meveo.service.script.ValidateBRScript')</where>
+        </delete>
+        <delete tableName="adm_script_sourc_role">
+            <where>script_instance_id  in (select id from meveo_script_instance where code='org.meveo.service.script.ValidateBRScript')</where>
+        </delete>
+        <delete tableName="meveo_script_parameter">
+            <where>script_instance_id  in (select id from meveo_script_instance where code='org.meveo.service.script.ValidateBRScript')</where>
+        </delete>
+        <delete tableName="meveo_script_instance">
+	        <where>code='org.meveo.service.script.ValidateBRScript'</where>
+	    </delete>
+
+        <delete tableName="job_execution">
+	        <where>job_instance_id  in (select id from meveo_job_instance where code in ('ValidateBR_Job' , 'Inv_Job' ))</where>
+	    </delete>
+        <delete tableName="meveo_job_instance">
+	        <where>code='ValidateBR_Job'</where>
+	    </delete>
+        <delete tableName="meveo_job_instance">
+	        <where>code='Inv_Job'</where>
+	    </delete>
+    </changeSet>
 
 </databaseChangeLog>

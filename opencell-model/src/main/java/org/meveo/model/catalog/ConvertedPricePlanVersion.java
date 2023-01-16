@@ -46,6 +46,18 @@ public class ConvertedPricePlanVersion extends AuditableEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "price_plan_matrix_version_id")
 	private PricePlanMatrixVersion pricePlanMatrixVersion;
+	
+	public ConvertedPricePlanVersion() {
+    
+	}
+
+    public ConvertedPricePlanVersion(ConvertedPricePlanVersion copy) {
+        this.convertedPrice = copy.convertedPrice;
+        this.tradingCurrency = copy.tradingCurrency;
+        this.rate = copy.rate;
+        this.useForBillingAccounts = copy.useForBillingAccounts;
+        this.pricePlanMatrixVersion = copy.pricePlanMatrixVersion;
+    }
 
 	/**
 	 * @return the convertedPrice

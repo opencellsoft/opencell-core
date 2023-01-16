@@ -1423,9 +1423,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     InvoiceValidationRule validationRule = validationRuleIterator.next();
                     if(DateUtils.isWithinDateWithoutTime(invoice.getInvoiceDate(), validationRule.getValidFrom(), validationRule.getValidTo())) {
                         if(validationRule.getType() == ValidationRuleTypeEnum.SCRIPT) {
-                            ScriptInterface validationRuleScript =
-                                    scriptInstanceService.getScriptInstance(validationRule.getValidationScript());
-                            ScriptInstance scriptInstance = scriptInstanceService.findByCode(validationRule.getValidationScript());
+                        	ScriptInstance scriptInstance = validationRule.getValidationScript();
+                            ScriptInterface validationRuleScript = scriptInstanceService.getScriptInstance(scriptInstance.getCode());
                             if(scriptInstance != null && !MapUtils.isEmpty(validationRule.getRuleValues())){
                                 scriptInstance.getScriptParameters().stream().forEach(sp -> {
                             		if (validationRule.getRuleValues().containsKey(sp.getCode())) {

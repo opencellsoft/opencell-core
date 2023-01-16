@@ -1674,7 +1674,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             if (!StringUtils.isBlank(filterValue)) {
                 queryBuilder = new QueryBuilder(filterValue);
             } else {
-                PaginationConfiguration configuration = new PaginationConfiguration(new HashMap<>(filters));
+                FilterConverter converter = new FilterConverter(RatedTransaction.class);
+                PaginationConfiguration configuration = new PaginationConfiguration(converter.convertFilters(filters));
                 queryBuilder = ratedTransactionService.getQuery(configuration);
             }
             filter.setPollingQuery(buildPollingQuery(queryBuilder));
@@ -1686,7 +1687,16 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         String pollingQuery = queryBuilder.getSqlString();
         if(queryBuilder.getParams() != null) {
             for(Map.Entry<String, Object> param : queryBuilder.getParams().entrySet()) {
-                pollingQuery = pollingQuery.replace(":" + param.getKey(), "\'"+ param.getValue() + "\'");
+                Class clazz = param.getValue().getClass();
+                String className = clazz.getName();
+                if(className.contains("Date")) {
+                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                    String paramDate = df.format(param.getValue());
+                    pollingQuery = pollingQuery.replace(":" + param.getKey(), "\'"+ paramDate + "\'");
+                }
+                else {
+                    pollingQuery = pollingQuery.replace(":" + param.getKey(), "\'"+ param.getValue() + "\'");
+                }
             }
         }
         return pollingQuery;

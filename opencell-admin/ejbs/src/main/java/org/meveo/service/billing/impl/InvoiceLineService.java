@@ -769,10 +769,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	        if (isExonerated == null) {
 	            isExonerated = billingAccountService.isExonerated(billingAccount);
 	        }
-	        
-	        Seller seller = billingAccount.getCustomerAccount().getCustomer().getSeller();
+
+            Seller billingAccountSeller = billingAccount.getCustomerAccount().getCustomer() != null ? billingAccount.getCustomerAccount().getCustomer().getSeller() : null;
+            Seller seller = billingAccountSeller == null ? invoiceLine.getInvoice().getSeller() : billingAccountSeller;
+
 	        TaxInfo recalculatedTaxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), 
-	            seller == null ? seller : invoiceLine.getInvoice().getSeller(), 
+	            seller,
 	            billingAccount, null, 
 	            invoiceLine.getValueDate()!=null?invoiceLine.getValueDate():new Date(), null, 
 	                    isExonerated, false, invoiceLine.getTax());
@@ -1327,7 +1329,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
     
     public long getCountBySubscriptionAge(Long invoiceId, String referenceDate, String operator, Date limitDate) {
-    	String query = "select count(*) from InvoiceLine il where il.invoice.id=:id and referenceDate operator :limitDate";
+    	String query = "select count(*) from InvoiceLine il where il.invoice.id=:id and not referenceDate operator :limitDate";
         return getEntityManager().createQuery(query.replace("operator", operator).replace("referenceDate", referenceDate), Long.class)
         		.setParameter("id", invoiceId)
         		.setParameter("limitDate", limitDate)

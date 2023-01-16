@@ -19,6 +19,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.scripts.ScriptInstance;
 
 
 @Entity
@@ -51,8 +52,9 @@ public class InvoiceValidationRule extends BusinessEntity {
     @Enumerated(EnumType.STRING)
     private InvoiceValidationStatusEnum failStatus = InvoiceValidationStatusEnum.REJECTED;
 
-    @Column(name = "validation_script")
-    private String validationScript;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "script_instance_id")
+    private ScriptInstance validationScript;
 
     @Column(name = "validation_el")
     private String validationEL;
@@ -104,11 +106,11 @@ public class InvoiceValidationRule extends BusinessEntity {
         this.type = type;
     }
 
-    public String getValidationScript() {
+    public ScriptInstance getValidationScript() {
         return validationScript;
     }
 
-    public void setValidationScript(String validationScript) {
+    public void setValidationScript(ScriptInstance validationScript) {
         this.validationScript = validationScript;
     }
 
