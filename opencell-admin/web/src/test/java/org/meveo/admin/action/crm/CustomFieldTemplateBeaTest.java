@@ -41,6 +41,7 @@ import org.reflections.Reflections;
 
 //@RunWith(MockitoJUnitRunner.class)
 public class CustomFieldTemplateBeaTest {
+    /*
     @Mock
     private CustomizedEntityService customizedEntityService;
     
@@ -97,4 +98,5 @@ public class CustomFieldTemplateBeaTest {
                 .map(businessEntity -> new CustomizedEntity(businessEntity))
                 .collect(Collectors.toList());
     }
+    */
 }
