@@ -214,18 +214,18 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         if (dto.getThresholdPerEntity() != null) {
         	entity.setThresholdPerEntity(dto.getThresholdPerEntity());
         }
-        if (dto.getInvoicingThreshold() != null) {
+
             entity.setInvoicingThreshold(dto.getInvoicingThreshold());
-        }
+
         if (dto.getReferenceDate() != null) {
             entity.setReferenceDate(dto.getReferenceDate());
         }
         if (dto.getType() != null) {
             entity.setType(dto.getType());
         }
-        if (dto.getCheckThreshold() != null) {
+
             entity.setCheckThreshold(dto.getCheckThreshold());
-        }
+
         if (dto.getSplitPerPaymentMethod() != null) {
             entity.setSplitPerPaymentMethod(dto.getSplitPerPaymentMethod());
         }

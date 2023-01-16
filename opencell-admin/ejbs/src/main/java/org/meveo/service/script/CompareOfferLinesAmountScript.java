@@ -27,7 +27,7 @@ public class CompareOfferLinesAmountScript extends Script{
     private final String VALUE = "value";
     private final String INVOICE = "CONTEXT_ENTITY";
     
-    private final String query = "select id from InvoiceLine where invoice.id = :invoiceId and offerTemplate.id in (:offers) group by id having (AMOUNT OPERATOR :value)";
+    private final String query = "select id from InvoiceLine where invoice.id = :invoiceId and offerTemplate.id in (:offers) group by id having not (AMOUNT OPERATOR :value)";
 
     private InvoiceLineService invoiceLineService = (InvoiceLineService) getServiceInterface("InvoiceLineService");
     
