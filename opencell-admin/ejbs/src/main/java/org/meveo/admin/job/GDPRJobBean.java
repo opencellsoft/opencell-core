@@ -352,7 +352,7 @@ public class GDPRJobBean extends BaseJobBean {
 	                    statement.execute("delete from " + schemaPrefix + "billing_discount_plan_instance where subscription_id in (select id from " + schemaPrefix + "mview_gdpr_subscriptions)");
 	                    statement.execute("delete from " + schemaPrefix + "dunning_document where billing_subscription_id in (select id from " + schemaPrefix + "mview_gdpr_subscriptions)");
 	                    statement.execute("delete from " + schemaPrefix + "billing_subscription where id in (select id from " + schemaPrefix + "mview_gdpr_subscriptions)");
-	                    statement.execute("delete from " + schemaPrefix + "audit_field_changes_history where entity_class='org.meveo.model.billing.Subscription' and id in (select id from " + schemaPrefix
+	                    statement.execute("delete from " + schemaPrefix + "audit_field_changes_history where entity_class='org.meveo.model.billing.Subscription' and entity_id in (select id from " + schemaPrefix
 	                            + "mview_gdpr_subscriptions)");	
 	                }
 	                statement.execute("drop materialized view if exists " + schemaPrefix + "mview_gdpr_subscriptions");
@@ -419,6 +419,7 @@ public class GDPRJobBean extends BaseJobBean {
 	                if (recordCount[0] > 0) {
 	
 	                    statement.execute("update " + schemaPrefix + "billing_invoice set order_id=null where order_id in (select id from " + schemaPrefix + "mview_gdpr_orders)");
+						statement.execute("DELETE FROM " + schemaPrefix + "billing_invoices_orders AS bio USING " + schemaPrefix + "mview_gdpr_orders AS m WHERE bio.order_id = m.id;");
 	                    statement.execute("drop materialized view if exists " + schemaPrefix + "mview_gdpr_payment_token");
 	                    statement.execute("create materialized view " + schemaPrefix + "mview_gdpr_payment_token (id) as (select payment_method_id from " + schemaPrefix + "ord_order o join " + schemaPrefix
 	                            + "mview_gdpr_orders go on o.id=go.id)");
@@ -516,7 +517,8 @@ public class GDPRJobBean extends BaseJobBean {
 	                    statement.execute("delete from " + schemaPrefix + "ar_account_operation where transaction_type='I' and invoice_id in (select id from " + schemaPrefix + "mview_gdpr_invoices)");
 	                    statement.execute("delete from " + schemaPrefix + "billing_invoice_agregate where type='F' and invoice_id in (select id from " + schemaPrefix + "mview_gdpr_invoices)");
 	                    statement.execute("delete from " + schemaPrefix + "billing_invoice_agregate where invoice_id in (select id from " + schemaPrefix + "mview_gdpr_invoices)");
-	                    statement.execute("delete from " + schemaPrefix + "billing_invoice where id in (select id from " + schemaPrefix + "mview_gdpr_invoices)");
+	                    statement.execute("delete from " + schemaPrefix + "billing_linked_invoices as bli using " + schemaPrefix + "mview_gdpr_orders as m where bli.id = m.id or bli.linked_invoice_id = m.id");
+						statement.execute("delete from " + schemaPrefix + "billing_invoice where id in (select id from " + schemaPrefix + "mview_gdpr_invoices)");
 	
 	                }
 	
