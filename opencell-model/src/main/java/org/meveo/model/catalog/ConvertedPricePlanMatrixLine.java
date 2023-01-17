@@ -22,7 +22,7 @@ import org.meveo.model.billing.TradingCurrency;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_converted_price_plan_matrix_line_sq") })
 @NamedQueries({
-	@NamedQuery(name = "ConvertedPricePlanMatrixLine.disableAllConvertedByVersionAndTradingCurrencyCode", query = "UPDATE ConvertedPricePlanMatrixLine set useForBillingAccounts = false where id in (:ids)") 
+	@NamedQuery(name = "ConvertedPricePlanMatrixLine.enableOrDisable", query = "UPDATE ConvertedPricePlanMatrixLine set useForBillingAccounts =:enable where id in (:ids)") 
 })
 public class ConvertedPricePlanMatrixLine  extends AuditableEntity {
 

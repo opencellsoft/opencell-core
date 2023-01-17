@@ -480,6 +480,19 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
 	}
 
     public void disableAllConvertedPricePlan(ConvertedPricePlanInputDto convertedPricePlanInputDto) {
+    	enableOrDisabbleConvertedPrice(convertedPricePlanInputDto, false);
+		
+	}
+
+	public void enableAllConvertedPricePlan(ConvertedPricePlanInputDto convertedPricePlanInputDto) {
+		enableOrDisabbleConvertedPrice(convertedPricePlanInputDto, true);
+	}
+	/**
+	 * 
+	 * @param convertedPricePlanInputDto
+	 * @param enable true converted price will be enable otherwise disabled
+	 */
+	private void enableOrDisabbleConvertedPrice(ConvertedPricePlanInputDto convertedPricePlanInputDto, boolean enable) {
 		if(convertedPricePlanInputDto.getPricePlanMatrixVersionId() == null) {
 			missingParameters.add("pricePlanMatrixVersionId");
 		}
@@ -500,7 +513,6 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
 								.filter(converted -> converted.getTradingCurrency().getId() == tradingCurrency.getId())
 								.map(ConvertedPricePlanMatrixLine::getId)
 								.collect(Collectors.toSet());
-		convertedPricePlanMatrixLineService.disableAllConvertedPricePlanMatrixLine(idsToUpdate);
-		
+		convertedPricePlanMatrixLineService.disableOrEnableAllConvertedPricePlanMatrixLine(idsToUpdate, enable);
 	}
 }

@@ -11,9 +11,11 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class ConvertedPricePlanMatrixLineService extends PersistenceService<ConvertedPricePlanMatrixLine> {
 
-	public void disableAllConvertedPricePlanMatrixLine(Set<Long> ids) {
+	public void disableOrEnableAllConvertedPricePlanMatrixLine(Set<Long> ids, boolean enable) {
 		if(CollectionUtils.isNotEmpty(ids)) {
-			this.getEntityManager().createNamedQuery("ConvertedPricePlanMatrixLine.disableAllConvertedByVersionAndTradingCurrencyCode").setParameter("ids", ids).executeUpdate();
+			this.getEntityManager().createNamedQuery("ConvertedPricePlanMatrixLine.enableOrDisable")
+									.setParameter("enable", enable)
+									.setParameter("ids", ids).executeUpdate();
 		}
 	}
 
