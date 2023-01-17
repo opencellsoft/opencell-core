@@ -515,4 +515,20 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
 								.collect(Collectors.toSet());
 		convertedPricePlanMatrixLineService.disableOrEnableAllConvertedPricePlanMatrixLine(idsToUpdate, enable);
 	}
+
+	public void enableConvertedVersionPricePlan(Long convertedPricePlanVersionId) {
+		enableDisableConvertedVersionPrice(convertedPricePlanVersionId, true);
+	}
+
+	public void disableConvertedVersionPricePlan(Long convertedPricePlanVersionId) {
+		enableDisableConvertedVersionPrice(convertedPricePlanVersionId, false);
+	}
+	
+	private void enableDisableConvertedVersionPrice(Long convertedPricePlanVersionId, boolean enable) {
+		ConvertedPricePlanVersion convertedPricePlanVersion = convertedPricePlanVersionService.findById(convertedPricePlanVersionId);
+		if(convertedPricePlanVersion == null) {
+			throw new EntityDoesNotExistsException(ConvertedPricePlanVersion.class, convertedPricePlanVersionId);
+		}
+		convertedPricePlanVersion.setUseForBillingAccounts(enable);
+	}
 }
