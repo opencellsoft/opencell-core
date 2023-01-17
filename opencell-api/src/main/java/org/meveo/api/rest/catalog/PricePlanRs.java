@@ -570,5 +570,10 @@ public interface PricePlanRs extends IBaseRs {
     @PUT
     @Path("/convertedPricePlanMatrixLines/disable")
     Response disableAllConvertedPricePlan(@Parameter(description = "contain information about all converted price that will be disabled") ConvertedPricePlanInputDto convertedPricePlanInputDto);
+    
+
+    @PUT
+    @Path("/convertedPricePlanMatrixLines/enable")
+    Response enableAllConvertedPricePlan(@Parameter(description = "contain information about all converted price that will be enabled") ConvertedPricePlanInputDto convertedPricePlanInputDto);
 
 }
