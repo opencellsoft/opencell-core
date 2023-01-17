@@ -145,9 +145,10 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 					for(ProductChargeTemplateMapping charge: product.getProductCharges()) {
 						if(charge.getChargeTemplate() != null) {
 							ChargeTemplate templateCharge = (ChargeTemplate) Hibernate.unproxy(charge.getChargeTemplate());
-							if(templateCharge instanceof OneShotChargeTemplate) {
+							if (templateCharge instanceof OneShotChargeTemplate) {
 								var oneShotCharge = (OneShotChargeTemplate) templateCharge;
-								if(oneShotCharge.getOneShotChargeTemplateType() != OneShotChargeTemplateTypeEnum.OTHER)
+								if (oneShotCharge.getOneShotChargeTemplateType() != OneShotChargeTemplateTypeEnum.OTHER
+										&& oneShotCharge.getOneShotChargeTemplateType() != OneShotChargeTemplateTypeEnum.INVOICING_PLAN)
 									return true;
 							}else
 								return true;
