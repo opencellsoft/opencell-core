@@ -32,11 +32,12 @@ public class ValidateCustomerAgeScript extends Script {
 
 		log.info("Process ValidateCustomerAgeScript {}", invoice);
 		
-		long limitDate = buildLimitDate(invoice, (Integer) context.get("age"));
 		String operator = ScriptUtils.buildOperator(String.valueOf(context.get("operator")), false);
 		Date referenceDate = billingAccountService.getDateCustomerAge(invoice.getBillingAccount().getId(), buildReferenceDateExpression(String.valueOf(context.get("referenceDate"))));
+		long limitDate = buildLimitDate(referenceDate, (Integer) context.get("age"));
+
 		
-		boolean result = ValueExpressionWrapper.evaluateToBoolean("#{" + referenceDate.getTime() + " " + operator + " " + limitDate + "}", new HashMap<Object, Object>(context));
+		boolean result = ValueExpressionWrapper.evaluateToBoolean("#{" + invoice.getInvoiceDate().getTime() + " " + operator + " " + limitDate + "}", new HashMap<Object, Object>(context));
 
 		context.put(Script.INVOICE_VALIDATION_STATUS, result ? InvoiceValidationStatusEnum.VALID : (InvoiceValidationStatusEnum) context.get(Script.RESULT_VALUE));
 		
@@ -44,10 +45,10 @@ public class ValidateCustomerAgeScript extends Script {
 
 	}
 
-	private long buildLimitDate(Invoice invoice, Integer age) {
+	private long buildLimitDate(Date referenceDate, Integer age) {
 		Calendar c = Calendar.getInstance();
-		c.setTime(invoice.getInvoiceDate());
-		c.add(Calendar.DATE, -age);
+		c.setTime(referenceDate);
+		c.add(Calendar.DATE, age);
 		return c.getTime().getTime();
 	}
 
