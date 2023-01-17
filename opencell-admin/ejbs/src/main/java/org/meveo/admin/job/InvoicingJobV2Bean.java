@@ -87,9 +87,16 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                 validateBRList(billingRuns, result);
                 for (BillingRun billingRun : billingRuns) {
                     billingRunService.createAggregatesAndInvoiceWithIl(billingRun, 1, 0, jobInstance.getId(), true);
+                    billingRunService.applyAutomaticValidationActions(billingRun);
+                    billingRun = billingRunService.refreshOrRetrieve(billingRun);
                     billingRunService.applyThreshold(billingRun.getId());
                     assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, result);
-                    billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.VALIDATED, null);;
+                    if(!billingRunService.isBillingRunValid(billingRun)) {
+                    	billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.REJECTED, null);
+                    }else {
+                    	 billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.VALIDATED, null);
+                    }
+                   
                 }
                 result.setNbItemsCorrectlyProcessed(billingRuns.size());
             }
