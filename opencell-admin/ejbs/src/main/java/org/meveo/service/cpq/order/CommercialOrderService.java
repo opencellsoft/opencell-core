@@ -147,8 +147,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 							ChargeTemplate templateCharge = (ChargeTemplate) Hibernate.unproxy(charge.getChargeTemplate());
 							if (templateCharge instanceof OneShotChargeTemplate) {
 								var oneShotCharge = (OneShotChargeTemplate) templateCharge;
-								if (oneShotCharge.getOneShotChargeTemplateType() != OneShotChargeTemplateTypeEnum.OTHER
-										&& oneShotCharge.getOneShotChargeTemplateType() != OneShotChargeTemplateTypeEnum.INVOICING_PLAN)
+								if (oneShotCharge.getOneShotChargeTemplateType() != OneShotChargeTemplateTypeEnum.OTHER)
 									return true;
 							}else
 								return true;
@@ -431,7 +430,11 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 
 			List<SubscriptionChargeInstance> oneShotCharges = serviceInstance.getSubscriptionChargeInstances()
 					.stream()
-					.filter(oneShotChargeInstance -> ((OneShotChargeTemplate)oneShotChargeInstance.getChargeTemplate()).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.SUBSCRIPTION)
+					.filter(
+							oneShotChargeInstance ->
+									((OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate()).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.SUBSCRIPTION
+											|| ((OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate()).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.INVOICING_PLAN
+					)
 					.map(oneShotChargeInstance -> {
 						oneShotChargeInstance.setQuantity(serviceInstance.getQuantity());
 						oneShotChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
