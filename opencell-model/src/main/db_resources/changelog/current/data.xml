@@ -15077,9 +15077,9 @@ public class CdrFlatFileImportScript extends Script {
 		</insert>
     </changeSet>
 
-    <changeSet id="#INTRD-12801_INTRD-12806__20230110" author="AbdellatifBARI">
-        <update tableName="meveo_job_instance">
-            <column name="cf_values"><![CDATA[{"nbRuns":[{"long":1}],
+	<changeSet id="#INTRD-12801_INTRD-12806__20230110" author="AbdellatifBARI">
+		<update tableName="meveo_job_instance">
+			<column name="cf_values"><![CDATA[{"nbRuns":[{"long":1}],
                 "waitingMillis":[{"long":0}],
                 "oneFilePerJob":[{"boolean":false}],
                 "FlatFileProcessingJob_inputDir":[{"string":"/imports/massImport/subscription/input"}],
@@ -15094,10 +15094,10 @@ public class CdrFlatFileImportScript extends Script {
                 "FlatFileProcessingJob_originFilename":[{"string":"origin_filename"}],
                 "FlatFileProcessingJob_formatTransfo":[{"string":"None"}],
                 "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}]}]]></column>
-            <where>code='massImportSubscriptionJob'</where>
-        </update>
-        <update tableName="meveo_job_instance">
-            <column name="cf_values"><![CDATA[{"nbRuns":[{"long":1}],
+			<where>code='massImportSubscriptionJob'</where>
+		</update>
+		<update tableName="meveo_job_instance">
+			<column name="cf_values"><![CDATA[{"nbRuns":[{"long":1}],
                 "waitingMillis":[{"long":0}],
                 "oneFilePerJob":[{"boolean":false}],
                 "FlatFileProcessingJob_inputDir":[{"string":"/imports/massImport/serviceInstance/input"}],
@@ -15112,10 +15112,10 @@ public class CdrFlatFileImportScript extends Script {
                 "FlatFileProcessingJob_originFilename":[{"string":"origin_filename"}],
                 "FlatFileProcessingJob_formatTransfo":[{"string":"None"}],
                 "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}]}]]></column>
-            <where>code='massImportServiceInstanceJob'</where>
-        </update>
-        <update tableName="meveo_job_instance">
-            <column name="cf_values"><![CDATA[{"nbRuns":[{"long":1}],
+			<where>code='massImportServiceInstanceJob'</where>
+		</update>
+		<update tableName="meveo_job_instance">
+			<column name="cf_values"><![CDATA[{"nbRuns":[{"long":1}],
                 "waitingMillis":[{"long":0}],
                 "oneFilePerJob":[{"boolean":false}],
                 "FlatFileProcessingJob_inputDir":[{"string":"/imports/massImport/attributeInstance/input"}],
@@ -15130,10 +15130,10 @@ public class CdrFlatFileImportScript extends Script {
                 "FlatFileProcessingJob_originFilename":[{"string":"origin_filename"}],
                 "FlatFileProcessingJob_formatTransfo":[{"string":"None"}],
                 "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}]}]]></column>
-            <where>code='massImportAttributeInstance'</where>
-        </update>
-        <update tableName="meveo_job_instance">
-            <column name="cf_values"><![CDATA[{"nbRuns":[{"long":1}],
+			<where>code='massImportAttributeInstance'</where>
+		</update>
+		<update tableName="meveo_job_instance">
+			<column name="cf_values"><![CDATA[{"nbRuns":[{"long":1}],
                 "waitingMillis":[{"long":0}],
                 "oneFilePerJob":[{"boolean":false}],
                 "FlatFileProcessingJob_inputDir":[{"string":"/imports/massImport/accessPoint/input"}],
@@ -15148,7 +15148,342 @@ public class CdrFlatFileImportScript extends Script {
                 "FlatFileProcessingJob_originFilename":[{"string":"origin_filename"}],
                 "FlatFileProcessingJob_formatTransfo":[{"string":"None"}],
                 "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}]}]]></column>
-            <where>code='massImportAccessPoint'</where>
+			<where>code='massImportAccessPoint'</where>
+		</update>
+	</changeSet>
+	<changeSet id="#INTRD-13192_20230116" author="AbdellatifBARI">
+		<update tableName="meveo_script_instance">
+			<column name="script">
+				<![CDATA[
+package org.meveo.service.script;
+
+import org.apache.commons.lang3.StringUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.billing.SubscriptionApi;
+import org.meveo.api.dto.billing.AttributeInstanceDto;
+import org.meveo.api.dto.billing.ServiceToUpdateDto;
+import org.meveo.api.dto.billing.UpdateServicesRequestDto;
+import org.meveo.api.dto.cpq.ProductToInstantiateDto;
+import org.meveo.model.billing.AttributeInstance;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
+import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.script.GenericMassImportScript;
+
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+public class ServiceInstanceImportScript extends GenericMassImportScript {
+
+    private static final String DATE_FORMAT_PATTERN = "dd/MM/yyyy";
+    private static final String RECORD_VARIABLE_NAME = "record";
+    private static final String ENTITY = "SERVICE_INSTANCE";
+    private static final String ENTITY_NAME = "ServiceInstance";
+
+    public enum ServiceInstanceActionEnum {
+        CREATE, UPDATE, DELETE
+    }
+
+    private final ServiceInstanceService serviceInstanceService = (ServiceInstanceService) getServiceInterface("ServiceInstanceService");
+    private final SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface("SubscriptionService");
+    private final SubscriptionApi subscriptionApi = (SubscriptionApi) getServiceInterface(SubscriptionApi.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> context) throws BusinessException {
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> recordMap = (Map<String, Object>) context.get(RECORD_VARIABLE_NAME);
+            if (recordMap != null && !recordMap.isEmpty()) {
+                // VALIDATE ENTITY
+                String OC_ENTITY = (String) recordMap.get("OC_ENTITY");
+                if (!ENTITY.equals(OC_ENTITY)) {
+                    throw new ValidationException("value of OC_ENTITY is not correct: " + OC_ENTITY);
+                }
+                // VALIDATE ACTION
+                String OC_ACTION = (String) recordMap.get("OC_ACTION");
+                if (Stream.of(ServiceInstanceActionEnum.values()).noneMatch(e -> e.toString().equals(OC_ACTION))) {
+                    throw new ValidationException("value of OC_ACTION is not correct: " + OC_ACTION);
+                }
+
+                ServiceInstanceActionEnum action = ServiceInstanceActionEnum.valueOf(OC_ACTION);
+
+                ProductToInstantiateDto productToInstantiateDto = validateAndGetServiceInstance(action, recordMap);
+
+                if (ServiceInstanceActionEnum.CREATE.equals(action)) {
+                    setServiceInstanceValues(recordMap, productToInstantiateDto);
+
+                    Subscription subscription = subscriptionService.findByCode((String) recordMap.get("OC_SUBSCRIPTION_CODE"));
+                    ServiceInstance si = serviceInstanceService.findByCodeAndCodeSubscriptionId((String) recordMap.get("OC_PRODUCT_CODE"), subscription);
+                    this.setCFValues(recordMap, si, ENTITY_NAME);
+                }
+            }
+        } catch (Exception exception) {
+            throw new BusinessException(exception);
+        }
+    }
+
+    private ProductToInstantiateDto validateAndGetServiceInstance(ServiceInstanceActionEnum action, Map<String, Object> recordMap) {
+        ProductToInstantiateDto productToInstantiateDto = null;
+
+        String OC_subscription_code = (String) recordMap.get("OC_SUBSCRIPTION_CODE");
+        if (OC_subscription_code.isEmpty()) {
+            throw new ValidationException("subscription_code is required");
+        }
+
+        String OC_si_code = (String) recordMap.get("OC_SI_CODE");
+        if (OC_si_code.isEmpty()) {
+            throw new ValidationException("serviceinstance_code is required");
+        }
+
+        productToInstantiateDto = new ProductToInstantiateDto();
+        Subscription subscription = subscriptionService.findByCode(OC_subscription_code);
+        if (subscription == null) {
+            throw new ValidationException("no subscription found for code: '" + OC_subscription_code + "'");
+        }
+
+        return productToInstantiateDto;
+    }
+
+    private void setServiceInstanceValues(Map<String, Object> recordMap, ProductToInstantiateDto productToInstantiateDto) throws ParseException {
+        String OC_subscription_code = (String) recordMap.get("OC_SUBSCRIPTION_CODE");
+        Subscription subscription = subscriptionService.findByCode(OC_subscription_code);
+
+        // Instantiate products
+        DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
+        dateFormat.setLenient(false);
+
+        String OC_product_deliv_dt = (String) recordMap.get("OC_PRODUCT_DELIV_DT");
+        productToInstantiateDto.setProductCode((String) recordMap.get("OC_PRODUCT_CODE"));
+        productToInstantiateDto.setQuantity(new BigDecimal((String) recordMap.get("OC_PRODUCT_QTY")));
+        try {
+            Date deliveryDate = StringUtils.isEmpty(OC_product_deliv_dt) ? null : dateFormat.parse(OC_product_deliv_dt);
+            productToInstantiateDto.setDeliveryDate(deliveryDate);
+        } catch(ParseException e) {
+            throw new ValidationException("Incorrect date format for delivery date. Please use 'dd/MM/yyyy'");
+        }
+
+        List<ProductToInstantiateDto> products = new ArrayList<>();
+        products.add(productToInstantiateDto);
+
+        subscriptionApi.instanciateProduct(OC_subscription_code, products);
+        serviceInstanceService.getEntityManager().flush();
+
+        // Save SI description
+        UpdateServicesRequestDto requestDto = new UpdateServicesRequestDto();
+        ServiceInstance serviceInstance = serviceInstanceService.findByCodeAndCodeSubscriptionId((String) recordMap.get("OC_PRODUCT_CODE"), subscription);
+
+        List<AttributeInstance> attributeInstances = serviceInstance.getAttributeInstances();
+        List<AttributeInstanceDto> aiDto = attributeInstances.stream().map(attribute ->
+                new AttributeInstanceDto(attribute, null)).collect(Collectors.toList());
+
+        requestDto.setSubscriptionCode((String) recordMap.get("OC_SUBSCRIPTION_CODE"));
+        ServiceToUpdateDto serviceDto = new ServiceToUpdateDto();
+        serviceDto.setId(serviceInstance.getId());
+        serviceDto.setCode(serviceInstance.getCode());
+        serviceDto.setDescription((String) recordMap.get("OC_SI_DESC"));
+
+        requestDto.addService(serviceDto);
+        requestDto.setAttributeInstances(aiDto);
+
+        subscriptionApi.updateServiceInstance(requestDto);
+    }
+}
+				]]>
+			</column>
+			<where>code='org.meveo.service.script.ServiceInstanceImportScript'</where>
+		</update>
+	</changeSet>
+
+    <changeSet id="#INTRD-13260_20230116" author="hichamELHALOUI">
+        <update tableName="meveo_script_instance">
+            <column name="script">
+				<![CDATA[
+package org.meveo.service.script;
+
+import org.joda.time.DateTime;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.UserApi;
+import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.job.JobInstanceInfoDto;
+import org.meveo.api.job.JobApi;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.service.communication.impl.EmailSender;
+import org.meveo.service.communication.impl.EmailTemplateService;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.meveo.commons.utils.ParamBean;
+
+import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
+
+public class ImportJobNotification extends Script {
+    private static final String USER_CODE = "user";
+    private static final String FROM_EMAIL = ParamBean.getInstance().getProperty("email.sender", "no_reply@opencellsoft.com");
+
+    private static final String MASS_IMPORT_SUCCESS_EMAIL = "MASS_IMPORT_SUCCESS_EMAIL";
+    private static final String MASS_IMPORT_FAILURE_EMAIL = "MASS_IMPORT_FAILURE_EMAIL";
+    private static final String MASS_IMPORT_ISSUES_EMAIL = "MASS_IMPORT_ISSUES_EMAIL";
+
+    private static final String CUSTOMER_JOB_CODE = "massImportCustomerJob";
+    private static final String CUSTOMER_ACCOUNT_JOB_CODE = "massImportCustomerAccountJob";
+    private static final String PAYMENT_METHOD_JOB_CODE = "massImportPaymentMethodJob";
+    private static final String BILLING_ACCOUNT_JOB_CODE = "massImportBillingAccountJob";
+    private static final String USER_ACCOUNT_JOB_CODE = "massImportUserAccountJob";
+
+    private static final String SUBSCRIPTION_JOB_CODE = "massImportSubscriptionJob";
+    private static final String SERVICE_INSTANCE_JOB_CODE = "massImportServiceInstanceJob";
+    private static final String ATTRIBUTE_INTSNACE_JOB_CODE = "massImportAttributeInstance";
+    private static final String ACCESS_POINT_JOB_CODE = "massImportAccessPoint";
+
+    private final transient JobApi jobApi = (JobApi) getServiceInterface(JobApi.class.getSimpleName());
+    private final transient UserApi userApi = (UserApi) getServiceInterface(UserApi.class.getSimpleName());
+
+    private final transient EmailSender emailSender = (EmailSender) getServiceInterface(EmailSender.class.getSimpleName());
+    private final transient EmailTemplateService emailTemplateService = (EmailTemplateService) getServiceInterface(EmailTemplateService.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> methodContext) throws BusinessException {
+        try {
+            @SuppressWarnings("unchecked")
+            String category = (String) methodContext.get("category");
+            JobExecutionResultImpl jobExecutionResult = (JobExecutionResultImpl) methodContext.get("entityOrEvent");
+            JobResultStatusEnum jobStatus = getJobResultStatus(jobExecutionResult);
+            String userName = (String) jobExecutionResult.getJobInstance().getCfValues().getValues().get(USER_CODE);
+
+            if (category == null || !category.equals("customer") || userName == null) return;
+            executeNextJob(jobExecutionResult);
+
+            // if there are no rows to process, we don't send a notification
+            if(jobExecutionResult.getNbItemsToProcess() == 0) return;
+
+            String subject;
+            String contentHtml;
+            Map<Object, Object> params = new HashMap<>();
+            EmailTemplate emailTemplate;
+
+
+            String jobCode = jobExecutionResult.getJobInstance().getCode();
+            params.put("entityName", EntityNameEnum.valueOf(jobCode).entity);
+            switch (jobStatus) {
+                case SUCCESS:
+                    emailTemplate = emailTemplateService.findByCode(MASS_IMPORT_SUCCESS_EMAIL);
+                    DateTime startDateTime = new DateTime(jobExecutionResult.getStartDate());
+                    params.put("date", startDateTime.toLocalDate());
+                    params.put("time", startDateTime.toLocalTime());
+                    contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
+                    subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
+                    break;
+                case FAILURE:
+                    emailTemplate = emailTemplateService.findByCode(MASS_IMPORT_FAILURE_EMAIL);
+                    contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
+                    subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
+                    break;
+                default:
+                    emailTemplate = emailTemplateService.findByCode(MASS_IMPORT_ISSUES_EMAIL);
+                    contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
+                    subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
+                    break;
+            }
+
+            List<String> toEmails = List.of(userApi.find(userName).getEmail());
+            emailSender.send(FROM_EMAIL, null, toEmails, subject, null, contentHtml);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void executeNextJob(JobExecutionResultImpl jobExecutionResult) {
+        String nextJobCode;
+        switch (jobExecutionResult.getJobInstance().getCode()) {
+            case CUSTOMER_JOB_CODE:
+                nextJobCode = CUSTOMER_ACCOUNT_JOB_CODE;
+                break;
+            case CUSTOMER_ACCOUNT_JOB_CODE:
+                nextJobCode = PAYMENT_METHOD_JOB_CODE;
+                break;
+            case PAYMENT_METHOD_JOB_CODE:
+                nextJobCode = BILLING_ACCOUNT_JOB_CODE;
+                break;
+            case BILLING_ACCOUNT_JOB_CODE:
+                nextJobCode = USER_ACCOUNT_JOB_CODE;
+                break;
+            case SUBSCRIPTION_JOB_CODE:
+                nextJobCode = SERVICE_INSTANCE_JOB_CODE;
+                break;
+            case SERVICE_INSTANCE_JOB_CODE:
+                nextJobCode = ATTRIBUTE_INTSNACE_JOB_CODE;
+                break;
+            case ATTRIBUTE_INTSNACE_JOB_CODE:
+                nextJobCode = ACCESS_POINT_JOB_CODE;
+                break;
+            default:
+                return;
+        }
+        JobInstanceInfoDto jobInstanceInfoDto = new JobInstanceInfoDto();
+        jobInstanceInfoDto.setCode(nextJobCode);
+        CustomFieldsDto customFields = new CustomFieldsDto();
+        CustomFieldDto customFieldDto = new CustomFieldDto();
+        customFieldDto.setCode(USER_CODE);
+        customFieldDto.setStringValue((String) jobExecutionResult.getJobInstance().getCfValues().getValues().get(USER_CODE));
+        customFields.setCustomField(List.of(customFieldDto));
+        jobInstanceInfoDto.setCustomFields(customFields);
+
+        jobApi.executeJob(jobInstanceInfoDto);
+    }
+
+    private JobResultStatusEnum getJobResultStatus(JobExecutionResultImpl jobExecutionResult) {
+        if(jobExecutionResult.getNbItemsToProcess() == 0)
+            return JobResultStatusEnum.NULL;
+        else if (jobExecutionResult.getNbItemsProcessedWithError() + 1 == jobExecutionResult.getNbItemsToProcess())
+            return JobResultStatusEnum.FAILURE;
+        else if(jobExecutionResult.getNbItemsCorrectlyProcessed() < jobExecutionResult.getNbItemsToProcess())
+            return JobResultStatusEnum.PARTIAL_SUCCESS;
+        else return JobResultStatusEnum.SUCCESS;
+    }
+
+    private enum JobResultStatusEnum {
+        SUCCESS,
+        FAILURE,
+        PARTIAL_SUCCESS,
+        NULL
+    }
+
+    private enum EntityNameEnum {
+        massImportCustomerJob("Customer"),
+        massImportCustomerAccountJob("CustomerAccount"),
+        massImportPaymentMethodJob("PaymentMethod"),
+        massImportBillingAccountJob("BillingAccount"),
+        massImportUserAccountJob("UserAccount"),
+        massImportSubscriptionJob("Subscription"),
+        massImportServiceInstanceJob("ServiceInstance"),
+        massImportAttributeInstance("AttributeInstance"),
+        massImportAccessPoint("AccessPoint");
+
+        String entity;
+
+        EntityNameEnum(String entity) {
+            this.entity = entity;
+        }
+
+    }
+}
+				]]>
+			</column>
+            <where>code='org.meveo.service.script.ImportJobNotification'</where>
         </update>
     </changeSet>
 
