@@ -374,7 +374,7 @@ public class GenericFileExportManager {
         saveDirectory = paramBeanFactory.getChrootDir() + File.separator + PATH_STRING_FOLDER_NO_GENERIC + entityName + File.separator + time.substring(0,8) + File.separator;
 
         // Manage locale language FR or Others (EN)
-        if(!LOCALE_FR.equals(locale)) {
+        if(!LOCALE_FR.equalsIgnoreCase(locale)) {
             filename = EN_AGED_BALANCE_FILENAME;
             format = new SimpleDateFormat(EN_DATE_FORMAT);
         }
@@ -389,12 +389,12 @@ public class GenericFileExportManager {
         formatFields(map, format);
 
         // If the map is not empty then save As Record to export - CSV, EXCEL or PDF
-        if (!map.isEmpty()) {
+        //if (!map.isEmpty()) {
             Path filePath = saveAsRecord(filename, map, fileType, fieldDetails, time, orderedColumn, locale);
             return filePath == null ? null : filePath.toString();
-        }
+        //}
 
-        return null;
+        //return null;
     }
 
     /**
@@ -408,19 +408,21 @@ public class GenericFileExportManager {
         List<Map<String, Object>> listOfMap = new ArrayList<>();
         List<Field> fields = Arrays.stream(clazz.getDeclaredFields()).filter(x -> columns.contains(x.getName())).collect(Collectors.toList());
 
-        for (Object o : list) {
-            Map<String, Object> map = new TreeMap<>();
-            for (Field field : fields) {
-                field.setAccessible(true);
-                Object value;
-                try {
-                    value = field.get(o);
-                    map.put(field.getName(), value);
-                } catch (IllegalArgumentException | IllegalAccessException e) {
-                    log.error("error occurred when converting list to list of Map");
+        if(list != null) {
+            for (Object o : list) {
+                Map<String, Object> map = new TreeMap<>();
+                for (Field field : fields) {
+                    field.setAccessible(true);
+                    Object value;
+                    try {
+                        value = field.get(o);
+                        map.put(field.getName(), value);
+                    } catch (IllegalArgumentException | IllegalAccessException e) {
+                        log.error("error occurred when converting list to list of Map");
+                    }
                 }
+                listOfMap.add(map);
             }
-            listOfMap.add(map);
         }
 
         return listOfMap;
