@@ -119,7 +119,8 @@ public class WebHookNotifier {
         HttpURLConnection conn = null;
 
         try {
-            String url = webHook.getHttpProtocol().name().toLowerCase() + "://" + webHook.getHost().replace("http://", "");
+        	String host = evaluate(webHook.getHost(), entityOrEvent, context);
+            String url = webHook.getHttpProtocol().name().toLowerCase() + "://" + host.replace("http://", "");
             if (webHook.getPort() != null) {
                 url += ":" + webHook.getPort();
             }
@@ -136,16 +137,27 @@ public class WebHookNotifier {
                 paramQuery += sep + URLEncoder.encode(paramKey, "UTF-8") + "=" + URLEncoder.encode(params.get(paramKey), "UTF-8");
                 sep = "&";
             }
-            log.debug("paramQuery={}", paramQuery);
-            url += "?" + paramQuery;
-
-            log.debug("webhook url: {}", url);
+            
+            String bodyEL_evaluated;
+           
+            if (WebHookMethodEnum.HTTP_GET == webHook.getHttpMethod()) {
+                url += "?" + paramQuery;
+            } else if (WebHookMethodEnum.HTTP_POST == webHook.getHttpMethod()) {
+                bodyEL_evaluated = evaluate(webHook.getBodyEL(), entityOrEvent, context);
+                log.debug("Evaluated BodyEL={}", bodyEL_evaluated);
+                if (!StringUtils.isBlank(bodyEL_evaluated)) {
+                    paramQuery += (!StringUtils.isBlank(paramQuery)) ? "&body=" + bodyEL_evaluated : "body=" + bodyEL_evaluated;
+                }
+            }
+            log.info("webhook url: {} , paramQuery={}", url,paramQuery);
             URL obj = new URL(url);
             conn = (HttpURLConnection) obj.openConnection();
 
             Map<String, String> headers = evaluateMap(webHook.getHeaders(), entityOrEvent, context);
-            if (!StringUtils.isBlank(webHook.getUsername()) && !headers.containsKey("Authorization")) {
-                byte[] bytes = Base64.encodeBase64((webHook.getUsername() + ":" + webHook.getPassword()).getBytes());
+            String username = evaluate(webHook.getUsername(), entityOrEvent, context);
+            String password = evaluate(webHook.getPassword(), entityOrEvent, context);
+            if (!StringUtils.isBlank(username) && !headers.containsKey("Authorization")) {
+                byte[] bytes = Base64.encodeBase64((username + ":" + password).getBytes());
                 headers.put("Authorization", "Basic " + new String(bytes));
             }
 
@@ -162,6 +174,7 @@ public class WebHookNotifier {
             } else if (WebHookMethodEnum.HTTP_DELETE == webHook.getHttpMethod()) {
                 conn.setRequestMethod("DELETE");
             }
+            
             conn.setUseCaches(false);
 
             if (WebHookMethodEnum.HTTP_POST == webHook.getHttpMethod() || WebHookMethodEnum.HTTP_PUT == webHook.getHttpMethod()) {
@@ -169,8 +182,7 @@ public class WebHookNotifier {
                 OutputStream os = conn.getOutputStream();
                 OutputStreamWriter out = new OutputStreamWriter(os, "UTF-8");
                 BufferedWriter writer = new BufferedWriter(out);
-                String body = evaluate(webHook.getBodyEL(), entityOrEvent, context);
-                writer.write(body);
+                writer.write(paramQuery);
                 writer.flush();
                 writer.close();
                 out.close();
