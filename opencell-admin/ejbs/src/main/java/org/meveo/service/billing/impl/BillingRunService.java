@@ -804,7 +804,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         if (!billingRun.isSkipValidationScript()) {
             if(isBillingRunContainingRejectedInvoices(billingRun.getId())) {
                 return false;
-            } else if (billingRun.getBillingCycle() == null) {
+            } else if(isBillingRunContainingSuspectInvoices(billingRun.getId())) {
+                return false;
+            }
+            else if (billingRun.getBillingCycle() == null) {
                 return true;
             }
             final ScriptInstance billingRunValidationScript = billingRun.getBillingCycle().getBillingRunValidationScript();
@@ -1485,5 +1488,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         return pollingQuery;
     }
 
-
+    public boolean isBillingRunContainingSuspectInvoices(Long billingRunId) {
+        return getEntityManager().createNamedQuery("Invoice.countSuspectByBillingRun", Long.class).setParameter("billingRunId", billingRunId).getSingleResult() > 0;
+    }
 }

@@ -2933,8 +2933,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return A list of invoice identifiers
      */
     public List<Long> getInvoiceIds(Long billingRunId, Long invoiceTypeId, Long sellerId, Date invoiceDate) {
+    	List<InvoiceStatusEnum> statusList=new ArrayList<InvoiceStatusEnum>();
+    	statusList.add(InvoiceStatusEnum.NEW);
+    	statusList.add(InvoiceStatusEnum.DRAFT);
         return getEntityManager().createNamedQuery("Invoice.byBrItSelDate", Long.class).setParameter("billingRunId", billingRunId).setParameter("invoiceTypeId", invoiceTypeId).setParameter("sellerId", sellerId)
-            .setParameter("invoiceDate", invoiceDate).getResultList();
+            .setParameter("invoiceDate", invoiceDate).setParameter("statusList", statusList).getResultList();
     }
 
     /**
