@@ -27,7 +27,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.billing.CounterPeriodDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.response.BaseResponse;
 
@@ -82,11 +81,6 @@ public class AppliedChargeResponseDto extends BaseResponse {
      */
     private List<WalletOperationDto> walletOperations;
     
-
-    /**
-     * Counter periods that were updated during the rating
-     */
-    private List<CounterPeriodDto> counterPeriods = new ArrayList<CounterPeriodDto>();
 
     public AppliedChargeResponseDto() {
         setActionStatus(null);
@@ -260,17 +254,4 @@ public class AppliedChargeResponseDto extends BaseResponse {
         }
     }
 
-	/**
-	 * @return the counterPeriods
-	 */
-	public List<CounterPeriodDto> getCounterPeriods() {
-		return counterPeriods;
-	}
-
-	/**
-	 * @param counterPeriods the counterPeriods to set
-	 */
-	public void setCounterPeriods(List<CounterPeriodDto> counterPeriods) {
-		this.counterPeriods = counterPeriods;
-	}
 }
