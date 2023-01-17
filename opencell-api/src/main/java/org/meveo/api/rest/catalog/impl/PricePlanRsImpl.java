@@ -425,6 +425,17 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 	        return Response.ok(result).build();
 	}
 
+    @Override
+    public Response deleteConvertedPricePlanMatrixLines(Long pricePlanMatrixVersion, String tradingCurrencyCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            pricePlanMatrixVersionApi.removeAllConvertedPricePlanLinesByVersion(pricePlanMatrixVersion, tradingCurrencyCode);
+        } catch (MeveoApiException e) {
+            return errorResponse(e, result);
+        }
+        return Response.ok(result).build();
+    }
+    
 	public Response createConvertedPricePlanVersion(ConvertedPricePlanVersionDto postData) {
 		ActionStatus result = new ActionStatus();
 		try {
