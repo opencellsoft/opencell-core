@@ -39,7 +39,6 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.apiv2.report.VerifyQueryInput;
 import org.meveo.commons.utils.EjbUtils;
-import org.meveo.commons.utils.JoinWrapper;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.report.query.QueryExecutionResultFormatEnum;
@@ -146,7 +145,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         }
         String generatedQuery;
         if (entity.getFields() != null && !entity.getFields().isEmpty()) {
-            generatedQuery = addFields(queryBuilder.getSqlString(false), entity.getFields(), entity.getSortBy());
+            generatedQuery = addFields(queryBuilder.getSqlString(false), entity.getFields(), entity.getSortBy(), entity.getAliases());
         } else {
             generatedQuery = queryBuilder.getSqlString();
         }
@@ -178,21 +177,30 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         return persistenceService;
     }
 
-    private String addFields(String query, List<String> fields, String sortBy) {
+    private String addFields(String query, List<String> fields, String sortBy, Map<String, String> aliases) {
         Set<String> groupByField = new TreeSet<>();
         List<String> aggFields = new ArrayList<>();
         Set<String> fetchJoins = new HashSet<>();
         StringBuilder queryField = new StringBuilder();
+        if(aliases == null) {
+        	aliases = new HashMap<>();
+        }
         for (String field : fields) {
             Matcher matcher = pattern.matcher(field);
             if(matcher.find()) {
                 queryField.append(field);
+                if(aliases.containsKey(field)) {
+                	queryField.append(" as ").append(aliases.get(field));
+                }
                 aggFields.add(field);
                 if (sortBy != null && sortBy.isBlank()) {
                     groupByField.add("id");
                 }
             } else {
                 queryField.append("a." + field);
+                if(aliases.containsKey(field)) {
+                	queryField.append(" as ").append(aliases.get(field));
+                }
                 if(field.contains(".")) {
                 	fetchJoins.add(field.substring(0, field.indexOf(".")));
                 }
