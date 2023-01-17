@@ -149,9 +149,7 @@ public class WebHookNotifier {
                     paramQuery += (!StringUtils.isBlank(paramQuery)) ? "&body=" + bodyEL_evaluated : "body=" + bodyEL_evaluated;
                 }
             }
-            log.info("paramQuery={}", paramQuery);
-
-            log.info("webhook url: {}", url);
+            log.info("webhook url: {} , paramQuery={}", url,paramQuery);
             URL obj = new URL(url);
             conn = (HttpURLConnection) obj.openConnection();
 
@@ -176,17 +174,7 @@ public class WebHookNotifier {
             } else if (WebHookMethodEnum.HTTP_DELETE == webHook.getHttpMethod()) {
                 conn.setRequestMethod("DELETE");
             }
-            if (WebHookMethodEnum.HTTP_GET != webHook.getHttpMethod() && WebHookMethodEnum.HTTP_DELETE != webHook.getHttpMethod()) {
-                conn.setDoOutput(true);
-                OutputStream os = conn.getOutputStream();
-                OutputStreamWriter out = new OutputStreamWriter(os, "UTF-8");
-                BufferedWriter writer = new BufferedWriter(out);
-                writer.write(paramQuery);
-                writer.flush();
-                writer.close();
-                out.close();
-                os.close();
-            }
+            
             conn.setUseCaches(false);
 
             if (WebHookMethodEnum.HTTP_POST == webHook.getHttpMethod() || WebHookMethodEnum.HTTP_PUT == webHook.getHttpMethod()) {
