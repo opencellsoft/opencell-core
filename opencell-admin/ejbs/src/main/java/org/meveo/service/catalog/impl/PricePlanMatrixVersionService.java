@@ -316,7 +316,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         if (endingDate != null && endingDate.before(org.meveo.model.shared.DateUtils.setDateToEndOfDay(new Date()))) {
             throw new ValidationException("ending date must be greater than today");
         }
-        pricePlanMatrixVersion.getValidity().setTo(endingDate);
+        pricePlanMatrixVersion.getValidity().setTo(DateUtils.setTimeToZero(endingDate));
         update(pricePlanMatrixVersion);
         return pricePlanMatrixVersion;
     }
@@ -403,7 +403,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
     public PricePlanMatrixVersionDto load(Long id) {
         PricePlanMatrixVersion pricePlanMatrixVersion = findById(id);
-        return new PricePlanMatrixVersionDto(pricePlanMatrixVersion);
+        return new PricePlanMatrixVersionDto(pricePlanMatrixVersion, true);
     }
 
     @SuppressWarnings("unchecked")
@@ -671,7 +671,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                 });
 
                 //Check if any of line contains an EL value, then add new column
-                if(!line.getValueEL().isEmpty()) {
+                if(!StringUtils.isBlank(line.getValueEL())) {
                     CSVLineRecord.put("description[text]", line.getDescription());
                     CSVLineRecordPosition.put("description[text]", Integer.MAX_VALUE - 2);
                     CSVLineRecord.put("priceWithoutTax[number]", line.getPriceWithoutTax());

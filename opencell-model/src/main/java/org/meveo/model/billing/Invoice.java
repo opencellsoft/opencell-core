@@ -138,7 +138,7 @@ import org.meveo.model.shared.DateUtils;
 
         @NamedQuery(name = "Invoice.sumAmountsByBR", query = "select sum(inv.amountTax),sum(inv.amountWithoutTax), sum(inv.amountWithTax) FROM Invoice inv where inv.billingRun.id=:billingRunId and inv.status <> 'CANCELED'"),
         @NamedQuery(name = "Invoice.billingAccountsByBr", query = "select distinct inv.billingAccount from Invoice inv where inv.billingRun.id=:billingRunId and inv.status <> 'CANCELED'"),
-		@NamedQuery(name = "Invoice.cancelInvoiceById", query = "update Invoice inv set inv.status='CANCELED', inv.auditable.updated=:now WHERE inv.id=:invoiceId AND inv.status <> 'VALIDATED'"),
+		@NamedQuery(name = "Invoice.cancelInvoiceById", query = "update Invoice inv set inv.status='CANCELED', inv.rejectedByRule = null, inv.rejectReason = null, inv.auditable.updated=:now WHERE inv.id=:invoiceId AND inv.status <> 'VALIDATED'"),
 
         @NamedQuery(name = "Invoice.deleteByIds", query = "delete from Invoice inv where inv.id IN (:invoicesIds)"),
         @NamedQuery(name = "Invoice.excludePrpaidInvoices", query = "select inv.id from Invoice inv where inv.id IN (:invoicesIds) and inv.prepaid=false"),
@@ -155,6 +155,7 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.findValidatedInvoiceAdvWithoutOrder", query = "select inv from Invoice inv  where  inv.commercialOrder is null  and inv.status='VALIDATED' and inv.invoiceType.code = 'ADV' and inv.invoiceBalance > 0 and inv.billingAccount.id =:billingAccountId"),
         @NamedQuery(name = "Invoice.findValidatedInvoiceAdvWithOrder", query = "select inv from Invoice inv  where  inv.commercialOrder=:commercialOrder and inv.status='VALIDATED' and inv.invoiceType.code = 'ADV' and inv.invoiceBalance > 0 and inv.billingAccount.id =:billingAccountId"),
         @NamedQuery(name = "Invoice.findWithFuntionalCurrencyDifferentFromOne", query = "SELECT i FROM Invoice i JOIN Provider p ON p.currency.id = i.tradingCurrency.currency.id WHERE i.lastAppliedRate <> :EXPECTED_RATE"),
+        @NamedQuery(name = "Invoice.countByValidationRule", query = "SELECT count(id) FROM Invoice WHERE rejectedByRule.id = :ruleId")
 })
 @NamedNativeQueries({
 	@NamedNativeQuery(name = "Invoice.rollbackAdvance", query = "update billing_invoice set invoice_balance = invoice_balance + li.amount from (select bli.linked_invoice_id, bli.amount from billing_linked_invoices bli join billing_invoice i on i.id = bli.id where i.billing_run_id = :billingRunId and bli.type = 'ADVANCEMENT_PAYMENT') li where li.linked_invoice_id = id")
@@ -755,6 +756,9 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @JoinColumn(name = "invoice_validation_rule_id")
     private InvoiceValidationRule rejectedByRule;
 
+    @Column(name = "converted_invoice_balance", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedInvoiceBalance;
+
     public Invoice() {
 	}
 
@@ -865,6 +869,9 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         this.convertedAmountWithoutTaxBeforeDiscount =
                 this.amountWithoutTaxBeforeDiscount != null
                         ? this.amountWithoutTaxBeforeDiscount.multiply(appliedRate) : ZERO;
+        this.convertedInvoiceBalance =
+                this.invoiceBalance != null
+                        ? this.invoiceBalance.multiply(appliedRate) : ZERO;
     }
 
     public String getInvoiceNumber() {
@@ -1932,4 +1939,11 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 	public void setRejectedByRule(InvoiceValidationRule rejectedByRule) {
 		this.rejectedByRule = rejectedByRule;
 	}
+
+    public BigDecimal getConvertedInvoiceBalance() {
+        return convertedInvoiceBalance;
+    }
+    public void setConvertedInvoiceBalance(BigDecimal convertedInvoiceBalance) {
+        this.convertedInvoiceBalance = convertedInvoiceBalance;
+    }
 }

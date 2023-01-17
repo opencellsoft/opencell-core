@@ -27,7 +27,7 @@ public class CompareOfferLinesAmountScript extends Script{
     private final String VALUE = "value";
     private final String INVOICE = "CONTEXT_ENTITY";
     
-    private final String query = "select id from InvoiceLine where invoice.id = :invoiceId and offerTemplate.id in (:offers) group by id having (AMOUNT OPERATOR :value)";
+    private final String query = "select id from InvoiceLine where invoice.id = :invoiceId and offerTemplate.id in (:offers) group by id having not (AMOUNT OPERATOR :value)";
 
     private InvoiceLineService invoiceLineService = (InvoiceLineService) getServiceInterface("InvoiceLineService");
     
@@ -41,7 +41,7 @@ public class CompareOfferLinesAmountScript extends Script{
         
         Long invoiceId = ((Invoice) methodContext.get(INVOICE)).getId();
         String finalQuery = query.replaceAll("AMOUNT",  "amount" + StringUtils.camelcase((String)methodContext.get(WITH_OR_WITHOUT_TAX)))
-                                 .replace("OPERATOR", ScriptUtils.buildOperator(String.valueOf(methodContext.get(OPERATOR))));
+                                 .replace("OPERATOR", ScriptUtils.buildOperator(String.valueOf(methodContext.get(OPERATOR)), true));
         
         List<OfferTemplate> offers = (List<OfferTemplate>) methodContext.get(OFFERS);
         

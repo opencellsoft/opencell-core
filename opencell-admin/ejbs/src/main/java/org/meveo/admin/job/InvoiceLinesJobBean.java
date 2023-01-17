@@ -20,13 +20,14 @@ import javax.interceptor.Interceptors;
 import org.apache.commons.collections.map.HashedMap;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.job.AggregationConfiguration.DateAggregationOption;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.DateAggregationOption;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -53,6 +54,8 @@ public class InvoiceLinesJobBean extends BaseJobBean {
     @Inject
     private IteratorBasedJobProcessing iteratorBasedJobProcessing;
     
+    public static final String FIELD_PRIORITY_SORT = "billingCycle.priority, auditable.created";
+    
     @Inject
     private BillingRunExtensionService billingRunExtensionService;
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -72,7 +75,8 @@ public class InvoiceLinesJobBean extends BaseJobBean {
             } else {
                 filters.put("inList id", billingRunIds);
             }
-            List<BillingRun> billingRuns = billingRunService.list(new PaginationConfiguration(filters));
+            PaginationConfiguration pagination = new PaginationConfiguration(null, null, filters, null, null, FIELD_PRIORITY_SORT, SortOrder.ASCENDING);
+            List<BillingRun> billingRuns = billingRunService.list(pagination);
             if(billingRuns != null && !billingRuns.isEmpty()) {
                 billingRuns.stream().filter(BillingRun::isExceptionalBR)
                         .forEach(this::addExceptionalBillingRunData);

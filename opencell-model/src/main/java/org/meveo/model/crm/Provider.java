@@ -60,11 +60,13 @@ import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.InvoiceConfiguration;
+import org.meveo.model.billing.IsoIcd;
 import org.meveo.model.billing.Language;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.dwh.GdprConfiguration;
+import org.meveo.model.order.OrderLineTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentPlanPolicy;
@@ -236,6 +238,21 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     @Column(name = "current_matching_code")
     private String currentMatchingCode = "A";
     
+    /**
+     * IsoIcd
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "icd_id")
+    private IsoIcd icdId;
+    
+    public IsoIcd getIcdId() {
+        return icdId;
+    }
+
+    public void setIcdId(IsoIcd icdId) {
+        this.icdId = icdId;
+    }
+
     public Integer getMaximumDelay() {
 		return maximumDelay;
 	}
@@ -432,6 +449,16 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     @Column(name = "portal_message", length = 500)
     @Size(max = 500)
     protected String portalMessage;
+    
+    /**
+     * Order line types allowed
+     */
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @ElementCollection(targetClass = OrderLineTypeEnum.class)
+    @CollectionTable(name = "crm_provider_order_line_type", joinColumns = @JoinColumn(name = "provider_id"))
+    @Column(name = "order_line_type")
+    @Enumerated(EnumType.STRING)
+    private List<OrderLineTypeEnum> orderLineTypes = new ArrayList<>();
     
     public String getCode() {
         return code;
@@ -912,4 +939,12 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     public void setCurrentMatchingCode(String currentMatchingCode) {
         this.currentMatchingCode = currentMatchingCode;
     }
+
+	public List<OrderLineTypeEnum> getOrderLineTypes() {
+		return orderLineTypes;
+	}
+
+	public void setOrderLineTypes(List<OrderLineTypeEnum> orderLineTypes) {
+		this.orderLineTypes = orderLineTypes;
+	}
 }

@@ -21,18 +21,12 @@ public class ConvertedPricePlanMatrixLineDto extends BaseEntityDto {
 	private BigDecimal convertedValue;
 
     @Schema(description = "trading currency")
-	private tradingCurrencyDto tradingCurrency;
+	private TradingCurrencyDto tradingCurrency;
 
 	@Schema(description = "the rate of converted currency")
     private BigDecimal rate;
     @Schema(description = "weither is will with billing account or not")
     private Boolean useForBillingAccounts;
-
-	
-
-	public ConvertedPricePlanMatrixLineDto() {
-	}
-
 
 
     public BigDecimal getConvertedValue() {
@@ -41,7 +35,7 @@ public class ConvertedPricePlanMatrixLineDto extends BaseEntityDto {
 
 
 
-    public tradingCurrencyDto getTradingCurrency() {
+    public TradingCurrencyDto getTradingCurrency() {
         return tradingCurrency;
     }
 
@@ -65,7 +59,7 @@ public class ConvertedPricePlanMatrixLineDto extends BaseEntityDto {
 
 
 
-    public void setTradingCurrency(tradingCurrencyDto tradingCurrency) {
+    public void setTradingCurrency(TradingCurrencyDto tradingCurrency) {
         this.tradingCurrency = tradingCurrency;
     }
 

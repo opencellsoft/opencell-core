@@ -71,6 +71,7 @@ import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.AgreementDateSettingEnum;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.payments.PaymentScheduleTemplate;
@@ -371,7 +372,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     }
 
     public void productServiceInstanciation(ServiceInstance serviceInstance, Product product, BigDecimal subscriptionAmount, BigDecimal terminationAmount, boolean isVirtual) throws BusinessException {
-
         log.debug("Will instantiate service {} for subscription {} quantity {}", serviceInstance.getCode(), serviceInstance.getSubscription().getCode(), serviceInstance.getQuantity());
 
         Subscription subscription = serviceInstance.getSubscription();
@@ -415,7 +415,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         if (!isVirtual) {
             create(serviceInstance);
-            getEntityManager().flush();
         } else {
             serviceInstance.updateSubscribedTillAndRenewalNotifyDates();
         }
@@ -519,7 +518,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             serviceInstance.setSubscriptionDate(new Date());
         }
 
-        if (serviceInstance.getEndAgreementDate() == null) {
+        if (serviceInstance.getEndAgreementDate() == null && !AgreementDateSettingEnum.MANUAL.equals(serviceInstance.getProductVersion().getProduct().getAgreementDateSetting())) {
             serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
         }
 

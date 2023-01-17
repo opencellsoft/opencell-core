@@ -112,8 +112,9 @@
         "composites": {
           "client": {
             "opencell-web": [
+              "administrateur",
               "apiAdministrateur",
-              "administrateur"
+              "genApiFull.list"
             ],
             "opencell-portal": [
               "ADMIN"
@@ -1132,6 +1133,14 @@
           "composite": false,
           "clientRole": true,
           "containerId": "d4a3eb0d-a156-4f61-8d93-2298dc65af96",
+          "attributes": {}
+        },
+        {
+          "id": "e629ad98-8dd7-11ed-a1eb-0242ac120002",
+          "name": "show_obsolete_legacy",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "eeeb2d58-8dd7-11ed-a1eb-0242ac120002",
           "attributes": {}
         },
         {
@@ -12297,6 +12306,7 @@
               "roles": "[{\"id\":\"opencell-web/useJob\",\"required\":false}]"
             }
           },
+          
           {
             "id": "978e5d5f-f867-40c5-9d11-19e080f8b09e",
             "name": "Role languageManagement",
@@ -14059,6 +14069,18 @@
             }
           },
           {
+            "id": "52d0f983-6980-40fc-209b-ed1b59aad199",
+            "name": "Page Custom entities - admin - update",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Page Custom entities\"]",
+              "scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
+              "applyPolicies": "[\"Role administrationManagement\"]"
+            }
+          },
+          {
             "id": "22458ec0-1138-4e1b-9761-a7902f2fcfca",
             "name": "Page Rated transactions - read",
             "type": "scope",
@@ -15292,6 +15314,18 @@
               "resources": "[\"Api V1 Customization - entities\"]",
               "scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
               "applyPolicies": "[\"Role apiSuperAdminManagement\"]"
+            }
+          },
+          {
+            "id": "ecaac485-44f5-4b96-a421-168177f1bc77",
+            "name": "Api V1 Customization - entities - admin - update",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Api V1 Customization - entities\"]",
+              "scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
+              "applyPolicies": "[\"Role apiAdministrationVisualization\"]"
             }
           },
           {

@@ -769,13 +769,17 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	        if (isExonerated == null) {
 	            isExonerated = billingAccountService.isExonerated(billingAccount);
 	        }
-			  TaxInfo recalculatedTaxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), 
-					  billingAccount.getCustomerAccount().getCustomer().getSeller(), 
-					  billingAccount, null, 
-					  invoiceLine.getValueDate()!=null?invoiceLine.getValueDate():new Date(), null, 
-				      isExonerated, false, invoiceLine.getTax());
-			  invoiceLine.setTax(recalculatedTaxInfo.tax);
-			  invoiceLine.setTaxRate(recalculatedTaxInfo.tax.getPercent());
+
+            Seller billingAccountSeller = billingAccount.getCustomerAccount().getCustomer() != null ? billingAccount.getCustomerAccount().getCustomer().getSeller() : null;
+            Seller seller = billingAccountSeller == null ? invoiceLine.getInvoice().getSeller() : billingAccountSeller;
+
+	        TaxInfo recalculatedTaxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), 
+	            seller,
+	            billingAccount, null, 
+	            invoiceLine.getValueDate()!=null?invoiceLine.getValueDate():new Date(), null, 
+	                    isExonerated, false, invoiceLine.getTax());
+	        invoiceLine.setTax(recalculatedTaxInfo.tax);
+	        invoiceLine.setTaxRate(recalculatedTaxInfo.tax.getPercent());
 		}
         if(!appProvider.isEntreprise()) {
             BigDecimal taxAmount = NumberUtils.computeTax(invoiceLine.getAmountWithoutTax(),
@@ -1009,7 +1013,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
      * filters : Map of filters
      * Return : QueryBuilder
      */
-    public QueryBuilder fromFilters(Map<String, String> filters) {
+    public QueryBuilder fromFilters(Map<String, Object> filters) {
         QueryBuilder queryBuilder;
         String filterValue = QueryBuilder.getFilterByKey(filters, "SQL");
         if (!StringUtils.isBlank(filterValue)) {
@@ -1324,11 +1328,15 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 .executeUpdate();
     }
     
-    public long getCountBySubscriptionAge(Long invoiceId, String referenceDate, String operator, Date limitDate) {
-    	String query = "select count(*) from InvoiceLine il where il.invoice.id=:id and referenceDate operator :limitDate";
-        return getEntityManager().createQuery(query.replace("operator", operator).replace("referenceDate", referenceDate), Long.class)
+    public List<Date> getCustomSubscriptionAge(Long invoiceId, String referenceDate) {
+    	String query = "select distinct referenceDate from InvoiceLine il where il.invoice.id=:id";
+        return getEntityManager().createQuery(query.replace("referenceDate", referenceDate), Date.class)
         		.setParameter("id", invoiceId)
-        		.setParameter("limitDate", limitDate)
-        		.getSingleResult();
+        		.getResultList();
     }
+
+    public List<Object[]> getTotalDiscountAmountByBR(BillingRun billingRun) {
+		return getEntityManager().createNamedQuery("InvoiceLine.sumAmountsDiscountByBillingAccount")
+				.setParameter("billingRunId", billingRun.getId()).getResultList();
+	}
 }

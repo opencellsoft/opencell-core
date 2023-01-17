@@ -68,6 +68,7 @@ import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.IsoIcd;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.billing.TradingCountry;
@@ -92,6 +93,7 @@ import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.DiscountPlanInstanceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.billing.impl.IsoIcdService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
@@ -134,6 +136,9 @@ public class BillingAccountApi extends AccountEntityApi {
     @Inject
     private TradingLanguageService tradingLanguageService;
 
+    @Inject
+    private IsoIcdService isoIcdService;
+    
     @Inject
     private CustomerAccountService customerAccountService;
 
@@ -594,6 +599,19 @@ public class BillingAccountApi extends AccountEntityApi {
         	if(title.getId() == null)
         		titleService.create(title);
         	billingAccount.setLegalEntityType(title);
+        }
+        
+        if (postData.getIsoICDCode() != null) {
+            IsoIcd isoIcd = isoIcdService.findByCode(postData.getIsoICDCode());
+            if (isoIcd == null) {
+                throw new EntityDoesNotExistsException(IsoIcd.class, postData.getIsoICDCode());
+            }
+            billingAccount.setIcdId(isoIcd);
+        }
+        else {
+            if(providerService.getProvider() != null) {
+                billingAccount.setIcdId(providerService.getProvider().getIcdId());
+            }            
         }
 
         // Update payment method information in a customer account.

@@ -1,5 +1,6 @@
 package org.meveo.api.cpq;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -142,14 +143,17 @@ public class CommercialOrderApi extends BaseApi {
 		final BillingAccount billingAccount = loadEntityByCode(billingAccountService, orderDto.getBillingAccountCode(), BillingAccount.class);
 		order.setBillingAccount(billingAccount);
 		Seller seller = null;
+
 		if(!Strings.isEmpty(orderDto.getSellerCode())) {
 			seller = sellerService.findByCode(orderDto.getSellerCode());
-			if(seller == null)
+			if(seller == null) {
 				throw new EntityDoesNotExistsException(Seller.class, orderDto.getSellerCode());
-		}else {
+			}
+		} else {
 			seller = billingAccount.getCustomerAccount().getCustomer().getSeller();
-			if(seller == null)
-				throw new EntityDoesNotExistsException("the customer is not attached to a seller");
+			if(seller == null) {
+				throw new EntityDoesNotExistsException("No seller found. a seller must be defined either on quote or at customer level");
+			}
 		}
 		order.setSeller(seller);
 		
@@ -327,18 +331,28 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 		if(!Strings.isEmpty(orderDto.getDiscountPlanCode())) {
 			order.setDiscountPlan(loadEntityByCode(discountPlanService, orderDto.getDiscountPlanCode(), DiscountPlan.class));
         }
-		if(!Strings.isEmpty(orderDto.getSellerCode())) {
-			final Seller seller = sellerService.findByCode(orderDto.getSellerCode());
-			if(seller == null)
-				throw new EntityDoesNotExistsException(Seller.class, orderDto.getSellerCode());
-			order.setSeller(seller);
-		}
+
 		if(!Strings.isEmpty(orderDto.getBillingAccountCode())) {
 			final BillingAccount billingAccount = billingAccountService.findByCode(orderDto.getBillingAccountCode());
 			if(billingAccount == null)
 				throw new EntityDoesNotExistsException(BillingAccount.class, orderDto.getBillingAccountCode());
 			order.setBillingAccount(billingAccount);
 		}
+
+		Seller seller = null;
+
+		if(!Strings.isEmpty(orderDto.getSellerCode())) {
+			seller = sellerService.findByCode(orderDto.getSellerCode());
+			if(seller == null) {
+				throw new EntityDoesNotExistsException(Seller.class, orderDto.getSellerCode());
+			}
+		} else {
+			seller = order.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+			if(seller == null) {
+				throw new EntityDoesNotExistsException("No seller found. a seller must be defined either on quote or at customer level");
+			}
+		}
+		order.setSeller(seller);
 		
 		if(!Strings.isEmpty(orderDto.getOrderTypeCode())) {
 			final OrderType orderType = orderTypeService.findByCode(orderDto.getOrderTypeCode());
@@ -1187,7 +1201,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 	        handleMissingParameters();
 	    }
 		for (OrderProductDto orderProductDto : orderProductDtos) {  
-		    if(orderProductDto.getQuantity() == null || orderProductDto.getQuantity().intValue() == 0 )
+		    if(orderProductDto.getQuantity() == null || orderProductDto.getQuantity().equals(BigDecimal.ZERO) )
 		        throw new BusinessApiException("The quantity for product code " + orderProductDto.getProductCode() + " must be great than 0" );
 			OrderProduct orderProduct=populateOrderProduct(orderProductDto,orderOffer,null);  
 			orderProductService.create(orderProduct);

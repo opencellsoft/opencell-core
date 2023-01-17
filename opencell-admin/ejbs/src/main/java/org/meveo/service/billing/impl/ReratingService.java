@@ -144,6 +144,10 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
 
     @Inject
     private RatedTransactionService ratedTransactionService;
+    
+
+    @Inject
+    private UsageRatingService usageRatingService;
 
     /**
      * Re-rate service instance charges
@@ -444,6 +448,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
                         continue;
                     }else {
                         triggerWalletOperation.setStatus(WalletOperationStatusEnum.CANCELED);
+                        triggerWalletOperation.setRejectReason("Origin wallet operation [id= "+operationToRerateId+"}] has been rerated");
                     }
                     walletOperationService.update(triggerWalletOperation);
                     
@@ -464,7 +469,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
                     }
 
                     // Create new T.EDRs
-                    List<EDR> newTEdrs = oneShotRatingService.instantiateTriggeredEDRs(newWO, edr, false);
+                    List<EDR> newTEdrs = oneShotRatingService.instantiateTriggeredEDRs(newWO, edr, false, true);
                     Optional.ofNullable(newTEdrs).orElse(Collections.emptyList())
                             .forEach(newEdr -> edrService.create(newEdr));
 
@@ -493,9 +498,13 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
                         continue;
                     }
                     // Create new T.EDRs
-                    List<EDR> newTEdrs = oneShotRatingService.instantiateTriggeredEDRs(newWO, edr, false);
-                    Optional.ofNullable(newTEdrs).orElse(Collections.emptyList())
-                            .forEach(newEdr -> edrService.create(newEdr));
+                    List<EDR> edrs = usageRatingService.instantiateTriggeredEDRs(newWO, operationToRerate.getEdr(), false, false);
+                    for (EDR e : edrs) {
+                        e.setWalletOperation(newWO);
+                        e.setEventKey(edr.getEventKey());
+                        e.setEventVersion(edr.getEventVersion() != null ? edr.getEventVersion() : null);
+                        edrService.create(e);
+                    }
 
                 } else if (edr.getStatus() == EDRStatusEnum.RATED &&
                         operationToRerate.getRatedTransaction() != null && operationToRerate.getRatedTransaction().getStatus() == RatedTransactionStatusEnum.BILLED) {
@@ -505,6 +514,18 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
                     walletOperationService.update(operationToRerate);
 
                     return;
+                }else {
+                    newWO = createNewWO(oldWOAndNewWO, operationToRerate, useSamePricePlan);
+                    edr.setStatus(EDRStatusEnum.CANCELLED);
+                    edr.setRejectReason("Origin wallet operation [id=" + operationToRerate.getId() + "] has been rerated");
+                    List<EDR> edrs = usageRatingService.instantiateTriggeredEDRs(newWO, operationToRerate.getEdr(), false, false);
+                    for (EDR e : edrs) {
+                        e.setWalletOperation(newWO);
+                        e.setEventKey(edr.getEventKey());
+                        e.setEventVersion(edr.getEventVersion() != null ? edr.getEventVersion() : null);
+                        edrService.create(e);
+                    }
+                    walletOperationService.update(operationToRerate);
                 }
             }
 

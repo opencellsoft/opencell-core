@@ -36,6 +36,7 @@ import org.hibernate.annotations.Type;
  */
 @Entity
 @Table(name = "dwh_chart_bar")
+@Deprecated
 public class BarChart extends Chart {
 
     private static final long serialVersionUID = -3247705449113663454L;

@@ -64,6 +64,7 @@ public class BusinessOfferModelBean extends GenericModuleBean<BusinessOfferModel
 
     public BusinessOfferModelBean() {
         super(BusinessOfferModel.class);
+        showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
     }
 
     @Override

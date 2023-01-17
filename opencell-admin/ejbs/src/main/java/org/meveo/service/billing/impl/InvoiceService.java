@@ -1394,7 +1394,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
                         methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
                         methodContext.put("billingRun", invoice.getBillingRun());
-                        script.execute(methodContext);
+                        scriptInstanceService.execute(scriptInstance.getCode(), methodContext);
                         Object status = methodContext.get(Script.INVOICE_VALIDATION_STATUS);
                         if (status != null && status instanceof InvoiceValidationStatusEnum) {
                             if (InvoiceValidationStatusEnum.REJECTED.equals((InvoiceValidationStatusEnum) status)) {
@@ -1423,9 +1423,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     InvoiceValidationRule validationRule = validationRuleIterator.next();
                     if(DateUtils.isWithinDateWithoutTime(invoice.getInvoiceDate(), validationRule.getValidFrom(), validationRule.getValidTo())) {
                         if(validationRule.getType() == ValidationRuleTypeEnum.SCRIPT) {
-                            ScriptInterface validationRuleScript =
-                                    scriptInstanceService.getScriptInstance(validationRule.getValidationScript());
-                            ScriptInstance scriptInstance = scriptInstanceService.findByCode(validationRule.getValidationScript());
+                        	ScriptInstance scriptInstance = validationRule.getValidationScript();
+                            ScriptInterface validationRuleScript = scriptInstanceService.getScriptInstance(scriptInstance.getCode());
                             if(scriptInstance != null && !MapUtils.isEmpty(validationRule.getRuleValues())){
                                 scriptInstance.getScriptParameters().stream().forEach(sp -> {
                             		if (validationRule.getRuleValues().containsKey(sp.getCode())) {
@@ -1435,48 +1434,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             	});	                        	                            
                             }
                             if(validationRuleScript != null) {
-                                try {
-                                    methodContext.put(Script.RESULT_VALUE, validationRule.getFailStatus());
-                                    validationRuleScript.execute(methodContext);
-                                    Object status = methodContext.get(Script.INVOICE_VALIDATION_STATUS);
-                                    if (status != null && status instanceof InvoiceValidationStatusEnum) {
-                                        if (InvoiceValidationStatusEnum.REJECTED.equals(status)) {
-                                            invoice.setStatus(InvoiceStatusEnum.REJECTED);
-                                            invoice.setRejectReason("Rejected by rule " + validationRule.getDescription());
-                                            invoice.setRejectedByRule(validationRule);
-                                            noValidationError = false;
-                                        } else if (InvoiceValidationStatusEnum.SUSPECT.equals(status)) {
-                                            invoice.setStatus(InvoiceStatusEnum.SUSPECT);
-                                            invoice.setRejectReason("Suspected by rule " + validationRule.getDescription());
-                                            invoice.setRejectedByRule(validationRule);
-                                            noValidationError = false;
-                                        }
-                                    }
-                                } catch (Exception exception) {
-                                    throw new BusinessException(exception);
-                                }
+                                noValidationError = validateRuleScript(invoice, noValidationError, methodContext, validationRule, validationRuleScript);
                             }
                         } else {
-                            Object validationResult =
-                                    evaluateExpression(validationRule.getValidationEL(),
-                                            Map.of("invoice", invoice), Boolean.class);
-                            try {
-                                if(!((Boolean) validationResult)) {
-                                    noValidationError = false;
-                                    if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.SUSPECT) {
-                                        invoice.setStatus(InvoiceStatusEnum.SUSPECT);
-                                        invoice.setRejectReason("Rejected by rule " + validationRule.getDescription());
-                                        invoice.setRejectedByRule(validationRule);
-                                    }
-                                    if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.REJECTED) {
-                                        invoice.setStatus(InvoiceStatusEnum.REJECTED);
-                                        invoice.setRejectedByRule(validationRule);
-                                        invoice.setRejectReason("Suspected by rule " + validationRule.getDescription());
-                                    }
-                                }
-                            } catch (Exception exception) {
-                                throw new BusinessException(exception);
-                            }
+                            noValidationError = validateRuleEL(invoice, noValidationError, validationRule);
                         }
 
                     }
@@ -1486,6 +1447,71 @@ public class InvoiceService extends PersistenceService<Invoice> {
             commit();
         }
     }
+
+    /**
+     * Validate invoice for an invoice validation rule type Script
+     * @param invoice
+     * @param noValidationError
+     * @param methodContext
+     * @param validationRule
+     * @param validationRuleScript
+     * @return false if validation script fails, true else
+     */
+	private boolean validateRuleScript(Invoice invoice, boolean noValidationError, Map<String, Object> methodContext, InvoiceValidationRule validationRule, ScriptInterface validationRuleScript) {
+		try {
+		    methodContext.put(Script.RESULT_VALUE, validationRule.getFailStatus());
+		    invoice.setRejectReason(null);
+		    validationRuleScript.execute(methodContext);
+		    Object status = methodContext.get(Script.INVOICE_VALIDATION_STATUS);
+		    if (status != null && status instanceof InvoiceValidationStatusEnum) {
+		        if (InvoiceValidationStatusEnum.REJECTED.equals(status)) {
+		            invoice.setStatus(InvoiceStatusEnum.REJECTED);
+		            invoice.setRejectedByRule(validationRule);
+		            noValidationError = false;
+		            if (invoice.getRejectReason() == null) invoice.setRejectReason("Rejected by rule " + validationRule.getDescription());
+		        } else if (InvoiceValidationStatusEnum.SUSPECT.equals(status)) {
+		            invoice.setStatus(InvoiceStatusEnum.SUSPECT);
+		            invoice.setRejectedByRule(validationRule);
+		            noValidationError = false;
+		            if (invoice.getRejectReason() == null)  invoice.setRejectReason("Suspected by rule " + validationRule.getDescription());
+		        }
+		    }
+		} catch (Exception exception) {
+		    throw new BusinessException(exception);
+		}
+		return noValidationError;
+	}
+	
+    /**
+     * Validate invoice for an invoice validation rule type EL
+     * @param invoice
+     * @param noValidationError
+     * @param validationRule
+     * @return false if validation EL fails, true else
+     */
+	private boolean validateRuleEL(Invoice invoice, boolean noValidationError, InvoiceValidationRule validationRule) {
+		try {
+			invoice.setRejectReason(null);
+			Object validationResult = evaluateExpression(validationRule.getValidationEL(), Map.of("invoice", invoice), Boolean.class);
+			if (!((Boolean) validationResult)) {
+		        if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.SUSPECT) {
+		            invoice.setStatus(InvoiceStatusEnum.SUSPECT);
+		            invoice.setRejectedByRule(validationRule);
+		            if (invoice.getRejectReason() == null) invoice.setRejectReason("Suspected by rule " + validationRule.getDescription());
+		        }
+		        if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.REJECTED) {
+		            invoice.setStatus(InvoiceStatusEnum.REJECTED);
+		            invoice.setRejectedByRule(validationRule);
+		            if (invoice.getRejectReason() == null) invoice.setRejectReason("Rejected by rule " + validationRule.getDescription());
+		        }
+		        noValidationError = false;
+		    }
+		} catch (Exception exception) {
+		    throw new BusinessException(exception);
+		}
+		return noValidationError;
+	}
+
 
     /**
      * Check if the electronic billing is enabled.
@@ -2157,7 +2183,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             String brPath = billingRun == null ? DateUtils.formatDateWithPattern(invoice.getInvoiceDate(), paramBean.getProperty("meveo.dateTimeFormat.string", "ddMMyyyy_HHmmss")) : billingRun.getId().toString();
 
             xmlFileName = brPath + File.separator + (isInvoiceAdjustment ? paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_") : "")
-                    + (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber());
+                    + getFileNameByStatus(invoice);
         }
 
         if (xmlFileName != null && !xmlFileName.toLowerCase().endsWith(".xml")) {
@@ -2166,6 +2192,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
         xmlFileName = StringUtils.normalizeFileName(xmlFileName);
         return xmlFileName;
     }
+
+    private String getFileNameByStatus(Invoice invoice) {
+        if (invoice.getStatus().equals(InvoiceStatusEnum.DRAFT) || invoice.getStatus().equals(InvoiceStatusEnum.NEW)) {
+            return invoice.getInvoiceType().getCode() + "-" + invoice.getId();
+        }
+        if (invoice.getStatus().equals(InvoiceStatusEnum.VALIDATED)) {
+            return invoice.getInvoiceNumber();
+        }
+        return (invoice.getInvoiceNumber() != null && !StringUtils.isBlank(invoice.getInvoiceNumber())) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber();
+    }
+
 
     /**
      * Get a full path to an invoice's PDF file.
@@ -3213,13 +3250,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         if (billingRun.getComputeDatesAtValidation() != null && !billingRun.getComputeDatesAtValidation()) {
             return;
-        } else if (billingRun.getComputeDatesAtValidation() == null && !billingCycle.getComputeDatesAtValidation()) {
+        } else if (billingRun.getComputeDatesAtValidation() == null && !billingCycle.isComputeDatesAtValidation()) {
             return;
         }
         if (billingRun.getComputeDatesAtValidation() != null && billingRun.getComputeDatesAtValidation()) {
             recalculateDate(invoice, billingRun, billingAccount, billingCycle);
             update(invoice);
-        } else if (billingRun.getComputeDatesAtValidation() == null && billingCycle.getComputeDatesAtValidation()) {
+        } else if (billingRun.getComputeDatesAtValidation() == null && billingCycle.isComputeDatesAtValidation()) {
             recalculateDate(invoice, billingRun, billingAccount, billingCycle);
             update(invoice);
         }
@@ -3251,7 +3288,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         
         if ((billingRun.getComputeDatesAtValidation() != null && billingRun.getComputeDatesAtValidation()) 
-                || (billingRun.getComputeDatesAtValidation() == null && billingCycle.getComputeDatesAtValidation())) {
+                || (billingRun.getComputeDatesAtValidation() == null && billingCycle.isComputeDatesAtValidation())) {
             recalculateDate(invoice, billingRun, billingAccount, billingCycle);
         }
 
@@ -6858,11 +6895,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 BigDecimal amountWithTax = ratedTransactions.stream().map(RatedTransaction::getAmountWithTax).reduce(BigDecimal.ZERO, BigDecimal::add);
                 BigDecimal amountWithoutTax = ratedTransactions.stream().map(RatedTransaction::getAmountWithoutTax).reduce(BigDecimal.ZERO, BigDecimal::add);
                 BigDecimal amountTax = ratedTransactions.stream().map(RatedTransaction::getAmountTax).reduce(BigDecimal.ZERO, BigDecimal::add);
+                BigDecimal quantity = ratedTransactions.stream().map(RatedTransaction::getQuantity).reduce(BigDecimal.ZERO, BigDecimal::add);
 
                 invoiceLine.setAmountWithTax(amountWithTax);
                 invoiceLine.setAmountWithoutTax(amountWithoutTax);
                 invoiceLine.setAmountTax(amountTax);
-                invoiceLine.setRatedTransactions(ratedTransactions);
+                invoiceLine.setQuantity(quantity);
             }
         }
     }
@@ -6955,9 +6993,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     public void triggersCollectionPlanLevelsJob() {
-        JobInstance triggerCollectionPlanLevelsJob_job = jobInstanceService.findByCode("TriggerCollectionPlanLevelsJob_Job");
-        if (triggerCollectionPlanLevelsJob_job != null) {
-            jobExecutionService.executeJob(triggerCollectionPlanLevelsJob_job, Collections.EMPTY_MAP, JobLauncherEnum.TRIGGER);
+        JobInstance triggerCollectionPlanLevelsJob = jobInstanceService.findByCode("TriggerCollectionPlanLevelsJob");
+        if (triggerCollectionPlanLevelsJob != null) {
+            jobExecutionService.executeJob(triggerCollectionPlanLevelsJob, Collections.EMPTY_MAP, JobLauncherEnum.TRIGGER);
         }
     }
 
@@ -7067,6 +7105,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         result.stream().forEach(invoices -> {
             Invoice key = (Invoice)invoices[0];
             Invoice adv = (Invoice)invoices[1];
+            if((key.getCommercialOrder() == null && adv.getCommercialOrder() != null) || (! "ADV".equals(adv.getInvoiceType().getCode()))) {
+            	return;
+            }
             if(invoicesWithAdv.get(key) == null) {
                 List<Invoice> advs = new ArrayList<>();
                 advs.add(adv);
@@ -7127,6 +7168,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         continue;
                     }
                     final BigDecimal amount;
+                    Optional<LinkedInvoice> toUpdate = invoice.getLinkedInvoices().stream()
+                            .filter(li -> li.getLinkedInvoiceValue().getId() == adv.getId()).findAny();
+                    if(toUpdate.isPresent() && toUpdate.get().getLinkedInvoiceValue().getCommercialOrder() != null && invoice.getCommercialOrder() == null) continue;
                     if(adv.getInvoiceBalance().compareTo(remainingAmount) >= 0){
                         amount=remainingAmount;
                         adv.setInvoiceBalance( adv.getInvoiceBalance().subtract(remainingAmount));
@@ -7137,10 +7181,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         adv.setInvoiceBalance(BigDecimal.ZERO);
                     }
                     if(amount.intValue() == ZERO.intValue()) continue;
-					Optional<LinkedInvoice> toUpdate = invoice.getLinkedInvoices().stream()
-							.filter(li -> li.getLinkedInvoiceValue().getId() == adv.getId()).findAny();
 					if (toUpdate.isPresent()) {
-						toUpdate.get().setAmount(toUpdate.get().getAmount().add(amount));
+					        toUpdate.get().setAmount(toUpdate.get().getAmount().add(amount));
 					}
 					else {
 						createNewLinkedInvoice(invoice, amount, adv);
@@ -7188,5 +7230,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	public void rollBackAdvances(BillingRun billingRun) {
 	    getEntityManager().createNamedQuery("Invoice.rollbackAdvance") .setParameter("billingRunId", billingRun.getId()).executeUpdate();
 	}
+	
+    public long countInvoicesByValidationRule(Long ruleId) {
+        return getEntityManager().createNamedQuery("Invoice.countByValidationRule", Long.class)
+                    .setParameter("ruleId", ruleId)
+                    .getSingleResult();
+    }
 
 }

@@ -39,7 +39,10 @@ public class DunningTemplate extends EmailTemplate {
     @OneToMany(mappedBy = "actionNotificationTemplate", fetch = LAZY)
     private List<DunningAction> dunningActions;
 
-    
+    @Column(name = "type_dunning_mode", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private DunningModeEnum typeDunningMode;
+
 	public DunningTemplate() {
 		setType(MessageTemplateTypeEnum.DUNNING); 
 	}
@@ -104,6 +107,14 @@ public class DunningTemplate extends EmailTemplate {
             return false;
         }
         return true;
+    }
+
+    public DunningModeEnum getTypeDunningMode() {
+        return typeDunningMode;
+    }
+
+    public void setType(DunningModeEnum typeDunningMode) {
+        this.typeDunningMode = typeDunningMode;
     }
 
 }
