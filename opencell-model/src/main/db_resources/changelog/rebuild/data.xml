@@ -18901,11 +18901,237 @@ public class CdrFlatFileImportScript extends Script {
     <changeSet id="#INTRD-12625_20221230" author="Bourras"/>
     <changeSet id="#INTRD-13260_20230116" author="hichamELHALOUI"/>
 
+    <changeSet id="#INTRD-12801_INTRD-12806__20230110" author="AbdellatifBARI">
+        <update tableName="meveo_job_instance">
+            <column name="cf_values"><![CDATA[{"nbRuns":[{"long":1}],
+                "waitingMillis":[{"long":0}],
+                "oneFilePerJob":[{"boolean":false}],
+                "FlatFileProcessingJob_inputDir":[{"string":"/imports/massImport/subscription/input"}],
+	            "FlatFileProcessingJob_archiveDir":[{"string":"/imports/massImport/subscription/archive"}],
+                "FlatFileProcessingJob_rejectDir":[{"string":"/imports/massImport/subscription/reject"}],
+	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/massImport/subscription/output"}],
+	            "FlatFileProcessingJob_fileNameExtension":[{"string":"csv"}],
+	            "FlatFileProcessingJob_nbLinesToProcess":[{"long":1}],
+	            "FlatFileProcessingJob_mappingConf":[{"string":"<beanio\r\n\txmlns=\"http://www.beanio.org/2012/03\"\r\n\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\";\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n\t\t\t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_USERACCOUNT_CODE*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_CODE*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_STATUS\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_DESCRIPTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_OFFER_CODE*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SELLER_CODE*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_DATE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ENDAGREEMENTDATE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_TERMINATIONDATE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUB_BC*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUB_INITTERMTYPE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUB_DURATIONTYPE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUB_INITTERMLENGTH\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUB_INITTERMUNIT\"  ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUB_ENDTERMACTION\"  ignore=\"true\" />\r\n\t\t\t<field name=\"OC_SUB_TERMINATIONREASON\"  ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUB_EBILL\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUB_EBILLEMAIL\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUB_EBILLEMAILS\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_USERACCOUNT_CODE\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_CODE\"/>\r\n\t\t\t<field name=\"OC_STATUS\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_DESCRIPTION\" />\r\n\t\t\t<field name=\"OC_OFFER_CODE\" />\r\n\t\t\t<field name=\"OC_SELLER_CODE\" />\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_DATE\" />\r\n\t\t\t<field name=\"OC_ENDAGREEMENTDATE\" />\r\n\t\t\t<field name=\"OC_TERMINATIONDATE\" />\r\n\t\t\t<field name=\"OC_SUB_BC\" />\r\n\t\t\t<field name=\"OC_SUB_INITTERMTYPE\" />\r\n\t\t\t<field name=\"OC_SUB_DURATIONTYPE\" />\r\n\t\t\t<field name=\"OC_SUB_INITTERMLENGTH\" />\r\n\t\t\t<field name=\"OC_SUB_INITTERMUNIT\" />\r\n\t\t\t<field name=\"OC_SUB_ENDTERMACTION\" />\r\n\t\t\t<field name=\"OC_SUB_TERMINATIONREASON\" />\r\n\t\t\t<field name=\"OC_SUB_EBILL\" />\r\n\t\t\t<field name=\"OC_SUB_EBILLEMAIL\" />\r\n\t\t\t<field name=\"OC_SUB_EBILLEMAILS\" />\r\n          \t<field name=\"OC_CFS\" type=\"String\" collection=\"list\" minOccurs=\"0\" maxOccurs=\"unbounded\" />\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}],
+                "FlatFileProcessingJob_scriptsFlow":[{"string":"org.meveo.service.script.SubscriptionMassImportScript"}],
+                "FlatFileProcessingJob_recordVariableName":[{"string":"record"}],
+                "FlatFileProcessingJob_originFilename":[{"string":"origin_filename"}],
+                "FlatFileProcessingJob_formatTransfo":[{"string":"None"}],
+                "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}]}]]></column>
+            <where>code='massImportSubscriptionJob'</where>
+        </update>
+        <update tableName="meveo_job_instance">
+            <column name="cf_values"><![CDATA[{"nbRuns":[{"long":1}],
+                "waitingMillis":[{"long":0}],
+                "oneFilePerJob":[{"boolean":false}],
+                "FlatFileProcessingJob_inputDir":[{"string":"/imports/massImport/serviceInstance/input"}],
+	            "FlatFileProcessingJob_archiveDir":[{"string":"/imports/massImport/serviceInstance/archive"}],
+                "FlatFileProcessingJob_rejectDir":[{"string":"/imports/massImport/serviceInstance/reject"}],
+	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/massImport/serviceInstance/output"}],
+	            "FlatFileProcessingJob_fileNameExtension":[{"string":"csv"}],
+	            "FlatFileProcessingJob_nbLinesToProcess":[{"long":1}],
+	            "FlatFileProcessingJob_mappingConf":[{"string":"<beanio\r\n\txmlns=\"http://www.beanio.org/2012/03\"\r\n\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\";\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n\t\t\t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_CODE*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SI_CODE*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SI_DESC\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_PRODUCT_CODE*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_PRODUCT_QTY\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_PRODUCT_DELIV_DT\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_CODE\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_SI_CODE\"/>\r\n\t\t\t<field name=\"OC_SI_DESC\"/>\r\n\t\t\t<field name=\"OC_PRODUCT_CODE\" />\r\n\t\t\t<field name=\"OC_PRODUCT_QTY\" />\r\n\t\t\t<field name=\"OC_PRODUCT_DELIV_DT\" />\r\n          \t<field name=\"OC_CFS\" type=\"String\" collection=\"list\" minOccurs=\"0\" maxOccurs=\"unbounded\" />\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}],
+                "FlatFileProcessingJob_scriptsFlow":[{"string":"org.meveo.service.script.ServiceInstanceImportScript"}],
+                "FlatFileProcessingJob_recordVariableName":[{"string":"record"}],
+                "FlatFileProcessingJob_originFilename":[{"string":"origin_filename"}],
+                "FlatFileProcessingJob_formatTransfo":[{"string":"None"}],
+                "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}]}]]></column>
+            <where>code='massImportServiceInstanceJob'</where>
+        </update>
+        <update tableName="meveo_job_instance">
+            <column name="cf_values"><![CDATA[{"nbRuns":[{"long":1}],
+                "waitingMillis":[{"long":0}],
+                "oneFilePerJob":[{"boolean":false}],
+                "FlatFileProcessingJob_inputDir":[{"string":"/imports/massImport/attributeInstance/input"}],
+	            "FlatFileProcessingJob_archiveDir":[{"string":"/imports/massImport/attributeInstance/archive"}],
+                "FlatFileProcessingJob_rejectDir":[{"string":"/imports/massImport/attributeInstance/reject"}],
+	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/massImport/attributeInstance/output"}],
+	            "FlatFileProcessingJob_fileNameExtension":[{"string":"csv"}],
+	            "FlatFileProcessingJob_nbLinesToProcess":[{"long":1}],
+	            "FlatFileProcessingJob_mappingConf":[{"string":"<beanio\r\n\txmlns=\"http://www.beanio.org/2012/03\"\r\n\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\";\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n\t\t\t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_CODE*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SERVICE_INSTANCE_CODE*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SI_ATTRIB_CODE*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SI_ATTRIB_VALUE\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_CODE\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_SERVICE_INSTANCE_CODE\"/>\r\n\t\t\t<field name=\"OC_SI_ATTRIB_CODE\"/>\r\n\t\t\t<field name=\"OC_SI_ATTRIB_VALUE\" />\r\n          \t<field name=\"OC_CFS\" type=\"String\" collection=\"list\" minOccurs=\"0\" maxOccurs=\"unbounded\" />\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}],
+                "FlatFileProcessingJob_scriptsFlow":[{"string":"org.meveo.service.script.AttributeInstanceImportScript"}],
+                "FlatFileProcessingJob_recordVariableName":[{"string":"record"}],
+                "FlatFileProcessingJob_originFilename":[{"string":"origin_filename"}],
+                "FlatFileProcessingJob_formatTransfo":[{"string":"None"}],
+                "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}]}]]></column>
+            <where>code='massImportAttributeInstance'</where>
+        </update>
+        <update tableName="meveo_job_instance">
+            <column name="cf_values"><![CDATA[{"nbRuns":[{"long":1}],
+                "waitingMillis":[{"long":0}],
+                "oneFilePerJob":[{"boolean":false}],
+                "FlatFileProcessingJob_inputDir":[{"string":"/imports/massImport/accessPoint/input"}],
+	            "FlatFileProcessingJob_archiveDir":[{"string":"/imports/massImport/accessPoint/archive"}],
+                "FlatFileProcessingJob_rejectDir":[{"string":"/imports/massImport/accessPoint/reject"}],
+	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/massImport/accessPoint/output"}],
+	            "FlatFileProcessingJob_fileNameExtension":[{"string":"csv"}],
+	            "FlatFileProcessingJob_nbLinesToProcess":[{"long":1}],
+	            "FlatFileProcessingJob_mappingConf":[{"string":"<beanio\r\n\txmlns=\"http://www.beanio.org/2012/03\"\r\n\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\";\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n\t\t\t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_CODE*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACCESSPOINT_CODE*\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACCESSPOINT_STARTDATE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACCESSPOINT_ENDDATE\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_SUBSCRIPTION_CODE\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ACCESSPOINT_CODE\"/>\r\n\t\t\t<field name=\"OC_ACCESSPOINT_STARTDATE\"/>\r\n\t\t\t<field name=\"OC_ACCESSPOINT_ENDDATE\" />\r\n          \t<field name=\"OC_CFS\" type=\"String\" collection=\"list\" minOccurs=\"0\" maxOccurs=\"unbounded\" />\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}],
+                "FlatFileProcessingJob_scriptsFlow":[{"string":"org.meveo.service.script.AccessPointImportScript"}],
+                "FlatFileProcessingJob_recordVariableName":[{"string":"record"}],
+                "FlatFileProcessingJob_originFilename":[{"string":"origin_filename"}],
+                "FlatFileProcessingJob_formatTransfo":[{"string":"None"}],
+                "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}]}]]></column>
+            <where>code='massImportAccessPoint'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="#INTRD-13192_20230116" author="AbdellatifBARI">
+        <update tableName="meveo_script_instance">
+            <column name="script">
+                <![CDATA[
+package org.meveo.service.script;
+
+import org.apache.commons.lang3.StringUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.billing.SubscriptionApi;
+import org.meveo.api.dto.billing.AttributeInstanceDto;
+import org.meveo.api.dto.billing.ServiceToUpdateDto;
+import org.meveo.api.dto.billing.UpdateServicesRequestDto;
+import org.meveo.api.dto.cpq.ProductToInstantiateDto;
+import org.meveo.model.billing.AttributeInstance;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
+import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.script.GenericMassImportScript;
+
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+public class ServiceInstanceImportScript extends GenericMassImportScript {
+
+    private static final String DATE_FORMAT_PATTERN = "dd/MM/yyyy";
+    private static final String RECORD_VARIABLE_NAME = "record";
+    private static final String ENTITY = "SERVICE_INSTANCE";
+    private static final String ENTITY_NAME = "ServiceInstance";
+
+    public enum ServiceInstanceActionEnum {
+        CREATE, UPDATE, DELETE
+    }
+
+    private final ServiceInstanceService serviceInstanceService = (ServiceInstanceService) getServiceInterface("ServiceInstanceService");
+    private final SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface("SubscriptionService");
+    private final SubscriptionApi subscriptionApi = (SubscriptionApi) getServiceInterface(SubscriptionApi.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> context) throws BusinessException {
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> recordMap = (Map<String, Object>) context.get(RECORD_VARIABLE_NAME);
+            if (recordMap != null && !recordMap.isEmpty()) {
+                // VALIDATE ENTITY
+                String OC_ENTITY = (String) recordMap.get("OC_ENTITY");
+                if (!ENTITY.equals(OC_ENTITY)) {
+                    throw new ValidationException("value of OC_ENTITY is not correct: " + OC_ENTITY);
+                }
+                // VALIDATE ACTION
+                String OC_ACTION = (String) recordMap.get("OC_ACTION");
+                if (Stream.of(ServiceInstanceActionEnum.values()).noneMatch(e -> e.toString().equals(OC_ACTION))) {
+                    throw new ValidationException("value of OC_ACTION is not correct: " + OC_ACTION);
+                }
+
+                ServiceInstanceActionEnum action = ServiceInstanceActionEnum.valueOf(OC_ACTION);
+
+                ProductToInstantiateDto productToInstantiateDto = validateAndGetServiceInstance(action, recordMap);
+
+                if (ServiceInstanceActionEnum.CREATE.equals(action)) {
+                    setServiceInstanceValues(recordMap, productToInstantiateDto);
+
+                    Subscription subscription = subscriptionService.findByCode((String) recordMap.get("OC_SUBSCRIPTION_CODE"));
+                    ServiceInstance si = serviceInstanceService.findByCodeAndCodeSubscriptionId((String) recordMap.get("OC_PRODUCT_CODE"), subscription);
+                    this.setCFValues(recordMap, si, ENTITY_NAME);
+                }
+            }
+        } catch (Exception exception) {
+            throw new BusinessException(exception);
+        }
+    }
+
+    private ProductToInstantiateDto validateAndGetServiceInstance(ServiceInstanceActionEnum action, Map<String, Object> recordMap) {
+        ProductToInstantiateDto productToInstantiateDto = null;
+
+        String OC_subscription_code = (String) recordMap.get("OC_SUBSCRIPTION_CODE");
+        if (OC_subscription_code.isEmpty()) {
+            throw new ValidationException("subscription_code is required");
+        }
+
+        String OC_si_code = (String) recordMap.get("OC_SI_CODE");
+        if (OC_si_code.isEmpty()) {
+            throw new ValidationException("serviceinstance_code is required");
+        }
+
+        productToInstantiateDto = new ProductToInstantiateDto();
+        Subscription subscription = subscriptionService.findByCode(OC_subscription_code);
+        if (subscription == null) {
+            throw new ValidationException("no subscription found for code: '" + OC_subscription_code + "'");
+        }
+
+        return productToInstantiateDto;
+    }
+
+    private void setServiceInstanceValues(Map<String, Object> recordMap, ProductToInstantiateDto productToInstantiateDto) throws ParseException {
+        String OC_subscription_code = (String) recordMap.get("OC_SUBSCRIPTION_CODE");
+        Subscription subscription = subscriptionService.findByCode(OC_subscription_code);
+
+        // Instantiate products
+        DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
+        dateFormat.setLenient(false);
+
+        String OC_product_deliv_dt = (String) recordMap.get("OC_PRODUCT_DELIV_DT");
+        productToInstantiateDto.setProductCode((String) recordMap.get("OC_PRODUCT_CODE"));
+        productToInstantiateDto.setQuantity(new BigDecimal((String) recordMap.get("OC_PRODUCT_QTY")));
+        try {
+            Date deliveryDate = StringUtils.isEmpty(OC_product_deliv_dt) ? null : dateFormat.parse(OC_product_deliv_dt);
+            productToInstantiateDto.setDeliveryDate(deliveryDate);
+        } catch(ParseException e) {
+            throw new ValidationException("Incorrect date format for delivery date. Please use 'dd/MM/yyyy'");
+        }
+
+        List<ProductToInstantiateDto> products = new ArrayList<>();
+        products.add(productToInstantiateDto);
+
+        subscriptionApi.instanciateProduct(OC_subscription_code, products);
+        serviceInstanceService.getEntityManager().flush();
+
+        // Save SI description
+        UpdateServicesRequestDto requestDto = new UpdateServicesRequestDto();
+        ServiceInstance serviceInstance = serviceInstanceService.findByCodeAndCodeSubscriptionId((String) recordMap.get("OC_PRODUCT_CODE"), subscription);
+
+        List<AttributeInstance> attributeInstances = serviceInstance.getAttributeInstances();
+        List<AttributeInstanceDto> aiDto = attributeInstances.stream().map(attribute ->
+                new AttributeInstanceDto(attribute, null)).collect(Collectors.toList());
+
+        requestDto.setSubscriptionCode((String) recordMap.get("OC_SUBSCRIPTION_CODE"));
+        ServiceToUpdateDto serviceDto = new ServiceToUpdateDto();
+        serviceDto.setId(serviceInstance.getId());
+        serviceDto.setCode(serviceInstance.getCode());
+        serviceDto.setDescription((String) recordMap.get("OC_SI_DESC"));
+
+        requestDto.addService(serviceDto);
+        requestDto.setAttributeInstances(aiDto);
+
+        subscriptionApi.updateServiceInstance(requestDto);
+    }
+}
+				]]>
+            </column>
+            <where>code='org.meveo.service.script.ServiceInstanceImportScript'</where>
+        </update>
+    </changeSet>
+
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
     </changeSet>
-
-    <changeSet id="#INTRD-12801_INTRD-12806__20230110" author="AbdellatifBARI" />
     
 </databaseChangeLog>
