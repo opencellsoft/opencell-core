@@ -446,7 +446,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			if (serviceInstance.getDeliveryDate().after(new Date())) {
 				serviceInstance.setStatus(InstanceStatusEnum.PENDING);
 			}
-			subscription.addServiceInstance(serviceInstance);
+			//subscription.addServiceInstance(serviceInstance);
 			return serviceInstance;
 	}
 	
