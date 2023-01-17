@@ -32,7 +32,7 @@
         <version.sips-payment-sdk>1.4.0</version.sips-payment-sdk>
         <jackson.version>2.11.3</jackson.version> <!-- wildfly 22 -->
         <dbtype>generic</dbtype>
-
+        <version.avalara-sdk>22.11.0</version.avalara-sdk>
         <java.version>11</java.version>
         <primefaces.version>7.0</primefaces.version>
         <swagger.version>2.2.0</swagger.version>
