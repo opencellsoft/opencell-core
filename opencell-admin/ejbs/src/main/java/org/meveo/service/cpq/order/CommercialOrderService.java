@@ -427,7 +427,11 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 
 			List<SubscriptionChargeInstance> oneShotCharges = serviceInstance.getSubscriptionChargeInstances()
 					.stream()
-					.filter(oneShotChargeInstance -> ((OneShotChargeTemplate)oneShotChargeInstance.getChargeTemplate()).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.SUBSCRIPTION)
+					.filter(
+							oneShotChargeInstance ->
+									((OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate()).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.SUBSCRIPTION
+											|| ((OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate()).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.INVOICING_PLAN
+					)
 					.map(oneShotChargeInstance -> {
 						oneShotChargeInstance.setQuantity(serviceInstance.getQuantity());
 						oneShotChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
