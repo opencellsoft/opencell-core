@@ -19,6 +19,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
@@ -27,8 +29,8 @@ import org.xml.sax.InputSource;
 @Stateless
 public class ValidationByNumberCountryService {
     
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
+    @Inject private ParamBeanFactory paramBeanFactory;
+    protected Logger log = LoggerFactory.getLogger(getClass());
     
     public boolean getValByValNbCountryCode(String valNb, String countryCode) {
         ParamBean instanceParamBean = paramBeanFactory.getInstance();
@@ -55,7 +57,8 @@ public class ValidationByNumberCountryService {
             String responseStr = cf.get();
             valueValideNodeBoolean = parseXml(responseStr);
         } catch (Exception e) {
-            System.err.println("Error occurred while sending SOAP Request to Server");
+            e.printStackTrace();
+            log.error("getValByValNbCountryCode error ", e.getMessage());
             throw new BusinessException(e.getMessage());
         }
         
@@ -79,6 +82,7 @@ public class ValidationByNumberCountryService {
         catch (Exception e) 
         {
             e.printStackTrace();
+            log.error("convertStringToXMLDocument error ", e.getMessage());
         }
         return null;
     }
