@@ -2361,7 +2361,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         cancelInvoiceAndRts(invoice);
         List<Long> invoicesIds = new ArrayList<>();
         invoicesIds.add(invoice.getId());
-        invoiceLinesService.cancelIlByInvoices(invoicesIds);
+        invoiceLinesService.uninvoiceILs(invoicesIds);//reopen ILs not created from  RTs
+        invoiceLinesService.cancelIlByInvoices(invoicesIds);//cancell ILs created from RTs
         if (remove) {
             super.remove(invoice);
         } else {
@@ -2912,9 +2913,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     @SuppressWarnings("unchecked")
     public List<InvoicesToNumberInfo> getInvoicesToNumberSummary(Long billingRunId) {
+    	List<InvoiceStatusEnum> statusList=new ArrayList<InvoiceStatusEnum>();
+    	statusList.add(InvoiceStatusEnum.NEW);
+    	statusList.add(InvoiceStatusEnum.DRAFT);
 
         List<InvoicesToNumberInfo> invoiceSummaries = new ArrayList<>();
-        List<Object[]> summary = getEntityManager().createNamedQuery("Invoice.invoicesToNumberSummary").setParameter("billingRunId", billingRunId).getResultList();
+        List<Object[]> summary = getEntityManager().createNamedQuery("Invoice.invoicesToNumberSummary").setParameter("billingRunId", billingRunId).setParameter("statusList", statusList).getResultList();
 
         for (Object[] summaryInfo : summary) {
             invoiceSummaries.add(new InvoicesToNumberInfo((Long) summaryInfo[0], (Long) summaryInfo[1], (Date) summaryInfo[2], (Long) summaryInfo[3]));
