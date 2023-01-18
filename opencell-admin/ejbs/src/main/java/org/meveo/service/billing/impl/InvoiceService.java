@@ -2358,9 +2358,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public void cancelInvoice(Invoice invoice, boolean remove) {
         checkNonValidateInvoice(invoice);
-        cancelInvoiceAndRts(invoice);
         List<Long> invoicesIds = new ArrayList<>();
         invoicesIds.add(invoice.getId());
+        ratedTransactionService.deleteSupplementalRTs(invoicesIds);
+        ratedTransactionService.uninvoiceRTs(invoicesIds);
         invoiceLinesService.uninvoiceILs(invoicesIds);//reopen ILs not created from  RTs
         invoiceLinesService.cancelIlByInvoices(invoicesIds);//cancell ILs created from RTs
         if (remove) {
