@@ -6568,6 +6568,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 toUpdate.setLastAppliedRate(lastAppliedRate);
                 toUpdate.setLastAppliedRateDate(new Date());
 
+                refreshAdvanceInvoicesConvertedAmount(toUpdate, lastAppliedRate);
+
                 refreshInvoiceLineAndAggregateAmounts(toUpdate);
             }
         }
@@ -6662,6 +6664,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         return update(toUpdate);
+    }
+
+    private void refreshAdvanceInvoicesConvertedAmount(Invoice toUpdate, BigDecimal lastAppliedRate) {
+        toUpdate.getLinkedInvoices().stream().filter(linkedInvoice ->
+                        linkedInvoice.getType().equals(InvoiceTypeEnum.ADVANCEMENT_PAYMENT)
+                                && linkedInvoice.getLinkedInvoiceValue().getStatus().equals(InvoiceStatusEnum.VALIDATED))
+                .forEach(linkedInvoice -> linkedInvoice.setConvertedAmount(linkedInvoice.getAmount().multiply(lastAppliedRate)));
     }
 
     /**
