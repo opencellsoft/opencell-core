@@ -88,7 +88,8 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                 for (BillingRun billingRun : billingRuns) {
                     billingRunService.createAggregatesAndInvoiceWithIl(billingRun, 1, 0, jobInstance.getId(), true);
                     if(!billingRunService.isBillingRunValid(billingRun)) {
-                    	billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.REJECTED, null);
+                    	billingRun.setStatus(BillingRunStatusEnum.REJECTED);
+                    	billingRunService.update(billingRun);
                         billingRunService.applyAutomaticValidationActions(billingRun);
                     }
                    
