@@ -30,7 +30,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.QueryHint;
 import javax.validation.constraints.Size;
 
-import org.hibernate.jpa.QueryHints;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
 
