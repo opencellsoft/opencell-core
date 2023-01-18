@@ -1106,6 +1106,7 @@
             <column name="calendar" valueNumeric="-1" />
             <column name="uuid" value="BillingCycle-1" />
             <column name="billing_cycle_type" value="BILLINGACCOUNT" />
+            <column name="filters" value='{"billingAccount.billingCycle.code":"{{billingCycle.code}}"}' />
         </insert>
         <insert tableName="billing_cycle">
             <column name="id" valueNumeric="-2" />
@@ -1120,6 +1121,7 @@
             <column name="calendar" valueNumeric="-1" />
             <column name="uuid" value="BillingCycle-2" />
             <column name="billing_cycle_type" value="BILLINGACCOUNT" />
+            <column name="filters" value='{"billingAccount.billingCycle.code":"{{billingCycle.code}}"}' />
         </insert>
     </changeSet>
     
@@ -2683,6 +2685,7 @@
 	<changeSet id="#INTRD-10199_20221010" author="TarikFA." />
 	<changeSet id="#INTRD-10592_20221014" author="TarikFA." />
     <changeSet id="INTRD-11122_20221104" author="HichamELHALOUI" />
+    <changeSet id="INTRD-13237_20230119" author="HichamELHALOUI" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

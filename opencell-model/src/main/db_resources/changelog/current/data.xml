@@ -18715,4 +18715,17 @@ public class ImportJobNotification extends Script {
 		</update>
 	</changeSet>
 
+    <changeSet id="INTRD-13237_20230119" author="HichamELHALOUI" >
+        <update tableName="billing_cycle">
+			<column name="filters" value='{"billingAccount.billingCycle.code":"{{billingCycle.code}}"}'></column>
+			<where>filters = null and  billing_cycle_type='BILLINGACCOUNT'</where>
+		</update>
+
+        <update tableName="billing_cycle">
+			<column name="filters" value='{"subscription.billingCycle.code":"{{billingCycle.code}}"}'></column>
+			<where>filters = null and  billing_cycle_type='SUBSCRIPTION'</where>
+		</update>
+
+    </changeSet>
+
 </databaseChangeLog>

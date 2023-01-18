@@ -37,6 +37,8 @@ import org.meveo.service.script.ScriptInstanceService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.BiFunction;
 
 /**
@@ -238,7 +240,18 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
 		if (dto.getPriority() != null) {
 			entity.setPriority(dto.getPriority());
 		}
-        entity.setFilters(dto.getFilters());
+
+        if(dto.getFilters() == null || dto.getFilters().isEmpty())
+        {
+            Map filters = new LinkedHashMap();
+            switch (dto.getType()){
+                case BILLINGACCOUNT: filters.put("billingAccount.billingCycle.code", "{{billingCycle.code}}"); entity.setFilters(filters);break;
+                case SUBSCRIPTION: filters.put("subscription.billingCycle.code", "{{billingCycle.code}}"); entity.setFilters(filters); break;
+            }
+
+        }else {
+            entity.setFilters(dto.getFilters());
+        }
         
         if (dto.getDisableAggregation() != null) {
             entity.setDisableAggregation(dto.getDisableAggregation());
