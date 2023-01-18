@@ -5,6 +5,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -15,6 +17,7 @@ import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.DatePeriodDto;
+import org.meveo.api.dto.catalog.ConvertedPricePlanInputDto;
 import org.meveo.api.dto.catalog.ConvertedPricePlanVersionDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -25,11 +28,14 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.catalog.ConvertedPricePlanMatrixLine;
 import org.meveo.model.catalog.ConvertedPricePlanVersion;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.contract.ContractItem;
@@ -38,6 +44,7 @@ import org.meveo.model.cpq.enums.PriceVersionTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.TradingCurrencyService;
+import org.meveo.service.catalog.impl.ConvertedPricePlanMatrixLineService;
 import org.meveo.service.catalog.impl.ConvertedPricePlanVersionService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
@@ -55,6 +62,8 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
     private TradingCurrencyService tradingCurrencyService;
     @Inject
     private ConvertedPricePlanVersionService convertedPricePlanVersionService;
+    @Inject
+    private ConvertedPricePlanMatrixLineService convertedPricePlanMatrixLineService;
 
     @Override
     public PricePlanMatrixVersion create(PricePlanMatrixVersionDto pricePlanMatrixVersionDto) throws MeveoApiException, BusinessException {
@@ -352,6 +361,20 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         return result;
     }
 
+
+    public void removeAllConvertedPricePlanLinesByVersion(Long pricePlanMatrixVersionId, String tradingCurrencyCode) {
+        PricePlanMatrixVersion planMatrixVersion = pricePlanMatrixVersionService.findById(pricePlanMatrixVersionId);
+        if(planMatrixVersion == null) {
+            throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, pricePlanMatrixVersionId);
+        }
+        if(tradingCurrencyCode == null) {
+            throw new MissingParameterException("tradingCurrenyCode");
+        }
+        planMatrixVersion.getLines().forEach(ppml -> {
+            ppml.getConvertedPricePlanMatrixLines().removeIf(cppml -> cppml.getTradingCurrency() != null && cppml.getTradingCurrency().getCurrency() != null && cppml.getTradingCurrency().getCurrency().getCurrencyCode().equals(tradingCurrencyCode));
+        });
+    }
+
     @Transactional
     public ConvertedPricePlanVersion createConvertedPricePlanVersion(ConvertedPricePlanVersionDto dtoData) throws MeveoApiException, BusinessException {
         checkMandatoryFields(dtoData);
@@ -454,5 +477,42 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
 			throw new BusinessException("Cannot delete converted price plan version for published price plan version");
 		}
 		convertedPricePlanVersionService.remove(entity);
+	}
+
+    public void disableAllConvertedPricePlan(ConvertedPricePlanInputDto convertedPricePlanInputDto) {
+    	enableOrDisabbleConvertedPrice(convertedPricePlanInputDto, false);
+		
+	}
+
+	public void enableAllConvertedPricePlan(ConvertedPricePlanInputDto convertedPricePlanInputDto) {
+		enableOrDisabbleConvertedPrice(convertedPricePlanInputDto, true);
+	}
+	/**
+	 * 
+	 * @param convertedPricePlanInputDto
+	 * @param enable true converted price will be enable otherwise disabled
+	 */
+	private void enableOrDisabbleConvertedPrice(ConvertedPricePlanInputDto convertedPricePlanInputDto, boolean enable) {
+		if(convertedPricePlanInputDto.getPricePlanMatrixVersionId() == null) {
+			missingParameters.add("pricePlanMatrixVersionId");
+		}
+		if(convertedPricePlanInputDto.getTradingCurrency() == null || (convertedPricePlanInputDto.getTradingCurrency().getId() == null && StringUtils.isBlank(convertedPricePlanInputDto.getTradingCurrency().getCode()))) {
+			missingParameters.add("tradingCurrency");
+		}
+		handleMissingParameters();
+		PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findById(convertedPricePlanInputDto.getPricePlanMatrixVersionId());
+		if(pricePlanMatrixVersion == null) {
+			throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, convertedPricePlanInputDto.getPricePlanMatrixVersionId());
+		}
+		TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCodeOrId(convertedPricePlanInputDto.getTradingCurrency().getCode(), convertedPricePlanInputDto.getTradingCurrency().getId());
+		if(tradingCurrency == null) {
+			throw new EntityDoesNotExistsException(TradingCurrency.class, "(" + convertedPricePlanInputDto.getTradingCurrency().getCode() + "," + convertedPricePlanInputDto.getTradingCurrency().getId() + ")");
+		}
+		Set<Long> idsToUpdate =pricePlanMatrixVersion.getLines().stream()
+								.map(PricePlanMatrixLine::getConvertedPricePlanMatrixLines).flatMap(Set::stream)
+								.filter(converted -> converted.getTradingCurrency().getId() == tradingCurrency.getId())
+								.map(ConvertedPricePlanMatrixLine::getId)
+								.collect(Collectors.toSet());
+		convertedPricePlanMatrixLineService.disableOrEnableAllConvertedPricePlanMatrixLine(idsToUpdate, enable);
 	}
 }

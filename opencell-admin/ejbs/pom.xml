@@ -673,6 +673,12 @@
             <artifactId>onlinepayments-sdk-java</artifactId>
             <version>${version.worldline.onlinepayments-sdk}</version>
         </dependency>
+       
+         <dependency>
+	       <groupId>net.avalara.avatax</groupId>
+		   <artifactId>avatax-rest-v2-api-java_2.11</artifactId>
+		   <version>${version.avalara-sdk}</version>
+		 </dependency>
 
         <dependency>
             <groupId>org.keycloak</groupId>
