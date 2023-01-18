@@ -1,6 +1,5 @@
 package org.meveo.service.script;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -9,7 +8,7 @@ import java.util.Set;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.DiscountPlanInstance;
+import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.catalog.DiscountPlan;
@@ -18,6 +17,7 @@ import org.meveo.model.cpq.commercial.CommercialOrderEnum;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.DiscountPlanInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
@@ -40,6 +40,7 @@ public class OrderValidationScript extends Script {
     private ServiceInstanceService serviceInstanceService = (ServiceInstanceService) getServiceInterface("ServiceInstanceService");
     private ServiceSingleton serviceSingleton = (ServiceSingleton) getServiceInterface("ServiceSingleton");
     private DiscountPlanInstanceService discountPlanInstanceService = (DiscountPlanInstanceService) getServiceInterface("DiscountPlanInstanceService");
+	private BillingCycleService billingCycleService = (BillingCycleService) getServiceInterface("BillingCycleService");
 
     @Override
     public void execute(Map<String, Object> context) {
@@ -75,6 +76,10 @@ public class OrderValidationScript extends Script {
             subscription.setPaymentMethod(order.getBillingAccount().getCustomerAccount().getPaymentMethods().get(0));
             subscription.setCode(subscription.getSeller().getCode() + "_" + subscription.getUserAccount().getCode() + "_" + offer.getId());
             subscription.setOrder(order);
+            
+            BillingCycle billingCycle = billingCycleService.findByCode("CYC_MONTHLY_01");
+    		subscription.setBillingCycle(billingCycle);
+    		
             commercialOrderService.processSubscriptionAttributes(subscription, offer.getOfferTemplate(), offer.getOrderAttributes());
             subscriptionService.create(subscription);
 

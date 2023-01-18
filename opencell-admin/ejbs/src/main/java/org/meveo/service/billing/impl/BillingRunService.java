@@ -761,6 +761,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param billingRun the billing run to process
      * @throws Exception the exception
      */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void applyAutomaticValidationActions(BillingRun billingRun) {
         if (BillingRunStatusEnum.REJECTED.equals(billingRun.getStatus())) {
             List<InvoiceStatusEnum> toMove = new ArrayList<>();
