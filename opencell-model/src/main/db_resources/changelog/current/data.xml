@@ -18702,4 +18702,17 @@ public class ImportJobNotification extends Script {
         </update>
     </changeSet>
 
+	<changeSet id="#INTRD-12327_20230117" author="AbdellatifBARI">
+		<update tableName="ADM_COUNTRY">
+			<column name="description" value="Réunion"/>
+			<column name="description_i18n" value='{"FRA":"Réunion","ENG":"Réunion"}' />
+			<where>id=177</where>
+		</update>
+		<update tableName="ADM_COUNTRY">
+			<column name="description" value="Santo Tomas and Principe"/>
+			<column name="description_i18n" value='{"FRA":"Sao Tomé et Principe","ENG":"Santo Tomas and Principe"}' />
+			<where>id=196</where>
+		</update>
+	</changeSet>
+
 </databaseChangeLog>
