@@ -30,7 +30,7 @@ import org.xml.sax.InputSource;
 public class ValidationByNumberCountryService {
     
     @Inject private ParamBeanFactory paramBeanFactory;
-    protected Logger log = LoggerFactory.getLogger(getClass());
+    protected static Logger log = LoggerFactory.getLogger(ValidationByNumberCountryService.class);
     
     public boolean getValByValNbCountryCode(String valNb, String countryCode) {
         ParamBean instanceParamBean = paramBeanFactory.getInstance();
@@ -57,7 +57,6 @@ public class ValidationByNumberCountryService {
             String responseStr = cf.get();
             valueValideNodeBoolean = parseXml(responseStr);
         } catch (Exception e) {
-            e.printStackTrace();
             log.error("getValByValNbCountryCode error ", e.getMessage());
             throw new BusinessException(e.getMessage());
         }
@@ -81,7 +80,6 @@ public class ValidationByNumberCountryService {
         } 
         catch (Exception e) 
         {
-            e.printStackTrace();
             log.error("convertStringToXMLDocument error ", e.getMessage());
         }
         return null;
