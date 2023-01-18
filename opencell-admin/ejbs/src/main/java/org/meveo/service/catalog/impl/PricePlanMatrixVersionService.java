@@ -435,7 +435,6 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         List<PricePlanMatrixVersion> result= this.getEntityManager()
                 .createNamedQuery("PricePlanMatrixVersion.getPublishedVersionValideForDate", PricePlanMatrixVersion.class)
                 .setParameter("pricePlanMatrixCode", ppmCode).setParameter("operationDate", operationDateParam)
-                .setHint("hibernate.query.passDistinctThrough", false)
                 .getResultList();
         if(CollectionUtils.isEmpty(result)) {
         	return null;
