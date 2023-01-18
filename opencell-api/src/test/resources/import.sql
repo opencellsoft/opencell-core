@@ -386,7 +386,7 @@ INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, descriptio
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(174,1,now(),null,'PW','Palau',null,null,2,49);
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(175,1,now(),null,'PY','Paraguay',null,null,2,122);
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(176,1,now(),null,'QA','Qatar',null,null,2,126);
-INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(177,1,now(),null,'RE','RÃ©union',null,null,2,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(177,1,now(),null,'RE','Réunion',null,null,2,5);
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(178,1,now(),null,'RO','Romania',null,null,2,128);
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(179,1,now(),null,'RU','Russia',null,null,2,129);
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(180,1,now(),null,'RW','Rwanda',null,null,2,130);
@@ -405,7 +405,7 @@ INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, descriptio
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(193,1,now(),null,'SN','Senegal',null,null,2,20);
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(194,1,now(),null,'SO','Somalia',null,null,2,141);
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(195,1,now(),null,'SR','Suriname',null,null,2,5);
-INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(196,1,now(),null,'ST','SÃ£o TomÃ© and PrÃ_ncipe',null,null,2,134);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(196,1,now(),null,'ST','São Tomé and Príncipe',null,null,2,134);
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(197,1,now(),null,'SV','El Salvador',null,null,2,132);
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(198,1,now(),null,'SY','Syria',null,null,2,148);
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(199,1,now(),null,'SZ','Swaziland',null,null,2,147);
