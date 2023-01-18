@@ -468,12 +468,14 @@ public class Product extends ServiceCharge {
 	@Override
 	public List<ServiceChargeTemplateSubscription> getServiceSubscriptionCharges() {
 		List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges= new ArrayList<>();
-		if(this.serviceSubscriptionCharges.isEmpty()){
-			for(ProductChargeTemplateMapping pc : getProductCharges()) {
-				if(pc.getChargeTemplate() != null) {
+		if (this.serviceSubscriptionCharges.isEmpty()) {
+			for (ProductChargeTemplateMapping pc : getProductCharges()) {
+				if (pc.getChargeTemplate() != null) {
 					ChargeTemplate ch = initializeAndUnproxy(pc.getChargeTemplate());
-					if(ch instanceof OneShotChargeTemplate && 
-							(((OneShotChargeTemplate)ch).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.SUBSCRIPTION || ((OneShotChargeTemplate) ch).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.OTHER)) {
+					if (ch instanceof OneShotChargeTemplate &&
+							(((OneShotChargeTemplate) ch).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.SUBSCRIPTION ||
+									((OneShotChargeTemplate) ch).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.OTHER)
+							|| ((OneShotChargeTemplate) ch).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.INVOICING_PLAN) {
 						ServiceChargeTemplateSubscription serviceChargeTemplateSubscription = new ServiceChargeTemplateSubscription();
 						serviceChargeTemplateSubscription.setChargeTemplate((OneShotChargeTemplate) ch);
 						serviceChargeTemplateSubscription.setAccumulatorCounterTemplates(pc.getAccumulatorCounterTemplates());
