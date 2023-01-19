@@ -33,6 +33,7 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.DatePeriodDto;
+import org.meveo.api.dto.catalog.ConvertedPricePlanInputDto;
 import org.meveo.api.dto.catalog.ConvertedPricePlanVersionDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixColumnDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
@@ -490,6 +491,19 @@ public interface PricePlanRs extends IBaseRs {
     							@Parameter(description = "The price plan matrix new code", required = true) @QueryParam("pricePlanMatrixNewCode") String pricePlanMatrixNewCode,
     							@Parameter(description = "The price plan matrix version to be duplicated", required = true)  @PathParam("pricePlanMatrixVersion") int pricePlanMatrixVersion, @QueryParam("priceVersionType") String priceVersionType);
     
+    
+    @DELETE
+    @Path("/pricePlanMatrixVersion/{pricePlanVersionId}/convertedPricePlanMatrixLines/tradingCurrency/{tradingCurrencyCode}")
+    @Operation(summary = "duplicate a price plan matrix version",
+    tags = { "Price Plan" },
+    description ="duplicate a product version",
+    responses = {
+            @ApiResponse(responseCode="200", description = "delete all converted price matrix line"),
+            @ApiResponse(responseCode = "404", description = "the trading courrency for plan matrix version doesn't exit")
+    })
+    Response deleteConvertedPricePlanMatrixLines(@Parameter(description = "the id of price plan matrix version ", required = true)  @PathParam("pricePlanVersionId") Long pricePlanVersionId,  
+                                                    @Parameter(description = "The price plan matrix code", required = true) @PathParam("tradingCurrencyCode") String tradingCurrencyCode);
+    
 
     /**
     *
@@ -551,5 +565,15 @@ public interface PricePlanRs extends IBaseRs {
                     @ApiResponse(responseCode = "412", description = "the price plan version is mandatory to create price plan version ")
             })
     Response deleteConvertedPricePlanVersion(@Parameter(description = "ID of converted price plan to delete") @PathParam("id") Long ccpvId);
+    
+    
+    @PUT
+    @Path("/convertedPricePlanMatrixLines/disable")
+    Response disableAllConvertedPricePlan(@Parameter(description = "contain information about all converted price that will be disabled") ConvertedPricePlanInputDto convertedPricePlanInputDto);
+    
+
+    @PUT
+    @Path("/convertedPricePlanMatrixLines/enable")
+    Response enableAllConvertedPricePlan(@Parameter(description = "contain information about all converted price that will be enabled") ConvertedPricePlanInputDto convertedPricePlanInputDto);
 
 }
