@@ -268,6 +268,13 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	@Size(max = 2000)
 	private String expressionEl;
 
+	/**
+	 *determines whether the discount plan will automatically be applied to an offer or a product upon instantiation
+	 */
+    @Type(type = "numeric_boolean")
+    @Column(name = "automatic_application")
+    private boolean automaticApplication = false;
+	
 	public DiscountPlan() {}
 	
 	public DiscountPlan(DiscountPlan dp) {
@@ -488,6 +495,14 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 
 	public void setSequence(Integer sequence) {
 		this.sequence = sequence;
+	}
+	
+	public boolean isAutomaticApplication() {
+		return automaticApplication;
+	}
+
+	public void setAutomaticApplication(boolean autmaticApplication) {
+		this.automaticApplication = autmaticApplication;
 	}
 
 	/**
