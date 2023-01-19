@@ -1,5 +1,7 @@
 package org.meveo.service.payments.impl;
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
 
 import org.meveo.model.dunning.DunningSettings;
 import org.meveo.service.base.BusinessService;
@@ -21,5 +23,19 @@ public class DunningSettingsService extends BusinessService<DunningSettings> {
 		duplicate.setCode(this.findDuplicateCode(duplicate));
 		this.create(duplicate);
 		return duplicate;
+	}
+
+	/**
+	 * Find the last dunning settings
+	 * @return {@link DunningSettings}
+	 */
+	public DunningSettings findLastOne() {
+		try {
+			TypedQuery<DunningSettings> query = getEntityManager().createQuery("from DunningSettings f order by f.id desc", entityClass).setMaxResults(1);
+			return query.getSingleResult();
+		} catch (NoResultException e) {
+			log.debug("No {} found", getEntityClass().getSimpleName());
+			return null;
+		}
 	}
 }

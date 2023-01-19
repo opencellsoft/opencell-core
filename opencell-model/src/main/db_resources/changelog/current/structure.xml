@@ -15685,4 +15685,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="#INTRD-13031_20230118" author="AdilElJaouhari">
+		<addColumn tableName="cat_discount_plan">
+			<column name="automatic_application" type="${type.boolean}" defaultValueNumeric="0" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
