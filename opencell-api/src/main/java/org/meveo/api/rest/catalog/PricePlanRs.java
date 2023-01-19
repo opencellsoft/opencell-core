@@ -567,13 +567,21 @@ public interface PricePlanRs extends IBaseRs {
     Response deleteConvertedPricePlanVersion(@Parameter(description = "ID of converted price plan to delete") @PathParam("id") Long ccpvId);
     
     
-    @PUT
+    @POST
     @Path("/convertedPricePlanMatrixLines/disable")
     Response disableAllConvertedPricePlan(@Parameter(description = "contain information about all converted price that will be disabled") ConvertedPricePlanInputDto convertedPricePlanInputDto);
     
 
-    @PUT
+    @POST
     @Path("/convertedPricePlanMatrixLines/enable")
     Response enableAllConvertedPricePlan(@Parameter(description = "contain information about all converted price that will be enabled") ConvertedPricePlanInputDto convertedPricePlanInputDto);
+    
+    @POST
+    @Path("convertedPricePlanVersion/{id}/enable")
+    Response enableConvertedVersionPricePlan(@PathParam("id") Long id );
+
+    @POST
+    @Path("convertedPricePlanVersion/{id}/disable")
+    Response disableConvertedVersionPricePlan(@PathParam("id") Long id );
 
 }
