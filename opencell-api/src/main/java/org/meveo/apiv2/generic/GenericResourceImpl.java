@@ -115,9 +115,9 @@ public class GenericResourceImpl implements GenericResource {
     }
 
     @Override
-    public Response getRelatedFieldsAndTypesOfEntity( String entityName ) {
+    public Response getRelatedFieldsAndTypesOfEntity( String entityName, String filter, Long depth ) {
         Class entityClass = GenericHelper.getEntityClass(entityName);
-        return Response.ok().entity(getPersistenceService(entityClass).mapRelatedFields()).type(MediaType.APPLICATION_JSON_TYPE).build();
+        return Response.ok().entity(getPersistenceService(entityClass).mapRelatedFields(filter, depth != null ? depth : 2L, 0L, null)).type(MediaType.APPLICATION_JSON_TYPE).build();
     }
     
     @Override
