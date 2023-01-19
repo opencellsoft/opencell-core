@@ -33,6 +33,7 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.DatePeriodDto;
+import org.meveo.api.dto.catalog.ConvertedPricePlanInputDto;
 import org.meveo.api.dto.catalog.ConvertedPricePlanVersionDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixColumnDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
@@ -564,5 +565,15 @@ public interface PricePlanRs extends IBaseRs {
                     @ApiResponse(responseCode = "412", description = "the price plan version is mandatory to create price plan version ")
             })
     Response deleteConvertedPricePlanVersion(@Parameter(description = "ID of converted price plan to delete") @PathParam("id") Long ccpvId);
+    
+    
+    @PUT
+    @Path("/convertedPricePlanMatrixLines/disable")
+    Response disableAllConvertedPricePlan(@Parameter(description = "contain information about all converted price that will be disabled") ConvertedPricePlanInputDto convertedPricePlanInputDto);
+    
+
+    @PUT
+    @Path("/convertedPricePlanMatrixLines/enable")
+    Response enableAllConvertedPricePlan(@Parameter(description = "contain information about all converted price that will be enabled") ConvertedPricePlanInputDto convertedPricePlanInputDto);
 
 }

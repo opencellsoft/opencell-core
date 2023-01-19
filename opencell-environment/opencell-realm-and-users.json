@@ -1138,6 +1138,7 @@
         {
           "id": "e629ad98-8dd7-11ed-a1eb-0242ac120002",
           "name": "show_obsolete_legacy",
+          "description": "Show obsolete items in Legacy Admin GUI. These items are no more supported. Use at your own risks.",
           "composite": false,
           "clientRole": true,
           "containerId": "eeeb2d58-8dd7-11ed-a1eb-0242ac120002",

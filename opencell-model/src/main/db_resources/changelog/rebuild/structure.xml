@@ -11191,6 +11191,7 @@
             <column name="sort_by" type="varchar(255)" />
             <column name="sort_order" type="varchar(15)" />
             <column name="query_parameters" type="${type.json}" />
+            <column name="aliases" type="${type.json}" />
         </createTable>
 
         <createTable tableName="report_query_fields">
@@ -19432,6 +19433,7 @@
     <changeSet id="#INTRD-12766_20230106" author="bourras"/>
     <changeSet id="#INTRD-13065_20230112" author="AdilElJaouhari" />
     <changeSet id="#INTRD-12781_20230116" author="zelmeliani" />
+    <changeSet id="#INTRD-12799-20230113-query_report_aliases" author="a.rouaguebe" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

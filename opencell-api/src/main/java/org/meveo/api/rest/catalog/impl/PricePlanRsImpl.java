@@ -30,6 +30,7 @@ import org.meveo.api.catalog.PricePlanMatrixVersionApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.DatePeriodDto;
+import org.meveo.api.dto.catalog.ConvertedPricePlanInputDto;
 import org.meveo.api.dto.catalog.ConvertedPricePlanVersionDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixColumnDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
@@ -464,6 +465,30 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 		ActionStatus result = new ActionStatus();
 		try {
             pricePlanMatrixVersionApi.deleteConvertedPricePlanVersion(cppvId);
+			return Response.ok(result).build();
+		} catch (Exception e) {
+			processException(e, result);
+		}
+		return Response.ok(result).build();
+	}
+
+	@Override
+	public Response disableAllConvertedPricePlan(ConvertedPricePlanInputDto convertedPricePlanInputDto) {
+		ActionStatus result = new ActionStatus();
+		try {
+            pricePlanMatrixVersionApi.disableAllConvertedPricePlan(convertedPricePlanInputDto);
+			return Response.ok(result).build();
+		} catch (Exception e) {
+			processException(e, result);
+		}
+		return Response.ok(result).build();
+	}
+
+	@Override
+	public Response enableAllConvertedPricePlan(ConvertedPricePlanInputDto convertedPricePlanInputDto) {
+		ActionStatus result = new ActionStatus();
+		try {
+            pricePlanMatrixVersionApi.enableAllConvertedPricePlan(convertedPricePlanInputDto);
 			return Response.ok(result).build();
 		} catch (Exception e) {
 			processException(e, result);
