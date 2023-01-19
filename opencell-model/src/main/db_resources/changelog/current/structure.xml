@@ -15691,4 +15691,16 @@ public class AgedBalanceReporting extends ReportExtractScript {
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="#INTRD-13204_20230119" author="HichamHANINE">
+        <addColumn tableName="billing_invoice_line">
+            <column name="specific_converted_unit_price" type="numeric(23, 12)" />
+            <column name="specific_converted_amount_without_tax" type="numeric(23, 12)" />
+            <column name="specific_converted_amount_with_tax" type="numeric(23, 12)" />
+            <column name="specific_converted_amount_tax" type="numeric(23, 12)" />
+            <column name="specific_converted_discount_amount" type="numeric(23, 12)" />
+            <column name="specific_converted_raw_amount" type="numeric(23, 12)" />			
+			<column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+	
 </databaseChangeLog>
