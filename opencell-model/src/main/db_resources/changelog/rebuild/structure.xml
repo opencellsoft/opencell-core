@@ -10769,6 +10769,13 @@
             <column name="converted_amount_tax" type="numeric(23, 12)" />
             <column name="converted_discount_amount" type="numeric(23, 12)" />
             <column name="converted_raw_amount" type="numeric(23, 12)" />
+            <column name="specific_converted_unit_price" type="numeric(23, 12)" />
+            <column name="specific_converted_amount_without_tax" type="numeric(23, 12)" />
+            <column name="specific_converted_amount_with_tax" type="numeric(23, 12)" />
+            <column name="specific_converted_amount_tax" type="numeric(23, 12)" />
+            <column name="specific_converted_discount_amount" type="numeric(23, 12)" />
+            <column name="specific_converted_raw_amount" type="numeric(23, 12)" />
+            <column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="open_order_number" type="varchar(255)" />
             <column name="sequence" type="int4"/>
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
@@ -19434,6 +19441,7 @@
     <changeSet id="#INTRD-13065_20230112" author="AdilElJaouhari" />
     <changeSet id="#INTRD-12781_20230116" author="zelmeliani" />
     <changeSet id="#INTRD-12799-20230113-query_report_aliases" author="a.rouaguebe" />
+	<changeSet id="#INTRD-13204_20230119" author="HichamHANINE" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
