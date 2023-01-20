@@ -23,10 +23,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.BillingCycleDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.exception.*;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.BillingEntityTypeEnum;
-import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.ThresholdOptionsEnum;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.tax.TaxCategory;
@@ -247,6 +244,7 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
             switch (dto.getType()){
                 case BILLINGACCOUNT: filters.put("billingAccount.billingCycle.code", "{{billingCycle.code}}"); entity.setFilters(filters);break;
                 case SUBSCRIPTION: filters.put("subscription.billingCycle.code", "{{billingCycle.code}}"); entity.setFilters(filters); break;
+                case ORDER: filters.put("infoOrder.order.billingCycle.code", "{{billingCycle.code}}"); entity.setFilters(filters); break;
             }
 
         }else {
