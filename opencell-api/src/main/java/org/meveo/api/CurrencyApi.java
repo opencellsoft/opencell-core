@@ -409,9 +409,11 @@ public class CurrencyApi extends BaseApi {
         }
 
         // We can modify only the future rates
-        if (exchangeRate.getFromDate().compareTo(setTimeToZero(new Date())) <= 0 && !currentUser.hasRole(CFO_ROLE)) {
+        // AEL Update 09/01/2023 : Since we dont have a CFO role mapping between opencell_portal and opencell_web
+        //                         We trust Portal restrition made in https://opencellsoft.atlassian.net/browse/INTRD-6451
+        /*if (exchangeRate.getFromDate().compareTo(setTimeToZero(new Date())) <= 0 && !currentUser.hasRole(CFO_ROLE)) {
             throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.future"));
-        }
+        }*/
 
         if (postData.getFromDate() == null) {
             throw new MissingParameterException(resourceMessages.getString("error.exchangeRate.fromDate.empty"));
@@ -424,9 +426,12 @@ public class CurrencyApi extends BaseApi {
         }
 
         // User cannot set a rate in a paste date
-        if (postData.getFromDate().before(setTimeToZero(new Date()))) {
+        // Commented related to the same reason of comment line 421 "AEL Update 09/01/2023"
+        // BTW, this duplicated check shall be removed
+        // User cannot set a rate in a paste date
+        /*if (postData.getFromDate().before(setTimeToZero(new Date()))) {
             throw new BusinessApiException(resourceMessages.getString("The date must not be in the past"));
-        }
+        }*/
 	}
     
     private void auditLogUpdateExchangeRate(ExchangeRate exchangeRate,
