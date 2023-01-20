@@ -1300,7 +1300,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                     if(CollectionUtils.isNotEmpty(billingAccount.getDiscountPlanInstances())) {
                         for (DiscountPlanInstance discountPlanInstance : billingAccount.getDiscountPlanInstances()) {
                             if (discountPlan.getCode().equals(discountPlanInstance.getDiscountPlan().getCode())) {
-                                throw new BusinessException("DiscountPlan " + dp.getCode() + " is already instantiated in Billing Account " + billingAccount.getCode() + ".");
+                                throw new BusinessException("DiscountPlan " + discountPlan.getCode() + " is already instantiated in Billing Account " + billingAccount.getCode() + ".");
                             }
                         }
                         
