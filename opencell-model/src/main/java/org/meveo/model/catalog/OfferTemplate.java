@@ -224,7 +224,7 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @Column(name = "sequence")
     protected Integer sequence = 0;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "document_id")
     private Document document;
     
