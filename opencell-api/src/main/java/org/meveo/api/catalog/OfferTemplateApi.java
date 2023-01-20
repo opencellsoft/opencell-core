@@ -425,19 +425,12 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             offerTemplate.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLongDescriptionsTranslated(), offerTemplate.getLongDescriptionI18n()));
         }
 
-        if (postData.getDocumentDto() != null) {
-
-            String fileName = postData.getDocumentDto().getFileName();
-            String fileTypeString = postData.getDocumentDto().getFileType();
-
-            if (fileTypeString != null) {
-                FileType fileType = fileTypeService.findByCode(fileTypeString);
-                if (fileType != null && fileName != null) {
-                    Document document = documentService.findByFileNameAndType(fileName, fileType.getId());
-                    if (document != null) {
-                        offerTemplate.setDocument(document);
-                    }
-                }
+        if (postData.getDocumentCode() != null) {
+            Document document = documentService.findByCode(postData.getDocumentCode());
+            if (document == null) {
+                throw new EntityDoesNotExistsException("The document with code " + postData.getDocumentCode() + " does not exist");
+            } else {
+                offerTemplate.setDocument(document);
             }
         }
 
