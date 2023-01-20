@@ -18796,6 +18796,11 @@ public class ImportJobNotification extends Script {
 			<where>filters = null and  billing_cycle_type='SUBSCRIPTION'</where>
 		</update>
 
+        <update tableName="billing_cycle">
+			<column name="filters" value='{"infoOrder.order.billingCycle.code":"{{billingCycle.code}}"}'></column>
+			<where>filters = null and  billing_cycle_type='ORDER'</where>
+		</update>
+
     </changeSet>
 
     <changeSet id="#INTRD-12463_20230119" author="AbdellatifBARI">
