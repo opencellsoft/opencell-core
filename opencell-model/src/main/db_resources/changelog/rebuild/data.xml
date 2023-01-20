@@ -6901,6 +6901,11 @@
             <column name="display_subscriptions" valueNumeric="1"></column>
             <column name="display_offers" valueNumeric="1"></column>
             <column name="display_services" valueNumeric="1"></column>
+			<column name="default_invoice_subcategory_id" valueNumeric="-3"></column>
+			<column name="default_generic_article_id" valueNumeric="-3"></column>
+			<column name="default_discount_article_id" valueNumeric="-2"></column>
+			<column name="default_advanced_payment_article_id" valueNumeric="-5"></column>
+			<column name="default_invoice_minimum_article_id" valueNumeric="-4"></column>
         </insert>
         <insert tableName="crm_provider">
             <column name="id" valueNumeric="1" />
@@ -16084,6 +16089,7 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
 	</changeSet>
 
 	<changeSet id="#INTRD-12327_20230117" author="AbdellatifBARI" />
+	<changeSet id="#INTRD-12463_20230119" author="AbdellatifBARI" />
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
