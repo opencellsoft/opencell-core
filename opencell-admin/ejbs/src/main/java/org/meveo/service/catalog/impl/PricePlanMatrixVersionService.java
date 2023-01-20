@@ -432,8 +432,10 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 				operationDateParam = serviceInstance.getPriceVersionDate();
 		}
 
-        List<PricePlanMatrixVersion> result=(List<PricePlanMatrixVersion>) this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.getPublishedVersionValideForDate")
-                .setParameter("pricePlanMatrixCode", ppmCode).setParameter("operationDate", operationDateParam).getResultList();
+        List<PricePlanMatrixVersion> result= this.getEntityManager()
+                .createNamedQuery("PricePlanMatrixVersion.getPublishedVersionValideForDate", PricePlanMatrixVersion.class)
+                .setParameter("pricePlanMatrixCode", ppmCode).setParameter("operationDate", operationDateParam)
+                .getResultList();
         if(CollectionUtils.isEmpty(result)) {
         	return null;
         }
