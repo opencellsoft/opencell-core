@@ -11181,6 +11181,11 @@
             <column name="sort_by" type="varchar(255)" />
             <column name="sort_order" type="varchar(15)" />
             <column name="query_parameters" type="${type.json}" />
+<<<<<<< HEAD
+=======
+            <column name="aliases" type="${type.json}" />
+            <column name="advanced_query" type="${type.json}" />
+>>>>>>> 1cb62b2449 (INTRD12819 - ReportQuery - add advanced_query)
         </createTable>
 
         <createTable tableName="report_query_fields">
@@ -19298,6 +19303,7 @@
     <changeSet id="#INTRD-12766_20230105" author="bourras"/>
     <changeSet id="#INTRD-12766_20230106" author="bourras"/>
 	<changeSet id="#INTRD-13065_20230112" author="AdilElJaouhari" />
+	<changeSet id="#INTRD-12819-20221220-qb_advanced_query" author="a.rouaguebe" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
