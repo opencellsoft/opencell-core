@@ -15520,6 +15520,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="meveo_script_instance" />
 	</changeSet>
+	
+	<changeSet id="#INTRD-12819-20221220-qb_advanced_query" author="a.rouaguebe">
+        <addColumn tableName="report_query">
+        	<column name="advanced_query" type="${type.json}" />
+        </addColumn>
+    </changeSet>
 
 	<changeSet id="#INTRD-12819-20221220-qb_advanced_query" author="a.rouaguebe">
         <addColumn tableName="report_query">
