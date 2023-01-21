@@ -31,10 +31,12 @@ public class ReportQuery extends BusinessEntity {
     @ElementCollection
     @CollectionTable(name = "report_query_fields", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "field")
+    @Deprecated
     private List<String> fields;
 
     @Type(type = "json")
     @Column(name = "filters", columnDefinition = "jsonb")
+    @Deprecated
     private Map<String, Object> filters;
 
     @Type(type = "longText")
@@ -42,19 +44,26 @@ public class ReportQuery extends BusinessEntity {
     private String generatedQuery;
 
     @Column(name = "sort_by")
+    @Deprecated
     private String sortBy;
 
     @Enumerated(value = STRING)
     @Column(name = "sort_order", length = 15)
+    @Deprecated
     private SortOrderEnum sortOrder;
 
     @Type(type = "json")
     @Column(name = "query_parameters", columnDefinition = "jsonb")
+    @Deprecated
     private Map<String, Object> queryParameters;
 
     @Type(type = "json")
     @Column(name = "aliases", columnDefinition = "jsonb")
     private Map<String, String> aliases;
+
+    @Type(type = "json")
+    @Column(name = "advanced_query", columnDefinition = "jsonb")
+    private Map<String, Object> advancedQuery;
 
     public String getTargetEntity() {
         return targetEntity;
@@ -139,5 +148,20 @@ public class ReportQuery extends BusinessEntity {
 	public void setAliases(Map<String, String> aliases) {
 		this.aliases = aliases;
 	}
+
+	/**
+	 * @return the advancedQuery
+	 */
+	public Map<String, Object> getAdvancedQuery() {
+		return advancedQuery;
+	}
+
+	/**
+	 * @param advancedQuery the advancedQuery to set
+	 */
+	public void setAdvancedQuery(Map<String, Object> advancedQuery) {
+		this.advancedQuery = advancedQuery;
+	}
+	
     
 }
