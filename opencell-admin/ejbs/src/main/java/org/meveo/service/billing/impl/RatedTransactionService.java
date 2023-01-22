@@ -17,6 +17,7 @@
  */
 package org.meveo.service.billing.impl;
 
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -42,6 +43,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -53,6 +55,7 @@ import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.AggregationConfiguration;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
@@ -107,6 +110,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
@@ -140,6 +144,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
 
     private static final String INVOICING_PROCESS_TYPE = "RatedTransaction";
+
+    private static final String QUERY_FILTER = "a.status = 'OPEN' AND :firstTransactionDate <= a.usageDate AND a.usageDate < :lastTransactionDate AND (a.invoicingDate is NULL or a.invoicingDate < :invoiceUpToDate) AND a.accountingArticle.ignoreAggregation = false";
 
     @Inject
     private ServiceInstanceService serviceInstanceService;
@@ -201,7 +207,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     private OfferTemplateService offerTemplateService;
 
     @Inject
-    private ServiceInstanceService getServiceInstanceService;
+    @Named
+    private NativePersistenceService nativePersistenceService;
     
     /**
      * Check if Billing account has any not yet billed Rated transactions
@@ -1679,27 +1686,55 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
         }
 
-        Map<String, Object> params = buildParams(billingRun, lastTransactionDate);
-        String entityCondition = getEntityCondition(be, params);
         String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration);
+        final List<String> fieldToFetch = asList("string_agg_long(a.id) as rated_transaction_ids", "billingAccount.id as billing_account__id",
+                "accountingCode.id as accounting_code_id", "description as label", "SUM(a.quantity) as quantity",
+                "unitAmountWithoutTax as unit_amount_without_tax", "SUM(a.amountWithoutTax) as sum_without_tax",
+                "SUM(a.amountWithTax) as sum_with_tax", "offerTemplate.id as offer_id", "serviceInstance.id as service_instance_id",
+                usageDateAggregation + " as usage_date", "min(a.startDate) as start_date", "max(a.endDate) as end_date",
+                "orderNumber as order_number", "subscription.id as subscription_id", "subscription.order.id as commercial_order_id",
+                "taxPercent as tax_percent", "tax.id as tax_id", "infoOrder.order.id as order_id",
+                "infoOrder.productVersion.id as product_version_id", "infoOrder.orderLot.id as order_id", "chargeInstance.id as charge_instance_id",
+                "accountingArticle.id as article_id", "discountedRatedTransaction as discounted_ratedtransaction_id");
 
-        String query = "SELECT string_agg_long(rt.id) as rated_transaction_ids, rt.billingAccount.id as billing_account__id, rt.accountingCode.id as accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, "
-                        + " rt.unitAmountWithoutTax as unit_amount_without_tax, SUM(rt.amountWithoutTax) as sum_without_tax, SUM(rt.amountWithTax) as sum_with_tax, rt.offerTemplate.id as offer_id, rt.serviceInstance.id as service_instance_id, "
-                        + usageDateAggregation + " as usage_date, min(rt.startDate) as start_date, max(rt.endDate) as end_date, rt.orderNumber as order_number, "
-                        + " s.id as subscription_id, s.order.id as commercial_order_id, rt.taxPercent as tax_percent, rt.tax.id as tax_id, "
-                        + " rt.infoOrder.order.id as order_id, rt.infoOrder.productVersion.id as product_version_id, rt.infoOrder.orderLot.id as order_lot_id, "
-                        + " rt.chargeInstance.id as charge_instance_id, rt.accountingArticle.id as article_id, rt.discountedRatedTransaction as discounted_ratedtransaction_id\n"
-                        + " FROM RatedTransaction rt left join rt.subscription s\n"
-                        + " WHERE " + entityCondition
-                        + " AND rt.status = 'OPEN' AND :firstTransactionDate <= rt.usageDate AND rt.usageDate < :lastTransactionDate"
-                        + " AND (rt.invoicingDate is NULL or rt.invoicingDate < :invoiceUpToDate) AND rt.accountingArticle.ignoreAggregation = false\n"
-                        + " GROUP BY rt.billingAccount.id, rt.accountingCode.id, rt.description, rt.offerTemplate.id, rt.serviceInstance.id, rt.unitAmountWithoutTax, "
-                        + usageDateAggregation + ", rt.startDate, rt.endDate, rt.orderNumber, s.id, s.order.id, rt.taxPercent, rt.tax.id, "
-                        + " rt.infoOrder.order.id, rt.infoOrder.productVersion.id, rt.infoOrder.orderLot.id, rt.chargeInstance.id, rt.accountingArticle.id, rt.discountedRatedTransaction\n"
-                        + " ORDER BY sum_without_tax desc";
-        List<Map<String, Object>> groupedRTsWithAggregation = getSelectQueryAsMap(query, params);
-        groupedRTsWithAggregation.addAll(getGroupedRTsWithoutAggregation(billingRun, be, lastTransactionDate));
+        Map<String, Object> billingCycleFilters = null;
+        if(billingRun.getBillingCycle().getFilters() != null && !billingRun.getBillingCycle().getFilters().isEmpty()) {
+            billingCycleFilters = new HashMap<>(billingRun.getBillingCycle().getFilters());
+        }
+        String query = buildFetchQuery(new PaginationConfiguration(billingCycleFilters, fieldToFetch, null),
+                usageDateAggregation, getEntityCondition(be));
+        List<Map<String, Object>> groupedRTsWithAggregation =
+                getSelectQueryAsMap(query, buildParams(billingRun, lastTransactionDate));
         return groupedRTsWithAggregation;
+    }
+
+    private String getEntityCondition(IBillableEntity be) {
+        String entityCondition = "";
+        if (be instanceof Subscription) {
+            entityCondition = " a.subscription.id= " + be.getId();
+        } else if (be instanceof BillingAccount) {
+            entityCondition = " a.billingAccount.id = " + be.getId();
+        } else if (be instanceof Order) {
+            entityCondition = " a.orderNumber =" + ((Order) be).getOrderNumber();
+        } else if (be instanceof CommercialOrder) {
+            entityCondition = " a.orderNumber = " + be.getId();
+        }
+        return entityCondition;
+    }
+
+    private String buildFetchQuery(PaginationConfiguration searchConfig,
+                                   String usageDateAggregation, String entityCondition) {
+        QueryBuilder queryBuilder =
+                nativePersistenceService.getAggregateQuery(entityClass.getCanonicalName(), searchConfig, null);
+        queryBuilder.addSql(entityCondition + " AND " + QUERY_FILTER);
+        return queryBuilder.getQueryAsString() + buildGroupByClause(usageDateAggregation);
+    }
+
+    private String buildGroupByClause(String usageDateAggregation) {
+        return " group by a.billingAccount.id, a.accountingCode.id, a.description, a.unitAmountWithoutTax,"
+                + " a.offerTemplate, a.serviceInstance, " + usageDateAggregation + " ,a.orderNumber, a.subscription.id,"
+                + " a.subscription.order.id, a.taxPercent, a.tax.id, a.infoOrder.order.id, a.infoOrder.productVersion.id, "
+                + " a.infoOrder.orderLot.id, a.chargeInstance.id, a.accountingArticle.id, a.discountedRatedTransaction";
     }
 
     private Map<String, Object> buildParams(BillingRun billingRun, Date lastTransactionDate) {
@@ -1729,7 +1764,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     private String getUsageDateAggregation(AggregationConfiguration aggregationConfiguration) {
-        return getUsageDateAggregation(aggregationConfiguration, " rt.usageDate ");
+        return getUsageDateAggregation(aggregationConfiguration, " a.usageDate ");
     }
 
     private String getUsageDateAggregation(AggregationConfiguration aggregationConfiguration, String usageDateColumn) {
