@@ -15622,6 +15622,24 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="converted_invoice_balance" type="numeric(23, 12)"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD-12047-20230112" author="AbdelmounaimAkadid">
+    	<createIndex indexName="idx__cpq_attribute_instance__subscription_id" tableName="cpq_attribute_instance">
+	      	<column name="subscription_id"/>
+	  	</createIndex>
+	  	<createIndex indexName="idx__cpq_attribute_instance__parent_id" tableName="cpq_attribute_instance">
+	      	<column name="parent_id"/>
+	  	</createIndex>
+	  	<createIndex indexName="idx__billing_rated_transaction__origin_billing_account" tableName="billing_rated_transaction">
+	      	<column name="origin_billing_account"/>
+	  	</createIndex>
+	  	<createIndex indexName="idx__billing_rated_transaction__rules_contract_id" tableName="billing_rated_transaction">
+	      	<column name="rules_contract_id"/>
+	  	</createIndex>
+	  	<createIndex indexName="idx__billing_rated_transaction__service_instance_id" tableName="billing_rated_transaction">
+	      	<column name="service_instance_id"/>
+	  	</createIndex>
+    </changeSet>   
 
     <changeSet id="#INTRD-12720-20221230-query_report" author="a.rouaguebe">
       <addColumn tableName="report_query">
@@ -15645,5 +15663,44 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="meveo_script_instance" />
 	</changeSet>
+
+    <changeSet id="#INTRD-12781_20230116" author="zelmeliani">
+        <addColumn tableName="ar_dunning_action">
+            <column name="type" type="varchar(255)"/>
+        </addColumn>
+        <addColumn tableName="dunning_level">
+            <column name="type" type="varchar(255)"/>
+        </addColumn>
+        <addColumn tableName="dunning_policy">
+            <column name="type" type="varchar(255)"/>
+        </addColumn>
+        <addColumn tableName="com_message_template">
+            <column name="type_dunning_mode" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-12799-20230113-query_report_aliases" author="a.rouaguebe">
+		<addColumn tableName="report_query">
+			<column name="aliases" type="${type.json}" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="#INTRD-13031_20230118" author="AdilElJaouhari">
+		<addColumn tableName="cat_discount_plan">
+			<column name="automatic_application" type="${type.boolean}" defaultValueNumeric="0" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="#INTRD-13204_20230119" author="HichamHANINE">
+        <addColumn tableName="billing_invoice_line">
+            <column name="specific_converted_unit_price" type="numeric(23, 12)" />
+            <column name="specific_converted_amount_without_tax" type="numeric(23, 12)" />
+            <column name="specific_converted_amount_with_tax" type="numeric(23, 12)" />
+            <column name="specific_converted_amount_tax" type="numeric(23, 12)" />
+            <column name="specific_converted_discount_amount" type="numeric(23, 12)" />
+            <column name="specific_converted_raw_amount" type="numeric(23, 12)" />			
+			<column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
 	
 </databaseChangeLog>

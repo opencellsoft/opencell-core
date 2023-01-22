@@ -1106,6 +1106,7 @@
             <column name="calendar" valueNumeric="-1" />
             <column name="uuid" value="BillingCycle-1" />
             <column name="billing_cycle_type" value="BILLINGACCOUNT" />
+            <column name="filters" value='{"billingAccount.billingCycle.code":"{{billingCycle.code}}"}' />
         </insert>
         <insert tableName="billing_cycle">
             <column name="id" valueNumeric="-2" />
@@ -1120,6 +1121,7 @@
             <column name="calendar" valueNumeric="-1" />
             <column name="uuid" value="BillingCycle-2" />
             <column name="billing_cycle_type" value="BILLINGACCOUNT" />
+            <column name="filters" value='{"billingAccount.billingCycle.code":"{{billingCycle.code}}"}' />
         </insert>
     </changeSet>
     
@@ -1587,6 +1589,7 @@
             <column name="uuid" value="MAIN_SELLER" />
             <column name="trading_currency_id" valueNumeric="-1" />
             <column name="trading_language_id" valueNumeric="-1" />
+            <column name="email" value="billing@opencell.com"/>
         </insert>
         <insert tableName="crm_seller">
             <column name="id" valueNumeric="-2" />
@@ -1598,6 +1601,7 @@
             <column name="parent_seller_id" valueNumeric="-1" />
             <column name="trading_currency_id" valueNumeric="-1" />
             <column name="trading_language_id" valueNumeric="-1" />
+            <column name="email" value="billing@opencell.com"/>
         </insert>
         <insert tableName="crm_seller">
             <column name="id" valueNumeric="-3" />
@@ -1609,6 +1613,7 @@
             <column name="parent_seller_id" valueNumeric="-1" />
             <column name="trading_currency_id" valueNumeric="-2" />
             <column name="trading_language_id" valueNumeric="-2" />
+            <column name="email" value="billing@opencell.com"/>
         </insert>
     </changeSet>
 
@@ -2198,6 +2203,7 @@
             <column name="uuid" value="PROD-STD" />
             <column name="tax_class_id" value="-1" />
             <column name="invoice_sub_category_id" value="-2" />
+            <column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code Where code = '95')"></column>
         </insert>
 
         <insert tableName="billing_accounting_article">
@@ -2211,6 +2217,7 @@
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_accounting_article-DISC-STD" />
+            <column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code Where code = '95')"></column>
         </insert>
         <insert tableName="billing_accounting_article">
             <column name="id" value='-3'/>
@@ -2223,6 +2230,7 @@
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_accounting_article-ART-STD" />
+            <column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code Where code = '95')"></column>
         </insert>
         <insert tableName="billing_accounting_article">
             <column name="id" value='-4'/>
@@ -2235,6 +2243,7 @@
             <column name="created" valueDate="${db.current.time}"/>
             <column name="creator" value="applicationInitializer"/>
             <column name="uuid" value="billing_accounting_article-MIN-STD"/>
+            <column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code Where code = '95')"></column>
         </insert>        
         
         <insert tableName="cat_discount_plan">
@@ -2477,6 +2486,7 @@
 			<column name="uuid" value="InvoiceType-SECURITY_DEPOSIT" />
 			<column name="vat_payment_option_id" value="1" />
 			<column name="invoice_code_type_id" value="30" />
+			<column name="invoice_subject_code" valueComputed="(SELECT id FROM untdid_4451_invoice_subject_code where code = 'IND')"></column>
 		</insert>
 		<insert tableName="billing_invoice_cat">
 			<column name="id" value='-4'/>
@@ -2509,6 +2519,7 @@
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="opencell.admin" />
 			<column name="uuid" value="billing_accounting_article_art_security_deposit" />
+			<column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code Where code = '95')"></column>
 		</insert>
 	</changeSet>
     <changeSet id="INTRD-5089_20220215" author="TarikRabeh" />
@@ -2529,7 +2540,7 @@
             <column name="uuid" value="billing_accounting_article-ADV-STD" />
             <column name="accounting_code_id" value="-6" />
             <column name="invoice_type_id" value="-5" />
-             
+            <column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code Where code = '95')"></column>
         </insert>
     </changeSet>
 
@@ -2620,6 +2631,7 @@
             <column name="invoice_accountable" value="1" />
             <column name="vat_payment_option_id" value="1" />
             <column name="invoice_code_type_id" value="19" />
+            <column name="invoice_subject_code" valueComputed="(SELECT id FROM untdid_4451_invoice_subject_code where code = 'IND')"></column>
 		</insert>
 		
 		<insert tableName="billing_invoice_type">
@@ -2636,6 +2648,7 @@
             <column name="invoice_accountable" value="1" />
             <column name="vat_payment_option_id" value="1" />
             <column name="invoice_code_type_id" value="19" />
+            <column name="invoice_subject_code" valueComputed="(SELECT id FROM untdid_4451_invoice_subject_code where code = 'IND')"></column>
 		</insert>
 		
 		<insert tableName="billing_invoice_type_applies_to">
@@ -2669,7 +2682,6 @@
 			<column name="vat_payment_option_id" value="1" />
 		</insert>	
 	</changeSet>
-    
 
     <changeSet id="#INTRD-6283_20220404" author="AbdelmounaimAkadid"/>
     <changeSet id="#INTRD-6291_20220406" author="AbdelmounaimAkadid"/>
@@ -2680,6 +2692,7 @@
 	<changeSet id="#INTRD-10199_20221010" author="TarikFA." />
 	<changeSet id="#INTRD-10592_20221014" author="TarikFA." />
     <changeSet id="INTRD-11122_20221104" author="HichamELHALOUI" />
+    <changeSet id="INTRD-13237_20230119" author="HichamELHALOUI" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

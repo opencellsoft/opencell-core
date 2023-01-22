@@ -45,9 +45,11 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.RatingResult;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldNameEnum;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -61,7 +63,9 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.TerminationChargeInstance;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.catalog.ChargeTemplateStatusEnum;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
@@ -157,6 +161,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
     @Inject
     private DiscountPlanService discountPlanService;
+    
+    @Inject
+    private DiscountPlanInstanceService discountPlanInstanceService;
     /**
      * Find a service instance list by subscription entity, service template code and service instance status list.
      * 
@@ -422,6 +429,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         subscription.getServiceInstances().add(serviceInstance);
 
         instanciateCharges(serviceInstance, product, subscriptionAmount, terminationAmount, isVirtual);
+        
+        if(CollectionUtils.isNotEmpty(product.getDiscountList())) {
+            product.getDiscountList().stream()
+                            .filter(DiscountPlan::isAutomaticApplication)
+                            .forEach(dp -> instantiateDiscountPlan(serviceInstance, dp));
+        }
 
     }
 
@@ -1273,5 +1286,30 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             throw new MissingParameterException("service id or code");
         }
         return serviceInstance;
+    }
+    
+    public void instantiateDiscountPlan(ServiceInstance serviceInstance, DiscountPlan discountPlan) {
+        if(discountPlan == null) {
+            throw new BusinessException("The Discount is required for instantiation");
+        }
+        if(discountPlan.getStatus() == DiscountPlanStatusEnum.IN_USE) {
+            Subscription sub = serviceInstance.getSubscription();
+            if(sub != null) {
+                BillingAccount billingAccount = sub.getUserAccount().getBillingAccount();
+                if(billingAccount != null) {
+                    if(CollectionUtils.isNotEmpty(billingAccount.getDiscountPlanInstances())) {
+                        for (DiscountPlanInstance discountPlanInstance : billingAccount.getDiscountPlanInstances()) {
+                            if (discountPlan.getCode().equals(discountPlanInstance.getDiscountPlan().getCode())) {
+                                throw new BusinessException("DiscountPlan " + discountPlan.getCode() + " is already instantiated in Billing Account " + billingAccount.getCode() + ".");
+                            }
+                        }
+                        
+                    }
+                    discountPlanInstanceService.instantiateDiscountPlan(billingAccount, discountPlan, null);
+                }
+            }
+           
+        }
+        
     }
 }

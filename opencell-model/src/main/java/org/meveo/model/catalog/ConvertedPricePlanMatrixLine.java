@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -19,6 +21,9 @@ import org.meveo.model.billing.TradingCurrency;
 @Table(name = "cpq_converted_price_plan_matrix_line")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_converted_price_plan_matrix_line_sq") })
+@NamedQueries({
+	@NamedQuery(name = "ConvertedPricePlanMatrixLine.enableOrDisable", query = "UPDATE ConvertedPricePlanMatrixLine set useForBillingAccounts =:enable where id in (:ids)") 
+})
 public class ConvertedPricePlanMatrixLine  extends AuditableEntity {
 
     private static final long serialVersionUID = -8640286801032633017L;

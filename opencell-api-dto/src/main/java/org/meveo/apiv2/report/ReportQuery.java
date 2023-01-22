@@ -55,4 +55,8 @@ public interface ReportQuery extends Resource {
     @Nullable
     @Schema(description = "Report query Owner name")
     String getOwnerName();
+
+    @Nullable
+    @Schema(description = "Report query fields' aliases")
+    Map<String, String> getAliases();
 }

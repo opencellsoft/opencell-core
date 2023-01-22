@@ -4300,6 +4300,7 @@
             <column name="applicable_on_overridden_price" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="applicable_on_discounted_price" type="${type.boolean}"/>
             <column name="sequence" type="int4"/>
+            <column name="automatic_application" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-212">
@@ -4938,6 +4939,7 @@
 			<column name="channel" type="varchar(255)" />
 			<column name="trading_language_id" type="bigint" />
 			<column name="is_active" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="type_dunning_mode" type="varchar(255)"/>
 
             <column name="textcontent_i18n" type="${type.json}"/>
             <column name="subject_i18n" type="${type.json}"/>
@@ -10768,6 +10770,13 @@
             <column name="converted_amount_tax" type="numeric(23, 12)" />
             <column name="converted_discount_amount" type="numeric(23, 12)" />
             <column name="converted_raw_amount" type="numeric(23, 12)" />
+            <column name="specific_converted_unit_price" type="numeric(23, 12)" />
+            <column name="specific_converted_amount_without_tax" type="numeric(23, 12)" />
+            <column name="specific_converted_amount_with_tax" type="numeric(23, 12)" />
+            <column name="specific_converted_amount_tax" type="numeric(23, 12)" />
+            <column name="specific_converted_discount_amount" type="numeric(23, 12)" />
+            <column name="specific_converted_raw_amount" type="numeric(23, 12)" />
+            <column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="open_order_number" type="varchar(255)" />
             <column name="sequence" type="int4"/>
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
@@ -11190,6 +11199,7 @@
             <column name="sort_by" type="varchar(255)" />
             <column name="sort_order" type="varchar(15)" />
             <column name="query_parameters" type="${type.json}" />
+            <column name="aliases" type="${type.json}" />
         </createTable>
 
         <createTable tableName="report_query_fields">
@@ -11558,6 +11568,7 @@
             <column name="attach_overdue_invoices" type="${type.boolean}" defaultValueNumeric="1"/>
             <column name="attach_due_invoices" type="${type.boolean}"  defaultValueNumeric="0"/>
             <column name="dunning_agent_id" type="bigint"/>
+            <column name="type" type="varchar(255)"/>
         </createTable>
     </changeSet>
 
@@ -11597,6 +11608,7 @@
             <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
+            <column name="type" type="varchar(255)"/>
         </createTable>
 
         <createTable tableName="dunning_policy_rule">
@@ -11665,6 +11677,7 @@
             <column name="charge_value" type="numeric(23, 12)" />
             <column name="charge_currency_id" type="bigint" />
             <column name="end_dunning_level" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="type" type="varchar(255)"/>
         </createTable>
     </changeSet>
 
@@ -17067,6 +17080,25 @@
         <sql>CREATE INDEX rt_adjusted_rated_tx ON ${db.schema.adapted}billing_rated_transaction (adjusted_rated_tx) </sql>
         <sql>CREATE INDEX wo_rt_id ON ${db.schema.adapted}billing_wallet_operation (rated_transaction_id) </sql>
         <sql>CREATE INDEX wo_rerated_wo ON ${db.schema.adapted}billing_wallet_operation (reratedwalletoperation_id) </sql></changeSet>
+        
+        
+    <changeSet id="#INTRD-12047-20230112" author="AbdelmounaimAkadid">
+    	<createIndex indexName="idx__cpq_attribute_instance__subscription_id" tableName="cpq_attribute_instance">
+	      	<column name="subscription_id"/>
+	  	</createIndex>
+	  	<createIndex indexName="idx__cpq_attribute_instance__parent_id" tableName="cpq_attribute_instance">
+	      	<column name="parent_id"/>
+	  	</createIndex>
+	  	<createIndex indexName="idx__billing_rated_transaction__origin_billing_account" tableName="billing_rated_transaction">
+	      	<column name="origin_billing_account"/>
+	  	</createIndex>
+	  	<createIndex indexName="idx__billing_rated_transaction__rules_contract_id" tableName="billing_rated_transaction">
+	      	<column name="rules_contract_id"/>
+	  	</createIndex>
+	  	<createIndex indexName="idx__billing_rated_transaction__service_instance_id" tableName="billing_rated_transaction">
+	      	<column name="service_instance_id"/>
+	  	</createIndex>
+    </changeSet>
 
     <!-- end index -->
 
@@ -19408,7 +19440,10 @@
     <changeSet id="#INTRD-12766_20230105" author="bourras"/>
     <changeSet id="#INTRD-12766_20230106" author="bourras"/>
     <changeSet id="#INTRD-13065_20230112" author="AdilElJaouhari" />
-
+    <changeSet id="#INTRD-12781_20230116" author="zelmeliani" />
+    <changeSet id="#INTRD-12799-20230113-query_report_aliases" author="a.rouaguebe" />
+    <changeSet id="#INTRD-13031_20230118" author="AdilElJaouhari" />
+	<changeSet id="#INTRD-13204_20230119" author="HichamHANINE" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

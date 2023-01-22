@@ -52,6 +52,10 @@ public class ReportQuery extends BusinessEntity {
     @Column(name = "query_parameters", columnDefinition = "jsonb")
     private Map<String, Object> queryParameters;
 
+    @Type(type = "json")
+    @Column(name = "aliases", columnDefinition = "jsonb")
+    private Map<String, String> aliases;
+
     public String getTargetEntity() {
         return targetEntity;
     }
@@ -120,6 +124,20 @@ public class ReportQuery extends BusinessEntity {
 	 */
 	public void setQueryParameters(Map<String, Object> queryParameters) {
 		this.queryParameters = queryParameters;
+	}
+
+	/**
+	 * @return the aliases
+	 */
+	public Map<String, String> getAliases() {
+		return aliases;
+	}
+
+	/**
+	 * @param aliases the aliases to set
+	 */
+	public void setAliases(Map<String, String> aliases) {
+		this.aliases = aliases;
 	}
     
 }
