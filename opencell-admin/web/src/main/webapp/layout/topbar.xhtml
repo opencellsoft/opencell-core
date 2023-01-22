@@ -86,6 +86,15 @@
 		<!-- / topbar-wrapper -->
 	</div>
 
+	<div id="messages-header" class="ui-messages ui-widget ui-header-alert-message">
+		<div class="ui-messages-warn ui-corner-all">
+			<span class="ui-messages-warn-icon"></span>
+			<ul>
+				<li><h:outputText value="#{messages['deprecated.legacy.message']}" styleClass="ui-messages-warn-summary" /></li>
+			</ul>
+		</div>
+	</div>
+
 	<div
 		id="#{FacesContext.viewRoot.renderKitId eq 'PRIMEFACES_MOBILE' ? 'layout-menu-cover' : 'top-menu-cover'}"
 		class="FLeft">
