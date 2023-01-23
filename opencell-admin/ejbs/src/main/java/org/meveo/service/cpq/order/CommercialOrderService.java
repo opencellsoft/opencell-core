@@ -54,6 +54,7 @@ import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.DiscountPlanInstanceService;
+import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
@@ -82,6 +83,8 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
     private DiscountPlanService discountPlanService;
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;
+    @Inject
+    private OneShotChargeInstanceService oneShotChargeInstanceService;
 
 	@Inject
 	private ProductService productService;
@@ -137,7 +140,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
     @SuppressWarnings("rawtypes")
 	public List<OrderOffer> validateOffers(List<OrderOffer> validOffers) {
     	return validOffers.stream().filter(o -> {
-    		if(o.getOrderLineType() == OfferLineTypeEnum.AMEND  || o.getOrderLineType() == OfferLineTypeEnum.TERMINATE) return true;
+    		if(o.getOrderLineType() == OfferLineTypeEnum.AMEND  || o.getOrderLineType() == OfferLineTypeEnum.TERMINATE || o.getOrderLineType() == OfferLineTypeEnum.APPLY_ONE_SHOT) return true;
 			if(o.getProducts().isEmpty()) return false;
 			for(OrderProduct quoteProduct: o.getProducts()) {
 				if(quoteProduct.getProductVersion() != null) {
@@ -274,6 +277,27 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			}else if (offer.getOrderLineType() == OfferLineTypeEnum.TERMINATE) {
 				Subscription subscription = offer.getSubscription();
 				subscriptionService.terminateSubscription(subscription, offer.getTerminationDate(), offer.getTerminationReason(), order.getOrderNumber());
+			}else if (offer.getOrderLineType() == OfferLineTypeEnum.APPLY_ONE_SHOT) {
+				Subscription subscription = offer.getSubscription();
+				for(OrderProduct quoteProduct: offer.getProducts()) {
+					if(quoteProduct.getProductVersion() != null) {
+						Product product = quoteProduct.getProductVersion().getProduct();
+						for(ProductChargeTemplateMapping charge: product.getProductCharges()) {
+							if(charge.getChargeTemplate() != null) {
+								ChargeTemplate templateCharge = (ChargeTemplate) Hibernate.unproxy(charge.getChargeTemplate());
+								if(templateCharge instanceof OneShotChargeTemplate) {
+									OneShotChargeTemplate oneShotCharge = (OneShotChargeTemplate) templateCharge;
+									if (oneShotCharge.getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.OTHER) {
+										oneShotChargeInstanceService.instantiateAndApplyOneShotCharge(subscription, null,
+												oneShotCharge, null, new Date(), null, null, quoteProduct.getQuantity(), null, null, null, null, 
+												order.getOrderNumber(), null, true, ChargeApplicationModeEnum.SUBSCRIPTION);
+									}
+								}
+							}
+						}
+					}   
+				}
+				
 			}
 
 		}
