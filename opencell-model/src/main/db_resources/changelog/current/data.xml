@@ -15543,6 +15543,25 @@ public class ImportJobNotification extends Script {
             <where>code='org.meveo.service.script.ImportJobNotification'</where>
     	</update>
     </changeSet>
+    
+    <changeSet id="#INTRD-13421_20230123" author="TarikFA.">
+        <update tableName="meveo_script_instance">
+            <column name="script">
+					<![CDATA[
+					 package org.meveo.service.script;
+
+/**
+ * @author phung
+ *
+ */
+public class ValidateBRScript extends ValidateBR {
+
+}
+					]]>
+			</column>
+            <where>code='org.meveo.service.script.ValidateBRScript'</where>
+    	</update>
+    </changeSet>
 
 
 </databaseChangeLog>
