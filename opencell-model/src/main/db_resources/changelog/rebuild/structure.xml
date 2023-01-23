@@ -11181,11 +11181,7 @@
             <column name="sort_by" type="varchar(255)" />
             <column name="sort_order" type="varchar(15)" />
             <column name="query_parameters" type="${type.json}" />
-<<<<<<< HEAD
-=======
-            <column name="aliases" type="${type.json}" />
             <column name="advanced_query" type="${type.json}" />
->>>>>>> 1cb62b2449 (INTRD12819 - ReportQuery - add advanced_query)
         </createTable>
 
         <createTable tableName="report_query_fields">
