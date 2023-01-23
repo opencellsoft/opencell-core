@@ -1645,7 +1645,7 @@ public class QueryBuilder {
         if (firstRow != null) {
             query.setFirstResult(firstRow);
         }
-        if (numberOfRows != null) {
+        if (numberOfRows != null && numberOfRows != 0) {
             query.setMaxResults(numberOfRows);
         }
     }
@@ -1673,7 +1673,7 @@ public class QueryBuilder {
         if (firstRow != null) {
             query.setFirstResult(firstRow);
         }
-        if (numberOfRows != null) {
+        if (numberOfRows != null && numberOfRows != 0) {
             query.setMaxResults(numberOfRows);
         }
     }

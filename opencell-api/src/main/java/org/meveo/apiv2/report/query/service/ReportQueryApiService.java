@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
@@ -47,6 +48,7 @@ import org.meveo.model.report.query.ReportQuery;
 import org.meveo.model.report.query.SortOrderEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.FilterConverter;
 import org.meveo.service.report.ReportQueryService;
@@ -61,6 +63,10 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     @Inject
     @CurrentUser
     private MeveoUser currentUser;
+
+    @Inject
+    @Named
+    private NativePersistenceService nativePersistenceService;
 
     private List<String> fetchFields = asList("fields");
 
@@ -122,7 +128,12 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     	checkPermissionExist();
         Class<?> targetEntity = getEntityClass(entity.getTargetEntity());
         try {
-        	String generatedQuery=generateQuery(entity, targetEntity);
+        	String generatedQuery;
+        	if(entity.getAdvancedQuery() != null) {
+        		generatedQuery = nativePersistenceService.generatedAdvancedQuery(entity).getSqlString();
+        	} else {
+        		generatedQuery = generateQuery(entity, targetEntity);
+        	}
             entity.setGeneratedQuery(generatedQuery);
             reportQueryService.create(entity, currentUser.getUserName());
             return entity;
@@ -232,8 +243,14 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         entity.setFilters(toUpdate.getFilters());
         entity.setSortBy(toUpdate.getSortBy());
         entity.setSortOrder(toUpdate.getSortOrder());
+        entity.setAdvancedQuery(toUpdate.getAdvancedQuery());
         try {
-        	String generatedQuery=generateQuery(entity, targetEntity);
+        	String generatedQuery;
+        	if(entity.getAdvancedQuery() != null) {
+        		generatedQuery = nativePersistenceService.generatedAdvancedQuery(entity).getSqlString();
+        	} else {
+        		generatedQuery = generateQuery(entity, targetEntity);
+        	}
             entity.setGeneratedQuery(generatedQuery);
             return of(reportQueryService.update(entity));
         } catch (Exception exception) {
