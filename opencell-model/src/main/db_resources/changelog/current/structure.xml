@@ -15520,5 +15520,9 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="meveo_script_instance" />
 	</changeSet>
+	
+	<changeSet id="#INTRD-12651-20230123" author="AdilElJaouhari">
+        <modifyDataType tableName="cpq_order_offer" columnName="order_line_type" newDataType="varchar(20)" />
+    </changeSet>
 
 </databaseChangeLog>
