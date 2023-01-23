@@ -19126,12 +19126,30 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
         </update>
     </changeSet>
 
+    <changeSet id="#INTRD-13386_20230223_build" author="TarikFA.">
+        <update tableName="meveo_script_instance">
+            <column name="script">
+					<![CDATA[
+					package org.meveo.service.script;
+
+
+					public class ImportJobNotification extends ImportJobNotificationScript {
+					}
+					]]>
+			</column>
+            <where>code='org.meveo.service.script.ImportJobNotification'</where>
+    	</update>
+    </changeSet>
+    
 	<changeSet id="#INTRD-12327_20230117" author="AbdellatifBARI" />
 	<changeSet id="#INTRD-12463_20230119" author="AbdellatifBARI" />
+    <changeSet id="#INTRD-13386_20230223" author="TarikFA." />
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
     </changeSet>
+    
+    
     
 </databaseChangeLog>
