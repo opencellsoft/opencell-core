@@ -15638,27 +15638,6 @@ public class CdrFlatFileImportScript extends Script {
 			<where>code='org.meveo.service.script.CdrFlatFileImportScript'</where>
 		</update>
 	</changeSet>
-
-	<changeSet id="#INTRD-10400_20221007" author="HichamHANINE" />
-    <changeSet id="#INTRD-10587_20221014" author="TarikFA." />
-    <changeSet id="#INTRD-10541_20221017" author="TarikFA." />
-	<changeSet id="#INTRD-10572_20221014" author="HichamHANINE" />
-	<changeSet id="#INTRD-10572_20221018" author="HichamHANINE" />
-	<changeSet id="#INTRD-11124_20221102" author="HatimOUDAD" />
-    <changeSet id="#INTRD-11154_20221102" author="TarikFA." />
-    <changeSet id="INTRD-11152_20221102" author="TarikFA." />
-	<changeSet id="INTRD-11122_20221104" author="HichamELHALOUI" />
-	<changeSet id="#INTRD-11244_20221104" author="TarikFA." />
-	<changeSet id="#INTRD-11165_20221108" author="HatimOUDAD" />
-	<changeSet id="INTRD-11124_20221109" author="aelmalki" />
-    <changeSet id="#INTR-11598_20221116" author="TarikFA." />
-	<changeSet id="#INTRD-11745_20221130" author="TarikFA." />
-	<changeSet id="#INTRD-12024_20221202" author="aeljaouhari" />
-	<changeSet id="INTRD_12001_20221205" author="TarikFA." />
-	<changeSet id="INTRD-12266_20221214" author="aeljaouhari" />
-	<changeSet id="INTRD-12267_20221219" author="aeljaouhari" />
-	<changeSet id="#INTRD-12335_20221216" author="Bourras"/>
-	<changeSet id="INTRD-12268_20221221" author="aeljaouhari" />
 	<changeSet id="#INTRD-10927-20230110-script-counter" author="MohamedChaouki">
 
 		<insert tableName="meveo_script_instance">
@@ -15862,6 +15841,27 @@ public class counterMassImportScript extends GenericMassImportScript {
 			<where>code='massImportUserAccountJob'</where>
 		</update>
 	</changeSet>
+
+	<changeSet id="#INTRD-10400_20221007" author="HichamHANINE" />
+    <changeSet id="#INTRD-10587_20221014" author="TarikFA." />
+    <changeSet id="#INTRD-10541_20221017" author="TarikFA." />
+	<changeSet id="#INTRD-10572_20221014" author="HichamHANINE" />
+	<changeSet id="#INTRD-10572_20221018" author="HichamHANINE" />
+	<changeSet id="#INTRD-11124_20221102" author="HatimOUDAD" />
+    <changeSet id="#INTRD-11154_20221102" author="TarikFA." />
+    <changeSet id="INTRD-11152_20221102" author="TarikFA." />
+	<changeSet id="INTRD-11122_20221104" author="HichamELHALOUI" />
+	<changeSet id="#INTRD-11244_20221104" author="TarikFA." />
+	<changeSet id="#INTRD-11165_20221108" author="HatimOUDAD" />
+	<changeSet id="INTRD-11124_20221109" author="aelmalki" />
+    <changeSet id="#INTR-11598_20221116" author="TarikFA." />
+	<changeSet id="#INTRD-11745_20221130" author="TarikFA." />
+	<changeSet id="#INTRD-12024_20221202" author="aeljaouhari" />
+	<changeSet id="INTRD_12001_20221205" author="TarikFA." />
+	<changeSet id="INTRD-12266_20221214" author="aeljaouhari" />
+	<changeSet id="INTRD-12267_20221219" author="aeljaouhari" />
+	<changeSet id="#INTRD-12335_20221216" author="Bourras"/>
+	<changeSet id="INTRD-12268_20221221" author="aeljaouhari" />
 
 	<changeSet id="#OUTRD-99_20221205" author="Ilham-Chafik">
 		<update tableName="meveo_script_instance">
