@@ -18814,5 +18814,57 @@ public class ImportJobNotification extends Script {
         </update>
     </changeSet>
 
+    <changeSet id="#INTRD-13314_20230123" author="zelmeliani">
+        <update tableName="billing_tax_mapping">
+            <column name="tax_category_id" value="-3"/>
+            <where>tax_category_id=-1</where>
+        </update>
+        <update tableName="crm_customer_category">
+            <column name="tax_category_id" value="-3"/>
+            <where>tax_category_id=-1</where>
+        </update>
+        <update tableName="billing_billing_account">
+            <column name="tax_category_id" value="-3"/>
+            <where>tax_category_id=-1</where>
+        </update>
+        <delete tableName="billing_tax_category">
+            <where>id=-1 and code = 'Tax category'</where>
+        </delete>
+
+        <update tableName="billing_tax_mapping">
+            <column name="tax_class_id" value="-5"/>
+            <where>tax_class_id in (-1, -2)</where>
+        </update>
+        <update tableName="cat_charge_template">
+            <column name="tax_class_id" value="-5"/>
+            <where>tax_class_id in (-1, -2)</where>
+        </update>
+        <update tableName="billing_wallet_operation">
+            <column name="tax_class_id" value="-5"/>
+            <where>tax_class_id in (-1, -2)</where>
+        </update>
+        <update tableName="billing_rated_transaction">
+            <column name="tax_class_id" value="-5"/>
+            <where>tax_class_id in (-1, -2)</where>
+        </update>
+        <update tableName="ar_payment_schedule_tmpl">
+            <column name="tax_class_id" value="-5"/>
+            <where>tax_class_id in (-1, -2)</where>
+        </update>
+        <update tableName="billing_accounting_article">
+            <column name="tax_class_id" value="-5"/>
+            <where>tax_class_id in (-1, -2)</where>
+        </update>
+        <delete tableName="billing_tax_class">
+            <where>id=-1 and code = 'CMP_DATA'</where>
+        </delete>
+        <delete tableName="billing_tax_class">
+            <where>id=-2 and code = 'SUB_DATA'</where>
+        </delete>
+
+        <delete tableName="billing_invoice_type">
+            <where>code='DRAFT'</where>
+        </delete>
+    </changeSet>
 
 </databaseChangeLog>
