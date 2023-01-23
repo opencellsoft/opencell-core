@@ -646,4 +646,9 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
             return null;
         }
     }
+
+	public List<CommercialOrder> findWithInvoicingPlanNotNull() {
+		TypedQuery<CommercialOrder> query = getEntityManager().createNamedQuery("CommercialOrder.findWithInvoicingPlan", CommercialOrder.class);
+		return query.getResultList();
+	}
 }

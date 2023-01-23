@@ -18903,7 +18903,6 @@ public class CdrFlatFileImportScript extends Script {
 
     <changeSet id="#INTRD-12727_20230105" author="zelmeliani" />
 
-    <changeSet id="#INTRD-12625_20221230" author="Bourras"/>
     <changeSet id="#INTRD-13260_20230116" author="hichamELHALOUI"/>
 
     <changeSet id="#INTRD-12801_INTRD-12806__20230110" author="AbdellatifBARI">
@@ -19132,6 +19131,23 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
             </column>
             <where>code='org.meveo.service.script.ServiceInstanceImportScript'</where>
         </update>
+    </changeSet>
+
+    <changeSet id="#INTRD-13383_20230123" author="bourras">
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="code" value="org.meveo.service.script.product.OneShotOtherTypeMigrationScript"/>
+            <column name="src_type" value="JAVA"/>
+            <column name="description" value="Migrate OneShot Charge of Type OTHER to INVOICING_PLAN"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="script">
+                <![CDATA[package org.meveo.service.script.product;
+						public class OneShotOtherTypeMigration extends OneShotOtherTypeMigrationScript {}
+				]]>
+            </column>
+            <column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='BILLING_RUN_VALIDATION')" />
+        </insert>
     </changeSet>
 
 	<changeSet id="#INTRD-12327_20230117" author="AbdellatifBARI" />
