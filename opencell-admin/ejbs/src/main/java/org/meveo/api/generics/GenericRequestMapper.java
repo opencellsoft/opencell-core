@@ -1,4 +1,4 @@
-package org.meveo.apiv2.generic.core;
+package org.meveo.api.generics;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,7 +10,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.assertj.core.util.VisibleForTesting;
 import org.meveo.admin.util.pagination.FilterOperatorEnum;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -37,7 +36,7 @@ public class GenericRequestMapper {
     }
 
     private PaginationConfiguration getPaginationConfiguration(GenericPagingAndFiltering genericPagingAndFiltering) {
-        return new PaginationConfiguration(genericPagingAndFiltering.getOffset().intValue(), genericPagingAndFiltering.getLimitOrDefault(GenericHelper.getDefaultLimit()).intValue(),
+        return new PaginationConfiguration(genericPagingAndFiltering.getOffset().intValue(), genericPagingAndFiltering.getLimitOrDefault(0L).intValue(),
                 evaluateFilters(genericPagingAndFiltering.getFilters(), entityClass), genericPagingAndFiltering.getFullTextFilter(),
                 computeFetchFields(genericPagingAndFiltering), genericPagingAndFiltering.getGroupBy(), genericPagingAndFiltering.getHaving(), genericPagingAndFiltering.getJoinType(),
                 genericPagingAndFiltering.getSortBy(), PagingAndFiltering.SortOrder.valueOf(genericPagingAndFiltering.getSortOrder()));

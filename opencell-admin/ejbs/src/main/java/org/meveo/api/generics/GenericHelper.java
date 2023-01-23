@@ -1,19 +1,19 @@
-package org.meveo.apiv2.generic.core;
+package org.meveo.api.generics;
 
-import org.meveo.api.dto.IEntityDto;
-import org.meveo.apiv2.GenericOpencellRestful;
-import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.model.catalog.OfferServiceTemplate;
-import org.reflections.Reflections;
+import static org.meveo.api.generics.ValidationUtils.checkEntityClass;
+import static org.meveo.api.generics.ValidationUtils.checkEntityName;
 
-import javax.persistence.Entity;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.meveo.apiv2.generic.ValidationUtils.checkEntityClass;
-import static org.meveo.apiv2.generic.ValidationUtils.checkEntityName;
+import javax.persistence.Entity;
+
+import org.meveo.api.dto.IEntityDto;
+import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.model.catalog.OfferServiceTemplate;
+import org.reflections.Reflections;
 
 
 public class GenericHelper {
@@ -93,7 +93,4 @@ public class GenericHelper {
         return entityDtoClass;
     }
 
-    public static Long getDefaultLimit() {
-        return GenericOpencellRestful.API_LIST_DEFAULT_LIMIT;
-    }
 }

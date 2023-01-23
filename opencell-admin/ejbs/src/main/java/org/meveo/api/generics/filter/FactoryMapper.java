@@ -1,12 +1,16 @@
-package org.meveo.apiv2.generic.core.filter;
+package org.meveo.api.generics.filter;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
-import org.meveo.api.generics.filter.FilterMapper;
 import org.meveo.api.generics.filter.filtermapper.AuditableMapper;
 import org.meveo.api.generics.filter.filtermapper.CustomFieldMapper;
 import org.meveo.api.generics.filter.filtermapper.DateMapper;
