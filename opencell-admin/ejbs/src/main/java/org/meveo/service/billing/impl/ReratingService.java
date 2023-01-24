@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import java.util.Optional;
 
 import javax.ejb.EJB;
@@ -423,7 +424,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
         List<EDR> tEdrs = getEntityManager().createNamedQuery("EDR.getByWO")
                 .setParameter("WO_IDS", List.of(operationToRerate.getId()))
                 .getResultList();
-
+        tEdrs = tEdrs.stream().filter(e -> e.getStatus() != EDRStatusEnum.CANCELLED).collect(Collectors.toList());
         WalletOperation newWO = null;
 
         // To manage case when 1 WO have more than 1 T.EDR
