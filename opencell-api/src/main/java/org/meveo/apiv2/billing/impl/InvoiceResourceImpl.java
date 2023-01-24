@@ -264,8 +264,8 @@ public class InvoiceResourceImpl implements InvoiceResource {
 		}
 		return Response.ok().entity(invoiceLinesInput).build();
 	}
-	
-	
+
+	@Transactional
 	@Override
 	public Response updateInvoiceLine(Long id, Long lineId, InvoiceLineInput invoiceLineInput) {
 		Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
