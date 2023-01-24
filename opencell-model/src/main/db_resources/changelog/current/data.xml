@@ -18896,9 +18896,6 @@ public class ValidateBRScript extends ValidateBR {
             <where>id=-2 and code = 'SUB_DATA'</where>
         </delete>
 
-        <delete tableName="billing_invoice_type">
-            <where>code='DRAFT'</where>
-        </delete>
     </changeSet>
 
 </databaseChangeLog>
