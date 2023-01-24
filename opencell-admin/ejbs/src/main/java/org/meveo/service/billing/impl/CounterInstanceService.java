@@ -80,7 +80,7 @@ import org.meveo.service.payments.impl.CustomerAccountService;
  * @lastModifiedVersion 6.1
  */
 @Stateless
-public class CounterInstanceService extends PersistenceService<CounterInstance> {
+public class CounterInstanceService extends BusinessService<CounterInstance> {
 
     private static final String CHARGE = "charge";
     private static final String SERVICE = "service";
