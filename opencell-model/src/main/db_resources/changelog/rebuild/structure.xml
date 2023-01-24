@@ -18154,6 +18154,44 @@
 								 deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" />
 	</changeSet>
+
+    <changeSet id="#INTRD-13062-20230124-rebuild" author="ZBariki">
+        <createSequence sequenceName="ar_customer_balance_seq" />
+        <createTable tableName="ar_customer_balance">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="customer_balance_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+            <column name="default_balance" type="${type.boolean}" defaultValueNumeric="0" />
+        </createTable>
+        <createTable tableName="ar_customer_balance_templates">
+            <column name="customer_balance_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="template_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="customer_balance_id, template_id"
+                       constraintName="ar_templates_customer_balance_pkey"
+                       tableName="ar_customer_balance_templates" />
+        <addForeignKeyConstraint baseTableName="ar_customer_balance_templates" baseColumnNames="customer_balance_id"
+                                 constraintName="fk_ar_customer_balance_templates"
+                                 referencedTableName="ar_customer_balance"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="ar_customer_balance_templates" baseColumnNames="template_id"
+                                 constraintName="fk_ar_templates_customer_balance"
+                                 referencedTableName="ar_occ_template"
+                                 referencedColumnNames="id"/>
+    </changeSet>
 	
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
@@ -19447,6 +19485,7 @@
 	<changeSet id="#INTRD-13204_20230119" author="HichamHANINE" />
 	<changeSet id="#INTRD-12819-20221220-qb_advanced_query" author="a.rouaguebe" />
 	<changeSet id="#INTRD-12651-20230123" author="AdilElJaouhari" />
+    <changeSet id="#INTRD-13062-20230124" author="ZBariki" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

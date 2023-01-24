@@ -24,6 +24,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -35,6 +37,9 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.billing.AccountingCode;
+import org.meveo.model.dunning.CustomerBalance;
+
+import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -95,6 +100,12 @@ public class OCCTemplate extends BusinessEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "manual_creation_enabled")
     private boolean manualCreationEnabled;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "ar_customer_balance_templates",
+            joinColumns = @JoinColumn(name = "template_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "customer_balance_id", referencedColumnName = "id"))
+    private List<CustomerBalance> balances;
 
     public String getAccountCodeClientSide() {
         return accountCodeClientSide;
@@ -187,5 +198,13 @@ public class OCCTemplate extends BusinessEntity {
 
     public void setManualCreationEnabled(boolean manualCreationEnabled) {
         this.manualCreationEnabled = manualCreationEnabled;
+    }
+
+    public List<CustomerBalance> getBalances() {
+        return balances;
+    }
+
+    public void setBalances(List<CustomerBalance> balances) {
+        this.balances = balances;
     }
 }
