@@ -71,17 +71,17 @@ public abstract class AccountService<P extends AccountEntity> extends BusinessSe
      */
     @SuppressWarnings("unchecked")
     private P findByExternalRefX(String externalRefX,String externalRef1or2) {
-        log.debug("start of find {} by "+externalRef1or2+" ("+externalRef1or2+"={}) ..", getEntityClass().getSimpleName(), externalRefX);
+        log.debug("start of find {} by {}  ({}={}) ..", getEntityClass().getSimpleName(),externalRef1or2,externalRef1or2, externalRefX);
         final Class<? extends P> productClass = getEntityClass();
         StringBuilder queryString = new StringBuilder("from " + productClass.getName() + " a");
         queryString.append(" where a."+externalRef1or2+" = :"+externalRef1or2);
         Query query = getEntityManager().createQuery(queryString.toString());
         query.setParameter(externalRef1or2, externalRefX);
-        if (query.getResultList().size() == 0) {
+        if (query.getResultList().isEmpty()) {
             return null;
         }
         P e = (P) query.getResultList().get(0);
-        log.debug("end of find {} by "+externalRef1or2+" ("+externalRef1or2+"={}). Result found={}.", new Object[] {getEntityClass().getSimpleName(), externalRefX, e != null });
+        log.debug("end of find {} by {} ({}={}). Result found={}.", getEntityClass().getSimpleName(),externalRef1or2,externalRef1or2, externalRefX, e != null );
         return e;
     }
 
