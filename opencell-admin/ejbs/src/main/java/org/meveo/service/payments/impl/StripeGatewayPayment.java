@@ -75,8 +75,7 @@ public class StripeGatewayPayment implements GatewayPaymentInterface {
 	private ParamBean paramBean() {
 		ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils
 				.getServiceInterface(ParamBeanFactory.class.getSimpleName());
-		ParamBean paramBean = paramBeanFactory.getInstance();
-		return paramBean;
+		return paramBeanFactory.getInstance();		
 	}
 
 	private CustomerAccountService getCustomerAccountService() {
@@ -150,7 +149,7 @@ public class StripeGatewayPayment implements GatewayPaymentInterface {
 				paymentMethodTypes.add("sepa_debit");
 			}
 			Map<String, Object> params = new HashMap<>();
-			params.put("amount", ctsAmount.longValue());
+			params.put("amount", ctsAmount);
 			params.put("currency", currencyCode);
 			params.put("payment_method_types", paymentMethodTypes);
 			params.put("payment_method", tokenId);
@@ -160,8 +159,12 @@ public class StripeGatewayPayment implements GatewayPaymentInterface {
 			params.put("off_session", paramBean().getProperty("stripe.paymentToken.offSession", "true"));
 
 			PaymentIntent paymentIntent = PaymentIntent.create(params);
+			
+			if(paymentIntent == null) {
+				throw new BusinessException("paymentIntent created is null");
+			}
 
-			log.info("PaymentIntent  created :{}", paymentIntent.toJson());
+			log.info("PaymentIntent  created :{}",paymentIntent.toJson());
 
 			paymentResponseDto.setPaymentID(paymentIntent.getId());
 			paymentResponseDto.setPaymentStatus(mappingStaus(paymentIntent.getStatus()));
