@@ -303,10 +303,36 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 	public List<SubAccountingPeriod> findByAccountingPeriodAndEndDate(AccountingPeriod accountingPeriod, Date endDate) {
         try {
             return getEntityManager()
-						.createNamedQuery("SubAccountingPeriod.findByAPAndAfterEndDate", entityClass)
-						.setParameter("apId", accountingPeriod.getId())
-						.setParameter("endDate", endDate, TemporalType.DATE)
-						.getResultList();
+                        .createNamedQuery("SubAccountingPeriod.findByAPAndAfterEndDate", entityClass)
+                        .setParameter("apId", accountingPeriod.getId())
+                        .setParameter("endDate", endDate, TemporalType.DATE)
+                        .getResultList();
+        } catch (NoResultException e) {
+            log.debug("No {} of AccountingPeriod {} found", getEntityClass().getSimpleName(), accountingPeriod.getId());
+            return new ArrayList<>();
+        }
+    }
+	
+	public List<SubAccountingPeriod> getRegularUsersSubPeriodWithStatusOpen(AccountingPeriod accountingPeriod, Date endDate) {
+        try {
+            return getEntityManager()
+                        .createNamedQuery("SubAccountingPeriod.getRegularUsersSubPeriodWithStatusOpen", entityClass)
+                        .setParameter("apId", accountingPeriod.getId())
+                        .setParameter("endDate", endDate, TemporalType.DATE)
+                        .getResultList();
+        } catch (NoResultException e) {
+            log.debug("No {} of AccountingPeriod {} found", getEntityClass().getSimpleName(), accountingPeriod.getId());
+            return new ArrayList<>();
+        }
+    }
+	
+	public List<SubAccountingPeriod> getAllUsersSubPeriodWithStatusOpen(AccountingPeriod accountingPeriod, Date endDate) {
+        try {
+            return getEntityManager()
+                        .createNamedQuery("SubAccountingPeriod.getAllUsersSubPeriodWithStatusOpen", entityClass)
+                        .setParameter("apId", accountingPeriod.getId())
+                        .setParameter("endDate", endDate, TemporalType.DATE)
+                        .getResultList();
         } catch (NoResultException e) {
             log.debug("No {} of AccountingPeriod {} found", getEntityClass().getSimpleName(), accountingPeriod.getId());
             return new ArrayList<>();
