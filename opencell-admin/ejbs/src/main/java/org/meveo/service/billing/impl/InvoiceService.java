@@ -3268,17 +3268,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (billingRun == null) {
             return;
         }
-//        if ((billingRun.getComputeDatesAtValidation() != null && !billingRun.getComputeDatesAtValidation()) 
-//              || (billingRun.getComputeDatesAtValidation() == null && !billingCycle.getComputeDatesAtValidation())){
-//            return;
-//        }
-        if (invoice.getStatus().equals(InvoiceStatusEnum.SUSPECT)) {
+        if (invoice.getStatus().equals(InvoiceStatusEnum.SUSPECT) || invoice.getStatus().equals(InvoiceStatusEnum.REJECTED)) {
             invoice.setStatus(InvoiceStatusEnum.DRAFT);
         }
-        
         if ((billingRun.getComputeDatesAtValidation() != null && billingRun.getComputeDatesAtValidation()) 
                 || (billingRun.getComputeDatesAtValidation() == null && billingCycle.isComputeDatesAtValidation())) {
             recalculateDate(invoice, billingRun, billingAccount, billingCycle);
+        }
+        if (billingRun.getSkipValidationScript() != null && !billingRun.isSkipValidationScript()) {
+            applyAutomaticInvoiceCheck(invoice, true);
+        }
+        if (invoice.getStatus().equals(InvoiceStatusEnum.REJECTED)) {
+            return;
         }
 
         //Assign invoice number :
