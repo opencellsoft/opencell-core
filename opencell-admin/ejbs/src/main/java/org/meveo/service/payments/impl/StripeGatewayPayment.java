@@ -139,7 +139,7 @@ public class StripeGatewayPayment implements GatewayPaymentInterface {
 		PaymentResponseDto paymentResponseDto = new PaymentResponseDto();
 		paymentResponseDto.setPaymentStatus(PaymentStatusEnum.NOT_PROCESSED);
 		try {
-			Stripe.apiKey = paymentGateway.getSecretKey();
+			setKey(paymentGateway.getSecretKey());
 
 			List<Object> paymentMethodTypes = new ArrayList<>();
 			if (paymentCardToken != null) {
@@ -160,11 +160,11 @@ public class StripeGatewayPayment implements GatewayPaymentInterface {
 
 			PaymentIntent paymentIntent = PaymentIntent.create(params);
 			
+			log.info("PaymentIntent  created :{}",paymentIntent == null ? null : paymentIntent.toJson());
+			
 			if(paymentIntent == null) {
 				throw new BusinessException("paymentIntent created is null");
 			}
-
-			log.info("PaymentIntent  created :{}",paymentIntent.toJson());
 
 			paymentResponseDto.setPaymentID(paymentIntent.getId());
 			paymentResponseDto.setPaymentStatus(mappingStaus(paymentIntent.getStatus()));
@@ -197,14 +197,14 @@ public class StripeGatewayPayment implements GatewayPaymentInterface {
 	@Override
 	public void cancelPayment(String paymentID) throws BusinessException {
 		try {
-			Stripe.apiKey = paymentGateway.getSecretKey();
+			setKey(paymentGateway.getSecretKey());
 
 			PaymentIntent paymentIntent = PaymentIntent.retrieve(paymentID);
 			if (paymentIntent == null) {
 				throw new BusinessException("Cant find payment by id:" + paymentID);
 			}
 			PaymentIntent updatedPaymentIntent = paymentIntent.cancel();
-			log.info("updatedPaymentIntent:{}", updatedPaymentIntent.toJson());
+			log.info("updatedPaymentIntent:{}", updatedPaymentIntent == null ? null : updatedPaymentIntent.toJson());
 
 		} catch (Exception e) {
 			throw new BusinessException(e.getMessage());
@@ -298,7 +298,7 @@ public class StripeGatewayPayment implements GatewayPaymentInterface {
 			if (StringUtils.isBlank(customerAccount.getContactInformationNullSafe().getEmail())) {
 				throw new BusinessException("Invalid customer email");
 			}
-			Stripe.apiKey = paymentGateway.getSecretKey();
+			setKey(paymentGateway.getSecretKey());
 			Customer stripeCustomer = null;
 			
 			String phone = customerAccount.getContactInformationNullSafe().getMobile();
@@ -308,10 +308,10 @@ public class StripeGatewayPayment implements GatewayPaymentInterface {
 			
 			CustomerCreateParams params = CustomerCreateParams.builder().setAddress(getBillingAddress(customerAccount))
 					.setName(customerAccount.getName().getFullName()).setDescription(customerAccount.getCode())
-					.setPhone(customerAccount.getContactInformationNullSafe().getMobile()).build();
+					.setPhone(phone).build();
 
 			stripeCustomer = Customer.create(params);
-			log.info("Customer stripe created :" + stripeCustomer.toJson());
+			log.info("Customer stripe created :{}",stripeCustomer == null ? null : stripeCustomer.toJson());
 			return stripeCustomer;
 		} catch (Exception e) {
 			throw new BusinessException(e.getMessage());
@@ -319,11 +319,14 @@ public class StripeGatewayPayment implements GatewayPaymentInterface {
 
 	}
 
+	private static synchronized void setKey(String key) {
+		Stripe.apiKey = key;
+	}
 	@Override
 	public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput)
 			throws BusinessException {
 		try {
-			Stripe.apiKey = paymentGateway.getSecretKey();
+			setKey(paymentGateway.getSecretKey());
 			CustomerAccount customerAccount = getCustomerAccountService()
 					.findByCode(hostedCheckoutInput.getCustomerAccountCode());
 
@@ -338,7 +341,10 @@ public class StripeGatewayPayment implements GatewayPaymentInterface {
 			}
 
 			if (stripeCustomer == null) {
-				stripeCustomer = createCustomer(customerAccount);			
+				stripeCustomer = createCustomer(customerAccount);
+				if (stripeCustomer == null) {
+					throw new BusinessException("Cant create customer on Stripe");
+				}
 				customerAccount.setExternalRef2(stripeCustomer.getId());
 				customerAccountService.update(customerAccount);
 			}
@@ -356,12 +362,13 @@ public class StripeGatewayPayment implements GatewayPaymentInterface {
 			params.put("currency", hostedCheckoutInput.getCurrencyCode());
 
 			Session session = Session.create(params);
-			log.info("session:" + session.toJson());
-
+			log.info("session:{}",session == null ? null : session.toJson());
+			if(session == null) {
+				throw new BusinessException("session created is null");
+			}
 			return new PaymentHostedCheckoutResponseDto(session.getUrl(), null, null, session.getId());
 		} catch (Exception e) {
-			log.error("Error on getHostedCheckoutUrl:", e);
-			throw new BusinessException(e.getMessage());
+			throw new BusinessException("Error on getHostedCheckoutUrl:"+e.getMessage());
 		}
 	}
 
@@ -379,7 +386,7 @@ public class StripeGatewayPayment implements GatewayPaymentInterface {
 	public HostedCheckoutStatusResponseDto getHostedCheckoutStatus(String id) throws BusinessException {
 		try {
 
-			Stripe.apiKey = paymentGateway.getSecretKey();
+			setKey(paymentGateway.getSecretKey());
 			Session session = Session.retrieve(id);
 			HostedCheckoutStatusResponseDto hostedCheckoutStatusResponseDto = new HostedCheckoutStatusResponseDto();
 			hostedCheckoutStatusResponseDto.setHostedCheckoutStatus(session.getStatus());
@@ -389,8 +396,7 @@ public class StripeGatewayPayment implements GatewayPaymentInterface {
 
 			return hostedCheckoutStatusResponseDto;
 		} catch (Exception e) {
-			log.error("Error on getHostedCheckoutStatus:", e);
-			throw new BusinessException(e.getMessage());
+			throw new BusinessException("Error on getHostedCheckoutStatus:"+e.getMessage());
 		}
 	}
 }
