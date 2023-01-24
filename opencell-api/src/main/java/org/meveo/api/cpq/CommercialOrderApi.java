@@ -22,6 +22,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.account.AccessDto;
@@ -37,14 +38,19 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.AdvancementRateIncreased;
 import org.meveo.event.qualifier.StatusUpdated;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.*;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
+import org.meveo.model.catalog.ProductChargeTemplateMapping;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.ProductVersion;
@@ -133,6 +139,9 @@ public class CommercialOrderApi extends BaseApi {
 	@Inject
 	@AdvancementRateIncreased
 	protected Event<CommercialOrder> entityAdvancementRateIncreasedEventProducer;
+	
+    @Inject
+    private ResourceBundle resourceMessages;
 
 	private static final String ADMINISTRATION_VISUALIZATION = "administrationVisualization";
     private static final String ADMINISTRATION_MANAGEMENT = "administrationManagement";
@@ -864,6 +873,39 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
     		}
         	orderOffer.setTerminationReason(terminationReason);
     		orderOffer.setTerminationDate(orderOfferDto.getTerminationDate());
+        }else if(orderOfferDto.getOrderLineType() == OfferLineTypeEnum.APPLY_ONE_SHOT) {
+        	for (OrderProductDto orderProductDto : orderOfferDto.getOrderProducts()) { 
+        		if(!StringUtils.isBlank(orderProductDto.getProductCode()) && !StringUtils.isBlank(orderProductDto.getProductVersion())) {
+        			ProductVersion productVersion = productVersionService.findByProductAndVersion(orderProductDto.getProductCode(), orderProductDto.getProductVersion());
+        			if(productVersion == null) {
+        				throw new EntityDoesNotExistsException(ProductVersion.class, orderProductDto.getProductCode() +","+ orderProductDto.getProductVersion());
+        			}
+    				boolean haveOneShotChargeOther = false;
+        			for(ProductChargeTemplateMapping charge : productVersion.getProduct().getProductCharges()) {
+        				if(charge.getChargeTemplate() != null) {
+        					ChargeTemplate templateCharge = (ChargeTemplate) PersistenceUtils.initializeAndUnproxy(charge.getChargeTemplate());
+        					if(templateCharge instanceof OneShotChargeTemplate) {
+        						OneShotChargeTemplate oneShotCharge = (OneShotChargeTemplate) templateCharge;
+        						if(oneShotCharge.getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.OTHER) {
+        							haveOneShotChargeOther = true;
+        							break;
+        						}
+        					}
+        				}
+        			}
+        			if (!haveOneShotChargeOther) {
+            			throw new MeveoApiException(resourceMessages.getString("order.line.type.one.shot.other.error", orderProductDto.getProductCode()));
+        			}
+        			
+        		}
+
+			}
+        	orderOffer.setOrderLineType(OfferLineTypeEnum.APPLY_ONE_SHOT);
+        	Subscription subscription = subscriptionService.findByCode(orderOfferDto.getSubscriptionCode());
+        	if(subscription == null) {
+        		throw new EntityDoesNotExistsException("Subscription with code "+orderOfferDto.getSubscriptionCode()+" does not exist");
+        	}
+        	orderOffer.setSubscription(subscription);
         }else {
         	orderOffer.setOrderLineType(OfferLineTypeEnum.CREATE);
         }
