@@ -14645,4 +14645,207 @@ public class CdrFlatFileImportScript extends Script {
 	</changeSet>
 
 
+	<changeSet id="#INTRD-10927-20230110-script-counter" author="MohamedChaouki">
+
+		<insert tableName="meveo_script_instance">
+			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+			<column name="code" value="org.meveo.service.script.CounterImportScript" />
+			<column name="script">
+				<![CDATA[
+package org.meveo.service.script;
+
+
+import org.apache.commons.lang3.StringUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.model.billing.*;
+import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.catalog.CounterTypeEnum;
+import org.meveo.model.crm.Customer;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.service.billing.impl.*;
+import org.meveo.service.catalog.impl.CounterTemplateService;
+import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.payments.impl.CustomerAccountService;
+
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+public class counterMassImportScript extends GenericMassImportScript {
+
+    private static final String DATE_FORMAT_PATTERN = "dd/MM/yyyy";
+    private static final String RECORD_VARIABLE_NAME = "record";
+    private final CustomerService customerService = (CustomerService) getServiceInterface(CustomerService.class.getSimpleName());
+    private final BillingAccountService billingAccountService = (BillingAccountService) getServiceInterface(BillingAccountService.class.getSimpleName());
+    private final SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface(SubscriptionService.class.getSimpleName());
+    private final CounterInstanceService counterInstanceService = (CounterInstanceService) getServiceInterface(CounterInstanceService.class.getSimpleName());
+    private final CounterTemplateService counterTemplateService = (CounterTemplateService) getServiceInterface(CounterTemplateService.class.getSimpleName());
+    private final CustomerAccountService customerAccountService = (CustomerAccountService) getServiceInterface(CustomerAccountService.class.getSimpleName());
+    private final UserAccountService userAccountService = (UserAccountService) getServiceInterface(UserAccountService.class.getSimpleName());
+    private final ServiceInstanceService serviceInstanceService = (ServiceInstanceService) getServiceInterface(ServiceInstanceService.class.getSimpleName());
+    private final CounterPeriodService counterPeriodService = (CounterPeriodService) getServiceInterface(CounterPeriodService.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> context) throws BusinessException {
+        try {
+            @SuppressWarnings("unchecked") Map<String, Object> recordMap = (Map<String, Object>) context.get(RECORD_VARIABLE_NAME);
+            if (recordMap != null && !recordMap.isEmpty()) {
+                CounterPeriod counterPeriod = new CounterPeriod();
+                CounterActionEnum action = CounterActionEnum.CREATE;
+                CounterInstance counterDto = validateAndGetCounter(action, recordMap);
+                CounterInstance instance = setCounterValues(recordMap, counterDto);
+                setCounterPeriodValues(recordMap, counterPeriod);
+                CounterInstance counterInstance = counterInstanceService.update(instance);
+                counterPeriod.setCounterInstance(counterInstance);
+               if (!counterPeriod.getCode().isEmpty())counterPeriodService.create(counterPeriod);
+
+            }
+        } catch (Exception exception) {
+            throw new BusinessException(exception);
+        }
+    }
+
+    private CounterInstance validateAndGetCounter(CounterActionEnum action, Map<String, Object> recordMap) {
+        CounterInstance counterInstance = null;
+
+        String ocCounterTemplateCode = (String) recordMap.get("OC_COUNTER_TEMPLATE_CODE");
+        if (ocCounterTemplateCode.isEmpty()) {
+            throw new ValidationException("OC_COUNTER_TEMPLATE_CODE is required");
+        }
+        String ocChangeInstanceCode = (String) recordMap.get("OC_CHANGE_INSTANCE_CODE");
+        if (ocChangeInstanceCode.isEmpty()) {
+            throw new ValidationException("OC_CHANGE_INSTANCE_CODE is required");
+        }
+        String ocSubscriptionCode = (String) recordMap.get("OC_SUBSCRIPTION_CODE");
+        if (ocSubscriptionCode.isEmpty()) {
+            throw new ValidationException("OC_SUBSCRIPTION_CODE is required");
+        }
+
+        counterInstance = new CounterInstance();
+
+        return counterInstance;
+    }
+
+    private void setCounterPeriodValues(Map<String, Object> recordMap, CounterPeriod counterPeriod) {
+
+        DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
+        String OC_counter_period_code = (String) recordMap.get("OC_COUNTER_PERIOD_CODE");
+        String OC_counter_period_type = (String) recordMap.get("OC_COUNTER_PERIOD_TYPE");
+        String OC_counter_period_start_date = (String) recordMap.get("OC_COUNTER_PERIOD_START_DATE");
+        String OC_counter_period_end_date = (String) recordMap.get("OC_COUNTER_PERIOD_END_DATE");
+        String OC_counter_period_level = (String) recordMap.get("OC_COUNTER_PERIOD_LEVEL");
+        String OC_counter_period_value = (String) recordMap.get("OC_COUNTER_PERIOD_VALUE");
+
+        Date periodStartDate = null;
+        Date periodEndDate = null;
+        try {
+            periodStartDate = StringUtils.isEmpty(OC_counter_period_start_date) ? null : dateFormat.parse(OC_counter_period_start_date);
+        } catch (ParseException e) {
+            throw new ValidationException("Incorrect format date for OC_COUNTER_PERIOD_START_DATE");
+        }
+        try {
+            periodEndDate = StringUtils.isEmpty(OC_counter_period_end_date) ? null : dateFormat.parse(OC_counter_period_end_date);
+        } catch (ParseException e) {
+            throw new ValidationException("Incorrect format date for OC_COUNTER_PERIOD_END_DATE");
+        }
+
+        BigDecimal level = OC_counter_period_level.isEmpty() ? null : new BigDecimal(OC_counter_period_level);
+        BigDecimal value = OC_counter_period_value.isEmpty() ? null : new BigDecimal(OC_counter_period_value);
+
+        counterPeriod.setCode(OC_counter_period_code);
+        counterPeriod.setCounterType(OC_counter_period_type.isEmpty() ? null : CounterTypeEnum.valueOf(OC_counter_period_type));
+        counterPeriod.setPeriodStartDate(periodStartDate);
+        counterPeriod.setPeriodEndDate(periodEndDate);
+        counterPeriod.setLevel(level);
+        counterPeriod.setValue(value);
+    }
+
+    private CounterInstance setCounterValues(Map<String, Object> recordMap, CounterInstance counterInstance) throws ParseException {
+
+        List<CounterPeriod> counterPeriods = new ArrayList<>();
+
+        String OC_customer_code = (String) recordMap.get("OC_CUSTOMER_CODE");
+        String OC_billing_account_code = (String) recordMap.get("OC_BILLINGACCOUNT_CODE");
+        String OC_subscription_code = (String) recordMap.get("OC_SUBSCRIPTION_CODE");
+        String OC_counter_code = (String) recordMap.get("OC_COUNTER_CODE");
+        String OC_counter_template_code = (String) recordMap.get("OC_COUNTER_TEMPLATE_CODE");
+        String OC_customer_account_code = (String) recordMap.get("OC_CUSTOMER_ACCOUNT_CODE");
+        String OC_user_account_code = (String) recordMap.get("OC_USER_ACCOUNT_CODE");
+        String OC_change_instance_code = (String) recordMap.get("OC_CHANGE_INSTANCE_CODE");
+
+        CounterTemplate counterTemplate = counterTemplateService.findByCode(OC_counter_template_code);
+        Customer customer = customerService.findByCode(OC_customer_code);
+        BillingAccount billingAccount = billingAccountService.findByCode(OC_billing_account_code);
+        Subscription subscription = subscriptionService.findByCode(OC_subscription_code);
+        CustomerAccount customerAccount = customerAccountService.findByCode(OC_customer_account_code);
+        UserAccount userAccount = userAccountService.findByCode(OC_user_account_code);
+        ServiceInstance serviceInstance = serviceInstanceService.findByCode(OC_change_instance_code);
+        CounterInstance counterInstanceCurrent = counterInstanceService.findByCode(OC_counter_code);
+        if (counterInstanceCurrent != null) {
+            counterInstance = counterInstanceCurrent;
+            counterPeriods = counterInstanceCurrent.getCounterPeriods();
+        }
+        counterInstance.setCustomer(customer);
+        counterInstance.setBillingAccount(billingAccount);
+        counterInstance.setSubscription(subscription);
+
+        counterInstance.setCounterTemplate(counterTemplate);
+        counterInstance.setCustomerAccount(customerAccount);
+        counterInstance.setUserAccount(userAccount);
+        counterInstance.setServiceInstance(serviceInstance);
+        counterInstance.setCode(OC_counter_code);
+        counterInstance.setCounterPeriods(counterPeriods);
+
+        return counterInstance;
+    }
+
+    public enum CounterActionEnum {CREATE, UPDATE, SUSPEND, RESUME, ACTIVATE, TERMINATE}
+}
+
+				]]>
+			</column>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="version" valueNumeric="0" />
+			<column name="src_type" value="JAVA" />
+		</insert>
+	</changeSet>
+	<changeSet id="#INTRD-10927-20230110-jobs-counter" author="MohamedChaouki">
+		<insert tableName="meveo_job_instance">
+			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="1" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="job_category" value="MEDIATION" />
+			<column name="job_template" value="FlatFileProcessingJob" />
+			<column name="code" value="ImportCounter" />
+			<column name="creator" value="opencell.admin" />
+			<column name="job_speed" value="NORMAL" />
+			<column name="single_node" valueNumeric="1" />
+			<column name="verbose_report" valueNumeric="1" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="cf_values">
+				<![CDATA[
+				{"nbRuns": [{"long": 1}], "oneFilePerJob": [{"boolean": false}], "waitingMillis": [{"long": 0}], "FlatFileProcessingJob_inputDir": [{"string": "/imports/counter/input"}], "FlatFileProcessingJob_outputDir": [{"string": "/imports/counter/output"}], "FlatFileProcessingJob_rejectDir": [{"string": "/imports/counter/reject"}], "FlatFileProcessingJob_archiveDir": [{"string": "/imports/counter/archive"}], "FlatFileProcessingJob_errorAction": [{"string": "CONTINUE"}], "FlatFileProcessingJob_mappingConf": [{"string": "<beanio\r\n        xmlns=\"http://www.beanio.org/2012/03\"\r\n        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n        xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n    <stream name=\"record\" format=\"csv\">\r\n        <parser>\r\n            <property name=\"delimiter\" value=\";\" />\r\n            <property name=\"comments\" value=\"END\" />\r\n            <property name=\"multilineEnabled\" value=\"true\" />\r\n        </parser>\r\n  <record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n  <field name=\"OC_ENTITY\" ignore=\"true\"/>\r\n  <field name=\"OC_ACTION\" ignore=\"true\"/>\r\n  <field name=\"OC_CUSTOMER_CODE\" ignore=\"true\"/>\r\n  <field name=\"OC_BILLINGACCOUNT_CODE\" ignore=\"true\"/>\r\n <field name=\"OC_SUBSCRIPTION_CODE\" ignore=\"true\"/>\r\n  <field name=\"OC_COUNTER_CODE\" ignore=\"true\"/>\r\n <field name=\"OC_COUNTER_TEMPLATE_CODE\" ignore=\"true\"/>\r\n   <field name=\"OC_CUSTOMER_ACCOUNT_CODE\" ignore=\"true\"/>\r\n  <field name=\"OC_USER_ACCOUNT_CODE\" ignore=\"true\"/>\r\n  <field name=\"OC_CHANGE_INSTANCE_CODE\" ignore=\"true\"/>\r\n  <field name=\"OC_COUNTER_PERIOD_CODE\" ignore=\"true\"/>\r\n   <field name=\"OC_COUNTER_PERIOD_TYPE\" ignore=\"true\"/>\r\n  <field name=\"OC_COUNTER_PERIOD_START_DATE\" ignore=\"true\"/>\r\n   <field name=\"OC_COUNTER_PERIOD_END_DATE\" ignore=\"true\"/>\r\n  <field name=\"OC_COUNTER_PERIOD_LEVEL\" ignore=\"true\"/>\r\n   <field name=\"OC_COUNTER_PERIOD_VALUE\" ignore=\"true\"/>\r\n  </record>\r\n  <record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n  <field name=\"OC_ENTITY\" required=\"true\"/>\r\n  <field name=\"OC_ACTION\" required=\"true\"/>\r\n  <field name=\"OC_CUSTOMER_CODE\" required=\"true\"/>\r\n   <field name=\"OC_BILLINGACCOUNT_CODE\"/>\r\n  <field name=\"OC_SUBSCRIPTION_CODE\"/>\r\n  <field name=\"OC_COUNTER_CODE\" />\r\n   <field name=\"OC_COUNTER_TEMPLATE_CODE\" />\r\n  <field name=\"OC_CUSTOMER_ACCOUNT_CODE\" />\r\n  <field name=\"OC_USER_ACCOUNT_CODE\" />\r\n  <field name=\"OC_CHANGE_INSTANCE_CODE\" />\r\n <field name=\"OC_COUNTER_PERIOD_CODE\" />\r\n <field name=\"OC_COUNTER_PERIOD_TYPE\" />\r\n  <field name=\"OC_COUNTER_PERIOD_START_DATE\"/>\r\n  <field name=\"OC_COUNTER_PERIOD_END_DATE\"/>\r\n <field name=\"OC_COUNTER_PERIOD_LEVEL\" />\r\n  <field name=\"OC_COUNTER_PERIOD_VALUE\" />\r\n  </record>\r\n  </stream>\r\n  </beanio>\r\n"}], "FlatFileProcessingJob_scriptsFlow": [{"string": "org.meveo.service.script.CounterImportScript"}], "FlatFileProcessingJob_formatTransfo": [{"string": "None"}], "FlatFileProcessingJob_originFilename": [{"string": "origin_filename"}], "FlatFileProcessingJob_nbLinesToProcess": [{"long": 1}], "FlatFileProcessingJob_fileNameExtension": [{"string": "csv"}], "FlatFileProcessingJob_recordVariableName": [{"string": "record"}]}
+				]]>
+			</column>
+		</insert>
+
+	</changeSet>
+	<changeSet id="#INTRD-11060-20230118-update-scripts" author="MohamedChaouki ">
+		<update tableName="meveo_job_instance">
+			<column name="cf_values">
+				<![CDATA[
+				{"nbRuns": [{"long": 1}], "oneFilePerJob": [{"boolean": false}], "waitingMillis": [{"long": 0}], "FlatFileProcessingJob_inputDir": [{"string": "/imports/massImport/userAccount/input"}], "FlatFileProcessingJob_outputDir": [{"string": "/imports/massImport/userAccount/output"}], "FlatFileProcessingJob_rejectDir": [{"string": "/imports/massImport/userAccount/reject"}], "FlatFileProcessingJob_archiveDir": [{"string": "/imports/massImport/userAccount/archive"}], "FlatFileProcessingJob_errorAction": [{"string": "CONTINUE"}], "FlatFileProcessingJob_mappingConf": [{"string": "<beanio\r\n        xmlns=\"http://www.beanio.org/2012/03\"\r\n        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n        xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n    <stream name=\"record\" format=\"csv\">\r\n        <parser>\r\n            <property name=\"delimiter\" value=\";\"/>\r\n            <property name=\"comments\" value=\"END\"/>\r\n            <property name=\"multilineEnabled\" value=\"true\"/>\r\n        </parser>\r\n        <record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n            <field name=\"OC_ENTITY\" ignore=\"true\" />\r\n            <field name=\"OC_ACTION\" ignore=\"true\" />\r\n            <field name=\"OC_BILLINGACCOUNT_CODE\" ignore=\"true\"/>\r\n          \t<field name=\"OC_PARENT_UA_CODE\" ignore=\"true\"/>\r\n            <field name=\"OC_USERACCOUNT_CODE\" ignore=\"true\"/>\r\n            <field name=\"OC_USERACCOUNT_ DESCRIPTION\" ignore=\"true\"/>\r\n            <field name=\"OC_UA_DATE\" ignore=\"true\"/>\r\n            <field name=\"OC_UA_REGISTRATION\" ignore=\"true\"/>\r\n            <field name=\"OC_UA_TVANUMBER\" ignore=\"true\"/>\r\n            <field name=\"OC_UA_TITLE\" ignore=\"true\"/>\r\n            <field name=\"OC_UA_FNAME\" ignore=\"true\"/>\r\n            <field name=\"OC_UA_LNAME\" ignore=\"true\"/>\r\n            <field name=\"OC_UA_ORGANIZATION\" ignore=\"true\"/>\r\n        </record>\r\n        <record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n            <field name=\"OC_ENTITY\" required=\"true\"/>\r\n            <field name=\"OC_ACTION\" required=\"true\"/>\r\n            <field name=\"OC_BILLINGACCOUNT_CODE\"/>\r\n          \t<field name=\"OC_PARENT_UA_CODE\"/>\r\n            <field name=\"OC_USERACCOUNT_CODE\"/>\r\n            <field name=\"OC_USERACCOUNT_ DESCRIPTION\"/>\r\n            <field name=\"OC_UA_DATE\"/>\r\n            <field name=\"OC_UA_REGISTRATION\"/>\r\n            <field name=\"OC_UA_TVANUMBER\"/>\r\n            <field name=\"OC_UA_TITLE\"/>\r\n            <field name=\"OC_UA_FNAME\"/>\r\n            <field name=\"OC_UA_LNAME\" required=\"true\"/>\r\n            <field name=\"OC_UA_ORGANIZATION\"/>\r\n            <field name=\"OC_CFS\" type=\"String\" collection=\"list\" minOccurs=\"0\" maxOccurs=\"unbounded\" />\r\n        </record>\r\n    </stream>\r\n</beanio>\r\n"}], "FlatFileProcessingJob_scriptsFlow": [{"string": "org.meveo.service.script.UserAccountImportScript"}], "FlatFileProcessingJob_formatTransfo": [{"string": "None"}], "FlatFileProcessingJob_originFilename": [{"string": "origin_filename"}], "FlatFileProcessingJob_processingOrder": [{"string": "Alphabetic"}], "FlatFileProcessingJob_nbLinesToProcess": [{"long": 1}], "FlatFileProcessingJob_fileNameExtension": [{"string": "csv"}], "FlatFileProcessingJob_recordVariableName": [{"string": "record"}]}
+				]]>
+			</column>
+			<where>code='massImportUserAccountJob'</where>
+		</update>
+	</changeSet>
 </databaseChangeLog>
