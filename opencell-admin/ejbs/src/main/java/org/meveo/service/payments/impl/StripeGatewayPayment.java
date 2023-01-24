@@ -159,13 +159,12 @@ public class StripeGatewayPayment implements GatewayPaymentInterface {
 			params.put("off_session", paramBean().getProperty("stripe.paymentToken.offSession", "true"));
 
 			PaymentIntent paymentIntent = PaymentIntent.create(params);
-			
-			log.info("PaymentIntent  created :{}",paymentIntent == null ? null : paymentIntent.toJson());
-			
 			if(paymentIntent == null) {
 				throw new BusinessException("paymentIntent created is null");
+			}else {
+				log.info("PaymentIntent  created :{}", paymentIntent.toJson());
 			}
-
+			
 			paymentResponseDto.setPaymentID(paymentIntent.getId());
 			paymentResponseDto.setPaymentStatus(mappingStaus(paymentIntent.getStatus()));
 			return paymentResponseDto;
@@ -362,9 +361,11 @@ public class StripeGatewayPayment implements GatewayPaymentInterface {
 			params.put("currency", hostedCheckoutInput.getCurrencyCode());
 
 			Session session = Session.create(params);
-			log.info("session:{}",session == null ? null : session.toJson());
+			
 			if(session == null) {
 				throw new BusinessException("session created is null");
+			} else {
+				log.info("session:{}",session.toJson());
 			}
 			return new PaymentHostedCheckoutResponseDto(session.getUrl(), null, null, session.getId());
 		} catch (Exception e) {
