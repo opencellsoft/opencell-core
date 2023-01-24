@@ -161,10 +161,11 @@ public class StripeGatewayPayment implements GatewayPaymentInterface {
 			PaymentIntent paymentIntent = PaymentIntent.create(params);
 			if(paymentIntent == null) {
 				throw new BusinessException("paymentIntent created is null");
-			}else {
-				log.info("PaymentIntent  created :{}", paymentIntent.toJson());
 			}
+			String paymentIntentResponseJson  = paymentIntent.toJson();
 			
+		    log.info("PaymentIntent  created :{}",paymentIntentResponseJson );
+						
 			paymentResponseDto.setPaymentID(paymentIntent.getId());
 			paymentResponseDto.setPaymentStatus(mappingStaus(paymentIntent.getStatus()));
 			return paymentResponseDto;
@@ -203,7 +204,11 @@ public class StripeGatewayPayment implements GatewayPaymentInterface {
 				throw new BusinessException("Cant find payment by id:" + paymentID);
 			}
 			PaymentIntent updatedPaymentIntent = paymentIntent.cancel();
-			log.info("updatedPaymentIntent:{}", updatedPaymentIntent == null ? null : updatedPaymentIntent.toJson());
+			if(updatedPaymentIntent == null) {
+				throw new BusinessException("updatedPaymentIntent is null");
+			}
+			String updatedPaymentIntentJson = updatedPaymentIntent.toJson();
+			log.info("updatedPaymentIntent:{}", updatedPaymentIntentJson );
 
 		} catch (Exception e) {
 			throw new BusinessException(e.getMessage());
@@ -310,7 +315,11 @@ public class StripeGatewayPayment implements GatewayPaymentInterface {
 					.setPhone(phone).build();
 
 			stripeCustomer = Customer.create(params);
-			log.info("Customer stripe created :{}",stripeCustomer == null ? null : stripeCustomer.toJson());
+			if(stripeCustomer == null) {
+				throw new BusinessException("stripeCustomer reponse is null");
+			}
+			String stripeCustomerJson  = stripeCustomer.toJson();
+			log.info("Customer stripe created :{}",stripeCustomerJson );
 			return stripeCustomer;
 		} catch (Exception e) {
 			throw new BusinessException(e.getMessage());
@@ -364,9 +373,10 @@ public class StripeGatewayPayment implements GatewayPaymentInterface {
 			
 			if(session == null) {
 				throw new BusinessException("session created is null");
-			} else {
-				log.info("session:{}",session.toJson());
-			}
+			} 
+			String sessionJson = session.toJson();
+			log.info("session:{}",sessionJson);
+			
 			return new PaymentHostedCheckoutResponseDto(session.getUrl(), null, null, session.getId());
 		} catch (Exception e) {
 			throw new BusinessException("Error on getHostedCheckoutUrl:"+e.getMessage());
