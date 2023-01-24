@@ -15527,4 +15527,8 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </addColumn>
     </changeSet>
 
+	<changeSet id="#INTRD-12651-20230123" author="AdilElJaouhari">
+        <modifyDataType tableName="cpq_order_offer" columnName="order_line_type" newDataType="varchar(20)" />
+    </changeSet>
+
 </databaseChangeLog>
