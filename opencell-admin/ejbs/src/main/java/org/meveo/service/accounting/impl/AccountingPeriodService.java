@@ -28,6 +28,8 @@ import org.meveo.service.crm.impl.ProviderService;
 @Stateless
 public class AccountingPeriodService extends PersistenceService<AccountingPeriod> {
 	
+    private static final String API_FINANCE_MANAGEMENT = "apiFinanceManagement";
+
     @Inject
     private SubAccountingPeriodService subAccountingPeriodService;
 
@@ -66,41 +68,16 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 			throw new ValidationException("the accounting period " + fiscalYear + " is already closed");
 		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.OPEN) && AccountingPeriodStatusEnum.valueOf(status).equals(AccountingPeriodStatusEnum.OPEN)) {
 			throw new ValidationException("the accounting period " + fiscalYear + " is already opened");
-		} else {
-		    Map<String, Set<String>> rolesByApplication = currentUserProvider.getRolesByApplication(currentUser);
-	        boolean result = true;
-	        for (Map.Entry<String, Set<String>> entry : rolesByApplication.entrySet()) {
-	            Set<String> roles = entry.getValue();
-	            for(String role:roles) {
-	                if("apiFinanceManagement".equals(role)) {
-	                    result = false;
-	                    break;
-	                }
-	            }
-	            if(!result) break;
-	        }
-	        
-	        Date finDannee = DateUtils.newDate(Integer.parseInt(fiscalYear), 12, 31, 0, 0, 0);
-		    if(AccountingPeriodStatusEnum.valueOf(status).equals(AccountingPeriodStatusEnum.CLOSED)) {
-	            if(result) {
-	                List<SubAccountingPeriod> subAccountingPeriods = subAccountingPeriodService.getRegularUsersSubPeriodWithStatusOpen(entity, finDannee);
-	                for (SubAccountingPeriod subAccountingPeriod : subAccountingPeriods) {
-	                    subAccountingPeriodService.updateSubAccountingRegularUsersStatus(fiscalYear, status, subAccountingPeriod, "");
-	                }
-	            }
-	            else {
-	                List<SubAccountingPeriod> subAccountingPeriods = subAccountingPeriodService.getAllUsersSubPeriodWithStatusOpen(entity, finDannee);
-	                for (SubAccountingPeriod subAccountingPeriod : subAccountingPeriods) {
-                        subAccountingPeriodService.updateSubAccountingAllUsersStatus(fiscalYear, status, subAccountingPeriod, "");
-                    }
-	            }
-	        }
-	        else if(AccountingPeriodStatusEnum.valueOf(status).equals(AccountingPeriodStatusEnum.OPEN)) {
-	            List<SubAccountingPeriod> subAccountingPeriods = subAccountingPeriodService.getAllUsersSubPeriodWithStatusOpen(entity, finDannee);
-	            for (SubAccountingPeriod subAccountingPeriod : subAccountingPeriods) {
+		} else {		    
+	        if (AccountingPeriodStatusEnum.valueOf(status).equals(AccountingPeriodStatusEnum.CLOSED) || 
+	                AccountingPeriodStatusEnum.valueOf(status).equals(AccountingPeriodStatusEnum.OPEN)) {
+	            Date lastDayOfFiscalYear = DateUtils.newDate(Integer.parseInt(fiscalYear), 12, 31, 0, 0, 0);
+	            boolean isUserHaveThisRole = currentUserProvider.isUserHaveThisRole(currentUser, API_FINANCE_MANAGEMENT);                    
+	            List<SubAccountingPeriod> subAccountingPeriods = subAccountingPeriodService.getSubPeriodsWithStatus(entity, lastDayOfFiscalYear, status, isUserHaveThisRole);
+                for (SubAccountingPeriod subAccountingPeriod : subAccountingPeriods) {
                     subAccountingPeriodService.updateSubAccountingAllUsersStatus(fiscalYear, status, subAccountingPeriod, "");
                 }
-	        }
+            }
 		    
 			AuditLog auditLog = createAuditLog(entity, status);
 			entity.setAccountingPeriodStatus(AccountingPeriodStatusEnum.valueOf(status));

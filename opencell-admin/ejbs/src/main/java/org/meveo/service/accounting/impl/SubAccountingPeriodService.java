@@ -18,6 +18,7 @@ import javax.ws.rs.NotFoundException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.accounting.AccountingPeriod;
+import org.meveo.model.accounting.AccountingPeriodStatusEnum;
 import org.meveo.model.accounting.SubAccountingPeriod;
 import org.meveo.model.accounting.SubAccountingPeriodStatusEnum;
 import org.meveo.model.accounting.SubAccountingPeriodTypeEnum;
@@ -301,35 +302,21 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 	}
 	
 	public List<SubAccountingPeriod> findByAccountingPeriodAndEndDate(AccountingPeriod accountingPeriod, Date endDate) {
-        try {
-            return getEntityManager()
-                        .createNamedQuery("SubAccountingPeriod.findByAPAndAfterEndDate", entityClass)
-                        .setParameter("apId", accountingPeriod.getId())
-                        .setParameter("endDate", endDate, TemporalType.DATE)
-                        .getResultList();
-        } catch (NoResultException e) {
-            log.debug("No {} of AccountingPeriod {} found", getEntityClass().getSimpleName(), accountingPeriod.getId());
-            return new ArrayList<>();
-        }
+        return getUsersSubPeriodWithByNameQuery(accountingPeriod, endDate, "SubAccountingPeriod.findByAPAndAfterEndDate");
     }
 	
-	public List<SubAccountingPeriod> getRegularUsersSubPeriodWithStatusOpen(AccountingPeriod accountingPeriod, Date endDate) {
-        try {
-            return getEntityManager()
-                        .createNamedQuery("SubAccountingPeriod.getRegularUsersSubPeriodWithStatusOpen", entityClass)
-                        .setParameter("apId", accountingPeriod.getId())
-                        .setParameter("endDate", endDate, TemporalType.DATE)
-                        .getResultList();
-        } catch (NoResultException e) {
-            log.debug("No {} of AccountingPeriod {} found", getEntityClass().getSimpleName(), accountingPeriod.getId());
-            return new ArrayList<>();
-        }
+	public List<SubAccountingPeriod> getRegularUsersSubPeriodWithStatusOpen(AccountingPeriod accountingPeriod, Date endDate) {     
+        return getUsersSubPeriodWithByNameQuery(accountingPeriod, endDate, "SubAccountingPeriod.getRegularUsersSubPeriodWithStatusOpen");
     }
 	
 	public List<SubAccountingPeriod> getAllUsersSubPeriodWithStatusOpen(AccountingPeriod accountingPeriod, Date endDate) {
+        return getUsersSubPeriodWithByNameQuery(accountingPeriod, endDate, "SubAccountingPeriod.getAllUsersSubPeriodWithStatusOpen");
+    }
+	
+	public List<SubAccountingPeriod> getUsersSubPeriodWithByNameQuery(AccountingPeriod accountingPeriod, Date endDate, String nameQuery) {
         try {
             return getEntityManager()
-                        .createNamedQuery("SubAccountingPeriod.getAllUsersSubPeriodWithStatusOpen", entityClass)
+                        .createNamedQuery(nameQuery, entityClass)
                         .setParameter("apId", accountingPeriod.getId())
                         .setParameter("endDate", endDate, TemporalType.DATE)
                         .getResultList();
@@ -359,5 +346,20 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
                 .setParameter("accountingPeriod", accountingPeriod)
                 .setParameter("ids", ids)
                 .getSingleResult() == 0;
+    }
+
+    public List<SubAccountingPeriod> getSubPeriodsWithStatus(AccountingPeriod entity, Date lastDayOfFiscalYear, String status, boolean isUserHaveThisRole) {
+        List<SubAccountingPeriod> subAccountingPeriods = null;
+        if (AccountingPeriodStatusEnum.valueOf(status).equals(AccountingPeriodStatusEnum.CLOSED)) {
+            if (isUserHaveThisRole) {
+                subAccountingPeriods = getRegularUsersSubPeriodWithStatusOpen(entity, lastDayOfFiscalYear);
+            } else {
+                subAccountingPeriods = getAllUsersSubPeriodWithStatusOpen(entity, lastDayOfFiscalYear);
+            }            
+        } 
+        else if (AccountingPeriodStatusEnum.valueOf(status).equals(AccountingPeriodStatusEnum.OPEN)) {
+            subAccountingPeriods = getAllUsersSubPeriodWithStatusOpen(entity, lastDayOfFiscalYear);            
+        }
+        return subAccountingPeriods;
     }
 }
