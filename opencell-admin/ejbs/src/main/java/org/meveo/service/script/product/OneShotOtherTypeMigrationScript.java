@@ -2,12 +2,10 @@ package org.meveo.service.script.product;
 
 import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
-import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderProduct;
@@ -18,7 +16,6 @@ import org.meveo.service.cpq.order.OrderProductService;
 import org.meveo.service.script.Script;
 
 import javax.xml.bind.ValidationException;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
