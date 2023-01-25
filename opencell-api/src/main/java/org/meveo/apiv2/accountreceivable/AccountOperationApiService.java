@@ -5,6 +5,7 @@ import static java.util.Optional.ofNullable;
 import static org.meveo.model.payments.AccountOperationStatus.EXPORTED;
 import static org.meveo.model.payments.AccountOperationStatus.POSTED;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -196,7 +197,25 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 		if (customer == null) {
 			throw new BusinessApiException("Matching action is failed : No CustomerAccount found with id " + customerIds.get(0) + " for matching");
 		}
-
+		
+		aos.stream().forEach(accountOperation -> {
+	          // check amount to match
+	        Optional<AccountOperationAndSequence> accountOperationAndSequenceOptional = accountOperations.stream().filter(aoas -> aoas.getId() == accountOperation.getId()).findFirst();
+	        if(accountOperationAndSequenceOptional.isPresent()) {
+	            BigDecimal amountToMatch = accountOperationAndSequenceOptional.get().getAmountToMatch();
+	            Integer sequence = accountOperationAndSequenceOptional.get().getSequence();
+	            if(amountToMatch != null) {
+	                if(amountToMatch.compareTo(BigDecimal.ZERO) <= 0) {
+	                    throw new BusinessApiException("The amount to match must be greater than 0");
+	                }else if(amountToMatch.compareTo(accountOperation.getUnMatchingAmount()) == 1) {
+	                    throw new BusinessApiException("The amount to match must be less than : " + accountOperation.getUnMatchingAmount().doubleValue() + " for sequence : " + sequence);
+	                }
+	                accountOperation.setUnMatchingAmount(amountToMatch);
+                    accountOperationService.update(accountOperation);
+	            }
+	        }
+		});
+		
 		Optional.of(aos.stream().filter(accountOperation -> accountOperation.getCustomerAccount() == null)
 						.collect(Collectors.toList())).orElse(Collections.emptyList())
 				.forEach(accountOperation -> {
