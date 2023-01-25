@@ -424,6 +424,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
         List<EDR> tEdrs = getEntityManager().createNamedQuery("EDR.getByWO")
                 .setParameter("WO_IDS", List.of(operationToRerate.getId()))
                 .getResultList();
+        
         tEdrs = tEdrs.stream().filter(e -> e.getStatus() != EDRStatusEnum.CANCELLED).collect(Collectors.toList());
         WalletOperation newWO = null;
         
