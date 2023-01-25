@@ -151,7 +151,7 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                                     nextAction = levelInstance.getActions().get(i + 1).getCode();
                                 }
                             } catch (Exception exception) {
-                                jobExecutionResult.addErrorReport(exception.getMessage());
+                                jobExecutionResult.addReport(exception.getMessage());
                             }
                         }
                         actionInstanceService.update(actionInstance);
@@ -297,10 +297,10 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                     throw new BusinessException(exception.getMessage());
                 }
             } else {
-                throw new BusinessException("Billing account email is missing");
+                throw new BusinessException("The email is missing for the billing account : " + billingAccount.getCode());
             }
         } else {
-            throw new BusinessException("From email is missing, email sending skipped");
+            throw new BusinessException("The email sending skipped because the from email is missing for the seller : " + invoice.getSeller().getCode());
         }
     }
 

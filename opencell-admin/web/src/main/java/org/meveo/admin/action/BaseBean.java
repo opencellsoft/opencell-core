@@ -246,9 +246,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public BaseBean(Class<T> clazz) {
         super();
         this.clazz = clazz;
-        if(FacesContext.getCurrentInstance().getViewRoot().getViewId().contains("/index.xhtml")) {
-            showDeprecatedWarning(DEFAULT_DEPRECATED_ADMIN_MESSAGE);
-        }
     }
 
     /**

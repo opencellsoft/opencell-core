@@ -15702,5 +15702,15 @@ public class AgedBalanceReporting extends ReportExtractScript {
 			<column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD-12651-20230123" author="AdilElJaouhari">
+        <modifyDataType tableName="cpq_order_offer" columnName="order_line_type" newDataType="varchar(20)" />
+    </changeSet>
 	
+	<changeSet id="#INTRD-12819-20221220-qb_advanced_query" author="a.rouaguebe">
+        <addColumn tableName="report_query">
+        	<column name="advanced_query" type="${type.json}" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

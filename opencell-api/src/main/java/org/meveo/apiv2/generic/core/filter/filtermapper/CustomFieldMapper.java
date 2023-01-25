@@ -1,6 +1,6 @@
 package org.meveo.apiv2.generic.core.filter.filtermapper;
 
-import org.meveo.apiv2.generic.core.filter.FilterMapper;
+import org.meveo.api.generics.filter.FilterMapper;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
