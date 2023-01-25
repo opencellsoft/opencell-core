@@ -389,12 +389,12 @@ public class GenericFileExportManager {
         formatFields(map, format);
 
         // If the map is not empty then save As Record to export - CSV, EXCEL or PDF
-        //if (!map.isEmpty()) {
+        if (!map.isEmpty()) {
             Path filePath = saveAsRecord(filename, map, fileType, fieldDetails, time, orderedColumn, locale);
             return filePath == null ? null : filePath.toString();
-        //}
+        }
 
-        //return null;
+        return null;
     }
 
     /**
