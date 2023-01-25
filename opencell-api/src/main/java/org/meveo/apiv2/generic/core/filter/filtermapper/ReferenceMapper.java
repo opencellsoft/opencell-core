@@ -1,6 +1,6 @@
 package org.meveo.apiv2.generic.core.filter.filtermapper;
 
-import org.meveo.apiv2.generic.core.filter.FilterMapper;
+import org.meveo.api.generics.filter.FilterMapper;
 import org.meveo.service.base.PersistenceService;
 
 import java.util.function.Function;

@@ -28,33 +28,57 @@ public class ReportQuery extends BusinessEntity {
     @Column(name = "visibility")
     private QueryVisibilityEnum visibility;
 
+    /**
+     * @deprecated use instead advancedQuery
+     */
     @ElementCollection
     @CollectionTable(name = "report_query_fields", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "field")
+    @Deprecated
     private List<String> fields;
 
+    /**
+     * @deprecated use instead advancedQuery
+     */
     @Type(type = "json")
     @Column(name = "filters", columnDefinition = "jsonb")
+    @Deprecated
     private Map<String, Object> filters;
 
     @Type(type = "longText")
     @Column(name = "generated_query")
     private String generatedQuery;
 
+    /**
+     * @deprecated use instead advancedQuery
+     */
     @Column(name = "sort_by")
+    @Deprecated
     private String sortBy;
 
+    /**
+     * @deprecated use instead advancedQuery
+     */
     @Enumerated(value = STRING)
     @Column(name = "sort_order", length = 15)
+    @Deprecated
     private SortOrderEnum sortOrder;
 
+    /**
+     * @deprecated use instead advancedQuery
+     */
     @Type(type = "json")
     @Column(name = "query_parameters", columnDefinition = "jsonb")
+    @Deprecated
     private Map<String, Object> queryParameters;
 
     @Type(type = "json")
     @Column(name = "aliases", columnDefinition = "jsonb")
     private Map<String, String> aliases;
+
+    @Type(type = "json")
+    @Column(name = "advanced_query", columnDefinition = "jsonb")
+    private Map<String, Object> advancedQuery;
 
     public String getTargetEntity() {
         return targetEntity;
@@ -139,5 +163,20 @@ public class ReportQuery extends BusinessEntity {
 	public void setAliases(Map<String, String> aliases) {
 		this.aliases = aliases;
 	}
+
+	/**
+	 * @return the advancedQuery
+	 */
+	public Map<String, Object> getAdvancedQuery() {
+		return advancedQuery;
+	}
+
+	/**
+	 * @param advancedQuery the advancedQuery to set
+	 */
+	public void setAdvancedQuery(Map<String, Object> advancedQuery) {
+		this.advancedQuery = advancedQuery;
+	}
+	
     
 }

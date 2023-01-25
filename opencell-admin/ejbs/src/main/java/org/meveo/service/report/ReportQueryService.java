@@ -41,10 +41,12 @@ import java.util.stream.Collectors;
 
 import javax.ejb.*;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.*;
 import javax.transaction.Transactional;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -54,7 +56,9 @@ import org.hibernate.collection.internal.PersistentSet;
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.generics.PersistenceServiceHelper;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.crm.Provider;
@@ -67,6 +71,7 @@ import org.meveo.model.report.query.QueryVisibilityEnum;
 import org.meveo.model.report.query.ReportQuery;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.FilterConverter;
 import org.meveo.service.communication.impl.EmailSender;
@@ -146,9 +151,10 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
 	private List<String> executeQuery(ReportQuery reportQuery, Class<?> targetEntity) {
     	List<Object> result = execute(reportQuery, targetEntity, false);
     	List<String> response = new ArrayList<>();
+    	Map<String, String> aliases = reportQuery.getAliases() != null ? reportQuery.getAliases() : new HashMap<>();
 		for(Object object : result) {
 			Map<String, Object> entries = (Map<String, Object>)object;
-			var line = reportQuery.getFields().stream().map(e -> entries.getOrDefault((String) e, "").toString()).collect(Collectors.joining(";"));
+			var line = reportQuery.getFields().stream().map(f -> aliases.getOrDefault(f, f)).map(e -> entries.getOrDefault((String) e, "").toString()).collect(Collectors.joining(";"));
     		response.add(line);
 		}
     	return response;
@@ -286,16 +292,17 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
     }
 
     private Set<String> findColumnHeaderForReportQuery(ReportQuery reportQuery) {
-        return mappingColumn(reportQuery.getGeneratedQuery(), reportQuery.getFields()).keySet();
+        Map<String, String> aliases = reportQuery.getAliases() != null ? reportQuery.getAliases() : new HashMap<>();
+		return mappingColumn(reportQuery.getGeneratedQuery(), reportQuery.getFields(), aliases).keySet();
     }
 
-    private Map<String, Integer> mappingColumn(String query, List<String> fields) {
+    private Map<String, Integer> mappingColumn(String query, List<String> fields, Map<String, String> aliases) {
         Map<String, Integer> result = new HashMap<>();
         for (String col : fields) {
             result.put(col, query.indexOf(col));
         }
         result = result.entrySet().stream().sorted(Map.Entry.comparingByValue())
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+            .collect(Collectors.toMap(e -> aliases.getOrDefault(e.getKey(), e.getKey()), Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
         return result;
     }
 
@@ -310,15 +317,29 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         return execute(reportQuery, targetEntity, true);
     }
 
+    @Inject
+    @Named
+    private NativePersistenceService nativePersistenceService;
 
     @SuppressWarnings("unchecked")
 	private List<Object> execute(ReportQuery reportQuery, Class<?> targetEntity, boolean saveQueryResult) {
         Date startDate = new Date();
-        List<Object> reportResult = prepareQueryToExecute(reportQuery, targetEntity).getResultList();
+        List<Object> reportResult;
+        List<String> fields;
+        if(reportQuery.getAdvancedQuery() != null && !reportQuery.getAdvancedQuery().isEmpty()) {
+        	QueryBuilder qb = nativePersistenceService.generatedAdvancedQuery(reportQuery);
+    		reportResult = qb.getQuery(PersistenceServiceHelper.getPersistenceService(targetEntity).getEntityManager()).getResultList();
+    		fields = (List<String>) reportQuery.getAdvancedQuery().getOrDefault("genericFields", new ArrayList<>());
+        } else {
+        	reportResult = prepareQueryToExecute(reportQuery, targetEntity).getResultList();
+        	fields = reportQuery.getFields();
+        }
+        
         Date endDate = new Date();
+    	Map<String, String> aliases = reportQuery.getAliases() != null ? reportQuery.getAliases() : new HashMap<>();
         if(saveQueryResult)
         	saveQueryResult(reportQuery, startDate, endDate, IMMEDIATE, null, reportResult.size());
-        return toExecutionResult(reportQuery.getFields(), reportResult, targetEntity);
+		return toExecutionResult(fields, reportResult, targetEntity, aliases);
     }
 
     /**
@@ -431,9 +452,10 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
     @Asynchronous
     public Future<QueryExecutionResult> executeReportQueryAndSaveResult(ReportQuery reportQuery,
                                                                              Class<?> targetEntity, Date startDate) {
+    	Map<String, String> aliases = reportQuery.getAliases() != null ? reportQuery.getAliases() : new HashMap<>();
         List<Object> reportResult = toExecutionResult((reportQuery.getFields() != null && !reportQuery.getFields().isEmpty())
                         ? reportQuery.getFields() : joinEntityFields(targetEntity),
-                prepareQueryToExecute(reportQuery, targetEntity).getResultList(), targetEntity);
+                prepareQueryToExecute(reportQuery, targetEntity).getResultList(), targetEntity, aliases);
         if (!reportResult.isEmpty()) {
             SimpleDateFormat dateFormat = new SimpleDateFormat(REPORT_EXECUTION_FILE_SUFFIX);
             StringBuilder fileName = new StringBuilder(dateFormat.format(startDate))
@@ -463,17 +485,30 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         }
     }
 
-    public List<Object> toExecutionResult(List<String> fields, List<Object> executionResult, Class<?> targetEntity) {
+    public List<Object> toExecutionResult(List<String> fields, List<Object> executionResult, Class<?> targetEntity, Map<String, String> aliases) {
         if(fields != null && !fields.isEmpty()) {
             List<Object> response = new ArrayList<>();
             int size = fields.size();
+            if(aliases == null) {
+            	aliases = new HashMap<>();
+            }
             for (Object result : executionResult) {
                 Map<String, Object> item = new LinkedHashMap<>();
                 if(fields.size() == 1) {
-                    item.put(fields.get(0), result);
+                    item.put(aliases.getOrDefault(fields.get(0), fields.get(0)), result);
                 } else {
                     for (int index = 0; index < size; index++) {
-                        item.put(fields.get(index), ((Object[]) result)[index]);
+                    	if(result instanceof Object[]) {
+                    		item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), ((Object[]) result)[index]);
+                    	} else if (targetEntity.isInstance(result)) {
+                    		Field field = FieldUtils.getField(targetEntity, fields.get(index), true);
+                    		try {
+								item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), field.get(result));
+							} catch (IllegalArgumentException | IllegalAccessException e) {
+								log.error("Result construction failed", e);
+								throw new BusinessException("Result construction failed", e);
+							}
+                    	}
                     }
                 }
                 response.add(item);

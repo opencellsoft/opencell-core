@@ -10489,7 +10489,7 @@
             <column name="description" type="varchar(255)" />
             <column name="delivery_date" type="datetime" />
             <column name="user_account_id" type="bigint"/>
-            <column name ="order_line_type" type="varchar(10)" />
+            <column name ="order_line_type" type="varchar(20)" />
             <column name="subscription_id" type="bigint" />
             <column name="termination_date" type="datetime" />
             <column name="sub_termin_reason_id" type="bigint" />
@@ -10770,6 +10770,13 @@
             <column name="converted_amount_tax" type="numeric(23, 12)" />
             <column name="converted_discount_amount" type="numeric(23, 12)" />
             <column name="converted_raw_amount" type="numeric(23, 12)" />
+            <column name="specific_converted_unit_price" type="numeric(23, 12)" />
+            <column name="specific_converted_amount_without_tax" type="numeric(23, 12)" />
+            <column name="specific_converted_amount_with_tax" type="numeric(23, 12)" />
+            <column name="specific_converted_amount_tax" type="numeric(23, 12)" />
+            <column name="specific_converted_discount_amount" type="numeric(23, 12)" />
+            <column name="specific_converted_raw_amount" type="numeric(23, 12)" />
+            <column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="open_order_number" type="varchar(255)" />
             <column name="sequence" type="int4"/>
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
@@ -11193,6 +11200,7 @@
             <column name="sort_order" type="varchar(15)" />
             <column name="query_parameters" type="${type.json}" />
             <column name="aliases" type="${type.json}" />
+            <column name="advanced_query" type="${type.json}" />
         </createTable>
 
         <createTable tableName="report_query_fields">
@@ -19436,6 +19444,9 @@
     <changeSet id="#INTRD-12781_20230116" author="zelmeliani" />
     <changeSet id="#INTRD-12799-20230113-query_report_aliases" author="a.rouaguebe" />
     <changeSet id="#INTRD-13031_20230118" author="AdilElJaouhari" />
+	<changeSet id="#INTRD-13204_20230119" author="HichamHANINE" />
+	<changeSet id="#INTRD-12819-20221220-qb_advanced_query" author="a.rouaguebe" />
+	<changeSet id="#INTRD-12651-20230123" author="AdilElJaouhari" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

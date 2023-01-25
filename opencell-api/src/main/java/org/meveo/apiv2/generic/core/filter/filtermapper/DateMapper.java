@@ -1,11 +1,11 @@
 package org.meveo.apiv2.generic.core.filter.filtermapper;
 
 
-import org.meveo.apiv2.generic.core.filter.FilterMapper;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import org.meveo.api.generics.filter.FilterMapper;
 
 public class DateMapper extends FilterMapper {
     public DateMapper(String property, Object value) {
