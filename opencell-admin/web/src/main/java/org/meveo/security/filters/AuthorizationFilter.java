@@ -31,8 +31,8 @@ public class AuthorizationFilter implements Filter {
 
         if (!isPermited[0]) {
             ((HttpServletResponse) response).setStatus(403);
-            if (url.startsWith("/api")) {
-                String page = contextPath + "/403.jsf";
+            if (!url.startsWith("/api")) {
+                String page = "/errors/403.jsf";
                 RequestDispatcher dispatcher = httpRequest.getRequestDispatcher(page);
                 dispatcher.forward(request, response);
             }

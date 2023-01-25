@@ -33,6 +33,7 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
@@ -291,11 +292,17 @@ public class CurrentUserProvider {
         // Lookup client id from a client name
         if (kcConnectionConfig.getClientId() == null) {
 
-            Keycloak keycloak = AuthenticationProvider.getKeycloakClient(kcConnectionConfig, accessTokenString);
+            try {
+                Keycloak keycloak = AuthenticationProvider.getKeycloakClient(kcConnectionConfig, accessTokenString);
 
-            RealmResource realmResource = keycloak.realm(kcConnectionConfig.getRealm());
-            String clientId = realmResource.clients().findByClientId(kcConnectionConfig.getClientName()).get(0).getId();
-            kcConnectionConfig.setClientId(clientId);
+                RealmResource realmResource = keycloak.realm(kcConnectionConfig.getRealm());
+                String clientId = realmResource.clients().findByClientId(kcConnectionConfig.getClientName()).get(0).getId();
+                kcConnectionConfig.setClientId(clientId);
+
+                // User has no access to lookup clients in Keycloak
+            } catch (ForbiddenException e) {
+                return result;
+            }
         }
         // AuthorizationResource authResource = realmResource.clients().get(clientId).authorization();
 
@@ -374,7 +381,7 @@ public class CurrentUserProvider {
 
         } catch (AuthorizationDeniedException e) {
             if (log.isErrorEnabled()) {
-                log.error("No permissions granted for any of the urls " + urls);
+                log.error("No permissions granted for any of the urls {}", (Object) urls);
             }
         }
 
