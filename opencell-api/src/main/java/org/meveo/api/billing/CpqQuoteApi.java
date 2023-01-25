@@ -445,7 +445,7 @@ public class CpqQuoteApi extends BaseApi {
                 missingParameters.add("products[" + index + "].productVersion");
 
             handleMissingParameters();
-            if(quoteProductDTO.getQuantity() == null || quoteProductDTO.getQuantity().intValue() == 0) {
+            if(quoteProductDTO.getQuantity() == null || quoteProductDTO.getQuantity().equals(BigDecimal.ZERO)) {
                 throw new BusinessException("The quantity for product code " + quoteProductDTO.getProductCode() + " must be great than 0" );
             }
 

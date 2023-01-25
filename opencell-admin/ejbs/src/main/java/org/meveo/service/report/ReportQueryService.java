@@ -41,9 +41,11 @@ import java.util.stream.Collectors;
 
 import javax.ejb.*;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.*;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -53,7 +55,9 @@ import org.hibernate.collection.internal.PersistentSet;
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.generics.PersistenceServiceHelper;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.crm.Provider;
@@ -66,6 +70,7 @@ import org.meveo.model.report.query.QueryVisibilityEnum;
 import org.meveo.model.report.query.ReportQuery;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.FilterConverter;
 import org.meveo.service.communication.impl.EmailSender;
@@ -308,15 +313,28 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         return execute(reportQuery, targetEntity, true);
     }
 
+    @Inject
+    @Named
+    private NativePersistenceService nativePersistenceService;
 
     @SuppressWarnings("unchecked")
 	private List<Object> execute(ReportQuery reportQuery, Class<?> targetEntity, boolean saveQueryResult) {
         Date startDate = new Date();
-        List<Object> reportResult = prepareQueryToExecute(reportQuery, targetEntity).getResultList();
+        List<Object> reportResult;
+        List<String> fields;
+        if(reportQuery.getAdvancedQuery() != null && !reportQuery.getAdvancedQuery().isEmpty()) {
+        	QueryBuilder qb = nativePersistenceService.generatedAdvancedQuery(reportQuery);
+    		reportResult = qb.getQuery(PersistenceServiceHelper.getPersistenceService(targetEntity).getEntityManager()).getResultList();
+    		fields = (List<String>) reportQuery.getAdvancedQuery().getOrDefault("genericFields", new ArrayList<>());
+        } else {
+        	reportResult = prepareQueryToExecute(reportQuery, targetEntity).getResultList();
+        	fields = reportQuery.getFields();
+        }
+        
         Date endDate = new Date();
         if(saveQueryResult)
         	saveQueryResult(reportQuery, startDate, endDate, IMMEDIATE, null, reportResult.size());
-        return toExecutionResult(reportQuery.getFields(), reportResult, targetEntity);
+		return toExecutionResult(fields, reportResult, targetEntity);
     }
 
     /**
@@ -466,7 +484,17 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                     item.put(fields.get(0), result);
                 } else {
                     for (int index = 0; index < size; index++) {
-                        item.put(fields.get(index), ((Object[]) result)[index]);
+                    	if(result instanceof Object[]) {
+                    		item.put(fields.get(index), ((Object[]) result)[index]);
+                    	} else if (targetEntity.isInstance(result)) {
+                    		Field field = FieldUtils.getField(targetEntity, fields.get(index), true);
+                    		try {
+								item.put(fields.get(index), field.get(result));
+							} catch (IllegalArgumentException | IllegalAccessException e) {
+								log.error("Result construction failed", e);
+								throw new BusinessException("Result construction failed", e);
+							}
+                    	}
                     }
                 }
                 response.add(item);

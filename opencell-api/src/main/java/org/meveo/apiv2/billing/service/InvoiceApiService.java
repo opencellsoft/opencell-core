@@ -257,6 +257,8 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 		// Update Invoice Line
 		invoiceLinesService.update(invoiceLine);
 		invoiceService.calculateInvoice(invoice);
+		BigDecimal lastApliedRate = invoiceService.getCurrentRate(invoice,invoice.getInvoiceDate());
+		invoiceService.refreshAdvanceInvoicesConvertedAmount(invoice,lastApliedRate);
 		invoiceService.updateBillingRunStatistics(invoice);
 	}
 

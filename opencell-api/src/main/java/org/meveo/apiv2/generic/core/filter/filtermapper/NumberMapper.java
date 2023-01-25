@@ -1,10 +1,10 @@
 package org.meveo.apiv2.generic.core.filter.filtermapper;
 
 
-import org.meveo.apiv2.generic.core.filter.FilterMapper;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
+
+import org.meveo.api.generics.filter.FilterMapper;
 
 public class NumberMapper extends FilterMapper {
     private final Class clazz;

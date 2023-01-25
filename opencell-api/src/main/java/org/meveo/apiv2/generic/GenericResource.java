@@ -149,7 +149,9 @@ public interface GenericResource {
                     @ApiResponse(responseCode = "404", description = "the full list of entities not found",
                             content = @Content(schema = @Schema(implementation = ApiException.class)))
             })
-    Response getRelatedFieldsAndTypesOfEntity( @Parameter(description = "The entity name", required = true) @PathParam("entityName") String entityName );
+    Response getRelatedFieldsAndTypesOfEntity( @Parameter(description = "The entity name", required = true) @PathParam("entityName") String entityName,
+    										   @Parameter(description = "Filter keyword", required = true) @QueryParam("filter") String filter,
+    										   @Parameter(description = "Depth of nested entities", required = true) @QueryParam("depth") Long depth);
 
     @POST
     @Path("/export/{entityName}/{fileFormat}")

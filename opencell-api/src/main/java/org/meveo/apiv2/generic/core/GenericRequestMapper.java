@@ -14,10 +14,10 @@ import org.assertj.core.util.VisibleForTesting;
 import org.meveo.admin.util.pagination.FilterOperatorEnum;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.generics.filter.FactoryFilterMapper;
+import org.meveo.api.generics.filter.FilterMapper;
 import org.meveo.apiv2.generic.GenericPagingAndFiltering;
 import org.meveo.apiv2.generic.ImmutableGenericPagingAndFiltering;
-import org.meveo.apiv2.generic.core.filter.FactoryFilterMapper;
-import org.meveo.apiv2.generic.core.filter.FilterMapper;
 import org.meveo.model.IEntity;
 import org.meveo.service.base.PersistenceService;
 
