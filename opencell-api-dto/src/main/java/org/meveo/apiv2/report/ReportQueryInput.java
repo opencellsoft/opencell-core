@@ -32,21 +32,33 @@ public interface ReportQueryInput {
     @Schema(description = "Report query description")
     QueryVisibilityEnum getVisibility();
 
+    /**
+     * @deprecated use instead advancedQuery
+     */
     @Nullable
     @Schema(description = "Report query description")
     @Deprecated
     List<String> getFields();
 
+    /**
+     * @deprecated use instead advancedQuery
+     */
     @Nullable
     @Schema(description = "Report query description")
     @Deprecated
     Map<String, Object> getFilters();
 
+    /**
+     * @deprecated use instead advancedQuery
+     */
     @Nullable
     @Schema(description = "Sort by")
     @Deprecated
     String getSortBy();
 
+    /**
+     * @deprecated use instead advancedQuery
+     */
     @Nullable
     @Schema(description = "Sort order", example = "Possible value are : DESCENDING, ASCENDING")
     @Deprecated
