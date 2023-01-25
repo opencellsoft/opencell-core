@@ -579,7 +579,7 @@ public class GDPRJobBean extends BaseJobBean {
 	                recordCount[0] = resultset.getLong(1);
 	
 	            } catch (Exception e) {
-	                log.error("Failed to remove subscriptions in GDPR", e);
+	                log.error("Failed to remove AOs in GDPR", e);
 	                throw new BusinessException(e);
 	            }
 	        }
