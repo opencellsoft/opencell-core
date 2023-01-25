@@ -213,7 +213,7 @@ public class BillingCycle extends BusinessCFEntity {
      */
     @Type(type = "json")
     @Column(name = "filters", columnDefinition = "jsonb")
-    private Map<String, String> filters;
+    private Map<String, Object> filters;
 
     /**
      * @return Invoicing calendar
@@ -479,12 +479,12 @@ public class BillingCycle extends BusinessCFEntity {
 		this.billingRunValidationScript = billingRunValidationScript;
 	}
 
-	public Map<String, String> getFilters() {
+	public Map<String, Object> getFilters() {
 		return filters;
 	}
 
-	public void setFilters(Map<String, String> filters) {
+	public void setFilters(Map<String, Object> filters) {
 		this.filters = filters;
 	}
-	
+
 }
