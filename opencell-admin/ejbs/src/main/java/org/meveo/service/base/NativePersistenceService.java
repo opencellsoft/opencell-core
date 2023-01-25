@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +63,11 @@ import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.generics.GenericHelper;
+import org.meveo.api.generics.GenericRequestMapper;
+import org.meveo.api.generics.PersistenceServiceHelper;
+import org.meveo.apiv2.generic.GenericPagingAndFiltering;
+import org.meveo.apiv2.generic.ImmutableGenericPagingAndFiltering;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.ParamBean;
@@ -77,6 +83,7 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.notification.NotificationEventTypeEnum;
+import org.meveo.model.report.query.ReportQuery;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.security.keycloak.CurrentUserProvider;
@@ -1483,5 +1490,70 @@ public class NativePersistenceService extends BaseService {
         } catch (Exception e) {
             throw new BusinessException("cannot get next value from sequence of table : " + customTableName + "_seq", e);
         }
+    }
+
+    public QueryBuilder findPaginatedRecords(Boolean extractList, Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> fetchFields, Long nestedDepth, Long id, Set<String> excludedFields) {
+    	
+    	return null;
+    }
+
+    public QueryBuilder generatedAdvancedQuery(ReportQuery reportQuery) {
+    	
+    	Class<?> entityClass = GenericHelper.getEntityClass(reportQuery.getTargetEntity());
+        GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
+        GenericPagingAndFiltering genericPagingAndFilter = buildGenericPagingAndFiltering(reportQuery);
+        PaginationConfiguration searchConfig = genericRequestMapper.mapTo(genericPagingAndFilter);
+        QueryBuilder qb;
+    	List<String> genericFields = (List<String>) reportQuery.getAdvancedQuery().get("genericFields");
+		if(isAggregationQueries(genericPagingAndFilter.getGenericFields())){
+    		searchConfig.setFetchFields(genericFields);
+    		qb = this.getAggregateQuery(entityClass.getCanonicalName(), searchConfig, null);
+    	} else if(isCustomFieldQuery(genericPagingAndFilter.getGenericFields())){
+    		searchConfig.setFetchFields(genericFields);
+    		qb = this.getQuery(entityClass.getCanonicalName(), searchConfig, null);
+    	} else {
+    		qb = PersistenceServiceHelper.getPersistenceService(entityClass, searchConfig).listQueryBuilder(searchConfig);
+    		String fieldsToRetrieve = !genericFields.isEmpty() ? retrieveFields(genericFields, null) : "";
+    		if(!fieldsToRetrieve.isBlank()) {
+    			qb.setQ(new StringBuilder("select " + buildFields(fieldsToRetrieve, "") + " ").append(qb.getSqlStringBuffer()));
+    		}
+    	}
+
+    	return qb;
+    }
+
+    private GenericPagingAndFiltering buildGenericPagingAndFiltering(ReportQuery reportQuery) {
+    	return ImmutableGenericPagingAndFiltering.builder()
+    									  .filters((Map<String, Object>) reportQuery.getAdvancedQuery().getOrDefault("filters", new HashMap<>()))
+    									  .groupBy((List<String>)reportQuery.getAdvancedQuery().getOrDefault("groupBy", new ArrayList<>()))
+    									  .sortBy((String) reportQuery.getAdvancedQuery().get("sortBy"))
+    									  .nestedEntities((List<String>)reportQuery.getAdvancedQuery().getOrDefault("nestedEntities", new ArrayList<>()))
+    									  .genericFields((List<String>)reportQuery.getAdvancedQuery().getOrDefault("genericFields", new ArrayList<>()))
+    									  .having((List<String>)reportQuery.getAdvancedQuery().getOrDefault("having", new ArrayList<>()))
+    									  .build();
+    	
+    }
+
+    private boolean isAggregationField(String field) {
+        return field.startsWith("SUM(") || field.startsWith("COUNT(") || field.startsWith("AVG(")
+                || field.startsWith("MAX(") || field.startsWith("MIN(") || field.startsWith("COALESCE(SUM(");
+    }
+    
+    private boolean isCustomField(String field) {
+        return field.contains("->>");
+    }
+    
+    public boolean isCustomFieldQuery(Set<String> genericFields) {
+        return genericFields.stream()
+                .filter(genericField -> isCustomField(genericField))
+                .findFirst()
+                .isPresent();
+    }
+
+    private boolean isAggregationQueries(Set<String> genericFields) {
+        return genericFields.stream()
+                .filter(genericField -> isAggregationField(genericField))
+                .findFirst()
+                .isPresent();
     }
 }

@@ -1,8 +1,8 @@
-package org.meveo.apiv2.generic.core.filter.filtermapper;
+package org.meveo.api.generics.filter.filtermapper;
 
 
+import org.meveo.api.generics.GenericHelper;
 import org.meveo.api.generics.filter.FilterMapper;
-import org.meveo.apiv2.generic.core.GenericHelper;
 
 public class TypeClassMapper extends FilterMapper {
 
@@ -11,7 +11,7 @@ public class TypeClassMapper extends FilterMapper {
     }
 
     @Override
-    public Class mapStrategy(Object value) {
+    public Class<?> mapStrategy(Object value) {
         if(!GenericHelper.entitiesByName.containsKey(((String) value).toLowerCase())){
             throw new IllegalArgumentException("Invalid argument : type_class");
         }
