@@ -1,4 +1,4 @@
-package org.meveo.apiv2.generic.core.filter.filtermapper;
+package org.meveo.api.generics.filter.filtermapper;
 
 
 import java.util.Collections;

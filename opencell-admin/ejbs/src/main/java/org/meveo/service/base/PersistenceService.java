@@ -745,16 +745,21 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             return new ArrayList<E>();
         }
 
+        Query query = listQueryBuilder(config).getQuery(getEntityManager());
+        return query.getResultList();
+    }
+
+    public QueryBuilder listQueryBuilder(PaginationConfiguration config) {
+    	Map<String, Object> filters = config.getFilters();
+
         if (filters != null && filters.containsKey("$FILTER")) {
             Filter filter = (Filter) filters.get("$FILTER");
             FilteredQueryBuilder queryBuilder = (FilteredQueryBuilder) getQuery(config);
             queryBuilder.processOrderCondition(filter.getOrderCondition(), filter.getPrimarySelector().getAlias());
-            Query query = queryBuilder.getQuery(getEntityManager());
-            return query.getResultList();
+            return queryBuilder;
         } else {
             QueryBuilder queryBuilder = getQuery(config);
-            Query query = queryBuilder.getQuery(getEntityManager());
-            return query.getResultList();
+            return queryBuilder;
         }
     }
 
