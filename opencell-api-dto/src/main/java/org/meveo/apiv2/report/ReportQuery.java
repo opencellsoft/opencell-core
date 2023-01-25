@@ -32,27 +32,47 @@ public interface ReportQuery extends Resource {
     @Nullable
     QueryVisibilityEnum getVisibility();
 
+    /**
+     * @deprecated use instead advancedQuery
+     */
     @Schema(description = "Report query fields")
     @Nullable
+    @Deprecated
     List<String> getFields();
 
+    /**
+     * @deprecated use instead advancedQuery
+     */
     @Schema(description = "Report query filters")
     @Nullable
+    @Deprecated
     Map<String, Object> getFilters();
 
     @Schema(description = "Generated query")
     @Nullable
     String getGeneratedQuery();
 
+    /**
+     * @deprecated use instead advancedQuery
+     */
     @Nullable
     @Schema(description = "Sort by")
+    @Deprecated
     String getSortBy();
 
+    /**
+     * @deprecated use instead advancedQuery
+     */
     @Nullable
     @Schema(description = "Sort order", example = "Possible value are : DESCENDING, ASCENDING")
+    @Deprecated
     SortOrderEnum getSortOrder();
 
     @Nullable
     @Schema(description = "Report query Owner name")
     String getOwnerName();
+
+    @Schema(description = "Report query - Advanced query")
+    @Nullable
+    Map<String, Object> getAdvancedQuery();
 }
