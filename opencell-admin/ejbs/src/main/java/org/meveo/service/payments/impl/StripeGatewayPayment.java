@@ -349,10 +349,7 @@ public class StripeGatewayPayment implements GatewayPaymentInterface {
 			}
 
 			if (stripeCustomer == null) {
-				stripeCustomer = createCustomer(customerAccount);
-				if (stripeCustomer == null) {
-					throw new BusinessException("Cant create customer on Stripe");
-				}
+				stripeCustomer = createCustomer(customerAccount);				
 				customerAccount.setExternalRef2(stripeCustomer.getId());
 				customerAccountService.update(customerAccount);
 			}
