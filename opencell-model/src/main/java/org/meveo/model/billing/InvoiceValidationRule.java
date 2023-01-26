@@ -11,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
@@ -18,6 +19,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.scripts.ScriptInstance;
 
 
 @Entity
@@ -50,8 +52,9 @@ public class InvoiceValidationRule extends BusinessEntity {
     @Enumerated(EnumType.STRING)
     private InvoiceValidationStatusEnum failStatus = InvoiceValidationStatusEnum.REJECTED;
 
-    @Column(name = "validation_script")
-    private String validationScript;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "script_instance_id")
+    private ScriptInstance validationScript;
 
     @Column(name = "validation_el")
     private String validationEL;
@@ -59,6 +62,9 @@ public class InvoiceValidationRule extends BusinessEntity {
     @Type(type = "json")
     @Column(name = "rule_values", columnDefinition = "jsonb")
     private Map<String, String> ruleValues;
+    
+    @Transient
+    private boolean toReorder;
 
     public InvoiceType getInvoiceType() {
         return invoiceType;
@@ -100,11 +106,11 @@ public class InvoiceValidationRule extends BusinessEntity {
         this.type = type;
     }
 
-    public String getValidationScript() {
+    public ScriptInstance getValidationScript() {
         return validationScript;
     }
 
-    public void setValidationScript(String validationScript) {
+    public void setValidationScript(ScriptInstance validationScript) {
         this.validationScript = validationScript;
     }
 
@@ -130,5 +136,13 @@ public class InvoiceValidationRule extends BusinessEntity {
 
 	public void setRuleValues(Map<String, String> ruleValues) {
 		this.ruleValues = ruleValues;
+	}
+
+	public boolean isToReorder() {
+		return toReorder;
+	}
+
+	public void setToReorder(boolean toReorder) {
+		this.toReorder = toReorder;
 	}
 }

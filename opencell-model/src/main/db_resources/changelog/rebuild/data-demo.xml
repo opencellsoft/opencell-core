@@ -1106,6 +1106,7 @@
             <column name="calendar" valueNumeric="-1" />
             <column name="uuid" value="BillingCycle-1" />
             <column name="billing_cycle_type" value="BILLINGACCOUNT" />
+            <column name="filters" value='{"billingAccount.billingCycle.code":"{{billingCycle.code}}"}' />
         </insert>
         <insert tableName="billing_cycle">
             <column name="id" valueNumeric="-2" />
@@ -1120,6 +1121,7 @@
             <column name="calendar" valueNumeric="-1" />
             <column name="uuid" value="BillingCycle-2" />
             <column name="billing_cycle_type" value="BILLINGACCOUNT" />
+            <column name="filters" value='{"billingAccount.billingCycle.code":"{{billingCycle.code}}"}' />
         </insert>
     </changeSet>
     
@@ -1139,6 +1141,7 @@
             <column name="description" value="5 Percent Tax" />
             <column name="tax_percentage" valueNumeric="5.000000000000" />
             <column name="uuid" value="tax-2" />
+            <column name="taxation_category_id" value="1" />
         </insert>
         <insert tableName="billing_tax">
             <column name="id" valueNumeric="-3" />
@@ -1148,6 +1151,7 @@
             <column name="description" value="18 Percent Tax" />
             <column name="tax_percentage" valueNumeric="18.000000000000" />
             <column name="uuid" value="tax-3" />
+            <column name="taxation_category_id" value="1" />
         </insert>        
         <insert tableName="billing_tax">
             <column name="id" value="-4"/>
@@ -1159,6 +1163,7 @@
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_tax_tax_10" />
            <column name="version" valueNumeric="0" />
+           <column name="taxation_category_id" value="1" />
         </insert>
         <insert tableName="billing_tax">
             <column name="id" value="-5"/>
@@ -1170,6 +1175,7 @@
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_tax_tax_20" />
            <column name="version" valueNumeric="0" />
+           <column name="taxation_category_id" value="1" />
         </insert>
     </changeSet>    
     
@@ -1583,6 +1589,7 @@
             <column name="uuid" value="MAIN_SELLER" />
             <column name="trading_currency_id" valueNumeric="-1" />
             <column name="trading_language_id" valueNumeric="-1" />
+            <column name="email" value="billing@opencell.com"/>
         </insert>
         <insert tableName="crm_seller">
             <column name="id" valueNumeric="-2" />
@@ -1594,6 +1601,7 @@
             <column name="parent_seller_id" valueNumeric="-1" />
             <column name="trading_currency_id" valueNumeric="-1" />
             <column name="trading_language_id" valueNumeric="-1" />
+            <column name="email" value="billing@opencell.com"/>
         </insert>
         <insert tableName="crm_seller">
             <column name="id" valueNumeric="-3" />
@@ -1605,6 +1613,7 @@
             <column name="parent_seller_id" valueNumeric="-1" />
             <column name="trading_currency_id" valueNumeric="-2" />
             <column name="trading_language_id" valueNumeric="-2" />
+            <column name="email" value="billing@opencell.com"/>
         </insert>
     </changeSet>
 
@@ -2471,6 +2480,8 @@
 			<column name="invoice_sequence_id" valueNumeric="-6" />
 			<column name="occ_template_id" valueNumeric="-52" />
 			<column name="uuid" value="InvoiceType-SECURITY_DEPOSIT" />
+			<column name="vat_payment_option_id" value="1" />
+			<column name="invoice_code_type_id" value="30" />
 		</insert>
 		<insert tableName="billing_invoice_cat">
 			<column name="id" value='-4'/>
@@ -2612,6 +2623,8 @@
             <column name="matching_auto" valueNumeric="0" />
             <column name="uuid" value="InvoiceType-ADJ-REF" />
             <column name="invoice_accountable" value="1" />
+            <column name="vat_payment_option_id" value="1" />
+            <column name="invoice_code_type_id" value="19" />
 		</insert>
 		
 		<insert tableName="billing_invoice_type">
@@ -2626,6 +2639,8 @@
             <column name="matching_auto" valueNumeric="0" />
             <column name="uuid" value="InvoiceType-ADJ-INV" />
             <column name="invoice_accountable" value="1" />
+            <column name="vat_payment_option_id" value="1" />
+            <column name="invoice_code_type_id" value="19" />
 		</insert>
 		
 		<insert tableName="billing_invoice_type_applies_to">
@@ -2656,6 +2671,7 @@
 			<column name="invoice_sequence_id" valueNumeric="-9" />
 			<column name="occ_template_id" valueNumeric="-25" />
 			<column name="uuid" value="InvoiceType-COMMERCIAL_ORDER" />
+			<column name="vat_payment_option_id" value="1" />
 		</insert>	
 	</changeSet>
     
@@ -2669,6 +2685,7 @@
 	<changeSet id="#INTRD-10199_20221010" author="TarikFA." />
 	<changeSet id="#INTRD-10592_20221014" author="TarikFA." />
     <changeSet id="INTRD-11122_20221104" author="HichamELHALOUI" />
+    <changeSet id="INTRD-13237_20230119" author="HichamELHALOUI" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

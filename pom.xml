@@ -5,7 +5,7 @@
     <groupId>com.opencellsoft</groupId>
     <artifactId>opencell</artifactId>
     <packaging>pom</packaging>
-    <version>14.0.0-SNAPSHOT</version>
+    <version>14.1.0-SNAPSHOT</version>
     <name>Opencell Parent Project</name>
 
     <modules>
@@ -28,11 +28,11 @@
         <version.keycloak>18.0.0</version.keycloak>
         <version.pdfbox>2.0.26</version.pdfbox>
         <version.barcode>2.1</version.barcode>
-        <version.stripe-sdk>20.124.0</version.stripe-sdk>
+        <version.stripe-sdk>22.4.0</version.stripe-sdk>
         <version.sips-payment-sdk>1.4.0</version.sips-payment-sdk>
         <jackson.version>2.11.3</jackson.version> <!-- wildfly 22 -->
         <dbtype>generic</dbtype>
-
+        <version.avalara-sdk>22.11.0</version.avalara-sdk>
         <java.version>11</java.version>
         <primefaces.version>7.0</primefaces.version>
         <swagger.version>2.2.0</swagger.version>
@@ -156,7 +156,8 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>3.11</version>
-                <scope>provided</scope>
+                <!-- Use compile scope to avoid compilation error in Opencell Script, even if we add it to jboss-deployment-structure.xml -->
+                <scope>compile</scope>
             </dependency>
 
             <dependency>
@@ -259,8 +260,8 @@
             <dependency>
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
-                <version>2.8.6</version>
-                <scope>provided</scope>
+                <version>2.10</version>
+                <scope>compile</scope>
             </dependency>
 
             <dependency>
@@ -496,7 +497,8 @@
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore-nio</artifactId>
                 <version>4.4.14</version>
-                <scope>provided</scope>
+                <!-- Use compile scope to avoid compilation error in Opencell Script, even if we add it to jboss-deployment-structure.xml -->
+                <scope>compile</scope>
             </dependency>
 
             <dependency>

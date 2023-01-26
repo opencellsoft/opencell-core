@@ -125,7 +125,7 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 
 	@Override
 	public Optional<Invoice> findByCode(String code) {
-		throw new BadRequestException("Use invoice number and type");
+		return ofNullable(invoiceService.findByInvoiceNumber(code));
 	}
 
 	/**
@@ -257,6 +257,8 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 		// Update Invoice Line
 		invoiceLinesService.update(invoiceLine);
 		invoiceService.calculateInvoice(invoice);
+		BigDecimal lastApliedRate = invoiceService.getCurrentRate(invoice,invoice.getInvoiceDate());
+		invoiceService.refreshAdvanceInvoicesConvertedAmount(invoice,lastApliedRate);
 		invoiceService.updateBillingRunStatistics(invoice);
 	}
 
@@ -310,7 +312,6 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 		}
         Invoice updateInvoice = invoiceService.update(invoice, input, invoiceResource);
         invoiceService.calculateInvoice(updateInvoice);
-        invoiceService.updateBillingRunStatistics(updateInvoice);
 
         return updateInvoice;
     }

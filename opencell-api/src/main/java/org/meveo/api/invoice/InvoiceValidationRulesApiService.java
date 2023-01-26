@@ -27,7 +27,7 @@ public class InvoiceValidationRulesApiService implements ApiService<InvoiceValid
 
     @Override
     public Optional<InvoiceValidationRule> update(Long id, InvoiceValidationRule invoiceValidationRule) {
-        invoiceValidationRulesService.updateInvoiceTypePriority(invoiceValidationRule);
+    	invoiceValidationRulesService.updateInvoiceTypePriority(invoiceValidationRule);
         return Optional.ofNullable(invoiceValidationRulesService.update(invoiceValidationRule));
     }
 
@@ -58,7 +58,7 @@ public class InvoiceValidationRulesApiService implements ApiService<InvoiceValid
         if (invoiceValidationRule == null) {
             throw new BusinessException("The invoice validation rule does not exist");
         }
-        invoiceValidationRulesService.remove(id);
+        invoiceValidationRulesService.remove(invoiceValidationRule);
         invoiceValidationRulesService.reorderInvoiceValidationRules(invoiceValidationRule, true);
         return Optional.empty();
     }

@@ -33,7 +33,7 @@ public class DunningCollectionPlanJobBean extends BaseJobBean {
                         eligibleInvoicesByPolicy.put(policy, eligibleInvoice);
                     }
                 }
-                policyService.processEligibleInvoice(eligibleInvoicesByPolicy);
+                policyService.processEligibleInvoice(eligibleInvoicesByPolicy, jobExecutionResult);
                 jobExecutionResult.addNbItemsCorrectlyProcessed(policies.size()
                         - jobExecutionResult.getNbItemsProcessedWithError());
             } catch (Exception exception) {

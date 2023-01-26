@@ -294,24 +294,15 @@ public class AccountsManagementApiService {
 
         List<Long> createdCounterInstances = new ArrayList<>();
 
-        List<ServiceInstance> serviceInstances = new ArrayList<>(
-                serviceInstanceService.findByCodeAndCodeSubscription(dto.getProductCode(), dto.getSubscriptionCode()));
-
-        if (CollectionUtils.isEmpty(serviceInstances)) {
-            throw new EntityDoesNotExistsException("No service instance found for [code=" + dto.getProductCode() + ", subscription codd=" + dto.getSubscriptionCode() + "]");
-        }
+        List<ServiceInstance> serviceInstances = getServiceInstances(dto);
 
         // si level SI, on boucle et on traite pour chaque serviceInstance retrouvé
         // si level subscritpion : on traite le premier en respectant un critere de date à voir
         if (serviceInstances.size() > 1 && CounterTemplateLevel.SU == counterTemplate.getCounterLevel()) {
             serviceInstances.sort(Comparator.comparing(ServiceInstance::getStatusDate));
-            CounterInstance counterInstance = counterInstanceService.counterInstanciationWithoutForceCommit(serviceInstances.get(0), counterTemplate, false);
-            processCounterInstanceAndPeriod(counterInstance, dto, serviceInstances.get(0), counterTemplate, createdCounterInstances);
+            processCreateCounterInstanceAndPeriod(dto, serviceInstances.get(0), counterTemplate, createdCounterInstances);
         } else {
-            serviceInstances.forEach(si -> {
-                CounterInstance counterInstance = counterInstanceService.counterInstanciationWithoutForceCommit(si, counterTemplate, false);
-                processCounterInstanceAndPeriod(counterInstance, dto, si, counterTemplate, createdCounterInstances);
-            });
+            serviceInstances.forEach(si -> processCreateCounterInstanceAndPeriod(dto, si, counterTemplate, createdCounterInstances));
         }
 
         return createdCounterInstances;
@@ -327,25 +318,32 @@ public class AccountsManagementApiService {
 
         CounterTemplate counterTemplate = checkFieldsAndGetCounterTemplate(dto);
 
-        List<Long> createdCounterInstances = new ArrayList<>();
+        List<Long> updatedCounterInstances = new ArrayList<>();
 
-        List<ServiceInstance> serviceInstances = serviceInstanceService.findByCodeAndCodeSubscription(dto.getProductCode(), dto.getSubscriptionCode());
-
-        if (CollectionUtils.isEmpty(serviceInstances)) {
-            throw new BusinessApiException("No service instance found for [code=" + dto.getProductCode() + ", subscription codd=" + dto.getSubscriptionCode() + "]");
-        }
+        List<ServiceInstance> serviceInstances = getServiceInstances(dto);
 
         // si level SI, on boucle et on traite pour chaque serviceInstance retrouvé
         // si level subscritpion : on traite le premier en respectant un critere de date à voir
         if (serviceInstances.size() > 1 && CounterTemplateLevel.SU == counterTemplate.getCounterLevel()) {
             serviceInstances.sort(Comparator.comparing(ServiceInstance::getStatusDate));
-            processCounterInstanceAndPeriod(counterInstance, dto, serviceInstances.get(0), counterTemplate, createdCounterInstances);
+            processUpdateCounterInstanceAndPeriod(counterInstance, dto, serviceInstances.get(0), counterTemplate);
         } else {
-            serviceInstances.forEach(si -> processCounterInstanceAndPeriod(counterInstance, dto, si, counterTemplate, createdCounterInstances));
+            serviceInstances.forEach(si -> processUpdateCounterInstanceAndPeriod(counterInstance, dto, si, counterTemplate));
         }
 
-        return createdCounterInstances;
+        updatedCounterInstances.add(counterInstance.getId());
 
+        return updatedCounterInstances;
+
+    }
+
+    private List<ServiceInstance> getServiceInstances(CounterInstanceDto dto) {
+        List<ServiceInstance> serviceInstances = serviceInstanceService.findByCodeAndCodeSubscription(dto.getProductCode(), dto.getSubscriptionCode());
+
+        if (CollectionUtils.isEmpty(serviceInstances)) {
+            throw new EntityDoesNotExistsException("No service instance found for [product code=" + dto.getProductCode() + ", subscription code=" + dto.getSubscriptionCode() + "]");
+        }
+        return new ArrayList<>(serviceInstances); // to avoid UnsupportedOperationException for sort bellow
     }
 
     private CounterTemplate checkFieldsAndGetCounterTemplate(CounterInstanceDto dto) {
@@ -361,7 +359,7 @@ public class AccountsManagementApiService {
             throw new BusinessApiException("Subscription code is mandatory");
         }
 
-        if (CollectionUtils.isEmpty(dto.getChargeInstances())) {
+        if (StringUtils.isBlank(dto.getChargeInstanceCode())) {
             throw new BusinessApiException("Charges are mandatory");
         }
 
@@ -389,59 +387,86 @@ public class AccountsManagementApiService {
                 }
                 break;
         }
+
+        // Period validations
+        if (CollectionUtils.isNotEmpty(dto.getCounterPeriods())) {
+            dto.getCounterPeriods().forEach(periodDto -> {
+                if(StringUtils.isBlank(periodDto.getCode())) {
+                    throw new BusinessApiException("Period code is mandatory");
+                }
+
+                if (periodDto.getStartDate() == null || periodDto.getEndDate() == null) {
+                    throw new BusinessApiException("Period Start and End date are mandatory");
+                }
+            });
+        }
         return counterTemplate;
     }
 
-    private void processCounterInstanceAndPeriod(CounterInstance counterInstance, CounterInstanceDto dto, ServiceInstance si, CounterTemplate counterTemplate, List<Long> createdCounterInstances) {
+    private void processCreateCounterInstanceAndPeriod(CounterInstanceDto dto, ServiceInstance si, CounterTemplate counterTemplate, List<Long> createdCounterInstances) {
+        ChargeInstance charge = getAndValidateChargeWithProduct(dto, si, counterTemplate, dto.getChargeInstanceCode());
+        CounterInstance counterInstance = counterInstanceService.counterInstanciationWithoutForceCommit(si, counterTemplate, charge, false);
         createdCounterInstances.add(counterInstance.getId());
+        validateAndProcessCounterPeriods(dto, counterInstance, charge);
+    }
 
-        dto.getChargeInstances().forEach(s -> {
-            ChargeInstance charge = chargeInstanceService.findByCode(s);
+    private void processUpdateCounterInstanceAndPeriod(CounterInstance counterInstance, CounterInstanceDto dto, ServiceInstance si, CounterTemplate counterTemplate) {
+        ChargeInstance charge = getAndValidateChargeWithProduct(dto, si, counterTemplate, dto.getChargeInstanceCode());
+        validateAndProcessCounterPeriods(dto, counterInstance, charge);
+    }
 
-            if (!productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(dto.getProductCode(), charge.getCode(), counterTemplate.getCode())) {
-                throw new BusinessApiException("ChargeInstance with [type=" + charge.getChargeType() + ", code=" + charge.getCode()
-                        + "] is not linked to Product [code=" + si.getCode()
-                        + "] and CounterTemplate [code=" + counterTemplate.getCode() + "]");
+    private void validateAndProcessCounterPeriods(CounterInstanceDto dto, CounterInstance counterInstance, ChargeInstance charge) {
+        // Check and build period
+        List<DateRange> periodes = new ArrayList<>();
+
+        Optional.ofNullable(dto.getCounterPeriods()).orElse(Collections.emptySet()).forEach(periodDto -> {
+            Date startP = DateUtils.setTimeToZero(periodDto.getStartDate());
+            Date endP = DateUtils.setTimeToZero(periodDto.getEndDate());
+            if (endP != null && startP != null && endP.before(startP)) {
+                throw new BusinessApiException("Invalid period dates : Start must be before End [start=" + formatDate(startP) + " - end=" + formatDate(endP) + "]");
             }
 
-            // Check and build period
-            List<DateRange> periodes = new ArrayList<>();
-
-            Optional.ofNullable(dto.getCounterPeriods()).orElse(Collections.emptySet()).forEach(periodDto -> {
-                Date startP = DateUtils.setTimeToZero(periodDto.getStartDate());
-                Date endP = DateUtils.setTimeToZero(periodDto.getEndDate());
-                if (endP != null && startP != null && endP.before(startP)) {
-                    throw new BusinessApiException("Invalid period dates : Start must be before End [start=" + formatDate(startP) + " - end=" + formatDate(endP) + "]");
+            // check period cheauvauchement
+            periodes.forEach(dateRange -> {
+                Date start = DateUtils.setTimeToZero(dateRange.getFrom());
+                Date end = DateUtils.setTimeToZero(dateRange.getTo());
+                if (((start.before(startP) || start.equals(startP)) && end.after(startP) && (end.before(endP) || end.equals(endP)))
+                        || (((start.after(startP) || start.equals(startP)) && start.before(endP)) && (end.after(endP) || end.equals(endP)))
+                        || (start.equals(startP) && end.equals(endP))
+                        || (start.before(startP) && end.after(startP) && end.after(endP))
+                        || (start.after(startP) && end.after(startP) && end.before(endP))
+                ) {
+                    throw new BusinessApiException("No overlapping should occur between counter Date Periods : [start=" + formatDate(startP) + " - end=" + formatDate(endP) + "]" +
+                            " and [start=" + formatDate(start) + " - end=" + formatDate(end) + "]");
                 }
-
-                // check period cheauvauchement
-                periodes.forEach(dateRange -> {
-                    Date start = DateUtils.setTimeToZero(dateRange.getFrom());
-                    Date end = DateUtils.setTimeToZero(dateRange.getTo());
-                    if (((start.before(startP) || start.equals(startP)) && end.after(startP) && (end.before(endP) || end.equals(endP)))
-                            || (((start.after(startP) || start.equals(startP)) && start.before(endP)) && (end.after(endP) || end.equals(endP)))
-                            || (start.equals(startP) && end.equals(endP))
-                            || (start.before(startP) && end.after(startP) && end.after(endP))
-                            || (start.after(startP) && end.after(startP) && end.before(endP))
-                    ) {
-                        throw new BusinessApiException("No overlapping should occur between counter Date Periods : [start=" + formatDate(startP) + " - end=" + formatDate(endP) + "]" +
-                                " and [start=" + formatDate(start) + " - end=" + formatDate(end) + "]");
-                    }
-                });
-
-                // fetch existing counterPeriod to check overlapping
-                CounterPeriod existingCounterPeriod = counterInstanceService.getCounterPeriodByDate(counterInstance, startP);
-
-                if (existingCounterPeriod == null) {
-                    counterInstanceService.createPeriod(counterInstance, charge.getChargeDate(), periodDto.getStartDate(), charge, periodDto.getValue(), periodDto.getLevel(), false);
-                } else {
-                    counterInstanceService.updatePeriod(existingCounterPeriod, counterInstance, charge.getChargeDate(), periodDto.getStartDate(), charge, periodDto.getValue(), periodDto.getLevel());
-                }
-
-                periodes.add(new DateRange(startP, endP));
             });
 
+            // fetch existing counterPeriod to check overlapping
+            CounterPeriod existingCounterPeriod = counterInstanceService.getCounterPeriodByDate(counterInstance, startP);
+
+            if (existingCounterPeriod == null) {
+                counterInstanceService.createPeriod(counterInstance, charge.getChargeDate(), periodDto.getStartDate(), charge, periodDto.getValue(), periodDto.getLevel(), false, periodDto.getEndDate(), true);
+            } else {
+                counterInstanceService.updatePeriod(existingCounterPeriod, counterInstance, charge.getChargeDate(), periodDto.getStartDate(), charge, periodDto.getValue(), periodDto.getLevel(), periodDto.getEndDate(), true);
+            }
+
+            periodes.add(new DateRange(startP, endP));
         });
+    }
+
+    private ChargeInstance getAndValidateChargeWithProduct(CounterInstanceDto dto, ServiceInstance si, CounterTemplate counterTemplate, String s) {
+        ChargeInstance charge = chargeInstanceService.findByCode(s);
+
+        if (charge == null) {
+            throw new EntityDoesNotExistsException("No ChargeInstance found with code : " + dto.getCounterTemplateCode());
+        }
+
+        if (!productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(dto.getProductCode(), charge.getCode(), counterTemplate.getCode())) {
+            throw new BusinessApiException("ChargeInstance with [type=" + charge.getChargeType() + ", code=" + charge.getCode()
+                    + "] is not linked to Product [code=" + si.getCode()
+                    + "] and CounterTemplate [code=" + counterTemplate.getCode() + "]");
+        }
+        return charge;
     }
 
     private String formatDate(Date date) {

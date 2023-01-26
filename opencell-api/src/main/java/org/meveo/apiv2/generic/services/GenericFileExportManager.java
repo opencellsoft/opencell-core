@@ -6,10 +6,12 @@ import static java.time.temporal.ChronoField.MINUTE_OF_HOUR;
 import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
 import static java.time.temporal.ChronoField.SECOND_OF_MINUTE;
 import static java.time.temporal.ChronoField.YEAR;
+import static java.util.stream.Collectors.toMap;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.file.Files;
@@ -23,10 +25,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.SignStyle;
 import java.time.temporal.TemporalAccessor;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javax.ejb.Stateless;
@@ -41,6 +42,7 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.meveo.api.dto.AgedReceivableDto;
 import org.meveo.apiv2.generic.GenericFieldDetails;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -63,6 +65,12 @@ public class GenericFileExportManager {
 	protected Logger log = LoggerFactory.getLogger(getClass());
 
     private static final String PATH_STRING_FOLDER = "exports" + File.separator + "generic"+ File.separator;
+    private static final String PATH_STRING_FOLDER_NO_GENERIC = "exports" + File.separator;
+    private static final String LOCALE_FR = "FR";
+    private static final String FR_AGED_BALANCE_FILENAME = "finance_rapports_balance-agee_";
+    private static final String FR_DATE_FORMAT = "dd/MM/yyyy";
+    private static final String EN_AGED_BALANCE_FILENAME = "Aged_trial_balance_";
+    private static final String EN_DATE_FORMAT = "MM/dd/yyyy";
     private String saveDirectory;
 
     public String export(String entityName, List<Map<String, Object>> mapResult, String fileType, Map<String, GenericFieldDetails> fieldDetails, List<String> ordredColumn, String locale){
@@ -341,5 +349,121 @@ public class GenericFileExportManager {
         style.setAlignment(HorizontalAlignment.LEFT);
         cell.setCellStyle(style);
     }
-    
+
+    /**
+     * Export aged trial balance
+     * @param entityName Entity Name
+     * @param fileType File Type (EXCEL, PDF or CSV)
+     * @param genericFieldDetails List of {@link GenericFieldDetails}
+     * @param agedReceivablesList List of {@link AgedReceivableDto}
+     * @param orderedColumn List of columns
+     * @param locale Language
+     * @return Stored Path
+     */
+    public String exportAgedTrialBalance(String entityName, String fileType, List<GenericFieldDetails> genericFieldDetails,
+                                         List<AgedReceivableDto> agedReceivablesList, List<String> orderedColumn, String locale){
+        log.info("Export Aged Balance - Entity Name: {}, File Type: {}, Locale: {}", entityName, fileType, locale);
+
+        String filename = FR_AGED_BALANCE_FILENAME;;
+        DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendValue(DAY_OF_MONTH, 2).appendValue(MONTH_OF_YEAR, 2).appendValue(YEAR, 4, 10, SignStyle.EXCEEDS_PAD)
+                .appendLiteral('-').appendValue(HOUR_OF_DAY, 2).appendValue(MINUTE_OF_HOUR, 2).appendValue(SECOND_OF_MINUTE, 2).toFormatter();
+        SimpleDateFormat format = new SimpleDateFormat(FR_DATE_FORMAT);
+
+        // Set Time to create file in the export directory
+        String time = LocalDateTime.now().format(formatter);
+        saveDirectory = paramBeanFactory.getChrootDir() + File.separator + PATH_STRING_FOLDER_NO_GENERIC + entityName + File.separator + time.substring(0,8) + File.separator;
+
+        // Manage locale language FR or Others (EN)
+        if(!LOCALE_FR.equalsIgnoreCase(locale)) {
+            filename = EN_AGED_BALANCE_FILENAME;
+            format = new SimpleDateFormat(EN_DATE_FORMAT);
+        }
+
+        // Manage Columns and convert List of AgedReceivable to a List Of Map
+        List<String> columns = new ArrayList<>();
+        Objects.requireNonNull(genericFieldDetails).forEach(gfd -> columns.add(gfd.getName()));
+        List<Map<String, Object>> map = convertObjectsListToListOfMap(agedReceivablesList, AgedReceivableDto.class, columns);
+        // Get Fields to Map by name and header
+        Map<String, GenericFieldDetails> fieldDetails = getFieldDetailsMap(genericFieldDetails);
+        // Format Fields
+        formatFields(map, format);
+
+        // If the map is not empty then save As Record to export - CSV, EXCEL or PDF
+        if (!map.isEmpty()) {
+            Path filePath = saveAsRecord(filename, map, fileType, fieldDetails, time, orderedColumn, locale);
+            return filePath == null ? null : filePath.toString();
+        }
+
+        return null;
+    }
+
+    /**
+     * Convert Objects to List of Map
+     * @param list List of {@link AgedReceivableDto}
+     * @param clazz Class
+     * @param columns List of columns
+     * @return List of Map
+     */
+    private List<Map<String, Object>> convertObjectsListToListOfMap(List<AgedReceivableDto> list, Class clazz, List<String> columns) {
+        List<Map<String, Object>> listOfMap = new ArrayList<>();
+        List<Field> fields = Arrays.stream(clazz.getDeclaredFields()).filter(x -> columns.contains(x.getName())).collect(Collectors.toList());
+
+        if(list != null) {
+            for (Object o : list) {
+                Map<String, Object> map = new TreeMap<>();
+                for (Field field : fields) {
+                    field.setAccessible(true);
+                    Object value;
+                    try {
+                        value = field.get(o);
+                        map.put(field.getName(), value);
+                    } catch (IllegalArgumentException | IllegalAccessException e) {
+                        log.error("error occurred when converting list to list of Map");
+                    }
+                }
+                listOfMap.add(map);
+            }
+        }
+
+        return listOfMap;
+    }
+
+    /**
+     * Format fields (Date)
+     * @param mapResult List of Map
+     * @param format Date Format
+     */
+    private static void formatFields(List<Map<String, Object>> mapResult, SimpleDateFormat format) {
+        for (Map<String, Object> item : mapResult) {
+            for (Map.Entry<String, Object> entry : item.entrySet()) {
+                if(entry.getKey().equals("dueDate")) {
+                    entry.setValue(format.format(entry.getValue()));
+                }
+            }
+        }
+    }
+
+    /**
+     * Get Field Detail Map
+     * @param genericFieldDetails List of {@link GenericFieldDetails}
+     * @return A Map Generic Field Details
+     */
+    private Map<String, GenericFieldDetails> getFieldDetailsMap(List<GenericFieldDetails> genericFieldDetails) {
+        Map<String, GenericFieldDetails> fieldDetails = new HashMap<>();
+
+        if (CollectionUtils.isNotEmpty(genericFieldDetails)) {
+            fieldDetails = genericFieldDetails.stream().collect(toMap(x -> nameOrHeader(x), Function.identity()));
+        }
+
+        return fieldDetails;
+    }
+
+    /**
+     * Get name or header
+     * @param genericFieldDetails {@link GenericFieldDetails}
+     * @return Nome or Header
+     */
+    private String nameOrHeader(GenericFieldDetails genericFieldDetails) {
+        return Optional.ofNullable(genericFieldDetails.getName()).orElse(genericFieldDetails.getHeader());
+    }
 }

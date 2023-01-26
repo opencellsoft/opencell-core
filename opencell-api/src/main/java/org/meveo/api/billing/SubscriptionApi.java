@@ -2651,6 +2651,7 @@ public class SubscriptionApi extends BaseApi {
         activateServicesRequestDto.setSubscriptionValidityDate(postData.getValidityDate());
 
         this.create(postData);
+        serviceInstanceService.getEntityManager().flush();
         this.activateServices(activateServicesRequestDto);
     }
 
@@ -2669,8 +2670,9 @@ public class SubscriptionApi extends BaseApi {
         if(!StringUtils.isBlank(postData.getProductToInstantiateDto())) {
             List<ProductToInstantiateDto> products=postData.getProductToInstantiateDto();
             if(products!=null && !products.isEmpty()) {
-                for(ProductToInstantiateDto productDto:products)
+                for(ProductToInstantiateDto productDto:products) {
                     processProduct(subscription,productDto);
+                }
             }
         }
         return subscription;
@@ -2792,6 +2794,10 @@ public class SubscriptionApi extends BaseApi {
                     throw new EntityNotAllowedException(Seller.class, Subscription.class, postData.getSeller());
                 }
             }
+        }
+        
+        if (seller == null) {
+        	throw new BusinessApiException("User account " + userAccount.getCode() + " doesn't have a default seller. Please provide a seller for this subscription.");
         }
 
         Subscription subscription = new Subscription();
@@ -3043,6 +3049,11 @@ public class SubscriptionApi extends BaseApi {
             }
             Subscription terminateSubscription = subscriptionService.terminateSubscription(lastVersionSubscription, effectiveDate, subscriptionTerminationReason, lastVersionSubscription.getOrderNumber());
             isImmediateTerminationOldSub = SubscriptionStatusEnum.RESILIATED == terminateSubscription.getStatus();
+            for(Access access : lastVersionSubscription.getAccessPoints())
+            {
+                access.setEndDate(effectiveDate);
+                accessApi.update(new AccessDto(access, null));
+            }
         }
 
         existingSubscriptionDto.setValidityDate(effectiveDate);
@@ -3079,6 +3090,7 @@ public class SubscriptionApi extends BaseApi {
 
         for (AccessDto access : existingSubscriptionDto.getAccesses().getAccess()) {
             access.setSubscription(existingSubscriptionDto.getCode());
+            access.setStartDate(effectiveDate);
         }
         createAccess(existingSubscriptionDto);
 
@@ -3220,6 +3232,7 @@ public class SubscriptionApi extends BaseApi {
                     processProduct(subscription, productDto);
             }
         }
+        serviceInstanceService.getEntityManager().flush();
         subscriptionService.activateInstantiatedService(subscription);
         return subscription;
     }

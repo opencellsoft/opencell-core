@@ -401,7 +401,7 @@ public class FilesApi extends BaseApi {
             return javaXMlFormatFile;
         } else {
             String[] fileNameParts = filePath.split("\\.");
-            if (fileNameParts.length > 1) {
+            if (fileNameParts.length > 2) {
                 File sqlXMlFormatFile = new File((".").concat(filePath.split("\\.")[1] + "_" + format("%04d", 0) + "." + filePath.split("\\.")[2]));
                 if (sqlXMlFormatFile.exists()) {
                     return sqlXMlFormatFile;

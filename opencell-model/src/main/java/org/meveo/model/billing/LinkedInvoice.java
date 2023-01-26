@@ -14,10 +14,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.IEntity;
+
+import static java.math.BigDecimal.ZERO;
 
 @Entity
 @Table(name = "billing_linked_invoices", uniqueConstraints = @UniqueConstraint(columnNames = { "id", "linked_invoice_id" }))
@@ -55,6 +59,16 @@ public class LinkedInvoice implements IEntity, Serializable {
     @Enumerated(EnumType.STRING)
     private InvoiceTypeEnum type;
 
+    @Column(name = "converted_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedAmount;
+    @PrePersist
+    @PreUpdate
+    public void prePersistOrUpdate() {
+        if (this.convertedAmount == null) {
+            BigDecimal appliedRate = getInvoice().getLastAppliedRate();
+            this.convertedAmount = appliedRate != null ? this.amount.multiply(appliedRate) : ZERO;
+        }
+    }
 
     public LinkedInvoice(Invoice id, Invoice linkedInvoiceValue) {
         super();
@@ -108,6 +122,13 @@ public class LinkedInvoice implements IEntity, Serializable {
 
     public void setType(InvoiceTypeEnum type) {
         this.type = type;
+    }
+
+    public BigDecimal getConvertedAmount() {
+        return convertedAmount;
+    }
+    public void setConvertedAmount(BigDecimal convertedAmount) {
+        this.convertedAmount = convertedAmount;
     }
 
 

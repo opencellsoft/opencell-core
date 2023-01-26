@@ -948,6 +948,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         BillingRun billingRun = findById(billingRunId);
         Set<Long> invoicesToRemove = new HashSet<>();
         Map<Class, Map<Long, Map<Long, Amounts>>> discountAmounts = getAmountsMap(invoiceAgregateService.getTotalDiscountAmountByBR(billingRun));
+        Map<Class, Map<Long, Map<Long, Amounts>>> discountILAmounts = getAmountsMap(invoiceLinesService.getTotalDiscountAmountByBR(billingRun));
         Map<Class, Map<Long, Map<Long, Amounts>>> positiveRTAmounts = getAmountsMap(ratedTransactionService.getTotalPositiveRTAmountsByBR(billingRun));
         Map<Class, Map<Long, Map<Long, Amounts>>> positiveILAmounts = getAmountsMap(invoiceLinesService.getTotalPositiveILAmountsByBR(billingRun));
         Map<Class, Map<Long, Map<Long, Amounts>>> invoiceableAmounts = getAmountsMap(invoiceService.getTotalInvoiceableAmountByBR(billingRun));
@@ -956,26 +957,28 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         Set<Long> rejectedBillingAccounts = new HashSet<>();
 
         invoicesToRemove.addAll(getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(Subscription.class),
-                positiveRTAmounts.get(Subscription.class), invoiceableAmounts.get(Subscription.class),
+                 discountILAmounts.get(Subscription.class), positiveRTAmounts.get(Subscription.class), invoiceableAmounts.get(Subscription.class),
             Subscription.class, rejectedBillingAccounts, positiveILAmounts.get(Subscription.class)));
 
         billableEntitieIds = invoiceableAmounts.get(CommercialOrder.class).keySet();
 
         invoicesToRemove.addAll(getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(CommercialOrder.class),
-                positiveRTAmounts.get(CommercialOrder.class), invoiceableAmounts.get(CommercialOrder.class),
+                discountILAmounts.get(CommercialOrder.class), positiveRTAmounts.get(CommercialOrder.class), invoiceableAmounts.get(CommercialOrder.class),
             CommercialOrder.class, rejectedBillingAccounts, positiveILAmounts.get(CommercialOrder.class)));
 
         billableEntitieIds = invoiceableAmounts.get(BillingAccount.class).keySet();
 
         invoicesToRemove.addAll(getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(BillingAccount.class),
-                positiveRTAmounts.get(BillingAccount.class), invoiceableAmounts.get(BillingAccount.class),
+                discountILAmounts.get(BillingAccount.class), positiveRTAmounts.get(BillingAccount.class), invoiceableAmounts.get(BillingAccount.class),
             BillingAccount.class, rejectedBillingAccounts, positiveILAmounts.get(BillingAccount.class)));
 
-        invoicesToRemove.addAll(getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(CustomerAccount.class), positiveRTAmounts.get(CustomerAccount.class), invoiceableAmounts.get(CustomerAccount.class),
+        invoicesToRemove.addAll(getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(CustomerAccount.class),
+                discountILAmounts.get(CustomerAccount.class), positiveRTAmounts.get(CustomerAccount.class), invoiceableAmounts.get(CustomerAccount.class),
             CustomerAccount.class, rejectedBillingAccounts, positiveILAmounts.get(CustomerAccount.class)));
 
         invoicesToRemove.addAll(
-            getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(Customer.class), positiveRTAmounts.get(Customer.class),
+            getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(Customer.class),
+                    discountILAmounts.get(Customer.class), positiveRTAmounts.get(Customer.class),
                     invoiceableAmounts.get(Customer.class), Customer.class, rejectedBillingAccounts, positiveILAmounts.get(Customer.class)));
 
         if (!invoicesToRemove.isEmpty()) {
@@ -1057,7 +1060,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @return a list of invoice that not reach the invoicing threshold and that must be removed.
      */
     @SuppressWarnings("rawtypes")
-    private List<Long> getInvoicesToRemoveByAccount(Collection<Long> billableEntities, Map<Long, Map<Long, Amounts>> discountThresholdAmounts, Map<Long, Map<Long, Amounts>> positiveRTThresholdAmounts,
+    private List<Long> getInvoicesToRemoveByAccount(Collection<Long> billableEntities, Map<Long, Map<Long, Amounts>> discountThresholdAmounts, Map<Long, Map<Long, Amounts>> discountILThresholdAmounts,  Map<Long, Map<Long, Amounts>> positiveRTThresholdAmounts,
             Map<Long, Map<Long, Amounts>> invoiceableThresholdAmounts, Class clazz, Set<Long> rejectedBillingAccounts, Map<Long, Map<Long, Amounts>> positiveILThresholdAmounts) {
         List<Long> invoicesToRemove = new ArrayList<>();
         List<Long> alreadyProcessedEntities = new ArrayList<>();
@@ -1162,9 +1165,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 case BEFORE_DISCOUNT:
                     thresholdAmounts = invoiceableThresholdAmounts.get(entityId);
                     Map<Long, Amounts> discountAmounts = discountThresholdAmounts.get(entityId);
+                    Map<Long, Amounts> discountILAmounts = discountILThresholdAmounts.get(entityId);
                     if (thresholdAmounts != null) {
                         if (discountAmounts != null) {
                             thresholdAmounts.keySet().stream().forEach(x -> thresholdAmounts.get(x).addAmounts((discountAmounts.get(x) != null) ? discountAmounts.get(x).negate() : null));
+                        }
+                        if(discountILAmounts!= null){
+                           thresholdAmounts.keySet().stream().forEach(x -> thresholdAmounts.get(x).addAmounts((discountILAmounts.get(x) != null) ? discountILAmounts.get(x).negate() : null));
                         }
                         checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntities, billableEntityId, threshold, isThresholdPerEntity, thresholdAmounts, clazz);
                     }
@@ -1662,12 +1669,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                     billingRun.getExceptionalILIds().stream().map(String::valueOf)
                             .collect(joining(",")) + ") AND il.status = 'OPEN'");
         } else {
-            Map<String, String> filters = billingRun.getFilters();
+            Map<String, Object> filters = billingRun.getFilters();
             String filterValue = QueryBuilder.getFilterByKey(filters, "SQL");
             if (!StringUtils.isBlank(filterValue)) {
                 queryBuilder = new QueryBuilder(filterValue);
             } else {
-                PaginationConfiguration configuration = new PaginationConfiguration(new HashMap<>(filters));
+                FilterConverter converter = new FilterConverter(RatedTransaction.class);
+                PaginationConfiguration configuration = new PaginationConfiguration(converter.convertFilters(filters));
                 queryBuilder = ratedTransactionService.getQuery(configuration);
             }
             filter.setPollingQuery(buildPollingQuery(queryBuilder));
@@ -1679,7 +1687,16 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         String pollingQuery = queryBuilder.getSqlString();
         if(queryBuilder.getParams() != null) {
             for(Map.Entry<String, Object> param : queryBuilder.getParams().entrySet()) {
-                pollingQuery = pollingQuery.replace(":" + param.getKey(), "\'"+ param.getValue() + "\'");
+                Class clazz = param.getValue().getClass();
+                String className = clazz.getName();
+                if(className.contains("Date")) {
+                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                    String paramDate = df.format(param.getValue());
+                    pollingQuery = pollingQuery.replace(":" + param.getKey(), "\'"+ paramDate + "\'");
+                }
+                else {
+                    pollingQuery = pollingQuery.replace(":" + param.getKey(), "\'"+ param.getValue() + "\'");
+                }
             }
         }
         return pollingQuery;

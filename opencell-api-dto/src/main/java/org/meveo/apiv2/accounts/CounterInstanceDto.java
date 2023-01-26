@@ -6,7 +6,6 @@ import org.immutables.value.Value;
 import org.meveo.apiv2.billing.CounterPeriodDto;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Value.Immutable
@@ -14,7 +13,7 @@ import java.util.Set;
 @JsonDeserialize(as = ImmutableCounterInstanceDto.class)
 public interface CounterInstanceDto {
 
-    @NotNull
+    @Nullable
     String getCounterTemplateCode();
 
     @Nullable
@@ -26,14 +25,14 @@ public interface CounterInstanceDto {
     @Nullable
     String getUserAccountCode();
 
-    @NotNull
+    @Nullable
     String getSubscriptionCode();
 
-    @NotNull
+    @Nullable
     String getProductCode();
 
     @Nullable
-    Set<String> getChargeInstances();
+    String getChargeInstanceCode();
 
     @Schema(description = "Counter Periods")
     @Nullable

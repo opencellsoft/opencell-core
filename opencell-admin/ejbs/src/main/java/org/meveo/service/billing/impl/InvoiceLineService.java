@@ -758,7 +758,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         if (resource.getEndDate() != null) {
             datePeriod.setTo(resource.getEndDate());
         }
-        
+        if(resource.getLabel()==null && invoiceLine.getAccountingArticle()!=null) {
+            invoiceLine.setLabel(!StringUtils.isBlank(invoiceLine.getAccountingArticle().getDescription())?invoiceLine.getAccountingArticle().getDescription():invoiceLine.getAccountingArticle().getCode());
+        }
 
 		if(invoiceLine.getTax()==null  && accountingArticle != null
                 && invoiceLine.getBillingAccount() != null && !invoiceLine.getTaxMode().equals(RATE))  {
@@ -767,13 +769,16 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	        if (isExonerated == null) {
 	            isExonerated = billingAccountService.isExonerated(billingAccount);
 	        }
-			  TaxInfo recalculatedTaxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), 
-					  billingAccount.getCustomerAccount().getCustomer().getSeller(), 
-					  billingAccount, null, 
-					  invoiceLine.getValueDate()!=null?invoiceLine.getValueDate():new Date(), null, 
-				      isExonerated, false, invoiceLine.getTax());
-			  invoiceLine.setTax(recalculatedTaxInfo.tax);
-			  invoiceLine.setTaxRate(recalculatedTaxInfo.tax.getPercent());
+            Seller billingAccountSeller = billingAccount.getCustomerAccount().getCustomer() != null ? billingAccount.getCustomerAccount().getCustomer().getSeller() : null;
+            Seller seller = billingAccountSeller == null ? invoiceLine.getInvoice().getSeller() : billingAccountSeller;
+
+            TaxInfo recalculatedTaxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(),
+                    seller,
+                    billingAccount, null,
+                    invoiceLine.getValueDate() != null ? invoiceLine.getValueDate() : new Date(), null,
+                    isExonerated, false, invoiceLine.getTax());
+            invoiceLine.setTax(recalculatedTaxInfo.tax);
+            invoiceLine.setTaxRate(recalculatedTaxInfo.tax.getPercent());
 		}
         if(!appProvider.isEntreprise()) {
             BigDecimal taxAmount = NumberUtils.computeTax(invoiceLine.getAmountWithoutTax(),
@@ -1007,7 +1012,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
      * filters : Map of filters
      * Return : QueryBuilder
      */
-    public QueryBuilder fromFilters(Map<String, String> filters) {
+    public QueryBuilder fromFilters(Map<String, Object> filters) {
         QueryBuilder queryBuilder;
         String filterValue = QueryBuilder.getFilterByKey(filters, "SQL");
         if (!StringUtils.isBlank(filterValue)) {
@@ -1321,4 +1326,16 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 .setParameter("ids", invoicesIds)
                 .executeUpdate();
     }
+    
+    public List<Date> getCustomSubscriptionAge(Long invoiceId, String referenceDate) {
+    	String query = "select distinct referenceDate from InvoiceLine il where il.invoice.id=:id";
+        return getEntityManager().createQuery(query.replace("referenceDate", referenceDate), Date.class)
+        		.setParameter("id", invoiceId)
+        		.getResultList();
+    }
+
+    public List<Object[]> getTotalDiscountAmountByBR(BillingRun billingRun) {
+		return getEntityManager().createNamedQuery("InvoiceLine.sumAmountsDiscountByBillingAccount")
+				.setParameter("billingRunId", billingRun.getId()).getResultList();
+	}
 }

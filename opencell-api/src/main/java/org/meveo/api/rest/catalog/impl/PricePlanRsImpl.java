@@ -101,11 +101,11 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
     }
 
     @Override
-    public GetPricePlanResponseDto find(String pricePlanCode) {
+    public GetPricePlanResponseDto find(String pricePlanCode, boolean returnPricePlanMatrixLine) {
         GetPricePlanResponseDto result = new GetPricePlanResponseDto();
 
         try {
-            result.setPricePlan(pricePlanApi.find(pricePlanCode));
+            result.setPricePlan(pricePlanApi.find(pricePlanCode, returnPricePlanMatrixLine));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

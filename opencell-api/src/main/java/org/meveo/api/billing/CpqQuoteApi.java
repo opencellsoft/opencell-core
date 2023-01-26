@@ -275,11 +275,22 @@ public class CpqQuoteApi extends BaseApi {
             throw new EntityDoesNotExistsException(BillingAccount.class, quoteDto.getApplicantAccountCode());
         }
         cpqQuote.setApplicantAccount(applicantAccount);
+
+        //Manage Seller
+        Seller seller = null;
         if(StringUtils.isNotBlank(quoteDto.getSellerCode())) {
-            cpqQuote.setSeller(sellerService.findByCode(quoteDto.getSellerCode()));
+            seller = sellerService.findByCode(quoteDto.getSellerCode());
+            if(seller == null) {
+                throw new EntityDoesNotExistsException(Seller.class, quoteDto.getSellerCode());
+            }
         } else {
-        	 cpqQuote.setSeller(applicantAccount.getCustomerAccount().getCustomer().getSeller());
+            seller = applicantAccount.getCustomerAccount().getCustomer().getSeller();
+            if(seller == null) {
+                throw new EntityDoesNotExistsException("No seller found. a seller must be defined either on quote or at customer level");
+            }
         }
+        cpqQuote.setSeller(seller);
+
         if(StringUtils.isNotBlank(quoteDto.getBillableAccountCode())) {
             var billableAccount = billingAccountService.findByCode(quoteDto.getBillableAccountCode());
             if(billableAccount == null) {
@@ -434,7 +445,7 @@ public class CpqQuoteApi extends BaseApi {
                 missingParameters.add("products[" + index + "].productVersion");
 
             handleMissingParameters();
-            if(quoteProductDTO.getQuantity() == null || quoteProductDTO.getQuantity().intValue() == 0) {
+            if(quoteProductDTO.getQuantity() == null || quoteProductDTO.getQuantity().equals(BigDecimal.ZERO)) {
                 throw new BusinessException("The quantity for product code " + quoteProductDTO.getProductCode() + " must be great than 0" );
             }
 
@@ -653,6 +664,25 @@ public class CpqQuoteApi extends BaseApi {
         if(StringUtils.isNotBlank(quoteDto.getSellerCode())) {
             quote.setSeller(sellerService.findByCode(quoteDto.getSellerCode()));
         }
+
+        BillingAccount applicantAccount = quote.getApplicantAccount();
+
+        //Manage Seller
+        Seller seller = null;
+        if(StringUtils.isNotBlank(quoteDto.getSellerCode())) {
+            seller = sellerService.findByCode(quoteDto.getSellerCode());
+            if(seller == null) {
+                throw new EntityDoesNotExistsException(Seller.class, quoteDto.getSellerCode());
+            }
+        } else {
+            seller = applicantAccount.getCustomerAccount().getCustomer().getSeller();
+            if(seller == null) {
+                throw new EntityDoesNotExistsException("No seller found. a seller must be defined either on quote or at customer level");
+            }
+        }
+        quote.setSeller(seller);
+
+
         if(StringUtils.isNotBlank(quoteDto.getApplicantAccountCode())) {
             final BillingAccount billingAccount = billingAccountService.findByCode(quoteDto.getApplicantAccountCode());
             if(billingAccount == null)
@@ -1789,29 +1819,29 @@ public class CpqQuoteApi extends BaseApi {
         Set<DiscountPlanItem> offerEligibleFixedDiscountItems = new HashSet<>();
         BillingAccount billingAccount;
         AccountingArticle usageArticle;
-        
+
         Map<AccountingArticle, List<QuoteArticleLine>> overrodeArticle = quoteOffer.getQuoteVersion().getQuoteArticleLines()
                 .stream()
                 .filter(articleLine -> articleLine.getQuoteProduct().getQuoteOffer().getId().equals(quoteOffer.getId()))
                 .collect(Collectors.groupingBy(QuoteArticleLine::getAccountingArticle));
-        
-        
+
+
         if (subscription != null) {
 
             billingAccount = subscription.getUserAccount().getBillingAccount();
             Map<String, Object> attributes = new HashMap<>();
-            
+
             // Add Service charges
             Double edrQuantity = 0d;
             for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
-            	
+
                  productEligibleFixedDiscountItems = new HashSet<>();
             	Set<AttributeValue> attributeValues = serviceInstance.getAttributeInstances()
                         .stream()
                         .map(attributeInstance -> attributeInstanceService.getAttributeValue(attributeInstance,serviceInstance, subscription))
                         .collect(Collectors.toSet());
-            	
-            	
+
+
                 for (AttributeValue attributeValue : attributeValues) {
                     Attribute attribute = attributeValue.getAttribute();
                     Object value = attribute.getAttributeType().getValue(attributeValue);
@@ -1834,6 +1864,9 @@ public class CpqQuoteApi extends BaseApi {
                              subscriptionCharge.setOverchargedUnitAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getOverchargedUnitAmountWithoutTax());
                          }
 
+                         if (subscriptionCharge.getSeller() == null) {
+                             setChargeSeller(quoteOffer, subscriptionCharge);
+                         }
                          RatingResult ratingResult = oneShotChargeInstanceService.applyOneShotChargeVirtual(subscriptionCharge, serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity());
                          if (ratingResult != null) {
                              walletOperations.addAll(ratingResult.getWalletOperations());
@@ -1852,23 +1885,26 @@ public class CpqQuoteApi extends BaseApi {
                 // Add recurring charges
                 for (RecurringChargeInstance recurringCharge : serviceInstance.getRecurringChargeInstances()) {
                     try {
-                    	   AccountingArticle recurringArticle = accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), recurringCharge.getChargeTemplate(), attributes,null)
-                                   .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + recurringCharge.getChargeTemplate()));
-                           if (overrodeArticle.keySet().contains(recurringArticle)) {
-                               QuoteArticleLine quoteArticleLine = overrodeArticle.get(recurringArticle).get(0);
-                               recurringCharge.setAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getUnitPriceWithoutTax());
-                               recurringCharge.setAmountWithTax(quoteArticleLine.getQuotePrices().get(0).getAmountWithTax().divide(quoteArticleLine.getQuantity(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
-                               recurringCharge.setApplyDiscountsOnOverridenPrice(quoteArticleLine.getQuotePrices().get(0).getApplyDiscountsOnOverridenPrice());
-                               recurringCharge.setOverchargedUnitAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getOverchargedUnitAmountWithoutTax());
-                           }
-                               Date nextApplicationDate = walletOperationService.getRecurringPeriodEndDate(recurringCharge, recurringCharge.getSubscriptionDate());
-                               RatingResult ratingResult = recurringChargeInstanceService
-                                       .applyRecurringCharge(recurringCharge, nextApplicationDate, false, true, null);
-                               if (ratingResult != null && !ratingResult.getWalletOperations().isEmpty()) {
-                                   walletOperations.addAll(ratingResult.getWalletOperations());
-                               }
+                        AccountingArticle recurringArticle = accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), recurringCharge.getChargeTemplate(), attributes, null)
+                                .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + recurringCharge.getChargeTemplate()));
+                        if (overrodeArticle.keySet().contains(recurringArticle)) {
+                            QuoteArticleLine quoteArticleLine = overrodeArticle.get(recurringArticle).get(0);
+                            recurringCharge.setAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getUnitPriceWithoutTax());
+                            recurringCharge.setAmountWithTax(quoteArticleLine.getQuotePrices().get(0).getAmountWithTax().divide(quoteArticleLine.getQuantity(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+                            recurringCharge.setApplyDiscountsOnOverridenPrice(quoteArticleLine.getQuotePrices().get(0).getApplyDiscountsOnOverridenPrice());
+                            recurringCharge.setOverchargedUnitAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getOverchargedUnitAmountWithoutTax());
+                        }
+                        Date nextApplicationDate = walletOperationService.getRecurringPeriodEndDate(recurringCharge, recurringCharge.getSubscriptionDate());
+                        if (recurringCharge.getSeller() == null) {
+                            setChargeSeller(quoteOffer, recurringCharge);
+                        }
+                        RatingResult ratingResult = recurringChargeInstanceService
+                                .applyRecurringCharge(recurringCharge, nextApplicationDate, false, true, null);
+                        if (ratingResult != null && !ratingResult.getWalletOperations().isEmpty()) {
+                            walletOperations.addAll(ratingResult.getWalletOperations());
+                        }
 
-                    }catch (NoTaxException e) { 
+                    }catch (NoTaxException e) {
                         throw new MeveoApiException(e.getMessage());
                     } catch (RatingException e) {
                         log.trace("Failed to apply a recurring charge {}: {}", recurringCharge, e.getRejectionReason());
@@ -1912,23 +1948,23 @@ public class CpqQuoteApi extends BaseApi {
 							if (edrQuantity > 0) {
 								quantityFound=true;
 							}
-							
+
 						}
-						
+
 					}
 				}
-			
+
 			if(subscription.getOffer() != null && subscription.getOffer().isGenerateQuoteEdrPerProduct()) {
 		        createEDR(edrQuantity, subscription, attributes, walletOperations);
 			}
-			
-			//applicable only for oneshot other	
+
+			//applicable only for oneshot other
             walletOperations.addAll(discountPlanService.calculateDiscountplanItems(new ArrayList<>(productEligibleFixedDiscountItems), subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), serviceInstance.getQuantity(), null,
 					serviceInstance.getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), serviceInstance, subscription, serviceInstance.getCode(), false, null, null, DiscountPlanTypeEnum.PRODUCT));
-        
+
             offerEligibleFixedDiscountItems.addAll(productEligibleFixedDiscountItems);
         }
-        
+
 
         createEDR(edrQuantity, subscription, attributes, walletOperations);
 
@@ -1944,10 +1980,16 @@ public class CpqQuoteApi extends BaseApi {
          sortedWalletOperations.addAll(walletOperations.stream()
           		  .filter(w->w.getDiscountPlan()!=null)
              		  .collect(Collectors.toList()));
-    
+
     quoteEligibleFixedDiscountItems.addAll(offerEligibleFixedDiscountItems);
     return sortedWalletOperations;
 }
+
+    private void setChargeSeller(QuoteOffer quoteOffer, ChargeInstance chargeInstance) {
+        chargeInstance.setSeller(quoteOffer.getQuoteVersion() != null &&
+                quoteOffer.getQuoteVersion().getQuote() != null ? quoteOffer.getQuoteVersion().getQuote().getSeller() : null);
+    }
+
     private void createEDR(Double edrQuantity, Subscription subscription, Map<String, Object> attributes, List<WalletOperation> walletOperations) {
     	if (edrQuantity != null && edrQuantity>0) {
 			EDR edr = new EDR();

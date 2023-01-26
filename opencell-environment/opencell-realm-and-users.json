@@ -112,8 +112,9 @@
         "composites": {
           "client": {
             "opencell-web": [
+              "administrateur",
               "apiAdministrateur",
-              "administrateur"
+              "genApiFull.list"
             ],
             "opencell-portal": [
               "ADMIN"
@@ -14059,6 +14060,18 @@
             }
           },
           {
+            "id": "52d0f983-6980-40fc-209b-ed1b59aad199",
+            "name": "Page Custom entities - admin - update",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Page Custom entities\"]",
+              "scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
+              "applyPolicies": "[\"Role administrationManagement\"]"
+            }
+          },
+          {
             "id": "22458ec0-1138-4e1b-9761-a7902f2fcfca",
             "name": "Page Rated transactions - read",
             "type": "scope",
@@ -15295,6 +15308,18 @@
             }
           },
           {
+            "id": "ecaac485-44f5-4b96-a421-168177f1bc77",
+            "name": "Api V1 Customization - entities - admin - update",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Api V1 Customization - entities\"]",
+              "scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
+              "applyPolicies": "[\"Role apiAdministrationVisualization\"]"
+            }
+          },
+          {
             "id": "daca7efc-9995-4dbe-a0b0-bd5c90c8fa27",
             "name": "Api V1 Security - User - read",
             "type": "scope",
@@ -16073,11 +16098,11 @@
           {
             "id": "e1b24c27-8880-4a48-a51d-cfb97f3c4168",
             "name": "Api V2 International Settings - Update",
-            "type": "scope",
+            "type": "resource",
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "resources": "[\"Api V2 International Settings\"\"]",
+              "resources": "[\"Api V2 International Settings\"]",
               "scopes": "[\"PUT\",\"DELETE\",\"POST\",\"PATCH\"]",
               "applyPolicies": "[\"Role apiAdministrationManagement\"]"
             }

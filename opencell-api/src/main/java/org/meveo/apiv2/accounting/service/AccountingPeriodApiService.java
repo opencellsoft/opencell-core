@@ -103,4 +103,16 @@ public class AccountingPeriodApiService  implements ApiService<AccountingPeriod>
 	public Optional<AccountingPeriod> generateNextAP() {
 		return Optional.of(accountingPeriodService.generateNextAP());
 	}
+
+	/**
+	 * Update the status of a fiscal year
+	 * @param entity {@link AccountingPeriod}
+	 * @param status Status
+	 * @param fiscalYear Fiscal Year
+	 * @return {@link AccountingPeriod}
+	 */
+	public AccountingPeriod updateStatus(AccountingPeriod entity, String status, String fiscalYear) {
+		return accountingPeriodService.updateStatus(entity, status, fiscalYear);
+
+	}
 }

@@ -1,5 +1,6 @@
 package org.meveo.api.cpq;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +22,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.account.AccessDto;
@@ -36,14 +38,19 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.AdvancementRateIncreased;
 import org.meveo.event.qualifier.StatusUpdated;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.*;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
+import org.meveo.model.catalog.ProductChargeTemplateMapping;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.ProductVersion;
@@ -132,6 +139,9 @@ public class CommercialOrderApi extends BaseApi {
 	@Inject
 	@AdvancementRateIncreased
 	protected Event<CommercialOrder> entityAdvancementRateIncreasedEventProducer;
+	
+    @Inject
+    private ResourceBundle resourceMessages;
 
 	private static final String ADMINISTRATION_VISUALIZATION = "administrationVisualization";
     private static final String ADMINISTRATION_MANAGEMENT = "administrationManagement";
@@ -142,14 +152,17 @@ public class CommercialOrderApi extends BaseApi {
 		final BillingAccount billingAccount = loadEntityByCode(billingAccountService, orderDto.getBillingAccountCode(), BillingAccount.class);
 		order.setBillingAccount(billingAccount);
 		Seller seller = null;
+
 		if(!Strings.isEmpty(orderDto.getSellerCode())) {
 			seller = sellerService.findByCode(orderDto.getSellerCode());
-			if(seller == null)
+			if(seller == null) {
 				throw new EntityDoesNotExistsException(Seller.class, orderDto.getSellerCode());
-		}else {
+			}
+		} else {
 			seller = billingAccount.getCustomerAccount().getCustomer().getSeller();
-			if(seller == null)
-				throw new EntityDoesNotExistsException("the customer is not attached to a seller");
+			if(seller == null) {
+				throw new EntityDoesNotExistsException("No seller found. a seller must be defined either on quote or at customer level");
+			}
 		}
 		order.setSeller(seller);
 		
@@ -327,18 +340,28 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 		if(!Strings.isEmpty(orderDto.getDiscountPlanCode())) {
 			order.setDiscountPlan(loadEntityByCode(discountPlanService, orderDto.getDiscountPlanCode(), DiscountPlan.class));
         }
-		if(!Strings.isEmpty(orderDto.getSellerCode())) {
-			final Seller seller = sellerService.findByCode(orderDto.getSellerCode());
-			if(seller == null)
-				throw new EntityDoesNotExistsException(Seller.class, orderDto.getSellerCode());
-			order.setSeller(seller);
-		}
+
 		if(!Strings.isEmpty(orderDto.getBillingAccountCode())) {
 			final BillingAccount billingAccount = billingAccountService.findByCode(orderDto.getBillingAccountCode());
 			if(billingAccount == null)
 				throw new EntityDoesNotExistsException(BillingAccount.class, orderDto.getBillingAccountCode());
 			order.setBillingAccount(billingAccount);
 		}
+
+		Seller seller = null;
+
+		if(!Strings.isEmpty(orderDto.getSellerCode())) {
+			seller = sellerService.findByCode(orderDto.getSellerCode());
+			if(seller == null) {
+				throw new EntityDoesNotExistsException(Seller.class, orderDto.getSellerCode());
+			}
+		} else {
+			seller = order.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+			if(seller == null) {
+				throw new EntityDoesNotExistsException("No seller found. a seller must be defined either on quote or at customer level");
+			}
+		}
+		order.setSeller(seller);
 		
 		if(!Strings.isEmpty(orderDto.getOrderTypeCode())) {
 			final OrderType orderType = orderTypeService.findByCode(orderDto.getOrderTypeCode());
@@ -850,6 +873,39 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
     		}
         	orderOffer.setTerminationReason(terminationReason);
     		orderOffer.setTerminationDate(orderOfferDto.getTerminationDate());
+        }else if(orderOfferDto.getOrderLineType() == OfferLineTypeEnum.APPLY_ONE_SHOT) {
+        	for (OrderProductDto orderProductDto : orderOfferDto.getOrderProducts()) { 
+        		if(!StringUtils.isBlank(orderProductDto.getProductCode()) && !StringUtils.isBlank(orderProductDto.getProductVersion())) {
+        			ProductVersion productVersion = productVersionService.findByProductAndVersion(orderProductDto.getProductCode(), orderProductDto.getProductVersion());
+        			if(productVersion == null) {
+        				throw new EntityDoesNotExistsException(ProductVersion.class, orderProductDto.getProductCode() +","+ orderProductDto.getProductVersion());
+        			}
+    				boolean haveOneShotChargeOther = false;
+        			for(ProductChargeTemplateMapping charge : productVersion.getProduct().getProductCharges()) {
+        				if(charge.getChargeTemplate() != null) {
+        					ChargeTemplate templateCharge = (ChargeTemplate) PersistenceUtils.initializeAndUnproxy(charge.getChargeTemplate());
+        					if(templateCharge instanceof OneShotChargeTemplate) {
+        						OneShotChargeTemplate oneShotCharge = (OneShotChargeTemplate) templateCharge;
+        						if(oneShotCharge.getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.OTHER) {
+        							haveOneShotChargeOther = true;
+        							break;
+        						}
+        					}
+        				}
+        			}
+        			if (!haveOneShotChargeOther) {
+            			throw new MeveoApiException(resourceMessages.getString("order.line.type.one.shot.other.error", orderProductDto.getProductCode()));
+        			}
+        			
+        		}
+
+			}
+        	orderOffer.setOrderLineType(OfferLineTypeEnum.APPLY_ONE_SHOT);
+        	Subscription subscription = subscriptionService.findByCode(orderOfferDto.getSubscriptionCode());
+        	if(subscription == null) {
+        		throw new EntityDoesNotExistsException("Subscription with code "+orderOfferDto.getSubscriptionCode()+" does not exist");
+        	}
+        	orderOffer.setSubscription(subscription);
         }else {
         	orderOffer.setOrderLineType(OfferLineTypeEnum.CREATE);
         }
@@ -1187,7 +1243,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 	        handleMissingParameters();
 	    }
 		for (OrderProductDto orderProductDto : orderProductDtos) {  
-		    if(orderProductDto.getQuantity() == null || orderProductDto.getQuantity().intValue() == 0 )
+		    if(orderProductDto.getQuantity() == null || orderProductDto.getQuantity().equals(BigDecimal.ZERO) )
 		        throw new BusinessApiException("The quantity for product code " + orderProductDto.getProductCode() + " must be great than 0" );
 			OrderProduct orderProduct=populateOrderProduct(orderProductDto,orderOffer,null);  
 			orderProductService.create(orderProduct);

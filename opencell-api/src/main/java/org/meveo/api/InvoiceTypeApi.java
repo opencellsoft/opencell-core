@@ -171,12 +171,14 @@ public class InvoiceTypeApi extends BaseCrudApi<InvoiceType, InvoiceTypeDto> {
             entity.setCode(dto.getUpdatedCode());
         }
         
-        if(!StringUtils.isBlank(dto.getInvoiceValidationScriptCode())) {
+        if (!StringUtils.isBlank(dto.getInvoiceValidationScriptCode())) {
         	ScriptInstance invoiceValidationScript = scriptInstanceService.findByCode(dto.getInvoiceValidationScriptCode());
         	if (invoiceValidationScript == null) {
                 throw new EntityDoesNotExistsException(ScriptInstance.class, dto.getInvoiceValidationScriptCode());
             }
         	entity.setInvoiceValidationScript(invoiceValidationScript);
+        } else if ("".equals(dto.getInvoiceValidationScriptCode())) {
+        	entity.setInvoiceValidationScript(null);
         }
 
         if (dto.getOccTemplateCode() != null) {

@@ -190,8 +190,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     private AccountingArticleService accountingArticleService;
 
     @Inject
-    private WalletOperationService walletOperationService;
-    @Inject
     private MethodCallingUtils methodCallingUtils;
     
     @Inject
@@ -367,12 +365,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
         RatingResult ratedEDRResult = new RatingResult();
         ratedEDRResult.addWalletOperation(walletOperation);
-        
-        if(!isVirtual) {
-        	walletOperationService.create(walletOperation);
-        }else {
-        	walletOperation.setUuid(UUID.randomUUID().toString());
-        }
+
     	applyDiscount(ratedEDRResult, walletOperation, isVirtual);
         
         return ratedEDRResult;
@@ -429,7 +422,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         }
 
         for (WalletOperation walletOperation : ratedEDRResult.getWalletOperations()) {
-            List<EDR> triggeredEdrs = instantiateTriggeredEDRs(walletOperation, edr, isVirtual);
+            List<EDR> triggeredEdrs = instantiateTriggeredEDRs(walletOperation, edr, isVirtual, true);
             ratedEDRResult.addTriggeredEDRs(triggeredEdrs);
         }
         return ratedEDRResult;
@@ -450,7 +443,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
      * @throws InvalidELException Failed to evaluate EL expression
      * @throws ElementNotFoundException Subscription as resolved from EL expression was not found
      */
-    public List<EDR> instantiateTriggeredEDRs(WalletOperation walletOperation, EDR edr, boolean isVirtual)
+    public List<EDR> instantiateTriggeredEDRs(WalletOperation walletOperation, EDR edr, boolean isVirtual, boolean evaluatEdrVersioning)
             throws RatingException, InvalidELException, ElementNotFoundException, CommunicateToRemoteInstanceException, ChargingEdrOnRemoteInstanceErrorException {
 
         List<EDR> triggredEDRs = new ArrayList<>();
@@ -543,7 +536,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 }
             }
         }
-        mediationsettingService.applyEdrVersioningRule(triggredEDRs, null, false, true);
+        if(evaluatEdrVersioning)
+            mediationsettingService.applyEdrVersioningRule(triggredEDRs, null, isVirtual, true);
         return triggredEDRs;
 
     }
@@ -647,7 +641,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                         .or(() -> contracts.stream().filter(c -> c.getCustomerAccount() != null).findFirst()) // CA Contract
                         .or(() -> contracts.stream().filter(c -> c.getCustomer() != null).findFirst()) // Customer Contract
                         .orElse(contracts.get(0)); // Seller Contract
-                    
+
                     // To save the first contract containing Rules by priority (BA->CA->Customer->seller) on WalletOperation.rulesContract
                     contractWithRules = contracts.stream().filter(c -> c.getBillingAccount() != null && c.getBillingRules()!=null && !c.getBillingRules().isEmpty()).findFirst() // BA Contract
                             .or(() -> contracts.stream().filter(c -> c.getCustomerAccount() != null && c.getBillingRules()!=null && !c.getBillingRules().isEmpty()).findFirst()) // CA Contract
@@ -660,7 +654,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 ContractItem contractItem = null;
                 if (contract != null && serviceInstance != null) {
                     OfferTemplate offerTemplate = serviceInstance.getSubscription().getOffer();
-                    
+
                     Contract contractMatched = contractItemService.getApplicableContract(contracts, offerTemplate, serviceInstance.getCode(), chargeTemplate);
                     if (contractMatched != null) {
                         contract = contractMatched;
@@ -711,7 +705,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
                     // A price discount is applied to a default price by a contract
                     if (contractItem != null && ContractRateTypeEnum.PERCENTAGE.equals(contractItem.getContractRateType()) ) {
-                        if(contractItem.getRate() > 0){
+                        if(contractItem.getRate() != null && contractItem.getRate() > 0){
                             BigDecimal amount = unitPriceWithoutTax.abs().multiply(BigDecimal.valueOf(contractItem.getRate()).divide(HUNDRED));
                             if (amount != null && unitPriceWithoutTax.compareTo(amount) > 0)
                                 unitPriceWithoutTax = unitPriceWithoutTax.subtract(amount);
@@ -775,7 +769,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     }
                 }
             }
-            
+
             if (pricePlan != null && pricePlan.getScriptInstance() != null) {
                 log.debug("start to execute script instance for ratePrice {}", pricePlan);
                 executeRatingScript(bareWalletOperation, pricePlan.getScriptInstance(), false);
@@ -872,7 +866,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     wo.setUnitAmountWithoutTax(priceWithoutTax);
                 }
                 if (ppmVersion.getPriceEL() != null) {
-                    priceWithoutTax = evaluateAmountExpression(ppmVersion.getPriceEL(), wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax);
+                    priceWithoutTax = evaluateAmountExpression(ppmVersion.getPriceEL(), wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax).setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
                     if (priceWithoutTax == null) {
                         throw new PriceELErrorException("Can't evaluate price for price plan " + ppmVersion.getId() + " EL:" + ppmVersion.getPriceEL());
                     }
@@ -1007,7 +1001,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         if (walletOperation.getPriceplan() != null) {
             String ratingEl = walletOperation.getPriceplan().getTotalAmountEL();
             if (!StringUtils.isBlank(ratingEl)) {
-                amount = BigDecimal.valueOf(evaluateDoubleExpression(ratingEl, walletOperation, walletOperation.getWallet().getUserAccount(), null, null));
+                amount = new BigDecimal(Double.toString(evaluateDoubleExpression(ratingEl, walletOperation, walletOperation.getWallet().getUserAccount(), null, null)));
             }
         }
 
@@ -1028,7 +1022,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
         // we override the wo amount if minimum amount el is set on price plan
         if (walletOperation.getPriceplan() != null && !StringUtils.isBlank(walletOperation.getPriceplan().getMinimumAmountEL())) {
-            BigDecimal minimumAmount = BigDecimal.valueOf(evaluateDoubleExpression(walletOperation.getPriceplan().getMinimumAmountEL(), walletOperation, walletOperation.getWallet().getUserAccount(), null, null));
+            BigDecimal minimumAmount = new BigDecimal(Double.toString(evaluateDoubleExpression(walletOperation.getPriceplan().getMinimumAmountEL(), walletOperation, walletOperation.getWallet().getUserAccount(), null, null)));
 
             if ((appProvider.isEntreprise() && walletOperation.getAmountWithoutTax().compareTo(minimumAmount) < 0) || (!appProvider.isEntreprise() && walletOperation.getAmountWithTax().compareTo(minimumAmount) < 0)) {
 
@@ -1507,7 +1501,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     		DiscountPlan discountPlan =null;
     		Date operationDate=walletOperation.getOperationDate()!=null?walletOperation.getOperationDate():new Date();
     		for(DiscountPlanInstance discountPlanInstance: discountPlanInstances) {
-    			
+
     			if (!discountPlanInstance.isEffective(operationDate) || discountPlanInstance.getStatus().equals(DiscountPlanInstanceStatusEnum.EXPIRED)) {
                     continue;
                 }

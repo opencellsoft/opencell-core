@@ -66,6 +66,7 @@ import org.meveo.model.scripts.ScriptInstance;
 public class ReportExtract extends EnableBusinessCFEntity implements IImageUpload {
 
     private static final long serialVersionUID = 879663935811446632L;
+    private static final Long DEFAULT_MAXIMUM_LINE = 100L;
 
     @Column(name = "category", length = 50)
     private String category;
@@ -279,7 +280,7 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
     }
 
     public void setMaximumLine(Long maximumLine) {
-        this.maximumLine = maximumLine;
+         this.maximumLine =  maximumLine <= 0 ? DEFAULT_MAXIMUM_LINE: maximumLine;
     }
 
     public String getDecimalSeparator() {

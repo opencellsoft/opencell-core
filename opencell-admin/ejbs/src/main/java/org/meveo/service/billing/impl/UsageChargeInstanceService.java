@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.EntityGraph;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.WalletCacheContainerProvider;
@@ -81,12 +82,11 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 
         if ((serviceUsageChargeTemplate.getAccumulatorCounterTemplates() != null && !serviceUsageChargeTemplate.getAccumulatorCounterTemplates().isEmpty()) || serviceUsageChargeTemplate.getCounterTemplate() != null) {
             for (CounterTemplate counterTemplate : serviceUsageChargeTemplate.getAccumulatorCounterTemplates()) {
-                CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, counterTemplate, isVirtual);
+                CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, counterTemplate, usageChargeInstance, isVirtual);
                 log.debug("Accumulator counter instance {} will be added to charge instance {}", counterInstance, usageChargeInstance);
-                usageChargeInstance.addAccumulatorCounterInstance(counterInstance);
             }
             if (serviceUsageChargeTemplate.getCounterTemplate() != null) {
-                CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, serviceUsageChargeTemplate.getCounterTemplate(), isVirtual);
+                CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, serviceUsageChargeTemplate.getCounterTemplate(), usageChargeInstance, isVirtual);
                 log.debug("Counter instance {} will be added to charge instance {}", counterInstance, usageChargeInstance);
                 usageChargeInstance.setCounter(counterInstance);
             }
@@ -159,7 +159,15 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
      * @return An ordered list by priority (ascended) of usage charge instances
      */
     public List<UsageChargeInstance> getUsageChargeInstancesValidForDateBySubscriptionId(Long subscriptionId, Object consumptionDate) {
-        return getEntityManager().createNamedQuery("UsageChargeInstance.getUsageChargesValidesForDateBySubscription", UsageChargeInstance.class).setParameter("subscriptionId", subscriptionId)
-            .setParameter("terminationDate", consumptionDate).getResultList();
+        EntityGraph<UsageChargeInstance> graph = getEntityManager().createEntityGraph(UsageChargeInstance.class);
+        graph.addAttributeNodes("chargeTemplate", "serviceInstance", "userAccount", "currency");
+        graph.addSubgraph("serviceInstance").addAttributeNodes("attributeInstances");
+        graph.addSubgraph("currency").addAttributeNodes("currency");
+        graph.addSubgraph("userAccount").addAttributeNodes("wallet");
+
+        return getEntityManager().createNamedQuery("UsageChargeInstance.getUsageChargesValidesForDateBySubscription", UsageChargeInstance.class)
+                .setParameter("terminationDate", consumptionDate).setParameter("subscriptionId", subscriptionId)
+                .setHint("javax.persistence.loadgraph", graph)
+                .getResultList();
     }
 }
