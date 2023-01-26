@@ -1344,7 +1344,7 @@ public class QueryBuilder {
     }
 
     public QueryBuilder startNestedFilter(FilterOperatorEnum operator) {
-    	if(!nestedClauses.empty()) {
+    	if(nestedClauses != null && !nestedClauses.empty()) {
     		NestedQuery parentNF = nestedClauses.peek();
     		if(parentNF.hasOneOrMoreCriteria) {
     			q.append(" " + parentNF.operator + " ");
