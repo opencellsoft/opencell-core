@@ -79,7 +79,7 @@ public class OneShotOtherTypeMigrationScript extends Script {
             }
 
         } catch (Exception exception) {
-            log.debug(exception.getMessage(), exception);
+            log.error("Error : {}", exception.getMessage(), exception);
         }
 
     }
