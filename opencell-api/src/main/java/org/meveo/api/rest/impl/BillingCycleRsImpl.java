@@ -113,11 +113,15 @@ public class BillingCycleRsImpl extends BaseRs implements BillingCycleRs {
     public ActionStatus createOrUpdate(BillingCycleDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        try {
-            result.setEntityId(billingCycleApi.createOrUpdate(postData).getId());
-        } catch (Exception e) {
-            processException(e, result);
-        }
+		try {
+			if (postData.getId() == null) {
+				result.setEntityId(billingCycleApi.create(postData).getId());
+			} else {
+				result.setEntityId(billingCycleApi.update(postData).getId());
+			}
+		} catch (Exception e) {
+			processException(e, result);
+		}
 
         return result;
     }
