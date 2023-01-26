@@ -215,19 +215,19 @@ public class BillingCycle extends BusinessCFEntity {
     
     @Type(type = "numeric_boolean")
     @Column(name = "disable_aggregation")
-    private boolean disableAggregation = false;
+    private boolean disableAggregation = true;
     
     @Type(type = "numeric_boolean")
     @Column(name = "use_accounting_article_label")
-    private boolean useAccountingArticleLabel = false;
+    private boolean useAccountingArticleLabel = true;
     
     @Enumerated(value = EnumType.STRING)
     @Column(name = "date_aggregation")
-    private DateAggregationOption dateAggregation = DateAggregationOption.NO_DATE_AGGREGATION;
+    private DateAggregationOption dateAggregation = DateAggregationOption.DAY_OF_USAGE_DATE;
     
     @Type(type = "numeric_boolean")
     @Column(name = "aggregate_unit_amounts")
-    private boolean aggregateUnitAmounts = false;
+    private boolean aggregateUnitAmounts = true;
     
     @Type(type = "numeric_boolean")
     @Column(name = "ignore_subscriptions")
