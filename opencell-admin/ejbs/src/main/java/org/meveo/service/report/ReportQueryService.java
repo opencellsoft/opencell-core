@@ -365,7 +365,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             QueryExecutionResult executionResult = asyncResult.get();
             if(executionResult != null && sendNotification) {
             	if(currentUser.getEmail() != null) {
-                    notifyUser(executionResult.getId(), reportQuery.getCode(), currentUser, true,
+                    notifyUser(executionResult.getId(), reportQuery.getCode(), currentUser.getFullNameOrUserName(), currentUser.getEmail(), true,
                             executionResult.getStartDate(), executionResult.getExecutionDuration(),
                             executionResult.getLineCount(), null);
             	}
@@ -373,7 +373,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                 	Set<String> setEmails = new HashSet<String>(emails);
                     for(String email : setEmails) {
                     	if(email != null && !email.equalsIgnoreCase(currentUser.getEmail())) {
-                        	notifyUser(executionResult.getId(), reportQuery.getCode(), currentUser, true,
+                        	notifyUser(executionResult.getId(), reportQuery.getCode(), currentUser.getFullNameOrUserName(), email, true,
                                     executionResult.getStartDate(), executionResult.getExecutionDuration(),
                                     executionResult.getLineCount(), null);
                     	}
@@ -385,14 +385,14 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         } catch (Exception exception) {
         	if(sendNotification) {
 	            long duration = new Date().getTime() - startDate.getTime();
-	            notifyUser(reportQuery.getId(), reportQuery.getCode(), currentUser, false,
+	            notifyUser(reportQuery.getId(), reportQuery.getCode(), currentUser.getFullNameOrUserName(), currentUser.getEmail(), false,
 	                    startDate, duration, null, exception.getMessage());
         	}
             log.error("Failed to execute async report query", exception);
         }
     }
 
-    private void notifyUser(Long reportQueryId, String reportQueryName, MeveoUser meveoUser, boolean success,
+    private void notifyUser(Long reportQueryId, String reportQueryName, String userName, String userEmail , boolean success,
                             Date startDate, long duration, Integer lineCount, String error) {
         String contentHtml = null;
         String content = null;
@@ -401,8 +401,6 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
 
         Format format = new SimpleDateFormat("yyyy-M-dd hh:mm:ss");
 
-        String userName = currentUser.getFullNameOrUserName();
-        String userEmail = currentUser.getEmail();
         Map<Object, Object> params = new HashMap<>();
         params.put("userName", userName);
         params.put("reportQueryName", reportQueryName);
