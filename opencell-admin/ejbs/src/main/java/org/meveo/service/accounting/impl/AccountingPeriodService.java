@@ -62,25 +62,22 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 	 * @return {@link AccountingPeriod}
 	 */
 	public AccountingPeriod updateStatus(AccountingPeriod entity, String status, String fiscalYear) {
-	    if(entity.isUseSubAccountingCycles() && AccountingPeriodStatusEnum.valueOf(status).equals(AccountingPeriodStatusEnum.OPEN)) {
+	    AccountingPeriodStatusEnum accountingPeriodStatus = AccountingPeriodStatusEnum.valueOf(status);
+        if(entity.isUseSubAccountingCycles() && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.OPEN)) {
 			throw new ValidationException("the accounting period " + fiscalYear + " has sub-accounting periods option activated");
-		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.CLOSED) && AccountingPeriodStatusEnum.valueOf(status).equals(AccountingPeriodStatusEnum.CLOSED)){
+		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.CLOSED) && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.CLOSED)){
 			throw new ValidationException("the accounting period " + fiscalYear + " is already closed");
-		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.OPEN) && AccountingPeriodStatusEnum.valueOf(status).equals(AccountingPeriodStatusEnum.OPEN)) {
+		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.OPEN) && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.OPEN)) {
 			throw new ValidationException("the accounting period " + fiscalYear + " is already opened");
 		} else {		    
-	        if (AccountingPeriodStatusEnum.valueOf(status).equals(AccountingPeriodStatusEnum.CLOSED) || 
-	                AccountingPeriodStatusEnum.valueOf(status).equals(AccountingPeriodStatusEnum.OPEN)) {
+	        if (accountingPeriodStatus.equals(AccountingPeriodStatusEnum.CLOSED)) {
 	            Date lastDayOfFiscalYear = DateUtils.newDate(Integer.parseInt(fiscalYear), 12, 31, 0, 0, 0);
-	            boolean isUserHaveThisRole = currentUserProvider.isUserHaveThisRole(currentUser, API_FINANCE_MANAGEMENT);                    
-	            List<SubAccountingPeriod> subAccountingPeriods = subAccountingPeriodService.getSubPeriodsWithStatus(entity, lastDayOfFiscalYear, status, isUserHaveThisRole);
-                for (SubAccountingPeriod subAccountingPeriod : subAccountingPeriods) {
-                    subAccountingPeriodService.updateSubAccountingAllUsersStatus(fiscalYear, status, subAccountingPeriod, "");
-                }
+	            boolean isUserHaveThisRole = currentUserProvider.isUserHaveThisRole(currentUser, API_FINANCE_MANAGEMENT);
+	            subAccountingPeriodService.updateSubPeriodsWithStatus(entity, fiscalYear, lastDayOfFiscalYear, status, isUserHaveThisRole);                
             }
 		    
 			AuditLog auditLog = createAuditLog(entity, status);
-			entity.setAccountingPeriodStatus(AccountingPeriodStatusEnum.valueOf(status));
+			entity.setAccountingPeriodStatus(accountingPeriodStatus);
 			update(entity);
 
 			if(auditLog.getEntity() != null) {

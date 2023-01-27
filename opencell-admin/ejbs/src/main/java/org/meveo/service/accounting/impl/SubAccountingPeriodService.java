@@ -212,7 +212,7 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 
 		updateSubAccountingRegularUsersStatus(fiscalYear, status, subAccountingPeriod, reason);
 	}
-
+	
 	public void updateSubAccountingRegularUsersStatus(String fiscalYear, String status,
 			SubAccountingPeriod subAccountingPeriod, String reason) {
 		if (subAccountingPeriod.getAccountingPeriod() == null || !subAccountingPeriod.getAccountingPeriod().getAccountingPeriodYear().equals(fiscalYear) ) {
@@ -313,7 +313,7 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
         return getUsersSubPeriodWithByNameQuery(accountingPeriod, endDate, "SubAccountingPeriod.getAllUsersSubPeriodWithStatusOpen");
     }
 	
-	public List<SubAccountingPeriod> getUsersSubPeriodWithByNameQuery(AccountingPeriod accountingPeriod, Date endDate, String nameQuery) {
+	private List<SubAccountingPeriod> getUsersSubPeriodWithByNameQuery(AccountingPeriod accountingPeriod, Date endDate, String nameQuery) {
         try {
             return getEntityManager()
                         .createNamedQuery(nameQuery, entityClass)
@@ -348,18 +348,18 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
                 .getSingleResult() == 0;
     }
 
-    public List<SubAccountingPeriod> getSubPeriodsWithStatus(AccountingPeriod entity, Date lastDayOfFiscalYear, String status, boolean isUserHaveThisRole) {
+    public void updateSubPeriodsWithStatus(AccountingPeriod entity, String fiscalYear, Date lastDayOfFiscalYear, String status, boolean isUserHaveThisRole) {
         List<SubAccountingPeriod> subAccountingPeriods = null;
-        if (AccountingPeriodStatusEnum.valueOf(status).equals(AccountingPeriodStatusEnum.CLOSED)) {
-            if (isUserHaveThisRole) {
-                subAccountingPeriods = getRegularUsersSubPeriodWithStatusOpen(entity, lastDayOfFiscalYear);
-            } else {
-                subAccountingPeriods = getAllUsersSubPeriodWithStatusOpen(entity, lastDayOfFiscalYear);
-            }            
-        } 
-        else if (AccountingPeriodStatusEnum.valueOf(status).equals(AccountingPeriodStatusEnum.OPEN)) {
-            subAccountingPeriods = getAllUsersSubPeriodWithStatusOpen(entity, lastDayOfFiscalYear);            
-        }
-        return subAccountingPeriods;
+        if (isUserHaveThisRole) {
+            subAccountingPeriods = getAllUsersSubPeriodWithStatusOpen(entity, lastDayOfFiscalYear);
+            for (SubAccountingPeriod subAccountingPeriod : subAccountingPeriods) {
+                updateSubAccountingAllUsersStatus(fiscalYear, status, subAccountingPeriod, "");
+            }
+        } else {
+            subAccountingPeriods = getRegularUsersSubPeriodWithStatusOpen(entity, lastDayOfFiscalYear);
+            for (SubAccountingPeriod subAccountingPeriod : subAccountingPeriods) {
+                updateSubAccountingRegularUsersStatus(fiscalYear, status, subAccountingPeriod, "");
+            }
+        }            
     }
 }
