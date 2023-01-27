@@ -13062,10 +13062,10 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="version" valueNumeric="1" />
             <column name="src_type" value="JAVA" />
-			<column name="description" value="Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator. For the invoice to be valid, all tested invoice lines must pass the test. If offer list is empty, then rule will always pass. Only offer actually present on invoice will be tested."/>
+			<column name="description" value="Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator. If offer list is empty, then all invoice lines will be tested regardless of their offer. For invoice to be valid, all invoice lines must pass the test. Only offer actually present on invoice will be tested."/>
 			<column name="description_i18n">
-				<![CDATA[{"ENG":"<p>Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator.</p><p>For the invoice to be valid, all tested invoice lines must pass the test.</p><p>If offer list is empty, then rule will always pass.</p><p>Only offer actually present on invoice will be tested.</p>",
-				"FRA":"<p>Le montant de chaque ligne de facture provenant d’une offre de la liste sera comparé à la valeur indiquée, en utilisant l’opérateur sélectionné.</p><p>Pour que la facture soit valide, toutes les lignes de facture testées doivent passer le test.</p><p>Si la liste des offres est vide, alors la règle passera toujours.</p><p>Seule les offres effectivement présentes sur la facture seront testées.</p>"}]]>
+				<![CDATA[{"ENG":"<p>Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator.</p><p>If offer list is empty, then all invoice lines will be tested regardless of their offer.</p><p>For invoice to be valid, all invoice lines must pass the test.</p><p>Only offer actually present on invoice will be tested.</p>",
+				"FRA":"<p>Le montant de chaque ligne de facture provenant d’une offre de la liste sera comparé à la valeur indiquée, en utilisant l’opérateur sélectionné.</p><p>Si la liste des offres est vide, alors toutes les lignes de facture seront testées, quelle que soit leur offre.</p><p>Pour que la facture soit valide, toutes les lignes de facture testées doivent passer le test.</p><p>Seule les offres effectivement présentes sur la facture seront testées.</p>"}]]>
 			</column>
 			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='INVOICE_VALIDATION')" />
         </insert>
@@ -19000,6 +19000,8 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
         </insert>
     </changeSet>
 	<changeSet id="#INTRD-13122_20220111" author="HichamHANINE" />
+    <changeSet id="#INTRD-13379_20230127" author="aeljaouhari" />
+
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
