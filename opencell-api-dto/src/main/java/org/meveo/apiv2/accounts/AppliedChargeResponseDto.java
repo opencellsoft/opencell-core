@@ -34,19 +34,19 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
- * The Class ChargeCDRResponseDto.
+ * The Class AppliedChargeResponseDto.
  *
- * @author HORRI Khalid
- * @lastModifiedVersion 7.3
+ * @author a.rouaguebe
+ * 
  */
 @XmlRootElement(name = "AppliedChargeResponseDto")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonInclude(Include.NON_EMPTY)
 public class AppliedChargeResponseDto extends BaseResponse {
 
-    private static final long serialVersionUID = 771726001135278144L;
+    private static final long serialVersionUID = -2171674315264169687L;
 
-    /**
+	/**
      * The amount without Tax.
      */
     private BigDecimal amountWithoutTax;
@@ -232,7 +232,8 @@ public class AppliedChargeResponseDto extends BaseResponse {
     }
 
     public static class CdrError implements Serializable {
-        private static final long serialVersionUID = 5139169395026374653L;
+
+        private static final long serialVersionUID = 7006614222124909513L;
 
         private String errorMessage;
 
