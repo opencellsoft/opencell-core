@@ -961,7 +961,7 @@ public class NativePersistenceService extends BaseService {
                     .forEach(key -> nativeExpressionFactory.addFilters(key, filters.get(key)));
         }
 
-        if (config.getOrderings().length == 2) {
+        if (config.getOrderings() != null && config.getOrderings().length == 2) {
             if (config.getOrderings()[0].equals("id")
                     && config.getOrderings()[1].equals(PagingAndFiltering.SortOrder.ASCENDING)) {
                 config.setOrderings(new Object[]{});
@@ -1055,7 +1055,8 @@ public class NativePersistenceService extends BaseService {
 
     private boolean checkAggFunctions(String field) {
         if (field.startsWith("SUM(") || field.startsWith("COUNT(") || field.startsWith("AVG(")
-                || field.startsWith("MAX(") || field.startsWith("MIN(") || field.startsWith("COALESCE(SUM(")) {
+                || field.startsWith("MAX(") || field.startsWith("MIN(") || field.startsWith("COALESCE(SUM(")
+                || field.startsWith("STRING_AGG_LONG") || field.startsWith("TO_CHAR(") || field.startsWith("CAST(")) {
             return true;
         } else {
             return false;
