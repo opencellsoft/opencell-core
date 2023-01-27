@@ -42,7 +42,6 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
-import org.meveo.service.payments.impl.CustomerAccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
