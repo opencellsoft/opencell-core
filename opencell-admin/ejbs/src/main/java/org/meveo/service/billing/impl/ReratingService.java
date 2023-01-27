@@ -519,6 +519,10 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
                     newWO = createNewWO(oldWOAndNewWO, operationToRerate, useSamePricePlan);
                     edr.setStatus(EDRStatusEnum.CANCELLED);
                     edr.setRejectReason("Origin wallet operation [id=" + operationToRerate.getId() + "] has been rerated");
+                    if (newWO==null) {
+                        // that mean no newWO are created, this is the cas when we have 1 WO woth more than 1 T.EDR, we skip creating of T.EDR
+                        continue;
+                    }
                     List<EDR> edrs = usageRatingService.instantiateTriggeredEDRs(newWO, operationToRerate.getEdr(), false, false);
                     for (EDR e : edrs) {
                         e.setWalletOperation(newWO);
