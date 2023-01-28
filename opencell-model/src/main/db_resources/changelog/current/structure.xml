@@ -15750,4 +15750,13 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedTableName="ar_occ_template"
                                  referencedColumnNames="id"/>
     </changeSet>
+
+    <changeSet id="#INTRD-13468_20230126" author="hichamELHALOUI">
+        <addColumn tableName="billing_invoice_validation_rule">
+            <column name="evaluation_mode" type="varchar(50)" defaultValue="VALIDATION">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+    </changeSet>
 </databaseChangeLog>
