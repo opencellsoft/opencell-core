@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
+import org.meveo.model.billing.EvaluationModeEnum;
 import org.meveo.model.billing.InvoiceValidationStatusEnum;
-import org.meveo.model.billing.ValidationRuleTypeEnum;
 
 import javax.annotation.Nullable;
 import java.util.Date;
@@ -60,5 +60,9 @@ public interface InvoiceValidationRuleDto extends Resource {
     @Nullable
     @Schema(description = "Rule values")
     Map<String, String> getRuleValues();
+
+    @Nullable
+    @Schema(description = "Evaluation Mode")
+    EvaluationModeEnum getEvaluationMode();
 
 }
