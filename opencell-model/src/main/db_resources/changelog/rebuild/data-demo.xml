@@ -1664,18 +1664,6 @@
             <column name="parametres" value="MRR" />
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueNumeric="-13" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="2016-09-14 00:00:00.000" />
-            <column name="job_category" value="DWH" />
-            <column name="job_template" value="DWHQueryJob" />
-            <column name="code" value="DWH_Job_CHURN" />
-            <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="timerentity_id" valueNumeric="-2" />
-            <column name="uuid" value="DWH_Job_CHURN" />
-            <column name="parametres" value="CHURN" />
-        </insert>
-        <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-19" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueNumeric="1" />
@@ -2675,6 +2663,7 @@
 	<changeSet id="#INTRD-10592_20221014" author="TarikFA." />
     <changeSet id="INTRD-11122_20221104" author="HichamELHALOUI" />
     <changeSet id="INTRD-13237_20230119" author="HichamELHALOUI" />
+    <changeSet id="INTRD-13608_20230130" author="HichamELHALOUI" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
