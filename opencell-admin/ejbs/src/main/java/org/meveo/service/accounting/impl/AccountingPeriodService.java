@@ -90,7 +90,7 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 	public AccountingPeriod createAccountingPeriod(AccountingPeriod entity, Boolean isUseSubAccountingPeriods) {
 		validateInputs(entity, isUseSubAccountingPeriods, entity.getSubAccountingPeriodType(), false);
 		if(entity.getAccountingPeriodYear() == null) {
-			entity.setAccountingPeriodYear(getAPYearForAccountingPeriodYear(entity.getStartDate(), entity.getEndDate()));
+			entity.setAccountingPeriodYear(getAPYearForNewAccountingPeriodYear(entity.getStartDate(), entity.getEndDate()));
 		}
 
 		if(entity.getStartDate() == null) {
@@ -233,7 +233,7 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
         return (startYear == endYear) ? "" + endYear : "" + startYear + "-" + endYear;
     }
 	
-	private String getAPYearForAccountingPeriodYear(Date startDate, Date endDate) {
+	private String getAPYearForNewAccountingPeriodYear(Date startDate, Date endDate) {
 		if (startDate == null) {
 		    Calendar cal = Calendar.getInstance();
 	        cal.setTime(endDate);
