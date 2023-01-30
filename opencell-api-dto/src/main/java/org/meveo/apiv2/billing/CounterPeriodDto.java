@@ -5,7 +5,6 @@ import org.immutables.value.Value;
 import org.meveo.model.catalog.CounterTypeEnum;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
@@ -15,7 +14,7 @@ import java.util.Map;
 @JsonDeserialize(as = ImmutableCounterPeriodDto.class)
 public interface CounterPeriodDto {
 
-    @NotNull
+    @Nullable
     String getCode();
 
     @Nullable
@@ -24,11 +23,11 @@ public interface CounterPeriodDto {
     @Nullable
     BigDecimal getLevel();
 
-    @NotNull
-    Date getPeriodStartDate();
+    @Nullable
+    Date getStartDate();
 
-    @NotNull
-    Date getPeriodEndDate();
+    @Nullable
+    Date getEndDate();
 
     @Nullable
     BigDecimal getValue();

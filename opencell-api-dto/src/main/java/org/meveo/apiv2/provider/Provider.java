@@ -44,6 +44,7 @@ public interface Provider {
     @Nullable Integer getMaximumDeferralPerInvoice();
     @Nullable String getPortalMessage();
     @Nullable String getCurrentMatchingCode();
+    @Nullable String getIsoICDCode();
     
     @Nullable
     Map<String, Long> getCurrency();
@@ -77,6 +78,9 @@ public interface Provider {
     
     @Nullable
     Set<String> getPaymentMethods();
+    
+    @Nullable
+    Set<String> getOrderLineTypes();
 
 
     default org.meveo.model.crm.Provider toEntity() {

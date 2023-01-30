@@ -52,6 +52,7 @@ import org.meveo.apiv2.billing.InvoiceLinesToReplicate;
 import org.meveo.apiv2.billing.InvoiceMatchedOperation;
 import org.meveo.apiv2.billing.InvoicePatchInput;
 import org.meveo.apiv2.billing.Invoices;
+import org.meveo.apiv2.billing.RejectReasonInput;
 import org.meveo.apiv2.billing.resource.InvoiceResource;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
 import org.meveo.apiv2.billing.service.InvoiceSubTotalsApiService;
@@ -263,11 +264,11 @@ public class InvoiceResourceImpl implements InvoiceResource {
 		}
 		return Response.ok().entity(invoiceLinesInput).build();
 	}
-	
-	
+
+	@Transactional
 	@Override
 	public Response updateInvoiceLine(Long id, Long lineId, InvoiceLineInput invoiceLineInput) {
-		Invoice invoice = findInvoiceEligibleToUpdate(id);
+		Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
 		invoiceApiService.updateLine(invoice, invoiceLineInput, lineId);
 		if(invoiceLineInput.getSkipValidation() == null || !invoiceLineInput.getSkipValidation()) {
 			invoiceApiService.rebuildInvoice(invoice);
@@ -317,9 +318,9 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	}
 
 	@Override
-	public Response rejectInvoiceLine(Long id) {
+	public Response rejectInvoiceLine(Long id, RejectReasonInput invoiceLinesReject) {
 		Invoice invoice = findInvoiceEligibleToUpdate(id);
-		invoiceApiService.rejectInvoice(invoice);
+		invoiceApiService.rejectInvoice(invoice, invoiceLinesReject);
 		return Response.created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())
                 .build();
 	}
@@ -333,9 +334,9 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	}
 
 	@Override
-	public Response cancelInvoice(Long id) {
+	public Response cancelInvoice(Long id, RatedTransactionAction rtAction) {
 		Invoice invoice = findInvoiceEligibleToUpdate(id);
-		invoiceApiService.cancelInvoice(invoice);
+		invoiceApiService.cancelInvoice(invoice, rtAction);
 		return Response.created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())
                 .build();
 	}
@@ -360,6 +361,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
                 .build();
 	}
 
+	@Transactional
 	@Override
 	public Response find(String invoiceNumber, Request request) {
 		Invoice invoice = invoiceApiService.findByCode(invoiceNumber).orElseThrow(NotFoundException::new);

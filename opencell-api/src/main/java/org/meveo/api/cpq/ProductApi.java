@@ -215,6 +215,9 @@ public class ProductApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Product.class, productCode);
 			}
 
+			if(product.getStatus() == ProductStatusEnum.ACTIVE &&  !productCode.equals(productDto.getCode()))
+				throw new MeveoApiException("you cannot change the product code after activating it");
+
 			if(!productCode.equalsIgnoreCase(productDto.getCode()) &&  productService.findByCode(productDto.getCode()) != null)
 				throw new EntityAlreadyExistsException(Product.class,productDto.getCode());
 
@@ -300,6 +303,10 @@ public class ProductApi extends BaseApi {
 			}
 			if(productDto.getProductChargeTemplateMappingDto() != null){
 				createProductChargeTemplateMappings(product, productDto.getProductChargeTemplateMappingDto());
+			}
+
+			if(productDto.getAgreementDateSetting() != null) {
+				product.setAgreementDateSetting(productDto.getAgreementDateSetting());
 			}
 
 			var publishedVersion = versions.stream()
@@ -697,6 +704,8 @@ public class ProductApi extends BaseApi {
 		product.setModel(productDto.getModel());
 		product.setModelChildren(productDto.getModelChildren());
 		product.setDiscountFlag(productDto.isDiscountFlag());
+
+		product.setAgreementDateSetting(productDto.getAgreementDateSetting());
 		
 		if(productDto.getPriceVersionDateSetting() != null) {
 			product.setPriceVersionDateSetting(productDto.getPriceVersionDateSetting());

@@ -15,13 +15,10 @@ import javax.persistence.NoResultException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.exception.BusinessApiException;
-import org.meveo.model.accounting.AccountingOperationAction;
-import org.meveo.model.accounting.AccountingPeriod;
-import org.meveo.model.accounting.AccountingPeriodForceEnum;
-import org.meveo.model.accounting.AccountingPeriodStatusEnum;
-import org.meveo.model.accounting.CustomLockOption;
-import org.meveo.model.accounting.RegularUserLockOption;
+import org.meveo.model.accounting.*;
+import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
 
@@ -34,6 +31,9 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 	@Inject
 	private ProviderService providerService;
 
+	@Inject
+	private AuditLogService auditLogService;
+
 	public AccountingPeriod create(AccountingPeriod entity, Boolean isUseSubAccountingPeriods) {
 		return createAccountingPeriod(entity, isUseSubAccountingPeriods);
 	}
@@ -41,17 +41,62 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 	public AccountingPeriod update(AccountingPeriod entity, AccountingPeriod newValue) {
 		return updateAccountingPeriod(entity, newValue);
 	}
+
+	/**
+	 * Update the status of a fiscal year after checking the subAccountingCycles and also status
+	 * @param entity {@link AccountingPeriod}
+	 * @param status Status
+	 * @param fiscalYear Fiscal Year
+	 * @return {@link AccountingPeriod}
+	 */
+	public AccountingPeriod updateStatus(AccountingPeriod entity, String status, String fiscalYear) {
+		if(entity.isUseSubAccountingCycles()) {
+			throw new ValidationException("the accounting period " + fiscalYear + " has sub-accounting periods option activated");
+		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.CLOSED) && AccountingPeriodStatusEnum.valueOf(status).equals(AccountingPeriodStatusEnum.CLOSED)){
+			throw new ValidationException("the accounting period " + fiscalYear + " is already closed");
+		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.OPEN) && AccountingPeriodStatusEnum.valueOf(status).equals(AccountingPeriodStatusEnum.OPEN)) {
+			throw new ValidationException("the accounting period " + fiscalYear + " is already opened");
+		} else {
+			AuditLog auditLog = createAuditLog(entity, status);
+			entity.setAccountingPeriodStatus(AccountingPeriodStatusEnum.valueOf(status));
+			update(entity);
+
+			if(auditLog.getEntity() != null) {
+				auditLogService.create(auditLog);
+			}
+		}
+
+		return entity;
+	}
+
+	/**
+	 * Create auditLog by passing the Accounting Period ans status
+	 * @param entity {@link AccountingPeriod}
+	 * @param status Status
+	 * @return {@link AuditLog}
+	 */
+	public AuditLog createAuditLog(AccountingPeriod entity, String status) {
+		AuditLog auditLog = new AuditLog();
+		auditLog.setActor(currentUser.getUserName());
+		auditLog.setCreated(new Date());
+		auditLog.setEntity("AccountingPeriod");
+		auditLog.setOrigin(entity.getAccountingPeriodStatus().name());
+		auditLog.setAction("update status");
+		auditLog.setParameters("user " + currentUser.getUserName() + " update status from " + entity.getAccountingPeriodStatus().name() + " to " + status);
+		return auditLog;
+	}
 	
 	public AccountingPeriod createAccountingPeriod(AccountingPeriod entity, Boolean isUseSubAccountingPeriods) {
 		validateInputs(entity, isUseSubAccountingPeriods, entity.getSubAccountingPeriodType());
 		if(entity.getAccountingPeriodYear() == null) {
 			entity.setAccountingPeriodYear(getAccountingPeriodYear(entity.getStartDate(), entity.getEndDate()));
 		}
+
 		if(entity.getStartDate() == null) {
-			LocalDateTime endDate = entity.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-			LocalDateTime startDate = subAccountingPeriodService.calculateInitialStartDatePeriod(LocalDate.now(),endDate);
+			LocalDateTime startDate = entity.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().minusYears(1);
 			entity.setStartDate(Date.from(startDate.atZone(ZoneId.systemDefault()).toInstant()));
 		}
+
 		create(entity);
 		generateSubAccountingPeriods(entity);
 

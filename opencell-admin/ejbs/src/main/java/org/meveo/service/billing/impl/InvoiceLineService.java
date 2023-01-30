@@ -8,6 +8,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 import static org.meveo.model.billing.InvoiceLineTaxModeEnum.RATE;
+import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
 import java.math.BigDecimal;
@@ -35,7 +36,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.admin.job.InvoiceLinesFactory;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
@@ -56,6 +56,7 @@ import org.meveo.model.billing.ExtraMinAmount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.billing.InvoiceLineTaxModeEnum;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.MinAmountData;
@@ -757,7 +758,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         if (resource.getEndDate() != null) {
             datePeriod.setTo(resource.getEndDate());
         }
-        
+        if(resource.getLabel()==null && invoiceLine.getAccountingArticle()!=null) {
+            invoiceLine.setLabel(!StringUtils.isBlank(invoiceLine.getAccountingArticle().getDescription())?invoiceLine.getAccountingArticle().getDescription():invoiceLine.getAccountingArticle().getCode());
+        }
 
 		if(invoiceLine.getTax()==null  && accountingArticle != null
                 && invoiceLine.getBillingAccount() != null && !invoiceLine.getTaxMode().equals(RATE))  {
@@ -766,13 +769,16 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	        if (isExonerated == null) {
 	            isExonerated = billingAccountService.isExonerated(billingAccount);
 	        }
-			  TaxInfo recalculatedTaxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), 
-					  billingAccount.getCustomerAccount().getCustomer().getSeller(), 
-					  billingAccount, null, 
-					  invoiceLine.getValueDate()!=null?invoiceLine.getValueDate():new Date(), null, 
-				      isExonerated, false, invoiceLine.getTax());
-			  invoiceLine.setTax(recalculatedTaxInfo.tax);
-			  invoiceLine.setTaxRate(recalculatedTaxInfo.tax.getPercent());
+            Seller billingAccountSeller = billingAccount.getCustomerAccount().getCustomer() != null ? billingAccount.getCustomerAccount().getCustomer().getSeller() : null;
+            Seller seller = billingAccountSeller == null ? invoiceLine.getInvoice().getSeller() : billingAccountSeller;
+
+            TaxInfo recalculatedTaxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(),
+                    seller,
+                    billingAccount, null,
+                    invoiceLine.getValueDate() != null ? invoiceLine.getValueDate() : new Date(), null,
+                    isExonerated, false, invoiceLine.getTax());
+            invoiceLine.setTax(recalculatedTaxInfo.tax);
+            invoiceLine.setTaxRate(recalculatedTaxInfo.tax.getPercent());
 		}
         if(!appProvider.isEntreprise()) {
             BigDecimal taxAmount = NumberUtils.computeTax(invoiceLine.getAmountWithoutTax(),
@@ -890,7 +896,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
      */
     public InvoiceLine getInvoiceLineForUpdate(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineResource, Long invoiceLineId) {
         InvoiceLine invoiceLine = findInvoiceLine(invoice, invoiceLineId);
-        invoiceLine = initInvoiceLineFromResource(invoiceLineResource, invoiceLine);
+		final InvoiceStatusEnum status = invoice.getStatus();
+        if(VALIDATED.equals(status)) {
+        	return invoiceLine;
+        }else {
+            invoiceLine = initInvoiceLineFromResource(invoiceLineResource, invoiceLine);
+        }
         return invoiceLine;
     }
 
@@ -1001,7 +1012,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
      * filters : Map of filters
      * Return : QueryBuilder
      */
-    public QueryBuilder fromFilters(Map<String, String> filters) {
+    public QueryBuilder fromFilters(Map<String, Object> filters) {
         QueryBuilder queryBuilder;
         String filterValue = QueryBuilder.getFilterByKey(filters, "SQL");
         if (!StringUtils.isBlank(filterValue)) {
@@ -1078,7 +1089,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             	OpenOrder openOrder = openOrderService.findOpenOrderCompatibleForIL(invoiceLine, configuration);
         		if (openOrder != null) {
         			invoiceLine.setOpenOrderNumber(openOrder.getOpenOrderNumber());
-        			openOrder.setBalance(openOrder.getBalance().subtract(invoiceLine.getAmountWithTax()));
+        			openOrder.setBalance(openOrder.getBalance().subtract(invoiceLine.getAmountWithoutTax()));
         		}
             }
             invoiceLines.add(invoiceLine);
@@ -1133,7 +1144,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
 
 	public void deleteInvoiceLines(BillingRun billingRun) {
-		List<Long> invoiceLinesIds = loadInvoiceLinesIdByBillingRun(billingRun.getId());
+		List<Long> invoiceLinesIds = loadInvoiceLinesByBillingRunNotValidatedInvoices(billingRun.getId());
         if(!invoiceLinesIds.isEmpty()) {
             detachRatedTransactions(invoiceLinesIds);
             getEntityManager()
@@ -1300,4 +1311,31 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 .setParameter("status", AdjustmentStatusEnum.TO_ADJUST.toString())
                 .getResultList();
     }
+    
+    public List<InvoiceLine> findByIdsAndInvoiceType(List<Long> invoiceLinesIds, String invoiceType) {
+        return getEntityManager().createNamedQuery("InvoiceLine.findByIdsAndInvoiceType", entityClass)
+                .setParameter("invoiceLinesIds", invoiceLinesIds)
+                .setParameter("invoiceType", invoiceType)
+                .getResultList();
+    }
+    
+    public void updateForAdjustment(Collection<Long> invoicesIds, AdjustmentStatusEnum status) {
+        getEntityManager().createNamedQuery("InvoiceLine.updateForAdjustment")
+                .setParameter("status", status.toString())
+                .setParameter("now", new Date())
+                .setParameter("ids", invoicesIds)
+                .executeUpdate();
+    }
+    
+    public List<Date> getCustomSubscriptionAge(Long invoiceId, String referenceDate) {
+    	String query = "select distinct referenceDate from InvoiceLine il where il.invoice.id=:id";
+        return getEntityManager().createQuery(query.replace("referenceDate", referenceDate), Date.class)
+        		.setParameter("id", invoiceId)
+        		.getResultList();
+    }
+
+    public List<Object[]> getTotalDiscountAmountByBR(BillingRun billingRun) {
+		return getEntityManager().createNamedQuery("InvoiceLine.sumAmountsDiscountByBillingAccount")
+				.setParameter("billingRunId", billingRun.getId()).getResultList();
+	}
 }

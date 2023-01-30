@@ -16,10 +16,12 @@ import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.InvoiceConfiguration;
+import org.meveo.model.billing.IsoIcd;
 import org.meveo.model.billing.Language;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.dunning.DunningPauseReason;
+import org.meveo.model.order.OrderLineTypeEnum;
 import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -29,6 +31,7 @@ import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.LanguageService;
 import org.meveo.service.base.BaseEntityService;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.IsoIcdService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.crm.impl.ProviderService;
@@ -69,6 +72,9 @@ public class ProviderResourceImpl implements ProviderResource {
 
     @Inject
     private DunningPauseReasonsService dunningPauseReasonsService;
+    
+    @Inject
+    private IsoIcdService isoIcdService;
 
     @Override
     public Response updateProvider(String providerCode, Provider provider) {
@@ -216,6 +222,13 @@ public class ProviderResourceImpl implements ProviderResource {
 
         if (provider.getCurrentMatchingCode() != null) {
             providerByCode.setCurrentMatchingCode(providerUpdateInfos.getCurrentMatchingCode());
+        }
+        if (provider.getIsoICDCode() != null) {
+            IsoIcd isoIcd = isoIcdService.findByCode(provider.getIsoICDCode());
+            if (isoIcd == null) {
+                throw new EntityDoesNotExistsException(IsoIcd.class, provider.getIsoICDCode());
+            }
+            providerByCode.setIcdId(isoIcd);
         }
         
         providerService.update(providerByCode);

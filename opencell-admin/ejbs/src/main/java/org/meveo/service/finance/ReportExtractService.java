@@ -189,9 +189,14 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             context.put(ReportExtractScript.LINE_COUNT, entity.getMaximumLine().intValue());
             Map<String, Object> resultContext = scriptInstanceService.execute(entity.getScriptInstance().getCode(), context);
             List<Map<String, Object>> resultList = readGeneratedFile(resultContext.get("DIR") + File.separator + resultContext.get("FILENAME"), ofNullable(entity.getFileSeparator()).orElse(";"));
-            reportExtractExecutionResult.setErrorMessage((String) resultContext.getOrDefault(ReportExtractScript.ERROR_MESSAGE, ""));
+            String errorMessage = (String) resultContext.getOrDefault(ReportExtractScript.ERROR_MESSAGE, "");
+            if(StringUtils.isNotBlank(errorMessage)) {
+                reportExtractExecutionResult.setErrorMessage(errorMessage);
+            }
             reportExtractExecutionResult.setLineCount((int) resultContext.getOrDefault(ReportExtractScript.LINE_COUNT, 0));
-
+            if (!filename.equals(resultContext.get("FILENAME"))) {
+                filename = (String) resultContext.get("FILENAME");
+            }
             if (entity.getCustomTableCode() != null && resultList != null && !resultList.isEmpty()) {
                 storeDataInCT(entity.getCustomTableCode(), resultList, entity.isAccumulate());
             }

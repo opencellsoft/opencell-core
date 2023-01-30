@@ -83,6 +83,10 @@ public interface AccountingArticle extends Resource {
     @Nullable
     @Schema(description = "Column criteria EL")
     String getColumCriteriaEL();
+    
+    @Nullable
+    @Schema(description = "Allowance Code")
+    String getAllowanceCode();
 
     @Nullable
     @Value.Default

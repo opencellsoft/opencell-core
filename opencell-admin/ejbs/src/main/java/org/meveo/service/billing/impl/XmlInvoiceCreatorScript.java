@@ -22,6 +22,7 @@ import static java.util.Optional.ofNullable;
 import static org.meveo.commons.utils.NumberUtils.toPlainString;
 import static org.meveo.commons.utils.StringUtils.getDefaultIfNull;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.storage.StorageFactory;
 import org.meveo.commons.utils.InvoiceCategoryComparatorUtils;
@@ -475,7 +476,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     protected Element createSubscriptionsSection(Document doc, UserAccount userAccount, List<RatedTransaction> ratedTransactions, boolean isVirtual, boolean ignoreUA,
                                                  List<InvoiceLine> invoiceLines) {
 
-        List<Subscription> subscriptions = ratedTransactions != null ? getSubscriptions(userAccount, isVirtual, ratedTransactions)
+        List<Subscription> subscriptions = CollectionUtils.isNotEmpty(ratedTransactions) ? getSubscriptions(userAccount, isVirtual, ratedTransactions)
                 : getSubscriptionsFromIls(invoiceLines);
         if (subscriptions == null || subscriptions.isEmpty()) {
             return null;
@@ -791,34 +792,41 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      */
     protected Element createNameSection(Document doc, AccountEntity account, String invoiceLanguageCode) {
 
-        Element nameTag = doc.createElement("name");
-        Element quality = doc.createElement("quality");
-        if (account !=null && account.getName() != null && account.getName().getTitle() != null) {
-            String translationKey = "T_" + account.getName().getTitle().getCode() + "_" + invoiceLanguageCode;
-            String descTranslated = descriptionMap.get(translationKey);
-            if (descTranslated == null) {
-                descTranslated = account.getName().getTitle().getDescriptionOrCode();
-                if (account.getName().getTitle().getDescriptionI18n() != null && account.getName().getTitle().getDescriptionI18n().get(invoiceLanguageCode) != null) {
-                    descTranslated = account.getName().getTitle().getDescriptionI18n().get(invoiceLanguageCode);
-                }
-                descriptionMap.put(translationKey, descTranslated);
-            }
-            Text titleTxt = this.createTextNode(doc, descTranslated);
-            quality.appendChild(titleTxt);
-        }
-        nameTag.appendChild(quality);
-        if (account !=null && account.getName() != null && account.getName().getFirstName() != null) {
-            Element firstName = doc.createElement("firstName");
-            Text firstNameTxt = this.createTextNode(doc, account.getName().getFirstName());
-            firstName.appendChild(firstNameTxt);
-            nameTag.appendChild(firstName);
-        }
-        Element name = doc.createElement("name");
-        if (account !=null && account.getName() != null && account.getName().getLastName() != null) {
-            Text nameTxt = this.createTextNode(doc, account.getName().getLastName());
-            name.appendChild(nameTxt);
-        }
-        nameTag.appendChild(name);
+		Element nameTag = doc.createElement("name");
+		if (account != null && account.getIsCompany() && account.getDescription() != null) {
+			Element name = doc.createElement("name");
+			Text nameTxt = this.createTextNode(doc, account.getDescription());
+			name.appendChild(nameTxt);
+			nameTag.appendChild(name);
+		} else {
+			Element quality = doc.createElement("quality");
+			if (account != null && account.getName() != null && account.getName().getTitle() != null) {
+				String translationKey = "T_" + account.getName().getTitle().getCode() + "_" + invoiceLanguageCode;
+				String descTranslated = descriptionMap.get(translationKey);
+				if (descTranslated == null) {
+					descTranslated = account.getName().getTitle().getDescriptionOrCode();
+					if (account.getName().getTitle().getDescriptionI18n() != null && account.getName().getTitle().getDescriptionI18n().get(invoiceLanguageCode) != null) {
+						descTranslated = account.getName().getTitle().getDescriptionI18n().get(invoiceLanguageCode);
+					}
+					descriptionMap.put(translationKey, descTranslated);
+				}
+				Text titleTxt = this.createTextNode(doc, descTranslated);
+				quality.appendChild(titleTxt);
+			}
+			nameTag.appendChild(quality);
+			if (account != null && account.getName() != null && account.getName().getFirstName() != null) {
+				Element firstName = doc.createElement("firstName");
+				Text firstNameTxt = this.createTextNode(doc, account.getName().getFirstName());
+				firstName.appendChild(firstNameTxt);
+				nameTag.appendChild(firstName);
+			}
+			Element name = doc.createElement("name");
+			if (account != null && account.getName() != null && account.getName().getLastName() != null) {
+				Text nameTxt = this.createTextNode(doc, account.getName().getLastName());
+				name.appendChild(nameTxt);
+			}
+			nameTag.appendChild(name);
+		}
         return nameTag;
     }
 
@@ -1400,6 +1408,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         invoiceTag.setAttribute("id", invoice.getId() != null ? invoice.getId().toString() : "");
         invoiceTag.setAttribute("customerId", invoice.getBillingAccount().getCustomerAccount().getCustomer().getCode());
         invoiceTag.setAttribute("customerAccountCode", invoice.getBillingAccount().getCustomerAccount().getCode());
+        invoiceTag.setAttribute("status", invoice.getStatus() != null ? invoice.getStatus().name() : "");
         ofNullable(invoice.getOpenOrderNumber()).ifPresent(oon -> invoiceTag.setAttribute("openOrderNumber", oon));
         ofNullable(invoice.getExternalRef()).ifPresent(externalRef
                 -> invoiceTag.setAttribute("externalReference", externalRef));
@@ -2560,7 +2569,8 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             addCustomFields(userAccount, doc, userAccountTag);
         }
         if (invoiceConfiguration.isDisplaySubscriptions()) {
-            Element subscriptionsTag = createSubscriptionsSection(doc, userAccount, null, isVirtual, ignoreUA, invoiceLines);
+        	List<RatedTransaction> ratedTransactions = ratedTransactionService.listRatedTransactionsByInvoice(invoice);
+            Element subscriptionsTag = createSubscriptionsSection(doc, userAccount, ratedTransactions, isVirtual, ignoreUA, invoiceLines);
             if (subscriptionsTag != null
                     && subscriptionsTag.getChildNodes() != null && subscriptionsTag.getChildNodes().getLength() != 0) {
                 userAccountTag.appendChild(subscriptionsTag);

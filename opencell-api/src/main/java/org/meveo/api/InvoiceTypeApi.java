@@ -40,6 +40,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
+import org.meveo.model.billing.UntdidInvoiceSubjectCode;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
@@ -49,6 +50,7 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.billing.impl.InvoiceSequenceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.billing.impl.UntdidInvoiceSubjectCodeService;
 import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.script.ScriptInstanceService;
@@ -88,6 +90,9 @@ public class InvoiceTypeApi extends BaseCrudApi<InvoiceType, InvoiceTypeDto> {
     @Inject
     private EmailTemplateService emailTemplateService;
 
+    @Inject
+    private UntdidInvoiceSubjectCodeService untdidInvoiceSubjectCodeService;
+    
     /**
      * Handle parameters.
      *
@@ -171,12 +176,14 @@ public class InvoiceTypeApi extends BaseCrudApi<InvoiceType, InvoiceTypeDto> {
             entity.setCode(dto.getUpdatedCode());
         }
         
-        if(!StringUtils.isBlank(dto.getInvoiceValidationScriptCode())) {
+        if (!StringUtils.isBlank(dto.getInvoiceValidationScriptCode())) {
         	ScriptInstance invoiceValidationScript = scriptInstanceService.findByCode(dto.getInvoiceValidationScriptCode());
         	if (invoiceValidationScript == null) {
                 throw new EntityDoesNotExistsException(ScriptInstance.class, dto.getInvoiceValidationScriptCode());
             }
         	entity.setInvoiceValidationScript(invoiceValidationScript);
+        } else if ("".equals(dto.getInvoiceValidationScriptCode())) {
+        	entity.setInvoiceValidationScript(null);
         }
 
         if (dto.getOccTemplateCode() != null) {
@@ -360,6 +367,14 @@ public class InvoiceTypeApi extends BaseCrudApi<InvoiceType, InvoiceTypeDto> {
 
         if(dto.getExcludeFromAgedTrialBalance() != null) {
         	entity.setExcludeFromAgedTrialBalance(dto.getExcludeFromAgedTrialBalance());
+        }
+        
+        if(dto.getUntdidInvoiceSubjectCode() != null) {
+            UntdidInvoiceSubjectCode invoiceSubjectCode = untdidInvoiceSubjectCodeService.getByCode(dto.getUntdidInvoiceSubjectCode());
+            if (invoiceSubjectCode == null) {
+                throw new EntityDoesNotExistsException(UntdidInvoiceSubjectCode.class, dto.getUntdidInvoiceSubjectCode());
+            }
+            entity.setInvoiceSubjectCode(invoiceSubjectCode);
         }
 
         // populate customFields

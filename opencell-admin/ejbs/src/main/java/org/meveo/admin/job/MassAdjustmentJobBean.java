@@ -1,6 +1,8 @@
 package org.meveo.admin.job;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +38,7 @@ public class MassAdjustmentJobBean extends BaseJobBean {
 	protected ResourceBundle resourceMessages;
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    @TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public JobExecutionResultImpl execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
     	log.debug("Running MassAdjustmentJob with parameter={}", jobInstance.getParametres());
     	
@@ -56,11 +58,12 @@ public class MassAdjustmentJobBean extends BaseJobBean {
         BigDecimal totalAWoTProcessed = BigDecimal.ZERO;
         BigDecimal totalAWTProcessed = BigDecimal.ZERO;
         int totalLinesProcessed = 0;
-        int totalImpactedBA = impactedInvoices.stream().map(Invoice::getBillingAccount).mapToInt(i -> 1).sum();
+        int totalImpactedBA = impactedInvoices.stream().map(Invoice::getBillingAccount).distinct().mapToInt(i -> 1).sum();
         
         for (Invoice invoice : impactedInvoices) {
         	Invoice adjustment = invoiceService.createAdjustment(invoice, invoiceLinesToAdjustIds);
         	invoiceService.validateInvoice(adjustment);
+        	adjustment.setInvoiceLines(invoiceLineService.listInvoiceLinesByInvoice(adjustment.getId()));
         	totalLinesProcessed += adjustment.getInvoiceLines().size();
         	totalAWoTProcessed = totalAWoTProcessed.add(adjustment.getInvoiceLines().stream().map(InvoiceLine::getAmountWithoutTax).reduce(BigDecimal.ZERO, BigDecimal::add));
         	totalAWTProcessed = totalAWTProcessed.add(adjustment.getInvoiceLines().stream().map(InvoiceLine::getAmountWithTax).reduce(BigDecimal.ZERO, BigDecimal::add));
@@ -75,17 +78,24 @@ public class MassAdjustmentJobBean extends BaseJobBean {
 			totalAmountWT = totalAmountWT.add(invoiceLine.getAmountWithTax());
 			invoiceLineService.update(invoiceLine);
 		}
-        
+		
         jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.initial.lines", invoiceLinesToAdjust.size()));
         jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.processed.lines", totalLinesProcessed));
-        jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.inital.awot", totalAmountWoT));
-        jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.initial.awt", totalAmountWT));
-        jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.processed.awot", totalAWoTProcessed));
-        jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.processed.awt", totalAWTProcessed));
+        jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.inital.awot", formatDecimal(totalAmountWoT)));
+        jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.initial.awt", formatDecimal(totalAmountWT)));
+        jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.processed.awot", formatDecimal(totalAWoTProcessed)));
+        jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.processed.awt", formatDecimal(totalAWTProcessed)));
         jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.impacted.invoices", impactedInvoices.size()));
         jobExecutionResult.addReport(resourceMessages.getString("jobExecution.mass.adjustment.report.impacted.ba", totalImpactedBA));
         
         return jobExecutionResult;
+    }
+    
+    private String formatDecimal(BigDecimal bd) {
+    	NumberFormat formatter = new DecimalFormat();  
+    	formatter.setGroupingUsed(false);
+
+    	return formatter.format(bd).replace(",", ".");
     }
 
 }

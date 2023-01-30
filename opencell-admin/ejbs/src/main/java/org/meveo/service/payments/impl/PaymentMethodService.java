@@ -83,6 +83,8 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 	private ProviderService providerService;
 
 	private boolean automaticMandateCreation;
+	
+	private static String dateParamName = "dateIN";
 
     public PaymentMethodService() {
         ParamBean bean = ParamBean.getInstance();
@@ -117,7 +119,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         // Mark other payment methods as not preferred
         if (paymentMethod.isPreferred()) {
             getEntityManager().createNamedQuery("PaymentMethod.updatePreferredPaymentMethod").setParameter("id", paymentMethod.getId())
-                .setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
+                .setParameter("ca", paymentMethod.getCustomerAccount()).setParameter(dateParamName, new Date()).executeUpdate();
         }
     }
 
@@ -226,6 +228,20 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
     }
 
+    /**
+     * 
+     * @param token
+     * @return
+     * @throws BusinessException
+     */
+	public boolean isTokenExist(String token) throws BusinessException {
+
+		long nbrOfCardCustomerAccount = (long) getEntityManager().createNamedQuery("PaymentMethod.getNumberOfTokenId")
+				.setParameter("tokenId", token).getSingleResult();
+		return nbrOfCardCustomerAccount > 0;
+	}
+    
+    
 
     @Override
     public PaymentMethod update(PaymentMethod entity) throws BusinessException {
@@ -241,7 +257,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         // Mark other payment methods as not preferred
         if (paymentMethod.isPreferred()) {
             getEntityManager().createNamedQuery("PaymentMethod.updatePreferredPaymentMethod").setParameter("id", paymentMethod.getId())
-                .setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
+                .setParameter("ca", paymentMethod.getCustomerAccount()).setParameter(dateParamName, new Date()).executeUpdate();
         }
 
         return paymentMethod;
@@ -268,8 +284,8 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
         if (wasPreferred) {
             Long minId = (Long) getEntityManager().createNamedQuery("PaymentMethod.updateFirstPaymentMethodToPreferred1").setParameter("caId", caId).getSingleResult();
-            getEntityManager().createNamedQuery("PaymentMethod.updateFirstPaymentMethodToPreferred2").setParameter("id", minId).setParameter("caId", caId).executeUpdate();
-            getEntityManager().createNamedQuery("PaymentMethod.updateFirstPaymentMethodToPreferred3").setParameter("id", minId).setParameter("caId", caId).executeUpdate();
+            getEntityManager().createNamedQuery("PaymentMethod.updateFirstPaymentMethodToPreferred2").setParameter("id", minId).setParameter("caId", caId).setParameter(dateParamName, new Date()).executeUpdate();
+            getEntityManager().createNamedQuery("PaymentMethod.updateFirstPaymentMethodToPreferred3").setParameter("id", minId).setParameter("caId", caId).setParameter(dateParamName, new Date()).executeUpdate();
         }
     }
 
@@ -336,7 +352,8 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
                 log.warn("Cant find payment gateway");
             }
 
-            if (gatewayPaymentInterface != null && !StringUtils.isBlank(iban) && !StringUtils.isBlank(accountHolderName)){
+            if (gatewayPaymentInterface != null && !StringUtils.isBlank(iban) && !StringUtils.isBlank(accountHolderName)
+                    && paymentGateway.getApiKey() != null && paymentGateway.getSecretKey() != null) {
                 String tockenID = gatewayPaymentInterface.createSepaDirectDebitToken(customerAccount, alias, accountHolderName, iban);
                 ddpaymentMethod.setTokenId(tockenID);
             }
@@ -410,7 +427,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         }
 
         GatewayPaymentInterface gatewayPaymentInterface = null;
-        gatewayPaymentInterface = getGatewayPaymentInterface(customerAccount,seller);
+        gatewayPaymentInterface = getGatewayPaymentInterface(customerAccount,seller,hostedCheckoutInput.getPaymentMethodType());
         hostedCheckoutInput.setCustomerAccountId(customerAccount.getId());
 
         if(StringUtils.isBlank(hostedCheckoutInput.getAuthenticationAmount())) {
@@ -466,15 +483,11 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         return gatewayPaymentInterface.getClientObject();
     }
 
-    /**
-     * Gets Gateway Payment Interface
-     * @param customerAccount
-     * @return
-     * @throws BusinessException
-     */
-    public GatewayPaymentInterface getGatewayPaymentInterface(CustomerAccount customerAccount, Seller seller) throws BusinessException {
-        GatewayPaymentInterface gatewayPaymentInterface = null;
-        PaymentGateway matchedPaymentGatewayForTheCA = paymentGatewayService.getPaymentGateway(customerAccount, null, null,seller);
+    
+    public GatewayPaymentInterface getGatewayPaymentInterface(CustomerAccount customerAccount, Seller seller,PaymentMethodEnum paymentMethodType) throws BusinessException {
+    	
+    	GatewayPaymentInterface gatewayPaymentInterface = null;
+        PaymentGateway matchedPaymentGatewayForTheCA = paymentGatewayService.getPaymentGateway(customerAccount, null, null,seller,paymentMethodType);
         if (matchedPaymentGatewayForTheCA == null) {
             throw new BusinessException("No payment gateway for customerAccount:" + customerAccount.getCode());
         }
@@ -485,6 +498,16 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         }
         return gatewayPaymentInterface;
     }
+
+    /**
+     * Gets Gateway Payment Interface
+     * @param customerAccount
+     * @return
+     * @throws BusinessException
+     */
+    public GatewayPaymentInterface getGatewayPaymentInterface(CustomerAccount customerAccount, Seller seller) throws BusinessException {
+       return getGatewayPaymentInterface(customerAccount, seller,null);
+    }   
 
     /**
      * Check bank coordinates fields.

@@ -204,8 +204,14 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 						    listAoToPay = listAoToPay.stream()
 	                                .filter(accountOperation -> (!OperationActionEnum.NONE.equals(accountOperation.getOperationAction())))
 	                                .collect(Collectors.toList());
-                        }						
+                        }
 						ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp, listAoToPay, ddRequestBuilder);
+						if (ddRequestLOT == null) {
+							result.setNbItemsToProcess(0);
+							result.registerSucces();
+							result.addReport("no invoice to process");
+							return;
+						}
 						dDRequestLOTService.addItems(ddrequestLotOp, ddRequestLOT, listAoToPay, ddRequestBuilder, result);
 
 						if (ddRequestLOT != null && "true".equals(paramBeanFactory.getInstance().getProperty("bayad.ddrequest.split", "true"))) {
