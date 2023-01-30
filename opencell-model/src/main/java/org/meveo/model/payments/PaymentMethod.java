@@ -40,6 +40,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableCFEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.billing.UntdidPaymentMeans;
 import org.meveo.model.document.Document;
 
 /**
@@ -162,6 +163,21 @@ public abstract class PaymentMethod extends EnableCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "document_id")
     private Document referenceDocument;
+    
+    /**
+     * UntdidPaymentMeans
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_means")
+    private UntdidPaymentMeans paymentMeans;
+
+    public UntdidPaymentMeans getPaymentMeans() {
+        return paymentMeans;
+    }
+
+    public void setPaymentMeans(UntdidPaymentMeans paymentMeans) {
+        this.paymentMeans = paymentMeans;
+    }
 
     /**
      * Add to deal with payment method auditing

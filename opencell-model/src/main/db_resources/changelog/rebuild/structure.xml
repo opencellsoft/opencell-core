@@ -2663,6 +2663,7 @@
             <column name="minimum_charge_template_id" type="bigint" />
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
+            <column name="icd_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-165">
@@ -3858,6 +3859,7 @@
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
             <column name="is_consumer" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="icd_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-201">
@@ -5428,6 +5430,7 @@
                 <constraints nullable="true"/>
             </column>
 			<column name="current_matching_code" type="varchar(255)" />
+			<column name="icd_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-250">
@@ -5526,6 +5529,7 @@
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
             <column name="minimum_article_id" type="bigint" />
+            <column name="icd_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-252">
@@ -6721,6 +6725,7 @@
             <column name="vat_payment_option_id" type="bigint">
                 <constraints nullable="false" />
             </column>
+		    <column name="invoice_subject_code" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-318">
@@ -7397,6 +7402,7 @@
             <column name="document_id" type="bigint"/>
             <column name="cf_values" type="${type.json}" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}" />
+            <column name="payment_means" type="bigint" />
         </createTable>
     </changeSet>
 
@@ -10071,6 +10077,7 @@
             <column name="cf_values" type="${type.json}" />
             <column name="ignore_aggregation" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="open_order_id" type="bigint"/>
+            <column name="allowance_code" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-467" author="NabilOUACHI">
@@ -17949,7 +17956,7 @@
             </column>
 
             <!-- Simple fields -->           
-            <column name="usage_in_EN16931" type="varchar(500)">
+            <column name="usage_in_en16931" type="varchar(500)">
                 <constraints nullable="true" />
             </column>
             <column name="code_name" type="varchar(500)">
@@ -18014,10 +18021,59 @@
         
         
     </changeSet>
-    
-    
-    
-
+	
+	<changeSet id="#INTRD-12405_20221226-rebuild" author="HichamHANINE">
+		<addForeignKeyConstraint baseTableName="billing_billing_account"
+								 baseColumnNames="icd_id"
+								 constraintName="fk_billing_account_icd"
+								 referencedTableName="iso_icd"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<addForeignKeyConstraint baseTableName="billing_user_account"
+								 baseColumnNames="icd_id"
+								 constraintName="fk_user_account_icd"
+								 referencedTableName="iso_icd"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<addForeignKeyConstraint baseTableName="crm_seller"
+								 baseColumnNames="icd_id"
+								 constraintName="fk_seller_icd"
+								 referencedTableName="iso_icd"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<addForeignKeyConstraint baseTableName="crm_provider"
+								 baseColumnNames="icd_id"
+								 constraintName="fk_provider_icd"
+								 referencedTableName="iso_icd"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />							 
+		<addForeignKeyConstraint baseTableName="billing_invoice_type"
+								 baseColumnNames="invoice_subject_code"
+								 constraintName="fk_invoice_type_untdid_4451_invoice_subject"
+								 referencedTableName="untdid_4451_invoice_subject_code"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<addForeignKeyConstraint baseTableName="ar_payment_token"
+								 baseColumnNames="payment_means"
+								 constraintName="fk_payment_token_untdid_4461_payment_means"
+								 referencedTableName="untdid_4461_payment_means"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<addForeignKeyConstraint baseTableName="billing_accounting_article"
+								 baseColumnNames="allowance_code"
+								 constraintName="fk_accounting_article_untdid_5189_allowance_code"
+								 referencedTableName="untdid_5189_allowance_code"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+	</changeSet>
+	
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
     <changeSet id="#4140_08042019" author="hznibar">
@@ -19302,7 +19358,8 @@
 	<changeSet id="#INTRD-12819-20221220-qb_advanced_query" author="a.rouaguebe" />
 	<changeSet id="#INTRD-12651-20230123" author="AdilElJaouhari" />
 	<changeSet id="#INTRD-12047-20230112" author="AbdelmounaimAkadid" />
-
+	<changeSet id="#INTRD-12405_20221226" author="HichamHANINE" />
+	
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
