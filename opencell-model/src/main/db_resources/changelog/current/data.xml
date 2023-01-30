@@ -18647,5 +18647,37 @@ public class ValidateBRScript extends ValidateBR {
                     valueComputed="(SELECT id from generic_sequence where code = 'billing_cycle_sequence')"/>
         </insert>
     </changeSet>
+    
+    <changeSet id="#INTRD-13122_20220111" author="HichamHANINE">	
+		<update tableName="billing_invoice_type">
+			<column name="invoice_subject_code" valueComputed="(SELECT id FROM untdid_4451_invoice_subject_code where code = 'IND')"></column>
+			<where>code in ('COM','ADJ_INV', 'ADJ_REF', 'ADJ', 'SECURITY_DEPOSIT', 'ADV')</where>
+		</update>
+
+		<update tableName="billing_accounting_article">
+			<column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code Where code = '95')"></column>
+		</update>		
+	
+		<update tableName="ar_payment_token">
+			<column name="payment_means" valueComputed="(SELECT id from untdid_4461_payment_means where code = '10')"></column>
+			<where>token_type = 'CASH'</where>
+		</update>		
+		<update tableName="ar_payment_token">
+			<column name="payment_means" valueComputed="(SELECT id from untdid_4461_payment_means where code = '20')"></column>
+			<where>token_type = 'CHECK'</where>
+		</update>
+		<update tableName="ar_payment_token">
+			<column name="payment_means" valueComputed="(SELECT id from untdid_4461_payment_means where code = '49')"></column>
+			<where>token_type = 'DIRECTDEBIT'</where>
+		</update>
+		<update tableName="ar_payment_token">
+			<column name="payment_means" valueComputed="(SELECT id from untdid_4461_payment_means where code = '54')"></column>
+			<where>token_type = 'CARD'</where>
+		</update>
+		<update tableName="ar_payment_token">
+			<column name="payment_means" valueComputed="(SELECT id from untdid_4461_payment_means where code = '68')"></column>
+			<where>token_type = 'PAYPAL'</where>
+		</update>
+	</changeSet>
 
 </databaseChangeLog>

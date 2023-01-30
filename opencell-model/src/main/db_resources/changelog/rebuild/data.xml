@@ -10454,6 +10454,7 @@
            <column name="occ_template_id"  valueComputed="(SELECT id FROM ar_occ_template WHERE code='INV_ADV')" />
            <column name="vat_payment_option_id" value="1" />
            <column name="invoice_code_type_id" value="23" />
+           <column name="invoice_subject_code" valueComputed="(SELECT id FROM untdid_4451_invoice_subject_code where code = 'IND')"></column>
         </insert> 
 	</changeSet>
 	
@@ -10507,6 +10508,7 @@
             <column name="uuid" value="InvoiceType-COM" />
             <column name="vat_payment_option_id" value="1" />
             <column name="invoice_code_type_id" value="18" />
+            <column name="invoice_subject_code" valueComputed="(SELECT id FROM untdid_4451_invoice_subject_code where code = 'IND')"></column>
         </insert>
         <insert tableName="billing_invoice_type">
             <column name="id" valueNumeric="-2" />
@@ -10522,6 +10524,7 @@
             <column name="uuid" value="InvoiceType-ADJ" />
             <column name="vat_payment_option_id" value="1" />
             <column name="invoice_code_type_id" value="19" />
+            <column name="invoice_subject_code" valueComputed="(SELECT id FROM untdid_4451_invoice_subject_code where code = 'IND')"></column>
         </insert>
         <insert tableName="billing_invoice_type">
             <column name="id" valueNumeric="-3" />
