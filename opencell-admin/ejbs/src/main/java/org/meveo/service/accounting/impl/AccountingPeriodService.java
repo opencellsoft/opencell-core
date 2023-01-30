@@ -90,7 +90,7 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 	public AccountingPeriod createAccountingPeriod(AccountingPeriod entity, Boolean isUseSubAccountingPeriods) {
 		validateInputs(entity, isUseSubAccountingPeriods, entity.getSubAccountingPeriodType(), false);
 		if(entity.getAccountingPeriodYear() == null) {
-			entity.setAccountingPeriodYear(getAccountingPeriodYear(entity.getStartDate(), entity.getEndDate()));
+			entity.setAccountingPeriodYear(getAPYearForAccountingPeriodYear(entity.getStartDate(), entity.getEndDate()));
 		}
 
 		if(entity.getStartDate() == null) {
@@ -214,16 +214,33 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 	 * @return a fiscal year. Ex. 2021-2022
 	 */
 	private String getAccountingPeriodYear(Date startDate, Date endDate) {
+        if (startDate == null) {
+            AccountingPeriod lastAccountingPeriod = findLastAccountingPeriod();
+            startDate = Optional.ofNullable(lastAccountingPeriod).map(AccountingPeriod::getEndDate).orElse(null);
+            if (startDate != null &&
+                    (startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().equals(endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
+                            || startDate.after(endDate))) {
+                throw new ValidationException("the given end date " + DateUtils.formatAsDate(endDate) + " already exists");
+            }
+        }
+        return extractedAccountingPeriodYearToStr(startDate, endDate);
+    }
+
+    private String extractedAccountingPeriodYearToStr(Date startDate, Date endDate) {
+        startDate = startDate != null ? startDate : new Date();
+        final int startYear = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear();
+        final int endYear = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear();
+        return (startYear == endYear) ? "" + endYear : "" + startYear + "-" + endYear;
+    }
+	
+	private String getAPYearForAccountingPeriodYear(Date startDate, Date endDate) {
 		if (startDate == null) {
 		    Calendar cal = Calendar.getInstance();
 	        cal.setTime(endDate);
 	        cal.set(Calendar.DAY_OF_YEAR, 1);
 	        startDate = cal.getTime();
 		}
-		startDate = startDate != null ? startDate : new Date();
-		final int startYear = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear();
-		final int endYear = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear();
-		return (startYear == endYear) ? "" + endYear : "" + startYear + "-" + endYear;
+		return extractedAccountingPeriodYearToStr(startDate, endDate);
 	}
 
 	private void validateCustLockNumDaysAndCustLockOpt(Integer customLockNumberDays, CustomLockOption customLockOption) {
