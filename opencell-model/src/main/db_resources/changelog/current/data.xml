@@ -18741,7 +18741,6 @@ public class ValidateBRScript extends ValidateBR {
 						public class OneShotOtherTypeMigration extends OneShotOtherTypeMigrationScript {}
 				]]>
             </column>
-            <column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='BILLING_RUN_VALIDATION')" />
         </insert>
     </changeSet>
 
