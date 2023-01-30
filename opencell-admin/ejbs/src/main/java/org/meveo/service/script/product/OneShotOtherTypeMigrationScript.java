@@ -15,10 +15,13 @@ import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.cpq.order.OrderProductService;
 import org.meveo.service.script.Script;
 
+import javax.transaction.Transactional;
 import javax.xml.bind.ValidationException;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
 
 public class OneShotOtherTypeMigrationScript extends Script {
 
@@ -31,6 +34,7 @@ public class OneShotOtherTypeMigrationScript extends Script {
     private OrderProductService orderProductService = (OrderProductService) getServiceInterface(OrderProductService.class.getSimpleName());
 
     @Override
+    @Transactional
     public void execute(Map<String, Object> context) throws BusinessException {
         log.info("{} EXECUTE context {}", this.getClass().getCanonicalName(), context);
 
@@ -45,7 +49,6 @@ public class OneShotOtherTypeMigrationScript extends Script {
                         if (orderProduct.getProductVersion() != null && orderProduct.getProductVersion().getProduct() != null) {
 
                             List<ProductChargeTemplateMapping> productChargeTemplates = orderProduct.getProductVersion().getProduct().getProductCharges();
-
                             for (ProductChargeTemplateMapping productChargeTemplateMapping : productChargeTemplates) {
 
                                 if (productChargeTemplateMapping.getChargeTemplate().getChargeMainType().equals(ChargeTemplate.ChargeMainTypeEnum.ONESHOT)) {
@@ -53,21 +56,14 @@ public class OneShotOtherTypeMigrationScript extends Script {
                                     OneShotChargeTemplate oneShotChargeTemplate = ((OneShotChargeTemplate) Hibernate.unproxy(productChargeTemplateMapping.getChargeTemplate()));
 
                                     if (oneShotChargeTemplate.getOneShotChargeTemplateType().equals(OneShotChargeTemplateTypeEnum.OTHER)) {
+                                        ;
+                                        String newChargeCode = oneShotChargeTemplate.getCode() + "_INV_PLAN_" + UUID.randomUUID().toString().substring(0,6).toUpperCase();
+                                        OneShotChargeTemplate invoicingPLanOneShotChargeTemplate = createInvoicingPlanOneShotCharge(oneShotChargeTemplate, newChargeCode);
 
-                                        OneShotChargeTemplate invoicingPLanOneShotChargeTemplate = createInvoicingPlanOneShotCharge(oneShotChargeTemplate);
-                                        OneShotChargeTemplate existingDuplicatedCharge = oneShotChargeTemplateService.findByCode(oneShotChargeTemplate.getCode() + "_INV_PLAN");
-
-                                        if (existingDuplicatedCharge == null) {
-
-                                            oneShotChargeTemplateService.create(invoicingPLanOneShotChargeTemplate);
-
-                                            ProductChargeTemplateMapping<OneShotChargeTemplate> invoicingPLanChargeMapping = createProductChargeMapping(orderProduct, productChargeTemplateMapping, invoicingPLanOneShotChargeTemplate);
-
-                                            productChargeTemplateMappingService.create(invoicingPLanChargeMapping);
-
-                                        }
+                                        oneShotChargeTemplateService.create(invoicingPLanOneShotChargeTemplate);
+                                        ProductChargeTemplateMapping<OneShotChargeTemplate> invoicingPLanChargeMapping = createProductChargeMapping(orderProduct, productChargeTemplateMapping, invoicingPLanOneShotChargeTemplate);
+                                        productChargeTemplateMappingService.create(invoicingPLanChargeMapping);
                                     }
-
                                 }
                             }
                         }
@@ -95,7 +91,7 @@ public class OneShotOtherTypeMigrationScript extends Script {
         return invoicingPLanChargeMapping;
     }
 
-    private static OneShotChargeTemplate createInvoicingPlanOneShotCharge(OneShotChargeTemplate oneShotChargeTemplate) throws ValidationException {
+    private static OneShotChargeTemplate createInvoicingPlanOneShotCharge(OneShotChargeTemplate oneShotChargeTemplate, String newChargeCode) throws ValidationException {
         OneShotChargeTemplate invoicingPLanOneShotChargeTemplate = new OneShotChargeTemplate();
         invoicingPLanOneShotChargeTemplate.setOneShotChargeTemplateType(OneShotChargeTemplateTypeEnum.INVOICING_PLAN);
         invoicingPLanOneShotChargeTemplate.setStatus(oneShotChargeTemplate.getStatus());
@@ -120,7 +116,7 @@ public class OneShotOtherTypeMigrationScript extends Script {
         invoicingPLanOneShotChargeTemplate.setActive(oneShotChargeTemplate.isActive());
         invoicingPLanOneShotChargeTemplate.setDropZeroWo(oneShotChargeTemplate.isDropZeroWo());
         invoicingPLanOneShotChargeTemplate.setNotified(oneShotChargeTemplate.isNotified());
-        invoicingPLanOneShotChargeTemplate.setCode(oneShotChargeTemplate.getCode() + "_INV_PLAN");
+        invoicingPLanOneShotChargeTemplate.setCode(newChargeCode);
         return invoicingPLanOneShotChargeTemplate;
     }
 }

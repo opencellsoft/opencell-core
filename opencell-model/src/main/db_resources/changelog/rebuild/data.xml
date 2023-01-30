@@ -18974,7 +18974,6 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
 						public class OneShotOtherTypeMigration extends OneShotOtherTypeMigrationScript {}
 				]]>
             </column>
-            <column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='BILLING_RUN_VALIDATION')" />
         </insert>
     </changeSet>
     
@@ -19000,6 +18999,7 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
                     valueComputed="(SELECT id from generic_sequence where code = 'billing_cycle_sequence')"/>
         </insert>
     </changeSet>
+	<changeSet id="#INTRD-13122_20220111" author="HichamHANINE" />
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
