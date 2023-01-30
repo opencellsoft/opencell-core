@@ -18640,7 +18640,7 @@ public class ValidateBRScript extends ValidateBR {
         <insert tableName="adm_custom_generic_entity_code">
             <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
             <column name="entity_class" value="org.meveo.model.billing.BillingCycle"/>
-            <column name="format_el_el" value="BC-"/>
+            <column name="format_el" value="BC-"/>
             <column name="created" valueDate="${db.current.time}"/>
             <column name="creator" value="applicationInitializer"/>
             <column name="sequence_id"
