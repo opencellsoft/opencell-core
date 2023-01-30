@@ -40,6 +40,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
@@ -153,6 +154,18 @@ public class SubscriptionService extends BusinessService<Subscription> {
                 log.error("Failed to execute a script {}", offerTemplate.getBusinessOfferModel().getScript().getCode(), e);
             }
         }
+        checkAndApplyDiscount(offerTemplate, subscription);
+    }
+    
+    private void checkAndApplyDiscount(OfferTemplate offerTemplate, Subscription subscription) {
+        if(offerTemplate != null ) {
+            if(CollectionUtils.isNotEmpty(offerTemplate.getAllowedDiscountPlans())) {
+                offerTemplate.getAllowedDiscountPlans().stream()
+                                            .filter(DiscountPlan::isAutomaticApplication)
+                                            .forEach(dp -> instantiateDiscountPlan(subscription, dp));
+                                            
+            }
+        }
     }
 
     @MeveoAudit
@@ -181,6 +194,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
                 log.error("Failed to execute a script {}", offerTemplate.getBusinessOfferModel().getScript().getCode(), e);
             }
         }
+        checkAndApplyDiscount(offerTemplate, subscription);
     }
 
     @MeveoAudit

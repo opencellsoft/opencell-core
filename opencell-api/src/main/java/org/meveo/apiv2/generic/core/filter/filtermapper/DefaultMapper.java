@@ -1,7 +1,7 @@
 package org.meveo.apiv2.generic.core.filter.filtermapper;
 
 
-import org.meveo.apiv2.generic.core.filter.FilterMapper;
+import org.meveo.api.generics.filter.FilterMapper;
 
 public class DefaultMapper extends FilterMapper {
     public DefaultMapper(String property, Object value) {

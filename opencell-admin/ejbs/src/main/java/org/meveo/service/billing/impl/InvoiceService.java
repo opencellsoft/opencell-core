@@ -3279,17 +3279,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (billingRun == null) {
             return;
         }
-//        if ((billingRun.getComputeDatesAtValidation() != null && !billingRun.getComputeDatesAtValidation()) 
-//              || (billingRun.getComputeDatesAtValidation() == null && !billingCycle.getComputeDatesAtValidation())){
-//            return;
-//        }
-        if (invoice.getStatus().equals(InvoiceStatusEnum.SUSPECT)) {
+        if (invoice.getStatus().equals(InvoiceStatusEnum.SUSPECT) || invoice.getStatus().equals(InvoiceStatusEnum.REJECTED)) {
             invoice.setStatus(InvoiceStatusEnum.DRAFT);
         }
-        
         if ((billingRun.getComputeDatesAtValidation() != null && billingRun.getComputeDatesAtValidation()) 
                 || (billingRun.getComputeDatesAtValidation() == null && billingCycle.isComputeDatesAtValidation())) {
             recalculateDate(invoice, billingRun, billingAccount, billingCycle);
+        }
+        if (billingRun.getSkipValidationScript() != null && !billingRun.isSkipValidationScript()) {
+            applyAutomaticInvoiceCheck(invoice, true);
+        }
+        if (invoice.getStatus().equals(InvoiceStatusEnum.REJECTED)) {
+            return;
         }
 
         //Assign invoice number :
@@ -5064,6 +5065,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     private void refreshInvoiceLineAndAggregateAmounts(Invoice invoice) {
+        invoice.getInvoiceLines()
+                .forEach(invoiceLine -> invoiceLinesService.update(invoiceLine));
         invoice.getInvoiceAgregates()
                 .stream()
                 .filter(invoiceAggregate -> invoiceAggregate instanceof TaxInvoiceAgregate)
@@ -6567,14 +6570,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (input.getInvoiceDate() != null) {
             toUpdate.setInvoiceDate(input.getInvoiceDate());
             if(!toUpdate.isUseCurrentRate()) {
-                BigDecimal currentRate = null;
-                if (toUpdate.getTradingCurrency() != null) {
-                    ExchangeRate exchangeRate = toUpdate.getTradingCurrency().getExchangeRate(input.getInvoiceDate());
-                    if (exchangeRate != null) {
-                        currentRate = exchangeRate.getExchangeRate();
-                    }
-                }
-                BigDecimal lastAppliedRate = currentRate != null ? currentRate : ONE;
+
+                BigDecimal lastAppliedRate = getCurrentRate(toUpdate, input.getInvoiceDate()) != null ? getCurrentRate(toUpdate, input.getInvoiceDate()) : ONE;
 
                 toUpdate.setLastAppliedRate(lastAppliedRate);
                 toUpdate.setLastAppliedRateDate(new Date());
@@ -6673,13 +6670,23 @@ public class InvoiceService extends PersistenceService<Invoice> {
                }
                toUpdate.setInvoiceBalance(invoiceResource.getAmountWithTax());
            }
-            
         }
 
         return update(toUpdate);
     }
 
-    private void refreshAdvanceInvoicesConvertedAmount(Invoice toUpdate, BigDecimal lastAppliedRate) {
+    public BigDecimal getCurrentRate(Invoice toUpdate, Date exchangeDate) {
+        BigDecimal currentRate = null;
+        if (toUpdate.getTradingCurrency() != null) {
+            ExchangeRate exchangeRate = toUpdate.getTradingCurrency().getExchangeRate(exchangeDate);
+            if (exchangeRate != null) {
+                currentRate = exchangeRate.getExchangeRate();
+            }
+        }
+        return currentRate;
+    }
+
+    public void refreshAdvanceInvoicesConvertedAmount(Invoice toUpdate, BigDecimal lastAppliedRate) {
         toUpdate.getLinkedInvoices().stream().filter(linkedInvoice ->
                         linkedInvoice.getType().equals(InvoiceTypeEnum.ADVANCEMENT_PAYMENT)
                                 && linkedInvoice.getLinkedInvoiceValue() != null && linkedInvoice.getLinkedInvoiceValue().getStatus().equals(InvoiceStatusEnum.VALIDATED))

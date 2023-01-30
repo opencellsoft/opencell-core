@@ -17,6 +17,7 @@
  */
 package org.meveo.model.billing;
 
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
@@ -224,7 +225,7 @@ public class BillingAccount extends AccountEntity implements IInvoicingMinimumAp
      */
     @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
     @MapKey(name = "code")
-    Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
+    private Map<String, CounterInstance> counters = new HashMap<>();
 
     /**
      * Invoicing threshold - do not invoice for a lesser amount
@@ -835,5 +836,11 @@ public class BillingAccount extends AccountEntity implements IInvoicingMinimumAp
     		return null;
     	}
     	return customerAccount.getSeller();
+    }
+
+    public String getBillingAccountTradingLanguageCode() {
+        return ofNullable(tradingLanguage)
+                .map(TradingLanguage::getLanguageCode)
+                .orElse(null);
     }
 }

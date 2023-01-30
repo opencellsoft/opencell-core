@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +76,7 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.encryption.IEncryptable;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
@@ -205,6 +207,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     protected static Map<Class, String> jsonTypes = new HashMap<Class, String>();
 
     protected static boolean encryptCFSetting = false;
+
+    private static Long MAX_DEPTH = 5L;
 
     @PostConstruct
     private void init() {
@@ -741,16 +745,21 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             return new ArrayList<E>();
         }
 
+        Query query = listQueryBuilder(config).getQuery(getEntityManager());
+        return query.getResultList();
+    }
+
+    public QueryBuilder listQueryBuilder(PaginationConfiguration config) {
+    	Map<String, Object> filters = config.getFilters();
+
         if (filters != null && filters.containsKey("$FILTER")) {
             Filter filter = (Filter) filters.get("$FILTER");
             FilteredQueryBuilder queryBuilder = (FilteredQueryBuilder) getQuery(config);
             queryBuilder.processOrderCondition(filter.getOrderCondition(), filter.getPrimarySelector().getAlias());
-            Query query = queryBuilder.getQuery(getEntityManager());
-            return query.getResultList();
+            return queryBuilder;
         } else {
             QueryBuilder queryBuilder = getQuery(config);
-            Query query = queryBuilder.getQuery(getEntityManager());
-            return query.getResultList();
+            return queryBuilder;
         }
     }
 
@@ -766,22 +775,43 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * Used to retrieve related fields of an entity
      */
     @SuppressWarnings({ "unchecked" })
-    public Map<String, Object> mapRelatedFields() {
+    public Map<String, Object> mapRelatedFields(String filter, long maxDepth, long currentDepth, Class<?> parentEntity) {
         final Class<? extends E> productClass = getEntityClass();
         StringBuilder queryString = new StringBuilder("from CustomFieldTemplate");
         Query query = getEntityManager().createQuery(queryString.toString());
         List<CustomFieldTemplate> resultsCFTmpl = query.getResultList();
-        Map<String, Object> mapAttributeAndType = new HashMap<>();
+        Map<String, Object> mapAttributeAndType = new LinkedHashMap<>();
         Set<Attribute<? super E, ?>> setAttributes = ((Session) getEntityManager().getDelegate()).getSessionFactory().getMetamodel().managedType(getEntityClass()).getAttributes();
-        for (Attribute<? super E, ?> att : setAttributes) {
+        List<Attribute<? super E, ?>> sortedAttributes = new ArrayList<>(setAttributes);
+        sortedAttributes.sort((a, b) -> a.getName().compareTo(b.getName()));
+        for (Attribute<? super E, ?> att : sortedAttributes) {
             if (att.getJavaType() != CustomFieldValues.class) {
-                Map<String, String> mapStringAndType = new HashMap();
+                Map<String, Object> mapStringAndType = new HashMap();
                 mapStringAndType.put("fullQualifiedTypeName", att.getJavaType().toString());
                 mapStringAndType.put("shortTypeName", att.getJavaType().getSimpleName());
-                mapStringAndType.put("isEntity",  Boolean.toString(BaseEntity.class.isAssignableFrom(att.getJavaType()) || ServiceTemplate.class.isAssignableFrom(att.getJavaType())));
+                Boolean isEntity = BaseEntity.class.isAssignableFrom(att.getJavaType()) || ServiceTemplate.class.isAssignableFrom(att.getJavaType());
+                if(StringUtils.isNotBlank(filter) && (!isEntity || maxDepth == (currentDepth+1) ) && !att.getName().toLowerCase().contains(filter.toLowerCase())) {
+                	continue;
+                }
+				mapStringAndType.put("isEntity",  Boolean.toString(isEntity));
+				if(isEntity && !att.getJavaType().equals(parentEntity) && (maxDepth == 0 || currentDepth < maxDepth) && currentDepth <= MAX_DEPTH) {
+					PersistenceService<?> persistenceService = (PersistenceService<?>) EjbUtils.getServiceInterface(att.getJavaType().getSimpleName() + "Service");
+					if(persistenceService == null){
+						persistenceService = (PersistenceService) EjbUtils.getServiceInterface("BaseEntityService");
+			            ((BaseEntityService) persistenceService).setEntityClass((Class<IEntity>) att.getJavaType());
+			        }
+					Map<String, Object> relatedFields = persistenceService.mapRelatedFields(filter, maxDepth, currentDepth + 1, entityClass);
+					if(relatedFields.isEmpty()) {
+						continue;
+					}
+					mapStringAndType.put("entityDetails", relatedFields);
+				}
                 mapAttributeAndType.put(att.getName(), mapStringAndType);
             } else {
                 if (!resultsCFTmpl.isEmpty()) {
+                	if(StringUtils.isNotBlank(filter) && !att.getName().toLowerCase().contains(filter.toLowerCase())) {
+                    	continue;
+                    }
                     Map<String, Map<String, String>> mapCFValues = new HashMap();
                     for (CustomFieldTemplate aCFTmpl : resultsCFTmpl) {
                         if (aCFTmpl.getAppliesTo().equals(productClass.getSimpleName())) {

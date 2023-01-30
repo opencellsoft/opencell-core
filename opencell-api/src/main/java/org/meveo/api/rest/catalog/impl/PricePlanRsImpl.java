@@ -496,4 +496,28 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 		return Response.ok(result).build();
 	}
 
+	@Override
+	public Response enableConvertedVersionPricePlan(Long convertedPricePlanVersionId) {
+		ActionStatus result = new ActionStatus();
+		try {
+            pricePlanMatrixVersionApi.enableConvertedVersionPricePlan(convertedPricePlanVersionId);
+			return Response.ok(result).build();
+		} catch (Exception e) {
+			processException(e, result);
+		}
+		return Response.ok(result).build();
+	}
+
+	@Override
+	public Response disableConvertedVersionPricePlan(Long convertedPricePlanVersionId) {
+		ActionStatus result = new ActionStatus();
+		try {
+            pricePlanMatrixVersionApi.disableConvertedVersionPricePlan(convertedPricePlanVersionId);
+			return Response.ok(result).build();
+		} catch (Exception e) {
+			processException(e, result);
+		}
+		return Response.ok(result).build();
+	}
+
 }
