@@ -10454,6 +10454,7 @@
            <column name="occ_template_id"  valueComputed="(SELECT id FROM ar_occ_template WHERE code='INV_ADV')" />
            <column name="vat_payment_option_id" value="1" />
            <column name="invoice_code_type_id" value="23" />
+           <column name="invoice_subject_code" valueComputed="(SELECT id FROM untdid_4451_invoice_subject_code where code = 'IND')"></column>
         </insert> 
 	</changeSet>
 	
@@ -10507,6 +10508,7 @@
             <column name="uuid" value="InvoiceType-COM" />
             <column name="vat_payment_option_id" value="1" />
             <column name="invoice_code_type_id" value="18" />
+            <column name="invoice_subject_code" valueComputed="(SELECT id FROM untdid_4451_invoice_subject_code where code = 'IND')"></column>
         </insert>
         <insert tableName="billing_invoice_type">
             <column name="id" valueNumeric="-2" />
@@ -10522,6 +10524,7 @@
             <column name="uuid" value="InvoiceType-ADJ" />
             <column name="vat_payment_option_id" value="1" />
             <column name="invoice_code_type_id" value="19" />
+            <column name="invoice_subject_code" valueComputed="(SELECT id FROM untdid_4451_invoice_subject_code where code = 'IND')"></column>
         </insert>
         <insert tableName="billing_invoice_type">
             <column name="id" valueNumeric="-3" />
@@ -18978,7 +18981,6 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
 						public class OneShotOtherTypeMigration extends OneShotOtherTypeMigrationScript {}
 				]]>
             </column>
-            <column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='BILLING_RUN_VALIDATION')" />
         </insert>
     </changeSet>
 
@@ -19010,7 +19012,8 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
     <changeSet id="#INTRD-13386_20230223" author="TarikFA." />
     <changeSet id="#INTRD-12925_20230106" author="aeljaouhari" />
     <changeSet id="#INTRD-13379_20230127" author="aeljaouhari" />
-
+	<changeSet id="#INTRD-13122_20220111" author="HichamHANINE" />
+	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
