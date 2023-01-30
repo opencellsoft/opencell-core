@@ -18743,6 +18743,17 @@ public class ValidateBRScript extends ValidateBR {
             </column>
         </insert>
     </changeSet>
+    
+    <changeSet id="#INTRD-13379_20230127" author="aeljaouhari">
+		<update tableName="meveo_script_instance">
+			<column name="description" value="Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator. If offer list is empty, then all invoice lines will be tested regardless of their offer. For invoice to be valid, all invoice lines must pass the test. Only offer actually present on invoice will be tested."/>
+			<column name="description_i18n">
+				<![CDATA[{"ENG":"<p>Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator.</p><p>If offer list is empty, then all invoice lines will be tested regardless of their offer.</p><p>For invoice to be valid, all invoice lines must pass the test.</p><p>Only offer actually present on invoice will be tested.</p>",
+				"FRA":"<p>Le montant de chaque ligne de facture provenant d’une offre de la liste sera comparé à la valeur indiquée, en utilisant l’opérateur sélectionné.</p><p>Si la liste des offres est vide, alors toutes les lignes de facture seront testées, quelle que soit leur offre.</p><p>Pour que la facture soit valide, toutes les lignes de facture testées doivent passer le test.</p><p>Seule les offres effectivement présentes sur la facture seront testées.</p>"}]]>
+			</column>
+			<where>code='org.meveo.service.script.CompareOfferLinesAmount'</where>
+		</update>
+	</changeSet>
 
     <changeSet id="#INTRD-13447_20230127" author="ZBariki">
         <insert tableName="generic_sequence">
