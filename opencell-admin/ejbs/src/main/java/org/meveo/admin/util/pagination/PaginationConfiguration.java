@@ -155,6 +155,12 @@ public class PaginationConfiguration implements Serializable {
         this.filters = filters;
     }
 
+    public PaginationConfiguration(Map<String, Object> filters, List<String> fetchFields, Set<String> groupBy) {
+        this.filters = filters;
+        this.setGroupBy(groupBy);
+        this.setFetchFields(fetchFields);
+    }
+
     /**
      * Constructor
      * 

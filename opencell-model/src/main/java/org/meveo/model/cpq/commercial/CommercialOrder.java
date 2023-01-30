@@ -55,10 +55,11 @@ import org.meveo.model.quote.QuoteVersion;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_commercial_order_seq")})
 @NamedQueries({
-    @NamedQuery(name = "CommercialOrder.getOrderIdsUsingCharge", query = "select op.order.id from OrderProduct op where op.order.status not in('CANCELED','VALIDATED','COMPLETED') and op.productVersion.product in (select pc.product from ProductChargeTemplateMapping pc where pc.chargeTemplate.code=:eventCode)"),
-	@NamedQuery(name = "CommercialOrder.listByCodeOrExternalId", query = "select co from CommercialOrder co where co.code IN :code OR co.externalReference IN :code order by co.id"),
-	@NamedQuery(name = "CommercialOrder.findByCodeOrExternalId", query = "select co from CommercialOrder co left join fetch co.billingRun where co.code = :code OR co.externalReference = :code ")
-    })
+		@NamedQuery(name = "CommercialOrder.getOrderIdsUsingCharge", query = "select op.order.id from OrderProduct op where op.order.status not in('CANCELED','VALIDATED','COMPLETED') and op.productVersion.product in (select pc.product from ProductChargeTemplateMapping pc where pc.chargeTemplate.code=:eventCode)"),
+		@NamedQuery(name = "CommercialOrder.listByCodeOrExternalId", query = "select co from CommercialOrder co where co.code IN :code OR co.externalReference IN :code order by co.id"),
+		@NamedQuery(name = "CommercialOrder.findByCodeOrExternalId", query = "select co from CommercialOrder co left join fetch co.billingRun where co.code = :code OR co.externalReference = :code "),
+		@NamedQuery(name = "CommercialOrder.findWithInvoicingPlan", query = "select co from CommercialOrder co where co.invoicingPlan is not null")
+})
 public class CommercialOrder extends BusinessCFEntity implements IBillableEntity  {
 
 

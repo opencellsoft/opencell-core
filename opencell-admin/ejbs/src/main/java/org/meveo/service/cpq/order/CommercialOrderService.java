@@ -54,6 +54,7 @@ import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.DiscountPlanInstanceService;
+import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
@@ -82,6 +83,8 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
     private DiscountPlanService discountPlanService;
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;
+    @Inject
+    private OneShotChargeInstanceService oneShotChargeInstanceService;
 
 	@Inject
 	private ProductService productService;
@@ -137,7 +140,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
     @SuppressWarnings("rawtypes")
 	public List<OrderOffer> validateOffers(List<OrderOffer> validOffers) {
     	return validOffers.stream().filter(o -> {
-    		if(o.getOrderLineType() == OfferLineTypeEnum.AMEND  || o.getOrderLineType() == OfferLineTypeEnum.TERMINATE) return true;
+    		if(o.getOrderLineType() == OfferLineTypeEnum.AMEND  || o.getOrderLineType() == OfferLineTypeEnum.TERMINATE || o.getOrderLineType() == OfferLineTypeEnum.APPLY_ONE_SHOT) return true;
 			if(o.getProducts().isEmpty()) return false;
 			for(OrderProduct quoteProduct: o.getProducts()) {
 				if(quoteProduct.getProductVersion() != null) {
@@ -145,9 +148,9 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 					for(ProductChargeTemplateMapping charge: product.getProductCharges()) {
 						if(charge.getChargeTemplate() != null) {
 							ChargeTemplate templateCharge = (ChargeTemplate) Hibernate.unproxy(charge.getChargeTemplate());
-							if(templateCharge instanceof OneShotChargeTemplate) {
+							if (templateCharge instanceof OneShotChargeTemplate) {
 								var oneShotCharge = (OneShotChargeTemplate) templateCharge;
-								if(oneShotCharge.getOneShotChargeTemplateType() != OneShotChargeTemplateTypeEnum.OTHER)
+								if (oneShotCharge.getOneShotChargeTemplateType() != OneShotChargeTemplateTypeEnum.OTHER)
 									return true;
 							}else
 								return true;
@@ -209,9 +212,6 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				}
 				
 				for (OrderProduct product : offer.getProducts()){
-					if(product.getDiscountPlan()!=null) {
-						discountPlans.add(product.getDiscountPlan());
-					}
 					processProductWithDiscount(subscription, product);
 				}
 				instanciateDiscountPlans(subscription, discountPlans);
@@ -277,6 +277,27 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			}else if (offer.getOrderLineType() == OfferLineTypeEnum.TERMINATE) {
 				Subscription subscription = offer.getSubscription();
 				subscriptionService.terminateSubscription(subscription, offer.getTerminationDate(), offer.getTerminationReason(), order.getOrderNumber());
+			}else if (offer.getOrderLineType() == OfferLineTypeEnum.APPLY_ONE_SHOT) {
+				Subscription subscription = offer.getSubscription();
+				for(OrderProduct quoteProduct: offer.getProducts()) {
+					if(quoteProduct.getProductVersion() != null) {
+						Product product = quoteProduct.getProductVersion().getProduct();
+						for(ProductChargeTemplateMapping charge: product.getProductCharges()) {
+							if(charge.getChargeTemplate() != null) {
+								ChargeTemplate templateCharge = (ChargeTemplate) Hibernate.unproxy(charge.getChargeTemplate());
+								if(templateCharge instanceof OneShotChargeTemplate) {
+									OneShotChargeTemplate oneShotCharge = (OneShotChargeTemplate) templateCharge;
+									if (oneShotCharge.getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.OTHER) {
+										oneShotChargeInstanceService.instantiateAndApplyOneShotCharge(subscription, null,
+												oneShotCharge, null, new Date(), null, null, quoteProduct.getQuantity(), null, null, null, null, 
+												order.getOrderNumber(), null, true, ChargeApplicationModeEnum.SUBSCRIPTION);
+									}
+								}
+							}
+						}
+					}   
+				}
+				
 			}
 
 		}
@@ -430,7 +451,11 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 
 			List<SubscriptionChargeInstance> oneShotCharges = serviceInstance.getSubscriptionChargeInstances()
 					.stream()
-					.filter(oneShotChargeInstance -> ((OneShotChargeTemplate)oneShotChargeInstance.getChargeTemplate()).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.SUBSCRIPTION)
+					.filter(
+							oneShotChargeInstance ->
+									((OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate()).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.SUBSCRIPTION
+											|| ((OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate()).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.INVOICING_PLAN
+					)
 					.map(oneShotChargeInstance -> {
 						oneShotChargeInstance.setQuantity(serviceInstance.getQuantity());
 						oneShotChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
@@ -449,7 +474,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			if (serviceInstance.getDeliveryDate().after(new Date())) {
 				serviceInstance.setStatus(InstanceStatusEnum.PENDING);
 			}
-			subscription.addServiceInstance(serviceInstance);
+			//subscription.addServiceInstance(serviceInstance);
 			return serviceInstance;
 	}
 	
@@ -645,4 +670,9 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
             return null;
         }
     }
+
+	public List<CommercialOrder> findWithInvoicingPlanNotNull() {
+		TypedQuery<CommercialOrder> query = getEntityManager().createNamedQuery("CommercialOrder.findWithInvoicingPlan", CommercialOrder.class);
+		return query.getResultList();
+	}
 }

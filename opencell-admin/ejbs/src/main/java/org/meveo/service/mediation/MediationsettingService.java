@@ -112,7 +112,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 					var previousEdr = previousEdrs.get(0);
         			boolean isNewVersion = (boolean) evaluateEdrVersion(edrVersionRule.getId(), edrVersionRule.getIsNewVersionEL(),edr, cdr, errorMsg, Boolean.class, previousEdr, edrIterate);    				
         			if(isNewVersion) {
-        				 // liste des edr versioning 
+        				 // liste des edr versioning
     					if(previousEdr.getStatus() != EDRStatusEnum.RATED) { // all status : OPEN, CANCELLED, REJECTED
         					previousEdr.setStatus(EDRStatusEnum.CANCELLED);
         					previousEdr.setRejectReason("Received new version EDR[id=" + edr.getId() + "]");
@@ -203,13 +203,14 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 		}
         return isRated;
     }
-    
+
     @SuppressWarnings("unchecked")
     private void manageTriggeredEdr(WalletOperation walletOperation, EDR edr, boolean isVirtual) {
         if(walletOperation.getEdr() != null) {
-            List<EDR> tEdrs = edrService.getEntityManager().createNamedQuery("EDR.getByWO")
+            List<EDR> tEdrs = (List<EDR>) edrService.getEntityManager().createNamedQuery("EDR.getByWO")
                     .setParameter("WO_IDS", List.of(walletOperation.getId()))
                     .getResultList();
+            tEdrs = tEdrs.stream().filter(e -> e.getStatus() != EDRStatusEnum.CANCELLED).collect(Collectors.toList());
             if(CollectionUtils.isNotEmpty(tEdrs)) {
                 for (EDR triggeredEdr : tEdrs) {
                     triggeredEdr.setStatus(EDRStatusEnum.CANCELLED);

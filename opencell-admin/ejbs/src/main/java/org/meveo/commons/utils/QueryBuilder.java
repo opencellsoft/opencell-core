@@ -1344,7 +1344,7 @@ public class QueryBuilder {
     }
 
     public QueryBuilder startNestedFilter(FilterOperatorEnum operator) {
-    	if(!nestedClauses.empty()) {
+    	if(nestedClauses != null && !nestedClauses.empty()) {
     		NestedQuery parentNF = nestedClauses.peek();
     		if(parentNF.hasOneOrMoreCriteria) {
     			q.append(" " + parentNF.operator + " ");
@@ -1645,7 +1645,7 @@ public class QueryBuilder {
         if (firstRow != null) {
             query.setFirstResult(firstRow);
         }
-        if (numberOfRows != null) {
+        if (numberOfRows != null && numberOfRows != 0) {
             query.setMaxResults(numberOfRows);
         }
     }
@@ -1673,7 +1673,7 @@ public class QueryBuilder {
         if (firstRow != null) {
             query.setFirstResult(firstRow);
         }
-        if (numberOfRows != null) {
+        if (numberOfRows != null && numberOfRows != 0) {
             query.setMaxResults(numberOfRows);
         }
     }

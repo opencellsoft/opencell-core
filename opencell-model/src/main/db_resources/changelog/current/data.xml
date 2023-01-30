@@ -18120,6 +18120,7 @@ public class CdrFlatFileImportScript extends Script {
 		</insert>
     </changeSet>
 
+
     <changeSet id="#INTRD-12801_INTRD-12806__20230110" author="AbdellatifBARI">
         <update tableName="meveo_job_instance">
             <column name="cf_values"><![CDATA[{"nbRuns":[{"long":1}],
@@ -18195,175 +18196,456 @@ public class CdrFlatFileImportScript extends Script {
         </update>
     </changeSet>
 
-    <changeSet id="#INTRD-12625_20221230" author="Bourras">
-        <sql>
-            create
-            temporary table one_shot_product_charge_association
-           (product_id int, new_charge_id int);
-        </sql>
-        <sql>
-            with inserted as (
-            insert
-            into public.cat_charge_template
-            (id, version, disabled, created, updated, code, description, amount_editable, credit_debit_flag, status,
-             creator, updater, invoice_sub_category,
-             input_unit_description, rating_unit_description, unit_multiplicator, unit_nb_decimal, uuid,
-             rounding_mode, revenue_recog_rule_id, cf_values,
-             description_i18n, charge_type, filter_expression, filter_param_1, filter_param_2, filter_param_3,
-             filter_param_4, priority, trigger_next_charge,
-             trigger_next_charge_el, apply_in_advance, duration_term_in_month, recurrence_type, share_level,
-             subscription_prorata, termination_prorata,
-             calendar_id, subscription_prorata_el, termination_prorata_el, apply_in_advance_el,
-             duration_term_in_month_el, calendar_code_el, immediate_invoicing, type, prorata_on_price_change,
-             input_unitofmeasure, rating_unitofmeasure, input_unit_el
-                , output_unit_el, tax_class_id, tax_class_el, drop_zero_wo, rating_script_id, sort_index_el,
-             apply_terminated_charge_to_date_el
-                , offer_template_id, product_id, service_template_id, price_plan_matrix_id, recurrence_duration_enum,
-             duration_service,
-             recurrence_calendar, calendar_service, usage_service_template_id, surcharge, price_matrix, param1,
-             param1_service_id, param2,
-             param2_service_id, param3, param3_service_id, param4, param4_service_id, dim1_matrix, dim1_matrix_bystep,
-             dim1_matrix_service,
-             dim2_matrix, dim2_matrix_bystep, dim2_matrix_service, dim3_matrix, dim3_matrix_bystep,
-             dim3_matrix_service, attribute_id,
-             attribute_duration_id, attribute_calendar_id, internal_note)
-            select nextval('cat_charge_template_seq')
-                 , chargeTemplate.version
-                 , chargeTemplate.disabled
-                 , chargeTemplate.created
-                 , chargeTemplate.updated
-                 , MD5(random()::text)
-                 , chargeTemplate.description
-                 , chargeTemplate.amount_editable
-                 , chargeTemplate.credit_debit_flag
-                 , chargeTemplate.status
-                 , chargeTemplate.creator
-                 , chargeTemplate.updater
-                 , chargeTemplate.invoice_sub_category
-                 , chargeTemplate.
-                input_unit_description
-                 , chargeTemplate.rating_unit_description
-                 , chargeTemplate.unit_multiplicator
-                 , chargeTemplate.unit_nb_decimal
-                 , chargeTemplate.uuid
-                 , chargeTemplate.rounding_mode
-                 , chargeTemplate.revenue_recog_rule_id
-                 , chargeTemplate.cf_values
-                 , chargeTemplate.
-                description_i18n
-                 , chargeTemplate.charge_type
-                 , chargeTemplate.filter_expression
-                 , chargeTemplate.filter_param_1
-                 , chargeTemplate.filter_param_2
-                 , chargeTemplate.filter_param_3
-                 , chargeTemplate.filter_param_4
-                 , chargeTemplate.priority
-                 , chargeTemplate.trigger_next_charge
-                 , chargeTemplate.
-                trigger_next_charge_el
-                 , chargeTemplate.apply_in_advance
-                 , chargeTemplate.duration_term_in_month
-                 , chargeTemplate.recurrence_type
-                 , chargeTemplate.share_level
-                 , chargeTemplate.subscription_prorata
-                 , chargeTemplate.termination_prorata
-                 , chargeTemplate.
-                calendar_id
-                 , chargeTemplate.subscription_prorata_el
-                 , chargeTemplate.termination_prorata_el
-                 , chargeTemplate.apply_in_advance_el
-                 , chargeTemplate.duration_term_in_month_el
-                 , chargeTemplate.calendar_code_el
-                 , chargeTemplate.
-                immediate_invoicing
-                 , 'INVOICING_PLAN'
-                 , chargeTemplate.prorata_on_price_change
-                 , chargeTemplate.input_unitofmeasure
-                 , chargeTemplate.rating_unitofmeasure
-                 , chargeTemplate.input_unit_el
-                 , chargeTemplate.output_unit_el
-                 , chargeTemplate.tax_class_id
-                 , chargeTemplate.tax_class_el
-                 , chargeTemplate.drop_zero_wo
-                 , chargeTemplate.rating_script_id
-                 , chargeTemplate.sort_index_el
-                 , chargeTemplate.apply_terminated_charge_to_date_el
-                 , chargeTemplate.offer_template_id
-                 , orderProduct.id
-                 , chargeTemplate.service_template_id
-                 , chargeTemplate.price_plan_matrix_id
-                 , chargeTemplate.recurrence_duration_enum
-                 , chargeTemplate.duration_service
-                 , chargeTemplate.
-                recurrence_calendar
-                 , chargeTemplate.calendar_service
-                 , chargeTemplate.usage_service_template_id
-                 , chargeTemplate.surcharge
-                 , chargeTemplate.price_matrix
-                 , chargeTemplate.param1
-                 , chargeTemplate.param1_service_id
-                 , chargeTemplate.param2
-                 , chargeTemplate.
-                param2_service_id
-                 , chargeTemplate.param3
-                 , chargeTemplate.param3_service_id
-                 , chargeTemplate.param4
-                 , chargeTemplate.param4_service_id
-                 , chargeTemplate.dim1_matrix
-                 , chargeTemplate.dim1_matrix_bystep
-                 , chargeTemplate.dim1_matrix_service
-                 , chargeTemplate.
-                dim2_matrix
-                 , chargeTemplate.dim2_matrix_bystep
-                 , chargeTemplate.dim2_matrix_service
-                 , chargeTemplate.dim3_matrix
-                 , chargeTemplate.dim3_matrix_bystep
-                 , chargeTemplate.dim3_matrix_service
-                 , chargeTemplate.attribute_id
-                 , chargeTemplate.
-                attribute_duration_id
-                 , chargeTemplate.attribute_calendar_id
-                 , chargeTemplate.internal_note
-            from public.cpq_commercial_order commercialOrder
-                     inner join public.cpq_order_offer offer
-                                on (offer.order_id = commercialOrder.id)
-                     inner join public.cpq_order_product orderProduct
-                                on (orderProduct.order_offer_id = offer.id)
-                     inner join public.cpq_product_charge_template_mapping productChargeTemplate
-                                on (productChargeTemplate.product_id = orderProduct.id)
-                     inner join public.cat_charge_template chargeTemplate
-                                on (productChargeTemplate.charge_template_id = chargeTemplate.id)
-            where commercialOrder.invoicing_plan_id is not null
-              and chargeTemplate.type = 'OTHER' returning id, product_id
-)
-            insert
-            into one_shot_product_charge_association(product_id, new_charge_id)
-            select inserted.product_id, inserted.id
-            from inserted;
-            insert into public.cpq_product_charge_template_mapping
-                (id, version, product_id, charge_template_id, counter_template_id)
-            select nextval('cpq_product_charge_template_mapping_seq')
-                 , productChargeTemplate.version
-                 , oneshotProductCharge.product_id
-                 , oneshotProductCharge.new_charge_id
-                 , productChargeTemplate.counter_template_id
-            from public.cpq_commercial_order commercialOrder
-                     inner join public.cpq_order_offer offer
-                                on (offer.order_id = commercialOrder.id)
-                     inner join public.cpq_order_product orderProduct
-                                on (orderProduct.order_offer_id = offer.id)
-                     inner join public.cpq_product_charge_template_mapping productChargeTemplate
-                                on (productChargeTemplate.product_id = orderProduct.id)
-                     inner join public.cat_charge_template chargeTemplate
-                                on (productChargeTemplate.charge_template_id = chargeTemplate.id)
-                     inner join one_shot_product_charge_association oneshotProductCharge
-                                on (oneshotProductCharge.product_id = productChargeTemplate.product_id)
-            where commercialOrder.invoicing_plan_id is not null
-              and chargeTemplate.type = 'OTHER';
-        </sql>
-        <sql>
-            drop table one_shot_product_charge_association
-        </sql>
+    <changeSet id="#INTRD-13192_20230116" author="AbdellatifBARI">
+        <update tableName="meveo_script_instance">
+            <column name="script">
+                <![CDATA[
+package org.meveo.service.script;
+
+import org.apache.commons.lang3.StringUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.billing.SubscriptionApi;
+import org.meveo.api.dto.billing.AttributeInstanceDto;
+import org.meveo.api.dto.billing.ServiceToUpdateDto;
+import org.meveo.api.dto.billing.UpdateServicesRequestDto;
+import org.meveo.api.dto.cpq.ProductToInstantiateDto;
+import org.meveo.model.billing.AttributeInstance;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
+import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.script.GenericMassImportScript;
+
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+public class ServiceInstanceImportScript extends GenericMassImportScript {
+
+    private static final String DATE_FORMAT_PATTERN = "dd/MM/yyyy";
+    private static final String RECORD_VARIABLE_NAME = "record";
+    private static final String ENTITY = "SERVICE_INSTANCE";
+    private static final String ENTITY_NAME = "ServiceInstance";
+
+    public enum ServiceInstanceActionEnum {
+        CREATE, UPDATE, DELETE
+    }
+
+    private final ServiceInstanceService serviceInstanceService = (ServiceInstanceService) getServiceInterface("ServiceInstanceService");
+    private final SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface("SubscriptionService");
+    private final SubscriptionApi subscriptionApi = (SubscriptionApi) getServiceInterface(SubscriptionApi.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> context) throws BusinessException {
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> recordMap = (Map<String, Object>) context.get(RECORD_VARIABLE_NAME);
+            if (recordMap != null && !recordMap.isEmpty()) {
+                // VALIDATE ENTITY
+                String OC_ENTITY = (String) recordMap.get("OC_ENTITY");
+                if (!ENTITY.equals(OC_ENTITY)) {
+                    throw new ValidationException("value of OC_ENTITY is not correct: " + OC_ENTITY);
+                }
+                // VALIDATE ACTION
+                String OC_ACTION = (String) recordMap.get("OC_ACTION");
+                if (Stream.of(ServiceInstanceActionEnum.values()).noneMatch(e -> e.toString().equals(OC_ACTION))) {
+                    throw new ValidationException("value of OC_ACTION is not correct: " + OC_ACTION);
+                }
+
+                ServiceInstanceActionEnum action = ServiceInstanceActionEnum.valueOf(OC_ACTION);
+
+                ProductToInstantiateDto productToInstantiateDto = validateAndGetServiceInstance(action, recordMap);
+
+                if (ServiceInstanceActionEnum.CREATE.equals(action)) {
+                    setServiceInstanceValues(recordMap, productToInstantiateDto);
+
+                    Subscription subscription = subscriptionService.findByCode((String) recordMap.get("OC_SUBSCRIPTION_CODE"));
+                    ServiceInstance si = serviceInstanceService.findByCodeAndCodeSubscriptionId((String) recordMap.get("OC_PRODUCT_CODE"), subscription);
+                    this.setCFValues(recordMap, si, ENTITY_NAME);
+                }
+            }
+        } catch (Exception exception) {
+            throw new BusinessException(exception);
+        }
+    }
+
+    private ProductToInstantiateDto validateAndGetServiceInstance(ServiceInstanceActionEnum action, Map<String, Object> recordMap) {
+        ProductToInstantiateDto productToInstantiateDto = null;
+
+        String OC_subscription_code = (String) recordMap.get("OC_SUBSCRIPTION_CODE");
+        if (OC_subscription_code.isEmpty()) {
+            throw new ValidationException("subscription_code is required");
+        }
+
+        String OC_si_code = (String) recordMap.get("OC_SI_CODE");
+        if (OC_si_code.isEmpty()) {
+            throw new ValidationException("serviceinstance_code is required");
+        }
+
+        productToInstantiateDto = new ProductToInstantiateDto();
+        Subscription subscription = subscriptionService.findByCode(OC_subscription_code);
+        if (subscription == null) {
+            throw new ValidationException("no subscription found for code: '" + OC_subscription_code + "'");
+        }
+
+        return productToInstantiateDto;
+    }
+
+    private void setServiceInstanceValues(Map<String, Object> recordMap, ProductToInstantiateDto productToInstantiateDto) throws ParseException {
+        String OC_subscription_code = (String) recordMap.get("OC_SUBSCRIPTION_CODE");
+        Subscription subscription = subscriptionService.findByCode(OC_subscription_code);
+
+        // Instantiate products
+        DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
+        dateFormat.setLenient(false);
+
+        String OC_product_deliv_dt = (String) recordMap.get("OC_PRODUCT_DELIV_DT");
+        productToInstantiateDto.setProductCode((String) recordMap.get("OC_PRODUCT_CODE"));
+        productToInstantiateDto.setQuantity(new BigDecimal((String) recordMap.get("OC_PRODUCT_QTY")));
+        try {
+            Date deliveryDate = StringUtils.isEmpty(OC_product_deliv_dt) ? null : dateFormat.parse(OC_product_deliv_dt);
+            productToInstantiateDto.setDeliveryDate(deliveryDate);
+        } catch(ParseException e) {
+            throw new ValidationException("Incorrect date format for delivery date. Please use 'dd/MM/yyyy'");
+        }
+
+        List<ProductToInstantiateDto> products = new ArrayList<>();
+        products.add(productToInstantiateDto);
+
+        subscriptionApi.instanciateProduct(OC_subscription_code, products);
+        serviceInstanceService.getEntityManager().flush();
+
+        // Save SI description
+        UpdateServicesRequestDto requestDto = new UpdateServicesRequestDto();
+        ServiceInstance serviceInstance = serviceInstanceService.findByCodeAndCodeSubscriptionId((String) recordMap.get("OC_PRODUCT_CODE"), subscription);
+
+        List<AttributeInstance> attributeInstances = serviceInstance.getAttributeInstances();
+        List<AttributeInstanceDto> aiDto = attributeInstances.stream().map(attribute ->
+                new AttributeInstanceDto(attribute, null)).collect(Collectors.toList());
+
+        requestDto.setSubscriptionCode((String) recordMap.get("OC_SUBSCRIPTION_CODE"));
+        ServiceToUpdateDto serviceDto = new ServiceToUpdateDto();
+        serviceDto.setId(serviceInstance.getId());
+        serviceDto.setCode(serviceInstance.getCode());
+        serviceDto.setDescription((String) recordMap.get("OC_SI_DESC"));
+
+        requestDto.addService(serviceDto);
+        requestDto.setAttributeInstances(aiDto);
+
+        subscriptionApi.updateServiceInstance(requestDto);
+    }
+}
+				]]>
+            </column>
+            <where>code='org.meveo.service.script.ServiceInstanceImportScript'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="#INTRD-13260_20230116" author="hichamELHALOUI">
+        <update tableName="meveo_script_instance">
+            <column name="script">
+				<![CDATA[
+package org.meveo.service.script;
+
+import org.joda.time.DateTime;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.UserApi;
+import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.job.JobInstanceInfoDto;
+import org.meveo.api.job.JobApi;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.service.communication.impl.EmailSender;
+import org.meveo.service.communication.impl.EmailTemplateService;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.meveo.commons.utils.ParamBean;
+
+import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
+
+public class ImportJobNotification extends Script {
+    private static final String USER_CODE = "user";
+    private static final String FROM_EMAIL = ParamBean.getInstance().getProperty("email.sender", "no_reply@opencellsoft.com");
+
+    private static final String MASS_IMPORT_SUCCESS_EMAIL = "MASS_IMPORT_SUCCESS_EMAIL";
+    private static final String MASS_IMPORT_FAILURE_EMAIL = "MASS_IMPORT_FAILURE_EMAIL";
+    private static final String MASS_IMPORT_ISSUES_EMAIL = "MASS_IMPORT_ISSUES_EMAIL";
+
+    private static final String CUSTOMER_JOB_CODE = "massImportCustomerJob";
+    private static final String CUSTOMER_ACCOUNT_JOB_CODE = "massImportCustomerAccountJob";
+    private static final String PAYMENT_METHOD_JOB_CODE = "massImportPaymentMethodJob";
+    private static final String BILLING_ACCOUNT_JOB_CODE = "massImportBillingAccountJob";
+    private static final String USER_ACCOUNT_JOB_CODE = "massImportUserAccountJob";
+
+    private static final String SUBSCRIPTION_JOB_CODE = "massImportSubscriptionJob";
+    private static final String SERVICE_INSTANCE_JOB_CODE = "massImportServiceInstanceJob";
+    private static final String ATTRIBUTE_INTSNACE_JOB_CODE = "massImportAttributeInstance";
+    private static final String ACCESS_POINT_JOB_CODE = "massImportAccessPoint";
+
+    private final transient JobApi jobApi = (JobApi) getServiceInterface(JobApi.class.getSimpleName());
+    private final transient UserApi userApi = (UserApi) getServiceInterface(UserApi.class.getSimpleName());
+
+    private final transient EmailSender emailSender = (EmailSender) getServiceInterface(EmailSender.class.getSimpleName());
+    private final transient EmailTemplateService emailTemplateService = (EmailTemplateService) getServiceInterface(EmailTemplateService.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> methodContext) throws BusinessException {
+        try {
+            @SuppressWarnings("unchecked")
+            String category = (String) methodContext.get("category");
+            JobExecutionResultImpl jobExecutionResult = (JobExecutionResultImpl) methodContext.get("entityOrEvent");
+            JobResultStatusEnum jobStatus = getJobResultStatus(jobExecutionResult);
+            String userName = (String) jobExecutionResult.getJobInstance().getCfValues().getValues().get(USER_CODE);
+
+            if (category == null || !category.equals("customer") || userName == null) return;
+            executeNextJob(jobExecutionResult);
+
+            // if there are no rows to process, we don't send a notification
+            if(jobExecutionResult.getNbItemsToProcess() == 0) return;
+
+            String subject;
+            String contentHtml;
+            Map<Object, Object> params = new HashMap<>();
+            EmailTemplate emailTemplate;
+
+
+            String jobCode = jobExecutionResult.getJobInstance().getCode();
+            params.put("entityName", EntityNameEnum.valueOf(jobCode).entity);
+            switch (jobStatus) {
+                case SUCCESS:
+                    emailTemplate = emailTemplateService.findByCode(MASS_IMPORT_SUCCESS_EMAIL);
+                    DateTime startDateTime = new DateTime(jobExecutionResult.getStartDate());
+                    params.put("date", startDateTime.toLocalDate());
+                    params.put("time", startDateTime.toLocalTime());
+                    contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
+                    subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
+                    break;
+                case FAILURE:
+                    emailTemplate = emailTemplateService.findByCode(MASS_IMPORT_FAILURE_EMAIL);
+                    contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
+                    subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
+                    break;
+                default:
+                    emailTemplate = emailTemplateService.findByCode(MASS_IMPORT_ISSUES_EMAIL);
+                    contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
+                    subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
+                    break;
+            }
+
+            List<String> toEmails = List.of(userApi.find(userName).getEmail());
+            emailSender.send(FROM_EMAIL, null, toEmails, subject, null, contentHtml);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void executeNextJob(JobExecutionResultImpl jobExecutionResult) {
+        String nextJobCode;
+        switch (jobExecutionResult.getJobInstance().getCode()) {
+            case CUSTOMER_JOB_CODE:
+                nextJobCode = CUSTOMER_ACCOUNT_JOB_CODE;
+                break;
+            case CUSTOMER_ACCOUNT_JOB_CODE:
+                nextJobCode = PAYMENT_METHOD_JOB_CODE;
+                break;
+            case PAYMENT_METHOD_JOB_CODE:
+                nextJobCode = BILLING_ACCOUNT_JOB_CODE;
+                break;
+            case BILLING_ACCOUNT_JOB_CODE:
+                nextJobCode = USER_ACCOUNT_JOB_CODE;
+                break;
+            case SUBSCRIPTION_JOB_CODE:
+                nextJobCode = SERVICE_INSTANCE_JOB_CODE;
+                break;
+            case SERVICE_INSTANCE_JOB_CODE:
+                nextJobCode = ATTRIBUTE_INTSNACE_JOB_CODE;
+                break;
+            case ATTRIBUTE_INTSNACE_JOB_CODE:
+                nextJobCode = ACCESS_POINT_JOB_CODE;
+                break;
+            default:
+                return;
+        }
+        JobInstanceInfoDto jobInstanceInfoDto = new JobInstanceInfoDto();
+        jobInstanceInfoDto.setCode(nextJobCode);
+        CustomFieldsDto customFields = new CustomFieldsDto();
+        CustomFieldDto customFieldDto = new CustomFieldDto();
+        customFieldDto.setCode(USER_CODE);
+        customFieldDto.setStringValue((String) jobExecutionResult.getJobInstance().getCfValues().getValues().get(USER_CODE));
+        customFields.setCustomField(List.of(customFieldDto));
+        jobInstanceInfoDto.setCustomFields(customFields);
+
+        jobApi.executeJob(jobInstanceInfoDto);
+    }
+
+    private JobResultStatusEnum getJobResultStatus(JobExecutionResultImpl jobExecutionResult) {
+        if(jobExecutionResult.getNbItemsToProcess() == 0)
+            return JobResultStatusEnum.NULL;
+        else if (jobExecutionResult.getNbItemsProcessedWithError() + 1 == jobExecutionResult.getNbItemsToProcess())
+            return JobResultStatusEnum.FAILURE;
+        else if(jobExecutionResult.getNbItemsCorrectlyProcessed() < jobExecutionResult.getNbItemsToProcess())
+            return JobResultStatusEnum.PARTIAL_SUCCESS;
+        else return JobResultStatusEnum.SUCCESS;
+    }
+
+    private enum JobResultStatusEnum {
+        SUCCESS,
+        FAILURE,
+        PARTIAL_SUCCESS,
+        NULL
+    }
+
+    private enum EntityNameEnum {
+        massImportCustomerJob("Customer"),
+        massImportCustomerAccountJob("CustomerAccount"),
+        massImportPaymentMethodJob("PaymentMethod"),
+        massImportBillingAccountJob("BillingAccount"),
+        massImportUserAccountJob("UserAccount"),
+        massImportSubscriptionJob("Subscription"),
+        massImportServiceInstanceJob("ServiceInstance"),
+        massImportAttributeInstance("AttributeInstance"),
+        massImportAccessPoint("AccessPoint");
+
+        String entity;
+
+        EntityNameEnum(String entity) {
+            this.entity = entity;
+        }
+
+    }
+}
+				]]>
+			</column>
+            <where>code='org.meveo.service.script.ImportJobNotification'</where>
+        </update>
+    </changeSet>
+
+	<changeSet id="#INTRD-12327_20230117" author="AbdellatifBARI">
+		<update tableName="ADM_COUNTRY">
+			<column name="description" value="Réunion"/>
+			<column name="description_i18n" value='{"FRA":"Réunion","ENG":"Réunion"}' />
+			<where>id=177</where>
+		</update>
+		<update tableName="ADM_COUNTRY">
+			<column name="description" value="Santo Tomas and Principe"/>
+			<column name="description_i18n" value='{"FRA":"Sao Tomé et Principe","ENG":"Santo Tomas and Principe"}' />
+			<where>id=196</where>
+		</update>
+	</changeSet>
+
+    <changeSet id="INTRD-13237_20230119" author="HichamELHALOUI" >
+        <update tableName="billing_cycle">
+			<column name="filters" value='{"billingAccount.billingCycle.code":"{{billingCycle.code}}"}'></column>
+			<where>filters = null and  billing_cycle_type='BILLINGACCOUNT'</where>
+		</update>
+
+        <update tableName="billing_cycle">
+			<column name="filters" value='{"subscription.billingCycle.code":"{{billingCycle.code}}"}'></column>
+			<where>filters = null and  billing_cycle_type='SUBSCRIPTION'</where>
+		</update>
+
+        <update tableName="billing_cycle">
+			<column name="filters" value='{"infoOrder.order.billingCycle.code":"{{billingCycle.code}}"}'></column>
+			<where>filters = null and  billing_cycle_type='ORDER'</where>
+		</update>
+
+    </changeSet>
+
+    <changeSet id="#INTRD-12463_20230119" author="AbdellatifBARI">
+        <update tableName="billing_invoice_configuration">
+            <column name="default_invoice_subcategory_id" valueNumeric="-3"></column>
+            <column name="default_generic_article_id" valueNumeric="-3"></column>
+            <column name="default_discount_article_id" valueNumeric="-2"></column>
+            <column name="default_advanced_payment_article_id" valueNumeric="-5"></column>
+            <column name="default_invoice_minimum_article_id" valueNumeric="-4"></column>
+            <where>id=-1</where>
+        </update>
+    </changeSet>
+    
+    <changeSet id="#INTRD-13386_20230223" author="TarikFA.">
+        <update tableName="meveo_script_instance">
+            <column name="script">
+					<![CDATA[
+					package org.meveo.service.script;
+
+
+					public class ImportJobNotification extends ImportJobNotificationScript {
+					}
+					]]>
+			</column>
+            <where>code='org.meveo.service.script.ImportJobNotification'</where>
+    	</update>
+    </changeSet>
+    
+    <changeSet id="#INTRD-13421_20230123" author="TarikFA.">
+        <update tableName="meveo_script_instance">
+            <column name="script">
+					<![CDATA[
+					 package org.meveo.service.script;
+
+/**
+ * @author phung
+ *
+ */
+public class ValidateBRScript extends ValidateBR {
+
+}
+					]]>
+			</column>
+            <where>code='org.meveo.service.script.ValidateBRScript'</where>
+    	</update>
+    </changeSet>
+
+    <changeSet id="#INTRD-13383_20230123" author="bourras">
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="code" value="org.meveo.service.script.product.OneShotOtherTypeMigrationScript"/>
+            <column name="src_type" value="JAVA"/>
+            <column name="description" value="Migrate OneShot Charge of Type OTHER to INVOICING_PLAN"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="script">
+                <![CDATA[package org.meveo.service.script.product;
+						public class OneShotOtherTypeMigration extends OneShotOtherTypeMigrationScript {}
+				]]>
+            </column>
+            <column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='BILLING_RUN_VALIDATION')" />
+        </insert>
+    </changeSet>
+
+    <changeSet id="#INTRD-13447_20230127" author="ZBariki">
+        <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="billing_cycle_sequence"/>
+            <column name="description" value="Billing cycle sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="4"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.billing.BillingCycle"/>
+            <column name="format_el_el" value="BC-"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'billing_cycle_sequence')"/>
+        </insert>
     </changeSet>
 
 </databaseChangeLog>

@@ -168,7 +168,7 @@ public class OfferTemplateDto extends ProductOfferingDto {
     @Schema(description = "sequence of the Offer Template")
     private Integer sequence = 0;
 
-    private DocumentDto document;
+    private String documentCode;
 
     public Integer getSequence() {
         return sequence;
@@ -573,11 +573,12 @@ public class OfferTemplateDto extends ProductOfferingDto {
         this.generateQuoteEdrPerProduct = generateQuoteEdrPerProduct;
     }
 
-    public DocumentDto getDocumentDto() {
-        return document;
+    public String getDocumentCode() {
+        return documentCode;
     }
-    public void setDocumentDto(DocumentDto document) {
-        this.document = document;
+
+    public void setDocumentCode(String documentCode) {
+        this.documentCode = documentCode;
     }
 	
 }

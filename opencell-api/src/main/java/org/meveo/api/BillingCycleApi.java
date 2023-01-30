@@ -23,10 +23,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.BillingCycleDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.exception.*;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.BillingEntityTypeEnum;
-import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.ThresholdOptionsEnum;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.tax.TaxCategory;
@@ -37,6 +34,8 @@ import org.meveo.service.script.ScriptInstanceService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.BiFunction;
 
 /**
@@ -214,18 +213,18 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         if (dto.getThresholdPerEntity() != null) {
         	entity.setThresholdPerEntity(dto.getThresholdPerEntity());
         }
-        if (dto.getInvoicingThreshold() != null) {
+
             entity.setInvoicingThreshold(dto.getInvoicingThreshold());
-        }
+
         if (dto.getReferenceDate() != null) {
             entity.setReferenceDate(dto.getReferenceDate());
         }
         if (dto.getType() != null) {
             entity.setType(dto.getType());
         }
-        if (dto.getCheckThreshold() != null) {
+
             entity.setCheckThreshold(dto.getCheckThreshold());
-        }
+
         if (dto.getSplitPerPaymentMethod() != null) {
             entity.setSplitPerPaymentMethod(dto.getSplitPerPaymentMethod());
         }
@@ -238,7 +237,19 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
 		if (dto.getPriority() != null) {
 			entity.setPriority(dto.getPriority());
 		}
-        entity.setFilters(dto.getFilters());
+
+        if(dto.getFilters() == null || dto.getFilters().isEmpty())
+        {
+            Map filters = new LinkedHashMap();
+            switch (dto.getType()){
+                case BILLINGACCOUNT: filters.put("billingAccount.billingCycle.code", dto.getCode()); entity.setFilters(filters);break;
+                case SUBSCRIPTION: filters.put("subscription.billingCycle.code", dto.getCode()); entity.setFilters(filters); break;
+                case ORDER: filters.put("infoOrder.order.billingCycle.code", dto.getCode()); entity.setFilters(filters); break;
+            }
+
+        }else {
+            entity.setFilters(dto.getFilters());
+        }
         
         if (dto.getDisableAggregation() != null) {
             entity.setDisableAggregation(dto.getDisableAggregation());

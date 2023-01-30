@@ -102,7 +102,7 @@ public class OrderOffer extends BusinessCFEntity {
     private UserAccount userAccount;
     
     @Enumerated(EnumType.STRING)
-    @Column(name = "order_line_type", length = 10)
+    @Column(name = "order_line_type", length = 20)
     private OfferLineTypeEnum orderLineType = OfferLineTypeEnum.CREATE;
     
     /**
