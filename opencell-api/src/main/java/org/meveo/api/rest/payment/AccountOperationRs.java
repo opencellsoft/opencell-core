@@ -29,6 +29,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.TransferAccountOperationDto;
+import org.meveo.api.dto.account.TransferOperationsDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
@@ -362,4 +363,8 @@ public interface AccountOperationRs extends IBaseRs {
 					)}
 	)
 	ActionStatus updateStatus(@PathParam("id") Long id, @PathParam("newStatus") String newStatus);
+	
+	@POST
+	@Path("/transferOperations")
+	ActionStatus transferOperations(TransferOperationsDto transferOperationsDto);
 }

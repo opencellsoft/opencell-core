@@ -21,6 +21,7 @@ package org.meveo.api.rest.payment.impl;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.TransferAccountOperationDto;
+import org.meveo.api.dto.account.TransferOperationsDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
@@ -224,6 +225,17 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             accountOperationApi.updateStatus(id, newStatus);
+        } catch (Exception exception) {
+            processException(exception, result);
+        }
+        return result;
+    }
+
+    @Override
+    public ActionStatus transferOperations(TransferOperationsDto transferOperationsDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            accountOperationApi.transferOperations(transferOperationsDto);
         } catch (Exception exception) {
             processException(exception, result);
         }
