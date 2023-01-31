@@ -1638,12 +1638,12 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return !(from != null && to != null && from.compareTo(to) > 0);
     }
     
-    public static void showDeprecatedWarning(String pWarningMessage) {
+    public static void showDeprecatedWarning() {
     	List<FacesMessage> messageList = FacesContext.getCurrentInstance().getMessageList();
-		if(messageList!=null && messageList.stream().anyMatch(x -> FacesMessage.SEVERITY_WARN.equals(x.getSeverity()) && pWarningMessage.equals(x.getSummary()))) {
+		if(messageList!=null && messageList.stream().anyMatch(x->FacesMessage.SEVERITY_WARN.equals(x.getSeverity())&& DEPRECATED_FEATURE.equals(x.getSummary()))) {
 			return;
     	}
-    	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, pWarningMessage, pWarningMessage));
+    	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, DEPRECATED_FEATURE, DEPRECATED_FEATURE));
     }
 
 }
