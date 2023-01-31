@@ -47,6 +47,7 @@ import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.billing.ChargeInstance;
@@ -80,6 +81,7 @@ import org.meveo.service.billing.impl.UsageChargeInstanceService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.WalletService;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.catalog.impl.ProductChargeTemplateMappingService;
 import org.meveo.service.crm.impl.CustomerService;
@@ -151,7 +153,10 @@ public class AccountsManagementApiService {
     private SubscriptionApi subscriptionApi;
 
     @Inject
+
     private MethodCallingUtils methodCallingUtils;
+	@Inject
+    AccountingArticleService accountingArticleService;
 
     @Resource(lookup = "java:jboss/ee/concurrency/executor/job_executor")
     protected ManagedExecutorService executor;
@@ -598,9 +603,10 @@ public class AccountsManagementApiService {
 		BigDecimal amountWithTax = BigDecimal.ZERO;
 		BigDecimal amountWithoutTax = BigDecimal.ZERO;
 		BigDecimal amountTax = BigDecimal.ZERO;
+		AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(osho);
 		for (WalletOperation wo : osho.getWalletOperations()) {
 			if(returnWallerOperationDetails) {
-				lDto.getWalletOperations().add(new WalletOperationDto(wo));
+				lDto.getWalletOperations().add(new WalletOperationDto(wo, accountingArticle));
 			} else if(returnWalletOperation) {
 				WalletOperationDto woDto = new WalletOperationDto();
 				woDto.setId(wo.getId());
