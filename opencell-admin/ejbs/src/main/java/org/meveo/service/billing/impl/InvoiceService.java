@@ -146,51 +146,7 @@ import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.AdjustmentStatusEnum;
-import org.meveo.model.billing.Amounts;
-import org.meveo.model.billing.ApplyMinimumModeEnum;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.BillingEntityTypeEnum;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.CategoryInvoiceAgregate;
-import org.meveo.model.billing.DiscountPlanInstance;
-import org.meveo.model.billing.DiscountPlanInstanceStatusEnum;
-import org.meveo.model.billing.ExchangeRate;
-import org.meveo.model.billing.IInvoiceable;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceAgregate;
-import org.meveo.model.billing.InvoiceCategory;
-import org.meveo.model.billing.InvoiceLine;
-import org.meveo.model.billing.InvoiceLineStatusEnum;
-import org.meveo.model.billing.InvoiceLineTaxModeEnum;
-import org.meveo.model.billing.InvoiceLinesGroup;
-import org.meveo.model.billing.InvoiceModeEnum;
-import org.meveo.model.billing.InvoicePaymentStatusEnum;
-import org.meveo.model.billing.InvoiceProcessTypeEnum;
-import org.meveo.model.billing.InvoiceStatusEnum;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.InvoiceTypeEnum;
-import org.meveo.model.billing.InvoiceTypeSellerSequence;
-import org.meveo.model.billing.InvoiceValidationRule;
-import org.meveo.model.billing.InvoiceValidationStatusEnum;
-import org.meveo.model.billing.LinkedInvoice;
-import org.meveo.model.billing.MinAmountForAccounts;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.RatedTransactionAction;
-import org.meveo.model.billing.RatedTransactionGroup;
-import org.meveo.model.billing.RatedTransactionStatusEnum;
-import org.meveo.model.billing.ReferenceDateEnum;
-import org.meveo.model.billing.SubCategoryInvoiceAgregate;
-import org.meveo.model.billing.SubcategoryInvoiceAgregateAmount;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.TaxInvoiceAgregate;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.ValidationRuleTypeEnum;
-import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
@@ -1464,6 +1420,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		    validationRuleScript.execute(methodContext);
 		    Object status = methodContext.get(Script.INVOICE_VALIDATION_STATUS);
 		    if (status != null && status instanceof InvoiceValidationStatusEnum) {
+
+                if(EvaluationModeEnum.VALIDATION.equals(validationRule.getEvaluationMode())){
 		        if (InvoiceValidationStatusEnum.REJECTED.equals(status)) {
 		            invoice.setStatus(InvoiceStatusEnum.REJECTED);
 		            invoice.setRejectedByRule(validationRule);
@@ -1474,7 +1432,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		            invoice.setRejectedByRule(validationRule);
 		            noValidationError = false;
 		            if (invoice.getRejectReason() == null)  invoice.setRejectReason("Suspected by rule " + validationRule.getDescription());
+		        }}
+                else if(EvaluationModeEnum.REJECTION.equals(validationRule.getEvaluationMode())){
+
+                    if (InvoiceValidationStatusEnum.VALID.equals(status)) {
+		            invoice.setStatus(InvoiceStatusEnum.REJECTED);
+		            invoice.setRejectedByRule(validationRule);
+		            noValidationError = false;
+		            if (invoice.getRejectReason() == null) invoice.setRejectReason("Rejected by rule " + validationRule.getDescription());
 		        }
+
+                }
 		    }
 		} catch (Exception exception) {
 		    throw new BusinessException(exception);
@@ -1493,19 +1461,30 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		try {
 			invoice.setRejectReason(null);
 			Object validationResult = evaluateExpression(validationRule.getValidationEL(), Map.of("invoice", invoice), Boolean.class);
-			if (!((Boolean) validationResult)) {
-		        if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.SUSPECT) {
-		            invoice.setStatus(InvoiceStatusEnum.SUSPECT);
-		            invoice.setRejectedByRule(validationRule);
-		            if (invoice.getRejectReason() == null) invoice.setRejectReason("Suspected by rule " + validationRule.getDescription());
-		        }
-		        if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.REJECTED) {
-		            invoice.setStatus(InvoiceStatusEnum.REJECTED);
-		            invoice.setRejectedByRule(validationRule);
-		            if (invoice.getRejectReason() == null) invoice.setRejectReason("Rejected by rule " + validationRule.getDescription());
-		        }
-		        noValidationError = false;
-		    }
+			if(EvaluationModeEnum.VALIDATION.equals(validationRule.getEvaluationMode())) {
+                if (!((Boolean) validationResult)) {
+                    if (validationRule.getFailStatus() == InvoiceValidationStatusEnum.SUSPECT) {
+                        invoice.setStatus(InvoiceStatusEnum.SUSPECT);
+                        invoice.setRejectedByRule(validationRule);
+                        if (invoice.getRejectReason() == null)
+                            invoice.setRejectReason("Suspected by rule " + validationRule.getDescription());
+                    }
+                    if (validationRule.getFailStatus() == InvoiceValidationStatusEnum.REJECTED) {
+                        invoice.setStatus(InvoiceStatusEnum.REJECTED);
+                        invoice.setRejectedByRule(validationRule);
+                        if (invoice.getRejectReason() == null)
+                            invoice.setRejectReason("Rejected by rule " + validationRule.getDescription());
+                    }
+                    noValidationError = false;
+                }
+            } else if (EvaluationModeEnum.VALIDATION.equals(validationRule.getEvaluationMode()) && (Boolean) validationResult) {
+                    noValidationError = false;
+                    invoice.setStatus(InvoiceStatusEnum.REJECTED);
+                        invoice.setRejectedByRule(validationRule);
+                        if (invoice.getRejectReason() == null)
+                            invoice.setRejectReason("Rejected by rule " + validationRule.getDescription());
+            }
+
 		} catch (Exception exception) {
 		    throw new BusinessException(exception);
 		}
@@ -5065,6 +5044,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     private void refreshInvoiceLineAndAggregateAmounts(Invoice invoice) {
+        invoice.getInvoiceLines()
+                .forEach(invoiceLine -> invoiceLinesService.update(invoiceLine));
         invoice.getInvoiceAgregates()
                 .stream()
                 .filter(invoiceAggregate -> invoiceAggregate instanceof TaxInvoiceAgregate)
