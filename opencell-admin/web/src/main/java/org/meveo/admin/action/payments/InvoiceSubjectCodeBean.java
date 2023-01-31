@@ -31,7 +31,7 @@ public class InvoiceSubjectCodeBean extends BaseBean<UntdidInvoiceSubjectCode> {
          */
         public InvoiceSubjectCodeBean() {
             super(UntdidInvoiceSubjectCode.class);
-            showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
+            showDeprecatedWarning();
         }
     
         /**
