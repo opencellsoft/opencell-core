@@ -18766,5 +18766,78 @@ public class ValidateBRScript extends ValidateBR {
                     valueComputed="(SELECT id from generic_sequence where code = 'billing_cycle_sequence')"/>
         </insert>
     </changeSet>
+    
+    <changeSet id="#INTRD-13375_20230131" author="aeljaouhari">
+    	<insert tableName="com_message_template">
+			<column name="media" value="EMAIL" />
+			<column name="id" valueSequenceNext="com_msg_tmpl_seq" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="FR-Invoice" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="Votre facture #{invoiceInvoiceNumber}" />
+			<column name="type" value="INVOICE" />
+			<column name="htmlcontent">
+				<![CDATA[
+				#{billingAccount.isCompany?billingAccount.billingAccountDescription:billingAccount.name.firstName+billingAccount.name.lastName}
+#{billingAccountAddressAddress1}
+#{billingAccountAddressZipCode} #{billingAccountAddressCity}
+#{billingAccountContactInformationPhone}
+
+#{customerAccount.isCompany?customerAccount.customerAccount.name.firstName+customerAccount.name.lastName}
+#{customerAccountAddressAddress1}
+#{customerAccountAddressZipCode} #{customerAccountAddressCity}
+
+#{SellerAddressCity}, le #{dayDate}
+
+#{billingAccount.LegalEntityTypeCode},
+
+Nous vous prions de trouver attaché à cet email la facture #{invoiceInvoiceNumber}) d’un montant de #{invoiceTotal}).
+
+Nous restons à votre disposition dans l’hypothèse d’éventuelles questions. Nous vous prions d'agréer l’assurance de nos salutations les meilleures.
+
+Company Signature
+                ]]>
+			</column>
+		</insert>
+		
+		<insert tableName="com_message_template">
+			<column name="media" value="EMAIL" />
+			<column name="id" valueSequenceNext="com_msg_tmpl_seq" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="EN-Invoice" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="Your Invoice #{invoiceInvoiceNumber}" />
+			<column name="type" value="INVOICE" />
+			<column name="htmlcontent">
+				<![CDATA[
+				#{billingAccount.isCompany?billingAccount.billingAccountDescription:billingAccount.name.firstName+billingAccount.name.lastName}
+#{billingAccountAddressAddress1}
+#{billingAccountAddressZipCode} #{billingAccountAddressCity}
+#{billingAccountContactInformationPhone}
+
+#{customerAccount.isCompany?customerAccount.customerAccount.name.firstName+customerAccount.name.lastName}
+#{customerAccountAddressAddress1}
+#{customerAccountAddressZipCode} #{customerAccountAddressCity}
+
+
+#{SellerAddressCity}, on #{dayDate}
+
+#{billingAccount.LegalEntityTypeCode},
+
+Please find attached the invoice #{invoiceInvoiceNumber} for an amount of #{invoiceTotal}
+
+We remain at your disposal in case of any questions. Please accept, Madam / Sir, the assurance of our best regards.
+
+Signature
+
+Your name and surname
+                ]]>
+			</column>
+		</insert>
+	</changeSet>
 
 </databaseChangeLog>
