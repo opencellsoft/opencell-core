@@ -366,5 +366,18 @@ public interface AccountOperationRs extends IBaseRs {
 	
 	@POST
 	@Path("/transferOperations")
+	@Operation(
+			summary=" transfer an AO from one account to another",
+			description=" transfer an AO from one account to another",
+			operationId="    POST_AccountOperation_updateStatus",
+			responses= {
+					@ApiResponse(description=" Request processing status ",
+							content = @Content(
+									schema = @Schema(
+											implementation= ActionStatus.class
+									)
+							)
+					)}
+	)
 	ActionStatus transferOperations(TransferOperationsDto transferOperationsDto);
 }
