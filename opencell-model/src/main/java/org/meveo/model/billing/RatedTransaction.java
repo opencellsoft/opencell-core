@@ -202,6 +202,10 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
 
     private static final long serialVersionUID = 1L;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created")
+    private Date created;
+
     /**
      * Wallet instance associated to rated transaction
      */
@@ -1582,6 +1586,13 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
 
     public void setRulesContract(Contract rulesContract) {
         this.rulesContract = rulesContract;
-    }	
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+    public void setCreated(Date created) {
+        this.created = created;
+    }
 	
 }
