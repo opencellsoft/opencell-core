@@ -3,6 +3,7 @@ package org.meveo.apiv2.catalog.resource;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.apiv2.billing.DiscountPlanInstanciateDto;
 import org.meveo.apiv2.catalog.service.DiscountPlanApiService;
 import org.meveo.apiv2.generic.GenericPagingAndFiltering;
 import org.meveo.apiv2.generic.common.LinkGenerator;
@@ -133,6 +134,11 @@ public class DiscountPlanResourceImpl implements DiscountPlanResource {
 
     private Link buildSingleResourceLink(String entityName, Long entityId) {
         return new LinkGenerator.SelfLinkGenerator(DiscountPlanResource.class).withGetAction().withPostAction().withId(entityId).withDeleteAction().build(entityName);
+    }
+
+    @Override
+    public Response instanciateDP(DiscountPlanInstanciateDto discountPlanInstanciateDto) {
+        return Response.ok().entity(discountPlanApiService.instanciateDP(discountPlanInstanciateDto)).links(buildSingleResourceLink(ENTITY_NAME, id)).build();
     }
 
 }
