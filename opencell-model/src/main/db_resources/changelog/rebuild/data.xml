@@ -18901,7 +18901,7 @@ public class CdrFlatFileImportScript extends Script {
 
     <changeSet id="#INTRD-12801_INTRD-12806__20230110" author="AbdellatifBARI" />
 
-    <changeSet id="#INTRD-11208_20230117" author="zelmeliani">
+    <changeSet id="#INTRD-11208_20230131" author="zelmeliani">
         <insert tableName="com_message_template">
             <column name="media" value="DUNNING_MEDIA" />
             <column name="id" value="-11" />
