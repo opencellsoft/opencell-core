@@ -170,7 +170,7 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		if (endDate == null) {
 			throw new ValidationException("endDate is mandatory to create AccountingPeriod");
 		}
-		if (endDate.before(new Date())) {
+		if (endDate.before(new Date()) && isUpdate) {
 			throw new ValidationException("the given endDate " + DateUtils.formatAsDate(endDate) + " is incorrect , the endDate must be greater than today");
 		}
 	}
