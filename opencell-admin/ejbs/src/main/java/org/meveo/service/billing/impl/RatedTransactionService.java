@@ -505,6 +505,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setSortIndex(aggregatedWo.getSortIndex());
         ratedTransaction.setStartDate(aggregatedWo.getStartDate());
         ratedTransaction.setEndDate(aggregatedWo.getEndDate());
+        ratedTransaction.setCreated(new Date());
+        if(aggregatedWo.getWalletOperationsIds() != null){
+            WalletOperation walletOperation = walletOperationService.findById(aggregatedWo.getWalletOperationsIds().get(0));
+            if(walletOperation != null && walletOperation.getPriceplan() != null){
+                ratedTransaction.setPriceplan(walletOperation.getPriceplan());
+            }
+        }
         // ratedTransaction.setEdr(aggregatedWo.getEdr());
         WalletInstance wallet = walletService.refreshOrRetrieve(aggregatedWo.getWallet());
         ratedTransaction.setWallet(wallet);
