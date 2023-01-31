@@ -225,6 +225,29 @@ public class CurrentUserProvider {
         }
         return null;
     }
+    
+    /**
+     * Check if user Have this Role
+     * 
+     * @param MeveoUser currentUser 
+     * @param String roleName
+     * @return True if The user Have this Role
+     */
+    public boolean isUserHaveThisRole(MeveoUser currentUser, String roleName) {
+        Map<String, Set<String>> rolesByApplication = getRolesByApplication(currentUser);
+        boolean isUserHaveThisRole = false;
+        for (Map.Entry<String, Set<String>> entry : rolesByApplication.entrySet()) {
+            Set<String> roles = entry.getValue();
+            for(String role:roles) {
+                if(roleName.equals(role)) {
+                    isUserHaveThisRole = true;
+                    break;
+                }
+            }
+            if(isUserHaveThisRole) break;
+        }
+        return isUserHaveThisRole;
+    }
 
     /**
      * Check if URL for a given scope, is allowed for a current user
