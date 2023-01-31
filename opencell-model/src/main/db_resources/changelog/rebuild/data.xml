@@ -19003,11 +19003,6 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
     <changeSet id="#INTRD-13379_20230127" author="aeljaouhari" />
 	<changeSet id="#INTRD-13122_20220111" author="HichamHANINE" />
 
-	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
-    <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
-        <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
-    </changeSet>
-
     <changeSet id="#INTRD-11208_20230131" author="zelmeliani">
         <insert tableName="com_message_template">
             <column name="media" value="DUNNING_MEDIA" />
@@ -19436,5 +19431,9 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
         </insert>
     </changeSet>
 
+    <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
+    <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
+        <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
+    </changeSet>
 
 </databaseChangeLog>
