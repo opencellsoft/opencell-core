@@ -1,12 +1,12 @@
 package org.meveo.service.accounting.impl;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -18,6 +18,9 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.model.accounting.*;
 import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
@@ -25,6 +28,8 @@ import org.meveo.service.crm.impl.ProviderService;
 @Stateless
 public class AccountingPeriodService extends PersistenceService<AccountingPeriod> {
 	
+    private static final String API_FINANCE_MANAGEMENT = "apiFinanceManagement";
+
     @Inject
     private SubAccountingPeriodService subAccountingPeriodService;
 
@@ -34,6 +39,13 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 	@Inject
 	private AuditLogService auditLogService;
 
+    @Inject
+    private CurrentUserProvider currentUserProvider;
+    
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
+    
 	public AccountingPeriod create(AccountingPeriod entity, Boolean isUseSubAccountingPeriods) {
 		return createAccountingPeriod(entity, isUseSubAccountingPeriods);
 	}
@@ -50,15 +62,22 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 	 * @return {@link AccountingPeriod}
 	 */
 	public AccountingPeriod updateStatus(AccountingPeriod entity, String status, String fiscalYear) {
-		if(entity.isUseSubAccountingCycles()) {
+	    AccountingPeriodStatusEnum accountingPeriodStatus = AccountingPeriodStatusEnum.valueOf(status);
+        if(entity.isUseSubAccountingCycles() && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.OPEN)) {
 			throw new ValidationException("the accounting period " + fiscalYear + " has sub-accounting periods option activated");
-		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.CLOSED) && AccountingPeriodStatusEnum.valueOf(status).equals(AccountingPeriodStatusEnum.CLOSED)){
+		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.CLOSED) && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.CLOSED)){
 			throw new ValidationException("the accounting period " + fiscalYear + " is already closed");
-		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.OPEN) && AccountingPeriodStatusEnum.valueOf(status).equals(AccountingPeriodStatusEnum.OPEN)) {
+		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.OPEN) && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.OPEN)) {
 			throw new ValidationException("the accounting period " + fiscalYear + " is already opened");
-		} else {
+		} else {		    
+	        if (accountingPeriodStatus.equals(AccountingPeriodStatusEnum.CLOSED)) {
+	            Date lastDayOfFiscalYear = DateUtils.newDate(Integer.parseInt(fiscalYear), 12, 31, 0, 0, 0);
+	            boolean isUserHaveThisRole = currentUserProvider.isUserHaveThisRole(currentUser, API_FINANCE_MANAGEMENT);
+	            subAccountingPeriodService.updateSubPeriodsWithStatus(entity, fiscalYear, lastDayOfFiscalYear, status, isUserHaveThisRole);                
+            }
+		    
 			AuditLog auditLog = createAuditLog(entity, status);
-			entity.setAccountingPeriodStatus(AccountingPeriodStatusEnum.valueOf(status));
+			entity.setAccountingPeriodStatus(accountingPeriodStatus);
 			update(entity);
 
 			if(auditLog.getEntity() != null) {
