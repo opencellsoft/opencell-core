@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.apiv2.article.AccountingArticle;
+import org.meveo.apiv2.billing.DiscountPlanInstanciateDto;
 import org.meveo.apiv2.generic.GenericPagingAndFiltering;
 import org.meveo.apiv2.models.ApiException;
 import org.meveo.model.catalog.DiscountPlan;
@@ -128,5 +129,15 @@ public interface DiscountPlanResource {
             @ApiResponse(responseCode = "404", description = "baseEntityObject not found", content = @Content(schema = @Schema(implementation = ApiException.class))),
             @ApiResponse(responseCode = "400", description = "bad request when input not well formed") })
     Response deleteItem(@Parameter(description = "The id here is the database primary key of the record to delete", required = true) @PathParam("idItem") Long id);
+    
+
+    @POST
+    @Path("/instanciate")
+    @Operation(summary = "add discount instance to subscription or serviceInstance or billingAccount", tags = {
+    "Discount Plans" }, description = "specify the entity name, the record id, and as body, the list of the fields to delete", responses = {
+                @ApiResponse(responseCode = "200", description = "resource successfully updated but not content exposed except the hypermedia"),
+                @ApiResponse(responseCode = "404", description = "baseEntityObject not found", content = @Content(schema = @Schema(implementation = ApiException.class))),
+                @ApiResponse(responseCode = "400", description = "bad request when input not well formed") })
+    Response instanciateDP(DiscountPlanInstanciateDto discountPlanInstanciateDto);
 
 }
