@@ -67,6 +67,7 @@ import org.meveo.api.generics.GenericRequestMapper;
 import org.meveo.api.generics.PersistenceServiceHelper;
 import org.meveo.apiv2.generic.GenericPagingAndFiltering;
 import org.meveo.apiv2.generic.ImmutableGenericPagingAndFiltering;
+import org.meveo.apiv2.generic.ImmutableGenericPagingAndFiltering.Builder;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.ParamBean;
@@ -1518,14 +1519,22 @@ public class NativePersistenceService extends BaseService {
     }
 
     private GenericPagingAndFiltering buildGenericPagingAndFiltering(ReportQuery reportQuery) {
-    	return ImmutableGenericPagingAndFiltering.builder()
-    									  .filters((Map<String, Object>) reportQuery.getAdvancedQuery().getOrDefault("filters", new HashMap<>()))
-    									  .groupBy((List<String>)reportQuery.getAdvancedQuery().getOrDefault("groupBy", new ArrayList<>()))
-    									  .sortBy((String) reportQuery.getAdvancedQuery().get("sortBy"))
-    									  .nestedEntities((List<String>)reportQuery.getAdvancedQuery().getOrDefault("nestedEntities", new ArrayList<>()))
-    									  .genericFields((List<String>)reportQuery.getAdvancedQuery().getOrDefault("fields", new ArrayList<>()))
-    									  .having((List<String>)reportQuery.getAdvancedQuery().getOrDefault("having", new ArrayList<>()))
-    									  .build();
+		Builder builder = ImmutableGenericPagingAndFiltering.builder()
+				.filters((Map<String, Object>) reportQuery.getAdvancedQuery().getOrDefault("filters", new HashMap<>()))
+				.groupBy((List<String>) reportQuery.getAdvancedQuery().getOrDefault("groupBy", new ArrayList<>()))
+				.nestedEntities((List<String>) reportQuery.getAdvancedQuery().getOrDefault("nestedEntities", new ArrayList<>()))
+				.genericFields((List<String>) reportQuery.getAdvancedQuery().getOrDefault("fields", new ArrayList<>()))
+				.having((List<String>) reportQuery.getAdvancedQuery().getOrDefault("having", new ArrayList<>()));
+    	String sortBy = (String) reportQuery.getAdvancedQuery().get("sortBy");
+    	if(org.meveo.commons.utils.StringUtils.isNotBlank(sortBy)) {
+    		builder.sortBy(sortBy);
+    	}
+    	String sortOrder = (String) reportQuery.getAdvancedQuery().get("sortOrder");
+    	if(org.meveo.commons.utils.StringUtils.isNotBlank(sortOrder)) {
+    		builder.sortOrder(sortOrder);
+    	}
+    	
+		return builder.build();
     	
     }
 
