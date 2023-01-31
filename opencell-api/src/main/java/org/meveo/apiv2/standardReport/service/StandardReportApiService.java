@@ -19,7 +19,6 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
 
 public class StandardReportApiService implements ApiService<RecordedInvoice> {
 
-
 	@Inject
     private RecordedInvoiceService recordedInvoiceService;
     
@@ -59,10 +58,13 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
 					paginationConfiguration, stepInDays, numberOfPeriods, invoiceNumber, customerAccountDescription, sellerDescription, tradingCurrency, functionalCurrency);
 		} catch (Exception exception) {
 			throw new BusinessApiException("Error occurred when listing aged balance report : " + exception.getMessage());
-
 		}
     }
 
+	/**
+	 * Get all aged receivables
+	 * @return List of object
+	 */
 	public List<Object[]> getAll() {
 		try {
 			return recordedInvoiceService.getAgedReceivables(null, null, new Date(), null, null,

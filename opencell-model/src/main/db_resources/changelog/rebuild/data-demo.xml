@@ -1106,6 +1106,7 @@
             <column name="calendar" valueNumeric="-1" />
             <column name="uuid" value="BillingCycle-1" />
             <column name="billing_cycle_type" value="BILLINGACCOUNT" />
+            <column name="filters" value='{"billingAccount.billingCycle.code":"{{billingCycle.code}}"}' />
         </insert>
         <insert tableName="billing_cycle">
             <column name="id" valueNumeric="-2" />
@@ -1120,6 +1121,7 @@
             <column name="calendar" valueNumeric="-1" />
             <column name="uuid" value="BillingCycle-2" />
             <column name="billing_cycle_type" value="BILLINGACCOUNT" />
+            <column name="filters" value='{"billingAccount.billingCycle.code":"{{billingCycle.code}}"}' />
         </insert>
     </changeSet>
     
@@ -1290,14 +1292,6 @@
     
     <changeSet author="AndriusKarpavicius" id="rebuild-data-taxDEMO">
         <insert tableName="billing_tax_category">
-            <column name="id" valueNumeric="-1"/>
-            <column name="version" valueNumeric="0"/>
-            <column name="created" valueDate="2020-02-08 00:03:59.983" />
-            <column name="version" valueNumeric="0" />
-            <column name="code" value="Tax category"/>
-            <column name="uuid" value="tax_category_1"/>
-        </insert>
-        <insert tableName="billing_tax_category">
             <column name="id" value="-2"/>
             <column name="code" value="EXEMPTED"/>
             <column name="description_i18n" value='{"FRA":"Exempté","ENG":"Exempted"}'/>
@@ -1314,22 +1308,6 @@
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_tax_category_regular" />
             <column name="version" valueNumeric="0" />
-        </insert>        
-        <insert tableName="billing_tax_class">
-            <column name="id" valueNumeric="-1"/>
-            <column name="code" value="CMP_DATA"/>
-            <column name="description" value="Consumption Data" />
-            <column name="uuid" value="tax_class_-1" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="2015-03-19 00:04:19.724" />
-        </insert>
-        <insert tableName="billing_tax_class">
-            <column name="id" valueNumeric="-2"/>
-            <column name="code" value="SUB_DATA"/>
-            <column name="description" value="Subscription Data" />
-            <column name="uuid" value="tax_class_-2" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="2015-03-19 00:04:19.744" />
         </insert>
         <insert tableName="billing_tax_class">
         	<column name="id" value="-3"/>
@@ -1360,8 +1338,8 @@
         </insert>
         <insert tableName="billing_tax_mapping">
             <column name="id" value='-1'/>
-            <column name="tax_category_id" value="-1"/>
-            <column name="tax_class_id" value="-1"/>
+            <column name="tax_category_id" value="-3"/>
+            <column name="tax_class_id" value="-5"/>
             <column name="tax_id" value='-1'/>
             <column name="buyer_country_id" value='-1'/>
 			<column name="created" valueDate="${db.current.time}" />
@@ -1371,8 +1349,8 @@
         </insert>
         <insert tableName="billing_tax_mapping">
             <column name="id" value='-2'/>
-            <column name="tax_category_id" value="-1"/>
-            <column name="tax_class_id" value="-1"/>
+            <column name="tax_category_id" value="-3"/>
+            <column name="tax_class_id" value="-5"/>
             <column name="tax_id" value='-2'/>
             <column name="buyer_country_id" value='-2'/>
             <column name="created" valueDate="${db.current.time}" />
@@ -1382,8 +1360,8 @@
         </insert>
         <insert tableName="billing_tax_mapping">
             <column name="id" value='-3'/>
-            <column name="tax_category_id" value="-1"/>
-            <column name="tax_class_id" value="-2"/>
+            <column name="tax_category_id" value="-3"/>
+            <column name="tax_class_id" value="-5"/>
             <column name="tax_id" value='-1'/>
             <column name="buyer_country_id" value='-1'/>
             <column name="created" valueDate="${db.current.time}" />
@@ -1393,8 +1371,8 @@
         </insert>
         <insert tableName="billing_tax_mapping">
             <column name="id" value='-4'/>
-            <column name="tax_category_id" value="-1"/>
-            <column name="tax_class_id" value="-2"/>
+            <column name="tax_category_id" value="-3"/>
+            <column name="tax_class_id" value="-5"/>
             <column name="tax_id" value='-2'/>
             <column name="buyer_country_id" value='-2'/>
             <column name="created" valueDate="${db.current.time}" />
@@ -1404,7 +1382,7 @@
         </insert>
         <insert tableName="billing_tax_mapping">
             <column name="id" value='-5'/>
-            <column name="tax_category_id" value="-1"/>
+            <column name="tax_category_id" value="-3"/>
             <column name="tax_id" value='-5'/>
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
@@ -1513,7 +1491,7 @@
             <column name="code" value="PROSPECT" />
             <column name="description" value="Prospect" />
             <column name="exonerated_from_taxes" valueNumeric="0" />
-            <column name="tax_category_id" valueNumeric="-1" />
+            <column name="tax_category_id" valueNumeric="-3" />
 
         </insert>
         <insert tableName="crm_customer_category">
@@ -1524,7 +1502,7 @@
             <column name="code" value="CLIENT" />
             <column name="description" value="Client" />
             <column name="exonerated_from_taxes" valueNumeric="0" />
-            <column name="tax_category_id" valueNumeric="-1" />
+            <column name="tax_category_id" valueNumeric="-3" />
 
         </insert>
     </changeSet>
@@ -1664,18 +1642,6 @@
             <column name="timerentity_id" valueNumeric="-2" />
             <column name="uuid" value="DWH_Job_MRR" />
             <column name="parametres" value="MRR" />
-        </insert>
-        <insert tableName="meveo_job_instance">
-            <column name="id" valueNumeric="-13" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="2016-09-14 00:00:00.000" />
-            <column name="job_category" value="DWH" />
-            <column name="job_template" value="DWHQueryJob" />
-            <column name="code" value="DWH_Job_CHURN" />
-            <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="timerentity_id" valueNumeric="-2" />
-            <column name="uuid" value="DWH_Job_CHURN" />
-            <column name="parametres" value="CHURN" />
         </insert>
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-19" />
@@ -2199,7 +2165,7 @@
             <column name="creator" value="opencell.admin" />
             <column name="updater" value="opencell.admin" />
             <column name="uuid" value="PROD-STD" />
-            <column name="tax_class_id" value="-1" />
+            <column name="tax_class_id" value="-5" />
             <column name="invoice_sub_category_id" value="-2" />
             <column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code Where code = '95')"></column>
         </insert>
@@ -2690,6 +2656,8 @@
 	<changeSet id="#INTRD-10199_20221010" author="TarikFA." />
 	<changeSet id="#INTRD-10592_20221014" author="TarikFA." />
     <changeSet id="INTRD-11122_20221104" author="HichamELHALOUI" />
+    <changeSet id="INTRD-13237_20230119" author="HichamELHALOUI" />
+    <changeSet id="INTRD-13608_20230130" author="HichamELHALOUI" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

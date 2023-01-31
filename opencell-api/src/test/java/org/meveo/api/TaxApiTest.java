@@ -1,29 +1,30 @@
 package org.meveo.api;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.ws.rs.BadRequestException;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.UntdidTaxationCategory;
 import org.meveo.service.billing.impl.AccountingCodeService;
+import org.meveo.service.billing.impl.UntdidTaxationCategoryService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import javax.ws.rs.BadRequestException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TaxApiTest {
@@ -36,6 +37,9 @@ public class TaxApiTest {
 
     @Mock
     private AccountingCodeService accountingCodeService;
+    
+    @Mock
+    private UntdidTaxationCategoryService untdidTaxationCategoryService;
 
     @Mock
     private CustomFieldTemplateService customFieldTemplateService;
@@ -57,6 +61,7 @@ public class TaxApiTest {
 
         TaxDto taxDto = new TaxDto();
         when(accountingCodeService.findByCode("ACC_CODE")).thenReturn(new AccountingCode());
+        when(untdidTaxationCategoryService.getByCode("TAXATION_CAT")).thenReturn(new UntdidTaxationCategory());
         when(taxService.findById(1L)).thenReturn(subTax1);
         when(taxService.findById(2L)).thenReturn(subTax2);
         when(taxApi.populateCustomFields(new CustomFieldsDto(), any(), true, true))
@@ -71,6 +76,7 @@ public class TaxApiTest {
         subTaxes.add(new TaxDto(1L));
         subTaxes.add(new TaxDto(2L));
         taxDto.setSubTaxes(subTaxes);
+        taxDto.setTaxationCategory("TAXATION_CAT");
 
         Tax tax = taxApi.create(taxDto);
 
@@ -81,6 +87,7 @@ public class TaxApiTest {
     public void testSimpleTaxCreation() {
         TaxDto taxDto = new TaxDto();
         when(accountingCodeService.findByCode("ACC_CODE")).thenReturn(new AccountingCode());
+        when(untdidTaxationCategoryService.getByCode("TAXATION_CAT")).thenReturn(new UntdidTaxationCategory());
         when(taxApi.populateCustomFields(new CustomFieldsDto(), any(), true, true))
                 .thenReturn(null);
         when(customFieldTemplateService.findByAppliesTo(any(ICustomFieldEntity.class))).thenReturn(null);
@@ -90,6 +97,7 @@ public class TaxApiTest {
         taxDto.setAccountingCode("ACC_CODE");
         taxDto.setComposite(Boolean.FALSE);
         taxDto.setPercent(BigDecimal.TEN);
+        taxDto.setTaxationCategory("TAXATION_CAT");
 
         Tax tax = taxApi.create(taxDto);
 

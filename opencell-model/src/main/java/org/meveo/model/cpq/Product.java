@@ -472,8 +472,10 @@ public class Product extends ServiceCharge {
 			for(ProductChargeTemplateMapping pc : getProductCharges()) {
 				if(pc.getChargeTemplate() != null) {
 					ChargeTemplate ch = initializeAndUnproxy(pc.getChargeTemplate());
-					if(ch instanceof OneShotChargeTemplate && 
-							(((OneShotChargeTemplate)ch).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.SUBSCRIPTION || ((OneShotChargeTemplate) ch).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.OTHER)) {
+					if(
+							(ch instanceof OneShotChargeTemplate) &&
+							(((OneShotChargeTemplate) ch).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.SUBSCRIPTION || ((OneShotChargeTemplate) ch).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.OTHER
+							|| ((OneShotChargeTemplate) ch).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.INVOICING_PLAN)) {
 						ServiceChargeTemplateSubscription serviceChargeTemplateSubscription = new ServiceChargeTemplateSubscription();
 						serviceChargeTemplateSubscription.setChargeTemplate((OneShotChargeTemplate) ch);
 						serviceChargeTemplateSubscription.setAccumulatorCounterTemplates(pc.getAccumulatorCounterTemplates());

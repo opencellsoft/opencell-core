@@ -223,6 +223,11 @@ public class ProviderResourceImpl implements ProviderResource {
         if (provider.getCurrentMatchingCode() != null) {
             providerByCode.setCurrentMatchingCode(providerUpdateInfos.getCurrentMatchingCode());
         }
+        
+        if (provider.getOrderLineTypes() != null) {
+            providerByCode.setOrderLineTypes(provider.getOrderLineTypes().stream().filter(StringUtils::isNotBlank).map(OrderLineTypeEnum::valueOf).collect(Collectors.toList()));
+        }
+        
         if (provider.getIsoICDCode() != null) {
             IsoIcd isoIcd = isoIcdService.findByCode(provider.getIsoICDCode());
             if (isoIcd == null) {

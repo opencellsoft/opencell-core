@@ -35,7 +35,7 @@ public class NativeExpressionFactory {
     }
 
     public void addFilters(String key, Object value) {
-    	if(key.endsWith(".id")) {
+    	if(key.endsWith(".id") || key.equals("id")) {
         	Object ids = (value instanceof Collection)? ((Collection)value).stream().map(x->Long.parseLong(x.toString())).collect(Collectors.toList()):Long.parseLong(value.toString());
             checkOnCondition(key, ids, new ExpressionParser(key.split(" ")));
     	} else {
@@ -109,7 +109,12 @@ public class NativeExpressionFactory {
             default: {
             	if (key.matches("^\\$filter[0-9]+$")) {
             		Map<String, Object> nestedFilterItems = (Map<String, Object>) value;
-            		FilterOperatorEnum operator = (FilterOperatorEnum) nestedFilterItems.getOrDefault("$operator", FilterOperatorEnum.AND);
+                    FilterOperatorEnum operator;
+                    if(nestedFilterItems.getOrDefault("$operator", FilterOperatorEnum.AND) instanceof String) {
+                        operator = FilterOperatorEnum.valueOf((String) nestedFilterItems.getOrDefault("$operator", FilterOperatorEnum.AND));
+                    } else {
+                        operator = (FilterOperatorEnum) nestedFilterItems.getOrDefault("$operator", FilterOperatorEnum.AND);
+                    }
             		queryBuilder.startNestedFilter(operator);
                     nestedFilterItems.keySet().stream()
 	                    						.sorted((k1, k2) -> org.apache.commons.lang3.StringUtils.countMatches(k2, ".") - org.apache.commons.lang3.StringUtils.countMatches(k1, "."))

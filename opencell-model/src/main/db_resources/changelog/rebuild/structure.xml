@@ -4300,6 +4300,7 @@
             <column name="applicable_on_overridden_price" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="applicable_on_discounted_price" type="${type.boolean}"/>
             <column name="sequence" type="int4"/>
+            <column name="automatic_application" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-212">
@@ -10488,7 +10489,7 @@
             <column name="description" type="varchar(255)" />
             <column name="delivery_date" type="datetime" />
             <column name="user_account_id" type="bigint"/>
-            <column name ="order_line_type" type="varchar(10)" />
+            <column name ="order_line_type" type="varchar(20)" />
             <column name="subscription_id" type="bigint" />
             <column name="termination_date" type="datetime" />
             <column name="sub_termin_reason_id" type="bigint" />
@@ -10769,6 +10770,13 @@
             <column name="converted_amount_tax" type="numeric(23, 12)" />
             <column name="converted_discount_amount" type="numeric(23, 12)" />
             <column name="converted_raw_amount" type="numeric(23, 12)" />
+            <column name="specific_converted_unit_price" type="numeric(23, 12)" />
+            <column name="specific_converted_amount_without_tax" type="numeric(23, 12)" />
+            <column name="specific_converted_amount_with_tax" type="numeric(23, 12)" />
+            <column name="specific_converted_amount_tax" type="numeric(23, 12)" />
+            <column name="specific_converted_discount_amount" type="numeric(23, 12)" />
+            <column name="specific_converted_raw_amount" type="numeric(23, 12)" />
+            <column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="open_order_number" type="varchar(255)" />
             <column name="sequence" type="int4"/>
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
@@ -11191,6 +11199,8 @@
             <column name="sort_by" type="varchar(255)" />
             <column name="sort_order" type="varchar(15)" />
             <column name="query_parameters" type="${type.json}" />
+            <column name="aliases" type="${type.json}" />
+            <column name="advanced_query" type="${type.json}" />
         </createTable>
 
         <createTable tableName="report_query_fields">
@@ -18144,6 +18154,44 @@
 								 deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" />
 	</changeSet>
+
+    <changeSet id="#INTRD-13062-20230124-rebuild" author="ZBariki">
+        <createSequence sequenceName="ar_customer_balance_seq" />
+        <createTable tableName="ar_customer_balance">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="customer_balance_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+            <column name="default_balance" type="${type.boolean}" defaultValueNumeric="0" />
+        </createTable>
+        <createTable tableName="ar_customer_balance_templates">
+            <column name="customer_balance_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="template_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="customer_balance_id, template_id"
+                       constraintName="ar_templates_customer_balance_pkey"
+                       tableName="ar_customer_balance_templates" />
+        <addForeignKeyConstraint baseTableName="ar_customer_balance_templates" baseColumnNames="customer_balance_id"
+                                 constraintName="fk_ar_customer_balance_templates"
+                                 referencedTableName="ar_customer_balance"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="ar_customer_balance_templates" baseColumnNames="template_id"
+                                 constraintName="fk_ar_templates_customer_balance"
+                                 referencedTableName="ar_occ_template"
+                                 referencedColumnNames="id"/>
+    </changeSet>
 	
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
@@ -19432,6 +19480,12 @@
     <changeSet id="#INTRD-12766_20230106" author="bourras"/>
     <changeSet id="#INTRD-13065_20230112" author="AdilElJaouhari" />
     <changeSet id="#INTRD-12781_20230116" author="zelmeliani" />
+    <changeSet id="#INTRD-12799-20230113-query_report_aliases" author="a.rouaguebe" />
+    <changeSet id="#INTRD-13031_20230118" author="AdilElJaouhari" />
+	<changeSet id="#INTRD-13204_20230119" author="HichamHANINE" />
+	<changeSet id="#INTRD-12819-20221220-qb_advanced_query" author="a.rouaguebe" />
+	<changeSet id="#INTRD-12651-20230123" author="AdilElJaouhari" />
+    <changeSet id="#INTRD-13062-20230124" author="ZBariki" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

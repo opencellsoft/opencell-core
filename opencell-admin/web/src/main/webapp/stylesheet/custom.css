@@ -1270,6 +1270,14 @@ footer .footer-copyright {
 	font-family: Roboto;
 }
 
+.ui-header-alert-message {
+    width: 60%;
+    float: inherit;
+    margin: auto;
+    margin-bottom: -10px;
+    margin-top: -40px;
+}
+
 /* .ui-dialog { */
 /*   z-index: 99999999 !important; */
 /* } */

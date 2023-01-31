@@ -25,6 +25,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class JsonGenericMapper extends ObjectMapper{
     private SimpleFilterProvider simpleFilterProvider;
@@ -49,7 +50,12 @@ public class JsonGenericMapper extends ObjectMapper{
     public String toJson(Set<String> fields, Class entityClass, Object dtoToSerialize, Set<String> excludedFields) {
     	if(fields != null && !fields.isEmpty()){
             addMixIn(entityClass, EntityFieldsFilterMixIn.class);
-            simpleFilterProvider.addFilter("EntityFieldsFilter", SimpleBeanPropertyFilter.filterOutAllExcept(fields));
+            Set<String> simpleFields = fields.stream().filter(f -> !f.contains(".")).collect(Collectors.toSet());
+            fields.stream().filter(f -> f.contains(".")).forEach(f -> {
+            	simpleFields.addAll(Arrays.asList(f.substring(0, f.lastIndexOf(".")).split("\\.")));
+            });
+            
+            simpleFilterProvider.addFilter("EntityFieldsFilter", SimpleBeanPropertyFilter.filterOutAllExcept(simpleFields));
             addMixIn(IEntity.class, EntitySubObjectFieldFilterMixIn.class);
             this.simpleFilterProvider.addFilter("EntitySubObjectFieldFilter", new GenericSimpleBeanPropertyFilter(getEntitySubFieldsToInclude(fields)));
         }   
