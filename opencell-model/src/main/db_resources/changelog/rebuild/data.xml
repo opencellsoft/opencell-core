@@ -19002,6 +19002,22 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
     
     <changeSet id="#INTRD-13379_20230127" author="aeljaouhari" />
 	<changeSet id="#INTRD-13122_20220111" author="HichamHANINE" />
+
+    <changeSet id="INTRD-12782_20230131" author="zelmeliani">
+        <update tableName="ar_dunning_action">
+            <column name="type" value="INVOICE_LEVEL" />
+        </update>
+        <update tableName="dunning_level">
+            <column name="type" value="INVOICE_LEVEL" />
+        </update>
+        <update tableName="dunning_policy">
+            <column name="type" value="INVOICE_LEVEL" />
+        </update>
+        <update tableName="com_message_template">
+            <column name="type_dunning_mode" value="INVOICE_LEVEL" />
+            <where>media = 'DUNNING_MEDIA'</where>
+        </update>
+    </changeSet>
 	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
