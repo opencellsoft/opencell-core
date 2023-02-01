@@ -281,11 +281,6 @@ public class SellerApi extends AccountEntityApi {
             seller.setRegistrationNo(postData.getRegistrationNo());
         }
         
-        if (org.apache.commons.lang3.StringUtils.isEmpty(seller.getRegistrationNo()) 
-            && org.apache.commons.lang3.StringUtils.isEmpty(postData.getIsoICDCode())) {
-            throw new MeveoApiException("the registrationNo is blank, isoICDCode should not be empty");
-        }
-        
         if (postData.getLegalText() != null) {
             seller.setLegalText(postData.getLegalText());
         }
