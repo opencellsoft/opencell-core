@@ -18791,4 +18791,20 @@ public class ValidateBRScript extends ValidateBR {
         </delete>
     </changeSet>
 
+    <changeSet id="INTRD-12782_20230131" author="zelmeliani">
+        <update tableName="ar_dunning_action">
+            <column name="type" value="INVOICE_LEVEL" />
+        </update>
+        <update tableName="dunning_level">
+            <column name="type" value="INVOICE_LEVEL" />
+        </update>
+        <update tableName="dunning_policy">
+            <column name="type" value="INVOICE_LEVEL" />
+        </update>
+        <update tableName="com_message_template">
+            <column name="type_dunning_mode" value="INVOICE_LEVEL" />
+            <where>media = 'DUNNING_MEDIA'</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>
