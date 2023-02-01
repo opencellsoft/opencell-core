@@ -2,6 +2,8 @@ package org.meveo.apiv2.catalog.resource;
 
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.apiv2.billing.DiscountPlanInstanciateDto;
 import org.meveo.apiv2.catalog.service.DiscountPlanApiService;
@@ -138,7 +140,8 @@ public class DiscountPlanResourceImpl implements DiscountPlanResource {
 
     @Override
     public Response instanciateDP(DiscountPlanInstanciateDto discountPlanInstanciateDto) {
-        return Response.ok().entity(discountPlanApiService.instanciateDP(discountPlanInstanciateDto)).links(buildSingleResourceLink(ENTITY_NAME, id)).build();
+    	discountPlanApiService.instanciateDP(discountPlanInstanciateDto);
+        return Response.ok().entity(new ActionStatus(ActionStatusEnum.SUCCESS, "")).build();
     }
 
 }
