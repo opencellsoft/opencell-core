@@ -521,8 +521,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         if (!isVirtual) {
             create(ratedTransaction);
             updateAggregatedWalletOperations(aggregatedWo.getWalletOperationsIds(), ratedTransaction);
-            setPricePlan(ratedTransaction);
         }
+        setPricePlan(ratedTransaction);
         ratedTransaction.setAccountingArticle(accountingArticleService.refreshOrRetrieve(aggregatedWo.getAccountingArticle()));
         ratedTransaction.setAccountingCode(accountingCodeService.refreshOrRetrieve(aggregatedWo.getAccountingCode()));
 
