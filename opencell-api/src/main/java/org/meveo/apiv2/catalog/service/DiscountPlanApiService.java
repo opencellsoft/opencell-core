@@ -167,7 +167,7 @@ public class DiscountPlanApiService {
 		return Optional.ofNullable((Long) updatedEntity.getId());
 	}
 
-    public Object instanciateDP(DiscountPlanInstanciateDto discountPlanInstanciateDto) {
+    public void instanciateDP(DiscountPlanInstanciateDto discountPlanInstanciateDto) {
         if(discountPlanInstanciateDto.getDiscountPlan() == null) {
             throw new InvalidParameterException("The discountPlan is required");
         }
@@ -222,7 +222,6 @@ public class DiscountPlanApiService {
         }else {
             throw new InvalidParameterException("One of these property must be present : serviceInstance, subscription, billingAccount");
         }
-        return null;
     }
     
     @Inject
