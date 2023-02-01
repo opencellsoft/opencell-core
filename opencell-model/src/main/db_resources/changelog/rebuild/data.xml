@@ -18976,7 +18976,7 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
             </column>
         </insert>
     </changeSet>
-
+    
     <changeSet id="#INTRD-13447_20230127" author="ZBariki">
         <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
@@ -18999,11 +18999,27 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
                     valueComputed="(SELECT id from generic_sequence where code = 'billing_cycle_sequence')"/>
         </insert>
     </changeSet>
-
+    
     <changeSet id="#INTRD-13379_20230127" author="aeljaouhari" />
 	<changeSet id="#INTRD-13122_20220111" author="HichamHANINE" />
 
-    <changeSet id="#INTRD-11208_20230131" author="zelmeliani">
+    <changeSet id="INTRD-12782_20230131" author="zelmeliani">
+        <update tableName="ar_dunning_action">
+            <column name="type" value="INVOICE_LEVEL" />
+        </update>
+        <update tableName="dunning_level">
+            <column name="type" value="INVOICE_LEVEL" />
+        </update>
+        <update tableName="dunning_policy">
+            <column name="type" value="INVOICE_LEVEL" />
+        </update>
+        <update tableName="com_message_template">
+            <column name="type_dunning_mode" value="INVOICE_LEVEL" />
+            <where>media = 'DUNNING_MEDIA'</where>
+        </update>
+    </changeSet>
+
+	<changeSet id="#INTRD-11208_20230131" author="zelmeliani">
         <insert tableName="com_message_template">
             <column name="media" value="DUNNING_MEDIA" />
             <column name="id" value="-11" />

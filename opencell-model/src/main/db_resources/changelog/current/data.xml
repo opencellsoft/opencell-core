@@ -18158,8 +18158,8 @@ public class CdrFlatFileImportScript extends Script {
 	        <where>code='Inv_Job'</where>
 	    </delete>
     </changeSet>
-
-	<changeSet id="#INTRD-13122_20220111" author="HichamHANINE">
+	
+	<changeSet id="#INTRD-13122_20220111" author="HichamHANINE">	
 		<update tableName="billing_invoice_type">
 			<column name="invoice_subject_code" valueComputed="(SELECT id FROM untdid_4451_invoice_subject_code where code = 'IND')"></column>
 			<where>code in ('COM','ADJ_INV', 'ADJ_REF', 'ADJ', 'SECURITY_DEPOSIT', 'ADV')</where>
@@ -18167,12 +18167,12 @@ public class CdrFlatFileImportScript extends Script {
 
 		<update tableName="billing_accounting_article">
 			<column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code Where code = '95')"></column>
-		</update>
-
+		</update>		
+	
 		<update tableName="ar_payment_token">
 			<column name="payment_means" valueComputed="(SELECT id from untdid_4461_payment_means where code = '10')"></column>
 			<where>token_type = 'CASH'</where>
-		</update>
+		</update>		
 		<update tableName="ar_payment_token">
 			<column name="payment_means" valueComputed="(SELECT id from untdid_4461_payment_means where code = '20')"></column>
 			<where>token_type = 'CHECK'</where>
@@ -18643,7 +18643,7 @@ public class ImportJobNotification extends Script {
             <where>id=-1</where>
         </update>
     </changeSet>
-
+    
     <changeSet id="#INTRD-13386_20230223" author="TarikFA.">
         <update tableName="meveo_script_instance">
             <column name="script">
@@ -18658,7 +18658,7 @@ public class ImportJobNotification extends Script {
             <where>code='org.meveo.service.script.ImportJobNotification'</where>
     	</update>
     </changeSet>
-
+    
     <changeSet id="#INTRD-13421_20230123" author="TarikFA.">
         <update tableName="meveo_script_instance">
             <column name="script">
@@ -18743,7 +18743,7 @@ public class ValidateBRScript extends ValidateBR {
             </column>
         </insert>
     </changeSet>
-
+    
     <changeSet id="#INTRD-13379_20230127" author="aeljaouhari">
 		<update tableName="meveo_script_instance">
 			<column name="description" value="Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator. If offer list is empty, then all invoice lines will be tested regardless of their offer. For invoice to be valid, all invoice lines must pass the test. Only offer actually present on invoice will be tested."/>
@@ -18789,6 +18789,22 @@ public class ValidateBRScript extends ValidateBR {
         <delete tableName="meveo_job_instance">
             <where>code='DWH_Job_CHURN'</where>
         </delete>
+    </changeSet>
+
+    <changeSet id="INTRD-12782_20230131" author="zelmeliani">
+        <update tableName="ar_dunning_action">
+            <column name="type" value="INVOICE_LEVEL" />
+        </update>
+        <update tableName="dunning_level">
+            <column name="type" value="INVOICE_LEVEL" />
+        </update>
+        <update tableName="dunning_policy">
+            <column name="type" value="INVOICE_LEVEL" />
+        </update>
+        <update tableName="com_message_template">
+            <column name="type_dunning_mode" value="INVOICE_LEVEL" />
+            <where>media = 'DUNNING_MEDIA'</where>
+        </update>
     </changeSet>
 
     <changeSet id="#INTRD-11208_20230131" author="zelmeliani">
