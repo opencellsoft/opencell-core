@@ -33,12 +33,12 @@ public class DocumentService extends BusinessService<Document> {
         entity.setFileType(fetchedFileType);
         final DocumentCategory fetchedCategory = documentCategoryService.findByCode(entity.getCategory().getCode());
         if(Objects.isNull(fetchedCategory)){
-            throw new BadRequestException("Category with id "+entity.getCategory().getId()+" not found");
+            throw new BadRequestException("Category with code "+entity.getCategory().getCode() +" not found");
         }
         if(Objects.nonNull(entity.getLinkedAccountEntity())){
             AccountEntity accountEntity = accountEntitySearchService.findById(entity.getLinkedAccountEntity().getId());
             if(Objects.isNull(accountEntity)){
-                throw new BadRequestException("Category with code "+entity.getCategory().getCode() +" not found");
+                throw new BadRequestException("Account Entity with id "+entity.getLinkedAccountEntity().getId()+" not found");
             }
             entity.setLinkedAccountEntity(accountEntity);
         }
