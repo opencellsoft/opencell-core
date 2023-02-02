@@ -29,7 +29,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +67,7 @@ import org.meveo.api.generics.GenericRequestMapper;
 import org.meveo.api.generics.PersistenceServiceHelper;
 import org.meveo.apiv2.generic.GenericPagingAndFiltering;
 import org.meveo.apiv2.generic.ImmutableGenericPagingAndFiltering;
+import org.meveo.apiv2.generic.ImmutableGenericPagingAndFiltering.Builder;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.ParamBean;
@@ -1493,11 +1493,6 @@ public class NativePersistenceService extends BaseService {
         }
     }
 
-    public QueryBuilder findPaginatedRecords(Boolean extractList, Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> fetchFields, Long nestedDepth, Long id, Set<String> excludedFields) {
-    	
-    	return null;
-    }
-
     public QueryBuilder generatedAdvancedQuery(ReportQuery reportQuery) {
     	
     	Class<?> entityClass = GenericHelper.getEntityClass(reportQuery.getTargetEntity());
@@ -1505,7 +1500,7 @@ public class NativePersistenceService extends BaseService {
         GenericPagingAndFiltering genericPagingAndFilter = buildGenericPagingAndFiltering(reportQuery);
         PaginationConfiguration searchConfig = genericRequestMapper.mapTo(genericPagingAndFilter);
         QueryBuilder qb;
-    	List<String> genericFields = (List<String>) reportQuery.getAdvancedQuery().get("genericFields");
+    	List<String> genericFields = (List<String>) reportQuery.getAdvancedQuery().getOrDefault("fields", new ArrayList<>());
 		if(isAggregationQueries(genericPagingAndFilter.getGenericFields())){
     		searchConfig.setFetchFields(genericFields);
     		qb = this.getAggregateQuery(entityClass.getCanonicalName(), searchConfig, null);
@@ -1524,14 +1519,22 @@ public class NativePersistenceService extends BaseService {
     }
 
     private GenericPagingAndFiltering buildGenericPagingAndFiltering(ReportQuery reportQuery) {
-    	return ImmutableGenericPagingAndFiltering.builder()
-    									  .filters((Map<String, Object>) reportQuery.getAdvancedQuery().getOrDefault("filters", new HashMap<>()))
-    									  .groupBy((List<String>)reportQuery.getAdvancedQuery().getOrDefault("groupBy", new ArrayList<>()))
-    									  .sortBy((String) reportQuery.getAdvancedQuery().get("sortBy"))
-    									  .nestedEntities((List<String>)reportQuery.getAdvancedQuery().getOrDefault("nestedEntities", new ArrayList<>()))
-    									  .genericFields((List<String>)reportQuery.getAdvancedQuery().getOrDefault("genericFields", new ArrayList<>()))
-    									  .having((List<String>)reportQuery.getAdvancedQuery().getOrDefault("having", new ArrayList<>()))
-    									  .build();
+		Builder builder = ImmutableGenericPagingAndFiltering.builder()
+				.filters((Map<String, Object>) reportQuery.getAdvancedQuery().getOrDefault("filters", new HashMap<>()))
+				.groupBy((List<String>) reportQuery.getAdvancedQuery().getOrDefault("groupBy", new ArrayList<>()))
+				.nestedEntities((List<String>) reportQuery.getAdvancedQuery().getOrDefault("nestedEntities", new ArrayList<>()))
+				.genericFields((List<String>) reportQuery.getAdvancedQuery().getOrDefault("fields", new ArrayList<>()))
+				.having((List<String>) reportQuery.getAdvancedQuery().getOrDefault("having", new ArrayList<>()));
+    	String sortBy = (String) reportQuery.getAdvancedQuery().get("sortBy");
+    	if(org.meveo.commons.utils.StringUtils.isNotBlank(sortBy)) {
+    		builder.sortBy(sortBy);
+    	}
+    	String sortOrder = (String) reportQuery.getAdvancedQuery().get("sortOrder");
+    	if(org.meveo.commons.utils.StringUtils.isNotBlank(sortOrder)) {
+    		builder.sortOrder(sortOrder);
+    	}
+    	
+		return builder.build();
     	
     }
 
