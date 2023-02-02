@@ -15713,4 +15713,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </addColumn>
     </changeSet>
 
+    <changeSet id="#INTRD-13009_20230202" author="bourras">
+        <addColumn tableName="finance_settings">
+            <column name="enable_billing_redirection_rules" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
