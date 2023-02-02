@@ -53,7 +53,7 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
         @NamedQuery(name = "PricePlanMatrixVersion.lastCurrentVersion", query = "select p.currentVersion from PricePlanMatrixVersion p where  p.pricePlanMatrix=:pricePlanMatrix order by p.currentVersion desc"),
         @NamedQuery(name = "PricePlanMatrixVersion.getLastPublishedVersion", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where pp.code=:pricePlanMatrixCode and p.status=org.meveo.model.cpq.enums.VersionStatusEnum.PUBLISHED order by p.currentVersion desc"),
         @NamedQuery(name = "PricePlanMatrixVersion.getPricePlanVersionsByIds", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where p.id IN (:ids) order by p.id desc"),
-        @NamedQuery(name = "PricePlanMatrixVersion.getPublishedVersionValideForDate", query = "select v from PricePlanMatrixVersion v left join v.pricePlanMatrix m where m.code=:pricePlanMatrixCode and v.status=org.meveo.model.cpq.enums.VersionStatusEnum.PUBLISHED and (v.validity.from is null or v.validity.from<=:operationDate) and (v.validity.to is null or v.validity.to>:operationDate)"),
+        @NamedQuery(name = "PricePlanMatrixVersion.getPublishedVersionValideForDate", query = "select distinct v from PricePlanMatrixVersion v left join v.pricePlanMatrix m left join fetch v.lines lines left join fetch lines.pricePlanMatrixValues where m.code=:pricePlanMatrixCode and v.status=org.meveo.model.cpq.enums.VersionStatusEnum.PUBLISHED and (v.validity.from is null or v.validity.from<=:operationDate) and (v.validity.to is null or v.validity.to>:operationDate)"),
         @NamedQuery(name = "PricePlanMatrixVersion.findEndDates", query = "from PricePlanMatrixVersion p where p.status='PUBLISHED' and p.pricePlanMatrix=:pricePlanMatrix and (p.validity.to >= :date or p.validity.to is null) order by p.validity.from desc"),
         @NamedQuery(name = "PricePlanMatrixVersion.findByPricePlan", query = "select p from PricePlanMatrixVersion p where p.pricePlanMatrix=:priceplan and p.status<>'CLOSED'"),
         @NamedQuery(name = "PricePlanMatrixVersion.findByPricePlans", query = "select p from PricePlanMatrixVersion p where p.pricePlanMatrix in :priceplans and p.status<>'CLOSED'"),
@@ -106,12 +106,15 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     @Column(name = "price_el")
     private String priceEL;
 
-    @OneToMany(mappedBy = "pricePlanMatrixVersion", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "pricePlanMatrixVersion", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PricePlanMatrixLine> lines = new HashSet<>();
 
     @OneToMany(mappedBy = "pricePlanMatrixVersion", fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.REFRESH }, orphanRemoval = true)
     private Set<PricePlanMatrixColumn> columns = new HashSet<>();
+
+    @OneToMany(mappedBy = "pricePlanMatrixVersion", fetch = FetchType.LAZY)
+    private Set<ConvertedPricePlanVersion> convertedPricePlanMatrixLines = new HashSet<>();
 
     /**
      * The lower number, the higher the priority is
@@ -232,7 +235,7 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     }
 
     public BigDecimal getPrice() {
-        return price;
+    	return isMatrix? null : price;
     }
 
     public void setPrice(BigDecimal price) {
@@ -306,7 +309,21 @@ public class PricePlanMatrixVersion extends AuditableEntity {
         this.priceVersionType = priceVersionType;
     }
 
-    @Override
+	/**
+	 * @return the convertedPricePlanMatrixLines
+	 */
+	public Set<ConvertedPricePlanVersion> getConvertedPricePlanMatrixLines() {
+		return convertedPricePlanMatrixLines;
+	}
+
+	/**
+	 * @param convertedPricePlanMatrixLines the convertedPricePlanMatrixLines to set
+	 */
+	public void setConvertedPricePlanMatrixLines(Set<ConvertedPricePlanVersion> convertedPricePlanMatrixLines) {
+		this.convertedPricePlanMatrixLines = convertedPricePlanMatrixLines;
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();

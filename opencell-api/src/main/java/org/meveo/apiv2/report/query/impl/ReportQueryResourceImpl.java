@@ -16,6 +16,7 @@ import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
@@ -172,15 +173,15 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
 	}
 
     @Override
-    public Response execute(Long id, boolean async, boolean sendNotification, ReportQueryInput resource) {
+    public Response execute(Long id, boolean async, boolean sendNotification, ReportQueryInput resource, UriInfo uriInfo) {
         if(async) {
-            reportQueryApiService.execute(id, async, sendNotification, resource.getEmails());
+            reportQueryApiService.execute(id, async, sendNotification, resource.getEmails(), uriInfo);
             return Response.ok().entity(ImmutableSuccessResponse.builder()
                     .status("ACCEPTED")
                     .message("Execution request accepted")
                     .build()).build();
         } else {
-            List<Object> result = (List<Object>) reportQueryApiService.execute(id, async, sendNotification, resource.getEmails()).orElse(EMPTY_LIST);
+            List<Object> result = (List<Object>) reportQueryApiService.execute(id, async, sendNotification, resource.getEmails(), uriInfo).orElse(EMPTY_LIST);
             ExecutionResult executionResult = builder()
                     .executionResults(result)
                     .total(result.size())

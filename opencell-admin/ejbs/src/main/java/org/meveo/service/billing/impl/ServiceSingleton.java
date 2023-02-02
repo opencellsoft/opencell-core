@@ -429,6 +429,8 @@ public class ServiceSingleton {
                     invoice.getTradingCurrency().getCurrentRateFromDate());
         }
     	invoice.setStatus(InvoiceStatusEnum.VALIDATED);
+    	invoice.setRejectedByRule(null);
+    	invoice.setRejectReason(null);
     	return assignInvoiceNumber(invoice, true);
     }
 
@@ -592,12 +594,11 @@ public class ServiceSingleton {
         		invoice = invoiceService.update(invoice);
         	}
         }
-        triggersJobs();
         return invoice;
     }
 
-    private void triggersJobs() {
-        Arrays.asList("DunningCollectionPlan_Job", "TriggerCollectionPlanLevelsJob_Job", "TriggerReminderDunningLevel_Job").stream()
+    public void triggersJobs() {
+        Arrays.asList("DunningCollectionPlan_Job", "TriggerCollectionPlanLevelsJob", "TriggerReminderDunningLevel_Job").stream()
                 .map(jobInstanceService::findByCode)
                 .filter(Objects::nonNull)
                 .forEach(jibInstance -> jobExecutionService.executeJob(jibInstance, null, JobLauncherEnum.TRIGGER));

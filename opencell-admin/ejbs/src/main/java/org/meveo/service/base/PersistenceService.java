@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +63,7 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.LockMode;
 import org.hibernate.SQLQuery;
@@ -73,6 +75,8 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.encryption.IEncryptable;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
@@ -106,6 +110,8 @@ import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
+import org.meveo.model.persistence.CustomFieldJsonTypeDescriptor;
+import org.meveo.model.persistence.JacksonUtil;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.base.expressions.ExpressionFactory;
 import org.meveo.service.base.expressions.ExpressionParser;
@@ -186,7 +192,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     public static final String FROM_JSON_FUNCTION = "FromJson(a.";
     public static final String CF_VALUES_FIELD = "cfValues";
-    
+
     public static final int SHORT_MAX_VALUE = 32767;
     /**
      * Is custom field accumulation being used
@@ -200,10 +206,15 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     protected static Map<Class, String> jsonTypes = new HashMap<Class, String>();
 
+    protected static boolean encryptCFSetting = false;
+
+    private static Long MAX_DEPTH = 5L;
+
     @PostConstruct
     private void init() {
         accumulateCF = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("customFields.accumulateCF", "false"));
         applyGenericWorkflow = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("workflow.enabled", "true"));
+        encryptCFSetting = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty(IEncryptable.ENCRYPT_CUSTOM_FIELDS_PROPERTY, IEncryptable.FALSE_STR));
     }
 
     @Inject
@@ -734,16 +745,21 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             return new ArrayList<E>();
         }
 
+        Query query = listQueryBuilder(config).getQuery(getEntityManager());
+        return query.getResultList();
+    }
+
+    public QueryBuilder listQueryBuilder(PaginationConfiguration config) {
+    	Map<String, Object> filters = config.getFilters();
+
         if (filters != null && filters.containsKey("$FILTER")) {
             Filter filter = (Filter) filters.get("$FILTER");
             FilteredQueryBuilder queryBuilder = (FilteredQueryBuilder) getQuery(config);
             queryBuilder.processOrderCondition(filter.getOrderCondition(), filter.getPrimarySelector().getAlias());
-            Query query = queryBuilder.getQuery(getEntityManager());
-            return query.getResultList();
+            return queryBuilder;
         } else {
             QueryBuilder queryBuilder = getQuery(config);
-            Query query = queryBuilder.getQuery(getEntityManager());
-            return query.getResultList();
+            return queryBuilder;
         }
     }
 
@@ -759,22 +775,43 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * Used to retrieve related fields of an entity
      */
     @SuppressWarnings({ "unchecked" })
-    public Map<String, Object> mapRelatedFields() {
+    public Map<String, Object> mapRelatedFields(String filter, long maxDepth, long currentDepth, Class<?> parentEntity) {
         final Class<? extends E> productClass = getEntityClass();
         StringBuilder queryString = new StringBuilder("from CustomFieldTemplate");
         Query query = getEntityManager().createQuery(queryString.toString());
         List<CustomFieldTemplate> resultsCFTmpl = query.getResultList();
-        Map<String, Object> mapAttributeAndType = new HashMap<>();
+        Map<String, Object> mapAttributeAndType = new LinkedHashMap<>();
         Set<Attribute<? super E, ?>> setAttributes = ((Session) getEntityManager().getDelegate()).getSessionFactory().getMetamodel().managedType(getEntityClass()).getAttributes();
-        for (Attribute<? super E, ?> att : setAttributes) {
+        List<Attribute<? super E, ?>> sortedAttributes = new ArrayList<>(setAttributes);
+        sortedAttributes.sort((a, b) -> a.getName().compareTo(b.getName()));
+        for (Attribute<? super E, ?> att : sortedAttributes) {
             if (att.getJavaType() != CustomFieldValues.class) {
-                Map<String, String> mapStringAndType = new HashMap();
+                Map<String, Object> mapStringAndType = new HashMap();
                 mapStringAndType.put("fullQualifiedTypeName", att.getJavaType().toString());
                 mapStringAndType.put("shortTypeName", att.getJavaType().getSimpleName());
-                mapStringAndType.put("isEntity",  Boolean.toString(BaseEntity.class.isAssignableFrom(att.getJavaType()) || ServiceTemplate.class.isAssignableFrom(att.getJavaType())));
+                Boolean isEntity = BaseEntity.class.isAssignableFrom(att.getJavaType()) || ServiceTemplate.class.isAssignableFrom(att.getJavaType());
+                if(StringUtils.isNotBlank(filter) && (!isEntity || maxDepth == (currentDepth+1) ) && !att.getName().toLowerCase().contains(filter.toLowerCase())) {
+                	continue;
+                }
+				mapStringAndType.put("isEntity",  Boolean.toString(isEntity));
+				if(isEntity && !att.getJavaType().equals(parentEntity) && (maxDepth == 0 || currentDepth < maxDepth) && currentDepth <= MAX_DEPTH) {
+					PersistenceService<?> persistenceService = (PersistenceService<?>) EjbUtils.getServiceInterface(att.getJavaType().getSimpleName() + "Service");
+					if(persistenceService == null){
+						persistenceService = (PersistenceService) EjbUtils.getServiceInterface("BaseEntityService");
+			            ((BaseEntityService) persistenceService).setEntityClass((Class<IEntity>) att.getJavaType());
+			        }
+					Map<String, Object> relatedFields = persistenceService.mapRelatedFields(filter, maxDepth, currentDepth + 1, entityClass);
+					if(relatedFields.isEmpty()) {
+						continue;
+					}
+					mapStringAndType.put("entityDetails", relatedFields);
+				}
                 mapAttributeAndType.put(att.getName(), mapStringAndType);
             } else {
                 if (!resultsCFTmpl.isEmpty()) {
+                	if(StringUtils.isNotBlank(filter) && !att.getName().toLowerCase().contains(filter.toLowerCase())) {
+                    	continue;
+                    }
                     Map<String, Map<String, String>> mapCFValues = new HashMap();
                     for (CustomFieldTemplate aCFTmpl : resultsCFTmpl) {
                         if (aCFTmpl.getAppliesTo().equals(productClass.getSimpleName())) {
@@ -1058,7 +1095,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         adaptOrdering(config, filters);
         
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields(), config.getJoinType(), config.getFilterOperator());
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.isDoFetch(), config.getFetchFields(), config.getJoinType(), config.getFilterOperator());
         if (filters != null && !filters.isEmpty()) {
             if (filters.containsKey(SEARCH_FILTER)) {
                 Filter filter = (Filter) filters.get(SEARCH_FILTER);
@@ -1070,7 +1107,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                 filters.putAll(cfFilters);
 
                 ExpressionFactory expressionFactory = new ExpressionFactory(queryBuilder, "a");
-                filters.keySet().stream().filter(key -> filters.get(key) != null && !"$OPERATOR".equalsIgnoreCase(key)).forEach(key -> expressionFactory.addFilters(key, filters.get(key)));
+                filters.keySet().stream().sorted((k1, k2) -> org.apache.commons.lang3.StringUtils.countMatches(k2, ".") - org.apache.commons.lang3.StringUtils.countMatches(k1, "."))
+                						 .filter(key -> filters.get(key) != null && !"$OPERATOR".equalsIgnoreCase(key))
+                						 .forEach(key -> expressionFactory.addFilters(key, filters.get(key)));
                 for (String cft : cfFilters.keySet()) {
                     filters.remove(cft);
                 }
@@ -1187,6 +1226,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         for (Object filterValue : filters.values()) {
             if (filterValue instanceof CustomFieldValues) {
                 CustomFieldValues customFieldValues = (CustomFieldValues) filterValue;
+                customFieldValues = checkCFValuesShouldBeEncrypted(customFieldValues);
+
                 Map<String, List<CustomFieldValue>> valuesByCode = customFieldValues.getValuesByCode();
                 for (String customFiterName : valuesByCode.keySet()) {
                     // get the filter value
@@ -1202,7 +1243,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                     // listVarcharFromJson(<entity>.cfValues,<custom field name>,<value to search for>)=true
                     if (SEARCH_LIST.equals(fieldInfo.getCondition())) {
                         if ("string".equals(type)) {
-                            value = "'" + value + "'";
+                           value = "'" + value + "'";
                         }
                         type = "list" + StringUtils.capitalizeFirstLetter(type);
                         String searchFunction = "list";
@@ -1230,7 +1271,17 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return cftFilters;
     }
 
-	private String extractCustomFieldSyntax(String type, Class clazz, String transformedFilter, String fieldName, String nestedFields) {
+    //check if search by the CF value should use or not the encrypted value
+    private CustomFieldValues checkCFValuesShouldBeEncrypted(CustomFieldValues customFieldValues) {
+        if (!encryptCFSetting) {
+            return customFieldValues;
+        }
+        String encryptedCFJson = CustomFieldJsonTypeDescriptor.INSTANCE.toString(customFieldValues);
+        Map<String, List<CustomFieldValue>> cfValues = JacksonUtil.fromString(encryptedCFJson, new TypeReference<Map<String, List<CustomFieldValue>>>() {});
+        return new CustomFieldValues(cfValues);
+    }
+
+    private String extractCustomFieldSyntax(String type, Class clazz, String transformedFilter, String fieldName, String nestedFields) {
 		nestedFields=nestedFields==null?"":nestedFields;
 		String searchFunction = getCustomFieldSearchFunctionPrefix(clazz);
 		transformedFilter = transformedFilter + searchFunction + FROM_JSON_FUNCTION+nestedFields+"cfValues," + fieldName + "," + type + ") ";
@@ -1634,7 +1685,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         } catch (NoResultException e) {
             throw new NotFoundException("No entity of type "+entity.getSimpleName()+"with "+where+" found");
         } catch (NonUniqueResultException e) {
-        	throw new ForbiddenException("More than one entity of type "+entity.getSimpleName()+"with "+where+" found");
+        	throw new BusinessException("More than one entity of type "+entity.getSimpleName()+" with "+where+" found");
         }
     }
 

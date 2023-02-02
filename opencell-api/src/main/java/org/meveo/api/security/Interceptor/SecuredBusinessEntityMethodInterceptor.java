@@ -405,7 +405,7 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 
         Map<String, Integer> classHierarchyByClass = Map.of("UserAccount", 0, "BillingAccount", 1, "CustomerAccount", 2, "Customer", 3, "Seller", 4);
 
-        // Additional properties to consider when climbing up the hierarchy. Should match the value in classHierarchyByPosition.
+        // Additional properties to consider when climbing up the hierarchy. Should match the classHierarchyByPosition.
         Map<String, String[]> additionalHierarchyProperties = considerSellerAsParent ? Map.of("Seller", new String[] { "seller" }) : new HashMap<String, String[]>();
 
         int posTryAccess = classHierarchyByClass.get(tryToAccessEntityClass);
@@ -422,18 +422,13 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
             // User is allowed to access Customer and is accessing a customer
         } else if (posAllowed == posTryAccess) {
 
-            String propertyPath = propertyName.equals("code") ? codeOrIdField : (propertyName + "." + codeOrIdField);
-
-            criteriaPaths.add(propertyPath);
+            String propertyPathPattern = propertyName.equals("code") ? "%s" + codeOrIdField : (propertyName + ".%s" + codeOrIdField);
+            criteriaPaths.add(String.format(propertyPathPattern, ""));
 
             if (additionalHierarchyProperties.containsKey(tryToAccessEntityClass)) {
 
                 for (String additionalHierarchy : additionalHierarchyProperties.get(tryToAccessEntityClass)) {
-                    if (propertyName.equals("code")) {
-                        criteriaPaths.add(additionalHierarchy + "." + codeOrIdField);
-                    } else {
-                        criteriaPaths.add(propertyName + "." + additionalHierarchy + "." + codeOrIdField);
-                    }
+                    criteriaPaths.add(String.format(propertyPathPattern, additionalHierarchy + "."));
                 }
             }
 

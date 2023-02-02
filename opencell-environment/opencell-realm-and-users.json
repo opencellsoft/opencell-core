@@ -166,8 +166,8 @@
           ],
           "client": {
             "opencell-web": [
-              "apiAdministrateur",
-              "administrateur"
+              "administrateur",
+              "apiAdministrateur"
             ],
             "opencell-portal": [
               "ADMIN"
@@ -1049,13 +1049,11 @@
             "client": {
               "opencell-web": [
                 "apiUseWorkflow",
-                "genApiFull.create",
                 "apiCreateInvoice",
                 "apiUseReport",
                 "apiReportingManagement",
                 "apiUseJob",
                 "apiIntegration",
-                "genApiFull.delete",
                 "apiWorkflowManager",
                 "genApiFull.list",
                 "apiBillingManagement",
@@ -1072,7 +1070,7 @@
                 "inboundAccess",
                 "apiAdministrationManagement",
                 "apiUseScript",
-                "genApiFull.update"
+                "general_roleManagement"
               ]
             }
           },
@@ -1190,6 +1188,15 @@
           "composite": false,
           "clientRole": true,
           "containerId": "d4a3eb0d-a156-4f61-8d93-2298dc65af96",
+          "attributes": {}
+        },
+        {
+          "id": "e629ad98-8dd7-11ed-a1eb-0242ac120002",
+          "name": "show_obsolete_legacy",
+          "description": "Show obsolete items in Legacy Admin GUI. These items are no more supported. Use at your own risks.",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "eeeb2d58-8dd7-11ed-a1eb-0242ac120002",
           "attributes": {}
         },
         {
@@ -2196,7 +2203,10 @@
             "client": {
               "opencell-web": [
                 "apiAdministrateur",
-                "apiSuperAdminManagement"
+                "apiSuperAdminManagement",
+                "genApiFull.create",
+                "genApiFull.delete",
+                "genApiFull.update"
               ]
             }
           },
@@ -10294,7 +10304,49 @@
                 "name": "HEAD"
               }
             ]
-          }
+          },
+          {
+            "name": "Api V2 International Settings",
+            "ownerManagedAccess": false,
+            "attributes": {},
+            "_id": "f68e7377-a3d6-4a4d-922b-ac145c39c157",
+            "uris": [
+              "/api/rest/v2/setting/internationalSettings/*",
+              "/api/rest/v2/setting/internationalSettings/EmailTemplate/*",
+              "/api/rest/v2/setting/internationalSettings/SMSTemplate/*"
+            ],
+            "scopes": [
+              {
+                "name": "DELETE"
+              },
+              {
+                "name": "GET"
+              },
+              {
+                "name": "POST"
+              },
+              {
+                "name": "PUT"
+              },
+              {
+                "name": "PATCH"
+              }
+           ]
+          },
+		  {
+			"name": "Api V2 CustomTable - export",
+			"ownerManagedAccess": false,
+			"attributes": {},
+			"_id": "f20b7f19-1c27-492b-bfa3-7003c044fb3c",
+			"uris": [
+				"/api/rest/v2/customTable/export/"
+			],
+			"scopes": [
+				{
+					"name": "POST"
+				}
+			]
+		 }
         ],
         "policies": [
           {
@@ -12327,6 +12379,7 @@
               "roles": "[{\"id\":\"opencell-web/useJob\",\"required\":false}]"
             }
           },
+          
           {
             "id": "978e5d5f-f867-40c5-9d11-19e080f8b09e",
             "name": "Role languageManagement",
@@ -14089,6 +14142,18 @@
             }
           },
           {
+            "id": "52d0f983-6980-40fc-209b-ed1b59aad199",
+            "name": "Page Custom entities - admin - update",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Page Custom entities\"]",
+              "scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
+              "applyPolicies": "[\"Role administrationManagement\"]"
+            }
+          },
+          {
             "id": "22458ec0-1138-4e1b-9761-a7902f2fcfca",
             "name": "Page Rated transactions - read",
             "type": "scope",
@@ -15325,6 +15390,18 @@
             }
           },
           {
+            "id": "ecaac485-44f5-4b96-a421-168177f1bc77",
+            "name": "Api V1 Customization - entities - admin - update",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Api V1 Customization - entities\"]",
+              "scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
+              "applyPolicies": "[\"Role apiAdministrationVisualization\"]"
+            }
+          },
+          {
             "id": "daca7efc-9995-4dbe-a0b0-bd5c90c8fa27",
             "name": "Api V1 Security - User - read",
             "type": "scope",
@@ -16098,6 +16175,18 @@
               "resources": "[\"GenApi Pkg settings - fud\"]",
               "scopes": "[\"POST\"]",
               "applyPolicies": "[\"Role genApiPkg_settings.list\"]"
+            }
+          },
+          {
+            "id": "e1b24c27-8880-4a48-a51d-cfb97f3c4168",
+            "name": "Api V2 International Settings - Update",
+            "type": "resource",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Api V2 International Settings\"]",
+              "scopes": "[\"PUT\",\"DELETE\",\"POST\",\"PATCH\"]",
+              "applyPolicies": "[\"Role apiAdministrationManagement\"]"
             }
           },
           {

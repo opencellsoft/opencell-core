@@ -500,7 +500,7 @@ public class UsageRatingService extends RatingService implements Serializable {
 
         RatingResult ratingResult = new RatingResult();
 
-        if (currentRatingDepth < maxDeep) {
+        if (currentRatingDepth <= maxDeep) {
             for (EDR edr : triggeredEDRs) {
                 // Do not throw the errors, but mark EDR as rejected with and error
                 try {
@@ -610,7 +610,7 @@ public class UsageRatingService extends RatingService implements Serializable {
         return ValueExpressionWrapper.evaluateToBoolean(expression, userMap);
     }
 
-    private boolean evaluateBooleanExpression(String expression, EDR edr, WalletOperation walletOperation) throws InvalidELException {
+    public boolean evaluateBooleanExpression(String expression, EDR edr, WalletOperation walletOperation) throws InvalidELException {
         boolean result = true;
         if (StringUtils.isBlank(expression)) {
             return result;

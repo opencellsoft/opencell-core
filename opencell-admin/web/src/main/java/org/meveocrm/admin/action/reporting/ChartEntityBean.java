@@ -77,12 +77,12 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 
 	public ChartEntityBean() {
 		super();
-		showDeprecatedWarning();
+		showDeprecatedWarning(DEPRECATED_FEATURE);
 	}
 
 	public ChartEntityBean(Class<T> clazz) {
 		super(clazz);
-		showDeprecatedWarning();
+		showDeprecatedWarning(DEPRECATED_FEATURE);
 	}
 
 	@Override

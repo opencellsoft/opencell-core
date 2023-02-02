@@ -18,9 +18,11 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import com.paypal.api.payments.Billing;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.dunning.*;
@@ -31,6 +33,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.communication.impl.EmailSender;
 import org.meveo.service.communication.impl.EmailTemplateService;
+import org.meveo.service.communication.impl.InternationalSettingsService;
 
 @Stateless
 public class DunningCollectionPlanService extends PersistenceService<DunningCollectionPlan> {
@@ -61,6 +64,9 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 
     @Inject
     private EmailTemplateService emailTemplateService;
+
+    @Inject
+    private InternationalSettingsService internationalSettingsService;
 
     private static final String STOP_REASON = "Changement de politique de recouvrement";
 
@@ -397,16 +403,21 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
                 .getResultList();
     }
 
-    public void sendNotification(String emailFrom, String emailTo, EmailTemplate emailTemplate,
+    public void sendNotification(String emailFrom, BillingAccount billingAccount, EmailTemplate emailTemplate,
                                  Map<Object, Object> params, List<File> attachments) {
         emailTemplate = emailTemplateService.refreshOrRetrieve(emailTemplate);
         if(emailTemplate != null) {
+            String languageCode = billingAccount.getCustomerAccount().getTradingLanguage().getLanguage().getLanguageCode();
+            String emailSubject = internationalSettingsService.resolveSubject(emailTemplate,languageCode);
+            String emailContent = internationalSettingsService.resolveEmailContent(emailTemplate,languageCode);
+            String htmlContent = internationalSettingsService.resolveHtmlContent(emailTemplate,languageCode);
+            String emailTo = billingAccount.getContactInformation().getEmail();
             String subject = emailTemplate.getSubject() != null
-                    ? evaluateExpression(emailTemplate.getSubject(), params, String.class) : "";
+                    ? evaluateExpression(emailSubject, params, String.class) : "";
             String content = emailTemplate.getTextContent() != null
-                    ? evaluateExpression(emailTemplate.getTextContent(), params, String.class) : "";
+                    ? evaluateExpression(emailContent, params, String.class) : "";
             String contentHtml = emailTemplate.getHtmlContent() != null
-                    ? evaluateExpression(emailTemplate.getHtmlContent(), params, String.class) : "";
+                    ? evaluateExpression(htmlContent, params, String.class) : "";
             emailSender.send(emailFrom, asList(emailFrom), asList(emailTo), null, null,
                     subject, content, contentHtml, attachments, null, false);
         } else {

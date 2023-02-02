@@ -63,6 +63,7 @@ public class TaxBean extends CustomFieldBean<Tax> {
      */
     public TaxBean() {
         super(Tax.class);
+        showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
     }
 
     /**

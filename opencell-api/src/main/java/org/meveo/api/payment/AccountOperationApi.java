@@ -277,6 +277,13 @@ public class AccountOperationApi extends BaseApi {
         accountOperation.setStatus(postData.getStatus());
         accountOperation.setReason(postData.getReason());
         accountOperation.setAccountingExportFile(postData.getAccountingExportFile());
+        accountOperation.setPaymentInfo(postData.getPaymentInfo());
+        accountOperation.setPaymentInfo1(postData.getPaymentInfo1());
+        accountOperation.setPaymentInfo2(postData.getPaymentInfo2());
+        accountOperation.setPaymentInfo3(postData.getPaymentInfo3());
+        accountOperation.setPaymentInfo4(postData.getPaymentInfo4());
+        accountOperation.setPaymentInfo5(postData.getPaymentInfo5());
+        accountOperation.setPaymentInfo6(postData.getPaymentInfo6());
 
         // populate customFields
         try {

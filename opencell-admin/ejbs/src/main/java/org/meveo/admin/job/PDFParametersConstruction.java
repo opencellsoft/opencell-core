@@ -73,7 +73,7 @@ public class PDFParametersConstruction {
 
     @Inject
     private ParamBeanFactory paramBeanFactory;
-
+    
     private String PDF_DIR_NAME = "pdf";
     private NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("FR"));
 
@@ -148,7 +148,9 @@ public class PDFParametersConstruction {
     	String billingAccountLanguage = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
         CustomerAccount customerAccount = invoice.getBillingAccount().getCustomerAccount();
         String name = "";
-        if (customerAccount.getName() != null) {
+        if (invoice.getBillingAccount().getIsCompany()) {
+        	name = invoice.getBillingAccount().getDescription();
+        } else if (customerAccount.getName() != null) {
             name = "";
 
             if (customerAccount.getName().getTitle() != null) {

@@ -77,6 +77,7 @@ import org.meveo.api.security.filter.ObjectFilter;
 import org.meveo.api.security.parameter.ObjectPropertyParser;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.admin.FileType;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.catalog.BusinessOfferModel;
@@ -103,8 +104,10 @@ import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.document.Document;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.FileTypeService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
@@ -120,6 +123,7 @@ import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.TagService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
+import org.meveo.service.document.DocumentService;
 import org.meveo.service.script.ScriptInstanceService;
 
 /**
@@ -183,6 +187,12 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
     @Inject
     private CommercialRuleHeaderService commercialRuleHeaderService;
+
+    @Inject
+    private DocumentService documentService;
+
+    @Inject
+    private FileTypeService fileTypeService;
 
     @Override
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "sellers", entityClass = Seller.class, parser = ObjectPropertyParser.class))
@@ -376,6 +386,12 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         offerTemplate.setDescription(postData.getDescription());
         offerTemplate.setName(postData.getName());
         offerTemplate.setLongDescription(postData.getLongDescription());
+        
+        if(!LifeCycleStatusEnum.RETIRED.equals(offerTemplate.getLifeCycleStatus())) {
+            offerTemplate.setSequence(postData.getSequence());
+            offerTemplate.setDisplay(postData.isDisplay());  
+        }       
+        
         var datePeriod = new DatePeriod();
 
         datePeriod.setFrom(postData.getNewValidFrom());
@@ -407,6 +423,15 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         }
         if (postData.getLongDescriptionsTranslated() != null) {
             offerTemplate.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLongDescriptionsTranslated(), offerTemplate.getLongDescriptionI18n()));
+        }
+
+        if (postData.getDocumentCode() != null) {
+            Document document = documentService.findByCode(postData.getDocumentCode());
+            if (document == null) {
+                throw new EntityDoesNotExistsException("The document with code " + postData.getDocumentCode() + " does not exist");
+            } else {
+                offerTemplate.setDocument(document);
+            }
         }
 
         offerTemplate.setSubscriptionRenewal(subscriptionApi.subscriptionRenewalFromDto(offerTemplate.getSubscriptionRenewal(), postData.getRenewalRule(), false));

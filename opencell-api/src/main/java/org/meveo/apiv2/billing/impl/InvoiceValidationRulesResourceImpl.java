@@ -9,10 +9,12 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.apiv2.billing.InvoiceValidationRuleDto;
 import org.meveo.api.invoice.InvoiceValidationRulesApiService;
 import org.meveo.apiv2.billing.resource.InvoiceValidationRulesResource;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceValidationRule;
 import org.meveo.model.billing.ValidationRuleTypeEnum;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.InvoiceValidationRulesService;
 import org.meveo.service.script.ScriptInstanceService;
@@ -32,6 +34,9 @@ public class InvoiceValidationRulesResourceImpl implements InvoiceValidationRule
 
     @Inject
     private InvoiceTypeService invoiceTypeService;
+    
+    @Inject
+    private InvoiceService invoiceService;
 
     @Inject
     private InvoiceValidationRulesService invoiceValidationRulesService;
@@ -49,9 +54,11 @@ public class InvoiceValidationRulesResourceImpl implements InvoiceValidationRule
         checkMissingParameters(invoiceValidationRuleDto);
         checkInvoiceType(invoiceType);
         checkValidationSriptAndEL(invoiceValidationRuleDto,getValidationRuleType(invoiceValidationRuleDto));
+        ScriptInstance scriptInstance = checkScriptInstance(invoiceValidationRuleDto);
 
         InvoiceValidationRule invoiceValidationRule = invoiceValidationRuleMapper.toEntity(invoiceValidationRuleDto);
         invoiceValidationRule.setInvoiceType(invoiceType);
+        invoiceValidationRule.setValidationScript(scriptInstance);
         checkCodeAndDescription(invoiceValidationRule);
         invoiceValidationRulesApiService.create(invoiceValidationRule);
 
@@ -63,14 +70,14 @@ public class InvoiceValidationRulesResourceImpl implements InvoiceValidationRule
     public Response update(Long invoiceValidationRuleId, InvoiceValidationRuleDto invoiceValidationRuleDto) {
 
         InvoiceType invoiceType = checkInvoiceType(invoiceValidationRuleDto);
-
         checkValidationSriptAndEL(invoiceValidationRuleDto, getValidationRuleType(invoiceValidationRuleDto));
+        ScriptInstance scriptInstance = checkScriptInstance(invoiceValidationRuleDto);
 
         InvoiceValidationRule invoiceValidationRule = ofNullable(invoiceValidationRulesService.findById(invoiceValidationRuleId))
                 .orElseThrow(() -> new EntityDoesNotExistsException(InvoiceValidationRule.class, invoiceValidationRuleId));
 
         invoiceValidationRulesApiService.update(invoiceValidationRule.getId(),
-                invoiceValidationRuleMapper.toEntity(invoiceValidationRuleDto, invoiceValidationRule, invoiceType));
+                invoiceValidationRuleMapper.toEntity(invoiceValidationRuleDto, invoiceValidationRule, invoiceType, scriptInstance));
 
         return Response.ok(buildSucessResponse(invoiceValidationRule.getId())).build();
     }
@@ -88,6 +95,7 @@ public class InvoiceValidationRulesResourceImpl implements InvoiceValidationRule
 
     @Override
     public Response delete(Long id) {
+    	checkRuleAlreadyReferenced(id);
         invoiceValidationRulesApiService.delete(id);
         return Response.ok(buildSucessResponse(id)).build();
     }
@@ -110,6 +118,17 @@ public class InvoiceValidationRulesResourceImpl implements InvoiceValidationRule
         }
         return invoiceType;
     }
+    
+    private ScriptInstance checkScriptInstance(InvoiceValidationRuleDto invoiceValidationRuleDto) {
+    	ScriptInstance scriptInstance = null;
+        if(invoiceValidationRuleDto.getValidationScript() != null) {
+        	scriptInstance = scriptInstanceService.findByCode(invoiceValidationRuleDto.getValidationScript());
+        	 if (scriptInstance == null) {
+                 throw new BusinessException("Script validation does not exist");
+             }
+        }
+        return scriptInstance;
+    }
 
     private void checkMissingParameters(InvoiceValidationRuleDto invoiceValidationRuleDto) {
 
@@ -122,7 +141,6 @@ public class InvoiceValidationRulesResourceImpl implements InvoiceValidationRule
         if (invoiceValidationRuleDto.getType() == null) {
             throw new BadRequestException("Validation Rule Type is missing");
         }
-
     }
 
 
@@ -133,51 +151,66 @@ public class InvoiceValidationRulesResourceImpl implements InvoiceValidationRule
         }
     }
 
+    private void checkRuleAlreadyReferenced(Long id) {
+        if (invoiceService.countInvoicesByValidationRule(id) > 0) {
+            throw new BadRequestException("Rule [id= " + id + "] cannot be deleted as it is suspecting or rejecting some invoices. "
+            		+ "Please, validate, correct, or cancel these invoices before deleting the rule.");
+        }
+    }
 
     private void checkCodeAndDescription(InvoiceValidationRule invoiceValidationRule) {
+        Long ruleId = invoiceValidationRulesService.nextSequenceId();
 
         if (invoiceValidationRule.getCode() == null || invoiceValidationRule.getCode().isEmpty()) {
-            invoiceValidationRule.setCode(invoiceValidationRule.getInvoiceType() + "_" + invoiceValidationRule.getPriority());
+            invoiceValidationRule.setCode("RULE_" + ruleId);
         }
 
         if (invoiceValidationRule.getDescription() == null || invoiceValidationRule.getDescription().isEmpty()) {
 
-            String value = invoiceValidationRule.getType().equals(ValidationRuleTypeEnum.SCRIPT) ? invoiceValidationRule.getValidationScript()
+            String value = invoiceValidationRule.getType().equals(ValidationRuleTypeEnum.SCRIPT) ? getScriptValidationShortCode(invoiceValidationRule.getValidationScript().getCode())
                     : invoiceValidationRule.getValidationEL();
 
-            invoiceValidationRule.setDescription("Rule " + invoiceValidationRule.getPriority() + ": "
+            invoiceValidationRule.setDescription("Rule " + ruleId + ": "
                     + invoiceValidationRule.getFailStatus().toString() + " if " + invoiceValidationRule.getType().toString() + " "
-                    + value +
-                    " fails");
+                    +  value  + " fails");
         }
     }
+    
+    private String getScriptValidationShortCode(String code) {
+    	return code.substring(code.lastIndexOf('.') + 1);
+    }
 
-    private void checkValidationSriptAndEL(InvoiceValidationRuleDto invoiceValidationRuleDto, ValidationRuleTypeEnum validationRuleType) {
+	private void checkValidationSriptAndEL(InvoiceValidationRuleDto invoiceValidationRuleDto, ValidationRuleTypeEnum validationRuleType) {
 
+        boolean isTypeScriptAndScriptValidationNotProvided = Objects.equals(validationRuleType, ValidationRuleTypeEnum.SCRIPT) && StringUtils.isBlank(invoiceValidationRuleDto.getValidationScript());
+        boolean isTypeELAndValidationELNotProvided = Objects.equals(validationRuleType, ValidationRuleTypeEnum.EXPRESSION_LANGUAGE) && StringUtils.isBlank(invoiceValidationRuleDto.getValidationEL());
         boolean isValidationScriptAndValidationEL = invoiceValidationRuleDto.getValidationScript() != null && invoiceValidationRuleDto.getValidationEL() != null;
         boolean isValidationScriptAndTypeScript = invoiceValidationRuleDto.getValidationScript() != null && Objects.equals(validationRuleType, ValidationRuleTypeEnum.SCRIPT);
         boolean isTypeScriptAndValidationELProvided = Objects.equals(validationRuleType, ValidationRuleTypeEnum.SCRIPT) && invoiceValidationRuleDto.getValidationEL() != null;
         boolean isTypeELAndValidationScriptProvided = Objects.equals(validationRuleType, ValidationRuleTypeEnum.EXPRESSION_LANGUAGE) && invoiceValidationRuleDto.getValidationScript() != null;
-
+        
+        if (isTypeScriptAndScriptValidationNotProvided) {
+            throw new InvalidParameterException("Validation script is mandatory for type=SCRIPT");
+        }
+        if (isTypeELAndValidationELNotProvided) {
+            throw new InvalidParameterException("Validation EL is mandatory for type=EL");
+        }
         if (isValidationScriptAndValidationEL) {
             throw new InvalidParameterException("You cannot have both validation script and validation EL");
         }
-
         if (isValidationScriptAndTypeScript) {
             ScriptInstance scriptInstance = scriptInstanceService.findByCode(invoiceValidationRuleDto.getValidationScript());
             if (scriptInstance == null) {
                 throw new InvalidParameterException("Script Instance does not exist");
             }
         }
-
         if (isTypeScriptAndValidationELProvided) {
             throw new InvalidParameterException("Type is set to SCRIPT and validation EL is provided instead of validation script");
-
         }
         if (isTypeELAndValidationScriptProvided) {
             throw new InvalidParameterException("Type is set to EL and validation script is provided instead of validation EL");
         }
-
+       
     }
 
 }

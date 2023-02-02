@@ -12,12 +12,9 @@ import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
 
-import liquibase.pro.packaged.D;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
-import org.assertj.core.util.DateUtil;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
@@ -215,6 +212,9 @@ public class ProductApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Product.class, productCode);
 			}
 
+			if(product.getStatus() == ProductStatusEnum.ACTIVE &&  !productCode.equals(productDto.getCode()))
+				throw new MeveoApiException("you cannot change the product code after activating it");
+
 			if(!productCode.equalsIgnoreCase(productDto.getCode()) &&  productService.findByCode(productDto.getCode()) != null)
 				throw new EntityAlreadyExistsException(Product.class,productDto.getCode());
 
@@ -302,8 +302,13 @@ public class ProductApi extends BaseApi {
 				createProductChargeTemplateMappings(product, productDto.getProductChargeTemplateMappingDto());
 			}
 
+			if(productDto.getAgreementDateSetting() != null) {
+				product.setAgreementDateSetting(productDto.getAgreementDateSetting());
+			}
+
 			var publishedVersion = versions.stream()
 											.filter(pv -> pv.getStatus().equals(VersionStatusEnum.PUBLISHED))
+											.filter(pv -> pv.getValidity().getTo() == null || pv.getValidity().getTo().compareTo(DateUtils.setTimeToZero(new Date()))  >= 0)
 												.sorted( (pv1, pv2) -> pv2.getValidity().compareFieldTo(pv1.getValidity())).collect(Collectors.toList());
 			if(publishedVersion.size() >= 1 ) {
 				product.setCurrentVersion(publishedVersion.get(0));
@@ -697,6 +702,8 @@ public class ProductApi extends BaseApi {
 		product.setModel(productDto.getModel());
 		product.setModelChildren(productDto.getModelChildren());
 		product.setDiscountFlag(productDto.isDiscountFlag());
+
+		product.setAgreementDateSetting(productDto.getAgreementDateSetting());
 		
 		if(productDto.getPriceVersionDateSetting() != null) {
 			product.setPriceVersionDateSetting(productDto.getPriceVersionDateSetting());
