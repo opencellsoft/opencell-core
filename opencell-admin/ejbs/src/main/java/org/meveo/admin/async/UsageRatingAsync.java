@@ -82,7 +82,7 @@ public class UsageRatingAsync {
 
             } catch (Exception e) {
 
-                String rejectReason = org.meveo.commons.utils.StringUtils.truncate(e.getMessage(), 255, true);
+                String rejectReason = e.getMessage();
 
                 StringBuilder aLine = new StringBuilder("Edr Id : ").append(edrId).append(" RejectReason : ").append(rejectReason);
                 result.registerError(aLine.toString());
