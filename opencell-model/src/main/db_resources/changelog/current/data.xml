@@ -18776,24 +18776,24 @@ public class ValidateBRScript extends ValidateBR {
 			<column name="code" value="FR-Invoice" />
 			<column name="tag_start" value="#{" />
 			<column name="tag_end" value="}" />
-			<column name="subject" value="Votre facture #{invoiceInvoiceNumber}" />
+			<column name="subject" value="Votre facture #{invoice.invoiceNumber}" />
 			<column name="type" value="INVOICE" />
 			<column name="htmlcontent">
 				<![CDATA[
-				#{billingAccount.isCompany?billingAccount.billingAccountDescription:billingAccount.name.firstName+billingAccount.name.lastName}
-#{billingAccountAddressAddress1}
-#{billingAccountAddressZipCode} #{billingAccountAddressCity}
-#{billingAccountContactInformationPhone}
+				#{billingAccount.isCompany?billingAccount.description:billingAccount.name.firstName+billingAccount.name.lastName}
+#{billingAccount.address.address1}
+#{billingAccount.address.zipCode} #{billingAccount.address.city}
+#{billingAccount.contactInformation.phone}
 
-#{customerAccount.isCompany?customerAccount.customerAccount.name.firstName+customerAccount.name.lastName}
-#{customerAccountAddressAddress1}
-#{customerAccountAddressZipCode} #{customerAccountAddressCity}
+#{billingAccount.customerAccount.isCompany?billingAccount.customerAccount.description:billingAccount.customerAccount.name.firstName+billingAccount.customerAccount.name.lastName}
+#{billingAccount.customerAccount.address.address1}
+#{billingAccount.customerAccount.address.zipCode} #{billingAccount.customerAccount.address.city}
 
-#{SellerAddressCity}, le #{dayDate}
+#{billingAccount.customerAccount.seller.address.city}, le #{dayDate}
 
-#{billingAccount.LegalEntityTypeCode},
+#{billingAccount.legalEntityType.code},
 
-Nous vous prions de trouver attaché à cet email la facture #{invoiceInvoiceNumber}) d’un montant de #{invoiceTotal}).
+Nous vous prions de trouver attaché à cet email la facture #{invoice.invoiceNumber} d’un montant de #{invoice.netToPay}.
 
 Nous restons à votre disposition dans l’hypothèse d’éventuelles questions. Nous vous prions d'agréer l’assurance de nos salutations les meilleures.
 
@@ -18810,25 +18810,25 @@ Company Signature
 			<column name="code" value="EN-Invoice" />
 			<column name="tag_start" value="#{" />
 			<column name="tag_end" value="}" />
-			<column name="subject" value="Your Invoice #{invoiceInvoiceNumber}" />
+			<column name="subject" value="Your Invoice #{invoice.invoiceNumber}" />
 			<column name="type" value="INVOICE" />
 			<column name="htmlcontent">
 				<![CDATA[
-				#{billingAccount.isCompany?billingAccount.billingAccountDescription:billingAccount.name.firstName+billingAccount.name.lastName}
-#{billingAccountAddressAddress1}
-#{billingAccountAddressZipCode} #{billingAccountAddressCity}
-#{billingAccountContactInformationPhone}
+				#{billingAccount.isCompany?billingAccount.description:billingAccount.name.firstName+billingAccount.name.lastName}
+#{billingAccount.address.address1}
+#{billingAccount.address.zipCode} #{billingAccount.address.city}
+#{billingAccount.contactInformation.phone}
 
-#{customerAccount.isCompany?customerAccount.customerAccount.name.firstName+customerAccount.name.lastName}
-#{customerAccountAddressAddress1}
-#{customerAccountAddressZipCode} #{customerAccountAddressCity}
+#{billingAccount.customerAccount.isCompany?billingAccount.customerAccount.description:billingAccount.customerAccount.name.firstName+billingAccount.customerAccount.name.lastName}
+#{billingAccount.customerAccount.address.address1}
+#{billingAccount.customerAccount.address.zipCode} #{billingAccount.customerAccount.address.city}
 
 
-#{SellerAddressCity}, on #{dayDate}
+#{billingAccount.customerAccount.seller.address.city}, on #{dayDate}
 
-#{billingAccount.LegalEntityTypeCode},
+#{billingAccount.legalEntityType.code},
 
-Please find attached the invoice #{invoiceInvoiceNumber} for an amount of #{invoiceTotal}
+Please find attached the invoice #{invoice.invoiceNumber} for an amount of #{invoice.netToPay}
 
 We remain at your disposal in case of any questions. Please accept, Madam / Sir, the assurance of our best regards.
 

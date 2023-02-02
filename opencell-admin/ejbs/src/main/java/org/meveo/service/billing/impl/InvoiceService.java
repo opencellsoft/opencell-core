@@ -3666,6 +3666,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (electronicBilling && mailingTypeEnum.equals(mailingType)) {
                 Map<Object, Object> params = new HashMap<>();
                 params.put("invoice", invoice);
+                params.put("billingAccount", billingAccount);
+                params.put("dayDate", DateUtils.formatDateWithPattern(new Date(), "dd/MM/yyyy"));
                 String subject = evaluateExpression(emailSubject, params, String.class);
                 String content = evaluateExpression(emailContent, params, String.class);
                 String contentHtml = evaluateExpression(htmlContent, params, String.class);
