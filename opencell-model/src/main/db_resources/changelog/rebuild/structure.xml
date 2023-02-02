@@ -11317,6 +11317,7 @@
             <column name="allow_dunning_charges" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="apply_dunning_charge_fx_exchange_rate" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="accounting_article_id" type="bigint" />
+            <column name="customer_balance_id" type="bigint" />
         </createTable>
 
          <createTable tableName="dunning_pause_reasons">
@@ -18195,7 +18196,14 @@
                                  referencedTableName="ar_occ_template"
                                  referencedColumnNames="id"/>
     </changeSet>
-	
+
+    <changeSet id="#INTRD-13045_20230202_rebuild_str_fk" author="ZBariki">
+        <addForeignKeyConstraint baseTableName="dunning_settings" baseColumnNames="customer_balance_id"
+                                 constraintName="fk_dunning_settings_customer_balance_id"
+                                 referencedTableName="ar_customer_balance"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
     <changeSet id="#4140_08042019" author="hznibar">
@@ -19490,6 +19498,7 @@
 	<changeSet id="#INTRD-12651-20230123" author="AdilElJaouhari" />
     <changeSet id="#INTRD-13062-20230124" author="ZBariki" />
     <changeSet id="#INTRD-13468_20230126" author="hichamELHALOUI" />
+    <changeSet id="#INTRD-13045-20230202" author="ZBariki" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
