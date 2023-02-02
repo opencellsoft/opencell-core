@@ -13088,7 +13088,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="code" value="offers" />
 			<column name="description_i18n" value='{"FRA":"Offres à vérifier","ENG":"Offers to check"}'/>
 			<column name="class_name" value="org.meveo.model.catalog.OfferTemplate" />
-			<column name="mandatory" valueNumeric="1" />
+			<column name="mandatory" valueNumeric="0" />
 			<column name="values_separator" value="\|" />
 			<column name="collection" valueNumeric="1" />
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmount')" />
@@ -19013,6 +19013,7 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
     <changeSet id="#INTRD-12925_20230106" author="aeljaouhari" />
     <changeSet id="#INTRD-13379_20230127" author="aeljaouhari" />
 	<changeSet id="#INTRD-13122_20220111" author="HichamHANINE" />
+	<changeSet id="#INTRD-13717_20230202" author="aeljaouhari" />
 	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
