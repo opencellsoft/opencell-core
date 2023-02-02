@@ -41,7 +41,7 @@
             <property name="hibernate.jpa.compliance.global_id_generators" value="false" />
 
             <!-- Additional query functions for accessing JSON -->
-            <property name="hibernate.dialect" value="org.meveo.commons.persistence.${env.OPENCELL_DIALECT:postgresql.MeveoPostgreSQLDialect}" />
+            <property name="hibernate.dialect" value="org.meveo.commons.persistence.postgresql.MeveoPostgreSQLDialect" />
 
             <!-- Flush mode to COMMIT for hibernate -->
             <property name="org.hibernate.flushMode" value="COMMIT"/>
@@ -88,7 +88,7 @@
             <property name="hibernate.jpa.compliance.global_id_generators" value="false" />
 
             <!-- Additional query functions for accessing JSON -->
-            <property name="hibernate.dialect" value="org.meveo.commons.persistence.${opencell.dialect}" />
+            <property name="hibernate.dialect" value="org.meveo.commons.persistence.postgresql.MeveoPostgreSQLDialect" />
 
             <!-- Flush mode to COMMIT for hibernate -->
             <property name="org.hibernate.flushMode" value="COMMIT"/>

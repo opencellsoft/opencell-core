@@ -75,7 +75,7 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		} else {		    
 	        if (accountingPeriodStatus.equals(AccountingPeriodStatusEnum.CLOSED)) {
 	            Date lastDayOfFiscalYear = DateUtils.newDate(Integer.parseInt(fiscalYear), 12, 31, 0, 0, 0);
-	            boolean isUserHaveThisRole = currentUserProvider.isUserHaveThisRole(currentUser, API_FINANCE_MANAGEMENT);
+	            boolean isUserHaveThisRole = currentUser.hasRole(API_FINANCE_MANAGEMENT);
 	            subAccountingPeriodService.updateSubPeriodsWithStatus(entity, fiscalYear, lastDayOfFiscalYear, status, isUserHaveThisRole);                
             }
 		    
