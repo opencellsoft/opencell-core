@@ -26,6 +26,7 @@ import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.AttributeValue;
@@ -36,6 +37,7 @@ import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
@@ -43,6 +45,7 @@ import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
@@ -65,6 +68,7 @@ public class InvoiceLinesFactory {
     private ProductVersionService productVersionService = (ProductVersionService) getServiceInterface(ProductVersionService.class.getSimpleName());
     private OrderLotService orderLotService = (OrderLotService) getServiceInterface(OrderLotService.class.getSimpleName());
     private ChargeInstanceService chargeInstanceService = (ChargeInstanceService) getServiceInterface(ChargeInstanceService.class.getSimpleName());
+    private UserAccountService userAccountService = (UserAccountService) getServiceInterface(UserAccountService.class.getSimpleName());
     private RatedTransactionService ratedTransactionService = (RatedTransactionService) getServiceInterface(RatedTransactionService.class.getSimpleName());
     private WalletOperationService walletOperationService = (WalletOperationService) getServiceInterface(WalletOperationService.class.getSimpleName());
 
@@ -95,6 +99,7 @@ public class InvoiceLinesFactory {
         InvoiceLine invoiceLine = new InvoiceLine();
         String rtID = (String) data.get("rated_transaction_ids");
         ofNullable(data.get("billing_account__id")).ifPresent(id -> invoiceLine.setBillingAccount(billingAccountService.getEntityManager().getReference(BillingAccount.class, ((Number)id).longValue())));
+        ofNullable(data.get("user_account_id")).ifPresent(id -> invoiceLine.setUserAccount(userAccountService.getEntityManager().getReference(UserAccount.class, id)));
         ofNullable(data.get("billing_run_id")).ifPresent(id -> invoiceLine.setBillingRun(billingRunService.getEntityManager().getReference(BillingRun.class, ((Number)id).longValue())));
         ofNullable(data.get("service_instance_id")).ifPresent(id -> invoiceLine.setServiceInstance(instanceService.getEntityManager().getReference(ServiceInstance.class, ((Number)id).longValue())));
         ofNullable(data.get("offer_id")).ifPresent(id -> invoiceLine.setOfferTemplate(offerTemplateService.getEntityManager().getReference(OfferTemplate.class, ((Number)id).longValue())));
@@ -174,36 +179,46 @@ public class InvoiceLinesFactory {
             }
         }
         invoiceLine.setValidity(validity);
-        if (data.get("charge_instance_id") != null && invoiceLine.getAccountingArticle() == null) {
-            ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
-            Product product = serviceInstance != null ? serviceInstance.getProductVersion() != null ? invoiceLine.getServiceInstance().getProductVersion().getProduct() : null : null;
-            List<AttributeValue> attributeValues = fromAttributeInstances(serviceInstance);
-            Map<String, Object> attributes = fromAttributeValue(attributeValues);
-            ChargeInstance chargeInstance = (ChargeInstance) chargeInstanceService.findById(((Number) data.get("charge_instance_id")).longValue());
-            String[] rtIds = ofNullable((String) data.get("rated_transaction_ids"))
-                    .map(ids -> ids.split(","))
-                    .orElse(null);
-            WalletOperation walletOperation = null;
-            if(rtIds != null && rtIds.length == 1) {
-                walletOperation = walletOperationService.findWoByRatedTransactionId(Long.valueOf(rtIds[0]));
-            }
-            AccountingArticle accountingArticle = accountingArticleService.getAccountingArticle(product, chargeInstance.getChargeTemplate(), attributes, walletOperation)
-                    .orElseThrow(() -> new BusinessException("No accountingArticle found"));
-            invoiceLine.setAccountingArticle(accountingArticle);
-        }
+        calculateAccountingArticle(record, invoiceLine);
+        invoiceLine.setLabel(invoiceLine.getAccountingArticle()!=null?invoiceLine.getAccountingArticle().getDescription() : (String) record.get("label"));
         if(billingRun != null && billingRun.getBillingCycle() != null
-                && billingRun.getBillingCycle().isUseAccountingArticleLabel()
-                && invoiceLine.getAccountingArticle() != null) {
-            String languageCode = getLanguageCode(invoiceLine.getBillingAccount(), appProvider);
-            Map<String, String> descriptionsI18N = invoiceLine.getAccountingArticle().getDescriptionI18nNotNull();
-            invoiceLine.setLabel(ofNullable(descriptionsI18N.get(languageCode))
-                    .orElse(invoiceLine.getAccountingArticle().getDescription()));
-        } else {
-            invoiceLine.setLabel((String) data.get("label"));
-        }
+        							&& billingRun.getBillingCycle().isUseAccountingArticleLabel()
+        							&& invoiceLine.getAccountingArticle() != null) {
+        						String languageCode = getLanguageCode(invoiceLine.getBillingAccount(), appProvider);
+        						Map<String, String> descriptionsI18N = invoiceLine.getAccountingArticle().getDescriptionI18nNotNull();
+        						invoiceLine.setLabel(ofNullable(descriptionsI18N.get(languageCode))
+        								.orElse(invoiceLine.getAccountingArticle().getDescription()));
+        					} else {
+        						invoiceLine.setLabel((String) data.get("label"));
+        					}
+        					
         ofNullable(openOrderNumber).ifPresent(invoiceLine::setOpenOrderNumber);
         return invoiceLine;
     }
+		private void calculateAccountingArticle(Map<String, Object> data, InvoiceLine invoiceLine) {
+			if (data.get("charge_instance_id") != null && invoiceLine.getAccountingArticle() == null) {
+				ChargeInstance chargeInstance = (ChargeInstance) chargeInstanceService.findById((Long) data.get("charge_instance_id"));
+	            ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
+	            Product product = serviceInstance != null ? serviceInstance.getProductVersion() != null ? invoiceLine.getServiceInstance().getProductVersion().getProduct() : null : null;
+	            List<AttributeValue> attributeValues = fromAttributeInstances(serviceInstance);
+	            Map<String, Object> attributes = fromAttributeValue(attributeValues);
+	            String[] rtIds = ofNullable((String) data.get("rated_transaction_ids"))
+	                    .map(ids -> ids.split(","))
+	                    .orElse(null);
+	            WalletOperation walletOperation = null;
+	            if(rtIds != null && rtIds.length == 1) {
+	                walletOperation = walletOperationService.findWoByRatedTransactionId(Long.valueOf(rtIds[0]));
+	            }
+	            AccountingArticle accountingArticle = accountingArticleService.getAccountingArticle(product, chargeInstance.getChargeTemplate(), attributes, walletOperation)
+	                    .orElseThrow(() -> new BusinessException("No accountingArticle found"));
+	            invoiceLine.setAccountingArticle(accountingArticle);
+			} else if(data.get("parameter_2") != null) {
+				String accountingArticleCode = (String) data.get("parameter_2");
+				if(!accountingArticleCode.isBlank()) {
+					invoiceLine.setAccountingArticle(accountingArticleService.findByCode(accountingArticleCode));
+				}
+			}
+		}
 
     /**
      * get usage date from string.

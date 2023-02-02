@@ -19,6 +19,32 @@
 package org.meveo.service.billing.impl;
 
 import com.mifmif.common.regex.Generex;
+import static java.time.Instant.now;
+import static java.util.Optional.ofNullable;
+import static java.util.UUID.randomUUID;
+import static org.meveo.model.sequence.SequenceTypeEnum.ALPHA_UP;
+import static org.meveo.model.sequence.SequenceTypeEnum.CUSTOMER_NO;
+import static org.meveo.model.sequence.SequenceTypeEnum.NUMERIC;
+import static org.meveo.model.sequence.SequenceTypeEnum.REGEXP;
+import static org.meveo.model.sequence.SequenceTypeEnum.RUM;
+import static org.meveo.model.sequence.SequenceTypeEnum.SEQUENCE;
+import static org.meveo.model.sequence.SequenceTypeEnum.UUID;
+import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.StringUtils;
@@ -52,35 +78,14 @@ import org.meveo.service.securityDeposit.impl.SecurityDepositTemplateService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
 
 import static java.lang.String.valueOf;
-import static java.time.Instant.now;
-import static java.util.Optional.ofNullable;
-import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang3.StringUtils.leftPad;
-import static org.meveo.model.sequence.SequenceTypeEnum.ALPHA_UP;
-import static org.meveo.model.sequence.SequenceTypeEnum.CUSTOMER_NO;
-import static org.meveo.model.sequence.SequenceTypeEnum.NUMERIC;
-import static org.meveo.model.sequence.SequenceTypeEnum.REGEXP;
-import static org.meveo.model.sequence.SequenceTypeEnum.RUM;
-import static org.meveo.model.sequence.SequenceTypeEnum.SEQUENCE;
-import static org.meveo.model.sequence.SequenceTypeEnum.UUID;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 /**
@@ -148,9 +153,23 @@ public class ServiceSingleton {
             'V', '6', 'W', '7', 'X', '8', 'Y', '9', 'Z');
 
     private static final String GENERATED_CODE_KEY = "generatedCode";
+    
+    private static Map<Long, AtomicInteger> invoicingTempNumber = new HashMap<>();
 
     private Random random = new SecureRandom();
+    
 
+    public String getTempInvoiceNumber(Long billingRunId){
+    	// #MEL when remove brs from this map?
+    	if(!invoicingTempNumber.containsKey(billingRunId)) {
+    		AtomicInteger counter = new AtomicInteger(0);
+    		invoicingTempNumber.put(billingRunId, counter);
+    	}
+    	AtomicInteger counter = invoicingTempNumber.get(billingRunId);
+    	final String index = ""+counter.incrementAndGet();
+    	return ""+billingRunId+"-"+("000000000"+index).substring(index.length());
+    }
+    
 
     /**
      * Gets the sequence from the seller or its parent hierarchy. Otherwise return the sequence from invoiceType.

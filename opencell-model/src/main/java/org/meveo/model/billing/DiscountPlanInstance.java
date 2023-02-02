@@ -165,16 +165,7 @@ public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEnti
      * @return returns true if this DiscountItem is to be applied
      */
     public boolean isEffective(Date date) {
-        if (startDate == null && endDate == null) {
-            return true;
-        }
-        if (startDate != null && endDate == null) {
-            return date.compareTo(startDate) >= 0;
-        }
-        if (startDate == null) {
-            return date.before(endDate);
-        }
-        return (date.compareTo(startDate) >= 0) && (date.before(endDate));
+        return (startDate==null || date.compareTo(startDate) >= 0) && (endDate==null || date.before(endDate));
     }
 
     public void copyEffectivityDates(DiscountPlan dp) {

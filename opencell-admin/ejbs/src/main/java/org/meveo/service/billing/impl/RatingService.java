@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
@@ -130,8 +129,6 @@ import org.meveo.service.script.catalog.TriggeredEdrScriptInterface;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
 
-import com.google.common.collect.Lists;
-
 /**
  * Rate charges such as {@link org.meveo.model.catalog.OneShotChargeTemplate}, {@link org.meveo.model.catalog.RecurringChargeTemplate} and {@link org.meveo.model.catalog.UsageChargeTemplate}. Generate the
  * {@link org.meveo.model.billing.WalletOperation} with the appropriate values.
@@ -178,7 +175,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     protected CounterInstanceService counterInstanceService;
 
     @Inject
-    private ServiceInstanceService serviceInstanceService;
+	private AccountingArticleService accountingArticleService;
+
 
     final private static BigDecimal HUNDRED = new BigDecimal("100");
     
@@ -186,8 +184,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     private DiscountPlanService discountPlanService;
     @Inject
     private DiscountPlanItemService discountPlanItemService;
-    @Inject
-    private AccountingArticleService accountingArticleService;
 
     @Inject
     private MethodCallingUtils methodCallingUtils;

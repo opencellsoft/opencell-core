@@ -703,4 +703,19 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
             this.amountsByTax.put(amountInfo.getKey(), new SubcategoryInvoiceAgregateAmount(isEnterprise ? amountInfo.getValue() : null, isEnterprise ? null : amountInfo.getValue()));
         }
     }
+    
+    public String getCategoryAggKey() {
+    	return ""+(this.userAccount==null?"":this.userAccount.getId())+this.invoiceSubCategory.getInvoiceCategory().getId();
+    }
+    
+    @Transient
+    private List<Long> ilIDs=new ArrayList<Long>();
+
+    public void addILs(List<Long> ilIDs) {
+    	this.ilIDs.addAll(ilIDs);
+    }
+
+    public List<Long> getIlIDs() {
+    	return this.ilIDs;
+    }
 }

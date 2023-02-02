@@ -802,27 +802,34 @@ public class CustomerAccount extends AccountEntity implements IInvoicingMinimumA
 	public String getDueBalance() {
 		return dueBalance;
 	}
-
-	public AccountingCode getGeneralClientAccount() {
-		return generalClientAccount;
-	}
-
-	public void setGeneralClientAccount(AccountingCode generalClientAccount) {
-		this.generalClientAccount = generalClientAccount;
-	}
-
-	public Set<PaymentPlan> getPaymentPlans() {
-		return paymentPlans;
-	}
-
-	public void setPaymentPlans(Set<PaymentPlan> paymentPlans) {
-		this.paymentPlans = paymentPlans;
-	}
-	
-	 public Seller getSeller() {
-	    	if(customer==null) {
-	    		return null;
-	    	}
-	    	return customer.getSeller();
-	    }
+(??)
+(??)	public AccountingCode getGeneralClientAccount() {
+(??)		return generalClientAccount;
+(??)	}
+(??)
+(??)	public void setGeneralClientAccount(AccountingCode generalClientAccount) {
+(??)		this.generalClientAccount = generalClientAccount;
+(??)	}
+(??)
+(??)	public Set<PaymentPlan> getPaymentPlans() {
+(??)		return paymentPlans;
+(??)	}
+(??)
+(??)	public void setPaymentPlans(Set<PaymentPlan> paymentPlans) {
+(??)		this.paymentPlans = paymentPlans;
+(??)	}
+(??)	
+(??)	 public Seller getSeller() {
+(??)	    	if(customer==null) {
+(??)	    		return null;
+(??)	    	}
+(??)	    	return customer.getSeller();
+(??)	    }
+(??)	
+(??)    public Seller getSeller() {
+(??)    	if(customer==null) {
+(??)    		return null;
+(??)    	}
+(??)    	return customer.getSeller();
+(??)    }
 }

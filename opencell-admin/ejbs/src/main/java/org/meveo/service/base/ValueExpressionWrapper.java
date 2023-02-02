@@ -39,7 +39,6 @@ import javax.el.VariableMapper;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.proxy.HibernateProxy;
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvalidELException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ReflectionUtils;

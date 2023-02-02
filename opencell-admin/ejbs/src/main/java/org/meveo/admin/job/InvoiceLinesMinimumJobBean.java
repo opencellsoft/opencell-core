@@ -30,7 +30,9 @@ import org.slf4j.Logger;
 
 @Stateless
 public class InvoiceLinesMinimumJobBean extends BaseJobBean {
- 
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	private BillingRunService billingRunService;
@@ -40,7 +42,10 @@ public class InvoiceLinesMinimumJobBean extends BaseJobBean {
 
 	@Inject
 	private IteratorBasedJobProcessing iteratorBasedJobProcessing;
- 
+
+	@Inject
+	@ApplicationProvider
+	protected Provider appProvider;
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
@@ -69,6 +74,7 @@ public class InvoiceLinesMinimumJobBean extends BaseJobBean {
 		
 		createMinInvoicLine(result, jobInstance, billingRun, invoiceLinesService.findMinimumsTocheck(billingRun, " join il.serviceInstance mt "), defaultMinAccountingArticle, nbRuns, nbRuns);
 		createMinInvoicLine(result, jobInstance, billingRun, invoiceLinesService.findMinimumsTocheck(billingRun, " join il.subscription mt "), defaultMinAccountingArticle, nbRuns, nbRuns);
+		createMinInvoicLine(result, jobInstance, billingRun, invoiceLinesService.findMinimumsTocheck(billingRun, " join il.userAccount mt "), defaultMinAccountingArticle, nbRuns, nbRuns);
 		createMinInvoicLine(result, jobInstance, billingRun, invoiceLinesService.findMinimumsTocheck(billingRun, " join il.billingAccount mt "), defaultMinAccountingArticle, nbRuns, nbRuns);
 		createMinInvoicLine(result, jobInstance, billingRun, invoiceLinesService.findMinimumsTocheck(billingRun, " join il.billingAccount ba join ba.customerAccount mt "), defaultMinAccountingArticle, nbRuns, nbRuns);
 		createMinInvoicLine(result, jobInstance, billingRun, invoiceLinesService.findMinimumsTocheck(billingRun, " join il.billingAccount ba join ba.customerAccount ca join ca.customer mt "), defaultMinAccountingArticle, nbRuns, nbRuns);

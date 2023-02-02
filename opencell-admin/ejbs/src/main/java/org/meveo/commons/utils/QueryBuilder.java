@@ -115,7 +115,7 @@ public class QueryBuilder {
 
     public static final String  JOIN_AS = " as ";
     
-    private static Set<String> joinAlias = new TreeSet<String>();
+    private Set<String> joinAlias = new TreeSet<String>();
     
     private JoinType joinType = JoinType.INNER ;
     
@@ -356,7 +356,7 @@ public class QueryBuilder {
      * @param fetchFields list of field need to be fetched.
      * @return SQL query.
      */
-    private static String getInitQuery(Class<?> clazz, String alias, boolean doFetch, List<String> fetchFields) {
+    private String getInitQuery(Class<?> clazz, String alias, List<String> fetchFields) {
         StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
         if (fetchFields != null && !fetchFields.isEmpty()) {
             for (String fetchField : fetchFields) {
@@ -375,7 +375,7 @@ public class QueryBuilder {
 	 * @param fetchField
 	 * @return
 	 */
-	public static String getJoinAlias(String alias, String fetchField, boolean checkExisting) {
+	private String getJoinAlias(String alias, String fetchField, boolean checkExisting) {
 		String result = alias+"_"+fetchField.replaceAll("\\.", "_");
 		if(checkExisting) {
 			if(joinAlias.contains(result)) {

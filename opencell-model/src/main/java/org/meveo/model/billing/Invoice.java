@@ -654,6 +654,8 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      */
     @Column(name = "amount_without_tax_before_discount", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amountWithoutTaxBeforeDiscount;
+    @Transient
+  	private Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates;
 
     @Type(type = "numeric_boolean")
     @Column(name = "is_reminder_level_triggered")
@@ -670,6 +672,8 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Column(name = "dunning_collection_plan_triggered")
     private boolean dunningCollectionPlanTriggered;
     
+    @Transient
+  	private Date nextInvoiceDate;
     /**
      * The exchange rate that converted amounts of the invoice.
      */

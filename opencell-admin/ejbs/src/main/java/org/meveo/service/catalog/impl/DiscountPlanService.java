@@ -55,6 +55,10 @@ import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.offer.QuoteOffer;
+import org.meveo.model.quote.QuoteProduct;
+import org.meveo.model.quote.QuoteVersion;
+import org.meveo.model.billing.InvoiceLine;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.WalletOperationService;
@@ -116,7 +120,6 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 	}
 
  
-	 
 	 public boolean matchDiscountPlanExpression(String expression, IDiscountable entity,BaseEntity...entities) throws BusinessException {
 	        Boolean result = true;
 
@@ -150,8 +153,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 	}
 	
  
-	
-	public boolean isDiscountPlanApplicable(IDiscountable entity, DiscountPlan discountPlan,Date applicationDate,BaseEntity... entities) {
+	public boolean isDiscountPlanApplicable(IDiscountable entity, DiscountPlan discountPlan,WalletOperation wo, QuoteVersion quoteVersion, QuoteOffer quoteOffer, QuoteProduct quoteProduct, Date applicationDate, InvoiceLine invoiceLine) {
 		if (!(discountPlan.getStatus().equals(DiscountPlanStatusEnum.IN_USE) || discountPlan.getStatus().equals(DiscountPlanStatusEnum.ACTIVE))) {
 			return false;
 		}
@@ -161,7 +163,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 		applicationDate=applicationDate!=null?applicationDate:new Date();
 		
 		if (discountPlan.isActive() && discountPlan.isEffective(applicationDate)) {
-			if (matchDiscountPlanExpression(discountPlan.getExpressionEl(),entity,entities)) {
+			if (matchDiscountPlanExpression(discountPlan.getExpressionEl(),entity,wo,quoteVersion,null, quoteOffer, quoteProduct, discountPlan)) {
 				return true;
 			}
 		}

@@ -62,6 +62,9 @@ import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.offer.QuoteOffer;
+import org.meveo.model.quote.QuoteProduct;
+import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.ChargeInstanceService;
@@ -81,9 +84,6 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
 	
 	@Inject
 	private PricePlanMatrixVersionService pricePlanMatrixVersionService;
-	
-	@Inject
-    private ChargeInstanceService<ChargeInstance> chargeInstanceService;
 	
 	@Inject
 	PricePlanMatrixService pricePlanMatrixService;
@@ -246,7 +246,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
 
     }
     
-    public List<DiscountPlanItem>  getApplicableDiscountPlanItems(BillingAccount billingAccount, DiscountPlan discountPlan,Subscription subscription,WalletOperation walletOperation,AccountingArticle accountingArticle,DiscountPlanItemTypeEnum discountPlanItemType,Date applicationDate)
+    public List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount, DiscountPlan discountPlan,WalletOperation walletOperation,QuoteVersion quoteVersion,QuoteOffer quoteOffer, QuoteProduct quoteProduct,AccountingArticle accountingArticle,DiscountPlanItemTypeEnum discountPlanItemType,Date applicationDate)
             throws BusinessException {
     	List<DiscountPlanItem>  applicableDiscountPlanItems = new ArrayList<DiscountPlanItem>();
     	
@@ -259,7 +259,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         }
         
         ChargeTemplate chargeTemplate = null;
-        boolean isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discountPlan,applicationDate,walletOperation,subscription);
+        boolean isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discountPlanItem, walletOperation, quoteVersion, quoteOffer, quoteProduct, null);
         if (walletOperation != null) {
             chargeTemplate = walletOperation.getChargeInstance().getChargeTemplate();
             
@@ -293,7 +293,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
 
         		if(isFixedDpItemIncluded || discountPlanItemType==null || (discountPlanItemType!=null && discountPlanItemType.equals(discountPlanItem.getDiscountPlanItemType()))) {
         			if ((lowPriority==null ||lowPriority.equals(discountPlanItem.getPriority()))
-        					&& isDiscountPlanItemApplicable(billingAccount, discountPlanItem, accountingArticle,subscription,walletOperation)) {
+        					&& isDiscountPlanItemApplicable(billingAccount, discountPlanItem, walletOperation, quoteVersion, quoteOffer, quoteProduct, null)) {
         				lowPriority=lowPriority!=null?lowPriority:discountPlanItem.getPriority();
 
         				if(discountPlanItem.getSequence()==null) {
@@ -308,13 +308,14 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         }
         log.debug("getApplicableDiscountPlanItems discountPlan code={},applicableDiscountPlanItems size={}",discountPlan.getCode(),applicableDiscountPlanItems.size());
         return applicableDiscountPlanItems;
-     }
-    public boolean isDiscountPlanItemApplicable(BillingAccount billingAccount,DiscountPlanItem discountPlanItem,AccountingArticle accountingArticle,Subscription subscription,WalletOperation walletOperation)
+    }
+    
+    public boolean isDiscountPlanItemApplicable(BillingAccount billingAccount,DiscountPlanItem discountPlanItem,WalletOperation walletOperation,QuoteVersion quoteVersion,QuoteOffer quoteOffer, QuoteProduct quoteProduct,AccountingArticle accountingArticle)
             throws BusinessException {
     	boolean isApplicable=false;
         if (discountPlanItem.isActive() 
                 		  && (discountPlanItem.getTargetAccountingArticle().isEmpty()  || accountingArticle == null || (discountPlanItem.getTargetAccountingArticle().contains(accountingArticle))) 
-                		  && discountPlanService.matchDiscountPlanExpression(discountPlanItem.getExpressionEl(), billingAccount, walletOperation,subscription, accountingArticle)) {
+                		  && discountPlanService.matchDiscountPlanExpression(discountPlanItem.getExpressionEl(), billingAccount, walletOperation,quoteVersion, null, quoteOffer, quoteProduct, discountPlanItem.getDiscountPlan())) {
                   	
         	isApplicable=true;
                   }

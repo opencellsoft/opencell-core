@@ -587,7 +587,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
        
         String truncateDateFunction = EntityManagerProvider.isDBOracle()?"TRUNC":"DATE";
         
-        String queryTemplate = "DROP VIEW IF EXISTS billing_wallet_operation_period; CREATE OR REPLACE VIEW billing_wallet_operation_period AS select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id {{ADDITIONAL_ORDER_BY}}) as period "
+        String queryTemplate = "CREATE OR REPLACE VIEW billing_wallet_operation_period AS select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id {{ADDITIONAL_ORDER_BY}}) as period "
                 + " from (select o.*, (case when (" + truncateDateFunction + "(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id {{ADDITIONAL_ORDER_BY}})) {{PERIOD_END_DATE_INCLUDED}}= " + truncateDateFunction + "(o.start_date)) then 0 else 1 end) as flag "
                 + " FROM billing_wallet_operation o WHERE o.status='OPEN' ) o ";
         
