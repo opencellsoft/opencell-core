@@ -77,7 +77,7 @@ public class CustomDDRequestBuilder extends AbstractDDRequestBuilder {
     }
 
     @Override
-    public List<AccountOperation> findListAoToPay(DDRequestLotOp ddrequestLotOp) throws BusinessException {
+    public List<Long> findListAoToPay(DDRequestLotOp ddrequestLotOp) throws BusinessException {
         Map<String, Object> scriptContext = new HashMap<String, Object>();
         scriptContext.put(DDRequestBuilderScript.DD_REQUEST_LIST_AO, super.findListAoToPay(ddrequestLotOp));
         return ddRequestBuilderScriptInterface.findListAoToPay(scriptContext);
