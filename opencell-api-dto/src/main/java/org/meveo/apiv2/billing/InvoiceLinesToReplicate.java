@@ -20,4 +20,7 @@ public interface InvoiceLinesToReplicate {
 
 	@Schema(description = "Containing list of invoice line Ids to replicate in the new adjustment.")
 	List<Long> getInvoiceLinesIds();
+
+    @Schema(description = "Containing list of invoice line Ids to replicate in the new adjustment.")
+    List<InvoiceLineRTs> getInvoiceLinesRTs();
 }

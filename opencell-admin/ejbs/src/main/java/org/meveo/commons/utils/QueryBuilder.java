@@ -22,18 +22,21 @@ import static org.meveo.service.base.PersistenceService.FROM_JSON_FUNCTION;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -98,6 +101,7 @@ public class QueryBuilder {
     private int nbCriteriaInOrClause;
 
     private Map<String, JoinWrapper> innerJoins = new HashMap<>();
+    private Set<InnerJoin> rootInnerJoins = new HashSet<>();
 
     private InnerJoin rootInnerJoin;
 
@@ -131,14 +135,15 @@ public class QueryBuilder {
     }
 
     public String formatInnerJoins(){
-        return innerJoins.values().isEmpty() ? "" : innerJoins.values().stream()
-                .map(jw -> format(alias, jw.getRootInnerJoin(), q.toString().startsWith(FROM)))
+        return rootInnerJoins.isEmpty() ? "" : rootInnerJoins.stream()
+                .map(rij -> format(alias, rij, q.toString().startsWith(FROM)))
                 .collect(Collectors.joining(" ", " ", " "));
     }
 
     public String formatInnerJoins(boolean doFetch){
-        return innerJoins.values().isEmpty() ? "" : innerJoins.values().stream()
-                .map(jw -> format(alias, jw.getRootInnerJoin(), doFetch))
+    	var i = this.alias;
+        return rootInnerJoins.isEmpty() ? "" : rootInnerJoins.stream()
+                .map(rij -> format(alias, rij, doFetch))
                 .collect(Collectors.joining(" ", " ", " "));
     }
 
@@ -151,7 +156,7 @@ public class QueryBuilder {
                 .map(next -> {
                     if(!next.getNextInnerJoins().isEmpty())
                         return format(innerJoin.getAlias(), next, doFetch);
-					return String.format(joinType.toString() + " join %s%s.%s %s", shouldFetch, innerJoin.getAlias(), next.getName(), next.getAlias());
+					return String.format("left join %s%s.%s %s", shouldFetch, innerJoin.getAlias(), next.getName(), next.getAlias());
                 })
                 .collect(Collectors.joining(" ", sql, ""));
     }
@@ -165,17 +170,25 @@ public class QueryBuilder {
 
         String joinAlias = "";
         InnerJoin rootInnerJoin = null;
-
-        for(int i = fields.length - 2; i >= 0; i--){
-            InnerJoin innerJoin = new InnerJoin(fields[i]);
-            if(i == fields.length - 2){
+        InnerJoin subInnerJoin = null;
+        List<InnerJoin> lookForInnerJoin = new ArrayList<>(rootInnerJoins);
+        for(AtomicInteger index = new AtomicInteger(); index.get() <= fields.length - 2; index.incrementAndGet()) {
+        	int i = index.get();
+        	InnerJoin innerJoin = lookForInnerJoin.stream().filter(rij -> rij.getName().equals(fields[index.get()])).findFirst().orElse(new InnerJoin(fields[index.get()])); 
+        	if(i == 0) {
+        		rootInnerJoin = innerJoin;
+        	} else {
+        		subInnerJoin.next(innerJoin);
+        	}
+        	if(i == fields.length - 2){
                 joinAlias = innerJoin.getAlias()+ "." + fields[i + 1];
-            }else {
-                innerJoin.next(rootInnerJoin);
             }
-            rootInnerJoin = innerJoin;
+        	subInnerJoin = innerJoin;
+        	lookForInnerJoin = innerJoin.getNextInnerJoins();
         }
-
+        
+        rootInnerJoins.add(rootInnerJoin);
+        
         return new JoinWrapper(rootInnerJoin, joinAlias);
     }
 
@@ -243,10 +256,14 @@ public class QueryBuilder {
     }
     
     
-	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, JoinType joinType) {
-		this(getInitQuery(clazz, alias, fetchFields), alias);
+	public QueryBuilder(Class<?> clazz, String alias, boolean doFetch, List<String> fetchFields, JoinType joinType) {
+		this(getInitQuery(clazz, alias, doFetch, fetchFields), alias);
     	this.clazz = clazz;
 		this.joinType = joinType != null ? joinType : JoinType.INNER;
+	}
+	
+	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, JoinType joinType) {
+		this(clazz, alias, true, fetchFields, joinType);
 	}
 
 	/**
@@ -259,7 +276,20 @@ public class QueryBuilder {
 	 * @param filterOperator Operator to build where statement
 	 */
 	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, JoinType joinType, FilterOperatorEnum filterOperator) {
-		this(clazz, alias, fetchFields, joinType);
+		this(clazz, alias, true, fetchFields, joinType, filterOperator);
+	}
+
+	/**
+	 * Contructor 
+	 * 
+	 * @param clazz Class for which query is created.
+     * @param alias Alias of a main table.
+     * @param fetchFields Additional (list/map type) fields to fetch
+	 * @param joinType
+	 * @param filterOperator Operator to build where statement
+	 */
+	public QueryBuilder(Class<?> clazz, String alias, boolean doFetch, List<String> fetchFields, JoinType joinType, FilterOperatorEnum filterOperator) {
+		this(clazz, alias, doFetch, fetchFields, joinType);
     	this.filterOperator = filterOperator;
 	}
 
@@ -271,7 +301,7 @@ public class QueryBuilder {
      * @param fetchFields Additional (list/map type) fields to fetch
      */
     public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields) {
-        this(getInitQuery(clazz, alias, fetchFields), alias);
+        this(getInitQuery(clazz, alias, true, fetchFields), alias);
         this.clazz = clazz;
     }
 
@@ -315,7 +345,9 @@ public class QueryBuilder {
     }
 
     private static void addInnerJoinTag(StringBuilder query) {
-        query.append(INNER_JOINS);
+        if(query.indexOf(INNER_JOINS) == -1) {
+        	query.append(INNER_JOINS);
+        }
     }
 
     /**
@@ -324,12 +356,12 @@ public class QueryBuilder {
      * @param fetchFields list of field need to be fetched.
      * @return SQL query.
      */
-    private static String getInitQuery(Class<?> clazz, String alias, List<String> fetchFields) {
+    private static String getInitQuery(Class<?> clazz, String alias, boolean doFetch, List<String> fetchFields) {
         StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
         if (fetchFields != null && !fetchFields.isEmpty()) {
             for (String fetchField : fetchFields) {
 				String joinAlias = fetchField.contains(JOIN_AS) ? "" : JOIN_AS + getJoinAlias(alias, fetchField, false);
-				query.append(" left join fetch " + alias + "." + fetchField + joinAlias);
+				query.append(" left join " + (doFetch ? "fetch " : "") + alias + "." + fetchField + joinAlias);
             }
         }
 
@@ -380,7 +412,7 @@ public class QueryBuilder {
     public QueryBuilder addPaginationConfiguration(PaginationConfiguration paginationConfiguration, String sortAlias) {
         this.paginationSortAlias = sortAlias;
         this.paginationConfiguration = paginationConfiguration;
-        if(paginationConfiguration.getJoinType() != null) {
+        if(paginationConfiguration != null && paginationConfiguration.getJoinType() != null) {
         	this.joinType=paginationConfiguration.getJoinType();
         }
         return this;
@@ -407,8 +439,10 @@ public class QueryBuilder {
     public void addSearchWildcardOrFilters(String tableNameAlias, String[] fields, Object value) {
         startOrClause();
         Stream.of(fields).forEach(field -> {
+        	String concatenatedFields = tableNameAlias+"."+field;
+        	concatenatedFields = createExplicitInnerJoins(concatenatedFields);
             String param = convertFieldToParam(tableNameAlias + "." + field);
-            addSqlCriterion(tableNameAlias + "." + field + " like :" + param, param, "%" + value + "%");
+            addSqlCriterion(concatenatedFields + " like :" + param, param, "%" + value + "%");
         });
         endOrClause();
     }
@@ -418,8 +452,10 @@ public class QueryBuilder {
         String valueStr = "%" + String.valueOf(value).toLowerCase() + "%";
         startOrClause();
         Stream.of(fields).forEach(field -> {
+        	String concatenatedFields = tableNameAlias+"."+field;
+        	concatenatedFields = createExplicitInnerJoins(concatenatedFields);
             String param = convertFieldToParam(tableNameAlias + "." + field);
-            addSqlCriterion("lower(" + tableNameAlias + "." + field + ") like :" + param, param, valueStr);
+            addSqlCriterion("lower(" + concatenatedFields + ") like :" + param, param, valueStr);
         });
         endOrClause();
     }
@@ -1076,24 +1112,25 @@ public class QueryBuilder {
      * @return instance of Query builder.
      */
     public QueryBuilder addValueIsGreaterThanField(String field, Object value, boolean optional) {
-
+    	String concatenatedFields = createExplicitInnerJoins(field);
         if (value instanceof Double) {
-            addCriterion(field, " > ", BigDecimal.valueOf((Double) value), false, optional);
+            addCriterion(concatenatedFields, " > ", BigDecimal.valueOf((Double) value), false, optional);
         } else if (value instanceof Number) {
-            addCriterion(field, " > ", value, false, optional);
+            addCriterion(concatenatedFields, " > ", value, false, optional);
         } else if (value instanceof Date) {
-            addCriterionDateRangeFromTruncatedToDay(field, (Date) value, optional, true);
+            addCriterionDateRangeFromTruncatedToDay(concatenatedFields, (Date) value, optional, true);
         }
         return this;
     }
 
     public QueryBuilder addValueIsGreaterThanOrEqualField(String field, Object value, boolean optional) {
+    	String concatenatedFields = createExplicitInnerJoins(field);
         if (value instanceof Double) {
-            addCriterion(field, " >= ", BigDecimal.valueOf((Double) value), false, optional);
+            addCriterion(concatenatedFields, " >= ", BigDecimal.valueOf((Double) value), false, optional);
         } else if (value instanceof Number) {
-            addCriterion(field, " >= ", value, false, optional);
+            addCriterion(concatenatedFields, " >= ", value, false, optional);
         } else if (value instanceof Date) {
-            addCriterionDateRangeFromTruncatedToDay(field, (Date) value, optional,false);
+            addCriterionDateRangeFromTruncatedToDay(concatenatedFields, (Date) value, optional,false);
         }
         return this;
     }
@@ -1108,13 +1145,13 @@ public class QueryBuilder {
      * @return instance of Query builder.
      */
     public QueryBuilder addValueIsLessThanField(String field, Object value, boolean inclusive, boolean isFieldValueOptional) {
-
+    	String concatenatedFields = createExplicitInnerJoins(field);
         if (value instanceof Double) {
-            addCriterion(field, inclusive ? " <= " : " < ", BigDecimal.valueOf((Double) value), true, isFieldValueOptional);
+            addCriterion(concatenatedFields, inclusive ? " <= " : " < ", BigDecimal.valueOf((Double) value), true, isFieldValueOptional);
         } else if (value instanceof Number) {
-            addCriterion(field, inclusive ? " <= " : " < ", value, true, isFieldValueOptional);
+            addCriterion(concatenatedFields, inclusive ? " <= " : " < ", value, true, isFieldValueOptional);
         } else if (value instanceof Date) {
-            addCriterionDateRangeToTruncatedToDay(field, (Date) value, inclusive, isFieldValueOptional);
+            addCriterionDateRangeToTruncatedToDay(concatenatedFields, (Date) value, inclusive, isFieldValueOptional);
         }
         return this;
     }
@@ -1307,7 +1344,7 @@ public class QueryBuilder {
     }
 
     public QueryBuilder startNestedFilter(FilterOperatorEnum operator) {
-    	if(!nestedClauses.empty()) {
+    	if(nestedClauses != null && !nestedClauses.empty()) {
     		NestedQuery parentNF = nestedClauses.peek();
     		if(parentNF.hasOneOrMoreCriteria) {
     			q.append(" " + parentNF.operator + " ");
@@ -1608,7 +1645,7 @@ public class QueryBuilder {
         if (firstRow != null) {
             query.setFirstResult(firstRow);
         }
-        if (numberOfRows != null) {
+        if (numberOfRows != null && numberOfRows != 0) {
             query.setMaxResults(numberOfRows);
         }
     }
@@ -1636,13 +1673,17 @@ public class QueryBuilder {
         if (firstRow != null) {
             query.setFirstResult(firstRow);
         }
-        if (numberOfRows != null) {
+        if (numberOfRows != null && numberOfRows != 0) {
             query.setMaxResults(numberOfRows);
         }
     }
 
     public String getSqlString() {
         return toStringQuery();
+    }
+    
+    public String getSqlString(boolean doFetch) {
+        return toStringQuery(doFetch);
     }
 
     private String toStringQuery() {
@@ -1720,18 +1761,22 @@ public class QueryBuilder {
      * @param key the searched key
      * @return the filter value for the provided key.
      */
-    public static String getFilterByKey(Map<String, String> filters, String key) {
+    public static String getFilterByKey(Map<String, Object> filters, String key) {
 
         String value = null;
         if (filters != null && !filters.isEmpty() && !StringUtils.isBlank(key)) {
-            Map<String, String> upperCasefilters = filters.entrySet().stream().collect(
+            Map<String, Object> upperCasefilters = filters.entrySet().stream().collect(
                     Collectors.toMap(
                             entry -> entry.getKey().toUpperCase(),
                             entry -> entry.getValue()
                     )
             );
-            value = (upperCasefilters.get(key.toUpperCase()));
+            value = (String)(upperCasefilters.get(key.toUpperCase()));
         }
         return value;
     }
+    
+    public Map<String, JoinWrapper> getInnerJoins() {
+		return Collections.unmodifiableMap(this.innerJoins);
+	}
 }

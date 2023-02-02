@@ -19,6 +19,7 @@
 package org.meveo.api.dto.communication;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -59,6 +60,10 @@ public class MessageTemplateDto extends BusinessEntityDto {
     
     /** The type. */
     private MessageTemplateTypeEnum type;
+
+    private String textContent;
+
+    private List<TranslatedTextContentDto> translatedTextContent;
 
     /**
      * Instantiates a new message template dto.
@@ -188,5 +193,21 @@ public class MessageTemplateDto extends BusinessEntityDto {
      */
     public void setType(MessageTemplateTypeEnum type) {
         this.type = type;
+    }
+
+    public String getTextContent() {
+        return textContent;
+    }
+
+    public void setTextContent(String textContent) {
+        this.textContent = textContent;
+    }
+
+    public List<TranslatedTextContentDto> getTranslatedTextContent() {
+        return translatedTextContent;
+    }
+
+    public void setTranslatedTextContent(List<TranslatedTextContentDto> translatedTextContent) {
+        this.translatedTextContent = translatedTextContent;
     }
 }

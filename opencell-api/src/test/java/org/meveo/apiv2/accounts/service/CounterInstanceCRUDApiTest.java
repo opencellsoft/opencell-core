@@ -7,15 +7,14 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.accounts.CounterInstanceDto;
 import org.meveo.apiv2.billing.CounterPeriodDto;
-import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UsageChargeInstance;
-import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.catalog.CounterTemplateLevel;
 import org.meveo.model.catalog.CounterTypeEnum;
-import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.CounterInstanceService;
@@ -24,6 +23,7 @@ import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
+import org.meveo.service.catalog.impl.ProductChargeTemplateMappingService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -37,10 +37,12 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CounterInstanceCRUDApiTest {
@@ -65,6 +67,8 @@ public class CounterInstanceCRUDApiTest {
     private CounterInstanceService counterInstanceService;
     @Mock
     private CounterPeriodService counterPeriodService;
+    @Mock
+    private ProductChargeTemplateMappingService productChargeTemplateMappingService;
 
     // ************************************************************
     // *********************** CREATE *****************************
@@ -72,39 +76,33 @@ public class CounterInstanceCRUDApiTest {
 
     @Test
     public void createNominal() {
-        CounterInstanceDto dto = buildDto("OVH", "OVH Counter TU", "TEMP1", "CUSTO",
-                "BILL", "USER", "SUBSC", "SRV", Set.of("USAGE", "AUTRE"),
+        CounterInstanceDto dto = buildDto("TEMP1", "CUSTO",
+                "BILL", "USER", "SUBSC", "SRV", "USAGE",
                 Set.of(buildCounterPeriodDto(CounterTypeEnum.NOTIFICATION,
                         Date.from(LocalDate.now().minusMonths(12).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                         Date.from(LocalDate.now().minusMonths(10).atStartOfDay(ZoneId.systemDefault()).toInstant()))
                 ));
 
-        Mockito.when(counterTemplateService.findByCode(any())).thenReturn(new CounterTemplate());
-        Mockito.when(customerAccountService.findByCode(any())).thenReturn(new CustomerAccount());
-        Mockito.when(billingAccountService.findByCode(any())).thenReturn(new BillingAccount());
-        Mockito.when(userAccountService.findByCode(any())).thenReturn(new UserAccount());
-        Mockito.when(subscriptionService.findByCode(any())).thenReturn(new Subscription());
-        Mockito.when(serviceInstanceService.findByCode(any())).thenReturn(new ServiceInstance());
+        CounterTemplate ct = new CounterTemplate();
+        ct.setCounterLevel(CounterTemplateLevel.SU);
+
+        ServiceInstance si1 = new ServiceInstance();
+        si1.setId(1L);
+        si1.setStatusDate(DateUtils.fromLocalDate(LocalDate.now().minusMonths(1)));
+        ServiceInstance si2 = new ServiceInstance();
+        si2.setId(2L);
+        si2.setStatusDate(DateUtils.fromLocalDate(LocalDate.now().minusDays(15)));
+        ServiceInstance si3 = new ServiceInstance();
+        si3.setId(3L);
+        si3.setStatusDate(DateUtils.fromLocalDate(LocalDate.now().minusDays(10)));
+
+        Mockito.when(counterTemplateService.findByCode(any())).thenReturn(ct);
+        Mockito.when(serviceInstanceService.findByCodeAndCodeSubscription(any(), any())).thenReturn(List.of(si1, si2, si3));
+        CounterInstance mockNewInstance = new CounterInstance();
+        mockNewInstance.setId(1L);
+        Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), any(), eq(false))).thenReturn(mockNewInstance);
         Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
-        Mockito.when(chargeInstanceService.findByCode("AUTRE")).thenReturn(new RecurringChargeInstance());
-        Mockito.doNothing().when(counterPeriodService).create(any());
-
-        apiService.createCounterInstance(dto);
-
-    }
-
-    @Test
-    public void createNominalPeriodWithoutType() {
-        CounterInstanceDto dto = buildDto("OVH", "OVH Counter TU", "TEMP1", "CUSTO",
-                null, null, null, null, null,
-                Set.of(buildCounterPeriodDto(null,
-                        Date.from(LocalDate.now().minusMonths(12).atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                        Date.from(LocalDate.now().minusMonths(10).atStartOfDay(ZoneId.systemDefault()).toInstant()))
-                ));
-
-        Mockito.when(counterTemplateService.findByCode(any())).thenReturn(new CounterTemplate());
-        Mockito.when(customerAccountService.findByCode(any())).thenReturn(new CustomerAccount());
-        Mockito.doNothing().when(counterPeriodService).create(any());
 
         apiService.createCounterInstance(dto);
 
@@ -112,8 +110,8 @@ public class CounterInstanceCRUDApiTest {
 
     @Test(expected = EntityDoesNotExistsException.class)
     public void codeTemplateNotExistErr() {
-        CounterInstanceDto dto = buildDto("OVH", "OVH Counter TU", "TEMP1", "NOT_FOUND",
-                null, null, null, null, null, null);
+        CounterInstanceDto dto = buildDto("TEMP1", "NOT_FOUND",
+                null, null, "ABC", "ABC", "USAGE", null);
 
         Mockito.when(counterTemplateService.findByCode(any())).thenReturn(null);
 
@@ -123,8 +121,8 @@ public class CounterInstanceCRUDApiTest {
 
     @Test(expected = EntityDoesNotExistsException.class)
     public void custAccountNotExistErr() {
-        CounterInstanceDto dto = buildDto("OVH", "OVH Counter TU", "TEMP1", "NOT_FOUND",
-                null, null, null, null, null, null);
+        CounterInstanceDto dto = buildDto("TEMP1", "NOT_FOUND",
+                null, "ABC", "ABC", "ABC", "USAGE", null);
 
         Mockito.when(counterTemplateService.findByCode(any())).thenReturn(new CounterTemplate());
 
@@ -134,11 +132,10 @@ public class CounterInstanceCRUDApiTest {
 
     @Test(expected = EntityDoesNotExistsException.class)
     public void billAccountNotExistErr() {
-        CounterInstanceDto dto = buildDto("OVH", "OVH Counter TU", "TEMP1", "CUSTO",
-                "NOT_FOUND", null, null, null, null, null);
+        CounterInstanceDto dto = buildDto("TEMP1", "CUSTO",
+                "NOT_FOUND", "ABC", "ABC", "ABC", "USAGE", null);
 
         Mockito.when(counterTemplateService.findByCode(any())).thenReturn(new CounterTemplate());
-        Mockito.when(customerAccountService.findByCode(any())).thenReturn(new CustomerAccount());
 
         apiService.createCounterInstance(dto);
 
@@ -146,11 +143,10 @@ public class CounterInstanceCRUDApiTest {
 
     @Test(expected = EntityDoesNotExistsException.class)
     public void userAccountNotExistErr() {
-        CounterInstanceDto dto = buildDto("OVH", "OVH Counter TU", "TEMP1", "CUSTO",
-                null, "NOT_FOUND", null, null, null, null);
+        CounterInstanceDto dto = buildDto("TEMP1", "CUSTO",
+                null, "NOT_FOUND", "ABC", "ABC", "USAGE", null);
 
         Mockito.when(counterTemplateService.findByCode(any())).thenReturn(new CounterTemplate());
-        Mockito.when(customerAccountService.findByCode(any())).thenReturn(new CustomerAccount());
 
         apiService.createCounterInstance(dto);
 
@@ -158,11 +154,10 @@ public class CounterInstanceCRUDApiTest {
 
     @Test(expected = EntityDoesNotExistsException.class)
     public void subNotExistErr() {
-        CounterInstanceDto dto = buildDto("OVH", "OVH Counter TU", "TEMP1", "CUSTO",
-                null, null, "NOT_FOUND", null, null, null);
+        CounterInstanceDto dto = buildDto("TEMP1", "CUSTO",
+                null, "ABC", "NOT_FOUND", "ABC", "USAGE", null);
 
         Mockito.when(counterTemplateService.findByCode(any())).thenReturn(new CounterTemplate());
-        Mockito.when(customerAccountService.findByCode(any())).thenReturn(new CustomerAccount());
 
         apiService.createCounterInstance(dto);
 
@@ -170,11 +165,10 @@ public class CounterInstanceCRUDApiTest {
 
     @Test(expected = EntityDoesNotExistsException.class)
     public void serviceInstanceNotExistErr() {
-        CounterInstanceDto dto = buildDto("OVH", "OVH Counter TU", "TEMP1", "CUSTO",
-                null, null, null, "NOT_FOUND", null, null);
+        CounterInstanceDto dto = buildDto("TEMP1", "CUSTO",
+                null, "UA", "ABC", "NOT_FOUND", "USAGE", null);
 
         Mockito.when(counterTemplateService.findByCode(any())).thenReturn(new CounterTemplate());
-        Mockito.when(customerAccountService.findByCode(any())).thenReturn(new CustomerAccount());
 
         apiService.createCounterInstance(dto);
 
@@ -182,26 +176,41 @@ public class CounterInstanceCRUDApiTest {
 
     @Test(expected = EntityDoesNotExistsException.class)
     public void chargeNotExistErr() {
-        CounterInstanceDto dto = buildDto("OVH", "OVH Counter TU", "TEMP1", "CUSTO",
-                null, null, null, null, Set.of("NOT_FOUND"), null);
+        CounterInstanceDto dto = buildDto("TEMP1", "CUSTO",
+                null, "ABC", "ABC", "ABC", "NOT_FOUND", null);
 
         Mockito.when(counterTemplateService.findByCode(any())).thenReturn(new CounterTemplate());
-        Mockito.when(customerAccountService.findByCode(any())).thenReturn(new CustomerAccount());
 
         apiService.createCounterInstance(dto);
 
     }
 
     @Test
-    public void mandatoriesFieldCheckErr() {
-        CounterInstanceDto dto = buildDto("OVH", "OVH Counter TU", "TEMP1", null,
-                null, null, null, null, null, null);
+    public void invalidProductAndCharge() {
+        CounterPeriodDto period = buildCounterPeriodDto(CounterTypeEnum.NOTIFICATION,
+                Date.from(LocalDate.now().minusMonths(10).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().minusMonths(12).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+
+        CounterInstanceDto dto = buildDto("TEMP1", "CUSTO",
+                null, "USER", "SUBSC", "SRV", "USAGE", Set.of(period));
+
+        UsageChargeInstance charge = new UsageChargeInstance();
+
+        Mockito.when(counterTemplateService.findByCode(any())).thenReturn(new CounterTemplate());
+        Mockito.when(serviceInstanceService.findByCodeAndCodeSubscription(any(), any())).thenReturn(List.of(new ServiceInstance(), new ServiceInstance()));
+        CounterInstance mockNewInstance = new CounterInstance();
+        mockNewInstance.setId(1L);
+        Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(false);
+        //Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {
             apiService.createCounterInstance(dto);
             Assert.fail("Exception must be thrown");
         } catch (BusinessApiException e) {
-            Assert.assertEquals(e.getMessage(), "At least one of those value is mandatory : customerAccountCode, billingAccountCode, userAccountCode, subscriptionCode, serviceInstanceCode");
+            Assert.assertEquals(e.getMessage(), "ChargeInstance with [type=" + charge.getChargeType() + ", code=" + charge.getCode()
+                    + "] is not linked to Product [code=" + null
+                    + "] and CounterTemplate [code=" + null + "]");
         }
 
     }
@@ -212,18 +221,22 @@ public class CounterInstanceCRUDApiTest {
                 Date.from(LocalDate.now().minusMonths(10).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 Date.from(LocalDate.now().minusMonths(12).atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
-        CounterInstanceDto dto = buildDto("OVH", "OVH Counter TU", "TEMP1", "CUSTO",
-                null, null, null, null, null,
-                Set.of(period));
+        CounterInstanceDto dto = buildDto("TEMP1", "CUSTO",
+                null, "USER", "SUBSC", "SRV", "USAGE", Set.of(period));
 
         Mockito.when(counterTemplateService.findByCode(any())).thenReturn(new CounterTemplate());
-        Mockito.when(customerAccountService.findByCode(any())).thenReturn(new CustomerAccount());
+        Mockito.when(serviceInstanceService.findByCodeAndCodeSubscription(any(), any())).thenReturn(List.of(new ServiceInstance(), new ServiceInstance()));
+        CounterInstance mockNewInstance = new CounterInstance();
+        mockNewInstance.setId(1L);
+        Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {
             apiService.createCounterInstance(dto);
             Assert.fail("Exception must be thrown");
         } catch (BusinessApiException e) {
-            Assert.assertEquals(e.getMessage(), "Invalid period dates : Start must be before End [start=" + formatDate(period.getPeriodStartDate()) + " - end=" + formatDate(period.getPeriodEndDate()) + "]");
+            Assert.assertEquals(e.getMessage(), "Invalid period dates : Start must be before End [start=" + formatDate(period.getStartDate()) + " - end=" + formatDate(period.getEndDate()) + "]");
         }
 
     }
@@ -238,13 +251,16 @@ public class CounterInstanceCRUDApiTest {
                 Date.from(LocalDate.now().minusMonths(11).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 Date.from(LocalDate.now().minusMonths(9).atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
-        CounterInstanceDto dto = buildDto("OVH", "OVH Counter TU", "TEMP1", "CUSTO",
-                null, null, null, null, null,
-                Set.of(period, period2));
+        CounterInstanceDto dto = buildDto("TEMP1", "CUSTO",
+                null, "USER", "SUBSC", "SRV", "USAGE", Set.of(period, period2));
 
         Mockito.when(counterTemplateService.findByCode(any())).thenReturn(new CounterTemplate());
-        Mockito.when(customerAccountService.findByCode(any())).thenReturn(new CustomerAccount());
-        Mockito.doNothing().when(counterPeriodService).create(any());
+        Mockito.when(serviceInstanceService.findByCodeAndCodeSubscription(any(), any())).thenReturn(List.of(new ServiceInstance(), new ServiceInstance()));
+        CounterInstance mockNewInstance = new CounterInstance();
+        mockNewInstance.setId(1L);
+        Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {
             apiService.createCounterInstance(dto);
@@ -265,13 +281,16 @@ public class CounterInstanceCRUDApiTest {
                 Date.from(LocalDate.now().minusMonths(11).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 Date.from(LocalDate.now().minusMonths(9).atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
-        CounterInstanceDto dto = buildDto("OVH", "OVH Counter TU", "TEMP1", "CUSTO",
-                null, null, null, null, null,
-                Set.of(period2, period));
+        CounterInstanceDto dto = buildDto("TEMP1", "CUSTO",
+                null, "USER", "SUBSC", "SRV", "USAGE", Set.of(period2, period));
 
         Mockito.when(counterTemplateService.findByCode(any())).thenReturn(new CounterTemplate());
-        Mockito.when(customerAccountService.findByCode(any())).thenReturn(new CustomerAccount());
-        Mockito.doNothing().when(counterPeriodService).create(any());
+        Mockito.when(serviceInstanceService.findByCodeAndCodeSubscription(any(), any())).thenReturn(List.of(new ServiceInstance(), new ServiceInstance()));
+        CounterInstance mockNewInstance = new CounterInstance();
+        mockNewInstance.setId(1L);
+        Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {
             apiService.createCounterInstance(dto);
@@ -292,13 +311,16 @@ public class CounterInstanceCRUDApiTest {
                 Date.from(LocalDate.now().minusMonths(12).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 Date.from(LocalDate.now().minusMonths(10).atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
-        CounterInstanceDto dto = buildDto("OVH", "OVH Counter TU", "TEMP1", "CUSTO",
-                null, null, null, null, null,
-                Set.of(period, period2));
+        CounterInstanceDto dto = buildDto("TEMP1", "CUSTO",
+                null, "USER", "SUBSC", "SRV", "USAGE", Set.of(period, period2));
 
         Mockito.when(counterTemplateService.findByCode(any())).thenReturn(new CounterTemplate());
-        Mockito.when(customerAccountService.findByCode(any())).thenReturn(new CustomerAccount());
-        Mockito.doNothing().when(counterPeriodService).create(any());
+        Mockito.when(serviceInstanceService.findByCodeAndCodeSubscription(any(), any())).thenReturn(List.of(new ServiceInstance(), new ServiceInstance()));
+        CounterInstance mockNewInstance = new CounterInstance();
+        mockNewInstance.setId(1L);
+        Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {
             apiService.createCounterInstance(dto);
@@ -319,13 +341,16 @@ public class CounterInstanceCRUDApiTest {
                 Date.from(LocalDate.now().minusMonths(12).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 Date.from(LocalDate.now().minusMonths(10).atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
-        CounterInstanceDto dto = buildDto("OVH", "OVH Counter TU", "TEMP1", "CUSTO",
-                null, null, null, null, null,
-                Set.of(period2, period));
+        CounterInstanceDto dto = buildDto("TEMP1", "CUSTO",
+                null, "USER", "SUBSC", "SRV", "USAGE", Set.of(period2, period));
 
         Mockito.when(counterTemplateService.findByCode(any())).thenReturn(new CounterTemplate());
-        Mockito.when(customerAccountService.findByCode(any())).thenReturn(new CustomerAccount());
-        Mockito.doNothing().when(counterPeriodService).create(any());
+        Mockito.when(serviceInstanceService.findByCodeAndCodeSubscription(any(), any())).thenReturn(List.of(new ServiceInstance(), new ServiceInstance()));
+        CounterInstance mockNewInstance = new CounterInstance();
+        mockNewInstance.setId(1L);
+        Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {
             apiService.createCounterInstance(dto);
@@ -346,13 +371,16 @@ public class CounterInstanceCRUDApiTest {
                 Date.from(LocalDate.now().minusMonths(14).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 Date.from(LocalDate.now().minusMonths(10).atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
-        CounterInstanceDto dto = buildDto("OVH", "OVH Counter TU", "TEMP1", "CUSTO",
-                null, null, null, null, null,
-                Set.of(period, period2));
+        CounterInstanceDto dto = buildDto("TEMP1", "CUSTO",
+                null, "USER", "SUBSC", "SRV", "USAGE", Set.of(period, period2));
 
         Mockito.when(counterTemplateService.findByCode(any())).thenReturn(new CounterTemplate());
-        Mockito.when(customerAccountService.findByCode(any())).thenReturn(new CustomerAccount());
-        Mockito.doNothing().when(counterPeriodService).create(any());
+        Mockito.when(serviceInstanceService.findByCodeAndCodeSubscription(any(), any())).thenReturn(List.of(new ServiceInstance(), new ServiceInstance()));
+        CounterInstance mockNewInstance = new CounterInstance();
+        mockNewInstance.setId(1L);
+        Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {
             apiService.createCounterInstance(dto);
@@ -373,13 +401,16 @@ public class CounterInstanceCRUDApiTest {
                 Date.from(LocalDate.now().minusMonths(14).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 Date.from(LocalDate.now().minusMonths(10).atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
-        CounterInstanceDto dto = buildDto("OVH", "OVH Counter TU", "TEMP1", "CUSTO",
-                null, null, null, null, null,
-                Set.of(period2, period));
+        CounterInstanceDto dto = buildDto("TEMP1", "CUSTO",
+                null, "USER", "SUBSC", "SRV", "USAGE", Set.of(period2, period));
 
         Mockito.when(counterTemplateService.findByCode(any())).thenReturn(new CounterTemplate());
-        Mockito.when(customerAccountService.findByCode(any())).thenReturn(new CustomerAccount());
-        Mockito.doNothing().when(counterPeriodService).create(any());
+        Mockito.when(serviceInstanceService.findByCodeAndCodeSubscription(any(), any())).thenReturn(List.of(new ServiceInstance(), new ServiceInstance()));
+        CounterInstance mockNewInstance = new CounterInstance();
+        mockNewInstance.setId(1L);
+        Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {
             apiService.createCounterInstance(dto);
@@ -400,13 +431,16 @@ public class CounterInstanceCRUDApiTest {
                 Date.from(LocalDate.now().minusMonths(11).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 Date.from(LocalDate.now().minusMonths(10).atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
-        CounterInstanceDto dto = buildDto("OVH", "OVH Counter TU", "TEMP1", "CUSTO",
-                null, null, null, null, null,
-                Set.of(period, period2));
+        CounterInstanceDto dto = buildDto("TEMP1", "CUSTO",
+                null, "USER", "SUBSC", "SRV", "USAGE", Set.of(period, period2));
 
         Mockito.when(counterTemplateService.findByCode(any())).thenReturn(new CounterTemplate());
-        Mockito.when(customerAccountService.findByCode(any())).thenReturn(new CustomerAccount());
-        Mockito.doNothing().when(counterPeriodService).create(any());
+        Mockito.when(serviceInstanceService.findByCodeAndCodeSubscription(any(), any())).thenReturn(List.of(new ServiceInstance(), new ServiceInstance()));
+        CounterInstance mockNewInstance = new CounterInstance();
+        mockNewInstance.setId(1L);
+        Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {
             apiService.createCounterInstance(dto);
@@ -427,13 +461,16 @@ public class CounterInstanceCRUDApiTest {
                 Date.from(LocalDate.now().minusMonths(11).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 Date.from(LocalDate.now().minusMonths(10).atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
-        CounterInstanceDto dto = buildDto("OVH", "OVH Counter TU", "TEMP1", "CUSTO",
-                null, null, null, null, null,
-                Set.of(period2, period));
+        CounterInstanceDto dto = buildDto("TEMP1", "CUSTO",
+                null, "USER", "SUBSC", "SRV", "USAGE", Set.of(period2, period));
 
         Mockito.when(counterTemplateService.findByCode(any())).thenReturn(new CounterTemplate());
-        Mockito.when(customerAccountService.findByCode(any())).thenReturn(new CustomerAccount());
-        Mockito.doNothing().when(counterPeriodService).create(any());
+        Mockito.when(serviceInstanceService.findByCodeAndCodeSubscription(any(), any())).thenReturn(List.of(new ServiceInstance(), new ServiceInstance()));
+        CounterInstance mockNewInstance = new CounterInstance();
+        mockNewInstance.setId(1L);
+        Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {
             apiService.createCounterInstance(dto);
@@ -454,13 +491,16 @@ public class CounterInstanceCRUDApiTest {
                 Date.from(LocalDate.now().minusMonths(14).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 Date.from(LocalDate.now().minusMonths(8).atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
-        CounterInstanceDto dto = buildDto("OVH", "OVH Counter TU", "TEMP1", "CUSTO",
-                null, null, null, null, null,
-                Set.of(period, period2));
+        CounterInstanceDto dto = buildDto("TEMP1", "CUSTO",
+                null, "USER", "SUBSC", "SRV", "USAGE", Set.of(period, period2));
 
         Mockito.when(counterTemplateService.findByCode(any())).thenReturn(new CounterTemplate());
-        Mockito.when(customerAccountService.findByCode(any())).thenReturn(new CustomerAccount());
-        Mockito.doNothing().when(counterPeriodService).create(any());
+        Mockito.when(serviceInstanceService.findByCodeAndCodeSubscription(any(), any())).thenReturn(List.of(new ServiceInstance(), new ServiceInstance()));
+        CounterInstance mockNewInstance = new CounterInstance();
+        mockNewInstance.setId(1L);
+        Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {
             apiService.createCounterInstance(dto);
@@ -481,13 +521,16 @@ public class CounterInstanceCRUDApiTest {
                 Date.from(LocalDate.now().minusMonths(14).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 Date.from(LocalDate.now().minusMonths(8).atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
-        CounterInstanceDto dto = buildDto("OVH", "OVH Counter TU", "TEMP1", "CUSTO",
-                null, null, null, null, null,
-                Set.of(period2, period));
+        CounterInstanceDto dto = buildDto("TEMP1", "CUSTO",
+                null, "USER", "SUBSC", "SRV", "USAGE", Set.of(period2, period));
 
         Mockito.when(counterTemplateService.findByCode(any())).thenReturn(new CounterTemplate());
-        Mockito.when(customerAccountService.findByCode(any())).thenReturn(new CustomerAccount());
-        Mockito.doNothing().when(counterPeriodService).create(any());
+        Mockito.when(serviceInstanceService.findByCodeAndCodeSubscription(any(), any())).thenReturn(List.of(new ServiceInstance(), new ServiceInstance()));
+        CounterInstance mockNewInstance = new CounterInstance();
+        mockNewInstance.setId(1L);
+        Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {
             apiService.createCounterInstance(dto);
@@ -508,13 +551,16 @@ public class CounterInstanceCRUDApiTest {
                 Date.from(LocalDate.now().minusMonths(12).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 Date.from(LocalDate.now().minusMonths(9).atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
-        CounterInstanceDto dto = buildDto("OVH", "OVH Counter TU", "TEMP1", "CUSTO",
-                null, null, null, null, null,
-                Set.of(period, period2));
+        CounterInstanceDto dto = buildDto("TEMP1", "CUSTO",
+                null, "USER", "SUBSC", "SRV", "USAGE", Set.of(period, period2));
 
         Mockito.when(counterTemplateService.findByCode(any())).thenReturn(new CounterTemplate());
-        Mockito.when(customerAccountService.findByCode(any())).thenReturn(new CustomerAccount());
-        Mockito.doNothing().when(counterPeriodService).create(any());
+        Mockito.when(serviceInstanceService.findByCodeAndCodeSubscription(any(), any())).thenReturn(List.of(new ServiceInstance(), new ServiceInstance()));
+        CounterInstance mockNewInstance = new CounterInstance();
+        mockNewInstance.setId(1L);
+        Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {
             apiService.createCounterInstance(dto);
@@ -535,19 +581,132 @@ public class CounterInstanceCRUDApiTest {
                 Date.from(LocalDate.now().minusMonths(12).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 Date.from(LocalDate.now().minusMonths(9).atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
-        CounterInstanceDto dto = buildDto("OVH", "OVH Counter TU", "TEMP1", "CUSTO",
-                null, null, null, null, null,
-                Set.of(period2, period));
+        CounterInstanceDto dto = buildDto("TEMP1", "CUSTO",
+                null, "USER", "SUBSC", "SRV", "USAGE", Set.of(period2, period));
 
         Mockito.when(counterTemplateService.findByCode(any())).thenReturn(new CounterTemplate());
-        Mockito.when(customerAccountService.findByCode(any())).thenReturn(new CustomerAccount());
-        Mockito.doNothing().when(counterPeriodService).create(any());
+        Mockito.when(serviceInstanceService.findByCodeAndCodeSubscription(any(), any())).thenReturn(List.of(new ServiceInstance(), new ServiceInstance()));
+        CounterInstance mockNewInstance = new CounterInstance();
+        mockNewInstance.setId(1L);
+        Mockito.when(productChargeTemplateMappingService.checkExistenceByProductAndChargeAndCounterTemplate(any(), any(), any())).thenReturn(true);
+        Mockito.when(counterInstanceService.counterInstanciationWithoutForceCommit(any(), any(), any(), eq(false))).thenReturn(mockNewInstance);
+        Mockito.when(chargeInstanceService.findByCode("USAGE")).thenReturn(new UsageChargeInstance());
 
         try {
             apiService.createCounterInstance(dto);
             Assert.fail("Exception must be thrown");
         } catch (BusinessApiException e) {
             Assert.assertTrue(e.getMessage().startsWith("No overlapping should occur between counter Date Periods"));
+        }
+
+    }
+
+    @Test
+    public void mandatoryCounterTemplate() {
+        CounterInstanceDto dto = buildDto(null, "NOT_FOUND",
+                null, null, "ABC", "ABC", "USAGE", null);
+
+        try {
+            apiService.createCounterInstance(dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "CounterTemplate code is mandatory");
+        }
+
+    }
+
+    @Test
+    public void mandatoryProductCode() {
+        CounterInstanceDto dto = buildDto("ABC", "NOT_FOUND",
+                null, null, "ABC", null, "USAGE", null);
+
+        try {
+            apiService.createCounterInstance(dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "Product code is mandatory");
+        }
+
+    }
+
+    @Test
+    public void mandatorySubscriptionCode() {
+        CounterInstanceDto dto = buildDto("ABC", "NOT_FOUND",
+                null, null, null, "ABC", "USAGE", null);
+
+        try {
+            apiService.createCounterInstance(dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "Subscription code is mandatory");
+        }
+
+    }
+
+    @Test
+    public void mandatoryChargeCode() {
+        CounterInstanceDto dto = buildDto("ABC", "NOT_FOUND",
+                null, null, "ABC", "ABC", null, null);
+
+        try {
+            apiService.createCounterInstance(dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "Charges are mandatory");
+        }
+
+    }
+
+    @Test
+    public void mandatoryCA() {
+        CounterInstanceDto dto = buildDto("ABC", null,
+                null, null, "ABC", "ABC", "USAGE", null);
+
+        CounterTemplate ct = new CounterTemplate();
+        ct.setCounterLevel(CounterTemplateLevel.CA);
+        Mockito.when(counterTemplateService.findByCode(any())).thenReturn(ct);
+
+        try {
+            apiService.createCounterInstance(dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "CustomerAccount code is mandatory");
+        }
+
+    }
+
+    @Test
+    public void mandatoryBA() {
+        CounterInstanceDto dto = buildDto("ABC", "null",
+                null, null, "ABC", "ABC", "USAGE", null);
+
+        CounterTemplate ct = new CounterTemplate();
+        ct.setCounterLevel(CounterTemplateLevel.BA);
+        Mockito.when(counterTemplateService.findByCode(any())).thenReturn(ct);
+
+        try {
+            apiService.createCounterInstance(dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "BillingAccount code is mandatory");
+        }
+
+    }
+
+    @Test
+    public void mandatoryUA() {
+        CounterInstanceDto dto = buildDto("ABC", "null",
+                "null", null, "ABC", "ABC", "USAGE", null);
+
+        CounterTemplate ct = new CounterTemplate();
+        ct.setCounterLevel(CounterTemplateLevel.UA);
+        Mockito.when(counterTemplateService.findByCode(any())).thenReturn(ct);
+
+        try {
+            apiService.createCounterInstance(dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "UserAccount code is mandatory");
         }
 
     }
@@ -559,22 +718,10 @@ public class CounterInstanceCRUDApiTest {
     // ************************************************************
     // ************************ TOOLS *****************************
     // ************************************************************
-
-    private CounterInstanceDto buildDto(String code, String description, String counterTemplateCode, String customerAccountCode, String billingAccountCode, String userAccountCode,
-                                        String subscriptionCode, String serviceInstanceCode, Set<String> chargeInstances, Set<CounterPeriodDto> counterPeriods) {
+    private CounterInstanceDto buildDto(String counterTemplateCode, String customerAccountCode, String billingAccountCode, String userAccountCode,
+                                        String subscriptionCode, String serviceInstanceCode, String chargeInstanceCode, Set<CounterPeriodDto> counterPeriods) {
 
         return new CounterInstanceDto() {
-
-            @Override
-            public String getCode() {
-                return code;
-            }
-
-            @Nullable
-            @Override
-            public String getDescription() {
-                return description;
-            }
 
             @Override
             public String getCounterTemplateCode() {
@@ -607,14 +754,14 @@ public class CounterInstanceCRUDApiTest {
 
             @Nullable
             @Override
-            public String getServiceInstanceCode() {
+            public String getProductCode() {
                 return serviceInstanceCode;
             }
 
             @Nullable
             @Override
-            public Set<String> getChargeInstances() {
-                return chargeInstances;
+            public String getChargeInstanceCode() {
+                return chargeInstanceCode;
             }
 
             @Nullable
@@ -646,12 +793,12 @@ public class CounterInstanceCRUDApiTest {
             }
 
             @Override
-            public Date getPeriodStartDate() {
+            public Date getStartDate() {
                 return start;
             }
 
             @Override
-            public Date getPeriodEndDate() {
+            public Date getEndDate() {
                 return end;
             }
 

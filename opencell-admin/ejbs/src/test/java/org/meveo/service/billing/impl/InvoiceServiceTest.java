@@ -913,13 +913,13 @@ public class InvoiceServiceTest {
             Invoice invoice = new Invoice();
             invoice.setStatus(status);
             if (rejectEligibilityMap.get(status)) {
-                invoiceService.rejectInvoice(invoice);
-                verify(invoiceService, times(1)).rejectInvoice(invoice);
+                invoiceService.rejectInvoice(invoice, null);
+                verify(invoiceService, times(1)).rejectInvoice(invoice, null);
             } else {
                 exception.expect(BusinessException.class);
                 exception.expectMessage("Can only reject invoices in statuses DRAFT/SUSPECT. current invoice status is :");
-                invoiceService.rejectInvoice(invoice);
-                verify(invoiceService, times(0)).rejectInvoice(invoice);
+                invoiceService.rejectInvoice(invoice, null);
+                verify(invoiceService, times(0)).rejectInvoice(invoice, null);
             }
         }
     }
@@ -939,7 +939,7 @@ public class InvoiceServiceTest {
         invoice.rebuildStatus(InvoiceStatusEnum.REJECTED);
         invoice.setBillingRun(br1);
         when(billingRunService.findById(id1)).thenReturn(br1);
-        when(billingRunService.findOrCreateNextBR(id1)).thenReturn(br2);
+        when(billingRunService.findOrCreateNextQuarantineBR(id1, null)).thenReturn(br2);
         when(invoiceService.findById(id1)).thenReturn(invoice);
         TypedQuery query = mock(TypedQuery.class);
         when(invoiceService.getEntityManager().createNamedQuery("Invoice.moveToBRByIds")).thenReturn(query);

@@ -5,6 +5,7 @@ import org.meveo.apiv2.ordering.ResourceMapper;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceValidationRule;
 import org.meveo.model.billing.ValidationRuleTypeEnum;
+import org.meveo.model.scripts.ScriptInstance;
 
 public class InvoiceValidationRuleMapper extends ResourceMapper<InvoiceValidationRuleDto, InvoiceValidationRule> {
 
@@ -20,17 +21,17 @@ public class InvoiceValidationRuleMapper extends ResourceMapper<InvoiceValidatio
         invoiceValidationRule.setPriority(invoiceValidationRuleDto.getPriority());
         invoiceValidationRule.setType(ValidationRuleTypeEnum.valueOf(invoiceValidationRuleDto.getType()));
         invoiceValidationRule.setValidationEL(invoiceValidationRuleDto.getValidationEL());
-        invoiceValidationRule.setValidationScript(invoiceValidationRuleDto.getValidationScript());
         invoiceValidationRule.setCode(invoiceValidationRuleDto.getCode());
         invoiceValidationRule.setDescription(invoiceValidationRuleDto.getDescription());
         invoiceValidationRule.setValidFrom(invoiceValidationRuleDto.getValidFrom());
         invoiceValidationRule.setValidTo(invoiceValidationRuleDto.getValidTo());
         invoiceValidationRule.setFailStatus(invoiceValidationRuleDto.getFailStatus());
+        invoiceValidationRule.setRuleValues(invoiceValidationRuleDto.getRuleValues());
 
         return invoiceValidationRule;
     }
 
-    public InvoiceValidationRule toEntity(InvoiceValidationRuleDto invoiceValidationRuleDto, InvoiceValidationRule invoiceValidationRule, InvoiceType invoiceType) {
+    public InvoiceValidationRule toEntity(InvoiceValidationRuleDto invoiceValidationRuleDto, InvoiceValidationRule invoiceValidationRule, InvoiceType invoiceType, ScriptInstance scriptInstance) {
 
         if (invoiceValidationRuleDto.getType() != null) {
             invoiceValidationRule.setType(ValidationRuleTypeEnum.valueOf(invoiceValidationRuleDto.getType()));
@@ -38,6 +39,7 @@ public class InvoiceValidationRuleMapper extends ResourceMapper<InvoiceValidatio
 
         if (invoiceValidationRuleDto.getPriority() != null) {
             invoiceValidationRule.setPriority(invoiceValidationRuleDto.getPriority());
+            invoiceValidationRule.setToReorder(!invoiceValidationRuleDto.getPriority().equals(invoiceValidationRule.getPriority()));
         }
 
         if (invoiceType != null) {
@@ -53,7 +55,7 @@ public class InvoiceValidationRuleMapper extends ResourceMapper<InvoiceValidatio
         }
 
         if (invoiceValidationRuleDto.getValidationScript() != null) {
-            invoiceValidationRule.setValidationScript(invoiceValidationRuleDto.getValidationScript());
+            invoiceValidationRule.setValidationScript(scriptInstance);
         }
 
         if (invoiceValidationRuleDto.getCode() != null) {
@@ -69,6 +71,10 @@ public class InvoiceValidationRuleMapper extends ResourceMapper<InvoiceValidatio
 
         if (invoiceValidationRuleDto.getValidTo() != null) {
             invoiceValidationRule.setValidTo(invoiceValidationRuleDto.getValidTo());
+        }
+        
+        if (invoiceValidationRuleDto.getRuleValues() != null) {
+            invoiceValidationRule.setRuleValues(invoiceValidationRuleDto.getRuleValues());
         }
 
 

@@ -67,6 +67,7 @@ public class ProductChargeTemplateBean extends BaseBean<ProductChargeTemplate> {
 
     public ProductChargeTemplateBean() {
         super(ProductChargeTemplate.class);
+        showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
     }
 
     @Override

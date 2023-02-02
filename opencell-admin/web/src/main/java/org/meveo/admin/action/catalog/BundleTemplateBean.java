@@ -98,6 +98,7 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 
     public BundleTemplateBean() {
         super(BundleTemplate.class);
+        showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
     }
 
     @Override

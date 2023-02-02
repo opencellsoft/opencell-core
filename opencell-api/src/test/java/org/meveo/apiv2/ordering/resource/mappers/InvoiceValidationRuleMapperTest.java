@@ -7,6 +7,7 @@ import org.meveo.apiv2.billing.impl.InvoiceValidationRuleMapper;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceValidationRule;
+import org.meveo.model.scripts.ScriptInstance;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +54,7 @@ public class InvoiceValidationRuleMapperTest {
         ImmutableInvoiceValidationRuleDto invoiceValidationRuleDto  = instantiateRandomObject(ImmutableInvoiceValidationRuleDto.class, true);
 
         // When
-        InvoiceValidationRule invoiceValidationRule = invoiceValidationRuleMapper.toEntity(invoiceValidationRuleDto, new InvoiceValidationRule(), new InvoiceType());
+        InvoiceValidationRule invoiceValidationRule = invoiceValidationRuleMapper.toEntity(invoiceValidationRuleDto, new InvoiceValidationRule(), new InvoiceType(), new ScriptInstance());
 
         // Then
         assertDtoAndEntityAreEqual(invoiceValidationRuleDto, invoiceValidationRule);
@@ -66,7 +67,6 @@ public class InvoiceValidationRuleMapperTest {
         assertThat(invoiceValidationRule.getFailStatus()).isEqualTo(invoiceValidationRuleDto.getFailStatus());
         assertThat(invoiceValidationRule.getCode()).isEqualTo(invoiceValidationRuleDto.getCode());
         assertThat(invoiceValidationRule.getDescription()).isEqualTo(invoiceValidationRuleDto.getDescription());
-        assertThat(invoiceValidationRule.getValidationScript()).isEqualTo(invoiceValidationRuleDto.getValidationScript());
     }
 
     public <T> T instantiateRandomObject(Class<T> clazz, boolean onlyBasicFields) throws Exception {

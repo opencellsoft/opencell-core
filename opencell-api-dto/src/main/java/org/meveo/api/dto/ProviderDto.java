@@ -154,6 +154,16 @@ public class ProviderDto extends AuditableEntityDto {
     /** if set to expression, will create cdr.originRecord dynamically**/
     private String cdrDeduplicationKeyEL;
 
+    private String isoICDCode;
+    
+    public String getIsoICDCode() {
+        return isoICDCode;
+    }
+
+    public void setIsoICDCode(String isoICDCode) {
+        this.isoICDCode = isoICDCode;
+    }
+
     /**
      * Instantiates a new provider dto.
      */
@@ -199,9 +209,14 @@ public class ProviderDto extends AuditableEntityDto {
             roundingMode = provider.getRoundingMode();
             invoiceRounding = provider.getInvoiceRounding();
             invoiceRoundingMode = provider.getInvoiceRoundingMode();
+            if (provider.getIcdId() != null) {
+                isoICDCode = provider.getIcdId().getCode();
+            } 
+            
             prepaidReservationExpirationDelayinMillisec = provider.getPrepaidReservationExpirationDelayinMillisec();
             discountAccountingCode = provider.getDiscountAccountingCode();
             email = provider.getEmail();
+            cdrDeduplicationKeyEL=provider.getCdrDeduplicationKeyEL();
 
             this.setEnterprise(provider.isEntreprise());
             this.setLevelDuplication(provider.isLevelDuplication());

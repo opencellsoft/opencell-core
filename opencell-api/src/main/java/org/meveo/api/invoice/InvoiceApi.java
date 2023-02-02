@@ -585,6 +585,8 @@ public class InvoiceApi extends BaseApi {
         if(brGenerateAO || generateAO) {
             invoiceService.generateRecordedInvoiceAO(invoiceId);
         }
+        
+        serviceSingleton.triggersJobs();
 
         Date today = new Date();
         invoice = invoiceService.refreshOrRetrieve(invoice);
@@ -607,7 +609,7 @@ public class InvoiceApi extends BaseApi {
         	} else if(createSD) {
         		SecurityDepositTemplate defaultSDTemplate = securityDepositTemplateService.getDefaultSDTemplate();
         		Long count = securityDepositService.countPerTemplate(defaultSDTemplate);
-        		securityDepositService.createSD(invoice, defaultSDTemplate, count);
+        		securityDepositService.createSecurityDeposit(invoice, defaultSDTemplate, count);
         		
         		//Get SD Template number of instantiation and update it after creating a new SD
         		SecurityDepositTemplate sdt = invoiceService.updateSDTemplate(defaultSDTemplate);
@@ -1279,5 +1281,11 @@ public class InvoiceApi extends BaseApi {
     	Invoice invoice = invoiceService.findById(invoiceId);
     	if(invoice == null) throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
     	return invoiceToDto(invoiceService.duplicate(invoice), false, false, false);
+    }
+
+    public Invoice rebuildInvoice(Long invoiceId, boolean save) {
+        Invoice invoice = invoiceService.findById(invoiceId);
+        invoiceService.rebuildInvoice(invoice, save);
+        return invoice;
     }
 }

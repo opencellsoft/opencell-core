@@ -67,6 +67,10 @@ public class DunningAction extends BusinessEntity {
     @Column(name = "attach_due_invoices")
     private boolean attachDueInvoices = false;
 
+    @Column(name = "type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private DunningModeEnum type;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dunning_agent_id")
     private DunningAgent assignedTo;
@@ -149,5 +153,13 @@ public class DunningAction extends BusinessEntity {
 
     public void setAssignedTo(DunningAgent assignedTo) {
         this.assignedTo = assignedTo;
+    }
+
+    public DunningModeEnum getType() {
+        return type;
+    }
+
+    public void setType(DunningModeEnum type) {
+        this.type = type;
     }
 }

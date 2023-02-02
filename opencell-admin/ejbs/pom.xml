@@ -5,7 +5,7 @@
     <parent>
         <artifactId>opencell-admin</artifactId>
         <groupId>com.opencellsoft</groupId>
-        <version>14.0.0-SNAPSHOT</version>
+        <version>14.2.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>opencell-admin-ejbs</artifactId>
@@ -688,6 +688,12 @@
             <artifactId>onlinepayments-sdk-java</artifactId>
             <version>${version.worldline.onlinepayments-sdk}</version>
         </dependency>
+       
+         <dependency>
+	       <groupId>net.avalara.avatax</groupId>
+		   <artifactId>avatax-rest-v2-api-java_2.11</artifactId>
+		   <version>${version.avalara-sdk}</version>
+		 </dependency>
 
         <dependency>
             <groupId>org.keycloak</groupId>
@@ -777,6 +783,11 @@
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore-nio</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpasyncclient</artifactId>
             <exclusions>
                 <exclusion>
@@ -811,7 +822,7 @@
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>s3</artifactId>
-            <version>2.17.202</version>
+            <version>2.18.34</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.httpcomponents</groupId>

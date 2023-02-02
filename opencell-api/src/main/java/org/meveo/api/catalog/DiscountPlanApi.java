@@ -48,6 +48,7 @@ import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
+import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.billing.impl.InvoiceLineService;
@@ -102,6 +103,11 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         discountPlan.setUsedQuantity(postData.getUsedQuantity());
         discountPlan.setSequence(postData.getSequence());
         discountPlan.setApplicableOnDiscountedPrice(postData.getApplicableOnDiscountedPrice());
+        if (postData.getAutomaticApplication() != null) {
+            discountPlan.setAutomaticApplication(postData.getAutomaticApplication());
+        }
+        checkDiscountPlanAutomaticApplication(discountPlan);
+        
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), discountPlan, true);
@@ -224,6 +230,12 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
             discountPlan.setApplicationLimit(postData.getApplicationLimit());
         }
         
+        if (postData.getAutomaticApplication() != null) {
+            discountPlan.setAutomaticApplication(postData.getAutomaticApplication());
+        }
+        
+        checkDiscountPlanAutomaticApplication(discountPlan);
+        
         discountPlan = discountPlanService.update(discountPlan);
         return discountPlan;
     }
@@ -343,4 +355,12 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
 
         return result;
     }
+    
+	private void checkDiscountPlanAutomaticApplication(DiscountPlan discountPlan) {
+		if (discountPlan.isAutomaticApplication()
+				&& !(discountPlan.getDiscountPlanType().equals(DiscountPlanTypeEnum.OFFER)
+						|| discountPlan.getDiscountPlanType().equals(DiscountPlanTypeEnum.PRODUCT))) {
+			throw new BusinessException("automatic application option is allowed only for Discount plan of type PRODUCT or OFFER");
+		}
+	}
 }

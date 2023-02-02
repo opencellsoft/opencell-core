@@ -21,6 +21,7 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
+import org.meveo.model.cpq.AgreementDateSettingEnum;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.CommercialOrderEnum;
@@ -60,7 +61,7 @@ public class OrderValidationScript extends Script {
         CommercialOrder order = (CommercialOrder) context.get("commercialOrder");
         MeveoUser currentUser = (MeveoUser) context.get(Script.CONTEXT_CURRENT_USER);
 
-        if (!CommercialOrderEnum.DRAFT.toString().equalsIgnoreCase(order.getStatus())) {
+        if (!CommercialOrderEnum.FINALIZED.toString().equalsIgnoreCase(order.getStatus()) && !CommercialOrderEnum.DRAFT.toString().equalsIgnoreCase(order.getStatus())) {
             throw new BusinessException("Can not validate order with status different then DRAFT, order id: " + order.getId());
         }
 
@@ -112,6 +113,7 @@ public class OrderValidationScript extends Script {
             }
         	commercialOrderService.instanciateDiscountPlans(subscription, discountPlans);
 			subscriptionService.update(subscription);
+			serviceInstanceService.getEntityManager().flush();
 			subscriptionService.activateInstantiatedService(subscription);
         }
 
@@ -143,7 +145,9 @@ public class OrderValidationScript extends Script {
         serviceInstance.setCode(product.getCode());
         serviceInstance.setQuantity(orderProduct.getQuantity());
         serviceInstance.setSubscriptionDate(subscription.getSubscriptionDate());
-        serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
+        if(!AgreementDateSettingEnum.MANUAL.equals(orderProduct.getProductVersion().getProduct().getAgreementDateSetting())) {
+        	serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
+        }
         serviceInstance.setRateUntilDate(subscription.getEndAgreementDate());
         serviceInstance.setProductVersion(orderProduct.getProductVersion());
 

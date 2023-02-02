@@ -61,6 +61,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -126,7 +128,7 @@ public class StorageFactory {
             }
 
             S3Client client =
-                    S3Client.builder().region(Region.of(region))
+                    S3Client.builder().forcePathStyle(true).region(Region.of(region))
                     .endpointOverride(URI.create(endpointUrl))
                             .credentialsProvider(
                                     StaticCredentialsProvider.create(
@@ -432,30 +434,6 @@ public class StorageFactory {
         }
 
         return null;
-    }
-
-
-    /**
-     * delete a file in S3 or FileSystem.
-     *
-     * @param file the file
-     */
-    public static void deleteFile(File file) {
-        if (storageType.equals(NFS)) {
-            file.delete();
-        }
-        else if (storageType.equalsIgnoreCase(S3)) {
-            String fullObjectKey = formatFullObjectKey(file.toString());
-
-            Path objectPath = getObjectPath(fullObjectKey);
-
-            try {
-                s3FileSystem.provider().delete(objectPath);
-            }
-            catch (IOException e) {
-                log.error("IOException message : {}", e.getMessage());
-            }
-        }
     }
 
     /**
@@ -1047,32 +1025,41 @@ public class StorageFactory {
      * @param destKey destination key of object.
      *
      */
-    public static void moveObject(String srcKey, String destKey) {
-        log.debug("move object from source key {} to destination key {}", srcKey, destKey);
-        // copy object from srckey to destKey
-        CopyObjectRequest copyObjRequest = CopyObjectRequest.builder()
-                .sourceBucket(bucketName).sourceKey(srcKey)
-                .destinationBucket(bucketName).destinationKey(destKey)
-                .build();
-
-        try {
-            s3FileSystem.getClient().copyObject(copyObjRequest);
+    public static void moveFileOrObject(String srcKey, String destKey) {
+        if (storageType.equals(NFS)) {
+            try {
+                Files.move(Paths.get(srcKey), Paths.get(destKey), StandardCopyOption.ATOMIC_MOVE);
+            } catch (IOException e) {
+                log.error("IOException while moving file : {}", e.getMessage());
+            }
         }
-        catch (NoSuchKeyException e) {
-            log.error("NoSuchKeyException while copying object in addExtension method : {}", e.getMessage());
-        }
+        else if (storageType.equalsIgnoreCase(S3)) {
+            log.debug("move object from source key {} to destination key {}", srcKey, destKey);
+            // copy object from srckey to destKey
+            CopyObjectRequest copyObjRequest = CopyObjectRequest.builder()
+                    .sourceBucket(bucketName).sourceKey(srcKey)
+                    .destinationBucket(bucketName).destinationKey(destKey)
+                    .build();
 
-        log.debug("delete old object at source key {}", srcKey);
-        // delete old object
-        DeleteObjectRequest deleteObjRequest = DeleteObjectRequest.builder()
-                .bucket(bucketName).key(srcKey)
-                .build();
+            try {
+                s3FileSystem.getClient().copyObject(copyObjRequest);
+            }
+            catch (NoSuchKeyException e) {
+                log.error("NoSuchKeyException while copying object in addExtension method : {}", e.getMessage());
+            }
 
-        try {
-            s3FileSystem.getClient().deleteObject(deleteObjRequest);
-        }
-        catch (NoSuchKeyException e) {
-            log.error("NoSuchKeyException while deleting object in addExtension method : {}", e.getMessage());
+            log.debug("delete old object at source key {}", srcKey);
+            // delete old object
+            DeleteObjectRequest deleteObjRequest = DeleteObjectRequest.builder()
+                    .bucket(bucketName).key(srcKey)
+                    .build();
+
+            try {
+                s3FileSystem.getClient().deleteObject(deleteObjRequest);
+            }
+            catch (NoSuchKeyException e) {
+                log.error("NoSuchKeyException while deleting object in addExtension method : {}", e.getMessage());
+            }
         }
     }
 
@@ -1093,7 +1080,7 @@ public class StorageFactory {
             String destKey = formatObjectKey(destFile.getPath());
             log.debug("rename key object in S3 bucket from source key {} to destination key {}", srcKey, destKey);
 
-            moveObject(srcKey, destKey);
+            moveFileOrObject(srcKey, destKey);
 
             return true;
         }
@@ -1240,7 +1227,7 @@ public class StorageFactory {
     public static File[] sortFiles(File[] files, String sortingOption) {
         if (files != null && files.length > 0 && !StringUtils.isBlank(sortingOption)) {
             if (SortingFilesEnum.ALPHA.name().equals(sortingOption)) {
-                Arrays.sort(files, (a, b) -> a.getName().compareTo(b.getName()));
+                Arrays.sort(files, (a, b) -> a.getName().compareToIgnoreCase(b.getName()));
             } else if (SortingFilesEnum.CREATION_DATE.name().equals(sortingOption)) {
                 Arrays.sort(files, (a, b) -> Long.compare(a.lastModified(), b.lastModified()));
             }

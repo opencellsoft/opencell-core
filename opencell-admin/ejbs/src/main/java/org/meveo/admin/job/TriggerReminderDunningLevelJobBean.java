@@ -71,14 +71,16 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
     @TransactionAttribute(REQUIRED)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
         List<DunningPolicy> policies = policyService.getPolicies(true);
-        jobExecutionResult.setNbItemsToProcess(policies.size());
         try {
+            int numberOFAllInvoicesProcessed = 0;
             for (DunningPolicy policy : policies) {
                 DunningCollectionPlan dunningCollectionPlan = collectionPlanService.findByPolicy(policy);
                 for (DunningPolicyLevel policyLevel : policy.getDunningLevels()) {
                     if (policyLevel.getDunningLevel() != null && policyLevel.getDunningLevel().isReminder()) {
                         List<Invoice> invoices = policyService.findEligibleInvoicesForPolicy(policy);
                         processInvoices(invoices, policyLevel.getDunningLevel(), policyLevel, dunningCollectionPlan);
+                        jobExecutionResult.setNbItemsToProcess(jobExecutionResult.getNbItemsToProcess() + invoices.size());
+                        numberOFAllInvoicesProcessed += invoices.size();
                     }
                 }
 
@@ -87,7 +89,7 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
                     collectionPlanService.update(dunningCollectionPlan);
                 }
             }
-            jobExecutionResult.addNbItemsCorrectlyProcessed(policies.size() - jobExecutionResult.getNbItemsProcessedWithError());
+            jobExecutionResult.addNbItemsCorrectlyProcessed(numberOFAllInvoicesProcessed - jobExecutionResult.getNbItemsProcessedWithError());
         } catch (Exception exception) {
             jobExecutionResult.addErrorReport(exception.getMessage());
         }
@@ -202,7 +204,7 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
             }
             if(billingAccount.getContactInformation() != null && billingAccount.getContactInformation().getEmail() != null) {
                 collectionPlanService.sendNotification(seller.getContactInformation().getEmail(),
-                        billingAccount.getContactInformation().getEmail(), emailTemplate, params, attachments);
+                        billingAccount, emailTemplate, params, attachments);
             } else {
                 throw new BusinessException("Billing account email is missing");
             }

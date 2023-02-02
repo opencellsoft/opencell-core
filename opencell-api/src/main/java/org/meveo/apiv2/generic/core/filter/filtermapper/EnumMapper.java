@@ -1,8 +1,8 @@
 package org.meveo.apiv2.generic.core.filter.filtermapper;
 
-import org.meveo.apiv2.generic.core.filter.FilterMapper;
-
 import java.util.stream.Stream;
+
+import org.meveo.api.generics.filter.FilterMapper;
 
 public class EnumMapper extends FilterMapper {
     private final Class clazz;

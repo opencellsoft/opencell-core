@@ -33,7 +33,10 @@ import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.invoice.InvoiceRs;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.communication.email.MailingTypeEnum;
+import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 
 import javax.enterprise.context.RequestScoped;
@@ -58,6 +61,9 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
 
     @Inject
     private InvoiceTypeService invoiceTypeService;
+    
+    @Inject
+    private InvoiceService invoiceService;
 
     @Override
     public CreateInvoiceResponseDto create(InvoiceDto invoiceDto) {
@@ -221,7 +227,15 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
     public ActionStatus validate(ValidateInvoiceRequestDto putData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            invoiceApi.validateInvoice(putData.getInvoiceId(), putData.getGenerateAO(), putData.getRefreshExchangeRate(), true);
+            //if true then validation is ignored, if false or missing then invoice goes through validation process (false as default value)
+            if(!putData.isSkipValidation()) {
+                Invoice invoice = invoiceApi.rebuildInvoice(putData.getInvoiceId(), false);
+                if(invoice != null && invoice.getStatus() == InvoiceStatusEnum.DRAFT) {
+                    invoiceApi.validateInvoice(putData.getInvoiceId(), putData.getGenerateAO(), putData.getRefreshExchangeRate(), true);
+                }
+            }else {
+                invoiceApi.validateInvoice(putData.getInvoiceId(), putData.getGenerateAO(), putData.getRefreshExchangeRate(), true);
+            }
         } catch (Exception e) {
             processException(e, result);
         }

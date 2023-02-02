@@ -1,12 +1,26 @@
 package org.meveo.model.billing;
 
+import java.util.Date;
+import java.util.Map;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.scripts.ScriptInstance;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.Date;
 
 @Entity
 @Table(name = "billing_invoice_validation_rule", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
@@ -38,11 +52,19 @@ public class InvoiceValidationRule extends BusinessEntity {
     @Enumerated(EnumType.STRING)
     private InvoiceValidationStatusEnum failStatus = InvoiceValidationStatusEnum.REJECTED;
 
-    @Column(name = "validation_script")
-    private String validationScript;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "script_instance_id")
+    private ScriptInstance validationScript;
 
     @Column(name = "validation_el")
     private String validationEL;
+    
+    @Type(type = "json")
+    @Column(name = "rule_values", columnDefinition = "jsonb")
+    private Map<String, String> ruleValues;
+    
+    @Transient
+    private boolean toReorder;
 
     public InvoiceType getInvoiceType() {
         return invoiceType;
@@ -84,11 +106,11 @@ public class InvoiceValidationRule extends BusinessEntity {
         this.type = type;
     }
 
-    public String getValidationScript() {
+    public ScriptInstance getValidationScript() {
         return validationScript;
     }
 
-    public void setValidationScript(String validationScript) {
+    public void setValidationScript(ScriptInstance validationScript) {
         this.validationScript = validationScript;
     }
 
@@ -107,4 +129,20 @@ public class InvoiceValidationRule extends BusinessEntity {
     public void setFailStatus(InvoiceValidationStatusEnum failStatus) {
         this.failStatus = failStatus;
     }
+
+	public Map<String, String> getRuleValues() {
+		return ruleValues;
+	}
+
+	public void setRuleValues(Map<String, String> ruleValues) {
+		this.ruleValues = ruleValues;
+	}
+
+	public boolean isToReorder() {
+		return toReorder;
+	}
+
+	public void setToReorder(boolean toReorder) {
+		this.toReorder = toReorder;
+	}
 }

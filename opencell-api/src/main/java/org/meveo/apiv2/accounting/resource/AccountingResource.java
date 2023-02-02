@@ -28,4 +28,16 @@ public interface AccountingResource {
             @ApiResponse(responseCode = "500", description = "Auxiliary account information not correctly evaluated")
     })
     Response getAuxiliaryAccount(@PathParam("customerAccountCode") String customerAccountCode);
+    
+    @GET
+    @Path("/vat/{vat_number}/{country_code}/validate")
+    @Operation(summary = "Check the validate VAT in EUROPE",
+            tags = {"vat_number", "country_code" },
+            description = "Check the validate VAT in EUROPE by vatNumber et countryCode",
+            responses = {
+            @ApiResponse(responseCode = "200", description = "valid VAT in EUROPE"),
+            @ApiResponse(responseCode = "500", description = "inValid VAT in EUROPE")
+    })
+    Response getValByValNbContryCode(@PathParam("vat_number") String vatNumber,
+            @PathParam("country_code") String countryCode);
 }
