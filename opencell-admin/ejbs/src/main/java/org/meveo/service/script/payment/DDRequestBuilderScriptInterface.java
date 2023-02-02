@@ -80,6 +80,6 @@ public interface DDRequestBuilderScriptInterface extends ScriptInterface {
     * @return the list of account operation
     * @throws BusinessException
     */
-    public List<AccountOperation> findListAoToPay(Map<String, Object> methodContext) throws BusinessException;
+    public List<Long> findListAoToPay(Map<String, Object> methodContext) throws BusinessException;
     
 }

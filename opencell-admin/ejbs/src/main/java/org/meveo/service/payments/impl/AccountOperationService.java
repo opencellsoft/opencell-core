@@ -206,7 +206,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
      * @return the a os to pay
      */
     @SuppressWarnings("unchecked")
-    public List<AccountOperation> getAOsToPayOrRefund(PaymentMethodEnum paymentMethodEnum, Date fromDueDate, Date toDueDate, OperationCategoryEnum opCatToProcess, Seller seller) {
+    public List<Long> getAOsToPayOrRefund(PaymentMethodEnum paymentMethodEnum, Date fromDueDate, Date toDueDate, OperationCategoryEnum opCatToProcess, Seller seller) {
         try {
             String queryName = "AccountOperation.listAoToPayOrRefundWithoutCA";
             if (seller != null) {
@@ -218,7 +218,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
             if (seller != null) {
                 query.setParameter("sellerIN", seller);
             }
-            return (List<AccountOperation>) query.getResultList();
+            return (List<Long>) query.getResultList();
 
         } catch (NoResultException e) {
             log.error("error = {}", e);

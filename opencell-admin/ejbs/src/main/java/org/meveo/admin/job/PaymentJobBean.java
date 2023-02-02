@@ -143,7 +143,7 @@ public class PaymentJobBean extends BaseJobBean {
 				toDueDate = DateUtils.addYearsToDate(fromDueDate, 1000);
 			}
 
-			List<AccountOperation> aos = new ArrayList<AccountOperation>();
+			List<Long> aos = new ArrayList<Long>();
 
 			AccountOperationFilterScript aoFilterScript = getAOScriptInstance(jobInstance);
 
@@ -172,7 +172,7 @@ public class PaymentJobBean extends BaseJobBean {
 			MeveoUser lastCurrentUser = currentUser.unProxy();
 
 			while (subListCreator.isHasNext()) {
-				futures.add(paymentAsync.launchAndForget((List<AccountOperation>) subListCreator.getNextWorkSet(), result, createAO, matchingAO, paymentGateway, operationCategory,
+				futures.add(paymentAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, createAO, matchingAO, paymentGateway, operationCategory,
 						paymentMethodType, lastCurrentUser, fromDueDate, toDueDate, aoFilterScript));
 				if (subListCreator.isHasNext()) {
 					try {

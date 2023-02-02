@@ -52,29 +52,28 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
      * @return the DD request item
      * @throws BusinessException the business exception
      */
-    public DDRequestItem createDDRequestItem(BigDecimal amountToPay, DDRequestLOT ddRequestLOT, String caFullName, String errorMsg, List<AccountOperation> listAO)
+    public void createDDRequestItem(BigDecimal amountToPay, DDRequestLOT ddRequestLOT, String caFullName, String errorMsg, List<AccountOperation> listAO)
             throws BusinessException {
-        DDRequestItem ddDequestItem = new DDRequestItem();
-        ddDequestItem.setErrorMsg(errorMsg);
-        ddDequestItem.setAmount(amountToPay);
-        ddDequestItem.setDdRequestLOT(ddRequestLOT);
-        ddDequestItem.setBillingAccountName(caFullName);
-        ddDequestItem.setDueDate(listAO.get(0).getDueDate());
-        ddDequestItem.setPaymentInfo(listAO.get(0).getPaymentInfo());
-        ddDequestItem.setPaymentInfo1(listAO.get(0).getPaymentInfo1());
-        ddDequestItem.setPaymentInfo2(listAO.get(0).getPaymentInfo2());
-        ddDequestItem.setPaymentInfo3(listAO.get(0).getPaymentInfo3());
-        ddDequestItem.setPaymentInfo4(listAO.get(0).getPaymentInfo4());
-        ddDequestItem.setPaymentInfo5(listAO.get(0).getPaymentInfo5());
-        ddDequestItem.setAccountOperations(listAO);
+        DDRequestItem newItem = new DDRequestItem();
+    	newItem.setErrorMsg(errorMsg);
+    	newItem.setAmount(amountToPay);
+    	newItem.setDdRequestLOT(ddRequestLOT);
+        newItem.setBillingAccountName(caFullName);
+        newItem.setDueDate(listAO.get(0).getDueDate());
+        newItem.setPaymentInfo(listAO.get(0).getPaymentInfo());
+        newItem.setPaymentInfo1(listAO.get(0).getPaymentInfo1());
+        newItem.setPaymentInfo2(listAO.get(0).getPaymentInfo2());
+        newItem.setPaymentInfo3(listAO.get(0).getPaymentInfo3());
+        newItem.setPaymentInfo4(listAO.get(0).getPaymentInfo4());
+        newItem.setPaymentInfo5(listAO.get(0).getPaymentInfo5());
+        newItem.setAccountOperations(listAO);
         if(listAO.size() == 1 && !StringUtils.isBlank(listAO.get(0).getReference())) {
-            ddDequestItem.setReference(listAO.get(0).getReference());
+            newItem.setReference(listAO.get(0).getReference());
         }
-        create(ddDequestItem);
+        create(newItem);
         for (AccountOperation ao : listAO) {
-            ao.setDdRequestItem(ddDequestItem);
+            ao.setDdRequestItem(newItem);
         }
-        log.info("ddrequestItem: {} amount {} ", ddDequestItem.getId(), amountToPay);
-        return ddDequestItem;
+        log.info("ddrequestItem: {} amount {} ", newItem.getId(), amountToPay);              
     }
 }

@@ -25,6 +25,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.script.payment.AccountOperationFilterScript;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,9 @@ public class PaymentAsync {
 	/** The unit payment job bean. */
 	@Inject
 	private UnitPaymentJobBean unitPaymentJobBean;
+	
+	@Inject
+	private AccountOperationService accountOperationService;
 
 	/** The JobExecution service. */
 	@Inject
@@ -79,20 +83,21 @@ public class PaymentAsync {
 	 */
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public Future<String> launchAndForget(List<AccountOperation> aos, JobExecutionResultImpl result, boolean createAO, boolean matchingAO, PaymentGateway paymentGateway,
+	public Future<String> launchAndForget(List<Long> aos, JobExecutionResultImpl result, boolean createAO, boolean matchingAO, PaymentGateway paymentGateway,
 			OperationCategoryEnum operationCategory, PaymentMethodEnum paymentMethodType, MeveoUser lastCurrentUser, Date fromDueDate, Date toDueDate,
 			AccountOperationFilterScript aoFilterScript) {
 
 		currentUserProvider.reestablishAuthentication(lastCurrentUser);
 		BigDecimal oneHundred = new BigDecimal("100");
 		int i = 0;
-		for (AccountOperation ao : aos) {
+		for (Long aoId : aos) {
 			i++;
 			if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
 				break;
 			}
 			List<Long> aoIds = new ArrayList<Long>();
-			aoIds.add(ao.getId());
+			aoIds.add(aoId);
+			AccountOperation ao = accountOperationService.findById(aoId);
 			unitPaymentJobBean.execute(result, ao.getCustomerAccount().getId(), aoIds, ao.getUnMatchingAmount().multiply(oneHundred).longValue(), createAO, matchingAO,
 					operationCategory, paymentGateway, paymentMethodType, aoFilterScript);
 
