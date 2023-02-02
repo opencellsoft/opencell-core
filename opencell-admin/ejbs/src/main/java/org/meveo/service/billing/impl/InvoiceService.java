@@ -26,6 +26,7 @@ import static java.util.Comparator.comparingInt;
 import static java.util.Optional.ofNullable;
 import static java.util.Set.of;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
 import static org.meveo.model.shared.DateUtils.setTimeToZero;
@@ -1317,7 +1318,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     private void setInitialCollectionDate(Invoice invoice, BillingCycle billingCycle, BillingRun billingRun) {
 
-        if (billingCycle.getCollectionDateDelayEl() == null) {
+        if (StringUtils.isBlank(billingCycle.getCollectionDateDelayEl())) {
             invoice.setInitialCollectionDate(invoice.getDueDate());
             return;
         }
@@ -3666,6 +3667,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (electronicBilling && mailingTypeEnum.equals(mailingType)) {
                 Map<Object, Object> params = new HashMap<>();
                 params.put("invoice", invoice);
+                params.put("billingAccount", billingAccount);
+                params.put("dayDate", DateUtils.formatDateWithPattern(new Date(), "dd/MM/yyyy"));
                 String subject = evaluateExpression(emailSubject, params, String.class);
                 String content = evaluateExpression(emailContent, params, String.class);
                 String contentHtml = evaluateExpression(htmlContent, params, String.class);
