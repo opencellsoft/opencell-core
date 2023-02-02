@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="20221027"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Webinar-Issue"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -182,6 +182,14 @@
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/@status"/>
 		<fieldDescription><![CDATA[/invoice/@status]]></fieldDescription>
 	</field>
+	<field name="openOrderNumber" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/@openOrderNumber"/>
+		<fieldDescription><![CDATA[/invoice/@openOrderNumber]]></fieldDescription>
+	</field>
+	<field name="orderNumber" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/@orderNumber"/>
+		<fieldDescription><![CDATA[/invoice/@orderNumber]]></fieldDescription>
+	</field>
 	<field name="externalRef1" class="java.lang.String">
 		<fieldDescription><![CDATA[/invoice/header/billingAccount/@externalRef1]]></fieldDescription>
 	</field>
@@ -192,6 +200,14 @@
 	<field name="caName" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/customerAccount/name/name"/>
 		<fieldDescription><![CDATA[/invoice/header/customerAccount/name/name]]></fieldDescription>
+	</field>
+	<field name="caQuality" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/customerAccount/name/quality"/>
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/name/quality]]></fieldDescription>
+	</field>
+	<field name="caFirstName" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/customerAccount/name/firstName"/>
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/name/firstName]]></fieldDescription>
 	</field>
 	<field name="caAddress1" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/customerAccount/address/address1"/>
@@ -217,6 +233,14 @@
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/customer/@vatNo"/>
 		<fieldDescription><![CDATA[/invoice/header/customer/@vatNo]]></fieldDescription>
 	</field>
+	<field name="contracts" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/customer/@vatNo"/>
+		<fieldDescription><![CDATA[/invoice/header/customer/@contracts]]></fieldDescription>
+	</field>
+	<field name="etpNo" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/customer/@etpNo"/>
+		<fieldDescription><![CDATA[/invoice/header/customer/@etpNo]]></fieldDescription>
+	</field>
 	<field name="mobile" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/customer/contact/@mobile"/>
 		<fieldDescription><![CDATA[/invoice/header/customer/contact/@mobile]]></fieldDescription>
@@ -226,8 +250,8 @@
 		<fieldDescription><![CDATA[/invoice/detail/userAccounts/userAccount/subscriptions/subscription/subscriptionDate]]></fieldDescription>
 	</field>
 	<field name="dueDate" class="java.lang.String">
-		<property name="net.sf.jasperreports.xpath.field.expression" value="invoice/header/dueDate"/>
-		<fieldDescription><![CDATA[invoice/header/dueDate]]></fieldDescription>
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/dueDate"/>
+		<fieldDescription><![CDATA[/invoice/header/dueDate]]></fieldDescription>
 	</field>
 	<field name="discountAmountWithoutTax" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/discounts/discount/@discountAmountWithoutTax"/>
@@ -251,7 +275,7 @@
 							<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
 						</reportElement>
 						<rectangle radius="10">
-							<reportElement x="16" y="3" width="216" height="170" forecolor="#FFFFFF" backcolor="#F2F4F5" uuid="ab33f039-d780-4304-9a78-c8a1b32b72e4"/>
+							<reportElement x="16" y="3" width="216" height="157" forecolor="#FFFFFF" backcolor="#F2F4F5" uuid="ab33f039-d780-4304-9a78-c8a1b32b72e4"/>
 							<graphicElement>
 								<pen lineWidth="0.0" lineColor="rgba(0, 0, 0, 0.0)"/>
 							</graphicElement>
@@ -275,7 +299,7 @@
 							<text><![CDATA[Customer]]></text>
 						</staticText>
 						<rectangle radius="10">
-							<reportElement x="16" y="182" width="216" height="108" forecolor="#FFFFFF" backcolor="#F2F4F5" uuid="62eca460-82c3-42a2-8462-a8e3a4f60aee"/>
+							<reportElement x="16" y="182" width="216" height="98" forecolor="#FFFFFF" backcolor="#F2F4F5" uuid="62eca460-82c3-42a2-8462-a8e3a4f60aee"/>
 							<graphicElement>
 								<pen lineWidth="0.0" lineColor="rgba(0, 0, 0, 0.0)"/>
 							</graphicElement>
@@ -296,7 +320,7 @@
 							<textElement textAlignment="Left" verticalAlignment="Middle">
 								<font fontName="Vista Sans OT Bold" size="14" isBold="true"/>
 							</textElement>
-							<text><![CDATA[Subscription]]></text>
+							<text><![CDATA[Your references]]></text>
 						</staticText>
 						<textField isBlankWhenNull="true">
 							<reportElement x="49" y="39" width="180" height="17" uuid="304059f0-60e1-4040-b731-8f30f2b97d2e">
@@ -305,7 +329,7 @@
 							<textElement verticalAlignment="Middle">
 								<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
 							</textElement>
-							<textFieldExpression><![CDATA[$F{caName}.toUpperCase()]]></textFieldExpression>
+							<textFieldExpression><![CDATA[($F{caQuality}==null ? "" : $F{caQuality}.toUpperCase() + " ") + ($F{caFirstName}==null ? "" : $F{caFirstName}.toUpperCase() + " ") + ($F{caName}==null ? "" : $F{caName}.toUpperCase() + " ")]]></textFieldExpression>
 						</textField>
 						<textField isBlankWhenNull="true">
 							<reportElement x="49" y="56" width="180" height="17" uuid="12cd32ba-009c-41bd-9eae-0956ca94678d">
@@ -326,7 +350,7 @@
 							<textFieldExpression><![CDATA[$F{caAddress2}.toUpperCase()]]></textFieldExpression>
 						</textField>
 						<textField isBlankWhenNull="true">
-							<reportElement x="49" y="91" width="174" height="17" uuid="6efb353f-281f-4d34-b2e8-6fa417ed5128">
+							<reportElement x="49" y="90" width="180" height="17" uuid="6efb353f-281f-4d34-b2e8-6fa417ed5128">
 								<property name="com.jaspersoft.studio.unit.height" value="px"/>
 							</reportElement>
 							<textElement verticalAlignment="Middle">
@@ -334,41 +358,25 @@
 							</textElement>
 							<textFieldExpression><![CDATA[$F{caPostalCode}.toUpperCase() + "  " + $F{caCity}.toUpperCase()]]></textFieldExpression>
 						</textField>
-						<textField isBlankWhenNull="true">
-							<reportElement x="50" y="240" width="151" height="17" uuid="23c38d61-db6a-4396-b5fd-a345c9469a0e"/>
+						<staticText>
+							<reportElement x="50" y="208" width="66" height="17" uuid="23c38d61-db6a-4396-b5fd-a345c9469a0e">
+								<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							</reportElement>
 							<textElement verticalAlignment="Middle">
-								<font fontName="Vista Sans OT Bold" size="10" isBold="false"/>
+								<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
 							</textElement>
-							<textFieldExpression><![CDATA[$F{subCode}]]></textFieldExpression>
-						</textField>
-						<textField isBlankWhenNull="true">
-							<reportElement x="49" y="137" width="180" height="17" uuid="4c618cf1-f94c-4805-9720-aa1f1aa0fbe7"/>
-							<textElement verticalAlignment="Middle">
-								<font fontName="Vista Sans OT Bold" size="10" isBold="false"/>
-							</textElement>
-							<textFieldExpression><![CDATA[$F{email}]]></textFieldExpression>
-						</textField>
+							<text><![CDATA[Customer ref:]]></text>
+						</staticText>
 						<image>
-							<reportElement x="18" y="240" width="31" height="30" uuid="220e7136-e98e-4942-ac6e-d6e92b7e0916"/>
+							<reportElement x="18" y="210" width="31" height="30" uuid="220e7136-e98e-4942-ac6e-d6e92b7e0916"/>
 							<imageExpression><![CDATA[$P{logoPath}+"Pictos/ico_service-level-agreements.png"]]></imageExpression>
 						</image>
 						<image>
 							<reportElement x="18" y="43" width="38" height="30" uuid="d672795d-6ee0-4c17-9c91-420a523c65cd"/>
 							<imageExpression><![CDATA[$P{logoPath}+"Pictos/ico_professional-services.png"]]></imageExpression>
 						</image>
-						<image>
-							<reportElement x="19" y="138" width="21" height="22" uuid="1227584e-912b-4175-b27f-4533884ef780"/>
-							<imageExpression><![CDATA[$P{logoPath}+"Pictos/ico_helpdeskt-support.png"]]></imageExpression>
-						</image>
 						<textField isBlankWhenNull="true">
-							<reportElement x="49" y="154" width="180" height="17" uuid="0e9be86d-0072-4a88-b50e-59b04f1bda87"/>
-							<textElement verticalAlignment="Middle">
-								<font fontName="Vista Sans OT Bold" size="10" isBold="false"/>
-							</textElement>
-							<textFieldExpression><![CDATA[$F{mobile}]]></textFieldExpression>
-						</textField>
-						<textField isBlankWhenNull="true">
-							<reportElement x="49" y="110" width="174" height="17" uuid="b7908196-cfbf-400e-bfb1-b2129fca2e82">
+							<reportElement x="49" y="132" width="180" height="17" uuid="b7908196-cfbf-400e-bfb1-b2129fca2e82">
 								<property name="com.jaspersoft.studio.unit.height" value="px"/>
 							</reportElement>
 							<textElement verticalAlignment="Middle">
@@ -377,11 +385,69 @@
 							<textFieldExpression><![CDATA[$F{vatNo}]]></textFieldExpression>
 						</textField>
 						<textField isBlankWhenNull="true">
-							<reportElement x="20" y="216" width="203" height="17" uuid="4f6a9296-bb76-459c-bd25-8963944c096b"/>
+							<reportElement x="49" y="115" width="180" height="17" uuid="f7456141-ff73-4fe0-b108-0c5cf0820a84">
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							</reportElement>
 							<textElement verticalAlignment="Middle">
-								<font fontName="Vista Sans OT Bold" size="12" isBold="true"/>
+								<font fontName="Vista Sans OT Bold" size="10"/>
 							</textElement>
-							<textFieldExpression><![CDATA[$F{Offerdescription}]]></textFieldExpression>
+							<textFieldExpression><![CDATA[$F{etpNo}]]></textFieldExpression>
+						</textField>
+						<staticText>
+							<reportElement x="50" y="223" width="58" height="17" uuid="b09e3a74-b4d0-495a-954b-63e3fafbd005">
+								<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							</reportElement>
+							<textElement verticalAlignment="Middle">
+								<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+							</textElement>
+							<text><![CDATA[Open order: ]]></text>
+						</staticText>
+						<staticText>
+							<reportElement x="50" y="237" width="46" height="17" uuid="9503ad60-4b10-4a76-8890-3b570646be05">
+								<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							</reportElement>
+							<textElement verticalAlignment="Middle">
+								<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+							</textElement>
+							<text><![CDATA[Contract: ]]></text>
+						</staticText>
+						<staticText>
+							<reportElement x="50" y="252" width="32" height="17" uuid="14e29c9a-c16a-462c-be04-481de63db7bf">
+								<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+								<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							</reportElement>
+							<textElement verticalAlignment="Middle">
+								<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+							</textElement>
+							<text><![CDATA[Order: ]]></text>
+						</staticText>
+						<textField isBlankWhenNull="true">
+							<reportElement x="116" y="208" width="113" height="17" uuid="afe5256a-c443-4e98-b2c4-bfc914c0a13a"/>
+							<textElement verticalAlignment="Middle">
+								<font fontName="Vista Sans OT Bold" size="10" isBold="false"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{subCode}]]></textFieldExpression>
+						</textField>
+						<textField isBlankWhenNull="true">
+							<reportElement x="108" y="223" width="121" height="17" uuid="57ab0e03-960c-4958-bff3-78b5f0035224"/>
+							<textElement verticalAlignment="Middle">
+								<font fontName="Vista Sans OT Bold" size="10" isBold="false"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{openOrderNumber}]]></textFieldExpression>
+						</textField>
+						<textField isBlankWhenNull="true">
+							<reportElement x="96" y="237" width="133" height="17" uuid="3889410c-7eb5-44bd-bae1-c07589b68a07"/>
+							<textElement verticalAlignment="Middle">
+								<font fontName="Vista Sans OT Bold" size="10" isBold="false"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{contracts}]]></textFieldExpression>
+						</textField>
+						<textField isBlankWhenNull="true">
+							<reportElement x="82" y="252" width="147" height="17" uuid="e98d0fb5-3f94-44ce-9501-c2954fc0044a"/>
+							<textElement verticalAlignment="Middle">
+								<font fontName="Vista Sans OT Bold" size="10" isBold="false"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{orderNumber}]]></textFieldExpression>
 						</textField>
 					</frame>
 				</frame>
@@ -449,18 +515,8 @@
 							<reportElement x="315" y="7" width="23" height="30" uuid="73b6936b-f4d0-4d86-b984-ddf885b837cf"/>
 							<imageExpression><![CDATA[$P{logoPath}+"Pictos/ico_professional-services.png"]]></imageExpression>
 						</image>
-						<staticText>
-							<reportElement x="-60" y="-98" width="294" height="33" forecolor="#FA100C" uuid="46b3f012-fced-4130-afa0-ba0ad4071788">
-								<property name="com.jaspersoft.studio.unit.x" value="px"/>
-								<printWhenExpression><![CDATA[$F{invoiceNumber}.equalsIgnoreCase("")]]></printWhenExpression>
-							</reportElement>
-							<textElement>
-								<font size="23" isBold="true"/>
-							</textElement>
-							<text><![CDATA[PRO FORMA]]></text>
-						</staticText>
 						<image>
-							<reportElement x="-57" y="-131" width="179" height="76" uuid="6fc38ccd-29bc-46cb-92c8-66d577b3eefa"/>
+							<reportElement x="-50" y="-120" width="179" height="76" uuid="253615c8-6ce2-4d5d-9e61-91fb405547bf"/>
 							<imageExpression><![CDATA[$F{invoiceStatus}!="VALIDATED" ? $P{logoPath}+"Pictos/draft.png" : $P{logoPath}+"Pictos/blank.png"]]></imageExpression>
 						</image>
 					</frame>
@@ -488,9 +544,9 @@
 	</group>
 	<group name="3">
 		<groupHeader>
-			<band height="50" splitType="Immediate">
+			<band height="260" splitType="Immediate">
 				<subreport isUsingCache="true" runToBottom="false">
-					<reportElement isPrintRepeatedValues="false" x="0" y="0" width="594" height="49" uuid="3c6dcd4b-38d1-4096-b8cd-54f56b3ae9f7"/>
+					<reportElement isPrintRepeatedValues="false" x="0" y="0" width="594" height="260" uuid="3c6dcd4b-38d1-4096-b8cd-54f56b3ae9f7"/>
 					<subreportParameter name="xmlDateFormat">
 						<subreportParameterExpression><![CDATA[$P{xmlDateFormat}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -507,7 +563,7 @@
 		<groupHeader>
 			<band height="70" splitType="Immediate">
 				<subreport>
-					<reportElement x="0" y="0" width="595" height="70" uuid="47798d30-7f84-4a23-90aa-1f1e129f231b"/>
+					<reportElement x="0" y="-358" width="594" height="428" uuid="47798d30-7f84-4a23-90aa-1f1e129f231b"/>
 					<subreportParameter name="logoPath">
 						<subreportParameterExpression><![CDATA[$P{logoPath}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -527,7 +583,7 @@
 	<pageHeader>
 		<band height="127">
 			<image scaleImage="RealSize" hAlign="Left" vAlign="Middle">
-				<reportElement x="0" y="-1" width="190" height="58" uuid="72b4774b-842f-4af5-b9f9-44fb6f812040"/>
+				<reportElement x="0" y="-1" width="189" height="85" uuid="72b4774b-842f-4af5-b9f9-44fb6f812040"/>
 				<imageExpression><![CDATA[$P{logoPath}+"Pictos/opensoft.png"]]></imageExpression>
 			</image>
 			<rectangle radius="10">
@@ -559,7 +615,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Vista Sans OT Bold" size="11" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Invoice number]]></text>
+				<text><![CDATA[Invoice]]></text>
 			</staticText>
 			<staticText>
 				<reportElement mode="Opaque" x="375" y="37" width="105" height="20" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="795119bd-1eaa-4d97-974f-c1e3245ede22">
@@ -577,12 +633,8 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Vista Sans OT Bold" size="11" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Invoice date]]></text>
+				<text><![CDATA[Date]]></text>
 			</staticText>
-			<image>
-				<reportElement x="17" y="84" width="40" height="40" uuid="b7df9d95-dd43-4615-9955-19864c6d0828"/>
-				<imageExpression><![CDATA[$P{logoPath}+"Pictos/ico_commercial-license.png"]]></imageExpression>
-			</image>
 			<textField>
 				<reportElement x="479" y="37" width="95" height="20" uuid="5f77c15e-7fe1-41c2-a072-289303113bbd"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -604,16 +656,6 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{invoiceStatus}=="VALIDATED" ? $F{invoiceNumber} : "Draft"]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement mode="Transparent" x="60" y="88" width="238" height="38" forecolor="#AB1616" uuid="73e9e1d3-b8d9-46e6-8a32-a9b17a30ebc2"/>
-				<box>
-					<pen lineColor="#A8120F"/>
-				</box>
-				<textElement textAlignment="Left">
-					<font size="29" isBold="true"/>
-				</textElement>
-				<text><![CDATA[My invoice]]></text>
-			</staticText>
 			<staticText>
 				<reportElement mode="Opaque" x="375" y="58" width="105" height="20" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="709983e2-ce32-486c-a21a-d81a02ae426f">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
