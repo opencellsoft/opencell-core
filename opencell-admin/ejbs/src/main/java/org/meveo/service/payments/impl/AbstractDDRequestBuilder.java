@@ -43,7 +43,7 @@ public abstract class AbstractDDRequestBuilder implements DDRequestBuilderInterf
     }
 
     @Override
-    public List<AccountOperation> findListAoToPay(DDRequestLotOp ddrequestLotOp) throws BusinessException {
+    public List<Long> findListAoToPay(DDRequestLotOp ddrequestLotOp) throws BusinessException {
         
         FilterService filterService = (FilterService) getServiceInterface(FilterService.class.getSimpleName());
         AccountOperationService accountOperationService = (AccountOperationService) getServiceInterface(AccountOperationService.class.getSimpleName());
@@ -52,7 +52,7 @@ public abstract class AbstractDDRequestBuilder implements DDRequestBuilderInterf
         Date toDueDate = ddrequestLotOp.getToDueDate();
         Filter filter = ddrequestLotOp.getFilter();
 
-        List<AccountOperation> listAoToPay = null;
+        List<Long> listAoToPay = null;
         if (filter == null) {
             if (fromDueDate == null) {
                 throw new BusinessEntityException("fromDuDate is empty");
@@ -63,9 +63,9 @@ public abstract class AbstractDDRequestBuilder implements DDRequestBuilderInterf
             if (fromDueDate.after(toDueDate)) {
                 throw new BusinessEntityException("fromDueDate is after toDueDate");
             }
-            listAoToPay = accountOperationService.getAOsToPayOrRefund(PaymentMethodEnum.DIRECTDEBIT, fromDueDate, toDueDate,ddrequestLotOp.getPaymentOrRefundEnum().getOperationCategoryToProcess(),ddrequestLotOp.getSeller());
+            listAoToPay = null;//accountOperationService.getAOsToPayOrRefund(PaymentMethodEnum.DIRECTDEBIT, fromDueDate, toDueDate,ddrequestLotOp.getPaymentOrRefundEnum().getOperationCategoryToProcess(),ddrequestLotOp.getSeller());
         } else {
-            listAoToPay = (List<AccountOperation>) filterService.filteredListAsObjects(filter);
+            listAoToPay = null;//(List<AccountOperation>) filterService.filteredListAsObjects(filter);
         }
         return listAoToPay;
     }

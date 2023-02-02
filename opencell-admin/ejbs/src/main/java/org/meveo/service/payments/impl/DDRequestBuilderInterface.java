@@ -43,7 +43,7 @@ public interface DDRequestBuilderInterface {
      * @return the list of account operation
      * @throws BusinessException the business exception
      */
-    public List<AccountOperation> findListAoToPay(DDRequestLotOp ddrequestLotOp) throws BusinessException;
+    public List<Long> findListAoToPay(DDRequestLotOp ddrequestLotOp) throws BusinessException;
     
          
    /**

@@ -189,7 +189,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 					}
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.CREATE) {
 						log.info("start filterAoToPayOrRefund...");
-						List<AccountOperation> listAoToPay = this.filterAoToPayOrRefund(ddRequestBuilderInterface, jobInstance, ddrequestLotOp);
+						List<Long> listAoToPay = this.filterAoToPayOrRefund(ddRequestBuilderInterface, jobInstance, ddrequestLotOp);
 						
 						if (listAoToPay == null || listAoToPay.isEmpty()) {
 							result.setNbItemsToProcess(0);
@@ -197,11 +197,11 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 							continue;
 						} else {
 							log.info("end filterAoToPayOrRefund listAoToPay.size:" + listAoToPay.size());
-							DDRequestLOT ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp, listAoToPay, ddRequestBuilder, result);
+							DDRequestLOT ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp, ddRequestBuilder, result);
 							log.info("end createDDRquestLot");
 							if (ddRequestLOT != null && "true".equals(paramBeanFactory.getInstance().getProperty("bayad.ddrequest.split", "true"))) {
-								dDRequestLOTService.addItems(ddrequestLotOp, ddRequestLOT, listAoToPay, ddRequestBuilder, result);
-								dDRequestLOTService.generateDDRquestLotFile(dDRequestLOTService.findById(ddRequestLOT.getId(), Arrays.asList("ddrequestItems")),
+								dDRequestLOTService.addItems(ddrequestLotOp, ddRequestLOT, listAoToPay, ddRequestBuilder, result); 
+								dDRequestLOTService.generateDDRquestLotFile(dDRequestLOTService.findById(ddRequestLOT.getId()),
 										ddRequestBuilderInterface, appProvider);
 								log.info("end generateDDRquestLotFile");
 								result.addReport(ddRequestLOT.getRejectedCause());
@@ -335,7 +335,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
      * @param ddRequestLotOp the dd request lot op
      * @return the accountOperation list to process
      */
-	private List<AccountOperation> filterAoToPayOrRefund(DDRequestBuilderInterface ddRequestBuilderInterface, JobInstance jobInstance, DDRequestLotOp ddRequestLotOp) {
+	private List<Long> filterAoToPayOrRefund(DDRequestBuilderInterface ddRequestBuilderInterface, JobInstance jobInstance, DDRequestLotOp ddRequestLotOp) {
 		AccountOperationFilterScript aoFilterScript = this.getAOScriptInstance(jobInstance);
 		if (aoFilterScript != null) {
 			Map<String, Object> methodContext = new HashMap<>();				
@@ -346,7 +346,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 
 			return aoFilterScript.filterAoToPay(methodContext);
 		}
-		return ddRequestBuilderInterface.findListAoToPay(ddRequestLotOp);
+		return null;//ddRequestBuilderInterface.findListAoToPay(ddRequestLotOp);
 	}
 
     /**

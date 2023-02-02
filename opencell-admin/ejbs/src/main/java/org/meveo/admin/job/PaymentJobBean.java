@@ -143,7 +143,7 @@ public class PaymentJobBean extends BaseJobBean {
 				toDueDate = DateUtils.addYearsToDate(fromDueDate, 1000);
 			}
 
-			List<AccountOperation> aos = new ArrayList<AccountOperation>();
+			List<Long> aos = new ArrayList<Long>();
 
 			AccountOperationFilterScript aoFilterScript = getAOScriptInstance(jobInstance);
 

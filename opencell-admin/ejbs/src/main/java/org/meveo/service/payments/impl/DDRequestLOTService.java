@@ -65,7 +65,7 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 
-	/** The dd request item service. */
+	/** The dd request item service. */ 
 	@Inject
 	private DDRequestItemService ddRequestItemService;
 
@@ -103,7 +103,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	 * @throws Exception               the exception
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public DDRequestLOT createDDRquestLot(DDRequestLotOp ddrequestLotOp, List<AccountOperation> listAoToPay, DDRequestBuilder ddRequestBuilder, JobExecutionResultImpl result)
+	public DDRequestLOT createDDRquestLot(DDRequestLotOp ddrequestLotOp,  DDRequestBuilder ddRequestBuilder, JobExecutionResultImpl result)
 			throws BusinessEntityException, Exception {
 
 		try {
@@ -132,7 +132,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void addItems(DDRequestLotOp ddrequestLotOp, DDRequestLOT ddRequestLOT, List<AccountOperation> listAoToPay, DDRequestBuilder ddRequestBuilder,
+	public void addItems(DDRequestLotOp ddrequestLotOp, DDRequestLOT ddRequestLOT, List<Long> listAoToPay, DDRequestBuilder ddRequestBuilder,
 			JobExecutionResultImpl result) throws BusinessEntityException, Exception {
 		try {
 			BigDecimal totalAmount = BigDecimal.ZERO;
@@ -143,9 +143,9 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 			if (ddRequestBuilder.getPaymentLevel() == PaymentLevelEnum.AO) {
 
 				List<Future<Map<String, Object>>> futures = new ArrayList<>();
-				SubListCreator<AccountOperation> subListCreator = new SubListCreator(listAoToPay, Runtime.getRuntime().availableProcessors());
+				SubListCreator<Long> subListCreator = new SubListCreator(listAoToPay, Runtime.getRuntime().availableProcessors());
 				while (subListCreator.isHasNext()) {
-					futures.add(sepaDirectDebitAsync.launchAndForgetDDRequesltLotCreation(ddRequestLOT, subListCreator.getNextWorkSet(), appProvider));
+					futures.add(sepaDirectDebitAsync.launchAndForgetDDRequesltLotCreation(ddRequestLOT, subListCreator.getNextWorkSet(), appProvider)); 
 				}
 				// Wait for all async methods to finish
 				for (Future<Map<String, Object>> future : futures) {
@@ -171,8 +171,8 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 
 			if (ddRequestBuilder.getPaymentLevel() == PaymentLevelEnum.CA) {
 				Map<CustomerAccount, List<AccountOperation>> aosByCA = new HashMap<CustomerAccount, List<AccountOperation>>();
-				for (AccountOperation ao : listAoToPay) {
-					ao = accountOperationService.refreshOrRetrieveLock(ao,LockModeType.OPTIMISTIC);
+				for (Long aoId : listAoToPay) {
+					AccountOperation ao = accountOperationService.findByIdLock(aoId,LockModeType.OPTIMISTIC);
 					List<AccountOperation> aos = new ArrayList<AccountOperation>();
 					if (aosByCA.containsKey(ao.getCustomerAccount())) {
 						aos = aosByCA.get(ao.getCustomerAccount());
@@ -194,7 +194,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 						}
 					}
 
-					ddRequestLOT.getDdrequestItems().add(ddRequestItemService.createDDRequestItem(amountToPayByItem, ddRequestLOT, caFullName, allErrorsByItem, entry.getValue()));
+					ddRequestItemService.createDDRequestItem(amountToPayByItem, ddRequestLOT, caFullName, allErrorsByItem, entry.getValue());
 
 					if (StringUtils.isBlank(allErrorsByItem)) {
 						nbItemsOk++;

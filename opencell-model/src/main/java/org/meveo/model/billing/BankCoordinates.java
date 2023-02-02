@@ -289,10 +289,7 @@ public class BankCoordinates implements Serializable, Cloneable {
 	 */
 	private String encryptIban(String iban) throws Exception {
 
-		if (iban != null && !(iban.startsWith("AES"))) {
-			AesEncrypt ae = new AesEncrypt();
-			return ae.getEncyptedIban(iban, ae);
-}
+		
 		return iban;
 	}
 

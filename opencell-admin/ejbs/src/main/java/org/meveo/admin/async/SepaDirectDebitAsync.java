@@ -117,7 +117,7 @@ public class SepaDirectDebitAsync {
 	 */
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public Future<Map<String,Object>> launchAndForgetDDRequesltLotCreation(DDRequestLOT ddRequestLOT, List<AccountOperation> listAoToPay,
+	public Future<Map<String,Object>> launchAndForgetDDRequesltLotCreation(DDRequestLOT ddRequestLOT, List<Long> listAoToPay,
 			Provider appProvider) throws BusinessException {
 				
 		Map<String,Object> result = new HashMap<String, Object>();
@@ -125,13 +125,18 @@ public class SepaDirectDebitAsync {
 		String allErrors="";
 		Long nbItemsKo = 0L,nbItemsOk=0L;	
 		BigDecimal totalAmount = BigDecimal.ZERO;
-
-		for (AccountOperation ao : listAoToPay) {
-			ao = accountOperationService.refreshOrRetrieveLock(ao,LockModeType.OPTIMISTIC);
+		//List<DDRequestItem> itms = new ArrayList<>();
+		//DDRequestItem newItem = new DDRequestItem();
+		AccountOperation ao = null;
+		int i =0;
+		for (Long aoId : listAoToPay) {
+			i++;
+			 ao = accountOperationService.findByIdLock(aoId,LockModeType.OPTIMISTIC);
 			CustomerAccount ca = ao.getCustomerAccount();
 			String errorMsg = ddRequestLOTService.getMissingField(ao, ddRequestLOT, appProvider, ca);
 			String caFullName =  ca.getName() != null ? ca.getName().getFullName() : "";
-			ddRequestLOT.getDdrequestItems().add(ddRequestItemService.createDDRequestItem(ao.getUnMatchingAmount(), ddRequestLOT, caFullName, errorMsg, new ArrayList<>(Arrays.asList(ao))));
+			//itms.add(ddRequestItemService.createDDRequestItem(ao.getUnMatchingAmount(), ddRequestLOT, caFullName, errorMsg, new ArrayList<>(Arrays.asList(ao))));
+			ddRequestItemService.createDDRequestItem(ao.getUnMatchingAmount(), ddRequestLOT, caFullName, errorMsg, new ArrayList<>(Arrays.asList(ao)));
 			if (errorMsg != null) {
 				nbItemsKo++;
 				allErrors += errorMsg + " ; ";
@@ -139,7 +144,12 @@ public class SepaDirectDebitAsync {
 				nbItemsOk++;
 				totalAmount = totalAmount.add(ao.getUnMatchingAmount());
 			}
+			if(i%1000 == 0) {				
+				ddRequestItemService.commit();
+				ddRequestItemService.getEntityManager().clear();
+			}
 		}
+		//ddRequestLOT.getDdrequestItems().addAll(itms);
 			
 		result.put("nbItemsOk",nbItemsOk);
 		result.put("nbItemsKo",nbItemsKo);
