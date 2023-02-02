@@ -19002,6 +19002,83 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
 	<changeSet id="#INTRD-13122_20220111" author="HichamHANINE" />
     <changeSet id="#INTRD-13379_20230127" author="aeljaouhari" />
 
+	<changeSet id="#INTRD-13375_20230131" author="aeljaouhari">
+    	<insert tableName="com_message_template">
+			<column name="media" value="EMAIL" />
+			<column name="id" valueSequenceNext="com_msg_tmpl_seq" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="FR-Invoice" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="Votre facture #{invoice.invoiceNumber}" />
+			<column name="type" value="INVOICE" />
+			<column name="htmlcontent">
+				<![CDATA[
+				#{billingAccount.isCompany?billingAccount.description:billingAccount.name.firstName+billingAccount.name.lastName}
+#{billingAccount.address.address1}
+#{billingAccount.address.zipCode} #{billingAccount.address.city}
+#{billingAccount.contactInformation.phone}
+
+#{billingAccount.customerAccount.isCompany?billingAccount.customerAccount.description:billingAccount.customerAccount.name.firstName+billingAccount.customerAccount.name.lastName}
+#{billingAccount.customerAccount.address.address1}
+#{billingAccount.customerAccount.address.zipCode} #{billingAccount.customerAccount.address.city}
+
+#{billingAccount.customerAccount.seller.address.city}, le #{dayDate}
+
+#{billingAccount.legalEntityType.code},
+
+Nous vous prions de trouver attaché à cet email la facture #{invoice.invoiceNumber} d’un montant de #{invoice.netToPay}.
+
+Nous restons à votre disposition dans l’hypothèse d’éventuelles questions. Nous vous prions d'agréer l’assurance de nos salutations les meilleures.
+
+Company Signature
+                ]]>
+			</column>
+		</insert>
+		
+		<insert tableName="com_message_template">
+			<column name="media" value="EMAIL" />
+			<column name="id" valueSequenceNext="com_msg_tmpl_seq" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="EN-Invoice" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="Your Invoice #{invoice.invoiceNumber}" />
+			<column name="type" value="INVOICE" />
+			<column name="htmlcontent">
+				<![CDATA[
+				#{billingAccount.isCompany?billingAccount.description:billingAccount.name.firstName+billingAccount.name.lastName}
+#{billingAccount.address.address1}
+#{billingAccount.address.zipCode} #{billingAccount.address.city}
+#{billingAccount.contactInformation.phone}
+
+#{billingAccount.customerAccount.isCompany?billingAccount.customerAccount.description:billingAccount.customerAccount.name.firstName+billingAccount.customerAccount.name.lastName}
+#{billingAccount.customerAccount.address.address1}
+#{billingAccount.customerAccount.address.zipCode} #{billingAccount.customerAccount.address.city}
+
+
+#{billingAccount.customerAccount.seller.address.city}, on #{dayDate}
+
+#{billingAccount.legalEntityType.code},
+
+Please find attached the invoice #{invoice.invoiceNumber} for an amount of #{invoice.netToPay}
+
+We remain at your disposal in case of any questions. Please accept, Madam / Sir, the assurance of our best regards.
+
+Signature
+
+Your name and surname
+                ]]>
+			</column>
+		</insert>
+	</changeSet>
+	
+	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
+    <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
+        <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
+    </changeSet>
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
