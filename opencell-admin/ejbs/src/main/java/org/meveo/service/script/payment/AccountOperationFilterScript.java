@@ -38,7 +38,7 @@ public abstract class AccountOperationFilterScript extends Script {
     public static final String PAYMENT_METHOD = "PAYMENT_METHOD";
     public static final String CAT_TO_PROCESS = "CAT_TO_PROCESS";
 
-    public abstract List<AccountOperation> filterAoToPay(Map<String, Object> methodContext);
+    public abstract List<Long> filterAoToPay(Map<String, Object> methodContext);
 
     public void checkPaymentRetry(Map<String, Object> methodContext) {
         // To be overridden by the custom script implementation ...
