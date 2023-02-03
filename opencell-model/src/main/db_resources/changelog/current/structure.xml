@@ -15757,6 +15757,15 @@ public class AgedBalanceReporting extends ReportExtractScript {
                 <constraints nullable="false"/>
             </column>
         </addColumn>
+    </changeSet>
 
+    <changeSet id="#INTRD-13045-20230202" author="ZBariki">
+        <addColumn tableName="dunning_settings">
+            <column name="customer_balance_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="dunning_settings" baseColumnNames="customer_balance_id"
+                                 constraintName="fk_dunning_settings_customer_balance_id"
+                                 referencedTableName="ar_customer_balance"
+                                 referencedColumnNames="id"/>
     </changeSet>
 </databaseChangeLog>
