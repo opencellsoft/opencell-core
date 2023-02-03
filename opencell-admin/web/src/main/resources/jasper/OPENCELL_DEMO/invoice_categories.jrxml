@@ -194,12 +194,18 @@
 	<field name="currencySymbol" class="java.lang.String">
 		<fieldDescription><![CDATA[/invoice/amount/currencySymbol]]></fieldDescription>
 	</field>
+	<field name="currencyLabel" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/currencyLabel]]></fieldDescription>
+	</field>
+	<field name="currencyRate" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/currencyRate]]></fieldDescription>
+	</field>
 	<sortField name="catLabel"/>
 	<group name="subCategory"/>
 	<group name="1">
 		<groupExpression><![CDATA[$F{catCode}]]></groupExpression>
 		<groupHeader>
-			<band height="21">
+			<band height="39">
 				<printWhenExpression><![CDATA[$F{catAmountWithoutTax} && $F{catAmountWithoutTax}.matches("-?\\d+(\\.\\d+)?") &&
 Double.valueOf($F{catAmountWithoutTax}) != 0]]></printWhenExpression>
 				<textField>
@@ -227,6 +233,14 @@ Double.valueOf($F{catAmountWithoutTax}) != 0]]></printWhenExpression>
 					<textFieldExpression><![CDATA[$F{catAmountWithoutTax} && $F{catAmountWithoutTax}.matches("-?\\d+(\\.\\d+)?")?
 new Double($F{catAmountWithoutTax}):0.00]]></textFieldExpression>
 				</textField>
+				<textField>
+					<reportElement x="-2" y="12" width="350" height="19" uuid="0bca7f37-3ed1-441d-bc52-b944897639b4"/>
+					<box bottomPadding="2"/>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font fontName="Vista Sans OT Reg" size="9" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Rate applied against EUR : "+ $F{currencyRate} + " " + $F{currencySymbol}]]></textFieldExpression>
+				</textField>
 			</band>
 		</groupHeader>
 	</group>
@@ -250,12 +264,20 @@ new Double($F{catAmountWithoutTax}):0.00]]></textFieldExpression>
 				</graphicElement>
 			</line>
 			<textField>
-				<reportElement x="175" y="10" width="168" height="19" uuid="a68058b4-aa3e-413e-8508-cba588131fe3"/>
+				<reportElement x="230" y="10" width="112" height="19" uuid="a68058b4-aa3e-413e-8508-cba588131fe3"/>
 				<box bottomPadding="2"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font fontName="Vista Sans OT Reg" size="11" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Price w/o tax ("+$F{currencySymbol}+")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="7" y="10" width="222" height="19" uuid="ef5c98bc-d894-4e9d-8dbe-5b7f77077e2e"/>
+				<box bottomPadding="2"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="Vista Sans OT Reg" size="11" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Currency : "+$F{currencyLabel}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
