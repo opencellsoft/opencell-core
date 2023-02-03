@@ -17084,7 +17084,7 @@
         <sql>CREATE INDEX wo_rerated_wo ON ${db.schema.adapted}billing_wallet_operation (reratedwalletoperation_id) </sql></changeSet>
         
         
-    <changeSet id="#INTRD-12047-20230112" author="AbdelmounaimAkadid">
+    <changeSet id="#INTRD-12047-20230112-rebuild" author="AbdelmounaimAkadid">
     	<createIndex indexName="idx__cpq_attribute_instance__subscription_id" tableName="cpq_attribute_instance">
 	      	<column name="subscription_id"/>
 	  	</createIndex>
@@ -19499,6 +19499,7 @@
     <changeSet id="#INTRD-13062-20230124" author="ZBariki" />
     <changeSet id="#INTRD-13468_20230126" author="hichamELHALOUI" />
     <changeSet id="#INTRD-13045-20230202" author="ZBariki" />
+    <changeSet id="#INTRD-12047-20230112" author="AbdelmounaimAkadid" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
