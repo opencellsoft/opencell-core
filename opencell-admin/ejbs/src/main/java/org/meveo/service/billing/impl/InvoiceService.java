@@ -6192,7 +6192,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 
 
-            if (taxWasRecalculated) {
+            if (taxWasRecalculated || invoiceLine.isTaxRecalculated()) {
                 invoiceLine.setTax(tax);
                 invoiceLine.setTaxRate(tax.getPercent());
                 invoiceLine.computeDerivedAmounts(isEnterprise, rtRounding, rtRoundingMode);
