@@ -108,9 +108,6 @@ public class TaxApi extends BaseApi {
             }
             tax.setUntdidTaxationCategory(untdidTaxationCategory);
         }
-        else {
-            throw new BadRequestException("TaxationCategory is Mandatory.");
-        }
         if (!StringUtils.isBlank(postData.getVatex())) {
             UntdidVatex untdidVatex = untdidVatexService.getByCode(postData.getVatex());
             if (untdidVatex == null) {

@@ -16,54 +16,114 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.security.client;
+package org.meveo.security.keycloak;
 
 /**
+ * Keycloak connection configuration
+ * 
  * @author Edward P. Legaspi
  * @since 10 Nov 2017
  **/
 public class KeycloakAdminClientConfig {
 
+    /**
+     * Keycloak server url
+     */
     private String serverUrl;
+
+    /**
+     * Realm name
+     */
     private String realm;
+
+    /**
+     * Client name
+     */
+    private String clientName;
+
+    /**
+     * Client identifier
+     */
     private String clientId;
+
+    /**
+     * Client secret
+     */
     private String clientSecret;
 
+    /**
+     * @return Keycloak server url
+     */
     public String getServerUrl() {
         return serverUrl;
     }
 
+    /**
+     * @param serverUrl Keycloak server url
+     */
     public void setServerUrl(String serverUrl) {
         this.serverUrl = serverUrl;
     }
 
+    /**
+     * @return Client name
+     */
     public String getRealm() {
         return realm;
     }
 
+    /**
+     * @param realm Client name
+     */
     public void setRealm(String realm) {
         this.realm = realm;
     }
 
+    /**
+     * @return Client name
+     */
+    public String getClientName() {
+        return clientName;
+    }
+
+    /**
+     * @param clientName Client name
+     */
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
+    }
+
+    /**
+     * @return Client identifier
+     */
     public String getClientId() {
         return clientId;
     }
 
+    /**
+     * @param clientId Client identifier
+     */
     public void setClientId(String clientId) {
         this.clientId = clientId;
     }
 
+    /**
+     * @return Client secret
+     */
     public String getClientSecret() {
         return clientSecret;
     }
 
+    /**
+     * @param clientSecret Client secret
+     */
     public void setClientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
     }
 
     @Override
     public String toString() {
-        return "KeycloakAdminClientConfig [serverUrl=" + serverUrl + ", realm=" + realm + ", clientId=" + clientId + ", clientSecret=" + clientSecret + "]";
+        return "KeycloakAdminClientConfig [serverUrl=" + serverUrl + ", realm=" + realm + ", clientId=" + clientName + ", clientSecret=" + clientSecret + "]";
     }
 
 }
