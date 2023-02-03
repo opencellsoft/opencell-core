@@ -5,7 +5,7 @@
         <artifactId>opencell</artifactId>
         <groupId>com.opencellsoft</groupId>
         <relativePath>../pom.xml</relativePath>
-        <version>13.2.1-600-81a032b</version>
+        <version>13.2.1-600-0317a7b</version>
     </parent>
     <artifactId>opencell-model</artifactId>
     <packaging>jar</packaging>
