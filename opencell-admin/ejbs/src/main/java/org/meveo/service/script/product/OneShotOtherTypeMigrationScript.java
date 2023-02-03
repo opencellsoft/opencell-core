@@ -70,6 +70,8 @@ public class OneShotOtherTypeMigrationScript extends Script {
                                         OneShotChargeTemplate invoicingPLanOneShotChargeTemplate = createInvoicingPlanOneShotCharge(oneShotChargeTemplate, newChargeCode);
 
                                         oneShotChargeTemplateService.create(invoicingPLanOneShotChargeTemplate);
+                                        setPricePlans(oneShotChargeTemplate,codePrefix,invoicingPLanOneShotChargeTemplate);
+
                                         ProductChargeTemplateMapping<OneShotChargeTemplate> invoicingPLanChargeMapping = createProductChargeMapping(orderProduct, productChargeTemplateMapping, invoicingPLanOneShotChargeTemplate);
                                         productChargeTemplateMappingService.create(invoicingPLanChargeMapping);
 
@@ -95,7 +97,8 @@ public class OneShotOtherTypeMigrationScript extends Script {
         for(PricePlanMatrix pricePlanMatrix : pricePlanMatrixList){
             PricePlanMatrix duplicatedPricePlanMatrix = createPricePlanMatrix(pricePlanMatrix, codePrefix, invoicingPLanOneShotChargeTemplate);
             pricePlanMatrixService.create(duplicatedPricePlanMatrix);
-            duplicatedPricePlanMatrix.setVersions(createMatrixPlanVersions(pricePlanMatrix.getVersions(),duplicatedPricePlanMatrix));
+            duplicatedPricePlanMatrix.setVersions(createMatrixPlanVersions(pricePlanMatrix.getVersions(),duplicatedPricePlanMatrix,codePrefix));
+            pricePlanMatrixService.update(duplicatedPricePlanMatrix);
         }
     }
 
@@ -127,10 +130,10 @@ public class OneShotOtherTypeMigrationScript extends Script {
 
     }
 
-    private List<PricePlanMatrixVersion> createMatrixPlanVersions(List<PricePlanMatrixVersion> versions, PricePlanMatrix pricePlanMatrix) {
+    private List<PricePlanMatrixVersion> createMatrixPlanVersions(List<PricePlanMatrixVersion> versions, PricePlanMatrix pricePlanMatrix, String codePrefix) {
         List<PricePlanMatrixVersion> duplicatedVersions = new ArrayList<>();
 
-        for(PricePlanMatrixVersion pricePlanMatrixVersion : versions){
+        for (PricePlanMatrixVersion pricePlanMatrixVersion : versions) {
             PricePlanMatrixVersion duplicatedPriceVersion = new PricePlanMatrixVersion();
             duplicatedPriceVersion.setPricePlanMatrix(pricePlanMatrix);
             duplicatedPriceVersion.setMatrix(pricePlanMatrixVersion.isMatrix());
@@ -143,6 +146,7 @@ public class OneShotOtherTypeMigrationScript extends Script {
             duplicatedPriceVersion.setPriceEL(pricePlanMatrixVersion.getPriceEL());
             duplicatedPriceVersion.setStatusDate(pricePlanMatrixVersion.getStatusDate());
             duplicatedPriceVersion.setPriority(pricePlanMatrixVersion.getPriority());
+            duplicatedPriceVersion.setLabel(pricePlanMatrixVersion.getLabel() + "_INV_PLAN_" + codePrefix);
 
             pricePlanMatrixVersionService.create(duplicatedPriceVersion);
             duplicatedVersions.add(duplicatedPriceVersion);
