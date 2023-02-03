@@ -6743,7 +6743,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return duplicate(invoice, null);
     }
 
-    public Invoice duplicate(Invoice invoice, List<Long> invoiceLinesIds) {
+    public Invoice duplicate(Invoice invoice, List<Long> invoiceLinesIds) {        
+        return duplicateByType(invoice, invoiceLinesIds, false);
+    }
+    
+    public Invoice duplicateByType(Invoice invoice, List<Long> invoiceLinesIds, boolean isAdjustment) {
         invoice = refreshOrRetrieve(invoice);
 
         if (invoice.getOrders() != null) {
@@ -6805,7 +6809,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoiceLinesService.detach(invoiceLine);
             InvoiceLine duplicateInvoiceLine = new InvoiceLine(invoiceLine, duplicateInvoice);
             duplicateInvoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
-            invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);
+            if(isAdjustment) {invoiceLinesService.createInvoiceLineWithInvoiceByType(duplicateInvoiceLine, invoice, true, true);}
+            else {invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);}            
             duplicateInvoice.getInvoiceLines().add(duplicateInvoiceLine);
         }
 
@@ -6894,9 +6899,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Invoice createAdjustment(Invoice invoice, List<Long> invoiceLinesIds) {
-
-        Invoice adjustmentInvoice = duplicate(invoice, invoiceLinesIds);
+    public Invoice createAdjustment(Invoice invoice, List<Long> invoiceLinesIds) {        
+        Invoice adjustmentInvoice = duplicateByType(invoice, invoiceLinesIds, true);
         populateAdjustmentInvoice(invoice, adjustmentInvoice);
         calculateOrUpdateInvoice(invoiceLinesIds, adjustmentInvoice);
 
