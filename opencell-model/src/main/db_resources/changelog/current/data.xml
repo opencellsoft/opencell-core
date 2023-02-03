@@ -18741,8 +18741,193 @@ public class ValidateBRScript extends ValidateBR {
 						public class OneShotOtherTypeMigration extends OneShotOtherTypeMigrationScript {}
 				]]>
             </column>
-            <column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='BILLING_RUN_VALIDATION')" />
         </insert>
     </changeSet>
+    <changeSet id="#INTRD-13468_20230126" author="hichamELHALOUI">
+        <update tableName="meveo_script_instance">
+            <column name="description" value="Invoice amount will be compared to provided amount using the selected operator. Invoice must match this criteria to be valid."/>
+			<column name="description_i18n" value='{"FRA":"Le montant de la facture sera comparé au montant indiqué en utilisant l’opérateur sélectionné. La facture doit répondre à ce critère pour être valide.","ENG":"Invoice amount will be compared to provided amount using the selected operator. Invoice must match this criteria to be valid."}'/>
+			<where>code = 'org.meveo.service.script.CompareInvoiceAmount'</where>
+        </update>
+        <update tableName="meveo_script_instance">
+            <column name="description" value="Amount invoiced for each offer in the list will be compared to the provided value using the selected operator If offer list is empty, then rule will be ignored. Only offer actually present on invoice will be tested."/>
+            <column name="description_i18n">
+				<![CDATA[{"FRA":"<p>Le montant facturé pour chacune des offres dans la liste sera comparé à la valeur indiquée, en utilisant l’opérateur sélectionné.</p><p>Si la liste des offres est vide, alors la règle sera ignorée.</p><p>Seules les offres effectivement présentes sur la facture seront testées.</p>","ENG":"<p>Amount invoiced for each offer in the list will be compared to the provided value using the selected operator</p><p>If offer list is empty, then rule will be ignored.</p><p>Only offer actually present on invoice will be tested.</p>"}]]>
+			</column>
+            <where>code = 'org.meveo.service.script.CompareOfferAmount'</where>
+        </update>
+        <update tableName="meveo_script_instance">
+            <column name="description" value="The customer's (customer account actually) credit category must not be in the provided list for the rule to pass. If customer's credit category is in the list, the rule will fail. If credit category list is empty, then rule will be ignored."/>
+            <column name="description_i18n">
+				<![CDATA[{"ENG":"<p>The customer's (customer account actually) credit category must not be in the provided list for the rule to pass.</p><p>If customer's credit category is in the list, the rule will fail.</p><p>If credit category list is empty, then rule will be ignored.</p>","FRA":"<p>Le catégorie de crédit du client (customer account) ne doit pas être dans la liste fournie pour que la règle passe.</p><p>Si la catégorie de crédit du client est dans la liste, la règle va échouer.</p><p>Si la liste de catégories de crédit est vide, la règle sera ignorée.</p>"}]]>
+			</column>
+            <where>code = 'org.meveo.service.script.validation.ValidateCreditCategory'</where>
+        </update>
+        <update tableName="meveo_script_instance">
+            <column name="description" value="Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator. Only offer from the list actually present on invoice will be tested. If offer list is empty, then all invoice lines will be tested regardless of their offer. For the test to pass, all tested invoice lines must pass the test."/>
+			<column name="description_i18n">
+				<![CDATA[{"ENG":"<p>Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator.</p><p>Only offer from the list actually present on invoice will be tested</p><p>If offer list is empty, then all invoice lines will be tested regardless of their offer.</p><p>For the test to pass, all tested invoice lines must pass the test.</p>",
+				"FRA":"<p>Le montant de chaque ligne de facture provenant d’une offre de la liste sera comparé à la valeur indiquée, en utilisant l’opérateur sélectionné.</p><p>Seule les offres de la liste effectivement présentes sur la facture seront testées.</p><p>Si la liste des offres est vide, alors toutes les lignes de facture seront testées, quelle que soit leur offre.</p><p>Pour que le teste passe, toutes les lignes de facture testées doivent passer le test.</p>"}]]>
+			</column>
+            <where>code = 'org.meveo.service.script.CompareOfferLinesAmount'</where>
+        </update>
+        <update tableName="meveo_script_instance">
+            <column name="description" value="The invoice’s customer (Customer/Group, Customer Account/Payer, Billing account) age is compared to a provided number of days. Age is computed at invoice date."/>
+            <column name="description_i18n">
+				<![CDATA[{"ENG":"<p>The invoice’s customer (Customer/Group, Customer Account/Payer, Billing account) age is compared to a provided number of days.</p><p>Age is computed at invoice date.</p>","FRA":"<p>L’âge du client (Customer/Groupe, Customer Account/Compte payeur, Billing account/Compte de facturation) est comparé au nombre de jours indiqué.</p><p>L'âge est calculé à la date de facture.</p>"}]]>
+			</column>
+            <where>code = 'org.meveo.service.script.validation.ValidateCustomerAge'</where>
+        </update>
+        <update tableName="meveo_script_instance">
+            <column name="description" value="The invoice’s subscriptions age is compared to a provided number of days. Age is computed at invoice date."/>
+            <column name="description_i18n">
+				<![CDATA[{"ENG":"<p>The invoice’s subscriptions age is compared to a provided number of days.</p><p>Age is computed at invoice date.</p>","FRA":"<p>L’âge de la souscription est comparé au nombre de jours indiqué.</p><p>L'âge est calculé à la date de facture.</p>"}]]>
+			</column>
+            <where>code = 'org.meveo.service.script.validation.ValidateSubscriptionAge'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="#INTRD-13379_20230127" author="aeljaouhari">
+		<update tableName="meveo_script_instance">
+			<column name="description" value="Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator. If offer list is empty, then all invoice lines will be tested regardless of their offer. For invoice to be valid, all invoice lines must pass the test. Only offer actually present on invoice will be tested."/>
+			<column name="description_i18n">
+				<![CDATA[{"ENG":"<p>Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator.</p><p>If offer list is empty, then all invoice lines will be tested regardless of their offer.</p><p>For invoice to be valid, all invoice lines must pass the test.</p><p>Only offer actually present on invoice will be tested.</p>",
+				"FRA":"<p>Le montant de chaque ligne de facture provenant d’une offre de la liste sera comparé à la valeur indiquée, en utilisant l’opérateur sélectionné.</p><p>Si la liste des offres est vide, alors toutes les lignes de facture seront testées, quelle que soit leur offre.</p><p>Pour que la facture soit valide, toutes les lignes de facture testées doivent passer le test.</p><p>Seule les offres effectivement présentes sur la facture seront testées.</p>"}]]>
+			</column>
+			<where>code='org.meveo.service.script.CompareOfferLinesAmount'</where>
+		</update>
+	</changeSet>
+
+    <changeSet id="#INTRD-13447_20230127" author="ZBariki">
+        <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="billing_cycle_sequence"/>
+            <column name="description" value="Billing cycle sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="4"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.billing.BillingCycle"/>
+            <column name="format_el" value="BC-"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'billing_cycle_sequence')"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="#INTRD-13375_20230131" author="aeljaouhari">
+    	<insert tableName="com_message_template">
+			<column name="media" value="EMAIL" />
+			<column name="id" valueSequenceNext="com_msg_tmpl_seq" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="FR-Invoice" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="Votre facture #{invoice.invoiceNumber}" />
+			<column name="type" value="INVOICE" />
+			<column name="htmlcontent">
+				<![CDATA[
+				#{billingAccount.isCompany?billingAccount.description:billingAccount.name.firstName+billingAccount.name.lastName}
+#{billingAccount.address.address1}
+#{billingAccount.address.zipCode} #{billingAccount.address.city}
+#{billingAccount.contactInformation.phone}
+
+#{billingAccount.customerAccount.isCompany?billingAccount.customerAccount.description:billingAccount.customerAccount.name.firstName+billingAccount.customerAccount.name.lastName}
+#{billingAccount.customerAccount.address.address1}
+#{billingAccount.customerAccount.address.zipCode} #{billingAccount.customerAccount.address.city}
+
+#{billingAccount.customerAccount.seller.address.city}, le #{dayDate}
+
+#{billingAccount.legalEntityType.code},
+
+Nous vous prions de trouver attaché à cet email la facture #{invoice.invoiceNumber} d’un montant de #{invoice.netToPay}.
+
+Nous restons à votre disposition dans l’hypothèse d’éventuelles questions. Nous vous prions d'agréer l’assurance de nos salutations les meilleures.
+
+Company Signature
+                ]]>
+			</column>
+		</insert>
+
+		<insert tableName="com_message_template">
+			<column name="media" value="EMAIL" />
+			<column name="id" valueSequenceNext="com_msg_tmpl_seq" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="EN-Invoice" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="Your Invoice #{invoice.invoiceNumber}" />
+			<column name="type" value="INVOICE" />
+			<column name="htmlcontent">
+				<![CDATA[
+				#{billingAccount.isCompany?billingAccount.description:billingAccount.name.firstName+billingAccount.name.lastName}
+#{billingAccount.address.address1}
+#{billingAccount.address.zipCode} #{billingAccount.address.city}
+#{billingAccount.contactInformation.phone}
+
+#{billingAccount.customerAccount.isCompany?billingAccount.customerAccount.description:billingAccount.customerAccount.name.firstName+billingAccount.customerAccount.name.lastName}
+#{billingAccount.customerAccount.address.address1}
+#{billingAccount.customerAccount.address.zipCode} #{billingAccount.customerAccount.address.city}
+
+
+#{billingAccount.customerAccount.seller.address.city}, on #{dayDate}
+
+#{billingAccount.legalEntityType.code},
+
+Please find attached the invoice #{invoice.invoiceNumber} for an amount of #{invoice.netToPay}
+
+We remain at your disposal in case of any questions. Please accept, Madam / Sir, the assurance of our best regards.
+
+Signature
+
+Your name and surname
+                ]]>
+			</column>
+		</insert>
+	</changeSet>
+
+    <changeSet id="INTRD-13608_20230130" author="HichamELHALOUI" >
+         <update tableName="meveo_job_instance">
+             <column name="following_job_id" value="null" />
+            <where>following_job_id  in (select id from meveo_job_instance where code='DWH_Job_CHURN')</where>
+        </update>
+        <delete tableName="job_execution">
+	        <where>job_instance_id  in (select id from meveo_job_instance where code='DWH_Job_CHURN')</where>
+	    </delete>
+        <delete tableName="meveo_job_instance">
+            <where>code='DWH_Job_CHURN'</where>
+        </delete>
+    </changeSet>
+
+    <changeSet id="INTRD-12782_20230131" author="zelmeliani">
+        <update tableName="ar_dunning_action">
+            <column name="type" value="INVOICE_LEVEL" />
+        </update>
+        <update tableName="dunning_level">
+            <column name="type" value="INVOICE_LEVEL" />
+        </update>
+        <update tableName="dunning_policy">
+            <column name="type" value="INVOICE_LEVEL" />
+        </update>
+        <update tableName="com_message_template">
+            <column name="type_dunning_mode" value="INVOICE_LEVEL" />
+            <where>media = 'DUNNING_MEDIA'</where>
+        </update>
+    </changeSet>
+    
+    <changeSet id="#INTRD-13717_20230202" author="aeljaouhari">
+    	<update tableName="meveo_script_parameter">
+			<column name="mandatory" valueNumeric="0" />
+			<where>script_instance_id in (SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmount') and code = 'offers'</where>
+		</update>
+	</changeSet>
 
 </databaseChangeLog>

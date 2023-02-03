@@ -26,6 +26,7 @@ import static java.util.Comparator.comparingInt;
 import static java.util.Optional.ofNullable;
 import static java.util.Set.of;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
 import static org.meveo.model.shared.DateUtils.setTimeToZero;
@@ -1317,7 +1318,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     private void setInitialCollectionDate(Invoice invoice, BillingCycle billingCycle, BillingRun billingRun) {
 
-        if (billingCycle.getCollectionDateDelayEl() == null) {
+        if (StringUtils.isBlank(billingCycle.getCollectionDateDelayEl())) {
             invoice.setInitialCollectionDate(invoice.getDueDate());
             return;
         }
@@ -3279,17 +3280,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (billingRun == null) {
             return;
         }
-//        if ((billingRun.getComputeDatesAtValidation() != null && !billingRun.getComputeDatesAtValidation()) 
-//              || (billingRun.getComputeDatesAtValidation() == null && !billingCycle.getComputeDatesAtValidation())){
-//            return;
-//        }
-        if (invoice.getStatus().equals(InvoiceStatusEnum.SUSPECT)) {
+        if (invoice.getStatus().equals(InvoiceStatusEnum.SUSPECT) || invoice.getStatus().equals(InvoiceStatusEnum.REJECTED)) {
             invoice.setStatus(InvoiceStatusEnum.DRAFT);
         }
-        
         if ((billingRun.getComputeDatesAtValidation() != null && billingRun.getComputeDatesAtValidation()) 
                 || (billingRun.getComputeDatesAtValidation() == null && billingCycle.isComputeDatesAtValidation())) {
             recalculateDate(invoice, billingRun, billingAccount, billingCycle);
+        }
+        if (billingRun.getSkipValidationScript() != null && !billingRun.isSkipValidationScript()) {
+            applyAutomaticInvoiceCheck(invoice, true);
+        }
+        if (invoice.getStatus().equals(InvoiceStatusEnum.REJECTED)) {
+            return;
         }
 
         //Assign invoice number :
@@ -3665,6 +3667,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (electronicBilling && mailingTypeEnum.equals(mailingType)) {
                 Map<Object, Object> params = new HashMap<>();
                 params.put("invoice", invoice);
+                params.put("billingAccount", billingAccount);
+                params.put("dayDate", DateUtils.formatDateWithPattern(new Date(), "dd/MM/yyyy"));
                 String subject = evaluateExpression(emailSubject, params, String.class);
                 String content = evaluateExpression(emailContent, params, String.class);
                 String contentHtml = evaluateExpression(htmlContent, params, String.class);
@@ -5064,6 +5068,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     private void refreshInvoiceLineAndAggregateAmounts(Invoice invoice) {
+        invoice.getInvoiceLines()
+                .forEach(invoiceLine -> invoiceLinesService.update(invoiceLine));
         invoice.getInvoiceAgregates()
                 .stream()
                 .filter(invoiceAggregate -> invoiceAggregate instanceof TaxInvoiceAgregate)

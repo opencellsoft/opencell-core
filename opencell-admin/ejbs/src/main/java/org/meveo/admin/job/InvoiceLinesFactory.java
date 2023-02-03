@@ -167,10 +167,10 @@ public class InvoiceLinesFactory {
         validity.setFrom(ofNullable((Date) data.get("start_date")).orElse(usageDate));
         validity.setTo(ofNullable((Date) data.get("end_date")).orElse(null));
         if(data.get("subscription_id") != null) {
-            Subscription subscription = subscriptionService.getEntityManager().getReference(Subscription.class, data.get("subscription_id"));
+            Subscription subscription = subscriptionService.getEntityManager().getReference(Subscription.class, ((Number) data.get("subscription_id")).longValue());
             invoiceLine.setSubscription(subscription);
             if(data.get("commercial_order_id") != null) {
-            	invoiceLine.setCommercialOrder(commercialOrderService.getEntityManager().getReference(CommercialOrder.class, data.get("commercial_order_id")));
+                invoiceLine.setCommercialOrder(commercialOrderService.getEntityManager().getReference(CommercialOrder.class, ((Number) data.get("commercial_order_id")).longValue()));
             }
         }
         invoiceLine.setValidity(validity);

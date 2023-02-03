@@ -307,7 +307,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         EntityManager em = getEntityManager();
         if (!em.contains(entity)) { // https://vladmihalcea.com/jpa-persist-and-merge/
-            entity = getEntityManager().merge(entity); // here could also use session.update(); see https://vladmihalcea.com/how-to-optimize-the-merge-operation-using-update-while-batching-with-jpa-and-hibernate/
+            entity = em.merge(entity); // here could also use session.update(); see https://vladmihalcea.com/how-to-optimize-the-merge-operation-using-update-while-batching-with-jpa-and-hibernate/
         }
 
         return entity;
@@ -561,7 +561,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         EntityManager em = getEntityManager();
         if (!em.contains(entity)) { // https://vladmihalcea.com/jpa-persist-and-merge/
-            entity = getEntityManager().merge(entity); // here could also use session.update(); see https://vladmihalcea.com/how-to-optimize-the-merge-operation-using-update-while-batching-with-jpa-and-hibernate/
+            entity = em.merge(entity); // here could also use session.update(); see https://vladmihalcea.com/how-to-optimize-the-merge-operation-using-update-while-batching-with-jpa-and-hibernate/
         }
     
         // Andrius K. Commented out for now as solution is not currently used. Please don't remove it.
@@ -745,16 +745,21 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             return new ArrayList<E>();
         }
 
+        Query query = listQueryBuilder(config).getQuery(getEntityManager());
+        return query.getResultList();
+    }
+
+    public QueryBuilder listQueryBuilder(PaginationConfiguration config) {
+    	Map<String, Object> filters = config.getFilters();
+
         if (filters != null && filters.containsKey("$FILTER")) {
             Filter filter = (Filter) filters.get("$FILTER");
             FilteredQueryBuilder queryBuilder = (FilteredQueryBuilder) getQuery(config);
             queryBuilder.processOrderCondition(filter.getOrderCondition(), filter.getPrimarySelector().getAlias());
-            Query query = queryBuilder.getQuery(getEntityManager());
-            return query.getResultList();
+            return queryBuilder;
         } else {
             QueryBuilder queryBuilder = getQuery(config);
-            Query query = queryBuilder.getQuery(getEntityManager());
-            return query.getResultList();
+            return queryBuilder;
         }
     }
 
@@ -778,9 +783,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         Map<String, Object> mapAttributeAndType = new LinkedHashMap<>();
         Set<Attribute<? super E, ?>> setAttributes = ((Session) getEntityManager().getDelegate()).getSessionFactory().getMetamodel().managedType(getEntityClass()).getAttributes();
         List<Attribute<? super E, ?>> sortedAttributes = new ArrayList<>(setAttributes);
-        if(StringUtils.isNotBlank(filter)) {
-        	sortedAttributes = sortedAttributes.stream().filter(a -> a.getName().toLowerCase().contains(filter.toLowerCase())).collect(Collectors.toList());
-        }
         sortedAttributes.sort((a, b) -> a.getName().compareTo(b.getName()));
         for (Attribute<? super E, ?> att : sortedAttributes) {
             if (att.getJavaType() != CustomFieldValues.class) {
@@ -788,6 +790,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                 mapStringAndType.put("fullQualifiedTypeName", att.getJavaType().toString());
                 mapStringAndType.put("shortTypeName", att.getJavaType().getSimpleName());
                 Boolean isEntity = BaseEntity.class.isAssignableFrom(att.getJavaType()) || ServiceTemplate.class.isAssignableFrom(att.getJavaType());
+                if(StringUtils.isNotBlank(filter) && (!isEntity || maxDepth == (currentDepth+1) ) && !att.getName().toLowerCase().contains(filter.toLowerCase())) {
+                	continue;
+                }
 				mapStringAndType.put("isEntity",  Boolean.toString(isEntity));
 				if(isEntity && !att.getJavaType().equals(parentEntity) && (maxDepth == 0 || currentDepth < maxDepth) && currentDepth <= MAX_DEPTH) {
 					PersistenceService<?> persistenceService = (PersistenceService<?>) EjbUtils.getServiceInterface(att.getJavaType().getSimpleName() + "Service");
@@ -795,11 +800,18 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 						persistenceService = (PersistenceService) EjbUtils.getServiceInterface("BaseEntityService");
 			            ((BaseEntityService) persistenceService).setEntityClass((Class<IEntity>) att.getJavaType());
 			        }
-					mapStringAndType.put("entityDetails", persistenceService.mapRelatedFields(filter, maxDepth, currentDepth + 1, entityClass));
+					Map<String, Object> relatedFields = persistenceService.mapRelatedFields(filter, maxDepth, currentDepth + 1, entityClass);
+					if(relatedFields.isEmpty()) {
+						continue;
+					}
+					mapStringAndType.put("entityDetails", relatedFields);
 				}
                 mapAttributeAndType.put(att.getName(), mapStringAndType);
             } else {
                 if (!resultsCFTmpl.isEmpty()) {
+                	if(StringUtils.isNotBlank(filter) && !att.getName().toLowerCase().contains(filter.toLowerCase())) {
+                    	continue;
+                    }
                     Map<String, Map<String, String>> mapCFValues = new HashMap();
                     for (CustomFieldTemplate aCFTmpl : resultsCFTmpl) {
                         if (aCFTmpl.getAppliesTo().equals(productClass.getSimpleName())) {
