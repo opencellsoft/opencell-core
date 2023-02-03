@@ -13,8 +13,10 @@ public enum ColumnTypeEnum {
         @Override
         public boolean valueMatch(PricePlanMatrixValue pricePlanMatrixValue, AttributeValue attributeValue) {
         	String multiValuesAttributeSeparator = ParamBean.getInstance().getProperty("attribute.multivalues.separator", ";");
-            if (attributeValue.getStringValue() == null || pricePlanMatrixValue.getStringValue() == null) {
+            if (attributeValue.getStringValue() == null && pricePlanMatrixValue.getStringValue() == null) {
                 return true;
+            } else if (attributeValue.getStringValue() == null || pricePlanMatrixValue.getStringValue() == null) {
+                return false;
             }
             switch (attributeValue.getAttribute().getAttributeType()) {
                 case LIST_MULTIPLE_TEXT:
