@@ -3793,7 +3793,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Construct discount and tax aggregates
         for (SubCategoryInvoiceAgregate scAggregate : subCategoryAggregates) {
 
-            if (BigDecimal.ZERO.equals(isEnterprise ? scAggregate.getAmountWithoutTax() : scAggregate.getAmountWithTax())) {
+            if (BigDecimal.ZERO.compareTo(isEnterprise ? scAggregate.getAmountWithoutTax() : scAggregate.getAmountWithTax()) == 0) {
                 continue;
             }
 
@@ -3955,7 +3955,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         MathContext mc = new MathContext(appProvider.getInvoiceRounding(),RoundingMode.HALF_UP);
         for(int i=0; i<subTaxes.size(); i++) {
             Tax subTax = subTaxes.get(i);
-            BigDecimal amountTax = BigDecimal.ZERO.equals(compositePercent)? BigDecimal.ZERO
+            BigDecimal amountTax = BigDecimal.ZERO.compareTo(compositePercent) == 0? BigDecimal.ZERO
                     : (i==subTaxes.size()-1)? composteTaxAmount.subtract(subTaxTotalAmount)
                             : composteTaxAmount.multiply(subTax.getPercent()).divide(compositePercent, mc);
             SubcategoryInvoiceAgregateAmount subcategoryInvoiceAgregateAmount= new SubcategoryInvoiceAgregateAmount(amountWithoutTax,amountWithoutTax.add(amountTax),amountTax);
