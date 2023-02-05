@@ -23,6 +23,7 @@ import javax.persistence.TypedQuery;
 
 import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.AdvancementRateIncreased;
@@ -174,7 +175,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		
 		List<OrderOffer> validOffers = validateOffers(order.getOffers());
 		
-		Set<DiscountPlan> discountPlans=new HashSet<DiscountPlan>();
+		Set<DiscountPlan> discountPlans=new HashSet<>();
 		if(order.getDiscountPlan()!=null) {
 			discountPlans.add(order.getDiscountPlan());
 		}
@@ -391,7 +392,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			}
 		}
 		
-		Map<String,AttributeInstance> instantiatedAttributes = new HashMap<String, AttributeInstance>();
+		Map<String,AttributeInstance> instantiatedAttributes = new HashMap<>();
 		
 		if(orderAttributes != null && orderAttributes.size() > 0) {
 			for (OrderAttribute orderAttribute : orderAttributes) {
@@ -474,7 +475,6 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			if (serviceInstance.getDeliveryDate().after(new Date())) {
 				serviceInstance.setStatus(InstanceStatusEnum.PENDING);
 			}
-			//subscription.addServiceInstance(serviceInstance);
 			return serviceInstance;
 	}
 	
@@ -503,7 +503,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			
 			serviceInstance.getAttributeInstances().clear();
 			
-		Map<String,AttributeInstance> instantiatedAttributes=new HashMap<String, AttributeInstance>();
+		Map<String,AttributeInstance> instantiatedAttributes=new HashMap<>();
 			
 			for (OrderAttribute orderAttribute : orderAttributes) {
 				if(orderAttribute.getAttribute()!=null  && !AttributeTypeEnum.EXPRESSION_LANGUAGE.equals(orderAttribute.getAttribute().getAttributeType())) {
@@ -581,7 +581,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 	}
 	
 	public void processSubscriptionAttributes(Subscription subscription,OfferTemplate offer,List<OrderAttribute> orderAttributes) {
-		Map<String,AttributeInstance> instantiatedAttributes=new HashMap<String, AttributeInstance>();
+		Map<String,AttributeInstance> instantiatedAttributes=new HashMap<>();
 		
 		for (OrderAttribute orderAttribute : orderAttributes) {
 			if(orderAttribute.getAttribute()!=null && !AttributeTypeEnum.EXPRESSION_LANGUAGE.equals(orderAttribute.getAttribute().getAttributeType()) ) {
@@ -636,10 +636,15 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		 
 	}
 
-	    public List<CommercialOrder> findCommercialOrders(BillingCycle billingCycle, Date startdate, Date endDate) {
+	    public List<CommercialOrder> findCommercialOrders(BillingCycle billingCycle) {
         try {
             QueryBuilder qb = new QueryBuilder(CommercialOrder.class, "co", null);
-            qb.addCriterionEntity("co.billingCycle.id", billingCycle.getId());
+			if(billingCycle.getFilters() != null && !billingCycle.getFilters().isEmpty()) {
+				qb.addPaginationConfiguration(new PaginationConfiguration(billingCycle.getFilters()));
+
+			} else {
+				qb.addCriterionEntity("co.billingCycle.id", billingCycle.getId());
+			}
             return (List<CommercialOrder>) qb.getQuery(getEntityManager()).getResultList();
 
         } catch (Exception ex) {
