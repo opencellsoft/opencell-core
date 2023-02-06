@@ -37,7 +37,7 @@ public class ValidateCreditCategoryScript extends Script {
 			long counter = billingAccountService.getCountByCreditCategory(invoice.getBillingAccount().getId(), creditCategorytIds);
 			context.put(Script.INVOICE_VALIDATION_STATUS, counter == 0 ? InvoiceValidationStatusEnum.VALID : (InvoiceValidationStatusEnum) context.get(Script.RESULT_VALUE));
 		} else {
-			context.put(Script.INVOICE_VALIDATION_STATUS, InvoiceValidationStatusEnum.VALID);
+			context.put(Script.INVOICE_VALIDATION_STATUS, null);
 		}
 
 		log.info("Result Processing ValidateCreditCategoryScript {}", context.get(Script.INVOICE_VALIDATION_STATUS));
