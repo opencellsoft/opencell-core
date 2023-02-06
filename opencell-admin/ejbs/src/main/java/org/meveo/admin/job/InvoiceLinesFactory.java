@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.NumberUtils;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
@@ -199,7 +200,13 @@ public class InvoiceLinesFactory {
             invoiceLine.setLabel(ofNullable(descriptionsI18N.get(languageCode))
                     .orElse(invoiceLine.getAccountingArticle().getDescription()));
         } else {
-            invoiceLine.setLabel((String) data.get("label"));
+            String label = StringUtils.EMPTY;
+            if (data.get("label") != null) {
+                label = (String) data.get("label");
+            } else if (invoiceLine.getAccountingArticle() != null && invoiceLine.getAccountingArticle().getDescription() != null) {
+                label = invoiceLine.getAccountingArticle().getDescription();
+            }
+            invoiceLine.setLabel(label);
         }
         ofNullable(openOrderNumber).ifPresent(invoiceLine::setOpenOrderNumber);
         return invoiceLine;
