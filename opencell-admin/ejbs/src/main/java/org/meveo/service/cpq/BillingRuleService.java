@@ -18,6 +18,9 @@ import java.util.List;
 @Stateless
 public class BillingRuleService extends PersistenceService<BillingRule> {
 
+    public static final String BILLING_ACCOUNT_ID = "billingAccountId";
+    public static final String CUSTOMER_ACCOUNT_ID = "customerAccountId";
+    public static final String CUSTOMER_ID = "customerId";
     @Inject
     private FinanceSettingsService financeSettingsService;
 
@@ -35,16 +38,16 @@ public class BillingRuleService extends PersistenceService<BillingRule> {
         try {
             if (billingAccount.getCustomerAccount().getCustomer().getSeller() != null) {
                 return getEntityManager().createNamedQuery("BillingRule.findByAccounts")
-                        .setParameter("billingAccountId", billingAccount.getId())
-                        .setParameter("customerAccountId", billingAccount.getCustomerAccount().getId())
-                        .setParameter("customerId", billingAccount.getCustomerAccount().getCustomer().getId())
+                        .setParameter(BILLING_ACCOUNT_ID, billingAccount.getId())
+                        .setParameter(CUSTOMER_ACCOUNT_ID, billingAccount.getCustomerAccount().getId())
+                        .setParameter(CUSTOMER_ID, billingAccount.getCustomerAccount().getCustomer().getId())
                         .setParameter("sellerId", billingAccount.getCustomerAccount().getCustomer().getSeller().getId())
                         .getResultList();
             } else {
                 return getEntityManager().createNamedQuery("BillingRule.findByAccountsWithSellerNull")
-                        .setParameter("billingAccountId", billingAccount.getId())
-                        .setParameter("customerAccountId", billingAccount.getCustomerAccount().getId())
-                        .setParameter("customerId", billingAccount.getCustomerAccount().getCustomer().getId())
+                        .setParameter(BILLING_ACCOUNT_ID, billingAccount.getId())
+                        .setParameter(CUSTOMER_ACCOUNT_ID, billingAccount.getCustomerAccount().getId())
+                        .setParameter(CUSTOMER_ID, billingAccount.getCustomerAccount().getCustomer().getId())
                         .getResultList();
             }
         } catch (NoResultException e) {
@@ -57,17 +60,17 @@ public class BillingRuleService extends PersistenceService<BillingRule> {
             if (billingAccount.getCustomerAccount().getCustomer().getSeller() != null) {
                 return getEntityManager().createNamedQuery("BillingRule.findByAccountsAndContract")
                         .setParameter("contractId", contract.getId())
-                        .setParameter("billingAccountId", billingAccount.getId())
-                        .setParameter("customerAccountId", billingAccount.getCustomerAccount().getId())
-                        .setParameter("customerId", billingAccount.getCustomerAccount().getCustomer().getId())
+                        .setParameter(BILLING_ACCOUNT_ID, billingAccount.getId())
+                        .setParameter(CUSTOMER_ACCOUNT_ID, billingAccount.getCustomerAccount().getId())
+                        .setParameter(CUSTOMER_ID, billingAccount.getCustomerAccount().getCustomer().getId())
                         .setParameter("sellerId", billingAccount.getCustomerAccount().getCustomer().getSeller().getId())
                         .getResultList();
             } else {
                 return getEntityManager().createNamedQuery("BillingRule.findByAccountsAndContractWithSellerNull")
                         .setParameter("contractId", contract.getId())
-                        .setParameter("billingAccountId", billingAccount.getId())
-                        .setParameter("customerAccountId", billingAccount.getCustomerAccount().getId())
-                        .setParameter("customerId", billingAccount.getCustomerAccount().getCustomer().getId())
+                        .setParameter(BILLING_ACCOUNT_ID, billingAccount.getId())
+                        .setParameter(CUSTOMER_ACCOUNT_ID, billingAccount.getCustomerAccount().getId())
+                        .setParameter(CUSTOMER_ID, billingAccount.getCustomerAccount().getCustomer().getId())
                         .getResultList();
             }
         } catch (NoResultException e) {
