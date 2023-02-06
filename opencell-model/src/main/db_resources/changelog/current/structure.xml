@@ -15616,5 +15616,16 @@ public class AgedBalanceReporting extends ReportExtractScript {
 	<changeSet id="#INTRD-13646_20230131" author="AdilElJaouhari">
         <dropNotNullConstraint tableName="billing_tax" columnName="taxation_category_id"/>
     </changeSet>
-	
+
+    <changeSet id="#INTRD-13220_20230203" author="AbdellatifBARI">
+        <addColumn tableName="cpq_order_product">
+            <column name="service_instance_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="cpq_order_product"
+                                 constraintName="fk_cpq_order_product_service_instance_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="billing_service_instance"/>
+    </changeSet>
+
+
 </databaseChangeLog>
