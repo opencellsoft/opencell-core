@@ -65,14 +65,6 @@
         <filter-name>noCache</filter-name>
         <servlet-name>Faces Servlet</servlet-name>
     </filter-mapping>
-    <!-- <filter> -->
-    <!-- <filter-name>SecurityFilter</filter-name> -->
-    <!-- <filter-class>org.meveo.filters.SecurityFilter</filter-class> -->
-    <!-- </filter> -->
-    <!-- <filter-mapping> -->
-    <!-- <filter-name>SecurityFilter</filter-name> -->
-    <!-- <url-pattern>/*</url-pattern> -->
-    <!-- </filter-mapping> -->
     <mime-mapping>
         <extension>eot</extension>
         <mime-type>application/vnd.ms-fontobject</mime-type>
@@ -151,10 +143,6 @@
             <role-name>*</role-name>
         </auth-constraint>
     </security-constraint>
-    <login-config>
-        <auth-method>KEYCLOAK</auth-method>
-        <realm-name>opencell</realm-name>
-    </login-config>
     <security-role>
         <role-name>*</role-name>
     </security-role>
