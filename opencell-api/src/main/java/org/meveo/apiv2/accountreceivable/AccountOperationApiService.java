@@ -210,8 +210,7 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 	                }else if(amountToMatch.compareTo(accountOperation.getUnMatchingAmount()) == 1) {
 	                    throw new BusinessApiException("The amount to match must be less than : " + accountOperation.getUnMatchingAmount().doubleValue() + " for sequence : " + sequence);
 	                }
-	                accountOperation.setUnMatchingAmount(amountToMatch);
-                    accountOperationService.update(accountOperation);
+	                accountOperation.setAmountForUnmatching(amountToMatch);
 	            }
 	        }
 		});
@@ -232,13 +231,14 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 			List<PartialMatchingOccToSelect> partialMatchingOcc = new ArrayList<>();
 			matchingResult.setPartialMatchingOcc(partialMatchingOcc);
 
-			for (Long aoId : aoIds) {
+			for (AccountOperation accountOperation : aos) {
+			    Long aoId = accountOperation.getId();
 				if (aoId.equals(creditAoId)) {
 					// process only DEBIT AO
 					continue;
 				}
 				MatchingReturnObject unitaryResult = matchingCodeService.matchOperations(customer.getId(), customer.getCode(),
-						List.of(creditAoId, aoId), aoId);
+						List.of(creditAoId, aoId), aoId, accountOperation.getAmountForUnmatching());
 
 				if (matchingResult.getPartialMatchingOcc() != null) {
 					partialMatchingOcc.addAll(matchingResult.getPartialMatchingOcc());
