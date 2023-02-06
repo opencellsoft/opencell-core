@@ -103,7 +103,6 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
 //    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public ReportExtractExecutionResult runReport(ReportExtract entity, Map<String, String> mapParams, ReportExtractExecutionOrigin origin) throws ReportExtractExecutionException, BusinessException {
         Map<String, Object> context = new HashMap<>();
-        int reportSize = 0;
         // use params parameter if set, otherwise use the set from entity
         Map<String, String> params = new HashMap<>();
         if (mapParams != null && !mapParams.isEmpty()) {
@@ -175,7 +174,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
                     fileDetails = writeAsHtml(filename, reportDir, results, entity);
                 }
                 filename = fileDetails.getFileName();
-                reportExtractExecutionResult.setLineCount(reportSize);
+                reportExtractExecutionResult.setLineCount(fileDetails.getSize());
 
             } else if (be == null && entity.isGenerateEmptyReport()) {
                 filename = generateEmptyReport(filename, reportDir, entity.getReportExtractResultType());
