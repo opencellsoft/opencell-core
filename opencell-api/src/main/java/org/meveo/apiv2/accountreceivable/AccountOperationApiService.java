@@ -207,7 +207,7 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 	            if(amountToMatch != null) {
 	                if(amountToMatch.compareTo(BigDecimal.ZERO) <= 0) {
 	                    throw new BusinessApiException("The amount to match must be greater than 0");
-	                }else if(amountToMatch.compareTo(accountOperation.getUnMatchingAmount()) == 1) {
+	                }else if(amountToMatch.compareTo(accountOperation.getUnMatchingAmount()) == 0) {
 	                    throw new BusinessApiException("The amount to match must be less than : " + accountOperation.getUnMatchingAmount().doubleValue() + " for sequence : " + sequence);
 	                }
 	                accountOperation.setAmountForUnmatching(amountToMatch);
@@ -270,6 +270,7 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 			return matchingResult;
 
 		} catch (Exception e) {
+            e.printStackTrace();
 			throw new BusinessApiException("Matching action is failed : " + e.getMessage());
 		}
 	}
