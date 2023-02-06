@@ -179,8 +179,8 @@ public class InvoiceLinesFactory {
             }
         }
         invoiceLine.setValidity(validity);
-        calculateAccountingArticle(record, invoiceLine);
-        invoiceLine.setLabel(invoiceLine.getAccountingArticle()!=null?invoiceLine.getAccountingArticle().getDescription() : (String) record.get("label"));
+        calculateAccountingArticle(data, invoiceLine);
+        invoiceLine.setLabel(invoiceLine.getAccountingArticle()!=null?invoiceLine.getAccountingArticle().getDescription() : (String) data.get("label"));
         if(billingRun != null && billingRun.getBillingCycle() != null
         							&& billingRun.getBillingCycle().isUseAccountingArticleLabel()
         							&& invoiceLine.getAccountingArticle() != null) {

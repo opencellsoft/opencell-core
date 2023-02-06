@@ -40,16 +40,6 @@ import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.*;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceLineStatusEnum;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.SubCategoryInvoiceAgregate;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
@@ -130,9 +120,7 @@ import org.meveo.model.cpq.offer.QuoteOffer;
     		+ " FROM InvoiceLine il "
     		+ " WHERE il.billingRun.id=:billingRunId AND il.billingAccount.id IN (:ids) AND il.status='OPEN' "
     		+ " group by il.billingAccount.id, il.accountingArticle.invoiceSubCategory.id, il.userAccount.id, il.tax.id "
-    		+ " order by il.billingAccount.id")
-		})
-public class InvoiceLine extends AuditableEntity {
+    		+ " order by il.billingAccount.id"),
 		@NamedQuery(name = "InvoiceLine.listDiscountLines", query = "SELECT il.id from InvoiceLine il WHERE il.discountedInvoiceLine.id = :invoiceLineId "),
 		@NamedQuery(name = "InvoiceLine.findByInvoiceAndIds", query = "SELECT il from InvoiceLine il WHERE il.invoice = :invoice and il.id in (:invoiceLinesIds)"),
 		@NamedQuery(name = "InvoiceLine.updateTaxForRateTaxMode", query = "UPDATE InvoiceLine il SET il.tax= null WHERE il.id in (:invoiceLinesIds)"),
@@ -479,6 +467,7 @@ public class InvoiceLine extends AuditableCFEntity {
 		this.orderLot = copy.orderLot;
 		this.taxRecalculated = copy.taxRecalculated;
 		this.taxMode = copy.taxMode;
+		this.userAccount = copy.userAccount;
 		this.status = InvoiceLineStatusEnum.OPEN;
 		this.adjustmentStatus = copy.adjustmentStatus;
 	}
@@ -1005,4 +994,17 @@ public class InvoiceLine extends AuditableCFEntity {
         this.useSpecificPriceConversion = useSpecificPriceConversion;
     }    
     
+    /**
+	 * @return the userAccount
+	 */
+	public UserAccount getUserAccount() {
+		return userAccount;
+	}
+	
+	/**
+	 * @param userAccount the userAccount to set
+	 */
+	public void setUserAccount(UserAccount userAccount) {
+		this.userAccount = userAccount;
+	}
 }

@@ -302,7 +302,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     	if(convertedValue==null && StringUtils.isBlank(sourceAttributeValue)) {
     		return true;
     	}
-    	if(!sourceAttributeValue.isEmpty() && !convertedValue.isEmpty() && operator!=null) {
+    	if(!sourceAttributeValue.isEmpty() && operator!=null) {
     		String convertedValueStr=convertedValue !=null?String.valueOf(convertedValue):null;
     		switch(operator) {
     		case EQUAL:

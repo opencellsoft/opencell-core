@@ -133,9 +133,6 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     @Inject
     private RecurringChargeTemplateService recurringChargeTemplateService;
     
-    @Inject
-    private OneShotChargeTemplateService oneShotChargeTemplateService;
-    
     /**
      *
      * @param ids

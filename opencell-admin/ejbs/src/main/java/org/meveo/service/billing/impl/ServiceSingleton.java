@@ -74,7 +74,6 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.payments.impl.OCCTemplateService;
-import org.meveo.service.securityDeposit.impl.SecurityDepositTemplateService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
@@ -86,7 +85,6 @@ import java.util.Objects;
 
 import static java.lang.String.valueOf;
 import static org.apache.commons.lang3.StringUtils.leftPad;
-import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 /**
  * A singleton service to handle synchronized calls. DO not change lock mode to Write

@@ -97,7 +97,6 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
                         Long maxInvoiceLinesPerTransaction = (Long) this.getParamOrCFValue(jobInstance, "maxInvoiceLinesPerTransaction", 10000L);
                         BasicStatistics basicStatistics = new BasicStatistics();
-                        Long maxInvoiceLinesPerTransaction = (Long) this.getParamOrCFValue(jobInstance, "maxInvoiceLinesPerTransaction", null);
                         assignAccountingArticleIfMissingInRTs(result, billableEntities, maxInvoiceLinesPerTransaction, waitingMillis, jobInstance, nbRuns);
                         
                         BiConsumer<IBillableEntity, JobExecutionResultImpl> task = (billableEntity, jobResult) -> createInvoiceLines(result, aggregationConfiguration, billingRun, billableEntity, basicStatistics,maxInvoiceLinesPerTransaction);

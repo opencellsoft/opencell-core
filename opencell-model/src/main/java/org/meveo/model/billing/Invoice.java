@@ -654,6 +654,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      */
     @Column(name = "amount_without_tax_before_discount", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amountWithoutTaxBeforeDiscount;
+   
     @Transient
   	private Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates;
 
@@ -1950,4 +1951,37 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public void setConvertedInvoiceBalance(BigDecimal convertedInvoiceBalance) {
         this.convertedInvoiceBalance = convertedInvoiceBalance;
     }
+    
+    /**
+	 * @param invoiceSCAs
+	 * @return
+	 */
+	public void setSubCategoryInvoiceAgregate(Set<SubCategoryInvoiceAgregate> invoiceSCAs) {
+		this.subCategoryInvoiceAgregates = invoiceSCAs;
+	}
+	/**
+	 * @param invoiceSCAs
+	 * @return
+	 */
+	public Set<SubCategoryInvoiceAgregate> getSubCategoryInvoiceAgregate() {
+		return this.subCategoryInvoiceAgregates;
+	}
+	public void setNextInvoiceDate(Date nextInvoiceDate) {
+		this.nextInvoiceDate = nextInvoiceDate;
+	}
+	/**
+	 * @return
+	 */
+	public Date getNextInvoiceDate() {
+		return nextInvoiceDate;
+	}
+    
+    /**
+	 * set all invoice amounts to 0
+	 */
+	public void initAmounts() {
+		this.amountTax=BigDecimal.ZERO;
+		this.amountWithTax=BigDecimal.ZERO;
+		this.amountWithoutTax=BigDecimal.ZERO;
+	}
 }

@@ -11857,6 +11857,14 @@ order by date_trunc('month', i.invoice_date) DESC
 
     </changeSet>
 
+	<changeSet id="#5882_20220325" author="MohammedELAZZOUZI">
+	     	<addColumn tableName="billing_invoice_line">
+            <column name="user_account_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_invoice_line" constraintName="fk_InvoiceLine_userAccount" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
+   	</changeSet> 
+
 	<changeSet id="#INTRD-5341_20220307" author="aelmalki">
         <renameTable oldTableName="cpq_invoice_line" newTableName="billing_invoice_line"/>
         <renameSequence oldSequenceName="cpq_invoice_line_seq" newSequenceName="billing_invoice_line_seq" />
@@ -11950,8 +11958,6 @@ order by date_trunc('month', i.invoice_date) DESC
             select get_next_val(SEQUENCE_NAME) as seq_val, lower(SEQUENCE_NAME) as seq_code FROM ${db.schema.adapted}user_sequences s
         </createView>
     </changeSet>
-
-
 
     <changeSet id="#INTRD-5804-20220321" author="HatimOUDAD">
 

@@ -141,6 +141,9 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     @Transient
     private List<InvoiceLine> invoiceLinesToAssociate = new ArrayList<>();
 
+    @Transient
+    private List<Long> ilIDs=new ArrayList<Long>();
+
     /**
      * Tracks cumulative amounts by tax
      */
@@ -538,6 +541,14 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
         this.discount = discount;
     }
 
+    public void addILs(List<Long> ilIDs) {
+    	this.ilIDs.addAll(ilIDs);
+    }
+    
+    public List<Long> getIlIDs() {
+    	return this.ilIDs;
+    }
+
     /**
      * @return Is this a discount aggregate
      */
@@ -708,14 +719,4 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     	return ""+(this.userAccount==null?"":this.userAccount.getId())+this.invoiceSubCategory.getInvoiceCategory().getId();
     }
     
-    @Transient
-    private List<Long> ilIDs=new ArrayList<Long>();
-
-    public void addILs(List<Long> ilIDs) {
-    	this.ilIDs.addAll(ilIDs);
-    }
-
-    public List<Long> getIlIDs() {
-    	return this.ilIDs;
-    }
 }

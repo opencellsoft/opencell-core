@@ -28,9 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -44,10 +41,8 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
-import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -67,7 +62,6 @@ import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 
@@ -259,7 +253,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         }
         
         ChargeTemplate chargeTemplate = null;
-        boolean isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discountPlanItem, walletOperation, quoteVersion, quoteOffer, quoteProduct, null);
+        boolean isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discountPlan,walletOperation,quoteVersion,quoteOffer,quoteProduct,applicationDate,null);
         if (walletOperation != null) {
             chargeTemplate = walletOperation.getChargeInstance().getChargeTemplate();
             

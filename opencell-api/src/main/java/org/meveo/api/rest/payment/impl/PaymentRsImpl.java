@@ -23,7 +23,6 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.QueryParam;
 
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.PaymentActionStatus;

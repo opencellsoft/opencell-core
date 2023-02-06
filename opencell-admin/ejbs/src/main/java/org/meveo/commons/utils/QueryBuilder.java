@@ -229,18 +229,21 @@ public class QueryBuilder {
      * @param alias Alias of a main table
      */
     public QueryBuilder(String sql, String alias) {
-        q = new StringBuilder(sql);
+    	initQueryBuilder(sql, alias);
+    }
+    
+    private void initQueryBuilder(String sql, String alias) {
+		q = new StringBuilder(sql);
         this.alias = alias;
         params = new HashMap<String, Object>();
-        hasOneOrMoreCriteria = false;
         if (sql.toLowerCase().contains("where")) {
-            hasOneOrMoreCriteria = true;
+        	hasOneOrMoreCriteria = true;
         }
         inOrClause = false;
         nbCriteriaInOrClause = 0;
         addInnerJoinTag(q);
     }
-
+    
     /**
      * Constructor.
      * 
@@ -257,7 +260,7 @@ public class QueryBuilder {
     
     
 	public QueryBuilder(Class<?> clazz, String alias, boolean doFetch, List<String> fetchFields, JoinType joinType) {
-		this(getInitQuery(clazz, alias, doFetch, fetchFields), alias);
+    	initQueryBuilder(getInitQuery(clazz, alias, doFetch, fetchFields), alias);
     	this.clazz = clazz;
 		this.joinType = joinType != null ? joinType : JoinType.INNER;
 	}
@@ -301,7 +304,7 @@ public class QueryBuilder {
      * @param fetchFields Additional (list/map type) fields to fetch
      */
     public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields) {
-        this(getInitQuery(clazz, alias, true, fetchFields), alias);
+    	initQueryBuilder(getInitQuery(clazz, alias, true, fetchFields), alias);
         this.clazz = clazz;
     }
 
@@ -356,7 +359,7 @@ public class QueryBuilder {
      * @param fetchFields list of field need to be fetched.
      * @return SQL query.
      */
-    private String getInitQuery(Class<?> clazz, String alias, List<String> fetchFields) {
+    private String getInitQuery(Class<?> clazz, String alias, boolean doFetch, List<String> fetchFields) {
         StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
         if (fetchFields != null && !fetchFields.isEmpty()) {
             for (String fetchField : fetchFields) {

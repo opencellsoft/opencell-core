@@ -3,7 +3,6 @@ package org.meveo.model.billing;
 import java.io.Serializable;
 import java.util.Map;
 
-import javax.persistence.Transient;
 
 import org.meveo.model.crm.IInvoicingMinimumApplicable;
 /**
