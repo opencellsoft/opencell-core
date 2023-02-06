@@ -1339,4 +1339,15 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		return getEntityManager().createNamedQuery("InvoiceLine.sumAmountsDiscountByBillingAccount")
 				.setParameter("billingRunId", billingRun.getId()).getResultList();
 	}
+	
+	public InvoiceLine adjustment(InvoiceLine invoiceLine) {
+        /*InvoiceType defaultAdjustement = invoiceTypeService.getDefaultAdjustement();
+        InvoiceType invoiceTypeOfInvoice = invoiceLine.getInvoice().getInvoiceType();
+        if(invoiceTypeOfInvoice.equals(defaultAdjustement)) {
+            List<Object[]> maxIlAmountAdjList = getMaxIlAmountAdj(invoiceLine.getInvoice().getId());
+            invoiceLine = checkAmountIL(invoiceLine, maxIlAmountAdjList); 
+        }
+        return invoiceLine;*/
+	    return null;
+    }
 }
