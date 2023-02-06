@@ -120,7 +120,7 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.TaxService;
-import org.meveo.service.cpq.BillingRulesService;
+import org.meveo.service.cpq.BillingRuleService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.tax.TaxClassService;
@@ -200,7 +200,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     private AccountingArticleService accountingArticleService;
 
     @Inject
-    private BillingRulesService billingRulesService;
+    private BillingRuleService billingRuleService;
 
     @Inject
     private AccountingCodeService accountingCodeService;
@@ -1869,7 +1869,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 boolean isApply = false;
                 for(RatedTransaction rt : lstRatedTransaction) {
                     if(rt.getRulesContract() != null) {
-                        List<BillingRule> billingRules = billingRulesService.findAllBillingRulesByBillingAccountAndContract(billingAccount, rt.getRulesContract());                
+                        List<BillingRule> billingRules = billingRuleService.findAllBillingRulesByBillingAccountAndContract(billingAccount, rt.getRulesContract());
                         isApply = false;
                         for(BillingRule billingRule : billingRules) { 
                             if(!isApply) {
