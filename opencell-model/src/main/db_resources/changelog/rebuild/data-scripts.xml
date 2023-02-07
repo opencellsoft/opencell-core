@@ -157,6 +157,9 @@ public class CustomGatewayPaymentScript extends PaymentScript{
    public void doRefundCard(Map<String, Object> methodContext) throws BusinessException {
         doIt(methodContext, "RFD_CARD");
     }
+   public void doRefundSepa(Map<String, Object> methodContext) throws BusinessException {
+        doIt(methodContext, "RFD_SEPA");
+    }
 
     private void doIt(Map<String, Object> methodContext,String operationType) throws BusinessException {
         try{
@@ -165,10 +168,13 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             if(amountCts == null){
                 throw new BusinessException("amountCts is null");
             }
-            CardPaymentMethod paymentToken = (CardPaymentMethod)methodContext.get(PaymentScript.CONTEXT_TOKEN);
-            if(paymentToken == null && (operationType.equals("PAL") || operationType.equals("RFD"))){
-                throw new BusinessException("paymentMethod is null");
-            }
+
+			if(!"RFD_SEPA".equals(operationType)) {
+				CardPaymentMethod paymentToken = (CardPaymentMethod)methodContext.get(PaymentScript.CONTEXT_TOKEN);
+				if(paymentToken == null && (operationType.equals("PAL") || operationType.equals("RFD"))){
+					throw new BusinessException("paymentMethod is null");
+				}
+			}
 
             //DEMO : get tokenId or card infos from context
             String body  = "{";
@@ -214,23 +220,16 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 
 import java.io.StringReader;
 import java.util.Map;
-
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
+import javax.xml.xpath.*;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.payments.CardPaymentMethod;
-import org.meveo.model.payments.PaymentStatusEnum;
+import org.meveo.model.payments.*;
 import org.meveo.service.script.payment.PaymentScript;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 
 /**
- *
  * @author anasseh
- *
  */
 public class CustomGatewayPaymentScript extends PaymentScript{
     private static final Logger log = LoggerFactory.getLogger(CustomGatewayPaymentScript.class);
@@ -251,6 +250,9 @@ public class CustomGatewayPaymentScript extends PaymentScript{
    public void doRefundCard(Map<String, Object> methodContext) throws BusinessException {
         doIt(methodContext, "RFD_CARD");
     }
+   public void doRefundSepa(Map<String, Object> methodContext) throws BusinessException {
+        doIt(methodContext, "RFD_SEPA");
+    }
 
     private void doIt(Map<String, Object> methodContext,String operationType) throws BusinessException {
         try{
@@ -259,10 +261,13 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             if(amountCts == null){
                 throw new BusinessException("amountCts is null");
             }
-            CardPaymentMethod paymentToken = (CardPaymentMethod)methodContext.get(PaymentScript.CONTEXT_TOKEN);
-            if(paymentToken == null && (operationType.equals("PAL") || operationType.equals("RFD"))){
-                throw new BusinessException("paymentMethod is null");
-            }
+
+			if(!"RFD_SEPA".equals(operationType)) {
+				CardPaymentMethod paymentToken = (CardPaymentMethod)methodContext.get(PaymentScript.CONTEXT_TOKEN);
+				if(paymentToken == null && (operationType.equals("PAL") || operationType.equals("RFD"))){
+					throw new BusinessException("paymentMethod is null");
+				}
+			}
 
             //DEMO : get tokenId or card infos from context
             String body  = "{";
