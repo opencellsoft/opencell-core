@@ -200,6 +200,7 @@ public class OrderValidationScript extends Script {
 			dpi.setCfValues(discountPlan.getCfValues());
 			dpi.setServiceInstance(serviceInstance);
 			discountPlanInstanceService.create(dpi, discountPlan);
+            serviceInstance.getDiscountPlanInstances().add(dpi);
 		}
 	}
 }
