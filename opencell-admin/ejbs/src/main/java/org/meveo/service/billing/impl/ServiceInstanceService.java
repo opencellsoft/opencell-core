@@ -63,7 +63,6 @@ import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Product;
-import org.meveo.model.payments.PaymentScheduleTemplate;
 import org.meveo.model.persistence.JacksonUtil;
 import org.meveo.model.rating.RatingResult;
 import org.meveo.model.shared.DateUtils;
@@ -73,8 +72,6 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.order.OrderHistoryService;
-import org.meveo.service.payments.impl.PaymentScheduleInstanceService;
-import org.meveo.service.payments.impl.PaymentScheduleTemplateService;
 import org.meveo.service.script.service.ServiceModelScriptService;
 
 /**
@@ -119,17 +116,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     @Inject
     ServiceTemplateService serviceTemplateService;
 
-    /**
-     * PaymentScheduleInstanceService
-     */
-    @Inject
-    private PaymentScheduleInstanceService paymentScheduleInstanceService;
-
-    /**
-     * PaymentScheduleTemplateService
-     */
-    @Inject
-    private PaymentScheduleTemplateService paymentScheduleTemplateService;
 
     ParamBean paramBean = ParamBean.getInstance();
 
@@ -558,10 +544,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             orderHistoryService.create(serviceInstance.getOrderNumber(), serviceInstance.getOrderItemId(), serviceInstance, serviceInstance.getOrderItemAction());
         }
 
-        PaymentScheduleTemplate paymentScheduleTemplate = paymentScheduleTemplateService.findByServiceTemplate(serviceInstance.getServiceTemplate());
-        if (paymentScheduleTemplate != null && paymentScheduleTemplateService.matchExpression(paymentScheduleTemplate.getFilterEl(), serviceInstance)) {
-            paymentScheduleInstanceService.instanciateFromService(paymentScheduleTemplate, serviceInstance);
-        }
+        
         if(ratingResult != null) {
         	//TODO : v12 & dev change new Date() with delivered != null
         	String description = StringUtils.isBlank(serviceInstance.getDescription()) ? serviceInstance.getCode() : serviceInstance.getDescription();
@@ -693,12 +676,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             }
         }
 
-        if(serviceInstance.getServiceTemplate() != null) {
-            PaymentScheduleTemplate paymentScheduleTemplate = paymentScheduleTemplateService.findByServiceTemplate(serviceInstance.getServiceTemplate());
-            if (paymentScheduleTemplate != null && serviceInstance.getPsInstances() != null && !serviceInstance.getPsInstances().isEmpty()) {
-                paymentScheduleInstanceService.terminate(serviceInstance, terminationDate);
-            }
-        }
+        
         serviceInstance = update(serviceInstance);
 
         return serviceInstance;
