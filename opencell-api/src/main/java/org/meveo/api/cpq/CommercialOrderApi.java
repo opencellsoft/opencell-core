@@ -134,6 +134,9 @@ public class CommercialOrderApi extends BaseApi {
 	@AdvancementRateIncreased
 	protected Event<CommercialOrder> entityAdvancementRateIncreasedEventProducer;
 
+	@Inject
+	private ServiceInstanceService serviceInstanceService;
+
 	private static final String ADMINISTRATION_VISUALIZATION = "administrationVisualization";
     private static final String ADMINISTRATION_MANAGEMENT = "administrationManagement";
 	
@@ -1190,8 +1193,16 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
     		throw new MeveoApiException("Delivery date should be in the future");	
     	}
     	orderProduct.setDeliveryDate(orderProductDto.getDeliveryDate());
-        
-		orderProduct.updateAudit(currentUser); 
+
+		if (orderProductDto.getServiceInstanceId() != null) {
+			ServiceInstance serviceInstance = serviceInstanceService.findById(orderProductDto.getServiceInstanceId());
+			if (serviceInstance == null) {
+				throw new EntityDoesNotExistsException(ServiceInstance.class, orderProductDto.getServiceInstanceId());
+			}
+			orderProduct.setServiceInstance(serviceInstance);
+		}
+
+		orderProduct.updateAudit(currentUser);
 		return orderProduct;
     }
     
