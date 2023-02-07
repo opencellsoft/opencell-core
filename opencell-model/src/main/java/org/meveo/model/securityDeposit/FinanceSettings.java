@@ -46,6 +46,10 @@ public class FinanceSettings extends BusinessEntity {
     @Column(name = "activate_dunning")
     private boolean activateDunning = false;
 
+    @Type(type = "numeric_boolean")
+    @Column(name = "enable_billing_redirection_rules")
+    private boolean enableBillingRedirectionRules = false;
+
     @Embedded
     private AuxiliaryAccounting auxiliaryAccounting;
 
@@ -116,5 +120,13 @@ public class FinanceSettings extends BusinessEntity {
 
     public void setActivateDunning(boolean activateDunning) {
         this.activateDunning = activateDunning;
+    }
+
+    public boolean isEnableBillingRedirectionRules() {
+        return enableBillingRedirectionRules;
+    }
+
+    public void setEnableBillingRedirectionRules(boolean enableBillingRedirectionRules) {
+        this.enableBillingRedirectionRules = enableBillingRedirectionRules;
     }
 }

@@ -5,11 +5,15 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
+import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.meveo.service.catalog.impl.ProductChargeTemplateMappingService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.cpq.order.OrderProductService;
@@ -17,9 +21,9 @@ import org.meveo.service.script.Script;
 
 import javax.transaction.Transactional;
 import javax.xml.bind.ValidationException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
@@ -32,6 +36,10 @@ public class OneShotOtherTypeMigrationScript extends Script {
     private ProductChargeTemplateMappingService productChargeTemplateMappingService = (ProductChargeTemplateMappingService) getServiceInterface(ProductChargeTemplateMappingService.class.getSimpleName());
 
     private OrderProductService orderProductService = (OrderProductService) getServiceInterface(OrderProductService.class.getSimpleName());
+
+    private PricePlanMatrixService pricePlanMatrixService = (PricePlanMatrixService) getServiceInterface(PricePlanMatrixService.class.getSimpleName());
+
+    private PricePlanMatrixVersionService pricePlanMatrixVersionService = (PricePlanMatrixVersionService) getServiceInterface(PricePlanMatrixVersionService.class.getSimpleName());
 
     @Override
     @Transactional
@@ -56,13 +64,17 @@ public class OneShotOtherTypeMigrationScript extends Script {
                                     OneShotChargeTemplate oneShotChargeTemplate = ((OneShotChargeTemplate) Hibernate.unproxy(productChargeTemplateMapping.getChargeTemplate()));
 
                                     if (oneShotChargeTemplate.getOneShotChargeTemplateType().equals(OneShotChargeTemplateTypeEnum.OTHER)) {
-                                        ;
-                                        String newChargeCode = oneShotChargeTemplate.getCode() + "_INV_PLAN_" + UUID.randomUUID().toString().substring(0,6).toUpperCase();
+
+                                        String codePrefix = UUID.randomUUID().toString().substring(0,6).toUpperCase();
+                                        String newChargeCode = oneShotChargeTemplate.getCode() + "_INV_PLAN_" + codePrefix;
                                         OneShotChargeTemplate invoicingPLanOneShotChargeTemplate = createInvoicingPlanOneShotCharge(oneShotChargeTemplate, newChargeCode);
 
                                         oneShotChargeTemplateService.create(invoicingPLanOneShotChargeTemplate);
+                                        setPricePlans(oneShotChargeTemplate,codePrefix,invoicingPLanOneShotChargeTemplate);
+
                                         ProductChargeTemplateMapping<OneShotChargeTemplate> invoicingPLanChargeMapping = createProductChargeMapping(orderProduct, productChargeTemplateMapping, invoicingPLanOneShotChargeTemplate);
                                         productChargeTemplateMappingService.create(invoicingPLanChargeMapping);
+
                                     }
                                 }
                             }
@@ -78,6 +90,68 @@ public class OneShotOtherTypeMigrationScript extends Script {
             log.error("Error : {}", exception.getMessage(), exception);
         }
 
+    }
+
+    private void setPricePlans(OneShotChargeTemplate oneShotChargeTemplate, String codePrefix, OneShotChargeTemplate invoicingPLanOneShotChargeTemplate) {
+        List<PricePlanMatrix> pricePlanMatrixList = pricePlanMatrixService.getActivePricePlansByChargeCode(oneShotChargeTemplate.getCode());
+        for(PricePlanMatrix pricePlanMatrix : pricePlanMatrixList){
+            PricePlanMatrix duplicatedPricePlanMatrix = createPricePlanMatrix(pricePlanMatrix, codePrefix, invoicingPLanOneShotChargeTemplate);
+            pricePlanMatrixService.create(duplicatedPricePlanMatrix);
+            duplicatedPricePlanMatrix.setVersions(createMatrixPlanVersions(pricePlanMatrix.getVersions(),duplicatedPricePlanMatrix,codePrefix));
+            pricePlanMatrixService.update(duplicatedPricePlanMatrix);
+        }
+    }
+
+    private PricePlanMatrix createPricePlanMatrix(PricePlanMatrix pricePlanMatrix, String codePrefix, ChargeTemplate newChargeTemplate) {
+        PricePlanMatrix newPricePlanMatrix = new PricePlanMatrix();
+        newPricePlanMatrix.setTradingCurrency(pricePlanMatrix.getTradingCurrency());
+        newPricePlanMatrix.setSeller(pricePlanMatrix.getSeller());
+        newPricePlanMatrix.setValidityFrom(pricePlanMatrix.getValidityFrom());
+        newPricePlanMatrix.setEventCode(newChargeTemplate.getCode());
+        newPricePlanMatrix.setAmountWithTaxEL(pricePlanMatrix.getAmountWithTaxEL());
+        newPricePlanMatrix.setCode(pricePlanMatrix.getCode() + "_" + codePrefix);
+        newPricePlanMatrix.setAmountWithTax(pricePlanMatrix.getAmountWithTax());
+        newPricePlanMatrix.setAmountWithoutTax(pricePlanMatrix.getAmountWithoutTax());
+        newPricePlanMatrix.setOfferTemplate(pricePlanMatrix.getOfferTemplate());
+        newPricePlanMatrix.setChargeTemplate(newChargeTemplate);
+        newPricePlanMatrix.setDiscountPlanItems(List.copyOf(pricePlanMatrix.getDiscountPlanItems()));
+        newPricePlanMatrix.setContractItems(List.copyOf(pricePlanMatrix.getContractItems()));
+        newPricePlanMatrix.setValidityCalendar(pricePlanMatrix.getValidityCalendar());
+        newPricePlanMatrix.setValidityDate(pricePlanMatrix.getValidityDate());
+        newPricePlanMatrix.setCriteriaEL(pricePlanMatrix.getCriteriaEL());
+        newPricePlanMatrix.setPriority(pricePlanMatrix.getPriority());
+        newPricePlanMatrix.setEndSubscriptionDate(pricePlanMatrix.getEndSubscriptionDate());
+        newPricePlanMatrix.setStartSubscriptionDate(pricePlanMatrix.getStartSubscriptionDate());
+        newPricePlanMatrix.setCriteriaEL(pricePlanMatrix.getCriteriaEL());
+        newPricePlanMatrix.setMinQuantity(pricePlanMatrix.getMinQuantity());
+        newPricePlanMatrix.setWoDescriptionEL(pricePlanMatrix.getWoDescriptionEL());
+
+        return newPricePlanMatrix;
+
+    }
+
+    private List<PricePlanMatrixVersion> createMatrixPlanVersions(List<PricePlanMatrixVersion> versions, PricePlanMatrix pricePlanMatrix, String codePrefix) {
+        List<PricePlanMatrixVersion> duplicatedVersions = new ArrayList<>();
+
+        for (PricePlanMatrixVersion pricePlanMatrixVersion : versions) {
+            PricePlanMatrixVersion duplicatedPriceVersion = new PricePlanMatrixVersion();
+            duplicatedPriceVersion.setPricePlanMatrix(pricePlanMatrix);
+            duplicatedPriceVersion.setMatrix(pricePlanMatrixVersion.isMatrix());
+            duplicatedPriceVersion.setPrice(pricePlanMatrixVersion.getPrice());
+            duplicatedPriceVersion.setPriceVersionType(pricePlanMatrixVersion.getPriceVersionType());
+            duplicatedPriceVersion.setStatus(pricePlanMatrixVersion.getStatus());
+            duplicatedPriceVersion.setValidity(pricePlanMatrixVersion.getValidity());
+            duplicatedPriceVersion.setColumns(Set.copyOf(pricePlanMatrixVersion.getColumns()));
+            duplicatedPriceVersion.setLines(Set.copyOf(pricePlanMatrixVersion.getLines()));
+            duplicatedPriceVersion.setPriceEL(pricePlanMatrixVersion.getPriceEL());
+            duplicatedPriceVersion.setStatusDate(pricePlanMatrixVersion.getStatusDate());
+            duplicatedPriceVersion.setPriority(pricePlanMatrixVersion.getPriority());
+            duplicatedPriceVersion.setLabel(pricePlanMatrixVersion.getLabel() + "_INV_PLAN_" + codePrefix);
+
+            pricePlanMatrixVersionService.create(duplicatedPriceVersion);
+            duplicatedVersions.add(duplicatedPriceVersion);
+        }
+        return duplicatedVersions;
     }
 
     private static ProductChargeTemplateMapping createProductChargeMapping(OrderProduct orderProduct, ProductChargeTemplateMapping productChargeTemplateMapping, OneShotChargeTemplate invoicingPLanOneShotChargeTemplate) {

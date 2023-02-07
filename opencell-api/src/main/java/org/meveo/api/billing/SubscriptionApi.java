@@ -1217,7 +1217,7 @@ public class SubscriptionApi extends BaseApi {
         	OneShotChargeInstance osho = oneShotChargeInstanceService
                     .instantiateAndApplyOneShotCharge(subscription, serviceInstance, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), postData.getOperationDate(),
                             postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(),
-                            postData.getCriteria3(), postData.getDescription(), null, oneShotChargeInstance.getCfValues(), true, ChargeApplicationModeEnum.SUBSCRIPTION);
+                            postData.getCriteria3(), postData.getDescription(), null, oneShotChargeInstance.getCfValues(), true, ChargeApplicationModeEnum.SUBSCRIPTION, isVirtual);
 
         	if(Boolean.TRUE.equals(postData.getGenerateRTs())) {
         		osho.getWalletOperations().stream().forEach(wo->ratedTransactionService.createRatedTransaction(wo,false));
@@ -2915,7 +2915,7 @@ public class SubscriptionApi extends BaseApi {
         } else {
         	subscriptionService.createWithoutNotif(subscription);
         }
-        subscriptionService.getEntityManager().flush();
+        subscriptionService.commit();
         userAccount.getSubscriptions().add(subscription);
 
         if (postData.getProducts() != null) {

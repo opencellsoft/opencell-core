@@ -46,6 +46,7 @@ import org.meveo.model.cpq.enums.ContractAccountLevel;
 import org.meveo.model.cpq.enums.ContractStatusEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
@@ -59,6 +60,7 @@ import org.meveo.service.cpq.ContractService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 
 /**
  * @author Tarik F.
@@ -94,7 +96,7 @@ public class ContractApi extends BaseApi{
 	private BillingRuleService billingRuleService;
 	@Inject
 	private PricePlanMatrixVersionService pricePlanMatrixVersionService;
-	
+
 	private BillingRuleMapper billingRuleMapper = new BillingRuleMapper();
 	
 	private static final String CONTRACT_DATE_END_GREAT_THAN_DATE_BEGIN = "Date end (%s) must be great than date begin (%s)";
@@ -104,7 +106,10 @@ public class ContractApi extends BaseApi{
 
 
 	public Long CreateContract(ContractDto dto) {
+
 		// check mandatory param
+		checkBillingRulesRedirectionIsEnabled(dto);
+
 		checkParams(dto);
 		//check if date end great than date begin
 		if(dto.getEndDate().compareTo(dto.getBeginDate()) < 0) {
@@ -144,7 +149,11 @@ public class ContractApi extends BaseApi{
 		}
 		return contract.getId();
 	}
-	
+
+	private void checkBillingRulesRedirectionIsEnabled(ContractDto contractDto) {
+		billingRuleService.checkBillingRedirectionRulesConfiguration(contractDto);
+	}
+
 	private void changeAccountLevel(ContractDto dto, Contract contract) {
 		switch (dto.getContractAccountLevel()) {
 			case SELLER:
@@ -176,7 +185,9 @@ public class ContractApi extends BaseApi{
 		}
 	}
 	public void updateContract(ContractDto dto) {
+
 		// check mandatory param
+		checkBillingRulesRedirectionIsEnabled(dto);
 		checkParams(dto);
 		//check if date end great than date begin
 		if(dto.getEndDate().compareTo(dto.getBeginDate()) < 0) {
