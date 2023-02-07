@@ -1074,8 +1074,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 Object entity;
                 Long entityId = billableEntityId;
 
-                if (clazz.equals(CommercialOrder.class)) {
-                    entity = commercialOrderService.findById(billableEntityId);
+            if (clazz.equals(CommercialOrder.class)) {
+                entity = billableEntityId != null ? commercialOrderService.findById(billableEntityId) : null;
 
                     if (alreadyProcessedOrders.contains(billableEntityId)) {
                         break;
