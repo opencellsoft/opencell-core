@@ -5055,6 +5055,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     private void refreshInvoiceLineAndAggregateAmounts(Invoice invoice) {
+        invoice.getInvoiceLines()
+                .forEach(invoiceLine -> invoiceLinesService.update(invoiceLine));
         invoice.getInvoiceAgregates()
                 .stream()
                 .filter(invoiceAggregate -> invoiceAggregate instanceof TaxInvoiceAgregate)
@@ -6192,7 +6194,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 
 
-            if (taxWasRecalculated) {
+            if (taxWasRecalculated || invoiceLine.isTaxRecalculated()) {
                 invoiceLine.setTax(tax);
                 invoiceLine.setTaxRate(tax.getPercent());
                 invoiceLine.computeDerivedAmounts(isEnterprise, rtRounding, rtRoundingMode);

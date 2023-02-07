@@ -7,6 +7,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.apiv2.cpq.contracts.BillingRuleDto;
@@ -27,6 +28,8 @@ public class CpqContractApiService {
 
 	@TransactionAttribute
 	public BillingRule createBillingRule(String contractCode, BillingRuleDto billingRuleDto) {
+
+		checkBillingRulesRedirectionIsEnabled();
 		// Check mandatory fields
 		handleMissingParameters(contractCode, billingRuleDto);
 
@@ -51,6 +54,8 @@ public class CpqContractApiService {
 
 	@TransactionAttribute
 	public BillingRule updateBillingRule(String contractCode, Long idBillingRule, BillingRuleDto billingRuleDto) {
+
+		checkBillingRulesRedirectionIsEnabled();
 		// Check mandatory fields
 		handleMissingParameters(contractCode, billingRuleDto);
 
@@ -75,8 +80,17 @@ public class CpqContractApiService {
 
 	}
 
+	private void checkBillingRulesRedirectionIsEnabled() {
+		if (!billingRuleService.isBillingRedirectionRulesEnabled()) {
+			throw new BusinessException("Feature disabled in application settings");
+		}
+	}
+
 	@TransactionAttribute
 	public void deleteBillingRule(String contractCode, Long idBillingRule) {
+
+		checkBillingRulesRedirectionIsEnabled();
+
 		// Check contract
 		Contract contract = this.contractService.findByCode(contractCode);
 		if(contract == null) {
