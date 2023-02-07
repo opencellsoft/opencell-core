@@ -670,6 +670,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         List<RatedTransaction> ratedTransactions = getRatedTransactions(entityToInvoice, ratedTransactionFilter, firstTransactionDate, lastTransactionDate, invoiceUpToDate, isDraft);
 
+        if (billingRun.isExceptionalBR() && ratedTransactions != null && !ratedTransactions.isEmpty()) {
+            ratedTransactions = ratedTransactions.stream().filter(rt -> (rt.getStatus() == RatedTransactionStatusEnum.OPEN && rt.getBillingRun() == null)).collect(toList());
+        }
+
         // If retrieved RT and pagination size does not match, it means no more RTs are pending to be processed and invoice can be closed
         boolean moreRts = ratedTransactions.size() == rtPaginationSize;
 
