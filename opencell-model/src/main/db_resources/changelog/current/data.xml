@@ -18858,9 +18858,8 @@ Your name and surname
 		</update>
 	</changeSet>
 	
-	<changeSet id="#INTRD-13762_20230206" author="aelmalki" />
-	
-		<changeSet id="#INTRD-13762_20230206" author="aelmalki">
+
+	<changeSet id="#INTRD-13762_20230206" author="aelmalki">
 		<update tableName="meveo_script_instance">
 			<column name="script">
 				<![CDATA[package org.meveo.service.script.demo;
