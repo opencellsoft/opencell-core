@@ -930,6 +930,10 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
     		throw new EntityDoesNotExistsException(OrderOffer.class, orderOfferDto.getOrderOfferId());
     	}
     	
+    	if(orderOffer.getOrder() != null && CommercialOrderEnum.VALIDATED.toString().equalsIgnoreCase(orderOffer.getOrder().getStatus())) {
+    		throw new BusinessApiException("A validated order cannot be update");
+    	}
+    	
 		if (orderOfferDto.getCommercialOrderId() != null) {
 			CommercialOrder commercialOrder=null;
 			commercialOrder = commercialOrderService.findById(orderOfferDto.getCommercialOrderId());
