@@ -18,23 +18,44 @@
 
 package org.meveo.security.keycloak;
 
+import java.net.HttpURLConnection;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.annotation.security.PermitAll;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.core.Response;
 
-import org.keycloak.AuthorizationContext;
-import org.keycloak.KeycloakPrincipal;
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.BearerAuthFilter;
+import org.keycloak.admin.client.resource.RealmResource;
+import org.keycloak.authorization.client.AuthorizationDeniedException;
 import org.keycloak.authorization.client.AuthzClient;
+import org.keycloak.representations.idm.authorization.AuthorizationRequest;
+import org.keycloak.representations.idm.authorization.Permission;
 import org.keycloak.representations.idm.authorization.ResourceRepresentation;
+import org.meveo.commons.utils.ResteasyClientProxyBuilder;
+import org.meveo.model.persistence.JacksonUtil;
 import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.wildfly.security.http.oidc.OidcPrincipal;
+import org.wildfly.security.http.oidc.OidcSecurityContext;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * Provides methods to deal with currently authenticated user
@@ -42,13 +63,16 @@ import org.slf4j.MDC;
  * @author Andrius Karpavicius
  */
 @Stateless
+@PermitAll
 public class CurrentUserProvider {
 
     @Resource
     private SessionContext ctx;
 
     @Inject
-    private Logger log;
+    private Instance<HttpServletRequest> requestInst;
+
+    private static Logger log = LoggerFactory.getLogger(CurrentUserProvider.class);
 
     /**
      * Contains a current tenant
@@ -71,10 +95,23 @@ public class CurrentUserProvider {
      * @param userName User name
      * @param providerCode Provider code
      */
+    @SuppressWarnings("rawtypes")
     public void forceAuthentication(String userName, String providerCode) {
-        // Current user is already authenticated, can't overwrite it
-        if (ctx.getCallerPrincipal() instanceof KeycloakPrincipal) {
-            log.warn("Current user is already authenticated, can't overwrite it keycloak: {}", ctx.getCallerPrincipal() instanceof KeycloakPrincipal);
+
+        OidcPrincipal oidcPrincipal = null;
+        try {
+            HttpServletRequest request = null;
+            request = requestInst.get();
+            if (request != null && request.getUserPrincipal() instanceof OidcPrincipal) {
+                oidcPrincipal = (OidcPrincipal) request.getUserPrincipal();
+            }
+        } catch (Exception e) {
+            // Ignore. Its the only way to inject request outside the http code trace
+        }
+
+        // Current user is already authenticated via OIDC, can't overwrite it
+        if (oidcPrincipal != null) {
+            log.warn("Current user is already authenticated, can't overwrite it OIDC principal: {}", oidcPrincipal.getName());
             return;
         }
 
@@ -94,10 +131,22 @@ public class CurrentUserProvider {
      * 
      * @param lastCurrentUser Last authenticated user. Note: Pass a unproxied version of MeveoUser (currentUser.unProxy()), as otherwise it will access CurrentUser producer method
      */
+    @SuppressWarnings("rawtypes")
     public void reestablishAuthentication(MeveoUser lastCurrentUser) {
 
-        // Current user is already authenticated, can't overwrite it
-        if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal)) {
+        OidcPrincipal oidcPrincipal = null;
+        try {
+            HttpServletRequest request = null;
+            request = requestInst.get();
+            if (request != null && request.getUserPrincipal() instanceof OidcPrincipal) {
+                oidcPrincipal = (OidcPrincipal) request.getUserPrincipal();
+            }
+        } catch (Exception e) {
+            // Ignore. Its the only way to inject request outside the http code trace
+        }
+
+        // Current user is already authenticated via OIDC, can't overwrite it
+        if (oidcPrincipal == null) {
 
             if (lastCurrentUser.getProviderCode() == null) {
                 MDC.remove("providerCode");
@@ -116,12 +165,25 @@ public class CurrentUserProvider {
      * 
      * @return Current provider's code
      */
+    @SuppressWarnings("rawtypes")
     public String getCurrentUserProviderCode() {
+
+        OidcPrincipal oidcPrincipal = null;
+        try {
+            HttpServletRequest request = null;
+            request = requestInst.get();
+            if (request != null && request.getUserPrincipal() instanceof OidcPrincipal) {
+                oidcPrincipal = (OidcPrincipal) request.getUserPrincipal();
+            }
+        } catch (Exception e) {
+            // Ignore. Its the only way to inject request outside the http code trace
+        }
 
         String providerCode = null;
 
-        if (ctx.getCallerPrincipal() instanceof KeycloakPrincipal) {
-            providerCode = MeveoUserKeyCloakImpl.extractProviderCode(ctx);
+        // Currently authenticated user via OIDC, get provider code from user properties
+        if (oidcPrincipal != null) {
+            providerCode = MeveoUserKeyCloakImpl.extractProviderCode(oidcPrincipal.getOidcSecurityContext().getToken());
 
             if (providerCode == null) {
                 MDC.remove("providerCode");
@@ -159,19 +221,39 @@ public class CurrentUserProvider {
      * 
      * @return Current user implementation
      */
+    @SuppressWarnings({ "rawtypes", "unused" })
     public MeveoUser getCurrentUser(String providerCode, EntityManager em) {
 
-        // String username = MeveoUserKeyCloakImpl.extractUsername(ctx, forcedUserUsername.get());
+        OidcPrincipal oidcPrincipal = null;
+        try {
+            HttpServletRequest request = null;
+            request = requestInst.get();
+            if (request != null && request.getUserPrincipal() instanceof OidcPrincipal) {
+                oidcPrincipal = (OidcPrincipal) request.getUserPrincipal();
+            }
+        } catch (Exception e) {
+            // Ignore. Its the only way to inject request outside the http code trace
+        }
 
+        String username = null;
         MeveoUser user = null;
 
-        // User was forced authenticated, so need to lookup the rest of user information
-        if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal) && forcedUserUsername.get() != null) {
-            user = new MeveoUserKeyCloakImpl(ctx, forcedUserUsername.get(), getCurrentTenant(), null, null);
+        // Authenticated via OIDC
+        if (oidcPrincipal != null) {
+
+            user = new MeveoUserKeyCloakImpl(oidcPrincipal.getOidcSecurityContext().getToken());
+            username = user.getUserName();
+
+            // User was forced authenticated, so need to lookup the rest of user information
+        } else if (forcedUserUsername.get() != null) {
+            username = forcedUserUsername.get();
+            user = new MeveoUserKeyCloakImpl(ctx, forcedUserUsername.get(), getCurrentTenant());
 
         } else {
-            user = new MeveoUserKeyCloakImpl(ctx, null, null, null, null);
+            username = ctx.getCallerPrincipal().getName();
+            user = new MeveoUserKeyCloakImpl(ctx, null, null);
         }
+
         // log.trace("getCurrentUser username={}, providerCode={}, forcedAuthentication {}/{} ", username, user != null ? user.getProviderCode() : null, getForcedUsername(),
         // getCurrentTenant());
 
@@ -179,6 +261,131 @@ public class CurrentUserProvider {
             log.trace("Current user is {}", user.toStringLong());
         }
         return user;
+    }
+
+    /**
+     * Check if URLs for a given scope are allowed for a current user
+     * 
+     * @param request Http request
+     * @param scope Scope to match
+     * @param urls A list of URLs to match
+     * @return A corresponding set of True/false if the URL is accessible
+     */
+    @SuppressWarnings("unchecked")
+    public static boolean[] isLinkAccesible(HttpServletRequest request, String scope, String... urls) {
+
+        boolean[] result = new boolean[urls.length];
+
+        Principal userPrincipal = request.getUserPrincipal();
+        if (userPrincipal == null) {
+            for (int i = 0; i < urls.length; i++) {
+                result[i] = true;
+            }
+            return result;
+        }
+        OidcPrincipal<OidcSecurityContext> oidcPrincipal = (OidcPrincipal<OidcSecurityContext>) userPrincipal;
+
+        String accessTokenString = oidcPrincipal.getOidcSecurityContext().getTokenString();
+
+        KeycloakAdminClientConfig kcConnectionConfig = AuthenticationProvider.getKeycloakConfig();
+
+        // Lookup client id from a client name
+        if (kcConnectionConfig.getClientId() == null) {
+
+            try {
+                Keycloak keycloak = AuthenticationProvider.getKeycloakClient(kcConnectionConfig, accessTokenString);
+
+                RealmResource realmResource = keycloak.realm(kcConnectionConfig.getRealm());
+                String clientId = realmResource.clients().findByClientId(kcConnectionConfig.getClientName()).get(0).getId();
+                kcConnectionConfig.setClientId(clientId);
+
+                // User has no access to lookup clients in Keycloak
+            } catch (ForbiddenException e) {
+                return result;
+            }
+        }
+        // AuthorizationResource authResource = realmResource.clients().get(clientId).authorization();
+
+        ResteasyClient client = new ResteasyClientProxyBuilder().build();
+        ResteasyWebTarget target = client.target(kcConnectionConfig.getServerUrl() + "/admin/realms/" + kcConnectionConfig.getRealm() + "/clients/" + kcConnectionConfig.getClientId() + "/authz/resource-server/resource");
+        target.register(new BearerAuthFilter(accessTokenString));
+        target = target.queryParam("matchingUri", "true");
+        ResteasyWebTarget targetNoUrl = target;
+
+        AuthorizationRequest authRequest = new AuthorizationRequest();
+        authRequest.setMetadata(new AuthorizationRequest.Metadata());
+
+        Map<String, List<String>> urlToResourceMap = new HashMap<String, List<String>>();
+
+        for (int i = 0; i < urls.length; i++) {
+            String url = urls[i];
+
+            // Get resources best matching the URL
+
+            // List<ResourceRepresentation> resources = authResource.resources().find(null, url, null, null, null, null, null); -- API does not accept matchingUri=true and does not return resource ID.
+            // List<ResourceRepresentation> resources = authzClient.protection(accessTokenString).resource().findByMatchingUri(url); -- API takes client id from a token. So if token was issues to opencell-portal client,
+            // it will return an error that opencell-portal is not a resource server. It ignores the server configuration passed to AuthzClient initiation.
+
+            target = targetNoUrl.queryParam("uri", url);
+
+            Response response = target.request().get();
+            if (response.getStatus() != HttpURLConnection.HTTP_OK) {
+                result[i] = false;
+                log.error("Failed to determine an authorization resource for url {} reason: {}, info {}", url, response.getStatus(), response.getStatusInfo().getReasonPhrase());
+                continue;
+            }
+
+            List<ResourceRepresentation> resources = JacksonUtil.fromString(response.readEntity(String.class), new TypeReference<List<ResourceRepresentation>>() {
+            });
+
+            // List<ResourceRepresentation> resources = response.readEntity(new GenericType<List<ResourceRepresentation>>() { -- Does not work - ID field is not populated
+            // });
+
+            List<String> resourceIds = new ArrayList<String>(resources.size());
+            urlToResourceMap.put(url, resourceIds);
+
+            for (ResourceRepresentation resourceRepresentation : resources) {
+                authRequest.addPermission(resourceRepresentation.getId(), request.getMethod());
+                resourceIds.add(resourceRepresentation.getId());
+            }
+        }
+
+        if (authRequest.getPermissions() == null || authRequest.getPermissions().getPermissions() == null || authRequest.getPermissions().getPermissions().isEmpty()) {
+            return result;
+        }
+
+        try {
+            AuthzClient authzClient = AuthenticationProvider.getKeycloakAuthzClient();
+            List<Permission> permissions = authzClient.authorization(accessTokenString).getPermissions(authRequest);
+            if (!permissions.isEmpty()) {
+
+                for (int i = 0; i < urls.length; i++) {
+                    String url = urls[i];
+
+                    List<String> resourceIds = urlToResourceMap.get(url);
+                    if (resourceIds != null) {
+                        loop1: for (String resourceId : resourceIds) {
+                            for (Object permission : permissions) {
+                                if (resourceId.equals(((Map<String, Object>) permission).get("rsid"))) { // .getResourceId())) {
+                                    result[i] = true;
+                                    break loop1;
+                                }
+                            }
+                        }
+                        if (result[i] == false) {
+                            log.error("No permission granted for resource {}, url {}", resourceIds, url);
+                        }
+                    }
+                }
+            }
+
+        } catch (AuthorizationDeniedException e) {
+            if (log.isErrorEnabled()) {
+                log.error("No permissions granted for any of the urls {}", (Object) urls);
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -211,110 +418,40 @@ public class CurrentUserProvider {
     }
 
     /**
-     * Get roles by application. Applies to Keycloak implementation only.
+     * Get roles by application. Applies only in case when user is authenticated via OIDC.
      *
      * @param currentUser Currently logged-in user
      * @return A list of roles grouped by application (keycloak client name). A realm level roles are identified by key "realm". Admin application (KC client opencell-web) contains a mix or realm roles, client roles,
      *         roles defined in opencell and their resolution to permissions.
      */
-    public Map<String, Set<String>> getRolesByApplication(MeveoUser currentUser) {
+    @SuppressWarnings("rawtypes")
+    public Map<String, List<String>> getRolesByApplication(MeveoUser currentUser) {
 
-        if (ctx.getCallerPrincipal() instanceof KeycloakPrincipal) {
-            Map<String, Set<String>> rolesByApplication = MeveoUserKeyCloakImpl.getRolesByApplication(ctx);
+        OidcPrincipal oidcPrincipal = null;
+        try {
+            HttpServletRequest request = null;
+            request = requestInst.get();
+            if (request != null && request.getUserPrincipal() instanceof OidcPrincipal) {
+                oidcPrincipal = (OidcPrincipal) request.getUserPrincipal();
+            }
+        } catch (Exception e) {
+            // Ignore. Its the only way to inject request outside the http code trace
+        }
+
+        if (oidcPrincipal != null) {
+            Map<String, List<String>> rolesByApplication = MeveoUserKeyCloakImpl.getRolesByApplication(oidcPrincipal.getOidcSecurityContext().getToken());
+
+            // Supplement admin application roles with ones resolved in a current user,
+            String adminClientName = System.getProperty("opencell.keycloak.client");
+            List<String> adminRoles = rolesByApplication.get(adminClientName);
+            if (adminRoles == null) {
+                adminRoles = new ArrayList<String>();
+            }
+            adminRoles.addAll(currentUser.getRoles());
+            rolesByApplication.put(adminClientName, adminRoles);
+
             return rolesByApplication;
         }
         return null;
     }
-    
-    /**
-     * Check if user Have this Role
-     * 
-     * @param MeveoUser currentUser 
-     * @param String roleName
-     * @return True if The user Have this Role
-     */
-    public boolean isUserHaveThisRole(MeveoUser currentUser, String roleName) {
-        Map<String, Set<String>> rolesByApplication = getRolesByApplication(currentUser);
-        boolean isUserHaveThisRole = false;
-        for (Map.Entry<String, Set<String>> entry : rolesByApplication.entrySet()) {
-            Set<String> roles = entry.getValue();
-            for(String role:roles) {
-                if(roleName.equals(role)) {
-                    isUserHaveThisRole = true;
-                    break;
-                }
-            }
-            if(isUserHaveThisRole) break;
-        }
-        return isUserHaveThisRole;
-    }
-
-    /**
-     * Check if URL for a given scope, is allowed for a current user
-     * 
-     * @param url URL to check
-     * @param scope Scope to match
-     * @return True if the URL is accessible
-     */
-    @SuppressWarnings("rawtypes")
-    public boolean isLinkAccesible(String url, String scope) {
-
-        if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal)) {
-            return true;
-        }
-
-        String accessToken = ((KeycloakPrincipal) ctx.getCallerPrincipal()).getKeycloakSecurityContext().getTokenString();
-
-        AuthorizationContext authContext = ((KeycloakPrincipal) ctx.getCallerPrincipal()).getKeycloakSecurityContext().getAuthorizationContext();
-
-        AuthzClient authzClient = AuthenticationProvider.getKcAuthzClient();
-
-        // Get resources best matching the URL
-        List<ResourceRepresentation> resources = authzClient.protection(accessToken).resource().findByMatchingUri(url);
-
-        boolean permited = false;
-        for (ResourceRepresentation resourceRepresentation : resources) {
-            permited = permited || authContext.hasPermission(resourceRepresentation.getName(), scope);
-        }
-
-        return permited;
-    }
-
-    /**
-     * Check if URLs for a given scope are allowed for a current user
-     * 
-     * @param scope Scope to match
-     * @param urls A list of URLs to match
-     * @return A corresponding set of True/false if the URL is accessible
-     */
-    @SuppressWarnings("rawtypes")
-    public boolean[] isLinkAccesible(String scope, String... urls) {
-
-        if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal)) {
-            return new boolean[urls.length];
-        }
-
-        String accessToken = ((KeycloakPrincipal) ctx.getCallerPrincipal()).getKeycloakSecurityContext().getTokenString();
-
-        AuthorizationContext authContext = ((KeycloakPrincipal) ctx.getCallerPrincipal()).getKeycloakSecurityContext().getAuthorizationContext();
-
-        AuthzClient authzClient = AuthenticationProvider.getKcAuthzClient();
-
-        boolean[] result = new boolean[urls.length];
-
-        for (int i = 0; i < urls.length; i++) {
-            String url = urls[i];
-
-            // Get resources best matching the URL
-            List<ResourceRepresentation> resources = authzClient.protection(accessToken).resource().findByMatchingUri(url);
-
-            boolean permited = false;
-            for (ResourceRepresentation resourceRepresentation : resources) {
-                permited = permited || authContext.hasPermission(resourceRepresentation.getName(), scope);
-            }
-            result[i] = permited;
-        }
-        return result;
-    }
-
 }

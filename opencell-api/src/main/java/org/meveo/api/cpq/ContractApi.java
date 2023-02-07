@@ -104,7 +104,10 @@ public class ContractApi extends BaseApi{
 
 
 	public Long CreateContract(ContractDto dto) {
+
 		// check mandatory param
+		checkBillingRulesRedirectionIsEnabled(dto);
+
 		checkParams(dto);
 		//check if date end great than date begin
 		if(dto.getEndDate().compareTo(dto.getBeginDate()) < 0) {
@@ -144,6 +147,10 @@ public class ContractApi extends BaseApi{
 		}
 		return contract.getId();
 	}
+
+	private void checkBillingRulesRedirectionIsEnabled(ContractDto contractDto) {
+		billingRuleService.checkBillingRedirectionRulesConfiguration(contractDto);
+	}
 	
 	private void changeAccountLevel(ContractDto dto, Contract contract) {
 		switch (dto.getContractAccountLevel()) {
@@ -176,7 +183,9 @@ public class ContractApi extends BaseApi{
 		}
 	}
 	public void updateContract(ContractDto dto) {
+
 		// check mandatory param
+		checkBillingRulesRedirectionIsEnabled(dto);
 		checkParams(dto);
 		//check if date end great than date begin
 		if(dto.getEndDate().compareTo(dto.getBeginDate()) < 0) {

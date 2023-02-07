@@ -62,6 +62,11 @@ public class InvoiceValidationRule extends BusinessEntity {
     @Type(type = "json")
     @Column(name = "rule_values", columnDefinition = "jsonb")
     private Map<String, String> ruleValues;
+
+    @Column(name = "evaluation_mode")
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private EvaluationModeEnum evaluationMode = EvaluationModeEnum.VALIDATION;
     
     @Transient
     private boolean toReorder;
@@ -145,4 +150,12 @@ public class InvoiceValidationRule extends BusinessEntity {
 	public void setToReorder(boolean toReorder) {
 		this.toReorder = toReorder;
 	}
+
+    public EvaluationModeEnum getEvaluationMode() {
+        return evaluationMode;
+    }
+
+    public void setEvaluationMode(EvaluationModeEnum evaluationMode) {
+        this.evaluationMode = evaluationMode;
+    }
 }

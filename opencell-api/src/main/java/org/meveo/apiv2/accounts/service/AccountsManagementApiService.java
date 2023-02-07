@@ -13,6 +13,8 @@ import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
@@ -558,8 +560,30 @@ public class AccountsManagementApiService {
             } catch (ExecutionException e) {
                 log.error("Failed to execute Mediation API async method", e);
             }
-        }
-		
+		}
+
+		// Summary
+		AtomicReference<BigDecimal> amountWithTax = new AtomicReference<>(BigDecimal.ZERO);
+		AtomicReference<BigDecimal> amountWithoutTax = new AtomicReference<>(BigDecimal.ZERO);
+		AtomicReference<BigDecimal> amountTax = new AtomicReference<>(BigDecimal.ZERO);
+		AtomicInteger walletOperationCount = new AtomicInteger(0);
+		Arrays.stream(result.getAppliedCharges()).forEach(charge -> {
+			if (charge != null) {
+				amountWithTax.accumulateAndGet(Optional.ofNullable(charge.getAmountWithTax()).orElse(BigDecimal.ZERO), BigDecimal::add);
+				amountWithoutTax.accumulateAndGet(Optional.ofNullable(charge.getAmountWithoutTax()).orElse(BigDecimal.ZERO), BigDecimal::add);
+				amountTax.accumulateAndGet(Optional.ofNullable(charge.getAmountTax()).orElse(BigDecimal.ZERO), BigDecimal::add);
+
+				walletOperationCount.addAndGet(Optional.ofNullable(charge.getWalletOperationCount()).orElse(0));
+			} else {
+				log.warn("cdrProcessingResult amouts and WOCount will have default 0 value, due to charge null");
+			}
+		});
+
+		result.setAmountWithTax(amountWithTax.get());
+		result.setAmountWithoutTax(amountWithoutTax.get());
+		result.setAmountTax(amountTax.get());
+		result.setWalletOperationCount(walletOperationCount.get());
+
 		return result;
 	}
 

@@ -44,14 +44,19 @@ public class CompareOfferAmountScript  extends Script{
                                  .replace("OPERATOR", ScriptUtils.buildOperator(String.valueOf(methodContext.get(OPERATOR)), true));
         
         List<OfferTemplate> offers = (List<OfferTemplate>) methodContext.get(OFFERS);
-        
-        List<Object[]> result = invoiceLineService.getEntityManager().createQuery(finalQuery)
-                                                    .setParameter("invoiceId", invoiceId)
-                                                    .setParameter("offers", offers.stream().map(OfferTemplate::getCode).collect(Collectors.toList()))
-                                                    .setParameter("value", methodContext.get(VALUE))
-                                                    .getResultList();
-        
-        methodContext.put(Script.INVOICE_VALIDATION_STATUS, CollectionUtils.isEmpty(result) ? InvoiceValidationStatusEnum.VALID : (InvoiceValidationStatusEnum) methodContext.get(Script.RESULT_VALUE));
+
+        if(CollectionUtils.isEmpty(offers))
+        {
+            methodContext.put(Script.INVOICE_VALIDATION_STATUS, null);
+        }else {
+            List<Object[]> result = invoiceLineService.getEntityManager().createQuery(finalQuery)
+                    .setParameter("invoiceId", invoiceId)
+                    .setParameter("offers", offers.stream().map(OfferTemplate::getCode).collect(Collectors.toList()))
+                    .setParameter("value", methodContext.get(VALUE))
+                    .getResultList();
+
+            methodContext.put(Script.INVOICE_VALIDATION_STATUS, CollectionUtils.isEmpty(result) ? InvoiceValidationStatusEnum.VALID : methodContext.get(Script.RESULT_VALUE));
+        }
     }
     
     @SuppressWarnings("unchecked")
