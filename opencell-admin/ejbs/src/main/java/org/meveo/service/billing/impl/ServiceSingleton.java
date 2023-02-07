@@ -594,6 +594,14 @@ public class ServiceSingleton {
         		invoice = invoiceService.update(invoice);
         	}
         }
+        
+        InvoiceSequence sequenceNew = new InvoiceSequence();
+        sequenceNew.setCurrentNumber(nextInvoiceNb);
+        sequenceNew.setSequenceSize(sequence.getSequenceSize());
+        sequenceNew.setCode(sequence.getCode());
+        invoiceSequenceService.create(sequenceNew);
+        invoiceType.setInvoiceSequence(sequenceNew);
+        
         return invoice;
     }
 
