@@ -1393,6 +1393,35 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         return result.toString();
     }
 
+    private String getTaxCodes(Tax tax) {
+        if (CollectionUtils.isEmpty(tax.getSubTaxes())) {
+            return tax.getCode().replaceAll(",", "\n");
+        } else {
+            return getSubTaxesCodes(tax.getSubTaxes());
+        }
+    }
+
+    private String getSubTaxesCodes(List<Tax> subTaxes) {
+        if (CollectionUtils.isEmpty(subTaxes)) {
+            return StringUtils.EMPTY;
+        }
+
+        final StringBuilder result = new StringBuilder();
+
+        String prefix = "";
+        for (Tax subTax : subTaxes) {
+            result.append(prefix);
+            prefix = ",";
+
+            if (CollectionUtils.isNotEmpty(subTax.getSubTaxes())) {
+                result.append(getSubTaxesCodes(subTax.getSubTaxes()));
+            } else {
+                result.append(subTax.getCode());
+            }
+        }
+        return result.toString();
+    }
+
     /**
      * Creates a root element of xml - Invoice tag
      *
@@ -2497,6 +2526,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         line.setAttribute("periodEndDate", DateUtils.formatDateWithPattern(periodEndDate, invoiceDateFormat));
         line.setAttribute("periodStartDate", DateUtils.formatDateWithPattern(periodStartDate, invoiceDateFormat));
         line.setAttribute("taxPercent", invoiceLine.getTaxRate() != null ? invoiceLine.getTaxRate().toPlainString() : "");
+        line.setAttribute("taxCode", getTaxCodes(invoiceLine.getTax()));
         line.setAttribute("sortIndex", "");
         line.setAttribute("code", invoiceLine.getOrderRef());
         Element label = doc.createElement("label");

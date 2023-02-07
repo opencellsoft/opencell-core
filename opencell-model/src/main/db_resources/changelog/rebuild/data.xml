@@ -19092,7 +19092,7 @@ Your name and surname
 			</column>
 		</insert>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-13717_20230202" author="aeljaouhari" />
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->

@@ -18922,7 +18922,7 @@ Your name and surname
             <where>media = 'DUNNING_MEDIA'</where>
         </update>
     </changeSet>
-    
+
     <changeSet id="#INTRD-13717_20230202" author="aeljaouhari">
     	<update tableName="meveo_script_parameter">
 			<column name="mandatory" valueNumeric="0" />

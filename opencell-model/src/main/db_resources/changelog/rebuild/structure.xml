@@ -11847,6 +11847,7 @@
             <column name="auxiliary_account_label_el" type="varchar(2000)"
                     defaultValue="#{ca.description}"/>
             <column name="activate_dunning" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="enable_billing_redirection_rules" type="${type.boolean}" defaultValueNumeric="0" />
       </createTable>
     </changeSet>
     <changeSet id="#INTRD-3461_20212128-rebuild-str-tbl" author="hichamElHaloui">

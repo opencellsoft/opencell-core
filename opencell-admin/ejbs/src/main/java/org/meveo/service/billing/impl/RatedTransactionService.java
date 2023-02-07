@@ -1713,7 +1713,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             String unitAmountField =
                     billingCycle.isAggregateUnitAmounts() ? "SUM(a.unitAmountWithoutTax)" : "unitAmountWithoutTax";
             List<String> fieldToFetch = buildFieldList(usageDateAggregation, unitAmountField,
-                    billingCycle.isIgnoreSubscriptions(), billingCycle.isIgnoreOrders(), true);
+                    billingCycle.isIgnoreSubscriptions(), billingCycle.isIgnoreOrders(),
+                    true, billingCycle.isUseAccountingArticleLabel());
 
             String query = buildFetchQuery(new PaginationConfiguration(billingCycleFilters, fieldToFetch, null),
                     usageDateAggregation, getEntityCondition(be), billingCycle, true);
@@ -1743,16 +1744,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     private List<String> buildFieldList(String usageDateAggregation,
                                         String unitAmountField, boolean ignoreSubscription,
-                                        boolean ignoreOrder, boolean withAggregation) {
+                                        boolean ignoreOrder, boolean withAggregation, boolean useAccountingArticleLabel) {
         List<String> fieldToFetch;
         if(withAggregation) {
             fieldToFetch = new ArrayList<>(asList("string_agg_long(a.id) as rated_transaction_ids", "billingAccount.id as billing_account__id",
-                    "accountingCode.id as accounting_code_id", "description as label", "SUM(a.quantity) as quantity",
+                    "accountingCode.id as accounting_code_id", "SUM(a.quantity) as quantity",
                     unitAmountField + " as unit_amount_without_tax", "SUM(a.amountWithoutTax) as sum_without_tax", "SUM(a.amountWithTax) as sum_with_tax",
-                    "offerTemplate.id as offer_id", "serviceInstance.id as service_instance_id", usageDateAggregation + " as usage_date",
+                    "offerTemplate.id as offer_id", usageDateAggregation + " as usage_date",
                     "min(a.startDate) as start_date", "max(a.endDate) as end_date", "orderNumber as order_number",
                     "taxPercent as tax_percent", "tax.id as tax_id", "infoOrder.order.id as order_id",
-                    "infoOrder.productVersion.id as product_version_id", "infoOrder.orderLot.id as order_id", "chargeInstance.id as charge_instance_id",
+                    "infoOrder.productVersion.id as product_version_id",
                     "accountingArticle.id as article_id", "discountedRatedTransaction as discounted_ratedtransaction_id"));
         } else {
             fieldToFetch = new ArrayList<>(asList("CAST(a.id as string) as rated_transaction_ids",
@@ -1766,9 +1767,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
         if(!ignoreSubscription) {
             fieldToFetch.add("subscription.id as subscription_id");
+            fieldToFetch.add("serviceInstance.id as service_instance_id");
+            fieldToFetch.add("chargeInstance.id as charge_instance_id");
         }
         if(!ignoreOrder) {
             fieldToFetch.add("subscription.order.id as commercial_order_id");
+        }
+        if(!useAccountingArticleLabel) {
+            fieldToFetch.add("description as label");
         }
         return fieldToFetch;
     }
@@ -1780,9 +1786,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         } else if (be instanceof BillingAccount) {
             entityCondition = " a.billingAccount.id = " + be.getId();
         } else if (be instanceof Order) {
-            entityCondition = " a.orderNumber =" + ((Order) be).getOrderNumber();
+            entityCondition = " a.orderNumber = '" + ((Order) be).getOrderNumber() + "'";
         } else if (be instanceof CommercialOrder) {
-            entityCondition = " a.orderNumber = " + be.getId();
+            entityCondition = " a.orderNumber = '" + ((CommercialOrder) be).getOrderNumber() + "'";
         }
         return entityCondition;
     }
@@ -1805,13 +1811,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         String ignoreSubscription = billingCycle.isIgnoreSubscriptions() ? "" : ", a.subscription.id";
         String ignoreOrders = billingCycle.isIgnoreOrders() ? "" : ", a.subscription.order.id";
         String aggregateWithUnitAmount = billingCycle.isAggregateUnitAmounts() ? "" : ", a.unitAmountWithoutTax";
+        String useAccountingLabel = billingCycle.isUseAccountingArticleLabel() ? "" : ", a.description";
         if(billingCycle.getDateAggregation() == DateAggregationOption.NO_DATE_AGGREGATION) {
             usageDateAggregation = "a." + usageDateAggregation;
         }
-        return " group by a.billingAccount.id, a.accountingCode.id, a.description " + aggregateWithUnitAmount + ","
+        return " group by a.billingAccount.id, a.accountingCode.id" + useAccountingLabel + aggregateWithUnitAmount + ","
                 + " a.offerTemplate, a.serviceInstance, " + usageDateAggregation + " ,a.orderNumber" + ignoreSubscription
                 + ignoreOrders + ", a.taxPercent, a.tax.id, a.infoOrder.order.id, a.infoOrder.productVersion.id, "
-                + " a.infoOrder.orderLot.id, a.chargeInstance.id, a.accountingArticle.id, a.discountedRatedTransaction";
+                + " a.chargeInstance.id, a.accountingArticle.id, a.discountedRatedTransaction";
     }
 
     private Map<String, Object> buildParams(BillingRun billingRun, Date lastTransactionDate) {
@@ -1827,7 +1834,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                                                                      Map<String, Object> billingCycleFilters,
                                                                      BillingCycle billingCycle) {
         List<String> fieldToFetch = buildFieldList(null, null,
-                billingCycle.isIgnoreSubscriptions(), billingCycle.isIgnoreOrders(), false);
+                billingCycle.isIgnoreSubscriptions(), billingCycle.isIgnoreOrders(),
+                false, billingCycle.isUseAccountingArticleLabel());
         String query = buildFetchQuery(new PaginationConfiguration(billingCycleFilters, fieldToFetch, null),
                 null, getEntityCondition(be), null, false);
         return getSelectQueryAsMap(query, buildParams(billingRun, lastTransactionDate));

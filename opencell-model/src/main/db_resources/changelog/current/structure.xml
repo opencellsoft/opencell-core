@@ -15768,4 +15768,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedTableName="ar_customer_balance"
                                  referencedColumnNames="id"/>
     </changeSet>
+
+    <changeSet id="#INTRD-13009_20230202" author="bourras">
+        <addColumn tableName="finance_settings">
+            <column name="enable_billing_redirection_rules" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
