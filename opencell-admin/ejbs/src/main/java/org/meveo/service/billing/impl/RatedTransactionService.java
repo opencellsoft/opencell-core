@@ -1753,7 +1753,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     "offerTemplate.id as offer_id", usageDateAggregation + " as usage_date",
                     "min(a.startDate) as start_date", "max(a.endDate) as end_date", "orderNumber as order_number",
                     "taxPercent as tax_percent", "tax.id as tax_id", "infoOrder.order.id as order_id",
-                    "infoOrder.productVersion.id as product_version_id", "infoOrder.orderLot.id as order_id",
+                    "infoOrder.productVersion.id as product_version_id",
                     "accountingArticle.id as article_id", "discountedRatedTransaction as discounted_ratedtransaction_id"));
         } else {
             fieldToFetch = new ArrayList<>(asList("CAST(a.id as string) as rated_transaction_ids",
@@ -1786,9 +1786,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         } else if (be instanceof BillingAccount) {
             entityCondition = " a.billingAccount.id = " + be.getId();
         } else if (be instanceof Order) {
-            entityCondition = " a.orderNumber =" + ((Order) be).getOrderNumber();
+            entityCondition = " a.orderNumber = '" + ((Order) be).getOrderNumber() + "'";
         } else if (be instanceof CommercialOrder) {
-            entityCondition = " a.orderNumber = " + be.getId();
+            entityCondition = " a.orderNumber = '" + ((CommercialOrder) be).getOrderNumber() + "'";
         }
         return entityCondition;
     }
@@ -1818,7 +1818,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return " group by a.billingAccount.id, a.accountingCode.id" + useAccountingLabel + aggregateWithUnitAmount + ","
                 + " a.offerTemplate, a.serviceInstance, " + usageDateAggregation + " ,a.orderNumber" + ignoreSubscription
                 + ignoreOrders + ", a.taxPercent, a.tax.id, a.infoOrder.order.id, a.infoOrder.productVersion.id, "
-                + " a.infoOrder.orderLot.id, a.chargeInstance.id, a.accountingArticle.id, a.discountedRatedTransaction";
+                + " a.chargeInstance.id, a.accountingArticle.id, a.discountedRatedTransaction";
     }
 
     private Map<String, Object> buildParams(BillingRun billingRun, Date lastTransactionDate) {
