@@ -55,7 +55,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
+import org.meveo.api.dto.response.catalog.GetPricePlanVersionResponseDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.MeveoApiException;
@@ -349,6 +351,15 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
             pricePlanMatrixVersion.setStatusDate(Calendar.getInstance().getTime());
         }
         return update(pricePlanMatrixVersion, "CHANGE_STATUS");
+    }
+
+    public GetPricePlanVersionResponseDto addLinesPricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion) {
+        PricePlanMatrixVersionDto ppmVersionDto = new PricePlanMatrixVersionDto(pricePlanMatrixVersion, false);
+        List<PricePlanMatrixLine> ppmLines = getEntityManager().createNamedQuery("PricePlanMatrixLine.findByPricePlanMatrixVersion", PricePlanMatrixLine.class)
+                .setParameter("pricePlanMatrixVersion", pricePlanMatrixVersion).getResultList();
+        ppmVersionDto.setLines(ppmLines.stream().map(PricePlanMatrixLineDto::new).collect(Collectors.toSet()));
+
+        return new GetPricePlanVersionResponseDto(ppmVersionDto);
     }
 
     public PricePlanMatrixVersion duplicate(PricePlanMatrixVersion pricePlanMatrixVersion, PricePlanMatrix pricePlanMatrix, DatePeriod validity, PriceVersionTypeEnum priceVersionType, boolean setNewVersion) {
