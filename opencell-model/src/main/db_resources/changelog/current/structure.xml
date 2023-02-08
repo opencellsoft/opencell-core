@@ -15729,4 +15729,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedTableName="billing_service_instance"/>
     </changeSet>
 
+
+	<changeSet id="#INTRD-13453_20230207" author="Mbarek-Ay">
+		<addColumn tableName="cpq_contract_item">
+			<column name="separate_discount" type="${type.boolean}" defaultValueNumeric="0"></column>
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>
