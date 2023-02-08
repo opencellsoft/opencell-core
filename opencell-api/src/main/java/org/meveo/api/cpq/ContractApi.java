@@ -473,8 +473,6 @@ public class ContractApi extends BaseApi{
 			missingParameters.add("contractAccountLevel");
 		if(Strings.isEmpty(dto.getAccountCode()))
 			missingParameters.add("accountCode");
-		if(dto.getContractDate() == null)
-			missingParameters.add("contractDate");
 		if(dto.getBeginDate() == null)
 			missingParameters.add("beginDate");
 		if(dto.getEndDate() == null)
