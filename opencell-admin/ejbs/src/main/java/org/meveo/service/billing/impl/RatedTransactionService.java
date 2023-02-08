@@ -20,6 +20,7 @@ package org.meveo.service.billing.impl;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static org.meveo.model.billing.BillingEntityTypeEnum.BILLINGACCOUNT;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -70,6 +71,7 @@ import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.ApplyMinimumModeEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.DateAggregationOption;
@@ -1714,7 +1716,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     billingCycle.isAggregateUnitAmounts() ? "SUM(a.unitAmountWithoutTax)" : "unitAmountWithoutTax";
             List<String> fieldToFetch = buildFieldList(usageDateAggregation, unitAmountField,
                     billingCycle.isIgnoreSubscriptions(), billingCycle.isIgnoreOrders(),
-                    true, billingCycle.isUseAccountingArticleLabel());
+                    true, billingCycle.isUseAccountingArticleLabel(), billingCycle.getType());
 
             String query = buildFetchQuery(new PaginationConfiguration(billingCycleFilters, fieldToFetch, null),
                     usageDateAggregation, getEntityCondition(be), billingCycle, true);
@@ -1744,7 +1746,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     private List<String> buildFieldList(String usageDateAggregation,
                                         String unitAmountField, boolean ignoreSubscription,
-                                        boolean ignoreOrder, boolean withAggregation, boolean useAccountingArticleLabel) {
+                                        boolean ignoreOrder, boolean withAggregation,
+                                        boolean useAccountingArticleLabel, BillingEntityTypeEnum type) {
         List<String> fieldToFetch;
         if(withAggregation) {
             fieldToFetch = new ArrayList<>(asList("string_agg_long(a.id) as rated_transaction_ids", "billingAccount.id as billing_account__id",
@@ -1765,7 +1768,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     "infoOrder.orderLot.id as order_lot_id", "chargeInstance.id as charge_instance_id",
                     "accountingArticle.id as article_id", "discountedRatedTransaction as discounted_ratedtransaction_id"));
         }
-        if(!ignoreSubscription) {
+        if(BILLINGACCOUNT != type || (BILLINGACCOUNT == type && !ignoreSubscription)) {
             fieldToFetch.add("subscription.id as subscription_id");
             fieldToFetch.add("serviceInstance.id as service_instance_id");
             fieldToFetch.add("chargeInstance.id as charge_instance_id");
@@ -1800,15 +1803,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 nativePersistenceService.getAggregateQuery(entityClass.getCanonicalName(), searchConfig, null);
         queryBuilder.addSql(entityCondition + " AND " + QUERY_FILTER);
         if(withGrouping) {
+            boolean ignoreSubscription = BILLINGACCOUNT == billingCycle.getType() && billingCycle.isIgnoreSubscriptions();
             return queryBuilder.getQueryAsString() +
-                    buildGroupByClause(usageDateAggregation, billingCycle);
+                    buildGroupByClause(usageDateAggregation, billingCycle, ignoreSubscription);
         } else {
             return queryBuilder.getQueryAsString();
         }
     }
 
-    private String buildGroupByClause(String usageDateAggregation, BillingCycle billingCycle) {
-        String ignoreSubscription = billingCycle.isIgnoreSubscriptions() ? "" : ", a.subscription.id";
+    private String buildGroupByClause(String usageDateAggregation, BillingCycle billingCycle, boolean ignoreSubscription) {
+        String ignoreSubscriptionClause = ignoreSubscription ? "" : ", a.subscription.id, a.serviceInstance ";
+        String chargeInstance = ignoreSubscription ? "" : ", a.chargeInstance.id";
         String ignoreOrders = billingCycle.isIgnoreOrders() ? "" : ", a.subscription.order.id";
         String aggregateWithUnitAmount = billingCycle.isAggregateUnitAmounts() ? "" : ", a.unitAmountWithoutTax";
         String useAccountingLabel = billingCycle.isUseAccountingArticleLabel() ? "" : ", a.description";
@@ -1816,9 +1821,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             usageDateAggregation = "a." + usageDateAggregation;
         }
         return " group by a.billingAccount.id, a.accountingCode.id" + useAccountingLabel + aggregateWithUnitAmount + ","
-                + " a.offerTemplate, a.serviceInstance, " + usageDateAggregation + " ,a.orderNumber" + ignoreSubscription
-                + ignoreOrders + ", a.taxPercent, a.tax.id, a.infoOrder.order.id, a.infoOrder.productVersion.id, "
-                + " a.chargeInstance.id, a.accountingArticle.id, a.discountedRatedTransaction";
+                + " a.offerTemplate, " + usageDateAggregation + " ,a.orderNumber" + ignoreSubscriptionClause
+                + ignoreOrders + ", a.taxPercent, a.tax.id, a.infoOrder.order.id, a.infoOrder.productVersion.id "
+                + chargeInstance + ", a.accountingArticle.id, a.discountedRatedTransaction";
     }
 
     private Map<String, Object> buildParams(BillingRun billingRun, Date lastTransactionDate) {
@@ -1835,7 +1840,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                                                                      BillingCycle billingCycle) {
         List<String> fieldToFetch = buildFieldList(null, null,
                 billingCycle.isIgnoreSubscriptions(), billingCycle.isIgnoreOrders(),
-                false, billingCycle.isUseAccountingArticleLabel());
+                false, billingCycle.isUseAccountingArticleLabel(), billingCycle.getType());
         String query = buildFetchQuery(new PaginationConfiguration(billingCycleFilters, fieldToFetch, null),
                 null, getEntityCondition(be), null, false);
         return getSelectQueryAsMap(query, buildParams(billingRun, lastTransactionDate));
