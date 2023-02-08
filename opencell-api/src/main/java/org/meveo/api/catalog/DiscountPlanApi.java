@@ -75,6 +75,9 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
 
     	if(postData.getDiscountPlanType() == null)
 			missingParameters.add("discountPlanType");
+        if (StringUtils.isBlank(postData.getAllowanceCode())) {
+            missingParameters.add("allowanceCode");
+        }
     	handleMissingParameters();
         if (StringUtils.isBlank(postData.getCode())) {
             addGenericCodeIfAssociated(DiscountPlan.class.getName(), postData);
@@ -84,7 +87,11 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         }
 
         DiscountPlan discountPlan = new DiscountPlan();
-        discountPlan.setAllowanceCode(checkAllowanceCodeAndGetIt(postData));
+         UntdidAllowanceCode untdidAllowanceCode = untdidAllowanceCodeService.getByCode(postData.getAllowanceCode());
+        if (untdidAllowanceCode == null) {
+            throw new EntityDoesNotExistsException(UntdidAllowanceCode.class, postData.getAllowanceCode());
+        }
+        discountPlan.setAllowanceCode(untdidAllowanceCode);
         discountPlan.setCode(postData.getCode());
         discountPlan.setDescription(postData.getDescription());
         if (postData.isDisabled() != null) {
@@ -127,16 +134,6 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         return discountPlan;
     }
 
-    private UntdidAllowanceCode checkAllowanceCodeAndGetIt(DiscountPlanDto postData) {
-        if (postData.getAllowanceCode() == null || postData.getAllowanceCode().isEmpty() ) {
-             throw new MissingParameterException("The allowance code  is obligatory");
-        }
-        UntdidAllowanceCode untdidAllowanceCode = untdidAllowanceCodeService.getByCode(postData.getAllowanceCode());
-        if (untdidAllowanceCode == null) {
-            throw new EntityDoesNotExistsException(UntdidAllowanceCode.class, postData.getAllowanceCode());
-        }
-        return untdidAllowanceCode;
-    }
 
     private List<DiscountPlan> getIncompatibleDiscountPlans(List<DiscountPlanDto> incompatibleDiscountPlansDto) {
         if (incompatibleDiscountPlansDto == null) {
@@ -161,6 +158,10 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         }
     	if(postData.getDiscountPlanType() == null)
 			missingParameters.add("discountPlanType");
+
+        if (StringUtils.isBlank(postData.getAllowanceCode())) {
+            missingParameters.add("allowanceCode");
+        }
     	
     	handleMissingParameters();
 
@@ -168,7 +169,11 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         if (discountPlan == null) {
             throw new EntityDoesNotExistsException(DiscountPlan.class, postData.getCode());
         }
-        discountPlan.setAllowanceCode(checkAllowanceCodeAndGetIt(postData));
+
+         UntdidAllowanceCode untdidAllowanceCode = untdidAllowanceCodeService.getByCode(postData.getAllowanceCode());
+        if (untdidAllowanceCode == null) {
+            throw new EntityDoesNotExistsException(UntdidAllowanceCode.class, postData.getAllowanceCode());
+        }
 
         if (discountPlan.getStatus().equals(DiscountPlanStatusEnum.DRAFT)) {
 
