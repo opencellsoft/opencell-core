@@ -61,6 +61,7 @@ import org.meveo.service.catalog.impl.DiscountPlanService;
 @Stateless
 public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> {
 
+    public static final String DISCOUNT_DEFAULT_ALLOWANCE_CODE = "95";
     @Inject
     private DiscountPlanService discountPlanService;
     
@@ -75,9 +76,7 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
 
     	if(postData.getDiscountPlanType() == null)
 			missingParameters.add("discountPlanType");
-        if (StringUtils.isBlank(postData.getAllowanceCode())) {
-            missingParameters.add("allowanceCode");
-        }
+
     	handleMissingParameters();
         if (StringUtils.isBlank(postData.getCode())) {
             addGenericCodeIfAssociated(DiscountPlan.class.getName(), postData);
@@ -87,6 +86,10 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         }
 
         DiscountPlan discountPlan = new DiscountPlan();
+
+        if (StringUtils.isBlank(postData.getAllowanceCode())) {
+           postData.setAllowanceCode(DISCOUNT_DEFAULT_ALLOWANCE_CODE);
+        }
          UntdidAllowanceCode untdidAllowanceCode = untdidAllowanceCodeService.getByCode(postData.getAllowanceCode());
         if (untdidAllowanceCode == null) {
             throw new EntityDoesNotExistsException(UntdidAllowanceCode.class, postData.getAllowanceCode());
@@ -159,9 +162,6 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
     	if(postData.getDiscountPlanType() == null)
 			missingParameters.add("discountPlanType");
 
-        if (StringUtils.isBlank(postData.getAllowanceCode())) {
-            missingParameters.add("allowanceCode");
-        }
     	
     	handleMissingParameters();
 
@@ -170,6 +170,9 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
             throw new EntityDoesNotExistsException(DiscountPlan.class, postData.getCode());
         }
 
+        if (StringUtils.isBlank(postData.getAllowanceCode())) {
+           postData.setAllowanceCode(DISCOUNT_DEFAULT_ALLOWANCE_CODE);
+        }
          UntdidAllowanceCode untdidAllowanceCode = untdidAllowanceCodeService.getByCode(postData.getAllowanceCode());
         if (untdidAllowanceCode == null) {
             throw new EntityDoesNotExistsException(UntdidAllowanceCode.class, postData.getAllowanceCode());

@@ -19458,4 +19458,11 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         </insert>
     </changeSet>
 
+    <changeSet id="#INTRD-13883_20230208" author="hichamELHALOUI">
+        <update tableName="cat_discount_plan">
+			<column name="allowance_code_id" valueComputed="(SELECT id from untdid_5189_allowance_code where code = '95')"></column>
+			<where>allowance_code_id is null</where>
+		</update>
+    </changeSet>
+
 </databaseChangeLog>
