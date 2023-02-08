@@ -236,7 +236,7 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 		try {			
 			Provider provider = providerService.findById(Provider.CURRENT_PROVIDER_ID, true);
 			provider.getInvoiceConfiguration().setCurrentInvoiceNb(currentInvoiceNb);
-
+			commit();
 		} catch (Exception e) {
 			throw new BusinessException("Cant update global InvoiceTypeSequence : " + e.getMessage());
 		}
