@@ -1,10 +1,13 @@
 package org.meveo.service.catalog.impl;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.ConvertedPricePlanVersion;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
@@ -31,4 +34,15 @@ public class ConvertedPricePlanVersionService extends PersistenceService<Convert
             return null;
         }
 	}
+    
+    public List<ConvertedPricePlanVersion> getListConvertedPricePlanVersionByPpmvId(Long ppmvId) {
+        try {
+            QueryBuilder qb = new QueryBuilder(ConvertedPricePlanVersion.class, "b", null);
+            qb.addCriterion("b.pricePlanMatrixVersion.id", "=", ppmvId, true);
+            return (List<ConvertedPricePlanVersion>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (Exception ex) {
+            log.error("failed to find billing accounts", ex);
+        }
+        return null;
+    }
 }

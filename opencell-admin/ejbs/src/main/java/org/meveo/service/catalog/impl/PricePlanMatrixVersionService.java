@@ -69,6 +69,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.ColumnTypeEnum;
+import org.meveo.model.catalog.ConvertedPricePlanVersion;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
@@ -116,7 +117,10 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
-
+    
+    @Inject
+    private ConvertedPricePlanVersionService convertedPricePlanVersionService;
+    
     protected Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
@@ -836,7 +840,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                     }
                     if (key.equals("amount")) {
                         row.createCell(2).setCellValue(cellValue != null ? String.valueOf(cellValue) : "");
-                    }
+                    }//HHAN
                 }
             }
         }
@@ -907,12 +911,29 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
             LinkedHashMap<String, Object> CSVLineRecords = new LinkedHashMap<>();
             CSVLineRecords.put("label", ppv.getLabel());
             CSVLineRecords.put("amount", ppv.getPrice());
+            
+            List<ConvertedPricePlanVersion> convertedPricePlanMatrixLines = convertedPricePlanVersionService.getListConvertedPricePlanVersionByPpmvId(ppv.getId());
+            for (ConvertedPricePlanVersion cppv : convertedPricePlanMatrixLines)
+            {
+                String codeCurrency = "";
+                if(cppv.getTradingCurrency().getCurrency() != null) {
+                    codeCurrency = cppv.getTradingCurrency().getCurrency().getCurrencyCode();
+                }
+                String keyLine = "unitPrice-" + codeCurrency;
+                String valueLine = cppv.getConvertedPrice() + "|" + codeCurrency + "|" + cppv.getRate() + "|" + cppv.isUseForBillingAccounts();
+                CSVLineRecords.put(keyLine, valueLine);
+            }
+            
             return CSVLineRecords;
         }
 
         private CsvSchema buildPricePlanVersionCsvSchema() {
-            return CsvSchema.builder().addColumn("label", CsvSchema.ColumnType.STRING)
-                .addColumn("amount", CsvSchema.ColumnType.NUMBER_OR_STRING).build().withColumnSeparator(';').withLineSeparator("\n").withoutQuoteChar().withHeader();
+            return CsvSchema.builder()
+                .addColumn("label", CsvSchema.ColumnType.STRING)
+                .addColumn("amount", CsvSchema.ColumnType.NUMBER_OR_STRING)
+                .addColumn("u1", CsvSchema.ColumnType.NUMBER_OR_STRING)
+                .addColumn("u2", CsvSchema.ColumnType.NUMBER_OR_STRING)
+                .build().withColumnSeparator(';').withLineSeparator("\n").withoutQuoteChar().withHeader();
         }
 
         private CsvSchema buildGridPricePlanVersionCsvSchema(Set<LinkedHashMap<String, Object>> records) {
