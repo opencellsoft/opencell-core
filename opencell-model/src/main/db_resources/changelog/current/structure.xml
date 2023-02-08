@@ -15175,4 +15175,8 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedTableName="billing_service_instance"/>
     </changeSet>
 
+    <changeSet id="#INTRD-12972" author="bourras">
+        <dropNotNullConstraint tableName="cpq_contract" columnName="contract_date"/>
+    </changeSet>
+
 </databaseChangeLog>
