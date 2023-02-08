@@ -9564,6 +9564,7 @@
             </column>
             <column name="cf_values" type="${type.json}" />
             <column name="rate_type" type="varchar(255)"/>
+            <column name="separate_discount" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
 
@@ -19457,6 +19458,7 @@
 	<changeSet id="#INTRD-12047-20230112" author="AbdelmounaimAkadid" />
     <changeSet id="#INTRD-13220_20230203" author="AbdellatifBARI" />
     <changeSet id="#INTRD-13009_20230202" author="bourras" />
+    <changeSet id="#INTRD-13453_20230207" author="Mbarek-Ay"/>
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
