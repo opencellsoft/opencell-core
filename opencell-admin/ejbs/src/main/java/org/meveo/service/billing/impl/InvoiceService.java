@@ -6090,8 +6090,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (isExonerated == null) {
             isExonerated = billingAccountService.isExonerated(billingAccount);
         }
-        int rtRounding = appProvider.getRounding();
-        RoundingModeEnum rtRoundingMode = appProvider.getRoundingMode();
+        int rtRounding = appProvider.getInvoiceRounding();
+        RoundingModeEnum rtRoundingMode = appProvider.getInvoiceRoundingMode();
         Tax defaultTax = isExonerated ? taxService.getZeroTax() : null;
 
         // InvoiceType.taxScript will calculate all tax aggregates at once.
@@ -6892,9 +6892,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 BigDecimal amountWithoutTax = ratedTransactions.stream().map(RatedTransaction::getAmountWithoutTax).reduce(BigDecimal.ZERO, BigDecimal::add);
                 BigDecimal amountTax = ratedTransactions.stream().map(RatedTransaction::getAmountTax).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-                invoiceLine.setAmountWithTax(amountWithTax);
-                invoiceLine.setAmountWithoutTax(amountWithoutTax);
-                invoiceLine.setAmountTax(amountTax);
+                invoiceLine.setAmountWithTax(amountWithTax.setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode()));
+                invoiceLine.setAmountWithoutTax(amountWithoutTax.setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode()));
+                invoiceLine.setAmountTax(amountTax.setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode()));
                 invoiceLine.setRatedTransactions(ratedTransactions);
             }
         }
