@@ -15794,6 +15794,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
     <changeSet id="#INTRD-13883_20230208" author="hichamELHALOUI">
         <addColumn tableName="cat_discount_plan">
             <column name="allowance_code_id" type="bigint">
+                <constraints nullable="false" />
             </column>
 		</addColumn>
 
