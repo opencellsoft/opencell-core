@@ -7088,6 +7088,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         List<Invoice> invoicesAdv  = this.getEntityManager().createNamedQuery("Invoice.findValidatedInvoiceAdvOrder")
                 .setParameter("billingAccountId", invoice.getBillingAccount().getId())
                 .setParameter("commercialOrder", invoice.getCommercialOrder())
+                .setParameter("tradingCurrencyId",invoice.getTradingCurrency().getId())
                 .getResultList();
         return invoicesAdv;
     }
