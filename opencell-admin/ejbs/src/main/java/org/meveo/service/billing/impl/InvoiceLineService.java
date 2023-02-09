@@ -278,11 +278,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 BigDecimal amountTax = (BigDecimal) maxIlAmountAdj[7];
                 BigDecimal amountWithTax = (BigDecimal) maxIlAmountAdj[8];
                 
-                int testAmount1 = invoiceLine.getAmountWithoutTax().compareTo(amountWithoutTax);
-                int testAmount2 = invoiceLine.getAmountTax().compareTo(amountTax);
-                int testAmount3 = invoiceLine.getAmountWithTax().compareTo(amountWithTax);
-                
-                if(testAmount1 == 1 || testAmount2 == 1 || testAmount3 == 1) {
+                if(invoiceLine.getAmountWithoutTax().compareTo(amountWithoutTax) == 1 
+                    || invoiceLine.getAmountTax().compareTo(amountTax) == 1 
+                    || invoiceLine.getAmountWithTax().compareTo(amountWithTax) == 1) {
                     invoiceLine.setAmountTax(amountTax);
                     invoiceLine.setAmountWithoutTax(amountWithoutTax);
                     invoiceLine.setAmountWithTax(amountWithTax);
@@ -1385,8 +1383,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     
     @SuppressWarnings("unchecked")
     private List<Object[]> getMaxIlAmountAdj(Long id) {
-        Query query;
-        query = getEntityManager().createNamedQuery("InvoiceLine.getMaxIlAmountAdj").setParameter("invoiceId", id);
-        return query.getResultList();
+        return getEntityManager().createNamedQuery("InvoiceLine.getMaxIlAmountAdj").setParameter("invoiceId", id).getResultList();
     }
 }
