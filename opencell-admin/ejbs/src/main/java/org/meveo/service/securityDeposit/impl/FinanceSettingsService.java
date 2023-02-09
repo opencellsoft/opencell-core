@@ -127,4 +127,8 @@ public class FinanceSettingsService extends BusinessService<FinanceSettings> {
             return "#{ca.name.firstName} #{ca.name.lastName}";
         }
     }
+
+    public boolean isBillingRedirectionRulesEnabled() {
+        return findLastOne() != null && findLastOne().isEnableBillingRedirectionRules();
+    }
 }

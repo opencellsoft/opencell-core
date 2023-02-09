@@ -15774,4 +15774,25 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="enable_billing_redirection_rules" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
     </changeSet>
+    
+    	 <changeSet id="#INTRD-13453_20230207" author="Mbarek-Ay">
+		<addColumn tableName="cpq_contract_item">
+			<column name="separate_discount" type="${type.boolean}" defaultValueNumeric="0"></column>
+		</addColumn>
+	</changeSet>
+
+    <changeSet id="#INTRD-13220_20230203" author="AbdellatifBARI">
+        <addColumn tableName="cpq_order_product">
+            <column name="service_instance_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="cpq_order_product"
+                                 constraintName="fk_cpq_order_product_service_instance_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="billing_service_instance"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-12972" author="bourras">
+        <dropNotNullConstraint tableName="cpq_contract" columnName="contract_date"/>
+    </changeSet>
+
 </databaseChangeLog>

@@ -15,10 +15,10 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
-import javax.validation.constraints.PositiveOrZero;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -111,6 +111,11 @@ public class ContractItem extends EnableBusinessCFEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "rate_type", length = 50)
 	private ContractRateTypeEnum contractRateType = ContractRateTypeEnum.PERCENTAGE;
+	
+	
+	@Type(type = "numeric_boolean")
+	@Column(name = "separate_discount")
+	private boolean separateDiscount = false;
 
 
 	/**
@@ -257,6 +262,18 @@ public class ContractItem extends EnableBusinessCFEntity {
 		result = prime * result + Objects.hash(amountWithoutTax, chargeTemplate, offerTemplate, contract, pricePlan,
 				product, rate, serviceTemplate);
 		return result;
+	}
+	
+	
+
+
+	public boolean isSeparateDiscount() {
+		return separateDiscount;
+	}
+
+
+	public void setSeparateDiscount(boolean separateDiscount) {
+		this.separateDiscount = separateDiscount;
 	}
 
 
