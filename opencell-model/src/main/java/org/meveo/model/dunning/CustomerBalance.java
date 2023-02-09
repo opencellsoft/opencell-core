@@ -12,6 +12,8 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import java.util.List;
 
@@ -19,7 +21,13 @@ import java.util.List;
 @Table(name = "ar_customer_balance")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_customer_balance_seq"), })
+@NamedQueries({
+    @NamedQuery(name = "CustomerBalance.findDefaultOne", query = "select c from CustomerBalance c where c.defaultBalance = :default"),
+})
 public class CustomerBalance extends BusinessEntity {
+
+    /** */
+	private static final long serialVersionUID = 1L;
 
     @Type(type = "numeric_boolean")
     @Column(name = "default_balance")
