@@ -9564,6 +9564,7 @@
             </column>
             <column name="cf_values" type="${type.json}" />
             <column name="rate_type" type="varchar(255)"/>
+            <column name="separate_discount" type="${type.boolean}" defaultValueNumeric="0"></column>
         </createTable>
     </changeSet>
 
@@ -19504,6 +19505,7 @@
 	<changeSet id="#INTRD-12651-20230123" author="AdilElJaouhari" />
     <changeSet id="#INTRD-13062-20230124" author="ZBariki" />
     <changeSet id="#INTRD-13468_20230126" author="hichamELHALOUI" />
+    <changeSet id="#INTRD-13453_20230207" author="Mbarek-Ay"/>
     <changeSet id="#INTRD-13045-20230202" author="ZBariki" />
     <changeSet id="#INTRD-12047-20230112" author="AbdelmounaimAkadid" />
     <changeSet id="#INTRD-13009_20230202" author="bourras" />

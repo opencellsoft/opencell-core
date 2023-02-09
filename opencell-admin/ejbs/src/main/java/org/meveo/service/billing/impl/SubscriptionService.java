@@ -717,6 +717,10 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     public Subscription instantiateDiscountPlan(Subscription entity, DiscountPlan dp) throws BusinessException {
        
+    	if(CollectionUtils.isNotEmpty(entity.getDiscountPlanInstances())) {
+    		boolean discountPlanInstancExist = entity.getDiscountPlanInstances().stream().anyMatch(discountPlanInstance -> discountPlanInstance.getDiscountPlan().getCode().equalsIgnoreCase(dp.getCode()));
+    		if(discountPlanInstancExist) return entity;
+    	}
         BillingAccount billingAccount = entity.getUserAccount().getBillingAccount();
         for (DiscountPlanInstance discountPlanInstance : billingAccount.getDiscountPlanInstances()) {
             if (dp.getCode().equals(discountPlanInstance.getDiscountPlan().getCode())) {

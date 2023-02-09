@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import org.meveo.api.dto.response.BaseResponse;
-import org.meveo.apiv2.billing.ProcessCdrListModeEnum;
 
 public class ProcessApplyChargeListResult extends BaseResponse {
 
@@ -33,7 +32,7 @@ public class ProcessApplyChargeListResult extends BaseResponse {
     /**
      * Processing mode
      */
-    private ProcessCdrListModeEnum mode;
+    private ApplyOneShotChargeListModeEnum mode;
 
     /**
      * Processing statistics
@@ -49,7 +48,7 @@ public class ProcessApplyChargeListResult extends BaseResponse {
 
     }
 
-    public ProcessApplyChargeListResult(ProcessCdrListModeEnum mode, int total) {
+    public ProcessApplyChargeListResult(ApplyOneShotChargeListModeEnum mode, int total) {
         this.mode = mode;
         this.statistics = new Statistics(total, 0, 0);
         this.appliedCharges = new AppliedChargeResponseDto[total];
@@ -58,14 +57,14 @@ public class ProcessApplyChargeListResult extends BaseResponse {
     /**
      * @return Processing mode
      */
-    public ProcessCdrListModeEnum getMode() {
+    public ApplyOneShotChargeListModeEnum getMode() {
         return mode;
     }
 
     /**
      * @param mode Processing mode
      */
-    public void setMode(ProcessCdrListModeEnum mode) {
+    public void setMode(ApplyOneShotChargeListModeEnum mode) {
         this.mode = mode;
     }
 
