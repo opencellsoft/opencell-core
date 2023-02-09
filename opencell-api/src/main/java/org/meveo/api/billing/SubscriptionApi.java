@@ -2970,10 +2970,9 @@ public class SubscriptionApi extends BaseApi {
         if(CollectionUtils.isNotEmpty(discountPlanInstanceToRemove)) {
             discountPlanInstanceToRemove.forEach(discountPlanCode -> {
                 DiscountPlanInstance discountPlanInstance = discountPlanInstanceService.findBySubscriptionAndCode(subscription, discountPlanCode);
-                if(discountPlanInstance == null) {
-                    throw new BusinessApiException("No Discount plan instance code " + discountPlanCode + " found for subscription code : " + subscription.getCode());
+                if(discountPlanInstance != null) {
+                    subscriptionService.terminateDiscountPlan(subscription, discountPlanInstance);
                 }
-                subscriptionService.terminateDiscountPlan(subscription, discountPlanInstance);
             });
         }
     }
