@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.ForbiddenException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -46,6 +47,7 @@ public class DunningSettingsApiService implements ApiService<DunningSettings> {
 	private static final String NO_ACCOUNTING_ARTICLE_FOUND = "No Accounting article was found for the id : ";
 	private static final String NO_CUSTOMER_BALANCE_FOUND = "No Customer Balance was found for the id : ";
 	private static final String NO_DEFAULT_CUSTOMER_BALANCE_FOUND = "No default Customer Balance was found";
+	private static final String CUSTOMER_BALANCE_IS_MANDATORY = "Customer balance is mandatory to create a dunning settings with mode INVOICE_LEVEL";
 	private static final String MANY_DEFAULT_CUSTOMER_BALANCE_FOUND = "Many Customer Balance are configured as default";
 	private static final String ACTIVE_OR_PAUSED_DUNNING_COLLECTION_PLAN_FOUND = "One or many Active/Paused Dunning Collection Plan was found";
 
@@ -85,6 +87,10 @@ public class DunningSettingsApiService implements ApiService<DunningSettings> {
 			if(customerBalance == null)
 				throw new BadRequestException(NO_CUSTOMER_BALANCE_FOUND + baseEntity.getCustomerBalance().getId());
 			baseEntity.setCustomerBalance(customerBalance);
+		}
+		
+		if(baseEntity.getCustomerBalance() == null && baseEntity.getDunningMode().equals(DunningModeEnum.INVOICE_LEVEL)) {
+			throw new BadRequestException(CUSTOMER_BALANCE_IS_MANDATORY);
 		}
 		
 		//Customer Balance not selected and DunningMode is CUSTOMER_LEVEL -> Set the default CustomerBalance
@@ -131,7 +137,7 @@ public class DunningSettingsApiService implements ApiService<DunningSettings> {
 		
 		List<DunningCollectionPlan> dunningCollectionPlans = dunningCollectionPlanService.getActiveOrPausedDunningCollectionPlan(dunningSettingsUpdate.getId());
 		if(dunningCollectionPlans != null && dunningCollectionPlans.size() > 0) {
-			throw new BadRequestException(ACTIVE_OR_PAUSED_DUNNING_COLLECTION_PLAN_FOUND);
+			throw new ForbiddenException(ACTIVE_OR_PAUSED_DUNNING_COLLECTION_PLAN_FOUND);
 		}
 		
 		if(dunningSettings.getCustomerBalance() != null && dunningSettings.getCustomerBalance().getId() != null) {
@@ -139,6 +145,10 @@ public class DunningSettingsApiService implements ApiService<DunningSettings> {
 			if(customerBalance == null)
 				throw new BadRequestException(NO_CUSTOMER_BALANCE_FOUND + dunningSettings.getCustomerBalance().getId());
 			dunningSettingsUpdate.setCustomerBalance(customerBalance);
+		}
+		
+		if(dunningSettings.getCustomerBalance() == null && dunningSettings.getDunningMode().equals(DunningModeEnum.INVOICE_LEVEL)) {
+			throw new BadRequestException(CUSTOMER_BALANCE_IS_MANDATORY);
 		}
 		
 		//Customer Balance not selected and DunningMode is CUSTOMER_LEVEL -> Set the default CustomerBalance
