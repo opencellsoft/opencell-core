@@ -92,7 +92,7 @@ public class ReportQueryResourceImplTest {
                 .queryName("code")
                 .queryDescription("description")
                 .targetEntity("BillingRun")
-                .fields(asList("code", "description"))
+                .genericFields(asList("code", "description"))
                 .visibility(PUBLIC)
                 .build();
         Response response = reportQueryResource.createReportQuery(input);
@@ -107,7 +107,7 @@ public class ReportQueryResourceImplTest {
         ReportQueryInput input = builder()
                 .queryName("code")
                 .queryDescription("description")
-                .fields(asList("code", "description"))
+                .genericFields(asList("code", "description"))
                 .visibility(PUBLIC)
                 .build();
         reportQueryResource.createReportQuery(input);
@@ -220,7 +220,7 @@ public class ReportQueryResourceImplTest {
                 .queryName("name")
                 .queryDescription("description")
                 .targetEntity("BillingRun")
-                .fields(asList("code", "description"))
+                .genericFields(asList("code", "description"))
                 .visibility(PUBLIC)
                 .build();
         Response response = reportQueryResource.update(1l, input);
