@@ -34,7 +34,7 @@ public interface ReportQueryInput {
 
     @Nullable
     @Schema(description = "Report query description")
-    List<String> getFields();
+    List<String> getGenericFields();
 
     @Nullable
     @Schema(description = "Report query description")
