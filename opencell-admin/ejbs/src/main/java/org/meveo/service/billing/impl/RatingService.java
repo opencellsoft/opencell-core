@@ -179,6 +179,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
     @Inject
     private ServiceInstanceService serviceInstanceService;
+    
+    @Inject
+    private WalletOperationService walletOperationService;
 
     final private static BigDecimal HUNDRED = new BigDecimal("100");
     
@@ -702,11 +705,12 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     Amounts unitPrices = determineUnitPrice(pricePlan, bareWalletOperation);
                     unitPriceWithoutTax = unitPrices.getAmountWithoutTax();
                     unitPriceWithTax = unitPrices.getAmountWithTax();
+                    BigDecimal amount=null;
 
                     // A price discount is applied to a default price by a contract
                     if (contractItem != null && ContractRateTypeEnum.PERCENTAGE.equals(contractItem.getContractRateType()) ) {
                         if(contractItem.getRate() != null && contractItem.getRate() > 0){
-                            BigDecimal amount = unitPriceWithoutTax.abs().multiply(BigDecimal.valueOf(contractItem.getRate()).divide(HUNDRED));
+                             amount = unitPriceWithoutTax.abs().multiply(BigDecimal.valueOf(contractItem.getRate()).divide(HUNDRED));
                             if (amount != null && unitPriceWithoutTax.compareTo(amount) > 0)
                                 unitPriceWithoutTax = unitPriceWithoutTax.subtract(amount);
                         } else if (contractItem.getPricePlan() != null) {
@@ -716,11 +720,52 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                                 PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, bareWalletOperation);
                                 BigDecimal discountRate= pricePlanMatrixLine.getValue();
                                 if(discountRate!=null && discountRate.compareTo(BigDecimal.ZERO) > 0 ){
-                                    BigDecimal amount = unitPriceWithoutTax.abs().multiply(discountRate.divide(HUNDRED));
+                                     amount = unitPriceWithoutTax.abs().multiply(discountRate.divide(HUNDRED));
                                     if (amount != null && unitPriceWithoutTax.compareTo(amount) > 0)
                                         unitPriceWithoutTax = unitPriceWithoutTax.subtract(amount);
                                 }
                             }
+                        }
+                        if(contractItem.isSeparateDiscount()) {
+                        	WalletOperation discountWalletOperation = new WalletOperation();
+                        	
+                        	BigDecimal walletOperationDiscountAmount=unitPrices.getAmountWithoutTax().abs().multiply(amount.negate().divide(HUNDRED));
+                        	BigDecimal taxPercent=bareWalletOperation.getTaxPercent();
+                        	BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(walletOperationDiscountAmount, walletOperationDiscountAmount, bareWalletOperation.getTaxPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP); 
+                        	BigDecimal quantity=bareWalletOperation.getQuantity();
+                        	
+                        	discountWalletOperation.setCode(bareWalletOperation.getCode());
+                        	discountWalletOperation.setDescription(bareWalletOperation.getDescription()); 
+                        	discountWalletOperation.setUnitAmountTax(walletOperationDiscountAmount);
+                        	discountWalletOperation.setAmountWithoutTax(quantity.compareTo(BigDecimal.ZERO)>0?quantity.multiply(amounts[0]):BigDecimal.ZERO);
+                        	discountWalletOperation.setAmountWithTax(quantity.multiply(amounts[1]));
+                        	discountWalletOperation.setAmountTax(quantity.multiply(amounts[2]));
+                        	discountWalletOperation.setTaxPercent(taxPercent);
+                        	discountWalletOperation.setUnitAmountWithoutTax(amounts[0]);
+                        	discountWalletOperation.setUnitAmountWithTax(amounts[1]);
+                        	discountWalletOperation.setUnitAmountTax(amounts[2]);
+                        	discountWalletOperation.setQuantity(quantity);
+                        	discountWalletOperation.setTax(bareWalletOperation.getTax());//
+                        	discountWalletOperation.setCreated(new Date()); 
+                        	discountWalletOperation.setSeller(bareWalletOperation.getSeller());
+                        	discountWalletOperation.setBillingAccount(billingAccount);
+                        	discountWalletOperation.setWallet(bareWalletOperation.getWallet());
+                        	discountWalletOperation.setOfferTemplate(bareWalletOperation.getOfferTemplate());
+                        	discountWalletOperation.setServiceInstance(serviceInstance);
+                        	discountWalletOperation.setOperationDate(bareWalletOperation.getOperationDate()); 
+                        	discountWalletOperation.setChargeInstance(chargeInstance);
+                        	discountWalletOperation.setInputQuantity(quantity);
+                        	discountWalletOperation.setCurrency(bareWalletOperation.getCurrency()!=null?bareWalletOperation.getCurrency():billingAccount.getCustomerAccount().getTradingCurrency().getCurrency());
+                        	discountWalletOperation.setDiscountedWalletOperation(bareWalletOperation.getId()); 
+                        	discountWalletOperation.setDiscountPlanType(DiscountPlanItemTypeEnum.PERCENTAGE);
+                        	discountWalletOperation.setDiscountValue(amount);
+                        	discountWalletOperation.setDiscountedAmount(unitPriceWithoutTax);
+                        	discountWalletOperation.setOrderNumber(bareWalletOperation.getOrderNumber());
+                        	discountWalletOperation.setSubscription(bareWalletOperation.getSubscription());
+                        	discountWalletOperation.setUserAccount(bareWalletOperation.getUserAccount());
+                        	if(!isVirtual)
+                        		walletOperationService.create(discountWalletOperation);
+                        	log.info("rateBareWalletOperation walletOperation code={},discountValue={}",discountWalletOperation!=null?discountWalletOperation.getCode():null,discountWalletOperation);
                         }
                     }
 
