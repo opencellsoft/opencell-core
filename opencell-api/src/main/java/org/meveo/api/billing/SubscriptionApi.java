@@ -1135,9 +1135,21 @@ public class SubscriptionApi extends BaseApi {
      * Apply an one shot charge on a subscription
      *
      * @param postData The apply one shot charge instance request dto
+     * @return 
      * @throws MeveoApiException Meveo api exception
      */
-    public void applyOneShotChargeInstance(ApplyOneShotChargeInstanceRequestDto postData) throws MeveoApiException {
+    public OneShotChargeInstance applyOneShotChargeInstance(ApplyOneShotChargeInstanceRequestDto postData) throws MeveoApiException {
+    	return this.applyOneShotChargeInstance(postData, false);
+    }
+
+    /**
+     * Apply an one shot charge on a subscription
+     *
+     * @param postData The apply one shot charge instance request dto
+     * @return 
+     * @throws MeveoApiException Meveo api exception
+     */
+    public OneShotChargeInstance applyOneShotChargeInstance(ApplyOneShotChargeInstanceRequestDto postData, boolean isVirtual) throws MeveoApiException {
 
         if (StringUtils.isBlank(postData.getOneShotCharge())) {
             missingParameters.add("oneShotCharge");
@@ -1203,13 +1215,14 @@ public class SubscriptionApi extends BaseApi {
         	}
 
         	OneShotChargeInstance osho = oneShotChargeInstanceService
-                    .instantiateAndApplyOneShotCharge(subscription, serviceInstance, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), operationDate,
+                    .instantiateAndApplyOneShotCharge(subscription, serviceInstance, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), postData.getOperationDate(),
                             postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(),
-                            postData.getCriteria3(), postData.getDescription(), null, oneShotChargeInstance.getCfValues(), true, ChargeApplicationModeEnum.SUBSCRIPTION);
+                            postData.getCriteria3(), postData.getDescription(), null, oneShotChargeInstance.getCfValues(), true, ChargeApplicationModeEnum.SUBSCRIPTION, isVirtual);
 
         	if(Boolean.TRUE.equals(postData.getGenerateRTs())) {
         		osho.getWalletOperations().stream().forEach(wo->ratedTransactionService.createRatedTransaction(wo,false));
         	}
+        	return osho;
         } catch (RatingException e) {
             log.trace("Failed to apply one shot charge {}: {}", oneShotChargeTemplate.getCode(), e.getRejectionReason());
             throw new MeveoApiException(e.getMessage());
@@ -2902,7 +2915,7 @@ public class SubscriptionApi extends BaseApi {
         } else {
         	subscriptionService.createWithoutNotif(subscription);
         }
-        subscriptionService.getEntityManager().flush();
+        subscriptionService.commit();
         userAccount.getSubscriptions().add(subscription);
 
         if (postData.getProducts() != null) {

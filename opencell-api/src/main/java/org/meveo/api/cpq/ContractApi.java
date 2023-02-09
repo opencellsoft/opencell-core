@@ -23,6 +23,7 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.security.config.annotation.FilterProperty;
 import org.meveo.api.security.config.annotation.FilterResults;
@@ -104,7 +105,10 @@ public class ContractApi extends BaseApi{
 
 
 	public Long CreateContract(ContractDto dto) {
+
 		// check mandatory param
+		checkBillingRulesRedirectionIsEnabled(dto);
+
 		checkParams(dto);
 		//check if date end great than date begin
 		if(dto.getEndDate().compareTo(dto.getBeginDate()) < 0) {
@@ -144,6 +148,10 @@ public class ContractApi extends BaseApi{
 		}
 		return contract.getId();
 	}
+
+	private void checkBillingRulesRedirectionIsEnabled(ContractDto contractDto) {
+		billingRuleService.checkBillingRedirectionRulesConfiguration(contractDto);
+	}
 	
 	private void changeAccountLevel(ContractDto dto, Contract contract) {
 		switch (dto.getContractAccountLevel()) {
@@ -176,7 +184,9 @@ public class ContractApi extends BaseApi{
 		}
 	}
 	public void updateContract(ContractDto dto) {
+
 		// check mandatory param
+		checkBillingRulesRedirectionIsEnabled(dto);
 		checkParams(dto);
 		//check if date end great than date begin
 		if(dto.getEndDate().compareTo(dto.getBeginDate()) < 0) {
@@ -352,6 +362,12 @@ public class ContractApi extends BaseApi{
     	}else {
         	item.setContractRateType(contractItemDto.getContractRateType());
     	}
+    	if(contractItemDto.getSeperateDiscountLine()!=null) {
+    		item.setSeparateDiscount(contractItemDto.getSeperateDiscountLine()); 
+    	}
+    	if(ContractRateTypeEnum.FIXED.equals(item.getContractRateType()) && Boolean.TRUE.equals(contractItemDto.getSeperateDiscountLine())){
+			throw new InvalidParameterException("generate separate discount line is valable only for the types 'Global discount' and 'Custom discount grid'");
+		}
     	
     	try {
     		populateCustomFields(contractItemDto.getCustomFields(), item, true);
@@ -363,7 +379,6 @@ public class ContractApi extends BaseApi{
     }
     
     public void updateContractLine(ContractItemDto contractItemDto) {
-
 		checkParams(contractItemDto);
     	final ContractItem item = contractItemService.findByCode(contractItemDto.getCode());
     	if(item == null)
@@ -397,6 +412,13 @@ public class ContractApi extends BaseApi{
     	}else {
         	item.setContractRateType(contractItemDto.getContractRateType());
     	}
+    	if(contractItemDto.getSeperateDiscountLine()!=null) {
+    		item.setSeparateDiscount(contractItemDto.getSeperateDiscountLine()); 
+    	}
+    	
+    	if(ContractRateTypeEnum.FIXED.equals(item.getContractRateType()) && item.isSeparateDiscount()){
+			throw new InvalidParameterException("generate separate discount line is valable only for the types 'Global discount' and 'Custom discount grid'");
+		}
     	
     	try {
     		populateCustomFields(contractItemDto.getCustomFields(), item, false);
@@ -464,8 +486,6 @@ public class ContractApi extends BaseApi{
 			missingParameters.add("contractAccountLevel");
 		if(Strings.isEmpty(dto.getAccountCode()))
 			missingParameters.add("accountCode");
-		if(dto.getContractDate() == null)
-			missingParameters.add("contractDate");
 		if(dto.getBeginDate() == null)
 			missingParameters.add("beginDate");
 		if(dto.getEndDate() == null)

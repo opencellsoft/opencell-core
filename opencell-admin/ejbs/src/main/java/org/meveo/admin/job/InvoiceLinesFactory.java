@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.NumberUtils;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
@@ -37,7 +38,6 @@ import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
@@ -161,7 +161,7 @@ public class InvoiceLinesFactory {
             BigDecimal unitAmount = (BigDecimal) data.getOrDefault("unit_amount_without_tax", ZERO);
             BigDecimal quantity = (BigDecimal) data.getOrDefault("quantity", ZERO);
             MathContext mc = new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
-            BigDecimal unitPrice = quantity.compareTo(ZERO) == 0 ? ZERO : unitAmount.divide(quantity, mc);
+            BigDecimal unitPrice = quantity.compareTo(ZERO) == 0 ? unitAmount : unitAmount.divide(quantity, mc);
             invoiceLine.setUnitPrice(unitPrice);
         } else {
             invoiceLine.setUnitPrice(isEnterprise ? (BigDecimal) data.getOrDefault("unit_amount_without_tax", ZERO)
@@ -172,53 +172,57 @@ public class InvoiceLinesFactory {
         validity.setFrom(ofNullable((Date) data.get("start_date")).orElse(usageDate));
         validity.setTo(ofNullable((Date) data.get("end_date")).orElse(null));
         if(data.get("subscription_id") != null) {
-            Subscription subscription = subscriptionService.getEntityManager().getReference(Subscription.class, data.get("subscription_id"));
+            Subscription subscription = subscriptionService.getEntityManager().getReference(Subscription.class, ((Number) data.get("subscription_id")).longValue());
             invoiceLine.setSubscription(subscription);
             if(data.get("commercial_order_id") != null) {
-            	invoiceLine.setCommercialOrder(commercialOrderService.getEntityManager().getReference(CommercialOrder.class, data.get("commercial_order_id")));
+                invoiceLine.setCommercialOrder(commercialOrderService.getEntityManager().getReference(CommercialOrder.class, ((Number) data.get("commercial_order_id")).longValue()));
             }
         }
         invoiceLine.setValidity(validity);
         calculateAccountingArticle(data, invoiceLine);
-        invoiceLine.setLabel(invoiceLine.getAccountingArticle()!=null?invoiceLine.getAccountingArticle().getDescription() : (String) data.get("label"));
         if(billingRun != null && billingRun.getBillingCycle() != null
-        							&& billingRun.getBillingCycle().isUseAccountingArticleLabel()
-        							&& invoiceLine.getAccountingArticle() != null) {
-        						String languageCode = getLanguageCode(invoiceLine.getBillingAccount(), appProvider);
-        						Map<String, String> descriptionsI18N = invoiceLine.getAccountingArticle().getDescriptionI18nNotNull();
-        						invoiceLine.setLabel(ofNullable(descriptionsI18N.get(languageCode))
-        								.orElse(invoiceLine.getAccountingArticle().getDescription()));
-        					} else {
-        						invoiceLine.setLabel((String) data.get("label"));
-        					}
-        					
+                && billingRun.getBillingCycle().isUseAccountingArticleLabel()
+                && invoiceLine.getAccountingArticle() != null) {
+            String languageCode = getLanguageCode(invoiceLine.getBillingAccount(), appProvider);
+            Map<String, String> descriptionsI18N = invoiceLine.getAccountingArticle().getDescriptionI18nNotNull();
+            invoiceLine.setLabel(ofNullable(descriptionsI18N.get(languageCode))
+                    .orElse(invoiceLine.getAccountingArticle().getDescription()));
+        } else {
+            String label = StringUtils.EMPTY;
+            if (data.get("label") != null) {
+                label = (String) data.get("label");
+            } else if (invoiceLine.getAccountingArticle() != null && invoiceLine.getAccountingArticle().getDescription() != null) {
+                label = invoiceLine.getAccountingArticle().getDescription();
+            }
+            invoiceLine.setLabel(label);
+        }
         ofNullable(openOrderNumber).ifPresent(invoiceLine::setOpenOrderNumber);
         return invoiceLine;
     }
-		private void calculateAccountingArticle(Map<String, Object> data, InvoiceLine invoiceLine) {
-			if (data.get("charge_instance_id") != null && invoiceLine.getAccountingArticle() == null) {
-				ChargeInstance chargeInstance = (ChargeInstance) chargeInstanceService.findById((Long) data.get("charge_instance_id"));
-	            ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
-	            Product product = serviceInstance != null ? serviceInstance.getProductVersion() != null ? invoiceLine.getServiceInstance().getProductVersion().getProduct() : null : null;
-	            List<AttributeValue> attributeValues = fromAttributeInstances(serviceInstance);
-	            Map<String, Object> attributes = fromAttributeValue(attributeValues);
-	            String[] rtIds = ofNullable((String) data.get("rated_transaction_ids"))
-	                    .map(ids -> ids.split(","))
-	                    .orElse(null);
-	            WalletOperation walletOperation = null;
-	            if(rtIds != null && rtIds.length == 1) {
-	                walletOperation = walletOperationService.findWoByRatedTransactionId(Long.valueOf(rtIds[0]));
-	            }
-	            AccountingArticle accountingArticle = accountingArticleService.getAccountingArticle(product, chargeInstance.getChargeTemplate(), attributes, walletOperation)
-	                    .orElseThrow(() -> new BusinessException("No accountingArticle found"));
-	            invoiceLine.setAccountingArticle(accountingArticle);
-			} else if(data.get("parameter_2") != null) {
-				String accountingArticleCode = (String) data.get("parameter_2");
-				if(!accountingArticleCode.isBlank()) {
-					invoiceLine.setAccountingArticle(accountingArticleService.findByCode(accountingArticleCode));
-				}
+
+	private void calculateAccountingArticle(Map<String, Object> data, InvoiceLine invoiceLine) {
+		if (data.get("charge_instance_id") != null && invoiceLine.getAccountingArticle() == null) {
+			ChargeInstance chargeInstance = (ChargeInstance) chargeInstanceService.findById((Long) data.get("charge_instance_id"));
+			ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
+			Product product = serviceInstance != null ? serviceInstance.getProductVersion() != null ? invoiceLine.getServiceInstance().getProductVersion().getProduct() : null
+					: null;
+			List<AttributeValue> attributeValues = fromAttributeInstances(serviceInstance);
+			Map<String, Object> attributes = fromAttributeValue(attributeValues);
+			String[] rtIds = ofNullable((String) data.get("rated_transaction_ids")).map(ids -> ids.split(",")).orElse(null);
+			WalletOperation walletOperation = null;
+			if (rtIds != null && rtIds.length == 1) {
+				walletOperation = walletOperationService.findWoByRatedTransactionId(Long.valueOf(rtIds[0]));
+			}
+			AccountingArticle accountingArticle = accountingArticleService.getAccountingArticle(product, chargeInstance.getChargeTemplate(), attributes, walletOperation)
+				.orElseThrow(() -> new BusinessException("No accountingArticle found"));
+			invoiceLine.setAccountingArticle(accountingArticle);
+		} else if (data.get("parameter_2") != null) {
+			String accountingArticleCode = (String) data.get("parameter_2");
+			if (!accountingArticleCode.isBlank()) {
+				invoiceLine.setAccountingArticle(accountingArticleService.findByCode(accountingArticleCode));
 			}
 		}
+	}
 
     /**
      * get usage date from string.

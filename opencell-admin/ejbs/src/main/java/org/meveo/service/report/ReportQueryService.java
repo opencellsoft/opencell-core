@@ -115,7 +115,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
     private static final String SUCCESS_TEMPLATE_CODE = "REPORT_QUERY_RESULT_SUCCESS";
     private static final String FAILURE_TEMPLATE_CODE = "REPORT_QUERY_RESULT_FAILURE";
     private static final String RESULT_EMPTY_MSG = "Execution of the query doesn't return any data";
-    private static final String DEFAULT_URI_PATH = "/opencell/frontend/DEMO/portal/finance/reports/query-tool/query-runs-results/";
+    private static final String DEFAULT_URI_PATH = "/opencell/frontend/DEMO/portal/operation/query-tool/query-runs-results/";
 
     /**
      * List of report queries allowed for the current user.
@@ -329,7 +329,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         if(reportQuery.getAdvancedQuery() != null && !reportQuery.getAdvancedQuery().isEmpty()) {
         	QueryBuilder qb = nativePersistenceService.generatedAdvancedQuery(reportQuery);
     		reportResult = qb.getQuery(PersistenceServiceHelper.getPersistenceService(targetEntity).getEntityManager()).getResultList();
-    		fields = (List<String>) reportQuery.getAdvancedQuery().getOrDefault("genericFields", new ArrayList<>());
+    		fields = (List<String>) reportQuery.getAdvancedQuery().getOrDefault("fields", new ArrayList<>());
         } else {
         	reportResult = prepareQueryToExecute(reportQuery, targetEntity).getResultList();
         	fields = reportQuery.getFields();

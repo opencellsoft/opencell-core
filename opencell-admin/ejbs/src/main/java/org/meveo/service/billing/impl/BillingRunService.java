@@ -672,9 +672,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
         qb.endOrClause();
 
-        List<BillingRun> billingRuns = qb.getQuery(getEntityManager()).getResultList();
-
-        return billingRuns;
+        return qb.getQuery(getEntityManager()).getResultList();
     }
 
     /**
@@ -698,11 +696,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             }
 
             if (billingCycle.getType() == BillingEntityTypeEnum.SUBSCRIPTION) {
-                return subscriptionService.findSubscriptions(billingCycle, startDate, endDate);
+                return subscriptionService.findSubscriptions(billingCycle);
             }
 
             if (billingCycle.getType() == BillingEntityTypeEnum.ORDER) {
-                return v11Process ? commercialOrderService.findCommercialOrders(billingCycle, startDate, endDate): orderService.findOrders(billingCycle, startDate, endDate);
+                return v11Process ? commercialOrderService.findCommercialOrders(billingCycle)
+                        : orderService.findOrders(billingCycle);
             }
 
             return billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
@@ -1520,7 +1519,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 Set<BillingRunList> billingRunLists = new HashSet<>();
                 billingRunLists.addAll(billingRun.getBillingRunLists());
                 quarantineBillingRun.setBillingRunLists(billingRunLists);
-                List<JobExecutionResultImpl> billingRunJobExecutions = new ArrayList<JobExecutionResultImpl>();
+                List<JobExecutionResultImpl> billingRunJobExecutions = new ArrayList<>();
                 billingRunJobExecutions.addAll(billingRun.getJobExecutions());                   
                 quarantineBillingRun.setJobExecutions(billingRunJobExecutions);
                 quarantineBillingRun.setBillableBillingAccounts(new ArrayList<>());

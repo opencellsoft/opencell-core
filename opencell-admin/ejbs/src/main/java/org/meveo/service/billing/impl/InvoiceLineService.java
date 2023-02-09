@@ -682,6 +682,17 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		ofNullable(resource.getDiscountAmount()).ifPresent(invoiceLine::setDiscountAmount);
 		ofNullable(resource.getLabel()).ifPresent(invoiceLine::setLabel);
 		ofNullable(resource.getRawAmount()).ifPresent(invoiceLine::setRawAmount);
+
+        if (StringUtils.isNotBlank(resource.getTaxCode())) {
+            Tax tax = taxService.findByCode(resource.getTaxCode());
+            if (tax == null) {
+                throw new BusinessException("No tax found with code '" + resource.getTaxCode() + "'");
+            }
+            if (invoiceLine.getTax() != null && tax.getId() != invoiceLine.getTax().getId()) {
+                invoiceLine.setTaxRecalculated(true);
+            }
+            invoiceLine.setTax(tax);
+        }
 		AccountingArticle accountingArticle=null;
 		if (resource.getAccountingArticleCode() != null) {
 			 accountingArticle = accountingArticleService.findByCode(resource.getAccountingArticleCode());

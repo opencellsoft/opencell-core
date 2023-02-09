@@ -432,8 +432,10 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 				operationDateParam = serviceInstance.getPriceVersionDate();
 		}
 
-        List<PricePlanMatrixVersion> result=(List<PricePlanMatrixVersion>) this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.getPublishedVersionValideForDate")
-                .setParameter("pricePlanMatrixCode", ppmCode).setParameter("operationDate", operationDateParam).getResultList();
+        List<PricePlanMatrixVersion> result= this.getEntityManager()
+                .createNamedQuery("PricePlanMatrixVersion.getPublishedVersionValideForDate", PricePlanMatrixVersion.class)
+                .setParameter("pricePlanMatrixCode", ppmCode).setParameter("operationDate", operationDateParam)
+                .getResultList();
         if(CollectionUtils.isEmpty(result)) {
         	return null;
         }
@@ -562,7 +564,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
             throw new BusinessException("pricePlanMatrix with code '" + pricePlanMatrixCode + "' and version '" + version + "' not found.");
         }
 
-        if (pricePlanMatrixVersion.getValidity().getTo() == null || pricePlanMatrixVersion.getValidity().getTo().after(new Date())) {
+        if (pricePlanMatrixVersion.getValidity() == null || pricePlanMatrixVersion.getValidity().getTo() == null || pricePlanMatrixVersion.getValidity().getTo().after(new Date())) {
             String eventCode = pricePlanMatrixVersion.getPricePlanMatrix().getEventCode();
 
             List<Long> subscriptionsIds = this.getEntityManager().createNamedQuery("Subscription.getSubscriptionIdsUsingProduct", Long.class).setParameter("eventCode", eventCode)

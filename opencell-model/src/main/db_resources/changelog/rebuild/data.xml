@@ -12957,8 +12957,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="version" valueNumeric="1" />
             <column name="src_type" value="JAVA" />
-			<column name="description" value="Invoice amount will be compared to provided amount using the selected operator. Invoice must match this criteria to be valid."/>
-			<column name="description_i18n" value='{"FRA":"Le montant de la facture sera comparé au montant indiqué en utilisant l’opérateur sélectionné. La facture doit répondre à ce critère pour être valide.","ENG":"Invoice amount will be compared to provided amount using the selected operator. Invoice must match this criteria to be valid."}'/>
+			<column name="description" value="Invoice amount will be compared to provided amount using the selected operator."/>
+			<column name="description_i18n" value='{"FRA":"Le montant de la facture sera comparé au montant indiqué en utilisant l’opérateur sélectionné.", "EN": "Invoice amount will be compared to provided amount using the selected operator. Invoice must match this criteria to be valid."}'/>
 			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='INVOICE_VALIDATION')" />
         </insert>
 
@@ -13019,9 +13019,9 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="version" valueNumeric="1" />
             <column name="src_type" value="JAVA" />
-			<column name="description" value="Amount invoiced for each offer in the list will be compared to the provided value using the selected operator. For the invoice to be valid, tested amount must pass the test. If offer list is empty, then rule will always pass. Only offer actually present on invoice will be tested."/>
+			<column name="description" value="Amount invoiced for each offer in the list will be compared to the provided value using the selected operator If offer list is empty, then rule will be ignored. Only offer actually present on invoice will be tested."/>
 			<column name="description_i18n">
-				<![CDATA[{"FRA":"<p>Le montant facturé pour chacune des offres dans la liste sera comparé à la valeur indiquée, en utilisant l’opérateur sélectionné.</p><p>Pour que la facture soit valide, le montant testé doit passer le test.</p><p>Si la liste des offres est vide, alors la règle passera toujours.</p><p>Seule les offres effectivement présentes sur la facture seront testées.</p>","ENG":"<p>Amount invoiced for each offer in the list will be compared to the provided value using the selected operator</p><p>For the invoice to be valid, tested amount must pass the test.</p><p>If offer list is empty, then rule will always pass.</p><p>Only offer actually present on invoice will be tested.</p>"}]]>
+				<![CDATA[{"FRA":"<p>Le montant facturé pour chacune des offres dans la liste sera comparé à la valeur indiquée, en utilisant l’opérateur sélectionné.</p><p>Si la liste des offres est vide, alors la règle sera ignorée.</p><p>Seules les offres effectivement présentes sur la facture seront testées.</p>","ENG":"<p>Amount invoiced for each offer in the list will be compared to the provided value using the selected operator</p><p>If offer list is empty, then rule will be ignored.</p><p>Only offer actually present on invoice will be tested.</p>"}]]>
 			</column>
 			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='INVOICE_VALIDATION')" />
         </insert>
@@ -13092,9 +13092,9 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="version" valueNumeric="1" />
             <column name="src_type" value="JAVA" />
-            <column name="description" value="The customer (customer account actually) credit category must not be in the provided list for the rule to pass.If customer credit category is in the list, the rule will fail.If credit category list is empty, then rule will always pass."/>
+            <column name="description" value="The customer's (customer account actually) credit category must not be in the provided list for the rule to pass. If customer's credit category is in the list, the rule will fail. If credit category list is empty, then rule will be ignored."/>
             <column name="description_i18n">
-				<![CDATA[{"ENG":"<p>The customer's (customer account actually) credit category must not be in the provided list for the rule to pass.</p><p>If customer's credit category is in the list, the rule will fail.</p><p>If credit category list is empty, then rule will always pass.</p>","FRA":"<p>Le catégorie de crédit du client (customer account) ne doit pas être dans la liste fournie pour que la règle passe.</p><p>Si la catégorie de crédit du client est dans la liste, la règle va échouer.</p><p>Si la liste de catégories de crédit est vide, la règle passera toujours.</p>"}]]>
+				<![CDATA[{"ENG":"<p>The customer's (customer account actually) credit category must not be in the provided list for the rule to pass.</p><p>If customer's credit category is in the list, the rule will fail.</p><p>If credit category list is empty, then rule will be ignored.</p>","FRA":"<p>Le catégorie de crédit du client (customer account) ne doit pas être dans la liste fournie pour que la règle passe.</p><p>Si la catégorie de crédit du client est dans la liste, la règle va échouer.</p><p>Si la liste de catégories de crédit est vide, la règle sera ignorée.</p>"}]]>
 			</column>
 			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='INVOICE_VALIDATION')" />
         </insert>
@@ -13124,10 +13124,10 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="version" valueNumeric="1" />
             <column name="src_type" value="JAVA" />
-			<column name="description" value="Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator. For the invoice to be valid, all tested invoice lines must pass the test. If offer list is empty, then rule will always pass. Only offer actually present on invoice will be tested."/>
+			<column name="description" value="Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator. Only offer from the list actually present on invoice will be tested. If offer list is empty, then all invoice lines will be tested regardless of their offer. For the test to pass, all tested invoice lines must pass the test."/>
 			<column name="description_i18n">
-				<![CDATA[{"ENG":"<p>Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator.</p><p>For the invoice to be valid, all tested invoice lines must pass the test.</p><p>If offer list is empty, then rule will always pass.</p><p>Only offer actually present on invoice will be tested.</p>",
-				"FRA":"<p>Le montant de chaque ligne de facture provenant d’une offre de la liste sera comparé à la valeur indiquée, en utilisant l’opérateur sélectionné.</p><p>Pour que la facture soit valide, toutes les lignes de facture testées doivent passer le test.</p><p>Si la liste des offres est vide, alors la règle passera toujours.</p><p>Seule les offres effectivement présentes sur la facture seront testées.</p>"}]]>
+				<![CDATA[{"ENG":"<p>Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator.</p><p>Only offer from the list actually present on invoice will be tested</p><p>If offer list is empty, then all invoice lines will be tested regardless of their offer.</p><p>For the test to pass, all tested invoice lines must pass the test.</p>",
+				"FRA":"<p>Le montant de chaque ligne de facture provenant d’une offre de la liste sera comparé à la valeur indiquée, en utilisant l’opérateur sélectionné.</p><p>Seule les offres de la liste effectivement présentes sur la facture seront testées.</p><p>Si la liste des offres est vide, alors toutes les lignes de facture seront testées, quelle que soit leur offre.</p><p>Pour que le teste passe, toutes les lignes de facture testées doivent passer le test.</p>"}]]>
 			</column>
 			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='INVOICE_VALIDATION')" />
         </insert>
@@ -13137,7 +13137,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="code" value="offers" />
 			<column name="description_i18n" value='{"FRA":"Offres à vérifier","ENG":"Offers to check"}'/>
 			<column name="class_name" value="org.meveo.model.catalog.OfferTemplate" />
-			<column name="mandatory" valueNumeric="1" />
+			<column name="mandatory" valueNumeric="0" />
 			<column name="values_separator" value="\|" />
 			<column name="collection" valueNumeric="1" />
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmount')" />
@@ -13195,9 +13195,9 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="version" valueNumeric="1" />
             <column name="src_type" value="JAVA" />
-            <column name="description" value="The invoice’s customer (Customer/Group, Customer Account/Payer, Billing account) age is compared to a provided number of days. Age is computed at invoice date. For the invoice to be valid, age must pass the test."/>
+            <column name="description" value="The invoice’s customer (Customer/Group, Customer Account/Payer, Billing account) age is compared to a provided number of days. Age is computed at invoice date."/>
             <column name="description_i18n">
-				<![CDATA[{"ENG":"<p>The invoice’s customer (Customer/Group, Customer Account/Payer, Billing account) age is compared to a provided number of days.</p><p>Age is computed at invoice date.</p><p>For the invoice to be valid, age must pass the test.</p>","FRA":"<p>L’âge du client (Customer/Groupe, Customer Account/Compte payeur, Billing account/Compte de facturation) est comparé au nombre de jours indiqué.</p><p>L'âge est calculé à la date de facture.</p><p>Pour que la facture soit valide, l'âge doit passer le test.</p>"}]]>
+				<![CDATA[{"ENG":"<p>The invoice’s customer (Customer/Group, Customer Account/Payer, Billing account) age is compared to a provided number of days.</p><p>Age is computed at invoice date.</p>","FRA":"<p>L’âge du client (Customer/Groupe, Customer Account/Compte payeur, Billing account/Compte de facturation) est comparé au nombre de jours indiqué.</p><p>L'âge est calculé à la date de facture.</p>"}]]>
 			</column>
 			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='INVOICE_VALIDATION')" />
         </insert>
@@ -13256,9 +13256,9 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="version" valueNumeric="1" />
             <column name="src_type" value="JAVA" />
-            <column name="description" value="The invoice’s subscriptions age in Opencell is compared to a provided number of days. Age is computed at invoice date. For the invoice to be valid, age must pass the test."/>
+            <column name="description" value="The invoice’s subscriptions age is compared to a provided number of days. Age is computed at invoice date."/>
             <column name="description_i18n">
-				<![CDATA[{"ENG":"<p>The invoice’s subscriptions age in Opencell is compared to a provided number of days.</p><p>Age is computed at invoice date.</p><p>For the invoice to be valid, age must pass the test.</p>","FRA":"<p><L’âge des souscriptions de la facture est comparé au nombre de jours indiqué.</p><p>L'âge est calculé à la date de facture.</p><p>Pour que la facture soit valide, l'âge doit passer le test.</p>"}]]>
+				<![CDATA[{"ENG":"<p>The invoice’s subscriptions age is compared to a provided number of days.</p><p>Age is computed at invoice date.</p>","FRA":"<p>L’âge de la souscription est comparé au nombre de jours indiqué.</p><p>L'âge est calculé à la date de facture.</p>"}]]>
 			</column>
 			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='INVOICE_VALIDATION')" />
         </insert>
@@ -19036,16 +19036,560 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
 						public class OneShotOtherTypeMigration extends OneShotOtherTypeMigrationScript {}
 				]]>
             </column>
-            <column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='BILLING_RUN_VALIDATION')" />
+        </insert>
+    </changeSet>
+    
+    <changeSet id="#INTRD-13447_20230127" author="ZBariki">
+        <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="billing_cycle_sequence"/>
+            <column name="description" value="Billing cycle sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="4"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.billing.BillingCycle"/>
+            <column name="format_el" value="BC-"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'billing_cycle_sequence')"/>
+        </insert>
+    </changeSet>
+    <changeSet id="#INTRD-13468_20230126" author="hichamELHALOUI" />
+
+    <changeSet id="#INTRD-13379_20230127" author="aeljaouhari" />
+	<changeSet id="#INTRD-13122_20220111" author="HichamHANINE" />
+
+    <changeSet id="INTRD-12782_20230131" author="zelmeliani">
+        <update tableName="ar_dunning_action">
+            <column name="type" value="INVOICE_LEVEL" />
+        </update>
+        <update tableName="dunning_level">
+            <column name="type" value="INVOICE_LEVEL" />
+        </update>
+        <update tableName="dunning_policy">
+            <column name="type" value="INVOICE_LEVEL" />
+        </update>
+        <update tableName="com_message_template">
+            <column name="type_dunning_mode" value="INVOICE_LEVEL" />
+            <where>media = 'DUNNING_MEDIA'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="#INTRD-13375_20230131" author="aeljaouhari">
+    	<insert tableName="com_message_template">
+			<column name="media" value="EMAIL" />
+			<column name="id" valueSequenceNext="com_msg_tmpl_seq" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="FR-Invoice" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="Votre facture #{invoice.invoiceNumber}" />
+			<column name="type" value="INVOICE" />
+			<column name="htmlcontent">
+				<![CDATA[
+				#{billingAccount.isCompany?billingAccount.description:billingAccount.name.firstName+billingAccount.name.lastName}
+#{billingAccount.address.address1}
+#{billingAccount.address.zipCode} #{billingAccount.address.city}
+#{billingAccount.contactInformation.phone}
+
+#{billingAccount.customerAccount.isCompany?billingAccount.customerAccount.description:billingAccount.customerAccount.name.firstName+billingAccount.customerAccount.name.lastName}
+#{billingAccount.customerAccount.address.address1}
+#{billingAccount.customerAccount.address.zipCode} #{billingAccount.customerAccount.address.city}
+
+#{billingAccount.customerAccount.seller.address.city}, le #{dayDate}
+
+#{billingAccount.legalEntityType.code},
+
+Nous vous prions de trouver attaché à cet email la facture #{invoice.invoiceNumber} d’un montant de #{invoice.netToPay}.
+
+Nous restons à votre disposition dans l’hypothèse d’éventuelles questions. Nous vous prions d'agréer l’assurance de nos salutations les meilleures.
+
+Company Signature
+                ]]>
+			</column>
+		</insert>
+
+		<insert tableName="com_message_template">
+			<column name="media" value="EMAIL" />
+			<column name="id" valueSequenceNext="com_msg_tmpl_seq" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="EN-Invoice" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="Your Invoice #{invoice.invoiceNumber}" />
+			<column name="type" value="INVOICE" />
+			<column name="htmlcontent">
+				<![CDATA[
+				#{billingAccount.isCompany?billingAccount.description:billingAccount.name.firstName+billingAccount.name.lastName}
+#{billingAccount.address.address1}
+#{billingAccount.address.zipCode} #{billingAccount.address.city}
+#{billingAccount.contactInformation.phone}
+
+#{billingAccount.customerAccount.isCompany?billingAccount.customerAccount.description:billingAccount.customerAccount.name.firstName+billingAccount.customerAccount.name.lastName}
+#{billingAccount.customerAccount.address.address1}
+#{billingAccount.customerAccount.address.zipCode} #{billingAccount.customerAccount.address.city}
+
+
+#{billingAccount.customerAccount.seller.address.city}, on #{dayDate}
+
+#{billingAccount.legalEntityType.code},
+
+Please find attached the invoice #{invoice.invoiceNumber} for an amount of #{invoice.netToPay}
+
+We remain at your disposal in case of any questions. Please accept, Madam / Sir, the assurance of our best regards.
+
+Signature
+
+Your name and surname
+                ]]>
+			</column>
+		</insert>
+	</changeSet>
+
+	<changeSet id="#INTRD-13717_20230202" author="aeljaouhari" />
+	<changeSet id="#INTRD-13762_20230206" author="aelmalki" />
+
+	<changeSet id="#INTRD-11208_20230131" author="zelmeliani">
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-11" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2B+5" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-1" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
+                    <p>Hello, </p>
+                    <p>We are reaching out to you in regards of your current balance that you have with our company. It seems you have debit of #{customerAccount balance} #{currencySymbol}.</p>
+                    <p>
+                        Please take necessary steps to insure payments of your last(s) invoice(s). <br>
+                        You
+                    </p>
+                    <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
+                    <p>Best regards,</p>
+                ]]>
+            </column>
+        </insert>
+
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-12" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2B +10" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-1" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
+                    <p>Hello, </p>
+                    <p>We are following up on our previous email regarding your negative balance (that is currently of#{customerAccount balance} #{currencySymbol}).</p>
+                    <p>
+                        Please take contact with us to clear the situation.<br>
+                        If you have already done a payment, you can discard this email.
+                    </p>
+                    <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
+                    <p>Best regards,</p>
+                ]]>
+            </column>
+        </insert>
+
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-13" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2B +20" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-1" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
+                    <p>Hello, </p>
+                    <p>It has now been 10 days since our first email regarding your current negative balance. Your current balance is #{customerAccount balance} #{currencySymbol}).</p>
+                    <p>
+                        Please take contact with us to clear the situation.<br>
+                        If you have already done a payment, you can discard this email.
+                    </p>
+                    <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
+                    <p>Best regards,</p>
+                ]]>
+            </column>
+        </insert>
+
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-14" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2B +30" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-1" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
+                    <p>Hello, </p>
+                    <p>It seems our previous emails did not allow the expected outcome. Today, your current balance is of#{customerAccount balance} #{currencySymbol}).</p>
+                    <p>As it seems we were not able to clear the situation, the services you have with us have been suspended.</p>
+                    <p>If you have already done a payment, please contact us so that we can re-activate your services.</p>
+                    <p>If you have any additional question, please contact our services.</p>
+                    <p>Best regards,</p>
+                ]]>
+            </column>
+        </insert>
+
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-15" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2C +1" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-1" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
+                    <p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+                    <p>We are reaching out to you in regards of your current balance that you have with our company. It seems you have debit of #{customerAccount balance} #{currencySymbol}.</p>
+                    <p>
+                        Please take necessary steps to insure payments of your last(s) invoice(s). <br>
+                        You
+                    </p>
+                    <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
+                    <p>Best regards,</p>
+                ]]>
+            </column>
+        </insert>
+
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-16" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2C +5" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-1" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
+                    <p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+                    <p>We are following up on our previous email regarding your negative balance (that is currently of#{customerAccount balance} #{currencySymbol}).</p>
+                    <p>
+                        Please take contact with us to clear the situation.<br>
+                        If you have already done a payment, you can discard this email.
+                    </p>
+                    <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
+                    <p>Best regards,</p>
+                ]]>
+            </column>
+        </insert>
+
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-17" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2C +10" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-1" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
+                    <p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+                    <p>It has now been 10 days since our first email regarding your current negative balance. Your current balance is #{customerAccount balance} #{currencySymbol}).</p>
+                    <p>
+                        Please take contact with us to clear the situation.<br>
+                        If you have already done a payment, you can discard this email.
+                    </p>
+                    <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
+                    <p>Best regards,</p>
+                ]]>
+            </column>
+        </insert>
+
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-18" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2C +15" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-1" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
+                    <p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+                    <p>It seems our previous emails did not allow the expected outcome. Today, your current balance is of#{customerAccount balance} #{currencySymbol}).</p>
+                    <p>As it seems we were not able to clear the situation, the services you have with us have been suspended.</p>
+                    <p>If you have already done a payment, please contact us so that we can re-activate your services.</p>
+                    <p>If you have any additional question, please contact our services.</p>
+                    <p>Best regards,</p>
+                ]]>
+            </column>
+        </insert>
+
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-19" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2B +5fr" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-2" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
+                    <p>Bonjour,</p>
+                    <p>Nous vous contactons au sujet de votre solde actuel auprèss de notre société. Il semble que vous ayez une position débitrice d’un montant de #{customerAccount balance} #{currencySymbol}.</p>
+                    <p>Nous vous invitons a faire le nécessaires pour assurer le paiement de votre (vos) dernière(s) facture(s).</p>
+                    <p>Si vous avez des questions supplémentaires, n'hésitez pas à contacter nos services ou votre point de contact habituel.</p>
+                    <p>Meilleures salutations,</p>
+                ]]>
+            </column>
+        </insert>
+
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-20" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2B +10fr" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-2" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
+                    <p>Bonjour,</p>
+                    <p>Nous donnons suite à notre précédent e-mail concernant votre solde négatif (actuellement de #{customerAccount balance} #{currencySymbol}).</p>
+                    <p>Merci de prendre contact avec nous pour échanger sur la situation.</p>
+                    <p>Si vous avez déjà effectué un paiement, veuillez ne pas prendre cet e-mail en considération.</p>
+                    <p>Si vous avez des questions supplémentaires, n'hésitez pas à contacter nos services ou votre point de contact habituel.</p>
+                    <p>Meilleures salutations,</p>
+                ]]>
+            </column>
+        </insert>
+
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-21" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2B +20fr" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-2" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
+                    <p>Bonjour,</p>
+                    <p>Cela fait maintenant 10 jours depuis notre premier e-mail concernant votre solde négatif. Votre solde actuel est de #{customerAccount balance} #{currencySymbol}).</p>
+                    <p>Merci de prendre contact avec nous pour éclaircir la situation.</p>
+                    <p>Si vous avez déjà effectué un paiement, vous pouvez ne pas prendre compte de cet e-mail.</p>
+                    <p>Si vous avez des questions supplémentaires, n'hésitez pas à contacter nos services ou votre point de contact habituel.</p>
+                    <p>Meilleures salutations,</p>
+                ]]>
+            </column>
+        </insert>
+
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-22" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2B +30fr" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-2" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
+                    <p>Bonjour,</p>
+                    <p>Il semble que nos e-mails précédents n'aient pas permis d’arriver au résultat escompté. Aujourd'hui, votre solde est de #{customerAccount balance} #{currencySymbol}).</p>
+                    <p>La situation ne s’étant pas régler à l’amiable, l’ensemble des services que vous avez avec nous ont été suspendus.</p>
+                    <p>Si vous avez déjà effectué un paiement, veuillez nous contacter afin que nous puissions réactiver vos services.</p>
+                    <p>Si vous avez des questions supplémentaires, veuillez contacter nos services.</p>
+                    <p>Meilleures salutations,</p>
+                ]]>
+            </column>
+        </insert>
+
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-23" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2C +1fr" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-2" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
+                    <p>Bonjour#{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+                    <p>Nous vous contactons au sujet de votre solde actuel auprèss de notre société. Il semble que vous ayez une position débitrice d’un montant de #{customerAccount balance} #{currencySymbol}.</p>
+                    <p>Nous vous invitons a faire le nécessaires pour assurer le paiement de votre (vos) dernière(s) facture(s).</p>
+                    <p>Si vous avez des questions supplémentaires, n'hésitez pas à contacter nos services ou votre point de contact habituel.</p>
+                    <p>Meilleures salutations,</p>
+                ]]>
+            </column>
+        </insert>
+
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-24" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2C +5fr" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-2" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
+                    <p>Bonjour#{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+                    <p>Nous donnons suite à notre précédent e-mail concernant votre solde négatif (actuellement de #{customerAccount balance} #{currencySymbol}).</p>
+                    <p>Merci de prendre contact avec nous pour échanger sur la situation.</p>
+                    <p>Si vous avez déjà effectué un paiement, veuillez ne pas prendre cet e-mail en considération.</p>
+                    <p>Si vous avez des questions supplémentaires, n'hésitez pas à contacter nos services ou votre point de contact habituel.</p>
+                    <p>Meilleures salutations,</p>
+                ]]>
+            </column>
+        </insert>
+
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-25" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2C +10fr" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-2" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
+                    <p>Bonjour#{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+                    <p>Cela fait maintenant 10 jours depuis notre premier e-mail concernant votre solde négatif. Votre solde actuel est de #{customerAccount balance} #{currencySymbol}).</p>
+                    <p>Merci de prendre contact avec nous pour éclaircir la situation.</p>
+                    <p>Si vous avez déjà effectué un paiement, vous pouvez ne pas prendre compte de cet e-mail.</p>
+                    <p>Si vous avez des questions supplémentaires, n'hésitez pas à contacter nos services ou votre point de contact habituel.</p>
+                    <p>Meilleures salutations,</p>
+                ]]>
+            </column>
+        </insert>
+
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-26" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2C +15fr" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-2" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
+                    <p>Bonjour #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+                    <p>Il semble que nos e-mails précédents n'aient pas permis d’arriver au résultat escompté. Aujourd'hui, votre solde est de #{customerAccount balance} #{currencySymbol}).</p>
+                    <p>La situation ne s’étant pas régler à l’amiable, l’ensemble des services que vous avez avec nous ont été suspendus.</p>
+                    <p>Si vous avez déjà effectué un paiement, veuillez nous contacter afin que nous puissions réactiver vos services.</p>
+                    <p>Si vous avez des questions supplémentaires, veuillez contacter nos services.</p>
+                    <p>Meilleures salutations,</p>
+                ]]>
+            </column>
         </insert>
     </changeSet>
     <changeSet id="#INTRD-12625_20221230" author="Bourras"/>
 
-	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
+    <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
     </changeSet>
-    
-    
-    
+
 </databaseChangeLog>

@@ -143,6 +143,9 @@ public class CommercialOrderApi extends BaseApi {
     @Inject
     private ResourceBundle resourceMessages;
 
+	@Inject
+	private ServiceInstanceService serviceInstanceService;
+
 	private static final String ADMINISTRATION_VISUALIZATION = "administrationVisualization";
     private static final String ADMINISTRATION_MANAGEMENT = "administrationManagement";
 	
@@ -927,6 +930,10 @@ public class CommercialOrderApi extends BaseApi {
     		throw new EntityDoesNotExistsException(OrderOffer.class, orderOfferDto.getOrderOfferId());
     	}
     	
+    	if(orderOffer.getOrder() != null && CommercialOrderEnum.VALIDATED.toString().equalsIgnoreCase(orderOffer.getOrder().getStatus())) {
+    		throw new BusinessApiException("A validated order cannot be update");
+    	}
+    	
 		if (orderOfferDto.getCommercialOrderId() != null) {
 			CommercialOrder commercialOrder=null;
 			commercialOrder = commercialOrderService.findById(orderOfferDto.getCommercialOrderId());
@@ -1232,8 +1239,16 @@ public class CommercialOrderApi extends BaseApi {
     		throw new MeveoApiException("Delivery date should be in the future");	
     	}
     	orderProduct.setDeliveryDate(orderProductDto.getDeliveryDate());
-        
-		orderProduct.updateAudit(currentUser); 
+
+		if (orderProductDto.getServiceInstanceId() != null) {
+			ServiceInstance serviceInstance = serviceInstanceService.findById(orderProductDto.getServiceInstanceId());
+			if (serviceInstance == null) {
+				throw new EntityDoesNotExistsException(ServiceInstance.class, orderProductDto.getServiceInstanceId());
+			}
+			orderProduct.setServiceInstance(serviceInstance);
+		}
+
+		orderProduct.updateAudit(currentUser);
 		return orderProduct;
     }
     
