@@ -21,6 +21,7 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.meveo.model.billing.BillingEntityTypeEnum.BILLINGACCOUNT;
+import static org.meveo.model.billing.DateAggregationOption.NO_DATE_AGGREGATION;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -1711,6 +1712,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             billingCycleFilters = new HashMap<>(billingRun.getBillingCycle().getFilters());
         }
         if(!billingCycle.isDisableAggregation()) {
+            if(billingCycle.getDateAggregation() == null) {
+                billingCycle.setDateAggregation(NO_DATE_AGGREGATION);
+            }
             String usageDateAggregation = getUsageDateAggregation(billingCycle.getDateAggregation());
             String unitAmount = appProvider.isEntreprise() ? "unitAmountWithoutTax" : "unitAmountWithTax";
             String unitAmountField =
@@ -1821,7 +1825,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         String unitAmount = appProvider.isEntreprise() ? "a.unitAmountWithoutTax" : "a.unitAmountWithTax";
         String aggregateWithUnitAmount = billingCycle.isAggregateUnitAmounts() ? "" : ", " + unitAmount;
         String useAccountingLabel = billingCycle.isUseAccountingArticleLabel() ? "" : ", a.description";
-        if(billingCycle.getDateAggregation() == DateAggregationOption.NO_DATE_AGGREGATION) {
+        if(billingCycle.getDateAggregation() == NO_DATE_AGGREGATION) {
             usageDateAggregation = "a." + usageDateAggregation;
         }
         return " group by a.billingAccount.id, a.accountingCode.id" + useAccountingLabel + aggregateWithUnitAmount + ","
