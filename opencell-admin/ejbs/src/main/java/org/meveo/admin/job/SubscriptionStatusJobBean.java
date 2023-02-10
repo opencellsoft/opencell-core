@@ -109,6 +109,9 @@ public class SubscriptionStatusJobBean extends IteratorBasedJobBean<Long> {
                             subscription);
                         calendarDate = calendarRenew.nextCalendarDate(subscription.getSubscribedTillDate());
                     } else {
+                    	if(subscription.getSubscriptionRenewal().getRenewFor() == null || subscription.getSubscriptionRenewal().getRenewFor() == 0) {
+                    		throw new BusinessException("RENEW FOR field for subscription "+subscription.getId()+" must be superior to 0");
+                    	}
                         calendar.setTime(subscription.getSubscribedTillDate());
                         calendar.add(subscription.getSubscriptionRenewal().getRenewForUnit().getCalendarField(), subscription.getSubscriptionRenewal().getRenewFor());
                         calendarDate = calendar.getTime();
