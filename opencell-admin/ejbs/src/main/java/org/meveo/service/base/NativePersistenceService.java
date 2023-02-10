@@ -147,20 +147,32 @@ public class NativePersistenceService extends BaseService {
      * @param id        Identifier
      * @return A map of values with field name as a map key and field value as a map value. Or null if no record was found with such identifier.
      */
-    @SuppressWarnings("rawtypes")
     public Map<String, Object> findById(String tableName, Long id) {
+        return findByIdWithouCheckCodeAndDescription(tableName, id, true);
+    }
+    /**
+     * Find record by its identifier
+     *
+     * @param tableName Table name
+     * @param id        Identifier
+     * @return A map of values with field name as a map key and field value as a map value. Or null if no record was found with such identifier.
+     */
+    @SuppressWarnings({ "rawtypes", "deprecation" })
+    public Map<String, Object> findByIdWithouCheckCodeAndDescription(String tableName, Long id, boolean canCheck) {
         tableName = addCurrentSchema(tableName);
         try {
             Session session = getEntityManager().unwrap(Session.class);
             StringBuilder selectQuery = new StringBuilder("select * from ").append(tableName).append(" e where id=:id");
             SQLQuery query = session.createSQLQuery(selectQuery.toString());
             query.setParameter("id", id);
-            query.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
-            query.setFlushMode(FlushMode.COMMIT);
-            query.addScalar("id", new LongType());
-            query.addScalar("code", new StringType());
-            query.addScalar("description", new StringType());
+            if(canCheck) {
+                query.addScalar("id", new LongType());
+                query.setFlushMode(FlushMode.COMMIT);
+                query.addScalar("code", new StringType());
+                query.addScalar("description", new StringType());
+            }
 
+            query.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
 
             Map<String, Object> values = (Map<String, Object>) query.uniqueResult();
             if (values != null) {
@@ -595,7 +607,7 @@ public class NativePersistenceService extends BaseService {
     public int remove(String tableName, Long id) throws BusinessException {
         tableName = addCurrentSchema(tableName);
         this.deletionService.checkTableNotreferenced(tableName, id);
-        Map<String, Object> values = findById(tableName, id);
+        Map<String, Object> values = findByIdWithouCheckCodeAndDescription(tableName, id, false);
         if (values == null) {
             return 0;
         }
@@ -608,6 +620,8 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * Delete multiple records. Note: There is no check done that records exists.
+     * Will call find by id and check if it has a code or description field other will throw 
+     * excpetion
      *
      * @param tableName Table name to delete from
      * @param ids       A set of record identifiers
@@ -625,6 +639,26 @@ public class NativePersistenceService extends BaseService {
         // TODO. Here could be a check that if no notification exist, delete it in batch mode
 //        ids.stream().forEach(id -> deletionService.checkTableNotreferenced(tableName, id));
 //        return getEntityManager().createNativeQuery("delete from " + tableName + " where id in :ids").setParameter("ids", ids).executeUpdate();
+    }
+    
+
+    /**
+     * Delete multiple records. Note: There is no check done that records exists.
+     * Will not check Code or description field, it will find the table by id and then delete
+     *
+     * @param tableName Table name to delete from
+     * @param ids       A set of record identifiers
+     * @return Number of records deleted
+     * @throws BusinessException General exception
+     */
+    public int removeById(String tableName, Set<Long> ids) throws BusinessException {
+        tableName = addCurrentSchema(tableName);
+        int nrDeleted = 0;
+        for (Long id : ids) {
+            nrDeleted = nrDeleted + remove(tableName, id);
+        }
+        return nrDeleted;
+
     }
 
     /**
