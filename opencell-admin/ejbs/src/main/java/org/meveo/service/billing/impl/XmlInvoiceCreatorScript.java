@@ -1185,7 +1185,10 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                 Tax taxData = taxInvoiceAgregate.getTax();
                 tax.setAttribute("id", taxData != null ? taxData.getId().toString() : "");
                 tax.setAttribute("code", taxData != null ? taxData.getCode() : "");
-                tax.setAttribute("vatex", taxData != null ? taxData.getUntdidVatex().getRemark() : "");
+
+                if (taxData != null &&  taxData.getUntdidVatex() != null) {
+                    tax.setAttribute("vatex", taxData.getUntdidVatex().getRemark());
+                }
                 addCustomFields(taxData, doc, tax);
                 String translationKey = "TX_" + (taxData != null ? taxData.getCode() : "") + "_" + invoiceLanguageCode;
                 String descTranslated = descriptionMap.get(translationKey);
@@ -1389,6 +1392,35 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                     .append(" (invoiced on ")
                     .append(DateUtils.formatDateWithPattern(inv.getInvoice().getInvoiceDate(), paramBeanFactory.getInstance().getProperty(INVOICE_DATE_FORMAT, DEFAULT_DATE_PATTERN)))
                     .append(")");
+        }
+        return result.toString();
+    }
+
+    private String getTaxCodes(Tax tax) {
+        if (CollectionUtils.isEmpty(tax.getSubTaxes())) {
+            return tax.getCode().replaceAll(",", "\n");
+        } else {
+            return getSubTaxesCodes(tax.getSubTaxes());
+        }
+    }
+
+    private String getSubTaxesCodes(List<Tax> subTaxes) {
+        if (CollectionUtils.isEmpty(subTaxes)) {
+            return StringUtils.EMPTY;
+        }
+
+        final StringBuilder result = new StringBuilder();
+
+        String prefix = "";
+        for (Tax subTax : subTaxes) {
+            result.append(prefix);
+            prefix = ",";
+
+            if (CollectionUtils.isNotEmpty(subTax.getSubTaxes())) {
+                result.append(getSubTaxesCodes(subTax.getSubTaxes()));
+            } else {
+                result.append(subTax.getCode());
+            }
         }
         return result.toString();
     }
@@ -2497,6 +2529,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         line.setAttribute("periodEndDate", DateUtils.formatDateWithPattern(periodEndDate, invoiceDateFormat));
         line.setAttribute("periodStartDate", DateUtils.formatDateWithPattern(periodStartDate, invoiceDateFormat));
         line.setAttribute("taxPercent", invoiceLine.getTaxRate() != null ? invoiceLine.getTaxRate().toPlainString() : "");
+        line.setAttribute("taxCode", getTaxCodes(invoiceLine.getTax()));
         line.setAttribute("sortIndex", "");
         line.setAttribute("code", invoiceLine.getOrderRef());
         Element label = doc.createElement("label");

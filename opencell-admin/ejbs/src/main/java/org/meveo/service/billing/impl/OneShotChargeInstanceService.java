@@ -302,7 +302,9 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
             }
         }
 
-        create(oneShotChargeInstance);
+        if(!isVirtual) {
+        	create(oneShotChargeInstance);
+        }
 
         if (chargeMode == null) {
             chargeMode = ChargeApplicationModeEnum.SUBSCRIPTION;
