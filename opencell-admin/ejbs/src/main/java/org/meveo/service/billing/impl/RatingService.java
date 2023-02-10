@@ -706,12 +706,12 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     unitPriceWithoutTax = unitPrices.getAmountWithoutTax();
                     unitPriceWithTax = unitPrices.getAmountWithTax();
                     BigDecimal amount=null;
-
                     // A price discount is applied to a default price by a contract
                     if (contractItem != null && ContractRateTypeEnum.PERCENTAGE.equals(contractItem.getContractRateType()) ) {
+                    	boolean seperateDiscount=contractItem.isSeparateDiscount();
                         if(contractItem.getRate() != null && contractItem.getRate() > 0){
                              amount = unitPriceWithoutTax.abs().multiply(BigDecimal.valueOf(contractItem.getRate()).divide(HUNDRED));
-                            if (amount != null && unitPriceWithoutTax.compareTo(amount) > 0)
+                            if (amount != null && unitPriceWithoutTax.compareTo(amount) > 0  && !seperateDiscount)
                                 unitPriceWithoutTax = unitPriceWithoutTax.subtract(amount);
                         } else if (contractItem.getPricePlan() != null) {
                             PricePlanMatrix pricePlanMatrix = contractItem.getPricePlan();
@@ -721,15 +721,15 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                                 BigDecimal discountRate= pricePlanMatrixLine.getValue();
                                 if(discountRate!=null && discountRate.compareTo(BigDecimal.ZERO) > 0 ){
                                      amount = unitPriceWithoutTax.abs().multiply(discountRate.divide(HUNDRED));
-                                    if (amount != null && unitPriceWithoutTax.compareTo(amount) > 0)
+                                    if (amount != null && unitPriceWithoutTax.compareTo(amount) > 0 && !seperateDiscount)
                                         unitPriceWithoutTax = unitPriceWithoutTax.subtract(amount);
                                 }
                             }
                         }
-                        if(contractItem.isSeparateDiscount()) {
+                        if(seperateDiscount) {
                         	WalletOperation discountWalletOperation = new WalletOperation();
-                        	
-                        	BigDecimal walletOperationDiscountAmount=unitPrices.getAmountWithoutTax().abs().multiply(amount.negate().divide(HUNDRED));
+                        	BigDecimal discountedAmount=unitPriceWithoutTax.subtract(amount);
+                        	BigDecimal walletOperationDiscountAmount=unitPriceWithoutTax.abs().multiply(amount.negate().divide(HUNDRED));
                         	BigDecimal taxPercent=bareWalletOperation.getTaxPercent();
                         	BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(walletOperationDiscountAmount, walletOperationDiscountAmount, bareWalletOperation.getTaxPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP); 
                         	BigDecimal quantity=bareWalletOperation.getQuantity();
@@ -738,8 +738,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                         	discountWalletOperation.setDescription(bareWalletOperation.getDescription()); 
                         	discountWalletOperation.setUnitAmountTax(walletOperationDiscountAmount);
                         	discountWalletOperation.setAmountWithoutTax(quantity.compareTo(BigDecimal.ZERO)>0?quantity.multiply(amounts[0]):BigDecimal.ZERO);
-                        	discountWalletOperation.setAmountWithTax(quantity.multiply(amounts[1]));
-                        	discountWalletOperation.setAmountTax(quantity.multiply(amounts[2]));
+                        	discountWalletOperation.setAmountWithTax(quantity.compareTo(BigDecimal.ZERO)>0?quantity.multiply(amounts[1]):BigDecimal.ZERO);
+                        	discountWalletOperation.setAmountTax(quantity.compareTo(BigDecimal.ZERO)>0?quantity.multiply(amounts[2]):BigDecimal.ZERO);
                         	discountWalletOperation.setTaxPercent(taxPercent);
                         	discountWalletOperation.setUnitAmountWithoutTax(amounts[0]);
                         	discountWalletOperation.setUnitAmountWithTax(amounts[1]);
@@ -759,7 +759,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                         	discountWalletOperation.setDiscountedWalletOperation(bareWalletOperation.getId()); 
                         	discountWalletOperation.setDiscountPlanType(DiscountPlanItemTypeEnum.PERCENTAGE);
                         	discountWalletOperation.setDiscountValue(amount);
-                        	discountWalletOperation.setDiscountedAmount(unitPriceWithoutTax);
+                        	discountWalletOperation.setDiscountedAmount(discountedAmount);
                         	discountWalletOperation.setOrderNumber(bareWalletOperation.getOrderNumber());
                         	discountWalletOperation.setSubscription(bareWalletOperation.getSubscription());
                         	discountWalletOperation.setUserAccount(bareWalletOperation.getUserAccount());
