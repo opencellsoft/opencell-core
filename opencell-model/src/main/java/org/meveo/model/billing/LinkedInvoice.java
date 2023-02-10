@@ -66,7 +66,6 @@ public class LinkedInvoice implements IEntity, Serializable {
     @PreUpdate
     public void prePersistOrUpdate() {
         if (this.convertedAmount == null) {
-            if (this.amount == null) {this.amount = ZERO;}
             BigDecimal appliedRate = getInvoice().getLastAppliedRate();
             this.convertedAmount = appliedRate != null ? this.amount.multiply(appliedRate) : ZERO;
         }
