@@ -6677,9 +6677,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public void refreshAdvanceInvoicesConvertedAmount(Invoice toUpdate, BigDecimal lastAppliedRate) {
         toUpdate.getLinkedInvoices().stream().filter(linkedInvoice ->
-                        linkedInvoice.getType().equals(InvoiceTypeEnum.ADVANCEMENT_PAYMENT)
-                                && linkedInvoice.getLinkedInvoiceValue() != null && linkedInvoice.getLinkedInvoiceValue().getStatus().equals(InvoiceStatusEnum.VALIDATED))
-                .forEach(linkedInvoice -> linkedInvoice.setConvertedAmount(linkedInvoice.getAmount().multiply(lastAppliedRate)));
+                InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(linkedInvoice.getType())
+                && linkedInvoice.getLinkedInvoiceValue() != null &&
+                linkedInvoice.getLinkedInvoiceValue().getStatus().equals(InvoiceStatusEnum.VALIDATED))
+            .forEach(linkedInvoice -> linkedInvoice.setConvertedAmount(linkedInvoice.getAmount().multiply(lastAppliedRate)));
     }
 
     /**
