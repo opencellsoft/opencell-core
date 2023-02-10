@@ -167,12 +167,17 @@ public class InvoiceValidationRulesResourceImpl implements InvoiceValidationRule
 
         if (invoiceValidationRule.getDescription() == null || invoiceValidationRule.getDescription().isEmpty()) {
 
-            String value = invoiceValidationRule.getType().equals(ValidationRuleTypeEnum.SCRIPT) ? getScriptValidationShortCode(invoiceValidationRule.getValidationScript().getCode())
+            String scriptCodeOrEL = invoiceValidationRule.getType().equals(ValidationRuleTypeEnum.SCRIPT) ? getScriptValidationShortCode(invoiceValidationRule.getValidationScript().getCode())
                     : invoiceValidationRule.getValidationEL();
 
-            invoiceValidationRule.setDescription("Rule " + ruleId + ": "
-                    + invoiceValidationRule.getFailStatus().toString() + " if " + invoiceValidationRule.getType().toString() + " "
-                    +  value  + " fails");
+            invoiceValidationRule.setDescription(String.format("rule %s: %s if %s %s %s" ,
+                    ruleId,
+                    invoiceValidationRule.getFailStatus().toString(),
+                    invoiceValidationRule.getType().toString(),
+                    scriptCodeOrEL,
+                    invoiceValidationRule.getEvaluationMode().toString()
+                    )
+            );
         }
     }
     

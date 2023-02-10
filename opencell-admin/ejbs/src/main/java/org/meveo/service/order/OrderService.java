@@ -34,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.BillingCycle;
@@ -190,10 +191,14 @@ public class OrderService extends BusinessService<Order> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Order> findOrders(BillingCycle billingCycle, Date startdate, Date endDate) {
+    public List<Order> findOrders(BillingCycle billingCycle) {
         try {
             QueryBuilder qb = new QueryBuilder(Order.class, "o", null);
-            qb.addCriterionEntity("o.billingCycle.id", billingCycle.getId());
+            if (billingCycle.getFilters() != null && !billingCycle.getFilters().isEmpty()) {
+                qb.addPaginationConfiguration(new PaginationConfiguration(billingCycle.getFilters()));
+            } else {
+                qb.addCriterionEntity("o.billingCycle.id", billingCycle.getId());
+            }
             return (List<Order>) qb.getQuery(getEntityManager()).getResultList();
 
         } catch (Exception ex) {

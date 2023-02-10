@@ -26,14 +26,14 @@ public class DocumentService extends BusinessService<Document> {
 
     @Override
     public void create(Document entity) throws BusinessException {
-        final FileType fetchedFileType = fileTypeService.findById(entity.getFileType().getId());
+        final FileType fetchedFileType = fileTypeService.findByCode(entity.getFileType().getCode());
         if(Objects.isNull(fetchedFileType)){
-            throw new BadRequestException("file type with id "+entity.getFileType().getId()+" not found");
+            throw new BadRequestException("file type with code "+entity.getFileType().getCode()+" not found");
         }
         entity.setFileType(fetchedFileType);
-        final DocumentCategory fetchedCategory = documentCategoryService.findById(entity.getCategory().getId());
+        final DocumentCategory fetchedCategory = documentCategoryService.findByCode(entity.getCategory().getCode());
         if(Objects.isNull(fetchedCategory)){
-            throw new BadRequestException("Category with id "+entity.getCategory().getId()+" not found");
+            throw new BadRequestException("Category with code "+entity.getCategory().getCode() +" not found");
         }
         if(Objects.nonNull(entity.getLinkedAccountEntity())){
             AccountEntity accountEntity = accountEntitySearchService.findById(entity.getLinkedAccountEntity().getId());

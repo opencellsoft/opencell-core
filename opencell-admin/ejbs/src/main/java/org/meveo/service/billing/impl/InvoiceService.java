@@ -26,6 +26,7 @@ import static java.util.Comparator.comparingInt;
 import static java.util.Optional.ofNullable;
 import static java.util.Set.of;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
 import static org.meveo.model.shared.DateUtils.setTimeToZero;
@@ -146,51 +147,7 @@ import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.AdjustmentStatusEnum;
-import org.meveo.model.billing.Amounts;
-import org.meveo.model.billing.ApplyMinimumModeEnum;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.BillingEntityTypeEnum;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.CategoryInvoiceAgregate;
-import org.meveo.model.billing.DiscountPlanInstance;
-import org.meveo.model.billing.DiscountPlanInstanceStatusEnum;
-import org.meveo.model.billing.ExchangeRate;
-import org.meveo.model.billing.IInvoiceable;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceAgregate;
-import org.meveo.model.billing.InvoiceCategory;
-import org.meveo.model.billing.InvoiceLine;
-import org.meveo.model.billing.InvoiceLineStatusEnum;
-import org.meveo.model.billing.InvoiceLineTaxModeEnum;
-import org.meveo.model.billing.InvoiceLinesGroup;
-import org.meveo.model.billing.InvoiceModeEnum;
-import org.meveo.model.billing.InvoicePaymentStatusEnum;
-import org.meveo.model.billing.InvoiceProcessTypeEnum;
-import org.meveo.model.billing.InvoiceStatusEnum;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.InvoiceTypeEnum;
-import org.meveo.model.billing.InvoiceTypeSellerSequence;
-import org.meveo.model.billing.InvoiceValidationRule;
-import org.meveo.model.billing.InvoiceValidationStatusEnum;
-import org.meveo.model.billing.LinkedInvoice;
-import org.meveo.model.billing.MinAmountForAccounts;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.RatedTransactionAction;
-import org.meveo.model.billing.RatedTransactionGroup;
-import org.meveo.model.billing.RatedTransactionStatusEnum;
-import org.meveo.model.billing.ReferenceDateEnum;
-import org.meveo.model.billing.SubCategoryInvoiceAgregate;
-import org.meveo.model.billing.SubcategoryInvoiceAgregateAmount;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.TaxInvoiceAgregate;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.ValidationRuleTypeEnum;
-import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
@@ -1126,12 +1083,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             // Retrieve Rated transactions and split them into BA/seller combinations
             List<RatedTransaction> rts = getDataToInvoiceFromFilterOrDraft(entityToInvoice, ratedTransactionFilter, firstTransactionDate, lastTransactionDate, invoiceDate, isDraft);
-            if (billingRun.isExceptionalBR()) {
-                rts = rts.stream().filter(rt -> (rt.getStatus() == RatedTransactionStatusEnum.OPEN && rt.getBillingRun() == null)).collect(toList());
-            }
             if (!rts.isEmpty()) {
+                if (billingRun.isExceptionalBR()) {
+                    rts = rts.stream().filter(rt -> (rt.getStatus() == RatedTransactionStatusEnum.OPEN && rt.getBillingRun() == null)).collect(toList());
+                }
                 RatedTransactionsToInvoice rtsToInvoice = getRatedTransactionGroups(entityToInvoice, billingAccount, billingRun, defaultBillingCycle, defaultInvoiceType, isDraft, defaultPaymentMethod, rts.iterator());
-
                 aggregateInvoiceables(rtGroupToInvoiceMap, rtsToInvoice.ratedTransactionGroups, entityToInvoice, billingRun, invoiceDate, isDraft, automaticInvoiceCheck);
             }
         }
@@ -1317,7 +1273,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     private void setInitialCollectionDate(Invoice invoice, BillingCycle billingCycle, BillingRun billingRun) {
 
-        if (billingCycle.getCollectionDateDelayEl() == null) {
+        if (StringUtils.isBlank(billingCycle.getCollectionDateDelayEl())) {
             invoice.setInitialCollectionDate(invoice.getDueDate());
             return;
         }
@@ -1464,6 +1420,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		    validationRuleScript.execute(methodContext);
 		    Object status = methodContext.get(Script.INVOICE_VALIDATION_STATUS);
 		    if (status != null && status instanceof InvoiceValidationStatusEnum) {
+
+                if(EvaluationModeEnum.VALIDATION.equals(validationRule.getEvaluationMode())){
 		        if (InvoiceValidationStatusEnum.REJECTED.equals(status)) {
 		            invoice.setStatus(InvoiceStatusEnum.REJECTED);
 		            invoice.setRejectedByRule(validationRule);
@@ -1474,7 +1432,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		            invoice.setRejectedByRule(validationRule);
 		            noValidationError = false;
 		            if (invoice.getRejectReason() == null)  invoice.setRejectReason("Suspected by rule " + validationRule.getDescription());
+		        }}
+                else if(EvaluationModeEnum.REJECTION.equals(validationRule.getEvaluationMode())){
+
+                    if (InvoiceValidationStatusEnum.VALID.equals(status)) {
+		            invoice.setStatus(InvoiceStatusEnum.REJECTED);
+		            invoice.setRejectedByRule(validationRule);
+		            noValidationError = false;
+		            if (invoice.getRejectReason() == null) invoice.setRejectReason("Rejected by rule " + validationRule.getDescription());
 		        }
+
+                }
 		    }
 		} catch (Exception exception) {
 		    throw new BusinessException(exception);
@@ -1493,19 +1461,30 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		try {
 			invoice.setRejectReason(null);
 			Object validationResult = evaluateExpression(validationRule.getValidationEL(), Map.of("invoice", invoice), Boolean.class);
-			if (!((Boolean) validationResult)) {
-		        if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.SUSPECT) {
-		            invoice.setStatus(InvoiceStatusEnum.SUSPECT);
-		            invoice.setRejectedByRule(validationRule);
-		            if (invoice.getRejectReason() == null) invoice.setRejectReason("Suspected by rule " + validationRule.getDescription());
-		        }
-		        if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.REJECTED) {
-		            invoice.setStatus(InvoiceStatusEnum.REJECTED);
-		            invoice.setRejectedByRule(validationRule);
-		            if (invoice.getRejectReason() == null) invoice.setRejectReason("Rejected by rule " + validationRule.getDescription());
-		        }
-		        noValidationError = false;
-		    }
+			if(EvaluationModeEnum.VALIDATION.equals(validationRule.getEvaluationMode())) {
+                if (!((Boolean) validationResult)) {
+                    if (validationRule.getFailStatus() == InvoiceValidationStatusEnum.SUSPECT) {
+                        invoice.setStatus(InvoiceStatusEnum.SUSPECT);
+                        invoice.setRejectedByRule(validationRule);
+                        if (invoice.getRejectReason() == null)
+                            invoice.setRejectReason("Suspected by rule " + validationRule.getDescription());
+                    }
+                    if (validationRule.getFailStatus() == InvoiceValidationStatusEnum.REJECTED) {
+                        invoice.setStatus(InvoiceStatusEnum.REJECTED);
+                        invoice.setRejectedByRule(validationRule);
+                        if (invoice.getRejectReason() == null)
+                            invoice.setRejectReason("Rejected by rule " + validationRule.getDescription());
+                    }
+                    noValidationError = false;
+                }
+            } else if (EvaluationModeEnum.VALIDATION.equals(validationRule.getEvaluationMode()) && (Boolean) validationResult) {
+                    noValidationError = false;
+                    invoice.setStatus(InvoiceStatusEnum.REJECTED);
+                        invoice.setRejectedByRule(validationRule);
+                        if (invoice.getRejectReason() == null)
+                            invoice.setRejectReason("Rejected by rule " + validationRule.getDescription());
+            }
+
 		} catch (Exception exception) {
 		    throw new BusinessException(exception);
 		}
@@ -3666,6 +3645,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (electronicBilling && mailingTypeEnum.equals(mailingType)) {
                 Map<Object, Object> params = new HashMap<>();
                 params.put("invoice", invoice);
+                params.put("billingAccount", billingAccount);
+                params.put("dayDate", DateUtils.formatDateWithPattern(new Date(), "dd/MM/yyyy"));
                 String subject = evaluateExpression(emailSubject, params, String.class);
                 String content = evaluateExpression(emailContent, params, String.class);
                 String contentHtml = evaluateExpression(htmlContent, params, String.class);
@@ -3710,10 +3691,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         if (!includeDraft) {
             qb.addSql("invoiceNumber IS NOT NULL");
-            InvoiceType draftInvoiceType = invoiceTypeService.getDefaultDraft();
-            if (draftInvoiceType != null) {
-                qb.addCriterionEntity("invoiceType", draftInvoiceType, "<>", false);
-            }
         }
 
         return (List<Invoice>) qb.getQuery(getEntityManager()).getResultList();
@@ -3727,10 +3704,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException
      */
     public boolean isDraft(Invoice invoice) throws BusinessException {
-        invoice = refreshOrRetrieve(invoice);
-        InvoiceType invoiceType = invoice.getInvoiceType();
-        InvoiceType draftInvoiceType = invoiceTypeService.getDefaultDraft();
-        return invoiceType != null && (invoiceType.equals(draftInvoiceType) || invoice.getInvoiceNumber() == null);
+        return invoice.getInvoiceNumber() == null;
     }
 
     /**
@@ -4317,7 +4291,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
     private List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount, List<DiscountPlanInstance> discountPlanInstances, Invoice invoice, CustomerAccount customerAccount)
             throws BusinessException {
         List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>();
-        InvoiceType invoiceType = invoiceTypeService.getDefaultDraft();
         for (DiscountPlanInstance dpi : discountPlanInstances) {
             if (!dpi.isEffective(invoice.getInvoiceDate()) || dpi.getStatus().equals(DiscountPlanInstanceStatusEnum.EXPIRED)
                     || Arrays.asList(DiscountPlanTypeEnum.OFFER, DiscountPlanTypeEnum.PRODUCT, DiscountPlanTypeEnum.QUOTE).contains(dpi.getDiscountPlan().getDiscountPlanType())) {
@@ -4330,19 +4303,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         applicableDiscountPlanItems.add(discountPlanItem);
                     }
                 }
-                if (!invoice.getInvoiceType().equals(invoiceType)) {
-                    dpi.setApplicationCount(dpi.getApplicationCount() == null ? 1 : dpi.getApplicationCount() + 1);
+                dpi.setApplicationCount(dpi.getApplicationCount() == null ? 1 : dpi.getApplicationCount() + 1);
 
-                    if (dpi.getDiscountPlan().getApplicationLimit() != 0 && dpi.getApplicationCount() >= dpi.getDiscountPlan().getApplicationLimit()) {
-                        dpi.setStatusDate(new Date());
-                        dpi.setStatus(DiscountPlanInstanceStatusEnum.EXPIRED);
-                    }
-                    if (dpi.getStatus().equals(DiscountPlanInstanceStatusEnum.ACTIVE)) {
-                        dpi.setStatusDate(new Date());
-                        dpi.setStatus(DiscountPlanInstanceStatusEnum.IN_USE);
-                    }
-                    discountPlanInstanceService.update(dpi);
+                if (dpi.getDiscountPlan().getApplicationLimit() != 0 && dpi.getApplicationCount() >= dpi.getDiscountPlan().getApplicationLimit()) {
+                    dpi.setStatusDate(new Date());
+                    dpi.setStatus(DiscountPlanInstanceStatusEnum.EXPIRED);
                 }
+                if (dpi.getStatus().equals(DiscountPlanInstanceStatusEnum.ACTIVE)) {
+                    dpi.setStatusDate(new Date());
+                    dpi.setStatus(DiscountPlanInstanceStatusEnum.IN_USE);
+                }
+                discountPlanInstanceService.update(dpi);
             }
         }
         return applicableDiscountPlanItems;
@@ -4352,26 +4323,23 @@ public class InvoiceService extends PersistenceService<Invoice> {
     private List<DiscountPlanItem> getApplicableDiscountPlanItemsV11(BillingAccount billingAccount, List<DiscountPlanInstance> discountPlanInstances, Invoice invoice, CustomerAccount customerAccount)
             throws BusinessException {
         List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>();
-        InvoiceType invoiceType = invoiceTypeService.getDefaultDraft();
         for (DiscountPlanInstance dpi : discountPlanInstances) {
             if (!dpi.isEffective(invoice.getInvoiceDate()) || dpi.getStatus().equals(DiscountPlanInstanceStatusEnum.EXPIRED)) {
                 continue;
             }
             if (dpi.getDiscountPlan().isActive()) {
                 applicableDiscountPlanItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, dpi.getDiscountPlan(), null, null, null, null, invoice.getInvoiceDate());
-                if (!invoice.getInvoiceType().equals(invoiceType)) {
-                    dpi.setApplicationCount(dpi.getApplicationCount() == null ? 1 : dpi.getApplicationCount() + 1);
+                dpi.setApplicationCount(dpi.getApplicationCount() == null ? 1 : dpi.getApplicationCount() + 1);
 
-                    if (dpi.getDiscountPlan().getApplicationLimit() != 0 && dpi.getApplicationCount() >= dpi.getDiscountPlan().getApplicationLimit()) {
-                        dpi.setStatusDate(new Date());
-                        dpi.setStatus(DiscountPlanInstanceStatusEnum.EXPIRED);
-                    }
-                    if (dpi.getStatus().equals(DiscountPlanInstanceStatusEnum.ACTIVE)) {
-                        dpi.setStatusDate(new Date());
-                        dpi.setStatus(DiscountPlanInstanceStatusEnum.IN_USE);
-                    }
-                    discountPlanInstanceService.update(dpi);
+                if (dpi.getDiscountPlan().getApplicationLimit() != 0 && dpi.getApplicationCount() >= dpi.getDiscountPlan().getApplicationLimit()) {
+                    dpi.setStatusDate(new Date());
+                    dpi.setStatus(DiscountPlanInstanceStatusEnum.EXPIRED);
                 }
+                if (dpi.getStatus().equals(DiscountPlanInstanceStatusEnum.ACTIVE)) {
+                    dpi.setStatusDate(new Date());
+                    dpi.setStatus(DiscountPlanInstanceStatusEnum.IN_USE);
+                }
+                discountPlanInstanceService.update(dpi);
             }
         }
         return applicableDiscountPlanItems;
@@ -6204,7 +6172,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 
 
-            if (taxWasRecalculated) {
+            if (taxWasRecalculated || invoiceLine.isTaxRecalculated()) {
                 invoiceLine.setTax(tax);
                 invoiceLine.setTaxRate(tax.getPercent());
                 invoiceLine.computeDerivedAmounts(isEnterprise, rtRounding, rtRoundingMode);
@@ -6688,9 +6656,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public void refreshAdvanceInvoicesConvertedAmount(Invoice toUpdate, BigDecimal lastAppliedRate) {
         toUpdate.getLinkedInvoices().stream().filter(linkedInvoice ->
-                        linkedInvoice.getType().equals(InvoiceTypeEnum.ADVANCEMENT_PAYMENT)
-                                && linkedInvoice.getLinkedInvoiceValue() != null && linkedInvoice.getLinkedInvoiceValue().getStatus().equals(InvoiceStatusEnum.VALIDATED))
-                .forEach(linkedInvoice -> linkedInvoice.setConvertedAmount(linkedInvoice.getAmount().multiply(lastAppliedRate)));
+                InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(linkedInvoice.getType())
+                && linkedInvoice.getLinkedInvoiceValue() != null &&
+                linkedInvoice.getLinkedInvoiceValue().getStatus().equals(InvoiceStatusEnum.VALIDATED))
+            .forEach(linkedInvoice -> linkedInvoice.setConvertedAmount(linkedInvoice.getAmount().multiply(lastAppliedRate)));
     }
 
     /**
@@ -6936,7 +6905,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         duplicatedInvoice.setInvoiceDate(new Date());
         duplicatedInvoice.setInvoiceType(invoiceTypeService.getDefaultAdjustement());
         duplicatedInvoice.setStatus(InvoiceStatusEnum.DRAFT);
-        LinkedInvoice linkedInvoice = new LinkedInvoice(duplicatedInvoice, invoice);
+        LinkedInvoice linkedInvoice = new LinkedInvoice(invoice, duplicatedInvoice);
         duplicatedInvoice.setLinkedInvoices(of(linkedInvoice));
         duplicatedInvoice.setOpenOrderNumber(StringUtils.EMPTY);
         getEntityManager().flush();
@@ -7111,6 +7080,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         List<Invoice> invoicesAdv  = this.getEntityManager().createNamedQuery("Invoice.findValidatedInvoiceAdvOrder")
                 .setParameter("billingAccountId", invoice.getBillingAccount().getId())
                 .setParameter("commercialOrder", invoice.getCommercialOrder())
+                .setParameter("tradingCurrencyId",invoice.getTradingCurrency().getId())
                 .getResultList();
         return invoicesAdv;
     }

@@ -537,6 +537,24 @@ public class QueryBuilder {
         if (multiParams.length == 0) {
             return this;
         }
+        
+        if(!nestedClauses.empty()) {
+        	NestedQuery currentNF = nestedClauses.pop();
+        	if(currentNF.hasOneOrMoreCriteria) {
+        		if (FilterOperatorEnum.OR.equals(currentNF.operator)) {
+	                q.append(" or ");
+	            } else {
+	                q.append(" and ");
+	            }
+        	}
+        	q.append(sql);
+        	for (int i = 0; i < multiParams.length - 1; i = i + 2) {
+                params.put((String) multiParams[i], multiParams[i + 1]);
+            }
+        	currentNF.hasOneOrMoreCriteria = true;
+        	nestedClauses.add(currentNF);
+        	return this;
+        }
 
         if (hasOneOrMoreCriteria) {
             if (FilterOperatorEnum.OR.equals(this.filterOperator) || (inOrClause && nbCriteriaInOrClause != 0)) {
