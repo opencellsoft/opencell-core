@@ -353,7 +353,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         return update(pricePlanMatrixVersion, "CHANGE_STATUS");
     }
 
-    public GetPricePlanVersionResponseDto addLinesToPricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion) {
+    public GetPricePlanVersionResponseDto getPricePlanVersionWithLines(PricePlanMatrixVersion pricePlanMatrixVersion) {
         PricePlanMatrixVersionDto ppmVersionDto = new PricePlanMatrixVersionDto(pricePlanMatrixVersion, false);
         List<PricePlanMatrixLine> ppmLines = getEntityManager().createNamedQuery("PricePlanMatrixLine.findByPricePlanMatrixVersion", PricePlanMatrixLine.class)
                 .setParameter("pricePlanMatrixVersion", pricePlanMatrixVersion).getResultList();
