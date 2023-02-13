@@ -727,7 +727,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
                 throw new BusinessException("DiscountPlan " + dp.getCode() + " is already instantiated in Billing Account " + billingAccount.getCode() + ".");
             }
         }
-        return (Subscription) discountPlanInstanceService.instantiateDiscountPlan(entity, dp, null);
+        return (Subscription) discountPlanInstanceService.instantiateDiscountPlan(entity, dp, null, false);
     }
 
     public void terminateDiscountPlan(Subscription entity, DiscountPlanInstance dpi) throws BusinessException {
