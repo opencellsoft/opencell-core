@@ -4302,6 +4302,7 @@
             <column name="sequence" type="int4"/>
             <column name="automatic_application" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="allowance_code_id" type="bigint">
+            <constraints nullable="false" />
             </column>
         </createTable>
     </changeSet>
