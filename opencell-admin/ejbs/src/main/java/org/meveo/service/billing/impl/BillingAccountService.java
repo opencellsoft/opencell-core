@@ -529,7 +529,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                 }
             }
         }
-        return (BillingAccount) discountPlanInstanceService.instantiateDiscountPlan(entity, dp, null);
+        return (BillingAccount) discountPlanInstanceService.instantiateDiscountPlan(entity, dp, null, false);
         }else {
         	 throw new BusinessException("DiscountPlan " + dp.getCode() + " of type " + dp.getDiscountPlanType() +" is not allowed to be applied to BillingAccount.");
         }
