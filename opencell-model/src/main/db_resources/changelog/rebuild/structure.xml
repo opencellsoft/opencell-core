@@ -9507,9 +9507,7 @@
             <column name="status_date" type="datetime">
                 <constraints nullable="false" />
             </column>
-            <column name="contract_date" type="date">
-                <constraints nullable="false" />
-            </column>
+            <column name="contract_date" type="date"/>
             <column name="begin_date" type="date">
                 <constraints nullable="false" />
             </column>

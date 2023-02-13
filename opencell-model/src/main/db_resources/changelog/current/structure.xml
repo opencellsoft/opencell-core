@@ -15810,4 +15810,8 @@ public class AgedBalanceReporting extends ReportExtractScript {
 								 onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
 
+    <changeSet id="#INTRD-12972" author="bourras">
+        <dropNotNullConstraint tableName="cpq_contract" columnName="contract_date"/>
+    </changeSet>
+
 </databaseChangeLog>

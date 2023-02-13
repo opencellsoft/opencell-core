@@ -25,7 +25,7 @@ public class BillingRuleService extends PersistenceService<BillingRule> {
     private FinanceSettingsService financeSettingsService;
 
     public void checkBillingRedirectionRulesConfiguration(ContractDto contractDto) {
-        if (contractDto.getBillingRules() != null && !isBillingRedirectionRulesEnabled()) {
+        if (contractDto.getBillingRules() != null && !contractDto.getBillingRules().isEmpty() && !isBillingRedirectionRulesEnabled()) {
             throw new BusinessException("Feature disabled in application settings");
         }
     }
