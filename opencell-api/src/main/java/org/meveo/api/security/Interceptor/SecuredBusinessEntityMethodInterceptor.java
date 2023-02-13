@@ -422,17 +422,15 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
             // User is allowed to access Customer and is accessing a customer
         } else if (posAllowed == posTryAccess) {
 
-            String propertyPath = propertyName.equals("code") ? codeOrIdField : (propertyName + "." + codeOrIdField);
-
-            criteriaPaths.add(propertyPath);
+            String propertyPathPattern = propertyName.equals("code") ? "%s" + codeOrIdField : (propertyName + ".%s" + codeOrIdField);
+            criteriaPaths.add(String.format(propertyPathPattern, ""));
 
             if (additionalHierarchyProperties.containsKey(tryToAccessEntityClass)) {
 
                 for (String additionalHierarchy : additionalHierarchyProperties.get(tryToAccessEntityClass)) {
-                    criteriaPaths.add(additionalHierarchy + "." + propertyPath);
+                    criteriaPaths.add(String.format(propertyPathPattern, additionalHierarchy + "."));
                 }
             }
-
             // User is allowed to access Customer and is accessing a userAccount - need to construct the whole hierarchy to climb up
         } else {
 
