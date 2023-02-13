@@ -16,7 +16,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.PositiveOrZero;
-
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.CustomFieldEntity;
@@ -112,7 +112,14 @@ public class ContractItem extends EnableBusinessCFEntity {
 	@Column(name = "rate_type", length = 50)
 	private ContractRateTypeEnum contractRateType = ContractRateTypeEnum.PERCENTAGE;
 
-
+	 /**
+     * separate discount
+     */
+	
+	@Type(type = "numeric_boolean")
+	@Column(name = "separate_discount")
+	private boolean separateDiscount = false;
+	
 	/**
 	 * @return the contract
 	 */
@@ -247,6 +254,16 @@ public class ContractItem extends EnableBusinessCFEntity {
 
 	public void setContractRateType(ContractRateTypeEnum contractRateType) {
 		this.contractRateType = contractRateType;
+	}
+
+
+	public boolean isSeparateDiscount() {
+		return separateDiscount;
+	}
+
+
+	public void setSeparateDiscount(boolean separateDiscount) {
+		this.separateDiscount = separateDiscount;
 	}
 
 

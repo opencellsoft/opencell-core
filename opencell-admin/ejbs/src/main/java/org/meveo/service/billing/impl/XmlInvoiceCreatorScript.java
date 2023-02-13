@@ -1185,7 +1185,10 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                 Tax taxData = taxInvoiceAgregate.getTax();
                 tax.setAttribute("id", taxData != null ? taxData.getId().toString() : "");
                 tax.setAttribute("code", taxData != null ? taxData.getCode() : "");
-                tax.setAttribute("vatex", taxData != null ? taxData.getUntdidVatex().getRemark() : "");
+
+                if (taxData != null &&  taxData.getUntdidVatex() != null) {
+                    tax.setAttribute("vatex", taxData.getUntdidVatex().getRemark());
+                }
                 addCustomFields(taxData, doc, tax);
                 String translationKey = "TX_" + (taxData != null ? taxData.getCode() : "") + "_" + invoiceLanguageCode;
                 String descTranslated = descriptionMap.get(translationKey);
