@@ -56,6 +56,8 @@ public class CustomStyleDto extends BusinessEntityDto {
 
     private String secondaryColor;
 
+    private String css;
+
     @XmlElementWrapper(name = "hypertextSections")
     @XmlElement(name = "hypertextSections")
     @Schema(description = "list of hypertext sections")
@@ -74,6 +76,7 @@ public class CustomStyleDto extends BusinessEntityDto {
                           Map<String, String> backgroundImage,
                           String primaryColor,
                           String secondaryColor,
+                          String css,
                           List<HypertextSectionDto> hypertextSections,
                           CustomEnum type) {
         this.logo = logo;
@@ -84,6 +87,7 @@ public class CustomStyleDto extends BusinessEntityDto {
         this.backgroundImage = backgroundImage;
         this.primaryColor = primaryColor;
         this.secondaryColor = secondaryColor;
+        this.css = css;
         this.hypertextSections = hypertextSections;
         this.type = type;
     }
@@ -115,6 +119,9 @@ public class CustomStyleDto extends BusinessEntityDto {
         }
         if (customStyle.getSecondaryColor() != null) {
             secondaryColor = customStyle.getSecondaryColor();
+        }
+        if (customStyle.getCss() != null) {
+            css = customStyle.getCss();
         }
         if (customStyle.getType() != null) {
             type = customStyle.getType();
@@ -188,6 +195,14 @@ public class CustomStyleDto extends BusinessEntityDto {
 
     public void setSecondaryColor(String secondaryColor) {
         this.secondaryColor = secondaryColor;
+    }
+
+    public String getCss() {
+        return css;
+    }
+
+    public void setCss(String css) {
+        this.css = css;
     }
 
     public CustomEnum getType() {
