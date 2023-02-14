@@ -118,7 +118,7 @@ public class InvoicingPlanItemApi extends BaseCrudApi<InvoicingPlanItem, Invoici
 			invoicingPlanItem.setBillingPlan(invoicingPlan);
 			var items = invoicingPlanItemService.findByInvoicingPlanCode(invoicingPlan);
 			if(!items.isEmpty() && postData.getAdvancement() != null) {
-				boolean isAdvancementExist = items.stream().anyMatch(ipi -> ipi.getAdvancement() == postData.getAdvancement());
+				boolean isAdvancementExist = items.stream().anyMatch(ipi -> ipi.getAdvancement() == postData.getAdvancement() && isNewEntity);
 				if(isAdvancementExist) {
 					throw new EntityAlreadyExistsException("Invoicing plan lines with advancement " + postData.getAdvancement() + " already exist");
 				}

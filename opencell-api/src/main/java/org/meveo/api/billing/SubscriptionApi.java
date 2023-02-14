@@ -660,7 +660,7 @@ public class SubscriptionApi extends BaseApi {
             }
 
         }
-
+        removeDiscountPlanInstanceForSubscription(subscription, postData.getDiscountPlanInstancesToRemove());
         return subscription;
     }
 
@@ -2688,6 +2688,7 @@ public class SubscriptionApi extends BaseApi {
                 }
             }
         }
+        removeDiscountPlanInstanceForSubscription(subscription, postData.getDiscountPlanInstancesToRemove());
         return subscription;
     }
 
@@ -2961,7 +2962,19 @@ public class SubscriptionApi extends BaseApi {
                 subscriptionService.instantiateDiscountPlan(subscription, discountPlan);
             });
         }
+        removeDiscountPlanInstanceForSubscription(subscription, postData.getDiscountPlanInstancesToRemove());
         return subscription;
+    }
+    
+    private void removeDiscountPlanInstanceForSubscription(Subscription subscription, List<String> discountPlanInstanceToRemove) {
+        if(CollectionUtils.isNotEmpty(discountPlanInstanceToRemove)) {
+            discountPlanInstanceToRemove.forEach(discountPlanCode -> {
+                DiscountPlanInstance discountPlanInstance = discountPlanInstanceService.findBySubscriptionAndCode(subscription, discountPlanCode);
+                if(discountPlanInstance != null) {
+                    subscriptionService.terminateDiscountPlan(subscription, discountPlanInstance);
+                }
+            });
+        }
     }
 
     private void updateSubscriptionVersions(Long nextSubscription, Long previousSubscription, Subscription subscriptionToUpdate) {

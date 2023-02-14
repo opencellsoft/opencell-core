@@ -40,8 +40,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
