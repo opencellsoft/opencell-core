@@ -18958,6 +18958,12 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>code='org.meveo.service.script.demo.CustomGatewayPaymentScript'</where>
 		</update>
 	</changeSet>
+
+    <changeSet id="#INTRD-13867_20230214" author="AbdellatifBARI">
+        <delete tableName="meveo_job_instance">
+            <where>code = 'DWH_Job_MRR'</where>
+        </delete>
+    </changeSet>
 	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
