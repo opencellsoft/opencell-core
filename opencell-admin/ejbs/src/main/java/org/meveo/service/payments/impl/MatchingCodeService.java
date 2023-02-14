@@ -496,6 +496,12 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, Exception {
         return matchOperations(customerAccountId, customerAccountCode, operationIds, aoToMatchLast, MatchingTypeEnum.M);
     }
+    
+
+    public MatchingReturnObject matchOperations(Long customerAccountId, String customerAccountCode, List<Long> operationIds, Long aoToMatchLast, BigDecimal amountForUnmatching)
+            throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, Exception {
+        return matchOperations(customerAccountId, customerAccountCode, operationIds, aoToMatchLast, MatchingTypeEnum.M, amountForUnmatching);
+    }
 
     /**
      * Match account operations of a given customer account.
