@@ -18709,5 +18709,107 @@ public class ValidateBRScript extends ValidateBR {
 			<where>script_instance_id in (SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmount') and code = 'offers'</where>
 		</update>
 	</changeSet>
+	
+	<changeSet id="#INTRD-13968" author="houdad">
+	<insert tableName="adm_country">
+            <column name="id" valueNumeric="238" />
+            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="AQ" />
+            <column name="description" value="Antarctica" />
+		</insert>
+		<insert tableName="adm_country">
+		            <column name="id" valueNumeric="239" />
+		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="country_code" value="AX" />
+		            <column name="description" value="Åland Islands" />
+		</insert>
+		<insert tableName="adm_country">
+		            <column name="id" valueNumeric="240" />
+		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="country_code" value="BL" />
+		            <column name="description" value="Saint Barthélemy" />
+		</insert>
+		<insert tableName="adm_country">
+		            <column name="id" valueNumeric="241" />
+		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="country_code" value="BQ" />
+		            <column name="description" value="Bonaire, Sint Eustatius and Saba" />
+		</insert>	
+		
+		<insert tableName="adm_country">
+		            <column name="id" valueNumeric="242" />
+		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="country_code" value="CW" />
+		            <column name="description" value="Curaçao" />
+		</insert>
+		<insert tableName="adm_country">
+		            <column name="id" valueNumeric="243" />
+		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="country_code" value="GG" />
+		            <column name="description" value="Guernsey" />
+		</insert>
+		<insert tableName="adm_country">
+		            <column name="id" valueNumeric="244" />
+		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="country_code" value="IM" />
+		            <column name="description" value="Isle of Man" />
+		</insert>
+		<insert tableName="adm_country">
+		            <column name="id" valueNumeric="245" />
+		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="country_code" value="JE" />
+		            <column name="description" value="Jersey" />
+		</insert>
+		<insert tableName="adm_country">
+		            <column name="id" valueNumeric="246" />
+		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="country_code" value="ME" />
+		            <column name="description" value="Montenegro" />
+		</insert>
+		<insert tableName="adm_country">
+		            <column name="id" valueNumeric="247" />
+		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="country_code" value="MF" />
+		            <column name="description" value="Saint Martin (French part)" />
+		</insert>
+		<insert tableName="adm_country">
+		            <column name="id" valueNumeric="248" />
+		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="country_code" value="RS" />
+		            <column name="description" value="Serbia" />
+		</insert>
+		<insert tableName="adm_country">
+		            <column name="id" valueNumeric="249" />
+		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="country_code" value="SS" />
+		            <column name="description" value="South Sudan" />
+		</insert>
+		<insert tableName="adm_country">
+		            <column name="id" valueNumeric="250" />
+		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="country_code" value="1A" />
+		            <column name="description" value="Kosovo" />
+		</insert>
+		<insert tableName="adm_country">
+		            <column name="id" valueNumeric="251" />
+		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="country_code" value="XI" />
+		            <column name="description" value="United Kingdom (Northern Ireland)" />
+		</insert>
+	</changeSet>
 
 </databaseChangeLog>
