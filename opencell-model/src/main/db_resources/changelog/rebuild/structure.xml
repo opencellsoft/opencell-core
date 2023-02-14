@@ -17779,32 +17779,6 @@
         </createTable>
         
         
-        <createSequence sequenceName="untdid_unit_seq" startValue="1" />
-        <createTable tableName="untdid_unit">
-            <!-- Generic fields -->
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_untdid_unit" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="code" type="varchar(255)">
-            </column>
-
-            <!-- Simple fields -->           
-            <column name="source" type="varchar(10)">
-                <constraints nullable="false" />
-            </column>
-            <column name="name" type="varchar(500)">
-                <constraints nullable="false" />
-            </column>
-
-        </createTable>
-        
         <createSequence sequenceName="untdid_1001_invoice_code_type_seq" startValue="1" />
         <createTable tableName="untdid_1001_invoice_code_type">
             <!-- Generic fields -->
@@ -19364,6 +19338,7 @@
 	<changeSet id="#INTRD-13646_20230131" author="AdilElJaouhari" />
     <changeSet id="#INTRD-13220_20230203" author="AbdellatifBARI" />
     <changeSet id="#INTRD-13453_20230207" author="Mbarek-Ay"/>
+    <changeSet id="#INTRD-13957-20230214" author="houdad"/>
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
