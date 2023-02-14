@@ -45,6 +45,7 @@ import org.meveocrm.services.dwh.MeasurableQuantityService;
 import org.meveocrm.services.dwh.MeasuredValueService;
 
 @Stateless
+@Deprecated
 public class MeasurableQuantityAggregationJob extends Job {
 
     @Inject
@@ -131,6 +132,6 @@ public class MeasurableQuantityAggregationJob extends Job {
 
     @Override
     public JobCategoryEnum getJobCategory() {
-        return MeveoJobCategoryEnum.DWH;
+        return MeveoJobCategoryEnum.UTILS;
     }
 }

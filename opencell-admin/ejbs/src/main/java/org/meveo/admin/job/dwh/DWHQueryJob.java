@@ -34,6 +34,7 @@ import org.meveo.service.job.Job;
  * it returns a list of (Date measureDate, Long value) each result is used to create a MeasuredValue
  */
 @Stateless
+@Deprecated
 public class DWHQueryJob extends Job {
 
     @Inject
@@ -47,6 +48,6 @@ public class DWHQueryJob extends Job {
 
     @Override
     public JobCategoryEnum getJobCategory() {
-        return MeveoJobCategoryEnum.DWH;
+        return MeveoJobCategoryEnum.UTILS;
     }
 }

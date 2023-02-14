@@ -53,6 +53,7 @@ import org.meveocrm.services.dwh.MeasuredValueService;
 import org.slf4j.Logger;
 
 @Stateless
+@Deprecated
 public class DWHQueryBean extends BaseJobBean{
 
     @Inject
