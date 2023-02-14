@@ -15740,6 +15740,14 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <dropNotNullConstraint tableName="cpq_contract" columnName="contract_date"/>
     </changeSet>
     
+   <changeSet id="#INTRD-13468_20230126" author="hichamELHALOUI">
+        <addColumn tableName="billing_invoice_validation_rule">
+            <column name="evaluation_mode" type="varchar(50)" defaultValue="VALIDATION">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    
     <changeSet id="#INTRD-13604_20230206" author="AdilElJaouhari">
     	<dropNotNullConstraint columnName="created" tableName="billing_invoice_validation_rule"/>
     	<dropNotNullConstraint columnName="fail_status" tableName="billing_invoice_validation_rule"/>
