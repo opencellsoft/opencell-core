@@ -270,7 +270,6 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 			return matchingResult;
 
 		} catch (Exception e) {
-            e.printStackTrace();
 			throw new BusinessApiException("Matching action is failed : " + e.getMessage());
 		}
 	}
