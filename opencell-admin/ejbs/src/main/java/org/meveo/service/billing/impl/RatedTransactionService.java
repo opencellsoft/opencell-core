@@ -1773,14 +1773,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             fieldToFetch = new ArrayList<>(asList("string_agg_long(a.id) as rated_transaction_ids", "billingAccount.id as billing_account__id",
                     "accountingCode.id as accounting_code_id", "SUM(a.quantity) as quantity",
                     unitAmountField + " as unit_amount_without_tax", "SUM(a.amountWithoutTax) as sum_without_tax", "SUM(a.amountWithTax) as sum_with_tax",
-                    "offerTemplate.id as offer_id", usageDateAggregation + " as usage_date",
+                    "offerTemplate.id as offer_id", "userAccount.id as user_account_id", usageDateAggregation + " as usage_date",
                     "min(a.startDate) as start_date", "max(a.endDate) as end_date",
                     "taxPercent as tax_percent", "tax.id as tax_id", "infoOrder.productVersion.id as product_version_id",
                     "accountingArticle.id as article_id", "discountedRatedTransaction as discounted_ratedtransaction_id"));
         } else {
             fieldToFetch = new ArrayList<>(asList("CAST(a.id as string) as rated_transaction_ids",
                     "billingAccount.id as billing_account__id", "accountingCode.id as accounting_code_id",
-                    "description as label", "quantity AS quantity", "amountWithoutTax as sum_without_tax",
+                    "description as label", "quantity AS quantity", "amountWithoutTax as sum_without_tax", "userAccount.id as user_account_id",
                     "amountWithTax as sum_with_tax", "offerTemplate.id as offer_id", "serviceInstance.id as service_instance_id",
                     "startDate as start_date", "endDate as end_date", "orderNumber as order_number", "taxPercent as tax_percent",
                     "tax.id as tax_id", "infoOrder.order.id as order_id", "infoOrder.productVersion.id as product_version_id",
@@ -1845,7 +1845,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
         return " group by a.billingAccount.id, a.accountingCode.id" + useAccountingLabel + aggregateWithUnitAmount + ","
                 + " a.offerTemplate, " + usageDateAggregation + ignoreSubscriptionClause
-                + ignoreOrders + ", a.taxPercent, a.tax.id, a.infoOrder.productVersion.id "
+                + ignoreOrders + ", a.taxPercent, a.tax.id, a.userAccount.id, a.infoOrder.productVersion.id "
                 + ", a.accountingArticle.id, a.discountedRatedTransaction";
     }
 

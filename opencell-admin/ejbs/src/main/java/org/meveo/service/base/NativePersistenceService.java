@@ -1518,13 +1518,13 @@ public class NativePersistenceService extends BaseService {
      * @return a long
      */
     private Long getNextValueFromSequence(String customTableName) {
-        try {
+    	try {
             customTableName = addCurrentSchema(customTableName);
-            final String sqlString = "select seq_val from all_sequences_view where lower(SEQ_CODE) like lower(:code) || '%'";
-            Object nextVal = getEntityManager().createNativeQuery(sqlString).setParameter("code", customTableName).getSingleResult();
+            final String sqlString = "select seq_val from all_sequences_view where lower(SEQ_CODE) =:code";
+            Object nextVal = getEntityManager().createNativeQuery(sqlString).setParameter("code", customTableName + "_seq").getSingleResult();
             return Long.parseLong((String) nextVal);
         } catch (Exception e) {
-            throw new BusinessException("cannot get next value from sequence of table : " + customTableName, e);
+            throw new BusinessException("cannot get next value from sequence of table : " + customTableName + "_seq", e);
         }
     }
 
