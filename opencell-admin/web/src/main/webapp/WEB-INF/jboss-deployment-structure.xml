@@ -15,6 +15,7 @@
 <!--         </exclusions> -->
 		<exclusions>
 			<module name="org.apache.logging.log4j.api" />
+			<module name="com.google.code.gson" />
 		</exclusions>
         <dependencies>
 <!--           <module name="org.jboss.resteasy.resteasy-jackson2-provider" services="import" /> -->
@@ -37,7 +38,6 @@
           <module name="org.joda.time" />
           <module name="org.jboss.as.controller" />
           <module name="org.jboss.as.server" />
-          <module name="com.google.code.gson" />
           <module name="org.jaxen" />
         </dependencies>          
 	</deployment>

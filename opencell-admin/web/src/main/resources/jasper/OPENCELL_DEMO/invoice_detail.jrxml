@@ -4,7 +4,37 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Draft-Watermark"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="EPE-06022023-RentCar"/>
+	<subDataset name="articleDataset" uuid="a35b5630-20c8-4a7d-90cb-ce0a78f9000d">
+		<queryString language="xPath">
+			<![CDATA[/invoice/detail/userAccounts/userAccount/categories/category/subCategories/subCategory/line]]>
+		</queryString>
+		<field name="artLabel" class="java.lang.String">
+			<fieldDescription><![CDATA[label]]></fieldDescription>
+		</field>
+		<field name="artUnitPrice" class="java.lang.String">
+			<fieldDescription><![CDATA[unitPrice]]></fieldDescription>
+		</field>
+		<field name="artQuantity" class="java.lang.String">
+			<fieldDescription><![CDATA[quantity]]></fieldDescription>
+		</field>
+		<field name="artUsageDate" class="java.lang.String">
+			<fieldDescription><![CDATA[usageDate]]></fieldDescription>
+		</field>
+		<field name="artAmountWithoutTax" class="java.lang.String">
+			<fieldDescription><![CDATA[amountWithoutTax]]></fieldDescription>
+		</field>
+		<field name="artAmountWithTax" class="java.lang.String">
+			<fieldDescription><![CDATA[amountWithTax]]></fieldDescription>
+		</field>
+		<field name="artAmountTax" class="java.lang.String">
+			<fieldDescription><![CDATA[amountTax]]></fieldDescription>
+		</field>
+		<field name="artTaxPercent" class="java.lang.String">
+			<fieldDescription><![CDATA[@taxPercent]]></fieldDescription>
+		</field>
+		<sortField name="artLabel"/>
+	</subDataset>
 	<queryString language="xPath">
 		<![CDATA[/invoice/detail/userAccounts/userAccount/categories/category/subCategories/subCategory/line]]>
 	</queryString>
@@ -206,7 +236,7 @@
 	<field name="amountTax" class="java.lang.String">
 		<fieldDescription><![CDATA[amountTax]]></fieldDescription>
 	</field>
-	<variable name="quantity" class="java.lang.Double" resetType="Group" resetGroup="2" calculation="Sum">
+	<variable name="quantity" class="java.lang.Double" resetType="Group" resetGroup="articles" calculation="Sum">
 		<variableExpression><![CDATA[$F{quantity}]]></variableExpression>
 	</variable>
 	<variable name="sortIndex" class="java.lang.Integer">
@@ -215,69 +245,143 @@
 	<group name="1">
 		<groupExpression><![CDATA[$F{useraccount_code}]]></groupExpression>
 	</group>
-	<group name="2">
-		<groupExpression><![CDATA[$F{label_line}]]></groupExpression>
+	<group name="articles">
 		<groupHeader>
-			<band height="19">
-				<textField>
-					<reportElement x="20" y="3" width="222" height="15" uuid="aebac6ee-7be4-4a44-9230-ee3968716f66"/>
-					<textElement verticalAlignment="Middle">
-						<font size="9"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></textFieldExpression>
-				</textField>
-				<textField pattern="MMM-yy" isBlankWhenNull="true">
-					<reportElement x="242" y="3" width="55" height="15" uuid="a3729a4b-61ce-4e22-8dc7-177cd79b03e2"/>
-					<textElement verticalAlignment="Middle">
-						<font size="9"/>
-					</textElement>
-					<textFieldExpression><![CDATA[new SimpleDateFormat("MM/yyyy").format(new SimpleDateFormat("dd/MM/yyyy").parse($F{usageDate}))]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="2" isBlankWhenNull="true">
-					<reportElement x="295" y="3" width="45" height="15" uuid="e0af6223-26d1-4cfa-a956-382e45a88ded"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="9"/>
-					</textElement>
-					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($V{quantity}))]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="2" pattern="" isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="340" y="3" width="60" height="15" uuid="0ca42a84-59db-46b9-a4d3-227e7163639c"/>
-					<box leftPadding="0" rightPadding="2"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="9" isBold="false"/>
-					</textElement>
-					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{unitAmountWithoutTax}))]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="2" pattern="" isBlankWhenNull="true">
-					<reportElement x="405" y="3" width="65" height="15" uuid="36419c39-6603-4092-9dbe-b643b28ad12a"/>
-					<box rightPadding="2"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="9"/>
-					</textElement>
-					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithTax}))]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="2" pattern="" isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="470" y="3" width="70" height="15" uuid="0ca42a84-59db-46b9-a4d3-227e7163639c"/>
-					<box leftPadding="0" rightPadding="2"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="9" isBold="false"/>
-					</textElement>
-					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountTax}))]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="2" pattern="" isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="535" y="3" width="50" height="15" uuid="0ca42a84-59db-46b9-a4d3-227e7163639c"/>
-					<box leftPadding="0" rightPadding="2"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="9" isBold="false"/>
-					</textElement>
-					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxPercentLine}))]]></textFieldExpression>
-				</textField>
-				<line>
-					<reportElement x="18" y="18" width="565" height="1" forecolor="#999999" uuid="3b4bb476-6f45-44a1-9025-a797860912ec"/>
-					<graphicElement>
-						<pen lineWidth="0.5" lineStyle="Dotted" lineColor="#999999"/>
-					</graphicElement>
-				</line>
+			<band height="300">
+				<componentElement>
+					<reportElement key="" positionType="Float" isPrintRepeatedValues="false" x="6" y="-14" width="583" height="30" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="0be238f7-ed26-41ca-877d-3e29084f5c7c"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="Blank">
+						<datasetRun subDataset="articleDataset" uuid="686ce5b3-d948-4909-9ef6-e974d9c647d3">
+							<dataSourceExpression><![CDATA[$P{REPORT_DATA_SOURCE}.dataSource("/invoice/detail/userAccounts/userAccount/categories/category/subCategories/subCategory/line")]]></dataSourceExpression>
+						</datasetRun>
+						<jr:column width="210" uuid="c68583b1-d285-4852-b53b-ffc158bcdb0a">
+							<jr:detailCell height="15" rowSpan="1">
+								<box>
+									<pen lineWidth="0.0" lineColor="#999999"/>
+									<topPen lineWidth="0.0" lineColor="#999999"/>
+									<leftPen lineWidth="0.0" lineColor="#999999"/>
+									<bottomPen lineWidth="1.0" lineStyle="Dotted" lineColor="#999999"/>
+									<rightPen lineWidth="0.0" lineColor="#999999"/>
+								</box>
+								<textField pattern="#,##0.00" isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="210" height="15" uuid="99bfc2c1-28d2-40b4-ad71-fa8bacbaae1b"/>
+									<textElement textAlignment="Left" verticalAlignment="Middle">
+										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{artLabel}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="70" uuid="c68583b1-d285-4852-b53b-ffc158bcdb0a">
+							<jr:detailCell height="15" rowSpan="1">
+								<box>
+									<pen lineWidth="0.0" lineColor="#999999"/>
+									<topPen lineWidth="0.0" lineColor="#999999"/>
+									<leftPen lineWidth="0.0" lineColor="#999999"/>
+									<bottomPen lineWidth="1.0" lineStyle="Dotted" lineColor="#999999"/>
+									<rightPen lineWidth="0.0" lineColor="#999999"/>
+								</box>
+								<textField pattern="#,##0.00" isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="70" height="14" uuid="99bfc2c1-28d2-40b4-ad71-fa8bacbaae1b"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format(new SimpleDateFormat("dd/MM/yyyy").parse($F{artUsageDate}))]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="50" uuid="c68583b1-d285-4852-b53b-ffc158bcdb0a">
+							<jr:detailCell height="15" rowSpan="1">
+								<box>
+									<pen lineWidth="0.0" lineColor="#999999"/>
+									<topPen lineWidth="0.0" lineColor="#999999"/>
+									<leftPen lineWidth="0.0" lineColor="#999999"/>
+									<bottomPen lineWidth="1.0" lineStyle="Dotted" lineColor="#999999"/>
+									<rightPen lineWidth="0.0" lineColor="#999999"/>
+								</box>
+								<textField pattern="#,##0.00" isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="50" height="14" uuid="99bfc2c1-28d2-40b4-ad71-fa8bacbaae1b"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{artQuantity}))]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="70" uuid="c68583b1-d285-4852-b53b-ffc158bcdb0a">
+							<jr:detailCell height="15" rowSpan="1">
+								<box>
+									<pen lineWidth="0.0" lineColor="#999999"/>
+									<topPen lineWidth="0.0" lineColor="#999999"/>
+									<leftPen lineWidth="0.0" lineColor="#999999"/>
+									<bottomPen lineWidth="1.0" lineStyle="Dotted" lineColor="#999999"/>
+									<rightPen lineWidth="0.0" lineColor="#999999"/>
+								</box>
+								<textField pattern="#,##0.00" isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="70" height="14" uuid="99bfc2c1-28d2-40b4-ad71-fa8bacbaae1b"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{artUnitPrice}))]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="70" uuid="c68583b1-d285-4852-b53b-ffc158bcdb0a">
+							<jr:detailCell height="15" rowSpan="1">
+								<box>
+									<pen lineWidth="0.0" lineColor="#999999"/>
+									<topPen lineWidth="0.0" lineColor="#999999"/>
+									<leftPen lineWidth="0.0" lineColor="#999999"/>
+									<bottomPen lineWidth="1.0" lineStyle="Dotted" lineColor="#999999"/>
+									<rightPen lineWidth="0.0" lineColor="#999999"/>
+								</box>
+								<textField pattern="#,##0.00" isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="70" height="14" uuid="99bfc2c1-28d2-40b4-ad71-fa8bacbaae1b"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{artAmountWithTax}))]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="65" uuid="c68583b1-d285-4852-b53b-ffc158bcdb0a">
+							<jr:detailCell height="15" rowSpan="1">
+								<box>
+									<pen lineWidth="0.0" lineColor="#999999"/>
+									<topPen lineWidth="0.0" lineColor="#999999"/>
+									<leftPen lineWidth="0.0" lineColor="#999999"/>
+									<bottomPen lineWidth="1.0" lineStyle="Dotted" lineColor="#999999"/>
+									<rightPen lineWidth="0.0" lineColor="#999999"/>
+								</box>
+								<textField pattern="#,##0.00" isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="65" height="14" uuid="99bfc2c1-28d2-40b4-ad71-fa8bacbaae1b"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{artAmountTax}))]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="45" uuid="c68583b1-d285-4852-b53b-ffc158bcdb0a">
+							<jr:detailCell height="15" rowSpan="1">
+								<box>
+									<pen lineWidth="0.0" lineColor="#999999"/>
+									<topPen lineWidth="0.0" lineColor="#999999"/>
+									<leftPen lineWidth="0.0" lineColor="#999999"/>
+									<bottomPen lineWidth="1.0" lineStyle="Dotted" lineColor="#999999"/>
+									<rightPen lineWidth="0.0" lineColor="#999999"/>
+								</box>
+								<textField pattern="#,##0.00" isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="45" height="14" uuid="99bfc2c1-28d2-40b4-ad71-fa8bacbaae1b"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{artTaxPercent}))]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
 			</band>
 		</groupHeader>
 	</group>
@@ -287,19 +391,19 @@
 	<pageHeader>
 		<band height="45">
 			<line>
-				<reportElement x="18" y="30" width="565" height="1" forecolor="#CCCCCC" uuid="49fddbb7-327b-4080-b5d7-05bd11bed13d"/>
+				<reportElement x="3" y="30" width="565" height="1" forecolor="#CCCCCC" uuid="49fddbb7-327b-4080-b5d7-05bd11bed13d"/>
 				<graphicElement>
 					<pen lineWidth="0.5" lineStyle="Dotted" lineColor="#999999"/>
 				</graphicElement>
 			</line>
 			<rectangle radius="10">
-				<reportElement x="15" y="11" width="567" height="19" forecolor="#FFFFFF" backcolor="#F2F4F5" uuid="1f23291e-f854-4b53-8326-5562746d2015"/>
+				<reportElement x="0" y="11" width="567" height="19" forecolor="#FFFFFF" backcolor="#F2F4F5" uuid="1f23291e-f854-4b53-8326-5562746d2015"/>
 				<graphicElement>
 					<pen lineWidth="0.0" lineColor="rgba(0, 0, 0, 0.0)"/>
 				</graphicElement>
 			</rectangle>
 			<staticText>
-				<reportElement mode="Opaque" x="20" y="14" width="220" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="a6e092f0-f4a9-4674-acc9-66c444e25cda">
+				<reportElement mode="Opaque" x="5" y="14" width="208" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="a6e092f0-f4a9-4674-acc9-66c444e25cda">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -317,7 +421,7 @@
 				<text><![CDATA[Details]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="240" y="14" width="55" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="5b637f66-8a7f-46c5-a73d-e751a229b349">
+				<reportElement mode="Opaque" x="213" y="14" width="77" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="5b637f66-8a7f-46c5-a73d-e751a229b349">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -332,10 +436,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Period]]></text>
+				<text><![CDATA[Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="295" y="14" width="45" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="d267e7f4-148f-495f-9cb6-78eff02fdf09">
+				<reportElement mode="Opaque" x="290" y="14" width="54" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="d267e7f4-148f-495f-9cb6-78eff02fdf09">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -353,7 +457,7 @@
 				<text><![CDATA[Qty]]></text>
 			</staticText>
 			<textField>
-				<reportElement mode="Opaque" x="340" y="14" width="70" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="dcd6fd15-92b2-41db-91d2-266dea66f220">
+				<reportElement mode="Opaque" x="344" y="14" width="70" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="dcd6fd15-92b2-41db-91d2-266dea66f220">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -371,7 +475,7 @@
 				<textFieldExpression><![CDATA["Price ("+$F{currencySymbol}+")"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement mode="Opaque" x="410" y="14" width="70" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="6faa18df-c9c4-41b9-9679-3586cdd1561f">
+				<reportElement mode="Opaque" x="409" y="14" width="70" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="6faa18df-c9c4-41b9-9679-3586cdd1561f">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -389,7 +493,7 @@
 				<textFieldExpression><![CDATA["Amount ("+$F{currencySymbol}+")"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement mode="Opaque" x="480" y="14" width="65" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="6faa18df-c9c4-41b9-9679-3586cdd1561f">
+				<reportElement mode="Opaque" x="479" y="14" width="65" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="6faa18df-c9c4-41b9-9679-3586cdd1561f">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -407,7 +511,7 @@
 				<textFieldExpression><![CDATA["Tax ("+$F{currencySymbol}+")"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement mode="Opaque" x="545" y="14" width="45" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="6faa18df-c9c4-41b9-9679-3586cdd1561f">
+				<reportElement mode="Opaque" x="544" y="14" width="45" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="6faa18df-c9c4-41b9-9679-3586cdd1561f">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>

@@ -9499,9 +9499,7 @@
             <column name="status_date" type="datetime">
                 <constraints nullable="false" />
             </column>
-            <column name="contract_date" type="date">
-                <constraints nullable="false" />
-            </column>
+            <column name="contract_date" type="date"/>
             <column name="begin_date" type="date">
                 <constraints nullable="false" />
             </column>
@@ -9558,6 +9556,7 @@
             </column>
             <column name="cf_values" type="${type.json}" />
             <column name="rate_type" type="varchar(255)"/>
+            <column name="separate_discount" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
 
@@ -10416,7 +10415,12 @@
             <column name="termination_date" type="datetime" />
             <column name="sub_termin_reason_id" type="bigint" />
             <column name="instance_status" type="varchar(10)" />
+            <column name="service_instance_id" type="bigint"/>
         </createTable>
+        <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="cpq_order_product"
+                                 constraintName="fk_cpq_order_product_service_instance_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="billing_service_instance"/>
     </changeSet>
     <changeSet id="rebuild-str-tbl-480" author="NabilOUACHI">
         <createTable tableName="cpq_order_lot">
@@ -19358,7 +19362,9 @@
 	<changeSet id="#INTRD-12047-20230112" author="AbdelmounaimAkadid" />
 	<changeSet id="#INTRD-12405_20221226" author="HichamHANINE" />
 	<changeSet id="#INTRD-13646_20230131" author="AdilElJaouhari" />
-	
+    <changeSet id="#INTRD-13220_20230203" author="AbdellatifBARI" />
+    <changeSet id="#INTRD-13453_20230207" author="Mbarek-Ay"/>
+
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
