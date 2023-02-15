@@ -303,6 +303,10 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         }
 
         if(!isVirtual) {
+            // OSO EPIC : if SI doesn't have id, that means that it is a Virtual one : we clear it to avoid cascade persist
+            if (oneShotChargeInstance.getServiceInstance().getId() == null) {
+                oneShotChargeInstance.setServiceInstance(null);
+            }
         	create(oneShotChargeInstance);
         }
 
@@ -311,7 +315,16 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         }
 
         if (applyCharge) {
+            if (!isVirtual) {
+                // OSO EPIC : set "Virtual" ServiceInstance to charge instance, to perform rating
+                oneShotChargeInstance.setServiceInstance(serviceInstance);
+            }
             oneShotRatingService.rateOneShotCharge(oneShotChargeInstance, quantity, null, chargeDate, orderNumberOverride, chargeMode, isVirtual, false);
+
+            if (!isVirtual) {
+                // OSO EPIC : for save oneShotCharge for Order, set serviceInstance to null to avoid creating Virtual ServiceInstance (used only for rating)
+                oneShotChargeInstance.setServiceInstance(null);
+            }
         }
         return oneShotChargeInstance;
     }
@@ -319,7 +332,6 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
     /**
      * Apply/rate one shot charge to a user account.
      * 
-     * @param subscription subscription
      * @param oneShotChargeInstance Recurring charge instance
      * @param quantity Quantity as calculated
      * @param effectiveDate Recurring charge application start
@@ -343,7 +355,6 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
     /**
      * Apply one shot charge to a user account for a Virtual operation. Does not create/update/persist any entity.
      * 
-     * @param subscription subscription
      * @param oneShotChargeInstance Recurring charge instance
      * @param quantity Quantity as calculated
      * @param effectiveDate Recurring charge application start
