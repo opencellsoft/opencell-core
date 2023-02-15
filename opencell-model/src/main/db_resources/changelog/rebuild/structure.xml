@@ -4301,6 +4301,9 @@
             <column name="applicable_on_discounted_price" type="${type.boolean}"/>
             <column name="sequence" type="int4"/>
             <column name="automatic_application" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="allowance_code_id" type="bigint">
+            <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-212">
@@ -9505,9 +9508,7 @@
             <column name="status_date" type="datetime">
                 <constraints nullable="false" />
             </column>
-            <column name="contract_date" type="date">
-                <constraints nullable="false" />
-            </column>
+            <column name="contract_date" type="date"/>
             <column name="begin_date" type="date">
                 <constraints nullable="false" />
             </column>
@@ -9564,6 +9565,7 @@
             </column>
             <column name="cf_values" type="${type.json}" />
             <column name="rate_type" type="varchar(255)"/>
+            <column name="separate_discount" type="${type.boolean}" defaultValueNumeric="0"></column>
         </createTable>
     </changeSet>
 
@@ -10422,7 +10424,12 @@
             <column name="termination_date" type="datetime" />
             <column name="sub_termin_reason_id" type="bigint" />
             <column name="instance_status" type="varchar(10)" />
+            <column name="service_instance_id" type="bigint"/>
         </createTable>
+        <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="cpq_order_product"
+                                 constraintName="fk_cpq_order_product_service_instance_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="billing_service_instance"/>
     </changeSet>
     <changeSet id="rebuild-str-tbl-480" author="NabilOUACHI">
         <createTable tableName="cpq_order_lot">
@@ -11847,6 +11854,7 @@
             <column name="auxiliary_account_label_el" type="varchar(2000)"
                     defaultValue="#{ca.description}"/>
             <column name="activate_dunning" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="enable_billing_redirection_rules" type="${type.boolean}" defaultValueNumeric="0" />
       </createTable>
     </changeSet>
     <changeSet id="#INTRD-3461_20212128-rebuild-str-tbl" author="hichamElHaloui">
@@ -16792,7 +16800,6 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="document"/>
     </changeSet>
-                                 
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -18159,6 +18166,16 @@
 								 onDelete="NO ACTION" onUpdate="NO ACTION" />
 	</changeSet>
 
+    <changeSet id="#INTRD-13883_20230208_fk" author="hichamELHALOUI">
+        <addForeignKeyConstraint baseTableName="cat_discount_plan"
+								 baseColumnNames="allowance_code_id"
+								 constraintName="fk_discount_plan_untdid_5189_allowance_code"
+								 referencedTableName="untdid_5189_allowance_code"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
+
     <changeSet id="#INTRD-13062-20230124-rebuild" author="ZBariki">
         <createSequence sequenceName="ar_customer_balance_seq" />
         <createTable tableName="ar_customer_balance">
@@ -19498,8 +19515,12 @@
 	<changeSet id="#INTRD-12651-20230123" author="AdilElJaouhari" />
     <changeSet id="#INTRD-13062-20230124" author="ZBariki" />
     <changeSet id="#INTRD-13468_20230126" author="hichamELHALOUI" />
+    <changeSet id="#INTRD-13453_20230207" author="Mbarek-Ay"/>
     <changeSet id="#INTRD-13045-20230202" author="ZBariki" />
     <changeSet id="#INTRD-12047-20230112" author="AbdelmounaimAkadid" />
+    <changeSet id="#INTRD-13009_20230202" author="bourras" />
+    <changeSet id="#INTRD-13220_20230203" author="AbdellatifBARI" />
+    <changeSet id="#INTRD-13883_20230208" author="hichamELHALOUI" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

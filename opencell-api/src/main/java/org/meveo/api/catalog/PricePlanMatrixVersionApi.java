@@ -398,7 +398,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             throw new BusinessException("Converted price plan version already exist for Price Plan " + ppmv.getId() + " and currency " + tradingCurrency.getCurrencyCode());
         }
 
-        if(ppmv.getPrice()!= null && dtoData.getRate() != null && dtoData.getConvertedPrice() != null && !dtoData.getRate().multiply(ppmv.getPrice()).equals(dtoData.getConvertedPrice())) {
+        if(ppmv.getPrice()!= null && dtoData.getRate() != null && dtoData.getConvertedPrice() != null && dtoData.getRate().multiply(ppmv.getPrice()).compareTo(dtoData.getConvertedPrice()) != 0) {
         	throw new BusinessException("The converted price is inconsistent with the price plan version price and the rate");
         }
 
@@ -436,6 +436,10 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             throw new BusinessApiException("Converted price plan cannot be update for published price plan matrix version");
         }
 
+        if(ppmv.getPrice()!= null && dtoData.getRate() != null && dtoData.getConvertedPrice() != null && dtoData.getRate().multiply(ppmv.getPrice()).compareTo(dtoData.getConvertedPrice()) != 0) {
+        	throw new BusinessException("The converted price is inconsistent with the price plan version price and the rate");
+        }
+
         ConvertedPricePlanVersion cppv = ppmv.getConvertedPricePlanMatrixLines()
                 .stream()
                 .filter(e -> e.getId().equals(cppvId))
@@ -443,8 +447,9 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
                 .orElseThrow(() -> new EntityDoesNotExistsException("Converted PPV " + cppvId + " not found for price plan version " + ppmv.getId()));
 
         // Check if another cppv exists for the new currency
-        if(!cppv.getTradingCurrency().getCurrencyCode().equals(tradingCurrency.getCurrencyCode())
-                && convertedPricePlanVersionService.findByPricePlanVersionAndCurrency(ppmv, tradingCurrency) != null) {
+        ConvertedPricePlanVersion existingCPPV = convertedPricePlanVersionService.findByPricePlanVersionAndCurrency(ppmv, tradingCurrency);
+		if(!cppv.getTradingCurrency().getCurrencyCode().equals(tradingCurrency.getCurrencyCode())
+                && existingCPPV != null && existingCPPV.getId().equals(cppv.getId())) {
             throw new BusinessException("Converted price plan version already exist for Price Plan " + ppmv.getId() + " and currecy " + tradingCurrency.getCurrencyCode());
         }
 

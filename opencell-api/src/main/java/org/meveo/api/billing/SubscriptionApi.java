@@ -660,7 +660,7 @@ public class SubscriptionApi extends BaseApi {
             }
 
         }
-
+        removeDiscountPlanInstanceForSubscription(subscription, postData.getDiscountPlanInstancesToRemove());
         return subscription;
     }
 
@@ -1217,7 +1217,7 @@ public class SubscriptionApi extends BaseApi {
         	OneShotChargeInstance osho = oneShotChargeInstanceService
                     .instantiateAndApplyOneShotCharge(subscription, serviceInstance, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), postData.getOperationDate(),
                             postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(),
-                            postData.getCriteria3(), postData.getDescription(), null, oneShotChargeInstance.getCfValues(), true, ChargeApplicationModeEnum.SUBSCRIPTION);
+                            postData.getCriteria3(), postData.getDescription(), null, oneShotChargeInstance.getCfValues(), true, ChargeApplicationModeEnum.SUBSCRIPTION, isVirtual);
 
         	if(Boolean.TRUE.equals(postData.getGenerateRTs())) {
         		osho.getWalletOperations().stream().forEach(wo->ratedTransactionService.createRatedTransaction(wo,false));
@@ -2688,6 +2688,7 @@ public class SubscriptionApi extends BaseApi {
                 }
             }
         }
+        removeDiscountPlanInstanceForSubscription(subscription, postData.getDiscountPlanInstancesToRemove());
         return subscription;
     }
 
@@ -2961,7 +2962,19 @@ public class SubscriptionApi extends BaseApi {
                 subscriptionService.instantiateDiscountPlan(subscription, discountPlan);
             });
         }
+        removeDiscountPlanInstanceForSubscription(subscription, postData.getDiscountPlanInstancesToRemove());
         return subscription;
+    }
+    
+    private void removeDiscountPlanInstanceForSubscription(Subscription subscription, List<String> discountPlanInstanceToRemove) {
+        if(CollectionUtils.isNotEmpty(discountPlanInstanceToRemove)) {
+            discountPlanInstanceToRemove.forEach(discountPlanCode -> {
+                DiscountPlanInstance discountPlanInstance = discountPlanInstanceService.findBySubscriptionAndCode(subscription, discountPlanCode);
+                if(discountPlanInstance != null) {
+                    subscriptionService.terminateDiscountPlan(subscription, discountPlanInstance);
+                }
+            });
+        }
     }
 
     private void updateSubscriptionVersions(Long nextSubscription, Long previousSubscription, Subscription subscriptionToUpdate) {

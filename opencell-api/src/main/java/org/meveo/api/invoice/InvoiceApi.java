@@ -266,9 +266,7 @@ public class InvoiceApi extends BaseApi {
         if (invoice.getInvoiceNumber() == null) {
             invoice = serviceSingleton.assignInvoiceNumber(invoice);
         }
-        InvoiceType draftInvoiceType = invoiceTypeService.getDefaultDraft();
-        InvoiceTypeSellerSequence invoiceTypeSellerSequence = draftInvoiceType.getSellerSequenceByType(seller);
-        String prefix = (invoiceTypeSellerSequence != null) ? invoiceTypeSellerSequence.getPrefixEL() : "DRAFT_";
+        String prefix = "DRAFT_";
         invoice.setAlias(invoice.getInvoiceNumber());
         invoice.setInvoiceNumber((prefix == null ? "" : prefix) + invoice.getInvoiceNumber());        
         invoice.assignTemporaryInvoiceNumber();
@@ -968,9 +966,6 @@ public class InvoiceApi extends BaseApi {
             return false;
         }
         if (MailingTypeEnum.AUTO.equals(mailingType) && invoice.isDontSend()) {
-            return false;
-        }
-        if (MailingTypeEnum.AUTO.equals(mailingType) && invoice.getInvoiceType().equals(invoiceTypeService.getDefaultDraft())) {
             return false;
         }
         if (invoiceDto.isCheckAlreadySent() && !invoice.isAlreadySent()) {

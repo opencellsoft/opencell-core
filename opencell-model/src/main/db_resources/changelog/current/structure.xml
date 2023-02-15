@@ -15768,4 +15768,50 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedTableName="ar_customer_balance"
                                  referencedColumnNames="id"/>
     </changeSet>
+
+    <changeSet id="#INTRD-13009_20230202" author="bourras">
+        <addColumn tableName="finance_settings">
+            <column name="enable_billing_redirection_rules" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
+    
+    	 <changeSet id="#INTRD-13453_20230207" author="Mbarek-Ay">
+		<addColumn tableName="cpq_contract_item">
+			<column name="separate_discount" type="${type.boolean}" defaultValueNumeric="0"></column>
+		</addColumn>
+	</changeSet>
+
+    <changeSet id="#INTRD-13220_20230203" author="AbdellatifBARI">
+        <addColumn tableName="cpq_order_product">
+            <column name="service_instance_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="cpq_order_product"
+                                 constraintName="fk_cpq_order_product_service_instance_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="billing_service_instance"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-13883_20230208" author="hichamELHALOUI">
+        <addColumn tableName="cat_discount_plan">
+            <column name="allowance_code_id" type="bigint">
+            </column>
+		</addColumn>
+        <update tableName="cat_discount_plan">
+			<column name="allowance_code_id" valueComputed="(SELECT id from untdid_5189_allowance_code where code = '95')"></column>
+			<where>allowance_code_id is null</where>
+		</update>
+        <addNotNullConstraint tableName="cat_discount_plan" columnName="allowance_code_id" />
+        <addForeignKeyConstraint baseTableName="cat_discount_plan"
+								 baseColumnNames="allowance_code_id"
+								 constraintName="fk_discount_plan_untdid_5189_allowance_code"
+								 referencedTableName="untdid_5189_allowance_code"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
+
+    <changeSet id="#INTRD-12972" author="bourras">
+        <dropNotNullConstraint tableName="cpq_contract" columnName="contract_date"/>
+    </changeSet>
+
 </databaseChangeLog>

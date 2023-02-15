@@ -94,7 +94,10 @@ public class OrderProductDto extends BaseEntityDto{
 	
 	@Schema(description = "The Instance Status Enum")
     private InstanceStatusEnum status;
-    
+
+	@Schema(description = "The service instance id")
+	private Long serviceInstanceId;
+
     private List<OrderAttributeDto> orderAttributes=new ArrayList<OrderAttributeDto>();
 
 	public OrderProductDto() {
@@ -122,6 +125,7 @@ public class OrderProductDto extends BaseEntityDto{
 		terminationReasonCode=orderProduct.getTerminationReason()!=null?orderProduct.getTerminationReason().getCode():null;
 		terminationDate=orderProduct.getTerminationDate();
 		status=orderProduct.getStatus();
+		serviceInstanceId = orderProduct.getServiceInstance() != null ? orderProduct.getServiceInstance().getId() : null;
 	}
 	
 	public OrderProductDto(OrderProduct orderProduct, boolean loadAttributes) {
@@ -354,5 +358,12 @@ public class OrderProductDto extends BaseEntityDto{
 	public void setInstanceStatus(InstanceStatusEnum status) {
 		this.status = status;
 	}
-	
+
+	public Long getServiceInstanceId() {
+		return serviceInstanceId;
+	}
+
+	public void setServiceInstanceId(Long serviceInstanceId) {
+		this.serviceInstanceId = serviceInstanceId;
+	}
 }
