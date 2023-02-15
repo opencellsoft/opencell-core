@@ -637,6 +637,9 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     @JoinColumn(name = "contract_id")
     private Contract contract;
     
+    @Transient
+    private WalletOperation discountedWO;
+    
     /**
      * Constructor
      */
@@ -1706,5 +1709,15 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 	public void setContract(Contract contract) {
 		this.contract = contract;
 	}
+
+	public WalletOperation getDiscountedWO() {
+		return discountedWO;
+	}
+
+	public void setDiscountedWO(WalletOperation discountedWO) {
+		this.discountedWO = discountedWO;
+	}
+	
+	
 
 }
