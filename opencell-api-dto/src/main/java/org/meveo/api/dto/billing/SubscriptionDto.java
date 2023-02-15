@@ -238,6 +238,14 @@ public class SubscriptionDto extends BusinessEntityDto {
     @Schema(description = "The sales person name")
     private String salesPersonName;
     
+
+    /**
+     * Use to remove existing discount plan instance.
+     */
+    @XmlElementWrapper(name = "discountPlanInstancesToRemove")
+    @XmlElement(name = "discountPlanInstancesToRemove")
+    private List<String> discountPlanInstancesToRemove;
+    
     /**
      * Instantiates a new subscription dto.
      */
@@ -906,5 +914,13 @@ public class SubscriptionDto extends BusinessEntityDto {
      */
     public void setSalesPersonName(String salesPersonName) {
     	this.salesPersonName = salesPersonName;
+    }
+
+    public List<String> getDiscountPlanInstancesToRemove() {
+        return discountPlanInstancesToRemove;
+    }
+
+    public void setDiscountPlanInstancesToRemove(List<String> discountPlanInstancesToRemove) {
+        this.discountPlanInstancesToRemove = discountPlanInstancesToRemove;
     }
 }

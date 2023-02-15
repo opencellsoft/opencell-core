@@ -2205,7 +2205,7 @@
                 "apiAdministrateur",
                 "apiSuperAdminManagement",
                 "genApiFull.create",
-                "genApiFull.delete"
+                "genApiFull.delete",
                 "genApiFull.update"
               ]
             }

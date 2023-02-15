@@ -137,6 +137,11 @@ public class DDRequestLotOpApi extends BaseApi {
             }
             ddRequestLotOp.setScriptInstance(scriptInstance);
         }
+        List<DDRequestLotOp> existingOps = ddrequestLotOpService.findByParams(dto);
+        if(existingOps != null && !existingOps.isEmpty()) {
+        	throw new BusinessException("A DD request operation with same params already exist");
+        }
+        
         ddRequestLotOp.setRecurrent(dto.getRecurrent());        
         ddRequestLotOp.setFromDueDate(dto.getFromDueDate());
         ddRequestLotOp.setToDueDate(dto.getToDueDate());
