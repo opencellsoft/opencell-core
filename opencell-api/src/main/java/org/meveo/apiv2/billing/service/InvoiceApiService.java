@@ -256,6 +256,7 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 		invoiceBaseApi.populateCustomFieldsForGenericApi(invoiceLineInput.getInvoiceLine().getCustomFields(), invoiceLine, false);
 		// Update Invoice Line
 		invoiceLinesService.update(invoiceLine);
+		invoiceLinesService.getEntityManager().flush();
 		invoiceService.calculateInvoice(invoice);
 		BigDecimal lastApliedRate = invoiceService.getCurrentRate(invoice,invoice.getInvoiceDate());
 		invoiceService.refreshAdvanceInvoicesConvertedAmount(invoice,lastApliedRate);
