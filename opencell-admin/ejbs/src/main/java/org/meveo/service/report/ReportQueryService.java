@@ -522,8 +522,8 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             return response;
         } else {
             List<Field> field = getFields(targetEntity);
+            field.addAll(getFields(targetEntity.getSuperclass()));
             for (Object item : executionResult) {
-                getEntityManager().detach(item);
                 initLazyLoadedValues(field, item);
             }
             return executionResult;
@@ -541,7 +541,9 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             try {
                 PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), item.getClass());
                 Object property = propertyDescriptor.getReadMethod().invoke(item);
-                if(property instanceof PersistentSet || property instanceof PersistentBag) {
+                if(property instanceof PersistentSet) {
+                    ((PersistentSet) property).removeAll((Collection) property);
+                }else if (property instanceof PersistentBag) {
                     ((PersistentBag) property).removeAll((Collection) property);
                 }else if (property instanceof HibernateProxy) {
                     Hibernate.initialize(property);
