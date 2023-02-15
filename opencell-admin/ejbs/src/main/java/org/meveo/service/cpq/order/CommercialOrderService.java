@@ -184,6 +184,8 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		if(order.getOrderNumber() == null)
 			order = serviceSingleton.assignCommercialOrderNumber(order);
 
+		CommercialOrderEnum orderStatus = orderCompleted ? CommercialOrderEnum.COMPLETED : CommercialOrderEnum.VALIDATED;
+
 		for(OrderOffer offer : validOffers){
 			if(offer.getOrderLineType() == OfferLineTypeEnum.CREATE) {
 				
@@ -291,7 +293,8 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 									if (oneShotCharge.getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.OTHER) {
 										oneShotChargeInstanceService.instantiateAndApplyOneShotCharge(subscription, null,
 												oneShotCharge, null, new Date(), null, null, quoteProduct.getQuantity(), null, null, null, null, 
-												order.getOrderNumber(), null, true, ChargeApplicationModeEnum.SUBSCRIPTION);
+												order.getOrderNumber(), null, true, ChargeApplicationModeEnum.SUBSCRIPTION,
+												CommercialOrderEnum.VALIDATED != orderStatus); // isVirtual=false for VALIDATED Order
 									}
 								}
 							}
@@ -302,7 +305,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			}
 
 		}
-		order.setStatus(orderCompleted ? CommercialOrderEnum.COMPLETED.toString() : CommercialOrderEnum.VALIDATED.toString());
+		order.setStatus(orderStatus.toString());
 		order.setStatusDate(new Date());
 
 
