@@ -1425,7 +1425,7 @@
             <column name="id" valueNumeric="128" />
             <column name="created" valueDate="2015-03-19 00:04:02.686" />
             <column name="version" valueNumeric="1" />
-            <column name="currency_code" value="RON" />
+            <column name="currency_code" value="ROL" />
             <column name="description_en" value="Leu" />
             <column name="system_currency" valueNumeric="1" />
         </insert>
