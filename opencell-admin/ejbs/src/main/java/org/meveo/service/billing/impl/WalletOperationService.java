@@ -38,6 +38,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import com.google.common.collect.Lists;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InsufficientBalanceException;
@@ -987,6 +988,14 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         } catch (NoResultException exception) {
             return null;
         }
+    }
+    
+    @Override
+    public void create(WalletOperation walletOperation) throws BusinessException {
+    	if(walletOperation.getDiscountedWO()!=null) {
+    		walletOperation.setDiscountedWalletOperation(walletOperation.getDiscountedWO().getId());
+    	}
+    	super.create(walletOperation);
     }
 
 }
