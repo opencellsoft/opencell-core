@@ -124,6 +124,15 @@ import org.meveo.model.cpq.offer.QuoteOffer;
         @NamedQuery(name = "InvoiceLine.findByAdjustmentStatus", query = "SELECT il from InvoiceLine il left join fetch il.invoice WHERE adjustment_status = :status"),
         @NamedQuery(name = "InvoiceLine.findByIdsAndInvoiceType", query = "SELECT il from InvoiceLine il left join fetch il.invoice i left join fetch i.invoiceType WHERE i.invoiceType.code = :invoiceType and il.id in (:invoiceLinesIds)"),
         @NamedQuery(name = "InvoiceLine.updateForAdjustment", query = "UPDATE InvoiceLine il set adjustment_status=:status, il.auditable.updated = :now  where il.id in :ids"),
+		@NamedQuery(name = "InvoiceLine.getMaxIlAmountAdj", query = "SELECT bli.id.id, bli.linkedInvoiceValue.id, il.accountingArticle.id, il.tax.id, il.taxRate, il.taxMode,   "
+                + " (SUM(il.amountWithoutTax) - COALESCE(SUM(ilAdj.amountWithoutTax), 0)) AS amountWithoutTax, "
+                + " (SUM(il.amountTax) - COALESCE(SUM(ilAdj.amountTax), 0)) AS amountTax, "
+                + " (SUM(il.amountWithTax) - COALESCE(SUM(ilAdj.amountWithTax), 0)) AS amountWithTax "
+                + " FROM InvoiceLine il LEFT JOIN LinkedInvoice bli ON (bli.id.id = il.invoice.id AND bli.type IS NULL) "
+                + " LEFT JOIN Invoice adj ON (bli.linkedInvoiceValue.id = adj.id AND adj.status not in ('REJECTED', 'CANCELED')) "
+                + " LEFT JOIN InvoiceLine ilAdj ON (adj.id = ilAdj.invoice.id AND il.accountingArticle.id = ilAdj.accountingArticle.id "
+                + " AND il.tax.id = ilAdj.tax.id AND il.taxRate = ilAdj.taxRate AND il.taxMode = ilAdj.taxMode) WHERE bli.id.id in (:invoiceId) "
+                + " GROUP BY bli.id.id, il.accountingArticle.id, il.tax.id, il.taxRate, il.taxMode, bli.linkedInvoiceValue.id "),
 		@NamedQuery(name = "InvoiceLine.sumAmountsDiscountByBillingAccount", query = "select sum(il.amountWithoutTax), sum(il.amountWithTax), il.subscription.id, il.commercialOrder.id ,il.invoice.id ,il.billingAccount.id,  il.billingAccount.customerAccount.id, il.billingAccount.customerAccount.customer.id"
                 + " from  InvoiceLine il  where il.billingRun.id=:billingRunId and il.discountPlanItem is not null group by il.subscription.id, il.commercialOrder.id , il.invoice.id, il.billingAccount.id, il.billingAccount.customerAccount.id, il.billingAccount.customerAccount.customer.id")
 	})

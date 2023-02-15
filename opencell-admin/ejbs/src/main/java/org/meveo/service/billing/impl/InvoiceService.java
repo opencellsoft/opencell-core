@@ -6730,7 +6730,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return duplicate(invoice, null);
     }
 
-    public Invoice duplicate(Invoice invoice, List<Long> invoiceLinesIds) {
+    public Invoice duplicate(Invoice invoice, List<Long> invoiceLinesIds) {        
+        return duplicateByType(invoice, invoiceLinesIds, false);
+    }
+    
+    public Invoice duplicateByType(Invoice invoice, List<Long> invoiceLinesIds, boolean isAdjustment) {
         invoice = refreshOrRetrieve(invoice);
 
         if (invoice.getOrders() != null) {
@@ -6787,11 +6791,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 }
             }
         }
-
+        List<Object[]> maxIlAmountAdjList = new ArrayList<Object[]>();
+        if(isAdjustment) {
+            maxIlAmountAdjList = invoiceLinesService.getMaxIlAmountAdj(invoice.getId());           
+        }  
+        
         for (InvoiceLine invoiceLine : invoiceLines) {
             invoiceLinesService.detach(invoiceLine);
             InvoiceLine duplicateInvoiceLine = new InvoiceLine(invoiceLine, duplicateInvoice);
             duplicateInvoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
+            if(isAdjustment) {
+                duplicateInvoiceLine = invoiceLinesService.checkAmountIL(duplicateInvoiceLine, maxIlAmountAdjList); 
+            }
             invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);
             duplicateInvoice.getInvoiceLines().add(duplicateInvoiceLine);
         }
@@ -6867,11 +6878,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         updateInvoiceLinesAmountFromRatedTransactions(invoiceLineRTs, invoiceLines);
 
+        List<Object[]> maxIlAmountAdjList = new ArrayList<Object[]>();
+        maxIlAmountAdjList = invoiceLinesService.getMaxIlAmountAdj(invoice.getId());           
+        
         for (InvoiceLine invoiceLine : invoiceLines) {
             invoiceLinesService.detach(invoiceLine);
             InvoiceLine duplicateInvoiceLine = new InvoiceLine(invoiceLine, duplicateInvoice);
             duplicateInvoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
             duplicateInvoiceLine.setRatedTransactions(invoiceLine.getRatedTransactions());
+            duplicateInvoiceLine = invoiceLinesService.checkAmountIL(duplicateInvoiceLine, maxIlAmountAdjList); 
             invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);
             duplicateInvoice.getInvoiceLines().add(duplicateInvoiceLine);
         }
@@ -6881,9 +6896,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Invoice createAdjustment(Invoice invoice, List<Long> invoiceLinesIds) {
-
-        Invoice adjustmentInvoice = duplicate(invoice, invoiceLinesIds);
+    public Invoice createAdjustment(Invoice invoice, List<Long> invoiceLinesIds) {        
+        Invoice adjustmentInvoice = duplicateByType(invoice, invoiceLinesIds, true);
         populateAdjustmentInvoice(invoice, adjustmentInvoice);
         calculateOrUpdateInvoice(invoiceLinesIds, adjustmentInvoice);
 
