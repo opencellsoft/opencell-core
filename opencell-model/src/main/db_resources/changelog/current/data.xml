@@ -18709,5 +18709,49 @@ public class ValidateBRScript extends ValidateBR {
 			<where>script_instance_id in (SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmount') and code = 'offers'</where>
 		</update>
 	</changeSet>
+	
+	<changeSet id="#INTRD-13967_20230215" author="houdad">
+		<update tableName="adm_currency">
+			<column name="currency_code" value="AFN" />
+			<where> id = 1</where>
+		</update>
+		<update tableName="adm_currency">
+			<column name="currency_code" value="AZN" />
+			<where> id = 14</where>
+		</update>
+		<update tableName="adm_currency">
+			<column name="currency_code" value="BYN" />
+			<where> id = 23</where>
+		</update>
+		<update tableName="adm_currency">
+			<column name="currency_code" value="GHS" />
+			<where> id = 62</where>
+		</update>
+		<update tableName="adm_currency">
+			<column name="currency_code" value="MRU" />
+			<where> id = 104</where>
+		</update>
+		<update tableName="adm_currency">
+			<column name="currency_code" value="RON" />
+			<where> id = 128</where>
+		</update>
+		<update tableName="adm_currency">
+			<column name="currency_code" value="STN" />
+			<where> id = 134</where>
+		</update>
+		<update tableName="adm_currency">
+			<column name="currency_code" value="TMT" />
+			<where> id = 157</where>
+		</update>
+		<update tableName="adm_currency">
+			<column name="currency_code" value="ZMW" />
+			<where> id = 166</where>
+		</update>
+		<update tableName="adm_currency">
+			<column name="currency_code" value="ZWL" />
+			<where> id = 167</where>
+		</update>
+	</changeSet>
+	
 
 </databaseChangeLog>
