@@ -148,6 +148,9 @@ public class TunnelCustomizationApi extends BaseCrudApi<TunnelCustomization, Tun
             }
             entity.setCustomerCategory(customerCategory);
         }
+        if (dto.getTunnelUrl() != null) {
+            entity.setTunnelUrl(dto.getTunnelUrl());
+        }
         if (dto.getThemeCode() != null) {
             Theme theme = themeService.findByCode(dto.getThemeCode());
             if (theme == null) {

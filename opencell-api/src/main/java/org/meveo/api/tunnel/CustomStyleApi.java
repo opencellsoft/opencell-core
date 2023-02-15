@@ -74,6 +74,9 @@ public class CustomStyleApi extends BaseCrudApi<CustomStyle, CustomStyleDto> {
         if (dto.getSecondaryColor() != null) {
             entity.setSecondaryColor(dto.getSecondaryColor());
         }
+        if (dto.getCss() != null) {
+            entity.setCss(dto.getCss());
+        }
         if (dto.getType() != null) {
             entity.setType(dto.getType());
         }

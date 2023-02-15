@@ -68,6 +68,9 @@ public class CustomStyle extends BusinessEntity {
     @Column(name = "secondary_color")
     private String secondaryColor;
 
+    @Column(name = "css")
+    private String css;
+
     @OneToMany(mappedBy = "customStyle", cascade = CascadeType.ALL)
     private List<HypertextSection> hypertextSections;
 
@@ -138,6 +141,14 @@ public class CustomStyle extends BusinessEntity {
 
     public void setSecondaryColor(String secondaryColor) {
         this.secondaryColor = secondaryColor;
+    }
+
+    public String getCss() {
+        return css;
+    }
+
+    public void setCss(String css) {
+        this.css = css;
     }
 
     public List<HypertextSection> getHypertextSections() {

@@ -110,6 +110,9 @@ public class TunnelCustomization extends BusinessEntity {
     @JoinColumn(name = "customer_category_id")
     private CustomerCategory customerCategory;
 
+    @Column(name = "tunnel_url")
+    private String tunnelUrl;
+
     @OneToOne
     @JoinColumn(name="theme_id")
     private Theme theme;
@@ -209,6 +212,14 @@ public class TunnelCustomization extends BusinessEntity {
 
     public void setCustomerCategory(CustomerCategory customerCategory) {
         this.customerCategory = customerCategory;
+    }
+
+    public String getTunnelUrl() {
+        return tunnelUrl;
+    }
+
+    public void setTunnelUrl(String tunnelUrl) {
+        this.tunnelUrl = tunnelUrl;
     }
 
     public Theme getTheme() {

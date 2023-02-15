@@ -74,6 +74,9 @@ public class TunnelCustomizationDto extends BusinessEntityDto {
     /** The default customer category for tunnel users. */
     private String customerCategoryCode;
 
+    /** The tunnel url for preview. */
+    private String tunnelUrl;
+
     /** the theme applied on the tunnel. */
     private String themeCode;
 
@@ -164,6 +167,7 @@ public class TunnelCustomizationDto extends BusinessEntityDto {
                                   List<ContactMethodEnum> contactMethods,
                                   String billingCycleCode,
                                   String customerCategoryCode,
+                                  String tunnelUrl,
                                   String themeCode,
                                   Boolean isSignatureActive,
                                   String electronicSignatureCode) {
@@ -177,6 +181,7 @@ public class TunnelCustomizationDto extends BusinessEntityDto {
         this.contactMethods = contactMethods;
         this.billingCycleCode = billingCycleCode;
         this.customerCategoryCode = customerCategoryCode;
+        this.tunnelUrl = tunnelUrl;
         this.themeCode = themeCode;
         this.isSignatureActive = isSignatureActive;
         this.electronicSignatureCode = electronicSignatureCode;
@@ -357,6 +362,14 @@ public class TunnelCustomizationDto extends BusinessEntityDto {
      */
     public void setCustomerCategoryCode(String customerCategoryCode) {
         this.customerCategoryCode = customerCategoryCode;
+    }
+
+    public String getTunnelUrl() {
+        return tunnelUrl;
+    }
+
+    public void setTunnelUrl(String tunnelUrl) {
+        this.tunnelUrl = tunnelUrl;
     }
 
     /**
