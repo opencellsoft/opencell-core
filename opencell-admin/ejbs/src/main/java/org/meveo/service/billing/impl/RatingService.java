@@ -1638,6 +1638,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     	discountWalletOperation.setSubscription(bareWalletOperation.getSubscription());
     	discountWalletOperation.setUserAccount(bareWalletOperation.getUserAccount());
     	discountWalletOperation.setContract(bareWalletOperation.getContract());
+    	discountWalletOperation.setAccountingArticle(bareWalletOperation.getAccountingArticle());
+    	
     	log.info("rateDiscountWalletOperation walletOperation code={},discountValue={},UnitAmountWithoutTax={},UnitAmountWithTax={},UnitAmountTax={}",discountWalletOperation.getCode(),discountedAmount,amounts[0],amounts[1],amounts[2]);
     	return discountWalletOperation;
     }
