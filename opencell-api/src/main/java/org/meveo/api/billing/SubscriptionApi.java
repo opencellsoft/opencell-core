@@ -154,6 +154,7 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
+import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.mediation.Access;
@@ -2126,6 +2127,11 @@ public class SubscriptionApi extends BaseApi {
             
             if (postData.getMinimumLabelEl() != null) {
                 serviceToUpdate.setMinimumLabelEl(postData.getMinimumLabelEl());
+            }
+            
+            if(postData.getPriceVersionDate() != null) {
+            	serviceToUpdate.setPriceVersionDate(postData.getPriceVersionDate());
+            	serviceToUpdate.setPriceVersionDateSetting(PriceVersionDateSettingEnum.MANUAL);
             }
            
             // populate customFields
