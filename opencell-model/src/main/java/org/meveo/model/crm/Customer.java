@@ -178,7 +178,19 @@ public class Customer extends AccountEntity implements IInvoicingMinimumApplicab
     @Column(name = "threshold_per_entity")
     private boolean thresholdPerEntity;
 
-
+    /**
+     * Parent customer 
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_customer_id")
+    private Customer parentCustomer;
+    
+    /**
+     * Customer childs 
+     */
+    @OneToMany(mappedBy = "parentCustomer", fetch = FetchType.LAZY)
+    private List<Customer> customerChilds = new ArrayList<>();
+    
     public Date getAnonymizationDate() {
         return anonymizationDate;
     }
