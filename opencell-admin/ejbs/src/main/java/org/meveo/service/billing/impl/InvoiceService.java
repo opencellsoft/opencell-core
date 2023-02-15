@@ -1127,12 +1127,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             // Retrieve Rated transactions and split them into BA/seller combinations
             List<RatedTransaction> rts = getDataToInvoiceFromFilterOrDraft(entityToInvoice, ratedTransactionFilter, firstTransactionDate, lastTransactionDate, invoiceDate, isDraft);
-            if (billingRun.isExceptionalBR()) {
-                rts = rts.stream().filter(rt -> (rt.getStatus() == RatedTransactionStatusEnum.OPEN && rt.getBillingRun() == null)).collect(toList());
-            }
             if (!rts.isEmpty()) {
+                if (billingRun.isExceptionalBR()) {
+                    rts = rts.stream().filter(rt -> (rt.getStatus() == RatedTransactionStatusEnum.OPEN && rt.getBillingRun() == null)).collect(toList());
+                }
                 RatedTransactionsToInvoice rtsToInvoice = getRatedTransactionGroups(entityToInvoice, billingAccount, billingRun, defaultBillingCycle, defaultInvoiceType, isDraft, defaultPaymentMethod, rts.iterator());
-
                 aggregateInvoiceables(rtGroupToInvoiceMap, rtsToInvoice.ratedTransactionGroups, entityToInvoice, billingRun, invoiceDate, isDraft, automaticInvoiceCheck);
             }
         }
@@ -5055,6 +5054,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     private void refreshInvoiceLineAndAggregateAmounts(Invoice invoice) {
+        invoice.getInvoiceLines()
+                .forEach(invoiceLine -> invoiceLinesService.update(invoiceLine));
         invoice.getInvoiceAgregates()
                 .stream()
                 .filter(invoiceAggregate -> invoiceAggregate instanceof TaxInvoiceAgregate)
@@ -6676,9 +6677,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public void refreshAdvanceInvoicesConvertedAmount(Invoice toUpdate, BigDecimal lastAppliedRate) {
         toUpdate.getLinkedInvoices().stream().filter(linkedInvoice ->
-                        linkedInvoice.getType().equals(InvoiceTypeEnum.ADVANCEMENT_PAYMENT)
-                                && linkedInvoice.getLinkedInvoiceValue() != null && linkedInvoice.getLinkedInvoiceValue().getStatus().equals(InvoiceStatusEnum.VALIDATED))
-                .forEach(linkedInvoice -> linkedInvoice.setConvertedAmount(linkedInvoice.getAmount().multiply(lastAppliedRate)));
+                InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(linkedInvoice.getType())
+                && linkedInvoice.getLinkedInvoiceValue() != null &&
+                linkedInvoice.getLinkedInvoiceValue().getStatus().equals(InvoiceStatusEnum.VALIDATED))
+            .forEach(linkedInvoice -> linkedInvoice.setConvertedAmount(linkedInvoice.getAmount().multiply(lastAppliedRate)));
     }
 
     /**
@@ -7099,6 +7101,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         List<Invoice> invoicesAdv  = this.getEntityManager().createNamedQuery("Invoice.findValidatedInvoiceAdvOrder")
                 .setParameter("billingAccountId", invoice.getBillingAccount().getId())
                 .setParameter("commercialOrder", invoice.getCommercialOrder())
+                .setParameter("tradingCurrencyId",invoice.getTradingCurrency() != null ? invoice.getTradingCurrency().getId() : null)
                 .getResultList();
         return invoicesAdv;
     }

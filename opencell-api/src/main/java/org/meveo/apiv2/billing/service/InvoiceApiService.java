@@ -50,6 +50,7 @@ import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.LinkedInvoiceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.filter.FilterService;
+import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 
 public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 	
@@ -75,7 +76,10 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 
 	@Inject
 	private LinkedInvoiceService linkedInvoiceService;
-	
+
+	@Inject
+	private FinanceSettingsService financeSettingsService;
+
 	private List<String> fieldToFetch = asList("invoiceLines");
 
 	@Override
@@ -386,9 +390,11 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
             Date firstTransactionDate = invoice.getFirstTransactionDate() == null ? new Date(0) : invoice.getFirstTransactionDate();
             Date lastTransactionDate = invoice.getLastTransactionDate() == null ? invoice.getInvoicingDate() : invoice.getLastTransactionDate();
             List<RatedTransaction> RTs = ratedTransactionService.listRTsToInvoice(entity, firstTransactionDate, lastTransactionDate, invoice.getInvoicingDate(), ratedTransactionFilter, null);
-            billingAccountsAfter = ratedTransactionService.applyInvoicingRules(RTs);
+			if (financeSettingsService.isBillingRedirectionRulesEnabled()) {
+				billingAccountsAfter = ratedTransactionService.applyInvoicingRules(RTs);
+			}
         }
-        
+
         List<Invoice> invoices = new ArrayList<>();
         if (billingAccountsAfter == null || billingAccountsAfter.isEmpty()) {
             invoices = invoiceService.generateInvoice(entity, invoice, ratedTransactionFilter,

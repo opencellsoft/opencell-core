@@ -38,7 +38,7 @@ public interface ReportQueryInput {
     @Nullable
     @Schema(description = "Report query description")
     @Deprecated
-    List<String> getFields();
+    List<String> getGenericFields();
 
     /**
      * @deprecated use instead advancedQuery

@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.NumberUtils;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
@@ -156,7 +157,7 @@ public class InvoiceLinesFactory {
             BigDecimal unitAmount = (BigDecimal) data.getOrDefault("unit_amount_without_tax", ZERO);
             BigDecimal quantity = (BigDecimal) data.getOrDefault("quantity", ZERO);
             MathContext mc = new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
-            BigDecimal unitPrice = quantity.compareTo(ZERO) == 0 ? ZERO : unitAmount.divide(quantity, mc);
+            BigDecimal unitPrice = quantity.compareTo(ZERO) == 0 ? unitAmount : unitAmount.divide(quantity, mc);
             invoiceLine.setUnitPrice(unitPrice);
         } else {
             invoiceLine.setUnitPrice(isEnterprise ? (BigDecimal) data.getOrDefault("unit_amount_without_tax", ZERO)
@@ -199,7 +200,13 @@ public class InvoiceLinesFactory {
             invoiceLine.setLabel(ofNullable(descriptionsI18N.get(languageCode))
                     .orElse(invoiceLine.getAccountingArticle().getDescription()));
         } else {
-            invoiceLine.setLabel((String) data.get("label"));
+            String label = StringUtils.EMPTY;
+            if (data.get("label") != null) {
+                label = (String) data.get("label");
+            } else if (invoiceLine.getAccountingArticle() != null && invoiceLine.getAccountingArticle().getDescription() != null) {
+                label = invoiceLine.getAccountingArticle().getDescription();
+            }
+            invoiceLine.setLabel(label);
         }
         ofNullable(openOrderNumber).ifPresent(invoiceLine::setOpenOrderNumber);
         return invoiceLine;

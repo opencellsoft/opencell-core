@@ -38,10 +38,12 @@ public class CpqContractApiServiceTest {
 
 	@Mock
 	private BillingRuleService billingRuleService;
+
 	
 	@Test
 	public void testCreateBillingRuleOK() {
-		
+
+		doReturn(true).when(billingRuleService).isBillingRedirectionRulesEnabled();
 		doReturn(new Contract()).when(contractService).findByCode("validContractCode");
 
 		ImmutableBillingRuleDto data = ImmutableBillingRuleDto.builder()
@@ -61,7 +63,7 @@ public class CpqContractApiServiceTest {
 				.criteriaEL("criteriaEL")
 				.invoicedBACodeEL("invoicedBACodeEL")
 				.build();
-
+		doReturn(true).when(billingRuleService).isBillingRedirectionRulesEnabled();
 		assertThrows(EntityDoesNotExistsException.class, () -> {			
 			cpqContractApiService.createBillingRule("invalidContractCode", data);
 		});
@@ -76,6 +78,7 @@ public class CpqContractApiServiceTest {
 				.invoicedBACodeEL("invoicedBACodeEL")
 				.build();
 
+		doReturn(true).when(billingRuleService).isBillingRedirectionRulesEnabled();
 		Exception exception = assertThrows(MissingParameterException.class, () -> {			
 			cpqContractApiService.createBillingRule("", data);
 		});
@@ -92,6 +95,7 @@ public class CpqContractApiServiceTest {
 				.invoicedBACodeEL("invoicedBACodeEL")
 				.build();
 
+		doReturn(true).when(billingRuleService).isBillingRedirectionRulesEnabled();
 		Exception exception = assertThrows(MissingParameterException.class, () -> {			
 			cpqContractApiService.createBillingRule("validContractCode", data);
 		});
@@ -108,6 +112,7 @@ public class CpqContractApiServiceTest {
 				.invoicedBACodeEL("")
 				.build();
 
+		doReturn(true).when(billingRuleService).isBillingRedirectionRulesEnabled();
 		Exception exception = assertThrows(MissingParameterException.class, () -> {			
 			cpqContractApiService.createBillingRule("validContractCode", data);
 		});
@@ -120,6 +125,7 @@ public class CpqContractApiServiceTest {
 		
 		doReturn(new Contract()).when(contractService).findByCode("validContractCode");
 		doReturn(new BillingRule()).when(billingRuleService).findById(anyLong());
+		doReturn(true).when(billingRuleService).isBillingRedirectionRulesEnabled();
 
 		ImmutableBillingRuleDto data = ImmutableBillingRuleDto.builder()
 				.priority(1)
@@ -132,7 +138,9 @@ public class CpqContractApiServiceTest {
 
 	@Test
 	public void testUpdateBillingRule_FailContractNotFound() {
-		
+
+		doReturn(true).when(billingRuleService).isBillingRedirectionRulesEnabled();
+
 		ImmutableBillingRuleDto data = ImmutableBillingRuleDto.builder()
 				.priority(1)
 				.criteriaEL("criteriaEL")
@@ -148,6 +156,7 @@ public class CpqContractApiServiceTest {
 	public void testUpdateBillingRule_FailBillingRuleNotFound() {
 
 		doReturn(new Contract()).when(contractService).findByCode("validContractCode");
+		doReturn(true).when(billingRuleService).isBillingRedirectionRulesEnabled();
 
 		ImmutableBillingRuleDto data = ImmutableBillingRuleDto.builder()
 				.priority(1)
@@ -162,6 +171,8 @@ public class CpqContractApiServiceTest {
 
 	@Test
 	public void testUpdateBillingRule_FailMissingContractCodeParameter() {
+
+		doReturn(true).when(billingRuleService).isBillingRedirectionRulesEnabled();
 
 		ImmutableBillingRuleDto data = ImmutableBillingRuleDto.builder()
 				.priority(1)
@@ -179,6 +190,8 @@ public class CpqContractApiServiceTest {
 	@Test
 	public void testUpdateBillingRule_FailMissingCriteriaEL() {
 
+		doReturn(true).when(billingRuleService).isBillingRedirectionRulesEnabled();
+
 		ImmutableBillingRuleDto data = ImmutableBillingRuleDto.builder()
 				.priority(1)
 				.criteriaEL("")
@@ -194,6 +207,8 @@ public class CpqContractApiServiceTest {
 
 	@Test
 	public void testUpdateBillingRule_FailMissingInvoicedBACodeEL() {
+
+		doReturn(true).when(billingRuleService).isBillingRedirectionRulesEnabled();
 
 		ImmutableBillingRuleDto data = ImmutableBillingRuleDto.builder()
 				.priority(1)
@@ -213,12 +228,15 @@ public class CpqContractApiServiceTest {
 		
 		doReturn(new Contract()).when(contractService).findByCode("validContractCode");
 		doReturn(new BillingRule()).when(billingRuleService).findById(anyLong());
+		doReturn(true).when(billingRuleService).isBillingRedirectionRulesEnabled();
 
 		cpqContractApiService.deleteBillingRule("validContractCode", 1L);
 	}
 
 	@Test
 	public void testDeleteBillingRule_FailContractNotFound() {
+
+		doReturn(true).when(billingRuleService).isBillingRedirectionRulesEnabled();
 		
 		assertThrows(EntityDoesNotExistsException.class, () -> {			
 			cpqContractApiService.deleteBillingRule("invalidContractCode", 1L);
@@ -229,6 +247,7 @@ public class CpqContractApiServiceTest {
 	public void testDeleteBillingRule_FailBillingRuleNotFound() {
 
 		doReturn(new Contract()).when(contractService).findByCode("validContractCode");
+		doReturn(true).when(billingRuleService).isBillingRedirectionRulesEnabled();
 
 		assertThrows(EntityDoesNotExistsException.class, () -> {			
 			cpqContractApiService.deleteBillingRule("validContractCode", 0L);
