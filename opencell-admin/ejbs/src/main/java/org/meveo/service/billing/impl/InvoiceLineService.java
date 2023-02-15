@@ -222,10 +222,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
     
     public InvoiceLine createInvoiceLineWithInvoice(InvoiceLine entity, Invoice invoice, boolean isDuplicated) throws BusinessException {
-        return createInvoiceLineWithInvoiceByType(entity, invoice, isDuplicated, false);
-    }
-    
-    public InvoiceLine createInvoiceLineWithInvoiceByType(InvoiceLine entity, Invoice invoice, boolean isDuplicated, boolean isAdjustment) throws BusinessException {
         AccountingArticle accountingArticle=entity.getAccountingArticle();
         Date date=new Date();
         if(entity.getValueDate()!=null) {
@@ -245,12 +241,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
              seller = sellerService.refreshOrRetrieve(seller);
              setApplicableTax(accountingArticle, date, seller, billingAccount, entity);
         }
-        
-        if(isAdjustment) {
-            List<Object[]> maxIlAmountAdjList = getMaxIlAmountAdj(invoice.getId());
-            entity = checkAmountIL(entity, maxIlAmountAdjList); 
-        }        
-        
+
         super.create(entity);
         
         if(!isDuplicated && entity.getDiscountPlan() != null && entity.getAmountWithoutTax().compareTo(BigDecimal.ZERO)>0 ) {
@@ -260,7 +251,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		return entity;
     }
     
-    private InvoiceLine checkAmountIL(InvoiceLine invoiceLine, List<Object[]> maxIlAmountAdjList) {
+    public InvoiceLine checkAmountIL(InvoiceLine invoiceLine, List<Object[]> maxIlAmountAdjList) {
         for (Object[] maxIlAmountAdj : maxIlAmountAdjList) {            
             Long accountingArticleId = (Long) maxIlAmountAdj[2];
             Long taxId = (Long) maxIlAmountAdj[3];
@@ -1393,7 +1384,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	}
     
     @SuppressWarnings("unchecked")
-    private List<Object[]> getMaxIlAmountAdj(Long id) {
+    public List<Object[]> getMaxIlAmountAdj(Long id) {
         return getEntityManager().createNamedQuery("InvoiceLine.getMaxIlAmountAdj").setParameter("invoiceId", id).getResultList();
     }
 }

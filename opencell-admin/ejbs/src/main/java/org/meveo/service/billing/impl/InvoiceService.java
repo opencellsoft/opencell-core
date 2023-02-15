@@ -6790,13 +6790,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 }
             }
         }
-
+        List<Object[]> maxIlAmountAdjList = new ArrayList<Object[]>();
+        if(isAdjustment) {
+            maxIlAmountAdjList = invoiceLinesService.getMaxIlAmountAdj(invoice.getId());           
+        }  
+        
         for (InvoiceLine invoiceLine : invoiceLines) {
             invoiceLinesService.detach(invoiceLine);
             InvoiceLine duplicateInvoiceLine = new InvoiceLine(invoiceLine, duplicateInvoice);
             duplicateInvoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
-            if(isAdjustment) {invoiceLinesService.createInvoiceLineWithInvoiceByType(duplicateInvoiceLine, invoice, true, true);}
-            else {invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);}            
+            if(isAdjustment) {
+                duplicateInvoiceLine = invoiceLinesService.checkAmountIL(duplicateInvoiceLine, maxIlAmountAdjList); 
+            }
+            invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);
             duplicateInvoice.getInvoiceLines().add(duplicateInvoiceLine);
         }
 
@@ -6871,11 +6877,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         updateInvoiceLinesAmountFromRatedTransactions(invoiceLineRTs, invoiceLines);
 
+        List<Object[]> maxIlAmountAdjList = new ArrayList<Object[]>();
+        maxIlAmountAdjList = invoiceLinesService.getMaxIlAmountAdj(invoice.getId());           
+        
         for (InvoiceLine invoiceLine : invoiceLines) {
             invoiceLinesService.detach(invoiceLine);
             InvoiceLine duplicateInvoiceLine = new InvoiceLine(invoiceLine, duplicateInvoice);
             duplicateInvoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
             duplicateInvoiceLine.setRatedTransactions(invoiceLine.getRatedTransactions());
+            duplicateInvoiceLine = invoiceLinesService.checkAmountIL(duplicateInvoiceLine, maxIlAmountAdjList); 
             invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);
             duplicateInvoice.getInvoiceLines().add(duplicateInvoiceLine);
         }
