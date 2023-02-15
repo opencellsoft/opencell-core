@@ -4296,6 +4296,10 @@
             <column name="applicable_on_overridden_price" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="applicable_on_discounted_price" type="${type.boolean}"/>
             <column name="sequence" type="int4"/>
+            <column name="automatic_application" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="allowance_code_id" type="bigint">
+            <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-212">
@@ -18075,7 +18079,17 @@
 								 deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" />
 	</changeSet>
-	
+
+    <changeSet id="#INTRD-13883_20230208_fk" author="hichamELHALOUI">
+        <addForeignKeyConstraint baseTableName="cat_discount_plan"
+								 baseColumnNames="allowance_code_id"
+								 constraintName="fk_discount_plan_untdid_5189_allowance_code"
+								 referencedTableName="untdid_5189_allowance_code"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
+
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
     <changeSet id="#4140_08042019" author="hznibar">
@@ -19364,6 +19378,7 @@
 	<changeSet id="#INTRD-13646_20230131" author="AdilElJaouhari" />
     <changeSet id="#INTRD-13220_20230203" author="AbdellatifBARI" />
     <changeSet id="#INTRD-13453_20230207" author="Mbarek-Ay"/>
+    <changeSet id="#INTRD-13883_20230208" author="hichamELHALOUI" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
