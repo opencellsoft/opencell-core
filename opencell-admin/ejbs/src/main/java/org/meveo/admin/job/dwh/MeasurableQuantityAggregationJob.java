@@ -44,8 +44,11 @@ import org.meveo.service.job.Job;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
 import org.meveocrm.services.dwh.MeasuredValueService;
 
-@Stateless
+/**
+ * @deprecated since 14.2.X.
+ */
 @Deprecated
+@Stateless
 public class MeasurableQuantityAggregationJob extends Job {
 
     @Inject
