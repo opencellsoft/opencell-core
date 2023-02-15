@@ -84,7 +84,7 @@ public class AccountOperationApiServiceTest {
     @Test(expected = NotFoundException.class)
     public void shouldFailToAssignAccountOperationCustomerAccountNotFound() {
         CustomerAccount customerAccount = ImmutableCustomerAccount.builder().id(1L).code("CODE").build();
-        Mockito.when(customerAccountService.findById(1L)).thenReturn(null);
+        Mockito.when(accountOperationService.findById(1L)).thenReturn(null);
         accountOperationApiService.assignAccountOperation(1L, customerAccount).get();
     }
     
@@ -100,9 +100,6 @@ public class AccountOperationApiServiceTest {
         List<AccountOperation> accountOperations = List.of(aoInvoice, aoP1, aoP2);
 
         Mockito.when(accountOperationService.findByIds(anyList())).thenReturn(accountOperations);
-        Mockito.when(accountOperationService.update(aoInvoice)).thenReturn(aoInvoice);
-        Mockito.when(accountOperationService.update(aoP1)).thenReturn(aoP1);
-        Mockito.when(accountOperationService.update(aoP2)).thenReturn(aoP2);
         Mockito.when(customerAccountService.findCustomerAccount(anyLong(), anyString())).thenReturn(aoInvoice.getCustomerAccount());
         Mockito.doNothing().when(paymentPlanService).toComplete(anyList());
         
@@ -144,10 +141,6 @@ public class AccountOperationApiServiceTest {
         List<AccountOperation> accountOperations = List.of(aoInvoice, aoP1);
 
         Mockito.when(accountOperationService.findByIds(anyList())).thenReturn(accountOperations);
-        Mockito.when(accountOperationService.update(aoInvoice)).thenReturn(aoInvoice);
-        Mockito.when(accountOperationService.update(aoP1)).thenReturn(aoP1);
-        Mockito.when(customerAccountService.findCustomerAccount(anyLong(), anyString())).thenReturn(aoInvoice.getCustomerAccount());
-        Mockito.doNothing().when(paymentPlanService).toComplete(anyList());
         //Mockito.when(matchingCodeService.matchOperations(aoInvoice.getCustomerAccount().getId(), aoInvoice.getCustomerAccount().getCode(), ) )
         
         Exception exception = assertThrows(BusinessApiException.class, () -> {
@@ -169,10 +162,7 @@ public class AccountOperationApiServiceTest {
         List<AccountOperation> accountOperations = List.of(aoInvoice, aoP1);
 
         Mockito.when(accountOperationService.findByIds(anyList())).thenReturn(accountOperations);
-        Mockito.when(accountOperationService.update(aoInvoice)).thenReturn(aoInvoice);
-        Mockito.when(accountOperationService.update(aoP1)).thenReturn(aoP1);
         Mockito.when(customerAccountService.findCustomerAccount(anyLong(), anyString())).thenReturn(aoInvoice.getCustomerAccount());
-        Mockito.doNothing().when(paymentPlanService).toComplete(anyList());
         //Mockito.when(matchingCodeService.matchOperations(aoInvoice.getCustomerAccount().getId(), aoInvoice.getCustomerAccount().getCode(), ) )
         
         Exception exception = assertThrows(BusinessApiException.class, () -> {
