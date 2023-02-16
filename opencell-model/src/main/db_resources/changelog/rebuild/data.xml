@@ -17114,6 +17114,7 @@ Your name and surname
 	
 	<changeSet id="#INTRD-13717_20230202" author="aeljaouhari" />
 	<changeSet id="#INTRD-13762_20230206" author="aelmalki" />
+	<changeSet id="#INTRD-13967_20230215" author="houdad"/>
 	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
