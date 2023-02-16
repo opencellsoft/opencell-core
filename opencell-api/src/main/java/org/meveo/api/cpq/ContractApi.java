@@ -362,13 +362,12 @@ public class ContractApi extends BaseApi{
     	}else {
         	item.setContractRateType(contractItemDto.getContractRateType());
     	}
-    	
     	if(contractItemDto.getSeperateDiscountLine()!=null) {
     		item.setSeparateDiscount(contractItemDto.getSeperateDiscountLine()); 
     	}
     	if(ContractRateTypeEnum.FIXED.equals(item.getContractRateType()) && Boolean.TRUE.equals(contractItemDto.getSeperateDiscountLine())){
-    		throw new InvalidParameterException("generate separate discount line is valable only for the types 'Global discount' and 'Custom discount grid'");
-    	}
+			throw new InvalidParameterException("generate separate discount line is valable only for the types 'Global discount' and 'Custom discount grid'");
+		}
     	
     	try {
     		populateCustomFields(contractItemDto.getCustomFields(), item, true);
@@ -417,9 +416,10 @@ public class ContractApi extends BaseApi{
     	if(contractItemDto.getSeperateDiscountLine()!=null) {
     		item.setSeparateDiscount(contractItemDto.getSeperateDiscountLine()); 
     	}
+    	
     	if(ContractRateTypeEnum.FIXED.equals(item.getContractRateType()) && item.isSeparateDiscount()){
-    		throw new InvalidParameterException("generate separate discount line is valable only for the types 'Global discount' and 'Custom discount grid'");
-    	}
+			throw new InvalidParameterException("generate separate discount line is valable only for the types 'Global discount' and 'Custom discount grid'");
+		}
     	
     	try {
     		populateCustomFields(contractItemDto.getCustomFields(), item, false);

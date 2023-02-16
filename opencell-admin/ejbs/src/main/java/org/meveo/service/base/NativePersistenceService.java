@@ -811,7 +811,8 @@ public class NativePersistenceService extends BaseService {
         }
 
         List<String> fetch = (config != null && config.getFetchFields() != null) ? config.getFetchFields().stream().filter(s -> s.contains(".")).map(s -> s.substring(0, s.lastIndexOf("."))).distinct().collect(Collectors.toList()) : Collections.emptyList();
-        Map<String, String> fetchAlias = fetch.stream().collect(Collectors.toMap(Function.identity(), s -> QueryBuilder.getJoinAlias("a", s, false)));
+//        Map<String, String> fetchAlias = fetch.stream().collect(Collectors.toMap(Function.identity(), s -> QueryBuilder.getJoinAlias("a", s, false)));
+        Map<String, String> fetchAlias = fetch.stream().collect(Collectors.toMap(Function.identity(), s -> "a" + "_"+s.replaceAll("\\.", "_")));
 
          String fieldsToRetrieve = (config != null && config.getFetchFields() != null) ? retrieveFields(config.getFetchFields(), predicate.negate()) : "";
         if(fieldsToRetrieve.isEmpty() && aggFields.isEmpty()) {
@@ -1517,7 +1518,7 @@ public class NativePersistenceService extends BaseService {
      * @return a long
      */
     private Long getNextValueFromSequence(String customTableName) {
-        try {
+    	try {
             customTableName = addCurrentSchema(customTableName);
             final String sqlString = "select seq_val from all_sequences_view where lower(SEQ_CODE) =:code";
             Object nextVal = getEntityManager().createNativeQuery(sqlString).setParameter("code", customTableName + "_seq").getSingleResult();

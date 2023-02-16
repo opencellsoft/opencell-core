@@ -68,11 +68,11 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
     private WalletOperationAggregationSettingsService walletOperationAggregationSettingsService;
 
     @Inject
-    @MeveoJpa
-    private EntityManagerWrapper emWrapper;
+    private FinanceSettingsService financeSettingsService;
 
     @Inject
-    private FinanceSettingsService financeSettingsService;
+    @MeveoJpa
+    private EntityManagerWrapper emWrapper;
 
     private boolean hasMore = false;
     private StatelessSession statelessSession;

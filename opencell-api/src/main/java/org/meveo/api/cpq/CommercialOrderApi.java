@@ -296,7 +296,7 @@ public class CommercialOrderApi extends BaseApi {
 		if(orderDto.getId() == null)
 			missingParameters.add("id");
 		handleMissingParameters();
-final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
+		final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 		
 		if(order == null) {
 			throw new EntityDoesNotExistsException(CommercialOrder.class, orderDto.getId());

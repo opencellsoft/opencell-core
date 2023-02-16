@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
@@ -130,8 +129,6 @@ import org.meveo.service.script.catalog.TriggeredEdrScriptInterface;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
 
-import com.google.common.collect.Lists;
-
 /**
  * Rate charges such as {@link org.meveo.model.catalog.OneShotChargeTemplate}, {@link org.meveo.model.catalog.RecurringChargeTemplate} and {@link org.meveo.model.catalog.UsageChargeTemplate}. Generate the
  * {@link org.meveo.model.billing.WalletOperation} with the appropriate values.
@@ -176,9 +173,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
     @Inject
     protected CounterInstanceService counterInstanceService;
-
-    @Inject
-    private ServiceInstanceService serviceInstanceService;
 
     final private static BigDecimal HUNDRED = new BigDecimal("100");
     
@@ -729,6 +723,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                         	createDiscountWalletOperation(bareWalletOperation,unitPriceWithoutTax,amount,billingAccount,serviceInstance,chargeInstance,isVirtual);
                         }
                     }
+
 
                 }
             } else {
@@ -1512,10 +1507,10 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 }
     			discountPlan=discountPlanInstance.getDiscountPlan();
 
-    			applicableDiscountPlanItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan, walletOperation.getSubscription(), walletOperation, accountingArticle,DiscountPlanItemTypeEnum.PERCENTAGE, operationDate));
+    			applicableDiscountPlanItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan, walletOperation, null, null, null, accountingArticle,DiscountPlanItemTypeEnum.PERCENTAGE, operationDate));
     			fixedDiscountPlanItems.addAll(
     					discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan, 
-    							walletOperation.getSubscription(), walletOperation, walletOperation.getAccountingArticle(), DiscountPlanItemTypeEnum.FIXED, walletOperation.getOperationDate()));
+    							walletOperation, null, null, null, walletOperation.getAccountingArticle(), DiscountPlanItemTypeEnum.FIXED, walletOperation.getOperationDate()));
     		}
     		if(!applicableDiscountPlanItems.isEmpty()) {
     			Seller seller = walletOperation.getSeller() != null ? walletOperation.getSeller() : walletOperation.getBillingAccount().getCustomerAccount().getCustomer().getSeller();

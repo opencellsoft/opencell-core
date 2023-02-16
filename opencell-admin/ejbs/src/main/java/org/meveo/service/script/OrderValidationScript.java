@@ -83,7 +83,6 @@ public class OrderValidationScript extends Script {
             subscription.setSubscriptionDate(order.getOrderDate());
             subscription.setEndAgreementDate(null);
             subscription.setRenewed(true);
-            subscription.setUserAccount(order.getUserAccount());
             
             if(offer.getUserAccount() == null) {
                 subscription.setUserAccount(order.getUserAccount());

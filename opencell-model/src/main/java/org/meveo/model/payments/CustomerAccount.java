@@ -814,15 +814,15 @@ public class CustomerAccount extends AccountEntity implements IInvoicingMinimumA
 	public Set<PaymentPlan> getPaymentPlans() {
 		return paymentPlans;
 	}
-
+	
 	public void setPaymentPlans(Set<PaymentPlan> paymentPlans) {
 		this.paymentPlans = paymentPlans;
 	}
-	
-	 public Seller getSeller() {
-	    	if(customer==null) {
-	    		return null;
-	    	}
-	    	return customer.getSeller();
-	    }
+
+	public Seller getSeller() {
+		if(customer==null) {
+			return null;
+		}
+		return customer.getSeller();
+	}
 }

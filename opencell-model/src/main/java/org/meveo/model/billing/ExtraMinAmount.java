@@ -3,7 +3,6 @@ package org.meveo.model.billing;
 import java.io.Serializable;
 import java.util.Map;
 
-import javax.persistence.Transient;
 
 import org.meveo.model.crm.IInvoicingMinimumApplicable;
 /**
@@ -20,8 +19,7 @@ public class ExtraMinAmount implements Serializable{
     /**
      * The Entity generating the amounts
      */
-    
-    private transient IInvoicingMinimumApplicable entity;
+    private IInvoicingMinimumApplicable entity;
 
     public ExtraMinAmount(IInvoicingMinimumApplicable entity, Map<String, Amounts> createdAmount) {
         this.createdAmount = createdAmount;

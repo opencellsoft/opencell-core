@@ -589,6 +589,13 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         for (CardPaymentMethod cardPaymentMethod : entity.getCardPaymentMethods(true)) {
             paymentMethodService.obtainAndSetCardToken(cardPaymentMethod, cardPaymentMethod.getCustomerAccount());
         }
+        
+     // Register dd payment methods in payment gateway and obtain a token id
+        for (DDPaymentMethod ddPaymentMethod : ddPaymentMethods) {
+        	if(ddPaymentMethod.getTokenId() == null){
+        		paymentMethodService.obtainAndSetSepaToken(ddPaymentMethod, entity);
+        	}
+        }
 
      // Register dd payment methods in payment gateway and obtain a token id
         for (DDPaymentMethod ddPaymentMethod : ddPaymentMethods) {

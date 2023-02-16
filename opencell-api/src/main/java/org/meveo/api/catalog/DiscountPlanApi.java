@@ -42,7 +42,6 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.catalog.ApplicableEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum;
@@ -50,7 +49,6 @@ import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
-import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 
@@ -72,6 +70,7 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
 
     	if(postData.getDiscountPlanType() == null)
 			missingParameters.add("discountPlanType");
+
     	handleMissingParameters();
         if (StringUtils.isBlank(postData.getCode())) {
             addGenericCodeIfAssociated(DiscountPlan.class.getName(), postData);
@@ -123,6 +122,7 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         return discountPlan;
     }
 
+
     private List<DiscountPlan> getIncompatibleDiscountPlans(List<DiscountPlanDto> incompatibleDiscountPlansDto) {
         if (incompatibleDiscountPlansDto == null) {
             return null;
@@ -146,6 +146,7 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         }
     	if(postData.getDiscountPlanType() == null)
 			missingParameters.add("discountPlanType");
+
     	
     	handleMissingParameters();
 

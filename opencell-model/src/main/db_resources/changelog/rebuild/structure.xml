@@ -10784,6 +10784,7 @@
             <column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="open_order_number" type="varchar(255)" />
             <column name="sequence" type="int4"/>
+            <column name="user_account_id" type="bigint"></column>
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
                 <constraints nullable="false" unique="true"/>
             </column>
@@ -17292,6 +17293,11 @@
                                  constraintName="fk_accounting_entry_tax" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
     </changeSet>
+
+	<changeSet id="#5882_20220325" author="MohammedELAZZOUZI">
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_invoice_line" constraintName="fk_InvoiceLine_userAccount" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
+   	</changeSet> 
 
     <changeSet id="#INTRD-6562_20220414-rebuild" author="aelmalki">
         <createTable tableName="accounting_accountingcode_mapping">

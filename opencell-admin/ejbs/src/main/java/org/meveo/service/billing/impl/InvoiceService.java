@@ -30,7 +30,11 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
 import static org.meveo.model.shared.DateUtils.setTimeToZero;
-import static org.meveo.service.base.ValueExpressionWrapper.*;
+import static org.meveo.service.base.ValueExpressionWrapper.VAR_BILLING_ACCOUNT;
+import static org.meveo.service.base.ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT;
+import static org.meveo.service.base.ValueExpressionWrapper.VAR_DISCOUNT_PLAN_INSTANCE;
+import static org.meveo.service.base.ValueExpressionWrapper.VAR_INVOICE;
+import static org.meveo.service.base.ValueExpressionWrapper.VAR_INVOICE_SHORT;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import java.io.File;
@@ -1315,7 +1319,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
 
-    private void setInitialCollectionDate(Invoice invoice, BillingCycle billingCycle, BillingRun billingRun) {
+    public void setInitialCollectionDate(Invoice invoice, BillingCycle billingCycle, BillingRun billingRun) {
 
         if (StringUtils.isBlank(billingCycle.getCollectionDateDelayEl())) {
             invoice.setInitialCollectionDate(invoice.getDueDate());
@@ -1368,7 +1372,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * @param invoiceList
      */
-    private void applyAutomaticInvoiceCheck(List<Invoice> invoiceList, boolean automaticInvoiceCheck) {
+    public void applyAutomaticInvoiceCheck(List<Invoice> invoiceList, boolean automaticInvoiceCheck) {
         if (automaticInvoiceCheck) {
             for (Invoice invoice : invoiceList) {
                 applyAutomaticInvoiceCheck(invoice, automaticInvoiceCheck);
@@ -1475,7 +1479,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		            noValidationError = false;
 		            if (invoice.getRejectReason() == null)  invoice.setRejectReason("Suspected by rule " + validationRule.getDescription());
 		        }
-		    }
+
+                }
 		} catch (Exception exception) {
 		    throw new BusinessException(exception);
 		}
@@ -1493,19 +1498,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		try {
 			invoice.setRejectReason(null);
 			Object validationResult = evaluateExpression(validationRule.getValidationEL(), Map.of("invoice", invoice), Boolean.class);
-			if (!((Boolean) validationResult)) {
-		        if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.SUSPECT) {
-		            invoice.setStatus(InvoiceStatusEnum.SUSPECT);
-		            invoice.setRejectedByRule(validationRule);
+                if (!((Boolean) validationResult)) {
+                    if (validationRule.getFailStatus() == InvoiceValidationStatusEnum.SUSPECT) {
+                        invoice.setStatus(InvoiceStatusEnum.SUSPECT);
+                        invoice.setRejectedByRule(validationRule);
 		            if (invoice.getRejectReason() == null) invoice.setRejectReason("Suspected by rule " + validationRule.getDescription());
-		        }
-		        if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.REJECTED) {
-		            invoice.setStatus(InvoiceStatusEnum.REJECTED);
-		            invoice.setRejectedByRule(validationRule);
+                    }
+                    if (validationRule.getFailStatus() == InvoiceValidationStatusEnum.REJECTED) {
+                        invoice.setStatus(InvoiceStatusEnum.REJECTED);
+                        invoice.setRejectedByRule(validationRule);
 		            if (invoice.getRejectReason() == null) invoice.setRejectReason("Rejected by rule " + validationRule.getDescription());
-		        }
-		        noValidationError = false;
-		    }
+                    }
+                    noValidationError = false;
+                }
 		} catch (Exception exception) {
 		    throw new BusinessException(exception);
 		}
@@ -3088,7 +3093,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return Applicable invoice type
      * @throws BusinessException General business exception
      */
-    private InvoiceType determineInvoiceType(boolean isPrepaid, boolean isDraft, boolean isDepositInvoice, BillingCycle billingCycle, BillingRun billingRun, BillingAccount billingAccount) throws BusinessException {
+    public InvoiceType determineInvoiceType(boolean isPrepaid, boolean isDraft, boolean isDepositInvoice, BillingCycle billingCycle, BillingRun billingRun, BillingAccount billingAccount) throws BusinessException {
         InvoiceType invoiceType = null;
 
         if (billingRun != null && billingRun.getInvoiceType() != null) {
@@ -3320,7 +3325,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param billingAccount Billing account
      * @throws BusinessException business exception
      */
-    private BillingAccount incrementBAInvoiceDate(BillingRun billingRun, BillingAccount billingAccount) throws BusinessException {
+    public BillingAccount incrementBAInvoiceDate(BillingRun billingRun, BillingAccount billingAccount) throws BusinessException {
 
         Date initCalendarDate = billingAccount.getSubscriptionDate() != null ? billingAccount.getSubscriptionDate() : billingAccount.getAuditable().getCreated();
         Calendar bcCalendar = CalendarService.initializeCalendar(billingAccount.getBillingCycle().getCalendar(), initCalendarDate, billingAccount, billingRun);
@@ -3968,9 +3973,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoice.addAmountTax(isExonerated ? BigDecimal.ZERO : scAggregate.getAmountTax());
         }
 
-        if(invoice.getDiscountPlan()!=null && discountPlanService.isDiscountPlanApplicable(billingAccount, invoice.getDiscountPlan(),invoice.getInvoiceDate())) {
+        if(invoice.getDiscountPlan()!=null && discountPlanService.isDiscountPlanApplicable(billingAccount, invoice.getDiscountPlan(), null, null, null, null, invoice.getInvoiceDate(), null)) {
             List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, invoice.getDiscountPlan(), 
-                    null, null, null, null, invoice.getInvoiceDate());
+                    null, null, null, null, null, null, invoice.getInvoiceDate());
             
             subscriptionApplicableDiscountPlanItems.addAll(discountItems);
         }
@@ -4349,9 +4354,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 continue;
             }
             if (dpi.getDiscountPlan().isActive()) {
-                applicableDiscountPlanItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, dpi.getDiscountPlan(), null, null, null, null, invoice.getInvoiceDate());
-                dpi.setApplicationCount(dpi.getApplicationCount() == null ? 1 : dpi.getApplicationCount() + 1);
-
+					applicableDiscountPlanItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, dpi.getDiscountPlan(), null, null, null, null, null, null, invoice.getInvoiceDate());
+					dpi.setApplicationCount(dpi.getApplicationCount() == null ? 1 : dpi.getApplicationCount() + 1);
                 if (dpi.getDiscountPlan().getApplicationLimit() != 0 && dpi.getApplicationCount() >= dpi.getDiscountPlan().getApplicationLimit()) {
                     dpi.setStatusDate(new Date());
                     dpi.setStatus(DiscountPlanInstanceStatusEnum.EXPIRED);
@@ -6215,7 +6219,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if(invoiceLine.getDiscountPlan() != null && invoiceLine.getDiscountPlan().getDiscountPlanItems() != null && !invoiceLine.getDiscountPlan().getDiscountPlanItems().isEmpty()) {
         	List<DiscountPlanItem> discountPlanItems = discountPlanItemService.getFixedDiscountPlanItemsByDP(invoiceLine.getDiscountPlan().getId());
             for(DiscountPlanItem discountPlanItem : discountPlanItems) {
-            if(discountPlanItem != null && discountPlanItemService.isDiscountPlanItemApplicable(invoiceLine.getBillingAccount(),discountPlanItem,invoiceLine.getAccountingArticle(),invoiceLine.getSubscription(),null) ) {
+            if(discountPlanItem != null && discountPlanItemService.isDiscountPlanItemApplicable(invoiceLine.getBillingAccount(),discountPlanItem, null, null, null, null, invoiceLine.getAccountingArticle())) {
                 invoiceLine.setAmountWithoutTax(invoiceLine.getAmountWithoutTax().subtract(discountPlanItem.getDiscountValue()));
                 invoiceLine.setAmountWithTax(invoiceLine.getAmountWithoutTax().add(invoiceLine.getAmountTax()));
                 invoiceLine.setDiscountAmount(invoiceLine.getDiscountAmount().add(discountPlanItem.getDiscountValue()));

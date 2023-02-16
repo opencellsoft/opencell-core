@@ -4,10 +4,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -21,7 +18,6 @@ import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
@@ -40,9 +36,6 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 	@Inject
 	private AuditLogService auditLogService;
 
-    @Inject
-    private CurrentUserProvider currentUserProvider;
-    
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;

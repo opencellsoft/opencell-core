@@ -211,7 +211,7 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 
 		updateSubAccountingRegularUsersStatus(fiscalYear, status, subAccountingPeriod, reason);
 	}
-
+	
 	public void updateSubAccountingRegularUsersStatus(String fiscalYear, String status,
 			SubAccountingPeriod subAccountingPeriod, String reason) {
 		if (subAccountingPeriod.getAccountingPeriod() == null || !subAccountingPeriod.getAccountingPeriod().getAccountingPeriodYear().equals(fiscalYear) ) {

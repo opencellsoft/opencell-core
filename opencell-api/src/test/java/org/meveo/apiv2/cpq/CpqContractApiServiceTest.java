@@ -57,7 +57,7 @@ public class CpqContractApiServiceTest {
 
 	@Test
 	public void testCreateBillingRule_FailContractNotFound() {
-		
+
 		ImmutableBillingRuleDto data = ImmutableBillingRuleDto.builder()
 				.priority(1)
 				.criteriaEL("criteriaEL")

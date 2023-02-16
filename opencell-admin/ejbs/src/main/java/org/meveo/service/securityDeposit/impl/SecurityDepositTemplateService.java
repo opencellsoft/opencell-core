@@ -4,7 +4,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.model.admin.Currency;
-import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.model.securityDeposit.SecurityTemplateStatusEnum;

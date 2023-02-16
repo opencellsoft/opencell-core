@@ -1055,6 +1055,7 @@
                 "apiUseJob",
                 "apiIntegration",
                 "apiWorkflowManager",
+                "genApiFull.list",
                 "apiBillingManagement",
                 "apiFinanceManagement",
                 "apiUserManagement",
@@ -1069,7 +1070,6 @@
                 "inboundAccess",
                 "apiAdministrationManagement",
                 "apiUseScript",
-                "genApiFull.list",
                 "general_roleManagement"
               ]
             }

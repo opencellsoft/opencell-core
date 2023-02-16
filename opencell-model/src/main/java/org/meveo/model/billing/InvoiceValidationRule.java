@@ -62,7 +62,7 @@ public class InvoiceValidationRule extends BusinessEntity {
     @Type(type = "json")
     @Column(name = "rule_values", columnDefinition = "jsonb")
     private Map<String, String> ruleValues;
-    
+
     @Transient
     private boolean toReorder;
 
