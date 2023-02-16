@@ -53,6 +53,7 @@ import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 
@@ -246,7 +247,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
             }
         }
 
-        if (chargeDate.before(subscription.getSubscriptionDate())) {
+        if (DateUtils.setTimeToZero(chargeDate).before(DateUtils.setTimeToZero(subscription.getSubscriptionDate()))) {
             throw new ValidationException("Operation date is before subscription date for subscription: " + subscription.getCode());
         }
 
