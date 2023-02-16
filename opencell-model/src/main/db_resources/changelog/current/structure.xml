@@ -15165,6 +15165,16 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </addColumn>
     </changeSet>
 
+    <changeSet id="#INTRD-14022_20230215" author="AdilElJaouhari">
+        <addColumn tableName="crm_customer">
+            <column name="parent_customer_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="crm_customer" baseColumnNames="parent_customer_id"
+                                 constraintName="fk_crm_customer_parent_customer_id"
+                                 referencedTableName="crm_customer"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
 
     <changeSet id="#INTRD-14632_20230306" author="AdilElJaouhari">
     	<addColumn tableName="cpq_order_offer">

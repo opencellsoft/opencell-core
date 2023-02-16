@@ -17743,6 +17743,13 @@
                                  referencedTableName="crm_customer"
                                  referencedColumnNames="id"/>
     </changeSet>
+    
+    <changeSet id="#INTRD-14022_20230215" author="AdilElJaouhari">
+        <addForeignKeyConstraint baseTableName="crm_customer" baseColumnNames="parent_customer_id"
+                                 constraintName="fk_crm_customer_parent_customer_id"
+                                 referencedTableName="crm_customer"
+                                 referencedColumnNames="id"/>
+    </changeSet>
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
