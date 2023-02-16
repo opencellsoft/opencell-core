@@ -1203,21 +1203,13 @@ public class SubscriptionApi extends BaseApi {
             throw e;
         }
         try {
-        	
-        	ServiceInstance serviceInstance=null;
-        	if(!StringUtils.isBlank(postData.getProductCode())) {
-        		 List<ServiceInstance> alreadyInstantiatedServices = serviceInstanceService.findByCodeSubscriptionAndStatus(postData.getProductCode(), subscription,
-                         InstanceStatusEnum.ACTIVE);
-            	 if (alreadyInstantiatedServices == null ||  alreadyInstantiatedServices.isEmpty()) {
-            		 throw new BusinessException("The product instance "+postData.getProductCode()+" doest not exist for this subscription or is not active");
-            	 }
-            	 serviceInstance=alreadyInstantiatedServices.get(0);
-        	}
+            ServiceInstance serviceInstance = buildServiceInstance(postData, subscription);
 
         	OneShotChargeInstance osho = oneShotChargeInstanceService
                     .instantiateAndApplyOneShotCharge(subscription, serviceInstance, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), postData.getOperationDate(),
                             postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(),
-                            postData.getCriteria3(), postData.getDescription(), null, oneShotChargeInstance.getCfValues(), true, ChargeApplicationModeEnum.SUBSCRIPTION, isVirtual);
+                            postData.getCriteria3(), postData.getDescription(), null, oneShotChargeInstance.getCfValues(),
+                            true, ChargeApplicationModeEnum.SUBSCRIPTION, isVirtual);
 
         	if(Boolean.TRUE.equals(postData.getGenerateRTs())) {
         		osho.getWalletOperations().stream().forEach(wo->ratedTransactionService.createRatedTransaction(wo,false));
@@ -1232,6 +1224,75 @@ public class SubscriptionApi extends BaseApi {
             throw e;
         }
 
+    }
+
+    /**
+     * Build ServiceInstance from OSO Payload
+     *
+     * @param postData     OSO payload
+     * @param subscription subscription
+     * @return Virtual or Real ServiceInstance
+     */
+    private ServiceInstance buildServiceInstance(ApplyOneShotChargeInstanceRequestDto postData, Subscription subscription) {
+        ServiceInstance serviceInstance = null;
+
+        if (postData.getAttributes() != null) {
+            serviceInstance = new ServiceInstance(); // Create a virtual ServiceInstance
+            serviceInstance.setSubscription(subscription);
+
+            // Product data
+            Product product = productService.findByCode(postData.getProductCode());
+            ProductVersion pVersion = new ProductVersion();
+            pVersion.setProduct(product);
+
+            serviceInstance.setCode(product.getCode());
+            serviceInstance.setProductVersion(pVersion);
+
+            // add attributes
+            for (AttributeInstanceDto attributeInstanceDto : postData.getAttributes()) {
+                AttributeInstance attributeInstance = new AttributeInstance();
+                attributeInstance.setAttribute(loadEntityByCode(attributeService, attributeInstanceDto.getAttributeCode(), Attribute.class));
+                attributeInstance.setServiceInstance(serviceInstance);
+                attributeInstance.setSubscription(subscription);
+
+                attributeInstance.setDoubleValue(attributeInstanceDto.getDoubleValue());
+                attributeInstance.setStringValue(attributeInstanceDto.getStringValue());
+                attributeInstance.setBooleanValue(attributeInstanceDto.getBooleanValue());
+                attributeInstance.setDateValue(attributeInstanceDto.getDateValue());
+
+                serviceInstance.addAttributeInstance(attributeInstance);
+            }
+        } else { // no attributs provided in payload (OSO case for example)
+            List<ServiceInstance> alreadyInstantiatedServices = null;
+            if (StringUtils.isNotBlank(postData.getProductCode())) {
+                alreadyInstantiatedServices = serviceInstanceService.findByCodeSubscriptionAndStatus(postData.getProductCode(), subscription,
+                        InstanceStatusEnum.ACTIVE);
+                if (alreadyInstantiatedServices == null || alreadyInstantiatedServices.isEmpty()) {
+                    throw new BusinessException("The product instance " + postData.getProductCode() + " doest not exist for this subscription or is not active");
+                }
+            } else {
+                alreadyInstantiatedServices = subscription.getServiceInstances().stream()
+                        .filter(si -> si.getStatus() == InstanceStatusEnum.ACTIVE)
+                        .collect(Collectors.toList());
+            }
+
+            if (alreadyInstantiatedServices.size() > 1) {
+                if (postData.getProductInstanceId() == null) {
+                    throw new BusinessException("More than one Product Instance found for Product '" + postData.getProductCode()
+                            + "' and Subscription '" + subscription.getCode() + "'. Please provide productInstanceId field");
+                } else {
+                    serviceInstance = serviceInstanceService.findById(postData.getProductInstanceId());
+                    if (serviceInstance == null) {
+                        throw new BusinessException("No Product Instance found with id=" + postData.getProductInstanceId());
+                    }
+                }
+            } else {
+                serviceInstance = alreadyInstantiatedServices.get(0);
+            }
+
+        }
+
+        return serviceInstance;
     }
 
     /**
