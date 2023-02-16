@@ -345,4 +345,20 @@ public class Customer extends AccountEntity implements IInvoicingMinimumApplicab
         this.checkThreshold = checkThreshold;
     }
 
+	public Customer getParentCustomer() {
+		return parentCustomer;
+	}
+
+	public void setParentCustomer(Customer parentCustomer) {
+		this.parentCustomer = parentCustomer;
+	}
+
+	public List<Customer> getCustomerChilds() {
+		return customerChilds;
+	}
+
+	public void setCustomerChilds(List<Customer> customerChilds) {
+		this.customerChilds = customerChilds;
+	}
+    
 }
