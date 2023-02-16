@@ -172,8 +172,5 @@ public class ProductChargeTemplateMapping<T extends ChargeTemplate> extends Base
         } else if (!getId().equals(other.getId()))
             return false;
         return true;
-        
-        return Objects.equals(longDescription, other.longDescription) && Objects.equals(parentLine, other.parentLine)
-                && Objects.equals(seller, other.seller);
     }
 }
