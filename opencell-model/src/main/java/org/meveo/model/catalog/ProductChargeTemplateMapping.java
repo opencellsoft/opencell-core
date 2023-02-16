@@ -19,6 +19,7 @@
 package org.meveo.model.catalog;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -149,6 +150,11 @@ public class ProductChargeTemplateMapping<T extends ChargeTemplate> extends Base
 	}
 	
 	@Override
+    public int hashCode() {
+	    return 976 + ("ProductChargeTemplateMapping" + id).hashCode();
+    }
+	
+    @Override
     public boolean equals(Object obj) {
 
         if (this == obj) {
@@ -159,12 +165,15 @@ public class ProductChargeTemplateMapping<T extends ChargeTemplate> extends Base
             return false;
         }
 
-        ProductChargeTemplateMapping other = (ProductChargeTemplateMapping) obj;
+        ProductChargeTemplateMapping<T> other = (ProductChargeTemplateMapping<T>) obj;
         if (getId() == null) {
             if (other.getId() != null)
                 return false;
         } else if (!getId().equals(other.getId()))
             return false;
         return true;
+        
+        return Objects.equals(longDescription, other.longDescription) && Objects.equals(parentLine, other.parentLine)
+                && Objects.equals(seller, other.seller);
     }
 }
