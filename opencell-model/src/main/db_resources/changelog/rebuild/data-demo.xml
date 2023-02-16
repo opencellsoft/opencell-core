@@ -2241,6 +2241,7 @@
             <column name="discount_plan_type"  value="PRODUCT"/>
             <column name="status"  value="ACTIVE"/>
             <column name="status_date" valueDate="${db.current.time}"/>
+            <column name="allowance_code_id" valueComputed="(SELECT id FROM untdid_5189_allowance_code Where code = '95')"></column>
         </insert> 
     </changeSet>    
     
