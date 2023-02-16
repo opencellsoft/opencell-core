@@ -15636,6 +15636,13 @@ public class AgedBalanceReporting extends ReportExtractScript {
     <changeSet id="#INTRD-12972" author="bourras">
         <dropNotNullConstraint tableName="cpq_contract" columnName="contract_date"/>
     </changeSet>
+    
+    <changeSet id="#INTRD-13957-20230214" author="houdad">
+        <sql>
+        DELETE FROM untdid_unit;
+        DROP TABLE untdid_unit;
+        </sql>
+    </changeSet>
 
     <changeSet id="#INTRD-13883_20230208" author="hichamELHALOUI">
         <addColumn tableName="cat_discount_plan">
