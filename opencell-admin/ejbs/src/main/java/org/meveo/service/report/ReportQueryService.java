@@ -522,7 +522,9 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             return response;
         } else {
             List<Field> field = getFields(targetEntity);
-            field.addAll(getFields(targetEntity.getSuperclass()));
+            if(targetEntity.getSuperclass() != null) {
+                field.addAll(getFields(targetEntity.getSuperclass()));
+            }
             for (Object item : executionResult) {
                 initLazyLoadedValues(field, item);
             }
