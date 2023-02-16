@@ -42,6 +42,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InsufficientBalanceException;
 import org.meveo.api.dto.billing.WalletOperationDto;
+import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -70,6 +71,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
+import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.transformer.AliasToAggregatedWalletOperationResultTransformer;
@@ -987,6 +989,14 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         } catch (NoResultException exception) {
             return null;
         }
+    }
+    
+    @Override
+    public void create(WalletOperation walletOperation) throws BusinessException {
+    	if(walletOperation.getDiscountedWO()!=null) {
+    		walletOperation.setDiscountedWalletOperation(walletOperation.getDiscountedWO().getId());
+    	}
+    	super.create(walletOperation);
     }
 
 }
