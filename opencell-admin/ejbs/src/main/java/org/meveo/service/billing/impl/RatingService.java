@@ -730,7 +730,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                             }
                         }
                     	 if(seperateDiscount) {
-                         	discountedWalletOperation=rateDiscountedWalletOperation(bareWalletOperation,unitPriceWithoutTax,amount,discountRate,billingAccount);
+                         	discountedWalletOperation=rateDiscountedWalletOperation(bareWalletOperation,unitPriceWithoutTax,amount,discountRate,billingAccount,chargeInstance);
                          }
                     }
 
@@ -1601,14 +1601,18 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         }
     }
     
-    private WalletOperation rateDiscountedWalletOperation(WalletOperation bareWalletOperation,BigDecimal unitPriceWithoutTax,BigDecimal amount,BigDecimal discountValue,BillingAccount billingAccount) {
+    private WalletOperation rateDiscountedWalletOperation(WalletOperation bareWalletOperation,BigDecimal unitPriceWithoutTax,BigDecimal amount,BigDecimal discountValue,BillingAccount billingAccount,
+    		ChargeInstance chargeInstance) {
+    	ParamBean paramBean = ParamBean.getInstance();
+		String defaultArticle = paramBean.getProperty("default.article", "ART-STD");
+    	AccountingArticle accountingArticle=null;
         BigDecimal walletOperationDiscountAmount=amount.negate();
     	WalletOperation discountWalletOperation = new WalletOperation();
     	BigDecimal discountedAmount=unitPriceWithoutTax.subtract(amount);
     	BigDecimal taxPercent=bareWalletOperation.getTaxPercent();
     	BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(walletOperationDiscountAmount, walletOperationDiscountAmount, bareWalletOperation.getTaxPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP); 
     	BigDecimal quantity=bareWalletOperation.getQuantity();
-    	
+    
     	discountWalletOperation.setCode(bareWalletOperation.getCode());
     	discountWalletOperation.setDescription(bareWalletOperation.getDescription());  
     	discountWalletOperation.setAmountWithoutTax(quantity.compareTo(BigDecimal.ZERO)>0?quantity.multiply(amounts[0]):BigDecimal.ZERO);
@@ -1627,7 +1631,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     	discountWalletOperation.setOfferTemplate(bareWalletOperation.getOfferTemplate());
     	discountWalletOperation.setServiceInstance(bareWalletOperation.getServiceInstance());
     	discountWalletOperation.setOperationDate(bareWalletOperation.getOperationDate()); 
-    	discountWalletOperation.setChargeInstance(bareWalletOperation.getChargeInstance());
+    	discountWalletOperation.setChargeInstance(chargeInstance);
     	discountWalletOperation.setInputQuantity(quantity);
     	discountWalletOperation.setCurrency(bareWalletOperation.getCurrency()!=null?bareWalletOperation.getCurrency():billingAccount.getCustomerAccount().getTradingCurrency().getCurrency());
     	discountWalletOperation.setDiscountedWO(bareWalletOperation); 
@@ -1638,7 +1642,13 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     	discountWalletOperation.setSubscription(bareWalletOperation.getSubscription());
     	discountWalletOperation.setUserAccount(bareWalletOperation.getUserAccount());
     	discountWalletOperation.setContract(bareWalletOperation.getContract());
-    	discountWalletOperation.setAccountingArticle(bareWalletOperation.getAccountingArticle());
+    	
+    	accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance, discountWalletOperation);
+    	if(defaultArticle.equalsIgnoreCase(accountingArticle.getCode())) {
+    		accountingArticle=bareWalletOperation.getAccountingArticle();
+    	}
+    	discountWalletOperation.setAccountingArticle(accountingArticle);
+    	
     	log.info("rateDiscountWalletOperation walletOperation code={},discountValue={},UnitAmountWithoutTax={},UnitAmountWithTax={},UnitAmountTax={}",discountWalletOperation.getCode(),discountedAmount,amounts[0],amounts[1],amounts[2]);
     	return discountWalletOperation;
     }
