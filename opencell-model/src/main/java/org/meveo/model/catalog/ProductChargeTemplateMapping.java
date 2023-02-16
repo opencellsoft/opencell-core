@@ -149,6 +149,11 @@ public class ProductChargeTemplateMapping<T extends ChargeTemplate> extends Base
 	}
 	
 	@Override
+    public int hashCode() {
+	    return 961 + ("ProductChargeTemplateMapping" + id).hashCode();
+    }
+	
+    @Override
     public boolean equals(Object obj) {
 
         if (this == obj) {
@@ -159,7 +164,7 @@ public class ProductChargeTemplateMapping<T extends ChargeTemplate> extends Base
             return false;
         }
 
-        ProductChargeTemplateMapping other = (ProductChargeTemplateMapping) obj;
+        ProductChargeTemplateMapping<T> other = (ProductChargeTemplateMapping<T>) obj;
         if (getId() == null) {
             if (other.getId() != null)
                 return false;
