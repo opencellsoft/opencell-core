@@ -14707,7 +14707,7 @@ public class CdrFlatFileImportScript extends Script {
 			INSERT INTO public.iso_icd VALUES (39, 0, now(), NULL, 'opencell.admin', NULL, '0040', 'Unilever Group Companies ');
 			INSERT INTO public.iso_icd VALUES (40, 0, now(), NULL, 'opencell.admin', NULL, '0041', 'Citicorp Global Information Network ');
 			INSERT INTO public.iso_icd VALUES (41, 0, now(), NULL, 'opencell.admin', NULL, '0042', 'DBP Telekom Object Identifiers ');
-			INSERT INTO public.iso_icd VALUES (42, 0, now(), NULL, 'opencell.admin', NULL, '0043', 'HydroNETT ');
+			INSERT INTO public.iso_icd VALUES (42, 0, now(), NULL, 'opencell.admin', NULL, '0043', 'HydroNETT');
 			INSERT INTO public.iso_icd VALUES (43, 0, now(), NULL, 'opencell.admin', NULL, '0044', 'Thai Industrial Standards Institute (TISI) ');
 			INSERT INTO public.iso_icd VALUES (44, 0, now(), NULL, 'opencell.admin', NULL, '0045', 'ICI Company Identification System ');
 			INSERT INTO public.iso_icd VALUES (45, 0, now(), NULL, 'opencell.admin', NULL, '0046', 'FUNLOC ');
@@ -19456,6 +19456,12 @@ public class CustomGatewayPaymentScript extends PaymentScript{
                 ]]>
             </column>
         </insert>
+    </changeSet>
+
+    <changeSet id="#INTRD-13867_20230214" author="AbdellatifBARI">
+        <delete tableName="meveo_job_instance">
+            <where>code = 'DWH_Job_MRR'</where>
+        </delete>
     </changeSet>
 
 </databaseChangeLog>
