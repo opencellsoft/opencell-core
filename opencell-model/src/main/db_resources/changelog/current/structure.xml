@@ -15758,5 +15758,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
 								 deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
+    
+    <changeSet id="#INTRD-13957-20230214" author="houdad">
+        <sql>
+        DELETE FROM untdid_unit;
+        DROP TABLE untdid_unit;
+        </sql>
+    </changeSet>
 
 </databaseChangeLog>
