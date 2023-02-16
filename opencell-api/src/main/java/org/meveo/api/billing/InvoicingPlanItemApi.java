@@ -122,7 +122,7 @@ public class InvoicingPlanItemApi extends BaseCrudApi<InvoicingPlanItem, Invoici
 				if(isAdvancementExist) {
 					throw new EntityAlreadyExistsException("Invoicing plan lines with advancement " + postData.getAdvancement() + " already exist");
 				}
-				BigDecimal rateToBill =  items.stream().map(InvoicingPlanItem::getRateToBill).reduce(BigDecimal.ZERO, BigDecimal::add);
+				BigDecimal rateToBill =  items.stream().filter(invPlan -> invPlan.getId() !=  invoicingPlanItem.getId()).map(InvoicingPlanItem::getRateToBill).reduce(BigDecimal.ZERO, BigDecimal::add);
 				BigDecimal totalRate = rateToBill.add(postData.getRateToBill() != null ? postData.getRateToBill() : BigDecimal.ZERO);
 				totalRate.add(rateToBill);
 				if(totalRate.intValue() > 100) {
