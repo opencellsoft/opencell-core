@@ -60,6 +60,7 @@ import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
+import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.ProductService;
 
 /**
@@ -86,6 +87,8 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
     private DiscountPlanInstanceService discountPlanInstanceService;
     @Inject
     private OneShotChargeInstanceService oneShotChargeInstanceService;
+	@Inject
+	private AttributeService attributeService;
 
 	@Inject
 	private ProductService productService;
@@ -291,10 +294,16 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 								if(templateCharge instanceof OneShotChargeTemplate) {
 									OneShotChargeTemplate oneShotCharge = (OneShotChargeTemplate) templateCharge;
 									if (oneShotCharge.getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.OTHER) {
-										oneShotChargeInstanceService.instantiateAndApplyOneShotCharge(subscription, null,
-												oneShotCharge, null, new Date(), null, null, quoteProduct.getQuantity(), null, null, null, null, 
-												order.getOrderNumber(), null, true, ChargeApplicationModeEnum.SUBSCRIPTION,
-												CommercialOrderEnum.VALIDATED != orderStatus); // isVirtual=false for VALIDATED Order
+										// Build ServiceInstance
+										ServiceInstance serviceInstance = buildServiceInstanceForOSO(quoteProduct.getProductVersion().getProduct().getCode(),
+												quoteProduct.getOrderAttributes(), subscription);
+
+										// field to add : serviceInstance, operationDate & quantity = from orderProduct,
+										oneShotChargeInstanceService.instantiateAndApplyOneShotCharge(subscription, serviceInstance,
+												oneShotCharge, null, quoteProduct.getDeliveryDate() == null ? new Date() : quoteProduct.getDeliveryDate(),
+												null, null, quoteProduct.getQuantity(),
+												null, null, null, null,
+												order.getOrderNumber(), null, true, ChargeApplicationModeEnum.SUBSCRIPTION);
 									}
 								}
 							}
@@ -680,4 +689,59 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		TypedQuery<CommercialOrder> query = getEntityManager().createNamedQuery("CommercialOrder.findWithInvoicingPlan", CommercialOrder.class);
 		return query.getResultList();
 	}
+
+	/**
+	 * Build ServiceInstance from OrderProduct
+	 *
+	 * @param productCode  productCode
+	 * @param attributes list of attributes from orderProducts
+	 * @param subscription subscription
+	 * @return Virtual or Real ServiceInstance
+	 */
+	private ServiceInstance buildServiceInstanceForOSO(String productCode, List<OrderAttribute> attributes, Subscription subscription) {
+		ServiceInstance serviceInstance = null;
+		if (attributes != null) {
+			serviceInstance = new ServiceInstance(); // Create a virtual ServiceInstance
+			serviceInstance.setSubscription(subscription);
+			// Product data
+			Product product = productService.findByCode(productCode);
+			ProductVersion pVersion = new ProductVersion();
+			pVersion.setProduct(product);
+			serviceInstance.setCode(product.getCode());
+			serviceInstance.setProductVersion(pVersion);
+			// add attributes
+			for (OrderAttribute orderAttribute : attributes) {
+				AttributeInstance attributeInstance = new AttributeInstance();
+				attributeInstance.setAttribute(attributeService.findByCode(orderAttribute.getAttribute().getCode()));
+				attributeInstance.setServiceInstance(serviceInstance);
+				attributeInstance.setSubscription(subscription);
+				attributeInstance.setDoubleValue(orderAttribute.getDoubleValue());
+				attributeInstance.setStringValue(orderAttribute.getStringValue());
+				attributeInstance.setBooleanValue(orderAttribute.getBooleanValue());
+				attributeInstance.setDateValue(orderAttribute.getDateValue());
+				serviceInstance.addAttributeInstance(attributeInstance);
+			}
+		} else { // no attributs provided in payload (OSO case for example)
+			List<ServiceInstance> alreadyInstantiatedServices = null;
+			if (StringUtils.isNotBlank(productCode)) {
+				alreadyInstantiatedServices = serviceInstanceService.findByCodeSubscriptionAndStatus(productCode, subscription,
+						InstanceStatusEnum.ACTIVE);
+				if (alreadyInstantiatedServices == null || alreadyInstantiatedServices.isEmpty()) {
+					throw new BusinessException("The product instance " + productCode + " doest not exist for this subscription or is not active");
+				}
+			} else {
+				alreadyInstantiatedServices = subscription.getServiceInstances().stream()
+						.filter(si -> si.getStatus() == InstanceStatusEnum.ACTIVE)
+						.collect(Collectors.toList());
+			}
+			if (alreadyInstantiatedServices.size() > 1) {
+				throw new BusinessException("More than one Product Instance found for Product '" + productCode
+						+ "' and Subscription '" + subscription.getCode() + "'. Please provide productInstanceId field");
+			} else {
+				serviceInstance = alreadyInstantiatedServices.get(0);
+			}
+		}
+		return serviceInstance;
+	}
+
 }
