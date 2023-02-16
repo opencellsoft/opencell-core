@@ -2737,7 +2737,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
     }
-
+    
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void validateInvoice(Invoice invoice) {
 		invoice.setStatus(InvoiceStatusEnum.VALIDATED);
 		serviceSingleton.assignInvoiceNumber(invoice, true);
@@ -6919,7 +6921,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         duplicatedInvoice.setInvoiceDate(new Date());
         duplicatedInvoice.setInvoiceType(invoiceTypeService.getDefaultAdjustement());
         duplicatedInvoice.setStatus(InvoiceStatusEnum.DRAFT);
-        LinkedInvoice linkedInvoice = new LinkedInvoice(invoice, duplicatedInvoice);
+        LinkedInvoice linkedInvoice = new LinkedInvoice(duplicatedInvoice, invoice);
         duplicatedInvoice.setLinkedInvoices(of(linkedInvoice));
         duplicatedInvoice.setOpenOrderNumber(StringUtils.EMPTY);
         getEntityManager().flush();
