@@ -21129,6 +21129,245 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         </sql>
 	</changeSet>
 	
+	<changeSet id="#INTRD-13967_20230215" author="houdad">
+		<update tableName="adm_currency">
+			<column name="currency_code" value="AFN" />
+			<where> id = 1</where>
+		</update>
+		<update tableName="adm_currency">
+			<column name="currency_code" value="AZN" />
+			<where> id = 14</where>
+		</update>
+		<update tableName="adm_currency">
+			<column name="currency_code" value="BYN" />
+			<where> id = 23</where>
+		</update>
+		<update tableName="adm_currency">
+			<column name="currency_code" value="GHS" />
+			<where> id = 62</where>
+		</update>
+		<update tableName="adm_currency">
+			<column name="currency_code" value="MRU" />
+			<where> id = 104</where>
+		</update>
+		<update tableName="adm_currency">
+			<column name="currency_code" value="STN" />
+			<where> id = 134</where>
+		</update>
+		<update tableName="adm_currency">
+			<column name="currency_code" value="TMT" />
+			<where> id = 157</where>
+		</update>
+		<update tableName="adm_currency">
+			<column name="currency_code" value="ZMW" />
+			<where> id = 166</where>
+		</update>
+		<update tableName="adm_currency">
+			<column name="currency_code" value="ZWL" />
+			<where> id = 167</where>
+		</update>
+		<insert tableName="adm_currency">
+            <column name="id" valueNumeric="168" />
+            <column name="created" valueDate="2023-02-15 00:04:03.53" />
+            <column name="version" valueNumeric="1" />
+            <column name="currency_code" value="BOV" />
+            <column name="description_en" value="Mvdol" />
+            <column name="system_currency" valueNumeric="1" />
+		</insert>
+		<insert tableName="adm_currency">
+		            <column name="id" valueNumeric="169" />
+		            <column name="created"  valueDate="2023-02-15 00:04:03.53" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="currency_code" value="CHE" />
+		            <column name="description_en" value="WIR Euro" />
+		            <column name="system_currency" valueNumeric="1" />
+		</insert>
+		<insert tableName="adm_currency">
+		            <column name="id" valueNumeric="170" />
+		            <column name="created"  valueDate="2023-02-15 00:04:03.53" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="currency_code" value="CHW" />
+		            <column name="description_en" value="WIR Franc" />
+		            <column name="system_currency" valueNumeric="1" />
+		</insert>
+		<insert tableName="adm_currency">
+		            <column name="id" valueNumeric="171" />
+		            <column name="created"  valueDate="2023-02-15 00:04:03.53" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="currency_code" value="CLF" />
+		            <column name="description_en" value="Unidad de Fomento" />
+		            <column name="system_currency" valueNumeric="1" />
+		</insert>
+		<insert tableName="adm_currency">
+		            <column name="id" valueNumeric="172" />
+		            <column name="created"  valueDate="2023-02-15 00:04:03.53" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="currency_code" value="COU" />
+		            <column name="description_en" value="Unidad de Valor Real" />
+		            <column name="system_currency" valueNumeric="1" />
+		</insert>
+		<insert tableName="adm_currency">
+		            <column name="id" valueNumeric="173" />
+		            <column name="created"  valueDate="2023-02-15 00:04:03.53" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="currency_code" value="CUC" />
+		            <column name="description_en" value="Peso Convertible" />
+		            <column name="system_currency" valueNumeric="1" />
+		</insert>
+		<insert tableName="adm_currency">
+		            <column name="id" valueNumeric="174" />
+		            <column name="created"  valueDate="2023-02-15 00:04:03.53" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="currency_code" value="MXV" />
+		            <column name="description_en" value="Mexican Unidad de Inversion (UDI)" />
+		            <column name="system_currency" valueNumeric="1" />
+		</insert>
+		<insert tableName="adm_currency">
+		            <column name="id" valueNumeric="175" />
+		            <column name="created"  valueDate="2023-02-15 00:04:03.53" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="currency_code" value="RSD" />
+		            <column name="description_en" value="Serbian Dinar" />
+		            <column name="system_currency" valueNumeric="1" />
+		</insert>
+		<insert tableName="adm_currency">
+		            <column name="id" valueNumeric="176" />
+		            <column name="created"  valueDate="2023-02-15 00:04:03.53" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="currency_code" value="SSP" />
+		            <column name="description_en" value="South Sudanese Pound" />
+		            <column name="system_currency" valueNumeric="1" />
+		</insert>
+		<insert tableName="adm_currency">
+		            <column name="id" valueNumeric="177" />
+		            <column name="created"  valueDate="2023-02-15 00:04:03.53" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="currency_code" value="USN" />
+		            <column name="description_en" value="US Dollar (Next day)" />
+		            <column name="system_currency" valueNumeric="1" />
+		</insert>
+		<insert tableName="adm_currency">
+		            <column name="id" valueNumeric="178" />
+		            <column name="created"  valueDate="2023-02-15 00:04:03.53" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="currency_code" value="UYI" />
+		            <column name="description_en" value="Uruguay Peso en Unidades Indexadas (UI)" />
+		            <column name="system_currency" valueNumeric="1" />
+		</insert>
+		<insert tableName="adm_currency">
+		            <column name="id" valueNumeric="179" />
+		            <column name="created"  valueDate="2023-02-15 00:04:03.53" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="currency_code" value="UYW" />
+		            <column name="description_en" value="Unidad Previsional" />
+		            <column name="system_currency" valueNumeric="1" />
+		</insert>
+		<insert tableName="adm_currency">
+		            <column name="id" valueNumeric="180" />
+		            <column name="created"  valueDate="2023-02-15 00:04:03.53" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="currency_code" value="VES" />
+		            <column name="description_en" value="Bolívar Soberano" />
+		            <column name="system_currency" valueNumeric="1" />
+		</insert>
+		<insert tableName="adm_currency">
+		            <column name="id" valueNumeric="181" />
+		            <column name="created"  valueDate="2023-02-15 00:04:03.53" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="currency_code" value="XAG" />
+		            <column name="description_en" value="Silver" />
+		            <column name="system_currency" valueNumeric="1" />
+		</insert>
+		<insert tableName="adm_currency">
+		            <column name="id" valueNumeric="182" />
+		            <column name="created"  valueDate="2023-02-15 00:04:03.53" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="currency_code" value="XBA" />
+		            <column name="description_en" value="Bond Markets Unit European Composite Unit (EURCO)" />
+		            <column name="system_currency" valueNumeric="1" />
+		</insert>
+		<insert tableName="adm_currency">
+		            <column name="id" valueNumeric="183" />
+		            <column name="created"  valueDate="2023-02-15 00:04:03.53" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="currency_code" value="XBB" />
+		            <column name="description_en" value="Bond Markets Unit European Monetary Unit (E.M.U.-6)" />
+		            <column name="system_currency" valueNumeric="1" />
+		</insert>
+		<insert tableName="adm_currency">
+		            <column name="id" valueNumeric="184" />
+		            <column name="created"  valueDate="2023-02-15 00:04:03.53" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="currency_code" value="XBC" />
+		            <column name="description_en" value="Bond Markets Unit European Unit of Account 9 (E.U.A.-9)" />
+		            <column name="system_currency" valueNumeric="1" />
+		</insert>
+		<insert tableName="adm_currency">
+		            <column name="id" valueNumeric="185" />
+		            <column name="created"  valueDate="2023-02-15 00:04:03.53" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="currency_code" value="XBD" />
+		            <column name="description_en" value="Bond Markets Unit European Unit of Account 17 (E.U.A.-17)" />
+		            <column name="system_currency" valueNumeric="1" />
+		</insert>
+		<insert tableName="adm_currency">
+		            <column name="id" valueNumeric="186" />
+		            <column name="created"  valueDate="2023-02-15 00:04:03.53" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="currency_code" value="XDR" />
+		            <column name="description_en" value="SDR (Special Drawing Right)" />
+		            <column name="system_currency" valueNumeric="1" />
+		</insert>
+		<insert tableName="adm_currency">
+		            <column name="id" valueNumeric="187" />
+		            <column name="created"  valueDate="2023-02-15 00:04:03.53" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="currency_code" value="XPD" />
+		            <column name="description_en" value="Palladium" />
+		            <column name="system_currency" valueNumeric="1" />
+		</insert>
+		<insert tableName="adm_currency">
+		            <column name="id" valueNumeric="188" />
+		            <column name="created"  valueDate="2023-02-15 00:04:03.53" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="currency_code" value="XPT" />
+		            <column name="description_en" value="Platinum" />
+		            <column name="system_currency" valueNumeric="1" />
+		</insert>
+		<insert tableName="adm_currency">
+		            <column name="id" valueNumeric="189" />
+		            <column name="created"  valueDate="2023-02-15 00:04:03.53" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="currency_code" value="XSU" />
+		            <column name="description_en" value="Sucre" />
+		            <column name="system_currency" valueNumeric="1" />
+		</insert>
+		<insert tableName="adm_currency">
+		            <column name="id" valueNumeric="190" />
+		            <column name="created"  valueDate="2023-02-15 00:04:03.53" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="currency_code" value="XTS" />
+		            <column name="description_en" value="Codes specifically reserved for testing purposes" />
+		            <column name="system_currency" valueNumeric="1" />
+		</insert>
+		<insert tableName="adm_currency">
+		            <column name="id" valueNumeric="191" />
+		            <column name="created"  valueDate="2023-02-15 00:04:03.53" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="currency_code" value="XUA" />
+		            <column name="description_en" value="ADB Unit of Account" />
+		            <column name="system_currency" valueNumeric="1" />
+		</insert>
+		<insert tableName="adm_currency">
+		            <column name="id" valueNumeric="192" />
+		            <column name="created"  valueDate="2023-02-15 00:04:03.53" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="currency_code" value="XXX" />
+		            <column name="description_en" value="The codes assigned for transactions where no currency is involved" />
+		            <column name="system_currency" valueNumeric="1" />
+		</insert>
+	</changeSet>
+	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
