@@ -129,6 +129,12 @@ public class OneShotRatingService extends RatingService implements Serializable 
             // Mark charge instance as closed
             chargeInstance.setStatus(InstanceStatusEnum.CLOSED);
 
+            // OSO SI Virtual : clean WalletOperation.SI if it is a SI Virtual (id==null)
+            if (!isVirtual) {
+                ratingResult.getWalletOperations().forEach(walletOperation -> walletOperation.setServiceInstance(
+                        walletOperation.getServiceInstance().getId() == null ? null : walletOperation.getServiceInstance()));
+            }
+
             return ratingResult;
         
         } catch (EJBTransactionRolledbackException e) {
