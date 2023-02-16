@@ -19,7 +19,6 @@
 package org.meveo.model.catalog;
 
 import java.util.List;
-import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -151,7 +150,7 @@ public class ProductChargeTemplateMapping<T extends ChargeTemplate> extends Base
 	
 	@Override
     public int hashCode() {
-	    return 976 + ("ProductChargeTemplateMapping" + id).hashCode();
+	    return 961 + ("ProductChargeTemplateMapping" + id).hashCode();
     }
 	
     @Override
