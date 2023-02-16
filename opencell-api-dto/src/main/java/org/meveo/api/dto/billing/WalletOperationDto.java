@@ -73,7 +73,9 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
 
     /** The Accounting Article Label. */
     private String accountingArticleLabel;
-    
+
+    private String productCode; // serviceInstance code
+
     /** The user account. */
     private String userAccount;
 
@@ -222,7 +224,7 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
         this(walletOperation, null, article);
     }
     public WalletOperationDto(WalletOperation walletOperation, CustomFieldsDto customFields) {
-        this(walletOperation, null, null);
+        this(walletOperation, customFields, null);
     }
     public WalletOperationDto(WalletOperation walletOperation, CustomFieldsDto customFields, AccountingArticle article) {
 
@@ -251,6 +253,9 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
         ratingUnitDescription = walletOperation.getRatingUnitDescription();
         if (walletOperation.getTax() != null) {
             taxCode = walletOperation.getTax().getCode();
+        }
+        if (walletOperation.getServiceInstance() != null) {
+            this.productCode = walletOperation.getServiceInstance().getCode();
         }
         taxPercent = walletOperation.getTaxPercent();
         unitAmountWithoutTax = walletOperation.getUnitAmountWithoutTax();
@@ -1025,7 +1030,15 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
 		this.accountingArticleLabel = accountingArticleLabel;
 	}
 
-	@Override
+    public String getProductCode() {
+        return productCode;
+    }
+
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
+    }
+
+    @Override
     public String toString() {
         return "WalletOperationDto [code=" + code + ", description=" + description + ", userAccount=" + userAccount + ", subscription=" + subscription + ", walletTemplate="
                 + walletTemplate + ", seller=" + seller + ", chargeInstance=" + chargeInstance + ", chargeInstanceId=" + chargeInstanceId + ", currency=" + currency + ", type="
