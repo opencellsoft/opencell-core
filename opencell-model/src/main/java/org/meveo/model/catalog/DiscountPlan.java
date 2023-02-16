@@ -251,12 +251,6 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	@Size(max = 2000)
 	private String expressionEl;
 
-	/**
-	 *determines whether the discount plan will automatically be applied to an offer or a product upon instantiation
-	 */
-    @Type(type = "numeric_boolean")
-    @Column(name = "automatic_application")
-    private boolean automaticApplication = false;
 
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "allowance_code_id")
