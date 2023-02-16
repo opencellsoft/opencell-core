@@ -170,6 +170,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     @Inject
     private OpenOrderService openOrderService;
 
+    @Inject
+    private InvoiceTypeService invoiceTypeService;
+    
     public List<InvoiceLine> findByQuote(CpqQuote quote) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByQuote", InvoiceLine.class)
                 .setParameter("quote", quote)
@@ -1386,5 +1389,15 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     @SuppressWarnings("unchecked")
     public List<Object[]> getMaxIlAmountAdj(Long id) {
         return getEntityManager().createNamedQuery("InvoiceLine.getMaxIlAmountAdj").setParameter("invoiceId", id).getResultList();
+    }
+    
+    public InvoiceLine adjustment(InvoiceLine invoiceLine) {
+        InvoiceType defaultAdjustement = invoiceTypeService.getDefaultAdjustement();
+        InvoiceType invoiceTypeOfInvoice = invoiceLine.getInvoice().getInvoiceType();
+        if(invoiceTypeOfInvoice.equals(defaultAdjustement)) {
+            List<Object[]> maxIlAmountAdjList = getMaxIlAmountAdj(invoiceLine.getInvoice().getId());
+            invoiceLine = checkAmountIL(invoiceLine, maxIlAmountAdjList); 
+        }
+        return invoiceLine;
     }
 }
