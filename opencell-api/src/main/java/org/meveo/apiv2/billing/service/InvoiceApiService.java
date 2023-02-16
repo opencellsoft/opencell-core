@@ -258,6 +258,8 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 		org.meveo.model.billing.InvoiceLine invoiceLine = invoiceLinesService.getInvoiceLineForUpdate(invoice, invoiceLineInput.getInvoiceLine(), lineId);
 		// Populate Custom fields
 		invoiceBaseApi.populateCustomFieldsForGenericApi(invoiceLineInput.getInvoiceLine().getCustomFields(), invoiceLine, false);
+		// for adjustment
+		invoiceLine = invoiceLinesService.adjustment(invoiceLine);
 		// Update Invoice Line
 		invoiceLinesService.update(invoiceLine);
 		invoiceService.getEntityManager().flush();
