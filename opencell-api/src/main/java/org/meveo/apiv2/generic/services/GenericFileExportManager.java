@@ -441,23 +441,10 @@ public class GenericFileExportManager {
      * @param format Date Format
      */
     private static void formatFields(List<Map<String, Object>> mapResult, SimpleDateFormat format, String locale) {
-    	NumberFormat numberformat = NumberFormat.getInstance(Locale.ENGLISH);
-    	
-    	if(LOCALE_FR.equalsIgnoreCase(locale)) {
-    		numberformat = NumberFormat.getInstance(Locale.FRANCE);
-        } 
-    	
         for (Map<String, Object> item : mapResult) {
             for (Map.Entry<String, Object> entry : item.entrySet()) {
                 if(entry.getKey().equals("dueDate")) {
                     entry.setValue(format.format(entry.getValue()));
-                }
-                
-                if(entry.getKey().equals("notYetDue") || entry.getKey().equals("sum1To30") || entry.getKey().equals("sum31To60") || entry.getKey().equals("sum61To90") || entry.getKey().equals("sum90Up") ||
-                		entry.getKey().equals("generalTotal") || entry.getKey().equals("billedAmount")) {
-                	if(entry.getValue() != null) {
-                        entry.setValue(numberformat.format(entry.getValue()));
-                	}
                 }
             }
         }
