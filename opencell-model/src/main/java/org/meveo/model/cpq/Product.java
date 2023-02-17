@@ -725,5 +725,13 @@ public class Product extends ServiceCharge {
 		this.agreementDateSetting = agreementDateSetting;
 	}
 
+    public void setArticleMappingLines(List<ArticleMappingLine> articleMappingLines) {
+        this.articleMappingLines = articleMappingLines;
+    }
+
+    public void setPricePlanMatrixColumns(List<PricePlanMatrixColumn> pricePlanMatrixColumns) {
+        this.pricePlanMatrixColumns = pricePlanMatrixColumns;
+    }
+
 
 }
