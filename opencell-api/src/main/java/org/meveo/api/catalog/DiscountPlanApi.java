@@ -177,7 +177,7 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         if (untdidAllowanceCode == null) {
             throw new EntityDoesNotExistsException(UntdidAllowanceCode.class, postData.getAllowanceCode());
         }
-
+        discountPlan.setAllowanceCode(untdidAllowanceCode);
         if (discountPlan.getStatus().equals(DiscountPlanStatusEnum.DRAFT)) {
 
 	        final String description = postData.getDescription();
