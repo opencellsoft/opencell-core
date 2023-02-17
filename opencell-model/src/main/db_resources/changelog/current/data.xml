@@ -21131,7 +21131,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 	
 	<changeSet id="#INTRD-13968" author="houdad">
 	<insert tableName="adm_country">
-            <column name="id" valueNumeric="238" />
+            <column name="id" valueNumeric="-238" />
             <column name="created" valueDate="2015-03-19 00:04:08.896" />
             <column name="version" valueNumeric="1" />
             <column name="country_code" value="AQ" />
@@ -21140,7 +21140,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="language_id" valueNumeric="2" />
 		</insert>
 		<insert tableName="adm_country">
-		            <column name="id" valueNumeric="239" />
+		            <column name="id" valueNumeric="-239" />
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="AX" />
@@ -21149,7 +21149,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 					<column name="currency_id" valueNumeric="5" />
 		</insert>
 		<insert tableName="adm_country">
-		            <column name="id" valueNumeric="240" />
+		            <column name="id" valueNumeric="-240" />
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="BL" />
@@ -21158,7 +21158,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 					<column name="language_id" valueNumeric="12" />
 		</insert>
 		<insert tableName="adm_country">
-		            <column name="id" valueNumeric="241" />
+		            <column name="id" valueNumeric="-241" />
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="BQ" />
@@ -21167,7 +21167,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 					<column name="language_id" valueNumeric="21" />
 		</insert>
 		<insert tableName="adm_country">
-		            <column name="id" valueNumeric="242" />
+		            <column name="id" valueNumeric="-242" />
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="SX" />
@@ -21176,7 +21176,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 					<column name="language_id" valueNumeric="21" />
 		</insert>
 		<insert tableName="adm_country">
-		            <column name="id" valueNumeric="243" />
+		            <column name="id" valueNumeric="-243" />
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="GG" />
@@ -21185,7 +21185,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 					<column name="language_id" valueNumeric="2" />
 		</insert>
 		<insert tableName="adm_country">
-		            <column name="id" valueNumeric="244" />
+		            <column name="id" valueNumeric="-244" />
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="IM" />
@@ -21194,7 +21194,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 					<column name="language_id" valueNumeric="2" />
 		</insert>
 		<insert tableName="adm_country">
-		            <column name="id" valueNumeric="245" />
+		            <column name="id" valueNumeric="-245" />
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="JE" />
@@ -21203,7 +21203,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 					<column name="language_id" valueNumeric="2" />
 		</insert>
 		<insert tableName="adm_country">
-		            <column name="id" valueNumeric="246" />
+		            <column name="id" valueNumeric="-246" />
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="ME" />
@@ -21211,14 +21211,14 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 					<column name="currency_id" valueNumeric="5" />
 		</insert>
 		<insert tableName="adm_country">
-		            <column name="id" valueNumeric="247" />
+		            <column name="id" valueNumeric="-247" />
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="MF" />
 		            <column name="description" value="Saint Martin (French part)" />
 		</insert>
 		<insert tableName="adm_country">
-		            <column name="id" valueNumeric="248" />
+		            <column name="id" valueNumeric="-248" />
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="RS" />
@@ -21227,7 +21227,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 					<column name="currency_id" valueNumeric="5" />
 		</insert>
 		<insert tableName="adm_country">
-		            <column name="id" valueNumeric="249" />
+		            <column name="id" valueNumeric="-249" />
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="SS" />
@@ -21236,7 +21236,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 					<column name="language_id" valueNumeric="2" />
 		</insert>
 		<insert tableName="adm_country">
-		            <column name="id" valueNumeric="250" />
+		            <column name="id" valueNumeric="-250" />
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="1A" />
@@ -21245,7 +21245,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 					<column name="currency_id" valueNumeric="5" />
 		</insert>
 		<insert tableName="adm_country">
-		            <column name="id" valueNumeric="251" />
+		            <column name="id" valueNumeric="-251" />
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="XI" />
