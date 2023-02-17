@@ -4546,6 +4546,132 @@
             <column name="language_id" valueNumeric="2" />
             <column name="description_i18n" value='{"FRA":"Zimbabwe","ENG":"Zimbabwe"}' />
         </insert>
+        <insert tableName="adm_country">
+            <column name="id" valueNumeric="-238" />
+            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="AQ" />
+            <column name="description" value="Antarctica" />
+			<column name="currency_id" valueNumeric="49" />
+			<column name="language_id" valueNumeric="2" />
+		</insert>
+		<insert tableName="adm_country">
+		            <column name="id" valueNumeric="-239" />
+		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="country_code" value="AX" />
+		            <column name="description" value="Åland Islands" />
+					<column name="language_id" valueNumeric="30" />
+					<column name="currency_id" valueNumeric="5" />
+		</insert>
+		<insert tableName="adm_country">
+		            <column name="id" valueNumeric="-240" />
+		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="country_code" value="BL" />
+		            <column name="description" value="Saint Barthélemy" />
+					<column name="currency_id" valueNumeric="5" />
+					<column name="language_id" valueNumeric="12" />
+		</insert>
+		<insert tableName="adm_country">
+		            <column name="id" valueNumeric="-241" />
+		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="country_code" value="BQ" />
+		            <column name="description" value="Bonaire, Sint Eustatius and Saba" />
+					<column name="currency_id" valueNumeric="5" />
+					<column name="language_id" valueNumeric="21" />
+		</insert>
+		
+		
+		
+		<insert tableName="adm_country">
+		            <column name="id" valueNumeric="-242" />
+		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="country_code" value="SX" />
+		            <column name="description" value="Sint Maarten (Dutch part)" />
+					<column name="currency_id" valueNumeric="5" />
+					<column name="language_id" valueNumeric="21" />
+		</insert>
+		<insert tableName="adm_country">
+		            <column name="id" valueNumeric="-243" />
+		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="country_code" value="GG" />
+		            <column name="description" value="Guernsey" />
+					<column name="currency_id" valueNumeric="65" />
+					<column name="language_id" valueNumeric="2" />
+		</insert>
+		<insert tableName="adm_country">
+		            <column name="id" valueNumeric="-244" />
+		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="country_code" value="IM" />
+		            <column name="description" value="Isle of Man" />
+					<column name="currency_id" valueNumeric="65" />
+					<column name="language_id" valueNumeric="2" />
+		</insert>
+		<insert tableName="adm_country">
+		            <column name="id" valueNumeric="-245" />
+		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="country_code" value="JE" />
+		            <column name="description" value="Jersey" />
+					<column name="currency_id" valueNumeric="65" />
+					<column name="language_id" valueNumeric="2" />
+		</insert>
+		<insert tableName="adm_country">
+		            <column name="id" valueNumeric="-246" />
+		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="country_code" value="ME" />
+		            <column name="description" value="Montenegro" />
+					<column name="currency_id" valueNumeric="5" />
+		</insert>
+		<insert tableName="adm_country">
+		            <column name="id" valueNumeric="-247" />
+		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="country_code" value="MF" />
+		            <column name="description" value="Saint Martin (French part)" />
+		</insert>
+		<insert tableName="adm_country">
+		            <column name="id" valueNumeric="-248" />
+		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="country_code" value="RS" />
+		            <column name="description" value="Serbia" />
+					<column name="language_id" valueNumeric="27" />
+					<column name="currency_id" valueNumeric="5" />
+		</insert>
+		<insert tableName="adm_country">
+		            <column name="id" valueNumeric="-249" />
+		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="country_code" value="SS" />
+		            <column name="description" value="South Sudan" />
+					<column name="currency_id" valueNumeric="176" />
+					<column name="language_id" valueNumeric="2" />
+		</insert>
+		<insert tableName="adm_country">
+		            <column name="id" valueNumeric="-250" />
+		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="country_code" value="1A" />
+		            <column name="description" value="Kosovo" />
+					<column name="language_id" valueNumeric="27" />
+					<column name="currency_id" valueNumeric="5" />
+		</insert>
+		<insert tableName="adm_country">
+		            <column name="id" valueNumeric="-251" />
+		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+		            <column name="version" valueNumeric="1" />
+		            <column name="country_code" value="XI" />
+		            <column name="description" value="United Kingdom (Northern Ireland)" />					
+					<column name="currency_id" valueNumeric="65" />
+					<column name="language_id" valueNumeric="2" />
+		</insert>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-data-calendarDays">
         <insert tableName="cat_day_in_year">
@@ -17562,6 +17688,7 @@ Your name and surname
     </changeSet>
     <changeSet id="#INTRD-13967_20230215" author="houdad"/>
     <changeSet id="#INTRD-13967_20230217" author="houdad"/>
+    <changeSet id="#INTRD-13968" author="houdad"/>
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
