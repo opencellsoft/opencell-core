@@ -329,7 +329,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         if(reportQuery.getAdvancedQuery() != null && !reportQuery.getAdvancedQuery().isEmpty()) {
         	QueryBuilder qb = nativePersistenceService.generatedAdvancedQuery(reportQuery);
     		reportResult = qb.getQuery(PersistenceServiceHelper.getPersistenceService(targetEntity).getEntityManager()).getResultList();
-    		fields = (List<String>) reportQuery.getAdvancedQuery().getOrDefault("fields", new ArrayList<>());
+    		fields = (List<String>) reportQuery.getAdvancedQuery().getOrDefault("genericFields", new ArrayList<>());
         } else {
         	reportResult = prepareQueryToExecute(reportQuery, targetEntity).getResultList();
         	fields = reportQuery.getFields();
