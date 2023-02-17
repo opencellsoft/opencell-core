@@ -7234,7 +7234,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     private BigDecimal getFunctionalCurrencyBalance(Invoice adv, BigDecimal transactionalCurrencyBalance) {
         BigDecimal functionalCurrencyBalance;
         functionalCurrencyBalance = (adv.getConvertedInvoiceBalance() != null && adv.getConvertedInvoiceBalance().compareTo(ZERO) > 0) ?
-                (transactionalCurrencyBalance.divide(adv.getConvertedInvoiceBalance())).multiply(adv.getInvoiceBalance()) :
+                (transactionalCurrencyBalance.divide(adv.getConvertedInvoiceBalance(),2,RoundingMode.HALF_UP)).multiply(adv.getInvoiceBalance()) :
                 transactionalCurrencyBalance;
         return functionalCurrencyBalance.setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode());
     }
