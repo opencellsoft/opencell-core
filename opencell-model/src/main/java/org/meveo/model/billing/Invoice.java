@@ -869,9 +869,10 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         this.convertedAmountWithoutTaxBeforeDiscount =
                 this.amountWithoutTaxBeforeDiscount != null
                         ? this.amountWithoutTaxBeforeDiscount.multiply(appliedRate) : ZERO;
-        this.convertedInvoiceBalance =
-                this.invoiceBalance != null
-                        ? this.invoiceBalance.multiply(appliedRate) : ZERO;
+
+        if (this.convertedInvoiceBalance != null) {
+            this.invoiceBalance = this.convertedInvoiceBalance.divide(appliedRate);
+        }
     }
 
     public String getInvoiceNumber() {
