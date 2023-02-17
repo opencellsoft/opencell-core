@@ -4547,7 +4547,7 @@
             <column name="description_i18n" value='{"FRA":"Zimbabwe","ENG":"Zimbabwe"}' />
         </insert>
         <insert tableName="adm_country">
-            <column name="id" valueNumeric="238" />
+            <column name="id" valueNumeric="-238" />
             <column name="created" valueDate="2015-03-19 00:04:08.896" />
             <column name="version" valueNumeric="1" />
             <column name="country_code" value="AQ" />
@@ -4556,7 +4556,7 @@
 			<column name="language_id" valueNumeric="2" />
 		</insert>
 		<insert tableName="adm_country">
-		            <column name="id" valueNumeric="239" />
+		            <column name="id" valueNumeric="-239" />
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="AX" />
@@ -4565,7 +4565,7 @@
 					<column name="currency_id" valueNumeric="5" />
 		</insert>
 		<insert tableName="adm_country">
-		            <column name="id" valueNumeric="240" />
+		            <column name="id" valueNumeric="-240" />
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="BL" />
@@ -4574,7 +4574,7 @@
 					<column name="language_id" valueNumeric="12" />
 		</insert>
 		<insert tableName="adm_country">
-		            <column name="id" valueNumeric="241" />
+		            <column name="id" valueNumeric="-241" />
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="BQ" />
@@ -4586,7 +4586,7 @@
 		
 		
 		<insert tableName="adm_country">
-		            <column name="id" valueNumeric="242" />
+		            <column name="id" valueNumeric="-242" />
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="SX" />
@@ -4595,7 +4595,7 @@
 					<column name="language_id" valueNumeric="21" />
 		</insert>
 		<insert tableName="adm_country">
-		            <column name="id" valueNumeric="243" />
+		            <column name="id" valueNumeric="-243" />
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="GG" />
@@ -4604,7 +4604,7 @@
 					<column name="language_id" valueNumeric="2" />
 		</insert>
 		<insert tableName="adm_country">
-		            <column name="id" valueNumeric="244" />
+		            <column name="id" valueNumeric="-244" />
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="IM" />
@@ -4613,7 +4613,7 @@
 					<column name="language_id" valueNumeric="2" />
 		</insert>
 		<insert tableName="adm_country">
-		            <column name="id" valueNumeric="245" />
+		            <column name="id" valueNumeric="-245" />
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="JE" />
@@ -4622,7 +4622,7 @@
 					<column name="language_id" valueNumeric="2" />
 		</insert>
 		<insert tableName="adm_country">
-		            <column name="id" valueNumeric="246" />
+		            <column name="id" valueNumeric="-246" />
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="ME" />
@@ -4630,14 +4630,14 @@
 					<column name="currency_id" valueNumeric="5" />
 		</insert>
 		<insert tableName="adm_country">
-		            <column name="id" valueNumeric="247" />
+		            <column name="id" valueNumeric="-247" />
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="MF" />
 		            <column name="description" value="Saint Martin (French part)" />
 		</insert>
 		<insert tableName="adm_country">
-		            <column name="id" valueNumeric="248" />
+		            <column name="id" valueNumeric="-248" />
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="RS" />
@@ -4646,7 +4646,7 @@
 					<column name="currency_id" valueNumeric="5" />
 		</insert>
 		<insert tableName="adm_country">
-		            <column name="id" valueNumeric="249" />
+		            <column name="id" valueNumeric="-249" />
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="SS" />
@@ -4655,7 +4655,7 @@
 					<column name="language_id" valueNumeric="2" />
 		</insert>
 		<insert tableName="adm_country">
-		            <column name="id" valueNumeric="250" />
+		            <column name="id" valueNumeric="-250" />
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="1A" />
@@ -4664,7 +4664,7 @@
 					<column name="currency_id" valueNumeric="5" />
 		</insert>
 		<insert tableName="adm_country">
-		            <column name="id" valueNumeric="251" />
+		            <column name="id" valueNumeric="-251" />
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="XI" />
