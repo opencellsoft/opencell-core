@@ -13,6 +13,7 @@ import javax.inject.Inject;
 
 import org.meveo.commons.parsers.RecordContext;
 import org.meveo.model.rating.CDR;
+import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.service.medina.impl.CDRParsingService.CDR_ORIGIN_ENUM;
 import org.meveo.service.medina.impl.CDRService;
 import org.meveo.service.medina.impl.ICdrParser;
@@ -67,14 +68,14 @@ public class CDRReprocessingReader implements ICdrReader, Serializable {
             return null;
         }
         CDR cdr = cdrReader.next();
-        String originRecord = cdr.getOriginRecord();
-        String line = cdr.getLine();
         Integer timesTried = cdr.getTimesTried() == null ? 1 : cdr.getTimesTried() + 1;
-        cdr = cdrParser.parse(cdr.getLine());
-        cdr.setLine(line);
-        cdr.setOriginRecord(originRecord);
+        CDR newCdr = cdrParser.parse(cdr.getLine());
+        cdr.fillFrom(newCdr);
         cdr.setTimesTried(timesTried);
-        cdr.setOriginBatch(batchName);
+        cdr.setRejectReasonException(null);
+        cdr.setRejectReason(null);
+        cdr.setStatus(CDRStatusEnum.OPEN);
+
         return cdr;
     }
 
