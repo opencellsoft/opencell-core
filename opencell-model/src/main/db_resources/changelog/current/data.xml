@@ -22000,4 +22000,45 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</insert>
 		</changeSet>
 
+	<changeSet id="INTRD-14137_20230217" author="aeljaouhari">
+		<update tableName="com_message_template">
+			<column name="htmlcontent">
+                <![CDATA[
+#{billingAccount.isCompany?billingAccount.description:billingAccount.name.fullName}<br>
+#{billingAccount.address.address1}<br>
+#{billingAccount.address.zipCode} #{billingAccount.address.city}<br>
+#{billingAccount.contactInformation.phone}<br>
+<br>
+#{billingAccount.customerAccount.isCompany?billingAccount.customerAccount.description:billingAccount.name.fullName}<br>
+#{billingAccount.customerAccount.address.address1}<br>
+#{billingAccount.customerAccount.address.zipCode} #{billingAccount.customerAccount.address.city}<br>
+<p>#{billingAccount.customerAccount.seller.address.city}, on #{dayDate}</p>
+<p>#{billingAccount.legalEntityType.code},</p>
+<p>Please find attached the invoice #{invoice.invoiceNumber} for an amount of #{invoice.netToPay}.</p>
+<p>We remain at your disposal in case of any questions. Please accept, Madam / Sir, the assurance of our best regards.</p>
+                ]]>
+			</column>
+			<where>code='EN-Invoice'</where>
+		</update>
+		<update tableName="com_message_template">
+			<column name="htmlcontent">
+                <![CDATA[
+#{billingAccount.isCompany?billingAccount.description:billingAccount.name.fullName}<br>
+#{billingAccount.address.address1}<br>
+#{billingAccount.address.zipCode} #{billingAccount.address.city}<br>
+#{billingAccount.contactInformation.phone}<br>
+<br>
+#{billingAccount.customerAccount.isCompany?billingAccount.customerAccount.description:billingAccount.name.fullName}<br>
+#{billingAccount.customerAccount.address.address1}<br>
+#{billingAccount.customerAccount.address.zipCode} #{billingAccount.customerAccount.address.city}<br>
+<p>#{billingAccount.customerAccount.seller.address.city}, le #{dayDate}</p>
+<p>#{billingAccount.legalEntityType.code},</p>
+<p>Nous vous prions de trouver attaché à cet email la facture #{invoice.invoiceNumber} d’un montant de #{invoice.netToPay}.</p>
+<p>Nous restons à votre disposition dans l’hypothèse d’éventuelles questions. Nous vous prions d'agréer l’assurance de nos salutations les meilleures.</p>
+                ]]>
+			</column>
+			<where>code='FR-Invoice'</where>
+		</update>
+	</changeSet>
+
 </databaseChangeLog>
