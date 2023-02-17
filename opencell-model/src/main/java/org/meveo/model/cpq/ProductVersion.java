@@ -272,8 +272,7 @@ public class ProductVersion extends AuditableEntity{
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, longDescription, product, shortDescription, validity, status, statusDate,
-				tags, version);
+		return Objects.hash(id, longDescription, product, shortDescription, validity, status, statusDate, version);
 	}
 
 	@Override
