@@ -706,6 +706,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     unitPriceWithTax = unitPrices.getAmountWithTax();
                     BigDecimal amount=null;
                     BigDecimal discountRate=null;
+                    PricePlanMatrixVersion ppmVersion=null;
+                    PricePlanMatrixLine pricePlanMatrixLine =null;
                     // A price discount is applied to a default price by a contract
                     if (contractItem != null && ContractRateTypeEnum.PERCENTAGE.equals(contractItem.getContractRateType()) ) {
                     	boolean seperateDiscount=contractItem.isSeparateDiscount();
@@ -717,9 +719,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                                 unitPriceWithoutTax = unitPriceWithoutTax.subtract(amount);
                         } else if (contractItem.getPricePlan() != null) {
                             PricePlanMatrix pricePlanMatrix = contractItem.getPricePlan();
-                            PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getPublishedVersionValideForDate(pricePlanMatrix.getCode(), bareWalletOperation.getServiceInstance(), bareWalletOperation.getOperationDate());
+                            ppmVersion = pricePlanMatrixVersionService.getPublishedVersionValideForDate(pricePlanMatrix.getCode(), bareWalletOperation.getServiceInstance(), bareWalletOperation.getOperationDate());
                             if (ppmVersion != null) {
-                                PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, bareWalletOperation);
+                                pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, bareWalletOperation);
                                 discountRate= pricePlanMatrixLine.getValue();
                                 if(discountRate!=null && discountRate.compareTo(BigDecimal.ZERO) > 0 ){
                                      amount = unitPriceWithoutTax.abs().multiply(discountRate.divide(HUNDRED));
@@ -729,7 +731,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                             }
                         }
                         if(seperateDiscount) {
-                        	discountedWalletOperation=rateDiscountedWalletOperation(bareWalletOperation,unitPriceWithoutTax,amount,discountRate,billingAccount,chargeInstance);
+                        	discountedWalletOperation=rateDiscountedWalletOperation(bareWalletOperation,unitPriceWithoutTax,amount,discountRate,billingAccount,ppmVersion,pricePlanMatrixLine);
                         }
                       
                     }
@@ -1601,7 +1603,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         }
     }
     private WalletOperation rateDiscountedWalletOperation(WalletOperation bareWalletOperation,BigDecimal unitPriceWithoutTax,BigDecimal amount,BigDecimal discountValue,BillingAccount billingAccount,
-    		ChargeInstance chargeInstance) {
+    		PricePlanMatrixVersion ppmVersion, PricePlanMatrixLine pricePlanMatrixLine ) {
+    	
     	ParamBean paramBean = ParamBean.getInstance();
 		String defaultArticle = paramBean.getProperty("default.article", "ART-STD");
     	AccountingArticle accountingArticle=null;
@@ -1611,6 +1614,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     	BigDecimal taxPercent=bareWalletOperation.getTaxPercent();
     	BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(walletOperationDiscountAmount, walletOperationDiscountAmount, bareWalletOperation.getTaxPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP); 
     	BigDecimal quantity=bareWalletOperation.getQuantity();
+    	ChargeInstance chargeInstance=bareWalletOperation.getChargeInstance();
     
     	discountWalletOperation.setCode(bareWalletOperation.getCode());
     	discountWalletOperation.setDescription(bareWalletOperation.getDescription());  
@@ -1641,6 +1645,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     	discountWalletOperation.setSubscription(bareWalletOperation.getSubscription());
     	discountWalletOperation.setUserAccount(bareWalletOperation.getUserAccount());
     	discountWalletOperation.setContract(bareWalletOperation.getContract());
+    	discountWalletOperation.setPricePlanMatrixVersion(ppmVersion);
+    	discountWalletOperation.setPriceplan(ppmVersion!=null?ppmVersion.getPricePlanMatrix():null);
+    	discountWalletOperation.setPricePlanMatrixLine(pricePlanMatrixLine);
     	
     	accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance, discountWalletOperation);
     	if(defaultArticle.equalsIgnoreCase(accountingArticle.getCode())) {
