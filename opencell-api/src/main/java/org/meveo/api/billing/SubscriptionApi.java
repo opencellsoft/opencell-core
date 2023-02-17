@@ -3321,12 +3321,15 @@ public class SubscriptionApi extends BaseApi {
         if (postData.getAttributes() != null) {
             serviceInstance = new ServiceInstance(); // Create a virtual ServiceInstance
             serviceInstance.setSubscription(subscription);
+
             // Product data
-            Product product = productService.findByCode(postData.getProductCode());
-            ProductVersion pVersion = new ProductVersion();
-            pVersion.setProduct(product);
-            serviceInstance.setCode(product.getCode());
-            serviceInstance.setProductVersion(pVersion);
+            if (StringUtils.isNotBlank(postData.getProductCode())) {
+                Product product = productService.findByCode(postData.getProductCode());
+                ProductVersion pVersion = new ProductVersion();
+                pVersion.setProduct(product);
+                serviceInstance.setCode(product.getCode());
+                serviceInstance.setProductVersion(pVersion);
+            }
             // add attributes
             for (AttributeInstanceDto attributeInstanceDto : postData.getAttributes()) {
                 AttributeInstance attributeInstance = new AttributeInstance();
