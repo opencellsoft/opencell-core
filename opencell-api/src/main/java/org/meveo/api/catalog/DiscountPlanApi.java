@@ -153,7 +153,7 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         }
     	if(postData.getDiscountPlanType() == null)
 			missingParameters.add("discountPlanType");
-    	
+
     	handleMissingParameters();
 
         DiscountPlan discountPlan = discountPlanService.findByCode(postData.getCode());
@@ -168,7 +168,7 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         if (untdidAllowanceCode == null) {
             throw new EntityDoesNotExistsException(UntdidAllowanceCode.class, postData.getAllowanceCode());
         }
-
+        discountPlan.setAllowanceCode(untdidAllowanceCode);
         if (discountPlan.getStatus().equals(DiscountPlanStatusEnum.DRAFT)) {
 
 	        final String description = postData.getDescription();
@@ -244,7 +244,7 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         if (postData.getApplicationLimit() != null) {
             discountPlan.setApplicationLimit(postData.getApplicationLimit());
         }
-        
+
         discountPlan = discountPlanService.update(discountPlan);
         return discountPlan;
     }
