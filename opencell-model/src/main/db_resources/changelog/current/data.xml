@@ -21367,6 +21367,12 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		            <column name="system_currency" valueNumeric="1" />
 		</insert>
 	</changeSet>
+	<changeSet id="#INTRD-13967_20230217" author="houdad">
+		<update tableName="adm_currency">
+			<column name="description_en" value="Rouble biélorussie" />
+			<where> id = 23</where>
+		</update>
+	</changeSet>
 	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
