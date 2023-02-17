@@ -330,10 +330,10 @@ public class PaymentService extends PersistenceService<Payment> {
             PaymentGateway matchedPaymentGatewayForTheCA = null;
             String pgCode = paymentGateway != null ? paymentGateway.getCode() : null;
             if(isNewCard) {
-            	matchedPaymentGatewayForTheCA = paymentGatewayService.getAndCheckPaymentGateway(customerAccount, null ,cardType,null,pgCode);
+            	matchedPaymentGatewayForTheCA = paymentGatewayService.getAndCheckPaymentGateway(customerAccount, null ,cardType,aoToPayRefund.getSeller(),pgCode);
             	
             }else {
-            	matchedPaymentGatewayForTheCA = paymentGatewayService.getAndCheckPaymentGateway(customerAccount, preferredMethod ,cardType,null,pgCode);
+            	matchedPaymentGatewayForTheCA = paymentGatewayService.getAndCheckPaymentGateway(customerAccount, preferredMethod ,cardType,aoToPayRefund.getSeller(),pgCode);
             }
                         
             if (matchedPaymentGatewayForTheCA == null) {
