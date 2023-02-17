@@ -21,6 +21,7 @@ import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -871,7 +872,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
                         ? this.amountWithoutTaxBeforeDiscount.multiply(appliedRate) : ZERO;
 
         if (this.convertedInvoiceBalance != null) {
-            this.invoiceBalance = this.convertedInvoiceBalance.divide(appliedRate);
+            this.invoiceBalance = this.convertedInvoiceBalance.divide(appliedRate,2, RoundingMode.HALF_UP);
         }
     }
 
