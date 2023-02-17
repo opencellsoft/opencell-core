@@ -585,7 +585,7 @@
             <column name="created" valueDate="2015-03-19 00:04:00.391" />
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="BYN" />
-            <column name="description_en" value="Rouble biãlorussie" />
+            <column name="description_en" value="Rouble biélorussie" />
             <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
@@ -17115,6 +17115,7 @@ Your name and surname
 	<changeSet id="#INTRD-13717_20230202" author="aeljaouhari" />
 	<changeSet id="#INTRD-13762_20230206" author="aelmalki" />
 	<changeSet id="#INTRD-13967_20230215" author="houdad"/>
+	<changeSet id="#INTRD-13967_20230217" author="houdad"/>
 	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
