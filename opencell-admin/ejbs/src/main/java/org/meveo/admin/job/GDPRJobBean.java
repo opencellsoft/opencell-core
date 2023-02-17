@@ -429,7 +429,10 @@ public class GDPRJobBean extends BaseJobBean {
 	                            + "mview_gdpr_orders go on oi.order_id=go.id)");
 	                    statement.execute("delete from " + schemaPrefix + "ord_item_offerings where order_item_id in (select oi.id from " + schemaPrefix + "ord_order_item oi join " + schemaPrefix
 	                            + "mview_gdpr_orders go on oi.order_id=go.id)");
+
+						statement.execute("delete from " + schemaPrefix + "ord_item_prd_instance as t1 using " + schemaPrefix + "ord_order_item as t2,  " + schemaPrefix + "mview_gdpr_orders as mv where t2.id = t1.order_item_id and t2.order_id = mv.id");
 	                    statement.execute("delete from " + schemaPrefix + "ord_order_item where order_id in (select id from " + schemaPrefix + "mview_gdpr_orders)");
+
 	                    statement.execute("delete from " + schemaPrefix + "ord_order where id in (select id from " + schemaPrefix + "mview_gdpr_orders)");
 	
 	                    statement.execute("delete from " + schemaPrefix + "ar_payment_token where id in (select id from " + schemaPrefix + "mview_gdpr_payment_token)");
