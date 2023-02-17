@@ -211,12 +211,7 @@ public class CustomerApi extends AccountEntityApi {
         
         customerService.create(customer);
         
-		if (postData.getCustomerChildsCodes() != null) {
-			customer.getCustomerChilds().forEach(customerChild -> {
-				customerChild.setParentCustomer(customer);
-				customerService.update(customerChild);
-			});
-		}
+        updateCustomerChilds(postData, customer);
         
         customer.getAddressbook().setCustomer(customer);
         addressBookService.update(customer.getAddressbook());
@@ -254,12 +249,7 @@ public class CustomerApi extends AccountEntityApi {
         
         customer = customerService.update(customer);
         
-		if (postData.getCustomerChildsCodes() != null) {
-			for (Customer customerChild : customer.getCustomerChilds()) {
-				customerChild.setParentCustomer(customer);
-				customerService.update(customerChild);
-			}
-		}
+        updateCustomerChilds(postData, customer);
 
         return customer;
     }
@@ -376,6 +366,15 @@ public class CustomerApi extends AccountEntityApi {
         	});
         }
     }
+    
+	private void updateCustomerChilds(CustomerDto postData, Customer customer) {
+		if (postData.getCustomerChildsCodes() != null) {
+			customer.getCustomerChilds().forEach(customerChild -> {
+				customerChild.setParentCustomer(customer);
+				customerService.update(customerChild);
+			});
+		}
+	}
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = Customer.class))
     public CustomerDto find(String customerCode) throws MeveoApiException {
