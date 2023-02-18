@@ -135,8 +135,11 @@ public class DunningSettingsApiService implements ApiService<DunningSettings> {
 		dunningSettingsUpdate.setMaxDaysOutstanding(dunningSettings.getMaxDaysOutstanding());
 		dunningSettingsUpdate.setMaxDunningLevels(dunningSettings.getMaxDunningLevels());
 		
-		List<DunningCollectionPlan> dunningCollectionPlans = dunningCollectionPlanService.getActiveOrPausedDunningCollectionPlan(dunningSettingsUpdate.getId());
-		if(dunningCollectionPlans != null && dunningCollectionPlans.size() > 0) {
+		List<DunningCollectionPlan> activeDunningCollectionPlans = dunningCollectionPlanService.getActiveDunningCollectionPlan(dunningSettingsUpdate.getId());
+		List<DunningCollectionPlan> pausedDunningCollectionPlans = dunningCollectionPlanService.getPausedDunningCollectionPlan(dunningSettingsUpdate.getId());
+		
+		//Check if active and paused dunning collection are not empty
+		if((activeDunningCollectionPlans != null && activeDunningCollectionPlans.size() > 0) || (pausedDunningCollectionPlans != null && pausedDunningCollectionPlans.size() > 0)) {
 			throw new ForbiddenException(ACTIVE_OR_PAUSED_DUNNING_COLLECTION_PLAN_FOUND);
 		}
 		

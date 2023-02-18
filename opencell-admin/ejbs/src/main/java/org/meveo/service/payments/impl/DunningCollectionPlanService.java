@@ -445,9 +445,21 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
      * @param id DunningSettings id
      * @return A list of {@link DunningCollectionPlan}
      */
-    public List<DunningCollectionPlan> getActiveOrPausedDunningCollectionPlan(Long id){
+    public List<DunningCollectionPlan> getActiveDunningCollectionPlan(Long id){
     	return getEntityManager()
-                .createNamedQuery("DunningCollectionPlan.findActiveOrPaused", DunningCollectionPlan.class)
+                .createNamedQuery("DunningCollectionPlan.findActive", DunningCollectionPlan.class)
+                .setParameter("id", id)
+                .getResultList();
+    }
+    
+    /**
+     * Get Active or Paused DunningCollectionPlan by Dunning Settings id
+     * @param id DunningSettings id
+     * @return A list of {@link DunningCollectionPlan}
+     */
+    public List<DunningCollectionPlan> getPausedDunningCollectionPlan(Long id){
+    	return getEntityManager()
+                .createNamedQuery("DunningCollectionPlan.findPaused", DunningCollectionPlan.class)
                 .setParameter("id", id)
                 .getResultList();
     }
