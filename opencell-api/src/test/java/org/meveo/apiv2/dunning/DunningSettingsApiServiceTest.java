@@ -84,7 +84,7 @@ public class DunningSettingsApiServiceTest {
     	when(dunningSettingsService.findById(anyLong())).thenReturn(dunningSettings);
     	var updateDunning = new org.meveo.model.dunning.DunningSettings(DunningModeEnum.INVOICE_LEVEL, 20, 18, false, BigDecimal.ONE, false, true, null);
     	when(dunningSettingsService.update(any())).thenReturn(updateDunning);
-    	when(dunningCollectionPlanService.getActiveOrPausedDunningCollectionPlan(any())).thenReturn(new ArrayList<>());
+    	when(dunningCollectionPlanService.getActiveDunningCollectionPlan(any())).thenReturn(new ArrayList<>());
     	when(customerBalanceService.getDefaultOne()).thenReturn(customerBalance);
     	
     	dunningSettingsApiService.update(1L, dunningSettings);
