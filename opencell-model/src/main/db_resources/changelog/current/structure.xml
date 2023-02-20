@@ -15831,5 +15831,20 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedColumnNames="id"/>
     </changeSet>
     
+    <changeSet id="#INTRD-13604_20230206" author="AdilElJaouhari">
+    	<dropNotNullConstraint columnName="created" tableName="billing_invoice_validation_rule"/>
+    	<dropNotNullConstraint columnName="fail_status" tableName="billing_invoice_validation_rule"/>
+        <addColumn tableName="billing_invoice_validation_rule">
+            <column name="operator" type="varchar(10)" defaultValue="OR" />
+        </addColumn>
+        <addColumn tableName="billing_invoice_validation_rule">
+            <column name="parent_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="billing_invoice_validation_rule" baseColumnNames="parent_id"
+                                 constraintName="fk_invoice_validation_rule_parent_id"
+                                 referencedTableName="billing_invoice_validation_rule"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    
 
 </databaseChangeLog>
