@@ -14919,7 +14919,6 @@ public class CdrFlatFileImportScript extends Script {
 			INSERT INTO ${db.schema.adapted}untdid_1001_invoice_code_type(id,version,created,updated,creator,updater,code,en16931_interpretation,name) VALUES (42, 0, now(), NULL, 'opencell.admin', NULL, '780', 'Invoice', 'Freight invoice');
 			INSERT INTO ${db.schema.adapted}untdid_1001_invoice_code_type(id,version,created,updated,creator,updater,code,en16931_interpretation,name) VALUES (43, 0, now(), NULL, 'opencell.admin', NULL, '935', 'Invoice', 'Customs invoice');
 			
-			INSERT INTO ${db.schema.adapted}untdid_2475_vat_payment_option(id,version,created,updated,creator,updater,code_2005,value_2005,code_2475,value_2475) VALUES (1, 0, now(), NULL, 'opencell.admin', NULL, '3', 'Invoice document issue date time', '5', 'Date of invoice');
 			INSERT INTO ${db.schema.adapted}untdid_2475_vat_payment_option(id,version,created,updated,creator,updater,code_2005,value_2005,code_2475,value_2475) VALUES (2, 0, now(), NULL, 'opencell.admin', NULL, '35', 'Delivery date/time, actual', '29', 'Date of delivery of goods to establishments/domicile/site');
 			INSERT INTO ${db.schema.adapted}untdid_2475_vat_payment_option(id,version,created,updated,creator,updater,code_2005,value_2005,code_2475,value_2475) VALUES (3, 0, now(), NULL, 'opencell.admin', NULL, '432', 'Paid to date', '72', 'Payment date');
 			
@@ -15307,7 +15306,6 @@ public class CdrFlatFileImportScript extends Script {
 			INSERT INTO ${db.schema.adapted}untdid_4451_invoice_subject_code(id,version,created,updated,creator,updater,code,code_name) VALUES (382, 0, now(), NULL, 'opencell.admin', NULL, 'WHI', 'Warehouse instruction/information');
 			INSERT INTO ${db.schema.adapted}untdid_4451_invoice_subject_code(id,version,created,updated,creator,updater,code,code_name) VALUES (383, 0, now(), NULL, 'opencell.admin', NULL, 'ZZZ', 'Mutually defined');
 			
-			INSERT INTO ${db.schema.adapted}untdid_5305_taxation_category(id,version,created,updated,creator,updater,code,semantic_model,name) VALUES (1, 0, now(), NULL, 'opencell.admin', NULL, 'S', 'Standard rate', 'Standard rate');
 			INSERT INTO ${db.schema.adapted}untdid_5305_taxation_category(id,version,created,updated,creator,updater,code,semantic_model,name) VALUES (2, 0, now(), NULL, 'opencell.admin', NULL, 'Z', 'Zero rated goods', 'Zero rated goods');
 			INSERT INTO ${db.schema.adapted}untdid_5305_taxation_category(id,version,created,updated,creator,updater,code,semantic_model,name) VALUES (3, 0, now(), NULL, 'opencell.admin', NULL, 'E', 'Exempt from tax', 'Exempt from tax');
 			INSERT INTO ${db.schema.adapted}untdid_5305_taxation_category(id,version,created,updated,creator,updater,code,semantic_model,name) VALUES (4, 0, now(), NULL, 'opencell.admin', NULL, 'AE', 'VAT reverse charge', 'VAT Reverse charge');
