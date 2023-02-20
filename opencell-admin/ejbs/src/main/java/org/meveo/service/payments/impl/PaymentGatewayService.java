@@ -134,16 +134,17 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
             }           
             String queryStr = "from " + PaymentGateway.class.getSimpleName()
                     + " where paymentMethodType =:paymenTypeValueIN and disabled=false and (country is null or country =:countryValueIN) and "
-                    + " (tradingCurrency is null or tradingCurrency =:tradingCurrencyValueIN)  and  (cardType is null or cardType =:cardTypeValueIN) and "
+                    + " (tradingCurrency is null or tradingCurrency.currency =:currencyValueIN)  and  (cardType is null or cardType =:cardTypeValueIN) and "
                     + " (seller is null or seller =:sellerIN) ";
             
             Query query = getEntityManager()
                 .createQuery(queryStr)
                 .setParameter("paymenTypeValueIN", paymentMethod == null ? paymentMethodType : paymentMethod.getPaymentType())
-                .setParameter("countryValueIN", customerAccount.getAddress() == null ? null : customerAccount.getAddress().getCountry())
-                .setParameter("tradingCurrencyValueIN", providerService.getProvider().getCurrency())
+                .setParameter("countryValueIN", customerAccount.getAddress() == null ? null : customerAccount.getAddress().getCountry())               
+                .setParameter("currencyValueIN", providerService.getProvider().getCurrency())
                 .setParameter("cardTypeValueIN", cardTypeToCheck)
                 .setParameter("sellerIN", seller);                    
+                                   
                  
             List<PaymentGateway> paymentGateways = (List<PaymentGateway>) query.getResultList();
             

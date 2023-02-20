@@ -1,5 +1,8 @@
 package org.meveo.apiv2.accounts.service;
 
+import static org.meveo.apiv2.accounts.ApplyOneShotChargeListModeEnum.PROCESS_ALL;
+import static org.meveo.apiv2.accounts.ApplyOneShotChargeListModeEnum.ROLLBACK_ON_ERROR;
+
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -13,6 +16,8 @@ import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
@@ -36,12 +41,12 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.apiv2.accounts.AppliedChargeResponseDto;
 import org.meveo.apiv2.accounts.AppliedChargeResponseDto.CdrError;
 import org.meveo.apiv2.accounts.ApplyOneShotChargeListInput;
+import org.meveo.apiv2.accounts.ApplyOneShotChargeListModeEnum;
 import org.meveo.apiv2.accounts.ConsumerInput;
 import org.meveo.apiv2.accounts.CounterInstanceDto;
 import org.meveo.apiv2.accounts.OpenTransactionsActionEnum;
 import org.meveo.apiv2.accounts.ParentInput;
 import org.meveo.apiv2.accounts.ProcessApplyChargeListResult;
-import org.meveo.apiv2.billing.ProcessCdrListModeEnum;
 import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.MethodCallingUtils;
@@ -529,9 +534,9 @@ public class AccountsManagementApiService {
 
 		SynchronizedIterator<ApplyOneShotChargeInstanceRequestDto> syncCharges = new SynchronizedIterator<>(postData.getChargesToApply());
 		
-		ProcessApplyChargeListResult result = new ProcessApplyChargeListResult(ProcessCdrListModeEnum.PROCESS_ALL, syncCharges.getSize());
+		ProcessApplyChargeListResult result = new ProcessApplyChargeListResult(postData.getMode(), syncCharges.getSize());
 		
-		int nbThreads = Runtime.getRuntime().availableProcessors();
+		int nbThreads = (postData.getMode() == PROCESS_ALL) ? Runtime.getRuntime().availableProcessors() : 1;
         if (nbThreads > postData.getChargesToApply().size()) {
             nbThreads = postData.getChargesToApply().size();
         }
@@ -540,9 +545,10 @@ public class AccountsManagementApiService {
         List<Future<?>> futures = new ArrayList<>();
 		
         for (int k = 0; k < nbThreads; k++) {
-        	tasks.add(() -> {
-        		this.thisNewTX.applyOneShotChargeInstance(syncCharges, result, postData.isGenerateRTs(), postData.isReturnWalletOperations(), postData.isReturnWalletOperationDetails(), postData.isVirtual());
-        	});
+        	tasks.add(() ->
+        		this.thisNewTX.applyOneShotChargeInstance(syncCharges, result, postData.isGenerateRTs(), postData.isReturnWalletOperations(),
+                        postData.isReturnWalletOperationDetails(), postData.isVirtual())
+        	);
 		}
         
         for (Runnable task : tasks) {
@@ -558,15 +564,38 @@ public class AccountsManagementApiService {
             } catch (ExecutionException e) {
                 log.error("Failed to execute Mediation API async method", e);
             }
-        }
-		
+		}
+
+		// Summary
+		AtomicReference<BigDecimal> amountWithTax = new AtomicReference<>(BigDecimal.ZERO);
+		AtomicReference<BigDecimal> amountWithoutTax = new AtomicReference<>(BigDecimal.ZERO);
+		AtomicReference<BigDecimal> amountTax = new AtomicReference<>(BigDecimal.ZERO);
+		AtomicInteger walletOperationCount = new AtomicInteger(0);
+		Arrays.stream(result.getAppliedCharges()).forEach(charge -> {
+			if (charge != null) {
+				amountWithTax.accumulateAndGet(Optional.ofNullable(charge.getAmountWithTax()).orElse(BigDecimal.ZERO), BigDecimal::add);
+				amountWithoutTax.accumulateAndGet(Optional.ofNullable(charge.getAmountWithoutTax()).orElse(BigDecimal.ZERO), BigDecimal::add);
+				amountTax.accumulateAndGet(Optional.ofNullable(charge.getAmountTax()).orElse(BigDecimal.ZERO), BigDecimal::add);
+
+				walletOperationCount.addAndGet(Optional.ofNullable(charge.getWalletOperationCount()).orElse(0));
+			} else {
+				log.warn("cdrProcessingResult amouts and WOCount will have default 0 value, due to charge null");
+			}
+		});
+
+		result.setAmountWithTax(amountWithTax.get());
+		result.setAmountWithoutTax(amountWithoutTax.get());
+		result.setAmountTax(amountTax.get());
+		result.setWalletOperationCount(walletOperationCount.get());
+
 		return result;
 	}
 
 	@JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void applyOneShotChargeInstance(SynchronizedIterator<ApplyOneShotChargeInstanceRequestDto> syncCharges, ProcessApplyChargeListResult result, boolean generateRTs, boolean returnWalletOperations, boolean returnWalletOperationDetails,
-			boolean isVirtual) {
+	public void applyOneShotChargeInstance(SynchronizedIterator<ApplyOneShotChargeInstanceRequestDto> syncCharges, ProcessApplyChargeListResult result,
+                                           boolean generateRTs, boolean returnWalletOperations, boolean returnWalletOperationDetails,
+                                           boolean isVirtual) {
 		
 		while(true) {
 			SynchronizedIterator<ApplyOneShotChargeInstanceRequestDto>.NextItem<ApplyOneShotChargeInstanceRequestDto> nextWPosition = syncCharges.nextWPosition();
@@ -580,17 +609,32 @@ public class AccountsManagementApiService {
 			
 			try {
 				log.info("applyOneShotChargeInstance #{}", chargePosition);
-				AppliedChargeResponseDto oshoDto = methodCallingUtils.callCallableInNewTx(() -> {
+				AppliedChargeResponseDto oshoDto;
+				if (result.getMode() == ROLLBACK_ON_ERROR) {
 					OneShotChargeInstance osho = subscriptionApi.applyOneShotChargeInstance(chargeToApply, isVirtual);
-					return createAppliedChargeResponseDto(osho, returnWalletOperations, returnWalletOperationDetails);
-				});
+					oshoDto = createAppliedChargeResponseDto(osho, returnWalletOperations, returnWalletOperationDetails);
+				} else {
+					oshoDto = methodCallingUtils.callCallableInNewTx(() -> {
+						OneShotChargeInstance osho = subscriptionApi.applyOneShotChargeInstance(chargeToApply, isVirtual);
+						return createAppliedChargeResponseDto(osho, returnWalletOperations, returnWalletOperationDetails);
+					});
+				}
 					
 				result.addAppliedCharge(chargePosition, oshoDto);
 				result.getStatistics().addSuccess();
 			} catch (Exception e) {
-				log.error("Error" , e);
+				log.error("Error when applying OSO at position #["+chargePosition+"]" , e);
 				result.getStatistics().addFail();
 				result.addAppliedCharge(chargePosition, createAppliedChargeResponseErrorDto(e.getMessage()));
+				if(result.getMode() == PROCESS_ALL) {
+					continue;
+				} else if (result.getMode() == ApplyOneShotChargeListModeEnum.STOP_ON_FIRST_FAIL) {
+					result.setAppliedCharges(Arrays.copyOf(result.getAppliedCharges(), chargePosition + 1));
+					break;
+				} else {
+					result.setAppliedCharges(new AppliedChargeResponseDto[] {createAppliedChargeResponseErrorDto(e.getMessage())});
+					throw new BusinessApiException(e);
+				}
 			}
 		}
 		
@@ -603,10 +647,9 @@ public class AccountsManagementApiService {
 		BigDecimal amountWithTax = BigDecimal.ZERO;
 		BigDecimal amountWithoutTax = BigDecimal.ZERO;
 		BigDecimal amountTax = BigDecimal.ZERO;
-		AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(osho);
 		for (WalletOperation wo : osho.getWalletOperations()) {
 			if(returnWallerOperationDetails) {
-				lDto.getWalletOperations().add(new WalletOperationDto(wo, accountingArticle));
+				lDto.getWalletOperations().add(new WalletOperationDto(wo, wo.getAccountingArticle()));
 			} else if(returnWalletOperation) {
 				WalletOperationDto woDto = new WalletOperationDto();
 				woDto.setId(wo.getId());

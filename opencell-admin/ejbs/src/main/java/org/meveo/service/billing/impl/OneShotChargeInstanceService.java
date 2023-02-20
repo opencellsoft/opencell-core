@@ -53,6 +53,7 @@ import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 
@@ -246,7 +247,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
             }
         }
 
-        if (chargeDate.before(subscription.getSubscriptionDate())) {
+        if (DateUtils.setTimeToZero(chargeDate).before(DateUtils.setTimeToZero(subscription.getSubscriptionDate()))) {
             throw new ValidationException("Operation date is before subscription date for subscription: " + subscription.getCode());
         }
 
@@ -302,14 +303,29 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
             }
         }
 
-        create(oneShotChargeInstance);
+        if(!isVirtual) {
+            // OSO EPIC : if SI doesn't have id, that means that it is a Virtual one : we clear it to avoid cascade persist
+            if (oneShotChargeInstance.getServiceInstance().getId() == null) {
+                oneShotChargeInstance.setServiceInstance(null);
+            }
+        	create(oneShotChargeInstance);
+        }
 
         if (chargeMode == null) {
             chargeMode = ChargeApplicationModeEnum.SUBSCRIPTION;
         }
 
         if (applyCharge) {
+            if (!isVirtual) {
+                // OSO EPIC : set "Virtual" ServiceInstance to charge instance, to perform rating
+                oneShotChargeInstance.setServiceInstance(serviceInstance);
+            }
             oneShotRatingService.rateOneShotCharge(oneShotChargeInstance, quantity, null, chargeDate, orderNumberOverride, chargeMode, isVirtual, false);
+
+            if (!isVirtual) {
+                // OSO EPIC : for save oneShotCharge for Order, set serviceInstance to null to avoid creating Virtual ServiceInstance (used only for rating)
+                oneShotChargeInstance.setServiceInstance(null);
+            }
         }
         return oneShotChargeInstance;
     }
@@ -317,7 +333,6 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
     /**
      * Apply/rate one shot charge to a user account.
      * 
-     * @param subscription subscription
      * @param oneShotChargeInstance Recurring charge instance
      * @param quantity Quantity as calculated
      * @param effectiveDate Recurring charge application start
@@ -341,7 +356,6 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
     /**
      * Apply one shot charge to a user account for a Virtual operation. Does not create/update/persist any entity.
      * 
-     * @param subscription subscription
      * @param oneShotChargeInstance Recurring charge instance
      * @param quantity Quantity as calculated
      * @param effectiveDate Recurring charge application start

@@ -592,7 +592,6 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     @Column(name = "discounted_wallet_operation_id")
     private Long discountedWalletOperation;
     
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discount_plan_id")
     private DiscountPlan discountPlan;
@@ -636,6 +635,9 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contract_id")
     private Contract contract;
+    
+    @Transient
+    private WalletOperation discountedWO;
     
     /**
      * Constructor
@@ -1706,5 +1708,15 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 	public void setContract(Contract contract) {
 		this.contract = contract;
 	}
+
+	public WalletOperation getDiscountedWO() {
+		return discountedWO;
+	}
+
+	public void setDiscountedWO(WalletOperation discountedWO) {
+		this.discountedWO = discountedWO;
+	}
+	
+	
 
 }

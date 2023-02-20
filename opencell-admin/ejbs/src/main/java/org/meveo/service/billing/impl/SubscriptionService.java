@@ -45,6 +45,7 @@ import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
@@ -518,7 +519,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     public RatingResult activateInstantiatedService(Subscription sub) throws BusinessException {
         // using a new ArrayList (cloning the original one) to avoid ConcurrentModificationException
     	RatingResult ratingResult = new RatingResult();
-    	Set<DiscountPlanItem> fixedDiscountItems = new HashSet<DiscountPlanItem>();
+    	Set<DiscountPlanItem> fixedDiscountItems = new HashSet<>();
         for (ServiceInstance si : new ArrayList<>(emptyIfNull(sub.getServiceInstances()))) {
             if (si.getStatus().equals(InstanceStatusEnum.INACTIVE)) {
             	ratingResult = serviceInstanceService.serviceActivation(si);
@@ -836,10 +837,14 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Subscription> findSubscriptions(BillingCycle billingCycle, Date startdate, Date endDate) {
+    public List<Subscription> findSubscriptions(BillingCycle billingCycle) {
         try {
             QueryBuilder qb = new QueryBuilder(Subscription.class, "s", null);
-            qb.addCriterionEntity("s.billingCycle.id", billingCycle.getId());
+            if(billingCycle.getFilters() != null && !billingCycle.getFilters().isEmpty()) {
+                qb.addPaginationConfiguration(new PaginationConfiguration(billingCycle.getFilters()));
+            } else {
+                qb.addCriterionEntity("s.billingCycle.id", billingCycle.getId());
+            }
             qb.addOrderCriterionAsIs("id", true);
 
             return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();

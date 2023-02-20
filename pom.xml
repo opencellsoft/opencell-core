@@ -25,7 +25,7 @@
         <version.ingenico-connect-sdk>6.31.0</version.ingenico-connect-sdk>
         <version.worldline.onlinepayments-sdk>3.5.0</version.worldline.onlinepayments-sdk>
         <version.paypal-sdk>1.14.0</version.paypal-sdk>
-        <version.keycloak>20.0.2</version.keycloak>
+		<version.keycloak>20.0.3</version.keycloak>
         <version.pdfbox>2.0.27</version.pdfbox>
         <version.barcode>2.1</version.barcode>
         <version.stripe-sdk>22.4.0</version.stripe-sdk>
@@ -267,14 +267,14 @@
             <dependency>
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
-                <version>2.8.9</version>
-                <scope>provided</scope>
+                <version>2.10</version>
+                <scope>compile</scope>
             </dependency>
 
             <dependency>
                 <groupId>commons-net</groupId>
                 <artifactId>commons-net</artifactId>
-                <version>3.8.0</version>
+				<version>3.9.0</version>
             </dependency>
 
             <dependency>
@@ -286,7 +286,7 @@
             <dependency>
                 <groupId>com.thoughtworks.xstream</groupId>
                 <artifactId>xstream</artifactId>
-                <version>1.4.19</version>
+				<version>1.4.20</version>
             </dependency>
 
             <dependency>
@@ -447,6 +447,37 @@
             </dependency>
 
             <dependency>
+				<groupId>com.fasterxml.jackson.dataformat</groupId>
+				<artifactId>jackson-dataformat-xml</artifactId>
+				<version>2.14.2</version>
+			</dependency>
+
+			<dependency>
+				<groupId>software.amazon.awssdk</groupId>
+				<artifactId>s3</artifactId>
+				<version>2.19.31</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.ant</groupId>
+				<artifactId>ant</artifactId>
+				<version>1.10.13</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.esotericsoftware.yamlbeans</groupId>
+				<artifactId>yamlbeans</artifactId>
+				<version>1.15</version>
+			</dependency>
+
+
+			<dependency>
+				<groupId>com.opencsv</groupId>
+				<artifactId>opencsv</artifactId>
+				<version>5.7.1</version>
+			</dependency>
+
+			<dependency>
                 <groupId>com.fasterxml</groupId>
                 <artifactId>classmate</artifactId>
                 <scope>provided</scope>
@@ -637,6 +668,12 @@
             </dependency>
 
             <dependency>
+				<groupId>org.springframework.plugin</groupId>
+				<artifactId>spring-plugin-core</artifactId>
+				<version>3.0.0</version>
+			</dependency>
+
+			<dependency>
                 <groupId>org.immutables</groupId>
                 <artifactId>value</artifactId>
                 <version>2.9.2</version>
