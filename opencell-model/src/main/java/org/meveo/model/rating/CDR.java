@@ -737,4 +737,35 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
     public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
         this.cfAccumulatedValues = cfAccumulatedValues;
     }
+
+    /**
+     * Copy parsed values from another CDR
+     * @param otherCDR OtherCDR to copy values from
+     */
+    public void fillFrom(CDR otherCDR) {
+        this.accessCode = otherCDR.getAccessCode();
+        this.cfValues = otherCDR.getCfValues();
+        this.dateParam1 = otherCDR.getDateParam1();
+        this.dateParam2 = otherCDR.getDateParam2();
+        this.dateParam3 = otherCDR.getDateParam3();
+        this.dateParam4 = otherCDR.getDateParam4();
+        this.dateParam5 = otherCDR.getDateParam5();
+        this.decimalParam1 = otherCDR.getDecimalParam1();
+        this.decimalParam2 = otherCDR.getDecimalParam2();
+        this.decimalParam3 = otherCDR.getDecimalParam3();
+        this.decimalParam4 = otherCDR.getDecimalParam4();
+        this.decimalParam5 = otherCDR.getDecimalParam5();
+        this.eventDate = otherCDR.getEventDate();
+        this.extraParam = otherCDR.getExtraParam();
+        this.parameter1 = otherCDR.getParameter1();
+        this.parameter2 = otherCDR.getParameter2();
+        this.parameter3 = otherCDR.getParameter3();
+        this.parameter4 = otherCDR.getParameter4();
+        this.parameter5 = otherCDR.getParameter5();
+        this.parameter6 = otherCDR.getParameter6();
+        this.parameter7 = otherCDR.getParameter7();
+        this.parameter8 = otherCDR.getParameter8();
+        this.parameter9 = otherCDR.getParameter9();
+        this.quantity = otherCDR.getQuantity();
+    }
 }
