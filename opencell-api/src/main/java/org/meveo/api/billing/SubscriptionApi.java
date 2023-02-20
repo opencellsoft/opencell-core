@@ -637,6 +637,11 @@ public class SubscriptionApi extends BaseApi {
         // instantiate the discounts
         if (postData.getDiscountPlansForInstantiation() != null) {
             for (DiscountPlanDto discountPlanDto : postData.getDiscountPlansForInstantiation()) {
+
+                DiscountPlanInstance discountPlanInstance = discountPlanInstanceService.findBySubscriptionAndCode(subscription, discountPlanDto.getCode());
+                if(discountPlanInstance != null) {
+                    continue;
+                }
                 DiscountPlan dp = discountPlanService.findByCode(discountPlanDto.getCode());
                 if (dp == null) {
                     throw new EntityDoesNotExistsException(DiscountPlan.class, discountPlanDto.getCode());
@@ -2170,6 +2175,11 @@ public class SubscriptionApi extends BaseApi {
             // instantiate the discounts
             if (serviceToUpdateDto.getDiscountPlansForInstantiation() != null) {
                 for (DiscountPlanDto discountPlanDto : serviceToUpdateDto.getDiscountPlansForInstantiation()) {
+
+                    DiscountPlanInstance discountPlanInstance = discountPlanInstanceService.findBySubscriptionAndCode(subscription, discountPlanDto.getCode());
+                    if(discountPlanInstance != null) {
+                        continue;
+                    }
                     DiscountPlan dp = discountPlanService.findByCode(discountPlanDto.getCode());
                     if (dp == null) {
                         throw new EntityDoesNotExistsException(DiscountPlan.class, discountPlanDto.getCode());
@@ -2951,11 +2961,6 @@ public class SubscriptionApi extends BaseApi {
         // instantiate the discounts
         if (postData.getDiscountPlansForInstantiation() != null) {
             for (DiscountPlanDto discountPlanDto : postData.getDiscountPlansForInstantiation()) {
-                
-                DiscountPlanInstance discountPlanInstance = discountPlanInstanceService.findBySubscriptionAndCode(subscription, discountPlanDto.getCode());
-                if(discountPlanInstance != null) {
-                    continue;
-                }
                 DiscountPlan dp = discountPlanService.findByCode(discountPlanDto.getCode());
                 if (dp == null) {
                     throw new EntityDoesNotExistsException(DiscountPlan.class, discountPlanDto.getCode());
