@@ -19458,8 +19458,191 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         </insert>
     </changeSet>
     
+    <changeSet id="#INTRD-13074_20230214" author="zelmeliani">
+    	<insert tableName="ar_customer_balance">
+    		<column name="id" value="-1"/>
+		    <column name="version" value="0" />
+		    <column name="created" valueDate="${db.current.time}" />
+		    <column name="creator" value="applicationInitializer" />
+		    <column name="code" value="default_customer_balance" />
+		    <column name="description" value="Default Customer Balance" />
+		    <column name="default_balance" value="1" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'INV_ADV')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REF_CASH')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PPL_INSTALLMENT')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PPL_CREATION')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_WIRE')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_CASH')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_BATCH')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_STP')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_PAL')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'CRD_TRS')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'DBT_TRS')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_CRD')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'EXP_WRT')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REF_TIP')" /> 
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'INV_CRN')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'INV_DIS')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'INV_REB')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REJ_RDD')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REJ_RCR')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REJ_CRD')" /> 
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'TAX_VAT_10')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'TAX_VAT_20')" /> 
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'TAX_VAT_05')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'TAX_VAT_00')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REF_CRD')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'ADJ_INV')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'ADJ_REF')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'INV_STD')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'INV_FEE')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_DEP')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'RND_INC')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'RND_EXP')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REF_DDT')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REF_CHK')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_REC')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_NID')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REJ_TIP')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REJ_DDT')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REJ_CHK')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_DDT')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_TIP')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_CHK')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+		<insert tableName="ar_customer_balance_templates">
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_SD')" />
+		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
+		</insert>
+    </changeSet>
+
     <changeSet id="#INTRD-13957_20230213" author="houdad">
-    	 
         <sql>
         DELETE FROM public.CAT_UNIT_OF_MEASURE;
         INSERT INTO ${db.schema.adapted}CAT_UNIT_OF_MEASURE (id,version,creator,updater,code,created,updated,symbol,description,description_i18n,multiplicator,parent_id) VALUES (-1, 0, 'opencell.admin', NULL, '10', now(), NULL, 'group', 'group', NULL, 1, NULL);
