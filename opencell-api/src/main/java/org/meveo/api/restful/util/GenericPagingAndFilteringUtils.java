@@ -21,6 +21,8 @@ import java.util.*;
 public class GenericPagingAndFilteringUtils {
 
     private static final String LIMIT = "limit";
+
+    private static final int API_LIST_MAX_LIMIT = 1000;
     private static final String OFFSET = "offset";
     private static final String SORT = "sort";
     private static final String FIELDS = "fields";
@@ -76,7 +78,7 @@ public class GenericPagingAndFilteringUtils {
 
         pagingAndFiltering = new PagingAndFiltering();
 
-        pagingAndFiltering.setLimit( pagingAndFilteringRest.getLimit() );
+        pagingAndFiltering.setLimit(pagingAndFilteringRest.getLimit() > API_LIST_MAX_LIMIT ? API_LIST_MAX_LIMIT : pagingAndFilteringRest.getLimit());
         pagingAndFiltering.setOffset( pagingAndFilteringRest.getOffset() );
 
         String allSortFieldsAndOrders = pagingAndFilteringRest.getSort();
