@@ -269,7 +269,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         }
         else {
             return priceLines.stream()
-                    .filter(line -> line.match(attributeValues))
+            		.filter(line -> !line.getPricePlanMatrixValues().isEmpty() && line.match(attributeValues))
                     .sorted(Comparator.comparing(PricePlanMatrixLine::getPriority))
                     .collect(Collectors.toList());
         }
