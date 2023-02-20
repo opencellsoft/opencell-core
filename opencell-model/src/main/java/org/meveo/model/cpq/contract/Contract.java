@@ -58,7 +58,7 @@ import org.meveo.model.payments.CustomerAccount;
 public class Contract extends EnableBusinessCFEntity {
 
 	public Contract() {
-		this.status = ContractStatusEnum.DRAFT;
+		this.status = ContractStatusEnum.DRAFT.toString();
 		this.statusDate = Calendar.getInstance().getTime();
 	}
 
@@ -99,9 +99,8 @@ public class Contract extends EnableBusinessCFEntity {
 	 * status of this contract
 	 */
 	@Column(name = "status", nullable = false)
-	@Enumerated(EnumType.STRING)
 	@NotNull
-	private ContractStatusEnum status;
+	private String status = ContractStatusEnum.DRAFT.toString();
 	
 	/**
 	 * date of the modification of the status
@@ -218,11 +217,11 @@ public class Contract extends EnableBusinessCFEntity {
 	}
 
  
-	public ContractStatusEnum getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(ContractStatusEnum status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 
