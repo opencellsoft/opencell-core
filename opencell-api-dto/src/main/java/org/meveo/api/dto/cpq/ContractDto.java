@@ -27,7 +27,7 @@ public class ContractDto extends BusinessEntityDto {
 	@Schema(description = "account code associated to contract depending the value of  contractAccountLevel")
 	private String accountCode;
 	@Schema(description = "status of the contract" ,example="possible value are : DRAFT, ACTIVE, CLOSED" )
-	private ContractStatusEnum status;
+	private String status;
 	@Schema(description = "date of the changement of the status, it set automatically")
 	private Date statusDate;
 
@@ -82,11 +82,11 @@ public class ContractDto extends BusinessEntityDto {
 	}
 	
 	 
-	public ContractStatusEnum getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(ContractStatusEnum status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 

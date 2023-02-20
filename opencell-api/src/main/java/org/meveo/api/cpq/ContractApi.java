@@ -188,7 +188,7 @@ public class ContractApi extends BaseApi{
 		if(contract == null)
 			throw new EntityDoesNotExistsException(Contract.class, dto.getCode());
 		//check the status of the contract
-		if(!ContractStatusEnum.DRAFT.equals(contract.getStatus())) {
+		if(!ContractStatusEnum.DRAFT.toString().equals(contract.getStatus())) {
 			throw new MeveoApiException(CONTRACt_STAT_DIFF_TO_DRAFT);
 		}else {
 			contract.setStatus(dto.getStatus());
@@ -267,9 +267,13 @@ public class ContractApi extends BaseApi{
 													
 	}
 
-	public void updateStatus(String contractCode, ContractStatusEnum contractStatus){
+	public void updateStatus(String contractCode, String contractStatus){
 		try {
 			Contract contract = loadEntityByCode(contractService, contractCode, Contract.class);
+			List<String> allStatus = allStatus(ContractStatusEnum.class, "contract.status", "");
+			if(!allStatus.contains(contractStatus.toLowerCase())) {
+				throw new MeveoApiException("Status is invalid, here is the list of available status : " + allStatus);
+			}
 			contractService.updateStatus(contract, contractStatus);
 		} catch (Exception e){
 			log.error(e.getMessage(),e);
