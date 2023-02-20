@@ -40,6 +40,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Stateless
 public class GenericApiLoadService {
+
+    private static final int API_LIST_MAX_LIMIT = 1000;
+
     @Inject
     GenericOpencellRestful genericOpencellRestful;
 
@@ -66,7 +69,7 @@ public class GenericApiLoadService {
                     .collect(toList());
             Map<String, Object> results = new LinkedHashMap<>();
             results.put("total", list.size());
-            results.put("limit", Long.valueOf(searchConfig.getNumberOfRows()));
+            results.put("limit", Long.valueOf(searchConfig.getNumberOfRows()) <= API_LIST_MAX_LIMIT ? Long.valueOf(searchConfig.getNumberOfRows()) : API_LIST_MAX_LIMIT);
             results.put("offset", Long.valueOf(searchConfig.getFirstRow()));
             results.put("data", mapResult);
 
@@ -84,7 +87,7 @@ public class GenericApiLoadService {
             .collect(toList());
             Map<String, Object> results = new LinkedHashMap<String, Object>();
             results.put("total", searchResult.getCount());
-            results.put("limit", Long.valueOf(searchConfig.getNumberOfRows()));
+            results.put("limit", Long.valueOf(searchConfig.getNumberOfRows()) <= API_LIST_MAX_LIMIT ? Long.valueOf(searchConfig.getNumberOfRows()) : API_LIST_MAX_LIMIT);
             results.put("offset", Long.valueOf(searchConfig.getFirstRow()));
             results.put("data", mapResult);
             return serializeResults(results);
@@ -92,7 +95,7 @@ public class GenericApiLoadService {
             SearchResult searchResult = persistenceDelegate.list(entityClass, searchConfig);
             ImmutableGenericPaginatedResource genericPaginatedResource = ImmutableGenericPaginatedResource.builder()
                     .data(searchResult.getEntityList())
-                    .limit(Long.valueOf(searchConfig.getNumberOfRows()))
+                    .limit(Long.valueOf(searchConfig.getNumberOfRows()) <= API_LIST_MAX_LIMIT ? Long.valueOf(searchConfig.getNumberOfRows()) : API_LIST_MAX_LIMIT)
                     .offset(Long.valueOf(searchConfig.getFirstRow()))
                     .total(searchResult.getCount())
                     .filters(searchConfig.getFilters())
