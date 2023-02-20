@@ -31,6 +31,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -105,6 +106,8 @@ import org.meveo.service.tax.TaxCategoryService;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * @author Edward P. Legaspi
@@ -205,8 +208,11 @@ public class CustomerApi extends AccountEntityApi {
         if (StringUtils.isBlank(postData.getCode())) {
             customer.setCode(customGenericEntityCodeService.getGenericEntityCode(customer));
         }
-
+        
         customerService.create(customer);
+        
+        updateCustomerChilds(postData, customer);
+        
         customer.getAddressbook().setCustomer(customer);
         addressBookService.update(customer.getAddressbook());
 
@@ -240,8 +246,10 @@ public class CustomerApi extends AccountEntityApi {
         }
 
         dtoToEntity(customer, postData, checkCustomFields, businessAccountModel, null);
-
+        
         customer = customerService.update(customer);
+        
+        updateCustomerChilds(postData, customer);
 
         return customer;
     }
@@ -335,11 +343,38 @@ public class CustomerApi extends AccountEntityApi {
             customer.setAdditionalDetails(additionalDetails);
         }
 
-        if(postData.getIsCompany() != null)
-        {
+        if(postData.getIsCompany() != null) {
             customer.setIsCompany(postData.getIsCompany());
         }
+        
+        if (postData.getParentCustomerCode() != null) {
+			customer.setParentCustomer(ofNullable(customerService.findByCode(postData.getParentCustomerCode()))
+					.orElseThrow(() -> new BusinessException("No customer parent found with the given code : " + postData.getParentCustomerCode())));
+			if(!canBeLinked(customer.getParentCustomer(), customer)) {
+                throw new BusinessException(String.format("A customer’s ascendant cannot be one of its descendants. Customer %s is [child OR descendant] of %s", 
+                		customer.getParentCustomer().getCode(), customer.getCode()));
+			}
+        }
+        
+        if (postData.getCustomerChildsCodes() != null) {
+        	customer.setCustomerChilds(postData.getCustomerChildsCodes().stream().map(code -> ofNullable(customerService.findByCode(code))
+					.orElseThrow(() -> new BusinessException("No customer child found with the given code : " + code))).collect(Collectors.toList()));
+        	
+        	customer.getCustomerChilds().stream().filter(child -> !canBeLinked(customer, child)).findAny().ifPresent(child -> {
+                throw new BusinessException(String.format("A customer’s ascendant cannot be one of its descendants. Customer %s is [child OR descendant] of %s", 
+                		customer.getCode(), child.getCode()));
+        	});
+        }
     }
+    
+	private void updateCustomerChilds(CustomerDto postData, Customer customer) {
+		if (postData.getCustomerChildsCodes() != null) {
+			customer.getCustomerChilds().forEach(customerChild -> {
+				customerChild.setParentCustomer(customer);
+				customerService.update(customerChild);
+			});
+		}
+	}
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = Customer.class))
     public CustomerDto find(String customerCode) throws MeveoApiException {
@@ -928,4 +963,15 @@ public class CustomerApi extends AccountEntityApi {
 
         return new ArrayList<>(customerService.filterCountersByPeriod(customer.getCounters(), date).values());
     }
+    
+	private boolean canBeLinked(Customer parent, Customer child) {
+		Customer grandParent = parent.getParentCustomer();
+		if (grandParent == null) {
+			return true;
+		}
+		if (grandParent == child) {
+			return false;
+		}
+		return canBeLinked(grandParent, child);
+	}
 }

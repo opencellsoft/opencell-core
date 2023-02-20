@@ -25,6 +25,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.GDPRInfoDto;
@@ -107,6 +108,15 @@ public class CustomerDto extends AccountDto {
     /** information GDPR **/
     @Schema(description = "information GDPR")
     private List<GDPRInfoDto> infoGdpr;
+    
+    /** the code of customer parent **/
+    @Schema(description = "the code of customer parent")
+    private String parentCustomerCode;
+    
+    /** customer childs **/
+    @XmlElementWrapper(name = "customerChildsCodes")
+    @Schema(description = "customer childs")
+    private List<String> customerChildsCodes;
 
     public Boolean isThresholdPerEntity() {
 		return thresholdPerEntity;
@@ -179,11 +189,13 @@ public class CustomerDto extends AccountDto {
             setThresholdPerEntity(e.isThresholdPerEntity());
         }
 
-        if(e.getIsCompany() != null)
-        {
+        if(e.getIsCompany() != null) {
             setIsCompany(e.getIsCompany());
         }
 
+        if (e.getParentCustomer() != null) {
+        	setParentCustomerCode(e.getParentCustomer().getCode());
+        }
         setAnonymizationDate(e.getAnonymizationDate());
     }
 	
@@ -357,7 +369,23 @@ public class CustomerDto extends AccountDto {
 		this.infoGdpr = infoGdpr;
 	}
 
-    @Override
+    public String getParentCustomerCode() {
+		return parentCustomerCode;
+	}
+
+	public void setParentCustomerCode(String parentCustomerCode) {
+		this.parentCustomerCode = parentCustomerCode;
+	}
+
+	public List<String> getCustomerChildsCodes() {
+		return customerChildsCodes;
+	}
+
+	public void setCustomerChildsCodes(List<String> customerChildsCodes) {
+		this.customerChildsCodes = customerChildsCodes;
+	}
+
+	@Override
     public String toString() {
         return "CustomerDto [customerCategory=" + customerCategory + ", customerBrand=" + customerBrand + ", seller=" + seller + ", mandateIdentification=" + mandateIdentification
                 + ", mandateDate=" + mandateDate + ", contactInformation=" + getContactInformation() + ", customerAccounts=" + customerAccounts + "]";
