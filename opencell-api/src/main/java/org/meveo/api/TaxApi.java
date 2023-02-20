@@ -295,11 +295,11 @@ public class TaxApi extends BaseApi {
         return result;
     }
 
-    public Long createOrUpdate(TaxDto postData) throws MeveoApiException, BusinessException {
+    public TaxDto createOrUpdate(TaxDto postData) throws MeveoApiException, BusinessException {
         if(!StringUtils.isBlank(postData.getCode()) && taxService.findByCode(postData.getCode()) != null) {
-            return update(postData).getId();
+            return new TaxDto(update(postData));
         } else {
-            return create(postData).getId();
+            return new TaxDto(create(postData));
         }
     }
 
