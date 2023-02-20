@@ -6724,7 +6724,7 @@
 		    </column>
 		    <column name="invoice_code_type_id" type="bigint">
             </column>
-            <column name="vat_payment_option_id" type="bigint">
+            <column name="vat_payment_option_id" type="bigint" defaultValueNumeric="1">
                 <constraints nullable="false" />
             </column>
 		    <column name="invoice_subject_code" type="bigint" />
