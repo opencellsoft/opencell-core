@@ -133,6 +133,8 @@ public abstract class BaseApi {
 
     private static final int limitDefaultValue = 100;
 
+    private static final int API_LIST_MAX_LIMIT = 1000;
+
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
 
@@ -1312,7 +1314,11 @@ public abstract class BaseApi {
         Integer limit = paramBean.getPropertyAsInteger("api.list.defaultLimit", limitDefaultValue);
         if (pagingAndFiltering != null) {
             if (pagingAndFiltering.getLimit() != null) {
-                limit = pagingAndFiltering.getLimit();
+                if (pagingAndFiltering.getLimit() > API_LIST_MAX_LIMIT) {
+                    limit = API_LIST_MAX_LIMIT;
+                } else {
+                    limit = pagingAndFiltering.getLimit();
+                }
             } else {
                 pagingAndFiltering.setLimit(limit);
             }
@@ -1329,9 +1335,14 @@ public abstract class BaseApi {
 
     private PaginationConfiguration initPaginationConfigurationMultiSort(String defaultSortBy, String defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering) {
         Integer limit = paramBean.getPropertyAsInteger("api.list.defaultLimit", limitDefaultValue);
+
         if (pagingAndFiltering != null) {
             if (pagingAndFiltering.getLimit() != null) {
-                limit = pagingAndFiltering.getLimit();
+                if (limit > API_LIST_MAX_LIMIT) {
+                    limit = API_LIST_MAX_LIMIT;
+                } else {
+                    limit = pagingAndFiltering.getLimit();
+                }
             } else {
                 pagingAndFiltering.setLimit(limit);
             }
