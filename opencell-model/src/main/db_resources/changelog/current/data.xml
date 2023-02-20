@@ -18745,8 +18745,8 @@ public class ValidateBRScript extends ValidateBR {
     </changeSet>
     <changeSet id="#INTRD-13468_20230126" author="hichamELHALOUI">
         <update tableName="meveo_script_instance">
-            <column name="description" value="Invoice amount will be compared to provided amount using the selected operator. Invoice must match this criteria to be valid."/>
-			<column name="description_i18n" value='{"FRA":"Le montant de la facture sera comparé au montant indiqué en utilisant l’opérateur sélectionné. La facture doit répondre à ce critère pour être valide.","ENG":"Invoice amount will be compared to provided amount using the selected operator. Invoice must match this criteria to be valid."}'/>
+            <column name="description" value="Invoice amount will be compared to provided amount using the selected operator."/>
+			<column name="description_i18n" value='{"FRA":"Le montant de la facture sera comparé au montant indiqué en utilisant l’opérateur sélectionné.","ENG":"Invoice amount will be compared to provided amount using the selected operator."}'/>
 			<where>code = 'org.meveo.service.script.CompareInvoiceAmount'</where>
         </update>
         <update tableName="meveo_script_instance">
@@ -22229,5 +22229,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <where>code = 'DWH_Job_MRR'</where>
         </delete>
     </changeSet>
+    
+    
 
 </databaseChangeLog>

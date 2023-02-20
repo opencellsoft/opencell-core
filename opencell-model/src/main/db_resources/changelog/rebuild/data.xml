@@ -11059,7 +11059,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="version" valueNumeric="1" />
             <column name="src_type" value="JAVA" />
 			<column name="description" value="Invoice amount will be compared to provided amount using the selected operator."/>
-			<column name="description_i18n" value='{"FRA":"Le montant de la facture sera comparé au montant indiqué en utilisant l’opérateur sélectionné.", "EN": "Invoice amount will be compared to provided amount using the selected operator. Invoice must match this criteria to be valid."}'/>
+			<column name="description_i18n" value='{"FRA":"Le montant de la facture sera comparé au montant indiqué en utilisant l’opérateur sélectionné.", "EN": "Invoice amount will be compared to provided amount using the selected operator."}'/>
 			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='INVOICE_VALIDATION')" />
         </insert>
 
