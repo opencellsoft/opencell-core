@@ -4301,6 +4301,9 @@
             <column name="applicable_on_discounted_price" type="${type.boolean}"/>
             <column name="sequence" type="int4"/>
             <column name="automatic_application" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="allowance_code_id" type="bigint">
+            <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-212">
@@ -5211,6 +5214,7 @@
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
             <column name="anonymization_date" type="datetime" />
+            <column name="parent_customer_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-245">
@@ -16797,7 +16801,6 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="document"/>
     </changeSet>
-                                 
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -17843,32 +17846,6 @@
         </createTable>
         
         
-        <createSequence sequenceName="untdid_unit_seq" startValue="1" />
-        <createTable tableName="untdid_unit">
-            <!-- Generic fields -->
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_untdid_unit" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="code" type="varchar(255)">
-            </column>
-
-            <!-- Simple fields -->           
-            <column name="source" type="varchar(10)">
-                <constraints nullable="false" />
-            </column>
-            <column name="name" type="varchar(500)">
-                <constraints nullable="false" />
-            </column>
-
-        </createTable>
-        
         <createSequence sequenceName="untdid_1001_invoice_code_type_seq" startValue="1" />
         <createTable tableName="untdid_1001_invoice_code_type">
             <!-- Generic fields -->
@@ -18164,6 +18141,16 @@
 								 onDelete="NO ACTION" onUpdate="NO ACTION" />
 	</changeSet>
 
+    <changeSet id="#INTRD-13883_20230208_fk" author="hichamELHALOUI">
+        <addForeignKeyConstraint baseTableName="cat_discount_plan"
+								 baseColumnNames="allowance_code_id"
+								 constraintName="fk_discount_plan_untdid_5189_allowance_code"
+								 referencedTableName="untdid_5189_allowance_code"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
+
     <changeSet id="#INTRD-13062-20230124-rebuild" author="ZBariki">
         <createSequence sequenceName="ar_customer_balance_seq" />
         <createTable tableName="ar_customer_balance">
@@ -18206,6 +18193,13 @@
         <addForeignKeyConstraint baseTableName="dunning_settings" baseColumnNames="customer_balance_id"
                                  constraintName="fk_dunning_settings_customer_balance_id"
                                  referencedTableName="ar_customer_balance"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-14022_20230215" author="AdilElJaouhari">
+        <addForeignKeyConstraint baseTableName="crm_customer" baseColumnNames="parent_customer_id"
+                                 constraintName="fk_crm_customer_parent_customer_id"
+                                 referencedTableName="crm_customer"
                                  referencedColumnNames="id"/>
     </changeSet>
 
@@ -19508,6 +19502,8 @@
     <changeSet id="#INTRD-12047-20230112" author="AbdelmounaimAkadid" />
     <changeSet id="#INTRD-13009_20230202" author="bourras" />
     <changeSet id="#INTRD-13220_20230203" author="AbdellatifBARI" />
+    <changeSet id="#INTRD-13883_20230208" author="hichamELHALOUI" />
+    <changeSet id="#INTRD-13957-20230214" author="houdad"/>
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

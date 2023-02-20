@@ -450,6 +450,10 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
      */
     @Column(name = "operation_number")
     private Long operationNumber;
+    
+
+    @Transient
+    private BigDecimal amountForUnmatching;
 
     public Date getDueDate() {
         return dueDate;
@@ -1042,5 +1046,13 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     @PreUpdate
     protected void onUpdate() {
         auditable.setUpdated(new Date());
+    }
+
+    public BigDecimal getAmountForUnmatching() {
+        return amountForUnmatching;
+    }
+
+    public void setAmountForUnmatching(BigDecimal amountForUnmatching) {
+        this.amountForUnmatching = amountForUnmatching;
     }
 }

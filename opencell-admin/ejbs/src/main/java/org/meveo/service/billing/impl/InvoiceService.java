@@ -6637,6 +6637,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                    throw new BusinessException("Invoice of type " + invoiceTypeService.getListAdjustementCode() + ", must use ADV-STD article");
                }
                toUpdate.setInvoiceBalance(invoiceResource.getAmountWithTax());
+               BigDecimal currentRate = getCurrentRate(toUpdate,toUpdate.getInvoiceDate());
+               toUpdate.setConvertedInvoiceBalance(currentRate != null && invoiceResource.getAmountWithTax() != null ? currentRate.multiply(invoiceResource.getAmountWithTax()) : invoiceResource.getAmountWithTax());
            }
         }
 
@@ -6656,9 +6658,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public void refreshAdvanceInvoicesConvertedAmount(Invoice toUpdate, BigDecimal lastAppliedRate) {
         toUpdate.getLinkedInvoices().stream().filter(linkedInvoice ->
-                        linkedInvoice.getType().equals(InvoiceTypeEnum.ADVANCEMENT_PAYMENT)
-                                && linkedInvoice.getLinkedInvoiceValue() != null && linkedInvoice.getLinkedInvoiceValue().getStatus().equals(InvoiceStatusEnum.VALIDATED))
-                .forEach(linkedInvoice -> linkedInvoice.setConvertedAmount(linkedInvoice.getAmount().multiply(lastAppliedRate)));
+                InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(linkedInvoice.getType())
+                && linkedInvoice.getLinkedInvoiceValue() != null &&
+                linkedInvoice.getLinkedInvoiceValue().getStatus().equals(InvoiceStatusEnum.VALIDATED))
+            .forEach(linkedInvoice -> linkedInvoice.setConvertedAmount(linkedInvoice.getAmount().multiply(lastAppliedRate)));
     }
 
     /**
@@ -6708,7 +6711,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return duplicate(invoice, null);
     }
 
-    public Invoice duplicate(Invoice invoice, List<Long> invoiceLinesIds) {
+    public Invoice duplicate(Invoice invoice, List<Long> invoiceLinesIds) {        
+        return duplicateByType(invoice, invoiceLinesIds, false);
+    }
+    
+    public Invoice duplicateByType(Invoice invoice, List<Long> invoiceLinesIds, boolean isAdjustment) {
         invoice = refreshOrRetrieve(invoice);
 
         if (invoice.getOrders() != null) {
@@ -6765,11 +6772,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 }
             }
         }
-
+        List<Object[]> maxIlAmountAdjList = new ArrayList<Object[]>();
+        if(isAdjustment) {
+            maxIlAmountAdjList = invoiceLinesService.getMaxIlAmountAdj(invoice.getId());           
+        }  
+        
         for (InvoiceLine invoiceLine : invoiceLines) {
             invoiceLinesService.detach(invoiceLine);
             InvoiceLine duplicateInvoiceLine = new InvoiceLine(invoiceLine, duplicateInvoice);
             duplicateInvoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
+            if(isAdjustment) {
+                duplicateInvoiceLine = invoiceLinesService.checkAmountIL(duplicateInvoiceLine, maxIlAmountAdjList); 
+            }
             invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);
             duplicateInvoice.getInvoiceLines().add(duplicateInvoiceLine);
         }
@@ -6845,11 +6859,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         updateInvoiceLinesAmountFromRatedTransactions(invoiceLineRTs, invoiceLines);
 
+        List<Object[]> maxIlAmountAdjList = new ArrayList<Object[]>();
+        maxIlAmountAdjList = invoiceLinesService.getMaxIlAmountAdj(invoice.getId());           
+        
         for (InvoiceLine invoiceLine : invoiceLines) {
             invoiceLinesService.detach(invoiceLine);
             InvoiceLine duplicateInvoiceLine = new InvoiceLine(invoiceLine, duplicateInvoice);
             duplicateInvoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
             duplicateInvoiceLine.setRatedTransactions(invoiceLine.getRatedTransactions());
+            duplicateInvoiceLine = invoiceLinesService.checkAmountIL(duplicateInvoiceLine, maxIlAmountAdjList); 
             invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);
             duplicateInvoice.getInvoiceLines().add(duplicateInvoiceLine);
         }
@@ -6859,9 +6877,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Invoice createAdjustment(Invoice invoice, List<Long> invoiceLinesIds) {
-
-        Invoice adjustmentInvoice = duplicate(invoice, invoiceLinesIds);
+    public Invoice createAdjustment(Invoice invoice, List<Long> invoiceLinesIds) {        
+        Invoice adjustmentInvoice = duplicateByType(invoice, invoiceLinesIds, true);
         populateAdjustmentInvoice(invoice, adjustmentInvoice);
         calculateOrUpdateInvoice(invoiceLinesIds, adjustmentInvoice);
 
@@ -7079,6 +7096,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         List<Invoice> invoicesAdv  = this.getEntityManager().createNamedQuery("Invoice.findValidatedInvoiceAdvOrder")
                 .setParameter("billingAccountId", invoice.getBillingAccount().getId())
                 .setParameter("commercialOrder", invoice.getCommercialOrder())
+                .setParameter("tradingCurrencyId",invoice.getTradingCurrency() != null ? invoice.getTradingCurrency().getId() : null)
                 .getResultList();
         return invoicesAdv;
     }
@@ -7107,82 +7125,100 @@ public class InvoiceService extends PersistenceService<Invoice> {
        });
        return null;
    }
-    
+
     public void applyAdvanceInvoice(Invoice invoice, List<Invoice> advInvoices) {
-		BigDecimal invoiceBalance = invoice.getInvoiceBalance();
-		if (invoiceBalance != null) {
-			CommercialOrder orderInvoice = invoice.getCommercialOrder();
-			BigDecimal sum = invoice.getLinkedInvoices().stream()
-					.filter(i -> InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(i.getType()))
-					.filter(li -> (orderInvoice != null && orderInvoice.equals(li.getLinkedInvoiceValue().getCommercialOrder())) || (orderInvoice == null && li.getLinkedInvoiceValue().getCommercialOrder() == null))
-					.map(x -> x.getAmount())
-					.reduce(BigDecimal::add).orElse(ZERO);
-			//if balance is well calculated and balance=0, we don't need to recalculate
-			if ((sum.add(invoiceBalance)).compareTo(invoice.getAmountWithTax()) == 0) {
-				CommercialOrder commercialOrder = CollectionUtils.isNotEmpty(advInvoices) ? advInvoices.get(0).getCommercialOrder() : null;
-				if (BigDecimal.ZERO.compareTo(invoiceBalance)==0 && !(commercialOrder!=null && commercialOrder.equals(invoice.getCommercialOrder()))) {
-					return;
-				} 
-			}
-			cancelInvoiceAdvances(invoice, advInvoices, false);
-		} 
-        if(CollectionUtils.isNotEmpty(advInvoices)) {
-        	sort(advInvoices, (inv1, inv2) -> {
+        BigDecimal invoiceBalance = invoice.getConvertedInvoiceBalance();
+        if (invoiceBalance != null) {
+            CommercialOrder orderInvoice = invoice.getCommercialOrder();
+            BigDecimal sum = invoice.getLinkedInvoices().stream()
+                    .filter(i -> InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(i.getType()))
+                    .filter(li -> (orderInvoice != null && orderInvoice.equals(li.getLinkedInvoiceValue().getCommercialOrder())) || (orderInvoice == null && li.getLinkedInvoiceValue().getCommercialOrder() == null))
+                    .map(LinkedInvoice::getConvertedAmount)
+                    .reduce(BigDecimal::add).orElse(ZERO);
+            //if balance is well calculated and balance=0, we don't need to recalculate
+            if ((sum.add(invoiceBalance)).compareTo(invoice.getConvertedAmountWithoutTax()) == 0) {
+                CommercialOrder commercialOrder = CollectionUtils.isNotEmpty(advInvoices) ? advInvoices.get(0).getCommercialOrder() : null;
+                if (BigDecimal.ZERO.compareTo(invoiceBalance) == 0 && !(commercialOrder != null && commercialOrder.equals(invoice.getCommercialOrder()))) {
+                    return;
+                }
+            }
+            cancelInvoiceAdvances(invoice, advInvoices, false);
+        }
+        if (CollectionUtils.isNotEmpty(advInvoices)) {
+            sort(advInvoices, (inv1, inv2) -> {
                 int compCommercialOrder = 0;
-                if(inv1.getCommercialOrder() != null && inv2.getCommercialOrder() == null) {
+                if (inv1.getCommercialOrder() != null && inv2.getCommercialOrder() == null) {
                     compCommercialOrder = -1;
-                }else if(inv1.getCommercialOrder() == null && inv2.getCommercialOrder() != null) {
+                } else if (inv1.getCommercialOrder() == null && inv2.getCommercialOrder() != null) {
                     compCommercialOrder = 1;
-                }else if(inv1.getCommercialOrder() == null && inv2.getCommercialOrder() == null) {
-                	compCommercialOrder = 0;
-                }else {
+                } else if (inv1.getCommercialOrder() == null && inv2.getCommercialOrder() == null) {
+                    compCommercialOrder = 0;
+                } else {
                     compCommercialOrder = inv1.getCommercialOrder().getId().compareTo(inv2.getCommercialOrder().getId());
                 }
-                if(compCommercialOrder != 0) {
+                if (compCommercialOrder != 0) {
                     return compCommercialOrder;
                 }
                 int compCreationDate = inv1.getAuditable().getCreated().compareTo(inv2.getAuditable().getCreated());
-                if(compCreationDate != 0) {
+                if (compCreationDate != 0) {
                     return compCreationDate;
                 }
                 return inv1.getInvoiceBalance().compareTo(inv2.getInvoiceBalance());
-                    
+
             });
-                BigDecimal remainingAmount = invoice.getAmountWithTax();
-                for(Invoice adv : advInvoices){
-                    if(adv.getInvoiceBalance() == null) {
-                        continue;
-                    }
-                    final BigDecimal amount;
-                    Optional<LinkedInvoice> toUpdate = invoice.getLinkedInvoices().stream()
-                            .filter(li -> li.getLinkedInvoiceValue().getId() == adv.getId()).findAny();
-                    if(toUpdate.isPresent() && toUpdate.get().getLinkedInvoiceValue().getCommercialOrder() != null && invoice.getCommercialOrder() == null) continue;
-                    if(adv.getInvoiceBalance().compareTo(remainingAmount) >= 0){
-                        amount=remainingAmount;
-                        adv.setInvoiceBalance( adv.getInvoiceBalance().subtract(remainingAmount));
-                        remainingAmount = ZERO;
-                    }else{
-                        amount = adv.getInvoiceBalance();
-                        remainingAmount=remainingAmount.subtract(adv.getInvoiceBalance());
-                        adv.setInvoiceBalance(BigDecimal.ZERO);
-                    }
-                    if(amount.intValue() == ZERO.intValue()) continue;
-					if (toUpdate.isPresent()) {
-					        toUpdate.get().setAmount(toUpdate.get().getAmount().add(amount));
-					}
-					else {
-						createNewLinkedInvoice(invoice, amount, adv);
-					}
-                    if(remainingAmount == ZERO) {
-                        break;
-                    }
+            BigDecimal remainingAmount = invoice.getConvertedAmountWithTax() != null ? invoice.getConvertedAmountWithTax() : invoice.getAmountWithTax();
+            for (Invoice adv : advInvoices) {
+                if (adv.getInvoiceBalance() == null) {
+                    continue;
                 }
+                final BigDecimal amount;
+                BigDecimal transactionalCurrencyBalance;
+                BigDecimal functionalCurrencyBalance;
+                Optional<LinkedInvoice> toUpdate = invoice.getLinkedInvoices().stream()
+                        .filter(li -> li.getLinkedInvoiceValue().getId() == adv.getId()).findAny();
+                if (toUpdate.isPresent() && toUpdate.get().getLinkedInvoiceValue().getCommercialOrder() != null && invoice.getCommercialOrder() == null)
+                    continue;
+
+                if (adv.getConvertedInvoiceBalance().compareTo(remainingAmount) >= 0) {
+                    amount = remainingAmount;
+                    transactionalCurrencyBalance = adv.getConvertedInvoiceBalance().subtract(remainingAmount);
+                    functionalCurrencyBalance = getFunctionalCurrencyBalance(adv, transactionalCurrencyBalance);
+
+                    adv.setInvoiceBalance(functionalCurrencyBalance);
+                    adv.setConvertedInvoiceBalance(transactionalCurrencyBalance);
+
+                    remainingAmount = ZERO;
+                } else {
+                    amount = adv.getConvertedInvoiceBalance();
+                    remainingAmount = remainingAmount.subtract(adv.getConvertedInvoiceBalance());
+                    adv.setInvoiceBalance(BigDecimal.ZERO);
+                    adv.setConvertedInvoiceBalance(ZERO);
+                }
+                if (amount.intValue() == ZERO.intValue()) continue;
+                if (toUpdate.isPresent()) {
+                    toUpdate.get().setAmount(toUpdate.get().getAmount().add(amount));
+                } else {
+                    createNewLinkedInvoice(invoice, amount, adv);
+                }
+                if (remainingAmount == ZERO) {
+                    break;
+                }
+            }
             invoice.setInvoiceBalance(remainingAmount);
+            invoice.setConvertedInvoiceBalance(remainingAmount);
             invoice.getLinkedInvoices().removeIf(il -> ZERO.compareTo(il.getAmount()) == 0 && InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(il.getType()));
-	        }
+        }
     }
 
-	private void createNewLinkedInvoice(Invoice invoice, BigDecimal amount, Invoice adv) {
+    private BigDecimal getFunctionalCurrencyBalance(Invoice adv, BigDecimal transactionalCurrencyBalance) {
+        BigDecimal functionalCurrencyBalance;
+        functionalCurrencyBalance = (adv.getConvertedInvoiceBalance() != null && adv.getConvertedInvoiceBalance().compareTo(ZERO) > 0) ?
+                (transactionalCurrencyBalance.divide(adv.getConvertedInvoiceBalance(),2,RoundingMode.HALF_UP)).multiply(adv.getInvoiceBalance()) :
+                transactionalCurrencyBalance;
+        return functionalCurrencyBalance.setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode());
+    }
+
+    private void createNewLinkedInvoice(Invoice invoice, BigDecimal amount, Invoice adv) {
 		LinkedInvoice advanceMapping = new LinkedInvoice(invoice, adv, amount, InvoiceTypeEnum.ADVANCEMENT_PAYMENT);
 		invoice.getLinkedInvoices().add(advanceMapping);
 	}

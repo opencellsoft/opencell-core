@@ -112,7 +112,7 @@ public class SellerBean extends CustomFieldBean<Seller> {
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-        if(entity.getRegistrationNo() == null && this.getIcdId() == null) {
+        if(entity.getRegistrationNo() != null && this.getIcdId() == null) {
             messages.error(new BundleKey("messages", "seller.icd.error"));
             facesContext.validationFailed();
             return "";
