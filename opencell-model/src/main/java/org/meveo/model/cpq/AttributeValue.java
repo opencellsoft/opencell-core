@@ -184,6 +184,24 @@ public class AttributeValue<T extends AttributeValue> extends AuditableCFEntity 
 		}
 		return null;
 	}
+
+	public Object getRealValue() {
+		if (attribute.getAttributeType() != null) {
+			if (this.getDoubleValue() != null) {
+				return this.getDoubleValue();
+			}
+			if (this.getStringValue() != null) {
+				return this.getStringValue();
+			}
+			if (this.getDateValue() != null) {
+				return this.getDateValue();
+			}
+			if (this.getBooleanValue() != null) {
+				return this.getBooleanValue();
+			}
+		}
+		return null;
+	}
 	
 	
 }
