@@ -3,6 +3,7 @@ package org.meveo.service.catalog.impl;
 import static java.time.temporal.ChronoField.DAY_OF_MONTH;
 import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
 import static java.time.temporal.ChronoField.YEAR;
+import static java.util.stream.Collectors.toList;
 import static org.meveo.model.catalog.ColumnTypeEnum.Range_Date;
 import static org.meveo.model.catalog.ColumnTypeEnum.Range_Numeric;
 
@@ -69,7 +70,6 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.ColumnTypeEnum;
-import org.meveo.model.catalog.ConvertedPricePlanVersion;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
@@ -649,8 +649,10 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         }
 
         public String export(Set<PricePlanMatrixVersion> pricePlanMatrixVersions, String fileType){
+            List<Long> ppmvIds = pricePlanMatrixVersions.stream().map(PricePlanMatrixVersion::getId).collect(toList());            
+            List<Map<String, Object>> ppmvMaps = convertedPricePlanVersionService.getPPVWithCPPVByPpmvId(ppmvIds);            
             if (pricePlanMatrixVersions != null && !pricePlanMatrixVersions.isEmpty()) {
-                Set<Path> filePaths = pricePlanMatrixVersions.stream().map(ppv -> saveAsRecord(buildFileName(ppv), ppv, fileType)).collect(Collectors.toSet());
+                Set<Path> filePaths = pricePlanMatrixVersions.stream().map(ppv -> saveAsRecord(buildFileName(ppv), ppv, fileType, ppmvMaps)).collect(Collectors.toSet());
                 if (filePaths.size() > 1) {
                     return archiveFiles(filePaths);
                 }
@@ -884,8 +886,8 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
          * @param fileType
          * @return
          */
-        private Path saveAsRecord(String fileName, PricePlanMatrixVersion ppv, String fileType) {
-            Set<LinkedHashMap<String, Object>> records = ppv.isMatrix() ? toCSVLineGridRecords(ppv) : Collections.singleton(toCSVLineRecords(ppv));
+        private Path saveAsRecord(String fileName, PricePlanMatrixVersion ppv, String fileType, List<Map<String, Object>> ppmvMaps) {
+            Set<LinkedHashMap<String, Object>> records = ppv.isMatrix() ? toCSVLineGridRecords(ppv) : Collections.singleton(toCSVLineRecords(ppv, ppmvMaps));
             String extensionFile = ".csv";
             try {
                 if(fileType.equals("CSV")) {
@@ -917,23 +919,24 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
             return null;
         }
 
-        private LinkedHashMap<String, Object> toCSVLineRecords(PricePlanMatrixVersion ppv) {
+        private LinkedHashMap<String, Object> toCSVLineRecords(PricePlanMatrixVersion ppv, List<Map<String, Object>> ppmvMaps) {
             LinkedHashMap<String, Object> CSVLineRecords = new LinkedHashMap<>();
             CSVLineRecords.put("label", ppv.getLabel());
-            CSVLineRecords.put("amount", ppv.getPrice());
-            
-            List<ConvertedPricePlanVersion> convertedPricePlanMatrixLines = convertedPricePlanVersionService.getListConvertedPricePlanVersionByPpmvId(ppv.getId());
-            for (ConvertedPricePlanVersion cppv : convertedPricePlanMatrixLines)
+            CSVLineRecords.put("amount", ppv.getPrice());            
+            for (Map<String, Object> ppmvMap : ppmvMaps)
             {
-                String codeCurrency = "";
-                if(cppv.getTradingCurrency().getCurrency() != null) {
-                    codeCurrency = cppv.getTradingCurrency().getCurrency().getCurrencyCode();
+                Long ppvId = (Long) ppmvMap.get("ppvId");
+                Long ppvcId = (Long) ppmvMap.get("ppvcId");
+                if (ppvId.equals(ppv.getId()) && ppvcId != null) {
+                    BigDecimal ppvCPrice = (BigDecimal) ppmvMap.get("ppvCPrice");
+                    BigDecimal rate = (BigDecimal) ppmvMap.get("rate");
+                    String cCurrencyCode = (String) ppmvMap.get("cCurrencyCode");
+                    Boolean useForBA = (Boolean) ppmvMap.get("useForBA");                    
+                    String keyLine = "unitPrice-" + cCurrencyCode;
+                    String valueLine = ppvCPrice + "|" + cCurrencyCode + "|" + rate + "|" + useForBA;
+                    CSVLineRecords.put(keyLine, valueLine);
                 }
-                String keyLine = "unitPrice-" + codeCurrency;
-                String valueLine = cppv.getConvertedPrice() + "|" + codeCurrency + "|" + cppv.getRate() + "|" + cppv.isUseForBillingAccounts();
-                CSVLineRecords.put(keyLine, valueLine);
             }
-            
             return CSVLineRecords;
         }
 
