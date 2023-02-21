@@ -20,19 +20,13 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingRun;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceLineService;
-import org.meveo.util.ApplicationProvider;
-import org.slf4j.Logger;
 
 @Stateless
 public class InvoiceLinesMinimumJobBean extends BaseJobBean {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private BillingRunService billingRunService;
@@ -43,9 +37,6 @@ public class InvoiceLinesMinimumJobBean extends BaseJobBean {
 	@Inject
 	private IteratorBasedJobProcessing iteratorBasedJobProcessing;
 
-	@Inject
-	@ApplicationProvider
-	protected Provider appProvider;
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {

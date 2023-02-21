@@ -1447,8 +1447,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     }
                 }
             }
-            update(invoice);
-            commit();
+//            update(invoice);
+//            commit();
         }
     }
 

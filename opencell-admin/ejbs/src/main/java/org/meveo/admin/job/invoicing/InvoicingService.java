@@ -66,7 +66,6 @@ import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.RejectedBillingAccountService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
-import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.script.billing.TaxScriptService;
 
 import com.google.common.collect.Lists;

@@ -144,9 +144,10 @@ public class InvoiceLinesJobBean extends BaseJobBean {
 		if(maxInvoiceLinesPerTransaction==null || maxInvoiceLinesPerTransaction < 1) {
 			ratedTransactionService.calculateAccountingArticle(result, billableEntity, null, null);
 		} else {
+    			int index=0;
 			int count = maxInvoiceLinesPerTransaction.intValue();
 			while(count >= maxInvoiceLinesPerTransaction){
-				count = ratedTransactionService.calculateAccountingArticle(result, billableEntity, maxInvoiceLinesPerTransaction.intValue(), 0);
+    				count = ratedTransactionService.calculateAccountingArticle(result, billableEntity, maxInvoiceLinesPerTransaction.intValue(), index++);
 			}
 		}
 	}
@@ -173,7 +174,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
 			}
 		}
 	}
-
+	
 	private void addExceptionalBillingRunData(BillingRun billingRun) {
         QueryBuilder queryBuilder = invoiceLinesService.fromFilters(billingRun.getFilters());
         List<RatedTransaction> ratedTransactions = queryBuilder.getQuery(ratedTransactionService.getEntityManager()).getResultList();
