@@ -285,6 +285,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				subscriptionService.terminateSubscription(subscription, offer.getTerminationDate(), offer.getTerminationReason(), order.getOrderNumber());
 			}else if (offer.getOrderLineType() == OfferLineTypeEnum.APPLY_ONE_SHOT) {
 				Subscription subscription = offer.getSubscription();
+				subscription.setOrder(order);
 				for(OrderProduct quoteProduct: offer.getProducts()) {
 					if(quoteProduct.getProductVersion() != null) {
 						Product product = quoteProduct.getProductVersion().getProduct();
