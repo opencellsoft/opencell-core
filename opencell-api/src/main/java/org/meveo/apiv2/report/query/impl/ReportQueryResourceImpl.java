@@ -5,6 +5,7 @@ import static org.meveo.apiv2.report.ImmutableExecutionResult.builder;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -174,14 +175,18 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
 
     @Override
     public Response execute(Long id, boolean async, boolean sendNotification, ReportQueryInput resource, UriInfo uriInfo) {
+        List<String> emails = new ArrayList<String>();
+        if(resource != null) {
+            emails = resource.getEmails();
+        } 
         if(async) {
-            reportQueryApiService.execute(id, async, sendNotification, resource.getEmails(), uriInfo);
+            reportQueryApiService.execute(id, async, sendNotification, emails, uriInfo);
             return Response.ok().entity(ImmutableSuccessResponse.builder()
                     .status("ACCEPTED")
                     .message("Execution request accepted")
                     .build()).build();
         } else {
-            List<Object> result = (List<Object>) reportQueryApiService.execute(id, async, sendNotification, resource.getEmails(), uriInfo).orElse(EMPTY_LIST);
+            List<Object> result = (List<Object>) reportQueryApiService.execute(id, async, sendNotification, emails, uriInfo).orElse(EMPTY_LIST);
             ExecutionResult executionResult = builder()
                     .executionResults(result)
                     .total(result.size())

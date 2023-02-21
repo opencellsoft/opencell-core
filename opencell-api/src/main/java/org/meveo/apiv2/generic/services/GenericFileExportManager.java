@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -353,7 +354,7 @@ public class GenericFileExportManager {
         style.setAlignment(HorizontalAlignment.LEFT);
         cell.setCellStyle(style);
     }
-    
+
     /**
      * Export aged trial balance
      * @param entityName Entity Name
@@ -387,10 +388,12 @@ public class GenericFileExportManager {
         List<String> columns = new ArrayList<>();
         Objects.requireNonNull(genericFieldDetails).forEach(gfd -> columns.add(gfd.getName()));
         List<Map<String, Object>> map = convertObjectsListToListOfMap(agedReceivablesList, AgedReceivableDto.class, columns);
+       
         // Get Fields to Map by name and header
         Map<String, GenericFieldDetails> fieldDetails = getFieldDetailsMap(genericFieldDetails);
+        
         // Format Fields
-        formatFields(map, format);
+        formatFields(map, format, locale);
 
         // If the map is not empty then save As Record to export - CSV, EXCEL or PDF
         if (!map.isEmpty()) {
@@ -437,7 +440,7 @@ public class GenericFileExportManager {
      * @param mapResult List of Map
      * @param format Date Format
      */
-    private static void formatFields(List<Map<String, Object>> mapResult, SimpleDateFormat format) {
+    private static void formatFields(List<Map<String, Object>> mapResult, SimpleDateFormat format, String locale) {
         for (Map<String, Object> item : mapResult) {
             for (Map.Entry<String, Object> entry : item.entrySet()) {
                 if(entry.getKey().equals("dueDate")) {
