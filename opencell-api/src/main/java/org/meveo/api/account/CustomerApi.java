@@ -289,14 +289,6 @@ public class CustomerApi extends AccountEntityApi {
             }
         }
 
-        if (!org.apache.commons.lang3.StringUtils.isEmpty(postData.getSeller())) {
-            Seller seller = associatedSeller != null ? associatedSeller : sellerService.findByCode(postData.getSeller());
-            if (seller == null) {
-                throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
-            }
-            customer.setSeller(seller);
-        }
-
         updateAccount(customer, postData, checkCustomFields);
 
         if (businessAccountModel != null) {
@@ -366,6 +358,17 @@ public class CustomerApi extends AccountEntityApi {
                 		customer.getCode(), childOrDescendant(customer, child), child.getCode()));
         	});
         }
+        
+        if (!org.apache.commons.lang3.StringUtils.isEmpty(postData.getSeller())) {
+            Seller seller = associatedSeller != null ? associatedSeller : sellerService.findByCode(postData.getSeller());
+            if (seller == null) {
+                throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
+            }
+            customer.setSeller(seller);
+        } else if (postData.getParentCustomerCode() != null) {
+        	customer.setSeller(customer.getParentCustomer().getSeller());
+        }
+
     }
     
 	private void updateCustomerChilds(CustomerDto postData, Customer customer) {
