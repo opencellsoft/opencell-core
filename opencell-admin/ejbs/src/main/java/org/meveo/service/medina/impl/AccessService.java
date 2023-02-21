@@ -55,6 +55,7 @@ public class AccessService extends PersistenceService<Access> {
      */
     public boolean isDuplicateAndOverlaps(Access access) {
         List<Access> accesses = retrieveAllAccessByUserId(access.getAccessUserId());
+        accesses.remove(access);
         if(accesses.isEmpty()){
             return false;
         }else if(access.getStartDate() == null && access.getEndDate() == null){
