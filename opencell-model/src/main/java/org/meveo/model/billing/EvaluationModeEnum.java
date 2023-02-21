@@ -2,5 +2,5 @@ package org.meveo.model.billing;
 
 public enum EvaluationModeEnum {
 
-    VALIDATION, REJECTION;
+    VALIDATION, REJECTION, CONDITION;
 }

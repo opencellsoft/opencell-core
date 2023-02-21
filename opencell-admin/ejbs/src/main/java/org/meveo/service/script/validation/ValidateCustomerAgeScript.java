@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceValidationStatusEnum;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.script.Script;
@@ -21,8 +20,6 @@ public class ValidateCustomerAgeScript extends Script {
 
 	@Override
 	public void execute(Map<String, Object> context) throws BusinessException {
-		log.info("ValidateCustomerAgeScript EXECUTE context {}", context);
-
 		Invoice invoice = (Invoice) context.get(Script.CONTEXT_ENTITY);
 
 		if (invoice == null) {
@@ -30,8 +27,6 @@ public class ValidateCustomerAgeScript extends Script {
 			throw new BusinessException("No Invoice passed as CONTEXT_ENTITY");
 		}
 
-		log.info("Process ValidateCustomerAgeScript {}", invoice);
-		
 		String operator = ScriptUtils.buildOperator(String.valueOf(context.get("operator")), false);
 		Date referenceDate = billingAccountService.getDateCustomerAge(invoice.getBillingAccount().getId(), buildReferenceDateExpression(String.valueOf(context.get("referenceDate"))));
 		long limitDate = buildLimitDate(referenceDate, (Integer) context.get("age"));
@@ -39,10 +34,7 @@ public class ValidateCustomerAgeScript extends Script {
 		
 		boolean result = ValueExpressionWrapper.evaluateToBoolean("#{" + invoice.getInvoiceDate().getTime() + " " + operator + " " + limitDate + "}", new HashMap<Object, Object>(context));
 
-		context.put(Script.INVOICE_VALIDATION_STATUS, result ? InvoiceValidationStatusEnum.VALID : (InvoiceValidationStatusEnum) context.get(Script.RESULT_VALUE));
-		
-		log.info("Result Processing ValidateCustomerAgeScript {}", context.get(Script.INVOICE_VALIDATION_STATUS));
-
+		context.put(Script.INVOICE_VALIDATION_STATUS, result);
 	}
 
 	private long buildLimitDate(Date referenceDate, Integer age) {
