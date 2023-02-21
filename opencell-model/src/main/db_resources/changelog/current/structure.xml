@@ -15457,8 +15457,8 @@ public class AgedBalanceReporting extends ReportExtractScript {
 
         </createTable>
         
-        <sql>INSERT INTO public.untdid_5305_taxation_category VALUES (1, 0, now(), NULL, 'opencell.admin', NULL, 'S', 'Standard rate', 'Standard rate');
-			INSERT INTO public.untdid_2475_vat_payment_option VALUES (1, 0, now(), NULL, 'opencell.admin', NULL, '3', 'Invoice document issue date time', '5', 'Date of invoice');
+        <sql>INSERT INTO ${db.schema.adapted}untdid_5305_taxation_category(id,version,created,updated,creator,updater,code,semantic_model,name) VALUES (1, 0, now(), NULL, 'opencell.admin', NULL, 'S', 'Standard rate', 'Standard rate');
+			INSERT INTO ${db.schema.adapted}untdid_2475_vat_payment_option(id,version,created,updated,creator,updater,code_2005,value_2005,code_2475,value_2475) VALUES (1, 0, now(), NULL, 'opencell.admin', NULL, '3', 'Invoice document issue date time', '5', 'Date of invoice');
 		</sql>
 			
         <addColumn tableName="billing_tax">
