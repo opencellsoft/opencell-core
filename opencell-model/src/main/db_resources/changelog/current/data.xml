@@ -15561,6 +15561,12 @@ public class CdrFlatFileImportScript extends Script {
         </update>
     </changeSet>
     
+    <changeSet id="#INTRD-12903_20230105" author="TarikFA.">
+		<delete tableName="meveo_job_instance">
+			<where>code = 'APIv2PermissionsSyncJob'</where>
+		</delete>
+	</changeSet>
+    
     <changeSet id="#INTRD-12925_20230106" author="aeljaouhari">
      	<!-- Script :  CompareInvoiceAmount -->
 		<delete tableName="meveo_script_parameter">
