@@ -395,8 +395,15 @@ public class InvoiceTypeApi extends BaseCrudApi<InvoiceType, InvoiceTypeDto> {
             }
             entity.setUntdidInvoiceCodeType(untdidInvoiceCodeType);
         }
+        
         if (!StringUtils.isBlank(dto.getVatPaymentOption())) {
             UntdidVatPaymentOption untdidVatPaymentOption = untdidVatPaymentOptionService.getByCode(dto.getVatPaymentOption());
+            if (untdidVatPaymentOption == null) {
+                throw new EntityDoesNotExistsException(UntdidVatPaymentOption.class, dto.getVatPaymentOption());
+            }
+            entity.setUntdidVatPaymentOption(untdidVatPaymentOption);
+        } else {
+            UntdidVatPaymentOption untdidVatPaymentOption = untdidVatPaymentOptionService.findById(1L);
             if (untdidVatPaymentOption == null) {
                 throw new EntityDoesNotExistsException(UntdidVatPaymentOption.class, dto.getVatPaymentOption());
             }
