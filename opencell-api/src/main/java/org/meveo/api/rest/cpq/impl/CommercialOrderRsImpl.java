@@ -67,7 +67,7 @@ public class CommercialOrderRsImpl extends BaseRs implements CommercialOrderRs {
 	public Response delete(Long orderId) {
 		ActionStatus status = new ActionStatus();
 		try {
-			commercialOrderApi.delete(orderId);;
+			commercialOrderApi.delete(orderId);
 			return Response.ok(status).build();
 		}catch(MeveoApiException e) {
 			return errorResponse(e, status);
@@ -160,7 +160,7 @@ public class CommercialOrderRsImpl extends BaseRs implements CommercialOrderRs {
 	public Response deleteOrderOffer(Long id) {
 		ActionStatus status = new ActionStatus();
 		try {
-			commercialOrderApi.removeOrderOffer(id);;
+			commercialOrderApi.removeOrderOffer(id);
 			return Response.ok(status).build();
 		}catch(MeveoApiException e) {
 			return errorResponse(e, status);
