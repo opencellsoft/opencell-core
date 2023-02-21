@@ -15798,5 +15798,9 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedTableName="billing_invoice_validation_rule"
                                  referencedColumnNames="id"/>
     </changeSet>
+    
+   	<changeSet id="#INTRD-14161_20230221" author="AdilElJaouhari">
+        <renameColumn tableName="accounting_journal_entry" oldColumnName="trading_amount" newColumnName="converted_amount"/>
+    </changeSet>
 
 </databaseChangeLog>
