@@ -17214,6 +17214,16 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
 	<changeSet id="INTRD-14137_20230217" author="aeljaouhari" />
 	<changeSet id="#INTRD-13468_20230126" author="hichamELHALOUI" />
 	
+	<changeSet id="#INTRD-13867_20230220" author="aeljaouhari">
+        <sql>
+	        update public.accounting_journal_entry set 
+		        trading_currency = (select ac.currency_code from adm_currency ac, billing_trading_currency btc, billing_invoice inv, ar_account_operation aco 
+		        	where ac.id = btc.currency_id and inv.trading_currency_id = btc.id and inv.id = aco.invoice_id and aco.id =  accounting_operation_id),
+		        converted_amount = (select inv.amount_without_tax from billing_invoice inv, ar_account_operation aco 
+		        	where inv.id = aco.invoice_id and aco.id =  accounting_operation_id)
+        </sql>
+    </changeSet>
+	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>

@@ -17256,7 +17256,7 @@
             </column>
             <column name="supporting_document_ref" type="bigint" />
             <column name="supporting_document_type" type="varchar(255)" />
-            <column name="trading_amount" type="numeric(23, 12)" />
+            <column name="converted_amount" type="numeric(23, 12)" />
             <column name="trading_currency" type="varchar(3)" />
             <column name="auxiliary_account_code" type="varchar(255)" />
             <column name="auxiliary_account_label" type="varchar(255)" />
@@ -19462,6 +19462,7 @@
     <changeSet id="#INTRD-13957-20230214" author="houdad"/>
     <changeSet id="#INTRD-13468_20230126" author="hichamELHALOUI" />
     <changeSet id="#INTRD-13604_20230206" author="AdilElJaouhari" />
+    <changeSet id="#INTRD-14161_20230221" author="AdilElJaouhari" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
