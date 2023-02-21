@@ -14516,7 +14516,7 @@ public class SubscriptionJobNotification extends Script {
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="code" value="OC_MASS_IMPORT_NOTIFICATION" />
 			<column name="class_name_filter" value="org.meveo.model.jobs.JobExecutionResultImpl" />
-			<column name="event_type_filter" value="PROCESSED" />
+			<column name="event_type_filter" value="STARTED" />
 			<column name="version" value="0" />
 			<column name="creator" value="opencell.admin" />
 			<column name="script_instance_id"
@@ -17238,6 +17238,7 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
     </changeSet>
 
     <changeSet id="#INTRD-13867_20230214" author="AbdellatifBARI" />
+	<changeSet id="#INTRD-13267_20230220" author="AbdellatifBARI" />
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
