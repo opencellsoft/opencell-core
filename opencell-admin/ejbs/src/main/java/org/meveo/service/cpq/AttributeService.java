@@ -166,7 +166,7 @@ public class AttributeService extends BusinessService<Attribute>{
         // Dates values
         if (AttributeTypeEnum.DATE == pvAttribute.getAttribute().getAttributeType() ||
                 AttributeTypeEnum.CALENDAR == pvAttribute.getAttribute().getAttributeType()) {
-            if (!isValidDate(attributeValue.getRealValue().toString())) {
+            if (!(attributeValue.getRealValue() instanceof Date) && !isValidDate(attributeValue.getRealValue().toString())) {
                 throw new BusinessApiException("The attribute " + pvAttribute.getAttribute().getCode() + " has not a valid Date value '" + attributeValue.getRealValue() + "'");
             }
         }
@@ -245,8 +245,14 @@ public class AttributeService extends BusinessService<Attribute>{
 
     private void checkReadOnlyAttribute(ProductVersionAttribute pvAttribute, AttributeValue<?> attributeValue) {
         // Read only attributes : Attributes having ready-only property must not be modified
-        if (pvAttribute.getReadOnly() && StringUtils.isNotBlank(pvAttribute.getDefaultValue()) && !pvAttribute.getDefaultValue().equals(attributeValue.getRealValue().toString())) {
-            throw new BusinessApiException("The read only attribute " + pvAttribute.getAttribute().getCode() + " cannot be updated");
+        if (pvAttribute.getReadOnly()) {
+            if (StringUtils.isBlank(attributeValue.getRealValue())) {
+                throw new BusinessApiException("The read only attribute " + pvAttribute.getAttribute().getCode() + " should have a default value");
+            }
+            if (StringUtils.isNotBlank(pvAttribute.getDefaultValue()) && !pvAttribute.getDefaultValue().equals(attributeValue.getRealValue().toString())) {
+                throw new BusinessApiException("The read only attribute " + pvAttribute.getAttribute().getCode() + " cannot be updated");
+            }
+
         }
     }
 
