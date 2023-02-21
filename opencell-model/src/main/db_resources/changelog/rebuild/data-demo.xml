@@ -2224,7 +2224,7 @@
     <changeSet id="#INTRD-13957_20230213" author="houdad">
     	 
         <sql>
-        DELETE FROM public.CAT_UNIT_OF_MEASURE;
+        DELETE FROM ${db.schema.adapted}CAT_UNIT_OF_MEASURE;
         INSERT INTO ${db.schema.adapted}CAT_UNIT_OF_MEASURE (id,version,creator,updater,code,created,updated,symbol,description,description_i18n,multiplicator,parent_id) VALUES (-1, 0, 'opencell.admin', NULL, '10', now(), NULL, 'group', 'group', NULL, 1, NULL);
 		INSERT INTO ${db.schema.adapted}CAT_UNIT_OF_MEASURE (id,version,creator,updater,code,created,updated,symbol,description,description_i18n,multiplicator,parent_id) VALUES (-2, 0, 'opencell.admin', NULL, '11', now(), NULL, 'outfit', 'outfit', NULL, 1, NULL);
 		INSERT INTO ${db.schema.adapted}CAT_UNIT_OF_MEASURE (id,version,creator,updater,code,created,updated,symbol,description,description_i18n,multiplicator,parent_id) VALUES (-3, 0, 'opencell.admin', NULL, '13', now(), NULL, 'ration', 'ration', NULL, 1, NULL);
