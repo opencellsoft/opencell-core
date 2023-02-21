@@ -19090,4 +19090,11 @@ public class ValidateBRScript extends ValidateBR {
 		</update>
 	</changeSet>
 
+    <changeSet id="#INTRD-13267_20230220" author="AbdellatifBARI">
+        <update tableName="adm_notification">
+            <column name="event_type_filter" value="STARTED" />
+            <where> code = 'OC_MASS_IMPORT_NOTIFICATION'</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>
