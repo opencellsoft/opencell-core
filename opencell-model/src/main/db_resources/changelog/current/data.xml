@@ -21599,4 +21599,11 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
     </changeSet>
 
+    <changeSet id="#INTRD-13267_20230220" author="AbdellatifBARI">
+        <update tableName="adm_notification">
+            <column name="event_type_filter" value="STARTED" />
+            <where> code = 'OC_MASS_IMPORT_NOTIFICATION'</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>
