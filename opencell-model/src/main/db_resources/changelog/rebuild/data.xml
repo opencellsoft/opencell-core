@@ -774,7 +774,7 @@
             <column name="created" valueDate="2015-03-19 00:04:00.955" />
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="USD" />
-            <column name="symbol" value="$US"  />
+            <column name="symbol" value="$"  />
             <column name="description_en" value="Dollar des Etats-unis" />
             <column name="system_currency" valueNumeric="1" />
         </insert>
@@ -17664,6 +17664,7 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
     <changeSet id="#INTRD-13267_20230220" author="AbdellatifBARI" />
     <changeSet id="#INTRD-7049_20220509" author="TarikRabeh" />
    	<changeSet id="#INTRD-13867_20230220" author="aeljaouhari" />
+	<changeSet id="#INTRD-14122_20230221" author="hichamELHALOUI" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
