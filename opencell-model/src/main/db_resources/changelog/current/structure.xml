@@ -15846,7 +15846,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="converted_tax_amount" type="numeric(23, 12)" />
             <column name="converted_matching_amount" type="numeric(23, 12)" />
             <column name="converted_un_matching_amount" type="numeric(23, 12)" />
-            <column name="trading_currency_id" type="bigint" />
+            <column name="transactional_currency" type="bigint" />
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="transactional_currency" baseTableName="ar_account_operation" constraintName="fk_account_operation_trading_currency" 
         	deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"

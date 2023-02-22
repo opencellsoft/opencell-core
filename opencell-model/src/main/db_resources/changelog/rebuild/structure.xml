@@ -2132,6 +2132,7 @@
             <column name="converted_tax_amount" type="numeric(23, 12)" />
             <column name="converted_matching_amount" type="numeric(23, 12)" />
             <column name="converted_un_matching_amount" type="numeric(23, 12)" />
+            <column name="transactional_currency" type="bigint" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-146">
