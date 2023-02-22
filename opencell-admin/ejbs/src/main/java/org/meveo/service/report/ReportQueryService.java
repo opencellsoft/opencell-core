@@ -61,6 +61,7 @@ import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.cpq.ProductLine;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.report.query.QueryExecutionModeEnum;
 import org.meveo.model.report.query.QueryExecutionResult;
@@ -83,6 +84,7 @@ import org.meveo.util.ApplicationProvider;
 @Stateless
 public class ReportQueryService extends BusinessService<ReportQuery> {
 
+    private static final String SEPARATOR_SELECTED_FIELDS = "\\.";
     @Inject
     private QueryExecutionResultService queryExecutionResultService;
     @Inject
@@ -499,26 +501,66 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                     	if(result instanceof Object[]) {
                     		item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), ((Object[]) result)[index]);
                     	} else if (targetEntity.isInstance(result)) {
-                    		Field field = FieldUtils.getField(targetEntity, fields.get(index), true);
-                    		try {
-								item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), field.get(result));
-							} catch (IllegalArgumentException | IllegalAccessException e) {
-								log.error("Result construction failed", e);
-								throw new BusinessException("Result construction failed", e);
-							}
+                    	    if(fields.get(index).contains(".")){
+                    	        String[] selected_fields =  fields.get(index).split(SEPARATOR_SELECTED_FIELDS);
+                    	        if (selected_fields.length == 3) {
+                    	            Field field1 = FieldUtils.getField(targetEntity, selected_fields[0], true);
+                                    Field field2 = FieldUtils.getField(field1.getType(), selected_fields[1], true);
+                                    Field field3 = FieldUtils.getField(field2.getType(), selected_fields[2], true);
+                                    try {
+                                        PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field2.getName(), field1.getType());                                   
+                                        if(field1.get(result) == null) {
+                                            item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), "");
+                                        }
+                                        else {
+                                            Object property = propertyDescriptor.getReadMethod().invoke(field1.get(result));
+
+                                            PropertyDescriptor propertyDescriptor1 = new PropertyDescriptor(field3.getName(), field2.getType());                                   
+                                            if(property == null) {
+                                                item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), "");
+                                            }
+                                            else {
+                                                Object property1 = propertyDescriptor1.getReadMethod().invoke(property);
+                                                item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), property1.toString());
+                                            } 
+                                        }                                    
+                                    } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException  | IntrospectionException e) {
+                                        log.error("Result construction failed", e);
+                                        throw new BusinessException("Result construction failed", e);
+                                    } 
+                    	        }
+                    	        if (selected_fields.length == 2) {
+                    	            Field field1 = FieldUtils.getField(targetEntity, selected_fields[0], true);
+                                    Field field2 = FieldUtils.getField(field1.getType(), selected_fields[1], true);
+                                    try {
+                                        PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field2.getName(), field1.getType());                                   
+                                        if(field1.get(result) == null) {
+                                            item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), "");
+                                        }
+                                        else {
+                                            Object property = propertyDescriptor.getReadMethod().invoke(field1.get(result));
+                                            item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), property.toString());
+                                        }                                    
+                                    } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException  | IntrospectionException e) {
+                                        log.error("Result construction failed", e);
+                                        throw new BusinessException("Result construction failed", e);
+                                    } 
+                    	        }                               
+                            }
+                    	    else {
+                                Field field = FieldUtils.getField(targetEntity, fields.get(index), true);
+                                try {
+                                    item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), field.get(result));
+                                } catch (IllegalArgumentException | IllegalAccessException e) {
+                                    log.error("Result construction failed", e);
+                                    throw new BusinessException("Result construction failed", e);
+                                } 
+                            }
                     	}
                     }
                 }
                 response.add(item);
-            }
-            for (Object item : response) {
-                for (Map.Entry<String, Object> entry : ((Map<String, Object>)item).entrySet()) {
-                    if(entry.getValue() != null) {
-                        List<Field> field = getFields(entry.getValue().getClass());
-                        initLazyLoadedValues(field, entry.getValue());
-                    }
-                }
-            }
+            }            
             return response;
         } else {
             List<Field> field = getFields(targetEntity);
