@@ -20,6 +20,7 @@ package org.meveo.model.billing;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -29,7 +30,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -189,4 +189,22 @@ public class InvoiceSubCategory extends BusinessCFEntity implements I18nDescript
     public void setSortIndex(Integer sortIndex) {
         this.sortIndex = sortIndex;
     }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), code, invoiceCategory, sortIndex);
+    }
+
+    @Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		InvoiceSubCategory other = (InvoiceSubCategory) obj;
+		return Objects.equals(id, other.id);
+	}
+
 }

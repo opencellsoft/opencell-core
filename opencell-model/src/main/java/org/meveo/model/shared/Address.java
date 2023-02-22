@@ -203,7 +203,7 @@ public class Address implements Serializable, Cloneable {
 
     @Override
     public Object clone() throws CloneNotSupportedException {
-    	return (Address) super.clone();
+    	return super.clone();
     }
 
     public void anonymize(String code) {

@@ -142,7 +142,7 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     private List<InvoiceLine> invoiceLinesToAssociate = new ArrayList<>();
 
     @Transient
-    private List<Long> ilIDs=new ArrayList<Long>();
+    private List<Long> ilIDs=new ArrayList<>();
 
     /**
      * Tracks cumulative amounts by tax

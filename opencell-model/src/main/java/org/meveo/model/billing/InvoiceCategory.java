@@ -20,6 +20,7 @@ package org.meveo.model.billing;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -168,5 +169,22 @@ public class InvoiceCategory extends BusinessCFEntity implements I18nDescripted{
     public void setOccTemplateNegative(OCCTemplate occTemplateNegative) {
         this.occTemplateNegative = occTemplateNegative;
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), code, sortIndex, occTemplate);
+    }
+
+    @Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		InvoiceCategory other = (InvoiceCategory) obj;
+		return Objects.equals(id, other.id);
+	}
 
 }
