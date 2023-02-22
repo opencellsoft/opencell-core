@@ -15762,6 +15762,18 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <dropUniqueConstraint tableName="cpq_price_plan_version" constraintName="cpq_price_plan_version_UNIC"/>
         <addUniqueConstraint columnNames="ppm_id,current_version" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
     </changeSet>
+    
+    <changeSet id="#INTRD-14264_20230222" author="TarikFA.">
+    	<addColumn tableName="billing_rated_transaction">
+    		<column name="origin_ratedtransaction_id" type="bigint" />
+    	</addColumn>
+        <addForeignKeyConstraint baseTableName="billing_rated_transaction" baseColumnNames="origin_ratedtransaction_id,status"
+                                 constraintName="fk_origin_ratedtransaction_id"
+                                 referencedTableName="billing_rated_transaction"
+                                 referencedColumnNames="id,status"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
 
     <changeSet id="#INTRD-15691_20230421" author="AbdellatifBARI">
         <addColumn tableName="billing_rated_transaction">

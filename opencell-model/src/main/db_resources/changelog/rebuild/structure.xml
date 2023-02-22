@@ -3397,6 +3397,7 @@
             <column name="origin_billing_account" type="bigint" />
             <column name="rules_contract_id" type="bigint" />
             <column name="discounted_amount" type="numeric(23,12)" />
+    		<column name="origin_ratedtransaction_id" type="bigint" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
