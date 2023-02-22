@@ -2,7 +2,6 @@ package org.meveo.model.cpq.contract;
 
 import static javax.persistence.CascadeType.ALL;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -33,7 +32,6 @@ import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.enums.ContractStatusEnum;
-import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 
@@ -53,6 +51,9 @@ import org.meveo.model.payments.CustomerAccount;
 	@NamedQuery(name = "Contract.findCustomer", query = "select c from Contract c left join c.customer cc where cc.code=:codeCustomer"),
     @NamedQuery(name = "Contract.findByAccounts", query = "select c from Contract c where c.status='ACTIVE' and (c.beginDate<=current_date and c.endDate>current_date) "
     		+ " and (c.customer.id is null or c.customer.id=:customerId) "
+				+ " and (c.billingAccount.id is null or c.billingAccount.id=:billingAccountId) and (c.customerAccount.id is null or c.customerAccount.id=:customerAccountId)  " ),
+	@NamedQuery(name = "Contract.findByCustomersBillingAccountCustomerAccount", query = "select c from Contract c where c.status='ACTIVE' and (c.beginDate<=current_date and c.endDate>current_date) "
+    		+ " and (c.customer.id is null or c.customer.id in :customersId) "
 				+ " and (c.billingAccount.id is null or c.billingAccount.id=:billingAccountId) and (c.customerAccount.id is null or c.customerAccount.id=:customerAccountId)  " )
 })
 public class Contract extends EnableBusinessCFEntity {
