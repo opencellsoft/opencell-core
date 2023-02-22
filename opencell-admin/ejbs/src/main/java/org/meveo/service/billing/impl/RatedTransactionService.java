@@ -17,7 +17,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 import java.lang.reflect.InvocationTargetException;
@@ -29,14 +28,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -48,6 +45,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
@@ -1525,6 +1523,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
 	private void linkRTsWithILByIds(Long invoiceLineId, final List<Long> ids) {
+		log.warn("============RTs/il:"+ids.size()+"/"+invoiceLineId+", list:"+StringUtils.join(ids, ','));
 		getEntityManager().createNamedQuery("RatedTransaction.linkRTWithInvoiceLine")
 		        .setParameter("il", invoiceLineId)
 		        .setParameter("ids", ids).executeUpdate();
