@@ -38,6 +38,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -55,6 +56,8 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
 import org.hibernate.annotations.Type;
+import org.meveo.model.billing.UntdidAllowanceCode;
+
 /**
  * Discount plan
  * 
@@ -275,6 +278,10 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
     @Column(name = "automatic_application")
     private boolean automaticApplication = false;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "allowance_code_id")
+    private UntdidAllowanceCode allowanceCode;
+	
 	public DiscountPlan() {}
 	
 	public DiscountPlan(DiscountPlan dp) {
@@ -294,6 +301,7 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 		this.setDiscountPlanItems(new ArrayList<>(dp.getDiscountPlanItems()));
 		this.sequence=dp.getSequence();
 		this.applicableOnDiscountedPrice=dp.getApplicableOnDiscountedPrice();
+		this.allowanceCode=dp.getAllowanceCode();
 	}
 	
 	public boolean isValid() {
@@ -529,6 +537,11 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
     }
 
 
+	public UntdidAllowanceCode getAllowanceCode() {
+		return allowanceCode;
+	}
 
-
+	public void setAllowanceCode(UntdidAllowanceCode allowanceCode) {
+		this.allowanceCode = allowanceCode;
+	}
 }

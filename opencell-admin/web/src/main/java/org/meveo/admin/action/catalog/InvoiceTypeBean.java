@@ -24,6 +24,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
@@ -37,6 +38,8 @@ import org.primefaces.model.DualListModel;
 @Named
 @ViewScoped
 public class InvoiceTypeBean extends CustomFieldBean<InvoiceType> {
+    
+    private static final String BUNDLE_KEY_MESSAGES = "messages";
 
 	private static final long serialVersionUID = 1L;
 
@@ -60,6 +63,25 @@ public class InvoiceTypeBean extends CustomFieldBean<InvoiceType> {
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
+        if (!entity.getCode().equals("COMMERCIAL_ORDER") 
+                && !entity.getCode().equals("QUOTE")
+                && !entity.getCode().equals("DRAFT")) {
+            if(entity.getInvoiceSubjectCode() == null && entity.getUntdidInvoiceCodeType() == null) {
+                messages.error(new BundleKey(BUNDLE_KEY_MESSAGES, "invoiceType.invoiceSubjectCode.and.invoiceCodeType.empty"), entity.getCode());
+                facesContext.validationFailed();
+                return "";
+            }
+            if(entity.getInvoiceSubjectCode() == null) {
+                messages.error(new BundleKey(BUNDLE_KEY_MESSAGES, "invoiceType.invoiceSubjectCode.empty"), entity.getCode());
+                facesContext.validationFailed();
+                return "";
+            }
+            if(entity.getUntdidInvoiceCodeType() == null) {
+                messages.error(new BundleKey(BUNDLE_KEY_MESSAGES, "invoiceType.invoiceCodeType.empty"), entity.getCode());
+                facesContext.validationFailed();
+                return "";
+            }
+        }
         log.trace("saving new InvoiceType={}", entity.getCode());
         getEntity().getAppliesTo().clear();
         getEntity().getAppliesTo().addAll(invoiceTypeService.refreshOrRetrieve(invoiceTypesDM.getTarget()));

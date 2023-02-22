@@ -42,6 +42,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.UntdidAllowanceCode;
 import org.meveo.model.catalog.ApplicableEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum;
@@ -50,6 +51,7 @@ import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.billing.impl.InvoiceLineService;
+import org.meveo.service.billing.impl.UntdidAllowanceCodeService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 
 /**
@@ -59,11 +61,15 @@ import org.meveo.service.catalog.impl.DiscountPlanService;
 @Stateless
 public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> {
 
+    public static final String DISCOUNT_DEFAULT_ALLOWANCE_CODE = "95";
     @Inject
     private DiscountPlanService discountPlanService;
     
     @Inject
     private InvoiceLineService invoiceLineService;
+
+    @Inject
+    private UntdidAllowanceCodeService untdidAllowanceCodeService;
 
     @Override
     public DiscountPlan create(DiscountPlanDto postData) throws MeveoApiException, BusinessException {
@@ -80,6 +86,15 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         }
 
         DiscountPlan discountPlan = new DiscountPlan();
+
+        if (StringUtils.isBlank(postData.getAllowanceCode())) {
+           postData.setAllowanceCode(DISCOUNT_DEFAULT_ALLOWANCE_CODE);
+        }
+         UntdidAllowanceCode untdidAllowanceCode = untdidAllowanceCodeService.getByCode(postData.getAllowanceCode());
+        if (untdidAllowanceCode == null) {
+            throw new EntityDoesNotExistsException(UntdidAllowanceCode.class, postData.getAllowanceCode());
+        }
+        discountPlan.setAllowanceCode(untdidAllowanceCode);
         discountPlan.setCode(postData.getCode());
         discountPlan.setDescription(postData.getDescription());
         if (postData.isDisabled() != null) {
@@ -153,6 +168,14 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         DiscountPlan discountPlan = discountPlanService.findByCode(postData.getCode());
         if (discountPlan == null) {
             throw new EntityDoesNotExistsException(DiscountPlan.class, postData.getCode());
+        }
+
+        if (StringUtils.isBlank(postData.getAllowanceCode())) {
+           postData.setAllowanceCode(DISCOUNT_DEFAULT_ALLOWANCE_CODE);
+        }
+         UntdidAllowanceCode untdidAllowanceCode = untdidAllowanceCodeService.getByCode(postData.getAllowanceCode());
+        if (untdidAllowanceCode == null) {
+            throw new EntityDoesNotExistsException(UntdidAllowanceCode.class, postData.getAllowanceCode());
         }
 
         if (discountPlan.getStatus().equals(DiscountPlanStatusEnum.DRAFT)) {

@@ -4363,7 +4363,6 @@
           <xs:enumeration value="RATING"/>
           <xs:enumeration value="INVOICING"/>
           <xs:enumeration value="IMPORT_HIERARCHY"/>
-          <xs:enumeration value="DWH"/>
           <xs:enumeration value="ACCOUNT_RECEIVABLES"/>
           <xs:enumeration value="WALLET"/>
           <xs:enumeration value="UTILS"/>
@@ -47112,7 +47111,6 @@
           <xs:enumeration value="RATING"/>
           <xs:enumeration value="INVOICING"/>
           <xs:enumeration value="IMPORT_HIERARCHY"/>
-          <xs:enumeration value="DWH"/>
           <xs:enumeration value="ACCOUNT_RECEIVABLES"/>
           <xs:enumeration value="WALLET"/>
           <xs:enumeration value="UTILS"/>
@@ -50716,7 +50714,6 @@
           <xs:enumeration value="RATING"/>
           <xs:enumeration value="INVOICING"/>
           <xs:enumeration value="IMPORT_HIERARCHY"/>
-          <xs:enumeration value="DWH"/>
           <xs:enumeration value="ACCOUNT_RECEIVABLES"/>
           <xs:enumeration value="WALLET"/>
           <xs:enumeration value="UTILS"/>
