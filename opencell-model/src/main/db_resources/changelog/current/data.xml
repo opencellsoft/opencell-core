@@ -19423,7 +19423,167 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		        	where inv.id = aco.invoice_id and aco.id =  accounting_operation_id)
         </sql>
     </changeSet>
-	
+    <changeSet id="#INTRD-14122_20230221" author="hichamELHALOUI">
+    <insert tableName="cpq_tag_type">
+        <column name="id" value="-1"/>
+        <column name="created" valueDate="${db.current.time}" />
+        <column name="code" value="tunnel"/>
+        <column name="description" value="Tunnel"/>
+    </insert>
+        <insert tableName="cpq_tag">
+        <column name="id" value="-1"/>
+        <column name="created" valueDate="${db.current.time}" />
+        <column name="code" value="featured"/>
+        <column name="description" value="Featured"/>
+        <column name="tag_type_id" value="-1" />
+    </insert>
+    <delete tableName="crm_customer_category">
+        <where>code='PROSPECT'</where>
+    </delete>
+    <insert tableName="crm_customer_category">
+            <column name="id" valueNumeric="-3" />
+            <column name="version" valueNumeric="0" />
+            <column name="uuid" value="CCC_B2B" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2B" />
+            <column name="description" value="B2B" />
+            <column name="accounting_code_id" valueComputed="(select id from billing_accounting_code where code = '410000000')" />
+            <column name="tax_category_id" valueNumeric="-3" />
+    </insert>
+    <insert tableName="crm_customer_category">
+                <column name="id" valueNumeric="-4" />
+                <column name="version" valueNumeric="0" />
+                <column name="uuid" value="CCC_regular_account" />
+                <column name="created" valueDate="${db.current.time}" />
+                <column name="code" value="regular account" />
+                <column name="description" value="regular account" />
+                <column name="accounting_code_id" valueComputed="(select id from billing_accounting_code where code = '410000000')" />
+                <column name="tax_category_id" valueNumeric="-3" />
+    </insert>
+     <delete tableName="ar_credit_category">
+        <where>code in ('PART_M', 'PART_C')</where>
+    </delete>
+     <update tableName="billing_invoice_cat">
+			<column name="description" value="Security Deposit" />
+			<where> code = 'ICAT_SECURITY_DEPOSIT'</where>
+		</update>
+
+        <insert tableName="cat_offer_template_category">
+                <column name="id" valueNumeric="-1" />
+                <column name="version" valueNumeric="0" />
+                <column name="created" valueDate="${db.current.time}" />
+                <column name="code" value="new" />
+                <column name="name" value="New" />
+        </insert>
+        <insert tableName="cat_offer_template_category">
+                <column name="id" valueNumeric="-2" />
+                <column name="version" valueNumeric="0" />
+                <column name="created" valueDate="${db.current.time}" />
+                <column name="code" value="standard" />
+                <column name="name" value="Standard" />
+        </insert>
+
+         <insert tableName="cat_channel">
+                <column name="id" valueNumeric="-1" />
+                <column name="version" valueNumeric="0" />
+                <column name="created" valueDate="${db.current.time}" />
+                <column name="code" value="backoffice" />
+                <column name="description" value="Backoffice" />
+        </insert>
+        <insert tableName="cat_channel">
+                <column name="id" valueNumeric="-2" />
+                <column name="version" valueNumeric="0" />
+                <column name="created" valueDate="${db.current.time}" />
+                <column name="code" value="web" />
+                <column name="description" value="Web" />
+        </insert>
+
+        <update tableName="crm_provider_pay_methods">
+			<column name="payment_method" value="STRIPEDIRECTLINK" />
+			<where> payment_method = 'STRIPE'</where>
+		</update>
+
+        <update tableName="crm_provider_pay_methods">
+			<column name="payment_method" value="PAYPALPAYMENTLINK" />
+			<where> payment_method = 'PAYPAL'</where>
+		</update>
+
+        <update tableName="adm_currency">
+            <column name="symbol" value="$"  />
+            <where> currency_code = 'USD'</where>
+        </update>
+
+        <delete tableName="adm_title">
+            <where>code = 'ASSOC'</where>
+        </delete>
+
+        <update tableName="adm_title">
+            <column name="code" value="Company" />
+            <column name="description" value="Company" />
+            <where>code = 'CIE'</where>
+        </update>
+
+                <insert tableName="adm_title">
+            <column name="id" valueNumeric="-8" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="SA" />
+            <column name="description" value="French joint-stock company" />
+            <column name="is_company" valueNumeric="1" />
+            <column name="description_i18n" value='{"FRA":"Société Anonyme","ENG":"French joint-stock company"}' />
+        </insert>
+
+         <insert tableName="adm_title">
+            <column name="id" valueNumeric="-9" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="SARL" />
+            <column name="description" value="French limited liability company" />
+            <column name="is_company" valueNumeric="1" />
+            <column name="description_i18n" value='{"FRA":"Société a responsabilité limitée","ENG":"French limited liability company"}' />
+        </insert>
+
+        <insert tableName="adm_title">
+            <column name="id" valueNumeric="-10" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="SAS" />
+            <column name="description" value="Simplified joint-stock corporation" />
+            <column name="is_company" valueNumeric="1" />
+            <column name="description_i18n" value='{"FRA":"Société par actions simplifiée","ENG":"Simplified joint-stock corporation"}' />
+        </insert>
+        <insert tableName="adm_title">
+            <column name="id" valueNumeric="-11" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="PLC" />
+            <column name="description" value="Public limited company" />
+            <column name="is_company" valueNumeric="1" />
+            <column name="description_i18n" value='{"FRA":"société ouverte à responsabilité limitée","ENG":"Public limited company"}' />
+        </insert>
+
+        <insert tableName="adm_title">
+            <column name="id" valueNumeric="-12" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="PLC" />
+            <column name="description" value="Private company limited by shares" />
+            <column name="is_company" valueNumeric="1" />
+            <column name="description_i18n" value='{"FRA":"Société privée limité par actions","ENG":"Private company limited by shares"}' />
+        </insert>
+
+    </changeSet>
+
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
