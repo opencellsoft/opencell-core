@@ -170,6 +170,7 @@ public class CustomerApi extends AccountEntityApi {
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
 
+
     public Customer create(CustomerDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
     }
@@ -180,9 +181,6 @@ public class CustomerApi extends AccountEntityApi {
 
     public Customer create(CustomerDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel, Seller associatedSeller) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(postData.getCode())) {
-            addGenericCodeIfAssociated(Customer.class.getName(), postData);
-        }
         if (StringUtils.isBlank(postData.getCustomerCategory())) {
             missingParameters.add("customerCategory");
         }
@@ -193,11 +191,15 @@ public class CustomerApi extends AccountEntityApi {
         handleMissingParameters(postData);
 
         // check if customer already exists
-        if (customerService.findByCode(postData.getCode()) != null) {
+        if (!StringUtils.isBlank(postData.getCode()) && customerService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(Customer.class, postData.getCode());
         }
 
         Customer customer = new Customer();
+
+        if (StringUtils.isBlank(postData.getCode())) {
+            postData.setCode(customGenericEntityCodeService.getGenericEntityCode(customer));
+        }
 
         dtoToEntity(customer, postData, checkCustomFields, businessAccountModel, associatedSeller);
 
