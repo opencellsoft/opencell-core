@@ -17662,6 +17662,8 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
 
     <changeSet id="#INTRD-13867_20230214" author="AbdellatifBARI" />
     <changeSet id="#INTRD-13267_20230220" author="AbdellatifBARI" />
+    <changeSet id="#INTRD-7049_20220509" author="TarikRabeh" />
+   	<changeSet id="#INTRD-13867_20230220" author="aeljaouhari" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

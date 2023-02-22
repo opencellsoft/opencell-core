@@ -669,13 +669,6 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 		 result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
 		 if(totalCount > 0) {
 			 commercialOrderService.list(paginationConfiguration).stream().forEach(co -> {
-			 	/*if(co.getId() == 1){
-					OrderAdvancementScript temp = new OrderAdvancementScript();
-					Map<String, Object> methodContext = new HashMap<String, Object>();
-					co.setOrderProgress(100);
-					methodContext.put("commercialOrder", co);
-					temp.execute(methodContext );
-				}*/
 				 result.getCommercialOrderDtos().add(new CommercialOrderDto(co));
 			 });
 		 }
@@ -732,7 +725,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 			if (scriptInstance != null) {
 				String orderValidationProcess = scriptInstance.getCode();
 				ScriptInterface script = scriptInstanceService.getScriptInstance(orderValidationProcess);
-				Map<String, Object> methodContext = new HashMap<String, Object>();
+				Map<String, Object> methodContext = new HashMap<>();
 				methodContext.put("commercialOrder", order);
 				methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
 				methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
@@ -768,7 +761,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 	
 	private void processOrderLot(CommercialOrderDto postData, CommercialOrder commercialOrder) {
 		Set<String> orderLots = postData.getOrderLotCodes(); 
-		List<OrderLot> orderLotList=new ArrayList<OrderLot>();
+		List<OrderLot> orderLotList=new ArrayList<>();
 		if(orderLots != null && !orderLots.isEmpty()){
 			for(String code:orderLots) {
 				OrderLot orderLot=orderLotService.findByCode(code);
@@ -1304,7 +1297,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 	        }
         }
         if (productVersionAttributes != null) {
-            List<Attribute> productAttributes = productVersionAttributes.stream().map(pva -> pva.getAttribute()).collect(Collectors.toList());
+            List<Attribute> productAttributes = productVersionAttributes.stream().map(ProductVersionAttribute::getAttribute).collect(Collectors.toList());
             if(productAttributes != null && !productAttributes.contains(attribute) && orderProduct!=null){
                 throw new BusinessApiException(String.format("Product version (code: %s, version: %d), doesn't contain attribute code: %s", orderProduct.getProductVersion().getProduct().getCode() , orderProduct.getProductVersion().getCurrentVersion(), attribute.getCode()));
             }
@@ -1365,6 +1358,15 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
                 throw new MeveoApiException("Cannot delete offers associated to an order in status : " + commercialOrder.getStatus());
             } 
         }
+		if(orderOffer.getProducts() != null) {
+			orderOffer.getProducts()
+					.stream()
+					.filter(orderProduct -> orderProduct.getOrderArticleLine() != null)
+					.forEach(orderProduct -> {
+						orderProduct.getOrderArticleLine().setOrderProduct(null);
+						orderProduct.setOrderArticleLine(null);
+					});
+		}
     	orderOfferService.remove(orderOffer);
     }
     
