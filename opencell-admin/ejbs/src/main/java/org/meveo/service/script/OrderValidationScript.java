@@ -67,7 +67,7 @@ public class OrderValidationScript extends Script {
 
         List<OrderOffer> validOffers = commercialOrderService.validateOffers(order.getOffers());
         
-        Set<DiscountPlan> discountPlans=new HashSet<DiscountPlan>();
+        Set<DiscountPlan> discountPlans=new HashSet<>();
       		if(order.getDiscountPlan()!=null) {
       			discountPlans.add(order.getDiscountPlan());
       		}

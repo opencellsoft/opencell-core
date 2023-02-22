@@ -32,13 +32,13 @@ import org.slf4j.LoggerFactory;
 @Stateless
 public class QuoteVersionService extends PersistenceService<QuoteVersion>   {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(QuoteVersionService.class);
-	private final static int NEW_VERSION = 1;
+	private static final Logger LOGGER = LoggerFactory.getLogger(QuoteVersionService.class);
+	private static final int NEW_VERSION = 1;
 
-	private final String MISSING_QUOTE_ID = "Missing quote for id %d";
-	private final String MISSING_QUOTE_VERSION = "Missing quote version for code %d";
-	private final String QUOTE_VERSION_STATUS_NOT_DRAFT = "you can not publish a quote version with status %s, the status must be DRAFT";
-	private final String QUOTE_VERSION_ALREADY_CLOSED = "Quote version code %d is already closed";
+	private static final String MISSING_QUOTE_ID = "Missing quote for id %d";
+	private static final String MISSING_QUOTE_VERSION = "Missing quote version for code %d";
+	private static final String QUOTE_VERSION_STATUS_NOT_DRAFT = "you can not publish a quote version with status %s, the status must be DRAFT";
+	private static final String QUOTE_VERSION_ALREADY_CLOSED = "Quote version code %d is already closed";
 
 	@Inject private CatalogHierarchyBuilderService catalogHierarchyBuilderService;
 	

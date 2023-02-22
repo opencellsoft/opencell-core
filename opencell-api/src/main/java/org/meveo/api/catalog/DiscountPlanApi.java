@@ -50,7 +50,6 @@ import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
-import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.UntdidAllowanceCodeService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 
@@ -66,16 +65,14 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
     private DiscountPlanService discountPlanService;
     
     @Inject
-    private InvoiceLineService invoiceLineService;
-
-    @Inject
     private UntdidAllowanceCodeService untdidAllowanceCodeService;
 
     @Override
     public DiscountPlan create(DiscountPlanDto postData) throws MeveoApiException, BusinessException {
 
-    	if(postData.getDiscountPlanType() == null)
+		if (postData.getDiscountPlanType() == null) {
 			missingParameters.add("discountPlanType");
+		}
 
     	handleMissingParameters();
         if (StringUtils.isBlank(postData.getCode())) {
@@ -159,9 +156,9 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-    	if(postData.getDiscountPlanType() == null)
+		if (postData.getDiscountPlanType() == null) {
 			missingParameters.add("discountPlanType");
-
+		}
     	
     	handleMissingParameters();
 

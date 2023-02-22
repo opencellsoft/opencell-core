@@ -204,11 +204,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     protected static boolean applyGenericWorkflow = true;
 
-    protected static Map<Class, String> jsonTypes = new HashMap<Class, String>();
+    protected static Map<Class, String> jsonTypes = new HashMap<>();
 
     protected static boolean encryptCFSetting = false;
 
-    private static Long MAX_DEPTH = 5L;
+    private static final Long MAX_DEPTH = 5L;
 
     @PostConstruct
     private void init() {

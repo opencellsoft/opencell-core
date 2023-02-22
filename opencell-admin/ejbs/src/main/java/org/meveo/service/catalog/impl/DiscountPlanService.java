@@ -120,7 +120,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 	}
 
  
-	 public boolean matchDiscountPlanExpression(String expression, IDiscountable entity,BaseEntity...entities) throws BusinessException {
+	 public boolean matchDiscountPlanExpression(String expression, IDiscountable entity, BaseEntity...entities) throws BusinessException {
 	        Boolean result = true;
 
 	        if (StringUtils.isBlank(expression)) {
@@ -147,9 +147,8 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 	}
 
 	public List<Long> getDiscountPlanToExpire(Date expireDiscountPlanToDate) {
-		List<Long> ids = getEntityManager().createNamedQuery("discountPlan.getExpired", Long.class).setParameter("date", expireDiscountPlanToDate)
+		return getEntityManager().createNamedQuery("discountPlan.getExpired", Long.class).setParameter("date", expireDiscountPlanToDate)
 				.setParameter("statuses", Arrays.asList(DiscountPlanStatusEnum.ACTIVE, DiscountPlanStatusEnum.IN_USE)).getResultList();
-		return ids;
 	}
 	
  
@@ -174,7 +173,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 	public List<WalletOperation> calculateDiscountplanItems(List<DiscountPlanItem> discountPlanItems, Seller seller, BillingAccount billingAccount, Date operationDate, BigDecimal quantity, 
     		BigDecimal unitAmountWithoutTax, String discountCode, WalletInstance walletInstance, OfferTemplate offerTemplate, 
     		ServiceInstance serviceInstance, Subscription subscription, String discountDescription, boolean isVirtual, ChargeInstance chargeInstance, WalletOperation walletOperation, DiscountPlanTypeEnum... discountPlanTypeEnum) {
-    	List<WalletOperation> discountWalletOperations = new ArrayList<WalletOperation>();
+    	List<WalletOperation> discountWalletOperations = new ArrayList<>();
     	
     	discountPlanItems.sort(Comparator.comparing(DiscountPlanItem::getFinalSequence));
     	

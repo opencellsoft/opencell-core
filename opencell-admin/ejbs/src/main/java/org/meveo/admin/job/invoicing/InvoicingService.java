@@ -78,7 +78,7 @@ import com.google.common.collect.Lists;
 @Stateless
 public class InvoicingService extends PersistenceService<Invoice> {
 
-    private final static BigDecimal HUNDRED = new BigDecimal("100");
+    private static final BigDecimal HUNDRED = new BigDecimal("100");
     @Inject
     private BillingAccountService billingAccountService;
     @Inject
@@ -94,9 +94,9 @@ public class InvoicingService extends PersistenceService<Invoice> {
     private static final int MAX_IL_TO_UPDATE_PER_TRANSACTION = 100000;
     @Inject
     private InvoiceSubCategoryService invoiceSubCategoryService;
-    private Map<Long, Tax> taxes=new TreeMap<Long, Tax>();
-    private Map<Long, TradingLanguage> tradingLanguages=new TreeMap<Long, TradingLanguage>();
-    private Map<Long, DiscountPlan> discountPlans=new TreeMap<Long, DiscountPlan>();
+    private Map<Long, Tax> taxes=new TreeMap<>();
+    private Map<Long, TradingLanguage> tradingLanguages=new TreeMap<>();
+    private Map<Long, DiscountPlan> discountPlans=new TreeMap<>();
     private Map<String, String> descriptionMap = new HashMap<>();
     
 	/** Creates the aggregates and invoice async. group of BAs at a time in a separate transaction.
@@ -126,11 +126,11 @@ public class InvoicingService extends PersistenceService<Invoice> {
 		}
 		List<Object[]> resultList = queryB.getResultList();
 		if(resultList==null || resultList.isEmpty()) {
-			return new ArrayList<BillingAccountDetailsItem>();
+			return new ArrayList<>();
 		}
-		final Map<Long, BillingAccountDetailsItem> billingAccountDetailsMap = resultList.stream().map(x-> new BillingAccountDetailsItem(x)).collect(Collectors.toMap(BillingAccountDetailsItem::getBillingAccountId, Function.identity()));
+		final Map<Long, BillingAccountDetailsItem> billingAccountDetailsMap = resultList.stream().map(BillingAccountDetailsItem::new).collect(Collectors.toMap(BillingAccountDetailsItem::getBillingAccountId, Function.identity()));
 		Query query = getEntityManager().createNamedQuery("InvoiceLine.getInvoicingItems").setParameter("ids", baIDs).setParameter("billingRunId", billingRun.getId());
-		final Map<Long, List<InvoicingItem>> itemsByBAID = ((List<Object[]>)query.getResultList()).stream().map(x-> new InvoicingItem(x)).collect(Collectors.groupingBy(InvoicingItem::getBillingAccountId));
+		final Map<Long, List<InvoicingItem>> itemsByBAID = ((List<Object[]>)query.getResultList()).stream().map(InvoicingItem::new).collect(Collectors.groupingBy(InvoicingItem::getBillingAccountId));
 		log.info("======= {} InvoicingItems found =======",itemsByBAID.size());
 		billingAccountDetailsMap.values().stream().forEach(x->x.setInvoicingItems(itemsByBAID.get(x.getBillingAccountId())));
 		return billingAccountDetailsMap.values().stream().collect(Collectors.toList());
@@ -138,23 +138,23 @@ public class InvoicingService extends PersistenceService<Invoice> {
     
 	private Future<String> processInvoicingItems(BillingRun billingRun, BillingCycle billingCycle, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, MeveoUser lastCurrentUser, boolean isFullAutomatic, JobExecutionResultImpl result) {
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
-        List<List<Invoice>> invoicesbyBA = processData(billingRun, invoicingItemsList, jobInstanceId, isFullAutomatic, billingCycle, result);
+        List<List<Invoice>> invoicesbyBA = processData(billingRun, invoicingItemsList, isFullAutomatic, billingCycle, result);
         if(!CollectionUtils.isEmpty(invoicesbyBA)) {
         	validateInvoices(invoicesbyBA);
             writeInvoicingData(billingRun, isFullAutomatic, invoicesbyBA, billingCycle);
         }
-        return new AsyncResult<String>("OK");
+        return new AsyncResult<>("OK");
     }
 
 	private void validateInvoices(List<List<Invoice>> invoicesbyBA) {
 		invoicesbyBA.stream().forEach(invoices-> invoiceService.applyAutomaticInvoiceCheck(invoices, true));
 	}
 
-	private List<List<Invoice>> processData(BillingRun billingRun, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, boolean isFullAutomatic, BillingCycle billingCycle, JobExecutionResultImpl result) {
-        List<List<Invoice>> invoicesByBA = new ArrayList<List<Invoice>>();
+	private List<List<Invoice>> processData(BillingRun billingRun, List<BillingAccountDetailsItem> invoicingItemsList, boolean isFullAutomatic, BillingCycle billingCycle, JobExecutionResultImpl result) {
+        List<List<Invoice>> invoicesByBA = new ArrayList<>();
         List<Invoice> invoices;
         for (BillingAccountDetailsItem billingAccountDetailsItem : invoicingItemsList) {
-        	invoices = new ArrayList<Invoice>();
+        	invoices = new ArrayList<>();
             BillingAccount billingAccount = getEntityManager().getReference(BillingAccount.class, billingAccountDetailsItem.getBillingAccountId());
             try {
                 createAggregatesAndInvoiceFromInvoicingItems(billingAccountDetailsItem, billingRun, invoices, billingCycle, billingAccount,isFullAutomatic);
@@ -163,15 +163,14 @@ public class InvoicingService extends PersistenceService<Invoice> {
             } catch (Exception e) {
                 log.error("Failed to create invoices for entity {}", billingAccount.getId(), e);
                 result.addErrorReport("BA: "+billingAccount.getId()+" error: "+e.getMessage());
-                rejectedBillingAccountService.create(billingAccount, billingRun, e.getMessage().toString());
+                rejectedBillingAccountService.create(billingAccount, billingRun, e.getMessage());
             }
         }
         return invoicesByBA;
     }
     
     private void createAggregatesAndInvoiceFromInvoicingItems(BillingAccountDetailsItem billingAccountDetailsItem, BillingRun billingRun, List<Invoice> invoices, BillingCycle billingCycle, BillingAccount billingAccount, boolean isFullAutomatic){
-        final InvoicingItem firstItem = billingAccountDetailsItem.getInvoicingItems().get(0);
-        final Invoice invoice = initInvoice(billingAccountDetailsItem, firstItem, billingRun, billingAccount, billingCycle, isFullAutomatic);
+        final Invoice invoice = initInvoice(billingAccountDetailsItem, billingRun, billingAccount, billingCycle, isFullAutomatic);
         Set<SubCategoryInvoiceAgregate> invoiceSCAs = createInvoiceAgregates(billingAccountDetailsItem, billingAccount, invoice);
         evalDueDate(invoice, billingCycle, null, billingAccountDetailsItem.getCaDueDateDelayEL());
         invoiceService.setInitialCollectionDate(invoice, billingCycle, billingRun);
@@ -181,14 +180,14 @@ public class InvoicingService extends PersistenceService<Invoice> {
 
     private void writeInvoicingData(BillingRun billingRun, boolean isFullAutomatic, List<List<Invoice>> invoicesbyBA, BillingCycle billingCycle) {
         log.info("======== CREATING {} INVOICES ========", invoicesbyBA.size());
-        invoicesbyBA.stream().forEach(invoices->assignNumberAndCreate(billingRun, isFullAutomatic, invoices, billingCycle));
+        invoicesbyBA.stream().forEach(invoices->assignNumberAndCreate(billingRun, isFullAutomatic, invoices));
         getEntityManager().flush();//to be able to update ILs
         getEntityManager().clear();
         log.info("======== UPDATING ILs ========");
-        invoicesbyBA.stream().forEach(invoices->invoices.stream().forEach(i ->i.getSubCategoryInvoiceAgregate().stream().forEach(sca->updateInvoiceLines(i,billingRun,sca))));
+        invoicesbyBA.stream().forEach(invoices->invoices.stream().forEach(i ->i.getSubCategoryInvoiceAgregate().stream().forEach(sca->updateInvoiceLines(i,sca))));
     }
 
-    private void assignNumberAndCreate(BillingRun billingRun, boolean isFullAutomatic, List<Invoice> invoices, BillingCycle billingCycle) {
+    private void assignNumberAndCreate(BillingRun billingRun, boolean isFullAutomatic, List<Invoice> invoices) {
         if(!isFullAutomatic) {
             invoices.stream().forEach(invoice->invoice.setTemporaryInvoiceNumber(serviceSingleton.getTempInvoiceNumber(billingRun.getId())));
         } else {
@@ -201,7 +200,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
 		});
     }
     
-    private void updateInvoiceLines(Invoice invoice, BillingRun billingRun, SubCategoryInvoiceAgregate sca) {
+    private void updateInvoiceLines(Invoice invoice, SubCategoryInvoiceAgregate sca) {
         final List<Long> largeList = sca.getIlIDs();
         for (List<Long> ilIDs : Lists.partition(largeList, MAX_IL_TO_UPDATE_PER_TRANSACTION)) {
             Query query = getEntityManager().createNamedQuery("InvoiceLine.linkToInvoice").setParameter("invoice", invoice).setParameter("invoiceAgregateF", sca).setParameter("ids", ilIDs);
@@ -247,7 +246,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
 
     private Map<SubCategoryInvoiceAgregate, List<InvoicingItem>> createInvoiceSubCategories(List<InvoicingItem> invoicingItems, Invoice invoice) {
         final Map<String, List<InvoicingItem>> scaGroup = invoicingItems.stream().collect(Collectors.groupingBy(InvoicingItem::getScaKey));
-        Map<SubCategoryInvoiceAgregate, List<InvoicingItem>> itemsBySubCategory = new HashMap<SubCategoryInvoiceAgregate, List<InvoicingItem>>();
+        Map<SubCategoryInvoiceAgregate, List<InvoicingItem>> itemsBySubCategory = new HashMap<>();
         scaGroup.values().stream().forEach(items->initSubCategoryInvoiceAggregate(items, invoice, itemsBySubCategory));
         return itemsBySubCategory;
     }
@@ -263,7 +262,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
         itemsBySubCategory.put(scAggregate,items);
     }
 
-    private Invoice initInvoice(BillingAccountDetailsItem billingAccountDetailsItem, InvoicingItem item, BillingRun billingRun, BillingAccount billingAccount, BillingCycle billingCycle, boolean isFullAutomatic) {
+    private Invoice initInvoice(BillingAccountDetailsItem billingAccountDetailsItem, BillingRun billingRun, BillingAccount billingAccount, BillingCycle billingCycle, boolean isFullAutomatic) {
         InvoiceType invoiceType = invoiceService.determineInvoiceType(false, false, false, billingCycle, billingRun, billingAccount);
         Invoice invoice = new Invoice();
         invoice.setBillingAccount(billingAccount);
@@ -271,9 +270,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
         invoice.setStatus(isFullAutomatic?InvoiceStatusEnum.VALIDATED:InvoiceStatusEnum.DRAFT);
         invoice.setInvoiceType(invoiceType);
         invoice.setInvoiceDate(billingRun.getInvoiceDate());
-        if (billingRun != null) {
-            invoice.setBillingRun(billingRun);
-        }
+        invoice.setBillingRun(billingRun);
         
         if (billingAccountDetailsItem.getPaymentMethodId() != null) {
             invoice.setPaymentMethodType(billingAccountDetailsItem.getPaymentMethodType());
@@ -302,9 +299,9 @@ public class InvoicingService extends PersistenceService<Invoice> {
         aggregate.setDescription(descTranslated);
     }
 
-    private void initTaxAggregations(BillingAccountDetailsItem BillingAccountDetailsItem, Invoice invoice, boolean calculateTaxOnSubCategoryLevel, BillingAccount billingAccount, String languageCode, List<InvoicingItem> invoicingItems) {
+    private void initTaxAggregations(BillingAccountDetailsItem billingAccountDetailsItem, Invoice invoice, boolean calculateTaxOnSubCategoryLevel, BillingAccount billingAccount, String languageCode, List<InvoicingItem> invoicingItems) {
         InvoicingItem firstItem = invoicingItems.get(0);
-        Boolean isExonerated = billingAccountService.isExonerated(billingAccount, BillingAccountDetailsItem.getExoneratedFromTaxes(), BillingAccountDetailsItem.getExonerationTaxEl());
+        boolean isExonerated = billingAccountService.isExonerated(billingAccount, billingAccountDetailsItem.getExoneratedFromTaxes(), billingAccountDetailsItem.getExonerationTaxEl());
         if (isExonerated) {
             return;
         }
@@ -383,13 +380,13 @@ public class InvoicingService extends PersistenceService<Invoice> {
         }*/
         final List<DiscountPlanSummary> discountPlanInstances = billingAccountDetailsItem.getdiscountPlanSummaries();
         if (discountPlanInstances != null && !discountPlanInstances.isEmpty()) {
-            applicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccountDetailsItem, discountPlanInstances,invoice));
+            applicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(discountPlanInstances,invoice));
         }
         return applicableDiscountPlanItems;
     }
 
     private List<DiscountPlanInstance> subscriptionDiscountPlanInstancesfromBillingAccount(BillingAccount billingAccount) {
-        return billingAccount.getUsersAccounts().stream().map(userAccount -> userAccount.getSubscriptions())
+        return billingAccount.getUsersAccounts().stream().map(UserAccount::getSubscriptions)
                 .map(this::addSubscriptionDiscountPlan).flatMap(Collection::stream).collect(toList());
     }
 
@@ -515,7 +512,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
         return computedDiscount;
     }
 
-    private List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccountDetailsItem billingAccountDetailsItem, List<DiscountPlanSummary> discountPlansum, Invoice invoice)
+    private List<DiscountPlanItem> getApplicableDiscountPlanItems(List<DiscountPlanSummary> discountPlansum, Invoice invoice)
             throws BusinessException {
         List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>();
         for (DiscountPlanSummary dps : discountPlansum) {
@@ -542,7 +539,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
         if (StringUtils.isBlank(expression)) {
             return result;
         }
-        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        Map<Object, Object> userMap = new HashMap<>();
 
         BillingAccount billingAccount = retrieveIfNotManaged(invoice).getBillingAccount();
         if (expression.indexOf("ca") >= 0) {
@@ -582,30 +579,34 @@ public class InvoicingService extends PersistenceService<Invoice> {
         if (StringUtils.isBlank(expression)) {
             return null;
         }
-        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        Map<Object, Object> userMap = new HashMap<>();
         userMap.put("ca", billingAccount.getCustomerAccount());
         userMap.put("ba", billingAccount);
         userMap.put("iv", invoice);
         userMap.put("invoice", invoice);
         userMap.put("wa", wallet);
         userMap.put("amount", subCatTotal);
-        BigDecimal result = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
-        return result;
+        return ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
     }
     
     private void evalDueDate(Invoice invoice, BillingCycle billingCycle, String orderDueDateDelayEL, String caDueDateDelayEL) {
         BillingAccount billingAccount = invoice.getBillingAccount();
         Order order = invoice.getOrder();
         // Determine invoice due date delay either from Order, Customer account or Billing cycle
-        String dueDateDelayEL = (order != null && !StringUtils.isBlank(orderDueDateDelayEL)) ? orderDueDateDelayEL:
-            (!StringUtils.isBlank(caDueDateDelayEL)) ? caDueDateDelayEL : billingCycle.getDueDateDelayEL();
+        String dueDateDelayEL = billingCycle.getDueDateDelayEL();
+        if (order != null && !StringUtils.isBlank(orderDueDateDelayEL)) {
+        	dueDateDelayEL = orderDueDateDelayEL;
+        } else if (!StringUtils.isBlank(caDueDateDelayEL)) {
+        	dueDateDelayEL = caDueDateDelayEL;
+        } else {
+        	
+        }
         Integer delay = invoiceService.evaluateDueDelayExpression(dueDateDelayEL, billingAccount, invoice, order);
-        Date dueDate = invoice.getInvoiceDate();
-        if (delay != null) {
-            dueDate = DateUtils.addDaysToDate(invoice.getInvoiceDate(), delay);
+        if (invoice.getInvoiceDate() != null) {
+        	Date dueDate = DateUtils.addDaysToDate(invoice.getInvoiceDate(), delay);
+            invoice.setDueDate(dueDate);
         } else {
             throw new BusinessException("Due date delay is null");
         }
-        invoice.setDueDate(dueDate);
     }
 }

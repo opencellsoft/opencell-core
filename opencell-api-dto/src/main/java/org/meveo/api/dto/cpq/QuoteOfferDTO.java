@@ -106,7 +106,7 @@ public class QuoteOfferDTO extends BusinessEntityDto {
 			"            ][<br/>" + 
 			"        }[<br/>" + 
 			"    ]")
-    private List<QuoteProductDTO> products = new ArrayList<QuoteProductDTO>();
+    private List<QuoteProductDTO> products = new ArrayList<>();
 
 	@Schema(description = "list of quote attribute", example = " \"offerAttributes\": [[<br/>" + 
 			"        {[<br/>" + 
@@ -116,7 +116,7 @@ public class QuoteOfferDTO extends BusinessEntityDto {
 			"            \"dateValue\": \"2021-02-22\"[<br/>" + 
 			"        }[<br/>" + 
 			"    ]")
-    private List<QuoteAttributeDTO> offerAttributes =new ArrayList<QuoteAttributeDTO>();
+    private List<QuoteAttributeDTO> offerAttributes =new ArrayList<>();
 
 	@Schema(description = "custom fields for quote offer")
     private CustomFieldsDto customFields;
@@ -189,14 +189,14 @@ public class QuoteOfferDTO extends BusinessEntityDto {
 		init(quoteOffer);
 		prices=calculateTotalsPerOffer(quoteOffer);
 		if(loadQuoteProduct) {
-			products=new ArrayList<QuoteProductDTO>();
+			products=new ArrayList<>();
 				for(QuoteProduct quoteProduct:quoteOffer.getQuoteProduct()) {
 					products.add(new QuoteProductDTO(quoteProduct,loadQuoteAttributes));
 				}
 		}
 		
 		if(loadOfferAttributes) {
-			offerAttributes=new ArrayList<QuoteAttributeDTO>();
+			offerAttributes=new ArrayList<>();
 			for(QuoteAttribute offerAttribute:quoteOffer.getQuoteAttributes()) {
 				offerAttributes.add(new QuoteAttributeDTO(offerAttribute));
 			}
@@ -217,7 +217,7 @@ public class QuoteOfferDTO extends BusinessEntityDto {
 			List<QuotePrice> quotePricesPerTax= pricesPerTax.get(taxRate);
 
 			List<PriceDTO> taxPrices = quotePricesPerTax.stream()
-					.map(price -> new PriceDTO(price))
+					.map(PriceDTO::new)
 					.collect(Collectors.toList());
 
 			taxPricesDtos.add(new TaxPricesDto(taxRate, taxPrices));

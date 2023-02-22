@@ -1143,7 +1143,7 @@ public class CpqQuoteApi extends BaseApi {
                         quoteOffer.getOfferTemplate().getAllowedDiscountPlans().stream()
                                 .filter(odp -> odp.getId().equals(dp.getId()))
                                 .findFirst()
-                                .ifPresent(matchedDP -> quoteOffer.setDiscountPlan(matchedDP));
+                                .ifPresent(quoteOffer::setDiscountPlan);
                     }
                 });
     }

@@ -1,9 +1,7 @@
 package org.meveo.service.cpq;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -91,12 +89,11 @@ public class TagService extends BusinessService<Tag> {
 	
 	@SuppressWarnings("unchecked")
     public List<String> findByRequestedTagType(List<String> requestedTagType) { 
-	 List<String> tags=new ArrayList<String>();
+	 List<String> tags=new ArrayList<>();
     	try {
     		tags = (List<String>)getEntityManager().createNamedQuery("Tag.findByRequestedTagType").setParameter("requestedTagType", requestedTagType).getResultList();
     	} catch (Exception e) {
-    		e.printStackTrace();
-    		log.error("findByCriteria error ", e.getMessage());
+    		log.error("findByCriteria error {}", e.getMessage());
     	}
 
     	return tags;

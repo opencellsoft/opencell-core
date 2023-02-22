@@ -66,7 +66,7 @@ public class EntityManagerProvider {
 
     private static boolean isMultiTenancyEnabled = ParamBean.isMultitenancyEnabled();
 
-    private static boolean DB_TYPE_ORACLE = JsonType.IS_CLOB;
+    private static final boolean DB_TYPE_ORACLE = JsonType.IS_CLOB;
 
     /**
      * Determine if DB is of oracle type. Value is derived when system setting "opencell.json.db.type"="clob"

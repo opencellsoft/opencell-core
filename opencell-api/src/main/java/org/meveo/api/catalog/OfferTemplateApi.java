@@ -107,7 +107,6 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.document.Document;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.admin.impl.FileTypeService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
@@ -190,9 +189,6 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
     @Inject
     private DocumentService documentService;
-
-    @Inject
-    private FileTypeService fileTypeService;
 
     @Override
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "sellers", entityClass = Seller.class, parser = ObjectPropertyParser.class))
@@ -525,7 +521,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         Set<String> tagCodes = postData.getTagCodes();
         offerTemplate.getTags().clear();
         if (tagCodes != null && !tagCodes.isEmpty()) {
-            List<Tag> tags = new ArrayList<Tag>();
+            List<Tag> tags = new ArrayList<>();
             for (String code : tagCodes) {
                 Tag tag = tagService.findByCode(code);
                 if (tag == null) {
@@ -541,7 +537,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         Set<String> mediaCodes = postData.getMediaCodes();
         offerTemplate.getMedias().clear();
         if (mediaCodes != null && !mediaCodes.isEmpty()) {
-            List<Media> medias = new ArrayList<Media>();
+            List<Media> medias = new ArrayList<>();
             for (String code : mediaCodes) {
                 Media media = mediaService.findByCode(code);
                 if (media == null) {
@@ -833,7 +829,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
                                             Set<ProductVersionAttributeDTO> attributes = productVersion.getAttributes().stream().map(ProductVersionAttributeDTO::new)
                                                     .collect(Collectors.toSet());
                                             getProductVersionResponse.setProductAttributes(attributes);
-                                            Set<GroupedAttributeDto> groupedAttributeDtos = productVersion.getGroupedAttributes().stream().map(att -> new GroupedAttributeDto(att))
+                                            Set<GroupedAttributeDto> groupedAttributeDtos = productVersion.getGroupedAttributes().stream().map(GroupedAttributeDto::new)
                                                     .collect(Collectors.toSet());
                                             getProductVersionResponse.setGroupedAttributes(groupedAttributeDtos);
                                         }

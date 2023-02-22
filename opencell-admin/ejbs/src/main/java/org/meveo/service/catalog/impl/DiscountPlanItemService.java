@@ -88,7 +88,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
 	@Inject
     AccountingArticleService accountingArticleService;
 	
-	private final static BigDecimal HUNDRED = new BigDecimal("100");
+	private static final BigDecimal HUNDRED = new BigDecimal("100");
 
     public DiscountPlanItem findByCode(String code) {
         QueryBuilder qb = new QueryBuilder(DiscountPlanItem.class, "d");
@@ -188,7 +188,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         if (StringUtils.isBlank(expression)) {
             return null;
         }
-        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        Map<Object, Object> userMap = new HashMap<>();
         userMap.put(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT, billingAccount != null ? billingAccount.getCustomerAccount() : null);
         userMap.put(ValueExpressionWrapper.VAR_BILLING_ACCOUNT, billingAccount);
         userMap.put("iv", invoice);
@@ -196,8 +196,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         userMap.put("wa", wallet);
         userMap.put("amount", subCatTotal);
 
-        BigDecimal result = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
-        return result;
+        return ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
     }
 
     public BigDecimal getDiscountAmount(BigDecimal amountToApplyDiscountOn, DiscountPlanItem discountPlanItem, Product product, List<AttributeValue> attributeValues)
@@ -242,7 +241,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
     
     public List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount, DiscountPlan discountPlan,WalletOperation walletOperation,QuoteVersion quoteVersion,QuoteOffer quoteOffer, QuoteProduct quoteProduct,AccountingArticle accountingArticle,DiscountPlanItemTypeEnum discountPlanItemType,Date applicationDate)
             throws BusinessException {
-    	List<DiscountPlanItem>  applicableDiscountPlanItems = new ArrayList<DiscountPlanItem>();
+    	List<DiscountPlanItem>  applicableDiscountPlanItems = new ArrayList<>();
     	
     	if(discountPlan.getSequence()==null){
     		discountPlanService.setDiscountPlanSequence(discountPlan);

@@ -89,11 +89,8 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
     private OneShotChargeInstanceService oneShotChargeInstanceService;
 	@Inject
 	private AttributeService attributeService;
-
 	@Inject
 	private ProductService productService;
-	@Inject
-	private OrderProductService orderProductService;
 
 	@Override
 	public void create(CommercialOrder entity) throws BusinessException {
@@ -319,12 +316,11 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 
 		order.getOffers()
 				.stream()
-				.map(offer->offer.getProducts())
+				.map(OrderOffer::getProducts)
 				.flatMap(Collection::stream)
 				.filter(orderProduct -> orderProduct.getDeliveryDate() == null)
-				.forEach(orderProduct -> {
-					orderProduct.setDeliveryDate(new Date());
-				});
+				.forEach(orderProduct -> orderProduct.setDeliveryDate(new Date())
+				);
 		updateWithoutProgressCheck(order);
 
 		return order;
@@ -459,7 +455,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		
 		Map<String,AttributeInstance> instantiatedAttributes = new HashMap<>();
 		
-		if(orderAttributes != null && orderAttributes.size() > 0) {
+		if(orderAttributes != null && !orderAttributes.isEmpty()) {
 			for (OrderAttribute orderAttribute : orderAttributes) {
 				if(orderAttribute.getAttribute()!=null  && !AttributeTypeEnum.EXPRESSION_LANGUAGE.equals(orderAttribute.getAttribute().getAttributeType())) {
 					AttributeInstance attributeInstance = new AttributeInstance(orderAttribute, currentUser);

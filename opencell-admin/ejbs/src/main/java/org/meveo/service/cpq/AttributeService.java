@@ -79,8 +79,7 @@ public class AttributeService extends BusinessService<Attribute>{
         if (resultType == null) {
             resultType = (Class<T>) String.class;
         }
-        T res = evaluateExpression(expression, params, resultType);
-        return res;
+        return evaluateExpression(expression, params, resultType);
     }
 
     public Attribute findByDescription(String description) {

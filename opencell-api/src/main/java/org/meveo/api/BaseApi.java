@@ -131,7 +131,7 @@ public abstract class BaseApi {
 
     protected static Logger log = LoggerFactory.getLogger(BaseApi.class);
 
-    private static final int limitDefaultValue = 100;
+    private static final int LIMIT_DEFAULT_VALUE = 100;
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
@@ -1313,7 +1313,7 @@ public abstract class BaseApi {
     }
 
     private PaginationConfiguration initPaginationConfiguration(String defaultSortBy, SortOrder defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering) {
-        Integer limit = paramBean.getPropertyAsInteger("api.list.defaultLimit", limitDefaultValue);
+        Integer limit = paramBean.getPropertyAsInteger("api.list.defaultLimit", LIMIT_DEFAULT_VALUE);
         if (pagingAndFiltering != null) {
             if (pagingAndFiltering.getLimit() != null) {
                 limit = pagingAndFiltering.getLimit();
@@ -1332,7 +1332,7 @@ public abstract class BaseApi {
     }
 
     private PaginationConfiguration initPaginationConfigurationMultiSort(String defaultSortBy, String defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering) {
-        Integer limit = paramBean.getPropertyAsInteger("api.list.defaultLimit", limitDefaultValue);
+        Integer limit = paramBean.getPropertyAsInteger("api.list.defaultLimit", LIMIT_DEFAULT_VALUE);
         if (pagingAndFiltering != null) {
             if (pagingAndFiltering.getLimit() != null) {
                 limit = pagingAndFiltering.getLimit();
@@ -1857,7 +1857,7 @@ public abstract class BaseApi {
     
     protected <T extends Enum<T>> List<String> allStatus(Class<T> enums, String paramBeanName, String defaultValueForParamBean){
     	
-		final List<String> allStatus = new ArrayList<String>();
+		final List<String> allStatus = new ArrayList<>();
 		for(T status:enums.getEnumConstants()) {
 			allStatus.add(status.toString().toLowerCase());
 		}

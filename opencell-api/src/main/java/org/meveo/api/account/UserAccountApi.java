@@ -67,7 +67,6 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
-import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;

@@ -103,8 +103,6 @@ public class QueryBuilder {
     private Map<String, JoinWrapper> innerJoins = new HashMap<>();
     private Set<InnerJoin> rootInnerJoins = new HashSet<>();
 
-    private InnerJoin rootInnerJoin;
-
     protected PaginationConfiguration paginationConfiguration;
 
     private String paginationSortAlias;
@@ -115,7 +113,7 @@ public class QueryBuilder {
 
     public static final String  JOIN_AS = " as ";
     
-    private Set<String> joinAlias = new TreeSet<String>();
+    private Set<String> joinAlias = new TreeSet<>();
     
     private JoinType joinType = JoinType.INNER ;
     
@@ -141,7 +139,6 @@ public class QueryBuilder {
     }
 
     public String formatInnerJoins(boolean doFetch){
-    	var i = this.alias;
         return rootInnerJoins.isEmpty() ? "" : rootInnerJoins.stream()
                 .map(rij -> format(alias, rij, doFetch))
                 .collect(Collectors.joining(" ", " ", " "));

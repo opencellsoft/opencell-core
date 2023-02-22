@@ -101,7 +101,7 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
     private Map<String, JasperReport> jasperReportMap = new HashMap<>();
     
     /** date format. */
-    private String DATE_PATERN = "yyyy.MM.dd";
+    private static final String DATE_PATERN = "yyyy.MM.dd";
 	
 	public CpqQuote duplicate(CpqQuote quote, QuoteVersion quoteVersion, boolean preserveCode, boolean duplicateHierarchy) {
 		
@@ -163,7 +163,7 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	         String xmlFileName = null;
 	         String expression = quoteType.getXmlFilenameEL();
 	         if (!StringUtils.isBlank(expression)) {
-	             Map<Object, Object> contextMap = new HashMap<Object, Object>();
+	             Map<Object, Object> contextMap = new HashMap<>();
 	             contextMap.put("quoteVersion",quoteVersion);
 	             try {
 	                 String value = ValueExpressionWrapper.evaluateExpression(expression, contextMap, String.class);
@@ -204,7 +204,7 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	         String xmlFileName = null;
 	         String expression = quoteType.getPdfFilenameEL();
 	         if (!StringUtils.isBlank(expression)) {
-	             Map<Object, Object> contextMap = new HashMap<Object, Object>();
+	             Map<Object, Object> contextMap = new HashMap<>();
 	             contextMap.put("quoteVersion", quoteVersion);
 	             try {
 	                 String value = ValueExpressionWrapper.evaluateExpression(expression, contextMap, String.class);

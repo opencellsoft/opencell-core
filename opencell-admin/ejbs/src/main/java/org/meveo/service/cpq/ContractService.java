@@ -35,13 +35,13 @@ import org.slf4j.LoggerFactory;
 @Stateless
 public class ContractService extends BusinessService<Contract>  {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(ContractService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ContractService.class);
 
 	@Inject
 	private PricePlanMatrixVersionService pricePlanMatrixVersionService;
 
-	private final static String CONTRACT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE = "status of the contract (%s) is %s, it can not be updated nor removed";
-	private final static String CONTRACT_CAN_NOT_CHANGE_THE_STATUS_ACTIVE_TO = "Status transition from ACTIVE to %s is not allowed";
+	private static final String CONTRACT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE = "status of the contract (%s) is %s, it can not be updated nor removed";
+	private static final String CONTRACT_CAN_NOT_CHANGE_THE_STATUS_ACTIVE_TO = "Status transition from ACTIVE to %s is not allowed";
 	
 	
 	public ContractService() {

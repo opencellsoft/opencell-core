@@ -30,7 +30,7 @@ public class InvoiceLinesMinimumJob extends Job {
 
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {
-        Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
+        Map<String, CustomFieldTemplate> result = new HashMap<>();
 
         CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
         customFieldNbRuns.setCode(CF_NB_RUNS);

@@ -26,9 +26,9 @@ public class QuotePriceService extends PersistenceService<QuotePrice> {
 
 	
 	@SuppressWarnings("unchecked")
-	public List<QuotePrice> findByQuoteArticleLineIdandQuoteVersionId(Long QuoteArticleLineId, Long quoteVersionId) {
+	public List<QuotePrice> findByQuoteArticleLineIdandQuoteVersionId(Long quoteArticleLineId, Long quoteVersionId) {
 		QueryBuilder queryBuilder = new QueryBuilder(QuotePrice.class, "qp", Arrays.asList("quoteArticleLine", "quoteVersion"));
-		queryBuilder.addCriterion("qp.quoteArticleLine.id", "=", QuoteArticleLineId, false);
+		queryBuilder.addCriterion("qp.quoteArticleLine.id", "=", quoteArticleLineId, false);
 		queryBuilder.addCriterion("qp.quoteVersion.id", "=", quoteVersionId, false);
 		queryBuilder.addOrderCriterionAsIs("qp.unitPriceWithoutTax", false);
 		Query query = queryBuilder.getQuery(getEntityManager());
@@ -70,10 +70,8 @@ public class QuotePriceService extends PersistenceService<QuotePrice> {
 			return getEntityManager().createQuery("from QuotePrice q where q.uuid=:uuid", QuotePrice.class)
 					.setParameter("uuid", uuid)
 					.getSingleResult();
-		}catch(NonUniqueResultException e) {
+		}catch(NonUniqueResultException | NoResultException e) {
 			return null;
-		}catch (NoResultException e) {
-		return null;
-	}
+		}
 	}
 }

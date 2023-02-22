@@ -44,7 +44,7 @@ import org.meveo.service.base.ValueExpressionWrapper;
 @Stateless
 public class InvoiceSubCategoryService extends BusinessService<InvoiceSubCategory> {
 	
-	private Map<Long, InvoiceSubCategory> invoiceSubCategoryMap = new TreeMap<Long, InvoiceSubCategory>();
+	private Map<Long, InvoiceSubCategory> invoiceSubCategoryMap = new TreeMap<>();
 
 	
     @SuppressWarnings("unchecked")
@@ -64,7 +64,7 @@ public class InvoiceSubCategoryService extends BusinessService<InvoiceSubCategor
         if (StringUtils.isBlank(expression)) {
             return result;
         }
-        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        Map<Object, Object> userMap = new HashMap<>();
 
         if (expression.indexOf(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT) >= 0) {
             userMap.put(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT, billingAccount.getCustomerAccount());

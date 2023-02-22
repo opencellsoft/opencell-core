@@ -104,9 +104,9 @@ public class ValueExpressionWrapper {
 
     private ValueExpression ve;
 
-    static protected Logger log = LoggerFactory.getLogger(ValueExpressionWrapper.class);
+    protected static Logger log = LoggerFactory.getLogger(ValueExpressionWrapper.class);
 
-    static HashMap<String, ValueExpressionWrapper> valueExpressionWrapperMap = new HashMap<String, ValueExpressionWrapper>();
+    static HashMap<String, ValueExpressionWrapper> valueExpressionWrapperMap = new HashMap<>();
 
     /**
      * EL variable class (class name) to parameter name mapping.
@@ -394,9 +394,7 @@ public class ValueExpressionWrapper {
      * @throws InvalidELException Failed to evaluate EL expression
      */
     public static boolean evaluateToBooleanOneVariable(String expression, String variableName, Object variable) throws InvalidELException {
-
-        boolean result = evaluateToBooleanMultiVariable(expression, variableName, variable);
-        return result;
+        return evaluateToBooleanMultiVariable(expression, variableName, variable);
     }
 
     /**
@@ -429,7 +427,7 @@ public class ValueExpressionWrapper {
             return true;
         }
 
-        Map<Object, Object> contextMap = new HashMap<Object, Object>();
+        Map<Object, Object> contextMap = new HashMap<>();
         if (contextVarNameAndValue != null) {
             for (int i = 0; i < contextVarNameAndValue.length; i = i + 2) {
                 contextMap.put(contextVarNameAndValue[i], contextVarNameAndValue[i + 1]);
@@ -473,7 +471,7 @@ public class ValueExpressionWrapper {
             return null;
         }
 
-        Map<Object, Object> contextMap = new HashMap<Object, Object>();
+        Map<Object, Object> contextMap = new HashMap<>();
         if (contextVarNameAndValue != null) {
             for (int i = 0; i < contextVarNameAndValue.length; i = i + 2) {
                 contextMap.put(contextVarNameAndValue[i], contextVarNameAndValue[i + 1]);
