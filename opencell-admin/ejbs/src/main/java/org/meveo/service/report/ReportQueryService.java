@@ -503,25 +503,35 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                     	} else if (targetEntity.isInstance(result)) {
                     	    if(fields.get(index).contains(".")){
                     	        String[] selected_fields =  fields.get(index).split(SEPARATOR_SELECTED_FIELDS);
-                    	        if (selected_fields.length == 3) {
+                    	        if (selected_fields.length >= 2) {
+                    	            processSelectedFields(selected_fields, result, item,  aliases.getOrDefault(fields.get(index), fields.get(index)), targetEntity, 0);
+                    	        }
+                    	        
+                    	        /*if (selected_fields.length == 3) {
                     	            Field field1 = FieldUtils.getField(targetEntity, selected_fields[0], true);
                                     Field field2 = FieldUtils.getField(field1.getType(), selected_fields[1], true);
                                     Field field3 = FieldUtils.getField(field2.getType(), selected_fields[2], true);
                                     try {
                                         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field2.getName(), field1.getType());                                   
+                                        Object property0 = propertyDescriptor.getReadMethod().invoke(field1.get(result));
+                                        String fieldAlias = aliases.getOrDefault(fields.get(index), fields.get(index)); 
                                         if(field1.get(result) == null) {
-                                            item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), "");
+                                            //item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), "");
+                                            item.put(fieldAlias, "");
                                         }
-                                        else {
-                                            Object property = propertyDescriptor.getReadMethod().invoke(field1.get(result));
-
-                                            PropertyDescriptor propertyDescriptor1 = new PropertyDescriptor(field3.getName(), field2.getType());                                   
-                                            if(property == null) {
-                                                item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), "");
+                                        else {                                            
+                                            PropertyDescriptor propertyDescriptor1 = new PropertyDescriptor(field3.getName(), field2.getType());
+                                            //String fieldAlias = aliases.getOrDefault(fields.get(index), fields.get(index));                            
+                                            Object property1 = propertyDescriptor1.getReadMethod().invoke(property0);
+                                            
+                                            if(property0 == null) {
+                                                //item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), "");
+                                                item.put(fieldAlias, "");
                                             }
                                             else {
-                                                Object property1 = propertyDescriptor1.getReadMethod().invoke(property);
-                                                item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), property1.toString());
+                                                //Object property1 = propertyDescriptor1.getReadMethod().invoke(property);
+                                                //item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), property1.toString());
+                                                item.put(fieldAlias, property1.toString());
                                             } 
                                         }                                    
                                     } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException  | IntrospectionException e) {
@@ -534,18 +544,23 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                                     Field field2 = FieldUtils.getField(field1.getType(), selected_fields[1], true);
                                     try {
                                         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field2.getName(), field1.getType());                                   
-                                        if(field1.get(result) == null) {
-                                            item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), "");
+                                        Object property0 = field1.get(result);
+                                        Object property1 = propertyDescriptor.getReadMethod().invoke(x);
+                                        String fieldAlias = aliases.getOrDefault(fields.get(index), fields.get(index));
+                                        if(property0 == null) {
+                                            //item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), "");
+                                            item.put(fieldAlias, "");
                                         }
                                         else {
-                                            Object property = propertyDescriptor.getReadMethod().invoke(field1.get(result));
-                                            item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), property.toString());
+                                            //Object property = propertyDescriptor.getReadMethod().invoke(field1.get(result));
+                                            //item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), property.toString());
+                                            item.put(fieldAlias, property1.toString());
                                         }                                    
                                     } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException  | IntrospectionException e) {
                                         log.error("Result construction failed", e);
                                         throw new BusinessException("Result construction failed", e);
                                     } 
-                    	        }                               
+                    	        }*/
                             }
                     	    else {
                                 Field field = FieldUtils.getField(targetEntity, fields.get(index), true);
@@ -571,6 +586,39 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                 initLazyLoadedValues(field, item);
             }
             return executionResult;
+        }
+    }
+    
+    private void processSelectedFields(String[] selectedFields, Object result, Map<String, Object> item, String fieldAlias, Class<?> currentClass, int fieldIndex) {
+        if (fieldIndex + 1 == selectedFields.length) {
+            item.put(fieldAlias, result != null ? result.toString() : "");
+            return;
+        }
+
+        Field fieldParent = FieldUtils.getField(currentClass, selectedFields[fieldIndex], true);
+        Field field = FieldUtils.getField(fieldParent.getType(), selectedFields[fieldIndex + 1], true);
+        if (fieldParent == null) {
+            throw new BusinessException("Field Parent not found: " + selectedFields[fieldIndex]);
+        }
+        if (field == null) {
+            throw new BusinessException("Field not found: " + selectedFields[fieldIndex + 1]);
+        }
+        try {
+            PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), fieldParent.getType());
+            Object property = null;
+            if(fieldIndex == 0){
+                result = fieldParent.get(result);
+            }            
+            if(result == null){
+                item.put(fieldAlias, property != null ? property.toString() : "");
+            }
+            else{
+                property = propertyDescriptor.getReadMethod().invoke(result);
+                processSelectedFields(selectedFields, property, item, fieldAlias, fieldParent.getType(), fieldIndex + 1);
+            }
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | IntrospectionException e) {
+            log.error("processSelectedFields failed", e);
+            throw new BusinessException("processSelectedFields failed", e);
         }
     }
 
