@@ -628,7 +628,15 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             BillingAccount billingAccount = bareWalletOperation.getBillingAccount();
             CustomerAccount customerAccount = billingAccount.getCustomerAccount();
             Customer customer = customerAccount.getCustomer();
-            List<Contract> contracts = contractService.getContractByAccount(customer, billingAccount, customerAccount);
+            
+            //Get the list of customers (current and parents)
+            List<Customer> customers = new ArrayList<>();
+            getCustomer(customer, customers);
+            
+            //Get contract by list of customer ids, billing account and customer account
+            List<Contract> contracts = contractService.getContractByListOfCustomers(customers.stream().map(Customer::getId).collect(Collectors.toList()), billingAccount, customerAccount);
+            List<Contract> filtredContractByCustomerLevel = getContractByCustomerLevel(customers, contracts);
+            
             if ((unitPriceWithoutTaxOverridden == null && appProvider.isEntreprise())
                     || (unitPriceWithTaxOverridden == null && !appProvider.isEntreprise())) {
 
@@ -640,18 +648,18 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 // Check if unit price was not overridden by a contract
                 Contract contract = null;
                 Contract contractWithRules = null;
-                if(contracts != null && !contracts.isEmpty()) {
-                    // Prioritize BA Contract then CA Contract then Customer Contract then Seller Contract
-                    contract = contracts.stream().filter(c -> c.getBillingAccount() != null).findFirst() // BA Contract
-                        .or(() -> contracts.stream().filter(c -> c.getCustomerAccount() != null).findFirst()) // CA Contract
-                        .or(() -> contracts.stream().filter(c -> c.getCustomer() != null).findFirst()) // Customer Contract
-                        .orElse(contracts.get(0)); // Seller Contract
+                if(filtredContractByCustomerLevel != null && !filtredContractByCustomerLevel.isEmpty()) {
+                    // Prioritize BA Contract then CA Contract then Customer Contract then Seller Contract                    contract = filtredContractByCustomerLevel.stream().filter(c -> c.getBillingAccount() != null).findFirst() // BA Contract
+                    contract = filtredContractByCustomerLevel.stream().filter(c -> c.getBillingAccount() != null).findFirst() // BA Contract
+                        .or(() -> filtredContractByCustomerLevel.stream().filter(c -> c.getCustomerAccount() != null).findFirst()) // CA Contract
+                        .or(() -> filtredContractByCustomerLevel.stream().filter(c -> c.getCustomer() != null).findFirst()) // Customer Contract
+                        .orElse(filtredContractByCustomerLevel.get(0)); // Seller Contract
 
                     // To save the first contract containing Rules by priority (BA->CA->Customer->seller) on WalletOperation.rulesContract
-                    contractWithRules = contracts.stream().filter(c -> c.getBillingAccount() != null && c.getBillingRules()!=null && !c.getBillingRules().isEmpty()).findFirst() // BA Contract
-                            .or(() -> contracts.stream().filter(c -> c.getCustomerAccount() != null && c.getBillingRules()!=null && !c.getBillingRules().isEmpty()).findFirst()) // CA Contract
-                            .or(() -> contracts.stream().filter(c -> c.getCustomer() != null && c.getBillingRules()!=null && !c.getBillingRules().isEmpty()).findFirst()) // Customer Contract
-                            .orElse(contracts.get(0));
+                    contractWithRules = filtredContractByCustomerLevel.stream().filter(c -> c.getBillingAccount() != null && c.getBillingRules()!=null && !c.getBillingRules().isEmpty()).findFirst() // BA Contract
+                            .or(() -> filtredContractByCustomerLevel.stream().filter(c -> c.getCustomerAccount() != null && c.getBillingRules()!=null && !c.getBillingRules().isEmpty()).findFirst()) // CA Contract
+                            .or(() -> filtredContractByCustomerLevel.stream().filter(c -> c.getCustomer() != null && c.getBillingRules()!=null && !c.getBillingRules().isEmpty()).findFirst()) // Customer Contract
+                            .orElse(filtredContractByCustomerLevel.get(0));
                     bareWalletOperation.setRulesContract(contractWithRules);
                 }
                 ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
@@ -659,14 +667,10 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 ContractItem contractItem = null;
                 if (contract != null && serviceInstance != null) {
                     OfferTemplate offerTemplate = serviceInstance.getSubscription().getOffer();
-                    Contract contractFromSubscription = bareWalletOperation.getSubscription() != null ? bareWalletOperation.getSubscription().getContract() != null ? bareWalletOperation.getSubscription().getContract() : null : null;
-                    if(contractFromSubscription == null) {
-                        Contract contractMatched = contractItemService.getApplicableContract(contracts, offerTemplate, serviceInstance.getCode(), chargeTemplate);
-                        if (contractMatched != null) {
-                            contract = contractMatched;
-                        }
-                    }else {
-                        contract = contractFromSubscription;
+                    
+                    Contract contractMatched = contractItemService.getApplicableContract(filtredContractByCustomerLevel, offerTemplate, serviceInstance.getCode(), chargeTemplate);
+                    if (contractMatched != null) {
+                        contract = contractMatched;
                     }
                     contractItem = contractItemService.getApplicableContractItem(contract, offerTemplate, serviceInstance.getCode(), chargeTemplate);
 
@@ -749,8 +753,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
                 }
             } else {
-                if (contracts != null && !contracts.isEmpty()) {
-                    bareWalletOperation.setRulesContract(addContractWithRules(contracts));
+                if (filtredContractByCustomerLevel != null && !filtredContractByCustomerLevel.isEmpty()) {
+                    bareWalletOperation.setRulesContract(addContractWithRules(filtredContractByCustomerLevel));
                 }
                 bareWalletOperation.setOverrodePrice(true);
             }
