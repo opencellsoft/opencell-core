@@ -27,8 +27,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.billing.UntdidTaxationCategoryDto;
-import org.meveo.api.dto.billing.UntdidVatexDto;
 import org.meveo.model.billing.Tax;
 
 /**
@@ -107,6 +105,10 @@ public class TaxDto extends BusinessEntityDto {
 
     public TaxDto(Long id) {
         this.id = id;
+    }
+
+    public TaxDto(Tax tax) {
+        super(tax);
     }
 
     /**
