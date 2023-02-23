@@ -660,9 +660,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
         qb.endOrClause();
 
-        List<BillingRun> billingRuns = qb.getQuery(getEntityManager()).getResultList();
-
-        return billingRuns;
+        return qb.getQuery(getEntityManager()).getResultList();
     }
 
     /**
@@ -701,16 +699,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 return EMPTY_LIST;
             }
             if (billingRun.getExceptionalRTIds() != null && !billingRun.getExceptionalRTIds().isEmpty()) {
-                return (List<BillingAccount>) ratedTransactionService.getEntityManager()
-                        .createNamedQuery("RatedTransaction.BillingAccountByRTIds")
-                        .setParameter("ids", billingRun.getExceptionalRTIds())
-                        .getResultList();
+                return ratedTransactionService.findBillingAccountsBy(billingRun.getExceptionalRTIds());
             }
             if (billingRun.getExceptionalILIds() != null && !billingRun.getExceptionalILIds().isEmpty()) {
-                return (List<BillingAccount>) invoiceLineService.getEntityManager()
-                        .createNamedQuery("InvoiceLine.BillingAccountByILIds")
-                        .setParameter("ids", billingRun.getExceptionalILIds())
-                        .getResultList();
+                return invoiceLineService.findBillingAccountsBy(billingRun.getExceptionalILIds());
             }
             List<BillingAccount> result = new ArrayList<>();
             String[] baIds = billingRun.getSelectedBillingAccounts() == null ? new String[0]:billingRun.getSelectedBillingAccounts().split(",");
@@ -1447,7 +1439,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         Filter filter = new Filter();
         if(invoicingV2) {
             filter.setPollingQuery("SELECT il from InvoiceLine il WHERE il.id in (" +
-                    billingRun.getExceptionalILIds().stream().map(id -> String.valueOf(id))
+                    billingRun.getExceptionalILIds().stream().map(String::valueOf)
                             .collect(joining(",")) + ")");
         } else {
             Map<String, String> filters = billingRun.getFilters();

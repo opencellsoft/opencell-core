@@ -3,6 +3,8 @@ package org.meveo.service.billing.impl;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections4.ListUtils.partition;
+import static org.meveo.commons.utils.ParamBean.getInstance;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
@@ -11,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -65,7 +68,6 @@ import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.crm.Customer;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.order.Order;
@@ -79,7 +81,6 @@ import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
-import org.meveo.util.ApplicationProvider;
 
 @Stateless
 public class InvoiceLineService extends PersistenceService<InvoiceLine> {
@@ -116,10 +117,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     @Inject
     private TaxService taxService;
-
-    @Inject
-    @ApplicationProvider
-    protected Provider appProvider;
     
     @Inject
 	private BillingRunService billingRunService;
@@ -669,14 +666,14 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         BasicStatistics basicStatistics = new BasicStatistics();
         InvoiceLine invoiceLine = null;
         List<Long> associatedRtIds = null;
-        for (Map<String, Object> record : groupedRTs) {
-            invoiceLine = linesFactory.create(record, configuration, result, appProvider, billingRun);
+        for (Map<String, Object> data : groupedRTs) {
+            invoiceLine = linesFactory.create(data, configuration, result, appProvider, billingRun);
             basicStatistics.addToAmountWithTax(invoiceLine.getAmountWithTax());
             basicStatistics.addToAmountWithoutTax(invoiceLine.getAmountWithoutTax());
             basicStatistics.addToAmountTax(invoiceLine.getAmountTax());
             create(invoiceLine);
             commit();
-            associatedRtIds = stream(((String) record.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
+            associatedRtIds = stream(((String) data.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
             ratedTransactionService.linkRTsToIL(associatedRtIds, invoiceLine.getId());
         }
         basicStatistics.setCount(groupedRTs.size());
@@ -700,9 +697,39 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	}
 
     public List<InvoiceLine> findByInvoiceAndIds(Invoice invoice, List<Long> invoiceLinesIds) {
+        final int maxValue = getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
+        if (invoiceLinesIds.size() > maxValue) {
+            List<InvoiceLine> invoiceLines = new ArrayList<>();
+            List<List<Long>> invoiceLineIdsSubList = partition(invoiceLinesIds, maxValue);
+            invoiceLineIdsSubList.forEach(subIdsList -> invoiceLines.addAll(loadBy(invoice, subIdsList)));
+            return invoiceLines;
+        } else {
+            return loadBy(invoice, invoiceLinesIds);
+        }
+    }
+
+    private List<InvoiceLine> loadBy(Invoice invoice, List<Long> invoiceLinesIds) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByInvoiceAndIds", entityClass)
                 .setParameter("invoice", invoice)
                 .setParameter("invoiceLinesIds", invoiceLinesIds)
+                .getResultList();
+    }
+
+    public List<BillingAccount> findBillingAccountsBy(List<Long> invoiceLinesIds) {
+        final int maxValue = getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
+        if (invoiceLinesIds.size() > maxValue) {
+            List<BillingAccount> billingAccounts = new ArrayList<>();
+            List<List<Long>> invoiceLineIdsSubList = partition(invoiceLinesIds, maxValue);
+            invoiceLineIdsSubList.forEach(subIdsList -> billingAccounts.addAll(loadBillingAccounts(subIdsList)));
+            return new ArrayList<>(new HashSet<>(billingAccounts));
+        } else {
+            return loadBillingAccounts(invoiceLinesIds);
+        }
+    }
+    private List<BillingAccount> loadBillingAccounts(List<Long> invoiceLinesIds) {
+        return getEntityManager()
+                .createNamedQuery("InvoiceLine.BillingAccountByILIds")
+                .setParameter("ids", invoiceLinesIds)
                 .getResultList();
     }
 }
