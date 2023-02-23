@@ -2078,5 +2078,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return null;
         }
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<RatedTransaction> findByFilter(Map<String, Object> filters) {
+        FilterConverter converter = new FilterConverter(RatedTransaction.class);
+        PaginationConfiguration configuration = new PaginationConfiguration(converter.convertFilters(filters));
+        QueryBuilder query = getQuery(configuration);
+        
+		return query.getQuery(getEntityManager()).getResultList();
+	}
     
 }

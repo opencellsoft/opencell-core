@@ -8,6 +8,7 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.exception.ActionForbiddenException;
+import org.meveo.apiv2.billing.DuplicateRTDto;
 import org.meveo.apiv2.billing.RatedTransactionInput;
 import org.meveo.apiv2.billing.resource.RatedTransactionResource;
 import org.meveo.apiv2.billing.service.RatedTransactionApiService;
@@ -62,5 +63,10 @@ public class RatedTransactionResourceImpl implements RatedTransactionResource {
 		RatedTransaction ratedTransaction = ratedTransactionApiService.findByCode(code)
 				.orElseThrow(NotFoundException::new);
 		return Response.ok().entity(mapper.toResource(ratedTransaction)).build();
+	}
+
+	@Override
+	public Response duplication(DuplicateRTDto duplicateRTDto) {
+		return Response.ok().entity(ratedTransactionApiService.duplication(duplicateRTDto.getFilters(), duplicateRTDto.getMode(), duplicateRTDto.getNegateAmount(), duplicateRTDto.getReturnRts())).build();
 	}
 }
