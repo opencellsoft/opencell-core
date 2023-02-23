@@ -7,9 +7,10 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
+import static org.apache.commons.collections4.ListUtils.partition;
+import static org.meveo.commons.utils.ParamBean.getInstance;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +18,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,7 +41,6 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
@@ -75,7 +76,6 @@ import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.IInvoicingMinimumApplicable;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.order.Order;
@@ -92,8 +92,6 @@ import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
-import org.meveo.util.ApplicationProvider;
-
 
 @Stateless
 public class InvoiceLineService extends PersistenceService<InvoiceLine> {
@@ -131,10 +129,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     @Inject
 
     private InvoiceService invoiceService;
-
-    @Inject
-    @ApplicationProvider
-    protected Provider appProvider;
 
     @Inject
     private SellerService sellerService;
@@ -928,18 +922,18 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         BasicStatistics basicStatistics = new BasicStatistics();
         InvoiceLine invoiceLine = null;
         List<Long> associatedRtIds = null;
-        for (Map<String, Object> record : groupedRTs) {
-            invoiceLine = linesFactory.create(record, iLIdsRtIdsCorrespondence, configuration, result, appProvider, billingRun);
+        for (Map<String, Object> data : groupedRTs) {
+            invoiceLine = linesFactory.create(data, iLIdsRtIdsCorrespondence, configuration, result, appProvider, billingRun);
             basicStatistics.addToAmountWithTax(invoiceLine.getAmountWithTax());
             basicStatistics.addToAmountWithoutTax(invoiceLine.getAmountWithoutTax());
             basicStatistics.addToAmountTax(invoiceLine.getAmountTax());
             create(invoiceLine);
             commit();
-            associatedRtIds = stream(((String) record.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
+            associatedRtIds = stream(((String) data.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
             basicStatistics.setCount(associatedRtIds.size());
             ratedTransactionService.linkRTsToIL(associatedRtIds, invoiceLine.getId());
-            if(record.get("rated_transaction_ids") != null) {
-            	var ratedTransIds = Arrays.asList( ((String) record.get("rated_transaction_ids")).split(","));
+            if(data.get("rated_transaction_ids") != null) {
+            	var ratedTransIds = Arrays.asList( ((String) data.get("rated_transaction_ids")).split(","));
             	for(String id: ratedTransIds) {
             		iLIdsRtIdsCorrespondence.put(Long.valueOf(id),invoiceLine.getId() );
             	}
@@ -1032,6 +1026,17 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
 
     public List<InvoiceLine> findByInvoiceAndIds(Invoice invoice, List<Long> invoiceLinesIds) {
+        final int maxValue = getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
+        if (invoiceLinesIds.size() > maxValue) {
+            List<InvoiceLine> invoiceLines = new ArrayList<>();
+            List<List<Long>> invoiceLineIdsSubList = partition(invoiceLinesIds, maxValue);
+            invoiceLineIdsSubList.forEach(subIdsList -> invoiceLines.addAll(loadBy(invoice, subIdsList)));
+            return invoiceLines;
+        } else {
+            return loadBy(invoice, invoiceLinesIds);
+        }
+    }
+    private List<InvoiceLine> loadBy(Invoice invoice, List<Long> invoiceLinesIds) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByInvoiceAndIds", entityClass)
                 .setParameter("invoice", invoice)
                 .setParameter("invoiceLinesIds", invoiceLinesIds)
@@ -1104,5 +1109,23 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		invoiceLine.setBillingRun(bilingRun);
 		create(invoiceLine);
 	}
+
+    public List<BillingAccount> findBillingAccountsBy(List<Long> invoiceLinesIds) {
+        final int maxValue = getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
+        if (invoiceLinesIds.size() > maxValue) {
+            List<BillingAccount> billingAccounts = new ArrayList<>();
+            List<List<Long>> invoiceLineIdsSubList = partition(invoiceLinesIds, maxValue);
+            invoiceLineIdsSubList.forEach(subIdsList -> billingAccounts.addAll(loadBillingAccounts(subIdsList)));
+            return new ArrayList<>(new HashSet<>(billingAccounts));
+        } else {
+            return loadBillingAccounts(invoiceLinesIds);
+        }
+    }
+    private List<BillingAccount> loadBillingAccounts(List<Long> invoiceLinesIds) {
+        return getEntityManager()
+                .createNamedQuery("InvoiceLine.BillingAccountByILIds")
+                .setParameter("ids", invoiceLinesIds)
+                .getResultList();
+    }
 
 }
