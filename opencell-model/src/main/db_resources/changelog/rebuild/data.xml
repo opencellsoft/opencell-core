@@ -383,25 +383,6 @@
         </insert>
     </changeSet>
     
-    <changeSet id="#5116_10122020" author="AbdelmounaimAkadid">
-     	<insert tableName="meveo_job_instance">
-            <column name="id" valueNumeric="-30" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="updated" valueDate="${db.current.time}" />
-            <column name="code" value="APIv2PermissionsSyncJob" />
-            <column name="description" value="APIv2PermissionsSyncJob" />
-            <column name="job_category" value="UTILS" />
-            <column name="job_template" value="APIv2PermissionsSyncJob" />
-            <column name="parametres" valueNumeric="null" />
-            <column name="creator" value="opencell.admin" />
-            <column name="updater" value="opencell.admin" />
-            <column name="timerentity_id" value="null" />
-            <column name="uuid" value="APIv2PermissionsSyncJob" />
-       	</insert>
-	</changeSet>
-    
     <changeSet author="AndriusKarpavicius" id="rebuild-data-currencies">
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="1" />
@@ -14503,7 +14484,7 @@ public class SubscriptionJobNotification extends Script {
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="code" value="OC_MASS_IMPORT_NOTIFICATION" />
 			<column name="class_name_filter" value="org.meveo.model.jobs.JobExecutionResultImpl" />
-			<column name="event_type_filter" value="PROCESSED" />
+			<column name="event_type_filter" value="STARTED" />
 			<column name="version" value="0" />
 			<column name="creator" value="opencell.admin" />
 			<column name="script_instance_id"
@@ -16899,6 +16880,7 @@ public class CdrFlatFileImportScript extends Script {
 		</insert>
 	</changeSet>
 
+	<changeSet id="#INTRD-12903_20230105" author="TarikFA." />
     <changeSet id="#INTRD-12727_20230105" author="zelmeliani" />
 
     <changeSet id="#INTRD-13260_20230116" author="hichamELHALOUI"/>
@@ -17180,6 +17162,7 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
 	<changeSet id="#INTRD-13967_20230215" author="houdad"/>
 	<changeSet id="#INTRD-13968" author="houdad"/>
 	<changeSet id="#INTRD-13967_20230217" author="houdad"/>
+    <changeSet id="#INTRD-13267_20230220" author="AbdellatifBARI" />
 	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
