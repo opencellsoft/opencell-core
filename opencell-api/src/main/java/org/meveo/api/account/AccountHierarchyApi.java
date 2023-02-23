@@ -1070,6 +1070,7 @@ public class AccountHierarchyApi extends BaseApi {
 
             CustomerDto customerDto = createCustomerDto(postData, accountHierarchyTypeEnum);
             customerDto.setIsCompany(postData.getCompany());
+            customerDto.setParentCustomerCode(postData.getParentCustomerCode());
             accountEntity = customerApi.create(customerDto, true, businessAccountModel, seller);
         }
 
@@ -1560,6 +1561,7 @@ public class AccountHierarchyApi extends BaseApi {
 
             CustomerDto customerDto = createCustomerDto(postData, accountHierarchyTypeEnum);
             customerDto.setIsCompany(postData.getCompany());
+            customerDto.setParentCustomerCode(postData.getParentCustomerCode());
             accountEntity = customerApi.update(customerDto, true, businessAccountModel);
         }
 
