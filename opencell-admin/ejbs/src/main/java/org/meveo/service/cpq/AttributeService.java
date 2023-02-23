@@ -263,8 +263,9 @@ public class AttributeService extends BusinessService<Attribute>{
             }
             if (AttributeTypeEnum.DATE == pvAttribute.getAttribute().getAttributeType() && attributeValue.getRealValue() instanceof Date && !pvAttribute.getDefaultValue().equals(DateUtils.formatAsDate((Date) attributeValue.getRealValue()))) {
                 throw new BusinessApiException("The read only attribute " + pvAttribute.getAttribute().getCode() + " cannot be updated");
-            } else if (!(attributeValue.getRealValue() instanceof Date) && StringUtils.isNotBlank(pvAttribute.getDefaultValue()) && !pvAttribute.getDefaultValue().equals(attributeValue.getRealValue().toString())) {
-                throw new BusinessApiException("The read only attribute " + pvAttribute.getAttribute().getCode() + " cannot be updated");
+            } else if (!(attributeValue.getRealValue() instanceof Date) && pvAttribute.getDefaultValue() != null && !String.valueOf(pvAttribute.getDefaultValue()).equals(String.valueOf(attributeValue.getRealValue()))) {
+                throw new BusinessApiException("The read only attribute " + pvAttribute.getAttribute().getCode() + " cannot be updated :" +
+                        " default value '" + pvAttribute.getDefaultValue() + "', given value '" + attributeValue.getRealValue() + "'");
             }
 
         }
