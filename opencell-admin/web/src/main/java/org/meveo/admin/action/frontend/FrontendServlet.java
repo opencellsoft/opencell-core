@@ -152,7 +152,7 @@ public class FrontendServlet extends HttpServlet {
         long length = file.length();
         long lastModified = file.lastModified();
         String eTag = fileName + "_" + length + "_" + lastModified;
-        long expires = System.currentTimeMillis() +  Long.parseLong(paramBeanFactory.getInstance().getProperty("FrontendServlet.DEFAULT_EXPIRE_TIME", "604800000"));
+        long expires = System.currentTimeMillis() +  Long.parseLong(paramBeanFactory.getInstance().getProperty("FrontendServlet.DEFAULT_EXPIRE_TIME", "600000"));
 
         // Validate request headers for caching ---------------------------------------------------
 
