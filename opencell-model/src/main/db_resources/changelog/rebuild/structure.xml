@@ -2126,6 +2126,13 @@
                 <constraints nullable="true"/>
             </column>
             <column name="operation_number" type="bigint" />
+            <column name="converted_net_to_pay" type="numeric(23, 12)" />
+            <column name="converted_amount" type="numeric(23, 12)" />
+            <column name="converted_amount_without_tax" type="numeric(23, 12)" />
+            <column name="converted_tax_amount" type="numeric(23, 12)" />
+            <column name="converted_matching_amount" type="numeric(23, 12)" />
+            <column name="converted_un_matching_amount" type="numeric(23, 12)" />
+            <column name="transactional_currency" type="bigint" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-146">
@@ -2397,6 +2404,7 @@
             </column>
             <column name="updated" type="datetime" />
             <column name="matching_amount" type="numeric(23, 12)" />
+            <column name="converted_matching_amount" type="numeric(23, 12)" />
 
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
@@ -2417,6 +2425,8 @@
             <column name="code" type="varchar(255)" />
             <column name="matching_amount_credit" type="numeric(23, 12)" />
             <column name="matching_amount_debit" type="numeric(23, 12)" />
+			<column name="converted_matching_amount_credit" type="numeric(23, 12)" />
+            <column name="converted_matching_amount_debit" type="numeric(23, 12)" />
             <column name="matching_date" type="date" />
             <column name="matching_type" type="varchar(255)" />
             <column name="creator" type="varchar(100)" />
@@ -16555,6 +16565,12 @@
         <addForeignKeyConstraint baseColumnNames="trading_currency_id" baseTableName="exchange_rate" constraintName="fk_exchange_rate_trading_currency_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             	onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
     </changeSet>
+    
+    <changeSet id="#INTRD-13981_20230222-fk" author="HichamHANINE">
+        <addForeignKeyConstraint baseColumnNames="transactional_currency" baseTableName="ar_account_operation" constraintName="fk_account_operation_trading_currency" 
+        	deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
+    </changeSet>
 
     <changeSet id="#INTRD-5804-20220321-fk" author="HatimOUDAD">
     <addForeignKeyConstraint baseColumnNames="sub_termin_reason_id" baseTableName="cpq_order_product" constraintName="fk_q6d91d7b6bc2ypdbx4tjbr0acbd" deferrable="false" initiallyDeferred="false"
@@ -19463,6 +19479,7 @@
     <changeSet id="#INTRD-13468_20230126" author="hichamELHALOUI" />
     <changeSet id="#INTRD-13604_20230206" author="AdilElJaouhari" />
     <changeSet id="#INTRD-14161_20230221" author="AdilElJaouhari" />
+	<changeSet id="#INTRD-13981_20230222" author="HichamHANINE" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

@@ -93,6 +93,18 @@ public class MatchingCode extends AuditableEntity {
     @Column(name = "matching_amount_debit", precision = 23, scale = 12)
     private BigDecimal matchingAmountDebit;
 
+    /**
+     * Total converted matched amount credit
+     */
+    @Column(name = "converted_matching_amount_credit", precision = 23, scale = 12)
+    private BigDecimal convertedMatchingAmountCredit;
+
+    /**
+     * Total converted matched amount debit
+     */
+    @Column(name = "converted_matching_amount_debit", precision = 23, scale = 12)
+    private BigDecimal convertedMatchingAmountDebit;
+    
     public String getCode() {
         return code;
     }
@@ -139,6 +151,22 @@ public class MatchingCode extends AuditableEntity {
 
     public List<MatchingAmount> getMatchingAmounts() {
         return matchingAmounts;
+    }
+    
+    public BigDecimal getConvertedMatchingAmountCredit() {
+        return convertedMatchingAmountCredit;
+    }
+
+    public void setConvertedMatchingAmountCredit(BigDecimal convertedMatchingAmountCredit) {
+        this.convertedMatchingAmountCredit = convertedMatchingAmountCredit;
+    }
+
+    public BigDecimal getConvertedMatchingAmountDebit() {
+        return convertedMatchingAmountDebit;
+    }
+
+    public void setConvertedMatchingAmountDebit(BigDecimal convertedMatchingAmountDebit) {
+        this.convertedMatchingAmountDebit = convertedMatchingAmountDebit;
     }
 
     @Override
