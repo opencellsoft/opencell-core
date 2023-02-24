@@ -21,10 +21,10 @@ package org.meveo.admin.exception;
 import org.meveo.model.payments.PaymentErrorEnum;
 
 /**
- * An exception extending BusinessException, used for payment exceptions. 
+ * An exception extending RuntimeException, used for payment exceptions. 
  * @author Said Ramli
  */
-public class PaymentException extends ValidationException {
+public class PaymentException extends RuntimeException {
     private static final long serialVersionUID = 1L;
     private String code;
     
