@@ -32,7 +32,9 @@ import org.meveo.service.job.Job;
 /**
  * This job is made to create MeasuredValue of some MeasurableQuantity whose code is given as parameter The JPA query to execute is stored in the MeasurableQuantity, and we assume
  * it returns a list of (Date measureDate, Long value) each result is used to create a MeasuredValue
+ * @deprecated since 14.2.X.
  */
+@Deprecated
 @Stateless
 public class DWHQueryJob extends Job {
 
@@ -47,6 +49,6 @@ public class DWHQueryJob extends Job {
 
     @Override
     public JobCategoryEnum getJobCategory() {
-        return MeveoJobCategoryEnum.DWH;
+        return MeveoJobCategoryEnum.UTILS;
     }
 }

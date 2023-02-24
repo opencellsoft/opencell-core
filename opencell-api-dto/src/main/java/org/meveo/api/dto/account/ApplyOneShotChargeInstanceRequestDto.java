@@ -19,7 +19,9 @@
 package org.meveo.api.dto.account;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -28,6 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.billing.AttributeInstanceDto;
 
 /**
  * The Class ApplyOneShotChargeInstanceRequestDto.
@@ -56,6 +59,9 @@ public class ApplyOneShotChargeInstanceRequestDto extends BaseEntityDto {
      */
     private String productCode;
 
+    private Long productInstanceId;
+
+    private List<AttributeInstanceDto> attributes = new ArrayList<>();
 
     private Date subscriptionValidityDate;
 
@@ -363,8 +369,6 @@ public class ApplyOneShotChargeInstanceRequestDto extends BaseEntityDto {
         this.subscriptionValidityDate = subscriptionValidityDate;
     }
     
-    
-
     public String getProductCode() {
 		return productCode;
 	}
@@ -373,7 +377,23 @@ public class ApplyOneShotChargeInstanceRequestDto extends BaseEntityDto {
 		this.productCode = productCode;
 	}
 
-	@Override
+    public Long getProductInstanceId() {
+        return productInstanceId;
+    }
+
+    public void setProductInstanceId(Long productInstanceId) {
+        this.productInstanceId = productInstanceId;
+    }
+
+    public List<AttributeInstanceDto> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(List<AttributeInstanceDto> attributes) {
+        this.attributes = attributes;
+    }
+
+    @Override
     public String toString() {
         return "ApplyOneShotChargeInstanceDto [oneShotCharge=" + oneShotCharge + ", subscription=" + subscription + ", wallet=" + wallet + ", operationDate=" + operationDate
                 + ", description=" + description + ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax + ", criteria1=" + criteria1 + ", criteria2="

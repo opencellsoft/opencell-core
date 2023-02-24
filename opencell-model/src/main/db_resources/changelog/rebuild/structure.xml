@@ -3385,6 +3385,7 @@
             <column name="reject_reason" type="varchar(4000)" />
             <column name="origin_billing_account" type="bigint" />
             <column name="rules_contract_id" type="bigint" />
+    		<column name="origin_ratedtransaction_id" type="bigint" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -5214,6 +5215,7 @@
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
             <column name="anonymization_date" type="datetime" />
+            <column name="parent_customer_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-245">
@@ -16800,6 +16802,15 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="document"/>
     </changeSet>
+    <changeSet id="#INTRD-14264_20230222_fk" author="TarikFA.">
+        <addForeignKeyConstraint baseTableName="billing_rated_transaction" baseColumnNames="origin_ratedtransaction_id,status"
+                                 constraintName="fk_origin_ratedtransaction_id"
+                                 referencedTableName="billing_rated_transaction"
+                                 referencedColumnNames="id,status"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>                          
+
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -17254,7 +17265,7 @@
             </column>
             <column name="supporting_document_ref" type="bigint" />
             <column name="supporting_document_type" type="varchar(255)" />
-            <column name="trading_amount" type="numeric(23, 12)" />
+            <column name="converted_amount" type="numeric(23, 12)" />
             <column name="trading_currency" type="varchar(3)" />
             <column name="auxiliary_account_code" type="varchar(255)" />
             <column name="auxiliary_account_label" type="varchar(255)" />
@@ -17757,9 +17768,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_validation_rule_pkey" />
             </column>
             <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
+            <column name="created" type="datetime" />
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
@@ -17776,21 +17785,26 @@
             <column name="type" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="fail_status" type="varchar(50)">
-                <constraints nullable="false"/>
-            </column>
+            <column name="fail_status" type="varchar(50)" />
             <column name="script_instance_id" type="bigint" />
             <column name="validation_el" type="${type.text}" />
             <column name="rule_values" type="${type.json}" />
             <column name="evaluation_mode" type="varchar(50)" defaultValue="VALIDATION">
                 <constraints nullable="false"/>
             </column>
+            <column name="operator" type="varchar(10)" defaultValue="OR" />
+            <column name="parent_id" type="bigint"/>
         </createTable>
         
         <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="billing_invoice_validation_rule"
                                  constraintName="fk_validation_rule_meveo_script_instance" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+
+        <addForeignKeyConstraint baseTableName="billing_invoice_validation_rule" baseColumnNames="parent_id"
+                                 constraintName="fk_invoice_validation_rule_parent_id"
+                                 referencedTableName="billing_invoice_validation_rule"
+                                 referencedColumnNames="id"/>
     </changeSet>
 	
     <changeSet id="#INTRD-11780_20221128_fk" author="AdilElJaouhari">
@@ -17844,32 +17858,6 @@
 
         </createTable>
         
-        
-        <createSequence sequenceName="untdid_unit_seq" startValue="1" />
-        <createTable tableName="untdid_unit">
-            <!-- Generic fields -->
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_untdid_unit" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="code" type="varchar(255)">
-            </column>
-
-            <!-- Simple fields -->           
-            <column name="source" type="varchar(10)">
-                <constraints nullable="false" />
-            </column>
-            <column name="name" type="varchar(500)">
-                <constraints nullable="false" />
-            </column>
-
-        </createTable>
         
         <createSequence sequenceName="untdid_1001_invoice_code_type_seq" startValue="1" />
         <createTable tableName="untdid_1001_invoice_code_type">
@@ -18218,6 +18206,13 @@
         <addForeignKeyConstraint baseTableName="dunning_settings" baseColumnNames="customer_balance_id"
                                  constraintName="fk_dunning_settings_customer_balance_id"
                                  referencedTableName="ar_customer_balance"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-14022_20230215" author="AdilElJaouhari">
+        <addForeignKeyConstraint baseTableName="crm_customer" baseColumnNames="parent_customer_id"
+                                 constraintName="fk_crm_customer_parent_customer_id"
+                                 referencedTableName="crm_customer"
                                  referencedColumnNames="id"/>
     </changeSet>
 
@@ -19521,6 +19516,10 @@
     <changeSet id="#INTRD-13009_20230202" author="bourras" />
     <changeSet id="#INTRD-13220_20230203" author="AbdellatifBARI" />
     <changeSet id="#INTRD-13883_20230208" author="hichamELHALOUI" />
+    <changeSet id="#INTRD-13957-20230214" author="houdad"/>
+    <changeSet id="#INTRD-13604_20230206" author="AdilElJaouhari" />
+    <changeSet id="#INTRD-14161_20230221" author="AdilElJaouhari" />
+    <changeSet id="#INTRD-14264_20230222" author="TarikFA." />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

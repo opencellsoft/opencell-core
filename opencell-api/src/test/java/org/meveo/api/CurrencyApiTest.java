@@ -113,7 +113,7 @@ public class CurrencyApiTest {
     public void updateCurrency() {
         when(tradingCurrencyService.findByTradingCurrencyCode(any())).thenReturn(new TradingCurrency());
         when(currencyService.findByCode(any())).thenReturn(new Currency());
-        when(tradingCurrencyService.findByTradingCurrencyCode(any())).thenReturn(new TradingCurrency());
+        when(currencyService.update(any())).thenReturn(new Currency());
         CurrencyDto currencyDto = new CurrencyDto();
         currencyDto.setCode("MAD");
         currencyDto.setSymbol(null);
