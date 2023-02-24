@@ -6650,10 +6650,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public void refreshAdvanceInvoicesConvertedAmount(Invoice toUpdate, BigDecimal lastAppliedRate) {
         toUpdate.getLinkedInvoices().stream().filter(linkedInvoice ->
-                InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(linkedInvoice.getType())
-                && linkedInvoice.getLinkedInvoiceValue() != null &&
-                linkedInvoice.getLinkedInvoiceValue().getStatus().equals(InvoiceStatusEnum.VALIDATED))
-            .forEach(linkedInvoice -> linkedInvoice.setConvertedAmount(linkedInvoice.getAmount().multiply(lastAppliedRate)));
+                        InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(linkedInvoice.getType())
+                                && linkedInvoice.getLinkedInvoiceValue() != null &&
+                                linkedInvoice.getLinkedInvoiceValue().getStatus().equals(InvoiceStatusEnum.VALIDATED))
+                .forEach(linkedInvoice -> linkedInvoice.setConvertedAmount(linkedInvoice.getAmount().multiply(lastAppliedRate)));
     }
 
     /**
@@ -7158,8 +7158,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 return inv1.getInvoiceBalance().compareTo(inv2.getInvoiceBalance());
 
             });
-            BigDecimal remainingAmount = (invoice.getConvertedAmountWithTax() != null &&
-                    invoice.getConvertedAmountWithTax().compareTo(ZERO) > 0) ? invoice.getConvertedAmountWithTax() : invoice.getAmountWithTax();
+            BigDecimal lastApliedRate = invoiceService.getCurrentRate(invoice,invoice.getInvoiceDate());
+
+            BigDecimal remainingAmount = lastApliedRate != null ? invoice.getAmountWithTax().multiply(lastApliedRate) : invoice.getAmountWithTax();
+
             for (Invoice adv : advInvoices) {
                 if (adv.getInvoiceBalance() == null) {
                     continue;
@@ -7189,7 +7191,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 }
                 if (amount.intValue() == ZERO.intValue()) continue;
                 if (toUpdate.isPresent()) {
-                    toUpdate.get().setAmount(toUpdate.get().getAmount().add(amount));
+                    toUpdate.get().setConvertedAmount(toUpdate.get().getConvertedAmount().add(amount));
                 } else {
                     createNewLinkedInvoice(invoice, amount, adv);
                 }
@@ -7197,9 +7199,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     break;
                 }
             }
-            invoice.setInvoiceBalance(remainingAmount);
             invoice.setConvertedInvoiceBalance(remainingAmount);
-            invoice.getLinkedInvoices().removeIf(il -> ZERO.compareTo(il.getAmount()) == 0 && InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(il.getType()));
+            invoice.getLinkedInvoices().removeIf(il -> ZERO.compareTo(il.getConvertedAmount()) == 0 && InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(il.getType()));
         }
     }
 
@@ -7227,16 +7228,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			} else {
 				for (Invoice i : advInvoices) {
 					invoice.getLinkedInvoices().stream().filter(advFilter).filter(li -> li.getLinkedInvoiceValue().getId() == i.getId()).findAny().ifPresent(li -> {
-						i.setInvoiceBalance(i.getInvoiceBalance().add(li.getAmount()));
-						li.setAmount(ZERO);
+                        i.setConvertedInvoiceBalance(i.getConvertedInvoiceBalance().add(li.getConvertedAmount()));
+                        li.setConvertedAmount(ZERO);
 					});
 				}
-				List<LinkedInvoice> lis = invoice.getLinkedInvoices().stream().filter(advFilter).filter(li -> ZERO.compareTo(li.getAmount()) < 0).collect(Collectors.toList());
+				List<LinkedInvoice> lis = invoice.getLinkedInvoices().stream().filter(advFilter).filter(li -> ZERO.compareTo(li.getConvertedAmount()) < 0).collect(Collectors.toList());
 					for(LinkedInvoice li : lis) {
 						Invoice oldAdvanceInvoice = li.getLinkedInvoiceValue();
-						oldAdvanceInvoice.setInvoiceBalance(oldAdvanceInvoice.getInvoiceBalance().add(li.getAmount()));
+                        oldAdvanceInvoice.setConvertedInvoiceBalance(oldAdvanceInvoice.getConvertedInvoiceBalance().add(li.getConvertedAmount()));
 						advInvoices.add(oldAdvanceInvoice);
-						li.setAmount(ZERO);
+                        li.setConvertedAmount(ZERO);
 					};
 			}
 		}
