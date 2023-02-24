@@ -240,6 +240,7 @@ public class PaymentJobBean extends IteratorBasedJobBean<PaymentItem> {
      * 
      * @param customerAccountId Account operation id
      * @param jobExecutionResult Job execution result
+     * @throws Exception 
      */
     private void createPaymentOrPayout(PaymentItem paymentItem, JobExecutionResultImpl jobExecutionResult) {
 
@@ -276,8 +277,8 @@ public class PaymentJobBean extends IteratorBasedJobBean<PaymentItem> {
                 // jobExecutionResult.registerSucces();
             }
 
-        } catch (NoAllOperationUnmatchedException | UnbalanceAmountException e) {
-            throw new BusinessException(e);
+        } catch (Exception e) {
+        	log.error(" Error on createPaymentOrPayout [{}]", e.getMessage());
         }
     }
 
