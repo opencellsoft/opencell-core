@@ -7158,7 +7158,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 return inv1.getInvoiceBalance().compareTo(inv2.getInvoiceBalance());
 
             });
-            BigDecimal remainingAmount = invoice.getConvertedAmountWithTax() != null ? invoice.getConvertedAmountWithTax() : invoice.getAmountWithTax();
+            BigDecimal remainingAmount = (invoice.getConvertedAmountWithTax() != null &&
+                    invoice.getConvertedAmountWithTax().compareTo(ZERO) > 0) ? invoice.getConvertedAmountWithTax() : invoice.getAmountWithTax();
             for (Invoice adv : advInvoices) {
                 if (adv.getInvoiceBalance() == null) {
                     continue;
