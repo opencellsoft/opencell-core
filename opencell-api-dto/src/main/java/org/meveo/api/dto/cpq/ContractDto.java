@@ -52,6 +52,8 @@ public class ContractDto extends BusinessEntityDto {
 	@Schema(description = "list of billing rules")
 	private List<BillingRuleDto> billingRules;
 
+	@Schema(description = "An expression to decide whether the contract should be applied or not")
+	private String applicationEl;
     
 	
 	public ContractDto() {}
@@ -79,6 +81,7 @@ public class ContractDto extends BusinessEntityDto {
 		this.status = c.getStatus();
 		this.statusDate = c.getStatusDate();
 		this.description = c.getDescription();
+		this.applicationEl = c.getApplicationEl();
 	}
 	
 	 
@@ -219,6 +222,18 @@ public class ContractDto extends BusinessEntityDto {
 		this.billingRules = billingRules;
 	}
 
-	
+	/**
+	 * @return the applicationEL
+	 */
+	public String getApplicationEl() {
+		return applicationEl;
+	}
+
+	/**
+	 * @param applicationEL the applicationEL to set
+	 */
+	public void setApplicationEL(String applicationEl) {
+		this.applicationEl = applicationEl;
+	}
 	
 }

@@ -157,7 +157,7 @@ public class Contract extends EnableBusinessCFEntity {
 	 */
 	@Column(name = "application_el", length = 2000)
 	@Size(max = 2000)
-	private String applicationEL;
+	private String applicationEl;
     
 	public List<BillingRule> getBillingRules() {
         return billingRules;
@@ -380,15 +380,15 @@ public class Contract extends EnableBusinessCFEntity {
 	/**
 	 * @return the applicationEL
 	 */
-	public String getApplicationEL() {
-		return applicationEL;
+	public String getApplicationEl() {
+		return applicationEl;
 	}
 
 	/**
 	 * @param applicationEL the applicationEL to set
 	 */
-	public void setApplicationEL(String applicationEL) {
-		this.applicationEL = applicationEL;
+	public void setApplicationEl(String applicationEl) {
+		this.applicationEl = applicationEl;
 	}
 	
 	
