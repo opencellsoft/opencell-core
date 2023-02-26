@@ -126,6 +126,7 @@ public class ContractApi extends BaseApi{
 		contract.setRenewal(dto.isRenewal());
 		contract.setContractDuration(dto.getContractDuration());
 		contract.setDescription(dto.getDescription());
+		contract.setApplicationEl(dto.getApplicationEl());
 		changeAccountLevel(dto, contract);
 		try {
 			populateCustomFields(dto.getCustomFields(), contract, true);
@@ -203,6 +204,7 @@ public class ContractApi extends BaseApi{
 		contract.setRenewal(dto.isRenewal());
 		contract.setContractDuration(dto.getContractDuration());
 		contract.setDescription(dto.getDescription());
+		contract.setApplicationEl(dto.getApplicationEl());
 		
 		contract.setBillingAccount(null);
 		contract.setSeller(null);
