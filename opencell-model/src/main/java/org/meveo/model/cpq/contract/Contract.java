@@ -2,7 +2,6 @@ package org.meveo.model.cpq.contract;
 
 import static javax.persistence.CascadeType.ALL;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -23,6 +22,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -33,7 +33,6 @@ import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.enums.ContractStatusEnum;
-import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 
@@ -152,6 +151,13 @@ public class Contract extends EnableBusinessCFEntity {
 	
     @OneToMany(mappedBy = "contract", fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)
     private List<BillingRule> billingRules;
+
+	/**
+	 * 	An expression to decide whether the contract should be applied or not.
+	 */
+	@Column(name = "application_el", length = 2000)
+	@Size(max = 2000)
+	private String applicationEL;
     
 	public List<BillingRule> getBillingRules() {
         return billingRules;
@@ -309,9 +315,8 @@ public class Contract extends EnableBusinessCFEntity {
 	public void setContractDuration(int contractDuration) {
 		this.contractDuration = contractDuration;
 	}
-	
-	
-	   /**
+
+	/**
      * Check if a date is within this contract effective date. Exclusive of the endDate. If startDate is null, it returns true. If startDate is not null and endDate is null,
      * endDate is computed from the given duration.
      *
@@ -371,7 +376,20 @@ public class Contract extends EnableBusinessCFEntity {
 	public void setContractItems(List<ContractItem> contractItems) {
 		this.contractItems = contractItems;
 	}
-	
+
+	/**
+	 * @return the applicationEL
+	 */
+	public String getApplicationEL() {
+		return applicationEL;
+	}
+
+	/**
+	 * @param applicationEL the applicationEL to set
+	 */
+	public void setApplicationEL(String applicationEL) {
+		this.applicationEL = applicationEL;
+	}
 	
 	
 }
