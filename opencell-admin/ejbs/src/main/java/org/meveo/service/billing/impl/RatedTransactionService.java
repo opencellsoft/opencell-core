@@ -1625,7 +1625,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         Map<String, Object> params = new HashMap<>();
         params.put("ids", ratedTransactionIds);
         String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration.getDateAggregationOption(),
-                " rt.usage_date ");
+                "usage_date ", "rt");
         String query = "SELECT  string_agg(concat(rt.id, ''), ',') as rated_transaction_ids, rt.billing_account__id, "
                 + "              rt.accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, "
                 + "              sum(rt.amount_without_tax) as sum_without_tax, sum(rt.amount_with_tax) as sum_with_tax,"
@@ -1736,13 +1736,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     private String getUsageDateAggregation(DateAggregationOption dateAggregationOption, String usageDateColumn) {
+    	return this.getUsageDateAggregation(dateAggregationOption, usageDateColumn, "a");
+    }
+    
+    private String getUsageDateAggregation(DateAggregationOption dateAggregationOption, String usageDateColumn, String alias) {
         switch (dateAggregationOption) {
         case MONTH_OF_USAGE_DATE:
-            return " TO_CHAR(a." + usageDateColumn + ", 'YYYY-MM') ";
+            return " TO_CHAR(" + alias + "." + usageDateColumn + ", 'YYYY-MM') ";
         case DAY_OF_USAGE_DATE:
-            return " TO_CHAR(a." + usageDateColumn + ", 'YYYY-MM-DD') ";
+            return " TO_CHAR(" + alias + "." + usageDateColumn + ", 'YYYY-MM-DD') ";
         case WEEK_OF_USAGE_DATE:
-            return " TO_CHAR(a." + usageDateColumn + ", 'YYYY-WW') ";
+            return " TO_CHAR(" + alias + "." + usageDateColumn + ", 'YYYY-WW') ";
         case NO_DATE_AGGREGATION:
             return usageDateColumn;
         }
