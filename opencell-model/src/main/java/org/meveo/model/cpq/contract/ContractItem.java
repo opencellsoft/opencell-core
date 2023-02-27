@@ -15,10 +15,11 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
+import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -117,7 +118,10 @@ public class ContractItem extends EnableBusinessCFEntity {
 	@Column(name = "separate_discount")
 	private boolean separateDiscount = false;
 
-
+	@Column(name = "application_el", length = 2000)
+	@Size(max = 2000)
+	private String applicationEl;
+	
 	/**
 	 * @return the contract
 	 */
@@ -253,7 +257,14 @@ public class ContractItem extends EnableBusinessCFEntity {
 	public void setContractRateType(ContractRateTypeEnum contractRateType) {
 		this.contractRateType = contractRateType;
 	}
+	
+	public String getApplicationEl() {
+		return applicationEl;
+	}
 
+	public void setApplicationEl(String applicationEl) {
+		this.applicationEl = applicationEl;
+	}
 
 	@Override
 	public int hashCode() {
