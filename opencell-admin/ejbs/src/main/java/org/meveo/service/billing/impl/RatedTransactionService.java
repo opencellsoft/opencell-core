@@ -19,6 +19,8 @@ package org.meveo.service.billing.impl;
 
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections4.ListUtils.partition;
+import static org.meveo.commons.utils.ParamBean.getInstance;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -32,10 +34,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -92,6 +96,7 @@ import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
@@ -1660,5 +1665,23 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return getEntityManager().createNamedQuery("RatedTransaction.detachRTFromSubCat")
                 .setParameter("rtIds", rtIds)
                 .executeUpdate();
+    }
+
+    public List<BillingAccount> findBillingAccountsBy(List<Long> rtIds) {
+        final int maxValue = getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
+        if (rtIds.size() > maxValue) {
+            List<BillingAccount> billingAccounts = new ArrayList<>();
+            List<List<Long>> invoiceLineIdsSubList = partition(rtIds, maxValue);
+            invoiceLineIdsSubList.forEach(subIdsList -> billingAccounts.addAll(loadBy(subIdsList)));
+            return new ArrayList<>(new HashSet<>(billingAccounts));
+        } else {
+            return loadBy(rtIds);
+        }
+    }
+    private List<BillingAccount> loadBy(List<Long> rtIds) {
+        return getEntityManager()
+                .createNamedQuery("RatedTransaction.BillingAccountByRTIds")
+                .setParameter("ids", rtIds)
+                .getResultList();
     }
 }
