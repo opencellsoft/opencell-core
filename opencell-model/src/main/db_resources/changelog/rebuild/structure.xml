@@ -10779,12 +10779,6 @@
             <column name="converted_amount_tax" type="numeric(23, 12)" />
             <column name="converted_discount_amount" type="numeric(23, 12)" />
             <column name="converted_raw_amount" type="numeric(23, 12)" />
-            <column name="specific_converted_unit_price" type="numeric(23, 12)" />
-            <column name="specific_converted_amount_without_tax" type="numeric(23, 12)" />
-            <column name="specific_converted_amount_with_tax" type="numeric(23, 12)" />
-            <column name="specific_converted_amount_tax" type="numeric(23, 12)" />
-            <column name="specific_converted_discount_amount" type="numeric(23, 12)" />
-            <column name="specific_converted_raw_amount" type="numeric(23, 12)" />
             <column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="open_order_number" type="varchar(255)" />
             <column name="sequence" type="int4"/>
