@@ -8,7 +8,10 @@ import org.meveo.api.restful.pagingFiltering.ImmutablePagingAndFilteringRest;
 import org.meveo.api.restful.pagingFiltering.PagingAndFilteringRest;
 import org.meveo.apiv2.generic.core.GenericRequestMapper;
 import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 
+import javax.inject.Inject;
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.*;
 
@@ -22,7 +25,7 @@ public class GenericPagingAndFilteringUtils {
 
     private static final String LIMIT = "limit";
 
-    private static final int API_LIST_MAX_LIMIT = 1000;
+    private static final String API_LIST_MAX_LIMIT_KEY = "api.list.maxLimit";
     private static final String OFFSET = "offset";
     private static final String SORT = "sort";
     private static final String FIELDS = "fields";
@@ -44,6 +47,9 @@ public class GenericPagingAndFilteringUtils {
     // pagination configuration
     private PaginationConfiguration paginationConfig;
     private PagingAndFiltering pagingAndFiltering;
+
+    @Inject
+    protected ParamBeanFactory paramBeanFactory;
 
     private static GenericPagingAndFilteringUtils instance = new GenericPagingAndFilteringUtils();
 
@@ -77,7 +83,7 @@ public class GenericPagingAndFilteringUtils {
             pagingAndFilteringRest = ImmutablePagingAndFilteringRest.builder().build();
 
         pagingAndFiltering = new PagingAndFiltering();
-
+        int API_LIST_MAX_LIMIT = paramBeanFactory.getInstance().getPropertyAsInteger(API_LIST_MAX_LIMIT_KEY, 1000);
         pagingAndFiltering.setLimit(pagingAndFilteringRest.getLimit() > API_LIST_MAX_LIMIT ? API_LIST_MAX_LIMIT : pagingAndFilteringRest.getLimit());
         pagingAndFiltering.setOffset( pagingAndFilteringRest.getOffset() );
 
