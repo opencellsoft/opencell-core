@@ -27,13 +27,19 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.commons.parsers.FileParserBeanio;
 import org.meveo.commons.parsers.RecordContext;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.mediation.CDRRejectionCauseEnum;
 import org.meveo.model.rating.CDR;
+import org.meveo.model.rating.CDRStatusEnum;
+import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.medina.impl.CDRParsingService.CDR_ORIGIN_ENUM;
+import org.meveo.service.medina.impl.DuplicateException;
 import org.meveo.service.medina.impl.ICdrCsvReader;
 import org.meveo.service.medina.impl.ICdrParser;
 import org.slf4j.Logger;
@@ -46,10 +52,13 @@ import org.slf4j.LoggerFactory;
  * 
  * @author H.ZNIBAR
  */
-@Named
+@Stateless
 public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvReader {
 
     private static Logger log = LoggerFactory.getLogger(MEVEOCdrFlatFileReader.class);
+
+    @Inject
+    private EdrService edrService;
 
     static MessageDigest messageDigest = null;
     static {
@@ -65,7 +74,7 @@ public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvR
     private CDR_ORIGIN_ENUM origin;
 
     @Override
-    public void init(File cdrFile) throws FileNotFoundException {        
+    public void init(File cdrFile) throws FileNotFoundException {
         batchName = "CDR_" + cdrFile.getName();
         this.origin = CDR_ORIGIN_ENUM.JOB;       
     }
@@ -102,6 +111,11 @@ public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvR
                 cdr.setLine(line);
                 cdr.setOriginBatch(batchName);
                 cdr.setOriginRecord(getOriginRecord(line));
+
+                if (edrService.isMemoryDuplicateFound(cdr.getOriginBatch(), cdr.getOriginRecord())) {
+                    cdr.setStatus(CDRStatusEnum.ERROR);
+                    cdr.setRejectReason(CDRRejectionCauseEnum.DUPLICATE.toString());
+                }
             }
         }        
         

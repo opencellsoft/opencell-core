@@ -45,11 +45,7 @@ import org.meveo.model.rating.EDR;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.ReservationService;
 import org.meveo.service.billing.impl.UsageRatingService;
-import org.meveo.service.medina.impl.CDRParsingException;
-import org.meveo.service.medina.impl.CDRParsingService;
-import org.meveo.service.medina.impl.CDRService;
-import org.meveo.service.medina.impl.ICdrParser;
-import org.meveo.service.medina.impl.InvalidAccessException;
+import org.meveo.service.medina.impl.*;
 import org.meveo.service.notification.DefaultObserver;
 
 import javax.annotation.Resource;
@@ -131,8 +127,11 @@ public class MediationApi extends BaseApi {
                     cdr.setStatus(CDRStatusEnum.ERROR);
                     createOrUpdateCdr(cdr);
                 } else {
+                    if (edrService.isDuplicateFound(cdr.getOriginBatch(), cdr.getOriginRecord())) {
+                        throw new DuplicateException(cdr);
+                    }
                     List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
-                    List<EDR> edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);       
+                    List<EDR> edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);
                     cdrParsingService.createEdrs(edrs,cdr);
                 }                
             }
@@ -179,6 +178,9 @@ public class MediationApi extends BaseApi {
                 }               
             }
 
+            if (edrService.isDuplicateFound(cdr.getOriginBatch(), cdr.getOriginRecord())) {
+                throw new DuplicateException(cdr);
+            }
             List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
             List<EDR> edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);                        
             List<WalletOperation> walletOperations = new ArrayList<>();
@@ -289,6 +291,9 @@ public class MediationApi extends BaseApi {
             if(cdr.getRejectReason() != null) {
                 log.error("cdr =" + (cdr != null ? cdr.getLine() : "") + ": " + cdr.getRejectReason());
                 throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, cdr.getRejectReason());
+            }
+            if (edrService.isDuplicateFound(cdr.getOriginBatch(), cdr.getOriginRecord())) {
+                throw new DuplicateException(cdr);
             }
             List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
             edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);

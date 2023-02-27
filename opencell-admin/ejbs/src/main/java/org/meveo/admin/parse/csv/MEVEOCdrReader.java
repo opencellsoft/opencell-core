@@ -31,10 +31,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.mediation.CDRRejectionCauseEnum;
 import org.meveo.model.rating.CDR;
+import org.meveo.model.rating.CDRStatusEnum;
+import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.medina.impl.CDRParsingService.CDR_ORIGIN_ENUM;
 import org.meveo.service.medina.impl.ICdrCsvReader;
 import org.meveo.service.medina.impl.ICdrParser;
@@ -48,10 +53,13 @@ import org.slf4j.LoggerFactory;
  * 
  * @author H.ZNIBAR
  */
-@Named
+@Stateless
 public class MEVEOCdrReader implements ICdrCsvReader {
 
     private static Logger log = LoggerFactory.getLogger(MEVEOCdrReader.class);
+
+    @Inject
+    private EdrService edrService;
 
     static MessageDigest messageDigest = null;
     static {
@@ -105,6 +113,11 @@ public class MEVEOCdrReader implements ICdrCsvReader {
         }
         cdr.setOriginBatch(batchName);
         cdr.setOriginRecord(getOriginRecord(line));
+        
+        if (edrService.isMemoryDuplicateFound(cdr.getOriginBatch(), cdr.getOriginRecord())) {
+            cdr.setStatus(CDRStatusEnum.ERROR);
+            cdr.setRejectReason(CDRRejectionCauseEnum.DUPLICATE.toString());
+        }
         return cdr;
     }
         
