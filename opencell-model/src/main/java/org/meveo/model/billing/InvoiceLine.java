@@ -899,19 +899,21 @@ public class InvoiceLine extends AuditableCFEntity {
 	@PrePersist
 	@PreUpdate
 	public void prePersistOrUpdate() {
-		BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
-		this.convertedAmountWithoutTax = this.amountWithoutTax != null ?
-				this.amountWithoutTax.multiply(appliedRate) : ZERO;
-		this.convertedAmountWithTax = this.amountWithTax != null ?
-				this.amountWithTax.multiply(appliedRate) : ZERO;
-		this.convertedAmountTax = this.amountTax !=null ?
-				this.amountTax.multiply(appliedRate) : ZERO;
-		this.convertedDiscountAmount = this.discountAmount != null ?
-				this.discountAmount.multiply(appliedRate) : ZERO;
-		this.convertedRawAmount = this.rawAmount != null ?
-				this.rawAmount.multiply(appliedRate) : ZERO;
-		this.convertedUnitPrice = this.unitPrice != null ?
-				this.unitPrice.multiply(appliedRate) : ZERO;
+	    if(!this.useSpecificPriceConversion) {
+        	BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
+        	this.convertedAmountWithoutTax = this.amountWithoutTax != null ?
+        			this.amountWithoutTax.multiply(appliedRate) : ZERO;
+        	this.convertedAmountWithTax = this.amountWithTax != null ?
+        			this.amountWithTax.multiply(appliedRate) : ZERO;
+        	this.convertedAmountTax = this.amountTax !=null ?
+        			this.amountTax.multiply(appliedRate) : ZERO;
+        	this.convertedDiscountAmount = this.discountAmount != null ?
+        			this.discountAmount.multiply(appliedRate) : ZERO;
+        	this.convertedRawAmount = this.rawAmount != null ?
+        			this.rawAmount.multiply(appliedRate) : ZERO;
+        	this.convertedUnitPrice = this.unitPrice != null ?
+        			this.unitPrice.multiply(appliedRate) : ZERO;
+	    }
 	}
 
 	@Override
