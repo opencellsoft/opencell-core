@@ -25,6 +25,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.QueryHint;
+import javax.xml.bind.ValidationException;
 
 import org.hibernate.annotations.Type;
 
@@ -66,6 +67,39 @@ public class OneShotChargeTemplate extends ChargeTemplate {
     @Type(type = "numeric_boolean")
     @Column(name = "immediate_invoicing")
     private Boolean immediateInvoicing = false;
+
+    public OneShotChargeTemplate(){}
+    public OneShotChargeTemplate(ChargeTemplate chargeTemplate) throws ValidationException {
+        this.setProductCharges(chargeTemplate.getProductCharges());
+        this.setType(chargeTemplate.getType());
+        this.setChargeType(chargeTemplate.getChargeType());
+        this.setAmountEditable(chargeTemplate.getAmountEditable());
+        this.setInvoiceSubCategory(chargeTemplate.getInvoiceSubCategory());
+        this.setEdrTemplates(chargeTemplate.getEdrTemplates());
+        this.setInputUnitDescription(chargeTemplate.getInputUnitDescription());
+        this.setRatingUnitDescription(chargeTemplate.getRatingUnitDescription());
+        this.setInputUnitOfMeasure(chargeTemplate.getInputUnitOfMeasure());
+        this.setRatingUnitOfMeasure(chargeTemplate.getRatingUnitOfMeasure());
+        this.setInputUnitEL(chargeTemplate.getInputUnitEL());
+        this.setOutputUnitEL(chargeTemplate.getOutputUnitEL());
+        this.setUnitMultiplicator(chargeTemplate.getUnitMultiplicator());
+        this.unitNbDecimal = chargeTemplate.unitNbDecimal;
+        this.roundingMode = chargeTemplate.roundingMode;
+        this.revenueRecognitionRule = chargeTemplate.revenueRecognitionRule;
+        this.descriptionI18n = chargeTemplate.descriptionI18n;
+        this.filterExpression = chargeTemplate.filterExpression;
+        this.setTaxClass(chargeTemplate.getTaxClass());
+        this.setTaxClassEl(chargeTemplate.getTaxClassEl());
+        this.setRatingScript(chargeTemplate.getRatingScript());
+        this.dropZeroWo = chargeTemplate.dropZeroWo;
+        this.setSortIndexEl(chargeTemplate.getSortIndexEl());
+        this.setAttributes(chargeTemplate.getAttributes());
+        this.setRoundingUnityNbDecimal(chargeTemplate.getRoundingUnityNbDecimal());
+        this.setRoundingEdrNbDecimal(chargeTemplate.getRoundingEdrNbDecimal());
+        this.setStatus(ChargeTemplateStatusEnum.DRAFT);
+        this.setInternalNote(chargeTemplate.getInternalNote());
+        this.immediateInvoicing = ((OneShotChargeTemplate)chargeTemplate).immediateInvoicing;
+    }
 
     public OneShotChargeTemplateTypeEnum getOneShotChargeTemplateType() {
         return oneShotChargeTemplateType;

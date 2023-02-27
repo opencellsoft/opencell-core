@@ -40,14 +40,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.catalog.Channel;
-import org.meveo.model.catalog.DigitalResource;
-import org.meveo.model.catalog.LifeCycleStatusEnum;
-import org.meveo.model.catalog.OfferProductTemplate;
-import org.meveo.model.catalog.OfferServiceTemplate;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.OfferTemplateCategory;
-import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.catalog.*;
 import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.OfferTemplateAttribute;
 import org.meveo.model.cpq.offer.OfferComponent;
@@ -58,10 +51,7 @@ import org.meveo.model.cpq.trade.CommercialRuleLine;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.cpq.CommercialRuleHeaderService;
-import org.meveo.service.cpq.CommercialRuleItemService;
-import org.meveo.service.cpq.CommercialRuleLineService;
-import org.meveo.service.cpq.MediaService;
+import org.meveo.service.cpq.*;
 
 /**
  * Offer Template service implementation.
@@ -89,6 +79,9 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
     @Inject
     private CommercialRuleLineService commercialRuleLineService;
+
+    @Inject
+    private ProductService productService;
 
     @SuppressWarnings("unchecked")
     public List<OfferTemplate> findByServiceTemplate(ServiceTemplate serviceTemplate) {
@@ -230,6 +223,9 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         offerToDuplicate.getCommercialRules()
                 .forEach(commercialRuleHeader -> commercialRuleHeader.getCommercialRuleItems()
                         .forEach(commercialRuleItem -> commercialRuleItem.getCommercialRuleLines().size()));
+        offerToDuplicate.getTags().size();
+        offerToDuplicate.getAllowedOffersChange().size();
+        offerToDuplicate.getAllowedDiscountPlans().size();
 
         if (offerToDuplicate.getOfferServiceTemplates() != null) {
             for (OfferServiceTemplate offerServiceTemplate : offerToDuplicate.getOfferServiceTemplates()) {
@@ -295,6 +291,15 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
         List<CommercialRuleHeader> commercialRulesHeader = offer.getCommercialRules();
         offer.setCommercialRules(new ArrayList<>());
+
+        List<DiscountPlan> discountPlans = offer.getAllowedDiscountPlans();
+        offer.setAllowedDiscountPlans(new ArrayList<>());
+
+        List<Tag> tags = offer.getTags();
+        offer.setTags(new ArrayList<>());
+
+        List<OfferTemplate> chargeTemplates = offer.getAllowedOffersChange();
+        offer.setAllowedOffersChange(new ArrayList<>());
 
 
         if (businessAccountModels != null) {
@@ -369,6 +374,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
             	for (OfferComponent offerComponent : offerComponents) {
             			offerComponent.setId(null);
             			offerComponent.setOfferTemplate(offer);
+                        offerComponent.setProduct(productService.duplicateProduct(offerComponent.getProduct(), true, false));
             			offer.getOfferComponents().add(offerComponent);
             			
 				}

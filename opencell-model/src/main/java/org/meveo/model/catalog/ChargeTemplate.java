@@ -295,7 +295,8 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     @Type(type = "longText")
     @Column(name = "internal_note")
     private String internalNote;
-    
+
+
     public String getInputUnitEL() {
         return inputUnitEL;
     }

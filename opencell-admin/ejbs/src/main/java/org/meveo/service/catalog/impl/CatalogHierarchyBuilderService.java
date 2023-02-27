@@ -320,12 +320,22 @@ public class CatalogHierarchyBuilderService {
     		productCharge.forEach(pct -> { 
     			ProductChargeTemplateMapping duplicat = new ProductChargeTemplateMapping();
     			duplicat.setCounterTemplate(pct.getCounterTemplate());
-    			duplicat.setChargeTemplate(pct.getChargeTemplate()); 
     			duplicat.setProduct(entity);
     			duplicat.setAccumulatorCounterTemplates(new ArrayList<>());
     			duplicat.setWalletTemplates(new ArrayList<>());
+                duplicat.setChargeTemplate(pct.getChargeTemplate());
+                ChargeTemplate duplicateCharge = null;
+                if(pct.getChargeTemplate() != null) {
+                    if(pct.getChargeTemplate() instanceof  OneShotChargeTemplate) {
+                        duplicateCharge = new OneShotChargeTemplate();
+                    }else if(pct.getChargeTemplate() instanceof  RecurringChargeTemplate) {
+
+                    }else if(pct.getChargeTemplate() instanceof UsageChargeTemplate) {
+
+                    }
+                }
     			productChargeTemplateMappingService.create(duplicat);
-    			entity.getProductCharges().add(duplicat);
+                entity.getProductCharges().add(duplicat);
     		});
     	}
     	

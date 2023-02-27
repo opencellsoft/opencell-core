@@ -186,7 +186,8 @@ public class ProductService extends BusinessService<Product> {
     	}
 		
 		Product duplicate = new Product(product);
-	   	 
+		duplicate.setCode(product.getCode());
+
 	   	 if(!preserveCode) {
 	         String code = findDuplicateCode(duplicate);
 	   	   	duplicate.setCode(code);
