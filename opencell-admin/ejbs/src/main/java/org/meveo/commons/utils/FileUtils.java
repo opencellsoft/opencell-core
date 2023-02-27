@@ -470,7 +470,7 @@ public final class FileUtils {
             while ((entry = zis.getNextEntry()) != null) {
                 fileout = new File(folder + File.separator + entry.getName());
                 if (!fileout.toString().startsWith(folder)) {
-                    //throw new IOException("Entry is outside of the target directory");
+                    throw new IOException("Entry is outside of the target directory");
                 }
                 if (entry.isDirectory()) {
                     if (!StorageFactory.existsDirectory(fileout)) {
