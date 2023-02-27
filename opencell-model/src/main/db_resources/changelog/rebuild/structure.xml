@@ -34,129 +34,140 @@
     <changeSet author="AndriusKarpavicius"  id="rebuild_oracle_functions_clob" dbms="oracle">
         <createProcedure>
           create or replace type listagg_clob_t as object
-            ( t_varchar2 varchar2(32767)
-            , t_clob clob
-            , static function odciaggregateinitialize( sctx in out listagg_clob_t )
-              return number
-            , member function odciaggregateiterate
-                ( self in out listagg_clob_t
-                , a_val varchar2
-                )
-              return number
-            , member function odciaggregateterminate
-                ( self in out listagg_clob_t
-                , returnvalue out clob
-                , flags in number
-                )
-              return number
-            , member function odciaggregatemerge
-                ( self in out listagg_clob_t
-                , ctx2 in out listagg_clob_t
-                )
-              return number
-            );
+          (
+              t_varchar2 VARCHAR2 (32767),
+              t_clob CLOB,
+              STATIC FUNCTION odciaggregateinitialize (sctx IN OUT listagg_clob_t)
+                  RETURN NUMBER,
+              MEMBER FUNCTION odciaggregateiterate (self    IN OUT listagg_clob_t,
+                                                    a_val          VARCHAR2)
+                  RETURN NUMBER,
+              MEMBER FUNCTION odciaggregateterminate (self          IN OUT listagg_clob_t,
+                                                      returnvalue      OUT CLOB,
+                                                      flags         IN     NUMBER)
+                  RETURN NUMBER,
+              MEMBER FUNCTION odciaggregatemerge (self   IN OUT listagg_clob_t,
+                                                  ctx2   IN OUT listagg_clob_t)
+                  RETURN NUMBER
+          );
         </createProcedure>
         <createProcedure>
             create or replace type body listagg_clob_t
-                is
-                  static function odciaggregateinitialize( sctx in out listagg_clob_t )
-                  return number
-                  is
-                  begin
-                    sctx := listagg_clob_t( null, null );
-                    return odciconst.success;
-                  end;
-                --
-                  member function odciaggregateiterate
-                    ( self in out listagg_clob_t
-                    , a_val varchar2
-                    )
-                  return number
-                  is
-                    procedure add_val( p_val varchar2 )
+            IS
+                STATIC FUNCTION odciaggregateinitialize (sctx IN OUT listagg_clob_t)
+                    RETURN NUMBER
+                    IS
+                BEGIN
+                    sctx := listagg_clob_t (NULL, NULL);
+                    RETURN odciconst.success;
+                END;
+                member function odciaggregateiterate
+                ( self in out listagg_clob_t
+                , a_val varchar2
+                )
+                    return number
                     is
+                    procedure add_val( p_val varchar2 )
+                        is
                     begin
-                      if nvl( lengthb( self.t_varchar2 ), 0 ) + lengthb( p_val ) &lt;= 4000
-                -- Strange limit, the max size of self.t_varchar2 is 29993
-                -- If you exceeds this number you get ORA-22813: operand value exceeds system limits
-                -- with 29993 you get JSON-output as large 58894 bytes
-                -- with 4000 you get JSON-output as large 1063896 bytes, probably max more
-                      then
-                        if self.t_varchar2 is null then
-                          self.t_varchar2 := self.t_varchar2 || p_val;
-                        else
-                          self.t_varchar2 := self.t_varchar2 || ',' || p_val;
-                        end if;
-                      else
-                        if self.t_clob is null
-                        then
-                          dbms_lob.createtemporary( self.t_clob, true, dbms_lob.call );
-                          dbms_lob.writeappend( self.t_clob, length( self.t_varchar2 ), self.t_varchar2 );
-                        else
-                          dbms_lob.writeappend( self.t_clob, length( self.t_varchar2 ), ','||self.t_varchar2 );
-                        end if;
-                        self.t_varchar2 := p_val;
-                      end if;
-                    end;
-                  begin
-                    add_val( a_val );
-                    return odciconst.success;
-                  end;
-                --
-                  member function odciaggregateterminate
-                    ( self in out listagg_clob_t
-                    , returnvalue out clob
-                    , flags in number
-                    )
-                  return number
-                  is
-                  begin
-                    if self.t_clob is null
-                    then
-                      dbms_lob.createtemporary( self.t_clob, true, dbms_lob.call );
-                    end if;
-                    if self.t_varchar2 is not null
-                    then
-                      dbms_lob.writeappend( self.t_clob, length( self.t_varchar2 ), self.t_varchar2 );
-                    end if;
-                    returnvalue := self.t_clob;
-                    return odciconst.success;
-                  end;
-                --
-                  member function odciaggregatemerge
-                    ( self in out listagg_clob_t
-                    , ctx2 in out listagg_clob_t
-                    )
-                  return number
-                  is
-                  begin
-                    if self.t_clob is null
-                    then
-                      dbms_lob.createtemporary( self.t_clob, true, dbms_lob.call );
-                    end if;
-                    if self.t_varchar2 is not null
-                    then
-                      dbms_lob.writeappend( self.t_clob, length( self.t_varchar2 ), self.t_varchar2 );
-                    end if;
-                    if ctx2.t_clob is not null
-                    then
-                      dbms_lob.append( self.t_clob, ctx2.t_clob );
-                      dbms_lob.freetemporary( ctx2.t_clob );
-                    end if;
-                    if ctx2.t_varchar2 is not null
-                    then
-                      dbms_lob.writeappend( self.t_clob, length( ctx2.t_varchar2 ), ctx2.t_varchar2 );
-                      ctx2.t_varchar2 := null;
-                    end if;
-                    return odciconst.success;
-                  end;
-                --
-                end;        
+                        if nvl( lengthb( self.t_varchar2 ), 0 ) + lengthb( p_val ) &lt;= 4000
+                        THEN
+                            IF self.t_varchar2 IS NULL
+            THEN
+               self.t_varchar2 := self.t_varchar2 || p_val;
+        ELSE
+               self.t_varchar2 := self.t_varchar2 || ',' || p_val;
+        END IF;
+        ELSE
+            IF self.t_clob IS NULL
+            THEN
+               DBMS_LOB.createtemporary (self.t_clob, TRUE, DBMS_LOB.call);
+        DBMS_LOB.writeappend (self.t_clob,
+                                     LENGTH (self.t_varchar2),
+                                     self.t_varchar2);
+        ELSE
+               DBMS_LOB.writeappend (self.t_clob,
+                                     LENGTH (self.t_varchar2) + 1,
+                                     ',' || self.t_varchar2);
+        END IF;
+
+        self.t_varchar2 := p_val;
+        END IF;
+        END;
+        BEGIN
+            add_val (a_val);
+            RETURN odciconst.success;
+        END;
+
+        MEMBER FUNCTION odciaggregateterminate (self          IN OUT listagg_clob_t,
+                                           returnvalue      OUT CLOB,
+                                           flags         IN     NUMBER)
+      RETURN NUMBER
+   IS
+        BEGIN
+            IF self.t_clob IS NULL
+            THEN
+                DBMS_LOB.createtemporary (self.t_clob, TRUE, DBMS_LOB.call);
+
+                IF self.t_varchar2 IS NOT NULL
+                THEN
+                    DBMS_LOB.writeappend (self.t_clob,
+                                          LENGTH (self.t_varchar2) ,
+                                          self.t_varchar2);
+                END IF;
+            ELSE
+                IF self.t_varchar2 IS NOT NULL
+                THEN
+                    DBMS_LOB.writeappend (self.t_clob,
+                                          LENGTH (self.t_varchar2) + 1,
+                                          ',' || self.t_varchar2);
+                END IF;
+            END IF;
+
+            returnvalue := self.t_clob;
+            RETURN odciconst.success;
+        END;
+
+        MEMBER FUNCTION odciaggregatemerge (self   IN OUT listagg_clob_t,
+                                       ctx2   IN OUT listagg_clob_t)
+      RETURN NUMBER
+   IS
+        BEGIN
+            IF self.t_clob IS NULL
+            THEN
+                DBMS_LOB.createtemporary (self.t_clob, TRUE, DBMS_LOB.call);
+            END IF;
+
+            IF self.t_varchar2 IS NOT NULL
+            THEN
+                DBMS_LOB.writeappend (self.t_clob,
+                                      LENGTH (self.t_varchar2),
+                                      self.t_varchar2);
+            END IF;
+
+            IF ctx2.t_clob IS NOT NULL
+            THEN
+                DBMS_LOB.append (self.t_clob, ctx2.t_clob);
+                DBMS_LOB.freetemporary (ctx2.t_clob);
+            END IF;
+
+            IF ctx2.t_varchar2 IS NOT NULL
+            THEN
+                DBMS_LOB.writeappend (self.t_clob,
+                                      LENGTH (ctx2.t_varchar2),
+                                      ctx2.t_varchar2);
+                ctx2.t_varchar2 := NULL;
+            END IF;
+
+            RETURN odciconst.success;
+        END;
+        END;
         </createProcedure>
         <createProcedure>
             create or replace function listagg_clob( agg varchar2 )
-            return clob
-            parallel_enable aggregate using listagg_clob_t;        
+                RETURN CLOB
+                PARALLEL_ENABLE
+                AGGREGATE USING listagg_clob_t;
         </createProcedure>
     </changeSet>
 
@@ -18815,8 +18826,7 @@
     <changeSet id="#INTR-12252_20221212_agreement_date" author="a.rouaguebe" />
 	<changeSet id="#INTRD-11775_20221120" author="hichamELHALOUI" />
     <changeSet id="#INTRD-11841_20221214-reports" author="HichamHANINE" />
-
-
+    <changeSet author="ZBariki" id="#INTRD-14208_20230224" dbms="oracle" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
