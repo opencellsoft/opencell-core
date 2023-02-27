@@ -125,8 +125,12 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
     }
 
     private void unzipFile(String importTempDir, File zipFile) {
+        File dir = new File(importTempDir);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
         if (!zipFile.exists()) {
-            throw new BusinessApiException("The zipped file does not exist");
+            //throw new BusinessApiException("The zipped file does not exist");
         }
         if (!FileUtils.isValidZip(zipFile)) {
             throw new BusinessApiException("The zipped file is invalid!");
