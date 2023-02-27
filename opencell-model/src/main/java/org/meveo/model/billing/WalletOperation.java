@@ -72,6 +72,7 @@ import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.model.cpq.commercial.OrderInfo;
 import org.meveo.model.cpq.contract.Contract;
+import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
@@ -327,21 +328,21 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     /**
      * Additional rating parameter
      */
-    @Column(name = "parameter_1", length = 255)
+    @Column(name = "parameter_1")
     @Size(max = 255)
     private String parameter1;
 
     /**
      * Additional rating parameter
      */
-    @Column(name = "parameter_2", length = 255)
+    @Column(name = "parameter_2")
     @Size(max = 255)
     private String parameter2;
 
     /**
      * Additional rating parameter
      */
-    @Column(name = "parameter_3", length = 255)
+    @Column(name = "parameter_3")
     @Size(max = 255)
     private String parameter3;
 
@@ -376,7 +377,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     /**
      * Offer code
      */
-    @Column(name = "offer_code", length = 255)
+    @Column(name = "offer_code")
     @Size(max = 255, min = 1)
     protected String offerCode;
 
@@ -639,6 +640,10 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     
     @Transient
     private WalletOperation discountedWO;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contract_line_id")
+    private ContractItem contractLine;
     
     /**
      * Constructor
@@ -1717,7 +1722,12 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 	public void setDiscountedWO(WalletOperation discountedWO) {
 		this.discountedWO = discountedWO;
 	}
-	
-	
 
+    public ContractItem getContractLine() {
+        return contractLine;
+    }
+
+    public void setContractLine(ContractItem contractLine) {
+        this.contractLine = contractLine;
+    }
 }
