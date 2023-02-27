@@ -4,8 +4,8 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.cpq.ContractDto;
+import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.contract.BillingRule;
 import org.meveo.model.cpq.contract.Contract;
@@ -26,7 +26,7 @@ public class BillingRuleService extends PersistenceService<BillingRule> {
 
     public void checkBillingRedirectionRulesConfiguration(ContractDto contractDto) {
         if (contractDto.getBillingRules() != null && !contractDto.getBillingRules().isEmpty() && !isBillingRedirectionRulesEnabled()) {
-            throw new BusinessException("Feature disabled in application settings");
+            throw new ActionForbiddenException("Feature disabled in application settings");
         }
     }
 
