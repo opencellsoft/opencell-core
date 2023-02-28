@@ -40,7 +40,7 @@ import org.meveo.model.cpq.Product;
 @NamedQueries({
 	@NamedQuery(name = "ContractItem.getApplicableContracts", query = "select c from ContractItem c where  c.contract.id=:contractId "
 			+ " and (c.offerTemplate is null or c.offerTemplate.id=:offerId) "
-			+ " and (c.product is null or c.product.code=:productCode) and (c.chargeTemplate is null or c.chargeTemplate.id=:chargeTemplateId)  " )})
+			+ " and (c.product is null or c.product.code=:productCode) and (c.chargeTemplate is null or c.chargeTemplate.id=:chargeTemplateId)  order by c.auditable.created desc" )})
 	
 public class ContractItem extends EnableBusinessCFEntity {
 

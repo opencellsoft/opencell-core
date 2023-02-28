@@ -140,10 +140,8 @@ public class ContractItemService extends BusinessService<ContractItem> {
         if (!applicableContractItems.isEmpty()) {
             if (applicableContractItems.size() > 1) {
                 log.error("Contract " + contract.getCode() + "has more than one item ");
-
-            } else {
-                contractItem = applicableContractItems.get(0);
             }
+			contractItem = applicableContractItems.get(0);
         }
         return contractItem;
     }
