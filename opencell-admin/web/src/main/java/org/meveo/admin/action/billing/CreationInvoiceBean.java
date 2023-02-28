@@ -387,7 +387,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         }
 
         // AKK check what happens with tax
-        RatedTransaction ratedTransaction = new RatedTransaction(usageDate, unitAmountWithoutTax, unitAmountWithTax, unitAmountTax  , quantity, unitAmountWithoutTax.multiply(quantity), unitAmountWithTax.max(quantity), unitAmountTax.multiply(quantity), RatedTransactionStatusEnum.BILLED, ua.getWallet(),
+        RatedTransaction ratedTransaction = new RatedTransaction(usageDate, unitAmountWithoutTax, unitAmountWithTax, unitAmountTax  , quantity, unitAmountWithoutTax.multiply(quantity), unitAmountWithTax.multiply(quantity), unitAmountTax.multiply(quantity), RatedTransactionStatusEnum.BILLED, ua.getWallet(),
             ua.getBillingAccount(), ua, selectInvoiceSubCat, parameter1, parameter2, parameter3, null, orderNumber, null, null, null, null, null, null, selectedCharge.getCode(), description, rtStartDate, rtEndDate,
             seller, taxInfo.tax, taxInfo.tax.getPercent(), null, taxInfo.taxClass, null, null, null, null);
 
