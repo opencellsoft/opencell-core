@@ -83,6 +83,7 @@ import org.meveo.util.ApplicationProvider;
 @Stateless
 public class ReportQueryService extends BusinessService<ReportQuery> {
 
+    private static final String SEPARATOR_SELECTED_FIELDS = "\\.";
     @Inject
     private QueryExecutionResultService queryExecutionResultService;
     @Inject
@@ -499,26 +500,26 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                     	if(result instanceof Object[]) {
                     		item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), ((Object[]) result)[index]);
                     	} else if (targetEntity.isInstance(result)) {
-                    		Field field = FieldUtils.getField(targetEntity, fields.get(index), true);
-                    		try {
-								item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), field.get(result));
-							} catch (IllegalArgumentException | IllegalAccessException e) {
-								log.error("Result construction failed", e);
-								throw new BusinessException("Result construction failed", e);
-							}
+                    	    if(fields.get(index).contains(".") && !nativePersistenceService.isAggregationField(fields.get(index))){
+                    	        String[] selected_fields =  fields.get(index).split(SEPARATOR_SELECTED_FIELDS);
+                    	        if (selected_fields.length >= 2) {
+                    	            processSelectedFields(selected_fields, result, item,  aliases.getOrDefault(fields.get(index), fields.get(index)), targetEntity, 0);
+                    	        }
+                            }
+                    	    else {
+                                Field field = FieldUtils.getField(targetEntity, fields.get(index), true);
+                                try {
+                                    item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), field.get(result));
+                                } catch (IllegalArgumentException | IllegalAccessException e) {
+                                    log.error("Result construction failed", e);
+                                    throw new BusinessException("Result construction failed", e);
+                                } 
+                            }
                     	}
                     }
                 }
                 response.add(item);
-            }
-            for (Object item : response) {
-                for (Map.Entry<String, Object> entry : ((Map<String, Object>)item).entrySet()) {
-                    if(entry.getValue() != null) {
-                        List<Field> field = getFields(entry.getValue().getClass());
-                        initLazyLoadedValues(field, entry.getValue());
-                    }
-                }
-            }
+            }            
             return response;
         } else {
             List<Field> field = getFields(targetEntity);
@@ -529,6 +530,39 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                 initLazyLoadedValues(field, item);
             }
             return executionResult;
+        }
+    }
+    
+    private void processSelectedFields(String[] selectedFields, Object result, Map<String, Object> item, String fieldAlias, Class<?> currentClass, int fieldIndex) {
+        if (fieldIndex + 1 == selectedFields.length) {
+            item.put(fieldAlias, result != null ? result.toString() : "");
+            return;
+        }
+
+        Field fieldParent = FieldUtils.getField(currentClass, selectedFields[fieldIndex], true);
+        Field field = FieldUtils.getField(fieldParent.getType(), selectedFields[fieldIndex + 1], true);
+        if (fieldParent == null) {
+            throw new BusinessException("Field Parent not found: " + selectedFields[fieldIndex]);
+        }
+        if (field == null) {
+            throw new BusinessException("Field not found: " + selectedFields[fieldIndex + 1]);
+        }
+        try {
+            PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), fieldParent.getType());
+            Object property = null;
+            if(fieldIndex == 0){
+                result = fieldParent.get(result);
+            }            
+            if(result == null){
+                item.put(fieldAlias, property != null ? property.toString() : "");
+            }
+            else{
+                property = propertyDescriptor.getReadMethod().invoke(result);
+                processSelectedFields(selectedFields, property, item, fieldAlias, fieldParent.getType(), fieldIndex + 1);
+            }
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | IntrospectionException e) {
+            log.error("processSelectedFields failed", e);
+            throw new BusinessException("processSelectedFields failed", e);
         }
     }
 

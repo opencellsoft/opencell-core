@@ -7,6 +7,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.WalletOperation;
@@ -18,6 +19,7 @@ import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 
@@ -138,7 +140,7 @@ public class AttributeService extends BusinessService<Attribute>{
     private void checkPhoneAttribute(ProductVersionAttribute pvAttribute, AttributeValue<?> attributeValue) {
         // Phone values
         if (AttributeTypeEnum.PHONE == pvAttribute.getAttribute().getAttributeType()) {
-            if (!isValidPhone(attributeValue.getRealValue().toString())) {
+            if (!isValidPhone(attributeValue.getRealValue())) {
                 throw new BusinessApiException("The attribute " + pvAttribute.getAttribute().getCode() + " has not a valid Phone value '" + attributeValue.getRealValue() + "'");
             }
         }
@@ -147,7 +149,7 @@ public class AttributeService extends BusinessService<Attribute>{
     private void checkEmailAttribute(ProductVersionAttribute pvAttribute, AttributeValue<?> attributeValue) {
         // Email values
         if (AttributeTypeEnum.EMAIL == pvAttribute.getAttribute().getAttributeType()) {
-            if (!isValidEmail(attributeValue.getRealValue().toString())) {
+            if (!isValidEmail(attributeValue.getRealValue())) {
                 throw new BusinessApiException("The attribute " + pvAttribute.getAttribute().getCode() + " has not a valid Email value '" + attributeValue.getRealValue() + "'");
             }
         }
@@ -156,7 +158,7 @@ public class AttributeService extends BusinessService<Attribute>{
     private void checkBooleanAttribute(ProductVersionAttribute pvAttribute, AttributeValue<?> attributeValue) {
         // Boolean values
         if (AttributeTypeEnum.BOOLEAN == pvAttribute.getAttribute().getAttributeType()) {
-            if (!isValidBoolean(attributeValue.getRealValue().toString())) {
+            if (!isValidBoolean(attributeValue.getRealValue())) {
                 throw new BusinessApiException("The attribute " + pvAttribute.getAttribute().getCode() + " has not a valid Boolean value '" + attributeValue.getRealValue() + "'");
             }
         }
@@ -166,7 +168,7 @@ public class AttributeService extends BusinessService<Attribute>{
         // Dates values
         if (AttributeTypeEnum.DATE == pvAttribute.getAttribute().getAttributeType() ||
                 AttributeTypeEnum.CALENDAR == pvAttribute.getAttribute().getAttributeType()) {
-            if (!(attributeValue.getRealValue() instanceof Date) && !isValidDate(attributeValue.getRealValue().toString())) {
+            if (!(attributeValue.getRealValue() instanceof Date) && !isValidDate(attributeValue.getRealValue())) {
                 throw new BusinessApiException("The attribute " + pvAttribute.getAttribute().getCode() + " has not a valid Date value '" + attributeValue.getRealValue() + "'");
             }
         }
@@ -176,7 +178,7 @@ public class AttributeService extends BusinessService<Attribute>{
         // Number values
         if (AttributeTypeEnum.NUMERIC == pvAttribute.getAttribute().getAttributeType() ||
                 AttributeTypeEnum.INTEGER == pvAttribute.getAttribute().getAttributeType()) {
-            if (!isValidNumber(attributeValue.getRealValue().toString())) {
+            if (!isValidNumber(attributeValue.getRealValue())) {
                 throw new BusinessApiException("The attribute " + pvAttribute.getAttribute().getCode() + " has not a valid number '" + attributeValue.getRealValue() + "'");
             }
 
@@ -189,12 +191,12 @@ public class AttributeService extends BusinessService<Attribute>{
             }
 
             attributeValue.getAssignedAttributeValue().forEach(assignedAttibute -> {
-                if (!isValidNumber(assignedAttibute.getRealValue().toString())) {
+                if (!isValidNumber(assignedAttibute.getRealValue())) {
                     throw new BusinessApiException("The attribute " + pvAttribute.getAttribute().getCode() + " has not a valid number '" + attributeValue.getRealValue() + "'");
                 }
             });
 
-            if (!isValidNumber(attributeValue.getRealValue().toString())) {
+            if (!isValidNumber(attributeValue.getRealValue())) {
                 throw new BusinessApiException("The attribute " + pvAttribute.getAttribute().getCode() + " has not a valid number '" + attributeValue.getRealValue() + "'");
             }
 
@@ -206,7 +208,7 @@ public class AttributeService extends BusinessService<Attribute>{
                 throw new BusinessApiException("The attribute " + pvAttribute.getAttribute().getCode() + " with COUNT type, does not have a linked assigned attributes");
             }
 
-            if (!isValidNumber(attributeValue.getRealValue().toString())) {
+            if (!isValidNumber(attributeValue.getRealValue())) {
                 throw new BusinessApiException("The attribute " + pvAttribute.getAttribute().getCode() + " has not a valid number '" + attributeValue.getRealValue() + "'");
             }
 
@@ -216,9 +218,17 @@ public class AttributeService extends BusinessService<Attribute>{
     private void checkListAttribute(ProductVersionAttribute pvAttribute, AttributeValue<?> attributeValue) {
         // Check value content
         // List values
+        if (attributeValue.getRealValue() == null) {
+            return;
+        }
+
+        String seperator = ParamBean.getInstance().getProperty("attribute.multivalues.separator", ";");
+
+        Set<String> givenValues = Set.of(attributeValue.getRealValue().toString().split(seperator));
+
         if (AttributeTypeEnum.LIST_TEXT == pvAttribute.getAttribute().getAttributeType() ||
                 AttributeTypeEnum.LIST_NUMERIC == pvAttribute.getAttribute().getAttributeType()) {
-            if (!pvAttribute.getAttribute().getAllowedValues().contains(attributeValue.getRealValue().toString())) {
+            if (CollectionUtils.isNotEmpty(pvAttribute.getAttribute().getAllowedValues()) && !pvAttribute.getAttribute().getAllowedValues().contains(attributeValue.getRealValue().toString())) {
                 throw new BusinessApiException("The value '" + attributeValue.getRealValue() + "' is not part of allowed values " + pvAttribute.getAttribute().getAllowedValues());
             }
 
@@ -228,7 +238,6 @@ public class AttributeService extends BusinessService<Attribute>{
         if (AttributeTypeEnum.LIST_MULTIPLE_TEXT == pvAttribute.getAttribute().getAttributeType() ||
                 AttributeTypeEnum.LIST_MULTIPLE_NUMERIC == pvAttribute.getAttribute().getAttributeType()) {
             // Split value by separator
-            Set<String> givenValues = Set.of(attributeValue.getRealValue().toString().split(","));
             if (!pvAttribute.getAttribute().getAllowedValues().containsAll(givenValues)) {
                 throw new BusinessApiException("The values " + givenValues + " are not part of allowed values " + pvAttribute.getAttribute().getAllowedValues());
             }
@@ -237,6 +246,9 @@ public class AttributeService extends BusinessService<Attribute>{
     }
 
     private void checkRegExAttribute(ProductVersionAttribute pvAttribute, AttributeValue<?> attributeValue) {
+        if (attributeValue.getRealValue() == null) {
+            return;
+        }
         // Check value type
         if (pvAttribute.getValidationType() == AttributeValidationType.REGEX && !attributeValue.getRealValue().toString().matches(pvAttribute.getValidationPattern())) {
             throw new BusinessApiException("The attribute " + pvAttribute.getAttribute().getCode() + " does not meet the regEx " + pvAttribute.getValidationPattern());
@@ -249,8 +261,11 @@ public class AttributeService extends BusinessService<Attribute>{
             if (StringUtils.isBlank(attributeValue.getRealValue())) {
                 throw new BusinessApiException("The read only attribute " + pvAttribute.getAttribute().getCode() + " should have a default value");
             }
-            if (StringUtils.isNotBlank(pvAttribute.getDefaultValue()) && !pvAttribute.getDefaultValue().equals(attributeValue.getRealValue().toString())) {
+            if (AttributeTypeEnum.DATE == pvAttribute.getAttribute().getAttributeType() && attributeValue.getRealValue() instanceof Date && !pvAttribute.getDefaultValue().equals(DateUtils.formatAsDate((Date) attributeValue.getRealValue()))) {
                 throw new BusinessApiException("The read only attribute " + pvAttribute.getAttribute().getCode() + " cannot be updated");
+            } else if (!(attributeValue.getRealValue() instanceof Date) && pvAttribute.getDefaultValue() != null && !String.valueOf(pvAttribute.getDefaultValue()).equals(String.valueOf(attributeValue.getRealValue()))) {
+                throw new BusinessApiException("The read only attribute " + pvAttribute.getAttribute().getCode() + " cannot be updated :" +
+                        " default value '" + pvAttribute.getDefaultValue() + "', given value '" + attributeValue.getRealValue() + "'");
             }
 
         }
@@ -263,68 +278,70 @@ public class AttributeService extends BusinessService<Attribute>{
         }
     }
 
-    private boolean isValidNumber(String value) {
+    private boolean isValidNumber(Object value) {
         if (value == null) {
             return true;
         }
         try {
-            Double.parseDouble(value);
+            Double.parseDouble(value.toString());
         } catch (NumberFormatException ex) {
             return false;
         }
         return true;
     }
 
-    private boolean isValidDate(String value) {
+    private boolean isValidDate(Object value) {
         if (value == null) {
             return true;
         }
         try {
-            Date date = value.matches("^\\d{4}-\\d{2}-\\d{2}$") ? new SimpleDateFormat("yyyy-MM-dd").parse(value) :
-                    new SimpleDateFormat("dd/MM/yyyy").parse(value);
+            Date date = value.toString().matches("^\\d{4}-\\d{2}-\\d{2}$") ? new SimpleDateFormat("yyyy-MM-dd").parse(value.toString()) :
+                    new SimpleDateFormat("dd/MM/yyyy").parse(value.toString());
         } catch (ParseException e) {
             return false;
         }
         return true;
     }
 
-    private boolean isValidBoolean(String value) {
+    private boolean isValidBoolean(Object value) {
         if (value == null) {
             return true;
         }
-        return "true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value);
+        return "true".equalsIgnoreCase(value.toString()) || "false".equalsIgnoreCase(value.toString());
     }
 
-    private boolean isValidEmail(String value) {
+    private boolean isValidEmail(Object value) {
         if (value == null) {
             return true;
         }
         Pattern emailPattern = Pattern.compile(EMAIL_REGEX_VALIDATION);
 
-        return emailPattern.matcher(value).matches();
+        return emailPattern.matcher(value.toString()).matches();
     }
 
-    private boolean isValidPhone(String value) {
+    private boolean isValidPhone(Object value) {
         if (value == null) {
             return true;
         }
 
         Pattern phonePattern = Pattern.compile(PHONE_REGEX_VALIDATION);
 
-        if (value.startsWith("+")) {
-            value = value.replace("+", "00");
+        String givenPhone = value.toString();
+
+        if (givenPhone.startsWith("+")) {
+            givenPhone = givenPhone.replace("+", "00");
         }
-        if (value.contains("(")) {
-            value = value.replace("(", "");
+        if (givenPhone.contains("(")) {
+            givenPhone = givenPhone.replace("(", "");
         }
-        if (value.contains(")")) {
-            value = value.replace(")", "");
+        if (givenPhone.contains(")")) {
+            givenPhone = givenPhone.replace(")", "");
         }
-        if (value.contains("-")) {
-            value = value.replace("-", "");
+        if (givenPhone.contains("-")) {
+            givenPhone = givenPhone.replace("-", "");
         }
 
-        return phonePattern.matcher(value).matches();
+        return phonePattern.matcher(givenPhone).matches();
 
     }
 

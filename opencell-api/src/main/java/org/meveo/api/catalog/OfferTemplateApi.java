@@ -107,6 +107,7 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.document.Document;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.FileTypeService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
@@ -193,6 +194,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
     @Inject
     private FileTypeService fileTypeService;
+
+    @Inject
+    CustomGenericEntityCodeService customGenericEntityCodeService;
 
     @Override
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "sellers", entityClass = Seller.class, parser = ObjectPropertyParser.class))
@@ -382,6 +386,11 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         }
 
         offerTemplate.setBusinessOfferModel(businessOffer);
+
+        if (StringUtils.isBlank(postData.getCode())) {
+            postData.setCode(customGenericEntityCodeService.getGenericEntityCode(offerTemplate));
+        }
+
         offerTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         offerTemplate.setDescription(postData.getDescription());
         offerTemplate.setName(postData.getName());

@@ -59,10 +59,8 @@ public class FilterConverter {
             	return convertFilters((Map<String, Object>)filterEntry.getValue());
             }
             if(fieldName.equalsIgnoreCase("id")) {
-            	if(filterEntry.getValue() instanceof Collection)
-            		return (Collection)filterEntry.getValue();
-            	else 
-            		return Long.valueOf((String)filterEntry.getValue());
+            	Object value = filterEntry.getValue();
+        		return Long.valueOf(value.toString());
             }
             final int index = fieldName.indexOf(".");
 			if(index>0) {

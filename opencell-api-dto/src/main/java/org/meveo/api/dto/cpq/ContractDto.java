@@ -27,7 +27,7 @@ public class ContractDto extends BusinessEntityDto {
 	@Schema(description = "account code associated to contract depending the value of  contractAccountLevel")
 	private String accountCode;
 	@Schema(description = "status of the contract" ,example="possible value are : DRAFT, ACTIVE, CLOSED" )
-	private ContractStatusEnum status;
+	private String status;
 	@Schema(description = "date of the changement of the status, it set automatically")
 	private Date statusDate;
 
@@ -52,6 +52,8 @@ public class ContractDto extends BusinessEntityDto {
 	@Schema(description = "list of billing rules")
 	private List<BillingRuleDto> billingRules;
 
+	@Schema(description = "An expression to decide whether the contract should be applied or not")
+	private String applicationEl;
     
 	
 	public ContractDto() {}
@@ -79,14 +81,15 @@ public class ContractDto extends BusinessEntityDto {
 		this.status = c.getStatus();
 		this.statusDate = c.getStatusDate();
 		this.description = c.getDescription();
+		this.applicationEl = c.getApplicationEl();
 	}
 	
 	 
-	public ContractStatusEnum getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(ContractStatusEnum status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 
@@ -219,6 +222,18 @@ public class ContractDto extends BusinessEntityDto {
 		this.billingRules = billingRules;
 	}
 
-	
+	/**
+	 * @return the applicationEL
+	 */
+	public String getApplicationEl() {
+		return applicationEl;
+	}
+
+	/**
+	 * @param applicationEL the applicationEL to set
+	 */
+	public void setApplicationEL(String applicationEl) {
+		this.applicationEl = applicationEl;
+	}
 	
 }
