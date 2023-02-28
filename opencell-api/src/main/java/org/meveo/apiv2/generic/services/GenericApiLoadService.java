@@ -43,6 +43,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class GenericApiLoadService {
 
     private static final String API_LIST_MAX_LIMIT_KEY = "api.list.maxLimit";
+    private static final String API_LIST_DEFAULT_LIMIT = "api.list.defaultLimit";
 
     @Inject
     GenericOpencellRestful genericOpencellRestful;
@@ -61,7 +62,7 @@ public class GenericApiLoadService {
     protected ParamBeanFactory paramBeanFactory;
 
     public String findPaginatedRecords(Boolean extractList, Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> fetchFields, Long nestedDepth, Long id, Set<String> excludedFields) {
-        int API_LIST_MAX_LIMIT = paramBeanFactory.getInstance().getPropertyAsInteger(API_LIST_MAX_LIMIT_KEY, 1000);
+
         if(genericFields != null && isAggregationQueries(genericFields)){
             searchConfig.setFetchFields(new ArrayList<>(genericFields));
             List<List<Object>> list = (List<List<Object>>) nativePersistenceService.getAggregateQuery(entityClass.getCanonicalName(), searchConfig, id)
@@ -74,7 +75,7 @@ public class GenericApiLoadService {
                     .collect(toList());
             Map<String, Object> results = new LinkedHashMap<>();
             results.put("total", list.size());
-            results.put("limit", Long.valueOf(searchConfig.getNumberOfRows()) <= API_LIST_MAX_LIMIT ? Long.valueOf(searchConfig.getNumberOfRows()) : API_LIST_MAX_LIMIT);
+            results.put("limit", getLimit(searchConfig));
             results.put("offset", Long.valueOf(searchConfig.getFirstRow()));
             results.put("data", mapResult);
 
@@ -92,7 +93,7 @@ public class GenericApiLoadService {
             .collect(toList());
             Map<String, Object> results = new LinkedHashMap<String, Object>();
             results.put("total", searchResult.getCount());
-            results.put("limit", Long.valueOf(searchConfig.getNumberOfRows()) <= API_LIST_MAX_LIMIT ? Long.valueOf(searchConfig.getNumberOfRows()) : API_LIST_MAX_LIMIT);
+            results.put("limit", getLimit(searchConfig));
             results.put("offset", Long.valueOf(searchConfig.getFirstRow()));
             results.put("data", mapResult);
             return serializeResults(results);
@@ -100,7 +101,7 @@ public class GenericApiLoadService {
             SearchResult searchResult = persistenceDelegate.list(entityClass, searchConfig);
             ImmutableGenericPaginatedResource genericPaginatedResource = ImmutableGenericPaginatedResource.builder()
                     .data(searchResult.getEntityList())
-                    .limit(Long.valueOf(searchConfig.getNumberOfRows()) <= API_LIST_MAX_LIMIT ? Long.valueOf(searchConfig.getNumberOfRows()) : API_LIST_MAX_LIMIT)
+                    .limit(getLimit(searchConfig))
                     .offset(Long.valueOf(searchConfig.getFirstRow()))
                     .total(searchResult.getCount())
                     .filters(searchConfig.getFilters())
@@ -114,7 +115,23 @@ public class GenericApiLoadService {
         }
     }
 
-	public List<Map<String, Object>> findAggregatedPaginatedRecords(Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFieldsAlias) {
+    private long getLimit(PaginationConfiguration searchConfig) {
+
+        int limit = 0;
+        Integer userLimit = searchConfig.getLimit();
+        int apiListMaxLimit = paramBeanFactory.getInstance().getPropertyAsInteger(API_LIST_MAX_LIMIT_KEY, 1000);
+        int apiDefaultLimit = paramBeanFactory.getInstance().getPropertyAsInteger(API_LIST_DEFAULT_LIMIT, 100);
+
+        if (userLimit != null && userLimit > 0) {
+            limit = Math.min(userLimit, apiListMaxLimit);
+        } else {
+            limit = Math.min(apiDefaultLimit, apiListMaxLimit);
+        }
+
+        return limit;
+    }
+
+    public List<Map<String, Object>> findAggregatedPaginatedRecords(Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFieldsAlias) {
 		List<List<Object>> list = (List<List<Object>>) nativePersistenceService.getQueryWithoutDependencies(entityClass.getCanonicalName(), searchConfig, null)
 				.addPaginationConfiguration(searchConfig, "a").find(nativePersistenceService.getEntityManager()).stream().map(ObjectArrays -> Arrays.asList(ObjectArrays)).collect(toList());
 		return list.stream().map(line -> addResultLine(line, genericFieldsAlias != null ? genericFieldsAlias.iterator() : searchConfig.getFetchFields().iterator())).collect(toList());
