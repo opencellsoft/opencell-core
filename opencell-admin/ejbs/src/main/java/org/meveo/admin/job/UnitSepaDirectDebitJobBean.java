@@ -120,8 +120,8 @@ public class UnitSepaDirectDebitJobBean {
 	public void execute(JobExecutionResultImpl result, DDRequestItem ddrequestItem, boolean isToMatching, PaymentStatusEnum paymentStatusEnum) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
     	ddrequestItem = dDRequestItemService.refreshOrRetrieve(ddrequestItem);
 		DDRequestLOT ddRequestLOT = ddrequestItem.getDdRequestLOT();
-		log.debug("processing DD requestItem id  : {}", ddrequestItem.getId());
-		if (ddrequestItem.getAccountOperations().size() == 1) {
+		log.debug("processing DD requestItem id  : {}", ddrequestItem.getId());					
+		if(!isPaidItem(ddrequestItem)) {
 			AccountOperation automatedPayment = null;
 			PaymentErrorTypeEnum paymentErrorTypeEnum = null;
 			String errorMsg = null;
@@ -163,7 +163,18 @@ public class UnitSepaDirectDebitJobBean {
 					result.registerError(errorMsg);
 				}
 			}
+		} else {
+			log.debug("Payment already crated for requestItem id  : {}", ddrequestItem.getId());	
 		}
+	}
+
+	private boolean isPaidItem(DDRequestItem ddrequestItem) {
+		for(AccountOperation ao :ddrequestItem.getAccountOperations() ) {
+			if( ao instanceof Payment || ao instanceof AutomatedPayment || ao instanceof Refund || ao instanceof AutomatedRefund ) {
+				return true;
+			}			
+		}
+		return false;
 	}
 
 	/**
