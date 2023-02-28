@@ -121,7 +121,6 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 		ratedTransactionService.updateRatedTransaction(ratedTransaction, description, unitAmountWithoutTax, quantity, param1, param2, param3, paramExtra);
 	}
 
-	@SuppressWarnings("unchecked")
 	public DuplicateRTResult duplication(Map<String, Object> filters, ProcessingModeEnum mode, boolean negateAmount,
 			boolean returnRts) {
 		DuplicateRTResult result = new DuplicateRTResult();
@@ -130,9 +129,9 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 		}
 		Map<String, Object> modifiableFilters = new HashMap<>(filters);
 		if(filters.get("status") == null) {
-			modifiableFilters.put("status", RatedTransactionStatusEnum.BILLED);
+			modifiableFilters.put("status", RatedTransactionStatusEnum.BILLED.toString());
 		}
-		List<RatedTransaction> rtToDuplicate = ratedTransactionService.findByIds(List.of(1L));
+		List<RatedTransaction> rtToDuplicate = ratedTransactionService.findByFilter(modifiableFilters);
 		if(CollectionUtils.isEmpty(rtToDuplicate)) {
 			log.warn("list of rated transaction to duplicate is empty for filters : " + filters);
 			result.getActionStatus().setMessage("list of rated transaction to duplicate is empty.");
