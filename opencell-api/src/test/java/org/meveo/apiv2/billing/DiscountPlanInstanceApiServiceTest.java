@@ -13,6 +13,8 @@ import org.meveo.apiv2.generic.services.GenericApiAlteringService;
 import org.meveo.apiv2.generic.services.GenericApiLoadService;
 import org.meveo.apiv2.generic.services.GenericApiPersistenceDelegate;
 import org.meveo.apiv2.generic.services.SearchResult;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.model.IEntity;
 import org.meveo.model.billing.BillingAccount;
@@ -83,6 +85,12 @@ public class DiscountPlanInstanceApiServiceTest {
     @Mock
     private SubscriptionService subscriptionService;
 
+    @Mock
+    private ParamBeanFactory paramBeanFactory;
+
+    @Mock
+    private ParamBean paramBean;
+
     @Before
     public void setup() {
         when(persistenceDelegate.list(any(), any())).thenAnswer(new Answer<SearchResult>() {
@@ -147,6 +155,8 @@ public class DiscountPlanInstanceApiServiceTest {
             }
         });
         when(discountPlanService.findById(any())).thenReturn(getDiscountPlan(DiscountPlanTypeEnum.PROMO_CODE, DiscountPlanStatusEnum.ACTIVE, false));
+        when(paramBeanFactory.getInstance()).thenReturn(paramBean);
+        when(paramBean.getPropertyAsInteger("api.list.maxLimit",1000)).thenReturn(1000);
     }
 
     private DiscountPlan getDiscountPlan(DiscountPlanTypeEnum type, DiscountPlanStatusEnum status, boolean nullDates) {
