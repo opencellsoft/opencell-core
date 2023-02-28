@@ -177,5 +177,28 @@ public class RecordedInvoice extends AccountOperation {
 		this.agedReceivableReportKey = agedReceivableReportKey;
 	}
 
+	public BigDecimal getAppliedRate() {
+	    if(super.getAppliedRate() == null && invoice != null && invoice.getAppliedRate() != null) {
+	        return invoice.getAppliedRate(); 
+	    }else {
+	        return super.getAppliedRate();  
+	    }
+    }
+
+    public void setAppliedRate(BigDecimal appliedRate) {
+        super.setAppliedRate(appliedRate);
+    }
+
+    public Date getAppliedRateDate() {
+        if(super.getAppliedRateDate() == null && invoice != null && invoice.getLastAppliedRateDate() != null) {
+            return invoice.getLastAppliedRateDate(); 
+        }else {
+            return super.getAppliedRateDate();  
+        }
+    }
+
+    public void setAppliedRateDate(Date appliedRateDate) {
+        super.setAppliedRateDate(appliedRateDate);
+    }
 
 }
