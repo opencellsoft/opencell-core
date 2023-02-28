@@ -2403,4 +2403,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         linesFactory.update(invoiceLine.getId(), deltaAmounts, deltaQuantity, beginDate, endDate, unitPrice);
     }
+    
+	@SuppressWarnings("unchecked")
+	public List<RatedTransaction> findByFilter(Map<String, Object> filters) {
+        FilterConverter converter = new FilterConverter(RatedTransaction.class);
+        PaginationConfiguration configuration = new PaginationConfiguration(converter.convertFilters(filters));
+        QueryBuilder query = getQuery(configuration);
+        
+		return query.getQuery(getEntityManager()).getResultList();
+	}
 }
