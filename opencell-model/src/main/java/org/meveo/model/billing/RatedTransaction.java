@@ -632,6 +632,10 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     @JoinColumn(name = "rules_contract_id")
     private Contract rulesContract;
     
+    @ManyToOne
+    @JoinColumn(name = "origin_ratedtransaction_id")
+    private RatedTransaction originRatedTransaction;
+    
     /**
   	 * 
   	 *filled only for price lines related to applied discounts, and contains the application sequence composed by the concatenation of the DP sequence and DPI sequence
@@ -1593,5 +1597,19 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     public void setCreated(Date created) {
         this.created = created;
     }
+
+	/**
+	 * @return the originRatedTransaction
+	 */
+	public RatedTransaction getOriginRatedTransaction() {
+		return originRatedTransaction;
+	}
+
+	/**
+	 * @param originRatedTransaction the originRatedTransaction to set
+	 */
+	public void setOriginRatedTransaction(RatedTransaction originRatedTransaction) {
+		this.originRatedTransaction = originRatedTransaction;
+	}
 	
 }
