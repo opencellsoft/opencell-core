@@ -44,7 +44,7 @@ public class RefundResourceImpl implements RefundResource{
         try {
             refundApi.refundByCard(payByCardDto);
             return Response.ok(new ActionStatus()).build();
-        } catch (NoAllOperationUnmatchedException | UnbalanceAmountException e) {
+        } catch (Exception e) {
             throw new ClientErrorException(e.getMessage(), Response.Status.PRECONDITION_FAILED);
         }
     }
