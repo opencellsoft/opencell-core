@@ -2103,4 +2103,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 .setParameter("ids", rtIds)
                 .getResultList();
     }
+	
+	@SuppressWarnings("unchecked")
+	public List<RatedTransaction> findByFilter(Map<String, Object> filters) {
+        FilterConverter converter = new FilterConverter(RatedTransaction.class);
+        PaginationConfiguration configuration = new PaginationConfiguration(converter.convertFilters(filters));
+        QueryBuilder query = getQuery(configuration);
+        
+		return query.getQuery(getEntityManager()).getResultList();
+	}
+    
 }
