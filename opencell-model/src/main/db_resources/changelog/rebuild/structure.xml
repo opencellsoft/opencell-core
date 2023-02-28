@@ -2138,7 +2138,7 @@
             </column>
             <column name="operation_number" type="bigint" />
             <column name="applied_rate" type="numeric(23, 12)" />
-            <column name="applied_rate_date" type="date" />
+            <column name="applied_rate_date" type="datetime" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-146">
