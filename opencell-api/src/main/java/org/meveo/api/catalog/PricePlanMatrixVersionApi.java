@@ -92,7 +92,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             PricePlanMatrix ppm = pricePlanMatrixService.findByCode(pricePlanMatrixCode);
             if (ppm != null && ppm.getContractItems()!=null && ppm.getContractItems().size() > 0) {
                 Contract contract = ppm.getContractItems().get(0).getContract();
-                if (ContractStatusEnum.DRAFT.equals(contract.getStatus())) {
+                if (ContractStatusEnum.DRAFT.toString().equals(contract.getStatus())) {
                     pricePlanMatrixVersionService.removePriceMatrixVersionOnlyNotClosed(pricePlanMatrixVersion);
                 }
                 else {

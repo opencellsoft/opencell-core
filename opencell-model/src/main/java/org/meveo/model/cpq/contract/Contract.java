@@ -22,6 +22,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -51,7 +52,7 @@ import org.meveo.model.payments.CustomerAccount;
 	@NamedQuery(name = "Contract.findCustomer", query = "select c from Contract c left join c.customer cc where cc.code=:codeCustomer"),
     @NamedQuery(name = "Contract.findByAccounts", query = "select c from Contract c where c.status='ACTIVE' and (c.beginDate<=current_date and c.endDate>current_date) "
     		+ " and (c.customer.id is null or c.customer.id=:customerId) "
-				+ " and (c.billingAccount.id is null or c.billingAccount.id=:billingAccountId) and (c.customerAccount.id is null or c.customerAccount.id=:customerAccountId)  " ),
+				+ " and (c.billingAccount.id is null or c.billingAccount.id=:billingAccountId) and (c.customerAccount.id is null or c.customerAccount.id=:customerAccountId)  order by c.contractDate desc , c.auditable.created desc " ),
 	@NamedQuery(name = "Contract.findByCustomersBillingAccountCustomerAccount", query = "select c from Contract c where c.status='ACTIVE' and (c.beginDate<=current_date and c.endDate>current_date) "
     		+ " and (c.customer.id is null or c.customer.id in :customersId) "
 				+ " and (c.billingAccount.id is null or c.billingAccount.id=:billingAccountId) and (c.customerAccount.id is null or c.customerAccount.id=:customerAccountId)  " )
@@ -59,7 +60,7 @@ import org.meveo.model.payments.CustomerAccount;
 public class Contract extends EnableBusinessCFEntity {
 
 	public Contract() {
-		this.status = ContractStatusEnum.DRAFT;
+		this.status = ContractStatusEnum.DRAFT.toString();
 		this.statusDate = Calendar.getInstance().getTime();
 	}
 
@@ -100,9 +101,8 @@ public class Contract extends EnableBusinessCFEntity {
 	 * status of this contract
 	 */
 	@Column(name = "status", nullable = false)
-	@Enumerated(EnumType.STRING)
 	@NotNull
-	private ContractStatusEnum status;
+	private String status = ContractStatusEnum.DRAFT.toString();
 	
 	/**
 	 * date of the modification of the status
@@ -153,6 +153,13 @@ public class Contract extends EnableBusinessCFEntity {
 	
     @OneToMany(mappedBy = "contract", fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)
     private List<BillingRule> billingRules;
+
+	/**
+	 * 	An expression to decide whether the contract should be applied or not.
+	 */
+	@Column(name = "application_el", length = 2000)
+	@Size(max = 2000)
+	private String applicationEl;
     
 	public List<BillingRule> getBillingRules() {
         return billingRules;
@@ -219,11 +226,11 @@ public class Contract extends EnableBusinessCFEntity {
 	}
 
  
-	public ContractStatusEnum getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(ContractStatusEnum status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 
@@ -310,9 +317,8 @@ public class Contract extends EnableBusinessCFEntity {
 	public void setContractDuration(int contractDuration) {
 		this.contractDuration = contractDuration;
 	}
-	
-	
-	   /**
+
+	/**
      * Check if a date is within this contract effective date. Exclusive of the endDate. If startDate is null, it returns true. If startDate is not null and endDate is null,
      * endDate is computed from the given duration.
      *
@@ -372,7 +378,20 @@ public class Contract extends EnableBusinessCFEntity {
 	public void setContractItems(List<ContractItem> contractItems) {
 		this.contractItems = contractItems;
 	}
-	
+
+	/**
+	 * @return the applicationEL
+	 */
+	public String getApplicationEl() {
+		return applicationEl;
+	}
+
+	/**
+	 * @param applicationEL the applicationEL to set
+	 */
+	public void setApplicationEl(String applicationEl) {
+		this.applicationEl = applicationEl;
+	}
 	
 	
 }

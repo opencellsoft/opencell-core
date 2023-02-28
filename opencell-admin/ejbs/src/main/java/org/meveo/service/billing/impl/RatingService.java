@@ -195,6 +195,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     @Inject
     private RecurringRatingService recurringRatingService;
 
+    
     /**
      * @param level level enum
      * @param chargeCode charge's code
@@ -629,9 +630,10 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             getCustomer(customer, customers);
             
             //Get contract by list of customer ids, billing account and customer account
-            List<Contract> contracts = contractService.getContractByListOfCustomers(customers.stream().map(Customer::getId).collect(Collectors.toList()), billingAccount, customerAccount);
+            List<Contract> contracts = contractService.getContractByAccount(customer, billingAccount, customerAccount, bareWalletOperation);
             List<Contract> filtredContractByCustomerLevel = getContractByCustomerLevel(customers, contracts);
-            
+    
+
             if ((unitPriceWithoutTaxOverridden == null && appProvider.isEntreprise())
                     || (unitPriceWithTaxOverridden == null && !appProvider.isEntreprise())) {
 
