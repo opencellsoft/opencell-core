@@ -31,6 +31,7 @@ import org.meveo.apiv2.GenericOpencellRestful;
 import org.meveo.apiv2.generic.GenericFieldDetails;
 import org.meveo.apiv2.generic.ImmutableGenericPaginatedResource;
 import org.meveo.apiv2.generic.core.mapper.JsonGenericMapper;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.IEntity;
 import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -40,6 +41,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Stateless
 public class GenericApiLoadService {
+
+    private static final String API_LIST_MAX_LIMIT_KEY = "api.list.maxLimit";
+
     @Inject
     GenericOpencellRestful genericOpencellRestful;
 
@@ -53,7 +57,11 @@ public class GenericApiLoadService {
     @Inject
     private GenericFileExportManager genericExportManager;
 
+    @Inject
+    protected ParamBeanFactory paramBeanFactory;
+
     public String findPaginatedRecords(Boolean extractList, Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> fetchFields, Long nestedDepth, Long id, Set<String> excludedFields) {
+        int API_LIST_MAX_LIMIT = paramBeanFactory.getInstance().getPropertyAsInteger(API_LIST_MAX_LIMIT_KEY, 1000);
         if(genericFields != null && isAggregationQueries(genericFields)){
             searchConfig.setFetchFields(new ArrayList<>(genericFields));
             List<List<Object>> list = (List<List<Object>>) nativePersistenceService.getAggregateQuery(entityClass.getCanonicalName(), searchConfig, id)
@@ -66,7 +74,7 @@ public class GenericApiLoadService {
                     .collect(toList());
             Map<String, Object> results = new LinkedHashMap<>();
             results.put("total", list.size());
-            results.put("limit", Long.valueOf(searchConfig.getNumberOfRows()));
+            results.put("limit", Long.valueOf(searchConfig.getNumberOfRows()) <= API_LIST_MAX_LIMIT ? Long.valueOf(searchConfig.getNumberOfRows()) : API_LIST_MAX_LIMIT);
             results.put("offset", Long.valueOf(searchConfig.getFirstRow()));
             results.put("data", mapResult);
 
@@ -84,7 +92,7 @@ public class GenericApiLoadService {
             .collect(toList());
             Map<String, Object> results = new LinkedHashMap<String, Object>();
             results.put("total", searchResult.getCount());
-            results.put("limit", Long.valueOf(searchConfig.getNumberOfRows()));
+            results.put("limit", Long.valueOf(searchConfig.getNumberOfRows()) <= API_LIST_MAX_LIMIT ? Long.valueOf(searchConfig.getNumberOfRows()) : API_LIST_MAX_LIMIT);
             results.put("offset", Long.valueOf(searchConfig.getFirstRow()));
             results.put("data", mapResult);
             return serializeResults(results);
@@ -92,7 +100,7 @@ public class GenericApiLoadService {
             SearchResult searchResult = persistenceDelegate.list(entityClass, searchConfig);
             ImmutableGenericPaginatedResource genericPaginatedResource = ImmutableGenericPaginatedResource.builder()
                     .data(searchResult.getEntityList())
-                    .limit(Long.valueOf(searchConfig.getNumberOfRows()))
+                    .limit(Long.valueOf(searchConfig.getNumberOfRows()) <= API_LIST_MAX_LIMIT ? Long.valueOf(searchConfig.getNumberOfRows()) : API_LIST_MAX_LIMIT)
                     .offset(Long.valueOf(searchConfig.getFirstRow()))
                     .total(searchResult.getCount())
                     .filters(searchConfig.getFilters())
