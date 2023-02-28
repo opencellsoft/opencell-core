@@ -30,6 +30,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.QueryHint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.ValidationException;
 
 import org.hibernate.annotations.Type;
 import org.meveo.model.cpq.Attribute;
@@ -160,6 +161,66 @@ public class RecurringChargeTemplate extends ChargeTemplate {
     @JoinColumn(name = "attribute_calendar_id")
     private Attribute attributeCalendar;
 
+
+
+    public RecurringChargeTemplate(){}
+     public RecurringChargeTemplate(ChargeTemplate chargeTemplate) {
+         this.code = chargeTemplate.getCode();
+         this.auditable = chargeTemplate.getAuditable();
+         this.cfValues = chargeTemplate.getCfValues();
+         this.description = chargeTemplate.getDescription();
+         this.version = 1;
+        this.setProductCharges(chargeTemplate.getProductCharges());
+        this.setType(chargeTemplate.getType());
+        this.setChargeType(chargeTemplate.getChargeType());
+        this.setAmountEditable(chargeTemplate.getAmountEditable());
+        this.setInvoiceSubCategory(chargeTemplate.getInvoiceSubCategory());
+        this.setEdrTemplates(chargeTemplate.getEdrTemplates());
+        this.setInputUnitDescription(chargeTemplate.getInputUnitDescription());
+        this.setRatingUnitDescription(chargeTemplate.getRatingUnitDescription());
+        this.setInputUnitOfMeasure(chargeTemplate.getInputUnitOfMeasure());
+        this.setRatingUnitOfMeasure(chargeTemplate.getRatingUnitOfMeasure());
+        this.setInputUnitEL(chargeTemplate.getInputUnitEL());
+        this.setOutputUnitEL(chargeTemplate.getOutputUnitEL());
+        this.setUnitMultiplicator(chargeTemplate.getUnitMultiplicator());
+        this.unitNbDecimal = chargeTemplate.unitNbDecimal;
+        this.roundingMode = chargeTemplate.roundingMode;
+        this.revenueRecognitionRule = chargeTemplate.revenueRecognitionRule;
+        this.descriptionI18n = chargeTemplate.descriptionI18n;
+        this.filterExpression = chargeTemplate.filterExpression;
+        this.setTaxClass(chargeTemplate.getTaxClass());
+        this.setTaxClassEl(chargeTemplate.getTaxClassEl());
+        this.setRatingScript(chargeTemplate.getRatingScript());
+        this.dropZeroWo = chargeTemplate.dropZeroWo;
+        this.setSortIndexEl(chargeTemplate.getSortIndexEl());
+        this.setAttributes(chargeTemplate.getAttributes());
+        this.setRoundingUnityNbDecimal(chargeTemplate.getRoundingUnityNbDecimal());
+        this.setRoundingEdrNbDecimal(chargeTemplate.getRoundingEdrNbDecimal());
+         try {
+             this.setStatus(ChargeTemplateStatusEnum.DRAFT);
+         } catch (ValidationException e) {
+             throw new RuntimeException(e);
+         }
+        this.setInternalNote(chargeTemplate.getInternalNote());
+        RecurringChargeTemplate recurringChargeTemplate = (RecurringChargeTemplate)chargeTemplate;
+        this.recurrenceType = recurringChargeTemplate.recurrenceType;
+        this.calendar = recurringChargeTemplate.calendar;
+        this.durationTermInMonth = recurringChargeTemplate.durationTermInMonth;
+        this.subscriptionProrata = recurringChargeTemplate.subscriptionProrata;
+        this.terminationProrata = recurringChargeTemplate.terminationProrata;
+        this.prorataOnPriceChange = recurringChargeTemplate.prorataOnPriceChange;
+        this.applyInAdvance = recurringChargeTemplate.applyInAdvance;
+        this.shareLevel = recurringChargeTemplate.shareLevel;
+        this.subscriptionProrataEl = recurringChargeTemplate.subscriptionProrataEl;
+        this.terminationProrataEl = recurringChargeTemplate.terminationProrataEl;
+        this.applyInAdvanceEl = recurringChargeTemplate.applyInAdvanceEl;
+        this.durationTermInMonthEl = recurringChargeTemplate.durationTermInMonthEl;
+        this.calendarCodeEl = recurringChargeTemplate.calendarCodeEl;
+        this.applyTerminatedChargeToDateEL = recurringChargeTemplate.applyTerminatedChargeToDateEL;
+        this.attributeDuration = recurringChargeTemplate.attributeDuration;
+        this.attributeCalendar = recurringChargeTemplate.attributeCalendar;
+
+    }
     /**
      * Gets the calendar.
      *

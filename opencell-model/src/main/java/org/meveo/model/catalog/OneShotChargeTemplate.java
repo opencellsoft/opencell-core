@@ -69,7 +69,12 @@ public class OneShotChargeTemplate extends ChargeTemplate {
     private Boolean immediateInvoicing = false;
 
     public OneShotChargeTemplate(){}
-    public OneShotChargeTemplate(ChargeTemplate chargeTemplate) throws ValidationException {
+    public OneShotChargeTemplate(ChargeTemplate chargeTemplate) {
+        this.code = chargeTemplate.getCode();
+        this.auditable = chargeTemplate.getAuditable();
+        this.cfValues = chargeTemplate.getCfValues();
+        this.description = chargeTemplate.getDescription();
+        this.version = 1;
         this.setProductCharges(chargeTemplate.getProductCharges());
         this.setType(chargeTemplate.getType());
         this.setChargeType(chargeTemplate.getChargeType());
@@ -96,9 +101,14 @@ public class OneShotChargeTemplate extends ChargeTemplate {
         this.setAttributes(chargeTemplate.getAttributes());
         this.setRoundingUnityNbDecimal(chargeTemplate.getRoundingUnityNbDecimal());
         this.setRoundingEdrNbDecimal(chargeTemplate.getRoundingEdrNbDecimal());
-        this.setStatus(ChargeTemplateStatusEnum.DRAFT);
+        try {
+            this.setStatus(ChargeTemplateStatusEnum.DRAFT);
+        } catch (ValidationException e) {
+            throw new RuntimeException(e);
+        }
         this.setInternalNote(chargeTemplate.getInternalNote());
         this.immediateInvoicing = ((OneShotChargeTemplate)chargeTemplate).immediateInvoicing;
+        this.oneShotChargeTemplateType = ((OneShotChargeTemplate)chargeTemplate).oneShotChargeTemplateType;
     }
 
     public OneShotChargeTemplateTypeEnum getOneShotChargeTemplateType() {
