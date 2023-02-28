@@ -694,16 +694,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 return EMPTY_LIST;
             }
             if (billingRun.getExceptionalRTIds() != null && !billingRun.getExceptionalRTIds().isEmpty()) {
-                return (List<BillingAccount>) ratedTransactionService.getEntityManager()
-                        .createNamedQuery("RatedTransaction.BillingAccountByRTIds")
-                        .setParameter("ids", billingRun.getExceptionalRTIds())
-                        .getResultList();
+                return ratedTransactionService.findBillingAccountsBy(billingRun.getExceptionalRTIds());
             }
             if (billingRun.getExceptionalILIds() != null && !billingRun.getExceptionalILIds().isEmpty()) {
-                return (List<BillingAccount>) invoiceLineService.getEntityManager()
-                        .createNamedQuery("InvoiceLine.BillingAccountByILIds")
-                        .setParameter("ids", billingRun.getExceptionalILIds())
-                        .getResultList();
+                return invoiceLineService.findBillingAccountsBy(billingRun.getExceptionalILIds());
             }
             List<BillingAccount> result = new ArrayList<>();
             String[] baIds = billingRun.getSelectedBillingAccounts() == null ? new String[0]:billingRun.getSelectedBillingAccounts().split(",");
