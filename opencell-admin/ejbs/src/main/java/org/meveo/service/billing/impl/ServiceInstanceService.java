@@ -35,6 +35,7 @@ import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MissingParameterException;
@@ -406,7 +407,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
 
         serviceInstance.setDescription(product.getDescription());
-        serviceInstance.setPriceVersionDateSetting(product.getPriceVersionDateSetting());
+        if(!PriceVersionDateSettingEnum.MANUAL.equals(serviceInstance.getPriceVersionDateSetting())) {
+            serviceInstance.setPriceVersionDateSetting(product.getPriceVersionDateSetting());
+        }
         
 		if(PriceVersionDateSettingEnum.DELIVERY.equals(serviceInstance.getPriceVersionDateSetting())) {
 			serviceInstance.setPriceVersionDate(serviceInstance.getSubscriptionDate()); 
@@ -418,6 +421,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			}
 		}else if(PriceVersionDateSettingEnum.EVENT.equals(serviceInstance.getPriceVersionDateSetting())) {
 			serviceInstance.setPriceVersionDate(null); 
+		}
+		if(PriceVersionDateSettingEnum.MANUAL == product.getPriceVersionDateSetting() && serviceInstance.getPriceVersionDate() == null) {
+			throw new BusinessApiException("mandatory field is missing");
 		}
 
         if (!isVirtual) {

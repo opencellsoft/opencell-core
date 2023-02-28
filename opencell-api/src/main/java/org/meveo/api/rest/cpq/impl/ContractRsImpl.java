@@ -80,7 +80,7 @@ public class ContractRsImpl  extends BaseRs implements ContractRs {
 	}
 
 	@Override
-	public Response updateStatus(String contractCode, ContractStatusEnum status) {
+	public Response updateStatus(String contractCode, String status) {
 		ActionStatus result = new ActionStatus();
 		try {
 			contractApi.updateStatus(contractCode, status);

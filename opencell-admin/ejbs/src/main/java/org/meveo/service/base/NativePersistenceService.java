@@ -1534,7 +1534,7 @@ public class NativePersistenceService extends BaseService {
         GenericPagingAndFiltering genericPagingAndFilter = buildGenericPagingAndFiltering(reportQuery);
         PaginationConfiguration searchConfig = genericRequestMapper.mapTo(genericPagingAndFilter);
         QueryBuilder qb;
-    	List<String> genericFields = (List<String>) reportQuery.getAdvancedQuery().getOrDefault("fields", new ArrayList<>());
+    	List<String> genericFields = (List<String>) reportQuery.getAdvancedQuery().getOrDefault("genericFields", new ArrayList<>());
 		if(isAggregationQueries(genericPagingAndFilter.getGenericFields())){
     		searchConfig.setFetchFields(genericFields);
     		qb = this.getAggregateQuery(entityClass.getCanonicalName(), searchConfig, null);
@@ -1557,7 +1557,7 @@ public class NativePersistenceService extends BaseService {
 				.filters((Map<String, Object>) reportQuery.getAdvancedQuery().getOrDefault("filters", new HashMap<>()))
 				.groupBy((List<String>) reportQuery.getAdvancedQuery().getOrDefault("groupBy", new ArrayList<>()))
 				.nestedEntities((List<String>) reportQuery.getAdvancedQuery().getOrDefault("nestedEntities", new ArrayList<>()))
-				.genericFields((List<String>) reportQuery.getAdvancedQuery().getOrDefault("fields", new ArrayList<>()))
+				.genericFields((List<String>) reportQuery.getAdvancedQuery().getOrDefault("genericFields", new ArrayList<>()))
 				.having((List<String>) reportQuery.getAdvancedQuery().getOrDefault("having", new ArrayList<>()));
     	String sortBy = (String) reportQuery.getAdvancedQuery().get("sortBy");
     	if(org.meveo.commons.utils.StringUtils.isNotBlank(sortBy)) {
@@ -1572,7 +1572,7 @@ public class NativePersistenceService extends BaseService {
     	
     }
 
-    private boolean isAggregationField(String field) {
+    public boolean isAggregationField(String field) {
         return field.startsWith("SUM(") || field.startsWith("COUNT(") || field.startsWith("AVG(")
                 || field.startsWith("MAX(") || field.startsWith("MIN(") || field.startsWith("COALESCE(SUM(");
     }
