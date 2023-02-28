@@ -186,31 +186,31 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     /**
      * Amount with tax
      */
-    @Column(name = "amount", precision = 23, scale = 12)
+    @Column(name = "amount", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amount;
 
     /**
      * Amount without tax
      */
-    @Column(name = "amount_without_tax", precision = 23, scale = 12)
+    @Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amountWithoutTax;
 
     /**
      * Tax amount
      */
-    @Column(name = "tax_amount", precision = 23, scale = 12)
+    @Column(name = "tax_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal taxAmount;
 
     /**
      * Matched amount
      */
-    @Column(name = "matching_amount", precision = 23, scale = 12)
+    @Column(name = "matching_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal matchingAmount = BigDecimal.ZERO;
 
     /**
      * Unmatched amount
      */
-    @Column(name = "un_matching_amount", precision = 23, scale = 12)
+    @Column(name = "un_matching_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal unMatchingAmount = BigDecimal.ZERO;
 
     /**
@@ -451,7 +451,13 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     @Column(name = "operation_number")
     private Long operationNumber;
     
+    @Column(name = "applied_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal appliedRate;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "applied_rate_date")
+    private Date appliedRateDate = new Date();
+    
     @Transient
     private BigDecimal amountForUnmatching;
 
@@ -1054,5 +1060,21 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
 
     public void setAmountForUnmatching(BigDecimal amountForUnmatching) {
         this.amountForUnmatching = amountForUnmatching;
+    }
+
+    public BigDecimal getAppliedRate() {
+        return appliedRate;
+    }
+
+    public void setAppliedRate(BigDecimal appliedRate) {
+        this.appliedRate = appliedRate;
+    }
+
+    public Date getAppliedRateDate() {
+        return appliedRateDate;
+    }
+
+    public void setAppliedRateDate(Date appliedRateDate) {
+        this.appliedRateDate = appliedRateDate;
     }
 }
