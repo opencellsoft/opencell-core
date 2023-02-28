@@ -183,7 +183,7 @@ public class ContractService extends BusinessService<Contract>  {
 		try {
 			return getEntityManager().createNamedQuery("Contract.findByCustomersBillingAccountCustomerAccount")
 					.setParameter("customersId", ids).setParameter("billingAccountId", billingAccount.getId())
-					.setParameter("customerAccountId",customerAccount.getId()).setFlushMode(FlushModeType.COMMIT).getResultList();
+					.setParameter("customerAccountId",customerAccount.getId()).getResultList();
     	} catch (NoResultException e) {
             return null;
         }
