@@ -33,6 +33,7 @@ import javax.inject.Named;
 
 import org.meveo.commons.parsers.FileParserBeanio;
 import org.meveo.commons.parsers.RecordContext;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.mediation.CDRRejectionCauseEnum;
 import org.meveo.model.rating.CDR;
@@ -52,12 +53,11 @@ import org.slf4j.LoggerFactory;
  * 
  * @author H.ZNIBAR
  */
-@Stateless
+@Named
 public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvReader {
 
     private static Logger log = LoggerFactory.getLogger(MEVEOCdrFlatFileReader.class);
 
-    @Inject
     private EdrService edrService;
 
     static MessageDigest messageDigest = null;
@@ -76,14 +76,16 @@ public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvR
     @Override
     public void init(File cdrFile) throws FileNotFoundException {
         batchName = "CDR_" + cdrFile.getName();
-        this.origin = CDR_ORIGIN_ENUM.JOB;       
+        this.origin = CDR_ORIGIN_ENUM.JOB;
+        edrService = (EdrService) EjbUtils.getServiceInterface(EdrService.class.getSimpleName());
     }
 
     @Override
     public void init(String user, String ip) {
         this.batchName = "API_" + ip;
         this.origin = CDR_ORIGIN_ENUM.API;
-        this.username = user;        
+        this.username = user;
+        edrService = (EdrService) EjbUtils.getServiceInterface(EdrService.class.getSimpleName());
     }
 
     public String getBatchName() {
