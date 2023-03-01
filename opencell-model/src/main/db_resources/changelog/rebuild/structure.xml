@@ -3679,6 +3679,7 @@
                 <constraints nullable="true" />
             </column>
             <column name="sales_person_name" type="varchar(52)" />
+    		<column name="contract_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-194">
@@ -9781,7 +9782,6 @@
             </column>
             <column name="quote_customer_service_id" type="bigint" />
             <column name="sequence" type="INT4" />
-            <column name="contract_code" type="varchar(50)" />
             <column name="position" type="int4" />
             <column name="discount_plan_id" type="bigint"></column>
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
@@ -9794,6 +9794,7 @@
             <column name="user_account_id" type="bigint" />
             <column name ="quote_line_type" type="varchar(10)" />
             <column name="subscription_id" type="bigint" />
+    		<column name="contract_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-457" author="NabilOUACHI">
@@ -16839,8 +16840,24 @@
                                  referencedColumnNames="id,status"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
-    </changeSet>                          
-
+    </changeSet>      
+    
+    <changeSet id="#INTRD-14522_20230301_fk" author="TarikFA.">
+        <addForeignKeyConstraint baseTableName="billing_subscription" baseColumnNames="contract_id"
+                                 constraintName="fk_contract_id"
+                                 referencedTableName="cpq_contract"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+                                 
+    	
+        <addForeignKeyConstraint baseTableName="quote_offer" baseColumnNames="contract_id"
+                                 constraintName="fk_contract_id"
+                                 referencedTableName="cpq_contract"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>                    
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -19552,6 +19569,7 @@
     <changeSet id="#INTRD-14264_20230222" author="TarikFA." />
     <changeSet id="#INTRD-14243_invoice_conversion" author="a.rouaguebe" />
     <changeSet id="#INTRD-14332_20230226_contract_application_el" author="a.rouaguebe" />
+    <changeSet id="#INTRD-14522_20230301" author="TarikFA." />
     <changeSet author="ZBariki" id="#INTRD-14208_20230224" dbms="oracle" />
 	<changeSet id="#INTRD-13981_20230222" author="HichamHANINE" />
     
