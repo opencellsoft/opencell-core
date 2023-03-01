@@ -119,4 +119,12 @@ public class MatchingAmount extends AuditableEntity {
         return false;
     }
 
+    public BigDecimal getConvertedMatchingAmount() {
+        return convertedMatchingAmount;
+    }
+
+    public void setConvertedMatchingAmount(BigDecimal convertedMatchingAmount) {
+        this.convertedMatchingAmount = convertedMatchingAmount;
+    }
+
 }
