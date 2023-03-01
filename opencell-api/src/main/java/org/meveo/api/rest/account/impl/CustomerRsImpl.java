@@ -474,4 +474,18 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     public GetCountersInstancesResponseDto filterCustomerCountersByPeriodV2(String customerCode, Date date) {
         return filterCustomerCountersByPeriod(customerCode, date);
     }
+    
+    @Override
+    public GetCustomerResponseDto findRootParent(String customerCode) {
+    	GetCustomerResponseDto result = new GetCustomerResponseDto();
+
+        try {
+            result.setCustomer(customerApi.findRootParent(customerCode));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
 }
