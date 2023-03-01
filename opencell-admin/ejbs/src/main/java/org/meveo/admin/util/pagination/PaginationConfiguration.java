@@ -72,6 +72,9 @@ public class PaginationConfiguration implements Serializable {
     
     private JoinType joinType;
 
+
+    private Integer limit;
+
     /**
      * Operator to use when building where statement
      */
@@ -312,4 +315,13 @@ public class PaginationConfiguration implements Serializable {
 	public void setFilterOperator(FilterOperatorEnum filterOperator) {
 		this.filterOperator = filterOperator;
 	}
+
+
+    public Integer getLimit() {
+        return limit;
+    }
+
+    public void setLimit(Integer limit) {
+        this.limit = limit;
+    }
 }

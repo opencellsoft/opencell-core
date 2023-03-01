@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.catalog.service.DiscountPlanApiService;
 import org.meveo.apiv2.generic.services.GenericApiAlteringService;
 import org.meveo.apiv2.generic.services.GenericApiLoadService;
@@ -49,6 +50,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
 
@@ -80,6 +82,9 @@ public class DiscountPlanApiServiceTest {
 
     @Mock
     private ParamBean paramBean;
+
+    @Mock
+    private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
 
     @Before
     public void setup() {
@@ -135,8 +140,6 @@ public class DiscountPlanApiServiceTest {
                 return dp;
             }
         });
-        when(paramBeanFactory.getInstance()).thenReturn(paramBean);
-        when(paramBean.getPropertyAsInteger("api.list.maxLimit",1000)).thenReturn(1000);
     }
 
     private DiscountPlanItem getDiscountPlanItem() {
@@ -168,6 +171,7 @@ public class DiscountPlanApiServiceTest {
     public void test_get_all_discount_plan() throws JsonProcessingException {
 
         PaginationConfiguration searchConfig = Mockito.mock(PaginationConfiguration.class);
+        Mockito.when(genericPagingAndFilteringUtils.getLimit(anyInt())).thenReturn(Long.valueOf(1000));
         String jsonResponse = loadService.findPaginatedRecords(true, DiscountPlan.class, searchConfig, null, null, 1L, null, null);
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> map = objectMapper.readValue(jsonResponse, Map.class);
