@@ -15861,6 +15861,15 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
+    
+    <changeSet id="#INTRD-14243_invoice_conversion" author="a.rouaguebe">
+    	<addColumn tableName="billing_invoice">
+    		<column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0" />
+    	</addColumn>
+    	<addColumn tableName="billing_invoice_agregate">
+    		<column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0" />
+    	</addColumn>
+    </changeSet>
 
 	<changeSet id="#INTRD-14332_20230226_contract_application_el" author="a.rouaguebe">
 		<addColumn tableName="cpq_contract">
