@@ -500,7 +500,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                     	if(result instanceof Object[]) {
                     		item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), ((Object[]) result)[index]);
                     	} else if (targetEntity.isInstance(result)) {
-                    	    if(fields.get(index).contains(".")){
+                    	    if(fields.get(index).contains(".") && !nativePersistenceService.isAggregationField(fields.get(index))){
                     	        String[] selected_fields =  fields.get(index).split(SEPARATOR_SELECTED_FIELDS);
                     	        if (selected_fields.length >= 2) {
                     	            processSelectedFields(selected_fields, result, item,  aliases.getOrDefault(fields.get(index), fields.get(index)), targetEntity, 0);

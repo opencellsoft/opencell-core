@@ -15,8 +15,9 @@ import javax.persistence.NoResultException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.MeveoApiException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.contract.Contract;
@@ -28,6 +29,7 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,9 +109,9 @@ public class ContractService extends BusinessService<Contract>  {
 	 * @return
 	 * @throws ContractException
 	 */
-	public Contract updateStatus(Contract contract, ContractStatusEnum status){
-		if(ContractStatusEnum.DRAFT.equals(contract.getStatus())
-				&& ContractStatusEnum.ACTIVE.equals(status) && !contract.getContractItems().isEmpty()) {
+	public Contract updateStatus(Contract contract, String status){
+		if(ContractStatusEnum.DRAFT.toString().equals(contract.getStatus())
+				&& ContractStatusEnum.ACTIVE.toString().equals(status) && !contract.getContractItems().isEmpty()) {
 			List<PricePlanMatrix> pricePlans = contract.getContractItems().stream().map(ContractItem::getPricePlan).collect(Collectors.toList());
 			List<PricePlanMatrixVersion> pricePlanVersions = pricePlanMatrixVersionService.findByPricePlans(pricePlans);
 			if (pricePlanVersions.isEmpty()) {
@@ -143,11 +145,10 @@ public class ContractService extends BusinessService<Contract>  {
 			}
 		}
 
-		if (ContractStatusEnum.ACTIVE.equals(contract.getStatus())
-				&& (ContractStatusEnum.ACTIVE.equals(status) || ContractStatusEnum.DRAFT.equals(status))) {
+		if (ContractStatusEnum.ACTIVE.toString().equals(contract.getStatus())
+				&& (ContractStatusEnum.ACTIVE.toString().equals(status) || ContractStatusEnum.DRAFT.toString().equals(status))) {
 			 throw new BusinessApiException(String.format(CONTRACT_CAN_NOT_CHANGE_THE_STATUS_ACTIVE_TO, status));
 		}
-
 
 		contract.setStatus(status);
 		return  update(contract);
@@ -167,11 +168,15 @@ public class ContractService extends BusinessService<Contract>  {
 		
 	}
 
-	 public List<Contract> getContractByAccount(Customer customer, BillingAccount billingAccount, CustomerAccount customerAccount) {
+	 public List<Contract> getContractByAccount(Customer customer, BillingAccount billingAccount, CustomerAccount customerAccount, WalletOperation bareWalletOperation) {
 	    	try {
-				return getEntityManager().createNamedQuery("Contract.findByAccounts")
+				List<Contract> contracts = getEntityManager().createNamedQuery("Contract.findByAccounts")
 						.setParameter("customerId", customer.getId()).setParameter("billingAccountId", billingAccount.getId())
 						.setParameter("customerAccountId",customerAccount.getId()).setFlushMode(FlushModeType.COMMIT).getResultList();
+				
+				return contracts.stream()
+    					.filter(c -> StringUtils.isBlank(c.getApplicationEl()) || ValueExpressionWrapper.evaluateExpression(c.getApplicationEl(), Boolean.class, bareWalletOperation, c))
+    					.collect(Collectors.toList());
 	    	} catch (NoResultException e) {
 	            return null;
 	        }

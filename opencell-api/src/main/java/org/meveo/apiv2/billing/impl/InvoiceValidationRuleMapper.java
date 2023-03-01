@@ -4,6 +4,7 @@ import java.util.stream.Collectors;
 
 import org.meveo.apiv2.billing.InvoiceValidationRuleDto;
 import org.meveo.apiv2.ordering.ResourceMapper;
+import org.meveo.model.billing.EvaluationModeEnum;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceValidationRule;
 import org.meveo.model.billing.ValidationRuleTypeEnum;
@@ -29,7 +30,7 @@ public class InvoiceValidationRuleMapper extends ResourceMapper<InvoiceValidatio
         invoiceValidationRule.setValidTo(invoiceValidationRuleDto.getValidTo());
         invoiceValidationRule.setFailStatus(invoiceValidationRuleDto.getFailStatus());
         invoiceValidationRule.setRuleValues(invoiceValidationRuleDto.getRuleValues());
-        invoiceValidationRule.setEvaluationMode(invoiceValidationRuleDto.getEvaluationMode());
+        invoiceValidationRule.setEvaluationMode(invoiceValidationRuleDto.getEvaluationMode() != null ? invoiceValidationRuleDto.getEvaluationMode() : EvaluationModeEnum.VALIDATION);
         invoiceValidationRule.setOperator(invoiceValidationRuleDto.getOperator() != null ? invoiceValidationRuleDto.getOperator() : OperatorEnum.OR);
         if (ValidationRuleTypeEnum.RULE_SET.equals(ValidationRuleTypeEnum.valueOf(invoiceValidationRuleDto.getType()))) {
         	invoiceValidationRule.setSubRules(invoiceValidationRuleDto.getSubRules().stream().map(subRule -> toEntity(subRule, invoiceValidationRule)).collect(Collectors.toList()));
