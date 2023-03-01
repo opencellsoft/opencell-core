@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
@@ -21,6 +22,7 @@ import javax.persistence.EntityManager;
 import java.util.*;
 
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -43,14 +45,15 @@ public class GenericApiLoadServiceTest {
     @Mock
     private ParamBean paramBean;
 
+    @Mock
+    private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
+
     private Set<String> fetchFieldsSet;
 
 
     @Before
     public void setup() {
         Mockito.when(nativePersistenceService.getEntityManager()).thenReturn(entityManager);
-        when(paramBeanFactory.getInstance()).thenReturn(paramBean);
-        when(paramBean.getPropertyAsInteger("api.list.maxLimit",1000)).thenReturn(1000);
     }
 
     @Test
@@ -74,6 +77,7 @@ public class GenericApiLoadServiceTest {
         objects[0]="3,dd".split(",");
         Mockito.when(nativePersistenceService.getAggregateQuery(Seller.class.getCanonicalName(), searchConfig, null)).thenReturn(queryBuilder);
         Mockito.when(queryBuilder.find(entityManager)).thenReturn(Arrays.asList(objects));
+        Mockito.when(genericPagingAndFilteringUtils.getLimit(anyInt())).thenReturn(Long.valueOf(0));
         fetchFieldsSet = new LinkedHashSet<>();
         fetchFieldsSet.addAll(Arrays.asList("AVG(id)", "code"));
         String paginatedRecords = loadService.findPaginatedRecords(false, Seller.class, searchConfig, fetchFieldsSet, null, null, null, null);
