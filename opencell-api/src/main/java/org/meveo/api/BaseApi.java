@@ -72,6 +72,7 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.InvalidReferenceException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
@@ -135,6 +136,8 @@ public abstract class BaseApi {
 
     private static final String API_LIST_MAX_LIMIT_KEY = "api.list.maxLimit";
 
+    private static final String API_LIST_DEFAULT_LIMIT = "api.list.defaultLimit";
+
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
 
@@ -186,6 +189,9 @@ public abstract class BaseApi {
 
     @Inject
     private ServiceSingleton serviceSingleton;
+
+    @Inject
+    private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
 
     protected ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
 
@@ -1311,18 +1317,11 @@ public abstract class BaseApi {
     }
 
     private PaginationConfiguration initPaginationConfiguration(String defaultSortBy, SortOrder defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering) {
-        Integer limit = paramBean.getPropertyAsInteger("api.list.defaultLimit", limitDefaultValue);
-        int API_LIST_MAX_LIMIT = paramBeanFactory.getInstance().getPropertyAsInteger(API_LIST_MAX_LIMIT_KEY, 1000);
+
+        int limit = paramBeanFactory.getInstance().getPropertyAsInteger(API_LIST_DEFAULT_LIMIT, limitDefaultValue);
         if (pagingAndFiltering != null) {
-            if (pagingAndFiltering.getLimit() != null) {
-                if (pagingAndFiltering.getLimit() > API_LIST_MAX_LIMIT) {
-                    limit = API_LIST_MAX_LIMIT;
-                } else {
-                    limit = pagingAndFiltering.getLimit();
-                }
-            } else {
-                pagingAndFiltering.setLimit(limit);
-            }
+            limit = (int) genericPagingAndFilteringUtils.getLimit(pagingAndFiltering.getLimit());
+            pagingAndFiltering.setLimit(limit);
         }
 
         // Commented out as regular API and customTable API has a different meaning of fields parameter - in customTableApi it will return only those fields, whereas in regularAPI
@@ -1336,19 +1335,10 @@ public abstract class BaseApi {
 
     private PaginationConfiguration initPaginationConfigurationMultiSort(String defaultSortBy, String defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering) {
 
-       Integer limit = paramBean.getPropertyAsInteger("api.list.defaultLimit", limitDefaultValue);
-        int API_LIST_MAX_LIMIT = paramBeanFactory.getInstance().getPropertyAsInteger(API_LIST_MAX_LIMIT_KEY, 1000);
-
+        int limit = paramBeanFactory.getInstance().getPropertyAsInteger(API_LIST_DEFAULT_LIMIT, limitDefaultValue);
         if (pagingAndFiltering != null) {
-            if (pagingAndFiltering.getLimit() != null) {
-                if (limit > API_LIST_MAX_LIMIT) {
-                    limit = API_LIST_MAX_LIMIT;
-                } else {
-                    limit = pagingAndFiltering.getLimit();
-                }
-            } else {
-                pagingAndFiltering.setLimit(limit);
-            }
+            limit = (int) genericPagingAndFilteringUtils.getLimit(pagingAndFiltering.getLimit());
+            pagingAndFiltering.setLimit(limit);
         }
 
         // Commented out as regular API and customTable API has a different meaning of fields parameter - in customTableApi it will return only those fields, whereas in regularAPI
