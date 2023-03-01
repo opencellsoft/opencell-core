@@ -979,4 +979,24 @@ public class CustomerApi extends AccountEntityApi {
 	private String childOrDescendant(Customer parent, Customer child) {
 		return (Objects.equals(child, parent.getParentCustomer()))? "child" : "descendant";
 	}
+	
+	@SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = Customer.class))
+    public CustomerDto findRootParent(String customerCode) throws MeveoApiException {
+        if (StringUtils.isBlank(customerCode)) {
+            missingParameters.add("customerCode");
+        }
+        handleMissingParameters();
+
+        Customer customer = ofNullable(customerService.findByCode(customerCode)).orElseThrow(() -> new EntityDoesNotExistsException(Customer.class, customerCode));
+
+        return accountHierarchyApi.customerToDto(getRootParent(customer));
+    }
+    
+    private Customer getRootParent(Customer customer) {
+		Customer parent = customer.getParentCustomer();
+		if (parent == null) {
+			return customer;
+		}
+		return getRootParent(parent);
+	}
 }
