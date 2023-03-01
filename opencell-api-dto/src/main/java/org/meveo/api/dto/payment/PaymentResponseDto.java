@@ -73,6 +73,9 @@ public class PaymentResponseDto extends BaseResponse {
     
     /** The bank refenrence. */
     private String bankRefenrence;
+    
+    /** Tha payment/refund AO id. */
+   	private Long accountOperationId;
 
     /**
      * Instantiates a new payment response dto.
@@ -296,11 +299,20 @@ public class PaymentResponseDto extends BaseResponse {
         this.bankRefenrence = bankRefenrence;
     }
 
-    @Override
+    
+    public Long getAccountOperationId() {
+		return accountOperationId;
+	}
+
+	public void setAccountOperationId(Long accountOperationId) {
+		this.accountOperationId = accountOperationId;
+	}
+
+	@Override
     public String toString() {
         return "PayByCardResponseDto [paymentID=" + paymentID + ", transactionId=" + transactionId + ", paymentStatus=" + paymentStatus + ", tokenId=" + tokenId + ", errorCode="
                 + errorCode + ", errorMessage=" + errorMessage + ", isNewToken=" + isNewToken + ", isAoCreated=" + isAoCreated + ", isMatchingCreated=" + isMatchingCreated
-                + ", codeClientSide=" + codeClientSide + ", paymentBrand=" + paymentBrand + ", bankRefenrence=" + bankRefenrence + "]";
+                + ", codeClientSide=" + codeClientSide + ", paymentBrand=" + paymentBrand + ", bankRefenrence=" + bankRefenrence +", accountOperationId="+accountOperationId+"]";
     }
 
 }

@@ -112,7 +112,11 @@ import org.meveo.model.finance.AccountingEntry;
                 " INNER JOIN SubAccountingPeriod sap ON sap.allUsersSubPeriodStatus = 'CLOSED' AND sap.startDate <= ao.accountingDate AND sap.endDate >= ao.accountingDate" +
                 " AND ao.status IN (:AO_STATUS)"),
         @NamedQuery(name = "AccountOperation.findAoByStatus", query = "SELECT ao FROM AccountOperation ao WHERE ao.status IN (:AO_STATUS)"),
-        @NamedQuery(name = "AccountOperation.findByCustomerAccount", query = "SELECT ao FROM AccountOperation ao WHERE ao.id in (:AO_IDS) AND ao.customerAccount.id = :CUSTOMERACCOUNT_ID")
+        @NamedQuery(name = "AccountOperation.findByCustomerAccount", query = "SELECT ao FROM AccountOperation ao WHERE ao.id in (:AO_IDS) AND ao.customerAccount.id = :CUSTOMERACCOUNT_ID"),
+        @NamedQuery(name = "Payment.updateReference", query = "UPDATE Payment pay set pay.reference = (select ph.externalPaymentId from PaymentHistory ph where ph.payment is not null and ph.payment.id = pay.id) where pay.reference is null"),
+        @NamedQuery(name = "Refund.updateReference", query = "UPDATE Refund re set re.reference = (select ph.externalPaymentId from PaymentHistory ph where ph.refund is not null and ph.refund.id = re.id) where re.reference is null")
+
+        
 })
 public class AccountOperation extends BusinessEntity implements ICustomFieldEntity, ISearchable, IWFEntity {
 

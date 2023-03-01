@@ -52,12 +52,12 @@ import org.meveo.model.payments.CustomerAccount;
 	@NamedQuery(name = "Contract.findCustomer", query = "select c from Contract c left join c.customer cc where cc.code=:codeCustomer"),
     @NamedQuery(name = "Contract.findByAccounts", query = "select c from Contract c where c.status='ACTIVE' and (c.beginDate<=current_date and c.endDate>current_date) "
     		+ " and (c.customer.id is null or c.customer.id=:customerId) "
-				+ " and (c.billingAccount.id is null or c.billingAccount.id=:billingAccountId) and (c.customerAccount.id is null or c.customerAccount.id=:customerAccountId)  " )
+				+ " and (c.billingAccount.id is null or c.billingAccount.id=:billingAccountId) and (c.customerAccount.id is null or c.customerAccount.id=:customerAccountId)  order by c.contractDate desc , c.auditable.created desc " )
 })
 public class Contract extends EnableBusinessCFEntity {
 
 	public Contract() {
-		this.status = ContractStatusEnum.DRAFT;
+		this.status = ContractStatusEnum.DRAFT.toString();
 		this.statusDate = Calendar.getInstance().getTime();
 	}
 
@@ -98,9 +98,8 @@ public class Contract extends EnableBusinessCFEntity {
 	 * status of this contract
 	 */
 	@Column(name = "status", nullable = false)
-	@Enumerated(EnumType.STRING)
 	@NotNull
-	private ContractStatusEnum status;
+	private String status = ContractStatusEnum.DRAFT.toString();
 	
 	/**
 	 * date of the modification of the status
@@ -224,11 +223,11 @@ public class Contract extends EnableBusinessCFEntity {
 	}
 
  
-	public ContractStatusEnum getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(ContractStatusEnum status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 

@@ -69,6 +69,7 @@ import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.IsoIcdService;
@@ -119,6 +120,9 @@ public class UserAccountApi extends AccountEntityApi {
     @Inject
     private IsoIcdService isoIcdService;
 
+    @Inject
+    CustomGenericEntityCodeService customGenericEntityCodeService;
+
     public UserAccount create(UserAccountDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
     }
@@ -130,9 +134,6 @@ public class UserAccountApi extends AccountEntityApi {
     public UserAccount create(UserAccountDto postData, boolean checkCustomFields,
                               BusinessAccountModel businessAccountModel, BillingAccount associatedBA) throws MeveoApiException, BusinessException {
 	
-        if (StringUtils.isBlank(postData.getCode())) {
-            addGenericCodeIfAssociated(UserAccount.class.getName(), postData);
-        }
         if (StringUtils.isBlank(postData.getBillingAccount())) {
             missingParameters.add("billingAccount");
         }
@@ -146,6 +147,10 @@ public class UserAccountApi extends AccountEntityApi {
         }
 
         UserAccount userAccount = new UserAccount();
+
+        if (StringUtils.isBlank(postData.getCode())) {
+            postData.setCode(customGenericEntityCodeService.getGenericEntityCode(userAccount));
+        }
 
         dtoToEntity(userAccount, postData, checkCustomFields, businessAccountModel, associatedBA);
         
