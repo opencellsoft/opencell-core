@@ -26,6 +26,7 @@ public class GenericPagingAndFilteringUtils {
     private static final String LIMIT = "limit";
 
     private static final String API_LIST_MAX_LIMIT_KEY = "api.list.maxLimit";
+    private static final String API_LIST_DEFAULT_LIMIT = "api.list.defaultLimit";
     private static final String OFFSET = "offset";
     private static final String SORT = "sort";
     private static final String FIELDS = "fields";
@@ -78,13 +79,14 @@ public class GenericPagingAndFilteringUtils {
      *               "toRange id": 0
      *         }
      */
-    public void constructPagingAndFiltering(PagingAndFilteringRest pagingAndFilteringRest) {
+    public void constructPagingAndFiltering(PagingAndFilteringRest pagingAndFilteringRest,MultivaluedMap<String, String> queryParamsMap) {
         if ( pagingAndFilteringRest == null )
             pagingAndFilteringRest = ImmutablePagingAndFilteringRest.builder().build();
 
         pagingAndFiltering = new PagingAndFiltering();
-        int API_LIST_MAX_LIMIT = paramBeanFactory.getInstance().getPropertyAsInteger(API_LIST_MAX_LIMIT_KEY, 1000);
-        pagingAndFiltering.setLimit(pagingAndFilteringRest.getLimit() > API_LIST_MAX_LIMIT ? API_LIST_MAX_LIMIT : pagingAndFilteringRest.getLimit());
+
+        Integer limitParameter = queryParamsMap != null && queryParamsMap.get("limit") != null ? Integer.parseInt(queryParamsMap.get("limit").get(0)) : null;
+        pagingAndFiltering.setLimit((int) instance.getLimit(limitParameter));
         pagingAndFiltering.setOffset( pagingAndFilteringRest.getOffset() );
 
         String allSortFieldsAndOrders = pagingAndFilteringRest.getSort();
@@ -116,6 +118,21 @@ public class GenericPagingAndFilteringUtils {
             Map<String, Object> genericFilters = new HashMap<>(pagingAndFilteringRest.getFilters());
             pagingAndFiltering.setFilters( genericFilters );
         }
+    }
+
+    public long getLimit(Integer userLimit) {
+
+        int limit = 0;
+        int apiListMaxLimit = ParamBean.getInstance().getPropertyAsInteger(API_LIST_MAX_LIMIT_KEY, 1000);
+        int apiDefaultLimit = ParamBean.getInstance().getPropertyAsInteger(API_LIST_DEFAULT_LIMIT, 100);
+
+        if (userLimit != null && userLimit > 0) {
+            limit = Math.min(userLimit, apiListMaxLimit);
+        } else {
+            limit = Math.min(apiDefaultLimit, apiListMaxLimit);
+        }
+
+        return limit;
     }
 
     /**
@@ -191,7 +208,7 @@ public class GenericPagingAndFilteringUtils {
     public PagingAndFiltering getPagingAndFiltering(){
     	PagingAndFilteringRest pagingAndFilteringRest = null;
     	if(pagingAndFiltering == null)
-    		constructPagingAndFiltering(pagingAndFilteringRest);
+    		constructPagingAndFiltering(pagingAndFilteringRest,null);
         return pagingAndFiltering;
     }
 

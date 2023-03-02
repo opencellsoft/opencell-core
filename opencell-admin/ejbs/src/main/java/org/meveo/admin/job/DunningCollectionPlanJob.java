@@ -7,9 +7,9 @@ import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
-import org.meveo.model.settings.GlobalSettings;
+import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.service.job.Job;
-import org.meveo.service.settings.impl.GlobalSettingsService;
+import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -23,7 +23,7 @@ public class DunningCollectionPlanJob extends Job {
     private DunningCollectionPlanJobBean dunningCollectionPlanJobBean;
 
     @Inject
-    private GlobalSettingsService globalSettingsService;
+    private FinanceSettingsService financeSettingsService;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -34,8 +34,8 @@ public class DunningCollectionPlanJob extends Job {
     }
 
     public void checkActivateDunning(JobExecutionResultImpl result) {
-        GlobalSettings lastOne = globalSettingsService.findLastOne();
-        if(lastOne != null && !lastOne.getActivateDunning()) {
+        FinanceSettings lastOne = financeSettingsService.findLastOne();
+        if (lastOne != null && !lastOne.isActivateDunning()) {
             result.registerError("The action is not possible, GlobalSettings.activateDunning is disabled");
             throw new BusinessApiException("The action is not possible, GlobalSettings.activateDunning is disabled");
         }

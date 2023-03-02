@@ -632,8 +632,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             //Get contract by list of customer ids, billing account and customer account
             List<Contract> contracts = contractService.getContractByAccount(customer, billingAccount, customerAccount, bareWalletOperation);
             List<Contract> filtredContractByCustomerLevel = getContractByCustomerLevel(customers, contracts);
-    
-
+            
             if ((unitPriceWithoutTaxOverridden == null && appProvider.isEntreprise())
                     || (unitPriceWithTaxOverridden == null && !appProvider.isEntreprise())) {
 

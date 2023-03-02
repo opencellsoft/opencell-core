@@ -33,6 +33,7 @@ import org.meveo.model.billing.InvoiceType;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.billing.impl.UntdidVatPaymentOptionService;
 import org.primefaces.model.DualListModel;
 
 @Named
@@ -49,6 +50,9 @@ public class InvoiceTypeBean extends CustomFieldBean<InvoiceType> {
 	 */
 	@Inject
 	private InvoiceTypeService invoiceTypeService;
+	
+	@Inject
+	private UntdidVatPaymentOptionService untdidVatPaymentOptionService;
 	
 	private DualListModel<InvoiceType> invoiceTypesDM;
 
@@ -81,6 +85,10 @@ public class InvoiceTypeBean extends CustomFieldBean<InvoiceType> {
                 facesContext.validationFailed();
                 return "";
             }
+        }
+        // default vat payment option
+        if(entity.getUntdidVatPaymentOption() == null) {
+        	entity.setUntdidVatPaymentOption(untdidVatPaymentOptionService.findById(1L));
         }
         log.trace("saving new InvoiceType={}", entity.getCode());
         getEntity().getAppliesTo().clear();

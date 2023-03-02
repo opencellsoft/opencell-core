@@ -12,6 +12,8 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import java.util.List;
 
@@ -19,6 +21,9 @@ import java.util.List;
 @Table(name = "ar_customer_balance")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_customer_balance_seq"), })
+@NamedQueries({
+        @NamedQuery(name = "CustomerBalance.findDefaultCustomerBalance",
+                query = "SELECT cb FROM CustomerBalance cb WHERE cb.defaultBalance = true") })
 public class CustomerBalance extends BusinessEntity {
 
     @Type(type = "numeric_boolean")
@@ -29,7 +34,7 @@ public class CustomerBalance extends BusinessEntity {
     @JoinTable(name = "ar_customer_balance_templates",
             joinColumns = @JoinColumn(name = "customer_balance_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "template_id", referencedColumnName = "id"))
-    private List<OCCTemplate> templates;
+    private List<OCCTemplate> occTemplates;
 
     public boolean isDefaultBalance() {
         return defaultBalance;
@@ -39,11 +44,11 @@ public class CustomerBalance extends BusinessEntity {
         this.defaultBalance = defaultBalance;
     }
 
-    public List<OCCTemplate> getTemplates() {
-        return templates;
+    public List<OCCTemplate> getOccTemplates() {
+        return occTemplates;
     }
 
-    public void setTemplates(List<OCCTemplate> templates) {
-        this.templates = templates;
+    public void setOccTemplates(List<OCCTemplate> templates) {
+        this.occTemplates = templates;
     }
 }
