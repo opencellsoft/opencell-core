@@ -663,12 +663,13 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 ContractItem contractItem = null;
                 if (contract != null && serviceInstance != null) {
                     OfferTemplate offerTemplate = serviceInstance.getSubscription().getOffer();
-
-                    Contract contractMatched = contractItemService.getApplicableContract(filtredContractByCustomerLevel, offerTemplate, serviceInstance.getCode(), chargeTemplate);
+                    Contract contractMatched = contractItemService.getApplicableContract(filtredContractByCustomerLevel, offerTemplate, serviceInstance.getCode(), chargeTemplate, bareWalletOperation);
+                    
                     if (contractMatched != null) {
                         contract = contractMatched;
                     }
-                    contractItem = contractItemService.getApplicableContractItem(contract, offerTemplate, serviceInstance.getCode(), chargeTemplate);
+                    contractItem = contractItemService.getApplicableContractItem(contract,
+                            offerTemplate, serviceInstance.getCode(), chargeTemplate, bareWalletOperation);
 
                     if (contractItem != null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
 
@@ -681,6 +682,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                                     PricePlanMatrixLine pricePlanMatrixLine = methodCallingUtils.callCallableInNewTx( () -> pricePlanMatrixVersionService.loadPrices(ppmVersion, tmpWalletOperation));
                                     unitPriceWithoutTax = pricePlanMatrixLine.getValue();
                                     bareWalletOperation.setContract(contract);
+                                    bareWalletOperation.setContractLine(contractItem);
                                     bareWalletOperation.setPriceplan(pricePlanMatrix);
                                     bareWalletOperation.setPricePlanMatrixVersion(ppmVersion);
                                     bareWalletOperation.setPricePlanMatrixLine(pricePlanMatrixLine);
@@ -694,6 +696,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                         } else {
                             unitPriceWithoutTax = contractItem.getAmountWithoutTax();
                             bareWalletOperation.setContract(contract);
+                            bareWalletOperation.setContractLine(contractItem);
                         }
                     }
 
@@ -719,6 +722,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     if (contractItem != null && ContractRateTypeEnum.PERCENTAGE.equals(contractItem.getContractRateType()) ) {
                     	boolean seperateDiscount=contractItem.isSeparateDiscount();
                     	bareWalletOperation.setContract(contract);
+                    	bareWalletOperation.setContractLine(contractItem);
                     	if(contractItem.getRate() != null && contractItem.getRate() > 0){
                         	discountRate=BigDecimal.valueOf(contractItem.getRate());
                              amount = unitPriceWithoutTax.abs().multiply(BigDecimal.valueOf(contractItem.getRate()).divide(HUNDRED));
@@ -1702,6 +1706,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     	discountWalletOperation.setSubscription(bareWalletOperation.getSubscription());
     	discountWalletOperation.setUserAccount(bareWalletOperation.getUserAccount());
     	discountWalletOperation.setContract(bareWalletOperation.getContract());
+    	discountWalletOperation.setContractLine(bareWalletOperation.getContractLine());
     	discountWalletOperation.setPricePlanMatrixVersion(ppmVersion);
     	discountWalletOperation.setPriceplan(ppmVersion!=null?ppmVersion.getPricePlanMatrix():null);
     	discountWalletOperation.setPricePlanMatrixLine(pricePlanMatrixLine);

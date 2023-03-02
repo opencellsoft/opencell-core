@@ -173,7 +173,7 @@ public class ContractService extends BusinessService<Contract>  {
 		try {
 			List<Contract> contracts = getEntityManager().createNamedQuery("Contract.findByAccounts")
 					.setParameter("customerId", customer.getId()).setParameter("billingAccountId", billingAccount.getId())
-					.setParameter("customerAccountId",customerAccount.getId()).setFlushMode(FlushModeType.COMMIT).getResultList();
+					.setParameter("customerAccountId",customerAccount.getId()).getResultList();
 			
 			return contracts.stream()
 					.filter(c -> StringUtils.isBlank(c.getApplicationEl()) || ValueExpressionWrapper.evaluateExpression(c.getApplicationEl(), Boolean.class, bareWalletOperation, c))

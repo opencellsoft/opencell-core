@@ -1,5 +1,7 @@
 package org.meveo.api.cpq;
 
+import static java.util.Optional.ofNullable;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -130,7 +132,7 @@ public class ContractApi extends BaseApi{
 			populateCustomFields(dto.getCustomFields(), contract, true);
 			contractService.create(contract);
 			// add billing rules
-            List<BillingRule> lstBillingRule = new ArrayList<BillingRule>();
+            List<BillingRule> lstBillingRule = new ArrayList<>();
             if (dto.getBillingRules() != null) {
                 for (BillingRuleDto brDto : dto.getBillingRules()) {
                     BillingRule br = billingRuleMapper.toEntity(brDto);
@@ -201,14 +203,6 @@ public class ContractApi extends BaseApi{
 			checkStatus(dto.getStatus());
 			contract.setStatus(dto.getStatus());
 		}
-		/*if(ProductStatusEnum.ACTIVE.equals(contract.getStatus())) {
-			if(ProductStatusEnum.DRAFT.equals(dto.getStatus())) {
-				throw new MeveoApiException("Current Contract is active, can not be DRAFT anymore");
-			}
-			contract.setStatus(dto.getStatus());
-		}else if(ProductStatusEnum.CLOSED.equals(contract.getStatus())) {
-			throw new MeveoApiException("Current Contract is already close");
-		}*/
 		contract.setCode(dto.getCode());
 		contract.setBeginDate(dto.getBeginDate());
 		contract.setEndDate(dto.getEndDate());
@@ -376,7 +370,8 @@ public class ContractApi extends BaseApi{
     	if(ContractRateTypeEnum.FIXED.equals(item.getContractRateType()) && Boolean.TRUE.equals(contractItemDto.getSeperateDiscountLine())){
 			throw new InvalidParameterException("generate separate discount line is valable only for the types 'Global discount' and 'Custom discount grid'");
 		}
-    	
+    	item.setApplicationEl(contractItemDto.getApplicationEl());
+
     	try {
     		populateCustomFields(contractItemDto.getCustomFields(), item, true);
     		contractItemService.create(item);
@@ -407,7 +402,6 @@ public class ContractApi extends BaseApi{
 			item.setPricePlan(null);
 		}
 
-		
     	if(!Strings.isEmpty(contractItemDto.getProductCode()))
     		item.setProduct(productService.findByCode(contractItemDto.getProductCode()));
     	if(!Strings.isEmpty(contractItemDto.getChargeTemplateCode()))
@@ -427,7 +421,7 @@ public class ContractApi extends BaseApi{
     	if(ContractRateTypeEnum.FIXED.equals(item.getContractRateType()) && item.isSeparateDiscount()){
 			throw new InvalidParameterException("generate separate discount line is valable only for the types 'Global discount' and 'Custom discount grid'");
 		}
-    	
+		ofNullable(contractItemDto.getApplicationEl()).ifPresent(applicationEl -> item.setApplicationEl(applicationEl));
     	try {
     		populateCustomFields(contractItemDto.getCustomFields(), item, false);
     		contractItemService.updateContractItem(item);
@@ -478,10 +472,12 @@ public class ContractApi extends BaseApi{
 	private void checkParams(ContractItemDto contractItemDto) {
     	if(Strings.isEmpty(contractItemDto.getContractCode()))
     		missingParameters.add("contractCode");
-    	if(Strings.isEmpty(contractItemDto.getCode()))
+    	if(Strings.isEmpty(contractItemDto.getCode()))  {
 			missingParameters.add("code");
-		if(Strings.isEmpty(contractItemDto.getChargeTemplateCode()))
+		}
+		if(Strings.isEmpty(contractItemDto.getChargeTemplateCode())) {
 			missingParameters.add("chargeTemplateCode");
+		}
 		checkPricePlanPeriod(contractItemDto);
     	handleMissingParameters();
 	}
