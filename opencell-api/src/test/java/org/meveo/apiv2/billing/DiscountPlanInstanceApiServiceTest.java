@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.billing.service.DiscountPlanInstanceApiService;
 import org.meveo.apiv2.generic.services.GenericApiAlteringService;
 import org.meveo.apiv2.generic.services.GenericApiLoadService;
@@ -50,6 +51,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -90,6 +92,9 @@ public class DiscountPlanInstanceApiServiceTest {
 
     @Mock
     private ParamBean paramBean;
+
+    @Mock
+    private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
 
     @Before
     public void setup() {
@@ -155,8 +160,6 @@ public class DiscountPlanInstanceApiServiceTest {
             }
         });
         when(discountPlanService.findById(any())).thenReturn(getDiscountPlan(DiscountPlanTypeEnum.PROMO_CODE, DiscountPlanStatusEnum.ACTIVE, false));
-        when(paramBeanFactory.getInstance()).thenReturn(paramBean);
-        when(paramBean.getPropertyAsInteger("api.list.maxLimit",1000)).thenReturn(1000);
     }
 
     private DiscountPlan getDiscountPlan(DiscountPlanTypeEnum type, DiscountPlanStatusEnum status, boolean nullDates) {

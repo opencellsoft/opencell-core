@@ -154,6 +154,7 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
+import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.mediation.Access;
@@ -637,6 +638,11 @@ public class SubscriptionApi extends BaseApi {
         // instantiate the discounts
         if (postData.getDiscountPlansForInstantiation() != null) {
             for (DiscountPlanDto discountPlanDto : postData.getDiscountPlansForInstantiation()) {
+
+                DiscountPlanInstance discountPlanInstance = discountPlanInstanceService.findBySubscriptionAndCode(subscription, discountPlanDto.getCode());
+                if(discountPlanInstance != null) {
+                    continue;
+                }
                 DiscountPlan dp = discountPlanService.findByCode(discountPlanDto.getCode());
                 if (dp == null) {
                     throw new EntityDoesNotExistsException(DiscountPlan.class, discountPlanDto.getCode());
@@ -2118,6 +2124,11 @@ public class SubscriptionApi extends BaseApi {
             if (postData.getMinimumLabelEl() != null) {
                 serviceToUpdate.setMinimumLabelEl(postData.getMinimumLabelEl());
             }
+            
+            if(postData.getPriceVersionDate() != null) {
+            	serviceToUpdate.setPriceVersionDate(postData.getPriceVersionDate());
+            	serviceToUpdate.setPriceVersionDateSetting(PriceVersionDateSettingEnum.MANUAL);
+            }
            
             // populate customFields
             try {
@@ -2167,6 +2178,39 @@ public class SubscriptionApi extends BaseApi {
                 });
             }
 
+            // instantiate the discounts
+            if (serviceToUpdateDto.getDiscountPlansForInstantiation() != null) {
+                for (DiscountPlanDto discountPlanDto : serviceToUpdateDto.getDiscountPlansForInstantiation()) {
+
+                    DiscountPlanInstance discountPlanInstance = discountPlanInstanceService.findBySubscriptionAndCode(subscription, discountPlanDto.getCode());
+                    if(discountPlanInstance != null) {
+                        continue;
+                    }
+                    DiscountPlan dp = discountPlanService.findByCode(discountPlanDto.getCode());
+                    if (dp == null) {
+                        throw new EntityDoesNotExistsException(DiscountPlan.class, discountPlanDto.getCode());
+                    }
+
+                    discountPlanService.detach(dp);
+                    dp = DiscountPlanDto.copyFromDto(discountPlanDto, dp);
+
+                    // populate customFields
+                    try {
+                        populateCustomFields(discountPlanDto.getCustomFields(), dp, true);
+                    } catch (MissingParameterException | InvalidParameterException e) {
+                        log.error("Failed to associate custom field instance to an entity: {} {}", discountPlanDto.getCode(), e.getMessage());
+                        throw e;
+                    } catch (Exception e) {
+                        log.error("Failed to associate custom field instance to an entity {}", discountPlanDto.getCode(), e);
+                        throw new MeveoApiException("Failed to associate custom field instance to an entity " + discountPlanDto.getCode());
+                    }
+                    if (subscription.getOffer().getAllowedDiscountPlans() != null && subscription.getOffer().getAllowedDiscountPlans().contains(dp)) {
+                        continue;
+                    }
+                    subscriptionService.instantiateDiscountPlan(subscription, dp);
+                }
+            }
+            removeDiscountPlanInstanceForSubscription(subscription, serviceToUpdateDto.getDiscountPlanForTermination());
             serviceInstanceService.update(serviceToUpdate);
         }
     }
@@ -2679,7 +2723,6 @@ public class SubscriptionApi extends BaseApi {
                 }
             }
         }
-        removeDiscountPlanInstanceForSubscription(subscription, postData.getDiscountPlanInstancesToRemove());
         return subscription;
     }
 
@@ -2948,12 +2991,6 @@ public class SubscriptionApi extends BaseApi {
                 subscriptionService.instantiateDiscountPlan(subscription, dp);
             }
         }
-        if (offerTemplate.getAllowedDiscountPlans() != null && !offerTemplate.getAllowedDiscountPlans().isEmpty()) {
-            offerTemplate.getAllowedDiscountPlans().forEach(discountPlan -> {
-                subscriptionService.instantiateDiscountPlan(subscription, discountPlan);
-            });
-        }
-        removeDiscountPlanInstanceForSubscription(subscription, postData.getDiscountPlanInstancesToRemove());
         return subscription;
     }
     

@@ -101,7 +101,7 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		auditLog.setActor(currentUser.getUserName());
 		auditLog.setCreated(new Date());
 		auditLog.setEntity("AccountingPeriod");
-		auditLog.setOrigin(entity.getAccountingPeriodStatus().name());
+		auditLog.setOrigin(entity.getAccountingPeriodYear());
 		auditLog.setAction("update status");
 		auditLog.setParameters("user " + currentUser.getUserName() + " update status from " + entity.getAccountingPeriodStatus().name() + " to " + status);
 		return auditLog;

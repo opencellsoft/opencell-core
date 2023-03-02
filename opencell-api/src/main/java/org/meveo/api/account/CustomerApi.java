@@ -31,6 +31,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -170,6 +171,7 @@ public class CustomerApi extends AccountEntityApi {
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
 
+
     public Customer create(CustomerDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
     }
@@ -180,9 +182,6 @@ public class CustomerApi extends AccountEntityApi {
 
     public Customer create(CustomerDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel, Seller associatedSeller) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(postData.getCode())) {
-            addGenericCodeIfAssociated(Customer.class.getName(), postData);
-        }
         if (StringUtils.isBlank(postData.getCustomerCategory())) {
             missingParameters.add("customerCategory");
         }
@@ -193,11 +192,15 @@ public class CustomerApi extends AccountEntityApi {
         handleMissingParameters(postData);
 
         // check if customer already exists
-        if (customerService.findByCode(postData.getCode()) != null) {
+        if (!StringUtils.isBlank(postData.getCode()) && customerService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(Customer.class, postData.getCode());
         }
 
         Customer customer = new Customer();
+
+        if (StringUtils.isBlank(postData.getCode())) {
+            postData.setCode(customGenericEntityCodeService.getGenericEntityCode(customer));
+        }
 
         dtoToEntity(customer, postData, checkCustomFields, businessAccountModel, associatedSeller);
 
@@ -343,8 +346,8 @@ public class CustomerApi extends AccountEntityApi {
 			customer.setParentCustomer(ofNullable(customerService.findByCode(postData.getParentCustomerCode()))
 					.orElseThrow(() -> new BusinessException("No customer parent found with the given code : " + postData.getParentCustomerCode())));
 			if(!canBeLinked(customer.getParentCustomer(), customer)) {
-                throw new BusinessException(String.format("A customer’s ascendant cannot be one of its descendants. Customer %s is [child OR descendant] of %s", 
-                		customer.getParentCustomer().getCode(), customer.getCode()));
+                throw new BusinessException(String.format("A customer’s ascendant cannot be one of its descendants. Customer %s is %s of %s", 
+                		customer.getParentCustomer().getCode(), childOrDescendant(customer.getParentCustomer(), customer), customer.getCode()));
 			}
         }
         
@@ -353,8 +356,8 @@ public class CustomerApi extends AccountEntityApi {
 					.orElseThrow(() -> new BusinessException("No customer child found with the given code : " + code))).collect(Collectors.toList()));
         	
         	customer.getCustomerChilds().stream().filter(child -> !canBeLinked(customer, child)).findAny().ifPresent(child -> {
-                throw new BusinessException(String.format("A customer’s ascendant cannot be one of its descendants. Customer %s is [child OR descendant] of %s", 
-                		customer.getCode(), child.getCode()));
+                throw new BusinessException(String.format("A customer’s ascendant cannot be one of its descendants. Customer %s is %s of %s", 
+                		customer.getCode(), childOrDescendant(customer, child), child.getCode()));
         	});
         }
         
@@ -976,5 +979,29 @@ public class CustomerApi extends AccountEntityApi {
 			return false;
 		}
 		return canBeLinked(grandParent, child);
+	}
+	
+	private String childOrDescendant(Customer parent, Customer child) {
+		return (Objects.equals(child, parent.getParentCustomer()))? "child" : "descendant";
+	}
+	
+	@SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = Customer.class))
+    public CustomerDto findRootParent(String customerCode) throws MeveoApiException {
+        if (StringUtils.isBlank(customerCode)) {
+            missingParameters.add("customerCode");
+        }
+        handleMissingParameters();
+
+        Customer customer = ofNullable(customerService.findByCode(customerCode)).orElseThrow(() -> new EntityDoesNotExistsException(Customer.class, customerCode));
+
+        return accountHierarchyApi.customerToDto(getRootParent(customer));
+    }
+    
+    private Customer getRootParent(Customer customer) {
+		Customer parent = customer.getParentCustomer();
+		if (parent == null) {
+			return customer;
+		}
+		return getRootParent(parent);
 	}
 }

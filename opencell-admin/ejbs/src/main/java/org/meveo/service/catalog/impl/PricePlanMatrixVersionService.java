@@ -431,7 +431,8 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 			operationDateParam = operationDate;
 		} else if(PriceVersionDateSettingEnum.DELIVERY.equals(serviceInstance.getPriceVersionDateSetting())
 			|| PriceVersionDateSettingEnum.RENEWAL.equals(serviceInstance.getPriceVersionDateSetting())
-			|| PriceVersionDateSettingEnum.QUOTE.equals(serviceInstance.getPriceVersionDateSetting())) {
+			|| PriceVersionDateSettingEnum.QUOTE.equals(serviceInstance.getPriceVersionDateSetting())
+			|| PriceVersionDateSettingEnum.MANUAL.equals(serviceInstance.getPriceVersionDateSetting())) {
 				operationDateParam = serviceInstance.getPriceVersionDate();
 		}
 

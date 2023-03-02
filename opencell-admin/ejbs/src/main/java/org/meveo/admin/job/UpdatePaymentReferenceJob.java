@@ -15,50 +15,50 @@
  * For more information on the GNU Affero General Public License, please consult
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
+
 package org.meveo.admin.job;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.exception.BusinessApiException;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
-import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.service.job.Job;
-import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-
+/**
+ * A Job to set reference payment from his history
+ * @author anasseh
+ * @lastModifiedVersion 10.0
+ */
 @Stateless
-public class ResumeDunningCollectionPlanJob extends Job {
+public class UpdatePaymentReferenceJob extends Job {
 
     @Inject
-    private ResumeDunningCollectionPlanJobBean ResumeDunningCollectionPlanJobBean;
-
-    @Inject
-    private FinanceSettingsService financeSettingsService;
-
+    UpdatePaymentReferenceJobBean updatePaymentReferenceJobBean;
+    
+    /**
+     * The actual job execution logic implementation.
+     *
+     * @param result      Job execution results
+     * @param jobInstance Job instance to execute
+     * @throws BusinessException Any exception
+     */
     @Override
-    @TransactionAttribute(TransactionAttributeType.NEVER)
     protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-        checkActivateDunning(result);
-        ResumeDunningCollectionPlanJobBean.execute(result, jobInstance);
+    	updatePaymentReferenceJobBean.execute(result, jobInstance);
         return result;
     }
-
-    public void checkActivateDunning(JobExecutionResultImpl result) {
-        FinanceSettings lastOne = financeSettingsService.findLastOne();
-        if (lastOne != null && !lastOne.isActivateDunning()) {
-            result.registerError("The action is not possible, GlobalSettings.activateDunning is disabled");
-            throw new BusinessApiException("The action is not possible, GlobalSettings.activateDunning is disabled");
-        }
-    }
-
+    
+    /**
+     * @return job category enum
+     */
     @Override
     public JobCategoryEnum getJobCategory() {
-        return MeveoJobCategoryEnum.DUNNING;
+        return MeveoJobCategoryEnum.PAYMENT;
     }
+
+   
 }
