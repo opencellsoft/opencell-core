@@ -79,13 +79,14 @@ public class GenericPagingAndFilteringUtils {
      *               "toRange id": 0
      *         }
      */
-    public void constructPagingAndFiltering(PagingAndFilteringRest pagingAndFilteringRest) {
+    public void constructPagingAndFiltering(PagingAndFilteringRest pagingAndFilteringRest,MultivaluedMap<String, String> queryParamsMap) {
         if ( pagingAndFilteringRest == null )
             pagingAndFilteringRest = ImmutablePagingAndFilteringRest.builder().build();
 
         pagingAndFiltering = new PagingAndFiltering();
 
-        pagingAndFiltering.setLimit((int) instance.getLimit(pagingAndFiltering.getLimit()));
+        Integer limitParameter = queryParamsMap != null && queryParamsMap.get("limit") != null ? Integer.parseInt(queryParamsMap.get("limit").get(0)) : null;
+        pagingAndFiltering.setLimit((int) instance.getLimit(limitParameter));
         pagingAndFiltering.setOffset( pagingAndFilteringRest.getOffset() );
 
         String allSortFieldsAndOrders = pagingAndFilteringRest.getSort();
@@ -122,8 +123,8 @@ public class GenericPagingAndFilteringUtils {
     public long getLimit(Integer userLimit) {
 
         int limit = 0;
-        int apiListMaxLimit = paramBeanFactory.getInstance().getPropertyAsInteger(API_LIST_MAX_LIMIT_KEY, 1000);
-        int apiDefaultLimit = paramBeanFactory.getInstance().getPropertyAsInteger(API_LIST_DEFAULT_LIMIT, 100);
+        int apiListMaxLimit = ParamBean.getInstance().getPropertyAsInteger(API_LIST_MAX_LIMIT_KEY, 1000);
+        int apiDefaultLimit = ParamBean.getInstance().getPropertyAsInteger(API_LIST_DEFAULT_LIMIT, 100);
 
         if (userLimit != null && userLimit > 0) {
             limit = Math.min(userLimit, apiListMaxLimit);
@@ -207,7 +208,7 @@ public class GenericPagingAndFilteringUtils {
     public PagingAndFiltering getPagingAndFiltering(){
     	PagingAndFilteringRest pagingAndFilteringRest = null;
     	if(pagingAndFiltering == null)
-    		constructPagingAndFiltering(pagingAndFilteringRest);
+    		constructPagingAndFiltering(pagingAndFilteringRest,null);
         return pagingAndFiltering;
     }
 
