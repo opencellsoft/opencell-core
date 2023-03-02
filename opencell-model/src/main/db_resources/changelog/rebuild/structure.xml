@@ -4017,6 +4017,7 @@
 			<column name="price_plan_matrix_version_id" type="bigint" />
 			<column name="price_plan_matrix_line_id" type="bigint" />
 			<column name="contract_id" type="bigint" />
+            <column name="contract_line_id" type="bigint" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -9595,6 +9596,7 @@
             <column name="cf_values" type="${type.json}" />
             <column name="rate_type" type="varchar(255)"/>
             <column name="separate_discount" type="${type.boolean}" defaultValueNumeric="0"></column>
+            <column name="application_el" type="varchar(2000)" />
         </createTable>
     </changeSet>
 
@@ -16842,7 +16844,7 @@
                                  referencedColumnNames="id,status"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
-    </changeSet>      
+    </changeSet>
     
     <changeSet id="#INTRD-14522_20230301_fk" author="TarikFA.">
         <addForeignKeyConstraint baseTableName="billing_subscription" baseColumnNames="contract_id"
@@ -16859,7 +16861,14 @@
                                  referencedColumnNames="id"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
-    </changeSet>                    
+    </changeSet>
+
+    <changeSet id="#INTRD-14336_20230227_fk" author="ZBariki">
+        <addForeignKeyConstraint baseTableName="billing_wallet_operation" baseColumnNames="contract_line_id"
+                                 constraintName="fk_wo_contract_line_id" referencedTableName="cpq_contract_item"
+                                 referencedColumnNames="id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -19575,7 +19584,7 @@
     <changeSet author="ZBariki" id="#INTRD-14208_20230224" dbms="oracle" />
 	<changeSet id="#INTRD-13981_20230222" author="HichamHANINE" />
     <changeSet id="#INTRD-14340_20230228" author="HichamHANINE" />
-    
+    <changeSet id="#INTRD-14336_20230227" author="ZBariki" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

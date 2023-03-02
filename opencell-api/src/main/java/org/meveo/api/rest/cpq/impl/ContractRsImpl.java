@@ -39,7 +39,7 @@ public class ContractRsImpl  extends BaseRs implements ContractRs {
 	public Response updateContract(ContractDto contractDto) {
 		ActionStatus result = new ActionStatus();
 		 try {
-			 contractApi.updateContract(contractDto);;
+			 contractApi.updateContract(contractDto);
 	            return Response.ok(result).build();
 	        } catch (MeveoApiException e) {
 			       return errorResponse(e, result);
@@ -117,7 +117,7 @@ public class ContractRsImpl  extends BaseRs implements ContractRs {
 	public Response updateContractLine(ContractItemDto contractItemDto) {
 		ActionStatus result = new ActionStatus();
 		 try {
-			 contractApi.updateContractLine(contractItemDto);;
+			 contractApi.updateContractLine(contractItemDto);
 	            return Response.ok(result).build();
 	        } catch (MeveoApiException e) {
 			       return errorResponse(e, result);
