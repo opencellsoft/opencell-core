@@ -1088,14 +1088,6 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
         auditable.setUpdated(new Date());
     }
 
-    public BigDecimal getAmountForUnmatching() {
-        return amountForUnmatching;
-    }
-
-    public void setAmountForUnmatching(BigDecimal amountForUnmatching) {
-        this.amountForUnmatching = amountForUnmatching;
-    }
-
     public BigDecimal getConvertedAmount() {
         return convertedAmount;
     }
