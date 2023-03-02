@@ -1019,5 +1019,20 @@ public class MediationApiService {
         if(toBeUpdated.getExtraParam() != null) {
             cdr.setExtraParameter(toBeUpdated.getExtraParam());
         }
+        if(toBeUpdated.getDecimalParam1() != null) {
+        	cdr.setDecimalParam1(toBeUpdated.getDecimalParam1());
+        }
+        if(toBeUpdated.getDecimalParam2() != null) {
+        	cdr.setDecimalParam2(toBeUpdated.getDecimalParam2());
+        }
+        if(toBeUpdated.getDecimalParam3() != null) {
+        	cdr.setDecimalParam3(toBeUpdated.getDecimalParam3());
+        }
+        if(toBeUpdated.getDecimalParam4() != null) {
+        	cdr.setDecimalParam4(toBeUpdated.getDecimalParam4());
+        }
+        if(toBeUpdated.getDecimalParam5() != null) {
+        	cdr.setDecimalParam5(toBeUpdated.getDecimalParam5());
+        }
     }
 }
