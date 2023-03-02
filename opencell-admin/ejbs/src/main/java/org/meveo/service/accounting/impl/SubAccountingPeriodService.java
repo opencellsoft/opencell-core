@@ -18,6 +18,7 @@ import javax.ws.rs.NotFoundException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.accounting.AccountingPeriod;
+import org.meveo.model.accounting.AccountingPeriodActionLevelEnum;
 import org.meveo.model.accounting.SubAccountingPeriod;
 import org.meveo.model.accounting.SubAccountingPeriodStatusEnum;
 import org.meveo.model.accounting.SubAccountingPeriodTypeEnum;
@@ -362,6 +363,21 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
     public void updateSubPeriodsWithStatus(AccountingPeriod entity, String fiscalYear, String status, boolean isUserHaveThisRole) {
         List<SubAccountingPeriod> subAccountingPeriods = null;
         if (isUserHaveThisRole) {
+            subAccountingPeriods = getAllUsersSubPeriodWithStatusOpen(entity);
+            for (SubAccountingPeriod subAccountingPeriod : subAccountingPeriods) {
+                updateSubAccountingAllUsersStatus(fiscalYear, status, subAccountingPeriod, "");
+            }
+        } else {
+            subAccountingPeriods = getRegularUsersSubPeriodWithStatusOpen(entity);
+            for (SubAccountingPeriod subAccountingPeriod : subAccountingPeriods) {
+                updateSubAccountingRegularUsersStatus(fiscalYear, status, subAccountingPeriod, "");
+            }
+        }            
+    }
+    
+    public void updateSubPeriodsWithStatus(AccountingPeriod entity, String fiscalYear, String status, AccountingPeriodActionLevelEnum level) {
+        List<SubAccountingPeriod> subAccountingPeriods = null;
+        if (AccountingPeriodActionLevelEnum.allUsers.equals(level)) {
             subAccountingPeriods = getAllUsersSubPeriodWithStatusOpen(entity);
             for (SubAccountingPeriod subAccountingPeriod : subAccountingPeriods) {
                 updateSubAccountingAllUsersStatus(fiscalYear, status, subAccountingPeriod, "");
