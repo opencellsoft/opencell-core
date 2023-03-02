@@ -13728,6 +13728,13 @@ order by date_trunc('month', i.invoice_date) DESC
 				type="${type.boolean}" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="#INTRD-14340_20230228" author="HichamHANINE">
+		<addColumn tableName="ar_account_operation">
+			<column name="applied_rate" type="numeric(23, 12)" />
+			<column name="applied_rate_date" type="datetime" />
+		</addColumn>
+	</changeSet>
 
 
        <changeSet id="#20220415_M540_6609" author="Mbarek-Ay">

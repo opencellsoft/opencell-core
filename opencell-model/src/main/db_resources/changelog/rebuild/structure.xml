@@ -2144,6 +2144,8 @@
             <column name="converted_matching_amount" type="numeric(23, 12)" />
             <column name="converted_un_matching_amount" type="numeric(23, 12)" />
             <column name="transactional_currency" type="bigint" />
+            <column name="applied_rate" type="numeric(23, 12)" />
+            <column name="applied_rate_date" type="datetime" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-146">
@@ -19554,7 +19556,7 @@
     <changeSet id="#INTRD-14332_20230226_contract_application_el" author="a.rouaguebe" />
     <changeSet author="ZBariki" id="#INTRD-14208_20230224" dbms="oracle" />
 	<changeSet id="#INTRD-13981_20230222" author="HichamHANINE" />
-    
+    <changeSet id="#INTRD-14340_20230228" author="HichamHANINE" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
