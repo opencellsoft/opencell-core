@@ -204,7 +204,7 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		final Date endDate = Date.from(openAccountingPeriod.getEndDate().toInstant().atZone(ZoneId.systemDefault()).plusYears(1).toInstant());
 		nextAP.setEndDate(endDate);
 
-		final Date startDate = Date.from(openAccountingPeriod.getStartDate().toInstant().atZone(ZoneId.systemDefault()).plusYears(1).toInstant());
+		final Date startDate = Date.from(openAccountingPeriod.getStartDate().toInstant().atZone(ZoneId.systemDefault()).plusYears(1).plusDays(1).toInstant());
 		nextAP.setStartDate(startDate);
 
 		nextAP.setAccountingPeriodYear(getAccountingPeriodYear(startDate,endDate));
