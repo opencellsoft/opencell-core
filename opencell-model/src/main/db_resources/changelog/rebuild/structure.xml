@@ -3139,6 +3139,7 @@
             <column name="invoice_validation_rule_id" type="bigint"/>
             <column name="converted_invoice_balance" type="numeric(23, 12)"/>
     		<column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0" />
+    		<column name="conversion_from_billing_currrency" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -3194,6 +3195,7 @@
             <column name="converted_amount_with_tax" type="numeric(23, 12)"/>
             <column name="converted_amount_tax" type="numeric(23, 12)"/>
     		<column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0" />
+    		<column name="conversion_from_billing_currrency" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-178">
@@ -10822,6 +10824,7 @@
             </column>
             <column name="cf_values" type="${type.json}" />
             <column name="adjustment_status" type="varchar(50)"/>
+            <column name="conversion_from_billing_currrency" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -19585,6 +19588,8 @@
 	<changeSet id="#INTRD-13981_20230222" author="HichamHANINE" />
     <changeSet id="#INTRD-14340_20230228" author="HichamHANINE" />
     <changeSet id="#INTRD-14336_20230227" author="ZBariki" />
+    <changeSet id="#INTRD-14402_20230301" author="AdilElJaouhari" />
+    
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

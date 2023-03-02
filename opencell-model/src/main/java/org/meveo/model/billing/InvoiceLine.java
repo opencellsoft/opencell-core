@@ -403,6 +403,10 @@ public class InvoiceLine extends AuditableCFEntity {
     @Column(name = "use_specific_price_conversion")
     private boolean useSpecificPriceConversion;
     
+    @Column(name = "conversion_from_billing_currrency")
+    @Type(type = "numeric_boolean")
+    private boolean conversionFromBillingCurrrency = false;
+    
 	/**
 	 * Open Order Number
 	 */
@@ -899,19 +903,21 @@ public class InvoiceLine extends AuditableCFEntity {
 	@PrePersist
 	@PreUpdate
 	public void prePersistOrUpdate() {
-		BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
-		this.convertedAmountWithoutTax = this.amountWithoutTax != null ?
-				this.amountWithoutTax.multiply(appliedRate) : ZERO;
-		this.convertedAmountWithTax = this.amountWithTax != null ?
-				this.amountWithTax.multiply(appliedRate) : ZERO;
-		this.convertedAmountTax = this.amountTax !=null ?
-				this.amountTax.multiply(appliedRate) : ZERO;
-		this.convertedDiscountAmount = this.discountAmount != null ?
-				this.discountAmount.multiply(appliedRate) : ZERO;
-		this.convertedRawAmount = this.rawAmount != null ?
-				this.rawAmount.multiply(appliedRate) : ZERO;
-		this.convertedUnitPrice = this.unitPrice != null ?
-				this.unitPrice.multiply(appliedRate) : ZERO;
+		if (!this.useSpecificPriceConversion && !this.conversionFromBillingCurrrency) {
+			BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
+			this.convertedAmountWithoutTax = this.amountWithoutTax != null ?
+					this.amountWithoutTax.multiply(appliedRate) : ZERO;
+			this.convertedAmountWithTax = this.amountWithTax != null ?
+					this.amountWithTax.multiply(appliedRate) : ZERO;
+			this.convertedAmountTax = this.amountTax !=null ?
+					this.amountTax.multiply(appliedRate) : ZERO;
+			this.convertedDiscountAmount = this.discountAmount != null ?
+					this.discountAmount.multiply(appliedRate) : ZERO;
+			this.convertedRawAmount = this.rawAmount != null ?
+					this.rawAmount.multiply(appliedRate) : ZERO;
+			this.convertedUnitPrice = this.unitPrice != null ?
+					this.unitPrice.multiply(appliedRate) : ZERO;
+		}
 	}
 
 	@Override
@@ -987,6 +993,14 @@ public class InvoiceLine extends AuditableCFEntity {
 
     public void setUseSpecificPriceConversion(boolean useSpecificPriceConversion) {
         this.useSpecificPriceConversion = useSpecificPriceConversion;
-    }    
+    }
+
+	public boolean isConversionFromBillingCurrrency() {
+		return conversionFromBillingCurrrency;
+	}
+
+	public void setConversionFromBillingCurrrency(boolean conversionFromBillingCurrrency) {
+		this.conversionFromBillingCurrrency = conversionFromBillingCurrrency;
+	}    
     
 }
