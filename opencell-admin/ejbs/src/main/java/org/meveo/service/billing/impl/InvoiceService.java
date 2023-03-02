@@ -40,6 +40,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.net.URL;
@@ -6536,10 +6537,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 toUpdate.setLastAppliedRate(lastAppliedRate);
                 toUpdate.setLastAppliedRateDate(new Date());
 
-                if(toUpdate.getLinkedInvoices() != null){
-                    refreshAdvanceInvoicesConvertedAmount(toUpdate, lastAppliedRate);
-                }
-
                 refreshInvoiceLineAndAggregateAmounts(toUpdate);
             }
         }
@@ -7163,7 +7160,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             BigDecimal remainingAmount = lastApliedRate != null ? invoice.getAmountWithTax().multiply(lastApliedRate) : invoice.getAmountWithTax();
 
             for (Invoice adv : advInvoices) {
-                if (adv.getInvoiceBalance() == null) {
+                if (adv.getConvertedInvoiceBalance() == null || adv.getConvertedInvoiceBalance().toBigInteger().equals(BigInteger.ZERO)) {
                     continue;
                 }
                 final BigDecimal amount;
@@ -7222,13 +7219,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		if (invoice.getLinkedInvoices() != null) {
 			Predicate<LinkedInvoice> advFilter = i -> InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(i.getType());
 			if (delete) {
-				invoice.getLinkedInvoices().stream().filter(advFilter).forEach(li -> li.getLinkedInvoiceValue().setInvoiceBalance(li.getLinkedInvoiceValue().getInvoiceBalance().add(li.getAmount())));
+				invoice.getLinkedInvoices().stream().filter(advFilter).forEach(li -> li.getLinkedInvoiceValue().setConvertedInvoiceBalance(li.getLinkedInvoiceValue().getConvertedInvoiceBalance().add(li.getConvertedAmount())));
 				linkedInvoiceService.deleteByInvoiceIdAndType(invoice.getId(), InvoiceTypeEnum.ADVANCEMENT_PAYMENT);
 				invoice.getLinkedInvoices().removeIf(advFilter);
 			} else {
-				for (Invoice i : advInvoices) {
-					invoice.getLinkedInvoices().stream().filter(advFilter).filter(li -> li.getLinkedInvoiceValue().getId() == i.getId()).findAny().ifPresent(li -> {
-                        i.setConvertedInvoiceBalance(i.getConvertedInvoiceBalance().add(li.getConvertedAmount()));
+				for (Invoice advInvoice : advInvoices) {
+					invoice.getLinkedInvoices().stream().filter(advFilter).filter(linkedInvoice -> linkedInvoice.getLinkedInvoiceValue().getId() == advInvoice.getId()).findAny().ifPresent(li -> {
+                        advInvoice.setConvertedInvoiceBalance(advInvoice.getConvertedInvoiceBalance().add(li.getConvertedAmount()));
                         li.setConvertedAmount(ZERO);
 					});
 				}

@@ -18,7 +18,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @SuppressWarnings("serial")
 public class ContractItemDto extends BusinessEntityDto {
 
-
 	@Schema(description = "contract code")
     @NotNull
 	private String contractCode;
@@ -48,6 +47,9 @@ public class ContractItemDto extends BusinessEntityDto {
     
 	@Schema(description = "list of the custom field if any")
 	private CustomFieldsDto customFields;
+
+	@Schema(description = "Expression language to condition contract line application")
+	private String applicationEl;
     
     public ContractItemDto() {}
     
@@ -70,6 +72,7 @@ public class ContractItemDto extends BusinessEntityDto {
     	this.code = c.getCode();
     	this.contractRateType=c.getContractRateType();
     	this.seperateDiscountLine=c.isSeparateDiscount();
+		this.applicationEl = c.getApplicationEl();
     }
     
 	/**
@@ -199,12 +202,11 @@ public class ContractItemDto extends BusinessEntityDto {
 		this.seperateDiscountLine = seperateDiscountLine;
 	}
 
+	public String getApplicationEl() {
+		return applicationEl;
+	}
 
-	
-	
-
-
-
-    
-	
+	public void setApplicationEl(String applicationEl) {
+		this.applicationEl = applicationEl;
+	}
 }
