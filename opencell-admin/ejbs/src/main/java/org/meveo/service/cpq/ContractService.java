@@ -1,5 +1,6 @@
 package org.meveo.service.cpq;
 
+import java.util.Comparator;
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.naturalOrder;
 import static java.util.Comparator.nullsLast;
@@ -168,17 +169,34 @@ public class ContractService extends BusinessService<Contract>  {
 		
 	}
 
-	 public List<Contract> getContractByAccount(Customer customer, BillingAccount billingAccount, CustomerAccount customerAccount, WalletOperation bareWalletOperation) {
-	    	try {
-				List<Contract> contracts = getEntityManager().createNamedQuery("Contract.findByAccounts")
-						.setParameter("customerId", customer.getId()).setParameter("billingAccountId", billingAccount.getId())
-						.setParameter("customerAccountId",customerAccount.getId()).setFlushMode(FlushModeType.COMMIT).getResultList();
-				
-				return contracts.stream()
-    					.filter(c -> StringUtils.isBlank(c.getApplicationEl()) || ValueExpressionWrapper.evaluateExpression(c.getApplicationEl(), Boolean.class, bareWalletOperation, c))
-    					.collect(Collectors.toList());
-	    	} catch (NoResultException e) {
-	            return null;
-	        }
-	    }
+	public List<Contract> getContractByAccount(Customer customer, BillingAccount billingAccount, CustomerAccount customerAccount, WalletOperation bareWalletOperation) {
+		try {
+			List<Contract> contracts = getEntityManager().createNamedQuery("Contract.findByAccounts")
+					.setParameter("customerId", customer.getId()).setParameter("billingAccountId", billingAccount.getId())
+					.setParameter("customerAccountId",customerAccount.getId()).getResultList();
+			
+			return contracts.stream()
+					.filter(c -> StringUtils.isBlank(c.getApplicationEl()) || ValueExpressionWrapper.evaluateExpression(c.getApplicationEl(), Boolean.class, bareWalletOperation, c))
+					.collect(Collectors.toList());
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	/**
+	 * Get contract by list of customer's id
+	 * @param ids Customer id's
+	 * @param billingAccount {@link BillingAccount}
+	 * @param customerAccount {@link CustomerAccount}
+	 * @return List of {@link Contract}
+	 */
+	public List<Contract> getContractByListOfCustomers(List<Long> ids , BillingAccount billingAccount, CustomerAccount customerAccount) {
+		try {
+			return getEntityManager().createNamedQuery("Contract.findByCustomersBillingAccountCustomerAccount")
+					.setParameter("customersId", ids).setParameter("billingAccountId", billingAccount.getId())
+					.setParameter("customerAccountId",customerAccount.getId()).getResultList();
+    	} catch (NoResultException e) {
+            return null;
+        }
+	}
 }
