@@ -1,8 +1,11 @@
 package org.meveo.service.cpq;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -10,9 +13,9 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.contract.Contract;
@@ -22,8 +25,6 @@ import org.meveo.model.cpq.enums.ContractStatusEnum;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
 import org.meveo.service.catalog.impl.OfferTemplateService;
-import org.meveo.service.catalog.impl.PricePlanMatrixService;
-import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,11 +39,10 @@ import org.slf4j.LoggerFactory;
 @Stateless
 public class ContractItemService extends BusinessService<ContractItem> {
 	
-	private final static Logger LOGGER = LoggerFactory.getLogger(ContractItemService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ContractItemService.class);
 
-//	private static final String PRODUCT_ATTRIBUTE_IS_REQUIRED = "attribute (%d) is missing for creation a new contract item attribute";	
-	private static final String CONTRACT_STATUS_NOT_DRAFT = "can not add the new contract of item, cause the current contract it not DRAFT";	
-	private final static String CONTRACT_ITEM_STATUS_NOT_DRAFT_CAN_NOT_REMOVED_OR_UPDATE = "item contract (%s) can not be update nor delete because its status is %s";
+	private static final String CONTRACT_STATUS_NOT_DRAFT = "can not add the new contract of item, cause the current contract it not DRAFT";
+	private static final String CONTRACT_ITEM_STATUS_NOT_DRAFT_CAN_NOT_REMOVED_OR_UPDATE = "item contract (%s) can not be update nor delete because its status is %s";
 	
 	@Inject
 	private ContractService contractService;
@@ -54,13 +54,6 @@ public class ContractItemService extends BusinessService<ContractItem> {
 	private ChargeTemplateServiceAll chargeTemplateServiceAll;
 	@Inject
 	private ServiceTemplateService serviceTemplateService;
-	@Inject
-	private PricePlanMatrixVersionService pricePlanMatrixVersionService;
-	@Inject
-	private PricePlanMatrixService pricePlanMatrixService;
-	
-	private final static BigDecimal HUNDRED = new BigDecimal("100");
-	
 	
 	/**
 	 * @param contractItem
@@ -122,37 +115,50 @@ public class ContractItemService extends BusinessService<ContractItem> {
 		
 		final ServiceTemplate serviceTemplate = serviceTemplateService.findById(idServiceTemplate);
 		item.setServiceTemplate(serviceTemplate);
-		/*item.setRate(rate);
-		item.setAmountWithoutTax(amountWithoutTax);*/
 		
 		this.create(item);	
 		
 	}
 
     @SuppressWarnings("unchecked")
-    public ContractItem getApplicableContractItem(Contract contract, OfferTemplate offer, String productCode, ChargeTemplate chargeTemplate) {
+    public ContractItem getApplicableContractItem(Contract contract, OfferTemplate offer, String productCode,
+												  ChargeTemplate chargeTemplate, WalletOperation walletOperation) {
         ContractItem contractItem = null;
-
-        Query query = getEntityManager().createNamedQuery("ContractItem.getApplicableContracts").setParameter("contractId", contract.getId()).setParameter("offerId", offer.getId())
-            .setParameter("productCode", productCode).setParameter("chargeTemplateId", chargeTemplate.getId());
+        Query query = getEntityManager().createNamedQuery("ContractItem.getApplicableContracts")
+				.setParameter("contractId", contract.getId())
+				.setParameter("offerId", offer.getId())
+				.setParameter("productCode", productCode)
+				.setParameter("chargeTemplateId", chargeTemplate.getId());
         List<ContractItem> applicableContractItems = query.getResultList();
 
         if (!applicableContractItems.isEmpty()) {
             if (applicableContractItems.size() > 1) {
                 log.error("Contract " + contract.getCode() + "has more than one item ");
+            } else {
+				ContractItem contractLineToEvaluate = applicableContractItems.get(0);
+				if(!isBlank(contractLineToEvaluate.getApplicationEl())) {
+					Map<Object, Object> contextVariables = new HashMap<>();
+					contextVariables.put("wo", walletOperation);
+					contextVariables.put("contract", contract);
+					contextVariables.put("contractLine", contractLineToEvaluate);
+					if(evaluateExpression(contractLineToEvaluate.getApplicationEl(), contextVariables, Boolean.class)) {
+						contractItem = contractLineToEvaluate;
+					}
+				}
             }
-			contractItem = applicableContractItems.get(0);
         }
         return contractItem;
     }
     
     @SuppressWarnings("unchecked")
-    public Contract getApplicableContract(List<Contract> contracts, OfferTemplate offer, String productCode, ChargeTemplate chargeTemplate) {
+    public Contract getApplicableContract(List<Contract> contracts, OfferTemplate offer, String productCode,
+										  ChargeTemplate chargeTemplate, WalletOperation walletOperation) {
         for (Contract contract : contracts) {
-            ContractItem contractItem = getApplicableContractItem(contract, offer, productCode, chargeTemplate);
+            ContractItem contractItem =
+					getApplicableContractItem(contract, offer, productCode, chargeTemplate, walletOperation);
             if (contractItem != null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
                 return contract;
-            };
+            }
         }
         return null;
     }
