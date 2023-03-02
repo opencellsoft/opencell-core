@@ -439,7 +439,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if(CollectionUtils.isNotEmpty(product.getDiscountList())) {
             product.getDiscountList().stream()
                             .filter(DiscountPlan::isAutomaticApplication)
-                            .forEach(dp -> instantiateDiscountPlan(serviceInstance, dp));
+                            .forEach(dp -> instantiateDiscountPlan(serviceInstance, dp, isVirtual));
         }
 
     }
@@ -1296,24 +1296,18 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         return serviceInstance;
     }
     
-    public void instantiateDiscountPlan(ServiceInstance serviceInstance, DiscountPlan discountPlan) {
+    public void instantiateDiscountPlan(ServiceInstance serviceInstance, DiscountPlan discountPlan, boolean isVirtual) {
         if(discountPlan == null) {
             throw new BusinessException("The Discount is required for instantiation");
         }
-        if(discountPlan.getStatus() == DiscountPlanStatusEnum.IN_USE) {
+        if(discountPlan.getStatus() == DiscountPlanStatusEnum.IN_USE || discountPlan.getStatus() == DiscountPlanStatusEnum.ACTIVE) {
             Subscription sub = serviceInstance.getSubscription();
             if(sub != null) {
                 BillingAccount billingAccount = sub.getUserAccount().getBillingAccount();
                 if(billingAccount != null) {
-                    if(CollectionUtils.isNotEmpty(billingAccount.getDiscountPlanInstances())) {
-                        for (DiscountPlanInstance discountPlanInstance : billingAccount.getDiscountPlanInstances()) {
-                            if (discountPlan.getCode().equals(discountPlanInstance.getDiscountPlan().getCode())) {
-                                throw new BusinessException("DiscountPlan " + discountPlan.getCode() + " is already instantiated in Billing Account " + billingAccount.getCode() + ".");
-                            }
-                        }
-                        
+                    if(CollectionUtils.isEmpty(billingAccount.getDiscountPlanInstances())) {
+                        discountPlanInstanceService.instantiateDiscountPlan(billingAccount, discountPlan, null, isVirtual);
                     }
-                    discountPlanInstanceService.instantiateDiscountPlan(billingAccount, discountPlan, null);
                 }
             }
            

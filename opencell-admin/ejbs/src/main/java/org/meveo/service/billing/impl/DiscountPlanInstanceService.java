@@ -135,7 +135,7 @@ public class DiscountPlanInstanceService extends PersistenceService<DiscountPlan
 		return super.update(entity);
 	}
 
-	public IDiscountable instantiateDiscountPlan(IDiscountable entity, DiscountPlan dp, List<DiscountPlanInstance> toAdd) throws BusinessException {
+	public IDiscountable instantiateDiscountPlan(IDiscountable entity, DiscountPlan dp, List<DiscountPlanInstance> toAdd, boolean isVirtual) throws BusinessException {
 		if (!isInstantiableDiscountPlan(entity, dp)) {
 			return entity;
 		}
@@ -147,7 +147,8 @@ public class DiscountPlanInstanceService extends PersistenceService<DiscountPlan
 			discountPlanInstance.copyEffectivityDates(dp);
 			discountPlanInstance.setDiscountPlanInstanceStatus(dp);
 			discountPlanInstance.setCfValues(dp.getCfValues());
-			this.create(discountPlanInstance, dp);
+			if(!isVirtual)
+			    this.create(discountPlanInstance, dp);
 			entity.addDiscountPlanInstances(discountPlanInstance);
 
 		} else {
@@ -166,7 +167,8 @@ public class DiscountPlanInstanceService extends PersistenceService<DiscountPlan
 				// update effectivity dates
 				dpiMatched.copyEffectivityDates(dp);
 				dpiMatched.setDiscountPlanInstanceStatus(dp);
-				this.update(dpiMatched, dp);
+				if(!isVirtual)
+				    this.update(dpiMatched, dp);
 
 			} else {
 				// add
@@ -183,7 +185,8 @@ public class DiscountPlanInstanceService extends PersistenceService<DiscountPlan
 				}
 			}
 		}
-		updateDiscountPlan(dp);
+		if(!isVirtual)
+		    updateDiscountPlan(dp);
 		return entity;
 	}
 
