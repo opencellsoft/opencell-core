@@ -1057,6 +1057,7 @@
                 "apiWorkflowManager",
                 "apiBillingManagement",
                 "apiFinanceManagement",
+                "apiCFO",
                 "apiUserManagement",
                 "apiCustomEntityManagement",
                 "apiQuoteManagement",
@@ -2099,6 +2100,14 @@
         {
           "id": "589d953a-ea7a-4d8b-9cba-9d055f416667",
           "name": "apiFinanceManagement",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "d4a3eb0d-a156-4f61-8d93-2298dc65af96",
+          "attributes": {}
+        },
+        {
+          "id": "589d953a-ea7a-4d8b-9cba-9d055f416667",
+          "name": "apiCFO",
           "composite": false,
           "clientRole": true,
           "containerId": "d4a3eb0d-a156-4f61-8d93-2298dc65af96",
@@ -10356,7 +10365,7 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"opencell-web/apiFinanceManagement\",\"required\":false},{\"id\":\"opencell-web/apiFinanceVisualization\",\"required\":false}]"
+              "roles": "[{\"id\":\"opencell-web/apiFinanceManagement\",\"required\":false},{\"id\":\"opencell-web/apiFinanceVisualization\",{\"id\":\"opencell-web/apiCFO\",\"required\":false}]"
             }
           },
           {
@@ -15457,7 +15466,7 @@
             "config": {
               "resources": "[\"Api V1 Finance\"]",
               "scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
-              "applyPolicies": "[\"Role apiFinanceManagement\"]"
+              "applyPolicies": "[\"Role apiFinanceManagement\",\"Role apiCFO\"]"
             }
           },
           {
