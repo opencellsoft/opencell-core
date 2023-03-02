@@ -187,7 +187,10 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
             for (PricePlanMatrixVersion pv : pvs) {
                 DatePeriod validity = pv.getValidity();
-
+                List<ConvertedPricePlanVersion> listConvertedPricePlanVersion = convertedPricePlanVersionService.getListConvertedPricePlanVersionByPpmvId(pv.getId());
+                for (ConvertedPricePlanVersion cppv : listConvertedPricePlanVersion) {
+                    convertedPricePlanVersionService.remove(cppv);
+                }                
                 if(validity == null) {
                     remove(pv);
                 } else {
@@ -232,13 +235,28 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
             newPv.setValidity(new DatePeriod(newFrom, newTo));
             newPv.setCurrentVersion(lastCurrentVersion != null ? ++lastCurrentVersion : getLastVersion(pricePlanMatrix) + 1);
 
-            if ("label;amount".equals(header)) {
+            if ("label;amount".equals(header.substring(0, 12))) {
                 String firstLine = lnr.readLine();
                 String[] split = firstLine.split(";");
                 newPv.setMatrix(false);
                 newPv.setLabel(split[0]);
                 newPv.setAmountWithoutTax(new BigDecimal(convertToDecimalFormat(split[1])));
                 create(newPv);
+                for(int i=2; i < split.length; i++) {
+                    String[] unitPriceLineSplit = split[i].split(COLUMN_SEPARATOR);
+                    ConvertedPricePlanVersion cppv = new ConvertedPricePlanVersion();
+                    cppv.setConvertedPrice(new BigDecimal(convertToDecimalFormat(unitPriceLineSplit[0])));
+                    String tradingCurrencyCode = unitPriceLineSplit[1].toUpperCase();
+                    TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(tradingCurrencyCode); 
+                    if(tradingCurrency == null) {
+                        throw new MeveoApiException("Trading currency doesn't exist for  ( code : " +  tradingCurrencyCode);
+                    }
+                    cppv.setTradingCurrency(tradingCurrency);
+                    cppv.setRate(new BigDecimal(convertToDecimalFormat(unitPriceLineSplit[2])));
+                    cppv.setUseForBillingAccounts("true".equals(unitPriceLineSplit[3].toLowerCase()) ? true : false);
+                    cppv.setPricePlanMatrixVersion(newPv);
+                    convertedPricePlanVersionService.create(cppv);
+                }
             } else if (StringUtils.isNotBlank(header)) {
                 // File name pattern: [Price plan version identifier]_-_[Charge name]_-_[Charge code]_-_[Label of the price version]_-_[Status of price version]_-_[start
                 // date time stamp]_-_[end date time stamp]
