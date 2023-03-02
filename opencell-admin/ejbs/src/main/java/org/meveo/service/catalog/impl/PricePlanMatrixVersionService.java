@@ -45,10 +45,6 @@ import javax.inject.Inject;
 import javax.persistence.FlushModeType;
 import javax.persistence.NoResultException;
 
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvParser;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -66,9 +62,11 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.ColumnTypeEnum;
+import org.meveo.model.catalog.ConvertedPricePlanVersion;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
@@ -80,12 +78,17 @@ import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.cpq.enums.PriceVersionTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.AttributeInstanceService;
 import org.meveo.service.cpq.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvParser;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 /**
  * @author Tarik FA.
@@ -95,6 +98,8 @@ import org.slf4j.LoggerFactory;
 public class PricePlanMatrixVersionService extends PersistenceService<PricePlanMatrixVersion> {
 
     private static final String STATUS_ERROR_MSG = "status of the price plan matrix version is %s, it can not be updated nor removed";
+    
+    private static final String COLUMN_SEPARATOR = "\\|";
 
     @Inject
     private PricePlanMatrixColumnService pricePlanMatrixColumnService;
@@ -119,6 +124,9 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     
     @Inject
     private ConvertedPricePlanVersionService convertedPricePlanVersionService;
+    
+    @Inject
+    private TradingCurrencyService tradingCurrencyService;
     
     protected Logger log = LoggerFactory.getLogger(getClass());
 
