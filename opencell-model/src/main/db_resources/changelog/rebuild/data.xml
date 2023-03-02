@@ -17664,6 +17664,36 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
     <changeSet id="#INTRD-7049_20220509" author="TarikRabeh" />
    	<changeSet id="#INTRD-13867_20230220" author="aeljaouhari" />
     <changeSet id="#INTRD-13867_20230301" author="AbdellatifBARI" />
+    
+    <changeSet id="#INTRD-14042_20230227" author="aeljaouhari">
+		<insert tableName="meveo_script_instance">
+			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="org.meveo.service.script.accountingscheme.NoAccountingEntry" />
+			<column name="script">
+				<![CDATA[package org.meveo.service.script.accountingscheme;
+						public class NoAccountingEntry extends NoAccountingEntryScript {}
+				]]>
+			</column>
+			<column name="src_type" value="JAVA" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="description" value="This accounting scheme doesn’t produce any accounting entry. Use it on account operation type that should not be exported to accounting."/>
+            <column name="description_i18n">
+				<![CDATA[{"ENG":"<p>This accounting scheme doesn’t produce any accounting entry.</p><p>Use it on account operation type that should not be exported to accounting.</p>","FRA":"<p>Ce schéma comptable ne produit aucune écriture comptable.</p><p>Utilisez le pour les types d’opérations de compte qui ne doivent pas être exportés vers la comptabilité.</p>"}]]>
+			</column>
+			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='ACCOUNTING_SCHEMES')" />
+		</insert>
+		<insert tableName="ar_accounting_scheme">
+			<column name="id" valueSequenceNext="ar_accounting_scheme_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="No accounting entry" />
+			<column name="description" value="No accounting entry"/>
+			<column name="long_description_i18n" value='{"FRA":"Pas d&apos;écriture comptable","ENG":"No accounting entry"}'/>
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.accountingscheme.NoAccountingEntry')"/>
+		</insert>	
+	</changeSet>
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
