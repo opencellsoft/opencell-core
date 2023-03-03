@@ -275,7 +275,6 @@ public class MEVEOCdrParser implements ICdrParser {
                 throw (CDRParsingException) cdr.getRejectReasonException();
             }
 
-            deduplicate(cdr);
             List<EDR> edrs = new ArrayList<EDR>();
             boolean foundMatchingAccess = false;
             
@@ -344,18 +343,6 @@ public class MEVEOCdrParser implements ICdrParser {
         edr.setSubscription(subscription);
 
         return edr;
-    }
-
-    /**
-     * Check if CDR was processed already by comparing Origin record/digest values
-     * 
-     * @param cdr CDR to check
-     * @throws DuplicateException CDR was processed already
-     */
-    private void deduplicate(CDR cdr) throws DuplicateException {
-        if (edrService.isDuplicateFound(cdr.getOriginBatch(), cdr.getOriginRecord())) {
-            throw new DuplicateException(cdr);
-        }
     }
 
     @Override

@@ -172,25 +172,6 @@ public class CDRParsingService extends PersistenceService<EDR> {
 //		cdrParser.initByApi(username, ip);
 //		return cdrParser;
 //	}
-
-	/**
-	 * Creates the edr.
-	 *
-	 * @param line the line
-	 * @throws CDRParsingException the CDR parsing exception
-	 * @throws BusinessException   the business exception
-	 */
-	@JpaAmpNewTx
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void createEdrs(CDR cdr) throws CDRParsingException, BusinessException {
-		List<EDR> edrs = getEDRList(cdr);
-		if (edrs != null && edrs.size() > 0) {
-			for (EDR edr : edrs) {
-				createEdr(edr, cdr);
-			}
-		}
-	}
-	
 	@JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createEdrs(List<EDR> edrs, CDR cdr) throws CDRParsingException, BusinessException {
@@ -245,7 +226,9 @@ public class CDRParsingService extends PersistenceService<EDR> {
 				throw (CDRParsingException) cdr.getRejectReasonException();
 			}
 
-			deduplicate(cdr);
+			if (edrService.isDuplicateFound(cdr.getOriginBatch(), cdr.getOriginRecord())) {
+				throw new DuplicateException(cdr);
+			}
 			List<EDR> edrs = new ArrayList<EDR>();
 			List<Access> accessPoints = accessPointLookup(cdr);
 
@@ -343,18 +326,6 @@ public class CDRParsingService extends PersistenceService<EDR> {
 		}
 
 		return edr;
-	}
-
-	/**
-	 * Check if CDR was processed already by comparing Origin record/digest values
-	 * 
-	 * @param cdr CDR to check
-	 * @throws DuplicateException CDR was processed already
-	 */
-	private void deduplicate(CDR cdr) throws DuplicateException {
-		if (edrService.isDuplicateFound(cdr.getOriginBatch(), cdr.getOriginRecord())) {
-			throw new DuplicateException(cdr);
-		}
 	}
 
 	/**

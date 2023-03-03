@@ -46,12 +46,9 @@ import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.model.rating.EDR;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
+import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.job.JobExecutionService;
-import org.meveo.service.medina.impl.CDRParsingException;
-import org.meveo.service.medina.impl.CDRParsingService;
-import org.meveo.service.medina.impl.CDRService;
-import org.meveo.service.medina.impl.ICdrParser;
-import org.meveo.service.medina.impl.ICdrReader;
+import org.meveo.service.medina.impl.*;
 import org.slf4j.Logger;
 
 /**
@@ -81,6 +78,9 @@ public class MediationFileProcessing {
 
 	@Inject
 	private CDRService cdrService;
+
+	@Inject
+	private EdrService edrService;
 	
 	/**
 	 * Read/parse mediation file and process one line at a time. NOTE: Executes in
@@ -124,11 +124,9 @@ public class MediationFileProcessing {
                     break;
                 }
 				if (StringUtils.isBlank(cdr.getRejectReason())) {
-				    List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
-	                List<EDR> edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);               
-	                log.debug("Processing record line content:{} from file {}", cdr.getLine(), fileName);
+	                this.convertAndCreateCdrToEdr(cdrParser, cdr);
 
-	                cdrParserService.createEdrs(edrs,cdr);
+	                log.debug("Processing record line content:{} from file {}", cdr.getLine(), fileName);
 
 	                synchronized (outputFileWriter) {
 	                    outputFileWriter.println(cdr.getLine());
@@ -203,4 +201,15 @@ public class MediationFileProcessing {
             }                       
         }
     }
+
+	public synchronized void convertAndCreateCdrToEdr(ICdrParser cdrParser, CDR cdr) throws CDRParsingException {
+		List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
+		List<EDR> edrs = cdrParser.convertCdrToEdr(cdr, accessPoints);
+
+		if (edrService.isDBDuplicateFound(cdr.getOriginBatch(), cdr.getOriginRecord())) {
+			throw new DuplicateException(cdr);
+		} else {
+			cdrParserService.createEdrs(edrs, cdr);
+		}
+	}
 }
