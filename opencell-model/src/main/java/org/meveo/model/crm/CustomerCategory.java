@@ -35,6 +35,7 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ISearchable;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.tax.TaxCategory;
 
@@ -104,6 +105,14 @@ public class CustomerCategory extends BusinessCFEntity implements ISearchable {
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "jsonb")
     private Map<String, String> descriptionI18n;
+    
+    /**
+     * Default seller
+     **/
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "default_seller_id", nullable = false)
+    @NotNull
+    private Seller defaultSeller;
 
     /**
      * @return True if account is exonerated from taxes
@@ -205,4 +214,13 @@ public class CustomerCategory extends BusinessCFEntity implements ISearchable {
             return this.description;
         }
     }
+
+	public Seller getDefaultSeller() {
+		return defaultSeller;
+	}
+
+	public void setDefaultSeller(Seller defaultSeller) {
+		this.defaultSeller = defaultSeller;
+	}
+    
 }

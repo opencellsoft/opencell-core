@@ -369,6 +369,8 @@ public class CustomerApi extends AccountEntityApi {
             customer.setSeller(seller);
         } else if (postData.getParentCustomerCode() != null) {
         	customer.setSeller(customer.getParentCustomer().getSeller());
+        } else {
+        	customer.setSeller(customer.getCustomerCategory().getDefaultSeller());
         }
 
     }
@@ -604,6 +606,13 @@ public class CustomerApi extends AccountEntityApi {
                 throw new EntityDoesNotExistsException(TaxCategory.class, postData.getTaxCategoryCode());
             }
             customerCategory.setTaxCategory(taxCategory);
+        }
+        if (!StringUtils.isBlank(postData.getDefaultSellerCode())) {
+            Seller defaultSeller = sellerService.findByCode(postData.getDefaultSellerCode());
+            if (defaultSeller == null) {
+                throw new EntityDoesNotExistsException(Seller.class, postData.getDefaultSellerCode());
+            }
+            customerCategory.setDefaultSeller(defaultSeller);
         }
 
         customerCategory.setTaxCategoryEl(postData.getTaxCategoryEl());
