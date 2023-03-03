@@ -308,6 +308,9 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 	 * @return the convertedAmountWithoutTax
 	 */
 	public BigDecimal getConvertedAmountWithoutTax() {
+	    if (convertedAmountWithoutTax == null) {
+            return BigDecimal.ZERO;
+        }
 		return convertedAmountWithoutTax;
 	}
 
@@ -322,6 +325,9 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 	 * @return the convertedAmountTax
 	 */
 	public BigDecimal getConvertedAmountTax() {
+	    if (convertedAmountTax == null) {
+            return BigDecimal.ZERO;
+        }
 		return convertedAmountTax;
 	}
 
@@ -336,6 +342,9 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 	 * @return the convertedAmountWithTax
 	 */
 	public BigDecimal getConvertedAmountWithTax() {
+	    if (convertedAmountWithTax == null) {
+            return BigDecimal.ZERO;
+        }
 		return convertedAmountWithTax;
 	}
 
