@@ -15935,5 +15935,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedColumnNames="id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
+    
+    <changeSet id="#INTRD-14598_20230303" author="zelmeliani">
+        <addColumn tableName="finance_settings">
+            <column name="discount_advanced_mode" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>
