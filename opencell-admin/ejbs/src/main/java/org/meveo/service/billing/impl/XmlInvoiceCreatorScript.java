@@ -2587,6 +2587,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
             if (ratedItems != null && !ratedItems.isEmpty()) {
                 Element ratedItemsElement = doc.createElement("ratedItems");
+
                 for (RatedTransaction ratedItem : ratedItems) {
 
                     Element ratedItemNode = doc.createElement("ratedItem");
@@ -2606,9 +2607,10 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                     }
                     ratedItemsElement.appendChild(ratedItemNode);
                 }
+                line.appendChild(ratedItemsElement);
             }
-        }
 
+        }
         return line;
     }
 
