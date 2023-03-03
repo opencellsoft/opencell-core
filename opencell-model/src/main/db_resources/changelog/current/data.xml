@@ -15954,6 +15954,12 @@ public class CdrFlatFileImportScript extends Script {
 		</insert>
     </changeSet>
 
+    <changeSet id="#INTRD-12906_20230215" author="hichamELHALOUI">
+        <update tableName="meveo_job_instance">
+            <column name="following_job_id" value="null" ></column>
+            <where>following_job_id in (select id from meveo_job_instance where code in ('ValidateBR_Job', 'Inv_Job' ))</where>
+        </update>
+    </changeSet>
     <changeSet id="#INTRD-12906_20230112" author="hichamELHALOUI">
         <delete tableName="adm_script_exec_role">
             <where>script_instance_id  in (select id from meveo_script_instance where code='org.meveo.service.script.ValidateBRScript')</where>
