@@ -403,9 +403,9 @@ public class InvoiceLine extends AuditableCFEntity {
     @Column(name = "use_specific_price_conversion")
     private boolean useSpecificPriceConversion;
     
-    @Column(name = "conversion_from_billing_currrency")
+    @Column(name = "conversion_from_billing_currency")
     @Type(type = "numeric_boolean")
-    private boolean conversionFromBillingCurrrency = false;
+    private boolean conversionFromBillingCurrency = false;
     
 	/**
 	 * Open Order Number
@@ -903,7 +903,7 @@ public class InvoiceLine extends AuditableCFEntity {
 	@PrePersist
 	@PreUpdate
 	public void prePersistOrUpdate() {
-		if (!this.useSpecificPriceConversion && !this.conversionFromBillingCurrrency) {
+		if (!this.useSpecificPriceConversion && !this.conversionFromBillingCurrency) {
 			BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
 			this.convertedAmountWithoutTax = this.amountWithoutTax != null ?
 					this.amountWithoutTax.multiply(appliedRate) : ZERO;
@@ -995,12 +995,12 @@ public class InvoiceLine extends AuditableCFEntity {
         this.useSpecificPriceConversion = useSpecificPriceConversion;
     }
 
-	public boolean isConversionFromBillingCurrrency() {
-		return conversionFromBillingCurrrency;
+	public boolean isConversionFromBillingCurrency() {
+		return conversionFromBillingCurrency;
 	}
 
-	public void setConversionFromBillingCurrrency(boolean conversionFromBillingCurrrency) {
-		this.conversionFromBillingCurrrency = conversionFromBillingCurrrency;
+	public void setConversionFromBillingCurrency(boolean conversionFromBillingCurrency) {
+		this.conversionFromBillingCurrency = conversionFromBillingCurrency;
 	}    
     
 }

@@ -157,9 +157,9 @@ public abstract class InvoiceAgregate extends AuditableEntity {
     @Type(type = "numeric_boolean")
     private boolean useSpecificPriceConversion;
     
-    @Column(name = "conversion_from_billing_currrency")
+    @Column(name = "conversion_from_billing_currency")
     @Type(type = "numeric_boolean")
-    private boolean conversionFromBillingCurrrency = false;
+    private boolean conversionFromBillingCurrency = false;
 
     /**
      * Aggregate converted amount without tax
@@ -308,12 +308,12 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 		this.useSpecificPriceConversion = useSpecificPriceConversion;
 	}
 	
-	public boolean isConversionFromBillingCurrrency() {
-		return conversionFromBillingCurrrency;
+	public boolean isConversionFromBillingCurrency() {
+		return conversionFromBillingCurrency;
 	}
 
-	public void setConversionFromBillingCurrrency(boolean conversionFromBillingCurrrency) {
-		this.conversionFromBillingCurrrency = conversionFromBillingCurrrency;
+	public void setConversionFromBillingCurrency(boolean conversionFromBillingCurrency) {
+		this.conversionFromBillingCurrency = conversionFromBillingCurrency;
 	}
 
 	/**
@@ -434,7 +434,7 @@ public abstract class InvoiceAgregate extends AuditableEntity {
     @PrePersist
     @PreUpdate
     public void prePersistOrUpdate() {
-        if (!this.useSpecificPriceConversion && !this.conversionFromBillingCurrrency) {
+        if (!this.useSpecificPriceConversion && !this.conversionFromBillingCurrency) {
             BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
             this.convertedAmountWithoutTax = this.amountWithoutTax != null
                     ? this.amountWithoutTax.multiply(appliedRate) : ZERO;

@@ -764,9 +764,9 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Type(type = "numeric_boolean")
     private boolean useSpecificPriceConversion = false;
     
-    @Column(name = "conversion_from_billing_currrency")
+    @Column(name = "conversion_from_billing_currency")
     @Type(type = "numeric_boolean")
-    private boolean conversionFromBillingCurrrency = false;
+    private boolean conversionFromBillingCurrency = false;
 
     public Invoice() {
 	}
@@ -863,7 +863,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
             }
         }
 
-        if (!this.useSpecificPriceConversion && !this.conversionFromBillingCurrrency) {
+        if (!this.useSpecificPriceConversion && !this.conversionFromBillingCurrency) {
         	BigDecimal appliedRate = getAppliedRate();
             this.convertedAmountTax = this.amountTax != null
                     ? this.amountTax.multiply(appliedRate) : ZERO;
@@ -1975,13 +1975,12 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 		this.useSpecificPriceConversion = useSpecificPriceConversion;
 	}
 
-	public boolean isConversionFromBillingCurrrency() {
-		return conversionFromBillingCurrrency;
+	public boolean isConversionFromBillingCurrency() {
+		return conversionFromBillingCurrency;
 	}
 
-
-	public void setConversionFromBillingCurrrency(boolean conversionFromBillingCurrrency) {
-		this.conversionFromBillingCurrrency = conversionFromBillingCurrrency;
+	public void setConversionFromBillingCurrency(boolean conversionFromBillingCurrency) {
+		this.conversionFromBillingCurrency = conversionFromBillingCurrency;
 	}
 
 }

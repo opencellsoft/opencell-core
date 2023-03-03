@@ -3139,7 +3139,7 @@
             <column name="invoice_validation_rule_id" type="bigint"/>
             <column name="converted_invoice_balance" type="numeric(23, 12)"/>
     		<column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0" />
-    		<column name="conversion_from_billing_currrency" type="${type.boolean}" defaultValueNumeric="0" />
+    		<column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -3195,7 +3195,7 @@
             <column name="converted_amount_with_tax" type="numeric(23, 12)"/>
             <column name="converted_amount_tax" type="numeric(23, 12)"/>
     		<column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0" />
-    		<column name="conversion_from_billing_currrency" type="${type.boolean}" defaultValueNumeric="0" />
+    		<column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-178">
@@ -10824,7 +10824,7 @@
             </column>
             <column name="cf_values" type="${type.json}" />
             <column name="adjustment_status" type="varchar(50)"/>
-            <column name="conversion_from_billing_currrency" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
