@@ -1,8 +1,11 @@
 package org.meveo.model.billing;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,6 +13,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -19,6 +23,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.cpq.enums.OperatorEnum;
 import org.meveo.model.scripts.ScriptInstance;
 
 
@@ -67,6 +72,17 @@ public class InvoiceValidationRule extends BusinessEntity {
     @Enumerated(EnumType.STRING)
     @NotNull
     private EvaluationModeEnum evaluationMode = EvaluationModeEnum.VALIDATION;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "operator")
+    private OperatorEnum operator = OperatorEnum.OR;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private InvoiceValidationRule parentRule;
+    
+    @OneToMany(mappedBy = "parentRule", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<InvoiceValidationRule> subRules = new ArrayList<>();
     
     @Transient
     private boolean toReorder;
@@ -158,4 +174,29 @@ public class InvoiceValidationRule extends BusinessEntity {
     public void setEvaluationMode(EvaluationModeEnum evaluationMode) {
         this.evaluationMode = evaluationMode;
     }
+
+	public OperatorEnum getOperator() {
+		return operator;
+	}
+
+	public void setOperator(OperatorEnum operator) {
+		this.operator = operator;
+	}
+
+	public InvoiceValidationRule getParentRule() {
+		return parentRule;
+	}
+
+	public void setParentRule(InvoiceValidationRule parentRule) {
+		this.parentRule = parentRule;
+	}
+
+	public List<InvoiceValidationRule> getSubRules() {
+		return subRules;
+	}
+
+	public void setSubRules(List<InvoiceValidationRule> subRules) {
+		this.subRules = subRules;
+	}
+    
 }

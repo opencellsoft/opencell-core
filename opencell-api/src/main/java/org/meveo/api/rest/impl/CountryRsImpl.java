@@ -27,6 +27,7 @@ import org.meveo.api.dto.response.GetTradingCountryResponse;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.CountryRs;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
+import org.meveo.model.billing.Country;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -135,9 +136,10 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
     @Override
     public ActionStatus createOrUpdate(CountryDto countryDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
         try {
-            countryApi.createOrUpdate(countryDto);
+            CountryDto country = countryApi.createOrUpdate(countryDto);
+            result.setEntityId(country.getEntityId());
+            result.setEntityCode(country.getCountryCode());
         } catch (Exception e) {
             processException(e, result);
         }

@@ -17,6 +17,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.annotation.Nonnull;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -127,6 +129,11 @@ public class AccountOperationServiceMatchingTest {
                 @Override
                 public Long getId() {
                     return aoIds.get(indice);
+                }
+
+                @Override
+                public BigDecimal getAmountToMatch() {
+                    return null;
                 }
             };
 

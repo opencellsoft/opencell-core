@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceValidationStatusEnum;
 import org.meveo.model.payments.CreditCategory;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.script.Script;
@@ -19,8 +18,6 @@ public class ValidateCreditCategoryScript extends Script {
 
     @Override
     public void execute(Map<String, Object> context) throws BusinessException {
-        log.info("ValidateCreditCategoryScript EXECUTE context {}", context);
-
         Invoice invoice = (Invoice) context.get(Script.CONTEXT_ENTITY);
 
         if (invoice == null) {
@@ -28,19 +25,15 @@ public class ValidateCreditCategoryScript extends Script {
             throw new BusinessException("No Invoice passed as CONTEXT_ENTITY");
         }
 
-        log.info("Process ValidateCreditCategoryScript {}", invoice);
-
         List<CreditCategory> creditCategories = (List<CreditCategory>) context.get("CheckCreditCategory");
 
 		if (creditCategories != null && !creditCategories.isEmpty()) {
 			List<Long> creditCategorytIds = creditCategories.stream().map(CreditCategory::getId).collect(Collectors.toList());
 			long counter = billingAccountService.getCountByCreditCategory(invoice.getBillingAccount().getId(), creditCategorytIds);
-			context.put(Script.INVOICE_VALIDATION_STATUS, counter == 0 ? InvoiceValidationStatusEnum.VALID : (InvoiceValidationStatusEnum) context.get(Script.RESULT_VALUE));
+			context.put(Script.INVOICE_VALIDATION_STATUS, counter == 0 ? true : false);
 		} else {
 			context.put(Script.INVOICE_VALIDATION_STATUS, null);
 		}
-
-		log.info("Result Processing ValidateCreditCategoryScript {}", context.get(Script.INVOICE_VALIDATION_STATUS));
     }
 
 }

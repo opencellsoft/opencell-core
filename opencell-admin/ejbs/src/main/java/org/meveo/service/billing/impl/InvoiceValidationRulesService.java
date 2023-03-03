@@ -22,9 +22,11 @@ public class InvoiceValidationRulesService extends BusinessService<InvoiceValida
     public void updateInvoiceTypePriority(InvoiceValidationRule invoiceValidationRule) {
 
         InvoiceType invoiceType = invoiceValidationRule.getInvoiceType();
+        List<InvoiceValidationRule> invoiceValidationRules = invoiceType.getInvoiceValidationRules()
+				.stream().filter(rule -> Objects.isNull(rule.getParentRule())).collect(Collectors.toList());
 
         if (invoiceValidationRule.getPriority() == null) {
-            invoiceValidationRule.setPriority(invoiceType.getInvoiceValidationRules() != null ? invoiceType.getInvoiceValidationRules().size() + 1 : null);
+            invoiceValidationRule.setPriority(invoiceValidationRules != null ? invoiceValidationRules.size() + 1 : null);
         } else if (invoiceValidationRule.isToReorder()) {
         	reorderInvoiceValidationRules(invoiceValidationRule, false);
         }
@@ -32,7 +34,8 @@ public class InvoiceValidationRulesService extends BusinessService<InvoiceValida
 
 	public void reorderInvoiceValidationRules(InvoiceValidationRule invoiceValidationRule, boolean remove) {
 		InvoiceType invoiceType = invoiceValidationRule.getInvoiceType();
-		List<InvoiceValidationRule> invoiceValidationRules = invoiceType.getInvoiceValidationRules();
+		List<InvoiceValidationRule> invoiceValidationRules = invoiceType.getInvoiceValidationRules()
+				.stream().filter(rule -> Objects.isNull(rule.getParentRule())).collect(Collectors.toList());
 
 		int rulePriority = invoiceValidationRule.getPriority();
 

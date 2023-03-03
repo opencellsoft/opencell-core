@@ -260,6 +260,7 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 		invoiceBaseApi.populateCustomFieldsForGenericApi(invoiceLineInput.getInvoiceLine().getCustomFields(), invoiceLine, false);
 		// Update Invoice Line
 		invoiceLinesService.update(invoiceLine);
+		invoiceService.getEntityManager().flush();
 		invoiceService.calculateInvoice(invoice);
 		BigDecimal lastApliedRate = invoiceService.getCurrentRate(invoice,invoice.getInvoiceDate());
 		invoiceService.refreshAdvanceInvoicesConvertedAmount(invoice,lastApliedRate);
@@ -469,9 +470,6 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
     	    else {
     	        invoice.setLinkedInvoices(new HashSet<>());
     	    }
-    	    LinkedInvoice linkedInvoice = new LinkedInvoice(invoice, adjInvoice);
-			linkedInvoiceService.create(linkedInvoice);
-    	    invoice.getLinkedInvoices().add(linkedInvoice);
     	    invoiceService.update(invoice);
 	    }
 	    catch (Exception e) {

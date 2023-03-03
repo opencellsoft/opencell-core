@@ -75,6 +75,9 @@ public class CountryDto extends AuditableEntityDto implements IEnableDto {
     /** The language descriptions. */
     private List<LanguageDescriptionDto> languageDescriptions;
 
+    /** Entity Id */
+    private Long entityId;
+
     /**
      * Instantiates a new country dto.
      */
@@ -100,6 +103,7 @@ public class CountryDto extends AuditableEntityDto implements IEnableDto {
             languageCode = country.getLanguage().getLanguageCode();
         }
         languageDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(country.getDescriptionI18n());
+        entityId = country.getId();
     }
 
     /**
@@ -237,5 +241,13 @@ public class CountryDto extends AuditableEntityDto implements IEnableDto {
 
     public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
         this.languageDescriptions = languageDescriptions;
+    }
+
+    public Long getEntityId() {
+        return entityId;
+    }
+
+    public void setEntityId(Long entityId) {
+        this.entityId = entityId;
     }
 }

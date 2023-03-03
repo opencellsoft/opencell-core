@@ -157,7 +157,7 @@ public class InvoiceLinesFactory {
             BigDecimal unitAmount = (BigDecimal) data.getOrDefault("unit_amount_without_tax", ZERO);
             BigDecimal quantity = (BigDecimal) data.getOrDefault("quantity", ZERO);
             MathContext mc = new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
-            BigDecimal unitPrice = quantity.compareTo(ZERO) == 0 ? ZERO : unitAmount.divide(quantity, mc);
+            BigDecimal unitPrice = quantity.compareTo(ZERO) == 0 ? unitAmount : unitAmount.divide(quantity, mc);
             invoiceLine.setUnitPrice(unitPrice);
         } else {
             invoiceLine.setUnitPrice(isEnterprise ? (BigDecimal) data.getOrDefault("unit_amount_without_tax", ZERO)

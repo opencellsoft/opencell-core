@@ -154,6 +154,7 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
+import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.mediation.Access;
@@ -637,6 +638,11 @@ public class SubscriptionApi extends BaseApi {
         // instantiate the discounts
         if (postData.getDiscountPlansForInstantiation() != null) {
             for (DiscountPlanDto discountPlanDto : postData.getDiscountPlansForInstantiation()) {
+
+                DiscountPlanInstance discountPlanInstance = discountPlanInstanceService.findBySubscriptionAndCode(subscription, discountPlanDto.getCode());
+                if(discountPlanInstance != null) {
+                    continue;
+                }
                 DiscountPlan dp = discountPlanService.findByCode(discountPlanDto.getCode());
                 if (dp == null) {
                     throw new EntityDoesNotExistsException(DiscountPlan.class, discountPlanDto.getCode());
@@ -660,7 +666,7 @@ public class SubscriptionApi extends BaseApi {
             }
 
         }
-
+        removeDiscountPlanInstanceForSubscription(subscription, postData.getDiscountPlanInstancesToRemove());
         return subscription;
     }
 
@@ -1203,16 +1209,7 @@ public class SubscriptionApi extends BaseApi {
             throw e;
         }
         try {
-        	
-        	ServiceInstance serviceInstance=null;
-        	if(!StringUtils.isBlank(postData.getProductCode())) {
-        		 List<ServiceInstance> alreadyInstantiatedServices = serviceInstanceService.findByCodeSubscriptionAndStatus(postData.getProductCode(), subscription,
-                         InstanceStatusEnum.ACTIVE);
-            	 if (alreadyInstantiatedServices == null ||  alreadyInstantiatedServices.isEmpty()) {
-            		 throw new BusinessException("The product instance "+postData.getProductCode()+" doest not exist for this subscription or is not active");
-            	 }
-            	 serviceInstance=alreadyInstantiatedServices.get(0);
-        	}
+            ServiceInstance serviceInstance = buildServiceInstanceForOSO(postData, subscription);
 
         	OneShotChargeInstance osho = oneShotChargeInstanceService
                     .instantiateAndApplyOneShotCharge(subscription, serviceInstance, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), postData.getOperationDate(),
@@ -2127,6 +2124,11 @@ public class SubscriptionApi extends BaseApi {
             if (postData.getMinimumLabelEl() != null) {
                 serviceToUpdate.setMinimumLabelEl(postData.getMinimumLabelEl());
             }
+            
+            if(postData.getPriceVersionDate() != null) {
+            	serviceToUpdate.setPriceVersionDate(postData.getPriceVersionDate());
+            	serviceToUpdate.setPriceVersionDateSetting(PriceVersionDateSettingEnum.MANUAL);
+            }
            
             // populate customFields
             try {
@@ -2176,6 +2178,39 @@ public class SubscriptionApi extends BaseApi {
                 });
             }
 
+            // instantiate the discounts
+            if (serviceToUpdateDto.getDiscountPlansForInstantiation() != null) {
+                for (DiscountPlanDto discountPlanDto : serviceToUpdateDto.getDiscountPlansForInstantiation()) {
+
+                    DiscountPlanInstance discountPlanInstance = discountPlanInstanceService.findBySubscriptionAndCode(subscription, discountPlanDto.getCode());
+                    if(discountPlanInstance != null) {
+                        continue;
+                    }
+                    DiscountPlan dp = discountPlanService.findByCode(discountPlanDto.getCode());
+                    if (dp == null) {
+                        throw new EntityDoesNotExistsException(DiscountPlan.class, discountPlanDto.getCode());
+                    }
+
+                    discountPlanService.detach(dp);
+                    dp = DiscountPlanDto.copyFromDto(discountPlanDto, dp);
+
+                    // populate customFields
+                    try {
+                        populateCustomFields(discountPlanDto.getCustomFields(), dp, true);
+                    } catch (MissingParameterException | InvalidParameterException e) {
+                        log.error("Failed to associate custom field instance to an entity: {} {}", discountPlanDto.getCode(), e.getMessage());
+                        throw e;
+                    } catch (Exception e) {
+                        log.error("Failed to associate custom field instance to an entity {}", discountPlanDto.getCode(), e);
+                        throw new MeveoApiException("Failed to associate custom field instance to an entity " + discountPlanDto.getCode());
+                    }
+                    if (subscription.getOffer().getAllowedDiscountPlans() != null && subscription.getOffer().getAllowedDiscountPlans().contains(dp)) {
+                        continue;
+                    }
+                    subscriptionService.instantiateDiscountPlan(subscription, dp);
+                }
+            }
+            removeDiscountPlanInstanceForSubscription(subscription, serviceToUpdateDto.getDiscountPlanForTermination());
             serviceInstanceService.update(serviceToUpdate);
         }
     }
@@ -2956,12 +2991,18 @@ public class SubscriptionApi extends BaseApi {
                 subscriptionService.instantiateDiscountPlan(subscription, dp);
             }
         }
-        if (offerTemplate.getAllowedDiscountPlans() != null && !offerTemplate.getAllowedDiscountPlans().isEmpty()) {
-            offerTemplate.getAllowedDiscountPlans().forEach(discountPlan -> {
-                subscriptionService.instantiateDiscountPlan(subscription, discountPlan);
+        return subscription;
+    }
+    
+    private void removeDiscountPlanInstanceForSubscription(Subscription subscription, List<String> discountPlanInstanceToRemove) {
+        if(CollectionUtils.isNotEmpty(discountPlanInstanceToRemove)) {
+            discountPlanInstanceToRemove.forEach(discountPlanCode -> {
+                DiscountPlanInstance discountPlanInstance = discountPlanInstanceService.findBySubscriptionAndCode(subscription, discountPlanCode);
+                if(discountPlanInstance != null) {
+                    subscriptionService.terminateDiscountPlan(subscription, discountPlanInstance);
+                }
             });
         }
-        return subscription;
     }
 
     private void updateSubscriptionVersions(Long nextSubscription, Long previousSubscription, Subscription subscriptionToUpdate) {
@@ -3303,5 +3344,69 @@ public class SubscriptionApi extends BaseApi {
     	}
 
     	log.info("Products instanciated successfully for subscription {}", subscriptionCode);
+    }
+
+    /**
+     * Build ServiceInstance from OSO Payload
+     *
+     * @param postData     OSO payload
+     * @param subscription subscription
+     * @return Virtual or Real ServiceInstance
+     */
+    private ServiceInstance buildServiceInstanceForOSO(ApplyOneShotChargeInstanceRequestDto postData, Subscription subscription) {
+        ServiceInstance serviceInstance = null;
+        if (postData.getAttributes() != null) {
+            serviceInstance = new ServiceInstance(); // Create a virtual ServiceInstance
+            serviceInstance.setSubscription(subscription);
+
+            // Product data
+            if (StringUtils.isNotBlank(postData.getProductCode())) {
+                Product product = productService.findByCode(postData.getProductCode());
+                ProductVersion pVersion = new ProductVersion();
+                pVersion.setProduct(product);
+                serviceInstance.setCode(product.getCode());
+                serviceInstance.setProductVersion(pVersion);
+            }
+
+            // add attributes
+            for (AttributeInstanceDto attributeInstanceDto : postData.getAttributes()) {
+                AttributeInstance attributeInstance = new AttributeInstance();
+                attributeInstance.setAttribute(loadEntityByCode(attributeService, attributeInstanceDto.getAttributeCode(), Attribute.class));
+                attributeInstance.setServiceInstance(serviceInstance);
+                attributeInstance.setSubscription(subscription);
+                attributeInstance.setDoubleValue(attributeInstanceDto.getDoubleValue());
+                attributeInstance.setStringValue(attributeInstanceDto.getStringValue());
+                attributeInstance.setBooleanValue(attributeInstanceDto.getBooleanValue());
+                attributeInstance.setDateValue(attributeInstanceDto.getDateValue());
+                serviceInstance.addAttributeInstance(attributeInstance);
+            }
+        } else { // no attributs provided in payload (OSO case for example)
+            List<ServiceInstance> alreadyInstantiatedServices = null;
+            if (StringUtils.isNotBlank(postData.getProductCode())) {
+                alreadyInstantiatedServices = serviceInstanceService.findByCodeSubscriptionAndStatus(postData.getProductCode(), subscription,
+                        InstanceStatusEnum.ACTIVE);
+                if (alreadyInstantiatedServices == null || alreadyInstantiatedServices.isEmpty()) {
+                    throw new BusinessException("The product instance " + postData.getProductCode() + " doest not exist for this subscription or is not active");
+                }
+            } else {
+                alreadyInstantiatedServices = subscription.getServiceInstances().stream()
+                        .filter(si -> si.getStatus() == InstanceStatusEnum.ACTIVE)
+                        .collect(Collectors.toList());
+            }
+            if (alreadyInstantiatedServices.size() > 1) {
+                if (postData.getProductInstanceId() == null) {
+                    throw new BusinessException("More than one Product Instance found for Product '" + postData.getProductCode()
+                            + "' and Subscription '" + subscription.getCode() + "'. Please provide productInstanceId field");
+                } else {
+                    serviceInstance = serviceInstanceService.findById(postData.getProductInstanceId());
+                    if (serviceInstance == null) {
+                        throw new BusinessException("No Product Instance found with id=" + postData.getProductInstanceId());
+                    }
+                }
+            } else {
+                serviceInstance = alreadyInstantiatedServices.get(0);
+            }
+        }
+        return serviceInstance;
     }
 }

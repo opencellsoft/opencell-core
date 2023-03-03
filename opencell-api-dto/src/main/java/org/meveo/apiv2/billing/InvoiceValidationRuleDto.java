@@ -7,9 +7,11 @@ import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.model.billing.EvaluationModeEnum;
 import org.meveo.model.billing.InvoiceValidationStatusEnum;
+import org.meveo.model.cpq.enums.OperatorEnum;
 
 import javax.annotation.Nullable;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Value.Immutable
@@ -64,5 +66,13 @@ public interface InvoiceValidationRuleDto extends Resource {
     @Nullable
     @Schema(description = "Evaluation Mode")
     EvaluationModeEnum getEvaluationMode();
+    
+    @Nullable
+    @Schema(description = "Applied operator")
+    OperatorEnum getOperator();
+    
+    @Nullable
+    @Schema(description = "Sub rules for composite rule")
+	List<InvoiceValidationRuleDto> getSubRules();
 
 }

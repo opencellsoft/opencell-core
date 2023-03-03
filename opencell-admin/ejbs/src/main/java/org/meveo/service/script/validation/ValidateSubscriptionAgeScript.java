@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceValidationStatusEnum;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.script.Script;
@@ -22,8 +21,6 @@ public class ValidateSubscriptionAgeScript extends Script {
 
 	@Override
 	public void execute(Map<String, Object> context) throws BusinessException {
-		log.info("ValidateSubscriptionAgeScript EXECUTE context {}", context);
-
 		Invoice invoice = (Invoice) context.get(Script.CONTEXT_ENTITY);
 
 		if (invoice == null) {
@@ -31,19 +28,15 @@ public class ValidateSubscriptionAgeScript extends Script {
 			throw new BusinessException("No Invoice passed as CONTEXT_ENTITY");
 		}
 
-		log.info("Process ValidateSubscriptionAgeScript {}", invoice);
-		
 		String operator = ScriptUtils.buildOperator(String.valueOf(context.get("operator")), false);
 		List<Date> referenceDates = invoiceLineService.getCustomSubscriptionAge(invoice.getId(), buildReferenceDateExpression(String.valueOf(context.get("referenceDate"))));
 		
 		if (referenceDates == null || referenceDates.isEmpty()) {
-			context.put(Script.INVOICE_VALIDATION_STATUS, InvoiceValidationStatusEnum.VALID);
+			context.put(Script.INVOICE_VALIDATION_STATUS, true);
 		} else {
 			boolean result = referenceDates.stream().allMatch(dt -> ValueExpressionWrapper.evaluateToBoolean("#{" + invoice.getInvoiceDate().getTime() + " " + operator + " " + buildLimitDate(dt, (Integer) context.get("age")) + "}", new HashMap<Object, Object>(context)));
-			context.put(Script.INVOICE_VALIDATION_STATUS, result ? InvoiceValidationStatusEnum.VALID : (InvoiceValidationStatusEnum) context.get(Script.RESULT_VALUE));
+			context.put(Script.INVOICE_VALIDATION_STATUS, result);
 		}
-		
-		log.info("Result Processing ValidateSubscriptionAgeScript {}", context.get(Script.INVOICE_VALIDATION_STATUS));
 	}
 
 	private long buildLimitDate(Date referenceDate, Integer age) {

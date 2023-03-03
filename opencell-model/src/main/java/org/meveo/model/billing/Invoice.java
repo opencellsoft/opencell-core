@@ -21,6 +21,7 @@ import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -150,8 +151,8 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.loadByBillingRun", query = "SELECT inv.id FROM Invoice inv WHERE inv.billingRun.id = :billingRunId"),
         @NamedQuery(name = "Invoice.findLinkedInvoicesByIdAndType", query = "SELECT inv.invoiceNumber, inv.invoiceDate, linkedinv.amount FROM Invoice inv inner join LinkedInvoice linkedinv on inv.id = linkedinv.linkedInvoiceValue.id where linkedinv.id.id = :invoiceId and inv.invoiceType.code =: invoiceTypeCode"),
         @NamedQuery(name = "Invoice.findInvoiceEligibleAdv", query = "select bi, adv from Invoice bi inner join  BillingAccount bba on bi.billingAccount.id = bba.id inner join Invoice adv on adv.billingAccount.id = bba.id inner join InvoiceType  it on it.id = adv.invoiceType.id"
-                + " where bi.billingRun.id = :billingRunId and it.code = 'ADV' and adv.status = 'VALIDATED' and adv.invoiceBalance > 0 and bi.status in ('DRAFT', 'REJECTED', 'SUSPECT') order by bi.id, adv.auditable.created, adv.invoiceBalance"),
-        @NamedQuery(name = "Invoice.findValidatedInvoiceAdvOrder", query = "select inv from Invoice inv  where  (inv.commercialOrder is null or inv.commercialOrder=:commercialOrder) and inv.status='VALIDATED' and inv.invoiceType.code = 'ADV' and inv.invoiceBalance > 0 and inv.billingAccount.id =:billingAccountId order by inv.commercialOrder, inv.auditable.created ASC"),
+                + " where bi.billingRun.id = :billingRunId and it.code = 'ADV' and adv.status = 'VALIDATED' and adv.invoiceBalance > 0 and bi.status in ('DRAFT', 'REJECTED', 'SUSPECT') and adv.tradingCurrency.id = bi.tradingCurrency.id  order by bi.id, adv.auditable.created, adv.invoiceBalance"),
+        @NamedQuery(name = "Invoice.findValidatedInvoiceAdvOrder", query = "select inv from Invoice inv  where  (inv.commercialOrder is null or inv.commercialOrder=:commercialOrder) and inv.status='VALIDATED' and inv.invoiceType.code = 'ADV' and inv.invoiceBalance > 0 and inv.billingAccount.id =:billingAccountId and inv.tradingCurrency.id =:tradingCurrencyId order by inv.commercialOrder, inv.auditable.created ASC"),
         @NamedQuery(name = "Invoice.findValidatedInvoiceAdvWithoutOrder", query = "select inv from Invoice inv  where  inv.commercialOrder is null  and inv.status='VALIDATED' and inv.invoiceType.code = 'ADV' and inv.invoiceBalance > 0 and inv.billingAccount.id =:billingAccountId"),
         @NamedQuery(name = "Invoice.findValidatedInvoiceAdvWithOrder", query = "select inv from Invoice inv  where  inv.commercialOrder=:commercialOrder and inv.status='VALIDATED' and inv.invoiceType.code = 'ADV' and inv.invoiceBalance > 0 and inv.billingAccount.id =:billingAccountId"),
         @NamedQuery(name = "Invoice.findWithFuntionalCurrencyDifferentFromOne", query = "SELECT i FROM Invoice i JOIN Provider p ON p.currency.id = i.tradingCurrency.currency.id WHERE i.lastAppliedRate <> :EXPECTED_RATE"),
@@ -759,6 +760,10 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Column(name = "converted_invoice_balance", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal convertedInvoiceBalance;
 
+    @Column(name = "use_specific_price_conversion")
+    @Type(type = "numeric_boolean")
+    private boolean useSpecificPriceConversion = false;
+
     public Invoice() {
 	}
 
@@ -853,25 +858,28 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
                 }
             }
         }
-        BigDecimal appliedRate = getAppliedRate();
-        this.convertedAmountTax = this.amountTax != null
-                ? this.amountTax.multiply(appliedRate) : ZERO;
-        this.convertedAmountWithoutTax = this.amountWithoutTax != null
-                ? this.amountWithoutTax.multiply(appliedRate) : ZERO;
-        this.convertedAmountWithTax = this.amountWithTax != null
-                ? this.amountWithTax.multiply(appliedRate) : ZERO;
-        this.convertedDiscountAmount = this.discountAmount != null
-                ? this.discountAmount.multiply(appliedRate) : ZERO;
-        this.convertedNetToPay = this.netToPay != null
-                ? this.netToPay.multiply(appliedRate) : ZERO;
-        this.convertedRawAmount = this.rawAmount != null
-                ? this.rawAmount.multiply(appliedRate) : ZERO;
-        this.convertedAmountWithoutTaxBeforeDiscount =
-                this.amountWithoutTaxBeforeDiscount != null
-                        ? this.amountWithoutTaxBeforeDiscount.multiply(appliedRate) : ZERO;
-        this.convertedInvoiceBalance =
-                this.invoiceBalance != null
-                        ? this.invoiceBalance.multiply(appliedRate) : ZERO;
+
+        if(this.useSpecificPriceConversion) {
+        	BigDecimal appliedRate = getAppliedRate();
+            this.convertedAmountTax = this.amountTax != null
+                    ? this.amountTax.multiply(appliedRate) : ZERO;
+            this.convertedAmountWithoutTax = this.amountWithoutTax != null
+                    ? this.amountWithoutTax.multiply(appliedRate) : ZERO;
+            this.convertedAmountWithTax = this.amountWithTax != null
+                    ? this.amountWithTax.multiply(appliedRate) : ZERO;
+            this.convertedDiscountAmount = this.discountAmount != null
+                    ? this.discountAmount.multiply(appliedRate) : ZERO;
+            this.convertedNetToPay = this.netToPay != null
+                    ? this.netToPay.multiply(appliedRate) : ZERO;
+            this.convertedRawAmount = this.rawAmount != null
+                    ? this.rawAmount.multiply(appliedRate) : ZERO;
+            this.convertedAmountWithoutTaxBeforeDiscount =
+                    this.amountWithoutTaxBeforeDiscount != null
+                            ? this.amountWithoutTaxBeforeDiscount.multiply(appliedRate) : ZERO;
+            if (this.convertedInvoiceBalance != null) {
+                this.invoiceBalance = this.convertedInvoiceBalance.divide(appliedRate,2, RoundingMode.HALF_UP);
+            }
+        }
     }
 
     public String getInvoiceNumber() {
@@ -1946,4 +1954,22 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public void setConvertedInvoiceBalance(BigDecimal convertedInvoiceBalance) {
         this.convertedInvoiceBalance = convertedInvoiceBalance;
     }
+
+
+	/**
+	 * @return the useSpecificPriceConversion
+	 */
+	public boolean isUseSpecificPriceConversion() {
+		return useSpecificPriceConversion;
+	}
+
+
+	/**
+	 * @param useSpecificPriceConversion the useSpecificPriceConversion to set
+	 */
+	public void setUseSpecificPriceConversion(boolean useSpecificPriceConversion) {
+		this.useSpecificPriceConversion = useSpecificPriceConversion;
+	}
+
+    
 }

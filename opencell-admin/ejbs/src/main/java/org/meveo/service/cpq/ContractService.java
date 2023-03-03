@@ -1,8 +1,10 @@
 package org.meveo.service.cpq;
 
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.naturalOrder;
+import static java.util.Comparator.nullsLast;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,8 +16,9 @@ import javax.persistence.NoResultException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.MeveoApiException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.contract.Contract;
@@ -26,8 +29,8 @@ import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,13 +42,13 @@ import org.slf4j.LoggerFactory;
 @Stateless
 public class ContractService extends BusinessService<Contract>  {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(ContractService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ContractService.class);
 
 	@Inject
 	private PricePlanMatrixVersionService pricePlanMatrixVersionService;
 
-	private final static String CONTRACT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE = "status of the contract (%s) is %s, it can not be updated nor removed";
-	private final static String CONTRACT_CAN_NOT_CHANGE_THE_STATUS_ACTIVE_TO = "Status transition from ACTIVE to %s is not allowed";
+	private static final String CONTRACT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE = "status of the contract (%s) is %s, it can not be updated nor removed";
+	private static final String CONTRACT_CAN_NOT_CHANGE_THE_STATUS_ACTIVE_TO = "Status transition from ACTIVE to %s is not allowed";
 	
 	
 	public ContractService() {
@@ -63,11 +66,11 @@ public class ContractService extends BusinessService<Contract>  {
 		LOGGER.info("updating contract {}", contract.getCode());
 		
 		if(contract.getStatus().equals(ProductStatusEnum.ACTIVE)) {
-			LOGGER.warn("the contract {} can not be updated, because of its status => {}", contract.getCode(), contract.getStatus().toString());
+			LOGGER.warn("the contract {} can not be updated, because of its status => {}", contract.getCode(), contract.getStatus());
 			throw new BusinessException(String.format(CONTRACT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, contract.getCode(), contract.getStatus().toString()));
 		}
 		if(!contract.getStatus().equals(ProductStatusEnum.DRAFT)) {
-			LOGGER.warn("the contract {} can not be updated, because of its status => {}", contract.getCode(), contract.getStatus().toString());
+			LOGGER.warn("the contract {} can not be updated, because of its status => {}", contract.getCode(), contract.getStatus());
 			throw new BusinessException(String.format(CONTRACT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, contract.getCode(), contract.getStatus().toString()));
 		}
 		
@@ -107,9 +110,9 @@ public class ContractService extends BusinessService<Contract>  {
 	 * @return
 	 * @throws ContractException
 	 */
-	public Contract updateStatus(Contract contract, ContractStatusEnum status){
-		if(ContractStatusEnum.DRAFT.equals(contract.getStatus())
-				&& ContractStatusEnum.ACTIVE.equals(status) && !contract.getContractItems().isEmpty()) {
+	public Contract updateStatus(Contract contract, String status){
+		if(ContractStatusEnum.DRAFT.toString().equals(contract.getStatus())
+				&& ContractStatusEnum.ACTIVE.toString().equals(status) && !contract.getContractItems().isEmpty()) {
 			List<PricePlanMatrix> pricePlans = contract.getContractItems().stream().map(ContractItem::getPricePlan).collect(Collectors.toList());
 			List<PricePlanMatrixVersion> pricePlanVersions = pricePlanMatrixVersionService.findByPricePlans(pricePlans);
 			if (pricePlanVersions.isEmpty()) {
@@ -124,7 +127,7 @@ public class ContractService extends BusinessService<Contract>  {
 					filter(pricePlanMatrixVersion -> pricePlanMatrixVersion.getValidity() != null && pricePlanMatrixVersion.getValidity().getTo() == null).collect(Collectors.toList());
 			
 			if (endDatePricePlanVersions.isEmpty() && !pricePlanVersions.isEmpty()){
-				pricePlanVersions.sort(Comparator.comparing(PricePlanMatrixVersion::getValidity));
+				pricePlanVersions.sort(comparing(PricePlanMatrixVersion::getValidity, nullsLast(naturalOrder())));
 				PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanVersions.get(0);
 				if (pricePlanMatrixVersion.getValidity() != null && pricePlanMatrixVersion.getValidity().getFrom().compareTo(contract.getBeginDate()) < 0){
 			//NOTE 2		
@@ -143,11 +146,10 @@ public class ContractService extends BusinessService<Contract>  {
 			}
 		}
 
-		if (ContractStatusEnum.ACTIVE.equals(contract.getStatus())
-				&& (ContractStatusEnum.ACTIVE.equals(status) || ContractStatusEnum.DRAFT.equals(status))) {
+		if (ContractStatusEnum.ACTIVE.toString().equals(contract.getStatus())
+				&& (ContractStatusEnum.ACTIVE.toString().equals(status) || ContractStatusEnum.DRAFT.toString().equals(status))) {
 			 throw new BusinessApiException(String.format(CONTRACT_CAN_NOT_CHANGE_THE_STATUS_ACTIVE_TO, status));
 		}
-
 
 		contract.setStatus(status);
 		return  update(contract);
@@ -167,13 +169,34 @@ public class ContractService extends BusinessService<Contract>  {
 		
 	}
 
-	 public List<Contract> getContractByAccount(Customer customer, BillingAccount billingAccount, CustomerAccount customerAccount) {
-	    	try {
-				return getEntityManager().createNamedQuery("Contract.findByAccounts")
-						.setParameter("customerId", customer.getId()).setParameter("billingAccountId", billingAccount.getId())
-						.setParameter("customerAccountId",customerAccount.getId()).setFlushMode(FlushModeType.COMMIT).getResultList();
-	    	} catch (NoResultException e) {
-	            return null;
-	        }
-	    }
+	public List<Contract> getContractByAccount(Customer customer, BillingAccount billingAccount, CustomerAccount customerAccount, WalletOperation bareWalletOperation) {
+		try {
+			List<Contract> contracts = getEntityManager().createNamedQuery("Contract.findByAccounts")
+					.setParameter("customerId", customer.getId()).setParameter("billingAccountId", billingAccount.getId())
+					.setParameter("customerAccountId",customerAccount.getId()).getResultList();
+			
+			return contracts.stream()
+					.filter(c -> StringUtils.isBlank(c.getApplicationEl()) || ValueExpressionWrapper.evaluateExpression(c.getApplicationEl(), Boolean.class, bareWalletOperation, c))
+					.collect(Collectors.toList());
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	/**
+	 * Get contract by list of customer's id
+	 * @param ids Customer id's
+	 * @param billingAccount {@link BillingAccount}
+	 * @param customerAccount {@link CustomerAccount}
+	 * @return List of {@link Contract}
+	 */
+	public List<Contract> getContractByListOfCustomers(List<Long> ids , BillingAccount billingAccount, CustomerAccount customerAccount) {
+		try {
+			return getEntityManager().createNamedQuery("Contract.findByCustomersBillingAccountCustomerAccount")
+					.setParameter("customersId", ids).setParameter("billingAccountId", billingAccount.getId())
+					.setParameter("customerAccountId",customerAccount.getId()).getResultList();
+    	} catch (NoResultException e) {
+            return null;
+        }
+	}
 }

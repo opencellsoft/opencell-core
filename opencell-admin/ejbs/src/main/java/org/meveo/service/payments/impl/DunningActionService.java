@@ -14,6 +14,7 @@ import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.dunning.DunningAction;
 import org.meveo.model.dunning.DunningAgent;
 import org.meveo.model.dunning.DunningLevel;
+import org.meveo.model.dunning.DunningSettings;
 import org.meveo.model.payments.ActionChannelEnum;
 import org.meveo.model.payments.ActionModeEnum;
 import org.meveo.model.payments.ActionTypeEnum;
@@ -36,6 +37,9 @@ public class DunningActionService  extends BusinessService<DunningAction> {
     
     @Inject
     private DunningAgentService dunningAgentService;
+    
+    @Inject
+	private DunningSettingsService dunningSettingsService;
 
     @Override
     public void create(DunningAction dunningAction) throws BusinessException {
@@ -53,6 +57,13 @@ public class DunningActionService  extends BusinessService<DunningAction> {
         if(ActionTypeEnum.SEND_NOTIFICATION.equals(dunningAction.getActionType()) && dunningAction.getActionChannel() == null){
             throw new BusinessApiException("the action channel is required, when ActionType is of type Send Notification.");
         }
+        
+        DunningSettings dunningSettings = dunningSettingsService.findLastOne();
+        
+        if(dunningSettings != null) {
+        	dunningAction.setType(dunningSettings.getDunningMode());
+        } 
+        
         super.create(dunningAction);
     }
 

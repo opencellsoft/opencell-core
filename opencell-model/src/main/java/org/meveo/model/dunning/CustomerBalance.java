@@ -23,7 +23,7 @@ import java.util.List;
         @Parameter(name = "sequence_name", value = "ar_customer_balance_seq"), })
 @NamedQueries({
     @NamedQuery(name = "CustomerBalance.findDefaultOne", query = "select c from CustomerBalance c where c.defaultBalance = :default"),
-})
+    @NamedQuery(name = "CustomerBalance.findDefaultCustomerBalance", query = "SELECT cb FROM CustomerBalance cb WHERE cb.defaultBalance = true") })
 public class CustomerBalance extends BusinessEntity {
 
     /** */
@@ -37,7 +37,7 @@ public class CustomerBalance extends BusinessEntity {
     @JoinTable(name = "ar_customer_balance_templates",
             joinColumns = @JoinColumn(name = "customer_balance_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "template_id", referencedColumnName = "id"))
-    private List<OCCTemplate> templates;
+    private List<OCCTemplate> occTemplates;
 
     public boolean isDefaultBalance() {
         return defaultBalance;
@@ -47,11 +47,11 @@ public class CustomerBalance extends BusinessEntity {
         this.defaultBalance = defaultBalance;
     }
 
-    public List<OCCTemplate> getTemplates() {
-        return templates;
+    public List<OCCTemplate> getOccTemplates() {
+        return occTemplates;
     }
 
-    public void setTemplates(List<OCCTemplate> templates) {
-        this.templates = templates;
+    public void setOccTemplates(List<OCCTemplate> templates) {
+        this.occTemplates = templates;
     }
 }

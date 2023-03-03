@@ -21,6 +21,9 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.meveo.model.billing.BillingEntityTypeEnum.BILLINGACCOUNT;
+import static org.meveo.model.billing.DateAggregationOption.NO_DATE_AGGREGATION;
+import static org.apache.commons.collections4.ListUtils.partition;
+import static org.meveo.commons.utils.ParamBean.getInstance;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -34,6 +37,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -58,6 +62,8 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.RatedTransactionDto;
+import org.meveo.api.generics.GenericRequestMapper;
+import org.meveo.api.generics.PersistenceServiceHelper;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
@@ -1624,7 +1630,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         Map<String, Object> params = new HashMap<>();
         params.put("ids", ratedTransactionIds);
         String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration.getDateAggregationOption(),
-                " rt.usage_date ");
+                "usage_date ", "rt");
         String query = "SELECT  string_agg(concat(rt.id, ''), ',') as rated_transaction_ids, rt.billing_account__id, "
                 + "              rt.accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, "
                 + "              sum(rt.amount_without_tax) as sum_without_tax, sum(rt.amount_with_tax) as sum_with_tax,"
@@ -1711,9 +1717,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             billingCycleFilters = new HashMap<>(billingRun.getBillingCycle().getFilters());
         }
         if(!billingCycle.isDisableAggregation()) {
+            if(billingCycle.getDateAggregation() == null) {
+                billingCycle.setDateAggregation(NO_DATE_AGGREGATION);
+            }
             String usageDateAggregation = getUsageDateAggregation(billingCycle.getDateAggregation());
+            String unitAmount = appProvider.isEntreprise() ? "unitAmountWithoutTax" : "unitAmountWithTax";
             String unitAmountField =
-                    billingCycle.isAggregateUnitAmounts() ? "SUM(a.unitAmountWithoutTax)" : "unitAmountWithoutTax";
+                    billingCycle.isAggregateUnitAmounts() ? "SUM(a.unitAmountWithoutTax)" : unitAmount;
             List<String> fieldToFetch = buildFieldList(usageDateAggregation, unitAmountField,
                     billingCycle.isIgnoreSubscriptions(), billingCycle.isIgnoreOrders(),
                     true, billingCycle.isUseAccountingArticleLabel(), billingCycle.getType());
@@ -1731,13 +1741,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     private String getUsageDateAggregation(DateAggregationOption dateAggregationOption, String usageDateColumn) {
+    	return this.getUsageDateAggregation(dateAggregationOption, usageDateColumn, "a");
+    }
+    
+    private String getUsageDateAggregation(DateAggregationOption dateAggregationOption, String usageDateColumn, String alias) {
         switch (dateAggregationOption) {
         case MONTH_OF_USAGE_DATE:
-            return " TO_CHAR(a." + usageDateColumn + ", 'YYYY-MM') ";
+            return " TO_CHAR(" + alias + "." + usageDateColumn + ", 'YYYY-MM') ";
         case DAY_OF_USAGE_DATE:
-            return " TO_CHAR(a." + usageDateColumn + ", 'YYYY-MM-DD') ";
+            return " TO_CHAR(" + alias + "." + usageDateColumn + ", 'YYYY-MM-DD') ";
         case WEEK_OF_USAGE_DATE:
-            return " TO_CHAR(a." + usageDateColumn + ", 'YYYY-WW') ";
+            return " TO_CHAR(" + alias + "." + usageDateColumn + ", 'YYYY-WW') ";
         case NO_DATE_AGGREGATION:
             return usageDateColumn;
         }
@@ -1754,9 +1768,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     "accountingCode.id as accounting_code_id", "SUM(a.quantity) as quantity",
                     unitAmountField + " as unit_amount_without_tax", "SUM(a.amountWithoutTax) as sum_without_tax", "SUM(a.amountWithTax) as sum_with_tax",
                     "offerTemplate.id as offer_id", usageDateAggregation + " as usage_date",
-                    "min(a.startDate) as start_date", "max(a.endDate) as end_date", "orderNumber as order_number",
-                    "taxPercent as tax_percent", "tax.id as tax_id", "infoOrder.order.id as order_id",
-                    "infoOrder.productVersion.id as product_version_id",
+                    "min(a.startDate) as start_date", "max(a.endDate) as end_date",
+                    "taxPercent as tax_percent", "tax.id as tax_id", "infoOrder.productVersion.id as product_version_id",
                     "accountingArticle.id as article_id", "discountedRatedTransaction as discounted_ratedtransaction_id"));
         } else {
             fieldToFetch = new ArrayList<>(asList("CAST(a.id as string) as rated_transaction_ids",
@@ -1775,6 +1788,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
         if(!ignoreOrder) {
             fieldToFetch.add("subscription.order.id as commercial_order_id");
+            fieldToFetch.add("orderNumber as order_number");
+            fieldToFetch.add("infoOrder.order.id as order_id");
         }
         if(!useAccountingArticleLabel) {
             fieldToFetch.add("description as label");
@@ -1812,18 +1827,20 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     private String buildGroupByClause(String usageDateAggregation, BillingCycle billingCycle, boolean ignoreSubscription) {
-        String ignoreSubscriptionClause = ignoreSubscription ? "" : ", a.subscription.id, a.serviceInstance ";
-        String chargeInstance = ignoreSubscription ? "" : ", a.chargeInstance.id";
-        String ignoreOrders = billingCycle.isIgnoreOrders() ? "" : ", a.subscription.order.id";
-        String aggregateWithUnitAmount = billingCycle.isAggregateUnitAmounts() ? "" : ", a.unitAmountWithoutTax";
+        String ignoreSubscriptionClause = ignoreSubscription
+                ? "" : ", a.subscription.id, a.serviceInstance, a.chargeInstance.id ";
+        String ignoreOrders = billingCycle.isIgnoreOrders()
+                ? "" : ", a.subscription.order.id, a.infoOrder.order.id, a.orderNumber";
+        String unitAmount = appProvider.isEntreprise() ? "a.unitAmountWithoutTax" : "a.unitAmountWithTax";
+        String aggregateWithUnitAmount = billingCycle.isAggregateUnitAmounts() ? "" : ", " + unitAmount;
         String useAccountingLabel = billingCycle.isUseAccountingArticleLabel() ? "" : ", a.description";
-        if(billingCycle.getDateAggregation() == DateAggregationOption.NO_DATE_AGGREGATION) {
+        if(billingCycle.getDateAggregation() == NO_DATE_AGGREGATION) {
             usageDateAggregation = "a." + usageDateAggregation;
         }
         return " group by a.billingAccount.id, a.accountingCode.id" + useAccountingLabel + aggregateWithUnitAmount + ","
-                + " a.offerTemplate, " + usageDateAggregation + " ,a.orderNumber" + ignoreSubscriptionClause
-                + ignoreOrders + ", a.taxPercent, a.tax.id, a.infoOrder.order.id, a.infoOrder.productVersion.id "
-                + chargeInstance + ", a.accountingArticle.id, a.discountedRatedTransaction";
+                + " a.offerTemplate, " + usageDateAggregation + ignoreSubscriptionClause
+                + ignoreOrders + ", a.taxPercent, a.tax.id, a.infoOrder.productVersion.id "
+                + ", a.accountingArticle.id, a.discountedRatedTransaction";
     }
 
     private Map<String, Object> buildParams(BillingRun billingRun, Date lastTransactionDate) {
@@ -2070,5 +2087,32 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return null;
         }
 	}
+
+	@SuppressWarnings("unchecked")
+	public List<RatedTransaction> findByFilter(Map<String, Object> filters) {
+        GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
+        filters = genericRequestMapper.evaluateFilters(filters, entityClass);
+        PaginationConfiguration configuration = new PaginationConfiguration(filters);
+        QueryBuilder query = getQuery(configuration);
+		return query.getQuery(getEntityManager()).getResultList();
+	}
     
+
+    public List<BillingAccount> findBillingAccountsBy(List<Long> rtIds) {
+        final int maxValue = getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
+        if (rtIds.size() > maxValue) {
+            List<BillingAccount> billingAccounts = new ArrayList<>();
+            List<List<Long>> invoiceLineIdsSubList = partition(rtIds, maxValue);
+            invoiceLineIdsSubList.forEach(subIdsList -> billingAccounts.addAll(loadBy(subIdsList)));
+            return new ArrayList<>(new HashSet<>(billingAccounts));
+        } else {
+            return loadBy(rtIds);
+        }
+    }
+    private List<BillingAccount> loadBy(List<Long> rtIds) {
+        return getEntityManager()
+                .createNamedQuery("RatedTransaction.BillingAccountByRTIds")
+                .setParameter("ids", rtIds)
+                .getResultList();
+    }
 }

@@ -545,9 +545,10 @@ public class AccountsManagementApiService {
         List<Future<?>> futures = new ArrayList<>();
 		
         for (int k = 0; k < nbThreads; k++) {
-        	tasks.add(() -> {
-        		this.thisNewTX.applyOneShotChargeInstance(syncCharges, result, postData.isGenerateRTs(), postData.isReturnWalletOperations(), postData.isReturnWalletOperationDetails(), postData.isVirtual());
-        	});
+        	tasks.add(() ->
+        		this.thisNewTX.applyOneShotChargeInstance(syncCharges, result, postData.isGenerateRTs(), postData.isReturnWalletOperations(),
+                        postData.isReturnWalletOperationDetails(), postData.isVirtual())
+        	);
 		}
         
         for (Runnable task : tasks) {
@@ -592,8 +593,9 @@ public class AccountsManagementApiService {
 
 	@JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void applyOneShotChargeInstance(SynchronizedIterator<ApplyOneShotChargeInstanceRequestDto> syncCharges, ProcessApplyChargeListResult result, boolean generateRTs, boolean returnWalletOperations, boolean returnWalletOperationDetails,
-			boolean isVirtual) {
+	public void applyOneShotChargeInstance(SynchronizedIterator<ApplyOneShotChargeInstanceRequestDto> syncCharges, ProcessApplyChargeListResult result,
+                                           boolean generateRTs, boolean returnWalletOperations, boolean returnWalletOperationDetails,
+                                           boolean isVirtual) {
 		
 		while(true) {
 			SynchronizedIterator<ApplyOneShotChargeInstanceRequestDto>.NextItem<ApplyOneShotChargeInstanceRequestDto> nextWPosition = syncCharges.nextWPosition();
@@ -645,10 +647,9 @@ public class AccountsManagementApiService {
 		BigDecimal amountWithTax = BigDecimal.ZERO;
 		BigDecimal amountWithoutTax = BigDecimal.ZERO;
 		BigDecimal amountTax = BigDecimal.ZERO;
-		AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(osho);
 		for (WalletOperation wo : osho.getWalletOperations()) {
 			if(returnWallerOperationDetails) {
-				lDto.getWalletOperations().add(new WalletOperationDto(wo, accountingArticle));
+				lDto.getWalletOperations().add(new WalletOperationDto(wo, wo.getAccountingArticle()));
 			} else if(returnWalletOperation) {
 				WalletOperationDto woDto = new WalletOperationDto();
 				woDto.setId(wo.getId());

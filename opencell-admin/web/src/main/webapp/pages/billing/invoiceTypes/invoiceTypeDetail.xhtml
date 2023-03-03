@@ -77,10 +77,10 @@
             <hftl:formField label="#{messages['invoiceType.invoiceSequence']}" id="invoiceSequenceSelectedId" field="invoiceSequence" valueLabelField="code" popup="true" popupId="searchInvoiceSequencePopup"
                 required="true" />
             
-            <hftl:formField label="#{messages['invoiceType.invoiceSubjectCode']}" id="invoiceSubjectCodeSelectedId" field="invoiceSubjectCode" valueLabelField="code" popup="true" popupId="searchInvoiceSubjectCodePopup"
-                required="true" />
-			<hftl:formField label="#{messages['invoiceType.invoiceCodeType']}" id="invoiceCodeTypeSelectedId" field="untdidInvoiceCodeType" valueLabelField="code" popup="true" popupId="searchInvoiceCodeTypePopup"
-                required="true" />  
+            <hftl:formField label="#{messages['invoiceType.invoiceSubjectCode']}" id="invoiceSubjectCodeSelectedId" field="invoiceSubjectCode" valueLabelField="codeName" popup="true" popupId="searchInvoiceSubjectCodePopup"
+                required="false" />
+			<hftl:formField label="#{messages['invoiceType.invoiceCodeType']}" id="invoiceCodeTypeSelectedId" field="untdidInvoiceCodeType" valueLabelField="name" popup="true" popupId="searchInvoiceCodeTypePopup"
+                required="false" />  
                   
             <hftl:formField label="#{messages['invoice.mailingType']}" listenerUpdate="emailTemplateId" field="mailingType" disabled="false" noSelectionLabel="false"/>
             <hftl:formField id="emailTemplateId" required="#{invoiceTypeBean.entity.mailingType!=null}" label="#{messages['emailTemplate']}" field="emailTemplate"

@@ -8,6 +8,7 @@ import static org.meveo.model.billing.BillingRunStatusEnum.CREATING_INVOICE_LINE
 import static org.meveo.model.billing.BillingRunStatusEnum.INVOICE_LINES_CREATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -75,7 +76,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
             } else {
                 filters.put("inList id", billingRunIds);
             }
-            PaginationConfiguration pagination = new PaginationConfiguration(null, null, filters, null, null, FIELD_PRIORITY_SORT, SortOrder.ASCENDING);
+            PaginationConfiguration pagination = new PaginationConfiguration(null, null, filters, null, Arrays.asList("billingCycle"), FIELD_PRIORITY_SORT, SortOrder.ASCENDING);
             List<BillingRun> billingRuns = billingRunService.list(pagination);
             if(billingRuns != null && !billingRuns.isEmpty()) {
                 billingRuns.stream().filter(BillingRun::isExceptionalBR)

@@ -119,15 +119,17 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
     }
 
     public void refund(SecurityDeposit securityDepositToUpdate, String reason, SecurityDepositOperationEnum securityDepositOperationEnum, SecurityDepositStatusEnum securityDepositStatusEnum, String operationType, Invoice adjInvoice) {
-        if (securityDepositToUpdate.getCurrentBalance() != null && BigDecimal.ZERO.compareTo(securityDepositToUpdate.getCurrentBalance()) != 0) {
-            Refund refund = createRefund(securityDepositToUpdate, adjInvoice);
-            if (refund == null) {
-                throw new BusinessException("Cannot create Refund.");
-            } else {
-                createSecurityDepositTransaction(securityDepositToUpdate, securityDepositToUpdate.getCurrentBalance(),
-                        securityDepositOperationEnum, OperationCategoryEnum.DEBIT, refund);
+        if(adjInvoice != null) {
+            if (securityDepositToUpdate.getCurrentBalance() != null && BigDecimal.ZERO.compareTo(securityDepositToUpdate.getCurrentBalance()) != 0) {
+                Refund refund = createRefund(securityDepositToUpdate, adjInvoice);
+                if (refund == null) {
+                    throw new BusinessException("Cannot create Refund.");
+                } else {
+                    createSecurityDepositTransaction(securityDepositToUpdate, securityDepositToUpdate.getCurrentBalance(),
+                            securityDepositOperationEnum, OperationCategoryEnum.DEBIT, refund);
+                }
             }
-        }
+        }        
 
         if (SecurityDepositStatusEnum.CANCELED.equals(securityDepositStatusEnum)) {
             securityDepositToUpdate.setCancelReason(reason);
@@ -188,8 +190,6 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         } catch (InvoiceExistException | ImportInvoiceException e) {
             throw new BusinessException(e);
         }
-
-
     }
 
     private Long doPayment(long amountToPay, List<Long> accountOperationsToPayIds, CustomerAccount customerAccount, PaymentMethod preferredPaymentMethod, Long refundId,

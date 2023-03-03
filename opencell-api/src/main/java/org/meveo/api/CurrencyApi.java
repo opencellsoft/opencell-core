@@ -204,7 +204,7 @@ public class CurrencyApi extends BaseApi {
         tradingCurrencyService.remove(tradingCurrency);
     }
 
-    public void update(CurrencyDto postData) throws MeveoApiException, BusinessException {
+    public CurrencyDto update(CurrencyDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -231,9 +231,10 @@ public class CurrencyApi extends BaseApi {
         tradingCurrency.setDecimalPlaces(postData.getDecimalPlaces() == null ? 2 : postData.getDecimalPlaces());
 
         tradingCurrencyService.update(tradingCurrency);
+        return new CurrencyDto(currency);
     }
 
-    public void createOrUpdate(CurrencyDto postData) throws MeveoApiException, BusinessException {
+    public CurrencyDto createOrUpdate(CurrencyDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -241,10 +242,10 @@ public class CurrencyApi extends BaseApi {
 
         TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCode());
         if (tradingCurrency == null) {
-            create(postData);
+            return create(postData);
         }
         else {
-            update(postData);
+            return update(postData);
         }
     }
 
