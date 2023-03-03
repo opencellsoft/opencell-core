@@ -15984,4 +15984,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </createProcedure>
     </changeSet>
 
+    <changeSet id="#INTRD-14381-202303202" author="bourras">
+        <addColumn tableName="billing_invoice_configuration">
+            <column name="display_rated_items" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+
+
 </databaseChangeLog>
