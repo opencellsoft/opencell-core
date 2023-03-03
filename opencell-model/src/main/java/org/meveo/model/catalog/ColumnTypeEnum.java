@@ -28,7 +28,7 @@ public enum ColumnTypeEnum {
                 case EMAIL:
                 case INFO:
                 case PHONE: {
-                    return attributeValue.getStringValue().equals(pricePlanMatrixValue.getStringValue());
+                    return attributeValue.getStringValue() != null && attributeValue.getStringValue().equals(pricePlanMatrixValue.getStringValue());
                 }
                 case EXPRESSION_LANGUAGE: {
                 	System.out.println("ColumnTypeEnum valueMatch="+pricePlanMatrixValue.getStringValue());
@@ -65,7 +65,7 @@ public enum ColumnTypeEnum {
                 case COUNT:
                 case TOTAL:
                 case NUMERIC: {
-                    return BigDecimal.valueOf(attributeValue.getDoubleValue()).equals(BigDecimal.valueOf(pricePlanMatrixValue.getLongValue().doubleValue()));
+                    return attributeValue.getDoubleValue() != null && (BigDecimal.valueOf(attributeValue.getDoubleValue()).equals(BigDecimal.valueOf(pricePlanMatrixValue.getLongValue().doubleValue())));
                 }
                 case LIST_NUMERIC:
                 case LIST_MULTIPLE_NUMERIC: {
@@ -90,7 +90,7 @@ public enum ColumnTypeEnum {
         	String multiValuesAttributeSeparator = ParamBean.getInstance().getProperty("attribute.multivalues.separator", ";");
             if(pricePlanMatrixValue.getDoubleValue() == null && pricePlanMatrixValue.getLongValue() == null && StringUtils.isEmpty(pricePlanMatrixValue.getStringValue()))
                 return true;
-            Object quote =  attributeValue.getAttribute().getAttributeType().getValue(attributeValue);
+            Object passedAttributeValue =  attributeValue.getAttribute().getAttributeType().getValue(attributeValue);
             switch (attributeValue.getAttribute().getAttributeType()) {
                 case INTEGER:
                 case COUNT:
@@ -99,21 +99,21 @@ public enum ColumnTypeEnum {
                 case NUMERIC: {
                     {
 
-                        if (quote == null) {
-                            return true;
+                        if (Boolean.isNullOrContainsEmptyString(passedAttributeValue)) {
+                            return false;
                         }
                         BigDecimal value = pricePlanMatrixValue.getDoubleValue() != null ? BigDecimal.valueOf(pricePlanMatrixValue.getDoubleValue()) : BigDecimal.valueOf(pricePlanMatrixValue.getLongValue());
-                        return ColumnTypeEnum.parseValue(quote) == value.doubleValue();
+                        return ColumnTypeEnum.parseValue(passedAttributeValue) == value.doubleValue();
                     }
                 }
                 case LIST_MULTIPLE_NUMERIC: {
-                    if (attributeValue.getStringValue() == null) {
-                        return true;
-                    }
+                    if (Boolean.isNullOrContainsEmptyString(passedAttributeValue)) {
+                            return false;
+                        }
                     return Stream.of(pricePlanMatrixValue.getStringValue().split(multiValuesAttributeSeparator))
                             .map(number -> BigDecimal.valueOf(java.lang.Double.parseDouble(number)))
                             .anyMatch(number -> {
-                                double value = parseValue(quote);
+                                double value = parseValue(passedAttributeValue);
                                 return number.doubleValue() == value;
                             });
                 }
@@ -224,4 +224,10 @@ public enum ColumnTypeEnum {
     public abstract boolean valueMatch(PricePlanMatrixValue pricePlanMatrixValue, AttributeValue attributeValue);
 
     public abstract boolean matchWithAllValues(PricePlanMatrixValue pricePlanMatrixValue);
+
+    private boolean isNullOrContainsEmptyString(Object value)
+    {
+      return value == null || (value instanceof String && ((String)value).isEmpty() );
+
+    }
 }
