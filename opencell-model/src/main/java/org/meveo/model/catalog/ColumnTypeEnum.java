@@ -99,7 +99,7 @@ public enum ColumnTypeEnum {
                 case NUMERIC: {
                     {
 
-                        if (passedAttributeValue == null) {
+                        if (Boolean.isNullOrContainsEmptyString(passedAttributeValue)) {
                             return false;
                         }
                         BigDecimal value = pricePlanMatrixValue.getDoubleValue() != null ? BigDecimal.valueOf(pricePlanMatrixValue.getDoubleValue()) : BigDecimal.valueOf(pricePlanMatrixValue.getLongValue());
@@ -107,9 +107,9 @@ public enum ColumnTypeEnum {
                     }
                 }
                 case LIST_MULTIPLE_NUMERIC: {
-                    if (attributeValue.getStringValue() == null) {
-                        return false;
-                    }
+                    if (Boolean.isNullOrContainsEmptyString(passedAttributeValue)) {
+                            return false;
+                        }
                     return Stream.of(pricePlanMatrixValue.getStringValue().split(multiValuesAttributeSeparator))
                             .map(number -> BigDecimal.valueOf(java.lang.Double.parseDouble(number)))
                             .anyMatch(number -> {
@@ -224,4 +224,10 @@ public enum ColumnTypeEnum {
     public abstract boolean valueMatch(PricePlanMatrixValue pricePlanMatrixValue, AttributeValue attributeValue);
 
     public abstract boolean matchWithAllValues(PricePlanMatrixValue pricePlanMatrixValue);
+
+    private boolean isNullOrContainsEmptyString(Object value)
+    {
+      return value == null || (value instanceof String && ((String)value).isEmpty() );
+
+    }
 }
