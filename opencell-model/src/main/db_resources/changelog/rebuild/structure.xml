@@ -11882,6 +11882,7 @@
                     defaultValue="#{ca.description}"/>
             <column name="activate_dunning" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="enable_billing_redirection_rules" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="discount_advanced_mode" type="${type.boolean}" defaultValueNumeric="0" />
       </createTable>
     </changeSet>
     <changeSet id="#INTRD-3461_20212128-rebuild-str-tbl" author="hichamElHaloui">
@@ -19533,6 +19534,7 @@
 	<changeSet id="#INTRD-13981_20230222" author="HichamHANINE" />
     <changeSet author="ZBariki" id="#INTRD-14208_20230224" dbms="oracle" />
     <changeSet id="#INTRD-14336_20230227" author="ZBariki" />
+    <changeSet id="#INTRD-14598_20230303" author="zelmeliani" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
