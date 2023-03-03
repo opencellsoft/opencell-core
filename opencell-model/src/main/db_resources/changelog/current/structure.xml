@@ -15098,5 +15098,22 @@ public class AgedBalanceReporting extends ReportExtractScript {
             CREATE INDEX idx_cpq_attribute_code_lower ON cpq_attribute(lower(code));
         </sql>
     </changeSet>
+    
+    <changeSet id="#INTRD-14598_20230303" author="zelmeliani">
+        <addColumn tableName="finance_settings">
+            <column name="discount_advanced_mode" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#INTR-14747_20230308" author="TarikFA.">
+    	<update tableName="cat_discount_plan">
+    		<column name="applicable_on_overridden_price" value="1"/>
+    		<where>applicable_on_overridden_price is null</where>
+    	</update>
+    	<update tableName="cat_discount_plan">
+    		<column name="applicable_on_discounted_price" value="1"/>
+    		<where>applicable_on_discounted_price is null</where>
+    	</update>
+    </changeSet>
 
 </databaseChangeLog>

@@ -35,6 +35,7 @@ import javax.inject.Inject;
 import javax.persistence.Query;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ChargingEdrOnRemoteInstanceErrorException;
@@ -194,6 +195,10 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     
     @Inject
     private RecurringRatingService recurringRatingService;
+    
+    @Inject
+    private DiscountPlanInstanceService discountPlanInstanceService;
+
 
     /**
      * @param level level enum
@@ -1509,16 +1514,36 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     		DiscountPlan discountPlan =null;
     		Date operationDate=walletOperation.getOperationDate()!=null?walletOperation.getOperationDate():new Date();
     		for(DiscountPlanInstance discountPlanInstance: discountPlanInstances) {
+    			
+    			boolean isDiscountPlanInstanceUpdated = false;
+    			discountPlan=discountPlanInstance.getDiscountPlan();
+    			if(discountPlanInstance.getStatus() != DiscountPlanInstanceStatusEnum.EXPIRED && 
+    					discountPlan.getApplicationLimit() != 0 && 
+    					discountPlanInstance.getApplicationCount() >= discountPlan.getApplicationLimit()) {
+	   				 discountPlanInstance.setStatusDate(new Date());
+	   				 discountPlanInstance.setStatus(DiscountPlanInstanceStatusEnum.EXPIRED);
+	   				isDiscountPlanInstanceUpdated = true;
+    			}
 
     			if (!discountPlanInstance.isEffective(operationDate) || discountPlanInstance.getStatus().equals(DiscountPlanInstanceStatusEnum.EXPIRED)) {
                     continue;
                 }
-    			discountPlan=discountPlanInstance.getDiscountPlan();
+    			//discountPlan=discountPlanInstance.getDiscountPlan();
 
     			applicableDiscountPlanItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan, walletOperation.getSubscription(), walletOperation, accountingArticle,DiscountPlanItemTypeEnum.PERCENTAGE, operationDate));
     			fixedDiscountPlanItems.addAll(
     					discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan, 
     							walletOperation.getSubscription(), walletOperation, walletOperation.getAccountingArticle(), DiscountPlanItemTypeEnum.FIXED, walletOperation.getOperationDate()));
+    			
+    			if( CollectionUtils.isNotEmpty(applicableDiscountPlanItems) || CollectionUtils.isNotEmpty(fixedDiscountPlanItems)) {
+    				discountPlanInstance.setApplicationCount( discountPlanInstance.getApplicationCount() == null ? 1 : discountPlanInstance.getApplicationCount() + 1);
+    				isDiscountPlanInstanceUpdated = true;
+    			}
+    			
+    			if(isDiscountPlanInstanceUpdated) {
+	   				 discountPlanInstanceService.update(discountPlanInstance);
+    			}
+    		
     		}
     		if(!applicableDiscountPlanItems.isEmpty()) {
     			Seller seller = walletOperation.getSeller() != null ? walletOperation.getSeller() : walletOperation.getBillingAccount().getCustomerAccount().getCustomer().getSeller();

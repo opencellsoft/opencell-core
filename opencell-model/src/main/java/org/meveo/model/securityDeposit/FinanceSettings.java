@@ -48,6 +48,10 @@ public class FinanceSettings extends BusinessEntity {
 
     @Embedded
     private AuxiliaryAccounting auxiliaryAccounting;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "discount_advanced_mode")
+    private boolean discountAdvancedMode = false;
 
     public FinanceSettings() {
         super();
@@ -117,4 +121,11 @@ public class FinanceSettings extends BusinessEntity {
     public void setActivateDunning(boolean activateDunning) {
         this.activateDunning = activateDunning;
     }
+    
+    public boolean isDiscountAdvancedMode() {
+		return discountAdvancedMode;
+	}
+	public void setDiscountAdvancedMode(boolean discountAdvancedMode) {
+		this.discountAdvancedMode = discountAdvancedMode;
+	}
 }
