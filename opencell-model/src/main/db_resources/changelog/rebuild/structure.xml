@@ -17002,6 +17002,29 @@
         <sql>CREATE INDEX wo_rerated_wo ON ${db.schema.adapted}billing_wallet_operation (reratedwalletoperation_id) </sql></changeSet>
         
         
+    
+
+    <!-- end index -->
+
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-func-999" dbms="postgresql">
+        <sql splitStatements="false" stripComments="false"><![CDATA[
+       CREATE OR REPLACE FUNCTION ${db.schema.adapted}fn_unaccent(str TEXT) RETURNS TEXT AS $$
+             BEGIN
+                RETURN  translate($1,
+                                 'çÇâàÂÀéèêÉÈÊîÎûÛôÔ',
+                                 'cCaaAAeeeEEEiIuUoO');
+            END;
+            $$ LANGUAGE plpgsql;
+        ]]></sql>
+    </changeSet>
+
+    <!-- end procedure -->
+    <!-- keep this always as the last changeSet to remove all rebuild logs -->
+    <changeSet id="rebuild-4.6-struct-complete" author="AndriusKarpavicius">
+        <delete tableName="DATABASECHANGELOG"/>
+    </changeSet>
+    
+    
     <changeSet id="#INTRD-12047-20230112" author="AbdelmounaimAkadid">
     	<createIndex indexName="idx__cpq_attribute_instance__subscription_id" tableName="cpq_attribute_instance">
 	      	<column name="subscription_id"/>
@@ -17018,30 +17041,6 @@
 	  	<createIndex indexName="idx__billing_rated_transaction__service_instance_id" tableName="billing_rated_transaction">
 	      	<column name="service_instance_id"/>
 	  	</createIndex>
-    </changeSet>
-
-    <!-- end index -->
-
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-func-999" dbms="postgresql">
-        <sql splitStatements="false" stripComments="false"><![CDATA[
-       CREATE OR REPLACE FUNCTION ${db.schema.adapted}fn_unaccent(str TEXT) RETURNS TEXT AS $$
-             BEGIN
-                RETURN  translate($1,
-                                 'çÇâàÂÀéèêÉÈÊîÎûÛôÔ',
-                                 'cCaaAAeeeEEEiIuUoO');
-            END;
-            $$ LANGUAGE plpgsql;
-        ]]></sql>
-    </changeSet>
-
-
-
-
-
-    <!-- end procedure -->
-    <!-- keep this always as the last changeSet to remove all rebuild logs -->
-    <changeSet id="rebuild-4.6-struct-complete" author="AndriusKarpavicius">
-        <delete tableName="DATABASECHANGELOG"/>
     </changeSet>
 
     <changeSet id="#4511_20190919-P" author="AndriusKarpavicius" dbms="postgresql">
