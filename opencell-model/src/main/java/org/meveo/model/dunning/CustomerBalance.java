@@ -22,9 +22,12 @@ import java.util.List;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_customer_balance_seq"), })
 @NamedQueries({
-        @NamedQuery(name = "CustomerBalance.findDefaultCustomerBalance",
-                query = "SELECT cb FROM CustomerBalance cb WHERE cb.defaultBalance = true") })
+    @NamedQuery(name = "CustomerBalance.findDefaultOne", query = "select c from CustomerBalance c where c.defaultBalance = :default"),
+    @NamedQuery(name = "CustomerBalance.findDefaultCustomerBalance", query = "SELECT cb FROM CustomerBalance cb WHERE cb.defaultBalance = true") })
 public class CustomerBalance extends BusinessEntity {
+
+    /** */
+	private static final long serialVersionUID = 1L;
 
     @Type(type = "numeric_boolean")
     @Column(name = "default_balance")
