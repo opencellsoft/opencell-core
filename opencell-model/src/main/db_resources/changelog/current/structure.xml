@@ -16004,5 +16004,17 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="discount_advanced_mode" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
     </changeSet>
+    
+  	<changeSet id="#INTRD-14402_20230301" author="AdilElJaouhari">
+		<addColumn tableName="billing_invoice_line">
+			<column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
+		</addColumn>
+		<addColumn tableName="billing_invoice">
+			<column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
+		</addColumn>
+		<addColumn tableName="billing_invoice_agregate">
+			<column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>
