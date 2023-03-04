@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.persistence.Persistence;
+
 class ListCustomSerializer extends StdSerializer<Collection> implements GenericSerializer{
 
     private JsonSerializer<Object> serializer;
@@ -32,16 +34,17 @@ class ListCustomSerializer extends StdSerializer<Collection> implements GenericS
 
     @Override
     public boolean isEmpty(SerializerProvider provider, Collection value) {
-        return super.isEmpty(provider, value) || value.isEmpty();
+        boolean c1 = super.isEmpty(provider, value);
+		return c1;
     }
     @Override
     public void serialize(Collection collection, JsonGenerator gen, SerializerProvider provider) throws IOException {
         Object currentValue = gen.getCurrentValue();
         String currentName = gen.getOutputContext().getCurrentName();
         String pathToRoot = getPathToRoot(gen);
+        boolean nestedEntityCandidate = isNestedEntityCandidate(pathToRoot, currentName);
         if(!collection.isEmpty() && collection.iterator().next() instanceof IEntity){
             Collection<? extends IEntity> collectionIEntity = (Collection<? extends IEntity>) collection;
-            boolean nestedEntityCandidate = isNestedEntityCandidate(pathToRoot, currentName);
 
             boolean isDepthToBig;
             List<String> referencedNestedEntitiesOnPath = referencedNestedEntitiesOnPath(pathToRoot);
