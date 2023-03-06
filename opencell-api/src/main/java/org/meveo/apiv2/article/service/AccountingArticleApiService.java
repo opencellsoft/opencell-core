@@ -66,9 +66,6 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
     @Inject
     private AccountingCodeService accountingCodeService;
 
-    @Inject
-    private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
-
     Logger log = LoggerFactory.getLogger(getClass());
 
     @PostConstruct
@@ -120,8 +117,7 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
 
     @Override
     public List<AccountingArticle> list(Long offset, Long limit, String sort, String orderBy, Map<String, Object> filter) {
-        long apiLimit = genericPagingAndFilteringUtils.getLimit(limit != null ? limit.intValue() : null);
-        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(), (int) apiLimit, filter, null, fetchFields, null, null);
+        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(), limit.intValue(), filter, null, fetchFields, null, null);
         return accountingArticleService.list(paginationConfiguration);
     }
 

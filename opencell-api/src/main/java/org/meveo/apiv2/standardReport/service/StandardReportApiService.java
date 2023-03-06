@@ -34,8 +34,7 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
 							   Date startDate, Date startDueDate, Date endDueDate, String customerAccountDescription,
 							   String sellerDescription, String sellerCode,
 							   String invoiceNumber, Integer stepInDays, Integer numberOfPeriods, String tradingCurrency, String functionalCurrency) {
-		long apiLimit = genericPagingAndFilteringUtils.getLimit(limit != null ? limit.intValue() : null);
-        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset != null ? offset.intValue() : null, (int)apiLimit , null, null, fetchFields, orderBy, sort);
+        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset != null ? offset.intValue() : null, limit.intValue() , null, null, fetchFields, orderBy, sort);
         if(invoiceNumber != null && invoiceService.findByInvoiceNumber(invoiceNumber) == null) {
 			throw new NotFoundException("Invoice number : " + invoiceNumber + " does not exits");
 		}

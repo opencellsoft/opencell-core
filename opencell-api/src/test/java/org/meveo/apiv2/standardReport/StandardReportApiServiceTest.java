@@ -4,6 +4,7 @@ import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
 
@@ -21,6 +22,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.standardReport.service.StandardReportApiService;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.payments.CustomerAccount;
@@ -45,6 +47,9 @@ public class StandardReportApiServiceTest {
     @Mock
     private RecordedInvoiceService recordedInvoiceService;
 
+    @Mock
+    private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
+
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
@@ -63,6 +68,7 @@ public class StandardReportApiServiceTest {
         invoice.setInvoiceNumber("INV_10000");
 
         when(invoiceService.findByInvoiceNumber("INV_10000")).thenReturn(invoice);
+        when(genericPagingAndFilteringUtils.getLimit(anyInt())).thenReturn(100L);
 
     }
 

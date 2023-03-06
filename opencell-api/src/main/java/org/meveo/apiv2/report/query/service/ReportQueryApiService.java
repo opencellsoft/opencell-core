@@ -69,9 +69,6 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     @Named
     private NativePersistenceService nativePersistenceService;
 
-    @Inject
-    private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
-
     private List<String> fetchFields = asList("fields");
 
     private static final Pattern pattern = Pattern.compile("^[a-zA-Z]+\\((.*?)\\)");
@@ -82,9 +79,8 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
 
     @Override
     public List<ReportQuery> list(Long offset, Long limit, String sort, String orderBy, String filter) {
-        long apiLimit = genericPagingAndFilteringUtils.getLimit(limit != null ? limit.intValue() : null);
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(),
-                (int)apiLimit, null, filter, fetchFields, orderBy, sort != null ? SortOrder.valueOf(sort) : null);
+                limit.intValue(), null, filter, fetchFields, orderBy, sort != null ? SortOrder.valueOf(sort) : null);
         return reportQueryService.reportQueriesAllowedForUser(paginationConfiguration, currentUser);
     }
 
@@ -399,9 +395,8 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     public List<ReportQuery> list(Long offset, Long limit, String sort, String orderBy, String filter, String query) {
         checkPermissionExist();
         Map<String, Object> filters = query != null ? buildFilters(query) : new HashMap<>();
-        long apiLimit = genericPagingAndFilteringUtils.getLimit(limit != null ? limit.intValue() : null);
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(),
-                (int) apiLimit, filters, filter, fetchFields, orderBy, sort != null ? SortOrder.valueOf(sort) : null);
+                limit.intValue(), filters, filter, fetchFields, orderBy, sort != null ? SortOrder.valueOf(sort) : null);
         return reportQueryService.reportQueriesAllowedForUser(paginationConfiguration, currentUser);
     }
 
