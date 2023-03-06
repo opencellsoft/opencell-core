@@ -34,6 +34,7 @@ import javax.ws.rs.BadRequestException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -80,6 +81,9 @@ public class OrderItemApiService implements ApiService<OrderItem> {
 
     @Inject
     private BillingAccountService billingAccountService;
+
+    @Inject
+    private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
     
     private static final Logger log = LoggerFactory.getLogger(OrderItemApiService.class);
 
@@ -90,7 +94,8 @@ public class OrderItemApiService implements ApiService<OrderItem> {
 
     @Override
     public List<OrderItem> list(Long offset, Long limit, String sort, String orderBy, String filter) {
-        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(), limit.intValue(), null, filter, fetchFields, null, null);
+        long apiLimit = genericPagingAndFilteringUtils.getLimit(limit != null ? limit.intValue() : null);
+        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(), (int)apiLimit, null, filter, fetchFields, null, null);
         List<OrderItem> list = orderItemService.list(paginationConfiguration);
 
         return list.stream()

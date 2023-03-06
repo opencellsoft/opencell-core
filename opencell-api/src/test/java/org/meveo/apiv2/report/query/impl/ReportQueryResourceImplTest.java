@@ -15,6 +15,7 @@ import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.report.*;
 import org.meveo.apiv2.report.query.service.ReportQueryApiService;
 import org.meveo.model.Auditable;
@@ -53,6 +54,9 @@ public class ReportQueryResourceImplTest {
     @Mock
     private UriInfo mockUriInfo;
 
+    @Mock
+    private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
+
     @Before
     public void setUp() {
         ReportQuery reportQuery = new ReportQuery();
@@ -73,6 +77,7 @@ public class ReportQueryResourceImplTest {
         when(reportQueryApiService.update(anyLong(), any())).thenReturn(Optional.of(reportQuery));
         when(reportQueryApiService.delete(1L)).thenReturn(empty());
         when(reportQueryApiService.delete(2L)).thenReturn(of(reportQuery));
+        when(genericPagingAndFilteringUtils.getLimit(anyInt())).thenReturn(10L);
     }
 
     @Test
