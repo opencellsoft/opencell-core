@@ -225,6 +225,27 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
                 }).collect(Collectors.toSet());
     }
 
+    public Set<ConvertedPricePlanMatrixLine> getCppmlFromDto(PricePlanMatrixLineDto dtoData, PricePlanMatrixLine pricePlanMatrixLine) {
+        Set<ConvertedPricePlanMatrixLine> listCppml = new HashSet<ConvertedPricePlanMatrixLine>();
+        List<ConvertedPricePlanMatrixLineDto> listCppmlDto = dtoData.getConvertedPricePlanMatrixLines();
+        for (ConvertedPricePlanMatrixLineDto cppmlDto : listCppmlDto) {
+            ConvertedPricePlanMatrixLine cppml = new ConvertedPricePlanMatrixLine();
+            cppml.setConvertedValue(cppmlDto.getConvertedValue());
+            cppml.setRate(cppmlDto.getRate());            
+            TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(cppmlDto.getTradingCurrency().getCode()); 
+            if(tradingCurrency == null) {
+                throw new MeveoApiException("Trading currency doesn't exist for  ( code : " +  cppmlDto.getTradingCurrency().getCode());
+            }            
+            cppml.setTradingCurrency(tradingCurrency);
+            cppml.setConvertedValue(cppmlDto.getConvertedValue());
+            cppml.setUseForBillingAccounts(cppmlDto.getUseForBillingAccounts());
+            cppml.setPricePlanMatrixLine(pricePlanMatrixLine);
+            convertedPricePlanMatrixLineService.create(cppml);
+            listCppml.add(cppml);
+        }        
+        return listCppml;
+    }
+
     public PricePlanMatrixLineDto load(Long ppmLineId) {
         PricePlanMatrixLine ppmLine = findById(ppmLineId);
         if (ppmLine == null) {
@@ -351,8 +372,11 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
             pricePlanMatrixLine.setDescription(pricePlanMatrixLineDto.getDescription());
             BigDecimal value = pricePlanMatrixLineDto.getValue() != null? pricePlanMatrixLineDto.getValue():pricePlanMatrixLineDto.getPriceWithoutTax();
             pricePlanMatrixLine.setValue(value);
-            create(pricePlanMatrixLine);
-            
+            create(pricePlanMatrixLine); 
+            Set<ConvertedPricePlanMatrixLine> convertedPricePlanMatrixLines = getCppmlFromDto(pricePlanMatrixLineDto, pricePlanMatrixLine);
+            pricePlanMatrixLine.getConvertedPricePlanMatrixLines().clear();
+            pricePlanMatrixLine.getConvertedPricePlanMatrixLines().addAll(convertedPricePlanMatrixLines);            
+            update(pricePlanMatrixLine);            
             Set<PricePlanMatrixValue> pricePlanMatrixValues = getPricePlanMatrixValues(pricePlanMatrixLineDto, pricePlanMatrixLine);
             pricePlanMatrixValues.stream().forEach(ppmv -> pricePlanMatrixValueService.create(ppmv));
             pricePlanMatrixLine.getPricePlanMatrixValues().addAll(pricePlanMatrixValues);

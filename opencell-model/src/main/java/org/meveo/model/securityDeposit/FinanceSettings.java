@@ -49,6 +49,10 @@ public class FinanceSettings extends BusinessEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "enable_billing_redirection_rules")
     private boolean enableBillingRedirectionRules = false;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "discount_advanced_mode")
+    private boolean discountAdvancedMode = false;
 
     @Embedded
     private AuxiliaryAccounting auxiliaryAccounting;
@@ -128,4 +132,12 @@ public class FinanceSettings extends BusinessEntity {
     public void setEnableBillingRedirectionRules(boolean enableBillingRedirectionRules) {
         this.enableBillingRedirectionRules = enableBillingRedirectionRules;
     }
+
+	public boolean isDiscountAdvancedMode() {
+		return discountAdvancedMode;
+	}
+
+	public void setDiscountAdvancedMode(boolean discountAdvancedMode) {
+		this.discountAdvancedMode = discountAdvancedMode;
+	}
 }

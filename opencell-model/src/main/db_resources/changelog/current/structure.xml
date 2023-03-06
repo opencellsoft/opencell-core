@@ -2341,27 +2341,7 @@ END $$;]]>
         	<column name="updater" type="varchar(100)"/>
         </addColumn>
     </changeSet>
-        <changeSet id="#5416_20120809" author="anasseh">
-		<createTable tableName="ar_ao_payment_histories">
-			<column name="ao_id" type="bigint" />
-			<column name="history_id" type="bigint" />
-		</createTable>
-		<addForeignKeyConstraint
-			baseColumnNames="ao_id" baseTableName="ar_ao_payment_histories"
-			constraintName="fk_ao_id" deferrable="false" initiallyDeferred="false"
-			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
-			referencedTableName="ar_account_operation" />
-		<addForeignKeyConstraint
-			baseColumnNames="history_id" baseTableName="ar_ao_payment_histories"
-			constraintName="fk_histo_id" deferrable="false"
-			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-			referencedColumnNames="id" referencedTableName="ar_payment_history" />
-
-        <sql>insert into ${db.schema.adapted}ar_ao_payment_histories (ao_id,history_id)  select id,payment_history_id from ${db.schema.adapted}ar_account_operation where payment_history_id is not null</sql>
-	    <dropColumn tableName="ar_account_operation">
-            <column name="payment_history_id"></column>
-        </dropColumn>
-	</changeSet>
+        
     <changeSet id="#CORE-5215_11082020" author="AbdelkaderBouazza">
         <addColumn tableName="billing_subscription">
             <column name="payment_method_id"  type="bigint">
@@ -2775,24 +2755,6 @@ END $$;]]>
                                  referencedColumnNames="id" referencedTableName="meveo_script_instance" />
 
     </changeSet>
-    <changeSet id="#5680_20201126" author="khalidHORRI">
-        <addColumn tableName="billing_invoice">
-            <column name="initial_collection_date" type="datetime"/>
-        </addColumn>
-        <addColumn tableName="billing_cycle">
-            <column name="collection_date_delay_el" type="varchar(2000)"/>
-        </addColumn>
-        <addColumn tableName="ar_account_operation">
-            <column name="collection_date" type="datetime"/>
-        </addColumn>
-        <addColumn tableName="billing_billing_run">
-            <column name="collection_date" type="datetime"/>
-        </addColumn>
-        <sql>
-            update ${db.schema.adapted}billing_invoice set initial_collection_date = due_date;
-            update ${db.schema.adapted}ar_account_operation set collection_date = due_date;
-        </sql>
-    </changeSet>
 
     <changeSet id="5687_20203011" author="khalidHORRI">
         <addColumn tableName="billing_cycle">
@@ -2895,14 +2857,7 @@ END $$;]]>
         <addDefaultValue columnName="skip_validation_script" tableName="billing_billing_run" defaultValueNumeric="0"/>
         <sql>update ${db.schema.adapted}billing_billing_run set skip_validation_script=0 where skip_validation_script is null</sql>
     </changeSet>
-    <changeSet id="5687_20203011" author="khalidHORRI">
-        <addColumn tableName="billing_cycle">
-            <column name="compute_dates_validation" type="${type.boolean}" defaultValueNumeric="0"/>
-        </addColumn>
-        <addColumn tableName="billing_billing_run">
-            <column name="compute_dates_validation" type="BOOLEAN"/>
-        </addColumn>
-    </changeSet>
+   
     <changeSet id="#5680_20201126" author="khalidHORRI">
         <addColumn tableName="billing_invoice">
             <column name="initial_collection_date" type="datetime"/>
@@ -6775,32 +6730,6 @@ public class OrderAdvancement extends ModuleScript {
 
     </changeSet>
 
-    <changeSet id="#20210222_540_269" author="TarikFA.">
-        <dropColumn tableName="cpq_grouped_attributes">
-            <column name="product_version_id"></column>
-        </dropColumn>
-
-        <dropColumn tableName="cpq_attribute">
-            <column name="grouped_attributes_id"></column>
-        </dropColumn>
-
-        <createTable tableName="cpq_grouped_attributes_attribute">
-            <column name="grouped_attributes" type="bigint" >
-                <constraints nullable="false"/>
-            </column>
-            <column name="attribute_id" type="bigint" >
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-
-
-        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_grouped_attributes_attribute" constraintName="fk_cpq_grouped_attributes_attribute_attribute_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
-        <addForeignKeyConstraint baseColumnNames="grouped_attributes" baseTableName="cpq_grouped_attributes_attribute" constraintName="fk_cpq_grouped_attributes_attribute_groupedattribute_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_grouped_attributes" />
-
-    </changeSet>
-
     <changeSet id="#20210123_540_280" author="TarikFA.">
 
         <addColumn tableName="adm_secured_entity">
@@ -7080,11 +7009,6 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
     </changeSet>
 
-    <changeSet id="#20210323-382" author="Mbarek-Ay">
-        <addColumn tableName="cpq_contract_item">
-            <column name="rate_type" type="varchar(255)"/>
-        </addColumn>
-    </changeSet>
     <changeSet id="#20220325_360" author="TarikFA.">
         <createTable tableName="cpq_commercial_order_order_lot">
             <column name="commercial_order_id" type="bigint">
@@ -7213,10 +7137,6 @@ public class OrderAdvancement extends ModuleScript {
                                  referencedColumnNames="id" referencedTableName="meveo_script_instance"/>
     </changeSet>
 
-    <changeSet id="#5627_20210112" author="MohammedELAZZOUZI">
-        <addDefaultValue columnName="skip_validation_script" tableName="billing_billing_run" defaultValueNumeric="0"/>
-        <sql>UPDATE ${db.schema.adapted}billing_billing_run SET skip_validation_script=0 WHERE skip_validation_script IS NULL</sql>
-    </changeSet>
     <changeSet id="#5884_20210119" author="MohammedELAZZOUZI">
     	<preConditions onFail="MARK_RAN">
 	       <not>
@@ -13728,6 +13648,13 @@ order by date_trunc('month', i.invoice_date) DESC
 				type="${type.boolean}" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="#INTRD-14340_20230228" author="HichamHANINE">
+		<addColumn tableName="ar_account_operation">
+			<column name="applied_rate" type="numeric(23, 12)" />
+			<column name="applied_rate_date" type="datetime" />
+		</addColumn>
+	</changeSet>
 
 
        <changeSet id="#20220415_M540_6609" author="Mbarek-Ay">
@@ -13984,13 +13911,6 @@ order by date_trunc('month', i.invoice_date) DESC
 
     <changeSet id="#INTRD-8706_20220812" author="TarikFA." dbms="oracle" >
     	<dropUniqueConstraint tableName="billing_invoice" constraintName="uk_billing_invoice"/>
-    </changeSet>
-    <changeSet  id="#INTRD-7950_20220816" author="Abdelkader.Bouazza">
-        <update tableName="crm_provider">
-            <column name="email" value="billing@opencellsoft.com" type="varchar(100)"/>
-            <where>email is null</where>
-        </update>
-        <addNotNullConstraint tableName="crm_provider" columnName="email" columnDataType="varchar(100)"/>
     </changeSet>
 
 	<changeSet id="#INTRD-9117_20220811" author="aelmalki">
@@ -15703,6 +15623,15 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </addColumn>
     </changeSet>
     
+    <changeSet id="#INTRD-14231_20230227" author="HichamHANINE">
+    	<dropColumn tableName="billing_invoice_line" columnName="specific_converted_unit_price"/>
+        <dropColumn tableName="billing_invoice_line" columnName="specific_converted_amount_without_tax"/>
+        <dropColumn tableName="billing_invoice_line" columnName="specific_converted_amount_with_tax"/>
+        <dropColumn tableName="billing_invoice_line" columnName="specific_converted_amount_tax"/>
+        <dropColumn tableName="billing_invoice_line" columnName="specific_converted_discount_amount"/>
+        <dropColumn tableName="billing_invoice_line" columnName="specific_converted_raw_amount"/>
+    </changeSet>
+    
     <changeSet id="#INTRD-12651-20230123" author="AdilElJaouhari">
         <modifyDataType tableName="cpq_order_offer" columnName="order_line_type" newDataType="varchar(20)" />
     </changeSet>
@@ -15831,6 +15760,28 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedColumnNames="id"/>
     </changeSet>
     
+    <changeSet author="HichamHANINE" id="#INTRD-13981_20230222">
+    	<addColumn tableName="ar_matching_code">
+            <column name="converted_matching_amount_credit" type="numeric(23, 12)" />
+            <column name="converted_matching_amount_debit" type="numeric(23, 12)" />
+        </addColumn>
+        <addColumn tableName="ar_matching_amount">
+            <column name="converted_matching_amount" type="numeric(23, 12)" />
+        </addColumn>        
+        <addColumn tableName="ar_account_operation">
+            <column name="converted_net_to_pay" type="numeric(23, 12)" />
+            <column name="converted_amount" type="numeric(23, 12)" />
+            <column name="converted_amount_without_tax" type="numeric(23, 12)" />
+            <column name="converted_tax_amount" type="numeric(23, 12)" />
+            <column name="converted_matching_amount" type="numeric(23, 12)" />
+            <column name="converted_un_matching_amount" type="numeric(23, 12)" />
+            <column name="transactional_currency" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="transactional_currency" baseTableName="ar_account_operation" constraintName="fk_account_operation_trading_currency" 
+        	deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />    
+    </changeSet>
+    
     <changeSet id="#INTRD-13604_20230206" author="AdilElJaouhari">
     	<dropNotNullConstraint columnName="created" tableName="billing_invoice_validation_rule"/>
     	<dropNotNullConstraint columnName="fail_status" tableName="billing_invoice_validation_rule"/>
@@ -15860,6 +15811,15 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedColumnNames="id,status"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
+    
+    <changeSet id="#INTRD-14243_invoice_conversion" author="a.rouaguebe">
+    	<addColumn tableName="billing_invoice">
+    		<column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0" />
+    	</addColumn>
+    	<addColumn tableName="billing_invoice_agregate">
+    		<column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0" />
+    	</addColumn>
     </changeSet>
 
 	<changeSet id="#INTRD-14332_20230226_contract_application_el" author="a.rouaguebe">
@@ -16008,5 +15968,73 @@ public class AgedBalanceReporting extends ReportExtractScript {
                 AGGREGATE USING listagg_clob_t;
         </createProcedure>
     </changeSet>
+    
+    <changeSet id="#INTRD-14522_20230301" author="TarikFA.">
+    	<addColumn tableName="billing_subscription">
+    		<column name="contract_id" type="bigint" />
+    	</addColumn>
+        <addForeignKeyConstraint baseTableName="billing_subscription" baseColumnNames="contract_id"
+                                 constraintName="fk_contract_id"
+                                 referencedTableName="cpq_contract"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+                                 
+    	<addColumn tableName="quote_offer">
+    		<column name="contract_id" type="bigint" />
+    	</addColumn>
+    	
+        <addForeignKeyConstraint baseTableName="quote_offer" baseColumnNames="contract_id"
+                                 constraintName="fk_contract_id"
+                                 referencedTableName="cpq_contract"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+         <dropColumn tableName="quote_offer">
+         	<column name="contract_code" />
+         </dropColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-14336_20230227" author="ZBariki">
+        <addColumn tableName="cpq_contract_item">
+            <column name="application_el" type="varchar(2000)" />
+        </addColumn>
+        <addColumn tableName="billing_wallet_operation">
+            <column name="contract_line_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="billing_wallet_operation" baseColumnNames="contract_line_id"
+                                 constraintName="fk_wo_contract_line_id" referencedTableName="cpq_contract_item"
+                                 referencedColumnNames="id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
+    
+    <changeSet id="#INTRD-14598_20230303" author="zelmeliani">
+        <addColumn tableName="finance_settings">
+            <column name="discount_advanced_mode" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
+    
+  	<changeSet id="#INTRD-14402_20230301" author="AdilElJaouhari">
+		<addColumn tableName="billing_invoice_line">
+			<column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
+		</addColumn>
+		<addColumn tableName="billing_invoice">
+			<column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
+		</addColumn>
+		<addColumn tableName="billing_invoice_agregate">
+			<column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
+		</addColumn>
+	</changeSet>
+
+    <changeSet id="#INTRD-14263_20200304" author="TarikFA.">
+        <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_origin_ratedtransaction_id" />
+    </changeSet>
+
+    <changeSet id="#INTRD-14381-202303202" author="bourras">
+        <addColumn tableName="billing_invoice_configuration">
+            <column name="display_rated_items" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+
 
 </databaseChangeLog>
