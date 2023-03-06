@@ -16035,6 +16035,16 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="display_rated_items" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD-14555_20230303" author="AdilElJaouhari">
+        <addColumn tableName="crm_customer_category">
+            <column name="default_seller_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="crm_customer_category" baseColumnNames="default_seller_id"
+                                 constraintName="fk_crm_customer_category_default_seller_id"
+                                 referencedTableName="crm_seller"
+                                 referencedColumnNames="id"/>
+    </changeSet>
 
 
 </databaseChangeLog>
