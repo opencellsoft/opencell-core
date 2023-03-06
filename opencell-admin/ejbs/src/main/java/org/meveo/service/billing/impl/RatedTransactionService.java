@@ -1620,13 +1620,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 +                usageDateAggregation + " as usage_date, min(rt.start_date) as start_date, "
                 + "              max(rt.end_date) as end_date, rt.order_number, rt.tax_percent, rt.tax_id, "
                 + "              rt.order_id, rt.product_version_id, rt.order_lot_id, rt.charge_instance_id, rt.accounting_article_id, "
-                + "              rt.discounted_Ratedtransaction_id, rt.subscription_id "
+                + "              rt.discounted_Ratedtransaction_id, rt.subscription_id, unit_amount_without_tax as unit_amount_without_tax, unit_amount_with_tax as unit_amount_with_tax "
                 + "    FROM billing_rated_transaction rt WHERE id in (:ids) "
                 + "    GROUP BY rt.billing_account__id, rt.accounting_code_id, rt.description, "
                 + "             rt.offer_id, rt.service_instance_id, " + usageDateAggregation + ",  "
                 + "             rt.order_number, rt.tax_percent, rt.tax_id, "
                 + "             rt.order_id, rt.product_version_id, rt.order_lot_id, rt.charge_instance_id, rt.accounting_article_id, "
-                + "             rt.discounted_Ratedtransaction_id, rt.subscription_id, rt.unit_amount_without_tax "
+                + "             rt.discounted_Ratedtransaction_id, rt.subscription_id, rt.unit_amount_without_tax, unit_amount_without_tax, unit_amount_with_tax "
                 + "    order by rt.unit_amount_without_tax desc";
         return executeNativeSelectQuery(query, params);
     }
@@ -1696,11 +1696,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         String entityCondition = getEntityCondition(be, params);
         String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration);
 
-        final String unitAmountSelect = aggregationConfiguration.isAggregationPerUnitAmount() ? "rt.unitAmountWithoutTax as unit_amount_without_tax," : "";
-        final String unitAmountGroupBy = aggregationConfiguration.isAggregationPerUnitAmount() ? "rt.unitAmountWithoutTax," : "";
-
         String query = "SELECT string_agg_long(rt.id) as rated_transaction_ids, rt.billingAccount.id as billing_account__id, rt.accountingCode.id as accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, "
-                        + unitAmountSelect + "SUM(rt.amountWithoutTax) as sum_without_tax, SUM(rt.amountWithTax) as sum_with_tax, rt.offerTemplate.id as offer_id, rt.serviceInstance.id as service_instance_id, "
+                        + " rt.unitAmountWithoutTax as unit_amount_without_tax, SUM(rt.amountWithoutTax) as sum_without_tax, SUM(rt.amountWithTax) as sum_with_tax, rt.offerTemplate.id as offer_id, rt.serviceInstance.id as service_instance_id, "
                         + usageDateAggregation + " as usage_date, min(rt.startDate) as start_date, max(rt.endDate) as end_date, rt.orderNumber as order_number, "
                         + " s.id as subscription_id, s.order.id as commercial_order_id, rt.taxPercent as tax_percent, rt.tax.id as tax_id, "
                         + " rt.infoOrder.order.id as order_id, rt.infoOrder.productVersion.id as product_version_id, rt.infoOrder.orderLot.id as order_lot_id, "
@@ -1709,8 +1706,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         + " WHERE " + entityCondition
                         + " AND rt.status = 'OPEN' AND :firstTransactionDate <= rt.usageDate AND rt.usageDate < :lastTransactionDate"
                         + " AND (rt.invoicingDate is NULL or rt.invoicingDate < :invoiceUpToDate) AND rt.accountingArticle.ignoreAggregation = false\n"
-                        + " GROUP BY rt.billingAccount.id, rt.accountingCode.id, rt.description, rt.offerTemplate.id, rt.serviceInstance.id, " 
-                        + unitAmountGroupBy + usageDateAggregation + ", rt.startDate, rt.endDate, rt.orderNumber, s.id, s.order.id, rt.taxPercent, rt.tax.id, "
+                        + " GROUP BY rt.billingAccount.id, rt.accountingCode.id, rt.description, rt.offerTemplate.id, rt.serviceInstance.id, rt.unitAmountWithoutTax, "
+                        + usageDateAggregation + ", rt.startDate, rt.endDate, rt.orderNumber, s.id, s.order.id, rt.taxPercent, rt.tax.id, "
                         + " rt.infoOrder.order.id, rt.infoOrder.productVersion.id, rt.infoOrder.orderLot.id, rt.chargeInstance.id, rt.accountingArticle.id, rt.discountedRatedTransaction\n"
                         + " ORDER BY sum_without_tax desc";
         List<Map<String, Object>> groupedRTsWithAggregation = getSelectQueryAsMap(query, params);
