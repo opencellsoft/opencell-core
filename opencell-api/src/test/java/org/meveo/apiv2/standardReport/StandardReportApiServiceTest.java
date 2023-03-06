@@ -68,7 +68,6 @@ public class StandardReportApiServiceTest {
         invoice.setInvoiceNumber("INV_10000");
 
         when(invoiceService.findByInvoiceNumber("INV_10000")).thenReturn(invoice);
-        when(genericPagingAndFilteringUtils.getLimit(anyInt())).thenReturn(100L);
 
     }
 
