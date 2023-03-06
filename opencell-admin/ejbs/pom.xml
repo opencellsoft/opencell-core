@@ -5,7 +5,7 @@
     <parent>
         <artifactId>opencell-admin</artifactId>
         <groupId>com.opencellsoft</groupId>
-        <version>14.0.1-600-053c201</version>
+        <version>14.0.1-600-49a2e3c</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>opencell-admin-ejbs</artifactId>
