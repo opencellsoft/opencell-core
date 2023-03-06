@@ -6010,6 +6010,7 @@
             <column name="default_invoice_minimum_article_id" type="bigint"/>
             <column name="discount_plan_id" type="bigint"/>
             <column name="display_tax_details" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="display_rated_items" type="${type.boolean}" defaultValueNumeric="0"/>
         </createTable>
     </changeSet>
 

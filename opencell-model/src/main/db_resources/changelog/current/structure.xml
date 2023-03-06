@@ -15946,4 +15946,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_origin_ratedtransaction_id" />
     </changeSet>
 
+    <changeSet id="#INTRD-14381-202303202" author="bourras">
+        <addColumn tableName="billing_invoice_configuration">
+            <column name="display_rated_items" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+
+
 </databaseChangeLog>
