@@ -16017,4 +16017,8 @@ public class AgedBalanceReporting extends ReportExtractScript {
 		</addColumn>
 	</changeSet>
 
+    <changeSet id="#INTRD-14263_20200304" author="TarikFA.">
+        <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_origin_ratedtransaction_id" />
+    </changeSet>
+
 </databaseChangeLog>
