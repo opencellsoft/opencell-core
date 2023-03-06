@@ -5293,6 +5293,7 @@
             <column name="description_i18n" type="${type.json}">
                 <constraints nullable="true" />
             </column>
+            <column name="default_seller_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-247">
@@ -18216,6 +18217,13 @@
         <addForeignKeyConstraint baseTableName="crm_customer" baseColumnNames="parent_customer_id"
                                  constraintName="fk_crm_customer_parent_customer_id"
                                  referencedTableName="crm_customer"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-14555_20230303" author="AdilElJaouhari">
+        <addForeignKeyConstraint baseTableName="crm_customer_category" baseColumnNames="default_seller_id"
+                                 constraintName="fk_crm_customer_category_default_seller_id"
+                                 referencedTableName="crm_seller"
                                  referencedColumnNames="id"/>
     </changeSet>
 
