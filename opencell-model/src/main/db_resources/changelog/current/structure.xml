@@ -15623,6 +15623,15 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </addColumn>
     </changeSet>
     
+    <changeSet id="#INTRD-14231_20230227" author="HichamHANINE">
+    	<dropColumn tableName="billing_invoice_line" columnName="specific_converted_unit_price"/>
+        <dropColumn tableName="billing_invoice_line" columnName="specific_converted_amount_without_tax"/>
+        <dropColumn tableName="billing_invoice_line" columnName="specific_converted_amount_with_tax"/>
+        <dropColumn tableName="billing_invoice_line" columnName="specific_converted_amount_tax"/>
+        <dropColumn tableName="billing_invoice_line" columnName="specific_converted_discount_amount"/>
+        <dropColumn tableName="billing_invoice_line" columnName="specific_converted_raw_amount"/>
+    </changeSet>
+    
     <changeSet id="#INTRD-12651-20230123" author="AdilElJaouhari">
         <modifyDataType tableName="cpq_order_offer" columnName="order_line_type" newDataType="varchar(20)" />
     </changeSet>
