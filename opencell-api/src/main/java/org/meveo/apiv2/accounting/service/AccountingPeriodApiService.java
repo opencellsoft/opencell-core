@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.accounting.AccountingPeriod;
+import org.meveo.model.accounting.AccountingPeriodActionLevelEnum;
 import org.meveo.service.accounting.impl.AccountingPeriodService;
 
 import static java.util.Optional.ofNullable;
@@ -113,6 +114,11 @@ public class AccountingPeriodApiService  implements ApiService<AccountingPeriod>
 	 */
 	public AccountingPeriod updateStatus(AccountingPeriod entity, String status, String fiscalYear) {
 		return accountingPeriodService.updateStatus(entity, status, fiscalYear);
+
+	}
+	
+	public AccountingPeriod updateStatus(AccountingPeriod entity, String status, String fiscalYear, AccountingPeriodActionLevelEnum level) {
+		return accountingPeriodService.updateStatus(entity, status, fiscalYear, level);
 
 	}
 }

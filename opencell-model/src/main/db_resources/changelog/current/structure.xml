@@ -15623,6 +15623,15 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </addColumn>
     </changeSet>
     
+    <changeSet id="#INTRD-14231_20230227" author="HichamHANINE">
+    	<dropColumn tableName="billing_invoice_line" columnName="specific_converted_unit_price"/>
+        <dropColumn tableName="billing_invoice_line" columnName="specific_converted_amount_without_tax"/>
+        <dropColumn tableName="billing_invoice_line" columnName="specific_converted_amount_with_tax"/>
+        <dropColumn tableName="billing_invoice_line" columnName="specific_converted_amount_tax"/>
+        <dropColumn tableName="billing_invoice_line" columnName="specific_converted_discount_amount"/>
+        <dropColumn tableName="billing_invoice_line" columnName="specific_converted_raw_amount"/>
+    </changeSet>
+    
     <changeSet id="#INTRD-12651-20230123" author="AdilElJaouhari">
         <modifyDataType tableName="cpq_order_offer" columnName="order_line_type" newDataType="varchar(20)" />
     </changeSet>
@@ -16025,6 +16034,16 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <addColumn tableName="billing_invoice_configuration">
             <column name="display_rated_items" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
+    </changeSet>
+    
+    <changeSet id="#INTRD-14555_20230303" author="AdilElJaouhari">
+        <addColumn tableName="crm_customer_category">
+            <column name="default_seller_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="crm_customer_category" baseColumnNames="default_seller_id"
+                                 constraintName="fk_crm_customer_category_default_seller_id"
+                                 referencedTableName="crm_seller"
+                                 referencedColumnNames="id"/>
     </changeSet>
 
 
