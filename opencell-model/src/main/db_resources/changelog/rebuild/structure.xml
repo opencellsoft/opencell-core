@@ -3139,6 +3139,7 @@
             <column name="invoice_validation_rule_id" type="bigint"/>
             <column name="converted_invoice_balance" type="numeric(23, 12)"/>
     		<column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0" />
+    		<column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -3194,6 +3195,7 @@
             <column name="converted_amount_with_tax" type="numeric(23, 12)"/>
             <column name="converted_amount_tax" type="numeric(23, 12)"/>
     		<column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0" />
+    		<column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-178">
@@ -4037,6 +4039,7 @@
 			<column name="converted_unit_amount_with_tax" type="bigint" />
 			<column name="converted_unit_amount_tax" type="bigint" />
 			<column name="trading_currency_id" type="bigint" />
+            <column name="contract_line_id" type="bigint" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -5316,6 +5319,7 @@
             <column name="description_i18n" type="${type.json}">
                 <constraints nullable="true" />
             </column>
+            <column name="default_seller_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-247">
@@ -6033,6 +6037,7 @@
             <column name="default_invoice_minimum_article_id" type="bigint"/>
             <column name="discount_plan_id" type="bigint"/>
             <column name="display_tax_details" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="display_rated_items" type="${type.boolean}" defaultValueNumeric="0"/>
         </createTable>
     </changeSet>
 
@@ -9615,6 +9620,7 @@
             <column name="cf_values" type="${type.json}" />
             <column name="rate_type" type="varchar(255)"/>
             <column name="separate_discount" type="${type.boolean}" defaultValueNumeric="0"></column>
+            <column name="application_el" type="varchar(2000)" />
         </createTable>
     </changeSet>
 
@@ -10826,12 +10832,6 @@
             <column name="converted_amount_tax" type="numeric(23, 12)" />
             <column name="converted_discount_amount" type="numeric(23, 12)" />
             <column name="converted_raw_amount" type="numeric(23, 12)" />
-            <column name="specific_converted_unit_price" type="numeric(23, 12)" />
-            <column name="specific_converted_amount_without_tax" type="numeric(23, 12)" />
-            <column name="specific_converted_amount_with_tax" type="numeric(23, 12)" />
-            <column name="specific_converted_amount_tax" type="numeric(23, 12)" />
-            <column name="specific_converted_discount_amount" type="numeric(23, 12)" />
-            <column name="specific_converted_raw_amount" type="numeric(23, 12)" />
             <column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="open_order_number" type="varchar(255)" />
             <column name="sequence" type="int4"/>
@@ -10840,6 +10840,7 @@
             </column>
             <column name="cf_values" type="${type.json}" />
             <column name="adjustment_status" type="varchar(50)"/>
+            <column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -11904,6 +11905,7 @@
                     defaultValue="#{ca.description}"/>
             <column name="activate_dunning" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="enable_billing_redirection_rules" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="discount_advanced_mode" type="${type.boolean}" defaultValueNumeric="0" />
       </createTable>
     </changeSet>
     <changeSet id="#INTRD-3461_20212128-rebuild-str-tbl" author="hichamElHaloui">
@@ -16855,14 +16857,6 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="document"/>
     </changeSet>
-    <changeSet id="#INTRD-14264_20230222_fk" author="TarikFA.">
-        <addForeignKeyConstraint baseTableName="billing_rated_transaction" baseColumnNames="origin_ratedtransaction_id,status"
-                                 constraintName="fk_origin_ratedtransaction_id"
-                                 referencedTableName="billing_rated_transaction"
-                                 referencedColumnNames="id,status"
-                                 deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
-    </changeSet>      
     
     <changeSet id="#INTRD-14522_20230301_fk" author="TarikFA.">
         <addForeignKeyConstraint baseTableName="billing_subscription" baseColumnNames="contract_id"
@@ -16879,7 +16873,14 @@
                                  referencedColumnNames="id"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
-    </changeSet>                    
+    </changeSet>
+
+    <changeSet id="#INTRD-14336_20230227_fk" author="ZBariki">
+        <addForeignKeyConstraint baseTableName="billing_wallet_operation" baseColumnNames="contract_line_id"
+                                 constraintName="fk_wo_contract_line_id" referencedTableName="cpq_contract_item"
+                                 referencedColumnNames="id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -18284,6 +18285,13 @@
                                  referencedTableName="crm_customer"
                                  referencedColumnNames="id"/>
     </changeSet>
+    
+    <changeSet id="#INTRD-14555_20230303" author="AdilElJaouhari">
+        <addForeignKeyConstraint baseTableName="crm_customer_category" baseColumnNames="default_seller_id"
+                                 constraintName="fk_crm_customer_category_default_seller_id"
+                                 referencedTableName="crm_seller"
+                                 referencedColumnNames="id"/>
+    </changeSet>
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
@@ -19611,7 +19619,12 @@
 
 	<changeSet id="#INTRD-13981_20230222" author="HichamHANINE" />
     <changeSet id="#INTRD-14340_20230228" author="HichamHANINE" />
-    
+    <changeSet id="#INTRD-14336_20230227" author="ZBariki" />
+    <changeSet id="#INTRD-14598_20230303" author="zelmeliani" />
+    <changeSet id="#INTRD-14402_20230301" author="AdilElJaouhari" />
+	<changeSet id="#INTRD-14231_20230227" author="HichamHANINE" />
+    <changeSet id="#INTRD-14263_20200304" author="TarikFA." />
+
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

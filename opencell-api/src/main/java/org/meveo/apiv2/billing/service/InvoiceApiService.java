@@ -31,6 +31,7 @@ import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.billing.*;
 import org.meveo.apiv2.billing.impl.InvoiceMapper;
 import org.meveo.apiv2.ordering.services.ApiService;
@@ -258,7 +259,9 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 		org.meveo.model.billing.InvoiceLine invoiceLine = invoiceLinesService.getInvoiceLineForUpdate(invoice, invoiceLineInput.getInvoiceLine(), lineId);
 		// Populate Custom fields
 		invoiceBaseApi.populateCustomFieldsForGenericApi(invoiceLineInput.getInvoiceLine().getCustomFields(), invoiceLine, false);
-		// Update Invoice Line
+		// for adjustment
+		invoiceLine = invoiceLinesService.adjustment(invoiceLine);
+        // Update Invoice Line
 		invoiceLinesService.update(invoiceLine);
 		invoiceService.getEntityManager().flush();
 		invoiceService.calculateInvoice(invoice);

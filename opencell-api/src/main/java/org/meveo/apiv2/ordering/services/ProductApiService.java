@@ -36,6 +36,7 @@ import javax.ws.rs.NotAuthorizedException;
 import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.IEntity;
 import org.meveo.model.catalog.Channel;
@@ -54,6 +55,7 @@ public class ProductApiService implements ApiService<ProductTemplate> {
 
     @Inject
     private ProductTemplateService productTemplateService;
+
     private List<String> fetchFields;
 
     @PostConstruct

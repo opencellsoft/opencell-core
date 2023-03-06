@@ -17,6 +17,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.mediation.EdrVersioningRule;
 import org.meveo.model.mediation.MediationSetting;
@@ -31,10 +32,14 @@ public class MediationSettingApiService implements ApiService<MediationSetting>{
 	private MediationsettingService mediationsettingService;
 	@Inject
 	private EdrVersioningRuleService edrVersioningRuleService;
+
+	@Inject
+	private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
 	
 	@Override
 	public List<MediationSetting> list(Long offset, Long limit, String sort, String orderBy, String filter) {
-        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(), limit.intValue(), null, filter, null, null, null);
+		long apiLimit = genericPagingAndFilteringUtils.getLimit(limit != null ? limit.intValue() : null);
+        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(), (int)apiLimit, null, filter, null, null, null);
         return mediationsettingService.list(paginationConfiguration);
 	}
 

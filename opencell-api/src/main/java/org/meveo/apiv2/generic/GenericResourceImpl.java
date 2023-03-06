@@ -4,7 +4,9 @@ import static org.meveo.apiv2.generic.services.PersistenceServiceHelper.getPersi
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -25,6 +27,7 @@ import org.meveo.apiv2.generic.services.GenericApiAlteringService;
 import org.meveo.apiv2.generic.services.GenericApiLoadService;
 import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BusinessEntity;
 import org.meveo.util.Inflector;
 
 @Stateless
@@ -110,8 +113,13 @@ public class GenericResourceImpl implements GenericResource {
     }
 
     @Override
-    public Response getFullListEntities() {
-        return Response.ok().entity(GenericOpencellRestful.ENTITIES_MAP).type(MediaType.APPLICATION_JSON_TYPE).build();
+    public Response getFullListEntities(boolean onlyBusinessEntities, boolean withFullName) {
+
+        List<String> entities = GenericOpencellRestful.ENTITIES_LIST.stream().filter(aClass ->
+                (!onlyBusinessEntities || BusinessEntity.class.isAssignableFrom(aClass)))
+                . map(aClass -> withFullName ? aClass.getCanonicalName(): aClass.getSimpleName()).collect(Collectors.toList());
+
+        return Response.ok().entity(Map.of("entities", entities)).type(MediaType.APPLICATION_JSON_TYPE).build();
     }
 
     @Override

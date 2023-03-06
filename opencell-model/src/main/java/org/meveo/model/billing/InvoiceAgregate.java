@@ -156,6 +156,10 @@ public abstract class InvoiceAgregate extends AuditableEntity {
     @Column(name = "use_specific_price_conversion")
     @Type(type = "numeric_boolean")
     private boolean useSpecificPriceConversion;
+    
+    @Column(name = "conversion_from_billing_currency")
+    @Type(type = "numeric_boolean")
+    private boolean conversionFromBillingCurrency = false;
 
     /**
      * Aggregate converted amount without tax
@@ -303,6 +307,14 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 	public void setUseSpecificPriceConversion(boolean useSpecificPriceConversion) {
 		this.useSpecificPriceConversion = useSpecificPriceConversion;
 	}
+	
+	public boolean isConversionFromBillingCurrency() {
+		return conversionFromBillingCurrency;
+	}
+
+	public void setConversionFromBillingCurrency(boolean conversionFromBillingCurrency) {
+		this.conversionFromBillingCurrency = conversionFromBillingCurrency;
+	}
 
 	/**
 	 * @return the convertedAmountWithoutTax
@@ -422,7 +434,7 @@ public abstract class InvoiceAgregate extends AuditableEntity {
     @PrePersist
     @PreUpdate
     public void prePersistOrUpdate() {
-        if(!this.useSpecificPriceConversion) {
+        if (!this.useSpecificPriceConversion && !this.conversionFromBillingCurrency) {
             BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
             this.convertedAmountWithoutTax = this.amountWithoutTax != null
                     ? this.amountWithoutTax.multiply(appliedRate) : ZERO;

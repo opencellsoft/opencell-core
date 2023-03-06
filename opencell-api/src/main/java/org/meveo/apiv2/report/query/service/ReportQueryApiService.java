@@ -37,6 +37,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.apiv2.report.VerifyQueryInput;
 import org.meveo.commons.utils.EjbUtils;
@@ -72,7 +73,6 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
 
     private static final Pattern pattern = Pattern.compile("^[a-zA-Z]+\\((.*?)\\)");
     
-
     private static final int EXECUTE = 1;
     private static final int READ = 2;
     private static final int UPDATE = 3;
@@ -393,7 +393,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     }
 
     public List<ReportQuery> list(Long offset, Long limit, String sort, String orderBy, String filter, String query) {
-    	checkPermissionExist();
+        checkPermissionExist();
         Map<String, Object> filters = query != null ? buildFilters(query) : new HashMap<>();
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(),
                 limit.intValue(), filters, filter, fetchFields, orderBy, sort != null ? SortOrder.valueOf(sort) : null);

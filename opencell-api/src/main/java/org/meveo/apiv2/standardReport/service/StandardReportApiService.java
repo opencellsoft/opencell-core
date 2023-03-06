@@ -11,6 +11,7 @@ import javax.ws.rs.*;
 
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.billing.impl.*;
@@ -24,13 +25,16 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
     @Inject
 	private InvoiceService invoiceService;
 
+	@Inject
+	private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
+
     private List<String> fetchFields = asList("fields");
 
     public List<Object[]> list(Long offset, Long limit, String sort, String orderBy, String customerAccountCode,
 							   Date startDate, Date startDueDate, Date endDueDate, String customerAccountDescription,
 							   String sellerDescription, String sellerCode,
 							   String invoiceNumber, Integer stepInDays, Integer numberOfPeriods, String tradingCurrency, String functionalCurrency) {
-        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset != null ? offset.intValue() : null, limit != null ? limit.intValue() : null, null, null, fetchFields, orderBy, sort);
+        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset != null ? offset.intValue() : null, limit.intValue() , null, null, fetchFields, orderBy, sort);
         if(invoiceNumber != null && invoiceService.findByInvoiceNumber(invoiceNumber) == null) {
 			throw new NotFoundException("Invoice number : " + invoiceNumber + " does not exits");
 		}

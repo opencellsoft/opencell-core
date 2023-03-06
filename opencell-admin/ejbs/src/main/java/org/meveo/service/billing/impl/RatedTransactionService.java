@@ -1088,7 +1088,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @Deprecated
     public boolean isServiceMinRTsUsed() {
 
-        Boolean booleanValue = ParamBean.getInstance().getBooleanValue("billing.minimumRating.global.enabled");
+        Boolean booleanValue = getInstance().getBooleanValue("billing.minimumRating.global.enabled");
         if (booleanValue != null) {
             return booleanValue;
         }
@@ -1109,7 +1109,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @Deprecated
     public boolean isSubscriptionMinRTsUsed() {
 
-        Boolean booleanValue = ParamBean.getInstance().getBooleanValue("billing.minimumRating.global.enabled");
+        Boolean booleanValue = getInstance().getBooleanValue("billing.minimumRating.global.enabled");
         if (booleanValue != null) {
             return booleanValue;
         }
@@ -1130,7 +1130,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @Deprecated
     public boolean isBAMinRTsUsed() {
 
-        Boolean booleanValue = ParamBean.getInstance().getBooleanValue("billing.minimumRating.global.enabled");
+        Boolean booleanValue = getInstance().getBooleanValue("billing.minimumRating.global.enabled");
         if (booleanValue != null) {
             return booleanValue;
         }
@@ -1151,7 +1151,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public boolean[] isMinRTsUsed() {
 
-        Boolean booleanValue = ParamBean.getInstance().getBooleanValue("billing.minimumRating.global.enabled");
+        Boolean booleanValue = getInstance().getBooleanValue("billing.minimumRating.global.enabled");
         if (booleanValue != null) {
             return new boolean[] { booleanValue, booleanValue, booleanValue, booleanValue, booleanValue, booleanValue };
         }
@@ -1625,8 +1625,23 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return getSelectQueryAsMap(query, params);
     }
 
-    public List<Map<String, Object>> getGroupedRTsWithAggregation(List<Long> ratedTransactionIds, AggregationConfiguration aggregationConfiguration) {
+    public List<Map<String, Object>> getGroupedRTsWithAggregation(List<Long> ratedTransactionIds,
+                                                                  AggregationConfiguration aggregationConfiguration) {
+        final int maxValue =
+                getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
+        if (ratedTransactionIds.size() > maxValue) {
+            List<List<Long>> rtSubLists = partition(ratedTransactionIds, maxValue);
+            return rtSubLists
+                    .stream()
+                    .map(rtIds -> executeAggregationQuery(aggregationConfiguration, rtIds))
+                    .collect(ArrayList::new, List::addAll, List::addAll);
+        } else {
+            return executeAggregationQuery(aggregationConfiguration, ratedTransactionIds);
+        }
+    }
 
+    private List<Map<String, Object>> executeAggregationQuery(AggregationConfiguration aggregationConfiguration,
+                                                              List<Long> ratedTransactionIds) {
         Map<String, Object> params = new HashMap<>();
         params.put("ids", ratedTransactionIds);
         String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration.getDateAggregationOption(),
@@ -1639,13 +1654,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 +                usageDateAggregation + " as usage_date, min(rt.start_date) as start_date, "
                 + "              max(rt.end_date) as end_date, rt.order_number, rt.tax_percent, rt.tax_id, "
                 + "              rt.order_id, rt.product_version_id, rt.order_lot_id, rt.charge_instance_id, rt.accounting_article_id, "
-                + "              rt.discounted_Ratedtransaction_id, rt.subscription_id "
+                + "              rt.discounted_Ratedtransaction_id, rt.subscription_id, rt.unit_amount_without_tax, rt.unit_amount_with_tax "
                 + "    FROM billing_rated_transaction rt WHERE id in (:ids) "
                 + "    GROUP BY rt.billing_account__id, rt.accounting_code_id, rt.description, "
                 + "             rt.offer_id, rt.service_instance_id, " + usageDateAggregation + ",  "
                 + "             rt.order_number, rt.tax_percent, rt.tax_id, "
                 + "             rt.order_id, rt.product_version_id, rt.order_lot_id, rt.charge_instance_id, rt.accounting_article_id, "
-                + "             rt.discounted_Ratedtransaction_id, rt.subscription_id, rt.unit_amount_without_tax "
+                + "             rt.discounted_Ratedtransaction_id, rt.subscription_id, rt.unit_amount_without_tax, rt.unit_amount_with_tax "
                 + "    order by rt.unit_amount_without_tax desc";
         return executeNativeSelectQuery(query, params);
     }

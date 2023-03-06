@@ -18,6 +18,7 @@
 
 package org.meveo.apiv2.ordering.resource.orderitem;
 
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 import org.meveo.apiv2.ordering.resource.orderItem.ImmutableOrderItem;
 import org.meveo.apiv2.ordering.resource.orderItem.ImmutableOrderItems;
@@ -39,9 +40,14 @@ public class OrderItemResourceImpl implements OrderItemResource {
     @Inject
     private OrderItemApiService orderItemService;
 
+    @Inject
+    private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
+
     @Override
     public Response getOrderItems(Long offset, Long limit, String sort, String orderBy, String filter, Request request) {
-        List<OrderItem> orderItemsEntity = orderItemService.list(offset, limit, sort, orderBy, filter);
+
+        long apiLimit = genericPagingAndFilteringUtils.getLimit(limit != null ? limit.intValue() : null);
+        List<OrderItem> orderItemsEntity = orderItemService.list(offset, apiLimit, sort, orderBy, filter);
 
         EntityTag etag = new EntityTag(Integer.toString(orderItemsEntity.hashCode()));
         CacheControl cc = new CacheControl();
@@ -59,9 +65,9 @@ public class OrderItemResourceImpl implements OrderItemResource {
 
         Long productCount = orderItemService.getCount(filter);
 
-        OrderItems immutableOrderItems = ImmutableOrderItems.builder().addData(orderItemList).offset(offset).limit(limit).total(productCount)
+        OrderItems immutableOrderItems = ImmutableOrderItems.builder().addData(orderItemList).offset(offset).limit(apiLimit).total(productCount)
                 .build().withLinks(new LinkGenerator.PaginationLinkGenerator(OrderItemResource.class)
-                        .offset(offset).limit(limit).total(productCount).build());
+                        .offset(offset).limit(apiLimit).total(productCount).build());
         return Response.ok().cacheControl(cc).tag(etag).entity(immutableOrderItems).build();
     }
 

@@ -114,7 +114,7 @@ public class GenericOpencellRestful extends Application {
     private static String GENERIC_API_REQUEST_LOGGING_CONFIG;
     private static boolean GENERIC_API_REQUEST_EXTRACT_LIST;
     public static List<Map<String, String>> VERSION_INFO = new ArrayList<>();
-    public static Map<String, List<String>> ENTITIES_MAP = new HashMap<>();
+    public static List<Class> ENTITIES_LIST = new ArrayList<>();
     public static long API_LIST_DEFAULT_LIMIT;
 
     @Inject
@@ -201,11 +201,11 @@ public class GenericOpencellRestful extends Application {
     }
 
     private void loadEntitiesList() {
-        List<String> listEntities = new ArrayList<>();
+        List<Class> listEntities = new ArrayList<>();
         for (Map.Entry<String, Class> entry : GenericHelper.entitiesByName.entrySet()) {
-            listEntities.add(entry.getValue().getSimpleName());
+            ENTITIES_LIST.add(entry.getValue());
         }
-        ENTITIES_MAP.put("entities", listEntities);
+
     }
 
     private void loadOpenAPI() {

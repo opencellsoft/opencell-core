@@ -1,30 +1,56 @@
 package org.meveo.service.payments.impl;
 
-import static java.util.Arrays.asList;
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
-import static java.util.Optional.ofNullable;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.model.dunning.CustomerBalance;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.PersistenceService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.ws.rs.NotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Arrays.asList;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
+
+/**
+ * Service implementation to manage CustomerBalance entity.
+ * It extends {@link PersistenceService} class
+ * 
+ * @author zelmeliani
+ * @version 15.0.0
+ *
+ */
 @Stateless
 public class CustomerBalanceService extends BusinessService<CustomerBalance> {
 
     @Inject
     private OCCTemplateService occTemplateService;
+
+	/**
+	 * Get the default CustomerBalance
+	 * @return
+	 */
+	public CustomerBalance getDefaultOne() throws NoResultException, NonUniqueResultException {
+		try {
+			return getEntityManager().createNamedQuery("CustomerBalance.findDefaultOne", CustomerBalance.class)
+			.setParameter("default", true)
+			.getSingleResult();
+		} catch (NoResultException e) {
+	        return null;
+	    } catch (NonUniqueResultException e) {
+	        throw new BusinessException("there are multiple customer balance as default");
+	    }
+	}
 
     /**
      * Find default customer balance
@@ -100,4 +126,5 @@ public class CustomerBalanceService extends BusinessService<CustomerBalance> {
         }
         return super.update(toUpdate);
     }
+	
 }
