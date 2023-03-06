@@ -472,9 +472,6 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
     	    else {
     	        invoice.setLinkedInvoices(new HashSet<>());
     	    }
-    	    LinkedInvoice linkedInvoice = new LinkedInvoice(invoice, adjInvoice);
-			linkedInvoiceService.create(linkedInvoice);
-    	    invoice.getLinkedInvoices().add(linkedInvoice);
     	    invoiceService.update(invoice);
 	    }
 	    catch (Exception e) {

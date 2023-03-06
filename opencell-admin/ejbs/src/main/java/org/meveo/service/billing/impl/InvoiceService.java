@@ -2730,7 +2730,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
     }
-
+    
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void validateInvoice(Invoice invoice) {
 		invoice.setStatus(InvoiceStatusEnum.VALIDATED);
 		serviceSingleton.assignInvoiceNumber(invoice, true);
