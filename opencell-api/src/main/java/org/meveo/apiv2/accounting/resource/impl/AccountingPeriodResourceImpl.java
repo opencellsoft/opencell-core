@@ -15,6 +15,7 @@ import org.meveo.apiv2.accounting.service.SubAccountingPeriodApiService;
 import org.meveo.apiv2.generic.common.LinkGenerator;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.accounting.AccountingPeriod;
+import org.meveo.model.accounting.AccountingPeriodActionLevelEnum;
 import org.meveo.model.accounting.SubAccountingPeriod;
 
 public class AccountingPeriodResourceImpl implements AccountingPeriodResource {
@@ -79,6 +80,12 @@ public class AccountingPeriodResourceImpl implements AccountingPeriodResource {
 	public Response updateStatus(String fiscalYear, String status) {
 		final AccountingPeriod accountingPeriod = accountingPeriodApiService.findByFiscalYear(fiscalYear).orElseThrow(NotFoundException::new);
 		return Response.ok().entity(toResourceAccountingPeriodWithLink(accountingPeriodMapper.toResource(accountingPeriodApiService.updateStatus(accountingPeriod, status, fiscalYear)))).build();
+	}
+	
+	@Override
+	public Response updateStatus(String fiscalYear, String status, AccountingPeriodActionLevelEnum level) {
+		final AccountingPeriod accountingPeriod = accountingPeriodApiService.findByFiscalYear(fiscalYear).orElseThrow(NotFoundException::new);
+		return Response.ok().entity(toResourceAccountingPeriodWithLink(accountingPeriodMapper.toResource(accountingPeriodApiService.updateStatus(accountingPeriod, status, fiscalYear, level)))).build();
 	}
 
 	// Those checks are deprecated, regarding to the need of this issue : INTRD-8245 / INTRD-9452
