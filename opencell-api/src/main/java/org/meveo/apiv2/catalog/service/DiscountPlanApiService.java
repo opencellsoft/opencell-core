@@ -232,7 +232,7 @@ public class DiscountPlanApiService {
             ServiceInstance serviceInstance = serviceInstanceService.findById(discountPlanInstanciateDto.getServiceInstance().getId());
             if(serviceInstance == null)
                 throw new NotFoundException("entity serviceInstance with id " + discountPlanInstanciateDto.getServiceInstance().getId() + " not found.");
-            serviceInstanceService.instantiateDiscountPlan(serviceInstance, discountPlan);
+            serviceInstanceService.instantiateDiscountPlan(serviceInstance, discountPlan, false);
         }else if(discountPlanInstanciateDto.getSubscription() != null && (discountPlanInstanciateDto.getSubscription().getId() != null || StringUtils.isNotEmpty(discountPlanInstanciateDto.getSubscription().getCode())))  {
         	instianciateSubscription(discountPlanInstanciateDto.getSubscription(), discountPlan);
         }else if(discountPlanInstanciateDto.getBillingAccount() != null && (discountPlanInstanciateDto.getBillingAccount().getId() != null || StringUtils.isNotEmpty(discountPlanInstanciateDto.getBillingAccount().getCode()))) {

@@ -22,14 +22,15 @@ import static java.math.BigDecimal.ZERO;
 import static java.util.Arrays.asList;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 import org.meveo.api.dto.AgedReceivableDto;
 import org.meveo.apiv2.ordering.ResourceMapper;
 import org.meveo.apiv2.standardReport.AgedReceivable;
 import org.meveo.apiv2.standardReport.ImmutableAgedReceivable;
-import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.DunningLevelEnum;
@@ -124,11 +125,11 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 		for (var i = 0; i < resource.size(); i++) {
 			Object[] agedList = resource.get(i);
 			var agedReceivableDto = new AgedReceivableDto();
-			agedReceivableDto.setNotYetDue(NumberUtils.round((BigDecimal)agedList[1], 2, RoundingMode.HALF_UP));
-			agedReceivableDto.setSum1To30(NumberUtils.round((BigDecimal)agedList[3], 2, RoundingMode.HALF_UP));
-			agedReceivableDto.setSum31To60(NumberUtils.round((BigDecimal) agedList[6], 2, RoundingMode.HALF_UP));
-			agedReceivableDto.setSum61To90(NumberUtils.round((BigDecimal)agedList[9], 2, RoundingMode.HALF_UP));
-			agedReceivableDto.setSum90Up(NumberUtils.round((BigDecimal)agedList[12], 2, RoundingMode.HALF_UP));
+			agedReceivableDto.setNotYetDue((BigDecimal)agedList[1]);
+			agedReceivableDto.setSum1To30((BigDecimal)agedList[3]);
+			agedReceivableDto.setSum31To60((BigDecimal) agedList[6]);
+			agedReceivableDto.setSum61To90((BigDecimal)agedList[9]);
+			agedReceivableDto.setSum90Up((BigDecimal)agedList[12]);
 			agedReceivableDto.setDunningLevel((DunningLevelEnum) agedList[14]);
 			agedReceivableDto.setCustomerAccountName(agedList[15] == null ? null : getName((Name) agedList[15]));
 			agedReceivableDto.setCustomerAccountDescription((String) agedList[16]);
@@ -140,15 +141,15 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 			agedReceivableDto.setInvoiceNumber((String) agedList[22]);
 			agedReceivableDto.setCustomerAccountCode((String) agedList[24]);
 
-			agedReceivableDto.setGeneralTotal(NumberUtils.round(((BigDecimal)agedList[3]).add((BigDecimal)agedList[6]).add((BigDecimal)agedList[9]).add((BigDecimal)agedList[12]), 2, RoundingMode.HALF_UP));
+			agedReceivableDto.setGeneralTotal(((BigDecimal)agedList[3]).add((BigDecimal)agedList[6]).add((BigDecimal)agedList[9]).add((BigDecimal)agedList[12]));
 			agedReceivableDto.setNetAmountByPeriod(asList((BigDecimal) agedList[2], (BigDecimal) agedList[5], (BigDecimal) agedList[8], (BigDecimal) agedList[11]));
 			agedReceivableDto.setTotalAmountByPeriod(asList((BigDecimal) agedList[3], (BigDecimal) agedList[6], (BigDecimal) agedList[9], (BigDecimal) agedList[12]));
 			agedReceivableDto.setTaxAmountByPeriod(asList((BigDecimal) agedList[4], (BigDecimal) agedList[7], (BigDecimal) agedList[10], (BigDecimal) agedList[13]));
 
 			if(agedList[25] == null)
-				agedReceivableDto.setBilledAmount(NumberUtils.round((BigDecimal) agedList[23], 2, RoundingMode.HALF_UP));
+				agedReceivableDto.setBilledAmount((BigDecimal) agedList[23]);
 			else
-				agedReceivableDto.setBilledAmount(NumberUtils.round((BigDecimal) agedList[25], 2, RoundingMode.HALF_UP));
+				agedReceivableDto.setBilledAmount((BigDecimal) agedList[25]);
 
 			agedReceivableDto.setCustomerId((Long) agedList[26]);
 			agedReceivableDto.setFuncCurrency(Optional.ofNullable(appProvider.getCurrency()).map(Currency::getCurrencyCode).orElse(null));
@@ -162,11 +163,11 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 		for (var i = 0; i < resource.size(); i++) {
 			Object[] agedList = resource.get(i);
 			var agedReceivableDto = new AgedReceivableDto();
-			agedReceivableDto.setNotYetDue(NumberUtils.round((BigDecimal)agedList[1], 2, RoundingMode.HALF_UP));
-			agedReceivableDto.setSum1To30(NumberUtils.round((BigDecimal)agedList[3], 2, RoundingMode.HALF_UP));
-			agedReceivableDto.setSum31To60(NumberUtils.round((BigDecimal) agedList[6], 2, RoundingMode.HALF_UP));
-			agedReceivableDto.setSum61To90(NumberUtils.round((BigDecimal)agedList[9], 2, RoundingMode.HALF_UP));
-			agedReceivableDto.setSum90Up(NumberUtils.round((BigDecimal)agedList[12], 2, RoundingMode.HALF_UP));
+			agedReceivableDto.setNotYetDue((BigDecimal)agedList[1]);
+			agedReceivableDto.setSum1To30((BigDecimal)agedList[3]);
+			agedReceivableDto.setSum31To60((BigDecimal) agedList[6]);
+			agedReceivableDto.setSum61To90((BigDecimal)agedList[9]);
+			agedReceivableDto.setSum90Up((BigDecimal)agedList[12]);
 			agedReceivableDto.setDunningLevel((DunningLevelEnum) agedList[14]);
 			agedReceivableDto.setCustomerAccountName(agedList[15] == null ? null : getName((Name) agedList[15]));
 			agedReceivableDto.setCustomerAccountDescription((String) agedList[16]);
@@ -178,15 +179,15 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 			agedReceivableDto.setInvoiceNumber((String) agedList[22]);
 			agedReceivableDto.setCustomerAccountCode((String) agedList[24]);
 
-			agedReceivableDto.setGeneralTotal(NumberUtils.round(((BigDecimal)agedList[3]).add((BigDecimal)agedList[6]).add((BigDecimal)agedList[9]).add((BigDecimal)agedList[12]), 2, RoundingMode.HALF_UP));
+			agedReceivableDto.setGeneralTotal(((BigDecimal)agedList[3]).add((BigDecimal)agedList[6]).add((BigDecimal)agedList[9]).add((BigDecimal)agedList[12]));
 			agedReceivableDto.setNetAmountByPeriod(asList((BigDecimal) agedList[2], (BigDecimal) agedList[5], (BigDecimal) agedList[8], (BigDecimal) agedList[11]));
 			agedReceivableDto.setTotalAmountByPeriod(asList((BigDecimal) agedList[3], (BigDecimal) agedList[6], (BigDecimal) agedList[9], (BigDecimal) agedList[12]));
 			agedReceivableDto.setTaxAmountByPeriod(asList((BigDecimal) agedList[4], (BigDecimal) agedList[7], (BigDecimal) agedList[10], (BigDecimal) agedList[13]));
 
 			if(agedList[25] == null)
-				agedReceivableDto.setBilledAmount(NumberUtils.round((BigDecimal) agedList[23], 2, RoundingMode.HALF_UP));
+				agedReceivableDto.setBilledAmount((BigDecimal) agedList[23]);
 			else
-				agedReceivableDto.setBilledAmount(NumberUtils.round((BigDecimal) agedList[25], 2, RoundingMode.HALF_UP));
+				agedReceivableDto.setBilledAmount((BigDecimal) agedList[25]);
 
 			agedReceivableDto.setCustomerId((Long) agedList[26]);
 			agedReceivableDto.setFuncCurrency(Optional.ofNullable(appProvider.getCurrency()).map(Currency::getCurrencyCode).orElse(null));

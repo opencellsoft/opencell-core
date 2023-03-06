@@ -6,6 +6,7 @@ import static java.time.temporal.ChronoField.MINUTE_OF_HOUR;
 import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
 import static java.time.temporal.ChronoField.SECOND_OF_MINUTE;
 import static java.time.temporal.ChronoField.YEAR;
+import static java.time.temporal.ChronoField.MILLI_OF_SECOND;
 import static java.util.stream.Collectors.toMap;
 
 import java.io.File;
@@ -18,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -80,7 +82,7 @@ public class GenericFileExportManager {
         String time = LocalDateTime.now().format(formatter);
     	saveDirectory = paramBeanFactory.getChrootDir() + File.separator + PATH_STRING_FOLDER + entityName + File.separator +time.substring(0,8) + File.separator;
         if (mapResult != null && !mapResult.isEmpty()) {        	
-            Path filePath = saveAsRecord(entityName, mapResult, fileType, fieldDetails, time, ordredColumn, locale);
+            Path filePath = saveAsRecord(entityName, mapResult, fileType, fieldDetails, ordredColumn, locale);
             return filePath == null? null : filePath.toString();
         }
         return null;
@@ -94,8 +96,11 @@ public class GenericFileExportManager {
      * @param time 
      * @return
      */
-    private Path saveAsRecord(String fileName, List<Map<String, Object>> records, String fileType, Map<String, GenericFieldDetails> fieldDetails, String time, List<String> ordredColumn, String locale) {
+    private Path saveAsRecord(String fileName, List<Map<String, Object>> records, String fileType, Map<String, GenericFieldDetails> fieldDetails, List<String> ordredColumn, String locale) {
         String extensionFile = ".csv";
+        DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendValue(DAY_OF_MONTH, 2).appendValue(MONTH_OF_YEAR, 2).appendValue(YEAR, 4, 10, SignStyle.EXCEEDS_PAD)
+                .appendLiteral('-').appendValue(HOUR_OF_DAY, 2).appendValue(MINUTE_OF_HOUR, 2).appendValue(SECOND_OF_MINUTE, 2).appendValue(MILLI_OF_SECOND, 3).toFormatter();
+        String time = LocalDateTime.now().format(formatter);
         
         try {
         	
@@ -383,14 +388,16 @@ public class GenericFileExportManager {
         List<String> columns = new ArrayList<>();
         Objects.requireNonNull(genericFieldDetails).forEach(gfd -> columns.add(gfd.getName()));
         List<Map<String, Object>> map = convertObjectsListToListOfMap(agedReceivablesList, AgedReceivableDto.class, columns);
+       
         // Get Fields to Map by name and header
         Map<String, GenericFieldDetails> fieldDetails = getFieldDetailsMap(genericFieldDetails);
+        
         // Format Fields
-        formatFields(map, format);
+        formatFields(map, format, locale);
 
         // If the map is not empty then save As Record to export - CSV, EXCEL or PDF
         if (!map.isEmpty()) {
-            Path filePath = saveAsRecord(filename, map, fileType, fieldDetails, time, orderedColumn, locale);
+            Path filePath = saveAsRecord(filename, map, fileType, fieldDetails, orderedColumn, locale);
             return filePath == null ? null : filePath.toString();
         }
 
@@ -433,7 +440,7 @@ public class GenericFileExportManager {
      * @param mapResult List of Map
      * @param format Date Format
      */
-    private static void formatFields(List<Map<String, Object>> mapResult, SimpleDateFormat format) {
+    private static void formatFields(List<Map<String, Object>> mapResult, SimpleDateFormat format, String locale) {
         for (Map<String, Object> item : mapResult) {
             for (Map.Entry<String, Object> entry : item.entrySet()) {
                 if(entry.getKey().equals("dueDate")) {

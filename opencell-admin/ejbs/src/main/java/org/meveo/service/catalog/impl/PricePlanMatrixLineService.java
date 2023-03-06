@@ -3,9 +3,13 @@ package org.meveo.service.catalog.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -245,7 +249,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         if (matchedPrices.isEmpty()) {
             throw new NoPricePlanException("No price match with price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ") using attribute : " + attributeValues.stream().map(AttributeValue::getValue));
         
-        } else if (matchedPrices.size() >= 2 && matchedPrices.get(0).getPriority() == matchedPrices.get(1).getPriority()) {
+        } else if (matchedPrices.size() >= 2 && matchedPrices.get(0).getPriority().equals(matchedPrices.get(1).getPriority())) {
             throw new NoPricePlanException("Many prices lines with the same priority match with price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ") using attribute : " + attributeValues.stream().map(AttributeValue::getValue));
         }
         return matchedPrices.get(0);
@@ -268,10 +272,21 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
                     .collect(Collectors.toList());
         }
         else {
-            return priceLines.stream()
+            List<PricePlanMatrixLine> results = priceLines.stream()
                     .filter(line -> line.match(attributeValues))
                     .sorted(Comparator.comparing(PricePlanMatrixLine::getPriority))
                     .collect(Collectors.toList());
+
+            if (CollectionUtils.isNotEmpty(results) && results.size() > 1) {
+                // in case we have more than one result, remove the default one (without values)
+                results.removeIf(pricePlanMatrixLine -> CollectionUtils.isEmpty(pricePlanMatrixLine.getPricePlanMatrixValues()));
+                // if we still have more than one value, get the one with biggest values : values are the number of matched values with passed attributes
+                if (results.size() > 1) {
+                    return filterByMostMatchedResultValues(results);
+                    // if we have more than result, the called method shall be use priority as already developped
+                }
+            }
+            return results;
         }
     }
 
@@ -448,6 +463,36 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
                     throw new MeveoApiException("A line having similar values already exists!.");
             }
         }
+    }
+
+    private List<PricePlanMatrixLine> filterByMostMatchedResultValues(List<PricePlanMatrixLine> ppmls) {
+        if (CollectionUtils.isEmpty(ppmls)) {
+            return Collections.emptyList();
+        }
+        // Create a map with COUNT of value, List on PricePlanMatrixLines
+        Map<Integer, List<PricePlanMatrixLine>> groupByCountValue = new HashMap<>();
+        // Put the result in map
+        ppmls.forEach(p -> {
+            if (CollectionUtils.isEmpty(p.getPricePlanMatrixValues())) {
+                return;
+            }
+            List<PricePlanMatrixLine> list = groupByCountValue.get(p.getPricePlanMatrixValues().size());
+            if (list == null) {
+                List<PricePlanMatrixLine> newList = new ArrayList<>();
+                newList.add(p);
+                groupByCountValue.put(p.getPricePlanMatrixValues().size(), newList);
+            } else {
+                list.add(p);
+            }
+        });
+        // Reverse order to get the result with the most matched values
+        Map<Integer, List<PricePlanMatrixLine>> reverdeOrderResults = groupByCountValue.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey(Comparator.reverseOrder()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+        // return list with the most values : 1 or more
+        return reverdeOrderResults.get(Collections.max(reverdeOrderResults.entrySet(),
+                Comparator.comparingInt(Map.Entry::getKey)).getKey());
     }
 
 }

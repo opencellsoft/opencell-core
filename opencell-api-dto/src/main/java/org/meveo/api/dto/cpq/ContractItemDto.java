@@ -18,7 +18,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @SuppressWarnings("serial")
 public class ContractItemDto extends BusinessEntityDto {
 
-
 	@Schema(description = "contract code")
     @NotNull
 	private String contractCode;
@@ -37,6 +36,8 @@ public class ContractItemDto extends BusinessEntityDto {
 	private Double rate;
 	@Schema(description = "amount without tax")
     private BigDecimal amountWithoutTax;
+	@Schema(description = "separate discount")
+	private Boolean seperateDiscountLine=Boolean.FALSE;
     
     /**
      * Type of rate, whether absolute or percentage.
@@ -46,6 +47,9 @@ public class ContractItemDto extends BusinessEntityDto {
     
 	@Schema(description = "list of the custom field if any")
 	private CustomFieldsDto customFields;
+
+	@Schema(description = "Expression language to condition contract line application")
+	private String applicationEl;
     
     public ContractItemDto() {}
     
@@ -67,6 +71,8 @@ public class ContractItemDto extends BusinessEntityDto {
     	this.description = c.getDescription();
     	this.code = c.getCode();
     	this.contractRateType=c.getContractRateType();
+    	this.seperateDiscountLine=c.isSeparateDiscount();
+		this.applicationEl = c.getApplicationEl();
     }
     
 	/**
@@ -188,12 +194,19 @@ public class ContractItemDto extends BusinessEntityDto {
 		this.contractRateType = contractRateType;
 	}
 
+	public Boolean getSeperateDiscountLine() {
+		return seperateDiscountLine;
+	}
 
-	
-	
+	public void setSeperateDiscountLine(Boolean seperateDiscountLine) {
+		this.seperateDiscountLine = seperateDiscountLine;
+	}
 
+	public String getApplicationEl() {
+		return applicationEl;
+	}
 
-
-    
-	
+	public void setApplicationEl(String applicationEl) {
+		this.applicationEl = applicationEl;
+	}
 }

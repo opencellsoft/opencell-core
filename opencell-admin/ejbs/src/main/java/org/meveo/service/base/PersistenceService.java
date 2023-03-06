@@ -64,6 +64,8 @@ import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.LockMode;
 import org.hibernate.SQLQuery;
@@ -307,7 +309,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         EntityManager em = getEntityManager();
         if (!em.contains(entity)) { // https://vladmihalcea.com/jpa-persist-and-merge/
-            entity = getEntityManager().merge(entity); // here could also use session.update(); see https://vladmihalcea.com/how-to-optimize-the-merge-operation-using-update-while-batching-with-jpa-and-hibernate/
+            entity = em.merge(entity); // here could also use session.update(); see https://vladmihalcea.com/how-to-optimize-the-merge-operation-using-update-while-batching-with-jpa-and-hibernate/
         }
 
         return entity;
@@ -561,7 +563,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         EntityManager em = getEntityManager();
         if (!em.contains(entity)) { // https://vladmihalcea.com/jpa-persist-and-merge/
-            entity = getEntityManager().merge(entity); // here could also use session.update(); see https://vladmihalcea.com/how-to-optimize-the-merge-operation-using-update-while-batching-with-jpa-and-hibernate/
+            entity = em.merge(entity); // here could also use session.update(); see https://vladmihalcea.com/how-to-optimize-the-merge-operation-using-update-while-batching-with-jpa-and-hibernate/
         }
     
         // Andrius K. Commented out for now as solution is not currently used. Please don't remove it.
@@ -1104,7 +1106,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             } else {
 
                 Map<String, Object> cfFilters = extractCustomFieldsFilters(filters);
-                filters.putAll(cfFilters);
+                if(MapUtils.isNotEmpty(cfFilters)) {
+                    filters.putAll(cfFilters);
+                }
 
                 ExpressionFactory expressionFactory = new ExpressionFactory(queryBuilder, "a");
                 filters.keySet().stream().sorted((k1, k2) -> org.apache.commons.lang3.StringUtils.countMatches(k2, ".") - org.apache.commons.lang3.StringUtils.countMatches(k1, "."))

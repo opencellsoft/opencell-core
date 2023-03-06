@@ -29,11 +29,23 @@ public class GenericRequestMapper {
         this.serviceFunction = serviceFunction;
     }
 
-    public PaginationConfiguration mapTo(GenericPagingAndFiltering genericPagingAndFiltering){
-        if(genericPagingAndFiltering == null){
-            return getPaginationConfiguration(ImmutableGenericPagingAndFiltering.builder().build());
+    public PaginationConfiguration mapTo(GenericPagingAndFiltering genericPagingAndFiltering) {
+        PaginationConfiguration paginationConfiguration;
+        GenericPagingAndFiltering genericPagingAndFilteringBuilt;
+
+        if (genericPagingAndFiltering == null) {
+            genericPagingAndFilteringBuilt = ImmutableGenericPagingAndFiltering.builder().build();
+            paginationConfiguration = getPaginationConfiguration(genericPagingAndFilteringBuilt);
+            setPaginationLimit(paginationConfiguration, genericPagingAndFilteringBuilt);
+        } else {
+            paginationConfiguration = getPaginationConfiguration(genericPagingAndFiltering);
+            setPaginationLimit(paginationConfiguration, genericPagingAndFiltering);
         }
-        return getPaginationConfiguration(genericPagingAndFiltering);
+        return paginationConfiguration;
+    }
+
+    private void setPaginationLimit(PaginationConfiguration paginationConfiguration, GenericPagingAndFiltering genericPagingAndFiltering) {
+        paginationConfiguration.setLimit(genericPagingAndFiltering.getLimit() != null ? genericPagingAndFiltering.getLimit().intValue() : null);
     }
 
     private PaginationConfiguration getPaginationConfiguration(GenericPagingAndFiltering genericPagingAndFiltering) {

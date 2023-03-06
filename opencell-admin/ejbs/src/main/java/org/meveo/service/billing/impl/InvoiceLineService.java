@@ -10,6 +10,8 @@ import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 import static org.meveo.model.billing.InvoiceLineTaxModeEnum.RATE;
 import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
+import static org.apache.commons.collections4.ListUtils.partition;
+import static org.meveo.commons.utils.ParamBean.getInstance;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -19,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -82,7 +85,6 @@ import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.IInvoicingMinimumApplicable;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.order.Order;
@@ -104,7 +106,6 @@ import org.meveo.service.order.OpenOrderService;
 import org.meveo.service.settings.impl.OpenOrderSettingService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
-import org.meveo.util.ApplicationProvider;
 
 @Stateless
 public class InvoiceLineService extends PersistenceService<InvoiceLine> {
@@ -144,10 +145,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     @Inject
     private InvoiceService invoiceService;
-
-    @Inject
-    @ApplicationProvider
-    protected Provider appProvider;
 
     @Inject
     private SellerService sellerService;
@@ -240,7 +237,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         if (accountingArticle != null && entity.getTax() == null) {
              seller = sellerService.refreshOrRetrieve(seller);
              setApplicableTax(accountingArticle, date, seller, billingAccount, entity);
-         }
+        }
+
         super.create(entity);
         
         if(!isDuplicated && entity.getDiscountPlan() != null && entity.getAmountWithoutTax().compareTo(BigDecimal.ZERO)>0 ) {
@@ -250,6 +248,37 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		return entity;
     }
     
+    public InvoiceLine checkAmountIL(InvoiceLine invoiceLine, List<Object[]> maxIlAmountAdjList) {
+        for (Object[] maxIlAmountAdj : maxIlAmountAdjList) {            
+            Long accountingArticleId = (Long) maxIlAmountAdj[2];
+            Long taxId = (Long) maxIlAmountAdj[3];
+            BigDecimal taxRate = (BigDecimal) maxIlAmountAdj[4];
+            InvoiceLineTaxModeEnum taxMode = (InvoiceLineTaxModeEnum) maxIlAmountAdj[5];
+            
+            boolean t1 = invoiceLine.getTaxMode().equals(taxMode);
+            boolean t2 = invoiceLine.getTax().getId().equals(taxId);
+            boolean t3 = invoiceLine.getTaxRate().equals(taxRate);
+            boolean t4 = invoiceLine.getAccountingArticle().getId().equals(accountingArticleId);
+            boolean isIlFind = t1 && t2 && t3 && t4;
+            
+            if(isIlFind) {
+                BigDecimal amountWithoutTax = (BigDecimal) maxIlAmountAdj[6];
+                BigDecimal amountTax = (BigDecimal) maxIlAmountAdj[7];
+                BigDecimal amountWithTax = (BigDecimal) maxIlAmountAdj[8];
+                
+                if(invoiceLine.getAmountWithoutTax().compareTo(amountWithoutTax) == 1 
+                    || invoiceLine.getAmountTax().compareTo(amountTax) == 1 
+                    || invoiceLine.getAmountWithTax().compareTo(amountWithTax) == 1) {
+                    invoiceLine.setAmountTax(amountTax);
+                    invoiceLine.setAmountWithoutTax(amountWithoutTax);
+                    invoiceLine.setAmountWithTax(amountWithTax);
+                }
+            }
+        }
+
+        return invoiceLine;
+    }
+
     private void addDiscountPlanInvoice(DiscountPlan discount, InvoiceLine entity, BillingAccount billingAccount, Invoice invoice, AccountingArticle accountingArticle, Seller seller) {
     	var isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discount,invoice!=null?invoice.getInvoiceDate():null);
     	if(isDiscountApplicable) {
@@ -678,6 +707,17 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		ofNullable(resource.getDiscountAmount()).ifPresent(invoiceLine::setDiscountAmount);
 		ofNullable(resource.getLabel()).ifPresent(invoiceLine::setLabel);
 		ofNullable(resource.getRawAmount()).ifPresent(invoiceLine::setRawAmount);
+
+        if (StringUtils.isNotBlank(resource.getTaxCode())) {
+            Tax tax = taxService.findByCode(resource.getTaxCode());
+            if (tax == null) {
+                throw new BusinessException("No tax found with code '" + resource.getTaxCode() + "'");
+            }
+            if (invoiceLine.getTax() != null && tax.getId() != invoiceLine.getTax().getId()) {
+                invoiceLine.setTaxRecalculated(true);
+            }
+            invoiceLine.setTax(tax);
+        }
 		AccountingArticle accountingArticle=null;
 		if (resource.getAccountingArticleCode() != null) {
 			 accountingArticle = accountingArticleService.findByCode(resource.getAccountingArticleCode());
@@ -1181,6 +1221,17 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
 
     public List<InvoiceLine> findByInvoiceAndIds(Invoice invoice, List<Long> invoiceLinesIds) {
+        final int maxValue = getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
+        if (invoiceLinesIds.size() > maxValue) {
+            List<InvoiceLine> invoiceLines = new ArrayList<>();
+            List<List<Long>> invoiceLineIdsSubList = partition(invoiceLinesIds, maxValue);
+            invoiceLineIdsSubList.forEach(subIdsList -> invoiceLines.addAll(loadBy(invoice, subIdsList)));
+            return invoiceLines;
+        } else {
+            return loadBy(invoice, invoiceLinesIds);
+        }
+    }
+    private List<InvoiceLine> loadBy(Invoice invoice, List<Long> invoiceLinesIds) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByInvoiceAndIds", entityClass)
                 .setParameter("invoice", invoice)
                 .setParameter("invoiceLinesIds", invoiceLinesIds)
@@ -1292,7 +1343,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		invoiceLine.setBillingRun(bilingRun);
 		create(invoiceLine);
 	}
-    
+
     public List<InvoiceLine> findByIdsAndAdjustmentStatus(List<Long> invoiceLinesIds, AdjustmentStatusEnum adjustmentStatusEnum) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByIdsAndAdjustmentStatus", entityClass)
                 .setParameter("status", adjustmentStatusEnum.toString())
@@ -1339,4 +1390,27 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		return getEntityManager().createNamedQuery("InvoiceLine.sumAmountsDiscountByBillingAccount")
 				.setParameter("billingRunId", billingRun.getId()).getResultList();
 	}
+
+    @SuppressWarnings("unchecked")
+    public List<Object[]> getMaxIlAmountAdj(Long id) {
+        return getEntityManager().createNamedQuery("InvoiceLine.getMaxIlAmountAdj").setParameter("invoiceId", id).getResultList();
+    }
+
+    public List<BillingAccount> findBillingAccountsBy(List<Long> invoiceLinesIds) {
+        final int maxValue = getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
+        if (invoiceLinesIds.size() > maxValue) {
+            List<BillingAccount> billingAccounts = new ArrayList<>();
+            List<List<Long>> invoiceLineIdsSubList = partition(invoiceLinesIds, maxValue);
+            invoiceLineIdsSubList.forEach(subIdsList -> billingAccounts.addAll(loadBillingAccounts(subIdsList)));
+            return new ArrayList<>(new HashSet<>(billingAccounts));
+        } else {
+            return loadBillingAccounts(invoiceLinesIds);
+        }
+    }
+    private List<BillingAccount> loadBillingAccounts(List<Long> invoiceLinesIds) {
+        return getEntityManager()
+                .createNamedQuery("InvoiceLine.BillingAccountByILIds")
+                .setParameter("ids", invoiceLinesIds)
+                .getResultList();
+    }
 }

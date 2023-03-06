@@ -91,7 +91,11 @@ public class ProductLine extends BusinessCFEntity  {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(longDescription, parentLine, seller);
+		Long idSeller = 0L;
+		if (seller != null) {
+		    idSeller = seller.getId();
+		}
+		result = prime * result + Objects.hash(longDescription, parentLine, idSeller);
 		return result;
 	}
 

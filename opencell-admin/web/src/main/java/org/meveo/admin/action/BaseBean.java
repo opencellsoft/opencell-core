@@ -228,9 +228,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     public static final String DEPRECATED_FEATURE = "DEPRECATED: This feature is deprecated and will be removed or replaced in a future release";
 
-    public static final String DEPRECATED_ADMIN_MESSAGE = "Use of the Legacy Admin is strongly discouraged for this feature. This page is either incomplete or obsolete.";
+    public static final String DEPRECATED_ADMIN_MESSAGE = "Use of the Legacy Admin is strongly discouraged for this feature. Page and/or feature are either incomplete or obsolete.";
 
-    public static final String DEFAULT_DEPRECATED_ADMIN_MESSAGE = "Please, use of the Legacy Admin only if the feature you seek hasn’t been ported to Portal yet. Legacy Admin is not maintained anymore; features can be missing, obsolete or broken.";
+    public static final String DEFAULT_DEPRECATED_ADMIN_MESSAGE = "Please, use of the Legacy Admin only if the feature you seek hasn't been ported to Portal yet. Legacy Admin is not maintained anymore; features can be missing, obsolete or broken.";
     /**
      * Constructor
      */

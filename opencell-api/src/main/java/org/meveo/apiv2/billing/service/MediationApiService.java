@@ -1,8 +1,8 @@
 package org.meveo.apiv2.billing.service;
 
-import static org.meveo.apiv2.billing.ProcessCdrListModeEnum.PROCESS_ALL;
-import static org.meveo.apiv2.billing.ProcessCdrListModeEnum.ROLLBACK_ON_ERROR;
-import static org.meveo.apiv2.billing.ProcessCdrListModeEnum.STOP_ON_FIRST_FAIL;
+import static org.meveo.apiv2.billing.ProcessingModeEnum.PROCESS_ALL;
+import static org.meveo.apiv2.billing.ProcessingModeEnum.ROLLBACK_ON_ERROR;
+import static org.meveo.apiv2.billing.ProcessingModeEnum.STOP_ON_FIRST_FAIL;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -54,7 +54,7 @@ import org.meveo.apiv2.billing.CdrListInput;
 import org.meveo.apiv2.billing.ChargeCdrListInput;
 import org.meveo.apiv2.billing.ImmutableCdrDtoResponse;
 import org.meveo.apiv2.billing.ImmutableCdrDtoResponse.Builder;
-import org.meveo.apiv2.billing.ProcessCdrListModeEnum;
+import org.meveo.apiv2.billing.ProcessingModeEnum;
 import org.meveo.apiv2.billing.ProcessCdrListResult;
 import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.commons.utils.MethodCallingUtils;
@@ -248,7 +248,7 @@ public class MediationApiService {
      * @return CDR processing result
      */
     @SuppressWarnings("rawtypes")
-    private ProcessCdrListResult processCdrList(List<String> cdrLines, ProcessCdrListModeEnum mode, boolean isVirtual, boolean rate, boolean reserve, boolean rateTriggeredEdr, Integer maxDepth,
+    private ProcessCdrListResult processCdrList(List<String> cdrLines, ProcessingModeEnum mode, boolean isVirtual, boolean rate, boolean reserve, boolean rateTriggeredEdr, Integer maxDepth,
             boolean returnWalletOperations, boolean returnWalletOperationDetails, boolean returnEDRs, boolean returnCounters, String ipAddress, boolean generateRTs) {
 
         ProcessCdrListResult cdrListResult = new ProcessCdrListResult(mode, cdrLines.size());
@@ -628,7 +628,7 @@ public class MediationApiService {
     }
 
     
-    public CdrDtoResponse createCdr(List<CDR> cdrs, ProcessCdrListModeEnum mode, boolean returnCDRs, boolean returnError) {
+    public CdrDtoResponse createCdr(List<CDR> cdrs, ProcessingModeEnum mode, boolean returnCDRs, boolean returnError) {
         Builder cdrDtoResponse = ImmutableCdrDtoResponse.builder();
         List<org.meveo.apiv2.models.Resource> ids = new ArrayList<>();
         List<CdrErrorDto> cdrErrorDtos = new ArrayList<CdrErrorDto>();
@@ -788,7 +788,7 @@ public class MediationApiService {
     }
     
 
-    public CdrDtoResponse updateCDRs(List<CDR> cdrs, ProcessCdrListModeEnum mode, boolean returnCDRs, boolean returnError) {
+    public CdrDtoResponse updateCDRs(List<CDR> cdrs, ProcessingModeEnum mode, boolean returnCDRs, boolean returnError) {
         List<CdrErrorDto> cdrErrorDtos = new ArrayList<CdrErrorDto>();
         List<String> errorParamters = new ArrayList<String>();
         List<org.meveo.apiv2.models.Resource> ids = new ArrayList<>();
@@ -919,7 +919,7 @@ public class MediationApiService {
         cdrService.remove(cdr);
     }
     
-    public CdrDtoResponse deleteCdrs(List<Long> ids, ProcessCdrListModeEnum mode, boolean returnCDRs, boolean returnError) {
+    public CdrDtoResponse deleteCdrs(List<Long> ids, ProcessingModeEnum mode, boolean returnCDRs, boolean returnError) {
         List<CdrErrorDto> cdrErrorDtos = new ArrayList<CdrErrorDto>();
         List<org.meveo.apiv2.models.Resource> returnIds = new ArrayList<>();
         for (Long id : ids) {
@@ -1018,6 +1018,21 @@ public class MediationApiService {
         }
         if(toBeUpdated.getExtraParam() != null) {
             cdr.setExtraParameter(toBeUpdated.getExtraParam());
+        }
+        if(toBeUpdated.getDecimalParam1() != null) {
+        	cdr.setDecimalParam1(toBeUpdated.getDecimalParam1());
+        }
+        if(toBeUpdated.getDecimalParam2() != null) {
+        	cdr.setDecimalParam2(toBeUpdated.getDecimalParam2());
+        }
+        if(toBeUpdated.getDecimalParam3() != null) {
+        	cdr.setDecimalParam3(toBeUpdated.getDecimalParam3());
+        }
+        if(toBeUpdated.getDecimalParam4() != null) {
+        	cdr.setDecimalParam4(toBeUpdated.getDecimalParam4());
+        }
+        if(toBeUpdated.getDecimalParam5() != null) {
+        	cdr.setDecimalParam5(toBeUpdated.getDecimalParam5());
         }
     }
 }

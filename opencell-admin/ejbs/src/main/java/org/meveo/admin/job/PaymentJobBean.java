@@ -276,8 +276,8 @@ public class PaymentJobBean extends IteratorBasedJobBean<PaymentItem> {
                 // jobExecutionResult.registerSucces();
             }
 
-        } catch (NoAllOperationUnmatchedException | UnbalanceAmountException e) {
-            throw new BusinessException(e);
+        } catch (Exception e) {
+        	log.error(" Error on createPaymentOrPayout [{}]", e.getMessage());
         }
     }
 

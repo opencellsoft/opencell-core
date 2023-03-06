@@ -25,8 +25,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.util.ApplicationProvider;
 
 public class StandardReportResourceImpl implements StandardReportResource {
-
-    private static final String FR_DATE_FORMAT = "dd/MM/yyyy";
+	
     private static final String EN_DATE_FORMAT = "MM/dd/yyyy";
 
     @Inject
@@ -80,7 +79,7 @@ public class StandardReportResourceImpl implements StandardReportResource {
     @Override
     public Response exportAgedReceivables(String fileFormat, String locale, GenericPagingAndFiltering input, @Context Request request) {
         String filePath = null;
-        SimpleDateFormat format = new SimpleDateFormat(FR_DATE_FORMAT);
+        SimpleDateFormat format = new SimpleDateFormat(EN_DATE_FORMAT);
 
         if(!fileFormat.equalsIgnoreCase("csv") && !fileFormat.equalsIgnoreCase("excel") && !fileFormat.equalsIgnoreCase("pdf")){
             throw new BadRequestException("Accepted formats for export are (CSV, pdf or EXCEL).");
@@ -94,45 +93,83 @@ public class StandardReportResourceImpl implements StandardReportResource {
         List<AgedReceivableDto> agedReceivablesList = null;
         agedReceivableMapper.setAppProvider(appProvider);
 
-        if("EN".equalsIgnoreCase(locale)) {
-            format = new SimpleDateFormat(EN_DATE_FORMAT);
-        }
-
         try {
-            if(input.getFilters() != null) {
-                agedBalanceList = standardReportApiService.list(
-                        input.getOffset(),
-                        input.getLimit(),
-                        input.getSortOrder(),
-                        input.getSortBy(),
-                        (String) input.getFilters().get("customerAccountCode"),
-                        input.getFilters().get("startDate") != null ? format.parse((String) input.getFilters().get("startDate")) : new Date(),
-                        input.getFilters().get("startDueDate") != null ? format.parse((String) input.getFilters().get("startDueDate")) : null,
-                        input.getFilters().get("endDueDate") != null ? format.parse((String) input.getFilters().get("endDueDate")) : null,
-                        (String) input.getFilters().get("customerAccountDescription"),
-                        (String) input.getFilters().get("sellerDescription"),
-                        (String) input.getFilters().get("sellerCode"),
-                        (String) input.getFilters().get("invoiceNumber"),
-                        (Integer) input.getFilters().get("stepInDays"),
-                        (Integer) input.getFilters().get("numberOfPeriods"),
-                        (String) input.getFilters().get("tradingCurrency"),
-                        (String) input.getFilters().get("functionalCurrency"));
-                // Convert List of Object to a list of Aged Receivable Dto
-                agedReceivablesList = (input.getFilters().get("stepInDays") == null && input.getFilters().get("numberOfPeriods") == null)
-                        ? agedReceivableMapper.buildEntityList(agedBalanceList)
-                        : agedReceivableMapper.buildDynamicResponse(agedBalanceList, input.getFilters().get("numberOfPeriods") != null ? (Integer) input.getFilters().get("numberOfPeriods") : 0);
+        if(input.getFilters() != null && input.getFilters().size() > 0) {
+        	agedBalanceList = standardReportApiService.list(
+		            input.getOffset(),
+		            input.getLimit(),
+		            input.getSortOrder(),
+		            input.getSortBy(),
+		            (String) input.getFilters().get("customerAccountCode"),
+                    input.getFilters().get("startDate") != null ? format.parse((String) input.getFilters().get("startDate")) : new Date(),
+                    input.getFilters().get("startDueDate") != null ? format.parse((String) input.getFilters().get("startDueDate")) : null,
+                    input.getFilters().get("endDueDate") != null ? format.parse((String) input.getFilters().get("endDueDate")) : null,
+                    (String) input.getFilters().get("customerAccountDescription"),
+		            (String) input.getFilters().get("sellerDescription"),
+		            (String) input.getFilters().get("sellerCode"),
+		            (String) input.getFilters().get("invoiceNumber"),
+		            (Integer) input.getFilters().get("stepInDays"),
+		            (Integer) input.getFilters().get("numberOfPeriods"),
+		            (String) input.getFilters().get("tradingCurrency"),
+		            (String) input.getFilters().get("functionalCurrency"));
+		    // Convert List of Object to a list of Aged Receivable Dto
+        	agedReceivablesList = (input.getFilters().get("stepInDays") == null && input.getFilters().get("numberOfPeriods") == null)
+                    ? agedReceivableMapper.fromListObjectToListEntity(agedBalanceList) : agedReceivableMapper.buildDynamicResponse(agedBalanceList, input.getFilters().get("numberOfPeriods") != null ? (Integer) input.getFilters().get("numberOfPeriods") : 0);
 
-            } else {
-                agedBalanceList = standardReportApiService.getAll();
-                agedReceivablesList = agedReceivableMapper.fromListObjectToListEntity(agedBalanceList);
-            }
+		} else {
+			Date startDate = new Date();
+			if(input.getFilters().get("startDate") != null ) {
+				startDate = format.parse((String) input.getFilters().get("startDate"));
+			}
+			
+			agedBalanceList = standardReportApiService.getAll(startDate);
+		    agedReceivablesList = agedReceivableMapper.fromListObjectToListEntity(agedBalanceList);
+		}
+        
+        //Calculate Sums
+        calculateSums(input, agedReceivablesList);
 
-            filePath = genericExportManager.exportAgedTrialBalance("AgedReceivableDto", fileFormat, input.getGenericFieldDetails(), agedReceivablesList,
-                    input.getGenericFieldDetails().stream().map(GenericFieldDetails::getName).collect(Collectors.toList()), locale);
+		filePath = genericExportManager.exportAgedTrialBalance("AgedReceivableDto", fileFormat, input.getGenericFieldDetails(), agedReceivablesList,
+		        input.getGenericFieldDetails().stream().map(GenericFieldDetails::getName).collect(Collectors.toList()), locale);
         } catch(ParseException ex) {
             throw new BusinessApiException("Error occurred when listing aged balance report : " + ex.getMessage());
+        }
+        
+        if(filePath == null) {
+        	throw new BusinessApiException("Error occurred when exporting file");
         }
 
         return Response.ok().entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"\"}, \"data\":{ \"filePath\":\""+ filePath +"\"}}").build();
     }
+
+    /**
+     * Calculate Sums before extracting data
+     * @param input
+     * @param agedReceivablesList
+     */
+	private void calculateSums(GenericPagingAndFiltering input, List<AgedReceivableDto> agedReceivablesList) {
+		agedReceivablesList.forEach(ag -> {
+        	if(input.getFilters().get("numberOfPeriods") != null) {
+        		Integer num = (Integer) input.getFilters().get("numberOfPeriods");
+        		if(ag.getTotalAmountByPeriod().size() > 0) {
+        			if(num > 0) {
+            			ag.setSum1To30(ag.getTotalAmountByPeriod().get(0));
+            		}
+            		
+            		if(num > 1) {
+            			ag.setSum31To60(ag.getTotalAmountByPeriod().get(1));
+            		}
+            		
+            		if(num > 2) {
+            			ag.setSum61To90(ag.getTotalAmountByPeriod().get(2));
+            		}
+            		
+            		if(num > 3) {
+            			ag.setSum90Up(ag.getTotalAmountByPeriod().get(3));
+            		}
+        		}
+        		
+        	}
+        });
+	}
 }

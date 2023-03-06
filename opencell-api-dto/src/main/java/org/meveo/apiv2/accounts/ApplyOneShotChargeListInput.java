@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 import org.immutables.value.Value;
 import org.immutables.value.Value.Default;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
-import org.meveo.apiv2.billing.ImmutableChargeCdrListInput;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -35,6 +34,8 @@ public interface ApplyOneShotChargeListInput {
     @Nullable
     Integer getMaxDepth();
 
+    
+
     @Default
     @Schema(description = "If true, the API will return the list of IDs of all wallet operations produced. Applies to non-virtual mode only.", name ="isReturnWalletOperations")
     default boolean isReturnWalletOperations() {
@@ -58,6 +59,12 @@ public interface ApplyOneShotChargeListInput {
     @Schema(description = "If true, the API will automatically generate RTs", name = "isGenerateRTs")
     default boolean isGenerateRTs() {
         return false;
+    }
+
+    @Default
+    @Schema(description = "How the Charges list is processed : STOP_ON_FIRST_FAIL, PROCESS_ALL, ROLLBACK_ON_ERROR")
+    default ApplyOneShotChargeListModeEnum getMode() {
+        return ApplyOneShotChargeListModeEnum.STOP_ON_FIRST_FAIL;
     }
 
     @Schema(description = "The list of one shot charges to apply", name = "chargesToApply")

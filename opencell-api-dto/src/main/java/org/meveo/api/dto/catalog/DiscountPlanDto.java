@@ -203,6 +203,14 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	private Boolean automaticApplication;
 
 	/**
+	 determines whether the discount plan will automatically be applied to an offer or a product upon instantiation
+	 */
+	@Schema(description = "determines whether the discount plan will automatically be applied to an offer or a product upon instantiation")
+	private String allowanceCode;
+
+
+
+	/**
 	 * Instantiates a new DiscountPlanDto
 	 */
 	public DiscountPlanDto() {
@@ -443,4 +451,11 @@ public class DiscountPlanDto extends EnableBusinessDto {
 		this.automaticApplication = automaticApplication;
 	}
 
+	public String getAllowanceCode() {
+		return allowanceCode;
+	}
+
+	public void setAllowanceCode(String allowanceCode) {
+		this.allowanceCode = allowanceCode;
+	}
 }

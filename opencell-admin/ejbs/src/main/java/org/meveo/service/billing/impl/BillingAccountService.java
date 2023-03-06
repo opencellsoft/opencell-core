@@ -294,18 +294,22 @@ public class BillingAccountService extends AccountService<BillingAccount> {
      * Find billing accounts.
      *
      * @param billingCycle the billing cycle
-     * @param startdate the startdate
+     * @param startDate the start date
      * @param endDate the end date
      * @return the list
      */
     @SuppressWarnings("unchecked")
-    public List<BillingAccount> findBillingAccounts(BillingCycle billingCycle, Date startdate, Date endDate) {
+    public List<BillingAccount> findBillingAccounts(BillingCycle billingCycle, Date startDate, Date endDate) {
         try {
             QueryBuilder qb = new QueryBuilder(BillingAccount.class, "b", null);
-            qb.addCriterionEntity("b.billingCycle.id", billingCycle.getId());
+            if(billingCycle.getFilters() != null && !billingCycle.getFilters().isEmpty()) {
+                qb.addPaginationConfiguration(new PaginationConfiguration(billingCycle.getFilters()));
+            } else {
+                qb.addCriterionEntity("b.billingCycle.id", billingCycle.getId());
+            }
 
-            if (startdate != null) {
-                qb.addCriterionDateRangeFromTruncatedToDay("nextInvoiceDate", startdate);
+            if (startDate != null) {
+                qb.addCriterionDateRangeFromTruncatedToDay("nextInvoiceDate", startDate);
             }
 
             if (endDate != null) {
@@ -525,7 +529,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                 }
             }
         }
-        return (BillingAccount) discountPlanInstanceService.instantiateDiscountPlan(entity, dp, null);
+        return (BillingAccount) discountPlanInstanceService.instantiateDiscountPlan(entity, dp, null, false);
         }else {
         	 throw new BusinessException("DiscountPlan " + dp.getCode() + " of type " + dp.getDiscountPlanType() +" is not allowed to be applied to BillingAccount.");
         }

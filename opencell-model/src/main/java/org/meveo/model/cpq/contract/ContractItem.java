@@ -15,8 +15,9 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
-import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.CustomFieldEntity;
@@ -40,7 +41,7 @@ import org.meveo.model.cpq.Product;
 @NamedQueries({
 	@NamedQuery(name = "ContractItem.getApplicableContracts", query = "select c from ContractItem c where  c.contract.id=:contractId "
 			+ " and (c.offerTemplate is null or c.offerTemplate.id=:offerId) "
-			+ " and (c.product is null or c.product.code=:productCode) and (c.chargeTemplate is null or c.chargeTemplate.id=:chargeTemplateId)  " )})
+			+ " and (c.product is null or c.product.code=:productCode) and (c.chargeTemplate is null or c.chargeTemplate.id=:chargeTemplateId)  order by c.auditable.created desc" )})
 	
 public class ContractItem extends EnableBusinessCFEntity {
 
@@ -112,7 +113,18 @@ public class ContractItem extends EnableBusinessCFEntity {
 	@Column(name = "rate_type", length = 50)
 	private ContractRateTypeEnum contractRateType = ContractRateTypeEnum.PERCENTAGE;
 
+	 /**
+     * separate discount
+     */
+	
+	@Type(type = "numeric_boolean")
+	@Column(name = "separate_discount")
+	private boolean separateDiscount = false;
 
+	@Column(name = "application_el", length = 2000)
+	@Size(max = 2000)
+	private String applicationEl;
+	
 	/**
 	 * @return the contract
 	 */
@@ -249,6 +261,23 @@ public class ContractItem extends EnableBusinessCFEntity {
 		this.contractRateType = contractRateType;
 	}
 
+
+	public boolean isSeparateDiscount() {
+		return separateDiscount;
+	}
+
+
+	public void setSeparateDiscount(boolean separateDiscount) {
+		this.separateDiscount = separateDiscount;
+	}
+
+	public String getApplicationEl() {
+		return applicationEl;
+	}
+
+	public void setApplicationEl(String applicationEl) {
+		this.applicationEl = applicationEl;
+	}
 
 	@Override
 	public int hashCode() {

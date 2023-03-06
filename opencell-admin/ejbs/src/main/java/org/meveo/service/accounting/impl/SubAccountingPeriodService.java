@@ -304,12 +304,12 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
         return getUsersSubPeriodWithByNameQuery(accountingPeriod, endDate, "SubAccountingPeriod.findByAPAndAfterEndDate");
     }
 	
-	public List<SubAccountingPeriod> getRegularUsersSubPeriodWithStatusOpen(AccountingPeriod accountingPeriod, Date endDate) {     
-        return getUsersSubPeriodWithByNameQuery(accountingPeriod, endDate, "SubAccountingPeriod.getRegularUsersSubPeriodWithStatusOpen");
+	public List<SubAccountingPeriod> getRegularUsersSubPeriodWithStatusOpen(AccountingPeriod accountingPeriod) {     
+        return getUsersSubPeriodWithByNameQuery(accountingPeriod, "SubAccountingPeriod.getRegularUsersSubPeriodWithStatusOpen");
     }
 	
-	public List<SubAccountingPeriod> getAllUsersSubPeriodWithStatusOpen(AccountingPeriod accountingPeriod, Date endDate) {
-        return getUsersSubPeriodWithByNameQuery(accountingPeriod, endDate, "SubAccountingPeriod.getAllUsersSubPeriodWithStatusOpen");
+	public List<SubAccountingPeriod> getAllUsersSubPeriodWithStatusOpen(AccountingPeriod accountingPeriod) {
+        return getUsersSubPeriodWithByNameQuery(accountingPeriod, "SubAccountingPeriod.getAllUsersSubPeriodWithStatusOpen");
     }
 	
 	private List<SubAccountingPeriod> getUsersSubPeriodWithByNameQuery(AccountingPeriod accountingPeriod, Date endDate, String nameQuery) {
@@ -318,6 +318,18 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
                         .createNamedQuery(nameQuery, entityClass)
                         .setParameter("apId", accountingPeriod.getId())
                         .setParameter("endDate", endDate, TemporalType.DATE)
+                        .getResultList();
+        } catch (NoResultException e) {
+            log.debug("No {} of AccountingPeriod {} found", getEntityClass().getSimpleName(), accountingPeriod.getId());
+            return new ArrayList<>();
+        }
+    }
+	
+	private List<SubAccountingPeriod> getUsersSubPeriodWithByNameQuery(AccountingPeriod accountingPeriod, String nameQuery) {
+        try {
+            return getEntityManager()
+                        .createNamedQuery(nameQuery, entityClass)
+                        .setParameter("apId", accountingPeriod.getId())
                         .getResultList();
         } catch (NoResultException e) {
             log.debug("No {} of AccountingPeriod {} found", getEntityClass().getSimpleName(), accountingPeriod.getId());
@@ -347,15 +359,15 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
                 .getSingleResult() == 0;
     }
 
-    public void updateSubPeriodsWithStatus(AccountingPeriod entity, String fiscalYear, Date lastDayOfFiscalYear, String status, boolean isUserHaveThisRole) {
+    public void updateSubPeriodsWithStatus(AccountingPeriod entity, String fiscalYear, String status, boolean isUserHaveThisRole) {
         List<SubAccountingPeriod> subAccountingPeriods = null;
         if (isUserHaveThisRole) {
-            subAccountingPeriods = getAllUsersSubPeriodWithStatusOpen(entity, lastDayOfFiscalYear);
+            subAccountingPeriods = getAllUsersSubPeriodWithStatusOpen(entity);
             for (SubAccountingPeriod subAccountingPeriod : subAccountingPeriods) {
                 updateSubAccountingAllUsersStatus(fiscalYear, status, subAccountingPeriod, "");
             }
         } else {
-            subAccountingPeriods = getRegularUsersSubPeriodWithStatusOpen(entity, lastDayOfFiscalYear);
+            subAccountingPeriods = getRegularUsersSubPeriodWithStatusOpen(entity);
             for (SubAccountingPeriod subAccountingPeriod : subAccountingPeriods) {
                 updateSubAccountingRegularUsersStatus(fiscalYear, status, subAccountingPeriod, "");
             }

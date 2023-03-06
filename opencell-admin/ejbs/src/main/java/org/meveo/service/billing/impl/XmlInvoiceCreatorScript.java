@@ -216,7 +216,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     public File createFile(Document doc, Invoice invoice, String fullXmlFilePath) throws BusinessException {
         try {
             Transformer trans = transfac.newTransformer();
-            // trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             trans.setOutputProperty(OutputKeys.INDENT, "yes");
             trans.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             // create string from xml tree
@@ -231,7 +230,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                 outStream.close();
             }
             catch (IOException e) {
-                System.out.println("Transformer exception : " + e.getMessage());
+                log.error("Transformer exception : {}", e.getMessage());
             }
             return xmlFile;
         } catch (TransformerException e) {
@@ -260,7 +259,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
         Document doc = docBuilder.newDocument();
-        rtBillingProcess = rtBillingProcess && !(invoice.getInvoiceLines()!=null && invoice.getInvoiceLines().size()>0);
+        rtBillingProcess = rtBillingProcess && !(invoice.getInvoiceLines()!=null && !invoice.getInvoiceLines().isEmpty());
         Element invoiceTag = rtBillingProcess ? createInvoiceSection(doc, invoice, isVirtual, isInvoiceAdjustment, docBuilder)
                 : createInvoiceSectionIL(doc, invoice, isVirtual, isInvoiceAdjustment, docBuilder);
         doc.appendChild(invoiceTag);
@@ -287,10 +286,15 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Element paymentGatewayTag = doc.createElement("paymentGateway");
         if (CollectionUtils.isNotEmpty(paymentGateways)) {
             PaymentGateway firstGateway = paymentGateways.get(0);
-
-            paymentGatewayTag.setAttribute("IBAN", firstGateway.getBankCoordinates().getIban() == null ? "" : firstGateway.getBankCoordinates().getIban());
-            paymentGatewayTag.setAttribute("bankCode", firstGateway.getBankCoordinates().getBankCode() == null ? "" : firstGateway.getBankCoordinates().getBankCode());
-            paymentGatewayTag.setAttribute("bankName", firstGateway.getBankCoordinates().getBankName() == null ? "" : firstGateway.getBankCoordinates().getBankName());
+            paymentGatewayTag.setAttribute("IBAN", firstGateway.getBankCoordinates() != null
+                    && firstGateway.getBankCoordinates().getIban() != null
+                    ? firstGateway.getBankCoordinates().getIban() : "");
+            paymentGatewayTag.setAttribute("bankCode", firstGateway.getBankCoordinates() != null
+                    && firstGateway.getBankCoordinates().getBankCode() != null
+                    ? firstGateway.getBankCoordinates().getBankCode() : "");
+            paymentGatewayTag.setAttribute("bankName", firstGateway.getBankCoordinates() != null
+                    && firstGateway.getBankCoordinates().getBankName() != null
+                    ? firstGateway.getBankCoordinates().getBankName() : "");
         }
         return paymentGatewayTag;
     }
@@ -1185,7 +1189,10 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                 Tax taxData = taxInvoiceAgregate.getTax();
                 tax.setAttribute("id", taxData != null ? taxData.getId().toString() : "");
                 tax.setAttribute("code", taxData != null ? taxData.getCode() : "");
-                tax.setAttribute("vatex", taxData != null ? taxData.getUntdidVatex().getRemark() : "");
+
+                if (taxData != null &&  taxData.getUntdidVatex() != null) {
+                    tax.setAttribute("vatex", taxData.getUntdidVatex().getRemark());
+                }
                 addCustomFields(taxData, doc, tax);
                 String translationKey = "TX_" + (taxData != null ? taxData.getCode() : "") + "_" + invoiceLanguageCode;
                 String descTranslated = descriptionMap.get(translationKey);
@@ -1229,7 +1236,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     	String billingAccountLanguage = invoice.getBillingAccount().getTradingLanguage().getLanguageCode();
         LinkedHashMap<String, XMLInvoiceHeaderCategoryDTO> headerCategories = new LinkedHashMap<>();
         List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new ArrayList<>();
-        // List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregate>();
         for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
             if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
                 CategoryInvoiceAgregate categoryInvoiceAgregate = (CategoryInvoiceAgregate) invoiceAgregate;
@@ -1291,7 +1297,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                     Element subCategory = doc.createElement("subCategory");
                     InvoiceSubCategory invoiceSubCat = subCatInvoiceAgregate.getInvoiceSubCategory();
                     // description translated is set on aggregate
-                    // String invoiceSubCategoryLabel = subCatInvoiceAgregate.getDescription() == null ? "" : subCatInvoiceAgregate.getDescription();
                     String invoiceSubCategoryLabel = subCatInvoiceAgregate.getDescription();
                     if (invoiceSubCat != null && invoiceSubCat.getDescriptionI18n() != null
                             && invoiceSubCat.getDescriptionI18n().get(billingAccountLanguage) != null) {
@@ -1389,6 +1394,35 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                     .append(" (invoiced on ")
                     .append(DateUtils.formatDateWithPattern(inv.getInvoice().getInvoiceDate(), paramBeanFactory.getInstance().getProperty(INVOICE_DATE_FORMAT, DEFAULT_DATE_PATTERN)))
                     .append(")");
+        }
+        return result.toString();
+    }
+
+    private String getTaxCodes(Tax tax) {
+        if (CollectionUtils.isEmpty(tax.getSubTaxes())) {
+            return tax.getCode().replaceAll(",", "\n");
+        } else {
+            return getSubTaxesCodes(tax.getSubTaxes());
+        }
+    }
+
+    private String getSubTaxesCodes(List<Tax> subTaxes) {
+        if (CollectionUtils.isEmpty(subTaxes)) {
+            return StringUtils.EMPTY;
+        }
+
+        final StringBuilder result = new StringBuilder();
+
+        String prefix = "";
+        for (Tax subTax : subTaxes) {
+            result.append(prefix);
+            prefix = ",";
+
+            if (CollectionUtils.isNotEmpty(subTax.getSubTaxes())) {
+                result.append(getSubTaxesCodes(subTax.getSubTaxes()));
+            } else {
+                result.append(subTax.getCode());
+            }
         }
         return result.toString();
     }
@@ -1529,10 +1563,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             }
         }
         addCustomFields(billingAccount, doc, billingAccountTag);
-        /*
-         * if (billingAccount.getName() != null && billingAccount.getName().getTitle() != null) { // Element company = doc.createElement("company"); Text companyTxt =
-         * doc.createTextNode (billingAccount.getName().getTitle().getIsCompany() + ""); billingAccountTag.appendChild(companyTxt); }
-         */
         Element email = doc.createElement("email");
         Element phone = doc.createElement("phone");
         Element mobile = doc.createElement("mobile");
@@ -2038,9 +2068,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         woLine.setAttribute("code", walletOperation.getCode());
         woLine.setAttribute("description", getDefaultIfNull(walletOperation.getDescription(), ""));
         ChargeInstance chargeInstance = walletOperation.getChargeInstance();
-        // if (!isVirtual) {
-        // chargeInstance = (ChargeInstance) chargeInstanceService.findById(chargeInstance.getId(), false);
-        // }
         ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
         // get periodStartDate and periodEndDate for recurrents
         Date periodStartDate = walletOperation.getStartDate();
@@ -2049,14 +2076,10 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         // instanceof is not used in this control because chargeTemplate can never be
         // instance of usageChargeTemplate according to model structure
         Date operationDate = walletOperation.getOperationDate();
-        if (chargeTemplate instanceof UsageChargeTemplate && operationDate != null) { // && usageChargeTemplateService.findById(chargeTemplate.getId()) != null) {
+        if (chargeTemplate instanceof UsageChargeTemplate && operationDate != null) {
             CounterPeriod counterPeriod = null;
             CounterInstance counter = walletOperation.getCounter();
-            // if (!isVirtual) {
-            // counterPeriod = counterPeriodService.getCounterPeriod(counter, operationDate);
-            // } else {
             counterPeriod = counter.getCounterPeriod(operationDate);
-            // }
             if (counterPeriod != null) {
                 periodStartDate = counterPeriod.getPeriodStartDate();
                 periodEndDate = counterPeriod.getPeriodEndDate();
@@ -2300,7 +2323,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     protected List<OfferTemplate> getOffers(List<RatedTransaction> ratedTransactions) {
 
         // TODO Need to check performance, maybe its quick enough to avoid searching DB in non-virtual cases
-        // if (isVirtual) {
         List<OfferTemplate> offers = new ArrayList<>();
         Set<Long> offerIds = new HashSet<>();
         for (RatedTransaction ratedTransaction : ratedTransactions) {
@@ -2311,7 +2333,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         }
         Collections.sort(offers, Comparator.comparing(OfferTemplate::getCode));
         return offers;
-        // }
     }
 
     /**
@@ -2323,7 +2344,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     protected Map<String, List<ServiceInstance>> getServices(List<RatedTransaction> ratedTransactions) {
 
         // TODO Need to check performance, maybe its quick enough to avoid searching DB in non-virtual cases
-        // if (isVirtual) {
         Map<String, List<ServiceInstance>> servicesByOffer = new HashMap<>();
         Set<Long> serviceInstanceIds = new HashSet<>();
         for (RatedTransaction ratedTransaction : ratedTransactions) {
@@ -2334,7 +2354,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             }
         }
         return servicesByOffer;
-        // }
     }
 
     /**
@@ -2497,6 +2516,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         line.setAttribute("periodEndDate", DateUtils.formatDateWithPattern(periodEndDate, invoiceDateFormat));
         line.setAttribute("periodStartDate", DateUtils.formatDateWithPattern(periodStartDate, invoiceDateFormat));
         line.setAttribute("taxPercent", invoiceLine.getTaxRate() != null ? invoiceLine.getTaxRate().toPlainString() : "");
+        line.setAttribute("taxCode", getTaxCodes(invoiceLine.getTax()));
         line.setAttribute("sortIndex", "");
         line.setAttribute("code", invoiceLine.getOrderRef());
         Element label = doc.createElement("label");

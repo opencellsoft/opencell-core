@@ -66,7 +66,7 @@ public class ReportExtractJob extends Job {
 
     @Override
     public JobCategoryEnum getJobCategory() {
-        return MeveoJobCategoryEnum.DWH;
+        return MeveoJobCategoryEnum.UTILS;
     }
 
     @Override

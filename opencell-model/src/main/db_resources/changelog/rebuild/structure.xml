@@ -34,129 +34,140 @@
     <changeSet author="AndriusKarpavicius"  id="rebuild_oracle_functions_clob" dbms="oracle">
         <createProcedure>
           create or replace type listagg_clob_t as object
-            ( t_varchar2 varchar2(32767)
-            , t_clob clob
-            , static function odciaggregateinitialize( sctx in out listagg_clob_t )
-              return number
-            , member function odciaggregateiterate
-                ( self in out listagg_clob_t
-                , a_val varchar2
-                )
-              return number
-            , member function odciaggregateterminate
-                ( self in out listagg_clob_t
-                , returnvalue out clob
-                , flags in number
-                )
-              return number
-            , member function odciaggregatemerge
-                ( self in out listagg_clob_t
-                , ctx2 in out listagg_clob_t
-                )
-              return number
-            );
+          (
+              t_varchar2 VARCHAR2 (32767),
+              t_clob CLOB,
+              STATIC FUNCTION odciaggregateinitialize (sctx IN OUT listagg_clob_t)
+                  RETURN NUMBER,
+              MEMBER FUNCTION odciaggregateiterate (self    IN OUT listagg_clob_t,
+                                                    a_val          VARCHAR2)
+                  RETURN NUMBER,
+              MEMBER FUNCTION odciaggregateterminate (self          IN OUT listagg_clob_t,
+                                                      returnvalue      OUT CLOB,
+                                                      flags         IN     NUMBER)
+                  RETURN NUMBER,
+              MEMBER FUNCTION odciaggregatemerge (self   IN OUT listagg_clob_t,
+                                                  ctx2   IN OUT listagg_clob_t)
+                  RETURN NUMBER
+          );
         </createProcedure>
         <createProcedure>
             create or replace type body listagg_clob_t
-                is
-                  static function odciaggregateinitialize( sctx in out listagg_clob_t )
-                  return number
-                  is
-                  begin
-                    sctx := listagg_clob_t( null, null );
-                    return odciconst.success;
-                  end;
-                --
-                  member function odciaggregateiterate
-                    ( self in out listagg_clob_t
-                    , a_val varchar2
-                    )
-                  return number
-                  is
-                    procedure add_val( p_val varchar2 )
+            IS
+                STATIC FUNCTION odciaggregateinitialize (sctx IN OUT listagg_clob_t)
+                    RETURN NUMBER
+                    IS
+                BEGIN
+                    sctx := listagg_clob_t (NULL, NULL);
+                    RETURN odciconst.success;
+                END;
+                member function odciaggregateiterate
+                ( self in out listagg_clob_t
+                , a_val varchar2
+                )
+                    return number
                     is
+                    procedure add_val( p_val varchar2 )
+                        is
                     begin
-                      if nvl( lengthb( self.t_varchar2 ), 0 ) + lengthb( p_val ) &lt;= 4000
-                -- Strange limit, the max size of self.t_varchar2 is 29993
-                -- If you exceeds this number you get ORA-22813: operand value exceeds system limits
-                -- with 29993 you get JSON-output as large 58894 bytes
-                -- with 4000 you get JSON-output as large 1063896 bytes, probably max more
-                      then
-                        if self.t_varchar2 is null then
-                          self.t_varchar2 := self.t_varchar2 || p_val;
-                        else
-                          self.t_varchar2 := self.t_varchar2 || ',' || p_val;
-                        end if;
-                      else
-                        if self.t_clob is null
-                        then
-                          dbms_lob.createtemporary( self.t_clob, true, dbms_lob.call );
-                          dbms_lob.writeappend( self.t_clob, length( self.t_varchar2 ), self.t_varchar2 );
-                        else
-                          dbms_lob.writeappend( self.t_clob, length( self.t_varchar2 ), ','||self.t_varchar2 );
-                        end if;
-                        self.t_varchar2 := p_val;
-                      end if;
-                    end;
-                  begin
-                    add_val( a_val );
-                    return odciconst.success;
-                  end;
-                --
-                  member function odciaggregateterminate
-                    ( self in out listagg_clob_t
-                    , returnvalue out clob
-                    , flags in number
-                    )
-                  return number
-                  is
-                  begin
-                    if self.t_clob is null
-                    then
-                      dbms_lob.createtemporary( self.t_clob, true, dbms_lob.call );
-                    end if;
-                    if self.t_varchar2 is not null
-                    then
-                      dbms_lob.writeappend( self.t_clob, length( self.t_varchar2 ), self.t_varchar2 );
-                    end if;
-                    returnvalue := self.t_clob;
-                    return odciconst.success;
-                  end;
-                --
-                  member function odciaggregatemerge
-                    ( self in out listagg_clob_t
-                    , ctx2 in out listagg_clob_t
-                    )
-                  return number
-                  is
-                  begin
-                    if self.t_clob is null
-                    then
-                      dbms_lob.createtemporary( self.t_clob, true, dbms_lob.call );
-                    end if;
-                    if self.t_varchar2 is not null
-                    then
-                      dbms_lob.writeappend( self.t_clob, length( self.t_varchar2 ), self.t_varchar2 );
-                    end if;
-                    if ctx2.t_clob is not null
-                    then
-                      dbms_lob.append( self.t_clob, ctx2.t_clob );
-                      dbms_lob.freetemporary( ctx2.t_clob );
-                    end if;
-                    if ctx2.t_varchar2 is not null
-                    then
-                      dbms_lob.writeappend( self.t_clob, length( ctx2.t_varchar2 ), ctx2.t_varchar2 );
-                      ctx2.t_varchar2 := null;
-                    end if;
-                    return odciconst.success;
-                  end;
-                --
-                end;        
+                        if nvl( lengthb( self.t_varchar2 ), 0 ) + lengthb( p_val ) &lt;= 4000
+                        THEN
+                            IF self.t_varchar2 IS NULL
+            THEN
+               self.t_varchar2 := self.t_varchar2 || p_val;
+        ELSE
+               self.t_varchar2 := self.t_varchar2 || ',' || p_val;
+        END IF;
+        ELSE
+            IF self.t_clob IS NULL
+            THEN
+               DBMS_LOB.createtemporary (self.t_clob, TRUE, DBMS_LOB.call);
+        DBMS_LOB.writeappend (self.t_clob,
+                                     LENGTH (self.t_varchar2),
+                                     self.t_varchar2);
+        ELSE
+               DBMS_LOB.writeappend (self.t_clob,
+                                     LENGTH (self.t_varchar2) + 1,
+                                     ',' || self.t_varchar2);
+        END IF;
+
+        self.t_varchar2 := p_val;
+        END IF;
+        END;
+        BEGIN
+            add_val (a_val);
+            RETURN odciconst.success;
+        END;
+
+        MEMBER FUNCTION odciaggregateterminate (self          IN OUT listagg_clob_t,
+                                           returnvalue      OUT CLOB,
+                                           flags         IN     NUMBER)
+      RETURN NUMBER
+   IS
+        BEGIN
+            IF self.t_clob IS NULL
+            THEN
+                DBMS_LOB.createtemporary (self.t_clob, TRUE, DBMS_LOB.call);
+
+                IF self.t_varchar2 IS NOT NULL
+                THEN
+                    DBMS_LOB.writeappend (self.t_clob,
+                                          LENGTH (self.t_varchar2) ,
+                                          self.t_varchar2);
+                END IF;
+            ELSE
+                IF self.t_varchar2 IS NOT NULL
+                THEN
+                    DBMS_LOB.writeappend (self.t_clob,
+                                          LENGTH (self.t_varchar2) + 1,
+                                          ',' || self.t_varchar2);
+                END IF;
+            END IF;
+
+            returnvalue := self.t_clob;
+            RETURN odciconst.success;
+        END;
+
+        MEMBER FUNCTION odciaggregatemerge (self   IN OUT listagg_clob_t,
+                                       ctx2   IN OUT listagg_clob_t)
+      RETURN NUMBER
+   IS
+        BEGIN
+            IF self.t_clob IS NULL
+            THEN
+                DBMS_LOB.createtemporary (self.t_clob, TRUE, DBMS_LOB.call);
+            END IF;
+
+            IF self.t_varchar2 IS NOT NULL
+            THEN
+                DBMS_LOB.writeappend (self.t_clob,
+                                      LENGTH (self.t_varchar2),
+                                      self.t_varchar2);
+            END IF;
+
+            IF ctx2.t_clob IS NOT NULL
+            THEN
+                DBMS_LOB.append (self.t_clob, ctx2.t_clob);
+                DBMS_LOB.freetemporary (ctx2.t_clob);
+            END IF;
+
+            IF ctx2.t_varchar2 IS NOT NULL
+            THEN
+                DBMS_LOB.writeappend (self.t_clob,
+                                      LENGTH (ctx2.t_varchar2),
+                                      ctx2.t_varchar2);
+                ctx2.t_varchar2 := NULL;
+            END IF;
+
+            RETURN odciconst.success;
+        END;
+        END;
         </createProcedure>
         <createProcedure>
             create or replace function listagg_clob( agg varchar2 )
-            return clob
-            parallel_enable aggregate using listagg_clob_t;        
+                RETURN CLOB
+                PARALLEL_ENABLE
+                AGGREGATE USING listagg_clob_t;
         </createProcedure>
     </changeSet>
 
@@ -2126,6 +2137,13 @@
                 <constraints nullable="true"/>
             </column>
             <column name="operation_number" type="bigint" />
+            <column name="converted_net_to_pay" type="numeric(23, 12)" />
+            <column name="converted_amount" type="numeric(23, 12)" />
+            <column name="converted_amount_without_tax" type="numeric(23, 12)" />
+            <column name="converted_tax_amount" type="numeric(23, 12)" />
+            <column name="converted_matching_amount" type="numeric(23, 12)" />
+            <column name="converted_un_matching_amount" type="numeric(23, 12)" />
+            <column name="transactional_currency" type="bigint" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-146">
@@ -2397,6 +2415,7 @@
             </column>
             <column name="updated" type="datetime" />
             <column name="matching_amount" type="numeric(23, 12)" />
+            <column name="converted_matching_amount" type="numeric(23, 12)" />
 
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
@@ -2417,6 +2436,8 @@
             <column name="code" type="varchar(255)" />
             <column name="matching_amount_credit" type="numeric(23, 12)" />
             <column name="matching_amount_debit" type="numeric(23, 12)" />
+			<column name="converted_matching_amount_credit" type="numeric(23, 12)" />
+            <column name="converted_matching_amount_debit" type="numeric(23, 12)" />
             <column name="matching_date" type="date" />
             <column name="matching_type" type="varchar(255)" />
             <column name="creator" type="varchar(100)" />
@@ -3385,6 +3406,7 @@
             <column name="reject_reason" type="varchar(4000)" />
             <column name="origin_billing_account" type="bigint" />
             <column name="rules_contract_id" type="bigint" />
+    		<column name="origin_ratedtransaction_id" type="bigint" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -3655,6 +3677,7 @@
                 <constraints nullable="true" />
             </column>
             <column name="sales_person_name" type="varchar(52)" />
+    		<column name="contract_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-194">
@@ -3990,6 +4013,7 @@
 			<column name="price_plan_matrix_version_id" type="bigint" />
 			<column name="price_plan_matrix_line_id" type="bigint" />
 			<column name="contract_id" type="bigint" />
+            <column name="contract_line_id" type="bigint" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -4301,6 +4325,9 @@
             <column name="applicable_on_discounted_price" type="${type.boolean}"/>
             <column name="sequence" type="int4"/>
             <column name="automatic_application" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="allowance_code_id" type="bigint">
+            <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-212">
@@ -5211,6 +5238,7 @@
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
             <column name="anonymization_date" type="datetime" />
+            <column name="parent_customer_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-245">
@@ -9505,9 +9533,7 @@
             <column name="status_date" type="datetime">
                 <constraints nullable="false" />
             </column>
-            <column name="contract_date" type="date">
-                <constraints nullable="false" />
-            </column>
+            <column name="contract_date" type="date"/>
             <column name="begin_date" type="date">
                 <constraints nullable="false" />
             </column>
@@ -9526,6 +9552,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
+            <column name="application_el" type="varchar(2000)" />
         </createTable>
     </changeSet>
 
@@ -9564,6 +9591,8 @@
             </column>
             <column name="cf_values" type="${type.json}" />
             <column name="rate_type" type="varchar(255)"/>
+            <column name="separate_discount" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="application_el" type="varchar(2000)" />
         </createTable>
     </changeSet>
 
@@ -9753,7 +9782,6 @@
             </column>
             <column name="quote_customer_service_id" type="bigint" />
             <column name="sequence" type="INT4" />
-            <column name="contract_code" type="varchar(50)" />
             <column name="position" type="int4" />
             <column name="discount_plan_id" type="bigint"></column>
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
@@ -9766,6 +9794,7 @@
             <column name="user_account_id" type="bigint" />
             <column name ="quote_line_type" type="varchar(10)" />
             <column name="subscription_id" type="bigint" />
+    		<column name="contract_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-457" author="NabilOUACHI">
@@ -10422,7 +10451,13 @@
             <column name="termination_date" type="datetime" />
             <column name="sub_termin_reason_id" type="bigint" />
             <column name="instance_status" type="varchar(10)" />
+            <column name="service_instance_id" type="bigint"/>
         </createTable>
+        <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="cpq_order_product"
+                                 constraintName="fk_cpq_order_product_service_instance_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="billing_service_instance"/>
+
     </changeSet>
     <changeSet id="rebuild-str-tbl-480" author="NabilOUACHI">
         <createTable tableName="cpq_order_lot">
@@ -11846,6 +11881,7 @@
             <column name="auxiliary_account_label_el" type="varchar(2000)"
                     defaultValue="#{ca.description}"/>
             <column name="activate_dunning" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="enable_billing_redirection_rules" type="${type.boolean}" defaultValueNumeric="0" />
       </createTable>
     </changeSet>
     <changeSet id="#INTRD-3461_20212128-rebuild-str-tbl" author="hichamElHaloui">
@@ -16545,6 +16581,12 @@
         <addForeignKeyConstraint baseColumnNames="trading_currency_id" baseTableName="exchange_rate" constraintName="fk_exchange_rate_trading_currency_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             	onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
     </changeSet>
+    
+    <changeSet id="#INTRD-13981_20230222-fk" author="HichamHANINE">
+        <addForeignKeyConstraint baseColumnNames="transactional_currency" baseTableName="ar_account_operation" constraintName="fk_account_operation_trading_currency" 
+        	deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
+    </changeSet>
 
     <changeSet id="#INTRD-5804-20220321-fk" author="HatimOUDAD">
     <addForeignKeyConstraint baseColumnNames="sub_termin_reason_id" baseTableName="cpq_order_product" constraintName="fk_q6d91d7b6bc2ypdbx4tjbr0acbd" deferrable="false" initiallyDeferred="false"
@@ -16791,7 +16833,39 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="document"/>
     </changeSet>
+       
+    <changeSet id="#INTRD-14264_20230222_fk" author="TarikFA.">
+        <addForeignKeyConstraint baseTableName="billing_rated_transaction" baseColumnNames="origin_ratedtransaction_id,status"
+                                 constraintName="fk_origin_ratedtransaction_id"
+                                 referencedTableName="billing_rated_transaction"
+                                 referencedColumnNames="id,status"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>      
+    
+    <changeSet id="#INTRD-14522_20230301_fk" author="TarikFA.">
+        <addForeignKeyConstraint baseTableName="billing_subscription" baseColumnNames="contract_id"
+                                 constraintName="fk_contract_id"
+                                 referencedTableName="cpq_contract"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
                                  
+    	
+        <addForeignKeyConstraint baseTableName="quote_offer" baseColumnNames="contract_id"
+                                 constraintName="fk_contract_id"
+                                 referencedTableName="cpq_contract"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
+
+    <changeSet id="#INTRD-14336_20230227_fk" author="ZBariki">
+        <addForeignKeyConstraint baseTableName="billing_wallet_operation" baseColumnNames="contract_line_id"
+                                 constraintName="fk_wo_contract_line_id" referencedTableName="cpq_contract_item"
+                                 referencedColumnNames="id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -17083,7 +17157,7 @@
         <sql>CREATE INDEX wo_rerated_wo ON ${db.schema.adapted}billing_wallet_operation (reratedwalletoperation_id) </sql></changeSet>
         
         
-    <changeSet id="#INTRD-12047-20230112" author="AbdelmounaimAkadid">
+    <changeSet id="#INTRD-12047-20230112-rebuild" author="AbdelmounaimAkadid">
     	<createIndex indexName="idx__cpq_attribute_instance__subscription_id" tableName="cpq_attribute_instance">
 	      	<column name="subscription_id"/>
 	  	</createIndex>
@@ -17246,7 +17320,7 @@
             </column>
             <column name="supporting_document_ref" type="bigint" />
             <column name="supporting_document_type" type="varchar(255)" />
-            <column name="trading_amount" type="numeric(23, 12)" />
+            <column name="converted_amount" type="numeric(23, 12)" />
             <column name="trading_currency" type="varchar(3)" />
             <column name="auxiliary_account_code" type="varchar(255)" />
             <column name="auxiliary_account_label" type="varchar(255)" />
@@ -17749,9 +17823,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_validation_rule_pkey" />
             </column>
             <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
+            <column name="created" type="datetime" />
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
@@ -17768,20 +17840,28 @@
             <column name="type" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="fail_status" type="varchar(50)">
-                <constraints nullable="false"/>
-            </column>
+            <column name="fail_status" type="varchar(50)" />
             <column name="script_instance_id" type="bigint" />
             <column name="validation_el" type="${type.text}" />
             <column name="rule_values" type="${type.json}" />
+            <column name="evaluation_mode" type="varchar(50)" defaultValue="VALIDATION">
+                <constraints nullable="false"/>
+            </column>
+            <column name="operator" type="varchar(10)" defaultValue="OR" />
+            <column name="parent_id" type="bigint"/>
         </createTable>
         
         <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="billing_invoice_validation_rule"
                                  constraintName="fk_validation_rule_meveo_script_instance" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+
+        <addForeignKeyConstraint baseTableName="billing_invoice_validation_rule" baseColumnNames="parent_id"
+                                 constraintName="fk_invoice_validation_rule_parent_id"
+                                 referencedTableName="billing_invoice_validation_rule"
+                                 referencedColumnNames="id"/>
     </changeSet>
-	
+    
     <changeSet id="#INTRD-11780_20221128_fk" author="AdilElJaouhari">
         <addForeignKeyConstraint baseTableName="billing_invoice"
                                  baseColumnNames="invoice_validation_rule_id"
@@ -17833,32 +17913,6 @@
 
         </createTable>
         
-        
-        <createSequence sequenceName="untdid_unit_seq" startValue="1" />
-        <createTable tableName="untdid_unit">
-            <!-- Generic fields -->
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_untdid_unit" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="code" type="varchar(255)">
-            </column>
-
-            <!-- Simple fields -->           
-            <column name="source" type="varchar(10)">
-                <constraints nullable="false" />
-            </column>
-            <column name="name" type="varchar(500)">
-                <constraints nullable="false" />
-            </column>
-
-        </createTable>
         
         <createSequence sequenceName="untdid_1001_invoice_code_type_seq" startValue="1" />
         <createTable tableName="untdid_1001_invoice_code_type">
@@ -18154,7 +18208,24 @@
 								 deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" />
 	</changeSet>
-	
+
+    <changeSet id="#INTRD-13883_20230208_fk" author="hichamELHALOUI">
+        <addForeignKeyConstraint baseTableName="cat_discount_plan"
+								 baseColumnNames="allowance_code_id"
+								 constraintName="fk_discount_plan_untdid_5189_allowance_code"
+								 referencedTableName="untdid_5189_allowance_code"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
+    
+    <changeSet id="#INTRD-14022_20230215" author="AdilElJaouhari">
+        <addForeignKeyConstraint baseTableName="crm_customer" baseColumnNames="parent_customer_id"
+                                 constraintName="fk_crm_customer_parent_customer_id"
+                                 referencedTableName="crm_customer"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
     <changeSet id="#4140_08042019" author="hznibar">
@@ -19447,6 +19518,21 @@
 	<changeSet id="#INTRD-13204_20230119" author="HichamHANINE" />
 	<changeSet id="#INTRD-12819-20221220-qb_advanced_query" author="a.rouaguebe" />
 	<changeSet id="#INTRD-12651-20230123" author="AdilElJaouhari" />
+	<changeSet id="#INTRD-12047-20230112" author="AbdelmounaimAkadid" />
+    <changeSet id="#INTRD-13220_20230203" author="AbdellatifBARI" />
+    <changeSet id="#INTRD-13009_20230202" author="bourras" />
+    <changeSet id="#INTRD-13453_20230207" author="Mbarek-Ay"/>
+    <changeSet id="#INTRD-13883_20230208" author="hichamELHALOUI" />
+    <changeSet id="#INTRD-13957-20230214" author="houdad"/>
+    <changeSet id="#INTRD-13468_20230126" author="hichamELHALOUI" />
+    <changeSet id="#INTRD-13604_20230206" author="AdilElJaouhari" />
+    <changeSet id="#INTRD-14161_20230221" author="AdilElJaouhari" />
+    <changeSet id="#INTRD-14264_20230222" author="TarikFA." />
+    <changeSet id="#INTRD-14332_20230226_contract_application_el" author="a.rouaguebe" />
+    <changeSet id="#INTRD-14522_20230301" author="TarikFA." />
+	<changeSet id="#INTRD-13981_20230222" author="HichamHANINE" />
+    <changeSet author="ZBariki" id="#INTRD-14208_20230224" dbms="oracle" />
+    <changeSet id="#INTRD-14336_20230227" author="ZBariki" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

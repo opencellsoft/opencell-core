@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -142,6 +143,9 @@ public class CommercialOrderApi extends BaseApi {
 	
     @Inject
     private ResourceBundle resourceMessages;
+
+	@Inject
+	private ServiceInstanceService serviceInstanceService;
 
 	private static final String ADMINISTRATION_VISUALIZATION = "administrationVisualization";
     private static final String ADMINISTRATION_MANAGEMENT = "administrationManagement";
@@ -665,13 +669,6 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 		 result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
 		 if(totalCount > 0) {
 			 commercialOrderService.list(paginationConfiguration).stream().forEach(co -> {
-			 	/*if(co.getId() == 1){
-					OrderAdvancementScript temp = new OrderAdvancementScript();
-					Map<String, Object> methodContext = new HashMap<String, Object>();
-					co.setOrderProgress(100);
-					methodContext.put("commercialOrder", co);
-					temp.execute(methodContext );
-				}*/
 				 result.getCommercialOrderDtos().add(new CommercialOrderDto(co));
 			 });
 		 }
@@ -728,7 +725,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 			if (scriptInstance != null) {
 				String orderValidationProcess = scriptInstance.getCode();
 				ScriptInterface script = scriptInstanceService.getScriptInstance(orderValidationProcess);
-				Map<String, Object> methodContext = new HashMap<String, Object>();
+				Map<String, Object> methodContext = new HashMap<>();
 				methodContext.put("commercialOrder", order);
 				methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
 				methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
@@ -764,7 +761,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 	
 	private void processOrderLot(CommercialOrderDto postData, CommercialOrder commercialOrder) {
 		Set<String> orderLots = postData.getOrderLotCodes(); 
-		List<OrderLot> orderLotList=new ArrayList<OrderLot>();
+		List<OrderLot> orderLotList=new ArrayList<>();
 		if(orderLots != null && !orderLots.isEmpty()){
 			for(String code:orderLots) {
 				OrderLot orderLot=orderLotService.findByCode(code);
@@ -913,6 +910,10 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 		orderOfferService.create(orderOffer);
 		orderOfferDto.setOrderOfferId(orderOffer.getId());
 		createOrderProduct(orderOfferDto.getOrderProducts(),orderOffer);
+		Optional.ofNullable(orderOffer.getProducts()).orElse(Collections.emptyList())
+				.forEach(orderProduct -> attributeService.validateAttributes(
+						orderOffer.getProducts().get(0).getProductVersion().getAttributes(),
+						orderProduct.getOrderAttributes()));
 		createOrderAttribute(orderOfferDto.getOrderAttributes(),null,orderOffer);
 		return orderOfferDto;
 	}
@@ -925,6 +926,10 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
     	OrderOffer orderOffer = orderOfferService.findById(orderOfferDto.getOrderOfferId());
     	if (orderOffer == null) {
     		throw new EntityDoesNotExistsException(OrderOffer.class, orderOfferDto.getOrderOfferId());
+    	}
+    	
+    	if(orderOffer.getOrder() != null && CommercialOrderEnum.VALIDATED.toString().equalsIgnoreCase(orderOffer.getOrder().getStatus())) {
+    		throw new BusinessApiException("A validated order cannot be update");
     	}
     	
 		if (orderOfferDto.getCommercialOrderId() != null) {
@@ -1011,9 +1016,13 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
     		orderOffer.setTerminationDate(orderOfferDto.getTerminationDate());
         }
         
-    	processOrderProductFromOffer(orderOfferDto, orderOffer); 
+    	processOrderProductFromOffer(orderOfferDto, orderOffer);
+		Optional.ofNullable(orderOffer.getProducts()).orElse(Collections.emptyList())
+				.forEach(orderProduct -> attributeService.validateAttributes(
+						orderOffer.getProducts().get(0).getProductVersion().getAttributes(),
+						orderProduct.getOrderAttributes()));
         processOrderAttribute(orderOfferDto,  orderOffer);
-    	orderOfferService.update(orderOffer); 
+    	orderOfferService.update(orderOffer);
     	return orderOfferDto;
     }
 	
@@ -1232,8 +1241,16 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
     		throw new MeveoApiException("Delivery date should be in the future");	
     	}
     	orderProduct.setDeliveryDate(orderProductDto.getDeliveryDate());
-        
-		orderProduct.updateAudit(currentUser); 
+
+		if (orderProductDto.getServiceInstanceId() != null) {
+			ServiceInstance serviceInstance = serviceInstanceService.findById(orderProductDto.getServiceInstanceId());
+			if (serviceInstance == null) {
+				throw new EntityDoesNotExistsException(ServiceInstance.class, orderProductDto.getServiceInstanceId());
+			}
+			orderProduct.setServiceInstance(serviceInstance);
+		}
+
+		orderProduct.updateAudit(currentUser);
 		return orderProduct;
     }
     
@@ -1280,7 +1297,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 	        }
         }
         if (productVersionAttributes != null) {
-            List<Attribute> productAttributes = productVersionAttributes.stream().map(pva -> pva.getAttribute()).collect(Collectors.toList());
+            List<Attribute> productAttributes = productVersionAttributes.stream().map(ProductVersionAttribute::getAttribute).collect(Collectors.toList());
             if(productAttributes != null && !productAttributes.contains(attribute) && orderProduct!=null){
                 throw new BusinessApiException(String.format("Product version (code: %s, version: %d), doesn't contain attribute code: %s", orderProduct.getProductVersion().getProduct().getCode() , orderProduct.getProductVersion().getCurrentVersion(), attribute.getCode()));
             }
@@ -1341,6 +1358,15 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
                 throw new MeveoApiException("Cannot delete offers associated to an order in status : " + commercialOrder.getStatus());
             } 
         }
+		if(orderOffer.getProducts() != null)  {
+			orderOffer.getProducts()
+					.stream()
+					.filter(orderProduct -> orderProduct.getOrderArticleLine() != null)
+					.forEach(orderProduct -> {
+						orderProduct.getOrderArticleLine().setOrderProduct(null);
+						orderProduct.setOrderArticleLine(null);
+					});
+		}
     	orderOfferService.remove(orderOffer);
     }
     

@@ -653,9 +653,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
         qb.endOrClause();
 
-        List<BillingRun> billingRuns = qb.getQuery(getEntityManager()).getResultList();
-
-        return billingRuns;
+        return qb.getQuery(getEntityManager()).getResultList();
     }
 
     /**
@@ -679,11 +677,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             }
 
             if (billingCycle.getType() == BillingEntityTypeEnum.SUBSCRIPTION) {
-                return subscriptionService.findSubscriptions(billingCycle, startDate, endDate);
+                return subscriptionService.findSubscriptions(billingCycle);
             }
 
             if (billingCycle.getType() == BillingEntityTypeEnum.ORDER) {
-                return v11Process ? commercialOrderService.findCommercialOrders(billingCycle, startDate, endDate): orderService.findOrders(billingCycle, startDate, endDate);
+                return v11Process ? commercialOrderService.findCommercialOrders(billingCycle)
+                        : orderService.findOrders(billingCycle);
             }
 
             return billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
@@ -695,16 +694,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 return EMPTY_LIST;
             }
             if (billingRun.getExceptionalRTIds() != null && !billingRun.getExceptionalRTIds().isEmpty()) {
-                return (List<BillingAccount>) ratedTransactionService.getEntityManager()
-                        .createNamedQuery("RatedTransaction.BillingAccountByRTIds")
-                        .setParameter("ids", billingRun.getExceptionalRTIds())
-                        .getResultList();
+                return ratedTransactionService.findBillingAccountsBy(billingRun.getExceptionalRTIds());
             }
             if (billingRun.getExceptionalILIds() != null && !billingRun.getExceptionalILIds().isEmpty()) {
-                return (List<BillingAccount>) invoiceLineService.getEntityManager()
-                        .createNamedQuery("InvoiceLine.BillingAccountByILIds")
-                        .setParameter("ids", billingRun.getExceptionalILIds())
-                        .getResultList();
+                return invoiceLineService.findBillingAccountsBy(billingRun.getExceptionalILIds());
             }
             List<BillingAccount> result = new ArrayList<>();
             String[] baIds = billingRun.getSelectedBillingAccounts() == null ? new String[0]:billingRun.getSelectedBillingAccounts().split(",");
@@ -1501,7 +1494,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 Set<BillingRunList> billingRunLists = new HashSet<>();
                 billingRunLists.addAll(billingRun.getBillingRunLists());
                 quarantineBillingRun.setBillingRunLists(billingRunLists);
-                List<JobExecutionResultImpl> billingRunJobExecutions = new ArrayList<JobExecutionResultImpl>();
+                List<JobExecutionResultImpl> billingRunJobExecutions = new ArrayList<>();
                 billingRunJobExecutions.addAll(billingRun.getJobExecutions());                   
                 quarantineBillingRun.setJobExecutions(billingRunJobExecutions);
                 quarantineBillingRun.setBillableBillingAccounts(new ArrayList<>());

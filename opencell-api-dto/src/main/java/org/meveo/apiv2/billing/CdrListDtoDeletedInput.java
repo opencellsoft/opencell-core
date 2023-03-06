@@ -17,8 +17,8 @@ public interface CdrListDtoDeletedInput extends Resource {
 
     @Default
     @Schema(description = "How the CDR list is processed : STOP_ON_FIRST_FAIL, PROCESS_ALL, ROLLBACK_ON_ERROR")
-    default ProcessCdrListModeEnum getMode() {
-        return ProcessCdrListModeEnum.STOP_ON_FIRST_FAIL;
+    default ProcessingModeEnum getMode() {
+        return ProcessingModeEnum.STOP_ON_FIRST_FAIL;
     }
     
     @Default

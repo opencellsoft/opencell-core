@@ -65,11 +65,7 @@
           "client": {
             "opencell-web": [
               "superAdministrateur",
-              "apiSuperAdministrateur",
-              "genApiFull.create",
-              "genApiFull.delete",
-              "genApiFull.list",
-              "genApiFull.update"
+              "apiSuperAdministrateur"
             ]
           }
         },
@@ -87,14 +83,68 @@
         "attributes": {}
       },
       {
+        "id": "105b5f8b-167f-497b-8b0e-4255cafbccf5",
+        "name": "userManagement",
+        "description": "User management",
+        "composite": true,
+        "composites": {
+          "client": {
+            "opencell-web": [
+              "userManagement"
+            ]
+          }
+        },
+        "clientRole": false,
+        "containerId": "opencell",
+        "attributes": {}
+      },
+      {
+        "id": "105b5f8b-167f-497b-8b0e-4255cafbccf6",
+        "name": "userSelfManagement",
+        "description": "User self management",
+        "composite": true,
+        "composites": {
+          "client": {
+            "opencell-web": [
+              "userSelfManagement"
+            ]
+          }
+        },
+        "clientRole": false,
+        "containerId": "opencell",
+        "attributes": {}
+      },
+      {
+        "id": "105b5f8b-167f-497b-8b0e-4255cafbccf7",
+        "name": "apiUserManagement",
+        "description": "User management via API",
+        "composite": true,
+        "composites": {
+          "client": {
+            "opencell-web": [
+              "apiUserManagement"
+            ]
+          }
+        },
+        "clientRole": false,
+        "containerId": "opencell",
+        "attributes": {}
+      },
+      {
+        "id": "105b5f8b-167f-497b-8b0e-4255cafbccf8",
+        "name": "apiUserSelfManagement",
+        "description": "User self management via API",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "opencell",
+        "attributes": {}
+      },
+      {
         "id": "3de50678-1671-4b5d-8b3c-441c594d5dfe",
         "name": "default-roles-opencell",
         "description": "${role_default-roles}",
         "composite": true,
         "composites": {
-          "realm": [
-            "administrator"
-          ],
           "client": {
             "opencell-web": [
               "uma_protection"
@@ -110,11 +160,14 @@
         "name": "administrator",
         "composite": true,
         "composites": {
+          "realm": [
+            "userManagement",
+            "apiUserManagement"
+          ],
           "client": {
             "opencell-web": [
               "administrateur",
-              "apiAdministrateur",
-              "genApiFull.list"
+              "apiAdministrateur"
             ],
             "opencell-portal": [
               "ADMIN"
@@ -1015,7 +1068,9 @@
                 "apiCpqManagement",
                 "inboundAccess",
                 "apiAdministrationManagement",
-                "apiUseScript"
+                "apiUseScript",
+                "genApiFull.list",
+                "general_roleManagement"
               ]
             }
           },
@@ -2148,7 +2203,10 @@
             "client": {
               "opencell-web": [
                 "apiAdministrateur",
-                "apiSuperAdminManagement"
+                "apiSuperAdminManagement",
+                "genApiFull.create",
+                "genApiFull.delete",
+                "genApiFull.update"
               ]
             }
           },
@@ -10153,6 +10211,20 @@
               "/*",
               "/",
               "/api/rest/v2/version"
+            ],
+            "scopes": [
+              {
+                "name": "DELETE"
+              },
+              {
+                "name": "GET"
+              },
+              {
+                "name": "POST"
+              },
+              {
+                "name": "PUT"
+              }
             ]
           },
           {

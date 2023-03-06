@@ -2,6 +2,7 @@ package org.meveo.model.billing;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -65,9 +66,9 @@ public class LinkedInvoice implements IEntity, Serializable {
     @PrePersist
     @PreUpdate
     public void prePersistOrUpdate() {
-        if (this.convertedAmount == null) {
+        if (this.convertedAmount != null) {
             BigDecimal appliedRate = getInvoice().getLastAppliedRate();
-            this.convertedAmount = appliedRate != null ? this.amount.multiply(appliedRate) : ZERO;
+            this.amount = this.convertedAmount.divide(appliedRate, 2, RoundingMode.HALF_UP);
         }
     }
 
@@ -78,11 +79,11 @@ public class LinkedInvoice implements IEntity, Serializable {
     }
 
 
-    public LinkedInvoice(Invoice id, Invoice linkedInvoiceValue, BigDecimal amount, InvoiceTypeEnum type) {
+    public LinkedInvoice(Invoice id, Invoice linkedInvoiceValue, BigDecimal convertedAmount, InvoiceTypeEnum type) {
         super();
         this.id = id;
         this.linkedInvoiceValue = linkedInvoiceValue;
-        this.amount = amount;
+        this.convertedAmount = convertedAmount;
         this.type = type;
     }
 

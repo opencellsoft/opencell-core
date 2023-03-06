@@ -299,7 +299,12 @@ public class AccountHierarchyDto implements Serializable {
     /** General client account code **/
     @Schema(description = "General client account code")
     private String generalClientAccountCode;
-
+    
+    /** the parent customer of customer **/
+    @XmlElement
+    @Schema(description = "the parent customer of customer")
+    private CustomerDto parentCustomer;
+    
     public Boolean isCustomerThresholdPerEntity() {
 		return customerThresholdPerEntity;
 	}
@@ -1137,4 +1142,13 @@ public class AccountHierarchyDto implements Serializable {
     public void setGeneralClientAccountCode(String generalClientAccountCode) {
         this.generalClientAccountCode = generalClientAccountCode;
     }
+
+	public CustomerDto getParentCustomer() {
+		return parentCustomer;
+	}
+
+	public void setParentCustomer(CustomerDto parentCustomer) {
+		this.parentCustomer = parentCustomer;
+	}
+
 }

@@ -35,6 +35,7 @@ import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MissingParameterException;
@@ -406,7 +407,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
 
         serviceInstance.setDescription(product.getDescription());
-        serviceInstance.setPriceVersionDateSetting(product.getPriceVersionDateSetting());
+        if(!PriceVersionDateSettingEnum.MANUAL.equals(serviceInstance.getPriceVersionDateSetting())) {
+            serviceInstance.setPriceVersionDateSetting(product.getPriceVersionDateSetting());
+        }
         
 		if(PriceVersionDateSettingEnum.DELIVERY.equals(serviceInstance.getPriceVersionDateSetting())) {
 			serviceInstance.setPriceVersionDate(serviceInstance.getSubscriptionDate()); 
@@ -418,6 +421,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			}
 		}else if(PriceVersionDateSettingEnum.EVENT.equals(serviceInstance.getPriceVersionDateSetting())) {
 			serviceInstance.setPriceVersionDate(null); 
+		}
+		if(PriceVersionDateSettingEnum.MANUAL == product.getPriceVersionDateSetting() && serviceInstance.getPriceVersionDate() == null) {
+			throw new BusinessApiException("mandatory field is missing");
 		}
 
         if (!isVirtual) {
@@ -433,7 +439,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if(CollectionUtils.isNotEmpty(product.getDiscountList())) {
             product.getDiscountList().stream()
                             .filter(DiscountPlan::isAutomaticApplication)
-                            .forEach(dp -> instantiateDiscountPlan(serviceInstance, dp));
+                            .forEach(dp -> instantiateDiscountPlan(serviceInstance, dp, isVirtual));
         }
 
     }
@@ -524,8 +530,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
 
         checkServiceAssociatedWithOffer(serviceInstance);
-        
-        subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
+
+        if (subscription.getStatus() != SubscriptionStatusEnum.ACTIVE) {
+            subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
+        }
 
         if (serviceInstance.getSubscriptionDate() == null) {
             serviceInstance.setSubscriptionDate(new Date());
@@ -1288,24 +1296,18 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         return serviceInstance;
     }
     
-    public void instantiateDiscountPlan(ServiceInstance serviceInstance, DiscountPlan discountPlan) {
+    public void instantiateDiscountPlan(ServiceInstance serviceInstance, DiscountPlan discountPlan, boolean isVirtual) {
         if(discountPlan == null) {
             throw new BusinessException("The Discount is required for instantiation");
         }
-        if(discountPlan.getStatus() == DiscountPlanStatusEnum.IN_USE) {
+        if(discountPlan.getStatus() == DiscountPlanStatusEnum.IN_USE || discountPlan.getStatus() == DiscountPlanStatusEnum.ACTIVE) {
             Subscription sub = serviceInstance.getSubscription();
             if(sub != null) {
                 BillingAccount billingAccount = sub.getUserAccount().getBillingAccount();
                 if(billingAccount != null) {
-                    if(CollectionUtils.isNotEmpty(billingAccount.getDiscountPlanInstances())) {
-                        for (DiscountPlanInstance discountPlanInstance : billingAccount.getDiscountPlanInstances()) {
-                            if (discountPlan.getCode().equals(discountPlanInstance.getDiscountPlan().getCode())) {
-                                throw new BusinessException("DiscountPlan " + discountPlan.getCode() + " is already instantiated in Billing Account " + billingAccount.getCode() + ".");
-                            }
-                        }
-                        
+                    if(CollectionUtils.isEmpty(billingAccount.getDiscountPlanInstances())) {
+                        discountPlanInstanceService.instantiateDiscountPlan(billingAccount, discountPlan, null, isVirtual);
                     }
-                    discountPlanInstanceService.instantiateDiscountPlan(billingAccount, discountPlan, null);
                 }
             }
            

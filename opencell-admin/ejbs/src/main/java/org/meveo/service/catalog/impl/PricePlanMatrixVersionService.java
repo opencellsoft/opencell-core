@@ -54,7 +54,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoPricePlanException;
-import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
 import org.meveo.api.exception.BusinessApiException;
@@ -271,9 +270,6 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         if (newFrom == null) {
             throw new BusinessApiException("The start date name is mandatory");
         }
-        if (newFrom != null && newFrom.before(DateUtils.truncateTime(new Date()))) {
-            throw new BusinessApiException("Uploaded PV cannot start before today");
-        }
         if (newFrom != null && newTo != null && newTo.before(newFrom)) {
             throw new BusinessApiException("Invalid validity period, the end date must be greather than the start date");
         }
@@ -313,8 +309,8 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     }
 
     public PricePlanMatrixVersion updatePublishedPricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion, Date endingDate) {
-        if (endingDate != null && endingDate.before(org.meveo.model.shared.DateUtils.setDateToEndOfDay(new Date()))) {
-            throw new ValidationException("ending date must be greater than today");
+        if( pricePlanMatrixVersion.getValidity() == null) {
+        	 pricePlanMatrixVersion.setValidity( new DatePeriod() );
         }
         pricePlanMatrixVersion.getValidity().setTo(DateUtils.setTimeToZero(endingDate));
         update(pricePlanMatrixVersion);
@@ -428,7 +424,8 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 			operationDateParam = operationDate;
 		} else if(PriceVersionDateSettingEnum.DELIVERY.equals(serviceInstance.getPriceVersionDateSetting())
 			|| PriceVersionDateSettingEnum.RENEWAL.equals(serviceInstance.getPriceVersionDateSetting())
-			|| PriceVersionDateSettingEnum.QUOTE.equals(serviceInstance.getPriceVersionDateSetting())) {
+			|| PriceVersionDateSettingEnum.QUOTE.equals(serviceInstance.getPriceVersionDateSetting())
+			|| PriceVersionDateSettingEnum.MANUAL.equals(serviceInstance.getPriceVersionDateSetting())) {
 				operationDateParam = serviceInstance.getPriceVersionDate();
 		}
 
@@ -562,7 +559,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
             throw new BusinessException("pricePlanMatrix with code '" + pricePlanMatrixCode + "' and version '" + version + "' not found.");
         }
 
-        if (pricePlanMatrixVersion.getValidity().getTo() == null || pricePlanMatrixVersion.getValidity().getTo().after(new Date())) {
+        if (pricePlanMatrixVersion.getValidity() == null || pricePlanMatrixVersion.getValidity().getTo() == null || pricePlanMatrixVersion.getValidity().getTo().after(new Date())) {
             String eventCode = pricePlanMatrixVersion.getPricePlanMatrix().getEventCode();
 
             List<Long> subscriptionsIds = this.getEntityManager().createNamedQuery("Subscription.getSubscriptionIdsUsingProduct", Long.class).setParameter("eventCode", eventCode)

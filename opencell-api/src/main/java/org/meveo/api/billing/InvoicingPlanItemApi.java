@@ -35,6 +35,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.cpq.commercial.InvoicingPlan;
 import org.meveo.model.cpq.commercial.InvoicingPlanItem;
+import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.billing.impl.InvoicingPlanItemService;
 import org.meveo.service.cpq.order.InvoicingPlanService;
 
@@ -51,6 +52,9 @@ public class InvoicingPlanItemApi extends BaseCrudApi<InvoicingPlanItem, Invoici
 	@Inject
 	private InvoicingPlanService invoicingPlanService;
 
+	@Inject
+	CustomGenericEntityCodeService customGenericEntityCodeService;
+
 	/**
 	 * Creates a new InvoicingPlanItem entity.
 	 * 
@@ -61,19 +65,17 @@ public class InvoicingPlanItemApi extends BaseCrudApi<InvoicingPlanItem, Invoici
 	 */
 	public InvoicingPlanItem create(InvoicingPlanItemDto postData) throws MeveoApiException, BusinessException {
 
-		String invoicingPlanItemCode = postData.getCode();
-
-		if (StringUtils.isBlank(invoicingPlanItemCode)) {
-			missingParameters.add("invoicingPlanItemCode");
-		}
-
 		handleMissingParametersAndValidate(postData);
 
-		InvoicingPlanItem invoicingPlanItem = invoicingPlanItemService.findByCode(invoicingPlanItemCode);
-		if (invoicingPlanItem != null) {
-			throw new EntityAlreadyExistsException(InvoicingPlanItem.class, invoicingPlanItemCode);
+		String invoicingPlanItemCode = postData.getCode();
+        if(!StringUtils.isBlank(invoicingPlanItemCode)){
+			InvoicingPlanItem existingInvoicingPlanItem = invoicingPlanItemService.findByCode(invoicingPlanItemCode);
+			if (existingInvoicingPlanItem != null) {
+				throw new EntityAlreadyExistsException(InvoicingPlanItem.class, invoicingPlanItemCode);
+			}
 		}
-		invoicingPlanItem = dtoToEntity(postData, new InvoicingPlanItem(), true);
+
+		InvoicingPlanItem invoicingPlanItem = dtoToEntity(postData, new InvoicingPlanItem(), true);
 		populateCustomFields(postData.getCustomFields(), invoicingPlanItem, true);
 		invoicingPlanItemService.create(invoicingPlanItem);
 
@@ -118,11 +120,11 @@ public class InvoicingPlanItemApi extends BaseCrudApi<InvoicingPlanItem, Invoici
 			invoicingPlanItem.setBillingPlan(invoicingPlan);
 			var items = invoicingPlanItemService.findByInvoicingPlanCode(invoicingPlan);
 			if(!items.isEmpty() && postData.getAdvancement() != null) {
-				boolean isAdvancementExist = items.stream().anyMatch(ipi -> ipi.getAdvancement() == postData.getAdvancement());
+				boolean isAdvancementExist = items.stream().anyMatch(ipi -> ipi.getAdvancement() == postData.getAdvancement() && isNewEntity);
 				if(isAdvancementExist) {
 					throw new EntityAlreadyExistsException("Invoicing plan lines with advancement " + postData.getAdvancement() + " already exist");
 				}
-				BigDecimal rateToBill =  items.stream().map(InvoicingPlanItem::getRateToBill).reduce(BigDecimal.ZERO, BigDecimal::add);
+				BigDecimal rateToBill =  items.stream().filter(invPlan -> invPlan.getId() !=  invoicingPlanItem.getId()).map(InvoicingPlanItem::getRateToBill).reduce(BigDecimal.ZERO, BigDecimal::add);
 				BigDecimal totalRate = rateToBill.add(postData.getRateToBill() != null ? postData.getRateToBill() : BigDecimal.ZERO);
 				totalRate.add(rateToBill);
 				if(totalRate.intValue() > 100) {
@@ -135,6 +137,9 @@ public class InvoicingPlanItemApi extends BaseCrudApi<InvoicingPlanItem, Invoici
 			if(postData.getRateToBill() != null && postData.getRateToBill().intValue() > 100) {
 				throw new InvalidParameterException("Down payment of invoicing plan can not be more than 100");
 			}
+		}
+		if (StringUtils.isBlank(postData.getCode())) {
+			postData.setCode(customGenericEntityCodeService.getGenericEntityCode(invoicingPlanItem));
 		}
 		invoicingPlanItem.setCode(
 				StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
