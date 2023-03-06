@@ -59,8 +59,7 @@ public class OrderApiService implements ApiService<Order> {
 
     @Override
     public List<Order> list(Long offset, Long limit, String sort, String orderBy, String filter) {
-        long apiLimit = genericPagingAndFilteringUtils.getLimit(limit != null ? limit.intValue() : null);
-        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(), (int)apiLimit, null, filter, fetchFields, null, null);
+        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(), limit.intValue(), null, filter, fetchFields, null, null);
         return orderService.list(paginationConfiguration);
     }
 

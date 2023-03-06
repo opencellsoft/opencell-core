@@ -80,16 +80,12 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 
 	@Inject
 	private FinanceSettingsService financeSettingsService;
-
-	@Inject
-	private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
 	
 	private List<String> fieldToFetch = asList("invoiceLines");
 
 	@Override
 	public List<Invoice> list(Long offset, Long limit, String sort, String orderBy, String filter) {
-		long apiLimit = genericPagingAndFilteringUtils.getLimit(limit != null ? limit.intValue() : null);
-        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(), (int)apiLimit, null, filter, null, null, null);
+        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(), limit.intValue(), null, filter, null, null, null);
         return invoiceService.listWithlinkedInvoices(paginationConfiguration);
 	}
 	

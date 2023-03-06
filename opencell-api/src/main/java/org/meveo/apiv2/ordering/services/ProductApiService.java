@@ -56,9 +56,6 @@ public class ProductApiService implements ApiService<ProductTemplate> {
     @Inject
     private ProductTemplateService productTemplateService;
 
-    @Inject
-    private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
-
     private List<String> fetchFields;
 
     @PostConstruct
@@ -73,8 +70,7 @@ public class ProductApiService implements ApiService<ProductTemplate> {
 
     @Override
     public List<ProductTemplate> list(Long offset, Long limit, String sort, String orderBy, String filter) {
-        long apiLimit = genericPagingAndFilteringUtils.getLimit(limit != null ? limit.intValue() : null);
-        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(), (int)apiLimit, null, filter, fetchFields, null, null);
+        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(), limit.intValue(), null, filter, fetchFields, null, null);
         return productTemplateService.list(paginationConfiguration);
     }
 

@@ -30,13 +30,10 @@ public class EdrVersioningRuleApiService implements ApiService<EdrVersioningRule
 	@Inject
 	private MediationsettingService mediationsettingService;
 
-	@Inject
-	private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
 
 	@Override
 	public List<EdrVersioningRule> list(Long offset, Long limit, String sort, String orderBy, String filter) {
-		long apiLimit = genericPagingAndFilteringUtils.getLimit(limit != null ? limit.intValue() : null);
-		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(), (int) apiLimit, null, filter, null, null, null);
+		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(), limit.intValue(), null, filter, null, null, null);
 		return edrVersioningRuleService.list(paginationConfiguration);
 	}
 
