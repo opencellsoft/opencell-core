@@ -16,6 +16,7 @@ import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -58,7 +59,8 @@ public class FilterConverter {
             	return convertFilters((Map<String, Object>)filterEntry.getValue());
             }
             if(fieldName.equalsIgnoreCase("id")) {
-                return Long.valueOf((String)filterEntry.getValue());
+            	Object value = filterEntry.getValue();
+        		return Long.valueOf(value.toString());
             }
             final int index = fieldName.indexOf(".");
 			if(index>0) {

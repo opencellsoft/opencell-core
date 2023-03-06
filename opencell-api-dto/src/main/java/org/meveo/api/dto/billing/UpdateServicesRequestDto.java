@@ -83,6 +83,8 @@ public class UpdateServicesRequestDto extends BaseEntityDto {
     /** attribute Instances */
     private List<AttributeInstanceDto> attributeInstances;
     
+    private Date priceVersionDate;
+    
     
 
     /**
@@ -233,6 +235,20 @@ public class UpdateServicesRequestDto extends BaseEntityDto {
 
 	public void setAttributeInstances(List<AttributeInstanceDto> attributeInstances) {
 		this.attributeInstances = attributeInstances;
+	}
+
+	/**
+	 * @return the priceVersionDate
+	 */
+	public Date getPriceVersionDate() {
+		return priceVersionDate;
+	}
+
+	/**
+	 * @param priceVersionDate the priceVersionDate to set
+	 */
+	public void setPriceVersionDate(Date priceVersionDate) {
+		this.priceVersionDate = priceVersionDate;
 	}
 
 }

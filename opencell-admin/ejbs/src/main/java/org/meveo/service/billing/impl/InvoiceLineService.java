@@ -10,6 +10,8 @@ import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 import static org.meveo.model.billing.InvoiceLineTaxModeEnum.RATE;
 import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
+import static org.apache.commons.collections4.ListUtils.partition;
+import static org.meveo.commons.utils.ParamBean.getInstance;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -19,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -82,7 +85,6 @@ import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.IInvoicingMinimumApplicable;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.order.Order;
@@ -104,7 +106,6 @@ import org.meveo.service.order.OpenOrderService;
 import org.meveo.service.settings.impl.OpenOrderSettingService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
-import org.meveo.util.ApplicationProvider;
 
 @Stateless
 public class InvoiceLineService extends PersistenceService<InvoiceLine> {
@@ -146,10 +147,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     private InvoiceService invoiceService;
 
     @Inject
-    @ApplicationProvider
-    protected Provider appProvider;
-
-    @Inject
     private SellerService sellerService;
     
     @Inject
@@ -170,6 +167,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     @Inject
     private OpenOrderService openOrderService;
 
+    @Inject
+    private InvoiceTypeService invoiceTypeService;
+    
     public List<InvoiceLine> findByQuote(CpqQuote quote) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByQuote", InvoiceLine.class)
                 .setParameter("quote", quote)
@@ -1224,6 +1224,17 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
 
     public List<InvoiceLine> findByInvoiceAndIds(Invoice invoice, List<Long> invoiceLinesIds) {
+        final int maxValue = getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
+        if (invoiceLinesIds.size() > maxValue) {
+            List<InvoiceLine> invoiceLines = new ArrayList<>();
+            List<List<Long>> invoiceLineIdsSubList = partition(invoiceLinesIds, maxValue);
+            invoiceLineIdsSubList.forEach(subIdsList -> invoiceLines.addAll(loadBy(invoice, subIdsList)));
+            return invoiceLines;
+        } else {
+            return loadBy(invoice, invoiceLinesIds);
+        }
+    }
+    private List<InvoiceLine> loadBy(Invoice invoice, List<Long> invoiceLinesIds) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByInvoiceAndIds", entityClass)
                 .setParameter("invoice", invoice)
                 .setParameter("invoiceLinesIds", invoiceLinesIds)
@@ -1335,7 +1346,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		invoiceLine.setBillingRun(bilingRun);
 		create(invoiceLine);
 	}
-    
+
     public List<InvoiceLine> findByIdsAndAdjustmentStatus(List<Long> invoiceLinesIds, AdjustmentStatusEnum adjustmentStatusEnum) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByIdsAndAdjustmentStatus", entityClass)
                 .setParameter("status", adjustmentStatusEnum.toString())
@@ -1382,9 +1393,37 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		return getEntityManager().createNamedQuery("InvoiceLine.sumAmountsDiscountByBillingAccount")
 				.setParameter("billingRunId", billingRun.getId()).getResultList();
 	}
-    
+
     @SuppressWarnings("unchecked")
     public List<Object[]> getMaxIlAmountAdj(Long id) {
         return getEntityManager().createNamedQuery("InvoiceLine.getMaxIlAmountAdj").setParameter("invoiceId", id).getResultList();
+    }
+
+    public List<BillingAccount> findBillingAccountsBy(List<Long> invoiceLinesIds) {
+        final int maxValue = getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
+        if (invoiceLinesIds.size() > maxValue) {
+            List<BillingAccount> billingAccounts = new ArrayList<>();
+            List<List<Long>> invoiceLineIdsSubList = partition(invoiceLinesIds, maxValue);
+            invoiceLineIdsSubList.forEach(subIdsList -> billingAccounts.addAll(loadBillingAccounts(subIdsList)));
+            return new ArrayList<>(new HashSet<>(billingAccounts));
+        } else {
+            return loadBillingAccounts(invoiceLinesIds);
+        }
+    }
+    private List<BillingAccount> loadBillingAccounts(List<Long> invoiceLinesIds) {
+        return getEntityManager()
+                .createNamedQuery("InvoiceLine.BillingAccountByILIds")
+                .setParameter("ids", invoiceLinesIds)
+                .getResultList();
+    }
+    
+    public InvoiceLine adjustment(InvoiceLine invoiceLine) {
+        InvoiceType defaultAdjustement = invoiceTypeService.getDefaultAdjustement();
+        InvoiceType invoiceTypeOfInvoice = invoiceLine.getInvoice().getInvoiceType();
+        if(invoiceTypeOfInvoice.equals(defaultAdjustement)) {
+            List<Object[]> maxIlAmountAdjList = getMaxIlAmountAdj(invoiceLine.getInvoice().getId());
+            invoiceLine = checkAmountIL(invoiceLine, maxIlAmountAdjList); 
+        }
+        return invoiceLine;
     }
 }

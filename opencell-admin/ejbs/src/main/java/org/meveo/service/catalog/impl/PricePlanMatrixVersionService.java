@@ -3,6 +3,7 @@ package org.meveo.service.catalog.impl;
 import static java.time.temporal.ChronoField.DAY_OF_MONTH;
 import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
 import static java.time.temporal.ChronoField.YEAR;
+import static java.util.stream.Collectors.toList;
 import static org.meveo.model.catalog.ColumnTypeEnum.Range_Date;
 import static org.meveo.model.catalog.ColumnTypeEnum.Range_Numeric;
 
@@ -44,17 +45,12 @@ import javax.inject.Inject;
 import javax.persistence.FlushModeType;
 import javax.persistence.NoResultException;
 
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvParser;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoPricePlanException;
-import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
 import org.meveo.api.exception.BusinessApiException;
@@ -66,9 +62,11 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.ColumnTypeEnum;
+import org.meveo.model.catalog.ConvertedPricePlanVersion;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
@@ -80,12 +78,17 @@ import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.cpq.enums.PriceVersionTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.AttributeInstanceService;
 import org.meveo.service.cpq.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvParser;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 /**
  * @author Tarik FA.
@@ -95,6 +98,8 @@ import org.slf4j.LoggerFactory;
 public class PricePlanMatrixVersionService extends PersistenceService<PricePlanMatrixVersion> {
 
     private static final String STATUS_ERROR_MSG = "status of the price plan matrix version is %s, it can not be updated nor removed";
+    
+    private static final String COLUMN_SEPARATOR = "\\|";
 
     @Inject
     private PricePlanMatrixColumnService pricePlanMatrixColumnService;
@@ -116,7 +121,13 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
-
+    
+    @Inject
+    private ConvertedPricePlanVersionService convertedPricePlanVersionService;
+    
+    @Inject
+    private TradingCurrencyService tradingCurrencyService;
+    
     protected Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
@@ -184,7 +195,10 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
             for (PricePlanMatrixVersion pv : pvs) {
                 DatePeriod validity = pv.getValidity();
-
+                List<ConvertedPricePlanVersion> listConvertedPricePlanVersion = convertedPricePlanVersionService.getListConvertedPricePlanVersionByPpmvId(pv.getId());
+                for (ConvertedPricePlanVersion cppv : listConvertedPricePlanVersion) {
+                    convertedPricePlanVersionService.remove(cppv);
+                }                
                 if(validity == null) {
                     remove(pv);
                 } else {
@@ -229,13 +243,28 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
             newPv.setValidity(new DatePeriod(newFrom, newTo));
             newPv.setCurrentVersion(lastCurrentVersion != null ? ++lastCurrentVersion : getLastVersion(pricePlanMatrix) + 1);
 
-            if ("label;amount".equals(header)) {
+            if ("label;amount".equals(header.substring(0, 12))) {
                 String firstLine = lnr.readLine();
                 String[] split = firstLine.split(";");
                 newPv.setMatrix(false);
                 newPv.setLabel(split[0]);
                 newPv.setAmountWithoutTax(new BigDecimal(convertToDecimalFormat(split[1])));
                 create(newPv);
+                for(int i=2; i < split.length; i++) {
+                    String[] unitPriceLineSplit = split[i].split(COLUMN_SEPARATOR);
+                    ConvertedPricePlanVersion cppv = new ConvertedPricePlanVersion();
+                    cppv.setConvertedPrice(new BigDecimal(convertToDecimalFormat(unitPriceLineSplit[0])));
+                    String tradingCurrencyCode = unitPriceLineSplit[1].toUpperCase();
+                    TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(tradingCurrencyCode); 
+                    if(tradingCurrency == null) {
+                        throw new MeveoApiException("Trading currency doesn't exist for  ( code : " +  tradingCurrencyCode);
+                    }
+                    cppv.setTradingCurrency(tradingCurrency);
+                    cppv.setRate(new BigDecimal(convertToDecimalFormat(unitPriceLineSplit[2])));
+                    cppv.setUseForBillingAccounts("true".equals(unitPriceLineSplit[3].toLowerCase()) ? true : false);
+                    cppv.setPricePlanMatrixVersion(newPv);
+                    convertedPricePlanVersionService.create(cppv);
+                }
             } else if (StringUtils.isNotBlank(header)) {
                 // File name pattern: [Price plan version identifier]_-_[Charge name]_-_[Charge code]_-_[Label of the price version]_-_[Status of price version]_-_[start
                 // date time stamp]_-_[end date time stamp]
@@ -270,9 +299,6 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     private void validateDates(Date newFrom, Date newTo) {
         if (newFrom == null) {
             throw new BusinessApiException("The start date name is mandatory");
-        }
-        if (newFrom != null && newFrom.before(DateUtils.truncateTime(new Date()))) {
-            throw new BusinessApiException("Uploaded PV cannot start before today");
         }
         if (newFrom != null && newTo != null && newTo.before(newFrom)) {
             throw new BusinessApiException("Invalid validity period, the end date must be greather than the start date");
@@ -313,8 +339,8 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     }
 
     public PricePlanMatrixVersion updatePublishedPricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion, Date endingDate) {
-        if (endingDate != null && endingDate.before(org.meveo.model.shared.DateUtils.setDateToEndOfDay(new Date()))) {
-            throw new ValidationException("ending date must be greater than today");
+        if( pricePlanMatrixVersion.getValidity() == null) {
+        	 pricePlanMatrixVersion.setValidity( new DatePeriod() );
         }
         pricePlanMatrixVersion.getValidity().setTo(DateUtils.setTimeToZero(endingDate));
         update(pricePlanMatrixVersion);
@@ -428,7 +454,8 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 			operationDateParam = operationDate;
 		} else if(PriceVersionDateSettingEnum.DELIVERY.equals(serviceInstance.getPriceVersionDateSetting())
 			|| PriceVersionDateSettingEnum.RENEWAL.equals(serviceInstance.getPriceVersionDateSetting())
-			|| PriceVersionDateSettingEnum.QUOTE.equals(serviceInstance.getPriceVersionDateSetting())) {
+			|| PriceVersionDateSettingEnum.QUOTE.equals(serviceInstance.getPriceVersionDateSetting())
+			|| PriceVersionDateSettingEnum.MANUAL.equals(serviceInstance.getPriceVersionDateSetting())) {
 				operationDateParam = serviceInstance.getPriceVersionDate();
 		}
 
@@ -645,8 +672,10 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         }
 
         public String export(Set<PricePlanMatrixVersion> pricePlanMatrixVersions, String fileType){
+            List<Long> ppmvIds = pricePlanMatrixVersions.stream().map(PricePlanMatrixVersion::getId).collect(toList());            
+            List<Map<String, Object>> ppmvMaps = convertedPricePlanVersionService.getPPVWithCPPVByPpmvId(ppmvIds);            
             if (pricePlanMatrixVersions != null && !pricePlanMatrixVersions.isEmpty()) {
-                Set<Path> filePaths = pricePlanMatrixVersions.stream().map(ppv -> saveAsRecord(buildFileName(ppv), ppv, fileType)).collect(Collectors.toSet());
+                Set<Path> filePaths = pricePlanMatrixVersions.stream().map(ppv -> saveAsRecord(buildFileName(ppv), ppv, fileType, ppmvMaps)).collect(Collectors.toSet());
                 if (filePaths.size() > 1) {
                     return archiveFiles(filePaths);
                 }
@@ -670,6 +699,18 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                     CSVLineRecordPosition.put(ppmv.getPricePlanMatrixColumn().getCode() + "[" + (ColumnTypeEnum.String.equals(type) ? "text" : type) + ']',
                         ppmv.getPricePlanMatrixColumn().getPosition());
 
+                });
+                
+                line.getConvertedPricePlanMatrixLines().iterator().forEachRemaining(cppmv -> {
+                    String codeCurrency = "";
+                    if(cppmv.getTradingCurrency().getCurrency() != null) {
+                        codeCurrency = cppmv.getTradingCurrency().getCurrency().getCurrencyCode();
+                    }
+                    String keyLine = "unitPrice-" + codeCurrency;
+                    String valueLine = cppmv.getPricePlanMatrixLine() + "|" + codeCurrency + "|" + cppmv.getRate() + "|" + cppmv.isUseForBillingAccounts();
+                    CSVLineRecord.put(keyLine, valueLine);
+                    int sizePosition = CSVLineRecordPosition.size();
+                    CSVLineRecordPosition.put(keyLine, sizePosition);
                 });
 
                 //Check if any of line contains an EL value, then add new column
@@ -813,32 +854,28 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         }
 
         private void buildPricePlanExcel(Set<LinkedHashMap<String, Object>> csvLineRecords, XSSFSheet sheet) {
-
-            buildSimplePricePlanExcelHeader(sheet);
+            buildSimplePricePlanExcelHeader(csvLineRecords, sheet);
             buildSimplePricePlanExcelLines(csvLineRecords, sheet);
         }
 
-        private void buildSimplePricePlanExcelHeader(XSSFSheet sheet) {
+        private void buildSimplePricePlanExcelHeader(Set<LinkedHashMap<String, Object>> csvLineRecords, XSSFSheet sheet) {
             var baseRow = sheet.createRow(0);
-            baseRow.createCell(1).setCellValue("label");
-            baseRow.createCell(2).setCellValue("amount");
+            for (LinkedHashMap<String, Object> lineRecord : csvLineRecords) {
+                int iKey = 0;
+                for (String key : lineRecord.keySet()) {
+                    baseRow.createCell(++iKey).setCellValue(key);
+                }
+            }
         }
 
         private void buildSimplePricePlanExcelLines(Set<LinkedHashMap<String, Object>> CSVLineRecords, XSSFSheet sheet) {
-
             int lineNumber = 1;
-
             for (LinkedHashMap<String, Object> lineRecord : CSVLineRecords) {
                 XSSFRow row = sheet.createRow(lineNumber++);
+                int iKey = 0;
                 for (String key : lineRecord.keySet()) {
-
                     Object cellValue = lineRecord.get(key);
-                    if (key.equals("label")) {
-                        row.createCell(1).setCellValue(cellValue != null ? String.valueOf(cellValue) : "");
-                    }
-                    if (key.equals("amount")) {
-                        row.createCell(2).setCellValue(cellValue != null ? String.valueOf(cellValue) : "");
-                    }
+                    row.createCell(++iKey).setCellValue(cellValue != null ? String.valueOf(cellValue) : "");
                 }
             }
         }
@@ -872,13 +909,13 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
          * @param fileType
          * @return
          */
-        private Path saveAsRecord(String fileName, PricePlanMatrixVersion ppv, String fileType) {
-            Set<LinkedHashMap<String, Object>> records = ppv.isMatrix() ? toCSVLineGridRecords(ppv) : Collections.singleton(toCSVLineRecords(ppv));
+        private Path saveAsRecord(String fileName, PricePlanMatrixVersion ppv, String fileType, List<Map<String, Object>> ppmvMaps) {
+            Set<LinkedHashMap<String, Object>> records = ppv.isMatrix() ? toCSVLineGridRecords(ppv) : Collections.singleton(toCSVLineRecords(ppv, ppmvMaps));
             String extensionFile = ".csv";
             try {
                 if(fileType.equals("CSV")) {
                     CsvMapper csvMapper = new CsvMapper();
-                    CsvSchema invoiceCsvSchema = ppv.isMatrix() ? buildGridPricePlanVersionCsvSchema(records) : buildPricePlanVersionCsvSchema();
+                    CsvSchema invoiceCsvSchema = ppv.isMatrix() ? buildGridPricePlanVersionCsvSchema(records) : buildPricePlanVersionCsvSchema(records);
                     csvMapper.enable(CsvParser.Feature.WRAP_AS_ARRAY);
                     if(!Files.exists(Path.of(saveDirectory))){
                         Files.createDirectories(Path.of(saveDirectory));
@@ -905,16 +942,37 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
             return null;
         }
 
-        private LinkedHashMap<String, Object> toCSVLineRecords(PricePlanMatrixVersion ppv) {
+        private LinkedHashMap<String, Object> toCSVLineRecords(PricePlanMatrixVersion ppv, List<Map<String, Object>> ppmvMaps) {
             LinkedHashMap<String, Object> CSVLineRecords = new LinkedHashMap<>();
             CSVLineRecords.put("label", ppv.getLabel());
-            CSVLineRecords.put("amount", ppv.getPrice());
+            CSVLineRecords.put("amount", ppv.getPrice());            
+            for (Map<String, Object> ppmvMap : ppmvMaps)
+            {
+                Long ppvId = (Long) ppmvMap.get("ppvId");
+                Long ppvcId = (Long) ppmvMap.get("ppvcId");
+                if (ppvId.equals(ppv.getId()) && ppvcId != null) {
+                    BigDecimal ppvCPrice = (BigDecimal) ppmvMap.get("ppvCPrice");
+                    BigDecimal rate = (BigDecimal) ppmvMap.get("rate");
+                    String cCurrencyCode = (String) ppmvMap.get("cCurrencyCode");
+                    Boolean useForBA = (Boolean) ppmvMap.get("useForBA");                    
+                    String keyLine = "unitPrice-" + cCurrencyCode;
+                    String valueLine = ppvCPrice + "|" + cCurrencyCode + "|" + rate + "|" + useForBA;
+                    CSVLineRecords.put(keyLine, valueLine);
+                }
+            }
             return CSVLineRecords;
         }
 
-        private CsvSchema buildPricePlanVersionCsvSchema() {
-            return CsvSchema.builder().addColumn("label", CsvSchema.ColumnType.STRING)
-                .addColumn("amount", CsvSchema.ColumnType.NUMBER_OR_STRING).build().withColumnSeparator(';').withLineSeparator("\n").withoutQuoteChar().withHeader();
+        private CsvSchema buildPricePlanVersionCsvSchema(Set<LinkedHashMap<String, Object>> records) {
+            List<String> dynamicColumns = new ArrayList();
+            if (!records.isEmpty()) {
+                dynamicColumns = records.stream().map(record -> record.keySet()).flatMap(Collection::stream).collect(Collectors.toList());
+            }
+
+            //Build default columns
+            CsvSchema.Builder columns = CsvSchema.builder().addColumns(dynamicColumns, CsvSchema.ColumnType.NUMBER_OR_STRING);
+
+            return columns.build().withColumnSeparator(';').withLineSeparator("\n").withoutQuoteChar().withHeader();
         }
 
         private CsvSchema buildGridPricePlanVersionCsvSchema(Set<LinkedHashMap<String, Object>> records) {

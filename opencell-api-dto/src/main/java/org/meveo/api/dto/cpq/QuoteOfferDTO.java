@@ -169,7 +169,7 @@ public class QuoteOfferDTO extends BusinessEntityDto {
 		quoteLotCode=quoteOffer.getQuoteLot()!=null?quoteOffer.getQuoteLot().getCode():null;
 		offerCode=quoteOffer.getOfferTemplate().getCode();
 		billableAccountCode=quoteOffer.getBillableAccount()!=null?quoteOffer.getBillableAccount().getCode():null;
-		contractCode=quoteOffer.getContractCode();
+		contractCode=quoteOffer.getContract()!= null ? quoteOffer.getContract().getCode() : null;
 		discountPlanCode=quoteOffer.getDiscountPlan()!=null?quoteOffer.getDiscountPlan().getCode():null;
 		offerId = quoteOffer.getOfferTemplate().getId();
 		sequence=quoteOffer.getSequence();

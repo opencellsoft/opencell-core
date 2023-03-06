@@ -245,21 +245,19 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 					if(product.getProductActionType() == ProductActionTypeEnum.ACTIVATE) {
 						serviceInstanceService.getEntityManager().flush();
 						ServiceInstance serviceInstance = product.getServiceInstance();
-						if (serviceInstance != null) {
-							if (serviceInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
-								ServiceInstance si = processProduct(offer.getSubscription(), product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null);
-								if(si != null) {
-									serviceInstanceService.serviceActivation(si);
-								}
-							} else if (serviceInstance.getStatus() == InstanceStatusEnum.INACTIVE
-									|| serviceInstance.getStatus() == InstanceStatusEnum.PENDING
-									|| serviceInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
-								updateProduct(offer, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null, product.getProductVersion().getProduct().getCode());
-								if (serviceInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
-									serviceInstanceService.serviceReactivation(serviceInstance, product.getDeliveryDate(), true, false);
-								}else {
-									serviceInstanceService.serviceActivation(serviceInstance);
-								}
+						if (serviceInstance == null || serviceInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
+							ServiceInstance si = processProduct(offer.getSubscription(), product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null);
+							if (si != null) {
+								serviceInstanceService.serviceActivation(si);
+							}
+						} else if (serviceInstance != null && (serviceInstance.getStatus() == InstanceStatusEnum.INACTIVE
+								|| serviceInstance.getStatus() == InstanceStatusEnum.PENDING
+								|| serviceInstance.getStatus() == InstanceStatusEnum.SUSPENDED)) {
+							updateProduct(offer, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null, product.getProductVersion().getProduct().getCode());
+							if (serviceInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
+								serviceInstanceService.serviceReactivation(serviceInstance, product.getDeliveryDate(), true, false);
+							} else {
+								serviceInstanceService.serviceActivation(serviceInstance);
 							}
 						}
 					}

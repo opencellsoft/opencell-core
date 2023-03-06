@@ -760,6 +760,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Column(name = "converted_invoice_balance", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal convertedInvoiceBalance;
 
+    @Column(name = "use_specific_price_conversion")
+    @Type(type = "numeric_boolean")
+    private boolean useSpecificPriceConversion = false;
+    
+    @Column(name = "conversion_from_billing_currency")
+    @Type(type = "numeric_boolean")
+    private boolean conversionFromBillingCurrency = false;
+
     public Invoice() {
 	}
 
@@ -854,24 +862,27 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
                 }
             }
         }
-        BigDecimal appliedRate = getAppliedRate();
-        this.convertedAmountTax = this.amountTax != null
-                ? this.amountTax.multiply(appliedRate) : ZERO;
-        this.convertedAmountWithoutTax = this.amountWithoutTax != null
-                ? this.amountWithoutTax.multiply(appliedRate) : ZERO;
-        this.convertedAmountWithTax = this.amountWithTax != null
-                ? this.amountWithTax.multiply(appliedRate) : ZERO;
-        this.convertedDiscountAmount = this.discountAmount != null
-                ? this.discountAmount.multiply(appliedRate) : ZERO;
-        this.convertedNetToPay = this.netToPay != null
-                ? this.netToPay.multiply(appliedRate) : ZERO;
-        this.convertedRawAmount = this.rawAmount != null
-                ? this.rawAmount.multiply(appliedRate) : ZERO;
-        this.convertedAmountWithoutTaxBeforeDiscount =
-                this.amountWithoutTaxBeforeDiscount != null
-                        ? this.amountWithoutTaxBeforeDiscount.multiply(appliedRate) : ZERO;
-        if (this.convertedInvoiceBalance != null) {
-            this.invoiceBalance = this.convertedInvoiceBalance.divide(appliedRate,2, RoundingMode.HALF_UP);
+
+        if (!this.useSpecificPriceConversion && !this.conversionFromBillingCurrency) {
+        	BigDecimal appliedRate = getAppliedRate();
+            this.convertedAmountTax = this.amountTax != null
+                    ? this.amountTax.multiply(appliedRate) : ZERO;
+            this.convertedAmountWithoutTax = this.amountWithoutTax != null
+                    ? this.amountWithoutTax.multiply(appliedRate) : ZERO;
+            this.convertedAmountWithTax = this.amountWithTax != null
+                    ? this.amountWithTax.multiply(appliedRate) : ZERO;
+            this.convertedDiscountAmount = this.discountAmount != null
+                    ? this.discountAmount.multiply(appliedRate) : ZERO;
+            this.convertedNetToPay = this.netToPay != null
+                    ? this.netToPay.multiply(appliedRate) : ZERO;
+            this.convertedRawAmount = this.rawAmount != null
+                    ? this.rawAmount.multiply(appliedRate) : ZERO;
+            this.convertedAmountWithoutTaxBeforeDiscount =
+                    this.amountWithoutTaxBeforeDiscount != null
+                            ? this.amountWithoutTaxBeforeDiscount.multiply(appliedRate) : ZERO;
+            if (this.convertedInvoiceBalance != null) {
+                this.invoiceBalance = this.convertedInvoiceBalance.divide(appliedRate,2, RoundingMode.HALF_UP);
+            }
         }
     }
 
@@ -1947,4 +1958,29 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public void setConvertedInvoiceBalance(BigDecimal convertedInvoiceBalance) {
         this.convertedInvoiceBalance = convertedInvoiceBalance;
     }
+
+
+	/**
+	 * @return the useSpecificPriceConversion
+	 */
+	public boolean isUseSpecificPriceConversion() {
+		return useSpecificPriceConversion;
+	}
+
+
+	/**
+	 * @param useSpecificPriceConversion the useSpecificPriceConversion to set
+	 */
+	public void setUseSpecificPriceConversion(boolean useSpecificPriceConversion) {
+		this.useSpecificPriceConversion = useSpecificPriceConversion;
+	}
+
+	public boolean isConversionFromBillingCurrency() {
+		return conversionFromBillingCurrency;
+	}
+
+	public void setConversionFromBillingCurrency(boolean conversionFromBillingCurrency) {
+		this.conversionFromBillingCurrency = conversionFromBillingCurrency;
+	}
+
 }

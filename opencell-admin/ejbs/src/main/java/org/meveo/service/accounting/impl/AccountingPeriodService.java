@@ -89,6 +89,38 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 
 		return entity;
 	}
+	
+	/**
+	 * Update the status of a fiscal year after checking the subAccountingCycles and also status
+	 * @param entity {@link AccountingPeriod}
+	 * @param status Status
+	 * @param fiscalYear Fiscal Year
+	 * @return {@link AccountingPeriod}
+	 */
+	public AccountingPeriod updateStatus(AccountingPeriod entity, String status, String fiscalYear, AccountingPeriodActionLevelEnum level) {
+	    AccountingPeriodStatusEnum accountingPeriodStatus = AccountingPeriodStatusEnum.valueOf(status);
+        if(entity.isUseSubAccountingCycles() && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.OPEN)) {
+			throw new ValidationException("the accounting period " + fiscalYear + " has sub-accounting periods option activated");
+		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.CLOSED) && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.CLOSED)){
+			throw new ValidationException("the accounting period " + fiscalYear + " is already closed");
+		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.OPEN) && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.OPEN)) {
+			throw new ValidationException("the accounting period " + fiscalYear + " is already opened");
+		} else {	
+	        if (accountingPeriodStatus.equals(AccountingPeriodStatusEnum.CLOSED)) {
+	            subAccountingPeriodService.updateSubPeriodsWithStatus(entity, fiscalYear, status, level);                
+            }
+		    
+			AuditLog auditLog = createAuditLog(entity, status);
+			entity.setAccountingPeriodStatus(accountingPeriodStatus);
+			update(entity);
+
+			if(auditLog.getEntity() != null) {
+				auditLogService.create(auditLog);
+			}
+		}
+
+		return entity;
+	}
 
 	/**
 	 * Create auditLog by passing the Accounting Period ans status
@@ -101,7 +133,7 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		auditLog.setActor(currentUser.getUserName());
 		auditLog.setCreated(new Date());
 		auditLog.setEntity("AccountingPeriod");
-		auditLog.setOrigin(entity.getAccountingPeriodStatus().name());
+		auditLog.setOrigin(entity.getAccountingPeriodYear());
 		auditLog.setAction("update status");
 		auditLog.setParameters("user " + currentUser.getUserName() + " update status from " + entity.getAccountingPeriodStatus().name() + " to " + status);
 		return auditLog;
@@ -206,7 +238,7 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		final Date endDate = Date.from(openAccountingPeriod.getEndDate().toInstant().atZone(ZoneId.systemDefault()).plusYears(1).toInstant());
 		nextAP.setEndDate(endDate);
 
-		final Date startDate = Date.from(openAccountingPeriod.getStartDate().toInstant().atZone(ZoneId.systemDefault()).plusYears(1).toInstant());
+		final Date startDate = Date.from(openAccountingPeriod.getStartDate().toInstant().atZone(ZoneId.systemDefault()).plusYears(1).plusDays(1).toInstant());
 		nextAP.setStartDate(startDate);
 
 		nextAP.setAccountingPeriodYear(getAccountingPeriodYear(startDate,endDate));

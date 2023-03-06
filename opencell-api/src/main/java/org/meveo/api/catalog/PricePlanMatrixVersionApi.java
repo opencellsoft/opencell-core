@@ -92,7 +92,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             PricePlanMatrix ppm = pricePlanMatrixService.findByCode(pricePlanMatrixCode);
             if (ppm != null && ppm.getContractItems()!=null && ppm.getContractItems().size() > 0) {
                 Contract contract = ppm.getContractItems().get(0).getContract();
-                if (ContractStatusEnum.DRAFT.equals(contract.getStatus())) {
+                if (ContractStatusEnum.DRAFT.toString().equals(contract.getStatus())) {
                     pricePlanMatrixVersionService.removePriceMatrixVersionOnlyNotClosed(pricePlanMatrixVersion);
                 }
                 else {
@@ -136,9 +136,6 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixCode, pricePlanMatrixVersionDto.getVersion());
         if(VersionStatusEnum.PUBLISHED.equals(pricePlanMatrixVersion.getStatus())){
         	if(validity != null && validity.getTo() != null) {
-        		if(validity.getTo().before(org.meveo.model.shared.DateUtils.setDateToEndOfDay(new Date()))) {
-        			throw new InvalidParameterException("ending date must be greater than today");
-        		}
         		pricePlanMatrixVersionService.updatePublishedPricePlanMatrixVersion(pricePlanMatrixVersion, validity.getTo());
         	}
         } else {

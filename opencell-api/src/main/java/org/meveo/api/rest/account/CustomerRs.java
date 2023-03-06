@@ -561,6 +561,17 @@ public interface CustomerRs extends IBaseRs {
             tags = { "Customer management" })
     GetCountersInstancesResponseDto filterCustomerCountersByPeriodV2(@Parameter(description = "The customer code") @PathParam("customerCode") String customerCode,
 			   														@Parameter(description = "The date to compare ", required = true) @QueryParam("date") @RestDateParam Date date);
-
+    
+    /**
+     * Get Customer root parent.
+     *
+     * @param customerCode The customer's code
+     * @return The Root parent data
+     */
+    @GET
+    @Path("/{customerCode}/rootParent")
+    @Operation(summary = " Get Customer root parent",
+            tags = { "Customer management" })
+    GetCustomerResponseDto findRootParent(@Parameter(description = "The customer code") @PathParam("customerCode") String customerCode);
 
 }

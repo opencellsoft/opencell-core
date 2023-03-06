@@ -1,11 +1,13 @@
 package org.meveo.service.billing.impl;
 
+import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.UntdidVatPaymentOption;
 import org.meveo.service.base.PersistenceService;
 
+@Stateless
 public class UntdidVatPaymentOptionService extends PersistenceService<UntdidVatPaymentOption> {
     public UntdidVatPaymentOption getByCode(String byCode) {
         if (byCode == null) {//code2005 code2475

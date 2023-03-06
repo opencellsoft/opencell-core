@@ -183,9 +183,6 @@ public class InvoiceValidationRulesResourceImpl implements InvoiceValidationRule
         if (invoiceValidationRuleDto.getType() == null) {
             throw new BadRequestException("Validation Rule Type is missing");
         }
-        if (invoiceValidationRuleDto.getEvaluationMode() == null) {
-            throw new BadRequestException("Evaluation mode is missing");
-        }
 		
         ValidationRuleTypeEnum validationRuleType = getValidationRuleType(invoiceValidationRuleDto);
         boolean isTypeScriptAndScriptValidationNotProvided = Objects.equals(validationRuleType, ValidationRuleTypeEnum.SCRIPT) && StringUtils.isBlank(invoiceValidationRuleDto.getValidationScript());

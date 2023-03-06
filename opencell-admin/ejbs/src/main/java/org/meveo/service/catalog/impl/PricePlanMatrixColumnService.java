@@ -23,8 +23,10 @@ import javax.ws.rs.NotFoundException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.dto.catalog.ConvertedPricePlanMatrixLineDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixValueDto;
+import org.meveo.api.dto.catalog.TradingCurrencyDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
@@ -40,6 +42,8 @@ import org.meveo.service.cpq.AttributeService;
 
 @Stateless
 public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatrixColumn> {
+
+    private static final String COLUMN_SEPARATOR = "\\|";
 
     @Inject
     private PricePlanMatrixValueService pricePlanMatrixValueService;
@@ -216,15 +220,20 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 	}
     
     private boolean isValidColumn(String column) {
+        boolean isUnitPriceColumn = false;
+        if (column.length() > 10) {
+            isUnitPriceColumn = column.substring(0,10).equals("unitPrice-");
+        }
         return !(column.equals("id") || column.equals("description") || column.equals("priority") 
-                || column.equals("priceWithoutTax") || column.equals("priceEL"));
+                || column.equals("priceWithoutTax") || column.equals("priceEL") || isUnitPriceColumn);
     }
     
 	private PricePlanMatrixLinesDto populateLines(String pricePlanMatrixCode,
 	        PricePlanMatrixVersion pricePlanMatrixVersion, Scanner scanner, List<Map.Entry<String, Optional<Attribute>>> columns) {
 		String line;
 		List<PricePlanMatrixLineDto> pricePlanMatrixLines = new ArrayList<>();
-			
+		List<ConvertedPricePlanMatrixLineDto> lstCppml = new ArrayList<ConvertedPricePlanMatrixLineDto>();
+		
 		while (scanner.hasNextLine()) {
 			
 			PricePlanMatrixLineDto pricePlanMatrixLineDto = new PricePlanMatrixLineDto();
@@ -294,6 +303,18 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 					if (columns.get(columnIndex).getKey().equalsIgnoreCase("description")) {
 						pricePlanMatrixLineDto.setDescription(nextLine[columnIndex]);
 					}
+					if (columns.get(columnIndex).getKey().substring(0, 9).equalsIgnoreCase("unitPrice")) {
+	                    String[] unitPriceLineSplit = nextLine[columnIndex].split(COLUMN_SEPARATOR);
+	                    ConvertedPricePlanMatrixLineDto cppv = new ConvertedPricePlanMatrixLineDto();
+	                    cppv.setConvertedValue(new BigDecimal(convertToDecimalFormat(unitPriceLineSplit[0])));
+	                    String tradingCurrencyCode = unitPriceLineSplit[1].toUpperCase();
+	                    TradingCurrencyDto tradingCurrencyDto = new TradingCurrencyDto();
+	                    tradingCurrencyDto.setCode(tradingCurrencyCode);
+	                    cppv.setTradingCurrency(tradingCurrencyDto);
+	                    cppv.setRate(new BigDecimal(convertToDecimalFormat(unitPriceLineSplit[2])));
+	                    cppv.setUseForBillingAccounts("true".equals(unitPriceLineSplit[3].toLowerCase()) ? true : false);
+	                    lstCppml.add(cppv);
+                    }
 					if (columns.get(columnIndex).getKey().equalsIgnoreCase("PriceWithoutTax")) {
 						String val = convertToDecimalFormat(nextLine[columnIndex]);
 						try {
@@ -304,7 +325,7 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 					}
 				}
 			}
-
+			pricePlanMatrixLineDto.setConvertedPricePlanMatrixLines(lstCppml);
 			pricePlanMatrixLineDto.setPricePlanMatrixCode(pricePlanMatrixCode);
 			pricePlanMatrixLineDto.setPricePlanMatrixVersion(pricePlanMatrixVersion.getCurrentVersion());
 			pricePlanMatrixLineDto.setPricePlanMatrixValues(pricePlanMatrixValueDtoList);

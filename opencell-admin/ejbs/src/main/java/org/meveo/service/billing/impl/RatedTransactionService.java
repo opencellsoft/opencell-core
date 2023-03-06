@@ -22,6 +22,8 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.meveo.model.billing.BillingEntityTypeEnum.BILLINGACCOUNT;
 import static org.meveo.model.billing.DateAggregationOption.NO_DATE_AGGREGATION;
+import static org.apache.commons.collections4.ListUtils.partition;
+import static org.meveo.commons.utils.ParamBean.getInstance;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -35,6 +37,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -59,6 +62,8 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.RatedTransactionDto;
+import org.meveo.api.generics.GenericRequestMapper;
+import org.meveo.api.generics.PersistenceServiceHelper;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
@@ -1083,7 +1088,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @Deprecated
     public boolean isServiceMinRTsUsed() {
 
-        Boolean booleanValue = ParamBean.getInstance().getBooleanValue("billing.minimumRating.global.enabled");
+        Boolean booleanValue = getInstance().getBooleanValue("billing.minimumRating.global.enabled");
         if (booleanValue != null) {
             return booleanValue;
         }
@@ -1104,7 +1109,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @Deprecated
     public boolean isSubscriptionMinRTsUsed() {
 
-        Boolean booleanValue = ParamBean.getInstance().getBooleanValue("billing.minimumRating.global.enabled");
+        Boolean booleanValue = getInstance().getBooleanValue("billing.minimumRating.global.enabled");
         if (booleanValue != null) {
             return booleanValue;
         }
@@ -1125,7 +1130,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @Deprecated
     public boolean isBAMinRTsUsed() {
 
-        Boolean booleanValue = ParamBean.getInstance().getBooleanValue("billing.minimumRating.global.enabled");
+        Boolean booleanValue = getInstance().getBooleanValue("billing.minimumRating.global.enabled");
         if (booleanValue != null) {
             return booleanValue;
         }
@@ -1146,7 +1151,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public boolean[] isMinRTsUsed() {
 
-        Boolean booleanValue = ParamBean.getInstance().getBooleanValue("billing.minimumRating.global.enabled");
+        Boolean booleanValue = getInstance().getBooleanValue("billing.minimumRating.global.enabled");
         if (booleanValue != null) {
             return new boolean[] { booleanValue, booleanValue, booleanValue, booleanValue, booleanValue, booleanValue };
         }
@@ -1620,12 +1625,27 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return getSelectQueryAsMap(query, params);
     }
 
-    public List<Map<String, Object>> getGroupedRTsWithAggregation(List<Long> ratedTransactionIds, AggregationConfiguration aggregationConfiguration) {
+    public List<Map<String, Object>> getGroupedRTsWithAggregation(List<Long> ratedTransactionIds,
+                                                                  AggregationConfiguration aggregationConfiguration) {
+        final int maxValue =
+                getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
+        if (ratedTransactionIds.size() > maxValue) {
+            List<List<Long>> rtSubLists = partition(ratedTransactionIds, maxValue);
+            return rtSubLists
+                    .stream()
+                    .map(rtIds -> executeAggregationQuery(aggregationConfiguration, rtIds))
+                    .collect(ArrayList::new, List::addAll, List::addAll);
+        } else {
+            return executeAggregationQuery(aggregationConfiguration, ratedTransactionIds);
+        }
+    }
 
+    private List<Map<String, Object>> executeAggregationQuery(AggregationConfiguration aggregationConfiguration,
+                                                              List<Long> ratedTransactionIds) {
         Map<String, Object> params = new HashMap<>();
         params.put("ids", ratedTransactionIds);
         String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration.getDateAggregationOption(),
-                " rt.usage_date ");
+                "usage_date ", "rt");
         String query = "SELECT  string_agg(concat(rt.id, ''), ',') as rated_transaction_ids, rt.billing_account__id, "
                 + "              rt.accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, "
                 + "              sum(rt.amount_without_tax) as sum_without_tax, sum(rt.amount_with_tax) as sum_with_tax,"
@@ -1736,13 +1756,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     private String getUsageDateAggregation(DateAggregationOption dateAggregationOption, String usageDateColumn) {
+    	return this.getUsageDateAggregation(dateAggregationOption, usageDateColumn, "a");
+    }
+    
+    private String getUsageDateAggregation(DateAggregationOption dateAggregationOption, String usageDateColumn, String alias) {
         switch (dateAggregationOption) {
         case MONTH_OF_USAGE_DATE:
-            return " TO_CHAR(a." + usageDateColumn + ", 'YYYY-MM') ";
+            return " TO_CHAR(" + alias + "." + usageDateColumn + ", 'YYYY-MM') ";
         case DAY_OF_USAGE_DATE:
-            return " TO_CHAR(a." + usageDateColumn + ", 'YYYY-MM-DD') ";
+            return " TO_CHAR(" + alias + "." + usageDateColumn + ", 'YYYY-MM-DD') ";
         case WEEK_OF_USAGE_DATE:
-            return " TO_CHAR(a." + usageDateColumn + ", 'YYYY-WW') ";
+            return " TO_CHAR(" + alias + "." + usageDateColumn + ", 'YYYY-WW') ";
         case NO_DATE_AGGREGATION:
             return usageDateColumn;
         }
@@ -2078,5 +2102,32 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return null;
         }
 	}
+
+	@SuppressWarnings("unchecked")
+	public List<RatedTransaction> findByFilter(Map<String, Object> filters) {
+        GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
+        filters = genericRequestMapper.evaluateFilters(filters, entityClass);
+        PaginationConfiguration configuration = new PaginationConfiguration(filters);
+        QueryBuilder query = getQuery(configuration);
+		return query.getQuery(getEntityManager()).getResultList();
+	}
     
+
+    public List<BillingAccount> findBillingAccountsBy(List<Long> rtIds) {
+        final int maxValue = getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
+        if (rtIds.size() > maxValue) {
+            List<BillingAccount> billingAccounts = new ArrayList<>();
+            List<List<Long>> invoiceLineIdsSubList = partition(rtIds, maxValue);
+            invoiceLineIdsSubList.forEach(subIdsList -> billingAccounts.addAll(loadBy(subIdsList)));
+            return new ArrayList<>(new HashSet<>(billingAccounts));
+        } else {
+            return loadBy(rtIds);
+        }
+    }
+    private List<BillingAccount> loadBy(List<Long> rtIds) {
+        return getEntityManager()
+                .createNamedQuery("RatedTransaction.BillingAccountByRTIds")
+                .setParameter("ids", rtIds)
+                .getResultList();
+    }
 }

@@ -38,6 +38,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
@@ -216,7 +217,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     public File createFile(Document doc, Invoice invoice, String fullXmlFilePath) throws BusinessException {
         try {
             Transformer trans = transfac.newTransformer();
-            // trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             trans.setOutputProperty(OutputKeys.INDENT, "yes");
             trans.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             // create string from xml tree
@@ -231,7 +231,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                 outStream.close();
             }
             catch (IOException e) {
-                System.out.println("Transformer exception : " + e.getMessage());
+                log.error("Transformer exception : {}", e.getMessage());
             }
             return xmlFile;
         } catch (TransformerException e) {
@@ -260,7 +260,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
         Document doc = docBuilder.newDocument();
-        rtBillingProcess = rtBillingProcess && !(invoice.getInvoiceLines()!=null && invoice.getInvoiceLines().size()>0);
+        rtBillingProcess = rtBillingProcess && !(invoice.getInvoiceLines()!=null && !invoice.getInvoiceLines().isEmpty());
         Element invoiceTag = rtBillingProcess ? createInvoiceSection(doc, invoice, isVirtual, isInvoiceAdjustment, docBuilder)
                 : createInvoiceSectionIL(doc, invoice, isVirtual, isInvoiceAdjustment, docBuilder);
         doc.appendChild(invoiceTag);
@@ -287,10 +287,15 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Element paymentGatewayTag = doc.createElement("paymentGateway");
         if (CollectionUtils.isNotEmpty(paymentGateways)) {
             PaymentGateway firstGateway = paymentGateways.get(0);
-
-            paymentGatewayTag.setAttribute("IBAN", firstGateway.getBankCoordinates().getIban() == null ? "" : firstGateway.getBankCoordinates().getIban());
-            paymentGatewayTag.setAttribute("bankCode", firstGateway.getBankCoordinates().getBankCode() == null ? "" : firstGateway.getBankCoordinates().getBankCode());
-            paymentGatewayTag.setAttribute("bankName", firstGateway.getBankCoordinates().getBankName() == null ? "" : firstGateway.getBankCoordinates().getBankName());
+            paymentGatewayTag.setAttribute("IBAN", firstGateway.getBankCoordinates() != null
+                    && firstGateway.getBankCoordinates().getIban() != null
+                    ? firstGateway.getBankCoordinates().getIban() : "");
+            paymentGatewayTag.setAttribute("bankCode", firstGateway.getBankCoordinates() != null
+                    && firstGateway.getBankCoordinates().getBankCode() != null
+                    ? firstGateway.getBankCoordinates().getBankCode() : "");
+            paymentGatewayTag.setAttribute("bankName", firstGateway.getBankCoordinates() != null
+                    && firstGateway.getBankCoordinates().getBankName() != null
+                    ? firstGateway.getBankCoordinates().getBankName() : "");
         }
         return paymentGatewayTag;
     }
@@ -1232,7 +1237,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     	String billingAccountLanguage = invoice.getBillingAccount().getTradingLanguage().getLanguageCode();
         LinkedHashMap<String, XMLInvoiceHeaderCategoryDTO> headerCategories = new LinkedHashMap<>();
         List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new ArrayList<>();
-        // List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregate>();
         for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
             if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
                 CategoryInvoiceAgregate categoryInvoiceAgregate = (CategoryInvoiceAgregate) invoiceAgregate;
@@ -1294,7 +1298,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                     Element subCategory = doc.createElement("subCategory");
                     InvoiceSubCategory invoiceSubCat = subCatInvoiceAgregate.getInvoiceSubCategory();
                     // description translated is set on aggregate
-                    // String invoiceSubCategoryLabel = subCatInvoiceAgregate.getDescription() == null ? "" : subCatInvoiceAgregate.getDescription();
                     String invoiceSubCategoryLabel = subCatInvoiceAgregate.getDescription();
                     if (invoiceSubCat != null && invoiceSubCat.getDescriptionI18n() != null
                             && invoiceSubCat.getDescriptionI18n().get(billingAccountLanguage) != null) {
@@ -1561,10 +1564,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             }
         }
         addCustomFields(billingAccount, doc, billingAccountTag);
-        /*
-         * if (billingAccount.getName() != null && billingAccount.getName().getTitle() != null) { // Element company = doc.createElement("company"); Text companyTxt =
-         * doc.createTextNode (billingAccount.getName().getTitle().getIsCompany() + ""); billingAccountTag.appendChild(companyTxt); }
-         */
         Element email = doc.createElement("email");
         Element phone = doc.createElement("phone");
         Element mobile = doc.createElement("mobile");
@@ -2070,9 +2069,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         woLine.setAttribute("code", walletOperation.getCode());
         woLine.setAttribute("description", getDefaultIfNull(walletOperation.getDescription(), ""));
         ChargeInstance chargeInstance = walletOperation.getChargeInstance();
-        // if (!isVirtual) {
-        // chargeInstance = (ChargeInstance) chargeInstanceService.findById(chargeInstance.getId(), false);
-        // }
         ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
         // get periodStartDate and periodEndDate for recurrents
         Date periodStartDate = walletOperation.getStartDate();
@@ -2081,14 +2077,10 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         // instanceof is not used in this control because chargeTemplate can never be
         // instance of usageChargeTemplate according to model structure
         Date operationDate = walletOperation.getOperationDate();
-        if (chargeTemplate instanceof UsageChargeTemplate && operationDate != null) { // && usageChargeTemplateService.findById(chargeTemplate.getId()) != null) {
+        if (chargeTemplate instanceof UsageChargeTemplate && operationDate != null) {
             CounterPeriod counterPeriod = null;
             CounterInstance counter = walletOperation.getCounter();
-            // if (!isVirtual) {
-            // counterPeriod = counterPeriodService.getCounterPeriod(counter, operationDate);
-            // } else {
             counterPeriod = counter.getCounterPeriod(operationDate);
-            // }
             if (counterPeriod != null) {
                 periodStartDate = counterPeriod.getPeriodStartDate();
                 periodEndDate = counterPeriod.getPeriodEndDate();
@@ -2332,7 +2324,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     protected List<OfferTemplate> getOffers(List<RatedTransaction> ratedTransactions) {
 
         // TODO Need to check performance, maybe its quick enough to avoid searching DB in non-virtual cases
-        // if (isVirtual) {
         List<OfferTemplate> offers = new ArrayList<>();
         Set<Long> offerIds = new HashSet<>();
         for (RatedTransaction ratedTransaction : ratedTransactions) {
@@ -2343,7 +2334,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         }
         Collections.sort(offers, Comparator.comparing(OfferTemplate::getCode));
         return offers;
-        // }
     }
 
     /**
@@ -2355,7 +2345,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     protected Map<String, List<ServiceInstance>> getServices(List<RatedTransaction> ratedTransactions) {
 
         // TODO Need to check performance, maybe its quick enough to avoid searching DB in non-virtual cases
-        // if (isVirtual) {
         Map<String, List<ServiceInstance>> servicesByOffer = new HashMap<>();
         Set<Long> serviceInstanceIds = new HashSet<>();
         for (RatedTransaction ratedTransaction : ratedTransactions) {
@@ -2366,7 +2355,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             }
         }
         return servicesByOffer;
-        // }
     }
 
     /**
@@ -2594,7 +2582,107 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             }
         }
 
+        if (invoiceConfiguration.isDisplayRatedItems()) {
+            List<RatedTransaction> ratedItems = invoiceLine.getRatedTransactions();
+
+            if (ratedItems != null && !ratedItems.isEmpty()) {
+                Element ratedItemsElement = doc.createElement("ratedItems");
+
+                for (RatedTransaction ratedItem : ratedItems) {
+
+                    Element ratedItemNode = doc.createElement("ratedItem");
+
+                    buildRatedItemNodeAttributes(invoiceDateFormat, ratedItem, ratedItemNode);
+
+                    buildProductNode(doc, ratedItem, ratedItemNode);
+
+                    ChargeInstance chargeInstance = ratedItem.getChargeInstance();
+                    if (chargeInstance != null) {
+                        buildSubscriptionNode(doc, ratedItemNode, chargeInstance);
+                    }
+                    buildParametersNode(doc, ratedItem, ratedItemNode);
+
+                    if (ratedItem.getParameterExtra() != null) {
+                        buildExtraParamterNode(doc, ratedItem, ratedItemNode);
+                    }
+                    ratedItemsElement.appendChild(ratedItemNode);
+                }
+                line.appendChild(ratedItemsElement);
+            }
+
+        }
         return line;
+    }
+
+    private void buildExtraParamterNode(Document doc, RatedTransaction ratedItem, Element ratedItemNode) {
+        Element parameterExtraNode = doc.createElement("parameterExtra");
+        Text parameterExtraText = this.createTextNode(doc, ratedItem.getParameterExtra());
+        parameterExtraNode.appendChild(parameterExtraText);
+        ratedItemNode.appendChild(parameterExtraNode);
+    }
+
+    private static void buildProductNode(Document doc, RatedTransaction ratedItem, Element ratedItemNode) {
+        if(ratedItem.getServiceInstance() != null && ratedItem.getServiceInstance().getProductVersion() != null){
+           Product product = ratedItem.getServiceInstance().getProductVersion().getProduct();
+           if(product != null){
+               Element productNode = doc.createElement("product");
+               productNode.setAttribute("code",product.getCode());
+               productNode.setAttribute("description",product.getDescription());
+               ratedItemNode.appendChild(productNode);
+           }
+        }
+    }
+
+    private static void buildRatedItemNodeAttributes(String invoiceDateFormat, RatedTransaction ratedItem, Element ratedItemNode) {
+        if(ratedItem.getUsageDate() != null){
+            ratedItemNode.setAttribute("usageDate", DateUtils.formatDateWithPattern(ratedItem.getUsageDate(), invoiceDateFormat));
+        }
+        if(ratedItem.getCode() != null){
+            ratedItemNode.setAttribute("code", ratedItem.getCode());
+        }
+        if(ratedItem.getDescription() != null){
+            ratedItemNode.setAttribute("description", ratedItem.getDescription());
+        }
+        if(ratedItem.getQuantity() != null){
+            ratedItemNode.setAttribute("quantity", ratedItem.getQuantity().toString());
+        }
+        if(ratedItem.getUnitAmountWithoutTax() != null){
+            ratedItemNode.setAttribute("unitAmountWithoutTax", ratedItem.getUnitAmountWithoutTax().toString());
+        }
+        if(ratedItem.getAmountWithoutTax() != null){
+            ratedItemNode.setAttribute("amountWithoutTax", ratedItem.getAmountWithoutTax().toString());
+        }
+    }
+
+    private void buildParametersNode(Document doc, RatedTransaction ratedItem, Element ratedItemNode) {
+        if(ratedItem.getParameter1() != null){
+            Element parameter1Node = doc.createElement("parameter1");
+            Text parameter1Text = this.createTextNode(doc, ratedItem.getParameter1());
+            parameter1Node.appendChild(parameter1Text);
+            ratedItemNode.appendChild(parameter1Node);
+        }
+        if(ratedItem.getParameter2() != null){
+            Element parameter2Node = doc.createElement("parameter2");
+            Text parameter2Text = this.createTextNode(doc, ratedItem.getParameter2());
+            parameter2Node.appendChild(parameter2Text);
+            ratedItemNode.appendChild(parameter2Node);
+        }
+        if(ratedItem.getParameter1() != null){
+            Element parameter3Node = doc.createElement("parameter3");
+            Text parameter3Text = this.createTextNode(doc, ratedItem.getParameter3());
+            parameter3Node.appendChild(parameter3Text);
+            ratedItemNode.appendChild(parameter3Node);
+        }
+    }
+
+    private static void buildSubscriptionNode(Document doc, Element ratedItemNode, ChargeInstance chargeInstance) {
+        Subscription subscription = chargeInstance.getSubscription();
+        if(subscription != null){
+            Element subscriptionNode = doc.createElement("subscription");
+            subscriptionNode.setAttribute("code",subscription.getCode());
+            subscriptionNode.setAttribute("description",subscription.getDescription());
+            ratedItemNode.appendChild(subscriptionNode);
+        }
     }
 
     private Element createTaxDetailTag(TaxDetails taxDetails, Document doc) {

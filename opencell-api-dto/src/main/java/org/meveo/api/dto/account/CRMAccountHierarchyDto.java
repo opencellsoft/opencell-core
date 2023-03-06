@@ -279,6 +279,9 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
 
     @XmlElement
     private TitleDto legalEntityType;
+    
+    /** the code of customer parent **/
+    private String parentCustomerCode;
 
     /**
      * 
@@ -1299,5 +1302,12 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
 		this.legalEntityType = legalEntityType;
 	}
 
-    
+	public String getParentCustomerCode() {
+		return parentCustomerCode;
+	}
+
+	public void setParentCustomerCode(String parentCustomerCode) {
+		this.parentCustomerCode = parentCustomerCode;
+	}
+
 }
