@@ -38,6 +38,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
@@ -2581,7 +2582,107 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             }
         }
 
+        if (invoiceConfiguration.isDisplayRatedItems()) {
+            List<RatedTransaction> ratedItems = invoiceLine.getRatedTransactions();
+
+            if (ratedItems != null && !ratedItems.isEmpty()) {
+                Element ratedItemsElement = doc.createElement("ratedItems");
+
+                for (RatedTransaction ratedItem : ratedItems) {
+
+                    Element ratedItemNode = doc.createElement("ratedItem");
+
+                    buildRatedItemNodeAttributes(invoiceDateFormat, ratedItem, ratedItemNode);
+
+                    buildProductNode(doc, ratedItem, ratedItemNode);
+
+                    ChargeInstance chargeInstance = ratedItem.getChargeInstance();
+                    if (chargeInstance != null) {
+                        buildSubscriptionNode(doc, ratedItemNode, chargeInstance);
+                    }
+                    buildParametersNode(doc, ratedItem, ratedItemNode);
+
+                    if (ratedItem.getParameterExtra() != null) {
+                        buildExtraParamterNode(doc, ratedItem, ratedItemNode);
+                    }
+                    ratedItemsElement.appendChild(ratedItemNode);
+                }
+                line.appendChild(ratedItemsElement);
+            }
+
+        }
         return line;
+    }
+
+    private void buildExtraParamterNode(Document doc, RatedTransaction ratedItem, Element ratedItemNode) {
+        Element parameterExtraNode = doc.createElement("parameterExtra");
+        Text parameterExtraText = this.createTextNode(doc, ratedItem.getParameterExtra());
+        parameterExtraNode.appendChild(parameterExtraText);
+        ratedItemNode.appendChild(parameterExtraNode);
+    }
+
+    private static void buildProductNode(Document doc, RatedTransaction ratedItem, Element ratedItemNode) {
+        if(ratedItem.getServiceInstance() != null && ratedItem.getServiceInstance().getProductVersion() != null){
+           Product product = ratedItem.getServiceInstance().getProductVersion().getProduct();
+           if(product != null){
+               Element productNode = doc.createElement("product");
+               productNode.setAttribute("code",product.getCode());
+               productNode.setAttribute("description",product.getDescription());
+               ratedItemNode.appendChild(productNode);
+           }
+        }
+    }
+
+    private static void buildRatedItemNodeAttributes(String invoiceDateFormat, RatedTransaction ratedItem, Element ratedItemNode) {
+        if(ratedItem.getUsageDate() != null){
+            ratedItemNode.setAttribute("usageDate", DateUtils.formatDateWithPattern(ratedItem.getUsageDate(), invoiceDateFormat));
+        }
+        if(ratedItem.getCode() != null){
+            ratedItemNode.setAttribute("code", ratedItem.getCode());
+        }
+        if(ratedItem.getDescription() != null){
+            ratedItemNode.setAttribute("description", ratedItem.getDescription());
+        }
+        if(ratedItem.getQuantity() != null){
+            ratedItemNode.setAttribute("quantity", ratedItem.getQuantity().toString());
+        }
+        if(ratedItem.getUnitAmountWithoutTax() != null){
+            ratedItemNode.setAttribute("unitAmountWithoutTax", ratedItem.getUnitAmountWithoutTax().toString());
+        }
+        if(ratedItem.getAmountWithoutTax() != null){
+            ratedItemNode.setAttribute("amountWithoutTax", ratedItem.getAmountWithoutTax().toString());
+        }
+    }
+
+    private void buildParametersNode(Document doc, RatedTransaction ratedItem, Element ratedItemNode) {
+        if(ratedItem.getParameter1() != null){
+            Element parameter1Node = doc.createElement("parameter1");
+            Text parameter1Text = this.createTextNode(doc, ratedItem.getParameter1());
+            parameter1Node.appendChild(parameter1Text);
+            ratedItemNode.appendChild(parameter1Node);
+        }
+        if(ratedItem.getParameter2() != null){
+            Element parameter2Node = doc.createElement("parameter2");
+            Text parameter2Text = this.createTextNode(doc, ratedItem.getParameter2());
+            parameter2Node.appendChild(parameter2Text);
+            ratedItemNode.appendChild(parameter2Node);
+        }
+        if(ratedItem.getParameter1() != null){
+            Element parameter3Node = doc.createElement("parameter3");
+            Text parameter3Text = this.createTextNode(doc, ratedItem.getParameter3());
+            parameter3Node.appendChild(parameter3Text);
+            ratedItemNode.appendChild(parameter3Node);
+        }
+    }
+
+    private static void buildSubscriptionNode(Document doc, Element ratedItemNode, ChargeInstance chargeInstance) {
+        Subscription subscription = chargeInstance.getSubscription();
+        if(subscription != null){
+            Element subscriptionNode = doc.createElement("subscription");
+            subscriptionNode.setAttribute("code",subscription.getCode());
+            subscriptionNode.setAttribute("description",subscription.getDescription());
+            ratedItemNode.appendChild(subscriptionNode);
+        }
     }
 
     private Element createTaxDetailTag(TaxDetails taxDetails, Document doc) {
