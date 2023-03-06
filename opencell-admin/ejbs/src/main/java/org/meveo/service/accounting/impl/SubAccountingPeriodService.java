@@ -377,7 +377,7 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
     
     public void updateSubPeriodsWithStatus(AccountingPeriod entity, String fiscalYear, String status, AccountingPeriodActionLevelEnum level) {
         List<SubAccountingPeriod> subAccountingPeriods = null;
-        if (AccountingPeriodActionLevelEnum.allUsers.equals(level)) {
+        if (AccountingPeriodActionLevelEnum.ALL_USERS.equals(level)) {
             subAccountingPeriods = getAllUsersSubPeriodWithStatusOpen(entity);
             for (SubAccountingPeriod subAccountingPeriod : subAccountingPeriods) {
                 updateSubAccountingAllUsersStatus(fiscalYear, status, subAccountingPeriod, "");
