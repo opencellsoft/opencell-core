@@ -784,6 +784,7 @@ public class MediationApiService {
             throw new BusinessException("Invalid Access for " + toBeUpdated.getAccessCode());
         }
         fillCdr(toBeUpdated, cdr, statusToUpdated);
+
         cdrService.update(cdr);
     }
     
@@ -967,72 +968,33 @@ public class MediationApiService {
         cdr.setQuantity(toBeUpdated.getQuantity());
         cdr.setAccessCode(toBeUpdated.getAccessCode());
         cdr.setParameter1(toBeUpdated.getParameter1());
-        cdr.setStatusDate(new Date());
 
         if(statusToUpdated != null) {
             cdr.setStatus(statusToUpdated);
+            cdr.setStatusDate(new Date());
         }
-        if(toBeUpdated.getParameter2() != null) {
-            cdr.setParameter2(toBeUpdated.getParameter2());
-        }
-        if(toBeUpdated.getParameter3() != null) {
-            cdr.setParameter3(toBeUpdated.getParameter3());
-        }
-        if(toBeUpdated.getParameter4() != null) {
-            cdr.setParameter4(toBeUpdated.getParameter4());
-        }
-        if(toBeUpdated.getParameter5() != null) {
-            cdr.setParameter5(toBeUpdated.getParameter5());
-        }
-        if(toBeUpdated.getParameter6() != null) {
-            cdr.setParameter6(toBeUpdated.getParameter6());
-        }
-        if(toBeUpdated.getParameter7() != null) {
-            cdr.setParameter7(toBeUpdated.getParameter7());
-        }
-        if(toBeUpdated.getParameter8() != null) {
-            cdr.setParameter8(toBeUpdated.getParameter8());
-        }
-        if(toBeUpdated.getParameter9() != null) {
-            cdr.setParameter9(toBeUpdated.getParameter9());
-        }
-
-        if(toBeUpdated.getDateParam1() != null) {
-            cdr.setDateParam1(toBeUpdated.getDateParam1());
-        }
-        if(toBeUpdated.getDateParam2() != null) {
-            cdr.setDateParam2(toBeUpdated.getDateParam2());
-        }
-        if(toBeUpdated.getDateParam3() != null) {
-            cdr.setDateParam3(toBeUpdated.getDateParam3());
-        }
-        if(toBeUpdated.getDateParam4() != null) {
-            cdr.setDateParam4(toBeUpdated.getDateParam4());
-        }
-        if(toBeUpdated.getDateParam5() != null) {
-            cdr.setDateParam5(toBeUpdated.getDateParam5());
-        }
-        
+        cdr.setParameter2(toBeUpdated.getParameter2());
+        cdr.setParameter3(toBeUpdated.getParameter3());
+        cdr.setParameter4(toBeUpdated.getParameter4());
+        cdr.setParameter5(toBeUpdated.getParameter5());
+        cdr.setParameter6(toBeUpdated.getParameter6());
+        cdr.setParameter7(toBeUpdated.getParameter7());
+        cdr.setParameter8(toBeUpdated.getParameter8());
+        cdr.setParameter9(toBeUpdated.getParameter9());
+        cdr.setDateParam1(toBeUpdated.getDateParam1());
+        cdr.setDateParam2(toBeUpdated.getDateParam2());
+        cdr.setDateParam3(toBeUpdated.getDateParam3());
+        cdr.setDateParam4(toBeUpdated.getDateParam4());
+        cdr.setDateParam5(toBeUpdated.getDateParam5());
+        cdr.setExtraParameter(toBeUpdated.getExtraParam());
+        cdr.setDecimalParam1(toBeUpdated.getDecimalParam1());
+        cdr.setDecimalParam2(toBeUpdated.getDecimalParam2());
+        cdr.setDecimalParam3(toBeUpdated.getDecimalParam3());
+        cdr.setDecimalParam4(toBeUpdated.getDecimalParam4());
+        cdr.setDecimalParam5(toBeUpdated.getDecimalParam5());
         if(toBeUpdated.getRejectReason() != null && statusToUpdated == CDRStatusEnum.ERROR) {
             cdr.setRejectReason(toBeUpdated.getRejectReason());
         }
-        if(toBeUpdated.getExtraParam() != null) {
-            cdr.setExtraParameter(toBeUpdated.getExtraParam());
-        }
-        if(toBeUpdated.getDecimalParam1() != null) {
-        	cdr.setDecimalParam1(toBeUpdated.getDecimalParam1());
-        }
-        if(toBeUpdated.getDecimalParam2() != null) {
-        	cdr.setDecimalParam2(toBeUpdated.getDecimalParam2());
-        }
-        if(toBeUpdated.getDecimalParam3() != null) {
-        	cdr.setDecimalParam3(toBeUpdated.getDecimalParam3());
-        }
-        if(toBeUpdated.getDecimalParam4() != null) {
-        	cdr.setDecimalParam4(toBeUpdated.getDecimalParam4());
-        }
-        if(toBeUpdated.getDecimalParam5() != null) {
-        	cdr.setDecimalParam5(toBeUpdated.getDecimalParam5());
-        }
+
     }
 }
