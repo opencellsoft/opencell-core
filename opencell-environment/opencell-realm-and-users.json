@@ -1058,6 +1058,7 @@
                 "genApiFull.list",
                 "apiBillingManagement",
                 "apiFinanceManagement",
+				"apiCFO",
                 "apiUserManagement",
                 "apiCustomEntityManagement",
                 "apiQuoteManagement",
@@ -10364,7 +10365,7 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"opencell-web/apiFinanceManagement\",\"required\":false},{\"id\":\"opencell-web/apiFinanceVisualization\",\"required\":false}]"
+              "roles": "[{\"id\":\"opencell-web/apiFinanceManagement\",\"required\":false},{\"id\":\"opencell-web/apiFinanceVisualization\",{\"id\":\"opencell-web/apiCFO\",\"required\":false}]"
             }
           },
           {
@@ -15465,7 +15466,7 @@
             "config": {
               "resources": "[\"Api V1 Finance\"]",
               "scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
-              "applyPolicies": "[\"Role apiFinanceManagement\"]"
+              "applyPolicies": "[\"Role apiFinanceManagement\",\"Role apiCFO\"]"
             }
           },
           {
