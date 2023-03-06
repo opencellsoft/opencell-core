@@ -1074,7 +1074,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @Deprecated
     public boolean isServiceMinRTsUsed() {
 
-        Boolean booleanValue = ParamBean.getInstance().getBooleanValue("billing.minimumRating.global.enabled");
+        Boolean booleanValue = getInstance().getBooleanValue("billing.minimumRating.global.enabled");
         if (booleanValue != null) {
             return booleanValue;
         }
@@ -1095,7 +1095,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @Deprecated
     public boolean isSubscriptionMinRTsUsed() {
 
-        Boolean booleanValue = ParamBean.getInstance().getBooleanValue("billing.minimumRating.global.enabled");
+        Boolean booleanValue = getInstance().getBooleanValue("billing.minimumRating.global.enabled");
         if (booleanValue != null) {
             return booleanValue;
         }
@@ -1116,7 +1116,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @Deprecated
     public boolean isBAMinRTsUsed() {
 
-        Boolean booleanValue = ParamBean.getInstance().getBooleanValue("billing.minimumRating.global.enabled");
+        Boolean booleanValue = getInstance().getBooleanValue("billing.minimumRating.global.enabled");
         if (booleanValue != null) {
             return booleanValue;
         }
@@ -1137,7 +1137,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public boolean[] isMinRTsUsed() {
 
-        Boolean booleanValue = ParamBean.getInstance().getBooleanValue("billing.minimumRating.global.enabled");
+        Boolean booleanValue = getInstance().getBooleanValue("billing.minimumRating.global.enabled");
         if (booleanValue != null) {
             return new boolean[] { booleanValue, booleanValue, booleanValue, booleanValue, booleanValue, booleanValue };
         }
@@ -1600,8 +1600,23 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return getSelectQueryAsMap(query, params);
     }
 
-    public List<Map<String, Object>> getGroupedRTsWithAggregation(List<Long> ratedTransactionIds, AggregationConfiguration aggregationConfiguration) {
+    public List<Map<String, Object>> getGroupedRTsWithAggregation(List<Long> ratedTransactionIds,
+                                                                  AggregationConfiguration aggregationConfiguration) {
+        final int maxValue =
+                getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
+        if (ratedTransactionIds.size() > maxValue) {
+            List<List<Long>> rtSubLists = partition(ratedTransactionIds, maxValue);
+            return rtSubLists
+                    .stream()
+                    .map(rtIds -> executeAggregationQuery(aggregationConfiguration, rtIds))
+                    .collect(ArrayList::new, List::addAll, List::addAll);
+        } else {
+            return executeAggregationQuery(aggregationConfiguration, ratedTransactionIds);
+        }
+    }
 
+    private List<Map<String, Object>> executeAggregationQuery(AggregationConfiguration aggregationConfiguration,
+                                                              List<Long> ratedTransactionIds) {
         Map<String, Object> params = new HashMap<>();
         params.put("ids", ratedTransactionIds);
         String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration, " rt.usage_date ");
