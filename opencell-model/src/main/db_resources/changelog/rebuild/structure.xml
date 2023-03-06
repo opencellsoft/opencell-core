@@ -6016,6 +6016,7 @@
             <column name="default_invoice_minimum_article_id" type="bigint"/>
             <column name="discount_plan_id" type="bigint"/>
             <column name="display_tax_details" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="display_rated_items" type="${type.boolean}" defaultValueNumeric="0"/>
         </createTable>
     </changeSet>
 
@@ -16835,14 +16836,6 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="document"/>
     </changeSet>
-    <changeSet id="#INTRD-14264_20230222_fk" author="TarikFA.">
-        <addForeignKeyConstraint baseTableName="billing_rated_transaction" baseColumnNames="origin_ratedtransaction_id,status"
-                                 constraintName="fk_origin_ratedtransaction_id"
-                                 referencedTableName="billing_rated_transaction"
-                                 referencedColumnNames="id,status"
-                                 deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
-    </changeSet>
     
     <changeSet id="#INTRD-14522_20230301_fk" author="TarikFA.">
         <addForeignKeyConstraint baseTableName="billing_subscription" baseColumnNames="contract_id"
@@ -19586,7 +19579,8 @@
     <changeSet id="#INTRD-14598_20230303" author="zelmeliani" />
     <changeSet id="#INTRD-14402_20230301" author="AdilElJaouhari" />
 	<changeSet id="#INTRD-14231_20230227" author="HichamHANINE" />
-	
+    <changeSet id="#INTRD-14263_20200304" author="TarikFA." />
+
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

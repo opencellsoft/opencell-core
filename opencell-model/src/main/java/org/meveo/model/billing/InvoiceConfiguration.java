@@ -181,7 +181,11 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
      */
     @Type(type = "numeric_boolean")
     @Column(name = "display_user_account_hierarchy")
-    private boolean displayUserAccountHierarchy = false;    
+    private boolean displayUserAccountHierarchy = false;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "display_rated_items")
+    private boolean displayRatedItems = false;
 
     public boolean isDisplayUserAccountHierarchy() {
 		return displayUserAccountHierarchy;
@@ -421,5 +425,14 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
         // Always return true as there can be only one record of invoice configuration
         return true;
     }
+
+    public boolean isDisplayRatedItems() {
+        return displayRatedItems;
+    }
+
+    public void setDisplayRatedItems(boolean displayRatedItems) {
+        this.displayRatedItems = displayRatedItems;
+    }
+
 
 }
