@@ -1058,7 +1058,6 @@
                 "genApiFull.list",
                 "apiBillingManagement",
                 "apiFinanceManagement",
-				"apiCFO",
                 "apiUserManagement",
                 "apiCustomEntityManagement",
                 "apiQuoteManagement",
@@ -1071,7 +1070,8 @@
                 "inboundAccess",
                 "apiAdministrationManagement",
                 "apiUseScript",
-                "general_roleManagement"
+                "general_roleManagement",
+				"apiCFO"
               ]
             }
           },
