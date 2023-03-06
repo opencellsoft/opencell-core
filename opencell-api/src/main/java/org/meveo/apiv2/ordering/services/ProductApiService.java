@@ -36,6 +36,7 @@ import javax.ws.rs.NotAuthorizedException;
 import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.IEntity;
 import org.meveo.model.catalog.Channel;
@@ -54,6 +55,10 @@ public class ProductApiService implements ApiService<ProductTemplate> {
 
     @Inject
     private ProductTemplateService productTemplateService;
+
+    @Inject
+    private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
+
     private List<String> fetchFields;
 
     @PostConstruct
@@ -68,7 +73,8 @@ public class ProductApiService implements ApiService<ProductTemplate> {
 
     @Override
     public List<ProductTemplate> list(Long offset, Long limit, String sort, String orderBy, String filter) {
-        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(), limit.intValue(), null, filter, fetchFields, null, null);
+        long apiLimit = genericPagingAndFilteringUtils.getLimit(limit != null ? limit.intValue() : null);
+        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(), (int)apiLimit, null, filter, fetchFields, null, null);
         return productTemplateService.list(paginationConfiguration);
     }
 
