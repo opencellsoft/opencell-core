@@ -19475,5 +19475,11 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <where>job_category = 'DWH'</where>
         </delete>
     </changeSet>
+    
+    <changeSet id="#INTRD-14555_20230303" author="aeljaouhari">
+        <update tableName="crm_customer_category">
+            <column name="default_seller_id" valueComputed="(SELECT min(id) FROM crm_seller WHERE code = 'MAIN_SELLER' OR id >= 1)" />
+        </update>
+    </changeSet>
 
 </databaseChangeLog>
