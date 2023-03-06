@@ -111,6 +111,7 @@ public class PaginationConfiguration implements Serializable {
         this.fullTextFilter = fullTextFilter;
         this.doFetch = doFetch;
         this.fetchFields = fetchFields;
+        this.limit = numberOfRows;
 
         List<Object> sortValues = new ArrayList<Object>();
         for (int i = 0; i < sortFieldsAndOrder.length; i = i + 2) {

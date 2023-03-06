@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.AgedReceivableDto;
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.generic.GenericFieldDetails;
 import org.meveo.apiv2.generic.GenericPagingAndFiltering;
 import org.meveo.apiv2.generic.services.GenericFileExportManager;
@@ -39,8 +40,11 @@ public class StandardReportResourceImpl implements StandardReportResource {
 
     @Inject
     private GenericFileExportManager genericExportManager;
-    
-    @Override
+
+	@Inject
+	private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
+
+	@Override
     public Response getAgedReceivables(Long offset, Long limit, String sort, String orderBy, String customerAccountCode,
                                        Date startDate, Date startDueDate, Date endDueDate, String customerAccountDescription,
                                        String sellerDescription, String sellerCode,
@@ -49,8 +53,9 @@ public class StandardReportResourceImpl implements StandardReportResource {
     	if (startDate == null) {
     		startDate = new Date();
 		}
+		long apiLimit = genericPagingAndFilteringUtils.getLimit(limit != null ? limit.intValue() : null);
     	List<Object[]> agedBalanceList =
-                standardReportApiService.list(offset, limit, sort, orderBy, customerAccountCode, startDate,
+                standardReportApiService.list(offset, apiLimit, sort, orderBy, customerAccountCode, startDate,
                         startDueDate, endDueDate, customerAccountDescription, sellerDescription, sellerCode, invoiceNumber, stepInDays, numberOfPeriods, tradingCurrency, functionalCurrency);
         agedReceivableMapper.setAppProvider(appProvider);
     	List<AgedReceivableDto> agedReceivablesList = (stepInDays == null && numberOfPeriods == null)
@@ -69,10 +74,10 @@ public class StandardReportResourceImpl implements StandardReportResource {
                 .addData(agedReceivablesData)
                 .startDate(DateUtils.formatDateWithPattern(startDate, "dd/MM/yyyy"))
                 .offset(offset)
-                .limit(limit)
+                .limit(apiLimit)
                 .total(count)
                 .build().withLinks(new LinkGenerator.PaginationLinkGenerator(StandardReportResource.class)
-                        .offset(offset).limit(limit).total(count).build());
+                        .offset(offset).limit(apiLimit).total(count).build());
         return Response.ok().entity(agedReceivables).build();
     }
 
