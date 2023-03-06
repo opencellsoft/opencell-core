@@ -5599,7 +5599,7 @@ Opencell team.
 			<where> policy_condition_target='IsCompany'</where>
 		</update>
 	</changeSet>
-	
+
     <changeSet id="INTRD-2756_20211110" author="Mohammed_ELAZZOUZI">
 		<insert tableName="meveo_job_instance">
 			<column name="id"  valueSequenceNext="meveo_job_instance_seq" />
@@ -20072,7 +20072,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <where>job_category = 'DWH'</where>
         </delete>
     </changeSet>
-    
+
     <changeSet id="#INTRD-14042_20230227" author="aeljaouhari">
 		<insert tableName="meveo_script_instance">
 			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
@@ -20104,7 +20104,19 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		<update tableName="ar_occ_template">
 			<column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code='No accounting entry')" />
 			<where> accounting_scheme_id is null</where>
-		</update>		
+		</update>
 	</changeSet>
+
+        <changeSet id="INTRD-12103_20221215_rebuild" author="HichamHANINE">
+      <update tableName="meveo_script_instance">
+			<column name="description" value="Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator. Only offer from the list actually present on invoice will be tested. If offer list is empty, then all invoice lines will be tested regardless of their offer. For the test to pass, all tested invoice lines must pass the test."/>
+			<column name="description_i18n">
+				<![CDATA[{"ENG":"<p>Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator.</p><p>Only offer from the list actually present on invoice will be tested</p><p>If offer list is empty, then all invoice lines will be tested regardless of their offer.</p><p>For the test to pass, all tested invoice lines must pass the test.</p>",
+				"FRA":"<p>Le montant de chaque ligne de facture provenant d’une offre de la liste sera comparé à la valeur indiquée, en utilisant l’opérateur sélectionné.</p><p>Seule les offres de la liste effectivement présentes sur la facture seront testées.</p><p>Si la liste des offres est vide, alors toutes les lignes de facture seront testées, quelle que soit leur offre.</p><p>Pour que le teste passe, toutes les lignes de facture testées doivent passer le test.</p>"}]]>
+			</column>
+          <where>code = 'org.meveo.service.script.CompareOfferLinesAmount' </where>
+      </update>
+    </changeSet>
+
 
 </databaseChangeLog>
