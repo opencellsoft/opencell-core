@@ -1652,13 +1652,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 +                usageDateAggregation + " as usage_date, min(rt.start_date) as start_date, "
                 + "              max(rt.end_date) as end_date, rt.order_number, rt.tax_percent, rt.tax_id, "
                 + "              rt.order_id, rt.product_version_id, rt.order_lot_id, rt.charge_instance_id, rt.accounting_article_id, "
-                + "              rt.discounted_Ratedtransaction_id, rt.subscription_id "
+                + "              rt.discounted_Ratedtransaction_id, rt.subscription_id, rt.unit_amount_without_tax, rt.unit_amount_with_tax "
                 + "    FROM billing_rated_transaction rt WHERE id in (:ids) "
                 + "    GROUP BY rt.billing_account__id, rt.accounting_code_id, rt.description, "
                 + "             rt.offer_id, rt.service_instance_id, " + usageDateAggregation + ",  "
                 + "             rt.order_number, rt.tax_percent, rt.tax_id, "
                 + "             rt.order_id, rt.product_version_id, rt.order_lot_id, rt.charge_instance_id, rt.accounting_article_id, "
-                + "             rt.discounted_Ratedtransaction_id, rt.subscription_id, rt.unit_amount_without_tax "
+                + "             rt.discounted_Ratedtransaction_id, rt.subscription_id, rt.unit_amount_without_tax, rt.unit_amount_with_tax "
                 + "    order by rt.unit_amount_without_tax desc";
         return executeNativeSelectQuery(query, params);
     }
