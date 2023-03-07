@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="20221027"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="EPE-06022023-RentCar"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -193,6 +193,14 @@
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/customerAccount/name/name"/>
 		<fieldDescription><![CDATA[/invoice/header/customerAccount/name/name]]></fieldDescription>
 	</field>
+	<field name="caQuality" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/customerAccount/name/quality"/>
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/name/quality]]></fieldDescription>
+	</field>
+	<field name="caFirstName" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/customerAccount/name/firstName"/>
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/name/firstName]]></fieldDescription>
+	</field>
 	<field name="caAddress1" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/customerAccount/address/address1"/>
 		<fieldDescription><![CDATA[/invoice/header/customerAccount/address/address1]]></fieldDescription>
@@ -226,8 +234,8 @@
 		<fieldDescription><![CDATA[/invoice/detail/userAccounts/userAccount/subscriptions/subscription/subscriptionDate]]></fieldDescription>
 	</field>
 	<field name="dueDate" class="java.lang.String">
-		<property name="net.sf.jasperreports.xpath.field.expression" value="invoice/header/dueDate"/>
-		<fieldDescription><![CDATA[invoice/header/dueDate]]></fieldDescription>
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/dueDate"/>
+		<fieldDescription><![CDATA[/invoice/header/dueDate]]></fieldDescription>
 	</field>
 	<field name="discountAmountWithoutTax" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/discounts/discount/@discountAmountWithoutTax"/>
@@ -305,7 +313,7 @@
 							<textElement verticalAlignment="Middle">
 								<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
 							</textElement>
-							<textFieldExpression><![CDATA[$F{caName}.toUpperCase()]]></textFieldExpression>
+							<textFieldExpression><![CDATA[($F{caQuality}==null ? "" : $F{caQuality}.toUpperCase() + " ") + ($F{caFirstName}==null ? "" : $F{caFirstName}.toUpperCase() + " ") + ($F{caName}==null ? "" : $F{caName}.toUpperCase() + " ")]]></textFieldExpression>
 						</textField>
 						<textField isBlankWhenNull="true">
 							<reportElement x="49" y="56" width="180" height="17" uuid="12cd32ba-009c-41bd-9eae-0956ca94678d">
@@ -460,7 +468,7 @@
 							<text><![CDATA[PRO FORMA]]></text>
 						</staticText>
 						<image>
-							<reportElement x="-57" y="-131" width="179" height="76" uuid="6fc38ccd-29bc-46cb-92c8-66d577b3eefa"/>
+							<reportElement x="-42" y="-131" width="150" height="66" uuid="6fc38ccd-29bc-46cb-92c8-66d577b3eefa"/>
 							<imageExpression><![CDATA[$F{invoiceStatus}!="VALIDATED" ? $P{logoPath}+"Pictos/draft.png" : $P{logoPath}+"Pictos/blank.png"]]></imageExpression>
 						</image>
 					</frame>

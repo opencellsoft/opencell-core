@@ -58,6 +58,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.IsoIcd;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
@@ -70,6 +71,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.IsoIcdService;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.UserAccountService;
@@ -113,6 +115,9 @@ public class UserAccountApi extends AccountEntityApi {
 
     @Inject
     private SellerService sellerService;
+    
+    @Inject
+    private IsoIcdService isoIcdService;
 
     public UserAccount create(UserAccountDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
@@ -322,7 +327,16 @@ public class UserAccountApi extends AccountEntityApi {
             }
             userAccount.setBillingAccount(billingAccount);
         }
-
+        if (postData.getIsoICDCode() != null) {
+            IsoIcd isoIcd = isoIcdService.findByCode(postData.getIsoICDCode());
+            if (isoIcd == null) {
+                throw new EntityDoesNotExistsException(IsoIcd.class, postData.getIsoICDCode());
+            }
+            userAccount.setIcdId(isoIcd);
+        }
+        else {
+            userAccount.setIcdId(userAccount.getBillingAccount().getIcdId());
+        }
         updateAccount(userAccount, postData, checkCustomFields);
 
         if (postData.getSubscriptionDate() != null) {

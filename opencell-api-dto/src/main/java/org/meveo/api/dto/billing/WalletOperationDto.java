@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.IEntityDto;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.OperationTypeEnum;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
@@ -66,7 +67,15 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
      */
     @XmlAttribute()
     protected String description;
+    
+    /** The Accounting Article Code. */
+    private String accountingArticleCode;
 
+    /** The Accounting Article Label. */
+    private String accountingArticleLabel;
+
+    private String productCode; // serviceInstance code
+    
     /** The user account. */
     private String userAccount;
 
@@ -209,9 +218,15 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
      * @param walletOperation the WalletOperation entity
      */
     public WalletOperationDto(WalletOperation walletOperation) {
-        this(walletOperation, null);
+        this(walletOperation, null, null);
+    }
+    public WalletOperationDto(WalletOperation walletOperation, AccountingArticle article) {
+        this(walletOperation, null, article);
     }
     public WalletOperationDto(WalletOperation walletOperation, CustomFieldsDto customFields) {
+        this(walletOperation, customFields, null);
+    }
+    public WalletOperationDto(WalletOperation walletOperation, CustomFieldsDto customFields, AccountingArticle article) {
 
         id = walletOperation.getId();
         code = walletOperation.getCode();
@@ -239,6 +254,9 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
         if (walletOperation.getTax() != null) {
             taxCode = walletOperation.getTax().getCode();
         }
+        if (walletOperation.getServiceInstance() != null) {
+           this.productCode = walletOperation.getServiceInstance().getCode();
+        }
         taxPercent = walletOperation.getTaxPercent();
         unitAmountWithoutTax = walletOperation.getUnitAmountWithoutTax();
         unitAmountWithTax = walletOperation.getUnitAmountWithTax();
@@ -258,6 +276,10 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
         offerCode = walletOperation.getOfferCode() != null ? walletOperation.getOfferCode() : walletOperation.getOfferTemplate() != null ? walletOperation.getOfferTemplate().getCode() : null;
         chargeInstance = walletOperation.getChargeInstance().getCode();
         chargeInstanceId = walletOperation.getChargeInstance().getId();
+        if(article != null) {
+        	accountingArticleCode = article.getCode();
+        	accountingArticleLabel = article.getDescription();
+        }
         rawAmountWithoutTax = walletOperation.getRawAmountWithoutTax();
         rawAmountWithTax = walletOperation.getRawAmountWithTax();
         updated = walletOperation.getUpdated();
@@ -978,6 +1000,42 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
      */
     public void setPricePlanCode(String pricePlanCode) {
         this.pricePlanCode = pricePlanCode;
+    }
+
+    /**
+	 * @return the accountingArticleCode
+	 */
+	public String getAccountingArticleCode() {
+		return accountingArticleCode;
+	}
+
+	/**
+	 * @param accountingArticleCode the accountingArticleCode to set
+	 */
+	public void setAccountingArticleCode(String accountingArticleCode) {
+		this.accountingArticleCode = accountingArticleCode;
+	}
+
+	/**
+	 * @return the accountingArticleLabel
+	 */
+	public String getAccountingArticleLabel() {
+		return accountingArticleLabel;
+	}
+
+	/**
+	 * @param accountingArticleLabel the accountingArticleLabel to set
+	 */
+	public void setAccountingArticleLabel(String accountingArticleLabel) {
+		this.accountingArticleLabel = accountingArticleLabel;
+	}
+
+    public String getProductCode() {
+        return productCode;
+    }
+
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
     }
 
     @Override

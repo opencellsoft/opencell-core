@@ -178,6 +178,7 @@ public class ProviderService extends PersistenceService<Provider> {
         appProvider.setCurrency(provider.getCurrency() != null ? provider.getCurrency() : null);
         appProvider.setCountry(provider.getCountry() != null ? provider.getCountry() : null);
         appProvider.setLanguage(provider.getLanguage() != null ? provider.getLanguage() : null);
+        appProvider.setIcdId(provider.getIcdId() != null ? provider.getIcdId() : null);
         appProvider.setInvoiceConfiguration(provider.getInvoiceConfiguration() != null ? provider.getInvoiceConfiguration() : null);
         appProvider.setPaymentMethods(provider.getPaymentMethods());
         appProvider.setOrderLineTypes(provider.getOrderLineTypes());

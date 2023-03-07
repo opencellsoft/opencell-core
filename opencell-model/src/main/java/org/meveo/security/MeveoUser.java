@@ -80,7 +80,7 @@ public abstract class MeveoUser implements Serializable {
     /**
      * Timestamp when user has authenticated or token was issued
      */
-    protected int authenticatedAt;
+    protected Long authenticatedAt;
 
     /**
      * Authentication/session token hash/id
@@ -214,14 +214,14 @@ public abstract class MeveoUser implements Serializable {
     /**
      * @return Timestamp when user has authenticated or token was issued
      */
-    public int getAuthenticatedAt() {
+    public Long getAuthenticatedAt() {
         return authenticatedAt;
     }
 
     /**
      * @param authenticatedAt Timestamp when user has authenticated or token was issued
      */
-    public void setAuthenticatedAt(int authenticatedAt) {
+    public void setAuthenticatedAt(Long authenticatedAt) {
         this.authenticatedAt = authenticatedAt;
     }
 

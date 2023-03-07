@@ -1,19 +1,23 @@
 package org.meveo.apiv2.accounts.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.ws.rs.core.Response;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.apiv2.accounts.ApplyOneShotChargeListInput;
 import org.meveo.apiv2.accounts.ConsumerInput;
 import org.meveo.apiv2.accounts.CounterInstanceDto;
 import org.meveo.apiv2.accounts.OpenTransactionsActionEnum;
 import org.meveo.apiv2.accounts.ParentInput;
+import org.meveo.apiv2.accounts.ProcessApplyChargeListResult;
 import org.meveo.apiv2.accounts.resource.AccountsManagementResource;
 import org.meveo.apiv2.accounts.service.AccountsManagementApiService;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
-import java.util.List;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class AccountsManagementResourceImpl implements AccountsManagementResource {
 
@@ -56,4 +60,12 @@ public class AccountsManagementResourceImpl implements AccountsManagementResourc
         return Response.created(LinkGenerator.getUriBuilderFromResource(AccountsManagementResource.class, updatedInstanceIds.toString()).build())
                 .entity(createdStatus).build();
     }
+
+	@Override
+	public ProcessApplyChargeListResult applyOneShotChargeList(ApplyOneShotChargeListInput applyOneShotChargeListInput) {
+
+		return accountsManagementApiService.applyOneShotChargeList(applyOneShotChargeListInput);
+		
+	}
+
 }

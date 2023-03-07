@@ -70,7 +70,7 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
     @PostConstruct
     public void initService() {
         fetchFields = asList("taxClass", "invoiceSubCategory",
-                "articleFamily", "accountingCode", "accountingCodeMappings", "invoiceType");
+                "articleFamily", "accountingCode", "accountingCodeMappings", "invoiceType", "allowanceCode");
     }
 
     @Override
@@ -220,6 +220,11 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
         if(baseEntity.getColumnCriteriaEL() != null) {
             accountingArticle.setColumnCriteriaEL(baseEntity.getColumnCriteriaEL());
         }
+        
+        if(baseEntity.getAllowanceCode() != null) {
+            accountingArticle.setAllowanceCode(baseEntity.getAllowanceCode());
+        }
+        
         accountingArticle.setIgnoreAggregation(baseEntity.isIgnoreAggregation());
 
         accountingArticleService.update(accountingArticle);

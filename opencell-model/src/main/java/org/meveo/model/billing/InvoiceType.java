@@ -159,6 +159,21 @@ public class InvoiceType extends BusinessCFEntity {
     @JoinColumn(name = "vat_payment_option_id")
     private UntdidVatPaymentOption untdidVatPaymentOption;
     
+    /**
+     * UntdidInvoiceSubjectCode
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoice_subject_code")
+    private UntdidInvoiceSubjectCode invoiceSubjectCode;    
+
+    public UntdidInvoiceSubjectCode getInvoiceSubjectCode() {
+        return invoiceSubjectCode;
+    }
+
+    public void setInvoiceSubjectCode(UntdidInvoiceSubjectCode invoiceSubjectCode) {
+        this.invoiceSubjectCode = invoiceSubjectCode;
+    }
+    
     public ScriptInstance getInvoiceValidationScript() {
 		return invoiceValidationScript;
 	}

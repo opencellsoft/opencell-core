@@ -147,4 +147,29 @@ public class ProductChargeTemplateMapping<T extends ChargeTemplate> extends Base
 	public void setAccumulatorCounterTemplates(List<CounterTemplate> accumulatorCounterTemplates) {
 		this.accumulatorCounterTemplates = accumulatorCounterTemplates;
 	}
+	
+	@Override
+    public int hashCode() {
+	    return 961 + ("ProductChargeTemplateMapping" + id).hashCode();
+    }
+	
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof ProductChargeTemplateMapping)) {
+            return false;
+        }
+
+        ProductChargeTemplateMapping<T> other = (ProductChargeTemplateMapping<T>) obj;
+        if (getId() == null) {
+            if (other.getId() != null)
+                return false;
+        } else if (!getId().equals(other.getId()))
+            return false;
+        return true;
+    }
 }

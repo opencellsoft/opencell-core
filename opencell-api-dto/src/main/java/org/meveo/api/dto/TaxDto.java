@@ -63,10 +63,10 @@ public class TaxDto extends BusinessEntityDto {
     private List<TaxDto> subTaxes;
     
     /** untdidTaxationCategory */
-    private UntdidTaxationCategoryDto untdidTaxationCategoryDto;
+    private String taxationCategory;
     
     /** untdidVatexDto */
-    private UntdidVatexDto untdidVatexDto;
+    private String vatex;
 
     /**
      * Instantiates a new tax dto.
@@ -102,21 +102,7 @@ public class TaxDto extends BusinessEntityDto {
                     stream()
                     .map(subTax -> new TaxDto(subTax.getId()))
                     .collect(toList());
-        }
-        if(tax.getUntdidTaxationCategory() != null) {
-	        untdidTaxationCategoryDto = new UntdidTaxationCategoryDto();
-	        untdidTaxationCategoryDto.setName(tax.getUntdidTaxationCategory().getName());
-	        untdidTaxationCategoryDto.setSemanticModel(tax.getUntdidTaxationCategory().getSemanticModel());
-	        setUntdidTaxationCategoryDto(untdidTaxationCategoryDto);
-        }
-        
-        if(tax.getUntdidVatex() != null) {
-	        untdidVatexDto = new UntdidVatexDto();
-	        untdidVatexDto.setCode( tax.getUntdidVatex().getCode());
-	        untdidVatexDto.setCodeName(tax.getUntdidVatex().getCodeName());
-	        untdidVatexDto.setRemark(tax.getUntdidVatex().getRemark());
-	        setUntdidVatexDto(untdidVatexDto);
-        }
+        }        
     }
 
     public TaxDto(Long id) {
@@ -217,20 +203,22 @@ public class TaxDto extends BusinessEntityDto {
                 + customFields + "]";
     }
 
-	public UntdidTaxationCategoryDto getUntdidTaxationCategoryDto() {
-		return untdidTaxationCategoryDto;
-	}
+    public String getTaxationCategory() {
+        return taxationCategory;
+    }
 
-	public void setUntdidTaxationCategoryDto(UntdidTaxationCategoryDto untdidTaxationCategoryDto) {
-		this.untdidTaxationCategoryDto = untdidTaxationCategoryDto;
-	}
+    public void setTaxationCategory(String taxationCategory) {
+        this.taxationCategory = taxationCategory;
+    }
 
-	public UntdidVatexDto getUntdidVatexDto() {
-		return untdidVatexDto;
-	}
+    public String getVatex() {
+        return vatex;
+    }
 
-	public void setUntdidVatexDto(UntdidVatexDto untdidVatexDto) {
-		this.untdidVatexDto = untdidVatexDto;
-	}
+    public void setVatex(String vatex) {
+        this.vatex = vatex;
+    }
+
+	
     
 }

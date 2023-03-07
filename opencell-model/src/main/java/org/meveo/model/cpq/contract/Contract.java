@@ -114,7 +114,6 @@ public class Contract extends EnableBusinessCFEntity {
 	 */
 	@Column(name = "contract_date", nullable = false)
 	@Temporal(TemporalType.DATE)
-	@NotNull
 	private Date contractDate;
 
 	/**

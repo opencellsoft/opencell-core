@@ -17,8 +17,8 @@
  */
 package org.meveo.api.dto;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.security.MeveoUser;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -62,7 +61,7 @@ public class CurrentUserDto extends BaseEntityDto {
     @XmlElementWrapper(name = "rolesByApplication")
     @XmlElement(name = "role")
     @Schema(description = "List of the roles", example = "role: [ { KEY_1 : [{ROLE_1:VALUE_1}] }]")
-    private Map<String, Set<String>> rolesByApplication;
+    private Map<String, List<String>> rolesByApplication;
 
     /**
      * Instantiates a new dto
@@ -76,7 +75,7 @@ public class CurrentUserDto extends BaseEntityDto {
      * @param user The current user
      * @param rolesByApplication Roles grouped by application (keycloak client)
      */
-    public CurrentUserDto(MeveoUser user, Map<String, Set<String>> rolesByApplication) {
+    public CurrentUserDto(MeveoUser user, Map<String, List<String>> rolesByApplication) {
         this.email = user.getEmail();
         this.fullName = user.getFullName();
         this.username = user.getUserName();
@@ -106,12 +105,12 @@ public class CurrentUserDto extends BaseEntityDto {
     }
 
     /**
-     * Get roles grouped by application (keycloak client)
+     * Get roles grouped by application (Keycloak client)
      * 
-     * @return A list of roles grouped by application (keycloak client). A realm level roles are identified by key "realm". Admin application (KC client opencell-web) contains
-     *         a mix or realm roles, client roles, roles defined in opencell and their resolution to permissions.
+     * @return A list of roles grouped by application (Keycloak client). A realm level roles are identified by key "realm". Admin application (KC client opencell-web) contains a mix or realm roles, client roles, roles
+     *         defined in Opencell and their resolution to permissions.
      */
-    public Map<String, Set<String>> getRolesByApplication() {
+    public Map<String, List<String>> getRolesByApplication() {
         return rolesByApplication;
     }
 }

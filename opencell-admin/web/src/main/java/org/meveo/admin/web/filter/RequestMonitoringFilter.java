@@ -19,6 +19,7 @@
 package org.meveo.admin.web.filter;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -121,6 +122,7 @@ public class RequestMonitoringFilter extends HttpFilter {
                 .withUnit(unit)
                 .build();
         Timer timer = registry.timer(metadata);
-        timer.update(duration, TimeUnit.MILLISECONDS);
+
+        timer.update(Duration.ofMillis(duration));
     }
 }
