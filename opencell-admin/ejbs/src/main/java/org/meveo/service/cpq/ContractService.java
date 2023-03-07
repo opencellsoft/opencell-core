@@ -1,6 +1,5 @@
 package org.meveo.service.cpq;
 
-import java.util.Comparator;
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.naturalOrder;
 import static java.util.Comparator.nullsLast;
@@ -10,11 +9,9 @@ import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.FlushModeType;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.InvalidELException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.StringUtils;
