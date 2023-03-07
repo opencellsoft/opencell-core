@@ -20080,9 +20080,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         <column name="description" value="Featured"/>
         <column name="tag_type_id" value="-1" />
     </insert>
-    <delete tableName="crm_customer_category">
-        <where>code='PROSPECT'</where>
-    </delete>
     <insert tableName="crm_customer_category">
             <column name="id" valueNumeric="-3" />
             <column name="version" valueNumeric="0" />
@@ -20103,9 +20100,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
                 <column name="accounting_code_id" valueComputed="(select id from billing_accounting_code where code = '410000000')" />
                 <column name="tax_category_id" valueNumeric="-3" />
     </insert>
-     <delete tableName="ar_credit_category">
-        <where>code in ('PART_M', 'PART_C')</where>
-    </delete>
      <update tableName="billing_invoice_cat">
 			<column name="description" value="Security Deposit" />
 			<where> code = 'ICAT_SECURITY_DEPOSIT'</where>
@@ -20155,10 +20149,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="symbol" value="$"  />
             <where> currency_code = 'USD'</where>
         </update>
-
-        <delete tableName="adm_title">
-            <where>code = 'ASSOC'</where>
-        </delete>
 
         <update tableName="adm_title">
             <column name="code" value="Company" />
