@@ -80,5 +80,9 @@ public class SignEventEmailDto extends BaseEntityDto {
     public void setTo(List<String> to) {
         this.to = to;
     }
-    
+
+    @Override
+    public String toString() {
+        return "SignEventEmailDto [subject=" + subject + ", message=" + message + ", to=" + to + "]";
+    }
 }

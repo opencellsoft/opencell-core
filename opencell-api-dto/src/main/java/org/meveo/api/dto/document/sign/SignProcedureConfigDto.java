@@ -85,4 +85,8 @@ public class SignProcedureConfigDto extends BaseEntityDto {
         this.webhook = webhook;
     }
 
+    @Override
+    public String toString() {
+        return "SignProcedureConfigDto [email=" + email + ", webhook=" + webhook + "]";
+    }
 }

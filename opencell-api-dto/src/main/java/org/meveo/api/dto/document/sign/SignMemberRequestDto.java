@@ -55,6 +55,10 @@ public class SignMemberRequestDto extends SignMemberDto {
     public void setFileObjects(List<SignFileObjectRequestDto> fileObjects) {
         this.fileObjects = fileObjects;
     }
-    
-   
+
+    @Override
+    public String toString() {
+        return "SignMemberRequestDto [fileObjects=" + fileObjects + ", firstname=" + getFirstname() + ", lastname=" + getLastname()
+                + ", email=" + getEmail() + ", phone=" + getPhone() + ", user=" + getUser() + ", internal=" + getInternal() + ", id=" + getId() + "]";
+    }
 }

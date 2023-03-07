@@ -109,6 +109,9 @@ public class SignEventWebhookDto extends BaseEntityDto {
     public void setUrl(String url) {
         this.url = url;
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return "SignEventWebhookDto [url=" + url + ", method=" + method + ", headers=" + headers + "]";
+    }
 }

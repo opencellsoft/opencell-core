@@ -137,4 +137,8 @@ public class SignProcedureDto  extends BaseEntityDto {
         this.id = id;
     }
 
+    @Override
+    public String toString() {
+        return "SignProcedureDto [id=" + id + ", name=" + name + ", description=" + description + ", start=" + start + ", members=" + members + ", config=" + config + "]";
+    }
 }

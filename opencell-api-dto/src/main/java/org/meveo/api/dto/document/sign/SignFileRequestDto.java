@@ -18,6 +18,7 @@
 
 package org.meveo.api.dto.document.sign;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.meveo.api.dto.BaseEntityDto;
@@ -217,5 +218,12 @@ public class SignFileRequestDto  extends BaseEntityDto {
 
     public void setPosition(int position) {
         this.position = position;
+    }
+
+    @Override
+    public String toString() {
+        return "SignFileRequestDto [id=" + id + ", name=" + name + ", filePath=" + filePath + ", position=" + position + ", internalPosition=" + internalPosition
+                + ", externalPosition=" + externalPosition + ", internalPage=" + internalPage + ", externalPage=" + externalPage + ", content=" + Arrays.toString(content)
+                + ", listExternalPositions=" + listExternalPositions + "]";
     }
 }
