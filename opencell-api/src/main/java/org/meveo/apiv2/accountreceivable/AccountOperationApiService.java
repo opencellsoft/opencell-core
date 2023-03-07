@@ -34,6 +34,7 @@ import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.MatchingReturnObject;
 import org.meveo.model.PartialMatchingOccToSelect;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AccountOperationStatus;
 import org.meveo.model.payments.MatchingStatusEnum;
@@ -230,8 +231,18 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 			MatchingReturnObject matchingResult = new MatchingReturnObject();
 			List<PartialMatchingOccToSelect> partialMatchingOcc = new ArrayList<>();
 			matchingResult.setPartialMatchingOcc(partialMatchingOcc);
-
-			for (AccountOperation accountOperation : aos) {
+            TradingCurrency theFirstTradingCurrency = null;
+            TradingCurrency tradingCurrency = null;
+            boolean isFirstTradingCurrency = true;
+			for (AccountOperation accountOperation : aos) {			    
+			    if(isFirstTradingCurrency) {
+			        isFirstTradingCurrency = false;
+			        theFirstTradingCurrency = accountOperation.getTransactionalCurrency();
+			    }
+			    tradingCurrency = accountOperation.getTransactionalCurrency();
+			    if(theFirstTradingCurrency != tradingCurrency) {
+			        throw new BusinessApiException("AOs must have the same transactional currency");
+                }
 			    Long aoId = accountOperation.getId();
 				if (aoId.equals(creditAoId)) {
 					// process only DEBIT AO
@@ -245,7 +256,6 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 				}
 
 				matchingResult.setOk(unitaryResult.isOk());
-
 			}
 
 			if (partialMatchingOcc.isEmpty()) {
