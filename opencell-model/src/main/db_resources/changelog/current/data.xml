@@ -19482,7 +19482,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         </update>
     </changeSet>
 
-        <changeSet id="INTRD-12103_20221215_rebuild" author="HichamHANINE">
+        <changeSet id="INTRD-12103_20221215" author="HichamHANINE">
       <update tableName="meveo_script_instance">
 			<column name="description" value="Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator. Only offer from the list actually present on invoice will be tested. If offer list is empty, then all invoice lines will be tested regardless of their offer. For the test to pass, all tested invoice lines must pass the test."/>
 			<column name="description_i18n">
