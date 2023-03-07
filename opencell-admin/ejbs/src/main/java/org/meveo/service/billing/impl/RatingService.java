@@ -640,7 +640,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 if (chargePricePlans == null || chargePricePlans.isEmpty()) {
                     throw new NoPricePlanException("No price plan for charge code " + bareWalletOperation.getCode());
                 }
-
                 // Check if unit price was not overridden by a contract
                 Contract contract = null;
                 Contract contractWithRules = null;
@@ -663,10 +662,14 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 ContractItem contractItem = null;
                 if (contract != null && serviceInstance != null) {
                     OfferTemplate offerTemplate = serviceInstance.getSubscription().getOffer();
-                    Contract contractMatched = contractItemService.getApplicableContract(filtredContractByCustomerLevel, offerTemplate, serviceInstance.getCode(), chargeTemplate, bareWalletOperation);
-                    
-                    if (contractMatched != null) {
-                        contract = contractMatched;
+                    Contract contractFromSubscription = bareWalletOperation.getSubscription() != null ? bareWalletOperation.getSubscription().getContract() != null ? bareWalletOperation.getSubscription().getContract() : null : null;
+                    if(contractFromSubscription == null) {
+	                    Contract contractMatched = contractItemService.getApplicableContract(filtredContractByCustomerLevel, offerTemplate, serviceInstance.getCode(), chargeTemplate, bareWalletOperation);
+	                    if (contractMatched != null) {
+	                        contract = contractMatched;
+	                    }
+                    }else {
+                        contract = contractFromSubscription;
                     }
                     contractItem = contractItemService.getApplicableContractItem(contract,
                             offerTemplate, serviceInstance.getCode(), chargeTemplate, bareWalletOperation);
