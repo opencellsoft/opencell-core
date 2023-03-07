@@ -126,14 +126,24 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
     public PricePlanMatrixVersion updatePricePlanMatrixVersion(PricePlanMatrixVersionDto pricePlanMatrixVersionDto) throws MeveoApiException {
         String pricePlanMatrixCode = checkPricePlanMatrixVersion(pricePlanMatrixVersionDto);
         final DatePeriod validity = pricePlanMatrixVersionDto.getValidity();
+        PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixCode, pricePlanMatrixVersionDto.getVersion());
         if(validity!=null) {
             Date from = validity.getFrom();
             Date to = validity.getTo();
             if(from!=null && to!=null && to.before(from)) {
                 throw new InvalidParameterException("Invalid validity period, the end date must be greather than the start date");
             }
+            
+            pricePlanMatrixVersion.getPricePlanMatrix().getVersions().stream().filter(ppmv -> pricePlanMatrixVersion.getId() == null ||  pricePlanMatrixVersion.getId() != ppmv.getId())
+            .forEach(ppmv -> {
+                if(ppmv.getValidity() != null && ppmv.getValidity().isCorrespondsToPeriod(pricePlanMatrixVersion.getValidity(), false)) {
+                    var formatter = new SimpleDateFormat("dd/MM/yyyy");
+                    String eFrom = ppmv.getValidity().getFrom() != null ? formatter.format(ppmv.getValidity().getFrom()) : "";
+                    String eTo = ppmv.getValidity().getTo() != null ? formatter.format(ppmv.getValidity().getTo()) : "";
+                    throw new MeveoApiException("The current period is overlapping date with [" + eFrom + " - "+ eTo +"]");
+                }
+            });
         }
-        PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixCode, pricePlanMatrixVersionDto.getVersion());
         if(VersionStatusEnum.PUBLISHED.equals(pricePlanMatrixVersion.getStatus())){
         	if(validity != null && validity.getTo() != null) {
         		pricePlanMatrixVersionService.updatePublishedPricePlanMatrixVersion(pricePlanMatrixVersion, validity.getTo());
