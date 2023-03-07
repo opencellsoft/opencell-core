@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -142,6 +143,9 @@ public class CommercialOrderApi extends BaseApi {
 	
     @Inject
     private ResourceBundle resourceMessages;
+
+	@Inject
+	private ServiceInstanceService serviceInstanceService;
 
 	private static final String ADMINISTRATION_VISUALIZATION = "administrationVisualization";
     private static final String ADMINISTRATION_MANAGEMENT = "administrationManagement";
@@ -913,6 +917,10 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 		orderOfferService.create(orderOffer);
 		orderOfferDto.setOrderOfferId(orderOffer.getId());
 		createOrderProduct(orderOfferDto.getOrderProducts(),orderOffer);
+		Optional.ofNullable(orderOffer.getProducts()).orElse(Collections.emptyList())
+				.forEach(orderProduct -> attributeService.validateAttributes(
+						orderOffer.getProducts().get(0).getProductVersion().getAttributes(),
+						orderProduct.getOrderAttributes()));
 		createOrderAttribute(orderOfferDto.getOrderAttributes(),null,orderOffer);
 		return orderOfferDto;
 	}
@@ -925,6 +933,10 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
     	OrderOffer orderOffer = orderOfferService.findById(orderOfferDto.getOrderOfferId());
     	if (orderOffer == null) {
     		throw new EntityDoesNotExistsException(OrderOffer.class, orderOfferDto.getOrderOfferId());
+    	}
+    	
+    	if(orderOffer.getOrder() != null && CommercialOrderEnum.VALIDATED.toString().equalsIgnoreCase(orderOffer.getOrder().getStatus())) {
+    		throw new BusinessApiException("A validated order cannot be update");
     	}
     	
 		if (orderOfferDto.getCommercialOrderId() != null) {
@@ -1011,9 +1023,13 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
     		orderOffer.setTerminationDate(orderOfferDto.getTerminationDate());
         }
         
-    	processOrderProductFromOffer(orderOfferDto, orderOffer); 
+    	processOrderProductFromOffer(orderOfferDto, orderOffer);
+		Optional.ofNullable(orderOffer.getProducts()).orElse(Collections.emptyList())
+				.forEach(orderProduct -> attributeService.validateAttributes(
+						orderOffer.getProducts().get(0).getProductVersion().getAttributes(),
+						orderProduct.getOrderAttributes()));
         processOrderAttribute(orderOfferDto,  orderOffer);
-    	orderOfferService.update(orderOffer); 
+    	orderOfferService.update(orderOffer);
     	return orderOfferDto;
     }
 	
@@ -1232,8 +1248,16 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
     		throw new MeveoApiException("Delivery date should be in the future");	
     	}
     	orderProduct.setDeliveryDate(orderProductDto.getDeliveryDate());
-        
-		orderProduct.updateAudit(currentUser); 
+
+		if (orderProductDto.getServiceInstanceId() != null) {
+			ServiceInstance serviceInstance = serviceInstanceService.findById(orderProductDto.getServiceInstanceId());
+			if (serviceInstance == null) {
+				throw new EntityDoesNotExistsException(ServiceInstance.class, orderProductDto.getServiceInstanceId());
+			}
+			orderProduct.setServiceInstance(serviceInstance);
+		}
+
+		orderProduct.updateAudit(currentUser);
 		return orderProduct;
     }
     

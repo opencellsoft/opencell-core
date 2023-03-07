@@ -29,7 +29,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +67,7 @@ import org.meveo.api.generics.GenericRequestMapper;
 import org.meveo.api.generics.PersistenceServiceHelper;
 import org.meveo.apiv2.generic.GenericPagingAndFiltering;
 import org.meveo.apiv2.generic.ImmutableGenericPagingAndFiltering;
+import org.meveo.apiv2.generic.ImmutableGenericPagingAndFiltering.Builder;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.ParamBean;
@@ -154,20 +154,32 @@ public class NativePersistenceService extends BaseService {
      * @param id        Identifier
      * @return A map of values with field name as a map key and field value as a map value. Or null if no record was found with such identifier.
      */
-    @SuppressWarnings("rawtypes")
     public Map<String, Object> findById(String tableName, Long id) {
+        return findByIdWithouCheckCodeAndDescription(tableName, id, true);
+    }
+    /**
+     * Find record by its identifier
+     *
+     * @param tableName Table name
+     * @param id        Identifier
+     * @return A map of values with field name as a map key and field value as a map value. Or null if no record was found with such identifier.
+     */
+    @SuppressWarnings({ "rawtypes", "deprecation" })
+    public Map<String, Object> findByIdWithouCheckCodeAndDescription(String tableName, Long id, boolean canCheck) {
         tableName = addCurrentSchema(tableName);
         try {
             Session session = getEntityManager().unwrap(Session.class);
             StringBuilder selectQuery = new StringBuilder("select * from ").append(tableName).append(" e where id=:id");
             SQLQuery query = session.createSQLQuery(selectQuery.toString());
             query.setParameter("id", id);
-            query.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
-            query.setFlushMode(FlushMode.COMMIT);
-            query.addScalar("id", new LongType());
-            query.addScalar("code", new StringType());
-            query.addScalar("description", new StringType());
+            if(canCheck) {
+                query.addScalar("id", new LongType());
+                query.setFlushMode(FlushMode.COMMIT);
+                query.addScalar("code", new StringType());
+                query.addScalar("description", new StringType());
+            }
 
+            query.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
 
             Map<String, Object> values = (Map<String, Object>) query.uniqueResult();
             if (values != null) {
@@ -602,7 +614,7 @@ public class NativePersistenceService extends BaseService {
     public int remove(String tableName, Long id) throws BusinessException {
         tableName = addCurrentSchema(tableName);
         this.deletionService.checkTableNotreferenced(tableName, id);
-        Map<String, Object> values = findById(tableName, id);
+        Map<String, Object> values = findByIdWithouCheckCodeAndDescription(tableName, id, false);
         if (values == null) {
             return 0;
         }
@@ -615,6 +627,8 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * Delete multiple records. Note: There is no check done that records exists.
+     * Will call find by id and check if it has a code or description field other will throw 
+     * excpetion
      *
      * @param tableName Table name to delete from
      * @param ids       A set of record identifiers
@@ -632,6 +646,26 @@ public class NativePersistenceService extends BaseService {
         // TODO. Here could be a check that if no notification exist, delete it in batch mode
 //        ids.stream().forEach(id -> deletionService.checkTableNotreferenced(tableName, id));
 //        return getEntityManager().createNativeQuery("delete from " + tableName + " where id in :ids").setParameter("ids", ids).executeUpdate();
+    }
+    
+
+    /**
+     * Delete multiple records. Note: There is no check done that records exists.
+     * Will not check Code or description field, it will find the table by id and then delete
+     *
+     * @param tableName Table name to delete from
+     * @param ids       A set of record identifiers
+     * @return Number of records deleted
+     * @throws BusinessException General exception
+     */
+    public int removeById(String tableName, Set<Long> ids) throws BusinessException {
+        tableName = addCurrentSchema(tableName);
+        int nrDeleted = 0;
+        for (Long id : ids) {
+            nrDeleted = nrDeleted + remove(tableName, id);
+        }
+        return nrDeleted;
+
     }
 
     /**
@@ -961,7 +995,7 @@ public class NativePersistenceService extends BaseService {
                     .forEach(key -> nativeExpressionFactory.addFilters(key, filters.get(key)));
         }
 
-        if (config.getOrderings().length == 2) {
+        if (config.getOrderings() != null && config.getOrderings().length == 2) {
             if (config.getOrderings()[0].equals("id")
                     && config.getOrderings()[1].equals(PagingAndFiltering.SortOrder.ASCENDING)) {
                 config.setOrderings(new Object[]{});
@@ -1055,7 +1089,8 @@ public class NativePersistenceService extends BaseService {
 
     private boolean checkAggFunctions(String field) {
         if (field.startsWith("SUM(") || field.startsWith("COUNT(") || field.startsWith("AVG(")
-                || field.startsWith("MAX(") || field.startsWith("MIN(") || field.startsWith("COALESCE(SUM(")) {
+                || field.startsWith("MAX(") || field.startsWith("MIN(") || field.startsWith("COALESCE(SUM(")
+                || field.startsWith("STRING_AGG_LONG") || field.startsWith("TO_CHAR(") || field.startsWith("CAST(")) {
             return true;
         } else {
             return false;
@@ -1492,11 +1527,6 @@ public class NativePersistenceService extends BaseService {
         }
     }
 
-    public QueryBuilder findPaginatedRecords(Boolean extractList, Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> fetchFields, Long nestedDepth, Long id, Set<String> excludedFields) {
-    	
-    	return null;
-    }
-
     public QueryBuilder generatedAdvancedQuery(ReportQuery reportQuery) {
     	
     	Class<?> entityClass = GenericHelper.getEntityClass(reportQuery.getTargetEntity());
@@ -1504,7 +1534,7 @@ public class NativePersistenceService extends BaseService {
         GenericPagingAndFiltering genericPagingAndFilter = buildGenericPagingAndFiltering(reportQuery);
         PaginationConfiguration searchConfig = genericRequestMapper.mapTo(genericPagingAndFilter);
         QueryBuilder qb;
-    	List<String> genericFields = (List<String>) reportQuery.getAdvancedQuery().get("genericFields");
+    	List<String> genericFields = (List<String>) reportQuery.getAdvancedQuery().getOrDefault("fields", new ArrayList<>());
 		if(isAggregationQueries(genericPagingAndFilter.getGenericFields())){
     		searchConfig.setFetchFields(genericFields);
     		qb = this.getAggregateQuery(entityClass.getCanonicalName(), searchConfig, null);
@@ -1523,14 +1553,22 @@ public class NativePersistenceService extends BaseService {
     }
 
     private GenericPagingAndFiltering buildGenericPagingAndFiltering(ReportQuery reportQuery) {
-    	return ImmutableGenericPagingAndFiltering.builder()
-    									  .filters((Map<String, Object>) reportQuery.getAdvancedQuery().getOrDefault("filters", new HashMap<>()))
-    									  .groupBy((List<String>)reportQuery.getAdvancedQuery().getOrDefault("groupBy", new ArrayList<>()))
-    									  .sortBy((String) reportQuery.getAdvancedQuery().get("sortBy"))
-    									  .nestedEntities((List<String>)reportQuery.getAdvancedQuery().getOrDefault("nestedEntities", new ArrayList<>()))
-    									  .genericFields((List<String>)reportQuery.getAdvancedQuery().getOrDefault("genericFields", new ArrayList<>()))
-    									  .having((List<String>)reportQuery.getAdvancedQuery().getOrDefault("having", new ArrayList<>()))
-    									  .build();
+		Builder builder = ImmutableGenericPagingAndFiltering.builder()
+				.filters((Map<String, Object>) reportQuery.getAdvancedQuery().getOrDefault("filters", new HashMap<>()))
+				.groupBy((List<String>) reportQuery.getAdvancedQuery().getOrDefault("groupBy", new ArrayList<>()))
+				.nestedEntities((List<String>) reportQuery.getAdvancedQuery().getOrDefault("nestedEntities", new ArrayList<>()))
+				.genericFields((List<String>) reportQuery.getAdvancedQuery().getOrDefault("fields", new ArrayList<>()))
+				.having((List<String>) reportQuery.getAdvancedQuery().getOrDefault("having", new ArrayList<>()));
+    	String sortBy = (String) reportQuery.getAdvancedQuery().get("sortBy");
+    	if(org.meveo.commons.utils.StringUtils.isNotBlank(sortBy)) {
+    		builder.sortBy(sortBy);
+    	}
+    	String sortOrder = (String) reportQuery.getAdvancedQuery().get("sortOrder");
+    	if(org.meveo.commons.utils.StringUtils.isNotBlank(sortOrder)) {
+    		builder.sortOrder(sortOrder);
+    	}
+    	
+		return builder.build();
     	
     }
 

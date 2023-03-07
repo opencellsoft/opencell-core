@@ -15,9 +15,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.RatingResult;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.mediation.EdrVersioningRule;
 import org.meveo.model.mediation.MediationSetting;
 import org.meveo.model.rating.CDR;
@@ -30,6 +32,7 @@ import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.billing.impl.WalletOperationService;
+import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +46,9 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 	private RatedTransactionService ratedTransactionService;
 	@Inject
 	private UsageRatingService usageRatingService;
+
+    @Inject
+    private UsageChargeTemplateService usageChargeTemplateService;
 	
 	public String getEventKeyFromEdrVersionRule(EDR edr) {
 		var mediationSettings = this.list();
@@ -137,51 +143,21 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 									edr.setEventVersion(previousEdr.getEventVersion() + 1);
 									previousEdr.setStatus(EDRStatusEnum.CANCELLED);
 									previousEdr.setRejectReason("Received new version EDR[id=" + edr.getId() + "]");
+                                    RatingResult rating = usageRatingService.rateUsage(edr, true, true, 0, 0, null, false);
+                                    if(rating.getWalletOperations().size() == 0 ) {
+                                        throw new BusinessException("Error while rating new Edr version : "  + edr.getEventVersion());
+                                    }
 									for(WalletOperation wo : wos){
-									    RatingResult rating = usageRatingService.rateUsage(edr, true, true, 0, 0, null, false);
-									    if(rating.getWalletOperations().size() == 0 ) {
-									        throw new BusinessException("Error while rating new Edr version : "  + edr.getEventVersion());
-									    }
-									    WalletOperation woToRetate = rating.getWalletOperations().get(0);
-										wo.setStatus(WalletOperationStatusEnum.TO_RERATE);
-										wo.setEdr(edr);
-										wo.setAccountingArticle(woToRetate.getAccountingArticle());
-										wo.setAccountingCode(woToRetate.getAccountingCode());
-										wo.setAmountTax(woToRetate.getAmountTax());
-										wo.setAmountWithoutTax(woToRetate.getAmountWithoutTax());
-										wo.setAmountWithTax(woToRetate.getAmountWithTax());
-										wo.setBillingAccount(woToRetate.getBillingAccount());
-										wo.setChargeInstance(woToRetate.getChargeInstance());
-										wo.setChargeMode(woToRetate.getChargeMode());
-										wo.setParameter1(woToRetate.getParameter1());
-										wo.setParameter2(woToRetate.getParameter2());
-										wo.setParameter3(woToRetate.getParameter3());
-										wo.setParameterExtra(woToRetate.getParameterExtra());
-										wo.setTax(woToRetate.getTax());
-										wo.setTaxClass(woToRetate.getTaxClass());
-										wo.setTaxPercent(woToRetate.getTaxPercent());
-										wo.setUnitAmountTax(woToRetate.getUnitAmountTax());
-										wo.setUnitAmountWithTax(woToRetate.getUnitAmountWithTax());
-										wo.setUnitAmountWithoutTax(woToRetate.getUnitAmountWithoutTax());
-										wo.setSubscriptionDate(woToRetate.getSubscriptionDate());
-										wo.setInvoiceSubCategory(woToRetate.getInvoiceSubCategory());
-										wo.setUserAccount(woToRetate.getUserAccount());
-										wo.setType(woToRetate.getType());
-										wo.setSubscription(woToRetate.getSubscription());
-										wo.setCurrency(woToRetate.getCurrency());
-										wo.setCounter(woToRetate.getCounter());
-										wo.setDescription(woToRetate.getDescription());
-										wo.setInputUnitDescription(woToRetate.getInputUnitDescription());
-										wo.setInputUnitOfMeasure(woToRetate.getInputUnitOfMeasure());
-										wo.setInputQuantity(woToRetate.getInputQuantity());
-										wo.setQuantity(woToRetate.getQuantity());
-										walletOperationService.update(wo);
-										if(wo.getRatedTransaction() != null) {
-											wo.getRatedTransaction().setStatus(RatedTransactionStatusEnum.CANCELED);
-											ratedTransactionService.update(wo.getRatedTransaction());
-										}
-										    isRated = true;
-										    manageTriggeredEdr(wo,edr, isVirtual);
+                                        boolean oldChargeTriggerdNext = isChargeHasTriggeredNexCharge(wo, edr);
+									    for (WalletOperation woToRetate : rating.getWalletOperations()) {
+									        boolean newChargeTriggerdNext = isChargeHasTriggeredNexCharge(woToRetate, edr);
+                                            torerateWalletOperation(wo, woToRetate, edr);
+									        if(oldChargeTriggerdNext && newChargeTriggerdNext) {
+	                                            break;
+									        }
+                                        }
+					                    isRated = true;
+					                    manageTriggeredEdr(wo,edr, isVirtual);
 									}
 								
 								}
@@ -202,6 +178,58 @@ public class MediationsettingService extends PersistenceService<MediationSetting
         	
 		}
         return isRated;
+    }
+    private boolean isChargeHasTriggeredNexCharge(WalletOperation wo, EDR edr) {
+        ChargeInstance usageChargeInstance = wo.getChargeInstance();
+        boolean triggerNextCharge = false;
+        if(usageChargeInstance != null && usageChargeInstance.getChargeTemplate() != null) {
+            UsageChargeTemplate usageChargeTemplate = usageChargeTemplateService.findById(usageChargeInstance.getChargeTemplate().getId());
+            triggerNextCharge = usageChargeTemplate.getTriggerNextCharge();
+            if (!StringUtils.isBlank(usageChargeTemplate.getTriggerNextChargeEL())) {
+                triggerNextCharge = usageRatingService.evaluateBooleanExpression(usageChargeTemplate.getTriggerNextChargeEL(), edr, wo);
+            }
+        }
+           return triggerNextCharge;
+    }
+    private void torerateWalletOperation(WalletOperation wo, WalletOperation woToRetate, EDR edr) {
+        wo.setStatus(WalletOperationStatusEnum.TO_RERATE);
+        wo.setEdr(edr);
+        wo.setAccountingArticle(woToRetate.getAccountingArticle());
+        wo.setAccountingCode(woToRetate.getAccountingCode());
+        wo.setAmountTax(woToRetate.getAmountTax());
+        wo.setAmountWithoutTax(woToRetate.getAmountWithoutTax());
+        wo.setAmountWithTax(woToRetate.getAmountWithTax());
+        wo.setBillingAccount(woToRetate.getBillingAccount());
+        wo.setChargeInstance(woToRetate.getChargeInstance());
+        wo.setChargeMode(woToRetate.getChargeMode());
+        wo.setParameter1(woToRetate.getParameter1());
+        wo.setParameter2(woToRetate.getParameter2());
+        wo.setParameter3(woToRetate.getParameter3());
+        wo.setParameterExtra(woToRetate.getParameterExtra());
+        wo.setTax(woToRetate.getTax());
+        wo.setTaxClass(woToRetate.getTaxClass());
+        wo.setTaxPercent(woToRetate.getTaxPercent());
+        wo.setUnitAmountTax(woToRetate.getUnitAmountTax());
+        wo.setUnitAmountWithTax(woToRetate.getUnitAmountWithTax());
+        wo.setUnitAmountWithoutTax(woToRetate.getUnitAmountWithoutTax());
+        wo.setSubscriptionDate(woToRetate.getSubscriptionDate());
+        wo.setInvoiceSubCategory(woToRetate.getInvoiceSubCategory());
+        wo.setUserAccount(woToRetate.getUserAccount());
+        wo.setType(woToRetate.getType());
+        wo.setSubscription(woToRetate.getSubscription());
+        wo.setCurrency(woToRetate.getCurrency());
+        wo.setCounter(woToRetate.getCounter());
+        wo.setDescription(woToRetate.getDescription());
+        wo.setInputUnitDescription(woToRetate.getInputUnitDescription());
+        wo.setInputUnitOfMeasure(woToRetate.getInputUnitOfMeasure());
+        wo.setInputQuantity(woToRetate.getInputQuantity());
+        wo.setQuantity(woToRetate.getQuantity());
+        wo.setCode(woToRetate.getCode());
+        walletOperationService.update(wo);
+        if(wo.getRatedTransaction() != null) {
+            wo.getRatedTransaction().setStatus(RatedTransactionStatusEnum.CANCELED);
+            ratedTransactionService.update(wo.getRatedTransaction());
+        }
     }
 
     @SuppressWarnings("unchecked")

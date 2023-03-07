@@ -48,6 +48,7 @@ import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.billing.GeneralLedger;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
+import org.meveo.model.billing.IsoIcd;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
@@ -152,6 +153,21 @@ public class Seller extends AccountEntity implements IWFEntity {
 
     @OneToMany(mappedBy = "seller", fetch = FetchType.LAZY)
     private List<Contract> contracts = new ArrayList<>();
+    
+    /**
+     * IsoIcd
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "icd_id")
+    private IsoIcd icdId;
+    
+    public IsoIcd getIcdId() {
+        return icdId;
+    }
+
+    public void setIcdId(IsoIcd icdId) {
+        this.icdId = icdId;
+    }
     
     public List<Contract> getContracts() {
         return contracts;

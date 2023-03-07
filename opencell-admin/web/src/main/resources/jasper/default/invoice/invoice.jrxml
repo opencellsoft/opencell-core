@@ -943,7 +943,7 @@
 							<textElement verticalAlignment="Middle">
 								<font fontName="Arial" size="9"/>
 							</textElement>
-							<textFieldExpression><![CDATA[($F{custAccQuality} !=null ? $F{custAccQuality} + " " : "") + $F{custAccName} + " " + $F{custAccFirstname}]]></textFieldExpression>
+							<textFieldExpression><![CDATA[($F{custAccQuality} !=null ? $F{custAccQuality} + " " : "") + $F{custAccName} + " " + ($F{custAccFirstname} !=null ? $F{custAccFirstname} : "")]]></textFieldExpression>
 						</textField>
 						<staticText>
 							<reportElement x="0" y="47" width="235" height="23" forecolor="#013042" uuid="b3c5f172-1bd8-4fce-a382-17a8450e58d7"/>

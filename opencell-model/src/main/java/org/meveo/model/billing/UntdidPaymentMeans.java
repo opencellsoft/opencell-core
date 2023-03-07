@@ -22,7 +22,7 @@ public class UntdidPaymentMeans extends AuditableEntity{
 	@Size(max = 20)
 	private String codeName;
 	  
-	@Column(name = "usage_in_EN16931", length = 500)
+	@Column(name = "usage_in_en16931", length = 500)
 	@Size(max = 20)
 	private String usageEN16931;
 
@@ -38,8 +38,8 @@ public class UntdidPaymentMeans extends AuditableEntity{
 		return usageEN16931;
 	}
 
-	public void setUsage_in_EN16931(String usageEN16931) {
-		this.usageEN16931 = usageEN16931;
-	}
+    public void setUsageEN16931(String usageEN16931) {
+        this.usageEN16931 = usageEN16931;
+    }
 	
 }

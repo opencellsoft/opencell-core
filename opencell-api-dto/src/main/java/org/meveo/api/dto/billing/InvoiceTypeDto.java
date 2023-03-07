@@ -113,6 +113,8 @@ public class InvoiceTypeDto extends BusinessEntityDto {
     private String mailingType;
 
     private String emailTemplateCode;
+    
+    private String untdidInvoiceSubjectCode;
 
     /**
      * Exclude this invoiceType from Aged Balance
@@ -120,9 +122,9 @@ public class InvoiceTypeDto extends BusinessEntityDto {
     @Schema(description = "Exclude from Aged Trial Balance")
     private Boolean excludeFromAgedTrialBalance;
     
-    private UntdidInvoiceCodeTypeDto untdidInvoiceCodeTypeDto;
+    private String invoiceCodeType;
     
-    private UntdidVatPaymentOptionDto untdidVatPaymentOptionDto;
+    private String vatPaymentOption;
 
     /**
      * Instantiates a new invoice type dto.
@@ -161,11 +163,10 @@ public class InvoiceTypeDto extends BusinessEntityDto {
         this.emailTemplateCode = invoiceType.getEmailTemplate() != null ? invoiceType.getEmailTemplate().getCode() : null;
         customFields = customFieldInstances;
         this.useSelfSequence = invoiceType.isUseSelfSequence();
-        this.excludeFromAgedTrialBalance = invoiceType.isExcludeFromAgedTrialBalance();
-        if(invoiceType.getUntdidInvoiceCodeType() != null)
-        	this.untdidInvoiceCodeTypeDto = new UntdidInvoiceCodeTypeDto(invoiceType.getUntdidInvoiceCodeType());
-        if(invoiceType.getUntdidVatPaymentOption() != null)
-        	this.untdidVatPaymentOptionDto = new UntdidVatPaymentOptionDto(invoiceType.getUntdidVatPaymentOption());
+        this.excludeFromAgedTrialBalance = invoiceType.isExcludeFromAgedTrialBalance();        
+        if (invoiceType.getUntdidInvoiceCodeType() != null) {
+            this.untdidInvoiceSubjectCode = invoiceType.getUntdidInvoiceCodeType().getCode();
+        }
     }
 
     /**
@@ -487,19 +488,30 @@ public class InvoiceTypeDto extends BusinessEntityDto {
 		this.excludeFromAgedTrialBalance = excludeFromAgedTrialBalance;
 	}
 
-	public UntdidInvoiceCodeTypeDto getUntdidInvoiceCodeTypeDto() {
-		return untdidInvoiceCodeTypeDto;
-	}
+    public String getUntdidInvoiceSubjectCode() {
+        return untdidInvoiceSubjectCode;
+    }
 
-	public void setUntdidInvoiceCodeTypeDto(UntdidInvoiceCodeTypeDto untdidInvoiceCodeTypeDto) {
-		this.untdidInvoiceCodeTypeDto = untdidInvoiceCodeTypeDto;
-	}
+    public void setUntdidInvoiceSubjectCode(String untdidInvoiceSubjectCode) {
+        this.untdidInvoiceSubjectCode = untdidInvoiceSubjectCode;
+    }
 
-	public UntdidVatPaymentOptionDto getUntdidVatPaymentOptionDto() {
-		return untdidVatPaymentOptionDto;
-	}
+    public String getInvoiceCodeType() {
+        return invoiceCodeType;
+    }
 
-	public void setUntdidVatPaymentOptionDto(UntdidVatPaymentOptionDto untdidVatPaymentOptionDto) {
-		this.untdidVatPaymentOptionDto = untdidVatPaymentOptionDto;
-	}
+    public void setInvoiceCodeType(String invoiceCodeType) {
+        this.invoiceCodeType = invoiceCodeType;
+    }
+
+    public String getVatPaymentOption() {
+        return vatPaymentOption;
+    }
+
+    public void setVatPaymentOption(String vatPaymentOption) {
+        this.vatPaymentOption = vatPaymentOption;
+    }
+	
+	
+	
 }

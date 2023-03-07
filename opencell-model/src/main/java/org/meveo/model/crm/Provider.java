@@ -60,6 +60,7 @@ import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.InvoiceConfiguration;
+import org.meveo.model.billing.IsoIcd;
 import org.meveo.model.billing.Language;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.RoundingModeEnum;
@@ -237,6 +238,21 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     @Column(name = "current_matching_code")
     private String currentMatchingCode = "A";
     
+    /**
+     * IsoIcd
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "icd_id")
+    private IsoIcd icdId;
+    
+    public IsoIcd getIcdId() {
+        return icdId;
+    }
+
+    public void setIcdId(IsoIcd icdId) {
+        this.icdId = icdId;
+    }
+
     public Integer getMaximumDelay() {
 		return maximumDelay;
 	}

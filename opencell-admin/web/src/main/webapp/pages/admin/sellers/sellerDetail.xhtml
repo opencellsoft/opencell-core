@@ -18,7 +18,19 @@
 	</ui:define>
 
 	<ui:define name="body">
-
+		<hftl:entityPopup id="searchIsoIcdPopup" 
+			header="#{messages['seller.icd']}" 
+			updateField=":parentTab:sellerFormId:tabView:isoIcdSelectedId :parentTab:sellerFormId:tabView:isoIcdSelectedId_text"
+            selection="#{sellerBean.icdId}" 
+            backingBean="#{isoIcdBean}" 
+            searchField1Label="#{messages['businessEntity.code']}" 
+            searchField1="code"
+            column1Label="#{messages['businessEntity.code']}" 
+            column1="code" 
+            column2Label="#{messages['seller.icd.schemeName']}" 
+            column2="schemeName">
+        </hftl:entityPopup>  
+        
 		<hftl:entityPopup id="searchInvoiceSequencePopup"
 			header="#{messages['invoiceTypeSellerSequence.invoiceSequence']}"
 			updateField=":parentTab:sellerFormId:tabView:invoiceSequenceSelectedId :parentTab:sellerFormId:tabView:invoiceSequenceSelectedId_text"
@@ -107,6 +119,10 @@
 										textArea="true" rows="1" field="legalText" id="legalText" />
 									<hftl:formField label="#{messages['seller.legalType']}"
 										field="legalType" id="legalType" />
+									<hftl:formField label="#{messages['seller.icd']}"
+										id="isoIcdSelectedId" field="icdId" entity="#{sellerBean}"
+										valueLabelField="code" popup="true" popupId="searchIsoIcdPopup"/>
+                                										
 									<h:panelGroup>
 										<p:dataTable id="sellerSequenceTable"
 											label="#{messages['inboundRequest.responseHeaders']}"

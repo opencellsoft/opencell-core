@@ -2,8 +2,10 @@ package org.meveo.service.billing.impl;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
@@ -23,6 +25,7 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+import org.meveo.service.tax.TaxClassService;
 
 @Stateless
 public class OneShotRatingService extends RatingService implements Serializable {
@@ -40,6 +43,9 @@ public class OneShotRatingService extends RatingService implements Serializable 
 
     @Inject
     private EdrService edrService;
+
+    @Inject
+    private TaxClassService taxClassService;
 
     /**
      * Apply/rate a one shot charge. Change charge instance status to CLOSED.
@@ -124,10 +130,26 @@ public class OneShotRatingService extends RatingService implements Serializable 
                         billingAccountService.update(billingAccount);
                     }
                 }
+
+                // OSO SI Virtual : clean WalletOperation.SI if it is a SI Virtual (id==null)
+                ratingResult.getWalletOperations().forEach(walletOperation -> walletOperation.setServiceInstance(
+                        walletOperation.getServiceInstance() != null && walletOperation.getServiceInstance().getId() == null
+                                ? null : walletOperation.getServiceInstance()));
+
             }
 
             // Mark charge instance as closed
             chargeInstance.setStatus(InstanceStatusEnum.CLOSED);
+
+            // DIRTY FIX : pression sur une livraison OSO
+            // Le service retournait bien le proxy hibernate pour recuperer la TaxClass, mais apres un merge du 15/02, ca ne fonctionne plus
+            // Donc je re-recuperer l'objet par son ID et on eteint le feux
+            Optional.ofNullable(ratingResult.getWalletOperations()).orElse(Collections.emptyList())
+                    .forEach(wo -> {
+                        if (wo.getTaxClass() != null) {
+                            wo.setTaxClass(taxClassService.findById(wo.getTaxClass().getId()));
+                        }
+                    });
 
             return ratingResult;
         

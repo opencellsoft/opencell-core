@@ -98,6 +98,11 @@ public class SellerDto extends BusinessEntityDto {
      * The legal type of the seller
      */
     private String legalType;
+    
+    /**
+     * The iso ICD Code
+     */
+    private String isoICDCode;
 
     /**
      * Instantiates a new seller dto.
@@ -138,7 +143,11 @@ public class SellerDto extends BusinessEntityDto {
         if (seller.getSeller() != null) {
             parentSeller = seller.getSeller().getCode();
         }
-
+        
+        if (seller.getIcdId() != null) {
+            isoICDCode = seller.getIcdId().getCode();
+        }
+        
         ContactInformation sellerContactInformation = seller.getContactInformation();
         if (sellerContactInformation != null) {
             if (getContactInformation() == null) {
@@ -418,5 +427,13 @@ public class SellerDto extends BusinessEntityDto {
         return "SellerDto [code=" + getCode() + ", description=" + getDescription() + ", currencyCode=" + currencyCode + ", countryCode=" + countryCode + ", languageCode="
                 + languageCode + ", parentSeller=" + parentSeller + ", customers=" + customers + ", customFields=" + customFields + ", invoiceTypeSequences=" + invoiceTypeSequences
                 + ", businessAccountModel=" + businessAccountModel + ", contactInformation=" + contactInformation + ", address=" + address + "]";
+    }
+
+    public String getIsoICDCode() {
+        return isoICDCode;
+    }
+
+    public void setIsoICDCode(String isoICDCode) {
+        this.isoICDCode = isoICDCode;
     }
 }

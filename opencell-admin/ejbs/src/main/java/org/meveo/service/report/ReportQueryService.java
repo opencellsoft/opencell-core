@@ -82,6 +82,7 @@ import org.meveo.util.ApplicationProvider;
 @Stateless
 public class ReportQueryService extends BusinessService<ReportQuery> {
 
+    private static final String SEPARATOR_SELECTED_FIELDS = "\\.";
     @Inject
     private QueryExecutionResultService queryExecutionResultService;
     @Inject
@@ -476,43 +477,80 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         if(fields != null && !fields.isEmpty()) {
             List<Object> response = new ArrayList<>();
             int size = fields.size();
+            Map<String, String> aliases = new HashMap<>();
+
             for (Object result : executionResult) {
                 Map<String, Object> item = new LinkedHashMap<>();
                 if(fields.size() == 1) {
-                    item.put(fields.get(0), result);
+                    item.put(aliases.getOrDefault(fields.get(0), fields.get(0)), result);
                 } else {
                     for (int index = 0; index < size; index++) {
                     	if(result instanceof Object[]) {
-                    		item.put(fields.get(index), ((Object[]) result)[index]);
+                    		item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), ((Object[]) result)[index]);
                     	} else if (targetEntity.isInstance(result)) {
-                    		Field field = FieldUtils.getField(targetEntity, fields.get(index), true);
-                    		try {
-								item.put(fields.get(index), field.get(result));
-							} catch (IllegalArgumentException | IllegalAccessException e) {
-								log.error("Result construction failed", e);
-								throw new BusinessException("Result construction failed", e);
-							}
+                    	    if(fields.get(index).contains(".")){
+                    	        String[] selected_fields =  fields.get(index).split(SEPARATOR_SELECTED_FIELDS);
+                    	        if (selected_fields.length >= 2) {
+                    	            processSelectedFields(selected_fields, result, item,  aliases.getOrDefault(fields.get(index), fields.get(index)), targetEntity, 0);
+                    	        }
+                            }
+                    	    else {
+                                Field field = FieldUtils.getField(targetEntity, fields.get(index), true);
+                                try {
+                                    item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), field.get(result));
+                                } catch (IllegalArgumentException | IllegalAccessException e) {
+                                    log.error("Result construction failed", e);
+                                    throw new BusinessException("Result construction failed", e);
+                                } 
+                            }
                     	}
                     }
                 }
                 response.add(item);
-            }
-            for (Object item : response) {
-                for (Map.Entry<String, Object> entry : ((Map<String, Object>)item).entrySet()) {
-                    if(entry.getValue() != null) {
-                        List<Field> field = getFields(entry.getValue().getClass());
-                        initLazyLoadedValues(field, entry.getValue());
-                    }
-                }
-            }
+            }            
             return response;
         } else {
             List<Field> field = getFields(targetEntity);
+            if(targetEntity.getSuperclass() != null) {
+                field.addAll(getFields(targetEntity.getSuperclass()));
+            }
             for (Object item : executionResult) {
-                getEntityManager().detach(item);
                 initLazyLoadedValues(field, item);
             }
             return executionResult;
+        }
+    }
+    
+    private void processSelectedFields(String[] selectedFields, Object result, Map<String, Object> item, String fieldAlias, Class<?> currentClass, int fieldIndex) {
+        if (fieldIndex + 1 == selectedFields.length) {
+            item.put(fieldAlias, result != null ? result.toString() : "");
+            return;
+        }
+
+        Field fieldParent = FieldUtils.getField(currentClass, selectedFields[fieldIndex], true);
+        Field field = FieldUtils.getField(fieldParent.getType(), selectedFields[fieldIndex + 1], true);
+        if (fieldParent == null) {
+            throw new BusinessException("Field Parent not found: " + selectedFields[fieldIndex]);
+        }
+        if (field == null) {
+            throw new BusinessException("Field not found: " + selectedFields[fieldIndex + 1]);
+        }
+        try {
+            PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), fieldParent.getType());
+            Object property = null;
+            if(fieldIndex == 0){
+                result = fieldParent.get(result);
+            }            
+            if(result == null){
+                item.put(fieldAlias, property != null ? property.toString() : "");
+            }
+            else{
+                property = propertyDescriptor.getReadMethod().invoke(result);
+                processSelectedFields(selectedFields, property, item, fieldAlias, fieldParent.getType(), fieldIndex + 1);
+            }
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | IntrospectionException e) {
+            log.error("processSelectedFields failed", e);
+            throw new BusinessException("processSelectedFields failed", e);
         }
     }
 
@@ -527,7 +565,9 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             try {
                 PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), item.getClass());
                 Object property = propertyDescriptor.getReadMethod().invoke(item);
-                if(property instanceof PersistentSet || property instanceof PersistentBag) {
+                if(property instanceof PersistentSet) {
+                    ((PersistentSet) property).removeAll((Collection) property);
+                }else if (property instanceof PersistentBag) {
                     ((PersistentBag) property).removeAll((Collection) property);
                 }else if (property instanceof HibernateProxy) {
                     Hibernate.initialize(property);

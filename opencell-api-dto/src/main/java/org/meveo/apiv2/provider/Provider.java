@@ -44,6 +44,7 @@ public interface Provider {
     @Nullable Integer getMaximumDeferralPerInvoice();
     @Nullable String getPortalMessage();
     @Nullable String getCurrentMatchingCode();
+    @Nullable String getIsoICDCode();
     
     @Nullable
     Map<String, Long> getCurrency();

@@ -221,6 +221,20 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
     protected CustomFieldsDto customFields;
 
     /**
+     * Payment Means.
+     */
+    @Schema(description = "Payment Means")
+    private String untdidPaymentMeans;
+    
+    public String getUntdidPaymentMeans() {
+        return untdidPaymentMeans;
+    }
+
+    public void setUntdidPaymentMeans(String untdidPaymentMeans) {
+        this.untdidPaymentMeans = untdidPaymentMeans;
+    }
+
+    /**
      * Default constructor.
      */
     public PaymentMethodDto() {
@@ -305,6 +319,9 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
         }
         if (paymentMethod instanceof StripePaymentMethod) {
             this.setPaymentMethodType(PaymentMethodEnum.STRIPE);
+        }
+        if (paymentMethod.getPaymentMeans() != null) {
+            this.untdidPaymentMeans = paymentMethod.getPaymentMeans().getCodeName();
         }
     }
 

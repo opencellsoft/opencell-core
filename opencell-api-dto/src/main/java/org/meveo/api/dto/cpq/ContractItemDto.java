@@ -37,6 +37,8 @@ public class ContractItemDto extends BusinessEntityDto {
 	private Double rate;
 	@Schema(description = "amount without tax")
     private BigDecimal amountWithoutTax;
+	@Schema(description = "separate discount")
+	private Boolean seperateDiscountLine=Boolean.FALSE;
     
     /**
      * Type of rate, whether absolute or percentage.
@@ -67,6 +69,7 @@ public class ContractItemDto extends BusinessEntityDto {
     	this.description = c.getDescription();
     	this.code = c.getCode();
     	this.contractRateType=c.getContractRateType();
+    	this.seperateDiscountLine=c.isSeparateDiscount();
     }
     
 	/**
@@ -186,6 +189,14 @@ public class ContractItemDto extends BusinessEntityDto {
 
 	public void setContractRateType(ContractRateTypeEnum contractRateType) {
 		this.contractRateType = contractRateType;
+	}
+
+	public Boolean getSeperateDiscountLine() {
+		return seperateDiscountLine;
+	}
+
+	public void setSeperateDiscountLine(Boolean seperateDiscountLine) {
+		this.seperateDiscountLine = seperateDiscountLine;
 	}
 
 

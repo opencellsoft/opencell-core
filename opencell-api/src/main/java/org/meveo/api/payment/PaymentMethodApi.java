@@ -46,6 +46,7 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.message.exception.InvalidDTOException;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.UntdidPaymentMeans;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.document.Document;
 import org.meveo.model.payments.CreditCardTypeEnum;
@@ -53,6 +54,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.service.billing.impl.UntdidPaymentMeansService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.document.DocumentService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -85,6 +87,10 @@ public class PaymentMethodApi extends BaseApi {
     /** The payment method service. */
     @Inject
     private PaymentMethodService paymentMethodService;
+    
+    /** The Payment Means Service. */
+    @Inject
+    private UntdidPaymentMeansService untdidPaymentMeansService;
 
     /**
      * Creates the PaymentMethod.
@@ -112,7 +118,13 @@ public class PaymentMethodApi extends BaseApi {
         }
 
         PaymentMethod paymentMethod = paymentMethodDto.fromDto(customerAccount, document, currentUser);
-        	paymentMethod.setTokenId(paymentMethodDto.getTokenId());
+        paymentMethod.setTokenId(paymentMethodDto.getTokenId());
+        
+        if (paymentMethodDto.getUntdidPaymentMeans() != null) {
+            UntdidPaymentMeans untdidPaymentMeans = untdidPaymentMeansService.getByCode(paymentMethodDto.getUntdidPaymentMeans());
+            paymentMethod.setPaymentMeans(untdidPaymentMeans);
+        }
+
 		// populate customFields
 		try {
 			populateCustomFields(paymentMethodDto.getCustomFields(), paymentMethod, true, true);
@@ -164,6 +176,12 @@ public class PaymentMethodApi extends BaseApi {
                 paymentMethod.setReferenceDocument(document);
             }
         }
+        
+        if (paymentMethodDto.getUntdidPaymentMeans() != null) {
+            UntdidPaymentMeans untdidPaymentMeans = untdidPaymentMeansService.getByCode(paymentMethodDto.getUntdidPaymentMeans());
+            paymentMethod.setPaymentMeans(untdidPaymentMeans);
+        }
+        
 		// populate customFields
 		try {
 			populateCustomFields(paymentMethodDto.getCustomFields(), paymentMethod, false, true);

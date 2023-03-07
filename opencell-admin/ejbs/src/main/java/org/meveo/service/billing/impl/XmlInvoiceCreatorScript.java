@@ -792,34 +792,41 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      */
     protected Element createNameSection(Document doc, AccountEntity account, String invoiceLanguageCode) {
 
-        Element nameTag = doc.createElement("name");
-        Element quality = doc.createElement("quality");
-        if (account !=null && account.getName() != null && account.getName().getTitle() != null) {
-            String translationKey = "T_" + account.getName().getTitle().getCode() + "_" + invoiceLanguageCode;
-            String descTranslated = descriptionMap.get(translationKey);
-            if (descTranslated == null) {
-                descTranslated = account.getName().getTitle().getDescriptionOrCode();
-                if (account.getName().getTitle().getDescriptionI18n() != null && account.getName().getTitle().getDescriptionI18n().get(invoiceLanguageCode) != null) {
-                    descTranslated = account.getName().getTitle().getDescriptionI18n().get(invoiceLanguageCode);
-                }
-                descriptionMap.put(translationKey, descTranslated);
-            }
-            Text titleTxt = this.createTextNode(doc, descTranslated);
-            quality.appendChild(titleTxt);
-        }
-        nameTag.appendChild(quality);
-        if (account !=null && account.getName() != null && account.getName().getFirstName() != null) {
-            Element firstName = doc.createElement("firstName");
-            Text firstNameTxt = this.createTextNode(doc, account.getName().getFirstName());
-            firstName.appendChild(firstNameTxt);
-            nameTag.appendChild(firstName);
-        }
-        Element name = doc.createElement("name");
-        if (account !=null && account.getName() != null && account.getName().getLastName() != null) {
-            Text nameTxt = this.createTextNode(doc, account.getName().getLastName());
-            name.appendChild(nameTxt);
-        }
-        nameTag.appendChild(name);
+		Element nameTag = doc.createElement("name");
+		if (account != null && account.getIsCompany() && account.getDescription() != null) {
+			Element name = doc.createElement("name");
+			Text nameTxt = this.createTextNode(doc, account.getDescription());
+			name.appendChild(nameTxt);
+			nameTag.appendChild(name);
+		} else {
+			Element quality = doc.createElement("quality");
+			if (account != null && account.getName() != null && account.getName().getTitle() != null) {
+				String translationKey = "T_" + account.getName().getTitle().getCode() + "_" + invoiceLanguageCode;
+				String descTranslated = descriptionMap.get(translationKey);
+				if (descTranslated == null) {
+					descTranslated = account.getName().getTitle().getDescriptionOrCode();
+					if (account.getName().getTitle().getDescriptionI18n() != null && account.getName().getTitle().getDescriptionI18n().get(invoiceLanguageCode) != null) {
+						descTranslated = account.getName().getTitle().getDescriptionI18n().get(invoiceLanguageCode);
+					}
+					descriptionMap.put(translationKey, descTranslated);
+				}
+				Text titleTxt = this.createTextNode(doc, descTranslated);
+				quality.appendChild(titleTxt);
+			}
+			nameTag.appendChild(quality);
+			if (account != null && account.getName() != null && account.getName().getFirstName() != null) {
+				Element firstName = doc.createElement("firstName");
+				Text firstNameTxt = this.createTextNode(doc, account.getName().getFirstName());
+				firstName.appendChild(firstNameTxt);
+				nameTag.appendChild(firstName);
+			}
+			Element name = doc.createElement("name");
+			if (account != null && account.getName() != null && account.getName().getLastName() != null) {
+				Text nameTxt = this.createTextNode(doc, account.getName().getLastName());
+				name.appendChild(nameTxt);
+			}
+			nameTag.appendChild(name);
+		}
         return nameTag;
     }
 

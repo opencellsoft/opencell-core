@@ -789,7 +789,8 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
      */
 	public <T> List<T> parseListFromString(String value, String clazzName, String separator) {
 		try {
-			return (List<T>) Arrays.stream(value.split(separator)).map(val -> parseObjectFromString(val, clazzName)).collect(Collectors.toList());
+			if (StringUtils.isBlank(value)) return null;
+			else return (List<T>) Arrays.stream(value.split(separator)).map(val -> parseObjectFromString(val, clazzName)).collect(Collectors.toList());
 		} catch (Exception e) {
 			throw new BusinessException(String.format("Failed to parse %s as list of %s", value, clazzName));
 		}

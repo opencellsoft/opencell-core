@@ -746,6 +746,8 @@ public class ProductApi extends BaseApi {
 						chargeTemplateProductChargeTemplateMapping.setChargeTemplate(loadEntityByCode(chargeTemplateService, pctm.getChargeCode(), ChargeTemplate.class));
 					if(!Strings.isEmpty(pctm.getCounterCode()))
 						chargeTemplateProductChargeTemplateMapping.setCounterTemplate(loadEntityByCode(counterTemplateService, pctm.getCounterCode(), CounterTemplate.class));
+					else
+					    chargeTemplateProductChargeTemplateMapping.setCounterTemplate(null);
 					if(pctm.getAccumulatorCounterCodes() != null && !pctm.getAccumulatorCounterCodes().isEmpty()) {
 						var accumulator = pctm.getAccumulatorCounterCodes().stream()
 											.map(counterCode -> loadEntityByCode(counterTemplateService, counterCode, CounterTemplate.class))
