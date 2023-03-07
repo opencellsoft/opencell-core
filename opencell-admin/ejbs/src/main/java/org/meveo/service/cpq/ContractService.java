@@ -1,6 +1,5 @@
 package org.meveo.service.cpq;
 
-import java.util.Comparator;
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.naturalOrder;
 import static java.util.Comparator.nullsLast;
@@ -10,7 +9,6 @@ import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.FlushModeType;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -175,8 +173,15 @@ public class ContractService extends BusinessService<Contract>  {
 					.setParameter("customerId", customer.getId()).setParameter("billingAccountId", billingAccount.getId())
 					.setParameter("customerAccountId",customerAccount.getId()).getResultList();
 			
+			
 			return contracts.stream()
-					.filter(c -> StringUtils.isBlank(c.getApplicationEl()) || ValueExpressionWrapper.evaluateExpression(c.getApplicationEl(), Boolean.class, bareWalletOperation, c))
+					.filter(c -> {
+						try {
+							return StringUtils.isBlank(c.getApplicationEl()) || ValueExpressionWrapper.evaluateExpression(c.getApplicationEl(), Boolean.class, bareWalletOperation, c);
+						} catch (Exception e) {
+							throw new BusinessException("Error evaluating the contract’s application EL [contract_id="+c.getId()+",  “"+c.getApplicationEl()+"“]: "+e.getMessage(), e);
+						}
+					})
 					.collect(Collectors.toList());
 		} catch (NoResultException e) {
 			return null;

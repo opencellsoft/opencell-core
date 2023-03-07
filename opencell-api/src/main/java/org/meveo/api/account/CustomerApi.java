@@ -367,8 +367,9 @@ public class CustomerApi extends AccountEntityApi {
                 throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
             }
             customer.setSeller(seller);
-        } else if (postData.getParentCustomerCode() != null) {
-        	customer.setSeller(customer.getParentCustomer().getSeller());
+        } else if (isNew) {
+			customer.setSeller((customer.getParentCustomer() != null && customer.getParentCustomer().getSeller() != null)? 
+							customer.getParentCustomer().getSeller() : customer.getCustomerCategory().getDefaultSeller());
         }
 
     }
@@ -574,6 +575,10 @@ public class CustomerApi extends AccountEntityApi {
         if ((postData.isExoneratedFromTaxes() == null || !postData.isExoneratedFromTaxes()) && postData.getTaxCategoryCode() == null) {
             missingParameters.add("Exonerated from taxes or tax category code");
         }
+        
+        if (StringUtils.isBlank(postData.getDefaultSellerCode())) {
+            missingParameters.add("defaultSellerCode");
+        }
 
         handleMissingParametersAndValidate(postData);
 
@@ -604,6 +609,13 @@ public class CustomerApi extends AccountEntityApi {
                 throw new EntityDoesNotExistsException(TaxCategory.class, postData.getTaxCategoryCode());
             }
             customerCategory.setTaxCategory(taxCategory);
+        }
+        if (!StringUtils.isBlank(postData.getDefaultSellerCode())) {
+            Seller defaultSeller = sellerService.findByCode(postData.getDefaultSellerCode());
+            if (defaultSeller == null) {
+                throw new EntityDoesNotExistsException(Seller.class, postData.getDefaultSellerCode());
+            }
+            customerCategory.setDefaultSeller(defaultSeller);
         }
 
         customerCategory.setTaxCategoryEl(postData.getTaxCategoryEl());
@@ -673,6 +685,15 @@ public class CustomerApi extends AccountEntityApi {
         }
         if (postData.getLanguageDescriptions() != null) {
             customerCategory.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
+            toUpdate = true;
+        }
+        
+        if (!StringUtils.isBlank(postData.getDefaultSellerCode())) {
+            Seller defaultSeller = sellerService.findByCode(postData.getDefaultSellerCode());
+            if (defaultSeller == null) {
+                throw new EntityDoesNotExistsException(Seller.class, postData.getDefaultSellerCode());
+            }
+            customerCategory.setDefaultSeller(defaultSeller);
             toUpdate = true;
         }
 

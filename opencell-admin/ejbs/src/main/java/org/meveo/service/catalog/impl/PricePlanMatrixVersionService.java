@@ -79,6 +79,7 @@ import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.cpq.enums.PriceVersionTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.AttributeInstanceService;
@@ -115,7 +116,16 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
-
+    
+    @Inject
+    private ConvertedPricePlanVersionService convertedPricePlanVersionService;
+    
+    @Inject
+    private TradingCurrencyService tradingCurrencyService;
+    
+	@Inject
+	private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
+    
     protected Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
@@ -166,11 +176,21 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         if (StringUtils.isBlank(importItem.getChargeCode())) {
             throw new BusinessApiException("The charge code is mandatory");
         }
-
-        List<PricePlanMatrix> pricePlanMatrixs = pricePlanMatrixService.listByChargeCode(newChargeCode);
+        
+        List<PricePlanMatrix> pricePlanMatrixs = null;
+        pricePlanMatrixs = pricePlanMatrixService.listByChargeCode(newChargeCode);
+        
+        if (pricePlanMatrixs == null || pricePlanMatrixs.size() == 0) {
+        	//Get Charge Template Id from file name
+        	 String lChargeTemplateId = importItem.getFileName().split("_-_")[1];
+             ChargeTemplate lChargeTemplate = chargeTemplateService.findById(Long.parseLong(lChargeTemplateId));
+             pricePlanMatrixs = pricePlanMatrixService.listByChargeCode(lChargeTemplate.getCode());
+        }
+        
         if (pricePlanMatrixs == null || pricePlanMatrixs.size() == 0) {
             throw new BusinessApiException("No PricePlanMatrix related to the charge '" + newChargeCode + "'");
         }
+        
         if (pricePlanMatrixs.size() > 1) {
             throw new BusinessApiException("There are several PricePlanMatrix related to this charge");
         }
@@ -240,7 +260,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                 // date time stamp]_-_[end date time stamp]
                 String[] split = importItem.getFileName().split("_-_");
                 newPv.setMatrix(true);
-                newPv.setLabel(split.length >= 4 ? split[3] : null);
+                newPv.setLabel(split.length >= 5 ? split[4] : null);
                 create(newPv);
                 String data = new StringBuilder(header).append("\n").append(readAllLines(lnr)).toString();
                 PricePlanMatrixLinesDto pricePlanMatrixLinesDto = pricePlanMatrixColumnService.createColumnsAndPopulateLinesAndValues(pricePlanMatrix.getCode(), data, newPv);
@@ -750,6 +770,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
             fileName.append(ppmv.getId());
             if (ppmv.getPricePlanMatrix() != null && ppmv.getPricePlanMatrix().getChargeTemplate() != null) {
                 ChargeTemplate chargeTemplate = ppmv.getPricePlanMatrix().getChargeTemplate();
+                fileName.append(fileNameSeparator + chargeTemplate.getId());
                 fileName.append(fileNameSeparator + chargeTemplate.getDescription()).append(fileNameSeparator + chargeTemplate.getCode());
             }
             fileName.append(fileNameSeparator + ppmv.getLabel());

@@ -18,6 +18,7 @@
 
 package org.meveo.apiv2.ordering.resource.product;
 
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 import org.meveo.apiv2.ordering.services.ProductApiService;
 import org.meveo.model.catalog.ProductTemplate;
@@ -34,10 +35,13 @@ public class ProductResourceImpl implements ProductResource {
     @Inject
     private ProductApiService productService;
     private ProductMapper productMapper = new ProductMapper();
+    @Inject
+    private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
 
     @Override
     public Response getProducts(Long offset, Long limit, String sort, String orderBy, String filter, Request request) {
-        List<ProductTemplate> productTemplatesEntity = productService.list(offset, limit, sort, orderBy, filter);
+        long apiLimit = genericPagingAndFilteringUtils.getLimit(limit != null ? limit.intValue() : null);
+        List<ProductTemplate> productTemplatesEntity = productService.list(offset, apiLimit, sort, orderBy, filter);
         EntityTag etag = new EntityTag(Integer.toString(productTemplatesEntity.hashCode()));
         CacheControl cc = new CacheControl();
         cc.setMaxAge(1000);
@@ -51,9 +55,9 @@ public class ProductResourceImpl implements ProductResource {
                 .map(productTemplate -> toResourceProductWithLink(productMapper.toResource(productTemplate)))
                 .toArray(ImmutableProduct[]::new);
         Long productCount = productService.getCount(filter);
-        Products products = ImmutableProducts.builder().addData(productList).offset(offset).limit(limit).total(productCount)
+        Products products = ImmutableProducts.builder().addData(productList).offset(offset).limit(apiLimit).total(productCount)
                 .build().withLinks(new LinkGenerator.PaginationLinkGenerator(ProductResource.class)
-                        .offset(offset).limit(limit).total(productCount).build());
+                        .offset(offset).limit(apiLimit).total(productCount).build());
         return Response.ok().cacheControl(cc).tag(etag).entity(products).build();
     }
 

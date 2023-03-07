@@ -35,6 +35,7 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.rest.InvoiceTypeRs;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.billing.BasicInvoice;
 import org.meveo.apiv2.billing.GenerateInvoiceInput;
 import org.meveo.apiv2.billing.GenerateInvoiceResult;
@@ -88,7 +89,10 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	private static final InvoiceMapper invoiceMapper = new InvoiceMapper();
 	
 	private static final InvoiceSubTotalsMapper invoiceSubTotalMapper = new InvoiceSubTotalsMapper();
-	
+
+	@Inject
+	private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
+
 	@Transactional
 	@Override
 	public Response getInvoice(Long id, Request request) {
@@ -109,8 +113,9 @@ public class InvoiceResourceImpl implements InvoiceResource {
 
 	@Override
 	public Response getInvoices(Long offset, Long limit, String sort, String orderBy, String filter, Request request) {
-		List<Invoice> invoicesEntity = invoiceApiService.list(offset, limit, sort, orderBy, filter);
-		return buildInvoicesReturn(offset, limit, filter, request, invoicesEntity);
+		long apiLimit = genericPagingAndFilteringUtils.getLimit(limit != null ? limit.intValue() : null);
+		List<Invoice> invoicesEntity = invoiceApiService.list(offset, apiLimit, sort, orderBy, filter);
+		return buildInvoicesReturn(offset, apiLimit, filter, request, invoicesEntity);
 	}
 
 	private Response buildInvoicesReturn(Long offset, Long limit, String filter, Request request,

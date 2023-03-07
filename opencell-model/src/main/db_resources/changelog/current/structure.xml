@@ -15935,5 +15935,33 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedColumnNames="id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
+    
+    <changeSet id="#INTRD-14598_20230303" author="zelmeliani">
+        <addColumn tableName="finance_settings">
+            <column name="discount_advanced_mode" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
+
+<!--  
+    <changeSet id="#INTRD-14263_20200304" author="TarikFA.">
+        <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_origin_ratedtransaction_id" />
+    </changeSet>
+-->
+
+    <changeSet id="#INTRD-14381-202303202" author="bourras">
+        <addColumn tableName="billing_invoice_configuration">
+            <column name="display_rated_items" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-14555_20230303" author="AdilElJaouhari">
+        <addColumn tableName="crm_customer_category">
+            <column name="default_seller_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="crm_customer_category" baseColumnNames="default_seller_id"
+                                 constraintName="fk_crm_customer_category_default_seller_id"
+                                 referencedTableName="crm_seller"
+                                 referencedColumnNames="id"/>
+    </changeSet>
 
 </databaseChangeLog>

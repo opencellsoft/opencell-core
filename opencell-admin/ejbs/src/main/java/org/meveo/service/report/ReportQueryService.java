@@ -453,9 +453,13 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
     public Future<QueryExecutionResult> executeReportQueryAndSaveResult(ReportQuery reportQuery,
                                                                              Class<?> targetEntity, Date startDate) {
     	Map<String, String> aliases = reportQuery.getAliases() != null ? reportQuery.getAliases() : new HashMap<>();
-        List<Object> reportResult = toExecutionResult((reportQuery.getFields() != null && !reportQuery.getFields().isEmpty())
-                        ? reportQuery.getFields() : joinEntityFields(targetEntity),
-                prepareQueryToExecute(reportQuery, targetEntity).getResultList(), targetEntity, aliases);
+        List<String> genericFields =
+                (List<String>) reportQuery.getAdvancedQuery().getOrDefault("genericFields", new ArrayList<>());
+        List<String> fields =
+                (genericFields != null && !genericFields.isEmpty()) ? genericFields : joinEntityFields(targetEntity);
+        List<Object> reportResult =
+                toExecutionResult(fields,
+                        prepareQueryToExecute(reportQuery, targetEntity).getResultList(), targetEntity, aliases);
         if (!reportResult.isEmpty()) {
             SimpleDateFormat dateFormat = new SimpleDateFormat(REPORT_EXECUTION_FILE_SUFFIX);
             StringBuilder fileName = new StringBuilder(dateFormat.format(startDate))
@@ -508,10 +512,9 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                     	        }
                             }
                     	    else {
-                                Field field = FieldUtils.getField(targetEntity, fields.get(index), true);
                                 try {
-                                    item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), field.get(result));
-                                } catch (IllegalArgumentException | IllegalAccessException e) {
+                                    item.put(aliases.getOrDefault(fields.get(index), fields.get(index)), result);
+                                } catch (IllegalArgumentException e) {
                                     log.error("Result construction failed", e);
                                     throw new BusinessException("Result construction failed", e);
                                 } 
