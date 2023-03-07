@@ -113,10 +113,10 @@ public class CustomerDto extends AccountDto {
     @Schema(description = "the code of customer parent")
     private String parentCustomerCode;
     
-    /** customer childs **/
-    @XmlElementWrapper(name = "customerChildsCodes")
-    @Schema(description = "customer childs")
-    private List<String> customerChildsCodes;
+    /** children Customers **/
+    @XmlElementWrapper(name = "childrenCustomersCodes")
+    @Schema(description = "children Customers")
+    private List<String> childrenCustomersCodes;
 
     public Boolean isThresholdPerEntity() {
 		return thresholdPerEntity;
@@ -377,12 +377,12 @@ public class CustomerDto extends AccountDto {
 		this.parentCustomerCode = parentCustomerCode;
 	}
 
-	public List<String> getCustomerChildsCodes() {
-		return customerChildsCodes;
+	public List<String> getChildrenCustomersCodes() {
+		return childrenCustomersCodes;
 	}
 
-	public void setCustomerChildsCodes(List<String> customerChildsCodes) {
-		this.customerChildsCodes = customerChildsCodes;
+	public void setChildrenCustomersCodes(List<String> childrenCustomersCodes) {
+		this.childrenCustomersCodes = childrenCustomersCodes;
 	}
 
 	@Override
