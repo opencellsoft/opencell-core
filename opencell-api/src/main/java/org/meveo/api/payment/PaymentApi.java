@@ -19,6 +19,7 @@
 package org.meveo.api.payment;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -57,6 +58,8 @@ import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.ExchangeRate;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.AccountOperation;
@@ -72,7 +75,7 @@ import org.meveo.model.payments.PaymentHistory;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.payments.RecordedInvoice;
-import org.meveo.service.admin.impl.CountryService;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.JournalService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -118,6 +121,9 @@ public class PaymentApi extends BaseApi {
 	@Inject
 	private JournalService journalService;
 
+	@Inject
+	private TradingCurrencyService tradingCurrencyService;
+
 	/**
      * @param paymentDto payment object which encapsulates the input data sent by client
      * @return the id of payment if created successful otherwise null
@@ -143,18 +149,31 @@ public class PaymentApi extends BaseApi {
             missingParameters.add("paymentMethod");
         }
         handleMissingParameters();
+
         CustomerAccount customerAccount = customerAccountService.findByCode(paymentDto.getCustomerAccountCode());
         OCCTemplate occTemplate = oCCTemplateService.findByCode(paymentDto.getOccTemplateCode());
         if (occTemplate == null) {
             throw new BusinessException("Cannot find OCC Template with code=" + paymentDto.getOccTemplateCode());
         }
 
+		BigDecimal convertedAmount = paymentDto.getAmount();
+		BigDecimal functionalAmount = convertedAmount;
+		String transactionalcurrency = paymentDto.getTransactionalcurrency();
+
+		if (transactionalcurrency != null && !StringUtils.isBlank(transactionalcurrency)) {
+			functionalAmount = checkAndCalculateFunctionalAmount(paymentDto, convertedAmount, functionalAmount, transactionalcurrency);
+		}
+
         Payment payment = new Payment();
+
 		payment.setJournal(occTemplate.getJournal());
         payment.setPaymentMethod(paymentDto.getPaymentMethod());
-        payment.setAmount(paymentDto.getAmount());
-        payment.setUnMatchingAmount(paymentDto.getAmount());
+        payment.setAmount(functionalAmount);
+        payment.setUnMatchingAmount(functionalAmount);
         payment.setMatchingAmount(BigDecimal.ZERO);
+		payment.setConvertedAmount(convertedAmount);
+		payment.setConvertedUnMatchingAmount(convertedAmount);
+		payment.setConvertedMatchingAmount(convertedAmount);
         payment.setAccountingCode(occTemplate.getAccountingCode());
         payment.setCode(occTemplate.getCode());
         payment.setDescription(StringUtils.isBlank(paymentDto.getDescription()) ? occTemplate.getDescription() : paymentDto.getDescription());
@@ -208,6 +227,39 @@ public class PaymentApi extends BaseApi {
         return payment.getId();
 
     }
+
+	private BigDecimal checkAndCalculateFunctionalAmount(PaymentDto paymentDto, BigDecimal convertedAmount, BigDecimal functionalAmount, String transactionalcurrency) {
+		TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(transactionalcurrency);
+		ExchangeRate exchangeRate = checkTransactionalCurrency(paymentDto, transactionalcurrency, tradingCurrency);
+		functionalAmount = calculateFunctionalAmount(convertedAmount, functionalAmount, tradingCurrency, exchangeRate);
+		return functionalAmount;
+	}
+
+	private BigDecimal calculateFunctionalAmount(BigDecimal convertedAmount, BigDecimal functionalAmount, TradingCurrency tradingCurrency, ExchangeRate exchangeRate) {
+		if (appProvider.getCurrency() != null) {
+			TradingCurrency functionalCurrency = tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode());
+			if (functionalCurrency != tradingCurrency && exchangeRate.getExchangeRate() != BigDecimal.ZERO) {
+				functionalAmount = convertedAmount.divide(exchangeRate.getExchangeRate(), 2, RoundingMode.HALF_UP);
+			}
+		}
+		return functionalAmount;
+	}
+
+	private static ExchangeRate checkTransactionalCurrency(PaymentDto paymentDto, String transactionalcurrency, TradingCurrency tradingCurrency) {
+		if (tradingCurrency == null || StringUtils.isBlank(tradingCurrency)) {
+			throw new BusinessException("Currency " + transactionalcurrency +
+					" is not recorded a trading currency in Opencell. Only currencies declared as trading currencies can be used to record account operations.");
+		}
+
+		Date exchangeDate = paymentDto.getTransactionDate() != null ? paymentDto.getTransactionDate() : new Date();
+		ExchangeRate exchangeRate = tradingCurrency.getExchangeRate(exchangeDate);
+		if (exchangeRate == null) {
+			throw new BusinessException("No valid exchange rate found for currency " + transactionalcurrency
+					+ " on " + exchangeDate);
+		}
+		return exchangeRate;
+	}
+
 
 	private void matchPayment(PaymentDto paymentDto, CustomerAccount customerAccount, Payment payment)
 			throws BusinessApiException, BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
