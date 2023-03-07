@@ -24,7 +24,7 @@ class LazyProxySerializer extends StdSerializer<HibernateProxy> implements Gener
     @Override
     public void serialize(HibernateProxy value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         JsonStreamContext outputContext = gen.getOutputContext();
-        boolean isSharedEntityToSerialize = sharedEntityToSerialize.stream().anyMatch(ses -> ses.getId().equals(value.getHibernateLazyInitializer().getIdentifier()));
+        boolean isSharedEntityToSerialize = sharedEntityToSerialize.stream().anyMatch(ses -> ses.getClass().equals(value.getClass()) && ses.getId().equals(value.getHibernateLazyInitializer().getIdentifier()));
 		if (isSharedEntityToSerialize || isNestedEntityCandidate(getPathToRoot(gen), outputContext.getCurrentName())) {
             Hibernate.initialize(value);
             Object implementation = value.getHibernateLazyInitializer().getImplementation();
