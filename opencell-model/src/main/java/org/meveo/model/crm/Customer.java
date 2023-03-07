@@ -186,10 +186,10 @@ public class Customer extends AccountEntity implements IInvoicingMinimumApplicab
     private Customer parentCustomer;
     
     /**
-     * Customer childs 
+     * Children customers 
      */
     @OneToMany(mappedBy = "parentCustomer", fetch = FetchType.LAZY)
-    private List<Customer> customerChilds = new ArrayList<>();
+    private List<Customer> childrenCustomers = new ArrayList<>();
     
     public Date getAnonymizationDate() {
         return anonymizationDate;
@@ -353,12 +353,12 @@ public class Customer extends AccountEntity implements IInvoicingMinimumApplicab
 		this.parentCustomer = parentCustomer;
 	}
 
-	public List<Customer> getCustomerChilds() {
-		return customerChilds;
+	public List<Customer> getChildrenCustomers() {
+		return childrenCustomers;
 	}
 
-	public void setCustomerChilds(List<Customer> customerChilds) {
-		this.customerChilds = customerChilds;
+	public void setChildrenCustomers(List<Customer> childrenCustomers) {
+		this.childrenCustomers = childrenCustomers;
 	}
     
 }
