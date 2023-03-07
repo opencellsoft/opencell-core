@@ -2127,6 +2127,7 @@ public class CpqQuoteApi extends BaseApi {
         if(quoteOffer.getQuoteVersion().getDiscountPlan() != null) {
         	createDiscountPlanInstance(quoteOffer.getQuoteVersion().getDiscountPlan(), subscription,null);
         }
+        subscription.setContract(quoteOffer.getContract() != null ? quoteOffer.getContract() : quoteOffer.getQuoteVersion().getContract() != null ? quoteOffer.getQuoteVersion().getContract() : null);
         
         // instantiate and activate services
         processProducts(subscription, quoteOffer.getQuoteProduct());
