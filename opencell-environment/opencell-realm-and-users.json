@@ -10216,7 +10216,6 @@
             "attributes": {},
             "_id": "a64d00d5-c33a-42a3-874c-25664763af82",
             "uris": [
-              "/*",
               "/",
               "/api/rest/v2/version"
             ],
@@ -10243,7 +10242,6 @@
             "uris": [
               "/pages/*",
               "/mm_index.xhtml",
-              "/api/*",
               "/home.jsf",
               "/index.jsf",
               "/index.xhtml",
