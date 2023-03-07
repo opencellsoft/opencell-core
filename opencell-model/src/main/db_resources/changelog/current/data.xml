@@ -5599,7 +5599,7 @@ Opencell team.
 			<where> policy_condition_target='IsCompany'</where>
 		</update>
 	</changeSet>
-	
+
     <changeSet id="INTRD-2756_20211110" author="Mohammed_ELAZZOUZI">
 		<insert tableName="meveo_job_instance">
 			<column name="id"  valueSequenceNext="meveo_job_instance_seq" />
@@ -15455,8 +15455,8 @@ public class CdrFlatFileImportScript extends Script {
 			INSERT INTO ${db.schema.adapted}untdid_5189_allowance_code(id,version,created,updated,creator,updater,code,description) VALUES (18, 0, now(), NULL, 'opencell.admin', NULL, '104', 'Standard');
 			INSERT INTO ${db.schema.adapted}untdid_5189_allowance_code(id,version,created,updated,creator,updater,code,description) VALUES (19, 0, now(), NULL, 'opencell.admin', NULL, '105', 'Yearly turnover');	
 			
-			
-			
+
+
 		]]>
 		</sql>
 		</changeSet>
@@ -16569,7 +16569,7 @@ public class ValidateBRScript extends ValidateBR {
             </column>
         </insert>
     </changeSet>
-    
+
     <changeSet id="#INTRD-13379_20230127" author="aeljaouhari">
 		<update tableName="meveo_script_instance">
 			<column name="description" value="Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator. If offer list is empty, then all invoice lines will be tested regardless of their offer. For invoice to be valid, all invoice lines must pass the test. Only offer actually present on invoice will be tested."/>
@@ -16603,7 +16603,7 @@ public class ValidateBRScript extends ValidateBR {
                     valueComputed="(SELECT id from generic_sequence where code = 'billing_cycle_sequence')"/>
         </insert>
     </changeSet>
-    
+
     <changeSet id="#INTRD-13375_20230131" author="aeljaouhari">
     	<insert tableName="com_message_template">
 			<column name="media" value="EMAIL" />
@@ -16638,7 +16638,7 @@ Company Signature
                 ]]>
 			</column>
 		</insert>
-		
+
 		<insert tableName="com_message_template">
 			<column name="media" value="EMAIL" />
 			<column name="id" valueSequenceNext="com_msg_tmpl_seq" />
@@ -16676,7 +16676,7 @@ Your name and surname
 			</column>
 		</insert>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-13717_20230202" author="aeljaouhari">
     	<update tableName="meveo_script_parameter">
 			<column name="mandatory" valueNumeric="0" />
@@ -16784,9 +16784,9 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>code='org.meveo.service.script.demo.CustomGatewayPaymentScript'</where>
 		</update>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-13957_20230213" author="houdad">
-    	 
+
         <sql>
         DELETE FROM ${db.schema.adapted}CAT_UNIT_OF_MEASURE;
         INSERT INTO ${db.schema.adapted}CAT_UNIT_OF_MEASURE (id,version,creator,updater,code,created,updated,symbol,description,description_i18n,multiplicator,parent_id) VALUES (-1, 0, 'opencell.admin', NULL, '10', now(), NULL, 'group', 'group', NULL, 1, NULL);
@@ -18954,7 +18954,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		        
         </sql>
 	</changeSet>
-	
+
 
 	<changeSet id="#INTRD-13967_20230215" author="houdad">
 		<update tableName="adm_currency">
@@ -19201,7 +19201,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
 	</changeSet>
 	
-	
+
 
 	<changeSet id="#INTRD-13968" author="houdad">
 	<insert tableName="adm_country">
@@ -19369,7 +19369,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>code='FR-Invoice'</where>
 		</update>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-13468_20230126" author="hichamELHALOUI">
         <update tableName="meveo_script_instance">
             <column name="description" value="Invoice amount will be compared to provided amount using the selected operator."/>
@@ -19423,7 +19423,147 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		        	where inv.id = aco.invoice_id and aco.id =  accounting_operation_id)
         </sql>
     </changeSet>
-	
+    <changeSet id="#INTRD-14122_20230221" author="hichamELHALOUI">
+    <insert tableName="cpq_tag_type">
+        <column name="id" value="-1"/>
+        <column name="created" valueDate="${db.current.time}" />
+        <column name="code" value="tunnel"/>
+        <column name="description" value="Tunnel"/>
+    </insert>
+        <insert tableName="cpq_tag">
+        <column name="id" value="-1"/>
+        <column name="created" valueDate="${db.current.time}" />
+        <column name="code" value="featured"/>
+        <column name="description" value="Featured"/>
+        <column name="tag_type_id" value="-1" />
+    </insert>
+    <insert tableName="crm_customer_category">
+            <column name="id" valueNumeric="-3" />
+            <column name="version" valueNumeric="0" />
+            <column name="uuid" value="CCC_B2B" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2B" />
+            <column name="description" value="B2B" />
+            <column name="accounting_code_id" valueComputed="(select id from billing_accounting_code where code = '410000000')" />
+            <column name="tax_category_id" valueNumeric="-3" />
+    </insert>
+    <insert tableName="crm_customer_category">
+                <column name="id" valueNumeric="-4" />
+                <column name="version" valueNumeric="0" />
+                <column name="uuid" value="CCC_regular_account" />
+                <column name="created" valueDate="${db.current.time}" />
+                <column name="code" value="regular account" />
+                <column name="description" value="regular account" />
+                <column name="accounting_code_id" valueComputed="(select id from billing_accounting_code where code = '410000000')" />
+                <column name="tax_category_id" valueNumeric="-3" />
+    </insert>
+     <update tableName="billing_invoice_cat">
+			<column name="description" value="Security Deposit" />
+			<where> code = 'ICAT_SECURITY_DEPOSIT'</where>
+		</update>
+
+        <insert tableName="cat_offer_template_category">
+                <column name="id" valueNumeric="-1" />
+                <column name="version" valueNumeric="0" />
+                <column name="created" valueDate="${db.current.time}" />
+                <column name="code" value="new" />
+                <column name="name" value="New" />
+        </insert>
+        <insert tableName="cat_offer_template_category">
+                <column name="id" valueNumeric="-2" />
+                <column name="version" valueNumeric="0" />
+                <column name="created" valueDate="${db.current.time}" />
+                <column name="code" value="standard" />
+                <column name="name" value="Standard" />
+        </insert>
+
+         <insert tableName="cat_channel">
+                <column name="id" valueNumeric="-1" />
+                <column name="version" valueNumeric="0" />
+                <column name="created" valueDate="${db.current.time}" />
+                <column name="code" value="backoffice" />
+                <column name="description" value="Backoffice" />
+        </insert>
+        <insert tableName="cat_channel">
+                <column name="id" valueNumeric="-2" />
+                <column name="version" valueNumeric="0" />
+                <column name="created" valueDate="${db.current.time}" />
+                <column name="code" value="web" />
+                <column name="description" value="Web" />
+        </insert>
+
+        <update tableName="crm_provider_pay_methods">
+			<column name="payment_method" value="STRIPEDIRECTLINK" />
+			<where> payment_method = 'STRIPE'</where>
+		</update>
+
+        <update tableName="crm_provider_pay_methods">
+			<column name="payment_method" value="PAYPALPAYMENTLINK" />
+			<where> payment_method = 'PAYPAL'</where>
+		</update>
+
+        <update tableName="adm_currency">
+            <column name="symbol" value="$"  />
+            <where> currency_code = 'USD'</where>
+        </update>
+
+        <update tableName="adm_title">
+            <column name="code" value="Company" />
+            <column name="description" value="Company" />
+            <where>code = 'CIE'</where>
+        </update>
+
+                <insert tableName="adm_title">
+            <column name="id" valueNumeric="-8" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="SA" />
+            <column name="description" value="French joint-stock company" />
+            <column name="is_company" valueNumeric="1" />
+            <column name="description_i18n" value='{"FRA":"Société Anonyme","ENG":"French joint-stock company"}' />
+        </insert>
+
+         <insert tableName="adm_title">
+            <column name="id" valueNumeric="-9" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="SARL" />
+            <column name="description" value="French limited liability company" />
+            <column name="is_company" valueNumeric="1" />
+            <column name="description_i18n" value='{"FRA":"Société a responsabilité limitée","ENG":"French limited liability company"}' />
+        </insert>
+
+        <insert tableName="adm_title">
+            <column name="id" valueNumeric="-10" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="SAS" />
+            <column name="description" value="Simplified joint-stock corporation" />
+            <column name="is_company" valueNumeric="1" />
+            <column name="description_i18n" value='{"FRA":"Société par actions simplifiée","ENG":"Simplified joint-stock corporation"}' />
+        </insert>
+        <insert tableName="adm_title">
+            <column name="id" valueNumeric="-11" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="PLC" />
+            <column name="description" value="Public limited company" />
+            <column name="is_company" valueNumeric="1" />
+            <column name="description_i18n" value='{"FRA":"société ouverte à responsabilité limitée","ENG":"Public limited company"}' />
+        </insert>
+
+        <insert tableName="adm_title">
+            <column name="id" valueNumeric="-12" />
+            <column name="version" valueNumeric="0" />
+
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
@@ -19435,7 +19575,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <where> code = 'OC_MASS_IMPORT_NOTIFICATION'</where>
         </update>
     </changeSet>
-    
+
     <changeSet id="#INTRD-14042_20230227" author="aeljaouhari">
 		<insert tableName="meveo_script_instance">
 			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
@@ -19467,7 +19607,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		<update tableName="ar_occ_template">
 			<column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code='No accounting entry')" />
 			<where> accounting_scheme_id is null</where>
-		</update>		
+		</update>
 	</changeSet>
 
     <changeSet id="#INTRD-13867_20230301" author="AbdellatifBARI">
@@ -19475,7 +19615,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <where>job_category = 'DWH'</where>
         </delete>
     </changeSet>
-    
+
     <changeSet id="#INTRD-14555_20230303" author="aeljaouhari">
         <update tableName="crm_customer_category">
             <column name="default_seller_id" valueComputed="(SELECT min(id) FROM crm_seller WHERE code = 'MAIN_SELLER' OR id >= 1)" />
@@ -19521,7 +19661,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
         </insert>
     </changeSet>
-	
+
 	<changeSet author="HichamHANINE" id="#INTRD-14562_20230308">
 		<update tableName="ar_account_operation">
 			<column name="converted_amount" valueComputed="amount"/>
