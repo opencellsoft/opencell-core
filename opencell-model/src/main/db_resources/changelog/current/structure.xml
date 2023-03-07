@@ -15963,5 +15963,17 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedTableName="crm_seller"
                                  referencedColumnNames="id"/>
     </changeSet>
+    
+  	<changeSet id="#INTRD-14632_20230306" author="AdilElJaouhari">
+    	<addColumn tableName="cpq_order_offer">
+    		<column name="contract_id" type="bigint" />
+    	</addColumn>
+        <addForeignKeyConstraint baseTableName="cpq_order_offer" baseColumnNames="contract_id"
+                                 constraintName="fk_cpq_order_offer_contract_id"
+                                 referencedTableName="cpq_contract"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
 
 </databaseChangeLog>
