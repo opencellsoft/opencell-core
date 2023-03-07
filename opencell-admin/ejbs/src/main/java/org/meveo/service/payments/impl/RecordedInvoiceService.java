@@ -280,7 +280,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             if (remainingConvertedAmountWithTaxForRecordedIncoice == null) {
                 remainingConvertedAmountWithTaxForRecordedIncoice = BigDecimal.ZERO;
             }                
-            BigDecimal remainingConvertedAmountTaxForRecordedIncoice = (invoice.getConvertedAmountTax() == null)?BigDecimal.ZERO:invoice.getConvertedAmountWithoutTax();
+            BigDecimal remainingConvertedAmountTaxForRecordedIncoice = (invoice.getConvertedAmountTax() == null)?BigDecimal.ZERO:invoice.getConvertedAmountTax();
             
             boolean allowMultipleAOperInvoice = "true".equalsIgnoreCase(ParamBean.getInstance().getProperty("ao.generateMultipleAOperInvoice", "true"));
             //cannot dispatch invoiceBalance between categories, if this is needed by a client, we will have to decide how to change all amounts according to invoiceBalance.
