@@ -2383,18 +2383,22 @@ public class CpqQuoteApi extends BaseApi {
 						isAttachedToBA = contract.getBillingAccount() != null && contract.getBillingAccount().getCode().equals(quoteOffer.getBillableAccount().getCode());
 						customerAccount = quoteOffer.getBillableAccount().getCustomerAccount();
 					}
+					if(isAttachedToBA) return contract;
 						
 					boolean isAttachedToCA = contract.getCustomerAccount() != null && customerAccount != null && contract.getCustomerAccount().getCode().equals(customerAccount.getCode());
+					if(isAttachedToCA) return contract;
+					
 					Customer customer = customerAccount != null && customerAccount.getCustomer() != null ? customerAccount.getCustomer() : null;
 					boolean isAttachedToCustomer = customer != null && contract.getCustomer() != null && contract.getCustomer().getCode().equals(customer.getCode());
-					Customer customerParent = customer != null && customer.getParentCustomer() != null  ? customer.getParentCustomer() : null;
-					boolean isAttacheToParentCustomer = customerParent != null && contract.getCustomer().getCode().equals(customerParent.getCode());
-					if(isAttachedToBA || isAttachedToCA || isAttachedToCustomer || isAttacheToParentCustomer) {
-		    			return contract;
-					}else {
-						log.warn("current Contract code : " + contract.getCode() + " is not applicable for any customer hierarchy");
-					}
+					if(isAttachedToCustomer) return contract;
 					
+					Customer customerParent = customer != null && customer.getParentCustomer() != null  ? customer.getParentCustomer() : null;
+					boolean isAttacheToParentCustomer = customerParent != null &&  contract.getCustomer() != null && contract.getCustomer().getCode().equals(customerParent.getCode());
+					if(isAttacheToParentCustomer) return contract;
+					Seller seller = customer != null && customer.getSeller() != null ? customer.getSeller() : null;
+					boolean isAttachedToSeller = seller != null && contract.getSeller() != null && seller.getCode().equals(contract.getSeller().getCode());
+					if(isAttachedToSeller) return contract;
+					log.warn("current Contract code : " + contract.getCode() + " is not applicable for any customer hierarchy");
 				}else {
 					log.warn("Entity to check contract hierarchy is null");
 				}
