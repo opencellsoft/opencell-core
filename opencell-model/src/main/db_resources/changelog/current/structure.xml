@@ -15995,6 +15995,47 @@ public class AgedBalanceReporting extends ReportExtractScript {
          </dropColumn>
     </changeSet>
 
+    <changeSet id="#INTRD-13326_20230227" author="zelmeliani">
+        <addColumn tableName="billing_wallet_operation">
+            <column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0">
+			    <constraints nullable="false" />
+			</column>
+			<column name="converted_amount_without_tax" type="bigint" />
+			<column name="converted_amount_with_tax" type="bigint" />
+			<column name="converted_amount_tax" type="bigint" />
+			<column name="converted_unit_amount_without_tax" type="bigint" />
+			<column name="converted_unit_amount_with_tax" type="bigint" />
+			<column name="converted_unit_amount_tax" type="bigint" />
+			<column name="trading_currency_id" type="bigint" />
+        </addColumn>
+
+        <addColumn tableName="billing_rated_transaction">
+            <column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0">
+			    <constraints nullable="false" />
+			</column>
+			<column name="converted_amount_without_tax" type="bigint" />
+			<column name="converted_amount_with_tax" type="bigint" />
+			<column name="converted_amount_tax" type="bigint" />
+			<column name="converted_unit_amount_without_tax" type="bigint" />
+			<column name="converted_unit_amount_with_tax" type="bigint" />
+			<column name="converted_unit_amount_tax" type="bigint" />
+			<column name="trading_currency_id" type="bigint" />
+        </addColumn>
+        
+        <addForeignKeyConstraint
+            constraintName="fk_trading_currency_id_billing_wallet_operation" 
+			referencedTableName="billing_trading_currency" 
+			referencedColumnNames="id"
+			baseColumnNames="trading_currency_id" 
+			baseTableName="billing_wallet_operation" />
+        <addForeignKeyConstraint 
+            constraintName="fk_trading_currency_id_billing_rated_transaction" 
+			referencedTableName="billing_trading_currency" 
+			referencedColumnNames="id"
+			baseColumnNames="trading_currency_id" 
+			baseTableName="billing_rated_transaction" />
+    </changeSet>
+
     <changeSet id="#INTRD-14336_20230227" author="ZBariki">
         <addColumn tableName="cpq_contract_item">
             <column name="application_el" type="varchar(2000)" />
