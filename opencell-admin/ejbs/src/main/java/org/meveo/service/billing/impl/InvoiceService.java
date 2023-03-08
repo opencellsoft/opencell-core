@@ -3278,7 +3278,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     private void recalculateDate(Invoice invoice, BillingRun billingRun, BillingAccount billingAccount, BillingCycle billingCycle) {
 
-        int delay = billingCycle.getInvoiceDateDelayEL() == null ? 0 : InvoiceService.resolveImmediateInvoiceDateDelay(billingCycle.getInvoiceDateDelayEL(), invoice, billingAccount);
+        int delay = 0;
+        if (invoice.getBillingRun() == null) {
+            delay = billingCycle.getInvoiceDateDelayEL() == null ? 0 : InvoiceService.resolveImmediateInvoiceDateDelay(billingCycle.getInvoiceDateDelayEL(), invoice, billingAccount);
+        }else {
+            delay = billingCycle.getInvoiceDateProductionDelayEL() == null ? 0 : InvoiceService.resolveImmediateInvoiceDateDelay(billingCycle.getInvoiceDateProductionDelayEL(), invoice, billingAccount);
+        }
         Date invoiceDate = DateUtils.addDaysToDate(new Date(), delay);
         invoiceDate = setTimeToZero(invoiceDate);
         invoice.setInvoiceDate(invoiceDate);
