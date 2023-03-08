@@ -160,20 +160,21 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         }
 
         if (securityDeposit.getSecurityDepositInvoice() != null) {
+            AccountOperation canceledAO = buildAccountOperationOCC(securityDeposit.getAmount(),
+                    securityDeposit.getCustomerAccount(), occTemplateService.findByCode(OCC_TEMPLATE_CANCEL_SD_COSE));
+
+            accountOperationService.create(canceledAO);
+
+            try {
+                matchingCodeService.matchOperations(canceledAO.getCustomerAccount().getId(), canceledAO.getCustomerAccount().getCode(),
+                        Arrays.asList(securityDeposit.getSecurityDepositInvoice().getRecordedInvoice().getId(), canceledAO.getId()), canceledAO.getId(), MatchingTypeEnum.A);
+            } catch (NoAllOperationUnmatchedException | UnbalanceAmountException e) {
+                throw new BusinessException(e);
+            }
+
             securityDeposit.getSecurityDepositInvoice().setPaymentStatus(InvoicePaymentStatusEnum.ABANDONED);
             invoiceService.update(securityDeposit.getSecurityDepositInvoice());
-        }
 
-        AccountOperation canceledAO = buildAccountOperationOCC(securityDeposit.getAmount(),
-                securityDeposit.getCustomerAccount(), occTemplateService.findByCode(OCC_TEMPLATE_CANCEL_SD_COSE));
-
-        accountOperationService.create(canceledAO);
-
-        try {
-            matchingCodeService.matchOperations(canceledAO.getCustomerAccount().getId(), canceledAO.getCustomerAccount().getCode(),
-                    Arrays.asList(securityDeposit.getSecurityDepositInvoice().getRecordedInvoice().getId(), canceledAO.getId()), canceledAO.getId(), MatchingTypeEnum.A);
-        } catch (NoAllOperationUnmatchedException | UnbalanceAmountException e) {
-            throw new BusinessException(e);
         }
 
         securityDeposit.setCancelReason(securityDepositInput.getCancelReason());
