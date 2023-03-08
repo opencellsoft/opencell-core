@@ -152,11 +152,11 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
     public SecurityDeposit cancel(Long id, SecurityDepositCancelInput securityDepositInput) {
         SecurityDeposit securityDeposit = findById(id);
         if (securityDeposit == null) {
-            throw new EntityDoesNotExistsException("security deposit with id " + id + " does not exist.");
+            throw new EntityDoesNotExistsException("Security Deposit with id " + id + " does not exist.");
         }
 
         if (SecurityDepositStatusEnum.VALIDATED != securityDeposit.getStatus()) {
-            throw new EntityDoesNotExistsException("Only security deposit with VALIDATED status can be cancelled");
+            throw new BusinessException("Only Security Deposit with VALIDATED status can be canceled");
         }
 
         if (securityDeposit.getSecurityDepositInvoice() != null) {
