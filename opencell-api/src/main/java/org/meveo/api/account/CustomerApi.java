@@ -368,6 +368,9 @@ public class CustomerApi extends AccountEntityApi {
         } else if (postData.getParentCustomerCode() != null) {
         	customer.setSeller(customer.getParentCustomer().getSeller());
         }
+        else{
+            customer.setSeller(null);
+        }
 
     }
     
