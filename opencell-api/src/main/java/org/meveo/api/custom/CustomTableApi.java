@@ -308,7 +308,7 @@ public class CustomTableApi extends BaseApi {
         if (ids == null || ids.isEmpty()) {
             return 0;
         }
-        Set<Long> idsToRemove = ids.stream().map(id -> id.longValue()).collect(Collectors.toSet());
+        Set<Long> idsToRemove = ids.stream().map(id -> ((Number) id).longValue()).collect(Collectors.toSet());
 
         return customTableService.remove(cet.getDbTablename(), idsToRemove);
     }
