@@ -16000,12 +16000,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0">
 			    <constraints nullable="false" />
 			</column>
-			<column name="converted_amount_without_tax" type="bigint" />
-			<column name="converted_amount_with_tax" type="bigint" />
-			<column name="converted_amount_tax" type="bigint" />
-			<column name="converted_unit_amount_without_tax" type="bigint" />
-			<column name="converted_unit_amount_with_tax" type="bigint" />
-			<column name="converted_unit_amount_tax" type="bigint" />
+			<column name="converted_amount_without_tax" type="numeric(23, 12)" />
+			<column name="converted_amount_with_tax" type="numeric(23, 12)" />
+			<column name="converted_amount_tax" type="numeric(23, 12)" />
+			<column name="converted_unit_amount_without_tax" type="numeric(23, 12)" />
+			<column name="converted_unit_amount_with_tax" type="numeric(23, 12)" />
+			<column name="converted_unit_amount_tax" type="numeric(23, 12)" />
 			<column name="trading_currency_id" type="bigint" />
         </addColumn>
 
@@ -16013,12 +16013,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0">
 			    <constraints nullable="false" />
 			</column>
-			<column name="converted_amount_without_tax" type="bigint" />
-			<column name="converted_amount_with_tax" type="bigint" />
-			<column name="converted_amount_tax" type="bigint" />
-			<column name="converted_unit_amount_without_tax" type="bigint" />
-			<column name="converted_unit_amount_with_tax" type="bigint" />
-			<column name="converted_unit_amount_tax" type="bigint" />
+			<column name="converted_amount_without_tax" type="numeric(23, 12)" />
+			<column name="converted_amount_with_tax" type="numeric(23, 12)" />
+			<column name="converted_amount_tax" type="numeric(23, 12)" />
+			<column name="converted_unit_amount_without_tax" type="numeric(23, 12)" />
+			<column name="converted_unit_amount_with_tax" type="numeric(23, 12)" />
+			<column name="converted_unit_amount_tax" type="numeric(23, 12)" />
 			<column name="trading_currency_id" type="bigint" />
         </addColumn>
         
