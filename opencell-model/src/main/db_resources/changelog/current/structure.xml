@@ -16100,6 +16100,17 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
+    
+    <changeSet id="#INTR-14747_20230308" author="TarikFA.">
+    	<update tableName="cat_discount_plan">
+    		<column name="applicable_on_overridden_price" value="1"/>
+    		<where>applicable_on_overridden_price is null</where>
+    	</update>
+    	<update tableName="cat_discount_plan">
+    		<column name="applicable_on_discounted_price" value="1"/>
+    		<where>applicable_on_discounted_price is null</where>
+    	</update>
+    </changeSet>
 
 
 </databaseChangeLog>
