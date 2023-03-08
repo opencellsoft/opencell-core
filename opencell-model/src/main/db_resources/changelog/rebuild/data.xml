@@ -17664,6 +17664,7 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
     <changeSet id="#INTRD-7049_20220509" author="TarikRabeh" />
    	<changeSet id="#INTRD-13867_20230220" author="aeljaouhari" />
     <changeSet id="#INTRD-13867_20230301" author="AbdellatifBARI" />
+    <changeSet id="INTRD-12103_20221215" author="HichamHANINE" />
     
     <changeSet id="#INTRD-14042_20230227" author="aeljaouhari">
 		<insert tableName="meveo_script_instance">
