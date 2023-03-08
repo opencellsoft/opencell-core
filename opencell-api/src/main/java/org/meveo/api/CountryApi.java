@@ -195,10 +195,14 @@ public class CountryApi extends BaseApi {
         handleMissingParameters();
 
         TradingCountry tradingCountry = tradingCountryService.findByCode(countryCode);
+   
         if (tradingCountry == null) {
             throw new EntityDoesNotExistsException(TradingCountry.class, countryCode);
         }
+        
+        Long lCountryId = tradingCountry.getCountry().getId();
         tradingCountryService.remove(tradingCountry);
+        countryService.remove(lCountryId);
     }
 
     public CountryDto update(CountryDto postData) throws MeveoApiException, BusinessException {
