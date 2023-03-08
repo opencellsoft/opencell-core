@@ -815,7 +815,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.userAccount = rateTransactionToDuplicate.getUserAccount();
         this.billingAccount = rateTransactionToDuplicate.getBillingAccount();
         this.seller = rateTransactionToDuplicate.getSeller();
-        this.invoiceSubCategory = rateTransactionToDuplicate.getInvoiceSubCategory();
         this.parameter1 = rateTransactionToDuplicate.getParameter1();
         this.parameter2 = rateTransactionToDuplicate.getParameter2();
         this.parameter3 = rateTransactionToDuplicate.getParameter3();
@@ -824,7 +823,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.subscription = rateTransactionToDuplicate.getSubscription();
         this.priceplan = rateTransactionToDuplicate.getPriceplan();
         this.offerTemplate = rateTransactionToDuplicate.getOfferTemplate();
-//        this.edr = rateTransactionToDuplicate.getEdr();
         this.startDate = rateTransactionToDuplicate.getStartDate();
         this.endDate = rateTransactionToDuplicate.getEndDate();
         this.tax = rateTransactionToDuplicate.getTax();
