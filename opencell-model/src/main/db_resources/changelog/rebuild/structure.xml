@@ -4321,8 +4321,8 @@
             <column name="application_filter_el" type="varchar(2000)"/>
             <column name="discount_plan_id" type="bigint"/>
             <column name="expression_el" type="varchar(2000)" />
-            <column name="applicable_on_overridden_price" type="${type.boolean}" defaultValueNumeric="0"/>
-            <column name="applicable_on_discounted_price" type="${type.boolean}"/>
+            <column name="applicable_on_overridden_price" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="applicable_on_discounted_price" type="${type.boolean}" defaultValueNumeric="1"/>
             <column name="sequence" type="int4"/>
             <column name="automatic_application" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="allowance_code_id" type="bigint">
@@ -19546,6 +19546,7 @@
     <changeSet author="ZBariki" id="#INTRD-14208_20230224" dbms="oracle" />
     <changeSet id="#INTRD-14336_20230227" author="ZBariki" />
     <changeSet id="#INTRD-14598_20230303" author="zelmeliani" />
+    <changeSet id="#INTR-14747_20230308" author="TarikFA." />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
