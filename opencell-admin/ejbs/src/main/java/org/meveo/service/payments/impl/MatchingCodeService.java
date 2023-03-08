@@ -49,6 +49,7 @@ import org.meveo.model.payments.PaymentScheduleInstanceItem;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.Refund;
 import org.meveo.model.payments.WriteOff;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -292,7 +293,16 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                     if (operation instanceof RecordedInvoice) {
                         Invoice invoice = ((RecordedInvoice)operation).getInvoice();
                         if (invoice != null) {
-                            invoice.setPaymentStatus(InvoicePaymentStatusEnum.PAID);
+                            if (invoice.getInvoiceDate() == null) {
+                                invoice.setPaymentStatus(InvoicePaymentStatusEnum.UNPAID);
+                            } else {
+                                if (DateUtils.setTimeToZero(new Date()).after(DateUtils.setTimeToZero(invoice.getInvoiceDate()))) {
+                                    invoice.setPaymentStatus(InvoicePaymentStatusEnum.UNPAID);
+                                } else {
+                                    invoice.setPaymentStatus(InvoicePaymentStatusEnum.NONE);
+                                }
+                            }
+                            invoice.setPaymentStatusDate(new Date());
                         	entityUpdatedEventProducer.fire(invoice);
                     	}
                     }
