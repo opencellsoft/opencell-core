@@ -176,7 +176,7 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 			
 		}
 		if(returnRts) {
-			result.getActionStatus().setMessage(String.format("%d RTs created with ids, %s", successList.size(), successList));
+			result.getActionStatus().setMessage(String.format("%d RTs created, with ids: %s", successList.size(), successList));
 		}
 		
 		return result;
