@@ -268,6 +268,9 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
     @Schema(description = "Accounting date")
     private Date accountingDate;
 
+    @Schema(description = "TransactionalCurrency")
+    private String transactionalCurrency;
+
     /**
      * Instantiates a new account operation dto.
      */
@@ -1088,5 +1091,13 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
 
     public void setAccountingDate(Date accountingDate) {
         this.accountingDate = accountingDate;
+    }
+
+    public String getTransactionalCurrency() {
+        return transactionalCurrency;
+    }
+
+    public void setTransactionalCurrency(String transactionalCurrency) {
+        this.transactionalCurrency = transactionalCurrency;
     }
 }
