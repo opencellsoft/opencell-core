@@ -229,15 +229,28 @@ public class PaymentApi extends BaseApi {
     }
 
 	private BigDecimal checkAndCalculateFunctionalAmount(PaymentDto paymentDto, BigDecimal convertedAmount, BigDecimal functionalAmount, String transactionalcurrency) {
-		TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(transactionalcurrency);
-		ExchangeRate exchangeRate = checkTransactionalCurrency(paymentDto, transactionalcurrency, tradingCurrency);
-		functionalAmount = calculateFunctionalAmount(convertedAmount, functionalAmount, tradingCurrency, exchangeRate);
-		return functionalAmount;
+
+		TradingCurrency transactionalCurrency = tradingCurrencyService.findByTradingCurrencyCode(transactionalcurrency);
+		TradingCurrency functionalCurrency = tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode());
+		checkTransactionalCurrency(paymentDto, transactionalcurrency, transactionalCurrency);
+
+		Date exchangeDate = paymentDto.getTransactionDate() != null ? paymentDto.getTransactionDate() : new Date();
+		ExchangeRate exchangeRate = getExchangeRate(transactionalCurrency, transactionalCurrency, exchangeDate);
+
+		return calculateFunctionalAmount(convertedAmount, functionalAmount, transactionalCurrency, functionalCurrency, exchangeRate);
 	}
 
-	private BigDecimal calculateFunctionalAmount(BigDecimal convertedAmount, BigDecimal functionalAmount, TradingCurrency tradingCurrency, ExchangeRate exchangeRate) {
+	private ExchangeRate getExchangeRate(TradingCurrency tradingCurrency, TradingCurrency functionalCurrency, Date exchangeDate) {
+		ExchangeRate exchangeRate = tradingCurrency.getExchangeRate(exchangeDate);
+		if (exchangeRate == null && !functionalCurrency.equals(tradingCurrency)) {
+			throw new BusinessException("No valid exchange rate found for currency " + tradingCurrency.getCurrencyCode()
+					+ " on " + exchangeDate);
+		}
+		return exchangeRate;
+	}
+
+	private BigDecimal calculateFunctionalAmount(BigDecimal convertedAmount, BigDecimal functionalAmount, TradingCurrency tradingCurrency, TradingCurrency functionalCurrency, ExchangeRate exchangeRate) {
 		if (appProvider.getCurrency() != null) {
-			TradingCurrency functionalCurrency = tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode());
 			if (functionalCurrency != tradingCurrency && exchangeRate.getExchangeRate() != BigDecimal.ZERO) {
 				functionalAmount = convertedAmount.divide(exchangeRate.getExchangeRate(), 2, RoundingMode.HALF_UP);
 			}
@@ -245,19 +258,11 @@ public class PaymentApi extends BaseApi {
 		return functionalAmount;
 	}
 
-	private static ExchangeRate checkTransactionalCurrency(PaymentDto paymentDto, String transactionalcurrency, TradingCurrency tradingCurrency) {
+	private void checkTransactionalCurrency(PaymentDto paymentDto, String transactionalcurrency, TradingCurrency tradingCurrency) {
 		if (tradingCurrency == null || StringUtils.isBlank(tradingCurrency)) {
 			throw new BusinessException("Currency " + transactionalcurrency +
 					" is not recorded a trading currency in Opencell. Only currencies declared as trading currencies can be used to record account operations.");
 		}
-
-		Date exchangeDate = paymentDto.getTransactionDate() != null ? paymentDto.getTransactionDate() : new Date();
-		ExchangeRate exchangeRate = tradingCurrency.getExchangeRate(exchangeDate);
-		if (exchangeRate == null) {
-			throw new BusinessException("No valid exchange rate found for currency " + transactionalcurrency
-					+ " on " + exchangeDate);
-		}
-		return exchangeRate;
 	}
 
 
