@@ -156,7 +156,11 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
     	Map<String, String> aliases = reportQuery.getAliases() != null ? reportQuery.getAliases() : new HashMap<>();
 		for(Object object : result) {
 			Map<String, Object> entries = (Map<String, Object>)object;
-			var line = reportQuery.getFields().stream().map(f -> aliases.getOrDefault(f, f)).map(e -> entries.getOrDefault((String) e, "").toString()).collect(Collectors.joining(";"));
+			List<String> fields = reportQuery.getFields();
+			if(reportQuery.getAdvancedQuery() != null && !reportQuery.getAdvancedQuery().isEmpty()) {
+				fields = (List<String>) reportQuery.getAdvancedQuery().getOrDefault("genericFields", new ArrayList<String>());
+			}
+			var line = fields.stream().map(f -> aliases.getOrDefault(f, f)).map(e -> entries.getOrDefault((String) e, "").toString()).collect(Collectors.joining(";"));
     		response.add(line);
 		}
     	return response;
