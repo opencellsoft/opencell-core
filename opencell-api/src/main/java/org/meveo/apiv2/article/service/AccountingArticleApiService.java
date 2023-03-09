@@ -152,6 +152,13 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
                 throw new BadRequestException("No taxClass found for id : " + baseEntity.getTaxClass().getId());
             accountingArticle.setTaxClass(taxClass);
         }
+        
+        if (baseEntity.getTaxClass() != null && baseEntity.getTaxClass().getCode() != null) {
+            TaxClass taxClass = taxClassService.findByCode(baseEntity.getTaxClass().getCode());
+            if (taxClass == null)
+                throw new BadRequestException("No taxClass found for code : " + baseEntity.getTaxClass().getCode());
+            accountingArticle.setTaxClass(taxClass);
+        }
 
         if (baseEntity.getInvoiceSubCategory() != null && baseEntity.getInvoiceSubCategory().getId() != null) {
             InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findById(baseEntity.getInvoiceSubCategory().getId());
