@@ -151,17 +151,8 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
     @Override
     @Transactional
     public Response cancel(Long id, SecurityDepositCancelInput securityDepositInput) {
-        SecurityDeposit securityDepositToUpdate = securityDepositService.findById(id);
-        if(securityDepositToUpdate == null) {
-            throw new EntityDoesNotExistsException("security deposit with id " + id + " does not exist.");
-        }
-        
-        if(SecurityDepositStatusEnum.CANCELED.equals(securityDepositToUpdate.getStatus())){
-            throw new EntityDoesNotExistsException("The Cancel is not possible if the status of the security deposit is at 'Cancel'");
-        } 
-        
-        securityDepositService.refund(securityDepositToUpdate, securityDepositInput.getCancelReason(), SecurityDepositOperationEnum.CANCEL_SECURITY_DEPOSIT, SecurityDepositStatusEnum.CANCELED, "CANCEL", null);
-        return Response.ok().entity(buildResponse(securityDepositMapper.toResource(securityDepositToUpdate))).build();
+        return Response.ok().entity(buildResponse(
+                securityDepositMapper.toResource(securityDepositApiService.cancel(id, securityDepositInput)))).build();
     }
     
     @Override
