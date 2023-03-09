@@ -371,6 +371,9 @@ public class CustomerApi extends AccountEntityApi {
 			customer.setSeller((customer.getParentCustomer() != null && customer.getParentCustomer().getSeller() != null)? 
 							customer.getParentCustomer().getSeller() : customer.getCustomerCategory().getDefaultSeller());
         }
+        else{
+            customer.setSeller(null);
+        }
 
     }
     
