@@ -106,7 +106,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             }
             pricePlanMatrixVersion = populatePricePlanMatrixVersion(new PricePlanMatrixVersion(), pricePlanMatrixVersionDto, VersionStatusEnum.DRAFT, Calendar.getInstance().getTime());
             AtomicReference<PricePlanMatrixVersion> parameter = new AtomicReference<>(pricePlanMatrixVersion);
-            pricePlanMatrixVersion.getPricePlanMatrix().getVersions().stream().filter(ppmv -> parameter.get().getId() == null  || ppmv.getId() != parameter.get().getId())
+            pricePlanMatrixVersion.getPricePlanMatrix().getVersions().stream().filter(ppmv -> ppmv.getId() != null)
             .forEach(ppmv -> {
                 if(ppmv.getValidity() != null && ppmv.getValidity().isCorrespondsToPeriod(parameter.get().getValidity(), false)) {
                     var formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -135,7 +135,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
                 throw new InvalidParameterException("Invalid validity period, the end date must be greather than the start date");
             }
             
-            pricePlanMatrixVersion.getPricePlanMatrix().getVersions().stream().filter(ppmv -> pricePlanMatrixVersion.getId() == null ||  pricePlanMatrixVersion.getId() != ppmv.getId())
+            pricePlanMatrixVersion.getPricePlanMatrix().getVersions().stream().filter(ppmv -> pricePlanMatrixVersion.getId() != ppmv.getId())
             .forEach(ppmv -> {
                 if(ppmv.getValidity() != null && ppmv.getValidity().isCorrespondsToPeriod(pricePlanMatrixVersion.getValidity(), false)) {
                     var formatter = new SimpleDateFormat("dd/MM/yyyy");
