@@ -231,31 +231,26 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 			MatchingReturnObject matchingResult = new MatchingReturnObject();
 			List<PartialMatchingOccToSelect> partialMatchingOcc = new ArrayList<>();
 			matchingResult.setPartialMatchingOcc(partialMatchingOcc);
-            TradingCurrency theFirstTradingCurrency = null;
-            TradingCurrency tradingCurrency = null;
-            boolean isFirstTradingCurrency = true;
-			for (AccountOperation accountOperation : aos) {			    
-			    if(isFirstTradingCurrency) {
-			        isFirstTradingCurrency = false;
-			        theFirstTradingCurrency = accountOperation.getTransactionalCurrency();
-			    }
-			    tradingCurrency = accountOperation.getTransactionalCurrency();
-			    if(theFirstTradingCurrency != tradingCurrency) {
-			        throw new BusinessApiException("AOs must have the same transactional currency");
-                }
-			    Long aoId = accountOperation.getId();
-				if (aoId.equals(creditAoId)) {
-					// process only DEBIT AO
-					continue;
-				}
-				MatchingReturnObject unitaryResult = matchingCodeService.matchOperations(customer.getId(), customer.getCode(),
-						List.of(creditAoId, aoId), aoId, accountOperation.getAmountForUnmatching());
+			if(aos.size()>0) {
+			    TradingCurrency theFirstTradingCurrency = aos.get(0).getTransactionalCurrency();
+			    for (AccountOperation accountOperation : aos) {              
+	                if(theFirstTradingCurrency != accountOperation.getTransactionalCurrency()) {
+	                    throw new BusinessApiException("AOs must have the same transactional currency");
+	                }
+	                Long aoId = accountOperation.getId();
+	                if (aoId.equals(creditAoId)) {
+	                    // process only DEBIT AO
+	                    continue;
+	                }
+	                MatchingReturnObject unitaryResult = matchingCodeService.matchOperations(customer.getId(), customer.getCode(),
+	                        List.of(creditAoId, aoId), aoId, accountOperation.getAmountForUnmatching());
 
-				if (matchingResult.getPartialMatchingOcc() != null) {
-					partialMatchingOcc.addAll(matchingResult.getPartialMatchingOcc());
-				}
+	                if (matchingResult.getPartialMatchingOcc() != null) {
+	                    partialMatchingOcc.addAll(matchingResult.getPartialMatchingOcc());
+	                }
 
-				matchingResult.setOk(unitaryResult.isOk());
+	                matchingResult.setOk(unitaryResult.isOk());
+	            }
 			}
 
 			if (partialMatchingOcc.isEmpty()) {
