@@ -105,7 +105,6 @@ import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.api.security.filter.ObjectFilter;
 import org.meveo.apiv2.billing.ServiceInstanceToDelete;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.VersionCreated;
 import org.meveo.event.qualifier.VersionRemoved;
@@ -155,6 +154,7 @@ import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
+import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.mediation.Access;
@@ -300,8 +300,6 @@ public class SubscriptionApi extends BaseApi {
     private CommercialOrderService commercialOrderService;
     @Inject
     private AttributeService attributeService;
-
-    private ParamBean paramBean = ParamBean.getInstance();
 
     @Inject
     private EmailTemplateService emailTemplateService;
@@ -509,8 +507,7 @@ public class SubscriptionApi extends BaseApi {
         subscription.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         subscription.setDescription(postData.getDescription());
         subscription.setSubscriptionDate(postData.getSubscriptionDate());
-        if(postData.isRenewed() == true)
-        {
+        if(postData.isRenewed()) {
             auditableFieldService.createFieldHistory(subscription, "renewed", AuditChangeTypeEnum.RENEWAL, null, "true" );
 
         }
@@ -519,7 +516,6 @@ public class SubscriptionApi extends BaseApi {
         if(!StringUtils.isBlank(postData.getSubscribedTillDate())) {
             subscription.setSubscribedTillDate(postData.getSubscribedTillDate());
         }
-        // subscription.setTerminationDate(postData.getTerminationDate());
 
         SubscriptionRenewal subscriptionRenewal = subscriptionRenewalFromDto(subscription.getSubscriptionRenewal(), postData.getRenewalRule(), subscription.isRenewed());
         subscription.setSubscriptionRenewal(subscriptionRenewal);
@@ -754,6 +750,11 @@ public class SubscriptionApi extends BaseApi {
             if (serviceInstance != null) {
                 log.debug("Found already instantiated service {} of {} for subscription {} quantity {}", serviceInstance.getId(), serviceInstance.getServiceCharge().getCode(), subscription.getCode(),
                         serviceInstance.getQuantity());
+                if(serviceInstance.getProductVersion() != null
+                        && serviceInstance.getProductVersion().getProduct() != null
+                        && ProductStatusEnum.CLOSED.equals(serviceInstance.getProductVersion().getProduct().getStatus())) {
+                    throw new BusinessApiException("Can not instantiate service and product status is CLOSED");
+                }
                 if (serviceToActivateDto.getOverrideCode() != null) {
                     serviceInstance.setCode(serviceToActivateDto.getOverrideCode());
                 }
@@ -798,6 +799,12 @@ public class SubscriptionApi extends BaseApi {
                 ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceToActivateDto.getCode());
                 if (serviceTemplate == null) {
                     productVersion = productService.getCurrentPublishedVersion(serviceToActivateDto.getCode(), serviceToActivateDto.getSubscriptionDate() != null ? serviceToActivateDto.getSubscriptionDate() : new Date());
+                    if(productVersion.isPresent()) {
+                        Product product = productVersion.get().getProduct();
+                        if(ProductStatusEnum.CLOSED.equals(product.getStatus())) {
+                            throw new BusinessApiException("Can not instantiate service and product status is CLOSED, product code : " + product.getCode());
+                        }
+                    }
                     log.debug("getServiceToActivate - productVersion: " + productVersion + " - serviceToActivateDto.getCode(): " + serviceToActivateDto.getCode() + " - serviceToActivateDto.getSubscriptionDate(): " + serviceToActivateDto.getSubscriptionDate());
                     if(productVersion.isEmpty()){
                         throw new BusinessApiException("No service template or valid product version found for code: " + serviceToActivateDto.getCode());
@@ -1714,7 +1721,7 @@ public class SubscriptionApi extends BaseApi {
         }
         List<AttributeInstanceDto> attributeInstances = null;
         if(serviceInstance.getAttributeInstances() != null) {
-            attributeInstances = new ArrayList<AttributeInstanceDto>();
+            attributeInstances = new ArrayList<>();
             for(AttributeInstance ai : serviceInstance.getAttributeInstances()) {
                 cFsDTO = entityToDtoConverter.getCustomFieldsDTO(ai, inheritCF);
                 attributeInstances.add( new AttributeInstanceDto(ai, cFsDTO));
@@ -2160,7 +2167,7 @@ public class SubscriptionApi extends BaseApi {
                         attributeInstance.setParentAttributeValue(loadEntityById(attributeInstanceService, attributeInstanceDto.getParentAttributeValueId(), AttributeInstance.class));
                     }
                     if(attributeInstanceDto.getAssignedAttributeValueIds() != null) {
-                        var listAssignedAttribute = attributeInstanceService.findByIds( new ArrayList<Long>(attributeInstanceDto.getAssignedAttributeValueIds()));
+                        var listAssignedAttribute = attributeInstanceService.findByIds( new ArrayList<>(attributeInstanceDto.getAssignedAttributeValueIds()));
                         attributeInstance.setAssignedAttributeValue(listAssignedAttribute);
                     }
                     if(!StringUtils.isBlank(attributeInstanceDto.getStringValue()))
@@ -2299,7 +2306,7 @@ public class SubscriptionApi extends BaseApi {
      *
      */
     private List<OneShotChargeTemplateDto> getOneShotCharges(OneShotChargeTemplateTypeEnum type) {
-        List<OneShotChargeTemplateDto> results = new ArrayList<OneShotChargeTemplateDto>();
+        List<OneShotChargeTemplateDto> results = new ArrayList<>();
         if (oneShotChargeTemplateService == null) {
             return results;
         }
@@ -2747,7 +2754,7 @@ public class SubscriptionApi extends BaseApi {
                                 attributeInstance.setParentAttributeValue(loadEntityById(attributeInstanceService, attributeInstanceDto.getParentAttributeValueId(), AttributeInstance.class));
                             }
                             if(attributeInstanceDto.getAssignedAttributeValueIds() != null) {
-                                var listAssignedAttribute = attributeInstanceService.findByIds( new ArrayList<Long>(attributeInstanceDto.getAssignedAttributeValueIds()));
+                                var listAssignedAttribute = attributeInstanceService.findByIds( new ArrayList<>(attributeInstanceDto.getAssignedAttributeValueIds()));
                                 attributeInstance.setAssignedAttributeValue(listAssignedAttribute);
                             }
                             if(!StringUtils.isBlank(attributeInstanceDto.getStringValue()))
@@ -2756,8 +2763,9 @@ public class SubscriptionApi extends BaseApi {
                                 attributeInstance.setDateValue(attributeInstanceDto.getDateValue());
                             if(attributeInstanceDto.getDoubleValue() != null)
                                 attributeInstance.setDoubleValue(attributeInstanceDto.getDoubleValue());
-                            if(attributeInstanceDto.getBooleanValue() != null)
-	    						attributeInstance.setBooleanValue(attributeInstanceDto.getBooleanValue());
+                            if(attributeInstanceDto.getBooleanValue() != null) {
+                                attributeInstance.setBooleanValue(attributeInstanceDto.getBooleanValue());
+                            }
 	    					if(AttributeTypeEnum.BOOLEAN==attributeInstance.getAttribute().getAttributeType() && attributeInstance.getBooleanValue()==null && attributeInstance.getStringValue()!=null ) {
 	    			        	attributeInstance.setBooleanValue(Boolean.valueOf(attributeInstance.getStringValue()));
 	    			        }
@@ -2837,10 +2845,8 @@ public class SubscriptionApi extends BaseApi {
                 throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
             }
 
-            if (offerTemplate.getSellers().size() > 0) {
-                if (!offerTemplate.getSellers().contains(seller)) {
-                    throw new EntityNotAllowedException(Seller.class, Subscription.class, postData.getSeller());
-                }
+            if (!offerTemplate.getSellers().isEmpty() && !offerTemplate.getSellers().contains(seller)) {
+                throw new EntityNotAllowedException(Seller.class, Subscription.class, postData.getSeller());
             }
         }
         
@@ -3021,16 +3027,6 @@ public class SubscriptionApi extends BaseApi {
             subscriptionToUpdate.setNextVersion(previousVersion);
         }
     }
-
-   /* private void checkOverLapPeriod(DatePeriod validity, String subscriptionCode) {
-        List<Subscription> subscriptions = subscriptionService.findListByCode(subscriptionCode);
-        for(Subscription sub: subscriptions) {
-            boolean isOverLap = validity.isCorrespondsToPeriod(sub.getValidity().getFrom(), sub.getValidity().getTo(), false);
-            if(isOverLap) {
-                throw new MeveoApiException("Current validity ("+ validity.toString("dd/MM/yyyy") +") date is overlap with validity ("+ sub.getValidity().toString("dd/MM/yyyy") +")");
-            }
-        }
-    }*/
 
     private void setMinimumAmountElSubscription(SubscriptionDto postData, Subscription subscription, OfferTemplate offerTemplate) {
         subscription.setMinimumAmountEl(offerTemplate.getMinimumAmountEl());
