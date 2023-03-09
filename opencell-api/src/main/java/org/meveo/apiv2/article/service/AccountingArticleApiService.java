@@ -166,6 +166,13 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
                 throw new BadRequestException("No invoiceSubCategory found for id : " + baseEntity.getInvoiceSubCategory().getId());
             accountingArticle.setInvoiceSubCategory(invoiceSubCategory);
         }
+        
+        if (baseEntity.getInvoiceSubCategory() != null && baseEntity.getInvoiceSubCategory().getCode() != null) {
+            InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(baseEntity.getInvoiceSubCategory().getCode());
+            if (invoiceSubCategory == null)
+                throw new BadRequestException("No invoiceSubCategory found for code : " + baseEntity.getInvoiceSubCategory().getCode());
+            accountingArticle.setInvoiceSubCategory(invoiceSubCategory);
+        }
 
         if (baseEntity.getAccountingCode() != null) {
             AccountingCode accountingCode = accountingArticleService.tryToFindByCodeOrId(baseEntity.getAccountingCode());
