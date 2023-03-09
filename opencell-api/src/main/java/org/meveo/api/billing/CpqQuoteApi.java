@@ -255,6 +255,9 @@ public class CpqQuoteApi extends BaseApi {
     @Inject
     private WalletOperationService walletOperationService;
     
+	@Inject
+	private ContractHierarchyHelper contractHierarchyHelper;
+    
     private static final String ADMINISTRATION_VISUALIZATION = "administrationVisualization";
     
     private static final String ADMINISTRATION_MANAGEMENT = "administrationManagement";
@@ -395,7 +398,7 @@ public class CpqQuoteApi extends BaseApi {
     		if(StringUtils.isNotBlank(quoteVersionDto.getDiscountPlanCode())) {
     			 quoteVersion.setDiscountPlan(loadEntityByCode(discountPlanService, quoteVersionDto.getDiscountPlanCode(), DiscountPlan.class));
     		}
-    		quoteVersion.setContract(checkContractToHierarchy(cpqQuote, quoteVersionDto.getContractCode()));
+    		quoteVersion.setContract(contractHierarchyHelper.checkContractHierarchy(cpqQuote.getBillableAccount(), quoteVersionDto.getContractCode()));
     		if(quoteVersionDto.getMediaCodes() != null) {
     		    quoteVersionDto.getMediaCodes().forEach(mediaCode -> {
             		var media = mediaService.findByCode(mediaCode);
@@ -789,7 +792,7 @@ public class CpqQuoteApi extends BaseApi {
                 if(StringUtils.isNotBlank(quoteVersionDto.getDiscountPlanCode())) {
                     qv.setDiscountPlan(loadEntityByCode(discountPlanService, quoteVersionDto.getDiscountPlanCode(), DiscountPlan.class));
                 }
-                qv.setContract(checkContractToHierarchy(quote, quoteVersionDto.getContractCode()));
+                qv.setContract(contractHierarchyHelper.checkContractHierarchy(quote.getBillableAccount(), quoteVersionDto.getContractCode()));
                 qv.getMedias().clear();
                 if(quoteVersionDto.getMediaCodes() != null) {
                 	quoteVersionDto.getMediaCodes().forEach(mediaCode -> {
@@ -982,7 +985,7 @@ public class CpqQuoteApi extends BaseApi {
             quoteOffer.setCode(quoteOfferDto.getCode());
             quoteOffer.setDescription(quoteOfferDto.getDescription());
             quoteOffer.setQuoteLineType(quoteOfferDto.getQuoteLineType());
-            quoteOffer.setContract(checkContractToHierarchy(quoteOffer, quoteOfferDto.getCode()));
+            quoteOffer.setContract(contractHierarchyHelper.checkContractHierarchy(quoteOffer.getBillableAccount(), quoteOfferDto.getCode()));
             populateCustomFields(quoteOfferDto.getCustomFields(), quoteOffer, true);
             quoteOfferService.create(quoteOffer);
             quoteOfferDto.setQuoteOfferId(quoteOffer.getId());
@@ -1098,7 +1101,7 @@ public class CpqQuoteApi extends BaseApi {
         	}
         	quoteOffer.setSubscription(subscription);
         }
-        quoteOffer.setContract(checkContractToHierarchy(quoteOffer, quoteOfferDTO.getCode()));
+        quoteOffer.setContract(contractHierarchyHelper.checkContractHierarchy(quoteOffer.getBillableAccount(), quoteOfferDTO.getCode()));
         processQuoteProduct(quoteOfferDTO, quoteOffer);
         processQuoteAttribute(quoteOfferDTO, quoteOffer);
         populateCustomFields(quoteOfferDTO.getCustomFields(), quoteOffer, false);
@@ -2369,45 +2372,5 @@ public class CpqQuoteApi extends BaseApi {
 	                  
 	                });
 	    }
-
-		private Contract checkContractToHierarchy(BusinessEntity entity, String contractCode) {
-			if(StringUtils.isNotBlank(contractCode)) {
-				Contract contract = contractService.findByCode(contractCode);
-				if(contract == null) {
-					log.warn("Contract code : " + contractCode + " doesn't exist");
-				}else if(entity != null){
-					boolean isAttachedToBA =  false ;
-					CustomerAccount customerAccount = null;
-					if(entity instanceof CpqQuote) {
-						CpqQuote cpqQuote = (CpqQuote) entity;
-						isAttachedToBA = contract.getBillingAccount() != null && contract.getBillingAccount().getCode().equals(cpqQuote.getBillableAccount().getCode());
-						customerAccount = cpqQuote.getBillableAccount().getCustomerAccount();
-					}else {
-						QuoteOffer quoteOffer = (QuoteOffer) entity;
-						isAttachedToBA = contract.getBillingAccount() != null && contract.getBillingAccount().getCode().equals(quoteOffer.getBillableAccount().getCode());
-						customerAccount = quoteOffer.getBillableAccount().getCustomerAccount();
-					}
-					if(isAttachedToBA) return contract;
-						
-					boolean isAttachedToCA = contract.getCustomerAccount() != null && customerAccount != null && contract.getCustomerAccount().getCode().equals(customerAccount.getCode());
-					if(isAttachedToCA) return contract;
-					
-					Customer customer = customerAccount != null && customerAccount.getCustomer() != null ? customerAccount.getCustomer() : null;
-					boolean isAttachedToCustomer = customer != null && contract.getCustomer() != null && contract.getCustomer().getCode().equals(customer.getCode());
-					if(isAttachedToCustomer) return contract;
-					
-					Customer customerParent = customer != null && customer.getParentCustomer() != null  ? customer.getParentCustomer() : null;
-					boolean isAttacheToParentCustomer = customerParent != null &&  contract.getCustomer() != null && contract.getCustomer().getCode().equals(customerParent.getCode());
-					if(isAttacheToParentCustomer) return contract;
-					Seller seller = customer != null && customer.getSeller() != null ? customer.getSeller() : null;
-					boolean isAttachedToSeller = seller != null && contract.getSeller() != null && seller.getCode().equals(contract.getSeller().getCode());
-					if(isAttachedToSeller) return contract;
-					log.warn("current Contract code : " + contract.getCode() + " is not applicable for any customer hierarchy");
-				}else {
-					log.warn("Entity to check contract hierarchy is null");
-				}
-		    }
-			return null;
-		}
 
 }
