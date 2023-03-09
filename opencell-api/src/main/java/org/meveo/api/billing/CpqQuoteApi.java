@@ -99,6 +99,7 @@ import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
+import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.crm.Customer;
@@ -490,7 +491,6 @@ public class CpqQuoteApi extends BaseApi {
                     .stream()
                     .forEach(productAttribute -> selectedAttributes.put(productAttribute.getQuoteAttributeCode(), productAttribute.getStringValue()));
             productContextDTO.setSelectedAttributes(selectedAttributes);
-            //processReplacementRules(commercialRuleHeader, productContextDTO, offerQuoteAttribute);
             ++index;
         }
         
@@ -602,7 +602,7 @@ public class CpqQuoteApi extends BaseApi {
             if (scriptInstance != null) {
                     String quoteXmlScript = scriptInstance.getCode();
                     ScriptInterface script = scriptInstanceService.getScriptInstance(quoteXmlScript);
-                    Map<String, Object> methodContext = new HashMap<String, Object>();
+                    Map<String, Object> methodContext = new HashMap<>();
                     methodContext.put("quoteVersion", quoteVersion);
                     methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
                     methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
@@ -1343,6 +1343,7 @@ public class CpqQuoteApi extends BaseApi {
         if(cpqQuote == null)
             throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode);
         QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, version);
+        validateProducts(quoteVersion);
         if(quoteVersion == null)
             throw new EntityDoesNotExistsException("No quote version found for quote: " + quoteCode + ", and version : " + version);
         if(cpqQuote.getStatus().equalsIgnoreCase(QuoteStatusEnum.CANCELLED.toString())
@@ -1415,6 +1416,10 @@ public class CpqQuoteApi extends BaseApi {
             }
             cpqQuote = serviceSingleton.assignCpqQuoteNumber(cpqQuote);
         }
+        List<QuoteVersion> quoteVersionsList = quoteVersionService.findLastVersionByCode(cpqQuote.getCode());
+        if(!quoteVersionsList.isEmpty()) {
+            validateProducts(quoteVersionsList.get(0));
+        }
         try {
             cpqQuoteService.update(cpqQuote);
             cpqQuoteStatusUpdatedEvent.fire(cpqQuote);
@@ -1433,8 +1438,13 @@ public class CpqQuoteApi extends BaseApi {
 
     public void updateQuoteVersionStatus(String quoteCode, int currentVersion, VersionStatusEnum status) {
         QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion);
-        if (quoteVersion == null)
+        if (quoteVersion == null) {
             throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
+        }
+
+        if(VersionStatusEnum.PUBLISHED.equals(status)) {
+            validateProducts(quoteVersion);
+        }
         if(quoteVersion.getQuoteOffers().isEmpty()) {
         	throw new MeveoApiException("link an offer to a version before publishing it");
         }
@@ -1467,11 +1477,31 @@ public class CpqQuoteApi extends BaseApi {
         }
     }
 
+    private void validateProducts(QuoteVersion quoteVersion) {
+        if (quoteVersion.getQuoteArticleLines() != null) {
+            quoteVersion.getQuoteArticleLines()
+                    .stream()
+                    .filter(Objects::nonNull)
+                    .map(QuoteArticleLine::getQuoteProduct)
+                    .filter(Objects::nonNull)
+                    .map(QuoteProduct::getProductVersion)
+                    .filter(Objects::nonNull)
+                    .map(ProductVersion::getProduct)
+                    .filter(product -> Objects.nonNull(product) && ProductStatusEnum.CLOSED.equals(product.getStatus()))
+                    .findAny()
+                    .ifPresent(product -> {
+                        throw new BusinessApiException("Can not perform action product status is CLOSED, product code : "
+                                + product.getCode());
+                    });
+        }
+    }
+
     public GetQuoteVersionDtoResponse quoteQuotation(String quoteCode, int currentVersion) {
         List<QuotePrice> accountingArticlePrices = new ArrayList<>();
         List<TaxPricesDto> pricesPerTaxDTO = new ArrayList<>();
-        Set<DiscountPlanItem> quoteEligibleFixedDiscountItems = new HashSet<DiscountPlanItem>();
-         QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion);
+        Set<DiscountPlanItem> quoteEligibleFixedDiscountItems = new HashSet<>();
+        QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion);
+        validateProducts(quoteVersion);
         if (quoteVersion == null)
             throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
 
@@ -1535,7 +1565,7 @@ public class CpqQuoteApi extends BaseApi {
                     AccountingArticlePricesDTO accountingArticlePricesDTO = new AccountingArticlePricesDTO();
                     accountingArticlePricesDTO.setAccountingArticleCode(quoteArticleLine.getAccountingArticle().getCode());
                     accountingArticlePricesDTO.setAccountingArticleLabel(quoteArticleLine.getAccountingArticle().getDescription());
-                    accountingArticlePricesDTO.setAccountingArticlePrices(new ArrayList<PriceDTO>());
+                    accountingArticlePricesDTO.setAccountingArticlePrices(new ArrayList<>());
                     Map<BigDecimal, List<QuotePrice>> pricesPerTauxMap = quoteArticleLine.getQuotePrices().stream()
                             .collect(Collectors.groupingBy(QuotePrice::getTaxRate));
                     BigDecimal quoteTotalAmountBigDecimal = BigDecimal.ZERO;
@@ -2030,7 +2060,7 @@ public class CpqQuoteApi extends BaseApi {
 		}
     }
     private List<QuotePrice> createFixedDiscountQuotePrices( List<WalletOperation> fixedDiscountWalletOperation,QuoteVersion quoteVersion, QuoteOffer quoteOffer,BillingAccount billingAccount,PriceLevelEnum priceLevelEnum) {
-    	List<QuotePrice> discountQuotePrices=new ArrayList<QuotePrice>();
+    	List<QuotePrice> discountQuotePrices=new ArrayList<>();
     	for (WalletOperation wo : fixedDiscountWalletOperation) {
     	   QuotePrice discountQuotePrice = new QuotePrice();
            discountQuotePrice.setPriceLevelEnum(priceLevelEnum);
