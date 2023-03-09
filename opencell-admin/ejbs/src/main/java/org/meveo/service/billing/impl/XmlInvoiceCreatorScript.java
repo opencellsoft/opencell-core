@@ -1930,19 +1930,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         }
         Date invoiceDateData = invoice.getInvoiceDate();
         if (invoiceDateData != null) {
-            Element invoiceDate = doc.createElement("invoiceDate");
-            String eventTimeCode2005 = buildEventTimeCode2005(invoice);
-            String eventTimeCode2475 = buildEventTimeCode2475(invoice);
-            if (StringUtils.isNotBlank(eventTimeCode2005)) {
-                invoiceDate.setAttribute("eventTimeCode2005", eventTimeCode2005);
-            }
-            if (StringUtils.isNotBlank(eventTimeCode2475)) {
-                invoiceDate.setAttribute("eventTimeCode2475", eventTimeCode2475);
-            }
-            invoiceDate.setAttribute("format", "102"); // hardcoded value, related to default pattern yyyyMMdd
-
-            invoiceDate.appendChild(this.createTextNode(doc, DateUtils.formatDateWithPattern(invoiceDateData, invoiceDateFormat)));
-            header.appendChild(invoiceDate);
+            buildInvoiceDates(doc, header, invoice, invoiceDateFormat);
         }
         Date dueDateData = invoice.getDueDate();
         if (dueDateData != null) {
@@ -1975,6 +1963,40 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     }
 
     // value from https://opencellsoft.atlassian.net/browse/INTRD-10546
+    private void buildInvoiceDates(Document doc, Element header, Invoice invoice, String invoiceDateFormat) {
+
+        Element invoiceDate = doc.createElement("invoiceDate");
+        invoiceDate.setAttribute("format", "102"); // hardcoded value, related to default pattern yyyyMMdd
+        invoiceDate.setAttribute("eventTimeCode2005", "3");
+        invoiceDate.setAttribute("eventTimeCode2475", "5");
+        invoiceDate.appendChild(this.createTextNode(doc, DateUtils.formatDateWithPattern(invoice.getInvoiceDate(), invoiceDateFormat)));
+
+        header.appendChild(invoiceDate);
+
+        if (invoice.getStatus() == InvoiceStatusEnum.VALIDATED) {
+            if (invoice.getPaymentStatus() == InvoicePaymentStatusEnum.PAID) {
+                Element invoiceDatePaid = doc.createElement("invoiceDatePaid");
+                invoiceDatePaid.setAttribute("eventTimeCode2005", "432");
+                invoiceDatePaid.setAttribute("eventTimeCode2475", "72");
+                invoiceDatePaid.setAttribute("format", "102");
+                invoiceDatePaid.appendChild(this.createTextNode(doc, DateUtils.formatDateWithPattern(invoice.getPaymentStatusDate(), invoiceDateFormat)));
+
+                header.appendChild(invoiceDatePaid);
+            }
+
+            if (invoice.getCommercialOrder() != null && invoice.getCommercialOrder().getInvoicingPlan() != null) {
+                Element invoiceDatePaid = doc.createElement("invoiceDateDelivery");
+                invoiceDatePaid.setAttribute("eventTimeCode2005", "35");
+                invoiceDatePaid.setAttribute("eventTimeCode2475", "29");
+                invoiceDatePaid.setAttribute("format", "102");
+                invoiceDatePaid.appendChild(this.createTextNode(doc, DateUtils.formatDateWithPattern(invoice.getInvoiceDate(), invoiceDateFormat)));
+
+                header.appendChild(invoiceDatePaid);
+            }
+        }
+    }
+
+
     private String buildEventTimeCode2005(Invoice invoice) {
         if (invoice.getStatus() == InvoiceStatusEnum.VALIDATED) {
             if (invoice.getPaymentStatus() == InvoicePaymentStatusEnum.PAID) {
