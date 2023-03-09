@@ -90,7 +90,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
     private void registerJob(Job job) {
 
         boolean clearTimers = false;
-        synchronized (jobTimers) {
+        synchronized (jobClasses) {
 
             if (!jobClasses.containsKey(job.getJobCategory())) {
                 jobClasses.put(job.getJobCategory(), new ArrayList<>());

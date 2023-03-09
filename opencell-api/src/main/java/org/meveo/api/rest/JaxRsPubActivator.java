@@ -32,15 +32,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Application config for public api rest paths, in order to get access to not protected resources.
- *  Required for some use cases needs , like Yousign webhook calbacks : https://help.yousign.com/hc/fr/articles/360000856312-Notifier-mon-application-avec-les-webhooks.
+ * Application config for public api rest paths, in order to get access to not protected resources. Required for some use cases needs , like Yousign webhook calbacks :
+ * https://help.yousign.com/hc/fr/articles/360000856312-Notifier-mon-application-avec-les-webhooks.
  * 
  * @author Said Ramli
  **/
 @ApplicationPath("/api/pub")
 public class JaxRsPubActivator extends Application {
-
-    private Logger log = LoggerFactory.getLogger(JaxRsPubActivator.class);
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
@@ -50,7 +48,8 @@ public class JaxRsPubActivator extends Application {
         Reflections reflections = new Reflections("org.meveo.api.pub.rest");
         Set<Class<? extends BaseRs>> allClasses = reflections.getSubTypesOf(BaseRs.class);
 
-        log.debug("Documenting {} rest services...", allClasses.size());
+        Logger log = LoggerFactory.getLogger(getClass());
+        log.debug("Documenting {} rest services for path /api/pub/", allClasses.size());
 
         resources.addAll(allClasses);
 
