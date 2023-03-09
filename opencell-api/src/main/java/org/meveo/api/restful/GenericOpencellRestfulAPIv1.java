@@ -68,14 +68,12 @@ import java.util.stream.Stream;
 
 @ApplicationPath(GenericOpencellRestfulAPIv1.REST_PATH)
 public class GenericOpencellRestfulAPIv1 extends Application {
-    public static List<Map<String,String>> VERSION_INFO = new ArrayList<Map<String, String>>();
     public static Map<Object,String> MAP_RESTFUL_PATH_AND_IBASE_RS_PATH = new HashMap<>();
     public static RegExHashMap<Object,String> MAP_RESTFUL_REGEX_PATH_AND_IBASE_RS_PATH = new RegExHashMap<>();
     public static Map<String,Class> MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS = new HashMap<>();
     public static long API_LIST_DEFAULT_LIMIT;
     public static final String REST_PATH = "/api/rest/v1";
     public static Map RESTFUL_ENTITIES_MAP = new LinkedHashMap();
-    public static OpenAPI API_STD_SWAGGER;
 
     private static final String API_LIST_DEFAULT_LIMIT_KEY = "api.list.defaultLimit";
     private static final String PATH_TO_ALL_ENTITY_RS = "org.meveo.api.rest";
@@ -105,10 +103,8 @@ public class GenericOpencellRestfulAPIv1 extends Application {
     @PostConstruct
     public void init() {
         API_LIST_DEFAULT_LIMIT = paramBeanFactory.getInstance().getPropertyAsInteger(API_LIST_DEFAULT_LIMIT_KEY, 100);
-        loadVersionInformation();
         loadMapPathAndInterfaceIBaseRs();
         loadSetGetAll();
-        loadSwaggerJson();
     }
 
     private void loadSetGetAll() {
@@ -124,26 +120,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
         }
     }
 
-    private void loadSwaggerJson() {
-        // Get standard API endpoints in Opencell and populate MAP_SWAGGER_PATHS
-        OpenAPI oasStandardApi = new OpenAPI();
-        SwaggerConfiguration oasStandardConfig = new SwaggerConfiguration()
-                .openAPI(oasStandardApi)
-                .readAllResources(false)
-                // scanner implementation only considering defined resourcePackages and classes
-                // and ignoring resource packages and classes defined in JAX-RS Application
-                .scannerClass(JaxrsAnnotationScanner.class.getName())
-                .resourcePackages(new HashSet<>(Arrays.asList("org.meveo.api.rest")));
 
-        OpenApiContext ctx = OpenApiContextLocator.getInstance().getOpenApiContext(
-                OpenApiContext.OPENAPI_CONTEXT_ID_DEFAULT );
-        if ( ctx instanceof GenericOpenApiContext) {
-            ((GenericOpenApiContext) ctx).getOpenApiScanner().setConfiguration(oasStandardConfig);
-            oasStandardApi = ctx.read();
-        }
-
-        API_STD_SWAGGER = oasStandardApi;
-    }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
@@ -157,31 +134,6 @@ public class GenericOpencellRestfulAPIv1 extends Application {
         return resources;
     }
 
-    private void loadVersionInformation() {
-        try {
-            Enumeration<URL> resources = getClass().getClassLoader().getResources("version.json");
-            JSONParser parser = new JSONParser();
-            resources.asIterator().forEachRemaining(url -> {
-                try {
-                    Object obj = parser.parse(new String(url.openStream().readAllBytes()));
-                    JSONObject jsonObject = (JSONObject) obj;
-
-                    Map<String,String> versionInfo = new HashedMap();
-                    versionInfo.put("name", (String) jsonObject.get("name"));
-                    versionInfo.put("version", (String) jsonObject.get("version"));
-                    versionInfo.put("commit", (String) jsonObject.get("commit"));
-
-                    VERSION_INFO.add(versionInfo);
-                } catch (ParseException | IOException e) {
-                    log.warn(e.toString());
-                    log.error("error = {}", e);
-                }
-            });
-        } catch (IOException e) {
-            log.warn("There was a problem loading version information");
-            log.error("error = {}", e);
-        }
-    }
 
     private void fillUpRestfulURLsMap(String aRestfulURL, Map mapRestful) {
         baseURL = REST_PATH + aRestfulURL;

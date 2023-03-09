@@ -120,8 +120,6 @@ public class GenericOpencellRestful extends Application {
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
-    public static OpenAPI openAPIv2;
-
     @PostConstruct
     public void init() {
         API_LIST_DEFAULT_LIMIT = paramBeanFactory.getInstance().getPropertyAsInteger(API_LIST_DEFAULT_LIMIT_KEY, 100);
@@ -129,7 +127,6 @@ public class GenericOpencellRestful extends Application {
         GENERIC_API_REQUEST_EXTRACT_LIST = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty(GENERIC_API_REQUEST_EXTRACT_LIST_CONFIG_KEY, "true"));
         loadVersionInformation();
         loadEntitiesList();
-        loadOpenAPI();
     }
 
     @Override
@@ -193,8 +190,7 @@ public class GenericOpencellRestful extends Application {
                 }
             });
         } catch (IOException e) {
-            log.warn("There was a problem loading version information");
-            log.error("error = {}", e.getMessage(), e);
+            log.error("There was a problem loading version information", e);
         }
     }
 
@@ -204,19 +200,6 @@ public class GenericOpencellRestful extends Application {
             listEntities.add(entry.getValue().getSimpleName());
         }
         ENTITIES_MAP.put("entities", listEntities);
-    }
-
-    private void loadOpenAPI() {
-        try {
-            OpenApiContext ctx = new JaxrsOpenApiContextBuilder<>()
-                    .ctxId("apiv2")
-                    .configLocation("/openapi-configuration-apiv2.json")
-                    .buildContext(true);
-
-            openAPIv2 = ctx.read();
-        } catch (OpenApiConfigurationException e) {
-            log.error("OpenApiConfigurationException : {}", e.getMessage());
-        }
     }
 
     public boolean shouldExtractList() {
