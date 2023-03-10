@@ -28,6 +28,7 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.UnitOfMeasureRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
+import org.meveo.model.catalog.UnitOfMeasure;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -47,7 +48,11 @@ public class UnitOfMeasureRsImpl extends BaseRs implements UnitOfMeasureRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            unitOfMeasureApi.create(postData);
+        	UnitOfMeasure unitOfMeasure = unitOfMeasureApi.create(postData);
+            if(unitOfMeasure != null) {
+            	result.setEntityId(unitOfMeasure.getId());
+            	result.setEntityCode(unitOfMeasure.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -60,7 +65,11 @@ public class UnitOfMeasureRsImpl extends BaseRs implements UnitOfMeasureRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            unitOfMeasureApi.update(postData);
+        	UnitOfMeasure unitOfMeasure = unitOfMeasureApi.update(postData);
+            if(unitOfMeasure != null) {
+            	result.setEntityId(unitOfMeasure.getId());
+            	result.setEntityCode(unitOfMeasure.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -99,7 +108,11 @@ public class UnitOfMeasureRsImpl extends BaseRs implements UnitOfMeasureRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            unitOfMeasureApi.createOrUpdate(postData);
+            UnitOfMeasure unitOfMeasure = unitOfMeasureApi.createOrUpdate(postData);
+            if(unitOfMeasure != null) {
+            	result.setEntityId(unitOfMeasure.getId());
+            	result.setEntityCode(unitOfMeasure.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
