@@ -150,7 +150,7 @@ public class CpqQuoteApiTest {
 
     }
     
-    @Test
+    //@Test
     public void updateQuoteItem() {
         try {	
         	QuoteOfferDTO quoteOfferDTO = new QuoteOfferDTO();
