@@ -207,7 +207,7 @@ public class JobApi extends BaseApi {
     }
 
 
-	private JobExecutionResultDto findJobExecutionResultByIdAndCode(String code, Long id) {
+	public JobExecutionResultDto findJobExecutionResultByIdAndCode(String code, Long id) {
 		JobExecutionResultDto jobExecutionResultDto;
         JobExecutionResultImpl jobExecutionResult = new JobExecutionResultImpl();
         if (!StringUtils.isBlank(id)) {
