@@ -145,6 +145,8 @@ public class ContractItemService extends BusinessService<ContractItem> {
 					if(evaluateExpression(contractLineToEvaluate.getApplicationEl(), contextVariables, Boolean.class)) {
 						contractItem = contractLineToEvaluate;
 					}
+				}else{
+					return contractLineToEvaluate;
 				}
             }
         }
