@@ -8,12 +8,9 @@
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="ACCOUNT_OPS" />
+            <column name="code" value="org.meveo.service.script.export.ExportAccountOperationScript" />
             <column name="description" value="Export account operations" />
-            <column name="src_type" value="JAVA" />
-            <column name="script">
-<![CDATA[package org.meveo.service.script.export; import java.io.File; import java.io.FileWriter; import java.text.DateFormat; import java.text.SimpleDateFormat; import java.util.List; import java.util.Map; import org.meveo.admin.exception.BusinessException; import org.meveo.model.payments.AccountOperation; import org.meveo.model.payments.CustomerAccount; import org.meveo.model.payments.RecordedInvoice; import org.meveo.service.payments.impl.AccountOperationService; import org.meveo.service.script.Script; import org.meveo.service.script.finance.ReportExtractScript; import org.slf4j.Logger; import org.slf4j.LoggerFactory; import java.util.Date; public class ExportAccountOperationScript extends ReportExtractScript { private static final Logger LOGGER = LoggerFactory.getLogger(ExportAccountOperationScript.class); private AccountOperationService accountOperationService = (AccountOperationService) getServiceInterface(AccountOperationService.class.getSimpleName()); @Override public void execute(Map<String, Object> initContext) throws BusinessException { try { LOGGER.debug("#####################Starting of script ExportAccountOperationScript"); Date startDate = (Date) initContext.get(ReportExtractScript.START_DATE); Date endDate = (Date) initContext.get(ReportExtractScript.END_DATE); DateFormat df = new SimpleDateFormat("yyyy-MM-dd"); List<AccountOperation> accountOperations = accountOperationService.list(); initContext.put(ReportExtractScript.LINE_COUNT, accountOperations.size()); String exportDir = String.valueOf(initContext.get(ReportExtractScript.DIR)); File dir = new File(exportDir); if (!dir.exists()) { dir.mkdirs(); } CustomerAccount customerAccount = null; StringBuilder sb =new StringBuilder(); sb.append("Transaction Date;Transaction Type;Amount;Due Date;Reference;Transaction Category;Invoice Date;" + "Customer Account Code;Customer Account Description\n"); for (AccountOperation accountOperation : accountOperations) { if(accountOperation.getTransactionDate().equals(startDate) || accountOperation.getTransactionDate().equals(endDate) || (accountOperation.getTransactionDate().after(startDate) && accountOperation.getTransactionDate().before(endDate))) { customerAccount = accountOperation.getCustomerAccount(); sb.append(nil(accountOperation.getTransactionDate().toString())+ ";"); sb.append(nil(accountOperation.getType()) + ";"); sb.append(nil(accountOperation.getAmount().toString()) + ";"); sb.append(isNull(accountOperation.getDueDate()) + ";"); sb.append(nil(accountOperation.getReference()) + ";"); sb.append(nil(accountOperation.getTransactionCategory().toString()) + ";"); if(accountOperation instanceof RecordedInvoice) { RecordedInvoice invoice = (RecordedInvoice) accountOperation; sb.append(invoice.getInvoiceDate().toString() + ";"); } else { sb.append(";"); } sb.append(nil(customerAccount.getCode()) + ";"); sb.append(nil(customerAccount.getDescriptionOrCode()) + ";\n"); } } String strFilename = String.valueOf(initContext.get(ReportExtractScript.FILENAME)); LOGGER.debug("output={}", strFilename); File file = new File(dir + File.separator + strFilename); file.createNewFile(); FileWriter fileWriter = new FileWriter(file); fileWriter.write(sb.toString()); fileWriter.close(); LOGGER.debug("#####################Ending of script ExportAccountOperationScript"); } catch (Exception e) { initContext.put(ReportExtractScript.ERROR_MESSAGE, e.getMessage()); LOGGER.error("Exception:", e); throw new BusinessException(e.getMessage()); } } private String isNull(Object obj) { if(obj == null) { return ""; } else { return obj.toString(); } } private String nil(String word) { if (word == null || "null".equalsIgnoreCase(word)) { return ""; } else { return word; } } }]]>
-            </column>
+            <column name="src_type" value="JAVA_CLASS" />
         </insert>
 
         <insert tableName="dwh_report_extract">
@@ -1373,235 +1370,7 @@ order by edr.STATUS, edr.id DESC]]>
             <column name="created" valueDate="${db.current.time}" />
             <column name="code" value="org.meveo.service.script.presale.AgedBalanceReporting" />
             <column name="description" value="Aged Balance Reporting Script" />
-            <column name="src_type" value="JAVA" />
-            <column name="script">
- <![CDATA[
-package org.meveo.service.script.presale;
-import java.io.File;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.math.RoundingMode;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.*;
-import static java.math.BigDecimal.ZERO;
-import static java.util.Optional.ofNullable;
-import static org.meveo.model.billing.InvoicePaymentStatusEnum.PENDING;
-import static org.meveo.model.billing.InvoicePaymentStatusEnum.PPAID;
-import static org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID;
-import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
-import static org.meveo.model.shared.DateUtils.setDateToEndOfDay;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.shared.DateUtils;
-import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.CsvBuilder;
-import org.meveo.model.payments.CustomerAccount;
-import org.meveo.service.payments.impl.CustomerAccountService;
-import org.meveo.service.script.finance.ReportExtractScript;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory; 
-import org.meveo.admin.util.pagination.PaginationConfiguration;
-import static java.util.Arrays.asList;
-import org.meveo.model.payments.RecordedInvoice;
-import org.meveo.model.payments.MatchingStatusEnum;
-import org.meveo.api.dto.AgedReceivableDto;
-import org.meveo.model.shared.Name;
-import org.meveo.model.admin.Currency;
-import org.meveo.model.crm.Provider;
-import org.meveo.service.crm.impl.ProviderService;
-import org.meveo.commons.utils.EjbUtils;
-public class AgedBalanceReporting extends ReportExtractScript {
-    private static final Logger log = LoggerFactory.getLogger(AgedBalanceReporting.class);
-  	private static Provider appProvider;
-    private CustomerAccountService customerAccountService = (CustomerAccountService) getServiceInterface(CustomerAccountService.class.getSimpleName());
-    @Override public void execute(Map < String, Object > executeContext) throws BusinessException {
-        try {    
-          	appProvider = ((ProviderService) EjbUtils.getServiceInterface("ProviderService")).getProvider();
-          	String currencyCode = "";
-          	Map < String, Object > paramsProvider = new HashMap < String, Object > ();
-          	paramsProvider.put("code", appProvider.getCode());
-           	String queryProvider = "Select pr.currency.currencyCode, pr.id FROM Provider pr where lower(pr.code)=lower(:code)";
-			List < Object[] > rowsProvider = (List < Object[] > ) customerAccountService.executeSelectQuery(queryProvider, paramsProvider);
-          	for (Object[] row: rowsProvider) {
-                currencyCode = row[0] + "";
-            }
-          
-          	List<String> fetchFields = asList("fields");
-          	PaginationConfiguration paginationConfiguration = new PaginationConfiguration(0, 50, null, null, fetchFields, "dueDate", "DESCENDING");
-          	int numberOfPeriods = 4;
-          	String query = getAgedReceivables(null, null, new Date(), null, null, paginationConfiguration, 30, numberOfPeriods, null, null, null, null, null);
-          
-            log.debug("execute executeContext:{}", executeContext);
-            Map < String, Object > params = new HashMap < String, Object > ();
-               
-          	List < Object[] > rows = (List < Object[] > ) customerAccountService.executeSelectQuery(query, params);
-          	List<AgedReceivableDto> listAgedReceivable = buildDynamicResponse(rows, numberOfPeriods);
-            
-            log.debug("execute rows size:{}", rows == null ? null : rows.size());
-            String dirOutput = String.valueOf(executeContext.get(ReportExtractScript.DIR));
-            String filename = String.valueOf(executeContext.get(ReportExtractScript.FILENAME));
-            CsvBuilder csvBuilder = new CsvBuilder(";", false);
-            String[] header = {
-                "Customer description", "Customer", "Invoice Number",
-               	"Total current", "0_30_DAYS","30_60_DAYS","60_90_DAYS","90_DAYS",
-                "Total overdue","Total",
-                "Currency","Amount billed","Billing currency"
-            };
-            csvBuilder.appendValues(header);
-            csvBuilder.startNewLine();
-            for (AgedReceivableDto agedReceivableDto: listAgedReceivable) {
-                csvBuilder.appendValue(agedReceivableDto.getCustomerAccountDescription());
-                csvBuilder.appendValue(agedReceivableDto.getCustomerAccountCode());
-                csvBuilder.appendValue(agedReceivableDto.getInvoiceNumber());
-                csvBuilder.appendValue(round((BigDecimal) agedReceivableDto.getNotYetDue()));
-                csvBuilder.appendValue(round((BigDecimal) agedReceivableDto.getTotalAmountByPeriod().get(0)));
-                csvBuilder.appendValue(round((BigDecimal) agedReceivableDto.getTotalAmountByPeriod().get(1)));
-                csvBuilder.appendValue(round((BigDecimal) agedReceivableDto.getTotalAmountByPeriod().get(2)));
-                csvBuilder.appendValue(round((BigDecimal) agedReceivableDto.getTotalAmountByPeriod().get(3)));
-                csvBuilder.appendValue(round((BigDecimal) agedReceivableDto.getGeneralTotal()));
-                csvBuilder.appendValue(round((BigDecimal) agedReceivableDto.getGeneralTotal()));
-                csvBuilder.appendValue(currencyCode);
-                csvBuilder.appendValue(round((BigDecimal) agedReceivableDto.getBilledAmount()));
-                csvBuilder.appendValue(agedReceivableDto.getTradingCurrency());
-              
-                csvBuilder.startNewLine();
-            }
-            csvBuilder.toFile(dirOutput + File.separator + filename);
-            log.debug("execute file generated:{}", dirOutput + File.separator + filename);
-        } catch (Exception e) {
-            log.error("Error on AgedBalanceReporting:", e);
-            throw new BusinessException(e.getMessage());
-        }
-    }
-    private String round(BigDecimal amount) {
-        if (amount == null) {
-            return "";
-        }
-        if (amount.scale() > 4) {
-            String amountAsString = "" + amount;
-            amount = new BigDecimal(amount.longValue() + "." + amountAsString.substring(amountAsString.indexOf(".") + 1).substring(0, 4));
-        }
-        amount = amount.setScale(2, RoundingMode.UP);
-        return amount.toPlainString();
-    }
-  
-  public String getAgedReceivables(String customerAccountCode, String sellerCode, Date startDate, Date startDueDate, Date endDueDate, PaginationConfiguration paginationConfiguration,
-                                             Integer stepInDays, Integer numberOfPeriods, String invoiceNumber, String customerAccountDescription, String sellerDescription, String tradingCurrency, String functionalCurrency) {        
-    	String datePattern = "yyyy-MM-dd";
-        StringBuilder query = new StringBuilder("Select ao.customerAccount.id, sum (case when ao.dueDate >= '")
-                .append(DateUtils.formatDateWithPattern(startDate, datePattern))
-                .append("'  then  ao.unMatchingAmount else 0 end ) as notYetDue,");
-    	if(stepInDays != null && numberOfPeriods != null) {
-    	    String alias;
-    	    int step;
-    	    if(numberOfPeriods > 1) {
-                query.append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then ao.amountWithoutTax else 0 end ) as sum_1_" + stepInDays + ",")
-                        .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then ao.unMatchingAmount else 0 end ) as sum_1_" + stepInDays + "_awt,")
-                        .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then ao.taxAmount else 0 end ) as sum_1_" + stepInDays + "_tax,");
-                for (int iteration = 1; iteration < numberOfPeriods - 1; iteration++) {
-                    step = iteration * stepInDays;
-                    alias = "as sum_"+ (stepInDays * iteration + 1) + "_" + (step * 2);
-                    query.append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -(step + stepInDays)), datePattern)+"' then ao.amountWithoutTax else 0 end ) ")
-                            .append(alias).append(" , ")
-                            .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -(step + stepInDays)), datePattern)+"' then ao.unMatchingAmount  else 0 end ) ")
-                            .append(alias).append("_awt, ")
-                            .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -(step + stepInDays)), datePattern)+"' then  ao.taxAmount else 0 end ) ")
-                            .append(alias).append("_tax, ");
-                }
-            }
-            step = numberOfPeriods > 1  ? stepInDays * (numberOfPeriods - 1) : stepInDays;
-            query.append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"'  then ao.amountWithoutTax else 0 end ) as sum_" + step + "_up,")
-                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"'  then ao.unMatchingAmount else 0 end ) as sum_" + step + "_up_awt,")
-                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' then ao.taxAmount else 0 end ) as sum_" + step + "_up_tax,");
-        } else {
-    	    query.append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' then ao.amountWithoutTax else 0 end ) as sum_1_30,")
-    	            .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' then ao.unMatchingAmount else 0 end ) as sum_1_30_awt,")
-    	            .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' then ao.taxAmount else 0 end ) as sum_1_30_tax,")
-                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' then ao.amountWithoutTax  else 0 end ) as sum_31_60,")
-                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' then ao.unMatchingAmount else 0 end ) as sum_31_60_awt,")
-                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' then ao.taxAmount else 0 end ) as sum_31_60_tax,")
-                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"' then ao.amountWithoutTax else 0 end ) as sum_61_90,")
-                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"' then ao.unMatchingAmount else 0 end ) as sum_61_90_awt,")
-                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"' then ao.taxAmount else 0 end ) as sum_61_90_tax,")
-                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then ao.amountWithoutTax else 0 end ) as sum_90_up,")
-                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then ao.unMatchingAmount else 0 end ) as sum_90_up_awt,")
-                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then ao.taxAmount else 0 end ) as sum_90_up_tax,");
-        }
-        query.append(" ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.seller.description, ao.seller.code, ao.dueDate, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.invoice.billingAccount.id ")
-                .append("from ")
-                .append(RecordedInvoice.class.getSimpleName())
-                .append(" as ao");
-        QueryBuilder qb = new QueryBuilder(query.toString());
-        qb.addSql("(ao.matchingStatus='"+MatchingStatusEnum.O+"' or ao.matchingStatus='"+MatchingStatusEnum.P+"') ");
-        qb.addSql("ao.invoice.invoiceType.excludeFromAgedTrialBalance = false");
-        ofNullable(customerAccountCode).ifPresent(ca -> qb.addSql("UPPER(ao.customerAccount.code) like '%" + customerAccountCode.toUpperCase() +"%'"));
-        ofNullable(customerAccountDescription).ifPresent(caDescription -> qb.addSql("UPPER(ao.customerAccount.description) like '%" + caDescription.toUpperCase() +"%'"));
-        ofNullable(sellerDescription).ifPresent(sDescription -> qb.addSql("UPPER(ao.seller.description) like ('%" + sDescription.toUpperCase() +"%')"));
-        ofNullable(sellerCode).ifPresent(sel -> qb.addSql("UPPER(ao.seller.code) like '%" + sellerCode.toUpperCase() +"%'"));
-        ofNullable(invoiceNumber).ifPresent(invNumber -> qb.addSql("ao.invoice.invoiceNumber = '" + invNumber +"'"));
-        ofNullable(tradingCurrency).ifPresent(fc -> qb.addSql("ao.invoice.tradingCurrency.currency.currencyCode = '" + fc + "'"));
-        if (startDueDate != null && endDueDate != null) {
-            qb.addSql("(ao.dueDate >= '" + DateUtils.formatDateWithPattern(startDueDate, datePattern)
-                    + "' and ao.dueDate <= '" + DateUtils.formatDateWithPattern(endDueDate, datePattern) + "')");
-        }
-        if (DateUtils.compare(startDate, new Date()) < 0) {
-            qb.addSql("ao.invoice.status = '" + VALIDATED + "' and ao.invoice.invoiceDate <= '"
-                    + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), "yyyy-MM-dd HH:mm:ss") + "'");
-            qb.addSql("(ao.invoice.paymentStatus = '" + PENDING + "' or ao.invoice.paymentStatus = '" + PPAID + "' or ao.invoice.paymentStatus ='" + UNPAID + "')");
-        }
-        qb.addGroupCriterion("ao.customerAccount.id, ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.seller.description, ao.seller.code, ao.dueDate, ao.amount, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.invoice.billingAccount.id ");
-        qb.addPaginationConfiguration(paginationConfiguration);
-          return qb.getSqlString();
-    }
-  
-  public List<AgedReceivableDto> buildDynamicResponse(List<Object[]> agedReceivables, int numberOfPeriods) {
-		List<AgedReceivableDto> responseDto = new  ArrayList<>();
-		for (int index = 0; index < agedReceivables.size(); index++) {
-			Object[] agedReceivable = agedReceivables.get(index);
-			AgedReceivableDto agedReceivableDto = new AgedReceivableDto();
-			agedReceivableDto.setNotYetDue((BigDecimal) agedReceivable[1]);
-			int sumIndex;
-			int startingSumIndex = 2;
-			agedReceivableDto.setNetAmountByPeriod(new ArrayList<>());
-			agedReceivableDto.setTotalAmountByPeriod(new ArrayList<>());
-			agedReceivableDto.setTaxAmountByPeriod(new ArrayList<>());
-			for (sumIndex = 0; sumIndex < numberOfPeriods; sumIndex++) {
-				agedReceivableDto.getNetAmountByPeriod().add((BigDecimal) agedReceivable[startingSumIndex]);
-				agedReceivableDto.getTotalAmountByPeriod().add((BigDecimal) agedReceivable[startingSumIndex + 1]);
-				agedReceivableDto.getTaxAmountByPeriod().add((BigDecimal) agedReceivable[startingSumIndex + 2]);
-				startingSumIndex += 3;
-			}
-			agedReceivableDto.setCustomerAccountName(agedReceivable[++startingSumIndex] == null ? null : getName((Name) agedReceivable[startingSumIndex]));
-			agedReceivableDto.setCustomerAccountDescription((String) agedReceivable[++startingSumIndex]);
-			agedReceivableDto.setSellerDescription((String) agedReceivable[++startingSumIndex]);
-			agedReceivableDto.setSellerCode((String) agedReceivable[++startingSumIndex]);
-			agedReceivableDto.setDueDate(agedReceivable[++startingSumIndex] == null ? null : ((Date) agedReceivable[startingSumIndex]));
-			agedReceivableDto.setTradingCurrency((String) agedReceivable[++startingSumIndex]);
-			BigDecimal generalTotal = agedReceivableDto.getTotalAmountByPeriod().stream().reduce(ZERO, BigDecimal::add);
-			agedReceivableDto.setGeneralTotal(generalTotal);
-			agedReceivableDto.setInvoiceId((Long) agedReceivable[++startingSumIndex]);
-			agedReceivableDto.setInvoiceNumber((String) agedReceivable[++startingSumIndex]);
-			agedReceivableDto.setBilledAmount((BigDecimal) agedReceivable[++startingSumIndex]);
-			agedReceivableDto.setCustomerAccountCode((String) agedReceivable[++startingSumIndex]);
-			if(agedReceivable[++startingSumIndex] != null)
-				agedReceivableDto.setBilledAmount((BigDecimal) agedReceivable[startingSumIndex]);
-			agedReceivableDto.setCustomerId((Long) agedReceivable[++startingSumIndex]);
-			responseDto.add(agedReceivableDto);
-		}
-		return responseDto;
-	}
-  
-  	private String getName(Name name) {
-		return (name.getFirstName() != null ? name.getFirstName() : "")
-				+ (name.getLastName() != null ? " " + name.getLastName() : "");
-	}
-}
-				]]>
-			</column>
+            <column name="src_type" value="JAVA_CLASS" />
         </insert>
 
         <insert tableName="dwh_report_extract">
@@ -1625,10 +1394,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="created" valueDate="${db.current.time}" />
             <column name="code" value="org.meveo.service.script.presale.CustomerRevenuReporting" />
             <column name="description" value="Customer Revenu Reporting Script" />
-            <column name="src_type" value="JAVA" />
-            <column name="script">
-                <![CDATA[package org.meveo.service.script.presale; import java.io.File; import java.math.BigDecimal; import java.math.RoundingMode; import java.util.Date; import java.util.HashMap; import java.util.List; import java.util.Map; import org.meveo.admin.exception.BusinessException; import org.meveo.commons.utils.CsvBuilder; import org.meveo.model.payments.CustomerAccount; import org.meveo.service.payments.impl.AccountOperationService; import org.meveo.service.payments.impl.CustomerAccountService; import org.meveo.service.script.finance.ReportExtractScript; import org.slf4j.Logger; import org.slf4j.LoggerFactory; /** * @author anasseh * */ public class CustomerRevenuReporting extends ReportExtractScript { private static final Logger log = LoggerFactory.getLogger(CustomerRevenuReporting.class); private CustomerAccountService customerAccountService = (CustomerAccountService) getServiceInterface(CustomerAccountService.class.getSimpleName()); @Override public void execute(Map<String, Object> executeContext) throws BusinessException { try { log.debug("execute executeContext:{}", executeContext); Date startDate = (Date) executeContext.get(ReportExtractScript.START_DATE); Date endDate = (Date) executeContext.get(ReportExtractScript.END_DATE); Map<String, Object> params = new HashMap<String, Object>(); params.put("startDateIN", startDate); params.put("endDateIN", endDate); String query = "Select ao.customerAccount.id , sum (ao.amount) as sum_amount from AccountOperation ao where ao.transactionCategory = 'DEBIT' and ao.dueDate >=:startDateIN " + "and ao.dueDate <:endDateIN  group by ao.customerAccount order by sum_amount desc"; List<Object[]> aos = (List<Object[]>)  customerAccountService.executeSelectQuery(query,params); log.debug("execute aos size:{}", aos == null ? null : aos.size()); String dirOutput = String.valueOf(executeContext.get(ReportExtractScript.DIR)); String filename = String.valueOf(executeContext.get(CustomerRevenuReporting.FILENAME)); CsvBuilder csvBuilder = new CsvBuilder(";", false); String[] header = { "CA_DESC", "C_DESC","SUM_REVENUE" }; csvBuilder.appendValues(header); csvBuilder.startNewLine(); for (Object[] ao : aos) { CustomerAccount ca = customerAccountService.findById(((Long)ao[0])); csvBuilder.appendValue(ca.getDescription()); csvBuilder.appendValue(ca.getCustomer().getDescription()); csvBuilder.appendValue(round((BigDecimal)ao[1])); csvBuilder.startNewLine(); } csvBuilder.toFile(dirOutput + File.separator + filename); log.debug("execute file generated:{}", dirOutput + File.separator + filename); } catch (Exception e) { log.error("Error on CustomerRevenuReporting:", e); throw new BusinessException(e.getMessage()); } } private String round(BigDecimal amount) { if(amount == null) { return ""; } if (amount.scale() > 4) { String amountAsString = "" + amount; amount = new BigDecimal(amount.longValue() + "." + amountAsString.substring(amountAsString.indexOf(".") + 1).substring(0, 4)); } amount = amount.setScale(2, RoundingMode.UP); return amount.toPlainString(); } }]]>
-            </column>
+            <column name="src_type" value="JAVA_CLASS" />
         </insert>
         <insert tableName="dwh_report_extract">
             <column name="id" valueNumeric="-28" />
@@ -1660,12 +1426,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="created" valueDate="${db.current.time}" />
             <column name="code" value="org.meveo.service.script.presale.CustomerPerOfferReporting" />
             <column name="description" value="Customer Per Offer Reporting Script" />
-            <column name="src_type" value="JAVA" />
-            <column name="script">
-                <![CDATA[
-                package org.meveo.service.script.presale; import java.io.File; import java.util.Date; import java.util.HashMap; import java.util.List; import java.util.Map; import org.meveo.admin.exception.BusinessException; import org.meveo.commons.utils.CsvBuilder; import org.meveo.commons.utils.StringUtils; import org.meveo.model.billing.UserAccount; import org.meveo.model.catalog.OfferTemplate; import org.meveo.service.billing.impl.SubscriptionService; import org.meveo.service.script.finance.ReportExtractScript; import org.slf4j.Logger; import org.slf4j.LoggerFactory; /** * @author anasseh * */ public class CustomerPerOfferReporting extends ReportExtractScript { private static final Logger log = LoggerFactory.getLogger(CustomerPerOfferReporting.class); private SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface(SubscriptionService.class.getSimpleName()); @Override public void execute(Map<String, Object> executeContext) throws BusinessException { try { log.debug("execute executeContext:{}", executeContext); Date startDate = (Date) executeContext.get(ReportExtractScript.START_DATE); String offerCode = (String) executeContext.get("OFFER_CODE"); Map<String, Object> params = new HashMap<String, Object>(); params.put("subDateIN", startDate); String query = "Select distinct sub.offer, sub.userAccount from Subscription sub where sub.subscriptionDate >:subDateIN "; if (!StringUtils.isBlank(offerCode)) { query += " and sub.offer.code =:offCodeIN "; params.put("offCodeIN", offerCode); } List<Object[]> rows = (List<Object[]>) subscriptionService.executeSelectQuery(query  + "order by sub.offer.code",params); log.debug("execute rows size:{}", rows == null ? null : rows.size()); String dirOutput = String.valueOf(executeContext.get(ReportExtractScript.DIR)); String filename = String.valueOf(executeContext.get(CustomerPerOfferReporting.FILENAME)); CsvBuilder csvBuilder = new CsvBuilder(";", false); String[] header = { "OFF_CODE", "OFF_DESC", "UA_DESC",  "BA_DESC",  "CA_DESC", "C_DESC" }; csvBuilder.appendValues(header); csvBuilder.startNewLine(); for (Object[] row : rows) { csvBuilder.appendValue(((OfferTemplate)row[0]).getCode()); csvBuilder.appendValue(((OfferTemplate)row[0]).getDescription()); csvBuilder.appendValue(((UserAccount)row[1]).getDescription()); csvBuilder.appendValue(((UserAccount)row[1]).getBillingAccount().getDescription()); csvBuilder.appendValue(((UserAccount)row[1]).getBillingAccount().getCustomerAccount().getDescription()); csvBuilder.appendValue(((UserAccount)row[1]).getBillingAccount().getCustomerAccount().getCustomer().getDescription()); csvBuilder.startNewLine(); } csvBuilder.toFile(dirOutput + File.separator + filename); log.debug("execute file generated:{}", dirOutput + File.separator + filename); } catch (Exception e) { log.error("Error on CustomerPerOfferReporting:", e); throw new BusinessException(e.getMessage()); } } }
-                ]]>
-            </column>
+            <column name="src_type" value="JAVA_CLASS" />
         </insert>
         <insert tableName="dwh_report_extract">
             <column name="id" valueNumeric="-30" />
@@ -1788,6 +1549,65 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="version" valueNumeric="1" />
             <column name="entity_class" value="Seller" />
             <column name="sequence_id" valueNumeric="-2" />
+        </insert>
+    </changeSet>
+    
+    
+    <changeSet id="INTRD-263_20210716" author="ZBariki">
+        <insert tableName="com_message_template">
+            <column name="media" value="EMAIL" />
+            <column name="id" valueSequenceNext="com_msg_tmpl_seq" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="REPORT_QUERY_RESULT_SUCCESS" />
+            <column name="type" value="OTHER"/>
+            <column name="tag_start" value="#{"/>
+            <column name="tag_end" value="}" />
+            <column name="description" value="Report query result" />
+            <column name="subject" value="[opencell] Query result #{reportQueryName} #{startDate}" />
+            <column name="htmlcontent">
+                <![CDATA[Dear #{userName},<br>
+<br>
+The result for your query is ready.<br>
+Check the result on <a href="#{portalResultLink}">Opencell Portal</a><br>
+Query : #{reportQueryName}<br>
+Started : #{startDate}<br>
+Duration : #{duration}<br>
+Line count : #{lineCount}<br>
+<br>
+Best regards,<br>
+Opencell team.
+                ]]>
+            </column>
+        </insert>
+        <insert tableName="com_message_template">
+            <column name="media" value="EMAIL" />
+            <column name="id" valueSequenceNext="com_msg_tmpl_seq"/>
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="REPORT_QUERY_RESULT_FAILURE" />
+            <column name="type" value="OTHER" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="description" value="Report query failure notification" />
+            <column name="subject" value="[opencell] Query failed #{reportQueryName} #{startDate}" />
+            <column name="textcontent">
+                <![CDATA[Dear #{userName},
+
+Query execution failed with error :
+#{error}
+
+Contact your administrator or support.
+
+Query : #{reportQueryName}
+Started : #{startDate}
+Duration : #{duration}
+
+Best regards,
+
+Opencell team.
+                ]]>
+            </column>
         </insert>
     </changeSet>
     
