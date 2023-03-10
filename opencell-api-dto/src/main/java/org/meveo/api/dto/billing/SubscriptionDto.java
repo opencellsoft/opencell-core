@@ -245,6 +245,12 @@ public class SubscriptionDto extends BusinessEntityDto {
     @XmlElementWrapper(name = "discountPlanInstancesToRemove")
     @XmlElement(name = "discountPlanInstancesToRemove")
     private List<String> discountPlanInstancesToRemove;
+
+    /**
+     * Contract code
+     */
+	@Schema(description = "code of existing contract")
+	private String contractCode;
     
     /**
      * Instantiates a new subscription dto.
@@ -923,4 +929,13 @@ public class SubscriptionDto extends BusinessEntityDto {
     public void setDiscountPlanInstancesToRemove(List<String> discountPlanInstancesToRemove) {
         this.discountPlanInstancesToRemove = discountPlanInstancesToRemove;
     }
+
+	public String getContractCode() {
+		return contractCode;
+	}
+
+	public void setContractCode(String contractCode) {
+		this.contractCode = contractCode;
+	}
+    
 }
