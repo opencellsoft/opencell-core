@@ -187,5 +187,23 @@ public class RecordedInvoice extends AccountOperation {
     public void setConvertedNetToPay(BigDecimal convertedNetToPay) {
         this.convertedNetToPay = convertedNetToPay;
     }
+	
+	@Override
+	public BigDecimal getAppliedRate() {
+	    if(super.getAppliedRate() == null && invoice != null && invoice.getAppliedRate() != null) {
+	        return invoice.getAppliedRate(); 
+	    }else {
+	        return super.getAppliedRate();  
+	    }
+    }
+
+	@Override
+    public Date getAppliedRateDate() {
+        if(super.getAppliedRateDate() == null && invoice != null && invoice.getLastAppliedRateDate() != null) {
+            return invoice.getLastAppliedRateDate(); 
+        }else {
+            return super.getAppliedRateDate();  
+        }
+    }
 
 }
