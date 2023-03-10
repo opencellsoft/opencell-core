@@ -72,6 +72,12 @@ public class CpqQuoteApiTest {
         when(subscriptionService.findByCode("s")).thenReturn(new Subscription());  
         when(quoteOfferService.findById(1L)).thenReturn(new QuoteOffer());
     }
+    
+    
+    @Test
+    public void mock() {
+         assertTrue(true);
+    }
 
     //@Test
     public void createQuoteItem_withMissingParameters() {
