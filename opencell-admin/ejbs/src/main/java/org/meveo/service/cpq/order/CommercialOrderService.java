@@ -212,6 +212,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				subscription.setPaymentMethod(order.getBillingAccount().getCustomerAccount().getPaymentMethods().get(0));
 				subscription.setOrder(order);
 				subscription.setOrderOffer(offer);
+				subscription.setContract((offer.getContract() != null)? offer.getContract() : order.getContract());
 				subscription.setSubscriptionRenewal(offer.getOfferTemplate() != null ? offer.getOfferTemplate().getSubscriptionRenewal() : null);
 				subscription.setSalesPersonName(order.getSalesPersonName());
 				subscriptionService.create(subscription);
