@@ -1,5 +1,11 @@
 package org.meveo.service.cpq;
 
+import static java.lang.String.format;
+import static org.meveo.model.catalog.ChargeTemplateStatusEnum.ACTIVE;
+import static org.meveo.model.cpq.enums.ProductStatusEnum.CLOSED;
+import static org.meveo.model.cpq.enums.ProductStatusEnum.DRAFT;
+import static org.meveo.model.cpq.enums.VersionStatusEnum.PUBLISHED;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -18,7 +24,6 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.DatePeriod;
-import org.meveo.model.catalog.ChargeTemplateStatusEnum;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
 import org.meveo.model.cpq.Product;
@@ -54,13 +59,6 @@ public class ProductService extends BusinessService<Product> {
 	private final static String PRODUCT_CAN_NOT_CHANGE_THE_STATUS = "product (%s) can not change the status beacause it not draft";
 	private static final String PRODUCT_CODE_EXIST = "code %s of the product already exist!";
 	
-	/*@Inject
-	private CustomerBrandService customerBrandService;
-	@Inject
-	private DiscountPlanService discountPlanService;
-	@Inject
-	private ProductLineService productLineService;*/
-	
 	@Inject
 	private CatalogHierarchyBuilderService catalogHierarchyBuilderService;
 	@Inject private PricePlanMatrixColumnService pricePlanMatrixColumnService;
@@ -93,13 +91,9 @@ public class ProductService extends BusinessService<Product> {
 	public Product updateProduct(Product product) throws BusinessException{
 		product.getProductVersions().size();
 		log.info("updating product {}", product.getCode());
-//		if(product.getStatus().equals(ProductStatusEnum.ACTIVE)) {
-//			LOGGER.warn("the product {} can not be updated, because of its status => {}", product.getCode(), product.getStatus().toString());
-//			throw new BusinessException(String.format(PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, product.getCode(), product.getStatus().toString()));
-//		}
 		if(product.getStatus().equals(ProductStatusEnum.CLOSED)) {
 			log.warn("the product {} can not be updated, because of its status => {}", product.getCode(), product.getStatus().toString());
-			throw new BusinessException(String.format(PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, product.getCode(), product.getStatus().toString()));
+			throw new BusinessException(format(PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, product.getCode(), product.getStatus().toString()));
 		}
 		
 		update(product);
@@ -175,7 +169,7 @@ public class ProductService extends BusinessService<Product> {
 				}
 			});
     		for (ProductVersion pv : productVersions) {
-				if(VersionStatusEnum.PUBLISHED == pv.getStatus()) {
+				if(PUBLISHED == pv.getStatus()) {
 					productVersion = pv;
 					break;
 				}
@@ -220,11 +214,11 @@ public class ProductService extends BusinessService<Product> {
 		
 		final Product deleteProduct = findById(id);
 		if(deleteProduct == null) {
-			throw new BusinessException(String.format(PRODUCT_UNKWON, id));
+			throw new BusinessException(format(PRODUCT_UNKWON, id));
 		}
 		if(deleteProduct.getStatus().equals(ProductStatusEnum.ACTIVE)) {
 			LOGGER.warn("product ({}) can not be removed, because its status is active", deleteProduct.getCode());
-			throw new BusinessException(String.format(PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, deleteProduct.getCode(), deleteProduct.getStatus().toString()));
+			throw new BusinessException(format(PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, deleteProduct.getCode(), deleteProduct.getStatus().toString()));
 		}
 		getEntityManager().remove(deleteProduct);
 		LOGGER.info("product ({}) is deleted successfully", deleteProduct.getCode());
@@ -235,35 +229,40 @@ public class ProductService extends BusinessService<Product> {
 	 * change the status of product.
 	 * <p>the product with status DRAFT can be change to ACTIVE or CLOSED.<br />
 	 * if the product status is ACTIVE then the only value possible is CLOSED otherwise it will throw exception.</p>
-	 * @param product
+	 * @param productCode product code
 	 * @param status
-	 * @return
-	 * @throws ProductException
+	 * @return Product
+	 * @throws BusinessException
 	 */
-	public Product updateStatus(String productCode, ProductStatusEnum status) throws BusinessException{
-		Product product =findByCode(productCode);
-		if(product == null)
+	public Product updateStatus(String productCode, ProductStatusEnum status) throws BusinessException {
+		Product product = findByCode(productCode);
+		if (product == null)
 			throw new EntityDoesNotExistsException(Product.class, productCode);
-		if(product.getStatus().equals(ProductStatusEnum.DRAFT)) {
-			ProductVersion productVersion= productVersionService.findByProductAndStatus(productCode,VersionStatusEnum.PUBLISHED);
-			if(productVersion==null) {
+		if (CLOSED.equals(status)) {
+			product.setStatus(status);
+			product.setStatusDate(Calendar.getInstance().getTime());
+			product.getProductVersions()
+					.forEach(productVersion -> productVersion.setStatus(VersionStatusEnum.CLOSED));
+			return update(product);
+		}
+		if (product.getStatus().equals(DRAFT)) {
+			ProductVersion productVersion = productVersionService.findByProductAndStatus(productCode, PUBLISHED);
+			if (productVersion == null) {
 				throw new MeveoApiException("At least one version must be published");
 			}
-			Optional<ProductChargeTemplateMapping> firstNonActiveLinkedCharge = product.getProductCharges().stream()
-					.filter(chargeTemplateMapping -> !chargeTemplateMapping.getChargeTemplate().getStatus().equals(ChargeTemplateStatusEnum.ACTIVE))
+			Optional<ProductChargeTemplateMapping> firstNonActiveLinkedCharge = product.getProductCharges()
+					.stream()
+					.filter(chargeTemplateMapping
+							-> !chargeTemplateMapping.getChargeTemplate().getStatus().equals(ACTIVE))
 					.findFirst();
-			if(firstNonActiveLinkedCharge.isPresent()){
+			if (firstNonActiveLinkedCharge.isPresent()) {
 				throw new BusinessException("All linked charges must be activated before activating the product!");
 			}
 			product.setStatus(status);
 			product.setStatusDate(Calendar.getInstance().getTime());
-			return  update(product);
-		}else if (ProductStatusEnum.ACTIVE.equals(product.getStatus()) && ProductStatusEnum.CLOSED.equals(status)) {
-			product.setStatus(status);
-			product.setStatusDate(Calendar.getInstance().getTime());
-			return  update(product);
+			return update(product);
 		}
-		throw new BusinessException(String.format(PRODUCT_CAN_NOT_CHANGE_THE_STATUS, product.getCode()));
+		throw new BusinessException(format(PRODUCT_CAN_NOT_CHANGE_THE_STATUS, product.getCode()));
 	}
 	
 	/**
@@ -275,9 +274,9 @@ public class ProductService extends BusinessService<Product> {
 	public void create(Product product) throws BusinessException {
 		
 		if(this.findByCode(product.getCode()) != null) {
-			throw new EntityAlreadyExistsException(String.format(PRODUCT_CODE_EXIST, product.getCode()));
+			throw new EntityAlreadyExistsException(format(PRODUCT_CODE_EXIST, product.getCode()));
 		}
-		product.setStatus(ProductStatusEnum.DRAFT);
+		product.setStatus(DRAFT);
 		product.setStatusDate(Calendar.getInstance().getTime());
 		super.create(product);
 	}
@@ -343,7 +342,7 @@ public class ProductService extends BusinessService<Product> {
                 
                 log.debug("code: " + code + " - pv.getStatus(): " + pv.getStatus() + " - date: " + date + " - conditionValidity: " + conditionValidity);
 
-                if(VersionStatusEnum.PUBLISHED.equals(pv.getStatus()) && conditionValidity)
+                if(PUBLISHED.equals(pv.getStatus()) && conditionValidity)
                 {
                     return Optional.of(pv);
                 }
