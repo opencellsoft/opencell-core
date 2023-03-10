@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="EInvoice-ADJ"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Rabie-Invoice-08032023"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -184,6 +184,10 @@
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/@number"/>
 		<fieldDescription><![CDATA[/invoice/@number]]></fieldDescription>
 	</field>
+	<field name="invoiceCodeType" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/@invoiceCodeType"/>
+		<fieldDescription><![CDATA[/invoice/@invoiceCodeType]]></fieldDescription>
+	</field>
 	<field name="invoiceStatus" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/@status"/>
 		<fieldDescription><![CDATA[/invoice/@status]]></fieldDescription>
@@ -239,17 +243,17 @@
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/customer/contact/@email"/>
 		<fieldDescription><![CDATA[/invoice/header/customer/contact/@email]]></fieldDescription>
 	</field>
-	<field name="vatNo" class="java.lang.String">
-		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/customer/@vatNo"/>
-		<fieldDescription><![CDATA[/invoice/header/customer/@vatNo]]></fieldDescription>
+	<field name="baVatNo" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/billingAccount/@vatNo"/>
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/@vatNo]]></fieldDescription>
 	</field>
 	<field name="contracts" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/customer/@vatNo"/>
 		<fieldDescription><![CDATA[/invoice/header/customer/@contracts]]></fieldDescription>
 	</field>
-	<field name="etpNo" class="java.lang.String">
-		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/customer/@etpNo"/>
-		<fieldDescription><![CDATA[/invoice/header/customer/@etpNo]]></fieldDescription>
+	<field name="baRegNo" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/billingAccount/@registrationNo"/>
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/@registrationNo]]></fieldDescription>
 	</field>
 	<field name="mobile" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/customer/contact/@mobile"/>
@@ -350,7 +354,7 @@
 							</graphicElement>
 						</rectangle>
 						<staticText>
-							<reportElement mode="Opaque" x="20" y="209" width="159" height="23" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="72e88def-ea91-49d3-a5ef-bb4ee290a66f">
+							<reportElement mode="Opaque" x="20" y="209" width="159" height="22" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="72e88def-ea91-49d3-a5ef-bb4ee290a66f">
 								<property name="com.jaspersoft.studio.unit.x" value="px"/>
 								<property name="com.jaspersoft.studio.unit.y" value="px"/>
 								<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -385,7 +389,7 @@
 (($F{subCode}!=null && !String.valueOf($F{subCode}).isEmpty() && !String.valueOf($F{subCode}).equals("null")) ? "<style isBold='true'>Subscription: </style>" + $F{subCode}+ "\n" : "")]]></textFieldExpression>
 						</textField>
 						<textField>
-							<reportElement x="24" y="33" width="201" height="87" uuid="37417c6f-aeec-4768-8e5e-5aedbb77505a"/>
+							<reportElement x="24" y="33" width="201" height="97" uuid="37417c6f-aeec-4768-8e5e-5aedbb77505a"/>
 							<textElement textAlignment="Left" verticalAlignment="Top" markup="styled">
 								<font fontName="Vista Sans OT Bold" size="10" isBold="false"/>
 							</textElement>
@@ -400,8 +404,8 @@
 + "\n"
 + (($F{caCountry}!=null && !String.valueOf($F{caCountry}).isEmpty() && !String.valueOf($F{caCountry}).equals("null")) ? $F{caCountry} : "")
 + "\n"
-+ (($F{etpNo}!=null && !String.valueOf($F{etpNo}).isEmpty() && !String.valueOf($F{etpNo}).equals("null")) ? "<style isBold='true'>Reg.nr.: </style>" + $F{etpNo}+ "\n" : "")
-+ (($F{vatNo}!=null && !String.valueOf($F{vatNo}).isEmpty() && !String.valueOf($F{vatNo}).equals("null")) ? "<style isBold='true'>VAT: </style>" + $F{vatNo}+ "\n" : "")]]></textFieldExpression>
++ (($F{baRegNo}!=null && !String.valueOf($F{baRegNo}).isEmpty() && !String.valueOf($F{baRegNo}).equals("null")) ? "<style isBold='true'>Reg.nr.: </style>" + $F{baRegNo}+ "\n" : "")
++ (($F{baVatNo}!=null && !String.valueOf($F{baVatNo}).isEmpty() && !String.valueOf($F{baVatNo}).equals("null")) ? "<style isBold='true'>VAT: </style>" + $F{baVatNo}+ "\n" : "")]]></textFieldExpression>
 						</textField>
 						<staticText>
 							<reportElement mode="Opaque" x="20" y="123" width="159" height="23" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="041d8407-dc27-421c-8369-535a303ef668">
@@ -422,23 +426,24 @@
 							<text><![CDATA[Delivery address]]></text>
 						</staticText>
 						<textField>
-							<reportElement x="24" y="147" width="202" height="60" uuid="f5ff75b6-07d3-4380-a507-85c8544fcf35"/>
+							<reportElement x="24" y="147" width="202" height="73" uuid="f5ff75b6-07d3-4380-a507-85c8544fcf35"/>
 							<textElement textAlignment="Left" verticalAlignment="Top">
 								<font fontName="Vista Sans OT Bold" size="10" isBold="false"/>
 							</textElement>
-							<textFieldExpression><![CDATA[(($F{caQuality}!=null && !String.valueOf($F{caQuality}).isEmpty() && !String.valueOf($F{caQuality}).equals("null")) ? $F{caQuality} + " " : "")
-+ (($F{caFirstName}!=null && !String.valueOf($F{caFirstName}).isEmpty() && !String.valueOf($F{caFirstName}).equals("null")) ? $F{caFirstName} + " " : "") 
-+ (($F{caName}!=null && !String.valueOf($F{caName}).isEmpty() && !String.valueOf($F{caName}).equals("null")) ? $F{caName} : "") 
+							<textFieldExpression><![CDATA[(($F{baQuality}!=null && !String.valueOf($F{baQuality}).isEmpty() && !String.valueOf($F{baQuality}).equals("null")) ? $F{baQuality} + " " : "")
++ (($F{baFirstName}!=null && !String.valueOf($F{baFirstName}).isEmpty() && !String.valueOf($F{baFirstName}).equals("null")) ? $F{baFirstName} + " " : "") 
++ (($F{baName}!=null && !String.valueOf($F{baName}).isEmpty() && !String.valueOf($F{baName}).equals("null")) ? $F{baName} : "") 
 + "\n"
-+ (($F{caAddress1}!=null && !String.valueOf($F{caAddress1}).isEmpty() && !String.valueOf($F{caAddress1}).equals("null")) ? $F{caAddress1} + "\n" : "")
-+ (($F{caAddress2}!=null && !String.valueOf($F{caAddress2}).isEmpty() && !String.valueOf($F{caAddress2}).equals("null")) ? $F{caAddress2} + "\n" : "")
-+ (($F{caPostalCode}!=null && !String.valueOf($F{caPostalCode}).isEmpty() && !String.valueOf($F{caPostalCode}).equals("null")) ? $F{caPostalCode} + " " : "")
-+ (($F{caCity}!=null && !String.valueOf($F{caCity}).isEmpty() && !String.valueOf($F{caCity}).equals("null")) ? $F{caCity} : "")
++ (($F{baAddrLine1}!=null && !String.valueOf($F{baAddrLine1}).isEmpty() && !String.valueOf($F{baAddrLine1}).equals("null")) ? $F{baAddrLine1} + "\n" : "")
++ (($F{baAddrLine2}!=null && !String.valueOf($F{baAddrLine2}).isEmpty() && !String.valueOf($F{baAddrLine2}).equals("null")) ? $F{baAddrLine2} + "\n" : "")
++ (($F{baAddrZip}!=null && !String.valueOf($F{baAddrZip}).isEmpty() && !String.valueOf($F{baAddrZip}).equals("null")) ? $F{baAddrZip} + " " : "")
++ (($F{baCity}!=null && !String.valueOf($F{baCity}).isEmpty() && !String.valueOf($F{baCity}).equals("null")) ? $F{baCity} : "")
 + "\n"
-+ (($F{caCountry}!=null && !String.valueOf($F{caCountry}).isEmpty() && !String.valueOf($F{caCountry}).equals("null")) ? $F{caCountry} : "")]]></textFieldExpression>
++ (($F{baCountry}!=null && !String.valueOf($F{baCountry}).isEmpty() && !String.valueOf($F{baCountry}).equals("null")) ? $F{baCountry} : "")
++ "\n"]]></textFieldExpression>
 						</textField>
 						<staticText>
-							<reportElement mode="Opaque" x="15" y="-66" width="217" height="54" forecolor="#F0F7FA" backcolor="rgba(169, 173, 176, 0.0)" uuid="6ec6b279-7d84-4be1-b2d2-eec6845ed69b">
+							<reportElement mode="Opaque" x="14" y="-71" width="217" height="54" forecolor="#F0F7FA" backcolor="rgba(169, 173, 176, 0.0)" uuid="6ec6b279-7d84-4be1-b2d2-eec6845ed69b">
 								<property name="com.jaspersoft.studio.unit.x" value="px"/>
 								<property name="com.jaspersoft.studio.unit.y" value="px"/>
 								<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -462,7 +467,7 @@
 						<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 					</reportElement>
 					<subreport isUsingCache="true" runToBottom="false">
-						<reportElement positionType="Float" isPrintRepeatedValues="false" x="0" y="0" width="355" height="70" uuid="b44bd58e-33aa-493f-b247-b40b3da8d9e3">
+						<reportElement positionType="Float" isPrintRepeatedValues="false" x="0" y="0" width="355" height="290" uuid="b44bd58e-33aa-493f-b247-b40b3da8d9e3">
 							<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 						</reportElement>
 						<subreportParameter name="xmlDateFormat">
@@ -498,7 +503,7 @@
 		<groupHeader>
 			<band height="70" splitType="Immediate">
 				<subreport>
-					<reportElement x="0" y="-345" width="594" height="403" uuid="47798d30-7f84-4a23-90aa-1f1e129f231b"/>
+					<reportElement x="0" y="-343" width="594" height="400" uuid="47798d30-7f84-4a23-90aa-1f1e129f231b"/>
 					<subreportParameter name="logoPath">
 						<subreportParameterExpression><![CDATA[$P{logoPath}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -516,7 +521,7 @@
 	</group>
 	<group name="5"/>
 	<pageHeader>
-		<band height="137">
+		<band height="140">
 			<textField evaluationTime="Report" isBlankWhenNull="false">
 				<reportElement x="568" y="10" width="17" height="20" uuid="70ddbde0-a609-410d-8301-143597ebd6fe"/>
 				<textElement markup="html">
@@ -544,37 +549,37 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{invoiceStatus}=="VALIDATED" ? "Invoice : " + $F{invoiceNumber} : "Draft Invoice"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{invoiceStatus}=="VALIDATED" ? ($F{invoiceCodeType} != null ? $F{invoiceCodeType} : "Invoice") + ": "+ $F{invoiceNumber} : "Draft " + ($F{invoiceCodeType} != null ? $F{invoiceCodeType} : "Invoice")]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="18" y="86" width="190" height="20" uuid="f9f73956-b4a2-41c9-9fea-f0e4e3956d22"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Date : " + $F{invoiceDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Date: " + $F{invoiceDate}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="18" y="101" width="190" height="20" uuid="f03bb93f-44f7-4b09-a3f9-e78c4d7ecb22"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Due Date : " + $F{dueDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Due Date: " + $F{dueDate}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="242" y="70" width="338" height="60" uuid="ec6e4a89-edc8-445f-a3cb-8827a5725e9b"/>
+				<reportElement x="242" y="70" width="338" height="70" uuid="ec6e4a89-edc8-445f-a3cb-8827a5725e9b"/>
 				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font fontName="Vista Sans OT Bold" size="10" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[(($F{caQuality}!=null && !String.valueOf($F{caQuality}).isEmpty() && !String.valueOf($F{caQuality}).equals("null")) ? $F{caQuality} + " " : "")
-+ (($F{caFirstName}!=null && !String.valueOf($F{caFirstName}).isEmpty() && !String.valueOf($F{caFirstName}).equals("null")) ? $F{caFirstName} + " " : "") 
-+ (($F{caName}!=null && !String.valueOf($F{caName}).isEmpty() && !String.valueOf($F{caName}).equals("null")) ? $F{caName} : "") 
+				<textFieldExpression><![CDATA[(($F{baQuality}!=null && !String.valueOf($F{baQuality}).isEmpty() && !String.valueOf($F{baQuality}).equals("null")) ? $F{baQuality} + " " : "")
++ (($F{baFirstName}!=null && !String.valueOf($F{baFirstName}).isEmpty() && !String.valueOf($F{baFirstName}).equals("null")) ? $F{baFirstName} + " " : "") 
++ (($F{baName}!=null && !String.valueOf($F{baName}).isEmpty() && !String.valueOf($F{baName}).equals("null")) ? $F{baName} : "") 
 + "\n"
-+ (($F{caAddress1}!=null && !String.valueOf($F{caAddress1}).isEmpty() && !String.valueOf($F{caAddress1}).equals("null")) ? $F{caAddress1} + "\n" : "")
-+ (($F{caAddress2}!=null && !String.valueOf($F{caAddress2}).isEmpty() && !String.valueOf($F{caAddress2}).equals("null")) ? $F{caAddress2} + "\n" : "")
-+ (($F{caPostalCode}!=null && !String.valueOf($F{caPostalCode}).isEmpty() && !String.valueOf($F{caPostalCode}).equals("null")) ? $F{caPostalCode} + " " : "")
-+ (($F{caCity}!=null && !String.valueOf($F{caCity}).isEmpty() && !String.valueOf($F{caCity}).equals("null")) ? $F{caCity} : "")
++ (($F{baAddrLine1}!=null && !String.valueOf($F{baAddrLine1}).isEmpty() && !String.valueOf($F{baAddrLine1}).equals("null")) ? $F{baAddrLine1} + "\n" : "")
++ (($F{baAddrLine2}!=null && !String.valueOf($F{baAddrLine2}).isEmpty() && !String.valueOf($F{baAddrLine2}).equals("null")) ? $F{baAddrLine2} + "\n" : "")
++ (($F{baAddrZip}!=null && !String.valueOf($F{baAddrZip}).isEmpty() && !String.valueOf($F{baAddrZip}).equals("null")) ? $F{baAddrZip} + " " : "")
++ (($F{baCity}!=null && !String.valueOf($F{baCity}).isEmpty() && !String.valueOf($F{baCity}).equals("null")) ? $F{baCity} : "")
 + "\n"
-+ (($F{caCountry}!=null && !String.valueOf($F{caCountry}).isEmpty() && !String.valueOf($F{caCountry}).equals("null")) ? $F{caCountry} : "")
++ (($F{baCountry}!=null && !String.valueOf($F{baCountry}).isEmpty() && !String.valueOf($F{baCountry}).equals("null")) ? $F{baCountry} : "")
 + "\n"]]></textFieldExpression>
 			</textField>
 		</band>

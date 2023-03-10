@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="EInvoice-ADJ"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Wafa-Invoice-08032023"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="0.0" lineColor="#000000"/>
@@ -180,6 +180,9 @@
 		<field name="amountHT" class="java.lang.String">
 			<fieldDescription><![CDATA[amountWithTax]]></fieldDescription>
 		</field>
+		<field name="amountWithoutTax" class="java.lang.String">
+			<fieldDescription><![CDATA[amountWithoutTax]]></fieldDescription>
+		</field>
 		<field name="amount" class="java.lang.String">
 			<fieldDescription><![CDATA[amount]]></fieldDescription>
 		</field>
@@ -275,7 +278,7 @@
 		<groupHeader>
 			<band height="340">
 				<rectangle radius="10">
-					<reportElement x="254" y="131" width="327" height="43" forecolor="#F2F4F5" backcolor="#F2F4F5" uuid="cea08215-b38e-46aa-bd62-e0051c5b3821">
+					<reportElement x="254" y="196" width="327" height="43" forecolor="#F2F4F5" backcolor="#F2F4F5" uuid="cea08215-b38e-46aa-bd62-e0051c5b3821">
 						<property name="com.jaspersoft.studio.element.name" value="coordonnees_container"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
@@ -289,17 +292,16 @@
 						<pen lineWidth="0.0" lineColor="rgba(0, 0, 0, 0.0)"/>
 					</graphicElement>
 				</rectangle>
-				<staticText>
+				<textField>
 					<reportElement x="28" y="60" width="87" height="20" uuid="db8c5362-b4e2-4eea-a454-7b251637b088">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<printWhenExpression><![CDATA[$F{paymentMethod}=="CHECK"]]></printWhenExpression>
 					</reportElement>
 					<box padding="1"/>
-					<textElement markup="none">
+					<textElement markup="styled">
 						<font fontName="Arial" size="10" isBold="true"/>
 					</textElement>
-					<text><![CDATA[Previous invoice:]]></text>
-				</staticText>
+					<textFieldExpression><![CDATA[(($F{previousInvoices}!=null && !String.valueOf($F{previousInvoices}).isEmpty() && !String.valueOf($F{previousInvoices}).equals("null")) ? "<style isBold='true'>Previous invoice: </style>" : "")]]></textFieldExpression>
+				</textField>
 				<staticText>
 					<reportElement mode="Opaque" x="20" y="11" width="159" height="23" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="5f5419f5-5826-4eb1-87eb-6e0026cf10d4">
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -319,21 +321,21 @@
 					<text><![CDATA[Other references]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="360" y="135" width="160" height="30" forecolor="#0D0101" uuid="ab46bcea-35b5-4ac0-8515-0e19afc2ba76"/>
+					<reportElement x="360" y="200" width="160" height="30" forecolor="#0D0101" uuid="ab46bcea-35b5-4ac0-8515-0e19afc2ba76"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="16"/>
 					</textElement>
 					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithTax}))]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="260" y="100" width="100" height="27" forecolor="#0D0101" uuid="a53473ae-1837-4e50-97d0-bae7f3e55ea7"/>
+					<reportElement x="260" y="165" width="100" height="27" forecolor="#0D0101" uuid="a53473ae-1837-4e50-97d0-bae7f3e55ea7"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithoutTax}))]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="530" y="136" width="48" height="28" forecolor="#0D0101" uuid="302ed8a5-2d59-4d2d-97e6-a20a009b885d">
+					<reportElement x="530" y="201" width="48" height="28" forecolor="#0D0101" uuid="302ed8a5-2d59-4d2d-97e6-a20a009b885d">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -351,7 +353,7 @@
 					<textFieldExpression><![CDATA[$F{currencySymbol}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="260" y="88" width="100" height="12" forecolor="#0D0101" uuid="89ed1a80-2f6b-4ea6-84ad-cf28e1dad9ef">
+					<reportElement x="260" y="153" width="100" height="12" forecolor="#0D0101" uuid="89ed1a80-2f6b-4ea6-84ad-cf28e1dad9ef">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -369,7 +371,7 @@
 					<text><![CDATA[Total w/o tax]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="260" y="137" width="100" height="26" forecolor="#0D0101" uuid="a4bdb9ff-6624-4191-b2ab-fe8ee405c4d3">
+					<reportElement x="260" y="202" width="100" height="26" forecolor="#0D0101" uuid="a4bdb9ff-6624-4191-b2ab-fe8ee405c4d3">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -387,7 +389,7 @@
 					<text><![CDATA[Net to pay]]></text>
 				</staticText>
 				<line>
-					<reportElement x="260" y="101" width="309" height="1" forecolor="#999999" uuid="60509d8c-612b-425d-b44f-26c3bdd6796e"/>
+					<reportElement x="260" y="166" width="309" height="1" forecolor="#999999" uuid="60509d8c-612b-425d-b44f-26c3bdd6796e"/>
 					<graphicElement>
 						<pen lineWidth="1.0" lineColor="#CCCCCC"/>
 					</graphicElement>
@@ -498,7 +500,7 @@
 					<textFieldExpression><![CDATA[((($F{paymentStatus}!=null && !String.valueOf($F{paymentStatus}).isEmpty() && !String.valueOf($F{paymentStatus}).equals("null") && $F{paymentStatus} == "PAID") && ($F{paymentStatusDate}!=null && !String.valueOf($F{paymentStatusDate}).isEmpty() && !String.valueOf($F{paymentStatusDate}).equals("null"))) ? "<style isBold='true'>Invoice paid on: </style>" + $F{paymentStatusDate} : "")]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="386" y="88" width="73" height="12" forecolor="#0D0101" uuid="86dea03e-7844-453c-bc5e-a1d42220c783">
+					<reportElement x="386" y="153" width="73" height="12" forecolor="#0D0101" uuid="86dea03e-7844-453c-bc5e-a1d42220c783">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -516,7 +518,7 @@
 					<text><![CDATA[Total tax]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="496" y="88" width="73" height="12" forecolor="#0D0101" uuid="71c48fcd-4dfd-46b8-9f65-11035f960db0">
+					<reportElement x="496" y="153" width="73" height="12" forecolor="#0D0101" uuid="71c48fcd-4dfd-46b8-9f65-11035f960db0">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -534,21 +536,21 @@
 					<text><![CDATA[Total incl. tax]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="470" y="100" width="99" height="27" forecolor="#0D0101" uuid="983641ac-adb5-41d1-a3cb-738dbfef4a78"/>
+					<reportElement x="470" y="165" width="99" height="27" forecolor="#0D0101" uuid="983641ac-adb5-41d1-a3cb-738dbfef4a78"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithTax}))]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="360" y="100" width="99" height="27" forecolor="#0D0101" uuid="89c8939a-e199-40dc-a708-52484264ee5b"/>
+					<reportElement x="360" y="165" width="99" height="27" forecolor="#0D0101" uuid="89c8939a-e199-40dc-a708-52484264ee5b"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(new java.math.BigDecimal(Double.valueOf($F{amountWithTax})).subtract(new java.math.BigDecimal(Double.valueOf($F{amountWithoutTax}))))]]></textFieldExpression>
 				</textField>
 				<componentElement>
-					<reportElement key="" positionType="Float" isPrintRepeatedValues="false" x="242" y="11" width="343" height="30" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="9bc14f0d-7b5b-43bb-8663-066a35ba3cd2"/>
+					<reportElement key="" positionType="Float" stretchType="ElementGroupHeight" isPrintRepeatedValues="false" x="242" y="11" width="343" height="30" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="9bc14f0d-7b5b-43bb-8663-066a35ba3cd2"/>
 					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="Blank">
 						<datasetRun subDataset="dataset1" uuid="6d96d948-6ab0-45eb-aaa1-98411b9f8aa2">
 							<dataSourceExpression><![CDATA[$P{REPORT_DATA_SOURCE}.dataSource("/invoice/amount/taxes/tax")]]></dataSourceExpression>
@@ -656,7 +658,7 @@ new Double($F{percent}) + "%":0.00 + "%"]]></textFieldExpression>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$F{amountHT} && $F{amountHT}.matches("-?\\d+(\\.\\d+)?")?new Double($F{amountHT}):0.00]]></textFieldExpression>
+									<textFieldExpression><![CDATA[$F{amountWithoutTax} && $F{amountWithoutTax}.matches("-?\\d+(\\.\\d+)?")?new Double($F{amountWithoutTax}):0.00]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -713,6 +715,7 @@ new Double($F{amount}):0.00]]></textFieldExpression>
 					<text><![CDATA["VAT exoneration reason : " + $F{vatex}]]></text>
 				</staticText>
 			</band>
+			<band/>
 		</groupHeader>
 	</group>
 </jasperReport>

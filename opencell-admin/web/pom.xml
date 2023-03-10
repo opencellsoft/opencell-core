@@ -360,6 +360,10 @@
             <groupId>com.opencellsoft</groupId>
             <artifactId>opencell-client</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.opencellsoft</groupId>
+            <artifactId>opencell-scripts</artifactId>
+        </dependency>
 
         <!-- Libraries included in JBoss -->
 

@@ -19521,6 +19521,17 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
         </insert>
     </changeSet>
-
+	
+	<changeSet author="HichamHANINE" id="#INTRD-14562_20230308">
+		<update tableName="ar_account_operation">
+			<column name="converted_amount" valueComputed="amount"/>
+			<column name="converted_amount_without_tax" valueComputed="amount_without_tax"/>
+			<column name="converted_tax_amount" valueComputed="tax_amount"/>
+			<column name="converted_matching_amount" valueComputed="matching_amount"/>
+			<column name="converted_un_matching_amount" valueComputed="un_matching_amount"/>
+			<column name="transactional_currency" valueComputed="(SELECT currency_id from crm_provider where id = 1)"></column>
+			<where>transactional_currency is null</where>
+		</update>
+	</changeSet>
 
 </databaseChangeLog>
