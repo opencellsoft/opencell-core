@@ -33,6 +33,7 @@ import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.MatchingReturnObject;
 import org.meveo.model.PartialMatchingOccToSelect;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AccountOperationStatus;
 import org.meveo.model.payments.MatchingStatusEnum;
@@ -212,22 +213,27 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 			MatchingReturnObject matchingResult = new MatchingReturnObject();
 			List<PartialMatchingOccToSelect> partialMatchingOcc = new ArrayList<>();
 			matchingResult.setPartialMatchingOcc(partialMatchingOcc);
+			if(aos.size()>0) {
+			    TradingCurrency theFirstTradingCurrency = aos.get(0).getTransactionalCurrency();
+			    for (AccountOperation accountOperation : aos) {
+			        if(theFirstTradingCurrency != accountOperation.getTransactionalCurrency()) {
+                        throw new BusinessApiException("AOs must have the same transactional currency");
+                    }
+	                Long aoId = accountOperation.getId();
+	                if (aoId.equals(creditAoId)) {
+	                    // process only DEBIT AO
+	                    continue;
+	                }
+	                MatchingReturnObject unitaryResult = matchingCodeService.matchOperations(customer.getId(), customer.getCode(),
+	                        List.of(creditAoId, aoId), aoId);
 
-			for (Long aoId : aoIds) {
-				if (aoId.equals(creditAoId)) {
-					// process only DEBIT AO
-					continue;
-				}
-				MatchingReturnObject unitaryResult = matchingCodeService.matchOperations(customer.getId(), customer.getCode(),
-						List.of(creditAoId, aoId), aoId);
+	                if (matchingResult.getPartialMatchingOcc() != null) {
+	                    partialMatchingOcc.addAll(matchingResult.getPartialMatchingOcc());
+	                }
 
-				if (matchingResult.getPartialMatchingOcc() != null) {
-					partialMatchingOcc.addAll(matchingResult.getPartialMatchingOcc());
-				}
-
-				matchingResult.setOk(unitaryResult.isOk());
-
-			}
+	                matchingResult.setOk(unitaryResult.isOk());
+	            }
+			}			
 
 			if (partialMatchingOcc.isEmpty()) {
 				// Reload AO to get updated MatchingStatus
