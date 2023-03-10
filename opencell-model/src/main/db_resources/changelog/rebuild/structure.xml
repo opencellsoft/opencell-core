@@ -2144,6 +2144,8 @@
             <column name="converted_matching_amount" type="numeric(23, 12)" />
             <column name="converted_un_matching_amount" type="numeric(23, 12)" />
             <column name="transactional_currency" type="bigint" />
+            <column name="applied_rate" type="numeric(23, 12)" />
+            <column name="applied_rate_date" type="datetime" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-146">
@@ -19547,8 +19549,8 @@
     <changeSet id="#INTRD-14336_20230227" author="ZBariki" />
     <changeSet id="#INTRD-14598_20230303" author="zelmeliani" />
     <changeSet id="#INTR-14747_20230308" author="TarikFA." />
-    <changeSet id="#INTRD-14811_20200310" author="TarikFA." />
-
+	<changeSet id="#INTRD-14340_20230228" author="HichamHANINE" />
+	
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
