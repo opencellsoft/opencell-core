@@ -16112,5 +16112,15 @@ public class AgedBalanceReporting extends ReportExtractScript {
     	</update>
     </changeSet>
 
+    <changeSet id="#INTRD-14811_20200310" author="TarikFA.">
+        <preConditions onFail="MARK_RAN" >
+            <and>
+                <foreignKeyConstraintExists foreignKeyName="fk_origin_ratedtransaction_id" foreignKeyTableName="billing_rated_transaction" />
+            </and>
+        </preConditions>
+        <comment>Foreign key exist !!</comment>
+        <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_origin_ratedtransaction_id" />
+    </changeSet>
+
 
 </databaseChangeLog>
