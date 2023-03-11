@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -27,6 +28,9 @@ class GenericSimpleBeanPropertyFilter extends SimpleBeanPropertyFilter.FilterExc
         String fullDeclaringClassName = writer.getMember().getDeclaringClass().getName();
         String declaringClassName = fullDeclaringClassName.substring(fullDeclaringClassName.lastIndexOf(".") + 1);
         String fieldPattern = declaringClassName +"."+ writer.getName();
+        if(Modifier.isAbstract(writer.getMember().getDeclaringClass().getModifiers())) {
+        	fieldPattern = writer.getName();
+        }
         Object[] propsToInclude = GenericSimpleBeanPropertyFilterPropertiesToInclude.toArray();
         for(int i = 0; i< propsToInclude.length; i++){
             String lowerCase = ((String) propsToInclude[i]).toLowerCase();
