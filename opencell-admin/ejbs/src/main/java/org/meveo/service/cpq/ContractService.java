@@ -4,6 +4,7 @@ import static java.util.Comparator.comparing;
 import static java.util.Comparator.naturalOrder;
 import static java.util.Comparator.nullsLast;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -168,9 +169,13 @@ public class ContractService extends BusinessService<Contract>  {
 	}
 
 	public List<Contract> getContractByAccount(Customer customer, BillingAccount billingAccount, CustomerAccount customerAccount, WalletOperation bareWalletOperation) {
+		return this.getContractByAccount(Arrays.asList(customer.getId()), billingAccount, customerAccount, bareWalletOperation);
+	}
+
+	public List<Contract> getContractByAccount(List<Long> customersID, BillingAccount billingAccount, CustomerAccount customerAccount, WalletOperation bareWalletOperation) {
 		try {
 			List<Contract> contracts = getEntityManager().createNamedQuery("Contract.findByAccounts")
-					.setParameter("customerId", customer.getId()).setParameter("billingAccountId", billingAccount.getId())
+					.setParameter("customerId", customersID).setParameter("billingAccountId", billingAccount.getId())
 					.setParameter("customerAccountId",customerAccount.getId()).getResultList();
 			
 			
@@ -188,20 +193,4 @@ public class ContractService extends BusinessService<Contract>  {
 		}
 	}
 
-	/**
-	 * Get contract by list of customer's id
-	 * @param ids Customer id's
-	 * @param billingAccount {@link BillingAccount}
-	 * @param customerAccount {@link CustomerAccount}
-	 * @return List of {@link Contract}
-	 */
-	public List<Contract> getContractByListOfCustomers(List<Long> ids , BillingAccount billingAccount, CustomerAccount customerAccount) {
-		try {
-			return getEntityManager().createNamedQuery("Contract.findByCustomersBillingAccountCustomerAccount")
-					.setParameter("customersId", ids).setParameter("billingAccountId", billingAccount.getId())
-					.setParameter("customerAccountId",customerAccount.getId()).getResultList();
-    	} catch (NoResultException e) {
-            return null;
-        }
-	}
 }
