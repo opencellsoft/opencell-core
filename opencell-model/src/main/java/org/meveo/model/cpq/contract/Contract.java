@@ -22,6 +22,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -40,8 +41,8 @@ import org.meveo.model.payments.CustomerAccount;
  * @version 10.0
  */
 @Entity
-@CustomFieldEntity(cftCodePrefix = "Contract")
 @WorkflowedEntity
+@CustomFieldEntity(cftCodePrefix = "Contract")
 @Table(name = "cpq_contract", uniqueConstraints = { @UniqueConstraint(columnNames = {"code"})})
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_contract_seq"), })
@@ -50,11 +51,12 @@ import org.meveo.model.payments.CustomerAccount;
 	@NamedQuery(name = "Contract.findCustomerAccount", query = "select c from Contract c left join c.customerAccount cc where cc.code=:codeCustomerAccount"),
 	@NamedQuery(name = "Contract.findCustomer", query = "select c from Contract c left join c.customer cc where cc.code=:codeCustomer"),
     @NamedQuery(name = "Contract.findByAccounts", query = "select c from Contract c where c.status='ACTIVE' and (c.beginDate<=current_date and c.endDate>current_date) "
-    		+ " and (c.customer.id is null or c.customer.id=:customerId) "
-				+ " and (c.billingAccount.id is null or c.billingAccount.id=:billingAccountId) and (c.customerAccount.id is null or c.customerAccount.id=:customerAccountId)  " ),
+    		+ " and (c.customer.id is null or c.customer.id in :customerId) "
+				+ " and (c.billingAccount.id is null or c.billingAccount.id=:billingAccountId) and (c.customerAccount.id is null or c.customerAccount.id=:customerAccountId)  order by c.contractDate desc , c.auditable.created desc " ),
 	@NamedQuery(name = "Contract.findByCustomersBillingAccountCustomerAccount", query = "select c from Contract c where c.status='ACTIVE' and (c.beginDate<=current_date and c.endDate>current_date) "
     		+ " and (c.customer.id is null or c.customer.id in :customersId) "
 				+ " and (c.billingAccount.id is null or c.billingAccount.id=:billingAccountId) and (c.customerAccount.id is null or c.customerAccount.id=:customerAccountId)  " )
+				
 })
 public class Contract extends EnableBusinessCFEntity {
 
@@ -152,6 +154,13 @@ public class Contract extends EnableBusinessCFEntity {
 	
     @OneToMany(mappedBy = "contract", fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)
     private List<BillingRule> billingRules;
+
+	/**
+	 * 	An expression to decide whether the contract should be applied or not.
+	 */
+	@Column(name = "application_el", length = 2000)
+	@Size(max = 2000)
+	private String applicationEl;
     
 	public List<BillingRule> getBillingRules() {
         return billingRules;
@@ -309,9 +318,8 @@ public class Contract extends EnableBusinessCFEntity {
 	public void setContractDuration(int contractDuration) {
 		this.contractDuration = contractDuration;
 	}
-	
-	
-	   /**
+
+	/**
      * Check if a date is within this contract effective date. Exclusive of the endDate. If startDate is null, it returns true. If startDate is not null and endDate is null,
      * endDate is computed from the given duration.
      *
@@ -371,7 +379,20 @@ public class Contract extends EnableBusinessCFEntity {
 	public void setContractItems(List<ContractItem> contractItems) {
 		this.contractItems = contractItems;
 	}
-	
+
+	/**
+	 * @return the applicationEL
+	 */
+	public String getApplicationEl() {
+		return applicationEl;
+	}
+
+	/**
+	 * @param applicationEL the applicationEL to set
+	 */
+	public void setApplicationEl(String applicationEl) {
+		this.applicationEl = applicationEl;
+	}
 	
 	
 }
