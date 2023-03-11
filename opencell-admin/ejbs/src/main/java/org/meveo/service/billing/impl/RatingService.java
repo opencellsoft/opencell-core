@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
@@ -624,29 +625,25 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             
             //Get the list of customers (current and parents)
             List<Customer> customers = new ArrayList<>();
-            getCustomer(customer, customers);
+			getCustomer(customer, customers);
+			List<Long> ids = customers.stream().map(Customer::getId).collect(Collectors.toList());
             
             //Get contract by list of customer ids, billing account and customer account
-            List<Contract> contracts = contractService.getContractByAccount(customer, billingAccount, customerAccount, bareWalletOperation);
+            List<Contract> contracts = contractService.getContractByAccount(ids, billingAccount, customerAccount, bareWalletOperation);
             List<Contract> filtredContractByCustomerLevel = getContractByCustomerLevel(customers, contracts);
             
             if ((unitPriceWithoutTaxOverridden == null && appProvider.isEntreprise())
                     || (unitPriceWithTaxOverridden == null && !appProvider.isEntreprise())) {
+            	
+            	Contract contract = lookupSuitableContract(customers, contracts);
 
                 List<PricePlanMatrix> chargePricePlans = pricePlanMatrixService.getActivePricePlansByChargeCode(bareWalletOperation.getCode());
                 if (chargePricePlans == null || chargePricePlans.isEmpty()) {
                     throw new NoPricePlanException("No price plan for charge code " + bareWalletOperation.getCode());
                 }
                 // Check if unit price was not overridden by a contract
-                Contract contract = null;
                 Contract contractWithRules = null;
                 if(filtredContractByCustomerLevel != null && !filtredContractByCustomerLevel.isEmpty()) {
-                    // Prioritize BA Contract then CA Contract then Customer Contract then Seller Contract
-                    contract = filtredContractByCustomerLevel.stream().filter(c -> c.getBillingAccount() != null).findFirst() // BA Contract
-                        .or(() -> filtredContractByCustomerLevel.stream().filter(c -> c.getCustomerAccount() != null).findFirst()) // CA Contract
-                        .or(() -> filtredContractByCustomerLevel.stream().filter(c -> c.getCustomer() != null).findFirst()) // Customer Contract
-                        .orElse(filtredContractByCustomerLevel.get(0)); // Seller Contract
-
                     // To save the first contract containing Rules by priority (BA->CA->Customer->seller) on WalletOperation.rulesContract
                     contractWithRules = filtredContractByCustomerLevel.stream().filter(c -> c.getBillingAccount() != null && c.getBillingRules()!=null && !c.getBillingRules().isEmpty()).findFirst() // BA Contract
                             .or(() -> filtredContractByCustomerLevel.stream().filter(c -> c.getCustomerAccount() != null && c.getBillingRules()!=null && !c.getBillingRules().isEmpty()).findFirst()) // CA Contract
@@ -810,6 +807,25 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         }
 		return ratingResult;
     }
+
+	private Contract lookupSuitableContract(List<Customer> customers, List<Contract> contracts) {
+		Contract contract = null;
+		if(contracts != null && !contracts.isEmpty()) {
+			// Prioritize BA Contract then CA Contract then Customer Hierarchy Contract then Seller Contract
+			Optional<Contract> contractLookup = contracts.stream().filter(c -> c.getBillingAccount() != null).findFirst()
+					.or(() -> contracts.stream().filter(c -> c.getCustomerAccount() != null).findFirst());
+			if(contractLookup.isEmpty()) {
+				for (Customer iCustomer : customers) {
+					contractLookup = contracts.stream().filter(c -> c.getCustomer() != null && c.getCustomer().getId().equals(iCustomer.getId())).findFirst();
+					if(contractLookup.isPresent()) {
+						break;
+					}
+				}
+			}
+			contract = contractLookup.orElseGet(() -> contracts.get(0));
+		}
+		return contract;
+	}
     
     /**
      * Get the customer and all parent customers
