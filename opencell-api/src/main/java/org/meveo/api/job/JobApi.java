@@ -202,7 +202,13 @@ public class JobApi extends BaseApi {
         if(!StringUtils.isBlank(code) && !StringUtils.isBlank(id)) {
         	throw new InvalidParameterException("Selection by both 'id' and 'code' is not allowed");
         }
+        
+        return findJobExecutionResultByIdAndCode(code, id);
+    }
 
+
+	public JobExecutionResultDto findJobExecutionResultByIdAndCode(String code, Long id) {
+		JobExecutionResultDto jobExecutionResultDto;
         JobExecutionResultImpl jobExecutionResult = new JobExecutionResultImpl();
         if (!StringUtils.isBlank(id)) {
             jobExecutionResult = jobExecutionResultService.findById(id);
