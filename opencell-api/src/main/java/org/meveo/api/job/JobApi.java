@@ -203,7 +203,13 @@ public class JobApi extends BaseApi {
         	throw new InvalidParameterException("Selection by both 'id' and 'code' is not allowed");
         }
 
-        JobExecutionResultImpl jobExecutionResult = new JobExecutionResultImpl();
+        return findJobExecutionResultByIdAndCode(code, id);
+    }
+
+
+	public JobExecutionResultDto findJobExecutionResultByIdAndCode(String code, Long id) {
+		JobExecutionResultDto jobExecutionResultDto;
+		JobExecutionResultImpl jobExecutionResult = new JobExecutionResultImpl();
         if (!StringUtils.isBlank(id)) {
             jobExecutionResult = jobExecutionResultService.findById(id);
             if (jobExecutionResult == null) {
@@ -270,7 +276,7 @@ public class JobApi extends BaseApi {
         }
 
         return jobExecutionResultDto;
-    }
+	}
 
     public JobExecutionResultsResponseDto list(PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
 
