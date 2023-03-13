@@ -5,14 +5,7 @@ import static javax.persistence.FetchType.LAZY;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -27,6 +20,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 @Table(name = "billing_article_family")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
         parameters = { @org.hibernate.annotations.Parameter(name = "sequence_name", value = "billing_article_family_seq"), })
+@Cacheable
 public class ArticleFamily extends BusinessEntity implements ICustomFieldEntity {
 
     @OneToOne(fetch = LAZY)
