@@ -17,9 +17,12 @@
  */
 package org.meveo.service.billing.impl;
 
+import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static org.meveo.commons.utils.NumberUtils.computeDerivedAmounts;
+import static org.meveo.model.BaseEntity.NB_DECIMALS;
 import static org.meveo.model.billing.BillingEntityTypeEnum.BILLINGACCOUNT;
 import static org.meveo.model.billing.DateAggregationOption.NO_DATE_AGGREGATION;
 import static org.apache.commons.collections4.ListUtils.partition;
@@ -28,7 +31,6 @@ import static org.meveo.commons.utils.ParamBean.getInstance;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -64,7 +66,6 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.api.generics.GenericRequestMapper;
 import org.meveo.api.generics.PersistenceServiceHelper;
-import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.EntityManagerProvider;
@@ -981,8 +982,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     private RatedTransaction getNewMinRatedTransaction(IBillableEntity billableEntity, BillingAccount billingAccount, Date minRatingDate, String minAmountLabel, IInvoicingMinimumApplicable entity, Seller seller,
             InvoiceSubCategory invoiceSubCategory, TaxInfo taxInfo, BigDecimal rtMinAmount, String code) {
         Tax tax = taxInfo.tax;
-        BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(rtMinAmount, rtMinAmount, tax.getPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
-        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(rtMinAmount, rtMinAmount, tax.getPercent(), appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+        BigDecimal[] unitAmounts = computeDerivedAmounts(rtMinAmount, rtMinAmount, tax.getPercent(), appProvider.isEntreprise(), NB_DECIMALS, HALF_UP);
+        BigDecimal[] amounts = computeDerivedAmounts(rtMinAmount, rtMinAmount, tax.getPercent(), appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
         RatedTransaction rt = new RatedTransaction(minRatingDate, unitAmounts[0], unitAmounts[1], unitAmounts[2], BigDecimal.ONE, amounts[0], amounts[1], amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount,
             null, invoiceSubCategory, null, null, null, null, null, null, null, null, null, null, null, code, minAmountLabel, null, null, seller, tax, tax.getPercent(), null, taxInfo.taxClass, null, RatedTransactionTypeEnum.MINIMUM, null, null);
 
@@ -1500,10 +1501,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         TaxClass taxClass = taxInfo.taxClass;
 
         final BigDecimal taxPercent = taxInfo.tax.getPercent();
-        BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(unitAmountWithoutTax, unitAmountWithoutTax,
-                taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+        BigDecimal[] unitAmounts = computeDerivedAmounts(unitAmountWithoutTax, unitAmountWithoutTax,
+                taxPercent, appProvider.isEntreprise(), NB_DECIMALS, HALF_UP);
         BigDecimal AmountWithoutTax = unitAmountWithoutTax.multiply(quantity);
-        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(AmountWithoutTax, AmountWithoutTax, taxPercent,
+        BigDecimal[] amounts = computeDerivedAmounts(AmountWithoutTax, AmountWithoutTax, taxPercent,
                 appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
         ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
         String rtDescription = description != null && !description.isBlank()
@@ -1532,14 +1533,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param param3 the param3
      * @param paramExtra the param extra
      */
-    public void updateRatedTransaction(RatedTransaction ratedTransaction, String description, BigDecimal unitAmountWithoutTax,
-            BigDecimal quantity, String param1, String param2, String param3, String paramExtra) {
+    public void updateRatedTransaction(RatedTransaction ratedTransaction, String description,
+                                       BigDecimal unitAmountWithoutTax, BigDecimal quantity, String param1,
+                                       String param2, String param3, String paramExtra) {
         ratedTransaction.setDescription(description);
-        BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(unitAmountWithoutTax, unitAmountWithoutTax,
-                ratedTransaction.getTaxPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
-        BigDecimal AmountWithoutTax = unitAmountWithoutTax.multiply(quantity);
-        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(AmountWithoutTax, AmountWithoutTax, ratedTransaction.getTaxPercent(),
-                appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+        BigDecimal[] unitAmounts = computeDerivedAmounts(unitAmountWithoutTax, unitAmountWithoutTax,
+                ratedTransaction.getTaxPercent(), appProvider.isEntreprise(), NB_DECIMALS, HALF_UP);
+        BigDecimal amountWithoutTax = unitAmountWithoutTax.multiply(quantity);
+        BigDecimal[] amounts = computeDerivedAmounts(amountWithoutTax, amountWithoutTax,
+                ratedTransaction.getTaxPercent(), appProvider.isEntreprise(), appProvider.getRounding(),
+                appProvider.getRoundingMode().getRoundingMode());
         ratedTransaction.setUnitAmountWithoutTax(unitAmounts[0]);
         ratedTransaction.setUnitAmountWithTax(unitAmounts[1]);
         ratedTransaction.setUnitAmountTax(unitAmounts[2]);
@@ -1547,23 +1550,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setAmountWithoutTax(amounts[0]);
         ratedTransaction.setAmountWithTax(amounts[1]);
         ratedTransaction.setAmountTax(amounts[2]);
-        
 
-        if(param1 != null) {
-            ratedTransaction.setParameter1(param1);
-        }
-        if(param2 != null) {
-            ratedTransaction.setParameter2(param2);
-        }
-        if(param3 != null) {
-            ratedTransaction.setParameter3(param3);
-        }
-        if(paramExtra != null) {
-            ratedTransaction.setParameterExtra(paramExtra);
-        }
+        ratedTransaction.setParameter1(param1);
+
+        ratedTransaction.setParameter2(param2);
+
+        ratedTransaction.setParameter3(param3);
+        ratedTransaction.setParameterExtra(paramExtra);
 
         update(ratedTransaction);
-
     }
 
     /**
