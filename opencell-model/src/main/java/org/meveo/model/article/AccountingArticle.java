@@ -7,6 +7,7 @@ import java.util.*;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
@@ -26,6 +27,7 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "AccountingArticle.findByAccountingCode", query = "select a from AccountingArticle a where a.accountingCode.code = :accountingCode"),
         @NamedQuery(name = "AccountingArticle.findByTaxClassAndSubCategory", query = "select a from AccountingArticle a where a.taxClass = :taxClass and a.invoiceSubCategory = :invoiceSubCategory"),
 })
+@Cacheable
 public class AccountingArticle extends EnableBusinessCFEntity {
 
     /**
@@ -79,6 +81,7 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     private String columnCriteriaEL;
 
     @OneToMany(mappedBy = "accountingArticle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private List<AccountingCodeMapping> accountingCodeMappings;
     
 
