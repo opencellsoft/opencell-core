@@ -35,17 +35,15 @@ import java.util.Date;
 @Table(name="view_usage_charge_instances")
 public class UsageChargeInstancesView {
     @Id
-    @Column(name = "id", nullable = false)
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id")
-    private UsageChargeInstance chargeInstance;
+    @Column(name = "id")
+    private Long id;
 
     @Column(name = "charge_type")
     @Size(max = 1)
     private String chargeType;
 
     @Column(name = "status")
-    private InstanceStatusEnum status;
+    private String status;
 
     @Column(name = "termination_date")
     private Date terminationDate;
@@ -56,15 +54,15 @@ public class UsageChargeInstancesView {
     @Column(name = "priority")
     private int priority = 1;
 
-    public UsageChargeInstance getChargeInstance() {
-        return chargeInstance;
+    public Long getId() {
+        return id;
     }
 
     public String getChargeType() {
         return chargeType;
     }
 
-    public InstanceStatusEnum getStatus() {
+    public String getStatus() {
         return status;
     }
 

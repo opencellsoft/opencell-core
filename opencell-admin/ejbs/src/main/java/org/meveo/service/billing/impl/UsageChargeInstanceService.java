@@ -171,6 +171,7 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 
         String hql = "from UsageChargeInstancesView c where (c.status='ACTIVE' OR ((c.status='TERMINATED' OR c.status='SUSPENDED') AND c.terminationDate>:terminationDate)) and c.subscription.id=:subscriptionId order by c.priority ASC";
         List<UsageChargeInstancesView> list = getEntityManager().createQuery(hql).setParameter("terminationDate", consumptionDate).setParameter("subscriptionId", subscriptionId).getResultList();
-        return list.stream().map(l->l.getChargeInstance()).collect(Collectors.toList());
+        List<Long> ids = list.stream().map(l->l.getId()).collect(Collectors.toList());
+        return findByIds(ids);
     }
 }
