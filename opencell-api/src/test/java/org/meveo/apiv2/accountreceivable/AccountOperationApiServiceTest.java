@@ -198,7 +198,6 @@ public class AccountOperationApiServiceTest {
 
         Mockito.when(accountOperationService.findByIds(anyList())).thenReturn(accountOperations);
         Mockito.when(customerAccountService.findCustomerAccount(anyLong(), anyString())).thenReturn(aoInvoice.getCustomerAccount());
-        //Mockito.when(matchingCodeService.matchOperations(aoInvoice.getCustomerAccount().getId(), aoInvoice.getCustomerAccount().getCode(), ) )
         
         Exception exception = assertThrows(BusinessApiException.class, () -> {
             accountOperationApiService.matchOperations(operationAndSequence);
