@@ -28,6 +28,8 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
@@ -80,6 +82,7 @@ public class Attribute extends EnableBusinessCFEntity{
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Column(name = "allowed_values")
 	@CollectionTable(name = "cpq_attribute_allowed_values", joinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id"))
+	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	private Set<String> allowedValues=new HashSet<>();
 	
 	
@@ -107,6 +110,7 @@ public class Attribute extends EnableBusinessCFEntity{
     
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "cpq_attribute_tag", joinColumns = @JoinColumn(name = "attribute_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private List<Tag> tags = new ArrayList<>();
     
     @OneToMany(mappedBy = "targetAttribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
