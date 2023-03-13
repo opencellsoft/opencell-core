@@ -28,7 +28,7 @@ public class MediationSetting extends AuditableEntity {
     @Type(type = "numeric_boolean")
 	private boolean enableEdrVersioning = Boolean.FALSE;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "mediationSetting", orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, mappedBy = "mediationSetting", orphanRemoval = true)
 	private Set<EdrVersioningRule> rules = new HashSet<>();
 
 	public boolean isEnableEdrVersioning() {
