@@ -1127,7 +1127,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     }
 
     public BigDecimal getConvertedMatchingAmount() {
-        return convertedMatchingAmount;
+        return convertedMatchingAmount != null ? convertedMatchingAmount : matchingAmount;
     }
 
     public void setConvertedMatchingAmount(BigDecimal convertedMatchingAmount) {
@@ -1144,7 +1144,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
 
     public void setConvertedUnMatchingAmount(BigDecimal convertedUnMatchingAmount) {      
         if(convertedUnMatchingAmount == null) {
-            this.convertedUnMatchingAmount =BigDecimal.ZERO;
+            this.convertedUnMatchingAmount = unMatchingAmount;
         }else {
             this.convertedUnMatchingAmount = convertedUnMatchingAmount;
         }
