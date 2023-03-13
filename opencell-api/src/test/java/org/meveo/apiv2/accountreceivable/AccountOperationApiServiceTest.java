@@ -23,6 +23,8 @@ import org.meveo.apiv2.AcountReceivable.*;
 import org.meveo.apiv2.AcountReceivable.CustomerAccount;
 import org.meveo.model.MatchingReturnObject;
 import org.meveo.model.PartialMatchingOccToSelect;
+import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.payments.*;
 import org.meveo.service.payments.impl.*;
 import org.mockito.*;
@@ -88,6 +90,36 @@ public class AccountOperationApiServiceTest {
         accountOperationApiService.assignAccountOperation(1L, customerAccount).get();
     }
     
+    @Test(expected = NotFoundException.class)
+    public void shouldFailToDifferentCurrency() {
+        List<AccountOperationAndSequence> operationAndSequence = initOperationSequence();
+
+        AccountOperation aoInvoice = init("I", 2L, new BigDecimal(9000), BigDecimal.ZERO, MatchingStatusEnum.O, new BigDecimal(9000), AccountOperationStatus.POSTED);
+        AccountOperation aoP1 = init("P", 3L, new BigDecimal(2000), BigDecimal.ZERO, MatchingStatusEnum.O, new BigDecimal(2000), AccountOperationStatus.POSTED);
+        AccountOperation aoP2 = init("P", 4L, new BigDecimal(3000), BigDecimal.ZERO, MatchingStatusEnum.O, new BigDecimal(3000), AccountOperationStatus.POSTED);
+        TradingCurrency eTradingCurrency1 = new TradingCurrency();
+        Currency eCurrency1 = new Currency();
+        eCurrency1.setCurrencyCode("USD");
+        eTradingCurrency1.setCurrency(eCurrency1);
+        TradingCurrency eTradingCurrency2 = new TradingCurrency();
+        Currency eCurrency2 = new Currency();
+        eCurrency2.setCurrencyCode("USD");
+        eTradingCurrency2.setCurrency(eCurrency2);
+        
+        aoP1.setTransactionalCurrency(eTradingCurrency1);
+        aoP2.setTransactionalCurrency(eTradingCurrency2);
+        List<Long> aoIds = List.of(2L, 3L, 4L);
+        List<AccountOperation> accountOperations = List.of(aoP1, aoP2);
+
+ 
+       
+        Mockito.when(matchingCodeService.matchOperations(anyLong(), anyString(), anyList(), anyLong(), any(BigDecimal.class))).thenReturn(matchingReturnObject1).thenReturn(matchingReturnObject2);
+        
+        //Mockito.when(matchingCodeService.matchOperations(aoInvoice.getCustomerAccount().getId(), aoInvoice.getCustomerAccount().getCode(), ) )
+        
+        accountOperationApiService.matchOperations(operationAndSequence);
+    }
+        
     @Test
     public void shouldMatchOperationAndUseAmountFromDto() throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, Exception {
         List<AccountOperationAndSequence> operationAndSequence = initOperationSequence();
@@ -195,6 +227,13 @@ public class AccountOperationApiServiceTest {
         ao.setCustomerAccount(new org.meveo.model.payments.CustomerAccount());
         ao.getCustomerAccount().setId(1L);
         ao.getCustomerAccount().setCode("CODE");
+        return ao;
+    }
+    
+    private AccountOperation init2(String typeOperation, Long idAp, BigDecimal amount, BigDecimal matchingAmount, MatchingStatusEnum matchingStatus, BigDecimal unMatchingAmount, AccountOperationStatus statusAop, BigDecimal amountForUnmatching) {
+        AccountOperation ao = init(typeOperation, idAp, amount, matchingAmount, matchingStatus, unMatchingAmount, statusAop);
+            
+        ao.setAmountForUnmatching(amountForUnmatching);
         return ao;
     }
 }
