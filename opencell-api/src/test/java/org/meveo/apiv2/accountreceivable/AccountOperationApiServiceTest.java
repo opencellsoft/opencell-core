@@ -1,5 +1,7 @@
 package org.meveo.apiv2.accountreceivable;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
@@ -90,8 +92,8 @@ public class AccountOperationApiServiceTest {
         accountOperationApiService.assignAccountOperation(1L, customerAccount).get();
     }
     
-    @Test(expected = NotFoundException.class)
-    public void shouldFailToDifferentCurrency() {
+    @Test
+    public void shouldFailToDifferentCurrency() throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, Exception {
         List<AccountOperationAndSequence> operationAndSequence = initOperationSequence();
 
         AccountOperation aoInvoice = init("I", 2L, new BigDecimal(9000), BigDecimal.ZERO, MatchingStatusEnum.O, new BigDecimal(9000), AccountOperationStatus.POSTED);
@@ -99,25 +101,26 @@ public class AccountOperationApiServiceTest {
         AccountOperation aoP2 = init("P", 4L, new BigDecimal(3000), BigDecimal.ZERO, MatchingStatusEnum.O, new BigDecimal(3000), AccountOperationStatus.POSTED);
         TradingCurrency eTradingCurrency1 = new TradingCurrency();
         Currency eCurrency1 = new Currency();
-        eCurrency1.setCurrencyCode("USD");
+        eCurrency1.setCurrencyCode("USD");//EUR
         eTradingCurrency1.setCurrency(eCurrency1);
         TradingCurrency eTradingCurrency2 = new TradingCurrency();
         Currency eCurrency2 = new Currency();
-        eCurrency2.setCurrencyCode("USD");
-        eTradingCurrency2.setCurrency(eCurrency2);
+        eCurrency2.setCurrencyCode("EUR");
         
         aoP1.setTransactionalCurrency(eTradingCurrency1);
         aoP2.setTransactionalCurrency(eTradingCurrency2);
+        aoInvoice.setTransactionalCurrency(eTradingCurrency1);
         List<Long> aoIds = List.of(2L, 3L, 4L);
-        List<AccountOperation> accountOperations = List.of(aoP1, aoP2);
+        List<AccountOperation> accountOperations = List.of(aoInvoice, aoP1, aoP2);
 
- 
-       
-        Mockito.when(matchingCodeService.matchOperations(anyLong(), anyString(), anyList(), anyLong(), any(BigDecimal.class))).thenReturn(matchingReturnObject1).thenReturn(matchingReturnObject2);
+        Mockito.when(accountOperationService.findByIds(anyList())).thenReturn(accountOperations);
+
+        //accountOperationApiService.matchOperations(operationAndSequence);
         
-        //Mockito.when(matchingCodeService.matchOperations(aoInvoice.getCustomerAccount().getId(), aoInvoice.getCustomerAccount().getCode(), ) )
-        
-        accountOperationApiService.matchOperations(operationAndSequence);
+        Exception exception = assertThrows(BusinessApiException.class, () -> {
+            accountOperationApiService.matchOperations(operationAndSequence);
+        });
+        assertTrue(exception.getMessage().contains("AOs must have the same transactional currency"));
     }
         
     @Test
