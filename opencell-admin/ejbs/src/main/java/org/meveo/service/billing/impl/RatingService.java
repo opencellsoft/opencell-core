@@ -700,10 +700,17 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
                     log.debug("Will apply priceplan {} for {}", pricePlan.getId(), bareWalletOperation.getCode());
 
+                    if (pricePlan != null && pricePlan.getScriptInstance() != null) {
+                        log.debug("start to execute script instance for ratePrice {}", pricePlan);
+                        executeRatingScript(bareWalletOperation, pricePlan.getScriptInstance(), false);
+                        unitPriceWithoutTax=bareWalletOperation.getAmountWithoutTax()!=null?bareWalletOperation.getAmountWithoutTax():BigDecimal.ZERO;
+                        unitPriceWithTax=bareWalletOperation.getAmountWithTax()!=null?bareWalletOperation.getAmountWithTax():BigDecimal.ZERO;
+                    }else {
+                    	Amounts unitPrices = determineUnitPrice(pricePlan, bareWalletOperation);
+                        unitPriceWithoutTax = unitPrices.getAmountWithoutTax();
+                        unitPriceWithTax = unitPrices.getAmountWithTax();
+                    }
 
-                    Amounts unitPrices = determineUnitPrice(pricePlan, bareWalletOperation);
-                    unitPriceWithoutTax = unitPrices.getAmountWithoutTax();
-                    unitPriceWithTax = unitPrices.getAmountWithTax();
                     BigDecimal amount=null;
                     BigDecimal discountRate=null;
                     PricePlanMatrixVersion ppmVersion=null;
@@ -780,12 +787,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                         bareWalletOperation.setInvoiceSubCategory(invoiceSubCategory);
                     }
                 }
-            }
-
-            if (pricePlan != null && pricePlan.getScriptInstance() != null) {
-                log.debug("start to execute script instance for ratePrice {}", pricePlan);
-                executeRatingScript(bareWalletOperation, pricePlan.getScriptInstance(), false);
-            }
+            }  
         }
 
         // Execute a final rating script set on offer template
