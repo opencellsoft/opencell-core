@@ -125,7 +125,7 @@ public class Attribute extends EnableBusinessCFEntity{
     protected Integer unitNbDecimal = BaseEntity.NB_DECIMALS;
 
 
-	@ManyToMany(mappedBy = "attributes")
+	@ManyToMany(mappedBy = "attributes", fetch = FetchType.LAZY)
 	private List<GroupedAttributes> groupedAttributes;
 	
 
