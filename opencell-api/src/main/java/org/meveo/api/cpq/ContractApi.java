@@ -1,7 +1,5 @@
 package org.meveo.api.cpq;
 
-import static java.util.Optional.ofNullable;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,12 +95,12 @@ public class ContractApi extends BaseApi{
 	private BillingRuleMapper billingRuleMapper = new BillingRuleMapper();
 	
 	private static final String CONTRACT_DATE_END_GREAT_THAN_DATE_BEGIN = "Date end (%s) must be great than date begin (%s)";
-	private static final String CONTRACt_STAT_DIFF_TO_DRAFT = "Only Draft status of contract can be edit";
+	private static final String CONTRACT_STAT_DIFF_TO_DRAFT = "Only Draft status of contract can be edit";
 
 	private static final String DEFAULT_SORT_ORDER_ID = "id";
 
 
-	public Long CreateContract(ContractDto dto) {
+	public Long createContract(ContractDto dto) {
 
 		// check mandatory param
 		checkBillingRulesRedirectionIsEnabled(dto);
@@ -198,7 +196,7 @@ public class ContractApi extends BaseApi{
 			throw new EntityDoesNotExistsException(Contract.class, dto.getCode());
 		//check the status of the contract
 		if(!ContractStatusEnum.DRAFT.toString().equals(contract.getStatus())) {
-			throw new MeveoApiException(CONTRACt_STAT_DIFF_TO_DRAFT);
+			throw new MeveoApiException(CONTRACT_STAT_DIFF_TO_DRAFT);
 		}else {
 			checkStatus(dto.getStatus());
 			contract.setStatus(dto.getStatus());
@@ -276,7 +274,6 @@ public class ContractApi extends BaseApi{
 			checkStatus(contractStatus);
 			contractService.updateStatus(contract, contractStatus);
 		} catch (Exception e){
-			log.error(e.getMessage(),e);
 			throw new MeveoApiException(e);
 		}
 	}
@@ -319,9 +316,8 @@ public class ContractApi extends BaseApi{
         result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
         
         if(totalCount > 0) {
-        	contractService.list(paginationConfiguration).stream().forEach( c -> {
-        		result.getContracts().getContracts().add(new ContractDto(c));
-        	});
+        	contractService.list(paginationConfiguration).stream().forEach(c ->
+        		result.getContracts().getContracts().add(new ContractDto(c)));
         }
     	return result;
     }
@@ -421,14 +417,13 @@ public class ContractApi extends BaseApi{
     	if(ContractRateTypeEnum.FIXED.equals(item.getContractRateType()) && item.isSeparateDiscount()){
     		throw new InvalidParameterException("Generate separate discount line is valid only for the types 'Global discount' and 'Custom discount grid'");
     	}
-		ofNullable(contractItemDto.getApplicationEl()).ifPresent(applicationEl -> item.setApplicationEl(applicationEl));
+		item.setApplicationEl(contractItemDto.getApplicationEl());
     	try {
     		populateCustomFields(contractItemDto.getCustomFields(), item, false);
     		contractItemService.updateContractItem(item);
-    	}catch(BusinessException e) {
+    	} catch(BusinessException e) {
     		throw new MeveoApiException(e);
     	}
-    	
     }
 
 	private void checkPricePlanPeriod(ContractItemDto contractItemDto) {
