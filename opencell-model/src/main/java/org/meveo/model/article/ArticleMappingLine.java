@@ -5,21 +5,10 @@ import static javax.persistence.FetchType.LAZY;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -33,6 +22,7 @@ import org.meveo.model.cpq.enums.OperatorEnum;
         parameters = { @org.hibernate.annotations.Parameter(name = "sequence_name", value = "billing_article_mapping_line_seq") })
 @NamedQueries({
         @NamedQuery(name = "ArticleMappingLine.findAll", query = "SELECT a FROM ArticleMappingLine a")})
+@Cacheable
 public class ArticleMappingLine extends BusinessEntity {
 
     /**
@@ -58,6 +48,7 @@ public class ArticleMappingLine extends BusinessEntity {
     private OperatorEnum attributeOperator = OperatorEnum.AND;
 
     @OneToMany(mappedBy = "articleMappingLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private List<AttributeMapping> attributesMapping = new ArrayList<AttributeMapping>();
 
     @OneToOne(fetch = LAZY)
