@@ -232,11 +232,5 @@ public class AccountOperationApiServiceTest {
         ao.getCustomerAccount().setCode("CODE");
         return ao;
     }
-    
-    private AccountOperation init2(String typeOperation, Long idAp, BigDecimal amount, BigDecimal matchingAmount, MatchingStatusEnum matchingStatus, BigDecimal unMatchingAmount, AccountOperationStatus statusAop, BigDecimal amountForUnmatching) {
-        AccountOperation ao = init(typeOperation, idAp, amount, matchingAmount, matchingStatus, unMatchingAmount, statusAop);
-            
-        ao.setAmountForUnmatching(amountForUnmatching);
-        return ao;
-    }
+
 }
