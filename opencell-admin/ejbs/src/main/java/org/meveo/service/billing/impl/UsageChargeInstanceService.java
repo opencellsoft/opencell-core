@@ -19,6 +19,7 @@ package org.meveo.service.billing.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -27,12 +28,7 @@ import javax.persistence.EntityGraph;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.billing.BillingWalletTypeEnum;
-import org.meveo.model.billing.CounterInstance;
-import org.meveo.model.billing.InstanceStatusEnum;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.UsageChargeInstance;
-import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.WalletTemplate;
@@ -159,6 +155,7 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
      * @return An ordered list by priority (ascended) of usage charge instances
      */
     public List<UsageChargeInstance> getUsageChargeInstancesValidForDateBySubscriptionId(Long subscriptionId, Object consumptionDate) {
+        /*
         EntityGraph<UsageChargeInstance> graph = getEntityManager().createEntityGraph(UsageChargeInstance.class);
         graph.addAttributeNodes("chargeTemplate", "serviceInstance", "userAccount", "currency");
         graph.addSubgraph("serviceInstance").addAttributeNodes("attributeInstances");
@@ -169,5 +166,11 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
                 .setParameter("terminationDate", consumptionDate).setParameter("subscriptionId", subscriptionId)
                 .setHint("javax.persistence.loadgraph", graph)
                 .getResultList();
+
+         */
+
+        String hql = "from UsageChargeInstancesView c where (c.status='ACTIVE' OR ((c.status='TERMINATED' OR c.status='SUSPENDED') AND c.terminationDate>:terminationDate)) and c.subscription.id=:subscriptionId order by c.priority ASC";
+        List<UsageChargeInstancesView> list = getEntityManager().createQuery(hql).setParameter("terminationDate", consumptionDate).setParameter("subscriptionId", subscriptionId).getResultList();
+        return list.stream().map(l->l.getChargeInstance()).collect(Collectors.toList());
     }
 }
