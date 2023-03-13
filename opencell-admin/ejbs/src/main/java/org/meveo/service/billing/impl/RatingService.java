@@ -667,7 +667,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
                         if (contractItem.getPricePlan() != null) {
                             PricePlanMatrix pricePlanMatrix = contractItem.getPricePlan();
-                            PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getPublishedVersionValideForDate(pricePlanMatrix.getCode(), bareWalletOperation.getServiceInstance(), bareWalletOperation.getOperationDate());
+                            PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getPublishedVersionValideForDate(pricePlanMatrix.getId(), bareWalletOperation.getServiceInstance(), bareWalletOperation.getOperationDate());
                             if (ppmVersion != null) {
                                 try {
                                     final WalletOperation tmpWalletOperation = bareWalletOperation;
@@ -719,7 +719,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                                 unitPriceWithoutTax = unitPriceWithoutTax.subtract(amount);
                         } else if (contractItem.getPricePlan() != null) {
                             PricePlanMatrix pricePlanMatrix = contractItem.getPricePlan();
-                            ppmVersion = pricePlanMatrixVersionService.getPublishedVersionValideForDate(pricePlanMatrix.getCode(), bareWalletOperation.getServiceInstance(), bareWalletOperation.getOperationDate());
+                            ppmVersion = pricePlanMatrixVersionService.getPublishedVersionValideForDate(pricePlanMatrix.getId(), bareWalletOperation.getServiceInstance(), bareWalletOperation.getOperationDate());
                             if (ppmVersion != null) {
                                 pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, bareWalletOperation);
                                 discountRate= pricePlanMatrixLine.getValue();
@@ -871,7 +871,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
         ServiceInstance serviceInstance = wo.getServiceInstance();
 
-        PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getPublishedVersionValideForDate(pricePlan.getCode(), serviceInstance, wo.getOperationDate());
+        PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getPublishedVersionValideForDate(pricePlan.getId(), serviceInstance, wo.getOperationDate());
         if (ppmVersion != null) {
             wo.setPricePlanMatrixVersion(ppmVersion);
             if (!ppmVersion.isMatrix()) {
