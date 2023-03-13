@@ -864,6 +864,14 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     			}
     		}
     	}
+        Seller seller = pCustomerList.get(pCustomerList.size() - 1).getSeller();
+        if(seller != null) {
+            for (Contract contract : pContractList) {
+                if(contract.getSeller() != null && seller.getId().equals(contract.getSeller().getId())) {
+                    return contract;
+                }
+            }
+        }
     	
 		return null;
     }
