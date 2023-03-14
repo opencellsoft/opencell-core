@@ -293,10 +293,11 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                     if (operation instanceof RecordedInvoice) {
                         Invoice invoice = ((RecordedInvoice)operation).getInvoice();
                         if (invoice != null) {
-                            if (invoice.getInvoiceDate() == null) {
+                            Date invoiceDueDate = invoice.getDueDate();
+                            if (invoiceDueDate == null) {
                                 invoice.setPaymentStatus(InvoicePaymentStatusEnum.UNPAID);
                             } else {
-                                if (DateUtils.setTimeToZero(new Date()).after(DateUtils.setTimeToZero(invoice.getInvoiceDate()))) {
+                                if (DateUtils.setTimeToZero(new Date()).after(DateUtils.setTimeToZero(invoiceDueDate))) {
                                     invoice.setPaymentStatus(InvoicePaymentStatusEnum.UNPAID);
                                 } else {
                                     invoice.setPaymentStatus(InvoicePaymentStatusEnum.NONE);
