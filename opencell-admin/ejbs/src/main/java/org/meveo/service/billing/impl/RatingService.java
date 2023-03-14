@@ -319,7 +319,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         		invoicingDate = invoicingCalendar.nextCalendarDate(applicationDate);
         	}
         }
-        ParamBean.setReload(true);
         String extraParam = edr != null ? paramBeanFactory.getInstance().getPropertyAsBoolean("edr.propagate.extraParameter", false) ? edr.getExtraParameter(): edr.getParameter4() : null;
         if (reservation != null) {
             if (orderNumberOverride != null) {
