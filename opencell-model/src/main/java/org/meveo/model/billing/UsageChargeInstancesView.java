@@ -38,11 +38,17 @@ public class UsageChargeInstancesView {
     @Column(name = "id")
     private Long id;
 
+    @Column(name = "usage_charge_id")
+    private Long usageChargeId;
+
     @Column(name = "charge_template_id")
     private Long chargeTemplateId;
 
     @Column(name = "user_account_id")
     private Long userAccountId;
+
+    @Column(name="service_instance_id")
+    private Long serviceInstanceId;
 
     @Column(name = "wallet_id")
     private Long walletId;
@@ -73,8 +79,36 @@ public class UsageChargeInstancesView {
         return id;
     }
 
+    public Long getUsageChargeId() {
+        return usageChargeId;
+    }
+
+    public Long getChargeTemplateId() {
+        return chargeTemplateId;
+    }
+
+    public Long getUserAccountId() {
+        return userAccountId;
+    }
+
+    public Long getWalletId() {
+        return walletId;
+    }
+
+    public Long getTradingCurrency() {
+        return tradingCurrency;
+    }
+
+    public Long getCurrencyId() {
+        return currencyId;
+    }
+
     public String getChargeType() {
         return chargeType;
+    }
+
+    public Long getServiceInstanceId() {
+        return serviceInstanceId;
     }
 
     public String getStatus() {
