@@ -1,6 +1,7 @@
 package org.meveo.api.dto;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -36,6 +37,24 @@ public class AgedReceivableDto extends BaseEntity {
 	private String tradingCurrency;
 	private BigDecimal billedAmount;
 	private Long customerId;
+
+	private BigDecimal transactionalNotYetDue;
+
+	private BigDecimal transactionalSum1To30;
+
+	private BigDecimal transactionalSum31To60;
+
+	private BigDecimal transactionalSum61To90;
+
+	private BigDecimal transactionalSum90Up;
+
+	private BigDecimal transactionalGeneralTotal;
+
+	private List<BigDecimal> transactionalNetAmountByPeriod = new ArrayList<>();
+
+	private List<BigDecimal> transactionalTaxAmountByPeriod = new ArrayList<>();
+
+	private List<BigDecimal> transactionalTotalAmountByPeriod = new ArrayList<>();
 
 	public AgedReceivableDto() {
 		super();
@@ -227,5 +246,77 @@ public class AgedReceivableDto extends BaseEntity {
 
 	public void setSellerCode(String sellerCode) {
 		this.sellerCode = sellerCode;
+	}
+
+	public BigDecimal getTransactionalNotYetDue() {
+		return transactionalNotYetDue;
+	}
+
+	public void setTransactionalNotYetDue(BigDecimal transactionalNotYetDue) {
+		this.transactionalNotYetDue = transactionalNotYetDue;
+	}
+
+	public BigDecimal getTransactionalSum1To30() {
+		return transactionalSum1To30;
+	}
+
+	public void setTransactionalSum1To30(BigDecimal transactionalSum1To30) {
+		this.transactionalSum1To30 = transactionalSum1To30;
+	}
+
+	public BigDecimal getTransactionalSum31To60() {
+		return transactionalSum31To60;
+	}
+
+	public void setTransactionalSum31To60(BigDecimal transactionalSum31To60) {
+		this.transactionalSum31To60 = transactionalSum31To60;
+	}
+
+	public BigDecimal getTransactionalSum61To90() {
+		return transactionalSum61To90;
+	}
+
+	public void setTransactionalSum61To90(BigDecimal transactionalSum61To90) {
+		this.transactionalSum61To90 = transactionalSum61To90;
+	}
+
+	public BigDecimal getTransactionalSum90Up() {
+		return transactionalSum90Up;
+	}
+
+	public void setTransactionalSum90Up(BigDecimal transactionalSum90Up) {
+		this.transactionalSum90Up = transactionalSum90Up;
+	}
+
+	public BigDecimal getTransactionalGeneralTotal() {
+		return transactionalGeneralTotal;
+	}
+
+	public void setTransactionalGeneralTotal(BigDecimal transactionalGeneralTotal) {
+		this.transactionalGeneralTotal = transactionalGeneralTotal;
+	}
+
+	public List<BigDecimal> getTransactionalNetAmountByPeriod() {
+		return transactionalNetAmountByPeriod;
+	}
+
+	public void setTransactionalNetAmountByPeriod(List<BigDecimal> transactionalNetAmountByPeriod) {
+		this.transactionalNetAmountByPeriod = transactionalNetAmountByPeriod;
+	}
+
+	public List<BigDecimal> getTransactionalTaxAmountByPeriod() {
+		return transactionalTaxAmountByPeriod;
+	}
+
+	public void setTransactionalTaxAmountByPeriod(List<BigDecimal> transactionalTaxAmountByPeriod) {
+		this.transactionalTaxAmountByPeriod = transactionalTaxAmountByPeriod;
+	}
+
+	public List<BigDecimal> getTransactionalTotalAmountByPeriod() {
+		return transactionalTotalAmountByPeriod;
+	}
+
+	public void setTransactionalTotalAmountByPeriod(List<BigDecimal> transactionalTotalAmountByPeriod) {
+		this.transactionalTotalAmountByPeriod = transactionalTotalAmountByPeriod;
 	}
 }
