@@ -180,7 +180,7 @@ public class JsonGenericMapper extends ObjectMapper{
                     .withNestedDepth(nestedDepth)
                     .build();
             if(simpleFilterProvider == null){
-                simpleFilterProvider = new GenericSimpleFilterProvider(shouldExtractList);
+                simpleFilterProvider = new GenericSimpleFilterProvider(shouldExtractList, nestedEntities);
             }
             return new JsonGenericMapper(module, simpleFilterProvider);
         }
