@@ -16197,4 +16197,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </addColumn>
     </changeSet>
 
+    <changeSet id="#INTRD-14743_20230313" author="TarikFA.">
+        <createIndex tableName="rating_edr" indexName="rating_edr_eventKey_index_idx">
+            <column name="event_key"/>
+        </createIndex>
+    </changeSet>
+
 </databaseChangeLog>

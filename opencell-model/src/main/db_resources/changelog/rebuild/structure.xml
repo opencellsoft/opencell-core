@@ -17194,6 +17194,12 @@
 	  	</createIndex>
     </changeSet>
 
+
+    <changeSet id="#INTRD-14743_20230313-rebuild" author="TarikFA.">
+        <createIndex tableName="rating_edr" indexName="rating_edr_eventKey_index_idx">
+            <column name="event_key"/>
+        </createIndex>
+    </changeSet>
     <!-- end index -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-func-999" dbms="postgresql">
@@ -19643,7 +19649,7 @@
     <changeSet id="#INTRD-14811_20200310" author="TarikFA." />
     <changeSet id="#INTRD-15043_20230317" author="AdilElJaouhari" />
     <changeSet id="#INTRD-15114_20230323" author="AdilElJaouhari" />
-    
+    <changeSet id="#INTRD-14743_20230313" author="TarikFA." />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
