@@ -51,7 +51,7 @@ import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
                 query = "SELECT c FROM UsageChargeInstance c where (c.status='ACTIVE' OR ((c.status='TERMINATED' OR c.status='SUSPENDED') AND c.terminationDate>:terminationDate)) and c.subscription.id=:subscriptionId order by c.priority ASC"),
         @NamedQuery(name = "UsageChargeInstance.getByIds",
                 query = "select c from UsageChargeInstance c " +
-                        "where id in :ids and c.chargeTemplate.id in :ctIds and c.serviceInstance.id in :siIds and c.userAccount.id in :uaIds" +
+                        "where id in :ids and c.chargeTemplate.id in :ctIds and c.serviceInstance.id in :siIds and c.userAccount.id in :uaIds " +
                         "and c.userAccount.wallet.id in :waIds and c.currency.id in :tradingCurrenciesIds and c.currency.currency in :currencyIds order by c.priority ASC")})
 public class UsageChargeInstance extends ChargeInstance {
 
