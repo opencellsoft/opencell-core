@@ -54,6 +54,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         try {
             return getEntityManager().createNamedQuery("PricePlanMatrixLine.findByPricePlanMatrixVersion", entityClass)
                     .setParameter("pricePlanMatrixVersion", pricePlanMatrixVersion)
+                    .setHint("javax.persistence.loadgraph", getEntityManager().getEntityGraph("PricePlanMatrixLine.graph.findByPricePlanMatrixVersion"))
                     .getResultList();
         } catch (NoResultException exp) {
             return new ArrayList<>();
