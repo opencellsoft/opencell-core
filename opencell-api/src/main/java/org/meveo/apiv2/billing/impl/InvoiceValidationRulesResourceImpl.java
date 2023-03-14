@@ -215,7 +215,7 @@ public class InvoiceValidationRulesResourceImpl implements InvoiceValidationRule
         }
         
         if (ValidationRuleTypeEnum.RULE_SET.equals(ValidationRuleTypeEnum.valueOf(invoiceValidationRuleDto.getType()))) {
-        	if (invoiceValidationRuleDto.getSubRules().size() < 2) {
+        	if (invoiceValidationRuleDto.getSubRules() == null || invoiceValidationRuleDto.getSubRules().size() < 2) {
         		throw new InvalidParameterException("Invoice validation rule type RULE_SET must have more than 1 sub-rules");
         	}
         	invoiceValidationRuleDto.getSubRules().forEach(this::checkValidationRuleDto);

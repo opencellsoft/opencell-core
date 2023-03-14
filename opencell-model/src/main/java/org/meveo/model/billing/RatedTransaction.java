@@ -636,6 +636,32 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     @JoinColumn(name = "origin_ratedtransaction_id")
     private RatedTransaction originRatedTransaction;
     
+    @Column(name = "use_specific_price_conversion")
+    @Type(type = "numeric_boolean")
+    private boolean useSpecificPriceConversion;
+    
+    @Column(name = "converted_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedAmountWithoutTax;
+    
+    @Column(name = "converted_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedAmountWithTax;
+    
+    @Column(name = "converted_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedAmountTax;
+    
+    @Column(name = "converted_unit_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedUnitAmountWithoutTax;
+    
+    @Column(name = "converted_unit_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedUnitAmountWithTax;
+    
+    @Column(name = "converted_unit_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedUnitAmountTax;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trading_currency_id")
+    private TradingCurrency tradingCurrency;
+    
     /**
   	 * 
   	 *filled only for price lines related to applied discounts, and contains the application sequence composed by the concatenation of the DP sequence and DPI sequence
@@ -824,7 +850,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.userAccount = rateTransactionToDuplicate.getUserAccount();
         this.billingAccount = rateTransactionToDuplicate.getBillingAccount();
         this.seller = rateTransactionToDuplicate.getSeller();
-        this.invoiceSubCategory = rateTransactionToDuplicate.getInvoiceSubCategory();
         this.parameter1 = rateTransactionToDuplicate.getParameter1();
         this.parameter2 = rateTransactionToDuplicate.getParameter2();
         this.parameter3 = rateTransactionToDuplicate.getParameter3();
@@ -833,7 +858,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.subscription = rateTransactionToDuplicate.getSubscription();
         this.priceplan = rateTransactionToDuplicate.getPriceplan();
         this.offerTemplate = rateTransactionToDuplicate.getOfferTemplate();
-//        this.edr = rateTransactionToDuplicate.getEdr();
         this.startDate = rateTransactionToDuplicate.getStartDate();
         this.endDate = rateTransactionToDuplicate.getEndDate();
         this.tax = rateTransactionToDuplicate.getTax();
@@ -1669,5 +1693,116 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
 	public void setOriginRatedTransaction(RatedTransaction originRatedTransaction) {
 		this.originRatedTransaction = originRatedTransaction;
 	}
-	
+
+    /**
+	 * @return the useSpecificPriceConversion
+	 */
+	public boolean isUseSpecificPriceConversion() {
+		return useSpecificPriceConversion;
+	}
+
+    /**
+	 * @param useSpecificPriceConversion the useSpecificPriceConversion to set
+	 */
+	public void setUseSpecificPriceConversion(boolean useSpecificPriceConversion) {
+		this.useSpecificPriceConversion = useSpecificPriceConversion;
+	}
+
+    /**
+	 * @return the convertedAmountWithoutTax
+	 */
+	public BigDecimal getConvertedAmountWithoutTax() {
+		return convertedAmountWithoutTax != null ? convertedAmountWithoutTax : amountWithoutTax;
+	}
+
+    /**
+	 * @param convertedAmountWithoutTax the convertedAmountWithoutTax to set
+	 */
+	public void setConvertedAmountWithoutTax(BigDecimal convertedAmountWithoutTax) {
+		this.convertedAmountWithoutTax = convertedAmountWithoutTax;
+	}
+
+    /**
+	 * @return the convertedAmountWithTax
+	 */
+	public BigDecimal getConvertedAmountWithTax() {
+		return convertedAmountWithTax != null ? convertedAmountWithTax : amountWithTax;
+	}
+
+    /**
+	 * @param convertedAmountWithTax the convertedAmountWithTax to set
+	 */
+	public void setConvertedAmountWithTax(BigDecimal convertedAmountWithTax) {
+		this.convertedAmountWithTax = convertedAmountWithTax;
+	}
+
+    /**
+	 * @return the convertedAmountTax
+	 */
+	public BigDecimal getConvertedAmountTax() {
+		return convertedAmountTax != null ? convertedAmountTax : amountTax;
+	}
+
+    /**
+	 * @param convertedAmountTax the convertedAmountTax to set
+	 */
+	public void setConvertedAmountTax(BigDecimal convertedAmountTax) {
+		this.convertedAmountTax = convertedAmountTax;
+	}
+
+    /**
+	 * @return the convertedUnitAmountWithoutTax
+	 */
+	public BigDecimal getConvertedUnitAmountWithoutTax() {
+		return convertedUnitAmountWithoutTax != null ? convertedUnitAmountWithoutTax : unitAmountWithoutTax;
+	}
+
+    /**
+	 * @param convertedUnitAmountWithoutTax the convertedUnitAmountWithoutTax to set
+	 */
+	public void setConvertedUnitAmountWithoutTax(BigDecimal convertedUnitAmountWithoutTax) {
+		this.convertedUnitAmountWithoutTax = convertedUnitAmountWithoutTax;
+	}
+
+    /**
+	 * @return the convertedUnitAmountWithTax
+	 */
+	public BigDecimal getConvertedUnitAmountWithTax() {
+		return convertedUnitAmountWithTax != null ? convertedUnitAmountWithTax : unitAmountWithTax;
+	}
+
+    /**
+	 * @param convertedUnitAmountWithTax the convertedUnitAmountWithTax to set
+	 */
+	public void setConvertedUnitAmountWithTax(BigDecimal convertedUnitAmountWithTax) {
+		this.convertedUnitAmountWithTax = convertedUnitAmountWithTax;
+	}
+
+    /**
+	 * @return the convertedUnitAmountTax
+	 */
+	public BigDecimal getConvertedUnitAmountTax() {
+		return convertedUnitAmountTax != null ? convertedUnitAmountTax : unitAmountTax;
+	}
+
+    /**
+	 * @param convertedUnitAmountTax the convertedUnitAmountTax to set
+	 */
+	public void setConvertedUnitAmountTax(BigDecimal convertedUnitAmountTax) {
+		this.convertedUnitAmountTax = convertedUnitAmountTax;
+	}
+
+    /**
+	 * @return the tradingCurrency
+	 */
+	public TradingCurrency getTradingCurrency() {
+		return tradingCurrency;
+	}
+
+    /**
+	 * @param tradingCurrency the tradingCurrency to set
+	 */
+	public void setTradingCurrency(TradingCurrency tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
+	}	
 }

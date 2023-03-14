@@ -59,6 +59,9 @@ public class OrderOfferDto extends BaseEntityDto {
 	/** The delivery date. */
 	@Schema(description = "The termination reason") 
     private String terminationReasonCode;
+	
+	@Schema(description = "code of existing contract")
+	private String contractCode;
 
     public OrderOfferDto() {
 	}
@@ -75,6 +78,7 @@ public class OrderOfferDto extends BaseEntityDto {
         this.subscriptionCode = orderOffer.getSubscription().getCode();
         this.terminationDate = orderOffer.getTerminationDate();
         this.terminationReasonCode = orderOffer.getTerminationReason() != null ? orderOffer.getTerminationReason().getCode() : null;
+        this.contractCode = orderOffer.getContract() != null ? orderOffer.getContract().getCode() : null;
 	}
  
 
@@ -261,8 +265,13 @@ public class OrderOfferDto extends BaseEntityDto {
 	public void setTerminationReasonCode(String terminationReasonCode) {
 		this.terminationReasonCode = terminationReasonCode;
 	}
+
+	public String getContractCode() {
+		return contractCode;
+	}
+
+	public void setContractCode(String contractCode) {
+		this.contractCode = contractCode;
+	}
 	
-    
-    
- 
 }

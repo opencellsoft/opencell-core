@@ -26,6 +26,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.billing.ContractHierarchyHelper;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.cpq.OrderAttributeDto;
 import org.meveo.api.dto.cpq.OrderProductDto;
@@ -146,6 +147,9 @@ public class CommercialOrderApi extends BaseApi {
 
 	@Inject
 	private ServiceInstanceService serviceInstanceService;
+	
+	@Inject
+	private ContractHierarchyHelper contractHierarchyHelper;
 
 	private static final String ADMINISTRATION_VISUALIZATION = "administrationVisualization";
     private static final String ADMINISTRATION_MANAGEMENT = "administrationManagement";
@@ -188,7 +192,7 @@ public class CommercialOrderApi extends BaseApi {
 			order.setQuote(loadEntityByCode(cpqQuoteService, orderDto.getQuoteCode(), CpqQuote.class));
 		}
 		if(!Strings.isEmpty(orderDto.getContractCode())) {
-			order.setContract(loadEntityByCode(contractService, orderDto.getContractCode(), Contract.class));
+			order.setContract(contractHierarchyHelper.checkContractHierarchy(billingAccount, orderDto.getContractCode()));
 		}
 		if(!Strings.isEmpty(orderDto.getInvoicingPlanCode())) {
 			order.setInvoicingPlan(loadEntityByCode(invoicingPlanService, orderDto.getInvoicingPlanCode(), InvoicingPlan.class));
@@ -379,11 +383,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 			order.setQuote(quote);
 		}
 		if(!Strings.isEmpty(orderDto.getContractCode())) {
-			final Contract contract = contractService.findByCode(orderDto.getContractCode());
-			if(contract == null)
-				throw new EntityDoesNotExistsException(Contract.class, orderDto.getContractCode());
-			order.setContract(contract);
-				
+			order.setContract(contractHierarchyHelper.checkContractHierarchy(order.getBillingAccount(), orderDto.getContractCode()));
 		}
 		if(!Strings.isEmpty(orderDto.getInvoicingPlanCode())) {
 			final InvoicingPlan billingPlan = invoicingPlanService.findByCode(orderDto.getInvoicingPlanCode());
@@ -811,6 +811,10 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 		} else {
 			userAccount = commercialOrder.getUserAccount();
 		}
+		
+		if (!StringUtils.isBlank(orderOfferDto.getContractCode())) {
+			orderOffer.setContract(contractHierarchyHelper.checkContractHierarchy(userAccount.getBillingAccount(), orderOfferDto.getContractCode()));
+		}
 
 		orderOffer.setUserAccount(userAccount);
 		DiscountPlan discountPlan=null;
@@ -969,6 +973,10 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 	        }
 	        orderOffer.setUserAccount(userAccount);
 		} 
+		
+		if (!StringUtils.isBlank(orderOfferDto.getContractCode())) {
+			orderOffer.setContract(contractHierarchyHelper.checkContractHierarchy(orderOffer.getUserAccount().getBillingAccount(), orderOfferDto.getContractCode()));
+		}
     	
     	if(orderOfferDto.getDeliveryDate()!=null && orderOfferDto.getDeliveryDate().before(new Date())) {
     		throw new MeveoApiException("Delivery date should be in the future");	

@@ -351,11 +351,11 @@ public class CustomerApi extends AccountEntityApi {
 			}
         }
         
-        if (postData.getCustomerChildsCodes() != null) {
-        	customer.setCustomerChilds(postData.getCustomerChildsCodes().stream().map(code -> ofNullable(customerService.findByCode(code))
+        if (postData.getChildrenCustomersCodes() != null) {
+        	customer.setChildrenCustomers(postData.getChildrenCustomersCodes().stream().map(code -> ofNullable(customerService.findByCode(code))
 					.orElseThrow(() -> new BusinessException("No customer child found with the given code : " + code))).collect(Collectors.toList()));
         	
-        	customer.getCustomerChilds().stream().filter(child -> !canBeLinked(customer, child)).findAny().ifPresent(child -> {
+        	customer.getChildrenCustomers().stream().filter(child -> !canBeLinked(customer, child)).findAny().ifPresent(child -> {
                 throw new BusinessException(String.format("A customer’s ascendant cannot be one of its descendants. Customer %s is %s of %s", 
                 		customer.getCode(), childOrDescendant(customer, child), child.getCode()));
         	});
@@ -371,12 +371,15 @@ public class CustomerApi extends AccountEntityApi {
 			customer.setSeller((customer.getParentCustomer() != null && customer.getParentCustomer().getSeller() != null)? 
 							customer.getParentCustomer().getSeller() : customer.getCustomerCategory().getDefaultSeller());
         }
+        else{
+            customer.setSeller(null);
+        }
 
     }
     
 	private void updateCustomerChilds(CustomerDto postData, Customer customer) {
-		if (postData.getCustomerChildsCodes() != null) {
-			customer.getCustomerChilds().forEach(customerChild -> {
+		if (postData.getChildrenCustomersCodes() != null) {
+			customer.getChildrenCustomers().forEach(customerChild -> {
 				customerChild.setParentCustomer(customer);
 				customerService.update(customerChild);
 			});

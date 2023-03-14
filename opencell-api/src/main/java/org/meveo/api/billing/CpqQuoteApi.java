@@ -99,6 +99,7 @@ import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
+import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.crm.Customer;
@@ -255,6 +256,9 @@ public class CpqQuoteApi extends BaseApi {
     @Inject
     private WalletOperationService walletOperationService;
     
+	@Inject
+	private ContractHierarchyHelper contractHierarchyHelper;
+    
     private static final String ADMINISTRATION_VISUALIZATION = "administrationVisualization";
     
     private static final String ADMINISTRATION_MANAGEMENT = "administrationManagement";
@@ -395,7 +399,7 @@ public class CpqQuoteApi extends BaseApi {
     		if(StringUtils.isNotBlank(quoteVersionDto.getDiscountPlanCode())) {
     			 quoteVersion.setDiscountPlan(loadEntityByCode(discountPlanService, quoteVersionDto.getDiscountPlanCode(), DiscountPlan.class));
     		}
-    		quoteVersion.setContract(checkContractToHierarchy(cpqQuote, quoteVersionDto.getContractCode()));
+    		quoteVersion.setContract(contractHierarchyHelper.checkContractHierarchy(cpqQuote.getBillableAccount(), quoteVersionDto.getContractCode()));
     		if(quoteVersionDto.getMediaCodes() != null) {
     		    quoteVersionDto.getMediaCodes().forEach(mediaCode -> {
             		var media = mediaService.findByCode(mediaCode);
@@ -490,7 +494,6 @@ public class CpqQuoteApi extends BaseApi {
                     .stream()
                     .forEach(productAttribute -> selectedAttributes.put(productAttribute.getQuoteAttributeCode(), productAttribute.getStringValue()));
             productContextDTO.setSelectedAttributes(selectedAttributes);
-            //processReplacementRules(commercialRuleHeader, productContextDTO, offerQuoteAttribute);
             ++index;
         }
         
@@ -602,7 +605,7 @@ public class CpqQuoteApi extends BaseApi {
             if (scriptInstance != null) {
                     String quoteXmlScript = scriptInstance.getCode();
                     ScriptInterface script = scriptInstanceService.getScriptInstance(quoteXmlScript);
-                    Map<String, Object> methodContext = new HashMap<String, Object>();
+                    Map<String, Object> methodContext = new HashMap<>();
                     methodContext.put("quoteVersion", quoteVersion);
                     methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
                     methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
@@ -789,7 +792,7 @@ public class CpqQuoteApi extends BaseApi {
                 if(StringUtils.isNotBlank(quoteVersionDto.getDiscountPlanCode())) {
                     qv.setDiscountPlan(loadEntityByCode(discountPlanService, quoteVersionDto.getDiscountPlanCode(), DiscountPlan.class));
                 }
-                qv.setContract(checkContractToHierarchy(quote, quoteVersionDto.getContractCode()));
+                qv.setContract(contractHierarchyHelper.checkContractHierarchy(quote.getBillableAccount(), quoteVersionDto.getContractCode()));
                 qv.getMedias().clear();
                 if(quoteVersionDto.getMediaCodes() != null) {
                 	quoteVersionDto.getMediaCodes().forEach(mediaCode -> {
@@ -982,7 +985,7 @@ public class CpqQuoteApi extends BaseApi {
             quoteOffer.setCode(quoteOfferDto.getCode());
             quoteOffer.setDescription(quoteOfferDto.getDescription());
             quoteOffer.setQuoteLineType(quoteOfferDto.getQuoteLineType());
-            quoteOffer.setContract(checkContractToHierarchy(quoteOffer, quoteOfferDto.getCode()));
+            quoteOffer.setContract(contractHierarchyHelper.checkContractHierarchy(quoteOffer.getBillableAccount(), quoteOfferDto.getCode()));
             populateCustomFields(quoteOfferDto.getCustomFields(), quoteOffer, true);
             quoteOfferService.create(quoteOffer);
             quoteOfferDto.setQuoteOfferId(quoteOffer.getId());
@@ -1098,7 +1101,7 @@ public class CpqQuoteApi extends BaseApi {
         	}
         	quoteOffer.setSubscription(subscription);
         }
-        quoteOffer.setContract(checkContractToHierarchy(quoteOffer, quoteOfferDTO.getCode()));
+        quoteOffer.setContract(contractHierarchyHelper.checkContractHierarchy(quoteOffer.getBillableAccount(), quoteOfferDTO.getCode()));
         processQuoteProduct(quoteOfferDTO, quoteOffer);
         processQuoteAttribute(quoteOfferDTO, quoteOffer);
         populateCustomFields(quoteOfferDTO.getCustomFields(), quoteOffer, false);
@@ -1343,6 +1346,7 @@ public class CpqQuoteApi extends BaseApi {
         if(cpqQuote == null)
             throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode);
         QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, version);
+        validateProducts(quoteVersion);
         if(quoteVersion == null)
             throw new EntityDoesNotExistsException("No quote version found for quote: " + quoteCode + ", and version : " + version);
         if(cpqQuote.getStatus().equalsIgnoreCase(QuoteStatusEnum.CANCELLED.toString())
@@ -1415,6 +1419,10 @@ public class CpqQuoteApi extends BaseApi {
             }
             cpqQuote = serviceSingleton.assignCpqQuoteNumber(cpqQuote);
         }
+        List<QuoteVersion> quoteVersionsList = quoteVersionService.findLastVersionByCode(cpqQuote.getCode());
+        if(!quoteVersionsList.isEmpty()) {
+            validateProducts(quoteVersionsList.get(0));
+        }
         try {
             cpqQuoteService.update(cpqQuote);
             cpqQuoteStatusUpdatedEvent.fire(cpqQuote);
@@ -1433,8 +1441,13 @@ public class CpqQuoteApi extends BaseApi {
 
     public void updateQuoteVersionStatus(String quoteCode, int currentVersion, VersionStatusEnum status) {
         QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion);
-        if (quoteVersion == null)
+        if (quoteVersion == null) {
             throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
+        }
+
+        if(VersionStatusEnum.PUBLISHED.equals(status)) {
+            validateProducts(quoteVersion);
+        }
         if(quoteVersion.getQuoteOffers().isEmpty()) {
         	throw new MeveoApiException("link an offer to a version before publishing it");
         }
@@ -1467,11 +1480,31 @@ public class CpqQuoteApi extends BaseApi {
         }
     }
 
+    private void validateProducts(QuoteVersion quoteVersion) {
+        if (quoteVersion.getQuoteArticleLines() != null) {
+            quoteVersion.getQuoteArticleLines()
+                    .stream()
+                    .filter(Objects::nonNull)
+                    .map(QuoteArticleLine::getQuoteProduct)
+                    .filter(Objects::nonNull)
+                    .map(QuoteProduct::getProductVersion)
+                    .filter(Objects::nonNull)
+                    .map(ProductVersion::getProduct)
+                    .filter(product -> Objects.nonNull(product) && ProductStatusEnum.CLOSED.equals(product.getStatus()))
+                    .findAny()
+                    .ifPresent(product -> {
+                        throw new BusinessApiException("Can not perform action product status is CLOSED, product code : "
+                                + product.getCode());
+                    });
+        }
+    }
+
     public GetQuoteVersionDtoResponse quoteQuotation(String quoteCode, int currentVersion) {
         List<QuotePrice> accountingArticlePrices = new ArrayList<>();
         List<TaxPricesDto> pricesPerTaxDTO = new ArrayList<>();
-        Set<DiscountPlanItem> quoteEligibleFixedDiscountItems = new HashSet<DiscountPlanItem>();
-         QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion);
+        Set<DiscountPlanItem> quoteEligibleFixedDiscountItems = new HashSet<>();
+        QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion);
+        validateProducts(quoteVersion);
         if (quoteVersion == null)
             throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
 
@@ -1535,7 +1568,7 @@ public class CpqQuoteApi extends BaseApi {
                     AccountingArticlePricesDTO accountingArticlePricesDTO = new AccountingArticlePricesDTO();
                     accountingArticlePricesDTO.setAccountingArticleCode(quoteArticleLine.getAccountingArticle().getCode());
                     accountingArticlePricesDTO.setAccountingArticleLabel(quoteArticleLine.getAccountingArticle().getDescription());
-                    accountingArticlePricesDTO.setAccountingArticlePrices(new ArrayList<PriceDTO>());
+                    accountingArticlePricesDTO.setAccountingArticlePrices(new ArrayList<>());
                     Map<BigDecimal, List<QuotePrice>> pricesPerTauxMap = quoteArticleLine.getQuotePrices().stream()
                             .collect(Collectors.groupingBy(QuotePrice::getTaxRate));
                     BigDecimal quoteTotalAmountBigDecimal = BigDecimal.ZERO;
@@ -2030,7 +2063,7 @@ public class CpqQuoteApi extends BaseApi {
 		}
     }
     private List<QuotePrice> createFixedDiscountQuotePrices( List<WalletOperation> fixedDiscountWalletOperation,QuoteVersion quoteVersion, QuoteOffer quoteOffer,BillingAccount billingAccount,PriceLevelEnum priceLevelEnum) {
-    	List<QuotePrice> discountQuotePrices=new ArrayList<QuotePrice>();
+    	List<QuotePrice> discountQuotePrices=new ArrayList<>();
     	for (WalletOperation wo : fixedDiscountWalletOperation) {
     	   QuotePrice discountQuotePrice = new QuotePrice();
            discountQuotePrice.setPriceLevelEnum(priceLevelEnum);
@@ -2123,6 +2156,7 @@ public class CpqQuoteApi extends BaseApi {
         if(quoteOffer.getQuoteVersion().getDiscountPlan() != null) {
         	createDiscountPlanInstance(quoteOffer.getQuoteVersion().getDiscountPlan(), subscription,null);
         }
+        subscription.setContract(quoteOffer.getContract() != null ? quoteOffer.getContract() : quoteOffer.getQuoteVersion().getContract() != null ? quoteOffer.getQuoteVersion().getContract() : null);
         
         // instantiate and activate services
         processProducts(subscription, quoteOffer.getQuoteProduct());
@@ -2364,41 +2398,5 @@ public class CpqQuoteApi extends BaseApi {
 	                  
 	                });
 	    }
-
-		private Contract checkContractToHierarchy(BusinessEntity entity, String contractCode) {
-			if(StringUtils.isNotBlank(contractCode)) {
-				Contract contract = contractService.findByCode(contractCode);
-				if(contract == null) {
-					log.warn("Contract code : " + contractCode + " doesn't exist");
-				}else if(entity != null){
-					boolean isAttachedToBA =  false ;
-					CustomerAccount customerAccount = null;
-					if(entity instanceof CpqQuote) {
-						CpqQuote cpqQuote = (CpqQuote) entity;
-						isAttachedToBA = contract.getBillingAccount() != null && contract.getBillingAccount().getCode().equals(cpqQuote.getBillableAccount().getCode());
-						customerAccount = cpqQuote.getBillableAccount().getCustomerAccount();
-					}else {
-						QuoteOffer quoteOffer = (QuoteOffer) entity;
-						isAttachedToBA = contract.getBillingAccount() != null && contract.getBillingAccount().getCode().equals(quoteOffer.getBillableAccount().getCode());
-						customerAccount = quoteOffer.getBillableAccount().getCustomerAccount();
-					}
-						
-					boolean isAttachedToCA = contract.getCustomerAccount() != null && customerAccount != null && contract.getCustomerAccount().getCode().equals(customerAccount.getCode());
-					Customer customer = customerAccount != null && customerAccount.getCustomer() != null ? customerAccount.getCustomer() : null;
-					boolean isAttachedToCustomer = customer != null && contract.getCustomer() != null && contract.getCustomer().getCode().equals(customer.getCode());
-					Customer customerParent = customer != null && customer.getParentCustomer() != null  ? customer.getParentCustomer() : null;
-					boolean isAttacheToParentCustomer = customerParent != null && contract.getCustomer().getCode().equals(customerParent.getCode());
-					if(isAttachedToBA || isAttachedToCA || isAttachedToCustomer || isAttacheToParentCustomer) {
-		    			return contract;
-					}else {
-						log.warn("current Contract code : " + contract.getCode() + " is not applicable for any customer hierarchy");
-					}
-					
-				}else {
-					log.warn("Entity to check contract hierarchy is null");
-				}
-		    }
-			return null;
-		}
 
 }

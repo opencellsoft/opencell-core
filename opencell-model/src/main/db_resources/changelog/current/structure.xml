@@ -15995,6 +15995,47 @@ public class AgedBalanceReporting extends ReportExtractScript {
          </dropColumn>
     </changeSet>
 
+    <changeSet id="#INTRD-13326_20230227" author="zelmeliani">
+        <addColumn tableName="billing_wallet_operation">
+            <column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0">
+			    <constraints nullable="false" />
+			</column>
+			<column name="converted_amount_without_tax" type="numeric(23, 12)" />
+			<column name="converted_amount_with_tax" type="numeric(23, 12)" />
+			<column name="converted_amount_tax" type="numeric(23, 12)" />
+			<column name="converted_unit_amount_without_tax" type="numeric(23, 12)" />
+			<column name="converted_unit_amount_with_tax" type="numeric(23, 12)" />
+			<column name="converted_unit_amount_tax" type="numeric(23, 12)" />
+			<column name="trading_currency_id" type="bigint" />
+        </addColumn>
+
+        <addColumn tableName="billing_rated_transaction">
+            <column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0">
+			    <constraints nullable="false" />
+			</column>
+			<column name="converted_amount_without_tax" type="numeric(23, 12)" />
+			<column name="converted_amount_with_tax" type="numeric(23, 12)" />
+			<column name="converted_amount_tax" type="numeric(23, 12)" />
+			<column name="converted_unit_amount_without_tax" type="numeric(23, 12)" />
+			<column name="converted_unit_amount_with_tax" type="numeric(23, 12)" />
+			<column name="converted_unit_amount_tax" type="numeric(23, 12)" />
+			<column name="trading_currency_id" type="bigint" />
+        </addColumn>
+        
+        <addForeignKeyConstraint
+            constraintName="fk_trading_currency_id_billing_wallet_operation" 
+			referencedTableName="billing_trading_currency" 
+			referencedColumnNames="id"
+			baseColumnNames="trading_currency_id" 
+			baseTableName="billing_wallet_operation" />
+        <addForeignKeyConstraint 
+            constraintName="fk_trading_currency_id_billing_rated_transaction" 
+			referencedTableName="billing_trading_currency" 
+			referencedColumnNames="id"
+			baseColumnNames="trading_currency_id" 
+			baseTableName="billing_rated_transaction" />
+    </changeSet>
+
     <changeSet id="#INTRD-14336_20230227" author="ZBariki">
         <addColumn tableName="cpq_contract_item">
             <column name="application_el" type="varchar(2000)" />
@@ -16026,9 +16067,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
 		</addColumn>
 	</changeSet>
 
+<!-- 
     <changeSet id="#INTRD-14263_20200304" author="TarikFA.">
         <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_origin_ratedtransaction_id" />
     </changeSet>
+ -->
 
     <changeSet id="#INTRD-14381-202303202" author="bourras">
         <addColumn tableName="billing_invoice_configuration">
@@ -16044,6 +16087,29 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  constraintName="fk_crm_customer_category_default_seller_id"
                                  referencedTableName="crm_seller"
                                  referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-14632_20230306" author="AdilElJaouhari">
+    	<addColumn tableName="cpq_order_offer">
+    		<column name="contract_id" type="bigint" />
+    	</addColumn>
+        <addForeignKeyConstraint baseTableName="cpq_order_offer" baseColumnNames="contract_id"
+                                 constraintName="fk_cpq_order_offer_contract_id"
+                                 referencedTableName="cpq_contract"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
+    
+    <changeSet id="#INTR-14747_20230308" author="TarikFA.">
+    	<update tableName="cat_discount_plan">
+    		<column name="applicable_on_overridden_price" value="1"/>
+    		<where>applicable_on_overridden_price is null</where>
+    	</update>
+    	<update tableName="cat_discount_plan">
+    		<column name="applicable_on_discounted_price" value="1"/>
+    		<where>applicable_on_discounted_price is null</where>
+    	</update>
     </changeSet>
 
 
