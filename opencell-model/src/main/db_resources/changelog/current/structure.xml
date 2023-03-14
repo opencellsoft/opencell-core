@@ -15702,5 +15702,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
                 AGGREGATE USING listagg_clob_t;
         </createProcedure>
     </changeSet>
+    
+    <changeSet id="#INTRD-14743_20230313" author="TarikFA.">
+        <createIndex tableName="rating_edr" indexName="rating_edr_eventKey_index_idx">
+            <column name="event_key"/>
+        </createIndex>
+    </changeSet>
 
 </databaseChangeLog>

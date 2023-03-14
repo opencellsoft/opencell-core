@@ -30,7 +30,7 @@ import org.meveo.model.cpq.AttributeValue;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_price_plan_matrix_line_sq") })
 @NamedQueries({
-	@NamedQuery(name = "PricePlanMatrixLine.findByPricePlanMatrixVersion", query = "select distinct(p) from PricePlanMatrixLine p left join fetch p.pricePlanMatrixValues pv where p.pricePlanMatrixVersion=:pricePlanMatrixVersion"),
+	@NamedQuery(name = "PricePlanMatrixLine.findByPricePlanMatrixVersion", query = "select distinct(p) from PricePlanMatrixLine p  where p.pricePlanMatrixVersion.id=:pricePlanMatrixVersionId"),
     @NamedQuery(name = "PricePlanMatrixLine.findByPricePlanMatrixVersionIds", query = "select p from PricePlanMatrixLine p where p.pricePlanMatrixVersion.id in (:ppmvIds)")})
 public class PricePlanMatrixLine extends AuditableEntity {
 

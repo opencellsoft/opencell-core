@@ -160,9 +160,8 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
      */
     public List<UsageChargeInstance> getUsageChargeInstancesValidForDateBySubscriptionId(Long subscriptionId, Object consumptionDate) {
         EntityGraph<UsageChargeInstance> graph = getEntityManager().createEntityGraph(UsageChargeInstance.class);
-        graph.addAttributeNodes("chargeTemplate", "serviceInstance", "userAccount", "currency");
+        graph.addAttributeNodes("chargeTemplate", "serviceInstance", "userAccount");
         graph.addSubgraph("serviceInstance").addAttributeNodes("attributeInstances");
-        graph.addSubgraph("currency").addAttributeNodes("currency");
         graph.addSubgraph("userAccount").addAttributeNodes("wallet");
 
         return getEntityManager().createNamedQuery("UsageChargeInstance.getUsageChargesValidesForDateBySubscription", UsageChargeInstance.class)
