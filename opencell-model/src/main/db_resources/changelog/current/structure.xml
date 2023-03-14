@@ -16045,4 +16045,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_origin_ratedtransaction_id" />
     </changeSet>
 
+    <changeSet id="#INTRD-14743_20230313" author="TarikFA.">
+        <createIndex tableName="rating_edr" indexName="rating_edr_eventKey_index_idx">
+            <column name="event_key"/>
+        </createIndex>
+    </changeSet>
+
 </databaseChangeLog>
