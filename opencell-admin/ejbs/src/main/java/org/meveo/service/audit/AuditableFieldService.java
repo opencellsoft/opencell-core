@@ -213,6 +213,7 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
         if (changedEntities != null && !changedEntities.isEmpty()) {
             // Add fields change history
             createFieldsHistory(changedEntities);
+            getEntityManager().flush();
 
             // Fire fields updated events.
             fireChangedFieldsEvents(changedEntities);
