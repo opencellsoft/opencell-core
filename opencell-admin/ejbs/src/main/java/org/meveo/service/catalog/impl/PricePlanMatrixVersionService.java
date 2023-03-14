@@ -52,8 +52,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
@@ -439,8 +437,6 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 	 * @param operationDate
 	 * @return PricePlanMatrixVersion
 	 */
-
-    @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 	public PricePlanMatrixVersion getPublishedVersionValideForDate(Long ppmId, ServiceInstance serviceInstance, Date operationDate) {
 		Date operationDateParam = new Date();
 		if(serviceInstance==null || PriceVersionDateSettingEnum.EVENT.equals(serviceInstance.getPriceVersionDateSetting())) {
