@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
@@ -30,7 +31,8 @@ import org.meveo.model.cpq.AttributeValue;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_price_plan_matrix_line_sq") })
 @NamedQueries({
-	@NamedQuery(name = "PricePlanMatrixLine.findByPricePlanMatrixVersion", query = "select distinct(p) from PricePlanMatrixLine p  where p.pricePlanMatrixVersion.id=:pricePlanMatrixVersionId"),
+	@NamedQuery(name = "PricePlanMatrixLine.findByPricePlanMatrixVersion", query = "select p from PricePlanMatrixLine p  where p.pricePlanMatrixVersion.id=:pricePlanMatrixVersionId", hints = {
+            @QueryHint(name = "org.hibernate.cacheable", value = "TRUE"), @QueryHint(name = "org.hibernate.readOnly", value = "true") }),
     @NamedQuery(name = "PricePlanMatrixLine.findByPricePlanMatrixVersionIds", query = "select p from PricePlanMatrixLine p where p.pricePlanMatrixVersion.id in (:ppmvIds)")})
 public class PricePlanMatrixLine extends AuditableEntity {
 

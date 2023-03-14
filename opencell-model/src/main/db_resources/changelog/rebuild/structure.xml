@@ -17059,14 +17059,12 @@
 	  	<createIndex indexName="idx__billing_rated_transaction__service_instance_id" tableName="billing_rated_transaction">
 	      	<column name="service_instance_id"/>
 	  	</createIndex>
-    </changeSet>
-
-
-    <changeSet id="#INTRD-14743_20230313-rebuild" author="TarikFA.">
         <createIndex tableName="rating_edr" indexName="rating_edr_eventKey_index_idx">
             <column name="event_key"/>
         </createIndex>
     </changeSet>
+
+
     <!-- end index -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-func-999" dbms="postgresql">
