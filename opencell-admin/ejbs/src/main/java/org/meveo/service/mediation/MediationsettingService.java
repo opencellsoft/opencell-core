@@ -76,11 +76,15 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 
     @SuppressWarnings("unchecked")
 	public boolean applyEdrVersioningRule(List<EDR> edrs, CDR cdr, boolean isVirtual, boolean isTriggeredEdr){
-    	var mediationSettings = this.list();
-    	if(CollectionUtils.isNotEmpty(mediationSettings) && mediationSettings.size() > 1)
-    		throw new BusinessException("More than one Mediation setting is found");
-    	if(CollectionUtils.isEmpty(mediationSettings)) return isVirtual;
-    	if(!mediationSettings.get(0).isEnableEdrVersioning()) return isVirtual;
+    	MediationSetting mediationSetting = this.findById(1L);
+    	if(mediationSetting == null) {
+        	var mediationSettings = this.list();
+        	if(CollectionUtils.isNotEmpty(mediationSettings) && mediationSettings.size() > 1)
+        		throw new BusinessException("More than one Mediation setting is found");
+        	if(CollectionUtils.isEmpty(mediationSettings)) return isVirtual;
+        	if(!mediationSettings.get(0).isEnableEdrVersioning()) return isVirtual;
+        	mediationSetting = mediationSettings.get(0);
+    	}
     	Comparator<EdrVersioningRule> sortByPriority = (EdrVersioningRule edrV1, EdrVersioningRule edrV2) -> edrV1.getPriority().compareTo(edrV2.getPriority()); 
     	var edrIterate = edrs.iterator();
     	boolean isRated = isVirtual;
@@ -89,7 +93,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
     		if(edr.getId() == null)
     		    edrService.create(edr);
     		var  errorMessage = "Error evaluating %s  [id= %d, \"%s\"] for CDR: [%s] : %s";
-        	var edrVersionRuleOption = mediationSettings.get(0).getRules().stream()
+        	var edrVersionRuleOption = mediationSetting.getRules().stream()
 					.sorted(sortByPriority)
 					.filter(edrVersion -> {
 						var errorMsg = String.format(errorMessage, "criteriaEL", edrVersion.getId(), edrVersion.getCriteriaEL(), isTriggeredEdr ?  "FROM_TRIGGERED_EDR : " + edr:cdr, "%s");
