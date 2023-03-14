@@ -155,13 +155,13 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
      * @return An ordered list by priority (ascended) of usage charge instances
      */
     public List<UsageChargeInstance> getUsageChargeInstancesValidForDateBySubscriptionId(Long subscriptionId, Object consumptionDate) {
-        /*
+
         EntityGraph<UsageChargeInstance> graph = getEntityManager().createEntityGraph(UsageChargeInstance.class);
         graph.addAttributeNodes("chargeTemplate", "serviceInstance", "userAccount", "currency");
         graph.addSubgraph("serviceInstance").addAttributeNodes("attributeInstances");
         graph.addSubgraph("currency").addAttributeNodes("currency");
         graph.addSubgraph("userAccount").addAttributeNodes("wallet");
-
+/*
         return getEntityManager().createNamedQuery("UsageChargeInstance.getUsageChargesValidesForDateBySubscription", UsageChargeInstance.class)
                 .setParameter("terminationDate", consumptionDate).setParameter("subscriptionId", subscriptionId)
                 .setHint("javax.persistence.loadgraph", graph)
@@ -172,6 +172,13 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
         String hql = "from UsageChargeInstancesView c where (c.status='ACTIVE' OR ((c.status='TERMINATED' OR c.status='SUSPENDED') AND c.terminationDate>:terminationDate)) and c.subscription.id=:subscriptionId order by c.priority ASC";
         List<UsageChargeInstancesView> list = getEntityManager().createQuery(hql).setParameter("terminationDate", consumptionDate).setParameter("subscriptionId", subscriptionId).getResultList();
         List<Long> ids = list.stream().map(l->l.getId()).collect(Collectors.toList());
-        return findByIds(ids);
+
+        return getEntityManager().createNamedQuery("UsageChargeInstance.getByIds",UsageChargeInstance.class)
+                .setParameter("ids", ids)
+                .setHint("javax.persistence.loadgraph", graph)
+                .getResultList();
+        //return findByIds(ids);
+
+
     }
 }

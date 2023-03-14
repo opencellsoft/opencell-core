@@ -38,6 +38,21 @@ public class UsageChargeInstancesView {
     @Column(name = "id")
     private Long id;
 
+    @Column(name = "charge_template_id")
+    private Long chargeTemplateId;
+
+    @Column(name = "user_account_id")
+    private Long userAccountId;
+
+    @Column(name = "wallet_id")
+    private Long walletId;
+
+    @Column(name="trading_currency")
+    private Long tradingCurrency;
+
+    @Column(name = "currency_id")
+    private Long currencyId;
+
     @Column(name = "charge_type")
     @Size(max = 1)
     private String chargeType;
