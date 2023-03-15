@@ -16073,7 +16073,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
     </changeSet>
  -->
 
-    <changeSet id="#INTRD-14381-202303202" author="bourras">
+    <changeSet id="#INTRD-14381-202303202" author="bourras" failOnError="false">
         <addColumn tableName="billing_invoice_configuration">
             <column name="display_rated_items" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
