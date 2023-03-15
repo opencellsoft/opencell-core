@@ -310,7 +310,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
             mediationSetting = mediationSettings.get(0);
             MEDIATION_SETTING_ID = mediationSetting.getId();
         } else {
-            mediationSetting = findById(MEDIATION_SETTING_ID, Arrays.asList("rules"));
+            mediationSetting = findById(MEDIATION_SETTING_ID);
         }
         return mediationSetting;
     }
