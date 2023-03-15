@@ -342,7 +342,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                             extraParam , null, startdate, endDate, null, invoicingDate);
             }
         }
-        ParamBean.setReload(false);
         walletOperation.setChargeMode(chargeMode);
         walletOperation.setFullRatingPeriod(fullRatingPeriod);
 
@@ -536,8 +535,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 }
             }
         }
-        if(evaluatEdrVersioning)
-            mediationsettingService.applyEdrVersioningRule(triggredEDRs, null, isVirtual, true);
+        if(evaluatEdrVersioning) {
+            mediationsettingService.applyEdrVersioningRule(triggredEDRs, null, true);
+        }
         return triggredEDRs;
 
     }
