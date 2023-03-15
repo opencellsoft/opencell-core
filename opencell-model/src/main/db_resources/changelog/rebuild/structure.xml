@@ -19117,7 +19117,6 @@
     <changeSet id="#222_20210219" author="Mbarek-Ay"></changeSet>
     <changeSet id="#270_20210222" author="Mbarek-Ay"></changeSet>
     <changeSet id="#20210222_540_269" author="TarikFA."></changeSet>
-    <changeSet id="#20210222_540_269" author="TarikFA."></changeSet>
     <changeSet id="#20210123_540_280" author="TarikFA."></changeSet>
     <changeSet   id="#20210123_540_281" author="TarikFA."></changeSet>
     <changeSet id="#20210224_5868" author="Mbarek-Ay"></changeSet>
@@ -19134,7 +19133,6 @@
     <changeSet id="#2020317-342" author="Mbarek-Ay"></changeSet>
     <changeSet id="#20210322_377" author="TarikFA."></changeSet>
     <changeSet id="#20210323_380" author="TarikFA."></changeSet>
-    <changeSet id="#20210323-382" author="Mbarek-Ay"></changeSet>
     <changeSet id="#20210323-382" author="Mbarek-Ay"></changeSet>
     <changeSet id="#20220325_360" author="TarikFA."></changeSet>
     <changeSet id="#20210329_399" author="TarikFA."></changeSet>
@@ -19557,6 +19555,9 @@
 	<changeSet id="#INTRD-14340_20230228" author="HichamHANINE" />
 	<changeSet id="#INTRD-14243_invoice_conversion" author="a.rouaguebe" />
 	<changeSet id="#INTRD-14402_20230301" author="AdilElJaouhari" />
+	<changeSet id="#INTRD-14381-202303202" author="bourras" />
+	<changeSet id="#20210623-INTRD-277-orderAdvacementScript" author="TarikFA." />
+	<changeSet id="#20210623-INTRD-277-quoteValidationScript" author="TarikFA." />
 	
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

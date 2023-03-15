@@ -2,36 +2,28 @@ package org.meveo.apiv2.billing.service;
 
 import static java.util.Optional.ofNullable;
 
-import javax.inject.Inject;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.rest.exception.BadRequestException;
 import org.meveo.apiv2.billing.DuplicateRTResult;
 import org.meveo.apiv2.billing.ProcessCdrListResult.Statistics;
 import org.meveo.apiv2.billing.ProcessingModeEnum;
 import org.meveo.apiv2.ordering.services.ApiService;
-import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import liquibase.pro.packaged.mo;
-
+import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 
 public class RatedTransactionApiService implements ApiService<RatedTransaction> {
@@ -133,7 +125,7 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 		}
 		List<RatedTransaction> rtToDuplicate = ratedTransactionService.findByFilter(modifiableFilters);
 		if(CollectionUtils.isEmpty(rtToDuplicate)) {
-			log.warn("list of rated transaction to duplicate is empty for filters : " + filters);
+			log.warn("list of rated transaction to duplicate is empty for filters : {}", filters);
 			result.getActionStatus().setMessage("list of rated transaction to duplicate is empty.");
 			return result;
 		}
