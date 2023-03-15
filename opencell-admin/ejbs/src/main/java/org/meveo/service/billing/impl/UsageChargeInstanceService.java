@@ -167,11 +167,11 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
                 .setParameter("terminationDate", consumptionDate).setParameter("subscriptionId", subscriptionId)
                 .setHint("javax.persistence.loadgraph", graph)
                 .getResultList();
-
          */
 
-        String hql = "from UsageChargeInstancesView c where (c.status='ACTIVE' OR ((c.status='TERMINATED' OR c.status='SUSPENDED') AND c.terminationDate>:terminationDate)) and c.subscription.id=:subscriptionId order by c.priority ASC";
-        List<UsageChargeInstancesView> list = getEntityManager().createQuery(hql).setParameter("terminationDate", consumptionDate).setParameter("subscriptionId", subscriptionId).getResultList();
+        String hql = "from UsageChargeInstancesView c where (c.status='ACTIVE' OR ((c.status='TERMINATED' OR c.status='SUSPENDED') AND c.terminationDate>:terminationDate)) and c.subscription=:subscriptionId order by c.priority ASC";
+        List<UsageChargeInstancesView> list = getEntityManager().createQuery(hql, UsageChargeInstancesView.class)
+                .setParameter("terminationDate", consumptionDate).setParameter("subscriptionId", subscriptionId).getResultList();
         Set<Long> ids = list.stream().map(l->l.getUsageChargeId()).collect(Collectors.toSet());
 
         return getEntityManager().createNamedQuery("UsageChargeInstance.getByIds",UsageChargeInstance.class)
@@ -184,8 +184,6 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
                 .setParameter("currencyIds", list.stream().map(l->l.getCurrencyId()).collect(Collectors.toSet()))
                 .setHint("javax.persistence.loadgraph", graph)
                 .getResultList();
-        //return findByIds(ids);
-
 
     }
 }
