@@ -3,6 +3,7 @@ package org.meveo.service.cpq;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Arrays;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
