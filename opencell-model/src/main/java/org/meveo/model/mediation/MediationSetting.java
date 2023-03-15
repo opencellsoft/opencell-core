@@ -6,6 +6,8 @@ import java.util.Set;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -29,6 +31,7 @@ public class MediationSetting extends AuditableEntity {
 	private boolean enableEdrVersioning = Boolean.FALSE;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "mediationSetting", orphanRemoval = true)
+    @Cache(usage =  CacheConcurrencyStrategy.READ_WRITE)
 	private Set<EdrVersioningRule> rules = new HashSet<>();
 
 	public boolean isEnableEdrVersioning() {
