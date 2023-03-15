@@ -16119,7 +16119,9 @@ public class AgedBalanceReporting extends ReportExtractScript {
     </changeSet>
     
     <changeSet id="#INTRD-14743_20230315" author="TarikFA.">
-        <sql>CREATE INDEX rt_customer_contract_index ON ${db.schema.adapted}cpq_contract (customer_id, billing_account_id, customer_account_id) where status='ACTIVE'</sql>
+        <sql>CREATE INDEX rt_customer_id_contract_index ON ${db.schema.adapted}cpq_contract (customer_id) where status='ACTIVE'</sql>
+        <sql>CREATE INDEX rt_billing_account_id_contract_index ON ${db.schema.adapted}cpq_contract (billing_account_id) where status='ACTIVE'</sql>
+        <sql>CREATE INDEX rt_customer_account_contract_index ON ${db.schema.adapted}cpq_contract (customer_account_id) where status='ACTIVE'</sql>
     </changeSet>
 
 </databaseChangeLog>
