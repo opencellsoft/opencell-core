@@ -17,7 +17,6 @@ import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -379,7 +378,7 @@ public class MediationApiService {
                         }
                         cdrParsingService.createEdrs(edrs, cdr);
                     }
-                   final boolean isVirtualTemp = mediationsettingService.applyEdrVersioningRule(edrs, cdr, isVirtual);
+                    mediationsettingService.applyEdrVersioningRule(edrs, cdr, false);
                     // Convert CDR to EDR and create a reservation
                     if (reserve) {
 
@@ -414,12 +413,11 @@ public class MediationApiService {
 
                         // Convert CDR to EDR and rate them
                     } else if (rate) {
-                        log.debug("usageRatingService : " + usageRatingService + ", isVirtual : " + isVirtual + ", rateTriggeredEdrs : " + rateTriggeredEdrs + ", maxDepth : " + maxDepth);
                         for (EDR edr : edrs) {
                             RatingResult ratingResult = null;
                             // For ROLLBACK_ON_ERROR mode, processing is called within TX, so when error is thrown up, everything will rollback
                             if (cdrProcessingResult.getMode() == ROLLBACK_ON_ERROR) {
-                                ratingResult = usageRatingService.rateUsage(edr, isVirtualTemp, rateTriggeredEdrs, maxDepth, 0, null, true);
+                                ratingResult = usageRatingService.rateUsage(edr, isVirtual, rateTriggeredEdrs, maxDepth, 0, null, true);
                                 if (ratingResult.getRatingException() != null) {
                                     throw ratingResult.getRatingException();
                                 }
@@ -429,7 +427,7 @@ public class MediationApiService {
                                 // For STOP_ON_FIRST_FAIL or PROCESS_ALL model if no rollback is needed (no additional unforeseen data can be created/updated during rating)
                                 // when rating fails, error is not thrown but is simply handled
                             } else if (noNeedToRollback) {
-                                ratingResult = usageRatingService.rateUsage(edr, isVirtualTemp, rateTriggeredEdrs, maxDepth, 0, null, noNeedToRollback);
+                                ratingResult = usageRatingService.rateUsage(edr, isVirtual, rateTriggeredEdrs, maxDepth, 0, null, noNeedToRollback);
                                 if (ratingResult.getRatingException() != null) {
                                     throw ratingResult.getRatingException();
                                 }
@@ -439,7 +437,7 @@ public class MediationApiService {
 
                                 // For STOP_ON_FIRST_FAIL or PROCESS_ALL model if rollback is needed, rating is called in a new TX and will rollback
                             } else {
-                                ratingResult = methodCallingUtils.callCallableInNewTx(() -> usageRatingService.rateUsage(edr, isVirtualTemp, rateTriggeredEdrs, maxDepth, 0, null, false));
+                                ratingResult = methodCallingUtils.callCallableInNewTx(() -> usageRatingService.rateUsage(edr, isVirtual, rateTriggeredEdrs, maxDepth, 0, null, false));
 
                                 if (ratingResult.getWalletOperations() != null) {
                                     walletOperations.addAll(ratingResult.getWalletOperations());
@@ -523,7 +521,8 @@ public class MediationApiService {
             if (generateRTs && !walletOperations.isEmpty()) {
                 for (WalletOperation walletOperation : walletOperations) {
                     //cdrParsingService.getEntityManager().persist(walletOperation.getEdr());
-                	if(walletOperation.getId() == null || walletOperation.getStatus() != WalletOperationStatusEnum.OPEN) continue;
+                    if (walletOperation.getId() == null || walletOperation.getStatus() != WalletOperationStatusEnum.OPEN)
+                        continue;
                     ratedTransactionService.createRatedTransaction(walletOperation, false);
                 }
             }
@@ -533,14 +532,10 @@ public class MediationApiService {
             cdrProcessingResult.setWalletOperationCount(0);
             Arrays.stream(cdrProcessingResult.getChargedCDRs()).forEach( cdrCharge -> {
                 if (cdrCharge != null) {
-                    cdrProcessingResult.setAmountWithTax(cdrProcessingResult.getAmountWithTax().add(cdrCharge.getAmountWithTax() != null
-                            ? cdrCharge.getAmountWithTax() : BigDecimal.ZERO));
-                    cdrProcessingResult.setAmountWithoutTax(cdrProcessingResult.getAmountWithoutTax().add(cdrCharge.getAmountWithoutTax() != null
-                            ? cdrCharge.getAmountWithoutTax() : BigDecimal.ZERO));
-                    cdrProcessingResult.setAmountTax(cdrProcessingResult.getAmountTax().add(cdrCharge.getAmountTax() != null
-                            ? cdrCharge.getAmountTax() : BigDecimal.ZERO));
-                    cdrProcessingResult.setWalletOperationCount(cdrProcessingResult.getWalletOperationCount() + (cdrCharge.getWalletOperationCount() != null
-                            ? cdrCharge.getWalletOperationCount() : 0));
+                    cdrProcessingResult.setAmountWithTax(cdrProcessingResult.getAmountWithTax().add(cdrCharge.getAmountWithTax() != null ? cdrCharge.getAmountWithTax() : BigDecimal.ZERO));
+                    cdrProcessingResult.setAmountWithoutTax(cdrProcessingResult.getAmountWithoutTax().add(cdrCharge.getAmountWithoutTax() != null ? cdrCharge.getAmountWithoutTax() : BigDecimal.ZERO));
+                    cdrProcessingResult.setAmountTax(cdrProcessingResult.getAmountTax().add(cdrCharge.getAmountTax() != null ? cdrCharge.getAmountTax() : BigDecimal.ZERO));
+                    cdrProcessingResult.setWalletOperationCount(cdrProcessingResult.getWalletOperationCount() + (cdrCharge.getWalletOperationCount() != null ? cdrCharge.getWalletOperationCount() : 0));
                 } else {
                     log.warn("cdrProcessingResult amouts and WOCount will have default 0 value, due to cdrCharge null");
                 }
@@ -627,7 +622,6 @@ public class MediationApiService {
         }
     }
 
-    
     public CdrDtoResponse createCdr(List<CDR> cdrs, ProcessingModeEnum mode, boolean returnCDRs, boolean returnError) {
         Builder cdrDtoResponse = ImmutableCdrDtoResponse.builder();
         List<org.meveo.apiv2.models.Resource> ids = new ArrayList<>();
@@ -699,7 +693,6 @@ public class MediationApiService {
 
                 cdrErrorDtos.add(new CdrErrorDto(cdr.toCsv(), cdr.getRejectReason()));
             }
-            
             
             if(cdr.getRejectReason() != null) {
                 if(mode == STOP_ON_FIRST_FAIL) {
@@ -788,7 +781,6 @@ public class MediationApiService {
         cdrService.update(cdr);
     }
     
-
     public CdrDtoResponse updateCDRs(List<CDR> cdrs, ProcessingModeEnum mode, boolean returnCDRs, boolean returnError) {
         List<CdrErrorDto> cdrErrorDtos = new ArrayList<CdrErrorDto>();
         List<String> errorParamters = new ArrayList<String>();
