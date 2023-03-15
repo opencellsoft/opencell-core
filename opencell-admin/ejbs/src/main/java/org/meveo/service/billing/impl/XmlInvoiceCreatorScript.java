@@ -2705,8 +2705,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
     private void buildExtraParamterNode(Document doc, RatedTransaction ratedItem, Element ratedItemNode) {
         Element parameterExtraNode = doc.createElement("parameterExtra");
-        Text parameterExtraText = this.createTextNode(doc, ratedItem.getParameterExtra());
-        parameterExtraNode.appendChild(parameterExtraText);
+        parameterExtraNode.appendChild(doc.createCDATASection(getDefaultIfNull(ratedItem.getParameterExtra(), " ")));
         ratedItemNode.appendChild(parameterExtraNode);
     }
 
