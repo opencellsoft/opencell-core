@@ -543,6 +543,9 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         
         recordedInvoice.setSeller(invoice.getSeller());
         recordedInvoice.setCollectionDate(invoice.getInitialCollectionDate());
+        recordedInvoice.setAppliedRate(invoice.getLastAppliedRate());
+        recordedInvoice.setTransactionalCurrency(invoice.getTradingCurrency());
+        
         try {
             recordedInvoice.setDueDate(DateUtils.setTimeToZero(invoice.getDueDate()));
         } catch (Exception e) {
