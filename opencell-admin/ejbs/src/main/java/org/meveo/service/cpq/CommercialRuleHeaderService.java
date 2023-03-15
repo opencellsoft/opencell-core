@@ -19,7 +19,10 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -348,14 +351,20 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     			if (Double.valueOf(convertedValueStr)>=Double.valueOf(sourceAttributeValue))
     				return true;	
     			}break;
-    		
     		case CONTAINS:
-    			
+    			multiValuesAttributeSeparator = paramBeanFactory.getInstance().getProperty("attribute.multivalues.separator", ";");
     			List<String> values = convertedValueStr!=null?Arrays.asList(convertedValueStr.split(multiValuesAttributeSeparator)):new ArrayList<String>();
 				if (values.contains(sourceAttributeValue.trim())){
 					return true;
 				}
     			break;
+             case NOT_CONTAINS:
+            	 multiValuesAttributeSeparator = paramBeanFactory.getInstance().getProperty("attribute.multivalues.separator", ";"); 
+    			List<String> listValues = convertedValueStr!=null?Arrays.asList(convertedValueStr.split(multiValuesAttributeSeparator)):new ArrayList<String>();
+				if (!listValues.contains(sourceAttributeValue.trim())){
+					return true;
+				}break;
+    			
     		}
     	}
     	return false;
@@ -475,6 +484,56 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                 );
     }
     
+    @Transactional
+    public List<CommercialRuleHeader> findAll() {
+        TypedQuery<CommercialRuleHeader> query = getEntityManager().createQuery("SELECT c FROM CommercialRuleHeader c WHERE c.disabled=false", entityClass);
+        // Fetch all layzies collections and objects
+        try {
+            List<CommercialRuleHeader> result = query.getResultList();
+            result.forEach(ruleH -> {
+                if (ruleH.getCommercialRuleItems() != null) {
+                    ruleH.getCommercialRuleItems().forEach(commercialRuleItem -> {
+                        if (commercialRuleItem.getCommercialRuleLines() != null) {
+                            commercialRuleItem.getCommercialRuleLines().forEach(commercialRuleLine -> {
+                                if (commercialRuleLine.getSourceGroupedAttributes() != null) {
+                                    commercialRuleLine.getSourceGroupedAttributes().getCode();
+                                }
+                                if (commercialRuleLine.getSourceAttribute() != null) {
+                                    commercialRuleLine.getSourceAttribute().getCode();
+                                }
+                                if (commercialRuleLine.getSourceProduct() != null) {
+                                    commercialRuleLine.getSourceProduct().getCode();
+                                }
+                                if (commercialRuleLine.getSourceProductVersion() != null) {
+                                    commercialRuleLine.getSourceProductVersion().getCurrentVersion();
+                                }
+                            });
+                        }
+                    });
+                }
+                if (ruleH.getTargetProductVersion() != null) {
+                    ruleH.getTargetProductVersion().getCurrentVersion();
+                }
+                if (ruleH.getCommercialRuleItems() != null) {
+                    ruleH.getCommercialRuleItems().size();
+                }
+                if (ruleH.getTargetProduct() != null) {
+                    ruleH.getTargetProduct().getCode();
+                }
+                if (ruleH.getTargetGroupedAttributes() != null && ruleH.getTargetGroupedAttributes().getAttributes() != null) {
+                    ruleH.getTargetGroupedAttributes().getAttributes().size();
+                }
+                if (ruleH.getTargetOfferTemplate() != null) {
+                    ruleH.getTargetOfferTemplate().getCode();
+                }
+            });
+            return result;
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    
     private boolean isOfferScope(ScopeTypeEnum scopeType) {
         return scopeType == null || scopeType == ScopeTypeEnum.QUOTE_OFFER;
     }
@@ -577,6 +636,9 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                 } catch (ParseException e) {
                     log.error("can not override quote value of type date, date parsing error: commercial rule: " + commercialRuleCode, e);
                 }
+                break;
+            default:
+           	 quoteAttributeToUpdate.setStringValue(sourceAttributeValue);
                 break;
         }
     }

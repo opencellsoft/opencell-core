@@ -99,12 +99,6 @@ public class CommercialRuleLineService extends PersistenceService<CommercialRule
 		if(product == null) { 
 			throw new EntityDoesNotExistsException(Product.class,productCode);
 		};
-		if(currentVersion!=null) {
-			ProductVersion productVersion=productVersionService.findByProductAndVersion(productCode, currentVersion);
-			if(productVersion==null) {
-				throw new EntityDoesNotExistsException(ProductVersion.class, productCode+" and version "+currentVersion);
-			}
-		}
 		
 		Query query = getEntityManager().createNamedQuery(queryName)
 				.setParameter("productCode", productCode);

@@ -36,12 +36,12 @@ import org.meveo.model.billing.BillingAccount;
 public class QuoteArticleLine extends AuditableEntity {
 
 	public QuoteArticleLine(QuoteArticleLine copy) {
-		this.quoteProduct = copy.quoteProduct;
-		this.billableAccount = copy.billableAccount;
+		this.quoteProduct = copy.getQuoteProduct();
+		this.billableAccount = copy.getBillableAccount();
 		this.quoteLot = copy.quoteLot;
-		this.accountingArticle = copy.accountingArticle;
+		this.accountingArticle = copy.getAccountingArticle();
 		this.quantity = copy.quantity;
-		this.serviceQuantity = copy.serviceQuantity;
+		this.serviceQuantity = copy.getServiceQuantity();
 		this.quoteVersion=copy.getQuoteVersion();
 	}
     

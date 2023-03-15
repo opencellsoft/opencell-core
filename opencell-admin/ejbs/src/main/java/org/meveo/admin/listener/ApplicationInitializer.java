@@ -34,6 +34,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.cache.CacheContainerProvider;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
+import org.meveo.cache.CommercialRulesContainerProvider;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.MetricsConfigurationCacheContainerProvider;
@@ -47,6 +48,7 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.script.ScriptCompilerService;
 import org.slf4j.Logger;
+
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
 /**
@@ -104,6 +106,9 @@ public class ApplicationInitializer {
 
     @Inject
     private StorageFactory storageFactory;
+    
+    @Inject
+    private CommercialRulesContainerProvider commercialRulesContainerProvider;
 
     public void init() {
 
@@ -171,7 +176,7 @@ public class ApplicationInitializer {
         jobCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
         tenantCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
         metricsConfigurationCacheContainerProvider.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
-
+        commercialRulesContainerProvider.populateCache();
         // Initialize storage factory
         storageFactory.init();
 

@@ -17,6 +17,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -47,14 +48,15 @@ import org.meveo.model.cpq.tags.Tag;
  @Parameter(name = "sequence_name", value = "cpq_commercial_rule_header_seq")})
 @NamedQueries({ 
 	@NamedQuery(name = "CommercialRuleHeader.getTagRules", query = "select c from CommercialRuleHeader c where c.targetTag.code=:tagCode"),
-	@NamedQuery(name = "CommercialRuleHeader.getOfferAttributeRules", query = "select c from CommercialRuleHeader c where c.targetAttribute.code=:attributeCode and c.targetOfferTemplate.code=:offerTemplateCode"),
-	@NamedQuery(name = "CommercialRuleHeader.getProductAttributeRules", query = "select c from CommercialRuleHeader c where c.targetAttribute.code=:attributeCode and c.targetProduct.code=:productCode"),
-	@NamedQuery(name = "CommercialRuleHeader.getAttributeRules", query = "select c from CommercialRuleHeader c where c.targetAttribute.code=:attributeCode"),
-	@NamedQuery(name = "CommercialRuleHeader.getOfferRules", query = "select c from CommercialRuleHeader c where c.targetOfferTemplate.code=:offerCode"),
+	@NamedQuery(name = "CommercialRuleHeader.getOfferAttributeRules", query = "select c from CommercialRuleHeader c where c.targetAttribute.code=:attributeCode and c.targetOfferTemplate.code=:offerTemplateCode", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+    @NamedQuery(name = "CommercialRuleHeader.getProductAttributeRules", query = "select c from CommercialRuleHeader c where c.targetAttribute.code=:attributeCode and c.targetProduct.code=:productCode", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+	@NamedQuery(name = "CommercialRuleHeader.getAttributeRules", query = "select c from CommercialRuleHeader c where c.targetAttribute.code=:attributeCode", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+	@NamedQuery(name = "CommercialRuleHeader.getOfferRules", query = "select c from CommercialRuleHeader c where c.targetOfferTemplate.code=:offerCode", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
 	@NamedQuery(name = "CommercialRuleHeader.getGroupedAttributeRules", query = "select c from CommercialRuleHeader c where c.targetGroupedAttributes.code=:groupedAttributeCode and c.targetProduct.code=:productCode"),
-	@NamedQuery(name = "CommercialRuleHeader.getProductRules", query = "select c from CommercialRuleHeader c where c.targetProduct.code=:productCode"),
-	@NamedQuery(name = "CommercialRuleHeader.getProductRulesWithOffer", query = "select c from CommercialRuleHeader c where c.targetOfferTemplate.code=:offerCode and c.targetProduct.code=:productCode")
+	@NamedQuery(name = "CommercialRuleHeader.getProductRules", query = "select c from CommercialRuleHeader c where c.targetProduct.code=:productCode and c.targetAttribute is null and c.targetGroupedAttributes is null", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+	@NamedQuery(name = "CommercialRuleHeader.getProductRulesWithOffer", query = "select c from CommercialRuleHeader c where c.targetOfferTemplate.code=:offerCode and c.targetProduct.code=:productCode and c.targetAttribute is null and c.targetGroupedAttributes is null", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") })
 })
+
 public class CommercialRuleHeader extends BusinessEntity {
 
 	public CommercialRuleHeader(CommercialRuleHeader copy) {
