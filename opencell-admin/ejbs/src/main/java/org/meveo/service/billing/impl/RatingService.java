@@ -673,7 +673,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                             if (ppmVersion != null) {
                                 try {
                                     final WalletOperation tmpWalletOperation = bareWalletOperation;
-                                    PricePlanMatrixLine pricePlanMatrixLine = methodCallingUtils.callCallableInNewTx( () -> pricePlanMatrixVersionService.loadPrices(ppmVersion, tmpWalletOperation));
+                                    PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, tmpWalletOperation);
                                     unitPriceWithoutTax = pricePlanMatrixLine.getValue();
                                     if (pricePlan.getScriptInstance() != null) {
                                     	log.debug("start to execute script instance for ratePrice {}", pricePlan);
