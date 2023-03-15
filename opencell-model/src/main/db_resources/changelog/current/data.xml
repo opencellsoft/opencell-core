@@ -19469,6 +19469,14 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where> accounting_scheme_id is null</where>
 		</update>		
 	</changeSet>
+    <changeSet id="#INTRD-14433_20230306" author="hichamELHALOUI">
+        <update tableName="meveo_script_parameter">
+            <column name="mandatory" valueNumeric="0"/>
+            <where>code='offers' AND script_instance_id in (SELECT id FROM meveo_script_instance WHERE
+                code='org.meveo.service.script.CompareOfferAmount')
+            </where>
+        </update>
+    </changeSet>
 
     <changeSet id="#INTRD-13867_20230301" author="AbdellatifBARI">
         <delete tableName="meveo_job_instance">
