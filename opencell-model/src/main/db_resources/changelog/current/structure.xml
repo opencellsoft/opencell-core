@@ -15708,5 +15708,9 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="event_key"/>
         </createIndex>
     </changeSet>
+    
+    <changeSet id="#INTRD-14743_20230315" author="TarikFA.">
+        <sql>CREATE INDEX rt_customer_contract_index ON ${db.schema.adapted}cpq_contract (customer_id, billing_account_id, customer_account_id) where status='ACTIVE'</sql>
+    </changeSet>
 
 </databaseChangeLog>
