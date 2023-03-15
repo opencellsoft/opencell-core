@@ -147,4 +147,22 @@ public class AccountOperationServiceMatchingTest {
         ao.setCustomerAccount(customerAccount);
         return ao;
     }
+
+    @Test
+    public void should_Fill_Converted_Amounts_When_Null() {
+
+        AccountOperation accountOperation = buildAo("ABC", 1L);
+
+        accountOperation.setAmount(new BigDecimal(10));
+        accountOperation.setMatchingAmount(new BigDecimal(5));
+        accountOperation.setUnMatchingAmount(new BigDecimal(6));
+        accountOperation.setConvertedMatchingAmount(null);
+        accountOperation.setConvertedUnMatchingAmount(null);
+        accountOperation.setConvertedAmount(null);
+
+        Assert.assertEquals(accountOperation.getConvertedMatchingAmount(),accountOperation.getMatchingAmount());
+        Assert.assertEquals(accountOperation.getConvertedAmount(),accountOperation.getConvertedAmount());
+        Assert.assertEquals(accountOperation.getConvertedUnMatchingAmount(),accountOperation.getUnMatchingAmount());
+
+    }
 }
