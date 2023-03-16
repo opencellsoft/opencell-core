@@ -622,7 +622,7 @@ public class MediationApiService {
         }
     }
 
-    public CdrDtoResponse createCdr(List<CDR> cdrs, ProcessCdrListModeEnum mode, boolean returnCDRs, boolean returnError) {
+    public CdrDtoResponse createCdr(List<CDR> cdrs, ProcessingModeEnum mode, boolean returnCDRs, boolean returnError) {
         Builder cdrDtoResponse = ImmutableCdrDtoResponse.builder();
         List<org.meveo.apiv2.models.Resource> ids = new ArrayList<>();
         List<CdrErrorDto> cdrErrorDtos = new ArrayList<CdrErrorDto>();
@@ -912,7 +912,7 @@ public class MediationApiService {
         cdrService.remove(cdr);
     }
 
-    public CdrDtoResponse deleteCdrs(List<Long> ids, ProcessCdrListModeEnum mode, boolean returnCDRs, boolean returnError) {
+    public CdrDtoResponse deleteCdrs(List<Long> ids, ProcessingModeEnum mode, boolean returnCDRs, boolean returnError) {
         List<CdrErrorDto> cdrErrorDtos = new ArrayList<CdrErrorDto>();
         List<org.meveo.apiv2.models.Resource> returnIds = new ArrayList<>();
         for (Long id : ids) {
