@@ -2750,25 +2750,28 @@ public class SubscriptionApi extends BaseApi {
             throw new InvalidParameterException("Subscription with code: " + code + " had one version, could not rollback it");
 
 
-        Subscription actualSubscription = subscriptions.stream()
-                .filter(s -> s.getValidity().getTo() == null)
-                .findFirst()
-                .get();
-
-        Subscription lastSubscription = subscriptions.stream()
-                .filter(s -> s.getValidity().getTo() != null)
-                .sorted((a, b) -> b.getValidity().getTo().compareTo(a.getValidity().getTo()))
-                .findFirst()
-                .get();
+        Subscription actualSubscription = subscriptions.stream().filter(s -> s.getValidity().getTo() == null).findFirst().get();
+        Subscription lastSubscription = subscriptions.stream().filter(s -> actualSubscription.getValidity().getFrom().equals(s.getValidity().getTo())).findFirst().get();
 
         actualSubscription.setToValidity(actualSubscription.getValidity().getFrom());
-        subscriptionService.terminateSubscription(actualSubscription, actualSubscription.getValidity().getFrom(), subscriptionTerminationReason, actualSubscription.getOrderNumber());
+        // if current Sub is still CREATED it means offer change never activated,
+        // so we can terminate it immediately if its validFrom date is not yet reached
+        Date currentSubTerminationDate = actualSubscription.getValidity().getFrom();
+        Date today = new Date();
+        if (actualSubscription.getStatus() == SubscriptionStatusEnum.CREATED
+                && actualSubscription.getValidity().getFrom().after(today)) {
+            currentSubTerminationDate = DateUtils.setDateToStartOfDay(today);
+        }
+        subscriptionService.terminateSubscription(actualSubscription, currentSubTerminationDate, subscriptionTerminationReason, actualSubscription.getOrderNumber());
 
         lastSubscription.setToValidity(null);
-        subscriptionService.subscriptionReactivation(lastSubscription, lastSubscription.getSubscriptionDate());
+        // do not reactivate previous sub only if it has already terminated (means offer change already activated)
+        if (lastSubscription.getStatus() == SubscriptionStatusEnum.RESILIATED) {
+            subscriptionService.subscriptionReactivation(lastSubscription, lastSubscription.getSubscriptionDate());
         reactivateServices(lastSubscription, actualSubscription.getValidity().getFrom());
-        if(lastSubscription.getInitialSubscriptionRenewal() != null)
-            subscriptionService.cancelSubscriptionTermination(lastSubscription);
+            if(lastSubscription.getInitialSubscriptionRenewal() != null)
+                subscriptionService.cancelSubscriptionTermination(lastSubscription);
+        }
         versionRemovedEvent.fire(lastSubscription);
     }
 
