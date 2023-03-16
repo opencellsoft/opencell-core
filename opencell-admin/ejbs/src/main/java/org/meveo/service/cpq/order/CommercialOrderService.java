@@ -424,7 +424,6 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			for (RecurringChargeInstance recurringChargeInstance : recurringChargeInstances) {
 				recurringChargeInstance.setSubscriptionDate(serviceInstance.getSubscriptionDate());
 				recurringChargeInstance.setQuantity(serviceInstance.getQuantity());
-				recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
 			}
 			if (serviceInstance.getDeliveryDate().after(new Date())) {
 				serviceInstance.setStatus(InstanceStatusEnum.PENDING);
