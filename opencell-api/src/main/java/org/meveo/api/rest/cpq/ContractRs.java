@@ -142,7 +142,7 @@ public interface ContractRs extends IBaseRs {
 					@ApiResponse(responseCode = "412", description = "One of the parameters is missing",
 							content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
 			})
-	Response updateStatus(@Parameter(description = "contract code to update status") @PathParam("contractCode")String contractCode, @Parameter(description = "target contract status") @PathParam("status") ContractStatusEnum status);
+	Response updateStatus(@Parameter(description = "contract code to update status") @PathParam("contractCode")String contractCode, @Parameter(description = "target contract status") @PathParam("status") String status);
 
 
 	@GET

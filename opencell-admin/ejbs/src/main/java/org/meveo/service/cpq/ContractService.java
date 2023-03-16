@@ -107,9 +107,9 @@ public class ContractService extends BusinessService<Contract>  {
 	 * @return
 	 * @throws ContractException
 	 */
-	public Contract updateStatus(Contract contract, ContractStatusEnum status){
-		if(ContractStatusEnum.DRAFT.equals(contract.getStatus())
-				&& ContractStatusEnum.ACTIVE.equals(status) && !contract.getContractItems().isEmpty()) {
+	public Contract updateStatus(Contract contract, String status){
+		if(ContractStatusEnum.DRAFT.toString().equals(contract.getStatus())
+				&& ContractStatusEnum.ACTIVE.toString().equals(status) && !contract.getContractItems().isEmpty()) {
 			List<PricePlanMatrix> pricePlans = contract.getContractItems().stream().map(ContractItem::getPricePlan).collect(Collectors.toList());
 			List<PricePlanMatrixVersion> pricePlanVersions = pricePlanMatrixVersionService.findByPricePlans(pricePlans);
 			if (pricePlanVersions.isEmpty()) {
@@ -143,11 +143,10 @@ public class ContractService extends BusinessService<Contract>  {
 			}
 		}
 
-		if (ContractStatusEnum.ACTIVE.equals(contract.getStatus())
-				&& (ContractStatusEnum.ACTIVE.equals(status) || ContractStatusEnum.DRAFT.equals(status))) {
+		if (ContractStatusEnum.ACTIVE.toString().equals(contract.getStatus())
+				&& (ContractStatusEnum.ACTIVE.toString().equals(status) || ContractStatusEnum.DRAFT.toString().equals(status))) {
 			 throw new BusinessApiException(String.format(CONTRACT_CAN_NOT_CHANGE_THE_STATUS_ACTIVE_TO, status));
 		}
-
 
 		contract.setStatus(status);
 		return  update(contract);

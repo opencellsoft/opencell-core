@@ -24,6 +24,7 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.security.config.annotation.FilterProperty;
 import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
@@ -188,9 +189,10 @@ public class ContractApi extends BaseApi{
 		if(contract == null)
 			throw new EntityDoesNotExistsException(Contract.class, dto.getCode());
 		//check the status of the contract
-		if(!ContractStatusEnum.DRAFT.equals(contract.getStatus())) {
+		if(!ContractStatusEnum.DRAFT.toString().equals(contract.getStatus())) {
 			throw new MeveoApiException(CONTRACt_STAT_DIFF_TO_DRAFT);
 		}else {
+			checkStatus(dto.getStatus());
 			contract.setStatus(dto.getStatus());
 		}
 		/*if(ProductStatusEnum.ACTIVE.equals(contract.getStatus())) {
@@ -267,13 +269,22 @@ public class ContractApi extends BaseApi{
 													
 	}
 
-	public void updateStatus(String contractCode, ContractStatusEnum contractStatus){
+	public void updateStatus(String contractCode, String contractStatus){
 		try {
 			Contract contract = loadEntityByCode(contractService, contractCode, Contract.class);
+			checkStatus(contractStatus);
 			contractService.updateStatus(contract, contractStatus);
 		} catch (Exception e){
 			log.error(e.getMessage(),e);
 			throw new MeveoApiException(e);
+		}
+	}
+
+	private void checkStatus(String contractStatus) {
+		if(StringUtils.isBlank(contractStatus)) throw new MissingParameterException("status");
+		List<String> allStatus = allStatus(ContractStatusEnum.class, "contract.status", "");
+		if(!allStatus.contains(contractStatus.toLowerCase())) {
+			throw new MeveoApiException("Status is invalid, here is the list of available status : " + allStatus);
 		}
 	}
 

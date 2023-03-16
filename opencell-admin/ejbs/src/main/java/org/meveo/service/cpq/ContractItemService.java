@@ -72,7 +72,7 @@ public class ContractItemService extends BusinessService<ContractItem> {
 		if(contract == null || contract.getId() == null) {
 			throw new EntityDoesNotExistsException(Contract.class, contractItem.getCode());
 		}
-		if(contract.getStatus().equals(ContractStatusEnum.DRAFT)) {
+		if(ContractStatusEnum.DRAFT.toString().equals(contract.getStatus())) {
 			update(contractItem);
 			LOGGER.info("Updating item contract ({}) successfuly", contractItem.getCode());
 			return;
@@ -90,7 +90,7 @@ public class ContractItemService extends BusinessService<ContractItem> {
 		if(item == null || item.getId() == null) {
 			throw new EntityDoesNotExistsException(ContractItem.class, contractItemCode);
 		}
-		if(item.getContract() != null && !item.getContract().getStatus().equals(ContractStatusEnum.DRAFT)) {
+		if(item.getContract() != null && !ContractStatusEnum.DRAFT.toString().equals(item.getContract().getStatus())) {
 			throw new BusinessException(String.format(CONTRACT_ITEM_STATUS_NOT_DRAFT_CAN_NOT_REMOVED_OR_UPDATE, contractItemCode, item.getContract().getStatus().toString()));
 		}
 		LOGGER.info("contract item ({}) successfully deleted", contractItemCode);
@@ -103,9 +103,9 @@ public class ContractItemService extends BusinessService<ContractItem> {
 											Long idServiceTemplate)  {
 		final Contract contract = contractService.findById(idContract);
 		// TODO: a confirmer avec Rachid
-		if(contract != null && contract.getStatus().equals(ContractStatusEnum.DRAFT)) {
+		if(contract != null && ContractStatusEnum.DRAFT.toString().equals(contract.getStatus())) {
 			item.setContract(contract);
-		}else if(!ContractStatusEnum.DRAFT.equals(contract != null ? contract.getStatus(): null)) {
+		}else if(!ContractStatusEnum.DRAFT.toString().equals(contract != null ? contract.getStatus(): null)) {
 			throw new BusinessException(CONTRACT_STATUS_NOT_DRAFT);
 		}
 		final OfferTemplate commercialOffer = offerTemplateService.findById(idCommercialOffer);
