@@ -662,7 +662,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                         contract = contractMatched;
                     }
 
-                    if (bareWalletOperation.getOperationDate().compareTo(contract.getBeginDate()) >= 0
+                    if (contract != null && bareWalletOperation.getOperationDate().compareTo(contract.getBeginDate()) >= 0
                             && bareWalletOperation.getOperationDate().compareTo(contract.getEndDate()) < 0) {
                         contractItem = contractItemService.getApplicableContractItem(contract, offerTemplate, serviceInstance.getCode(), chargeTemplate);
                     }
