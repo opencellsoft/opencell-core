@@ -16056,5 +16056,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>CREATE INDEX rt_billing_account_id_contract_index ON ${db.schema.adapted}cpq_contract (billing_account_id) where status='ACTIVE'</sql>
         <sql>CREATE INDEX rt_customer_account_contract_index ON ${db.schema.adapted}cpq_contract (customer_account_id) where status='ACTIVE'</sql>
     </changeSet>
+    
+    <changeSet id="#INTRD-14743_20230316" author="TarikFA.">
+        <sql>CREATE INDEX cpq_price_plan_matrix_value__ppml_id__idx ON cpq_price_plan_matrix_value(ppml_id)</sql>
+        <sql>CREATE INDEX CREATE INDEX cpq_price_plan_matrix_line__ppm_version_id__idx ON cpq_price_plan_matrix_line(ppm_version_id)</sql>
+    </changeSet>
 
 </databaseChangeLog>
