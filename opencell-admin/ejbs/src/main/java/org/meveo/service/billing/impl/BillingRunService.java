@@ -20,6 +20,8 @@ package org.meveo.service.billing.impl;
 import static java.math.BigDecimal.*;
 import static java.util.Collections.EMPTY_LIST;
 import static java.util.stream.Collectors.joining;
+import static org.apache.commons.collections4.ListUtils.partition;
+import static org.meveo.commons.utils.ParamBean.getInstance;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -1667,9 +1669,25 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         QueryBuilder queryBuilder;
         Filter filter = new Filter();
         if(invoicingV2) {
-            filter.setPollingQuery("SELECT il FROM InvoiceLine il WHERE il.id in (" +
-                    billingRun.getExceptionalILIds().stream().map(String::valueOf)
-                            .collect(joining(",")) + ") AND il.status = 'OPEN'");
+            final int maxValue =
+                    getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
+            final String queryPrefix = "SELECT il from InvoiceLine il WHERE il.id in ";
+            if (billingRun.getExceptionalILIds().size() > maxValue) {
+                List<List<Long>> rtSubLists = partition(billingRun.getExceptionalILIds(), maxValue);
+                List<String> subListIds = new ArrayList<>();
+                for(List<Long> ids : rtSubLists) {
+                    subListIds.add("(" + ids.stream()
+                            .map(String::valueOf)
+                            .collect(joining(",")) + ")");
+                }
+                filter.setPollingQuery(queryPrefix + subListIds.stream()
+                        .map(String::valueOf)
+                        .collect(joining(" OR id in ")));
+            } else {
+                filter.setPollingQuery(queryPrefix + " (" +
+                        billingRun.getExceptionalILIds().stream().map(String::valueOf)
+                                .collect(joining(",")) + ")");
+            }
         } else {
             Map<String, Object> filters = billingRun.getFilters();
             String filterValue = QueryBuilder.getFilterByKey(filters, "SQL");
