@@ -118,7 +118,6 @@ public class YouSignApi extends BaseApi {
             
             // The list of files to sign cannot be empty :  
             List<SignFileRequestDto> filesToSign = postData.getFilesToSign();
-            log.info("The list of files to sign = {}", filesToSign);
             
             this.checkFilesToSign(filesToSign, withInternalMember, postData.isAbsolutePaths());
             
@@ -132,13 +131,12 @@ public class YouSignApi extends BaseApi {
             this.prepareMembers(filesToSign, procedure.getMembers(), withInternalMember);
             
             // Creating procedureusing  Yousign platform API :
-            log.info("SignProcedureDto to send = {}",  procedure);
             ResteasyClient client = new ResteasyClientProxyBuilder().build();
             ResteasyWebTarget target = client.target(YOU_SIGN_REST_URL.concat("/procedures"));
             Response response = target.request().header(HttpHeaders.AUTHORIZATION, "Bearer " + YOU_SIGN_AUTH_TOKEN).post(Entity.json(procedure));
             
             if (isSuccessResponse(response)) {
-                log.info("CreateProcedure Success");
+                log.info("createProcedure Success");
                 // reading results :
                 result = response.readEntity(SignProcedureResponseDto.class);
             } else {
@@ -414,7 +412,6 @@ public class YouSignApi extends BaseApi {
             log.info("Start uploading files to Yousign ...");
             for (SignFileRequestDto file : filesToSign) {
                 
-                log.info("Uploading file = {}", file);
                 Response response =  resBuilder.post(Entity.json(file)); 
 
                 if (isSuccessResponse(response)) {
@@ -430,7 +427,7 @@ public class YouSignApi extends BaseApi {
                     }
                     file.setId(signableFileId);
                 } else {
-                    log.error("Error uploading file = {} \n Response = {}, ResponseBody = {}", file.getName(), response, response.readEntity(String.class));
+                    log.error("Error uploading file = {} \n, ResponseBody = {}", file.getName(), response.readEntity(String.class));
                     throw new MeveoApiException(" [Yousign Error] [" + response.getStatus() +"] : " + response.getStatusInfo().getReasonPhrase());
                 }
             }
