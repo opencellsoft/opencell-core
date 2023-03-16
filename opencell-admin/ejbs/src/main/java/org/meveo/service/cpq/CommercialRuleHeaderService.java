@@ -83,11 +83,6 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     QuoteAttributeService quoteAttributeService;
     
     private String multiValuesAttributeSeparator = ";";
-    
-    @PostConstruct
-    private void init() {
-    	multiValuesAttributeSeparator = paramBeanFactory.getInstance().getProperty("attribute.multivalues.separator", ";");
-    }
 
     @SuppressWarnings("unchecked")
     public List<CommercialRuleHeader> getTagRules(String tagCode) throws BusinessException {
@@ -272,7 +267,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                                      break;
                                  }
                         }   
-                        
+                        multiValuesAttributeSeparator = paramBeanFactory.getInstance().getProperty("attribute.multivalues.separator", ";");
                         if (line.getSourceGroupedAttributes() != null && productContext != null && productContext.getSelectedGroupedAttributes() != null) {
                             LinkedHashMap<String, Object> selectedGroupedAttributes = productContext.getSelectedGroupedAttributes();
                             for (Entry<String, Object> entry : selectedGroupedAttributes.entrySet()) {
@@ -280,7 +275,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                                 Object groupedAttributeValue = entry.getValue();
                                 String convertedValue = String.valueOf(groupedAttributeValue);
                                 if (groupedAttributeCode.equals(line.getSourceGroupedAttributes().getCode())) {
-                                    List<String> values = Arrays.asList(convertedValue.split("multiValuesAttributeSeparator"));
+                                    List<String> values = Arrays.asList(convertedValue.split(multiValuesAttributeSeparator));
                                     if ((isPreRequisite && !values.contains(line.getSourceGroupedAttributeValue()))
                                             || !isPreRequisite && values.contains(line.getSourceGroupedAttributeValue())) {
                                         if (continueProcess.isFalse()) {
@@ -383,6 +378,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     				switch (line.getSourceAttribute().getAttributeType()) {
     				case LIST_MULTIPLE_TEXT:
     				case LIST_MULTIPLE_NUMERIC:
+    					multiValuesAttributeSeparator = paramBeanFactory.getInstance().getProperty("attribute.multivalues.separator", ";");
     					List<String> values = attributeValue!=null?Arrays.asList(String.valueOf(attributeValue).split(multiValuesAttributeSeparator)):new ArrayList<String>();
     					if ((isPreRequisite && !values.contains(line.getSourceAttributeValue()))
     							|| !isPreRequisite && values.contains(line.getSourceAttributeValue())) {
@@ -648,37 +644,6 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
         attributeToReplace.setDoubleValue(sourceOfferAttribute.get().getDoubleValue());
         attributeToReplace.setDateValue(sourceOfferAttribute.get().getDateValue());
         quoteAttributeService.update(attributeToReplace);
-    }
-
-    public Map<String, Object> replacementProcess(CommercialRuleHeader commercialRule, List<ProductContextDTO> selectedProducts) {
-        List<CommercialRuleItem> items = null;
-        List<CommercialRuleLine> lines = null;
-        CommercialRuleItem item = null;
-        CommercialRuleLine line = null;
-
-
-        items = commercialRule.getCommercialRuleItems();
-        if (!items.isEmpty()) {
-            if (items.size() > 1) {
-                log.warn("the replacement commercial rule " + commercialRule.getCode() + " has more than one item");
-            }
-            item = items.get(0);
-            lines = item.getCommercialRuleLines();
-            if (!lines.isEmpty()) {
-                if (lines.size() > 1) {
-                    log.warn("the replacement commercial rule " + commercialRule.getCode() + " has more than one source line");
-                }
-                line = lines.get(0);
-                OfferTemplate sourceOfferTemplate = line.getSourceOfferTemplate();
-                Product sourceProduct = line.getSourceProduct();
-                Attribute sourceAttribute = line.getSourceAttribute();
-                return replaceProductAttribute(selectedProducts, sourceAttribute, line.getSourceAttributeValue(), sourceProduct.getCode());
-
-            }
-        } else {
-            return replaceProductAttribute(selectedProducts, commercialRule.getTargetAttribute(), commercialRule.getTargetAttributeValue(), commercialRule.getTargetProduct().getCode());
-        }
-        return null;
     }
 
     private Map<String, Object> replaceProductAttribute(List<ProductContextDTO> selectedProducts, Attribute sourceAttribute, String sourceAttributeValue, String sourceCode) {
