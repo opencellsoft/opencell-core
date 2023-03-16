@@ -2046,7 +2046,7 @@ public class CpqQuoteApi extends BaseApi {
            discountQuotePrice.setPriceTypeEnum(PriceTypeEnum.ONE_SHOT_OTHER);
            final AccountingArticle accountingArticle = wo.getAccountingArticle();
            if (accountingArticle != null && accountingArticle.getTaxClass() != null) {
-        	   final TaxInfo taxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), wo.getSeller() , billingAccount, null, wo.getOperationDate(), false, false);
+        	   final TaxInfo taxInfo = taxMappingService.determineTax(wo);
         	   if(taxInfo != null)
         		   discountQuotePrice.setTaxRate(taxInfo.tax.getPercent());
            }
