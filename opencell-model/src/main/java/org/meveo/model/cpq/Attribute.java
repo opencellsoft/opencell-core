@@ -79,7 +79,7 @@ public class Attribute extends EnableBusinessCFEntity{
     /**
 	 * allowed values
 	 */
-	@ElementCollection(fetch = FetchType.EAGER)
+	@ElementCollection(fetch = FetchType.LAZY)
 	@Column(name = "allowed_values")
 	@CollectionTable(name = "cpq_attribute_allowed_values", joinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id"))
 	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)

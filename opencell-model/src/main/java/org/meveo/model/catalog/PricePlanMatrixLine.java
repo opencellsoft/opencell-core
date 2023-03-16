@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,6 +21,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.Auditable;
@@ -28,17 +31,15 @@ import org.meveo.model.cpq.AttributeValue;
 
 @Entity
 @Table(name = "cpq_price_plan_matrix_line")
+@Cacheable
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_price_plan_matrix_line_sq") })
 @NamedQueries({
-	@NamedQuery(name = "PricePlanMatrixLine.findByPricePlanMatrixVersion", query = "select p from PricePlanMatrixLine p  where p.pricePlanMatrixVersion.id=:pricePlanMatrixVersionId", hints = {
+	@NamedQuery(name = "PricePlanMatrixLine.findByPricePlanMatrixVersion", query = "select distinct(p) from PricePlanMatrixLine p join fetch p.pricePlanMatrixValues pv where p.pricePlanMatrixVersion.id=:pricePlanMatrixVersionId order by p.id", hints = {
             @QueryHint(name = "org.hibernate.cacheable", value = "TRUE"), @QueryHint(name = "org.hibernate.readOnly", value = "true") }),
     @NamedQuery(name = "PricePlanMatrixLine.findByPricePlanMatrixVersionIds", query = "select p from PricePlanMatrixLine p where p.pricePlanMatrixVersion.id in (:ppmvIds)")})
 public class PricePlanMatrixLine extends AuditableEntity {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = -4919786663248378605L;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH )
@@ -63,7 +64,8 @@ public class PricePlanMatrixLine extends AuditableEntity {
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     private BigDecimal value;
 
-    @OneToMany(mappedBy = "pricePlanMatrixLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "pricePlanMatrixLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<PricePlanMatrixValue> pricePlanMatrixValues = new HashSet<>();
     
     @OneToMany(mappedBy = "pricePlanMatrixLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
