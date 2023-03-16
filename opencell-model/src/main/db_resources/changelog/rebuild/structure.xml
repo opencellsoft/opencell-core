@@ -17170,7 +17170,8 @@
         <sql>CREATE INDEX edr_header_edr_id ON ${db.schema.adapted}rating_edr (header_edr_id)</sql>
         <sql>CREATE INDEX rt_adjusted_rated_tx ON ${db.schema.adapted}billing_rated_transaction (adjusted_rated_tx) </sql>
         <sql>CREATE INDEX wo_rt_id ON ${db.schema.adapted}billing_wallet_operation (rated_transaction_id) </sql>
-        <sql>CREATE INDEX wo_rerated_wo ON ${db.schema.adapted}billing_wallet_operation (reratedwalletoperation_id) </sql></changeSet>
+        <sql>CREATE INDEX wo_rerated_wo ON ${db.schema.adapted}billing_wallet_operation (reratedwalletoperation_id) </sql>
+        <sql>CREATE INDEX rt_customer_contract_index ON ${db.schema.adapted}cpq_contract (customer_id, billing_account_id, customer_account_id) where status='ACTIVE'</sql></changeSet>
         
         
     <changeSet id="#INTRD-12047-20230112-rebuild" author="AbdelmounaimAkadid">
@@ -19640,6 +19641,7 @@
     <changeSet id="#INTRD-14381-202303202" author="bourras" />
     <changeSet id="#INTR-14747_20230308" author="TarikFA." />
     <changeSet id="#INTRD-14743_20230313" author="TarikFA." />
+    <changeSet id="#INTRD-14743_20230315" author="TarikFA." />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
