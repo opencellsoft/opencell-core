@@ -29,6 +29,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.enums.ContractStatusEnum;
@@ -42,6 +43,7 @@ import org.meveo.model.payments.CustomerAccount;
  */
 @Entity
 @CustomFieldEntity(cftCodePrefix = "Contract")
+@WorkflowedEntity
 @Table(name = "cpq_contract", uniqueConstraints = { @UniqueConstraint(columnNames = {"code"})})
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_contract_seq"), })
