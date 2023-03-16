@@ -1,11 +1,11 @@
 package org.meveo.service.cpq.rule;
 
+import java.util.List;
+
 import org.meveo.model.cpq.enums.RuleOperatorEnum;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 public class CommercialRuleLineCommandFactory {
 
@@ -38,8 +38,10 @@ public class CommercialRuleLineCommandFactory {
             case LESS_THAN_OR_EQUAL:
                 return new LessThanOrEqualCommand(commercialRuleHeader, selectedAttributes, sourceSelectedAttributes); 
             case CONTAINS:
-                return new ContainLineCommand(commercialRuleHeader, selectedAttributes, sourceSelectedAttributes);    
-               
+                return new ContainLineCommand(commercialRuleHeader, selectedAttributes, sourceSelectedAttributes);   
+            case NOT_CONTAINS:
+                return new NotContainLineCommand(commercialRuleHeader, selectedAttributes, sourceSelectedAttributes);    
+                
 
             default: {
                 log.warn("Only Exist operator can be applied on commercial rules of type replacement");

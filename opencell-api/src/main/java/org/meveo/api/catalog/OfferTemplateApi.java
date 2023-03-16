@@ -764,7 +764,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             boolean loadOfferServiceTemplate, boolean loadOfferProductTemplate, boolean loadServiceChargeTemplate, boolean loadProductChargeTemplate,
             boolean loadAllowedDiscountPlan, boolean loadAttributes, boolean loadTags, List<String> requestedTagTypes, OfferContextConfigDTO config) {
 
-        GetOfferTemplateResponseDto dto = new GetOfferTemplateResponseDto(offerTemplate, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, inheritCF), false, true, true);
+        GetOfferTemplateResponseDto dto = new GetOfferTemplateResponseDto(offerTemplate, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, inheritCF), false, loadTags, true);
 
         dto.setMinimumAmountEl(offerTemplate.getMinimumAmountEl());
         dto.setMinimumLabelEl(offerTemplate.getMinimumLabelEl());

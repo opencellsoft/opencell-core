@@ -34,6 +34,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.cpq.OverrideChargedPricesDto;
 import org.meveo.api.dto.cpq.QuoteDTO;
 import org.meveo.api.dto.cpq.QuoteOfferDTO;
 import org.meveo.api.dto.cpq.QuoteVersionDto;
@@ -387,4 +388,10 @@ public interface CpqQuoteRs {
             @ApiResponse(responseCode="404", description = "The quote offer doesn't exist",content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
     })
     Response findQuoteItem(@Parameter(description = "quote offer id", required = true) @PathParam("quoteItemId") Long quoteItemId,	@Context UriInfo info);
+    
+    
+    @PUT
+    @Path("/quotePrices/override")
+    Response overridePrices(OverrideChargedPricesDto overrodPricesDto);
 }
+

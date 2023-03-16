@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
@@ -39,12 +40,12 @@ import org.meveo.model.cpq.tags.Tag;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 @Parameter(name = "sequence_name", value = "cpq_commercial_rule_line_seq")})
 @NamedQueries({  
-	@NamedQuery(name = "CommercialRuleLine.getSourceAttributeRules", query = "select c.id from CommercialRuleLine c where c.sourceAttribute.code=:attributeCode"),
-	@NamedQuery(name = "CommercialRuleLine.getSourceProductAttributeRules", query = "select c.id from CommercialRuleLine c where c.sourceAttribute.code=:attributeCode and c.sourceProduct.code=:productCode"),
-	@NamedQuery(name = "CommercialRuleLine.getSourceOfferAttributeRules", query = "select c.id from CommercialRuleLine c where c.sourceAttribute.code=:attributeCode and c.sourceOfferTemplate.code=:offerCode"),
-	@NamedQuery(name = "CommercialRuleLine.getSourceProductRules", query = "select c.id from CommercialRuleLine c where c.sourceProduct.code=:productCode"),
-	@NamedQuery(name = "CommercialRuleLine.getSourceProductRulesWithOffer", query = "select c.id from CommercialRuleLine c where c.sourceOfferTemplate.code=:offerCode and c.sourceProduct.code=:productCode"),
-	@NamedQuery(name = "CommercialRuleLine.getSourceGroupedAttributeRules", query = "select c.id from CommercialRuleLine c where c.sourceGroupedAttributes.code=:groupedAttributeCode and c.sourceProduct.code=:productCode")
+	@NamedQuery(name = "CommercialRuleLine.getSourceAttributeRules", query = "select c.id from CommercialRuleLine c where c.sourceAttribute.code=:attributeCode", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true")}),
+	@NamedQuery(name = "CommercialRuleLine.getSourceProductAttributeRules", query = "select c.id from CommercialRuleLine c where c.sourceAttribute.code=:attributeCode and c.sourceProduct.code=:productCode", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+	@NamedQuery(name = "CommercialRuleLine.getSourceOfferAttributeRules", query = "select c.id from CommercialRuleLine c where c.sourceAttribute.code=:attributeCode and c.sourceOfferTemplate.code=:offerCode", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+	@NamedQuery(name = "CommercialRuleLine.getSourceProductRules", query = "select c.id from CommercialRuleLine c where c.sourceProduct.code=:productCode", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+	@NamedQuery(name = "CommercialRuleLine.getSourceProductRulesWithOffer", query = "select c.id from CommercialRuleLine c where c.sourceOfferTemplate.code=:offerCode and c.sourceProduct.code=:productCode", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+	@NamedQuery(name = "CommercialRuleLine.getSourceGroupedAttributeRules", query = "select c.id from CommercialRuleLine c where c.sourceGroupedAttributes.code=:groupedAttributeCode and c.sourceProduct.code=:productCode", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") })
 })
 public class CommercialRuleLine extends BaseEntity {
 

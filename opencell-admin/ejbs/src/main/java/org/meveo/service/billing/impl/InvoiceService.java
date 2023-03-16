@@ -2706,7 +2706,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         cancelInvoiceAdvances(invoice, null, true);
         List<Long> invoicesIds = new ArrayList<>();
         invoicesIds.add(invoice.getId());
-        invoiceLinesService.cancelIlByInvoices(invoicesIds);
+        ratedTransactionService.deleteSupplementalRTs(invoicesIds);
+        ratedTransactionService.uninvoiceRTs(invoicesIds);
+        invoiceLinesService.uninvoiceILs(invoicesIds);//reopen ILs not created from  RTs
+        invoiceLinesService.cancelIlByInvoices(invoicesIds);//cancell ILs created from RTs
         if (remove) {
             super.remove(invoice);
         } else {
@@ -3414,9 +3417,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     @SuppressWarnings("unchecked")
     public List<InvoicesToNumberInfo> getInvoicesToNumberSummary(Long billingRunId) {
+    	List<InvoiceStatusEnum> statusList=new ArrayList<InvoiceStatusEnum>();
+    	statusList.add(InvoiceStatusEnum.NEW);
+    	statusList.add(InvoiceStatusEnum.DRAFT);
 
         List<InvoicesToNumberInfo> invoiceSummaries = new ArrayList<>();
-        List<Object[]> summary = getEntityManager().createNamedQuery("Invoice.invoicesToNumberSummary").setParameter("billingRunId", billingRunId).getResultList();
+        List<Object[]> summary = getEntityManager().createNamedQuery("Invoice.invoicesToNumberSummary").setParameter("billingRunId", billingRunId).setParameter("statusList", statusList).getResultList();
 
         for (Object[] summaryInfo : summary) {
             invoiceSummaries.add(new InvoicesToNumberInfo((Long) summaryInfo[0], (Long) summaryInfo[1], (Date) summaryInfo[2], (Long) summaryInfo[3]));
@@ -4461,6 +4467,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         } else if(entity instanceof CommercialOrder){
             CommercialOrder commercialOrder = (CommercialOrder) entity;
             invoice.setCommercialOrder(commercialOrder);
+            invoice.setCpqQuote(commercialOrder.getQuote());
         }else if(entity instanceof CpqQuote){
             CpqQuote quote = (CpqQuote) entity;
             invoice.setCpqQuote(quote);
@@ -5773,9 +5780,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             if (entityToInvoice instanceof Order) {
                 paymentMethod = ((Order) entityToInvoice).getPaymentMethod();
-            } else if (entityToInvoice instanceof  CommercialOrder){
-                 paymentMethod = ((CommercialOrder) entityToInvoice).getBillingAccount().getPaymentMethod();
-            }else {
+            } else {
                 // Calculate customer account balance
                 boolean isBalanceDue = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.limitByDueDate", true);
                 boolean isBalanceLitigation = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.includeLitigation", false);
@@ -5829,7 +5834,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
  
         while (moreInvoiceLinesExpected) {
 
-            if (entityToInvoice instanceof Order || entityToInvoice instanceof CommercialOrder) {
+            if (entityToInvoice instanceof Order) {
                 billingAccount = null;
                 defaultInvoiceType = null;
             }
