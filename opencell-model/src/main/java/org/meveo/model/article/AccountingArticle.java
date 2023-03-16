@@ -1,5 +1,6 @@
 package org.meveo.model.article;
 
+import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.FetchType.LAZY;
 
 import java.math.BigDecimal;
@@ -33,7 +34,7 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@OneToOne(fetch = LAZY, cascade = CascadeType.MERGE)
+	@OneToOne(fetch = EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "tax_class_id")
     private TaxClass taxClass;
 
