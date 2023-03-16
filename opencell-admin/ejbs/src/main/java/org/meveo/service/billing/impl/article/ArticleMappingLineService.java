@@ -43,9 +43,9 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 														   String parameter2, String parameter3) {
 		QueryBuilder queryBuilder = new QueryBuilder(ArticleMappingLine.class, "am");
 		if(product != null)
-			queryBuilder.addCriterionEntity("am.product.code", product.getCode());
+			queryBuilder.addCriterionEntity("am.product.id", product.getId());
 		if(chargeTemplate != null)
-			queryBuilder.addCriterionEntity("am.chargeTemplate.code", chargeTemplate.getCode());
+			queryBuilder.addCriterionEntity("am.chargeTemplate.id", chargeTemplate.getId());
 		if(product == null) {
 			queryBuilder.addSql("am.product is null ");
 		}
@@ -53,7 +53,7 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 			queryBuilder.addSql("am.chargeTemplate is null ");
 		}
 		if(offer != null) {
-			queryBuilder.addCriterionEntity("am.offerTemplate.code", offer.getCode());
+			queryBuilder.addCriterionEntity("am.offerTemplate.id", offer.getId());
 		}
 		if(offer == null) {
 			queryBuilder.addSql("am.offerTemplate is null ");
