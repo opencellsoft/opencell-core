@@ -26,17 +26,15 @@ import java.util.Set;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.DiscountPlanItemDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.DiscountPlanItemsResponseDto;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.exception.*;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.InvoiceCategory;
@@ -106,7 +104,13 @@ public class DiscountPlanItemApi extends BaseApi {
             throw new EntityAlreadyExistsException(DiscountPlanItem.class, postData.getCode());
         }
         discountPlanItem = toDiscountPlanItem(postData, null);
-        
+        DiscountPlan discountPlan = discountPlanItem.getDiscountPlan();
+        if(BooleanUtils.isTrue(discountPlan.getApplicableOnDiscountedPrice()) || (appProvider.isActivateCascadingDiscounts() && !discountPlan.getApplicableOnDiscountedPrice())){
+            List<DiscountPlanItem> items = discountPlanItemService.findBySequence(discountPlan.getId(), discountPlanItem.getSequence());
+            if(CollectionUtils.isNotEmpty(items)) {
+                throw  new BusinessApiException("The sequence of this discount plan item already exist");
+            }
+        }
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), discountPlanItem, true);
