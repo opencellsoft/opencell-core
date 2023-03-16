@@ -52,6 +52,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
@@ -435,6 +437,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 	 * @return PricePlanMatrixVersion
 	 */
 
+    @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 	public PricePlanMatrixVersion getPublishedVersionValideForDate(Long ppmId, ServiceInstance serviceInstance, Date operationDate) {
 		Date operationDateParam = new Date();
 		if(serviceInstance==null || PriceVersionDateSettingEnum.EVENT.equals(serviceInstance.getPriceVersionDateSetting())) {
@@ -445,6 +448,15 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 			|| PriceVersionDateSettingEnum.MANUAL.equals(serviceInstance.getPriceVersionDateSetting())) {
 				operationDateParam = serviceInstance.getPriceVersionDate();
 		}
+        if(operationDateParam != null) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(operationDate);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            operationDateParam = calendar.getTime();
+        }
         List<PricePlanMatrixVersion> result= this.getEntityManager()
                 .createNamedQuery("PricePlanMatrixVersion.getPublishedVersionValideForDate", PricePlanMatrixVersion.class)
                 .setParameter("pricePlanMatrixId", ppmId).setParameter("operationDate", operationDateParam)
