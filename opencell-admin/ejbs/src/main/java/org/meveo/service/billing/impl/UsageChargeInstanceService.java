@@ -157,11 +157,11 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
      */
     public List<UsageChargeInstance> getUsageChargeInstancesValidForDateBySubscriptionId(Long subscriptionId, Object consumptionDate) {
 
-        EntityGraph<UsageChargeInstance> graph = getEntityManager().createEntityGraph(UsageChargeInstance.class);
-        graph.addAttributeNodes("chargeTemplate", "serviceInstance", "userAccount", "currency");
-        graph.addSubgraph("serviceInstance").addAttributeNodes("attributeInstances");
-        graph.addSubgraph("currency").addAttributeNodes("currency");
-        graph.addSubgraph("userAccount").addAttributeNodes("wallet");
+//        EntityGraph<UsageChargeInstance> graph = getEntityManager().createEntityGraph(UsageChargeInstance.class);
+//        graph.addAttributeNodes("chargeTemplate", "serviceInstance", "userAccount", "currency");
+//        graph.addSubgraph("serviceInstance").addAttributeNodes("attributeInstances");
+//        graph.addSubgraph("currency").addAttributeNodes("currency");
+//        graph.addSubgraph("userAccount").addAttributeNodes("wallet");
 /*
         return getEntityManager().createNamedQuery("UsageChargeInstance.getUsageChargesValidesForDateBySubscription", UsageChargeInstance.class)
                 .setParameter("terminationDate", consumptionDate).setParameter("subscriptionId", subscriptionId)
@@ -172,17 +172,15 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
         String hql = "from UsageChargeInstancesView c where (c.status='ACTIVE' OR ((c.status='TERMINATED' OR c.status='SUSPENDED') AND c.terminationDate>:terminationDate)) and c.subscription=:subscriptionId order by c.priority ASC";
         List<UsageChargeInstancesView> list = getEntityManager().createQuery(hql, UsageChargeInstancesView.class)
                 .setParameter("terminationDate", consumptionDate).setParameter("subscriptionId", subscriptionId).getResultList();
-        Set<Long> ids = list.stream().map(l->l.getUsageChargeId()).collect(Collectors.toSet());
 
         return getEntityManager().createNamedQuery("UsageChargeInstance.getByIds",UsageChargeInstance.class)
-                .setParameter("ids", ids)
-                .setParameter("ctIds", list.stream().map(l->l.getChargeTemplateId()).collect(Collectors.toSet()))
-                .setParameter("siIds", list.stream().map(l->l.getServiceInstanceId()).collect(Collectors.toSet()))
-                .setParameter("uaIds", list.stream().map(l->l.getUserAccountId()).collect(Collectors.toSet()))
-                .setParameter("waIds", list.stream().map(l->l.getWalletId()).collect(Collectors.toSet()))
-                .setParameter("tradingCurrenciesIds", list.stream().map(l->l.getTradingCurrency()).collect(Collectors.toSet()))
-                .setParameter("currencyIds", list.stream().map(l->l.getCurrencyId()).collect(Collectors.toSet()))
-                .setHint("javax.persistence.loadgraph", graph)
+                .setParameter("ids", list.stream().map(UsageChargeInstancesView::getUsageChargeId).collect(Collectors.toSet()))
+                .setParameter("ctIds", list.stream().map(UsageChargeInstancesView::getChargeTemplateId).collect(Collectors.toSet()))
+                .setParameter("siIds", list.stream().map(UsageChargeInstancesView::getServiceInstanceId).collect(Collectors.toSet()))
+                .setParameter("uaIds", list.stream().map(UsageChargeInstancesView::getUserAccountId).collect(Collectors.toSet()))
+                .setParameter("waIds", list.stream().map(UsageChargeInstancesView::getWalletId).collect(Collectors.toSet()))
+                .setParameter("tradingCurrenciesIds", list.stream().map(UsageChargeInstancesView::getTradingCurrency).collect(Collectors.toSet()))
+                .setParameter("currencyIds", list.stream().map(UsageChargeInstancesView::getCurrencyId).collect(Collectors.toSet()))
                 .getResultList();
 
     }
