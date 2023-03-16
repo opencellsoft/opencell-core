@@ -20,6 +20,8 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.api.dto.catalog.ConvertedPricePlanMatrixLineDto;
@@ -72,11 +74,11 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
     @Inject
     private TradingCurrencyService tradingCurrencyService;
 
-
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public List<PricePlanMatrixLine> findByPricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion) {
         try {
             return getEntityManager().createNamedQuery("PricePlanMatrixLine.findByPricePlanMatrixVersion", entityClass)
-                    .setParameter("pricePlanMatrixVersion", pricePlanMatrixVersion)
+                    .setParameter("pricePlanMatrixVersionId", pricePlanMatrixVersion)
                     .getResultList();
         } catch (NoResultException exp) {
             return new ArrayList<>();
