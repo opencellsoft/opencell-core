@@ -54,25 +54,16 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
     @Inject
     private PricePlanMatrixColumnService pricePlanMatrixColumnService;
 
-
     public List<PricePlanMatrixLine> findByPricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion) {
-        try {
-            return getEntityManager().createNamedQuery("PricePlanMatrixLine.findByPricePlanMatrixVersion", entityClass)
-                    .setParameter("pricePlanMatrixVersion", pricePlanMatrixVersion)
-                    .getResultList();
-        } catch (NoResultException exp) {
-            return new ArrayList<>();
-        }
+         return getEntityManager().createNamedQuery("PricePlanMatrixLine.findByPricePlanMatrixVersion", entityClass)
+                .setParameter("pricePlanMatrixVersionId", pricePlanMatrixVersion.getId())
+                .getResultList();
     }
     
     public List<PricePlanMatrixLine> findByPricePlanMatrixVersionIds(List<Long> ppmvIds) {
-        try {
-            return getEntityManager().createNamedQuery("PricePlanMatrixLine.findByPricePlanMatrixVersionIds", entityClass)
-                    .setParameter("ppmvIds", ppmvIds)
-                    .getResultList();
-        } catch (NoResultException exp) {
-            return new ArrayList<>();
-        }
+        return getEntityManager().createNamedQuery("PricePlanMatrixLine.findByPricePlanMatrixVersionIds", entityClass)
+                .setParameter("ppmvIds", ppmvIds)
+                .getResultList();
     }
 
     @JpaAmpNewTx
@@ -239,13 +230,13 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
 
     private List<PricePlanMatrixLine> getMatchedPriceLines(PricePlanMatrixVersion pricePlanMatrixVersion, Set<AttributeValue> attributeValues, WalletOperation walletOperation) {
         List<PricePlanMatrixLine> priceLines = findByPricePlanMatrixVersion(pricePlanMatrixVersion);
-        List<PricePlanMatrixLine> priceLinesSorted = priceLines.stream()
-                .sorted(Comparator.comparing(PricePlanMatrixLine::getId))
-                .collect(Collectors.toList());
-        int i = 0;
-        for (PricePlanMatrixLine ppml : priceLinesSorted) {
-            ppml.setPriority(i++);
-        }
+//        List<PricePlanMatrixLine> priceLinesSorted = priceLines.stream()
+//                .sorted(Comparator.comparing(PricePlanMatrixLine::getId))
+//                .collect(Collectors.toList());
+//        int i = 0;
+//        for (PricePlanMatrixLine ppml : priceLinesSorted) {
+//            ppml.setPriority(i++);
+//        }
             
         addBusinessAttributeValues(pricePlanMatrixVersion.getColumns().stream().filter(column->AttributeCategoryEnum.BUSINESS.equals(column.getAttribute().getAttributeCategory())).map(column->column.getAttribute()).collect(Collectors.toList()),attributeValues, walletOperation);
         if(attributeValues.isEmpty()) {
