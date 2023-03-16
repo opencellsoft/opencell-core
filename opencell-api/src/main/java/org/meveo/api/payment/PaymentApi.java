@@ -158,7 +158,7 @@ public class PaymentApi extends BaseApi {
 
 		BigDecimal functionalAmount = paymentDto.getAmount();
 		BigDecimal convertedAmount = functionalAmount;
-		TradingCurrency functionalCurrency = tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode());
+		TradingCurrency functionalCurrency = appProvider.getCurrency() != null && appProvider.getCurrency().getCurrencyCode() != null ? tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode()) : null;
 		TradingCurrency transactionalCurrency = null;
 
 		String transactionalcurrencyCode = paymentDto.getTransactionalcurrency();
