@@ -74,6 +74,8 @@ public class CurrentUserProvider {
 
     private static Logger log = LoggerFactory.getLogger(CurrentUserProvider.class);
 
+    private final static ResteasyClient client = new ResteasyClientProxyBuilder().connectionPoolSize(100).maxPooledPerRoute(100).build();
+
     /**
      * Contains a current tenant
      */
@@ -306,7 +308,6 @@ public class CurrentUserProvider {
         }
         // AuthorizationResource authResource = realmResource.clients().get(clientId).authorization();
 
-        ResteasyClient client = new ResteasyClientProxyBuilder().build();
         ResteasyWebTarget target = client.target(kcConnectionConfig.getServerUrl() + "/admin/realms/" + kcConnectionConfig.getRealm() + "/clients/" + kcConnectionConfig.getClientId() + "/authz/resource-server/resource");
         target.register(new BearerAuthFilter(accessTokenString));
         target = target.queryParam("matchingUri", "true");
