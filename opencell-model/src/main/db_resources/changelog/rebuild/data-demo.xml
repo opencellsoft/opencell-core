@@ -6,24 +6,13 @@
 
     <changeSet author="AndriusKarpavicius" id="rebuild-data-titlesDEMO">
         <insert tableName="adm_title">
-            <column name="id" valueNumeric="-1" />
-            <column name="version" valueNumeric="0" />
-
-            <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="created" valueDate="2016-11-03 00:00:00.000" />
-            <column name="code" value="ASSOC" />
-            <column name="description" value="Assoc." />
-            <column name="is_company" valueNumeric="1" />
-            <column name="description_i18n" value='{"FRA":"Assoc.","ENG":"Assoc."}' />
-        </insert>
-        <insert tableName="adm_title">
             <column name="id" valueNumeric="-2" />
             <column name="version" valueNumeric="0" />
 
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="created" valueDate="2016-11-03 00:00:00.000" />
-            <column name="code" value="CIE" />
-            <column name="description" value="Cie." />
+            <column name="code" value="Company" />
+            <column name="description" value="Company" />
             <column name="is_company" valueNumeric="1" />
             <column name="description_i18n" value='{"FRA":"Sté","ENG":"Cie."}' />
         </insert>
@@ -1484,17 +1473,6 @@
 
         </insert>
         <insert tableName="crm_customer_category">
-            <column name="id" valueNumeric="-1" />
-            <column name="version" valueNumeric="0" />
-            <column name="uuid" value="CCC_PROSPECT" />
-            <column name="created" valueDate="2015-03-19 00:04:19.089" />
-            <column name="code" value="PROSPECT" />
-            <column name="description" value="Prospect" />
-            <column name="exonerated_from_taxes" valueNumeric="0" />
-            <column name="tax_category_id" valueNumeric="-3" />
-
-        </insert>
-        <insert tableName="crm_customer_category">
             <column name="id" valueNumeric="-2" />
             <column name="version" valueNumeric="0" />
             <column name="uuid" value="CCC_CLIENT" />
@@ -1508,24 +1486,6 @@
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-data-creditCategoryDEMO">
-        <insert tableName="ar_credit_category">
-            <column name="id" valueNumeric="-1" />
-            <column name="version" valueNumeric="0" />
-
-            <column name="created" valueDate="2015-03-19 00:04:19.913" />
-            <column name="code" value="PART_C" />
-            <column name="description" value="Part C" />
-
-        </insert>
-        <insert tableName="ar_credit_category">
-            <column name="id" valueNumeric="-2" />
-            <column name="version" valueNumeric="0" />
-
-            <column name="created" valueDate="2015-03-19 00:04:19.913" />
-            <column name="code" value="PART_M" />
-            <column name="description" value="Part M" />
-
-        </insert>
         <insert tableName="ar_credit_category">
             <column name="id" valueNumeric="-3" />
             <column name="version" valueNumeric="0" />
@@ -4509,7 +4469,7 @@
 		<insert tableName="billing_invoice_cat">
 			<column name="id" value='-4'/>
 			<column name="code" value="ICAT_SECURITY_DEPOSIT"/>
-			<column name="description" value="ICAT_SECURITY_DEPOSIT"/>
+			<column name="description" value="Security Deposit”"/>
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="opencell.admin" />
 			<column name="uuid" value="billing_invoice_cat_icat_security_deposit" />
@@ -4823,7 +4783,132 @@
                 {"nbRuns": [{"long": 1}], "oneFilePerJob": [{"boolean": false}], "waitingMillis": [{"long": 0}], "FlatFileProcessingJob_inputDir": [{"string": "/imports/massImport/userAccount/input"}], "FlatFileProcessingJob_outputDir": [{"string": "/imports/massImport/userAccount/output"}], "FlatFileProcessingJob_rejectDir": [{"string": "/imports/massImport/userAccount/reject"}], "FlatFileProcessingJob_archiveDir": [{"string": "/imports/massImport/userAccount/archive"}], "FlatFileProcessingJob_errorAction": [{"string": "CONTINUE"}], "FlatFileProcessingJob_mappingConf": [{"string": "<beanio\r\n        xmlns=\"http://www.beanio.org/2012/03\"\r\n        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n        xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n    <stream name=\"record\" format=\"csv\">\r\n        <parser>\r\n            <property name=\"delimiter\" value=\";\"/>\r\n            <property name=\"comments\" value=\"END\"/>\r\n            <property name=\"multilineEnabled\" value=\"true\"/>\r\n        </parser>\r\n        <record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n            <field name=\"OC_ENTITY\" ignore=\"true\" />\r\n            <field name=\"OC_ACTION\" ignore=\"true\" />\r\n            <field name=\"OC_BILLINGACCOUNT_CODE\" ignore=\"true\"/>\r\n          \t<field name=\"OC_PARENT_UA_CODE\" ignore=\"true\"/>\r\n            <field name=\"OC_USERACCOUNT_CODE\" ignore=\"true\"/>\r\n            <field name=\"OC_USERACCOUNT_ DESCRIPTION\" ignore=\"true\"/>\r\n            <field name=\"OC_UA_DATE\" ignore=\"true\"/>\r\n            <field name=\"OC_UA_REGISTRATION\" ignore=\"true\"/>\r\n            <field name=\"OC_UA_TVANUMBER\" ignore=\"true\"/>\r\n            <field name=\"OC_UA_TITLE\" ignore=\"true\"/>\r\n            <field name=\"OC_UA_FNAME\" ignore=\"true\"/>\r\n            <field name=\"OC_UA_LNAME\" ignore=\"true\"/>\r\n            <field name=\"OC_UA_ORGANIZATION\" ignore=\"true\"/>\r\n        </record>\r\n        <record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n            <field name=\"OC_ENTITY\" required=\"true\"/>\r\n            <field name=\"OC_ACTION\" required=\"true\"/>\r\n            <field name=\"OC_BILLINGACCOUNT_CODE\"/>\r\n          \t<field name=\"OC_PARENT_UA_CODE\"/>\r\n            <field name=\"OC_USERACCOUNT_CODE\"/>\r\n            <field name=\"OC_USERACCOUNT_ DESCRIPTION\"/>\r\n            <field name=\"OC_UA_DATE\"/>\r\n            <field name=\"OC_UA_REGISTRATION\"/>\r\n            <field name=\"OC_UA_TVANUMBER\"/>\r\n            <field name=\"OC_UA_TITLE\"/>\r\n            <field name=\"OC_UA_FNAME\"/>\r\n            <field name=\"OC_UA_LNAME\" required=\"true\"/>\r\n            <field name=\"OC_UA_ORGANIZATION\"/>\r\n            <field name=\"OC_CFS\" type=\"String\" collection=\"list\" minOccurs=\"0\" maxOccurs=\"unbounded\" />\r\n        </record>\r\n    </stream>\r\n</beanio>\r\n"}], "FlatFileProcessingJob_scriptsFlow": [{"string": "org.meveo.service.script.UserAccountImportScript"}], "FlatFileProcessingJob_formatTransfo": [{"string": "None"}], "FlatFileProcessingJob_originFilename": [{"string": "origin_filename"}], "FlatFileProcessingJob_nbLinesToProcess": [{"long": 1}], "FlatFileProcessingJob_fileNameExtension": [{"string": "csv"}], "FlatFileProcessingJob_recordVariableName": [{"string": "record"}]}
                 ]]>
             </column>
+        </insert><changeSet id="#INTRD-14122_20230221" author="hichamELHALOUI">
+		<insert tableName="cpq_tag_type">
+			<column name="id" value="-1"/>
+			<column name="created" valueDate="${db.current.time}"/>
+			<column name="code" value="tunnel"/>
+			<column name="description" value="Tunnel"/>
+		</insert>
+	<insert tableName="cpq_tag">
+        <column name="id" value="-1"/>
+        <column name="created" valueDate="${db.current.time}" />
+        <column name="code" value="featured"/>
+        <column name="description" value="Featured"/>
+         <column name="tag_type_id" value="-1" />
+    </insert>
+
+     <insert tableName="crm_customer_category">
+            <column name="id" valueNumeric="-3" />
+            <column name="version" valueNumeric="0" />
+            <column name="uuid" value="CCC_B2B" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2B" />
+            <column name="description" value="B2B" />
+            <column name="accounting_code_id" valueComputed="(select id from billing_accounting_code where code = '410000000')" />
+            <column name="tax_category_id" valueNumeric="-3" />
+    </insert>
+    <insert tableName="crm_customer_category">
+                <column name="id" valueNumeric="-4" />
+                <column name="version" valueNumeric="0" />
+                <column name="uuid" value="CCC_regular_account" />
+                <column name="created" valueDate="${db.current.time}" />
+                <column name="code" value="regular account" />
+                <column name="description" value="regular account" />
+                <column name="accounting_code_id" valueComputed="(select id from billing_accounting_code where code = '410000000')" />
+                <column name="tax_category_id" valueNumeric="-3" />
+    </insert>
+
+        <insert tableName="cat_offer_template_category">
+                <column name="id" valueNumeric="-1" />
+                <column name="version" valueNumeric="0" />
+                <column name="created" valueDate="${db.current.time}" />
+                <column name="code" value="new" />
+                <column name="name" value="New" />
         </insert>
+        <insert tableName="cat_offer_template_category">
+                <column name="id" valueNumeric="-2" />
+                <column name="version" valueNumeric="0" />
+                <column name="created" valueDate="${db.current.time}" />
+                <column name="code" value="standard" />
+                <column name="name" value="Standard" />
+        </insert>
+
+        <insert tableName="cat_channel">
+                <column name="id" valueNumeric="-1" />
+                <column name="version" valueNumeric="0" />
+                <column name="created" valueDate="${db.current.time}" />
+                <column name="code" value="backoffice" />
+                <column name="description" value="Backoffice" />
+        </insert>
+        <insert tableName="cat_channel">
+                <column name="id" valueNumeric="-2" />
+                <column name="version" valueNumeric="0" />
+                <column name="created" valueDate="${db.current.time}" />
+                <column name="code" value="web" />
+                <column name="description" value="Web" />
+        </insert>
+
+                <insert tableName="adm_title">
+            <column name="id" valueNumeric="-8" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="SA" />
+            <column name="description" value="French joint-stock company" />
+            <column name="is_company" valueNumeric="1" />
+            <column name="description_i18n" value='{"FRA":"Société Anonyme","ENG":"French joint-stock company"}' />
+        </insert>
+
+         <insert tableName="adm_title">
+            <column name="id" valueNumeric="-9" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="SARL" />
+            <column name="description" value="French limited liability company" />
+            <column name="is_company" valueNumeric="1" />
+            <column name="description_i18n" value='{"FRA":"Société a responsabilité limitée","ENG":"French limited liability company"}' />
+        </insert>
+
+        <insert tableName="adm_title">
+            <column name="id" valueNumeric="-10" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="SAS" />
+            <column name="description" value="Simplified joint-stock corporation" />
+            <column name="is_company" valueNumeric="1" />
+            <column name="description_i18n" value='{"FRA":"Société par actions simplifiée","ENG":"Simplified joint-stock corporation"}' />
+        </insert>
+        <insert tableName="adm_title">
+            <column name="id" valueNumeric="-11" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="PLC" />
+            <column name="description" value="Public limited company" />
+            <column name="is_company" valueNumeric="1" />
+            <column name="description_i18n" value='{"FRA":"société ouverte à responsabilité limitée","ENG":"Public limited company"}' />
+        </insert>
+
+        <insert tableName="adm_title">
+            <column name="id" valueNumeric="-12" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="LTD" />
+            <column name="description" value="Private company limited by shares" />
+            <column name="is_company" valueNumeric="1" />
+            <column name="description_i18n" value='{"FRA":"Société privée limité par actions","ENG":"Private company limited by shares"}' />
+        </insert>
+
+	</changeSet>
 
         <!-- Email templates -->
         <insert tableName="com_message_template">

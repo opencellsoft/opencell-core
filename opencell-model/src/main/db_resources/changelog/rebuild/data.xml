@@ -774,7 +774,7 @@
             <column name="created" valueDate="2015-03-19 00:04:00.955" />
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="USD" />
-            <column name="symbol" value="$US"  />
+            <column name="symbol" value="$"  />
             <column name="description_en" value="Dollar des Etats-unis" />
             <column name="system_currency" valueNumeric="1" />
         </insert>
@@ -11515,7 +11515,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
         </insert>
     </changeSet>
 	<changeSet author="HichamHANINE" id="#INTRD-14562_20230308" />
-	
+	<changeSet id="#INTRD-14122_20230221" author="hichamELHALOUI" />
+
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
