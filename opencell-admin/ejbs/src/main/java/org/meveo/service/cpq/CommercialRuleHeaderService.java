@@ -13,10 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
@@ -24,12 +24,14 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.cpq.ProductContextDTO;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.cache.CommercialRulesContainerProvider;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
@@ -81,8 +83,31 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 
     @Inject
     QuoteAttributeService quoteAttributeService;
+
+    @Inject
+    private CommercialRulesContainerProvider commercialRulesContainerProvider;
     
     private String multiValuesAttributeSeparator = ";";
+    
+
+    @Override
+    public void create(CommercialRuleHeader entity) throws BusinessException {
+        super.create(entity);
+        commercialRulesContainerProvider.add(entity);
+    }
+
+    @Override
+    public CommercialRuleHeader update(CommercialRuleHeader entity) throws BusinessException {
+        CommercialRuleHeader updated = super.update(entity);
+        commercialRulesContainerProvider.update(updated);
+        return updated;
+    }
+
+    @Override
+    public void remove(CommercialRuleHeader entity) throws BusinessException {
+        super.remove(entity);
+        commercialRulesContainerProvider.remove(entity);
+    }
 
     @SuppressWarnings("unchecked")
     public List<CommercialRuleHeader> getTagRules(String tagCode) throws BusinessException {
@@ -99,7 +124,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 
     @SuppressWarnings("unchecked")
     public List<CommercialRuleHeader> getOfferRules(String offerCode) throws BusinessException {
-        OfferTemplate offer = offerTemplateService.findByCodeIgnoringValidityDate(offerCode);
+        OfferTemplate offer = offerTemplateService.findByCode(offerCode);
         if (offer == null) {
             throw new EntityDoesNotExistsException(OfferTemplate.class, offerCode);
         }
@@ -111,11 +136,8 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 
     @SuppressWarnings("unchecked")
     public List<CommercialRuleHeader> getProductAttributeRules(String attributeCode, String productCode) throws BusinessException {
-        Attribute attribute = attributeService.findByCode(attributeCode);
-        String queryName = "CommercialRuleHeader.getAttributeRules";
-        if (attribute == null) {
-            throw new EntityDoesNotExistsException(Attribute.class, attributeCode);
-        }
+       String queryName = "CommercialRuleHeader.getAttributeRules";
+       
         if (!StringUtils.isEmpty(productCode)) {
             queryName = "CommercialRuleHeader.getProductAttributeRules";
         }
@@ -123,6 +145,25 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                 .setParameter("attributeCode", attributeCode);
         if (!StringUtils.isEmpty(productCode)) {
             query.setParameter("productCode", productCode);
+        }
+
+        List<CommercialRuleHeader> commercialRules = (List<CommercialRuleHeader>) query.getResultList();
+        return commercialRules;
+    }
+
+    public List<CommercialRuleHeader> getProductAttributeRulesByCodes(Set<String> attributeCodes, Set<String> productCodes) throws BusinessException {
+        String queryName = null;
+        if (CollectionUtils.isNotEmpty(attributeCodes)) {
+            queryName = "CommercialRuleHeader.getByProductOrAttributeRules";
+        } else {
+            queryName = "CommercialRuleHeader.getByProductRules";
+        }
+
+        Query query = getEntityManager().createNamedQuery(queryName)
+                .setParameter("productCodes", productCodes);
+
+        if (CollectionUtils.isNotEmpty(attributeCodes)) {
+            query.setParameter("attributeCodes", attributeCodes);
         }
 
         List<CommercialRuleHeader> commercialRules = (List<CommercialRuleHeader>) query.getResultList();
@@ -143,10 +184,6 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 
     @SuppressWarnings("unchecked")
     public List<CommercialRuleHeader> getOfferAttributeRules(String attributeCode, String offerCode) throws BusinessException {
-        Attribute attribute = attributeService.findByCode(attributeCode);
-        if (attribute == null) {
-            throw new EntityDoesNotExistsException(Attribute.class, attributeCode);
-        }
         Query query = getEntityManager().createNamedQuery("CommercialRuleHeader.getOfferAttributeRules")
                 .setParameter("attributeCode", attributeCode).setParameter("offerTemplateCode", offerCode);
         List<CommercialRuleHeader> commercialRules = (List<CommercialRuleHeader>) query.getResultList();
@@ -205,10 +242,10 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                 .filter(commercialRuleHeaderFilter)
                 .collect(Collectors.toList());
         List<CommercialRuleItem> items = null; 
-        boolean isSelectedAttribute=true;
         MutableBoolean continueProcess=new MutableBoolean(false);
         boolean isLastLine=false;
         CommercialRuleLine line=null;
+        boolean isSelectedAttribute=true;
         for (CommercialRuleHeader commercialRule : commercialRules) {
         	if(!isSelectedAttribute) {
         		return false;
@@ -229,17 +266,17 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                             continue;
                         } else {
                         	isSelectedAttribute=true;
-                               break;
+                        	break;
                         }
 
                     }
                     if(line.getSourceProduct() == null && line.getSourceOfferTemplate()!=null) {
-                        isSelectedAttribute=isSelectedAttribute(selectedOfferAttributes,line,continueProcess, isPreRequisite,offerCode,isLastLine);
+                    	 isSelectedAttribute=isSelectedAttribute(selectedOfferAttributes,line,continueProcess, isPreRequisite,offerCode,isLastLine);
                     	if (continueProcess.isTrue()) {
                     		continue;
-                    	} else {
-                    		break;
-                    	}
+                    	}else {
+                       	 break;
+                        }
                     }
                     if (line.getSourceProduct() != null) {
                         String sourceProductCode = line.getSourceProduct().getCode();
@@ -263,8 +300,8 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                         		 isSelectedAttribute= isSelectedAttribute(productContext.getSelectedAttributes(),line,continueProcess, isPreRequisite,offerCode,isLastLine) ; 
                         		 if (continueProcess.isTrue()) {
                                      continue;
-                                 } else {
-                                     break;
+                                 }else {
+                                	 break;
                                  }
                         }   
                         multiValuesAttributeSeparator = paramBeanFactory.getInstance().getProperty("attribute.multivalues.separator", ";");
@@ -293,8 +330,6 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
         }
         return isSelectedAttribute;
     }
-    
-    
     
     private boolean valueCompare(RuleOperatorEnum operator,String sourceAttributeValue,Object convertedValue) {
     	if(convertedValue==null && StringUtils.isBlank(sourceAttributeValue)) {
@@ -364,7 +399,6 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     	}
     	return false;
     }
-    
     private  boolean  isSelectedAttribute(LinkedHashMap<String, Object> selectedAttributes, CommercialRuleLine line, MutableBoolean continueProcess, boolean isPreRequisite,String offerCode,boolean isLastLine) {
     	boolean isSelected=!isPreRequisite;
     	if(line.getSourceAttribute()==null) {
@@ -425,7 +459,6 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     	return isSelected;
     }
 
-
     public void processProductReplacementRule(QuoteProduct quoteProduct) {
         QuoteVersion quoteVersion = quoteProduct.getQuoteVersion();
         List<CommercialRuleHeader> productRules = quoteProduct.getProductVersion().getProduct().getCommercialRuleHeader()
@@ -479,7 +512,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                         }
                 );
     }
-    
+
     @Transactional
     public List<CommercialRuleHeader> findAll() {
         TypedQuery<CommercialRuleHeader> query = getEntityManager().createQuery("SELECT c FROM CommercialRuleHeader c WHERE c.disabled=false", entityClass);
@@ -494,12 +527,15 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                                 if (commercialRuleLine.getSourceGroupedAttributes() != null) {
                                     commercialRuleLine.getSourceGroupedAttributes().getCode();
                                 }
+
                                 if (commercialRuleLine.getSourceAttribute() != null) {
                                     commercialRuleLine.getSourceAttribute().getCode();
                                 }
+
                                 if (commercialRuleLine.getSourceProduct() != null) {
                                     commercialRuleLine.getSourceProduct().getCode();
                                 }
+
                                 if (commercialRuleLine.getSourceProductVersion() != null) {
                                     commercialRuleLine.getSourceProductVersion().getCurrentVersion();
                                 }
@@ -510,26 +546,29 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                 if (ruleH.getTargetProductVersion() != null) {
                     ruleH.getTargetProductVersion().getCurrentVersion();
                 }
+
                 if (ruleH.getCommercialRuleItems() != null) {
                     ruleH.getCommercialRuleItems().size();
                 }
                 if (ruleH.getTargetProduct() != null) {
                     ruleH.getTargetProduct().getCode();
                 }
+
                 if (ruleH.getTargetGroupedAttributes() != null && ruleH.getTargetGroupedAttributes().getAttributes() != null) {
                     ruleH.getTargetGroupedAttributes().getAttributes().size();
                 }
+
                 if (ruleH.getTargetOfferTemplate() != null) {
                     ruleH.getTargetOfferTemplate().getCode();
                 }
             });
+
             return result;
         } catch (NoResultException e) {
             return null;
         }
     }
 
-    
     private boolean isOfferScope(ScopeTypeEnum scopeType) {
         return scopeType == null || scopeType == ScopeTypeEnum.QUOTE_OFFER;
     }
@@ -623,6 +662,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
             case LIST_MULTIPLE_TEXT:
             case LIST_TEXT:
             case EXPRESSION_LANGUAGE:
+            case BOOLEAN:	
             case TEXT:
                 quoteAttributeToUpdate.setStringValue(sourceAttributeValue);
                 break;
@@ -634,17 +674,17 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                 }
                 break;
             default:
-           	 quoteAttributeToUpdate.setStringValue(sourceAttributeValue);
-                break;
+            	 quoteAttributeToUpdate.setStringValue(sourceAttributeValue);
+                 break;
         }
     }
-
+    
     private void updateQuoteAttribute(QuoteAttribute attributeToReplace, Optional<QuoteAttribute> sourceOfferAttribute) {
         attributeToReplace.setStringValue(sourceOfferAttribute.get().getStringValue());
         attributeToReplace.setDoubleValue(sourceOfferAttribute.get().getDoubleValue());
         attributeToReplace.setDateValue(sourceOfferAttribute.get().getDateValue());
         quoteAttributeService.update(attributeToReplace);
-    }
+    } 
 
     private Map<String, Object> replaceProductAttribute(List<ProductContextDTO> selectedProducts, Attribute sourceAttribute, String sourceAttributeValue, String sourceCode) {
         Map<String, Object> overriddenAttributes = new HashMap<>();

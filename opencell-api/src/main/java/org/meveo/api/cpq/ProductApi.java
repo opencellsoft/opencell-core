@@ -1025,7 +1025,7 @@ public class ProductApi extends BaseApi {
 			for (OfferProductsDto offerProduct : offertemplateDTO.getOfferProducts()) {
 	            if (offerProduct.getProduct() != null && offerProduct.getProduct().getCurrentProductVersion() != null) {
 
-	               List<CommercialRuleHeader> commercialRules = commercialRulesContainerProvider.getForOfferAndProduct(offerCode + "-"+ offerProduct.getProduct().getCode());
+	                   List<CommercialRuleHeader> commercialRules = commercialRulesContainerProvider.getForOfferAndProduct(offerCode + "-"+ offerProduct.getProduct().getCode());
 	                 //List<CommercialRuleHeader> commercialRules = commercialRuleHeaderService.getProductRules(offerCode, offerProduct.getProduct().getCode(), offerProduct.getProduct().getCurrentProductVersion().getCurrentVersion());
 	                 log.info("productCommercialRules productCode={},size={}",offerProduct.getProduct().getCode(),commercialRules!=null?commercialRules.size():null);
 	                if (commercialRules != null && !commercialRules.isEmpty()) {
@@ -1047,10 +1047,10 @@ public class ProductApi extends BaseApi {
 
 
 	                GetProductVersionResponse productVersionResponse = (GetProductVersionResponse) offerProduct.getProduct().getCurrentProductVersion();
-	                for (AttributeDTO attributeDto : productVersionResponse.getAttributes()) {
-						List<CommercialRuleHeader> attributeCommercialRules = commercialRulesContainerProvider.getForProductAndAtttribute(attributeDto.getCode() + "-"+ offerProduct.getProduct().getCode());
-	                  // List<CommercialRuleHeader> attributeCommercialRules = commercialRuleHeaderService.getProductAttributeRules(attributeDto.getAttributeCode(), offerProduct.getProduct().getCode());
-	                log.info("attributeCommercialRules attributeCode={}, productCode={},size={}",attributeDto.getCode(),offerProduct.getProduct().getCode(),attributeCommercialRules!=null?attributeCommercialRules.size():null);
+	                for (ProductVersionAttributeDTO attributeDto : productVersionResponse.getProductAttributes()) {
+					  List<CommercialRuleHeader> attributeCommercialRules = commercialRulesContainerProvider.getForProductAndAtttribute(attributeDto.getAttributeCode() + "-"+ offerProduct.getProduct().getCode());
+	                  //List<CommercialRuleHeader> attributeCommercialRules = commercialRuleHeaderService.getProductAttributeRules(attributeDto.getAttributeCode(), offerProduct.getProduct().getCode());
+	                log.info("attributeCommercialRules attributeCode={}, productCode={},size={}",attributeDto.getAttributeCode(),offerProduct.getProduct().getCode(),attributeCommercialRules!=null?attributeCommercialRules.size():null);
 
 						if (attributeCommercialRules != null && !attributeCommercialRules.isEmpty()) {
 	                        List<String> commercialRuleCodes = new ArrayList<>();
@@ -1063,15 +1063,15 @@ public class ProductApi extends BaseApi {
 							Optional<SelectedAttributes> selectedAttribute = productSourceSelectedAttributes.stream()
 									.filter(selectedAttributes -> selectedAttributes.match(offerProduct.getOfferTemplateCode(), offerProduct.getProduct().getCode()))
 									.findFirst();
-							if(selectedAttribute.isPresent() && selectedAttribute.get().getSelectedAttributesMap() != null && selectedAttribute.get().getSelectedAttributesMap().get(attributeDto.getCode()) != null) {
+							if(selectedAttribute.isPresent() && selectedAttribute.get().getSelectedAttributesMap() != null && selectedAttribute.get().getSelectedAttributesMap().get(attributeDto.getAttributeCode()) != null) {
 								replacementRulesExecutor.executeReplacements(selectedAttribute.get(), productSourceSelectedAttributes,attributeCommercialRules);
 								if(selectedAttribute.get().isCanReplace()) {
-									attributeDto.setAssignedValue(selectedAttribute.get().getSelectedAttributesMap().get(attributeDto.getCode()));
+									attributeDto.setAssignedValue(selectedAttribute.get().getSelectedAttributesMap().get(attributeDto.getAttributeCode()));
 								}
 								
 							}
 	                    }
-	                    List<Long> sourceRules = commercialRuleLineService.getSourceProductAttributeRules(attributeDto.getCode(), offerProduct.getProduct().getCode());
+	                    List<Long> sourceRules = commercialRuleLineService.getSourceProductAttributeRules(attributeDto.getAttributeCode(), offerProduct.getProduct().getCode());
 	                    if (sourceRules != null && !sourceRules.isEmpty()) {
 	                        attributeDto.setRuled(true);
 	                    }
