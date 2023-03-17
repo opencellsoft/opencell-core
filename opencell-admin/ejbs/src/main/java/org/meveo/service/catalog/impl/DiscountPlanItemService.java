@@ -360,6 +360,17 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
     			dpi.setSequence(sequence+1);
     	}
     }
+    
+    public List<DiscountPlanItem> findBySequence(Long discountPlanId, Integer currentSequence){
+        if(discountPlanId == null || currentSequence == null) {
+            log.warn("The discount plan and sequence must not be null");
+            return Collections.emptyList();
+        }
+        List<DiscountPlanItem> discountPlanItems = getEntityManager().createNamedQuery("DiscountPlanItem.findBySequence")
+                .setParameter("discountPlanId", discountPlanId)
+                .setParameter("sequence", currentSequence).getResultList();
+        return discountPlanItems;
+    }
     	
     
 }

@@ -4281,8 +4281,8 @@
             <column name="application_filter_el" type="varchar(2000)"/>
             <column name="discount_plan_id" type="bigint"/>
             <column name="expression_el" type="varchar(2000)" />
-            <column name="applicable_on_overridden_price" type="${type.boolean}" defaultValueNumeric="0"/>
-            <column name="applicable_on_discounted_price" type="${type.boolean}"/>
+            <column name="applicable_on_overridden_price" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="applicable_on_discounted_price" type="${type.boolean}" defaultValueNumeric="1"/>
             <column name="sequence" type="int4"/>
         </createTable>
     </changeSet>
@@ -11807,6 +11807,7 @@
             <column name="auxiliary_account_label_el" type="varchar(2000)"
                     defaultValue="#{ca.description}"/>
             <column name="activate_dunning" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="discount_advanced_mode" type="${type.boolean}" defaultValueNumeric="0" />
       </createTable>
     </changeSet>
     <changeSet id="#INTRD-3461_20212128-rebuild-str-tbl" author="hichamElHaloui">
@@ -18979,6 +18980,8 @@
     <changeSet id="#INTRD-13065_20230112" author="AdilElJaouhari" />
     <changeSet id="#INTRD-13220_20230203" author="AbdellatifBARI" />
     <changeSet id="#INTRD-6364_20220519" author="aelmalki" />
+    <changeSet id="#INTRD-14598_20230303" author="zelmeliani" />
+    <changeSet id="#INTR-14747_20230308" author="TarikFA." />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
