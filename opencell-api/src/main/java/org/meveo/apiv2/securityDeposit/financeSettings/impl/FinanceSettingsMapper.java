@@ -60,7 +60,6 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
          }
          financeSettings.setAuxiliaryAccounting(auxiliaryAccounting);
          financeSettings.setActivateDunning(resource.getActivateDunning());
-         financeSettings.setActivateDunning(resource.getActivateDunning());
          return financeSettings;
     }
 }
