@@ -363,7 +363,8 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
 
     public List<DiscountPlanItem> findBySequence(Long discountPlanId, Integer currentSequence){
         if(discountPlanId == null || currentSequence == null) {
-            throw new BusinessException("The discount plan and sequence must not be null");
+            log.warn("The discount plan and sequence must not be null");
+            return Collections.emptyList();
         }
 
         List<DiscountPlanItem> discountPlanItems = getEntityManager().createNamedQuery("DiscountPlanItem.findBySequence")

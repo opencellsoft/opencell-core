@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -149,7 +150,15 @@ public class DiscountPlanItemApi extends BaseApi {
             throw new EntityDoesNotExistsException(DiscountPlanItem.class, postData.getCode());
         }
         discountPlanItem = toDiscountPlanItem(postData, discountPlanItem);
-        
+        DiscountPlan discountPlan = discountPlanItem.getDiscountPlan();
+        if(BooleanUtils.isTrue(discountPlan.getApplicableOnDiscountedPrice()) || (appProvider.isActivateCascadingDiscounts() && !discountPlan.getApplicableOnDiscountedPrice())){
+            List<DiscountPlanItem> items = discountPlanItemService.findBySequence(discountPlan.getId(), discountPlanItem.getSequence());
+            Long discountPlanItemId = discountPlanItem.getId();
+            items = items.stream().filter(dpi -> dpi.getId() != discountPlanItemId).collect(Collectors.toList());
+            if(CollectionUtils.isNotEmpty(items)) {
+                throw  new BusinessApiException("The sequence of this discount plan item already exist");
+            }
+        }
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), discountPlanItem, false);
