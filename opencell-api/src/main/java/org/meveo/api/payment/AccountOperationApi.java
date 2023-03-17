@@ -254,7 +254,10 @@ public class AccountOperationApi extends BaseApi {
             TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(transactionalcurrency);
             TradingCurrency functionalCurrency = tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode());
 
-            checkTransactionalCurrency(tradingCurrency);
+            if (tradingCurrency == null || StringUtils.isBlank(tradingCurrency)) {
+                throw new BusinessException("Currency " + transactionalcurrency +
+                        " is not recorded a trading currency in Opencell. Only currencies declared as trading currencies can be used to record account operations.");
+            }
 
             Date exchangeDate = postData.getTransactionDate() != null ? postData.getTransactionDate() : new Date();
             ExchangeRate exchangeRate = getExchangeRate(transactionalcurrency, tradingCurrency, functionalCurrency, exchangeDate);
@@ -381,13 +384,6 @@ public class AccountOperationApi extends BaseApi {
                     + " on " + exchangeDate);
         }
         return exchangeRate;
-    }
-
-    private void checkTransactionalCurrency(TradingCurrency tradingCurrency) {
-        if (tradingCurrency == null || StringUtils.isBlank(tradingCurrency)) {
-            throw new BusinessException("Currency " + tradingCurrency.getCurrencyCode() +
-                    " is not recorded a trading currency in Opencell. Only currencies declared as trading currencies can be used to record account operations.");
-        }
     }
 
     /**

@@ -156,11 +156,12 @@ public class PaymentApi extends BaseApi {
             throw new BusinessException("Cannot find OCC Template with code=" + paymentDto.getOccTemplateCode());
         }
 
-		BigDecimal convertedAmount = paymentDto.getAmount();
-		BigDecimal functionalAmount = convertedAmount;
-		String transactionalcurrency = paymentDto.getTransactionalcurrency();
+		BigDecimal functionalAmount = paymentDto.getAmount();
+		BigDecimal convertedAmount = functionalAmount;
 
+		String transactionalcurrency = paymentDto.getTransactionalcurrency();
 		if (transactionalcurrency != null && !StringUtils.isBlank(transactionalcurrency)) {
+			convertedAmount = paymentDto.getAmount();
 			functionalAmount = checkAndCalculateFunctionalAmount(paymentDto, convertedAmount, functionalAmount, transactionalcurrency);
 		}
 
@@ -172,6 +173,8 @@ public class PaymentApi extends BaseApi {
         payment.setUnMatchingAmount(functionalAmount);
         payment.setMatchingAmount(BigDecimal.ZERO);
 		payment.setConvertedAmount(convertedAmount);
+		payment.setConvertedAmountWithoutTax(convertedAmount);
+		payment.setAmountWithoutTax(functionalAmount);
 		payment.setConvertedUnMatchingAmount(convertedAmount);
 		payment.setConvertedMatchingAmount(convertedAmount);
         payment.setAccountingCode(occTemplate.getAccountingCode());
@@ -197,6 +200,7 @@ public class PaymentApi extends BaseApi {
         payment.setPaymentInfo6(paymentDto.getPaymentInfo6());
         payment.setBankCollectionDate(paymentDto.getBankCollectionDate());
 		payment.setCollectionDate(paymentDto.getCollectionDate() == null ? paymentDto.getBankCollectionDate() : paymentDto.getCollectionDate());
+		payment.setTransactionalCurrency(tradingCurrencyService.findByTradingCurrencyCode(transactionalcurrency) != null ? tradingCurrencyService.findByTradingCurrencyCode(transactionalcurrency) : null);
 
         // populate customFields
         try {
