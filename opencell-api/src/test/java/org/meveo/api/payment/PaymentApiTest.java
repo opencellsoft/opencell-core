@@ -9,6 +9,7 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.Journal;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -17,6 +18,7 @@ import org.meveo.service.billing.impl.JournalService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.PaymentService;
+import org.meveo.util.ApplicationProvider;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -55,6 +57,9 @@ public class PaymentApiTest {
 
     @Mock
     private TradingCurrencyService tradingCurrencyService;
+
+    @Mock
+    private Provider applicationProvider;
 
 
     @Test
