@@ -19563,8 +19563,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         <insert tableName="adm_title">
             <column name="id" valueNumeric="-12" />
             <column name="version" valueNumeric="0" />
-        </insert>
-    </changeSet>
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
