@@ -12,6 +12,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.payments.Journal;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.JournalService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.OCCTemplateService;
@@ -52,8 +53,8 @@ public class PaymentApiTest {
     @Mock
     private JournalService journalService;
 
-
-
+    @Mock
+    private TradingCurrencyService tradingCurrencyService;
 
 
     @Test
