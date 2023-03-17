@@ -143,7 +143,8 @@ public class MediationApi extends BaseApi {
     /**
      * Process CDRs to create EDRs
      *
-     * @param cdrIds
+     * @param cdrIds A list of CDR ids to process
+     * @return A list of processed CDR information
      * @throws MeveoApiException
      * @throws BusinessException
      * @throws CDRAlreadyProcessedException 
