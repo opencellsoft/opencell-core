@@ -100,4 +100,31 @@ public interface AgedReceivable extends Resource {
 
     @Nullable
     Long getCustomerId();
+
+    @Nullable
+    BigDecimal getTransactional_NotYetDue();
+
+    @Nullable
+    BigDecimal getTransactionalSum_1_30();
+
+    @Nullable
+    BigDecimal getTransactionalSum_31_60();
+
+    @Nullable
+    BigDecimal getTransactionalSum_61_90();
+
+    @Nullable
+    BigDecimal getTransactionalSum_90_Up();
+
+    @Nullable
+    BigDecimal getTransactional_GeneralTotal();
+
+    @Nullable
+    List<BigDecimal> getTransactional_NetAmountByPeriod();
+
+    @Nullable
+    List<BigDecimal> getTransactional_TaxAmountByPeriod();
+
+    @Nullable
+    List<BigDecimal> getTransactional_TotalAmountByPeriod();
 }
