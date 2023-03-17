@@ -5588,6 +5588,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if(invoiceLine.getSubscription().getSeller() != null)
                 return invoiceLine.getSubscription().getSeller();
         }
+        if(invoiceLine.getRatedTransactions() != null && !invoiceLine.getRatedTransactions().isEmpty())
+        {
+            if(invoiceLine.getRatedTransactions().get(0).getSeller() != null)
+                return invoiceLine.getRatedTransactions().get(0).getSeller();
+        }
         if(invoiceLine.getCommercialOrder() != null) {
             if(invoiceLine.getCommercialOrder().getSeller()!=null)
                 return invoiceLine.getCommercialOrder().getSeller();
