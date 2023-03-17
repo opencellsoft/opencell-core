@@ -61,7 +61,6 @@ import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.communication.email.EmailTemplate;
-import org.meveo.model.cpq.ProductLine;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.report.query.QueryExecutionModeEnum;
 import org.meveo.model.report.query.QueryExecutionResult;
@@ -457,13 +456,17 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
     public Future<QueryExecutionResult> executeReportQueryAndSaveResult(ReportQuery reportQuery,
                                                                              Class<?> targetEntity, Date startDate) {
     	Map<String, String> aliases = reportQuery.getAliases() != null ? reportQuery.getAliases() : new HashMap<>();
-        List<String> genericFields =
-                (List<String>) reportQuery.getAdvancedQuery().getOrDefault("genericFields", new ArrayList<>());
-        List<String> fields =
-                (genericFields != null && !genericFields.isEmpty()) ? genericFields : joinEntityFields(targetEntity);
-        List<Object> reportResult =
-                toExecutionResult(fields,
-                        prepareQueryToExecute(reportQuery, targetEntity).getResultList(), targetEntity, aliases);
+        List<String> fields = null;
+        List<Object> result = null;
+        if(reportQuery.getAdvancedQuery() != null && !reportQuery.getAdvancedQuery().isEmpty()) {
+        	QueryBuilder qb = nativePersistenceService.generatedAdvancedQuery(reportQuery);
+    		result = qb.getQuery(PersistenceServiceHelper.getPersistenceService(targetEntity).getEntityManager()).getResultList();
+    		fields = (List<String>) reportQuery.getAdvancedQuery().getOrDefault("genericFields", new ArrayList<>());
+        } else {
+        	result = prepareQueryToExecute(reportQuery, targetEntity).getResultList();
+        	fields = reportQuery.getFields();
+        }
+		List<Object> reportResult = toExecutionResult(fields, result, targetEntity, aliases);
         if (!reportResult.isEmpty()) {
             SimpleDateFormat dateFormat = new SimpleDateFormat(REPORT_EXECUTION_FILE_SUFFIX);
             StringBuilder fileName = new StringBuilder(dateFormat.format(startDate))
