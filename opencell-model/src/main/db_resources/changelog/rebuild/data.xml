@@ -774,7 +774,7 @@
             <column name="created" valueDate="2015-03-19 00:04:00.955" />
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="USD" />
-            <column name="symbol" value="$US"  />
+            <column name="symbol" value="$"  />
             <column name="description_en" value="Dollar des Etats-unis" />
             <column name="system_currency" valueNumeric="1" />
         </insert>
@@ -17665,7 +17665,7 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
    	<changeSet id="#INTRD-13867_20230220" author="aeljaouhari" />
     <changeSet id="#INTRD-13867_20230301" author="AbdellatifBARI" />
     <changeSet id="INTRD-12103_20221215" author="HichamHANINE" />
-    
+
     <changeSet id="#INTRD-14042_20230227" author="aeljaouhari">
 		<insert tableName="meveo_script_instance">
 			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
@@ -17693,9 +17693,9 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
 			<column name="description" value="No accounting entry"/>
 			<column name="long_description_i18n" value='{"FRA":"Pas d&apos;écriture comptable","ENG":"No accounting entry"}'/>
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.accountingscheme.NoAccountingEntry')"/>
-		</insert>	
+		</insert>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-14126_20230307" author="aelmalki">
         <insert tableName="ar_occ_template">
             <column name="id" valueSequenceNext="ar_occ_template_seq" />
@@ -17711,7 +17711,9 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'SAL')" />
         </insert>
     </changeSet>
-	
+
+	<changeSet id="#INTRD-14122_20230221" author="hichamELHALOUI" />
+
     <changeSet id="#INTRD-14555_20230303" author="aeljaouhari" />
     <changeSet id="#INTRD-14433_20230306" author="hichamELHALOUI" />
     <changeSet author="HichamHANINE" id="#INTRD-14562_20230308" />
@@ -17744,7 +17746,7 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
         </insert>
     </changeSet>
-    
+
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
