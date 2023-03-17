@@ -9106,6 +9106,25 @@ public class OrderAdvancement extends ModuleScript {
             <column name="validation_label" type="varchar(255)" />
     	</addColumn>
 
+        <sql>INSERT INTO ${db.schema.adapted}offer_template_attribute
+             (id, attribute_id, offer_template_id, mandatory, read_only, sequence,
+              display, default_value, validation_label, validation_pattern, validation_type)
+            SELECT nextval('offer_template_attribute_seq') as next_id,att.id as attribute_id, coa.offer_template_id,
+                    att.mandatory, att.read_only, att.sequence,
+                    att.display, att.default_value, att.validation_label, att.validation_pattern, att.validation_type
+             FROM ${db.schema.adapted}cpq_attribute att left join ${db.schema.adapted}cpq_offer_attributes coa
+                 on att.id = coa.attribute_id
+             WHERE att.id = coa.attribute_id;</sql>
+        <sql>UPDATE ${db.schema.adapted}cpq_product_version_attributes cpva
+             SET display = att.display,
+                 read_only = att.read_only,
+                 mandatory = att.mandatory,
+                 default_value = att.default_value,
+                 validation_type = att.validation_type,
+                 validation_pattern = att.validation_pattern,
+                 validation_label = att.validation_label
+                 FROM ${db.schema.adapted}cpq_attribute att
+             WHERE cpva.attribute_id = att.id;</sql>
 		<dropColumn tableName="cpq_attribute">
 			<column name="mandatory"/>
 			<column name="read_only"/>
