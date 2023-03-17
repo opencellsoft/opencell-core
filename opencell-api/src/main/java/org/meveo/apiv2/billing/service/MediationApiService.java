@@ -162,6 +162,13 @@ public class MediationApiService {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * Accepts a list of CDR line. This CDR is parsed and created as EDR. CDR is same format use in mediation job
+     * 
+     * @param postData A list of CDR csv lines
+     * @param ipAddress IP address initiating api call
+     * @return CDR processing information
+     */
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public ProcessCdrListResult registerCdrList(CdrListInput postData, String ipAddress) {
 
@@ -169,6 +176,13 @@ public class MediationApiService {
         return processCdrList(postData.getCdrs(), postData.getMode(), false, false, false, false, null, false, false, true, false, ipAddress, false);
     }
 
+    /**
+     * Process existing CDRs in DB to create EDRs
+     *
+     * @param cdrIds A list of CDR ids to process
+     * @return A list of processed CDRs
+     * @throws CDRAlreadyProcessedException
+     */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<CDR> processCdrList(List<Long> cdrIds) throws CDRAlreadyProcessedException {
@@ -213,6 +227,13 @@ public class MediationApiService {
         return cdrs;
     }
 
+    /**
+     * Allows the user to reserve a CDR, this will create a new reservation entity attached to a wallet operation. A reservation has expiration limit save in the provider entity (PREPAID_RESRV_DELAY_MS)
+     * 
+     * @param postData A list of CDR csv lines
+     * @param ipAddress IP address initiating api call
+     * @return Available quantity and reservationID is returned
+     */
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public ProcessCdrListResult reserveCdrList(CdrListInput postData, String ipAddress) {
 
@@ -220,6 +241,13 @@ public class MediationApiService {
         return processCdrList(postData.getCdrs(), postData.getMode(), false, false, true, false, null, false, false, true, false, ipAddress, false);
     }
 
+    /**
+     * Parse CDR, convert to EDR and rate it
+     * 
+     * @param postData A list of CDR csv lines
+     * @param ipAddress IP address initiating api call
+     * @return CDR processing information
+     */
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public ProcessCdrListResult chargeCdrList(ChargeCdrListInput postData, String ipAddress) {
 
