@@ -19494,13 +19494,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
                 <column name="code" value="backoffice" />
                 <column name="description" value="Backoffice" />
         </insert>
-        <insert tableName="cat_channel">
-                <column name="id" valueNumeric="-2" />
-                <column name="version" valueNumeric="0" />
-                <column name="created" valueDate="${db.current.time}" />
-                <column name="code" value="web" />
-                <column name="description" value="Web" />
-        </insert>
 
         <update tableName="crm_provider_pay_methods">
 			<column name="payment_method" value="STRIPEDIRECTLINK" />
@@ -19592,6 +19585,26 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         </insert>
 
     </changeSet>
+    
+    <changeSet id="#INTRD-14122_20230221-FIX" author="hichamELHALOUI">
+    	<preConditions onFail="MARK_RAN">
+		    <sqlCheck expectedResult="0">
+		        SELECT COUNT(1)
+		        FROM cat_channel
+		        WHERE lower(code)='web'
+		    </sqlCheck>
+		</preConditions>
+	      <insert tableName="cat_channel">
+	                <column name="id" valueNumeric="-2" />
+	                <column name="version" valueNumeric="0" />
+	                <column name="created" valueDate="${db.current.time}" />
+	                <column name="code" value="web" />
+	                <column name="description" value="Web" />
+	        </insert>
+     </changeSet>
+    
+    
+    
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
