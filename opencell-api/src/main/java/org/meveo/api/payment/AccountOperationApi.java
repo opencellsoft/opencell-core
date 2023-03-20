@@ -264,12 +264,13 @@ public class AccountOperationApi extends BaseApi {
             }
 
             Date exchangeDate = postData.getTransactionDate() != null ? postData.getTransactionDate() : new Date();
-            ExchangeRate exchangeRate = getExchangeRate(tradingCurrency,exchangeDate);
+            ExchangeRate exchangeRate = getExchangeRate(tradingCurrency,transactionalcurrency,exchangeDate);
 
             if (!functionalCurrency.equals(tradingCurrency)) {
-                functionalAmount = convertedAmount.divide(exchangeRate.getExchangeRate(), 2, RoundingMode.HALF_UP);
+                functionalAmount = convertedAmount.divide(exchangeRate.getExchangeRate(),appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode());
                 functionalMatchingAmount = convertedMatchingAmount.divide(exchangeRate.getExchangeRate(), 2, RoundingMode.HALF_UP);
                 functionalUnMatchingAmount = convertedUnMatchingAmount.divide(exchangeRate.getExchangeRate(), 2, RoundingMode.HALF_UP);
+                accountOperation.setAppliedRate(exchangeRate.getExchangeRate());
             }
         }
 
@@ -380,12 +381,12 @@ public class AccountOperationApi extends BaseApi {
         return accountOperation.getId();
     }
 
-    private static ExchangeRate getExchangeRate(TradingCurrency tradingCurrency, Date exchangeDate) {
+    private static ExchangeRate getExchangeRate(TradingCurrency tradingCurrency, String transactionalCurrency, Date exchangeDate) {
         ExchangeRate exchangeRate = tradingCurrency.getExchangeRate(exchangeDate);
 
         if (exchangeRate == null || exchangeRate.getExchangeRate() == null) {
-            throw new NotFoundException(new ActionStatus(ActionStatusEnum.FAIL, "No valid exchange rate found for currency " + tradingCurrency.getCurrencyCode()
-                    + " on " + exchangeDate));
+            throw new EntityDoesNotExistsException("No valid exchange rate found for currency " + transactionalCurrency
+                    + " on " + exchangeDate);
         }
         return exchangeRate;
     }
