@@ -25,7 +25,7 @@ package org.meveo.model.payments;
  */
 public enum PaymentMethodEnum {
 
-	CHECK, DIRECTDEBIT, WIRETRANSFER, CARD, PAYPAL, STRIPE, CASH;
+	CHECK, DIRECTDEBIT, WIRETRANSFER, CARD, PAYPALPAYMENTLINK, STRIPEDIRECTLINK, CASH;
 
 	/**
 	 * @return label
@@ -41,7 +41,7 @@ public enum PaymentMethodEnum {
 	 * @return true/fale
 	 */
 	public boolean isSimple() {
-		return this == CHECK || this == PaymentMethodEnum.WIRETRANSFER || this == PaymentMethodEnum.PAYPAL
-				|| this == PaymentMethodEnum.STRIPE || this == PaymentMethodEnum.CASH;
+		return this == CHECK || this == PaymentMethodEnum.WIRETRANSFER || this == PaymentMethodEnum.PAYPALPAYMENTLINK
+				|| this == PaymentMethodEnum.STRIPEDIRECTLINK || this == PaymentMethodEnum.CASH;
 	}
 }

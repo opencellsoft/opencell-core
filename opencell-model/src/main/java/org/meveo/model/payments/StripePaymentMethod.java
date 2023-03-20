@@ -34,13 +34,13 @@ public class StripePaymentMethod extends PaymentMethod {
     private static final long serialVersionUID = 8726571611074346199L;
     
     public StripePaymentMethod() {
-        this.paymentType = PaymentMethodEnum.STRIPE;
+        this.paymentType = PaymentMethodEnum.STRIPEDIRECTLINK;
     }
 
     public StripePaymentMethod(boolean isDisabled, String alias, boolean preferred, CustomerAccount customerAccount,String userId) {
         super();
         setDisabled(isDisabled);
-        this.paymentType = PaymentMethodEnum.STRIPE;
+        this.paymentType = PaymentMethodEnum.STRIPEDIRECTLINK;
         this.alias = alias;
         this.preferred = preferred;
         this.customerAccount = customerAccount;
@@ -53,7 +53,7 @@ public class StripePaymentMethod extends PaymentMethod {
 
     public StripePaymentMethod(String alias, boolean preferred) {
         super();
-        this.paymentType = PaymentMethodEnum.STRIPE;
+        this.paymentType = PaymentMethodEnum.STRIPEDIRECTLINK;
         this.alias = alias;
         this.preferred = preferred;
     }
