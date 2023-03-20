@@ -528,6 +528,7 @@ public class InvoiceApi extends BaseApi {
         if(generateAO) {
             invoiceService.generateRecordedInvoiceAO(invoiceId);
         }
+        invoiceService.recalculateDatesForValidated(invoiceId);
         Date today = new Date();
         invoice = invoiceService.refreshOrRetrieve(invoice);
         if(invoice.getDueDate().before(today) && invoice.getStatus() == VALIDATED) {
