@@ -3303,15 +3303,52 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     }
 
+    public void recalculateDatesForValidated(Long invoiceId) {
+        Invoice invoice = findById(invoiceId);
+        BillingAccount billingAccount = invoice.getBillingAccount();
+        BillingCycle billingCycle = billingAccount.getBillingCycle();
+        BillingRun billingRun = invoice.getBillingRun();
+        if (billingRun != null && billingRun.getBillingCycle() != null) {
+            billingCycle = billingRun.getBillingCycle();
+        }
+        billingCycle = PersistenceUtils.initializeAndUnproxy(billingCycle);
+        if (billingRun == null) {
+            return;
+        }        
+        if ((billingRun.getComputeDatesAtValidation() != null && billingRun.getComputeDatesAtValidation()) 
+                || (billingRun.getComputeDatesAtValidation() == null && billingCycle.getComputeDatesAtValidation())) {
+            recalculateDateByBR(invoice, billingRun, billingAccount, billingCycle, true);
+        }
+    }
+    
     private void recalculateDate(Invoice invoice, BillingRun billingRun, BillingAccount billingAccount, BillingCycle billingCycle) {
 
-        int delay = billingCycle.getInvoiceDateDelayEL() == null ? 0 : InvoiceService.resolveImmediateInvoiceDateDelay(billingCycle.getInvoiceDateDelayEL(), invoice, billingAccount);
-        Date invoiceDate = DateUtils.addDaysToDate(new Date(), delay);
-        invoiceDate = setTimeToZero(invoiceDate);
+        int delay = 0;
+        if (invoice.getBillingRun() == null) {
+            delay = billingCycle.getInvoiceDateDelayEL() == null ? 0 : InvoiceService.resolveImmediateInvoiceDateDelay(billingCycle.getInvoiceDateDelayEL(), invoice, billingAccount);
+        }else {
+            delay = billingCycle.getInvoiceDateProductionDelayEL() == null ? 0 : InvoiceService.resolveImmediateInvoiceDateDelay(billingCycle.getInvoiceDateProductionDelayEL(), invoice, billingAccount);
+        }        Date invoiceDate = DateUtils.addDaysToDate(new Date(), delay);
+        invoiceDate = DateUtils.setTimeToZero(invoiceDate);
         invoice.setInvoiceDate(invoiceDate);
         setInvoiceDueDate(invoice, billingCycle);
         setInitialCollectionDate(invoice, billingCycle, billingRun);
 
+    }
+    
+    private void recalculateDateByBR(Invoice invoice, BillingRun billingRun, BillingAccount billingAccount, 
+            BillingCycle billingCycle, boolean isBillingRun) {
+        int delay = 0;
+        if (!isBillingRun) {
+            delay = billingCycle.getInvoiceDateDelayEL() == null ? 0 : InvoiceService.resolveImmediateInvoiceDateDelay(billingCycle.getInvoiceDateDelayEL(), invoice, billingAccount);
+        }else {
+            delay = billingCycle.getInvoiceDateProductionDelayEL() == null ? 0 : InvoiceService.resolveImmediateInvoiceDateDelay(billingCycle.getInvoiceDateProductionDelayEL(), invoice, billingAccount);
+        }        
+        Date invoiceDate = DateUtils.addDaysToDate(billingRun.getProcessDate(), delay);
+        invoiceDate = DateUtils.setTimeToZero(invoiceDate);
+        invoice.setInvoiceDate(invoiceDate);
+        setInvoiceDueDate(invoice, billingCycle);
+        setInitialCollectionDate(invoice, billingCycle, billingRun);
     }
 
     /**

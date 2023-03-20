@@ -583,7 +583,7 @@ public class InvoiceApi extends BaseApi {
         if(brGenerateAO || generateAO) {
             invoiceService.generateRecordedInvoiceAO(invoiceId);
         }
-        
+        invoiceService.recalculateDatesForValidated(invoiceId);
         serviceSingleton.triggersJobs();
 
         Date today = new Date();
