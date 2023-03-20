@@ -367,7 +367,7 @@ public class MediationApi extends BaseApi {
         cdr.setOriginRecord(getOriginRecordFromApi(cdrToCsv));
         cdr.setLine(cdrToCsv);
         
-        if (edrService.isDuplicateFound(cdr.getOriginBatch(), cdr.getOriginRecord())) {
+        if (edrService.isDuplicateFound(cdr.getOriginRecord())) {
             throw new DuplicateException(cdr);
         }
         
