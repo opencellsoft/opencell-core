@@ -133,7 +133,7 @@ public class MediationJobBeanV2 extends IteratorBasedJobBean<Long> {
                 List<Access> accessPoints = cdrParsingService.accessPointLookup(cdr);
                 List<EDR> edrs = cdrParsingService.convertCdrToEdr(cdr, accessPoints);
 
-                if (EdrService.isDuplicateCheckOn() && edrService.isDuplicateFound(cdr.getOriginBatch(), cdr.getOriginRecord())) {
+                if (EdrService.isDuplicateCheckOn() && edrService.isDuplicateFound(cdr.getOriginRecord())) {
                      throw new DuplicateException(cdr);
                 }
                 

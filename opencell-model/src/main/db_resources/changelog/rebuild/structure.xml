@@ -3138,6 +3138,8 @@
             <column name="use_current_rate" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="invoice_validation_rule_id" type="bigint"/>
             <column name="converted_invoice_balance" type="numeric(23, 12)"/>
+            <column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -3192,6 +3194,8 @@
             <column name="converted_amount_without_tax" type="numeric(23, 12)"/>
             <column name="converted_amount_with_tax" type="numeric(23, 12)"/>
             <column name="converted_amount_tax" type="numeric(23, 12)"/>
+            <column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-178">
@@ -10824,6 +10828,7 @@
             </column>
             <column name="cf_values" type="${type.json}" />
             <column name="adjustment_status" type="varchar(50)"/>
+            <column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -19112,7 +19117,6 @@
     <changeSet id="#222_20210219" author="Mbarek-Ay"></changeSet>
     <changeSet id="#270_20210222" author="Mbarek-Ay"></changeSet>
     <changeSet id="#20210222_540_269" author="TarikFA."></changeSet>
-    <changeSet id="#20210222_540_269" author="TarikFA."></changeSet>
     <changeSet id="#20210123_540_280" author="TarikFA."></changeSet>
     <changeSet   id="#20210123_540_281" author="TarikFA."></changeSet>
     <changeSet id="#20210224_5868" author="Mbarek-Ay"></changeSet>
@@ -19129,7 +19133,6 @@
     <changeSet id="#2020317-342" author="Mbarek-Ay"></changeSet>
     <changeSet id="#20210322_377" author="TarikFA."></changeSet>
     <changeSet id="#20210323_380" author="TarikFA."></changeSet>
-    <changeSet id="#20210323-382" author="Mbarek-Ay"></changeSet>
     <changeSet id="#20210323-382" author="Mbarek-Ay"></changeSet>
     <changeSet id="#20220325_360" author="TarikFA."></changeSet>
     <changeSet id="#20210329_399" author="TarikFA."></changeSet>
@@ -19551,6 +19554,11 @@
     <changeSet id="#INTR-14747_20230308" author="TarikFA." />
 	<changeSet id="#INTRD-14340_20230228" author="HichamHANINE" />
     <changeSet id="#INTRD-14811_20200310" author="TarikFA." />
+	<changeSet id="#INTRD-14243_invoice_conversion" author="a.rouaguebe" />
+	<changeSet id="#INTRD-14402_20230301" author="AdilElJaouhari" />
+	<changeSet id="#INTRD-14381-202303202" author="bourras" />
+	<changeSet id="#20210623-INTRD-277-orderAdvacementScript" author="TarikFA." />
+	<changeSet id="#20210623-INTRD-277-quoteValidationScript" author="TarikFA." />
 	
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

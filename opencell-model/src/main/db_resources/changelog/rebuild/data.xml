@@ -774,7 +774,7 @@
             <column name="created" valueDate="2015-03-19 00:04:00.955" />
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="USD" />
-            <column name="symbol" value="$US"  />
+            <column name="symbol" value="$"  />
             <column name="description_en" value="Dollar des Etats-unis" />
             <column name="system_currency" valueNumeric="1" />
         </insert>
@@ -10880,6 +10880,366 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		</insert>
 	</changeSet>
 	
+	<changeSet id="INTRD_11783_20221201_compate_invoice_amount" author="a.rouaguebe">
+    
+         <insert tableName="meveo_script_instance">
+        	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+        	<column name="code" value="org.meveo.service.script.CompareInvoiceAmount" />
+        	<column name="script">
+        		<![CDATA[   package org.meveo.service.script;
+            		public class CompareInvoiceAmount extends CompareInvoiceAmountScript {}]]>
+        	</column>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="src_type" value="JAVA" />
+			<column name="description" value="Invoice amount will be compared to provided amount using the selected operator."/>
+			<column name="description_i18n" value='{"FRA":"Le montant de la facture sera comparé au montant indiqué en utilisant l’opérateur sélectionné.", "EN": "Invoice amount will be compared to provided amount using the selected operator."}'/>
+			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='INVOICE_VALIDATION')" />
+        </insert>
+
+		<insert tableName="meveo_script_parameter">
+			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="withOrWithoutTax" />
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareInvoiceAmount')" />
+			<column name="description_i18n" value='{"FRA":"Montant à tester","ENG":"Amount to test"}'/>
+			<column name="class_name" value="java.lang.String" />
+			<column name="default_value" value="without tax" />
+			<column name="mandatory" valueNumeric="1" />
+			<column name="allowed_values" value="without tax|with tax" />
+			<column name="values_separator" value="\|" />
+			<column name="collection" valueNumeric="0" />
+		</insert>
+
+		<insert tableName="meveo_script_parameter">
+			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="operator" />
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareInvoiceAmount')" />
+			<column name="description_i18n" value='{"FRA":"Operateur de comparaison","ENG":"Comparison operator"}'/>
+			<column name="class_name" value="java.lang.String" />
+			<column name="default_value" value=">" />
+			<column name="mandatory" valueNumeric="1" />
+			<column name="allowed_values" value="&lt;|≤|=|≠|&gt;|≥" />
+			<column name="values_separator" value="\|" />
+			<column name="collection" valueNumeric="0" />
+		</insert>
+
+		<insert tableName="meveo_script_parameter">
+			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="value" />
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareInvoiceAmount')" />
+			<column name="description_i18n" value='{"FRA":"Valeur","ENG":"Value"}'/>
+			<column name="class_name" value="java.math.BigDecimal" />
+			<column name="default_value" value="0" />
+			<column name="mandatory" valueNumeric="1" />
+			<column name="values_separator" value="\|" />
+			<column name="collection" valueNumeric="0" />
+		</insert>
+    </changeSet>
+    
+    
+	
+	<changeSet id="INTRD_12001_20221205_rebuild" author="TarikFA.">
+    
+        <insert tableName="meveo_script_instance">
+        	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+        	<column name="code" value="org.meveo.service.script.CompareOfferAmount" />
+        	<column name="script">
+        		<![CDATA[   package org.meveo.service.script;
+            		public class CompareOfferAmount extends CompareOfferAmountScript {}]]>
+        	</column>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="src_type" value="JAVA" />
+			<column name="description" value="Amount invoiced for each offer in the list will be compared to the provided value using the selected operator If offer list is empty, then rule will be ignored. Only offer actually present on invoice will be tested."/>
+			<column name="description_i18n">
+				<![CDATA[{"FRA":"<p>Le montant facturé pour chacune des offres dans la liste sera comparé à la valeur indiquée, en utilisant l’opérateur sélectionné.</p><p>Si la liste des offres est vide, alors la règle sera ignorée.</p><p>Seules les offres effectivement présentes sur la facture seront testées.</p>","ENG":"<p>Amount invoiced for each offer in the list will be compared to the provided value using the selected operator</p><p>If offer list is empty, then rule will be ignored.</p><p>Only offer actually present on invoice will be tested.</p>"}]]>
+			</column>
+			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='INVOICE_VALIDATION')" />
+        </insert>
+
+		<insert tableName="meveo_script_parameter">
+			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="offers" />
+			<column name="description_i18n" value='{"FRA":"Offres à vérifier","ENG":"Offers to check"}'/>
+			<column name="class_name" value="org.meveo.model.catalog.OfferTemplate" />
+			<column name="mandatory" valueNumeric="0" />
+			<column name="values_separator" value="\|" />
+			<column name="collection" valueNumeric="1" />
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferAmount')" />
+		</insert>
+		
+		<insert tableName="meveo_script_parameter">
+			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="withOrWithoutTax" />
+			<column name="description_i18n" value='{"FRA":"Montant à tester","ENG":"Amount to test"}'/>
+			<column name="class_name" value="java.lang.String" />
+			<column name="default_value" value="without tax" />
+			<column name="mandatory" valueNumeric="1" />
+			<column name="allowed_values" value="without tax|with tax" />
+			<column name="values_separator" value="\|" />
+			<column name="collection" valueNumeric="0" />
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferAmount')" />
+		</insert>
+
+		<insert tableName="meveo_script_parameter">
+			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="operator" />
+			<column name="description_i18n" value='{"FRA":"Operateur de comparaison","ENG":"Comparison operator"}'/>
+			<column name="class_name" value="java.lang.String" />
+			<column name="default_value" value=">" />
+			<column name="mandatory" valueNumeric="1" />
+			<column name="allowed_values" value="&lt;|≤|=|≠|&gt;|≥" />
+			<column name="values_separator" value="\|" />
+			<column name="collection" valueNumeric="0" />
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferAmount')" />
+		</insert>
+
+		<insert tableName="meveo_script_parameter">
+			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="value" />
+			<column name="description_i18n" value='{"FRA":"Valeur","ENG":"Value"}'/>
+			<column name="class_name" value="java.math.BigDecimal" />
+			<column name="default_value" value="0" />
+			<column name="mandatory" valueNumeric="1" />
+			<column name="values_separator" value="\|" />
+			<column name="collection" valueNumeric="0" />
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferAmount')" />
+		</insert>
+    </changeSet>
+    
+    <changeSet id="INTRD-12266_20221214_rebuild" author="aeljaouhari">
+        <insert tableName="meveo_script_instance">
+        	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+        	<column name="code" value="org.meveo.service.script.validation.ValidateCreditCategory" />
+        	<column name="script">
+        		<![CDATA[   package org.meveo.service.script.validation;
+            		public class ValidateCreditCategory extends ValidateCreditCategoryScript {}]]>
+        	</column>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="src_type" value="JAVA" />
+            <column name="description" value="The customer's (customer account actually) credit category must not be in the provided list for the rule to pass. If customer's credit category is in the list, the rule will fail. If credit category list is empty, then rule will be ignored."/>
+            <column name="description_i18n">
+				<![CDATA[{"ENG":"<p>The customer's (customer account actually) credit category must not be in the provided list for the rule to pass.</p><p>If customer's credit category is in the list, the rule will fail.</p><p>If credit category list is empty, then rule will be ignored.</p>","FRA":"<p>Le catégorie de crédit du client (customer account) ne doit pas être dans la liste fournie pour que la règle passe.</p><p>Si la catégorie de crédit du client est dans la liste, la règle va échouer.</p><p>Si la liste de catégories de crédit est vide, la règle sera ignorée.</p>"}]]>
+			</column>
+			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='INVOICE_VALIDATION')" />
+        </insert>
+
+		<insert tableName="meveo_script_parameter">
+			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="CheckCreditCategory" />
+			<column name="description_i18n" value='{"FRA":"Catégories de crédit interdites","ENG":"Forbidden credit categories"}'/>
+			<column name="class_name" value="org.meveo.model.payments.CreditCategory" />
+			<column name="mandatory" valueNumeric="0" />
+			<column name="values_separator" value="\|" />
+			<column name="collection" valueNumeric="1" />
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateCreditCategory')" />
+		</insert>
+    </changeSet>
+    
+    <changeSet id="INTRD-12103_20221215_rebuild" author="HichamHANINE">    
+      <insert tableName="meveo_script_instance">
+        	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+        	<column name="code" value="org.meveo.service.script.CompareOfferLinesAmount" />
+        	<column name="script">
+        		<![CDATA[   package org.meveo.service.script;
+            		public class CompareOfferLinesAmount extends CompareOfferLinesAmountScript {}]]>
+        	</column>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="src_type" value="JAVA" />
+			<column name="description" value="Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator. Only offer from the list actually present on invoice will be tested. If offer list is empty, then all invoice lines will be tested regardless of their offer. For the test to pass, all tested invoice lines must pass the test."/>
+			<column name="description_i18n">
+				<![CDATA[{"ENG":"<p>Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator.</p><p>Only offer from the list actually present on invoice will be tested</p><p>If offer list is empty, then all invoice lines will be tested regardless of their offer.</p><p>For the test to pass, all tested invoice lines must pass the test.</p>",
+				"FRA":"<p>Le montant de chaque ligne de facture provenant d’une offre de la liste sera comparé à la valeur indiquée, en utilisant l’opérateur sélectionné.</p><p>Seule les offres de la liste effectivement présentes sur la facture seront testées.</p><p>Si la liste des offres est vide, alors toutes les lignes de facture seront testées, quelle que soit leur offre.</p><p>Pour que le teste passe, toutes les lignes de facture testées doivent passer le test.</p>"}]]>
+			</column>
+			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='INVOICE_VALIDATION')" />
+        </insert>
+		<insert tableName="meveo_script_parameter">
+			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="offers" />
+			<column name="description_i18n" value='{"FRA":"Offres à vérifier","ENG":"Offers to check"}'/>
+			<column name="class_name" value="org.meveo.model.catalog.OfferTemplate" />
+			<column name="mandatory" valueNumeric="0" />
+			<column name="values_separator" value="\|" />
+			<column name="collection" valueNumeric="1" />
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmount')" />
+		</insert>
+
+		<insert tableName="meveo_script_parameter">
+			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="withOrWithoutTax" />
+			<column name="description_i18n" value='{"FRA":"Montant à tester","ENG":"Amount to test"}'/>
+			<column name="class_name" value="java.lang.String" />
+			<column name="default_value" value="without tax" />
+			<column name="mandatory" valueNumeric="1" />
+			<column name="allowed_values" value="without tax|with tax" />
+			<column name="values_separator" value="\|" />
+			<column name="collection" valueNumeric="0" />
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmount')" />
+		</insert>
+		<insert tableName="meveo_script_parameter">
+			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="operator" />
+			<column name="description_i18n" value='{"FRA":"Operateur de comparaison","ENG":"Comparison operator"}'/>
+			<column name="class_name" value="java.lang.String" />
+			<column name="default_value" value=">" />
+			<column name="mandatory" valueNumeric="1" />
+			<column name="allowed_values" value="&lt;|≤|=|≠|&gt;|≥" />
+			<column name="values_separator" value="\|" />
+			<column name="collection" valueNumeric="0" />
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmount')" />
+		</insert>
+		<insert tableName="meveo_script_parameter">
+			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="value" />
+			<column name="description_i18n" value='{"FRA":"Valeur","ENG":"Value"}'/>
+			<column name="class_name" value="java.math.BigDecimal" />
+			<column name="default_value" value="0" />
+			<column name="mandatory" valueNumeric="1" />
+			<column name="values_separator" value="\|" />
+			<column name="collection" valueNumeric="0" />
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmount')" />
+		</insert>
+    </changeSet>
+    
+    <changeSet id="INTRD-12267_20221219_rebuild" author="aeljaouhari">
+         <insert tableName="meveo_script_instance">
+        	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+        	<column name="code" value="org.meveo.service.script.validation.ValidateCustomerAge" />
+        	<column name="script">
+        		<![CDATA[   package org.meveo.service.script.validation;
+            		public class ValidateCustomerAge extends ValidateCustomerAgeScript {}]]>
+        	</column>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="src_type" value="JAVA" />
+            <column name="description" value="The invoice’s customer (Customer/Group, Customer Account/Payer, Billing account) age is compared to a provided number of days. Age is computed at invoice date."/>
+            <column name="description_i18n">
+				<![CDATA[{"ENG":"<p>The invoice’s customer (Customer/Group, Customer Account/Payer, Billing account) age is compared to a provided number of days.</p><p>Age is computed at invoice date.</p>","FRA":"<p>L’âge du client (Customer/Groupe, Customer Account/Compte payeur, Billing account/Compte de facturation) est comparé au nombre de jours indiqué.</p><p>L'âge est calculé à la date de facture.</p>"}]]>
+			</column>
+			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='INVOICE_VALIDATION')" />
+        </insert>
+
+		<insert tableName="meveo_script_parameter">
+			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="referenceDate" />
+			<column name="description_i18n" value='{"FRA":"Date à tester","ENG":"Date to test"}'/>
+			<column name="class_name" value="java.lang.String" />
+			<column name="mandatory" valueNumeric="1" />
+			<column name="default_value" value="Billling Account subscription" />
+			<column name="allowed_values" value="Customer creation|Customer Account creation|Billing Account creation|Billing Account subscription" />
+			<column name="values_separator" value="\|" />
+			<column name="collection" valueNumeric="0" />
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateCustomerAge')" />
+		</insert>
+
+		<insert tableName="meveo_script_parameter">
+			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="operator" />
+			<column name="description_i18n" value='{"FRA":"Operateur de comparaison","ENG":"Comparison operator"}'/>
+			<column name="class_name" value="java.lang.String" />
+			<column name="default_value" value=">" />
+			<column name="mandatory" valueNumeric="1" />
+			<column name="allowed_values" value="&lt;|≤|=|≠|&gt;|≥" />
+			<column name="values_separator" value="\|" />
+			<column name="collection" valueNumeric="0" />
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateCustomerAge')" />
+		</insert>
+
+		<insert tableName="meveo_script_parameter">
+			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="age" />
+			<column name="description_i18n" value='{"FRA":"Âge en jour","ENG":"Age in days"}'/>
+			<column name="class_name" value="java.lang.Integer" />
+			<column name="default_value" value="30" />
+			<column name="mandatory" valueNumeric="1" />
+			<column name="values_separator" value="\|" />
+			<column name="collection" valueNumeric="0" />
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateCustomerAge')" />
+		</insert>
+    </changeSet>
+    
+    <changeSet id="INTRD-12268_20221221_rebuild" author="aeljaouhari">
+        <insert tableName="meveo_script_instance">
+        	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+        	<column name="code" value="org.meveo.service.script.validation.ValidateSubscriptionAge" />
+        	<column name="script">
+        		<![CDATA[   package org.meveo.service.script.validation;
+            		public class ValidateSubscriptionAge extends ValidateSubscriptionAgeScript {}]]>
+        	</column>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="src_type" value="JAVA" />
+            <column name="description" value="The invoice’s subscriptions age is compared to a provided number of days. Age is computed at invoice date."/>
+            <column name="description_i18n">
+				<![CDATA[{"ENG":"<p>The invoice’s subscriptions age is compared to a provided number of days.</p><p>Age is computed at invoice date.</p>","FRA":"<p>L’âge de la souscription est comparé au nombre de jours indiqué.</p><p>L'âge est calculé à la date de facture.</p>"}]]>
+			</column>
+			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='INVOICE_VALIDATION')" />
+        </insert>
+
+		<insert tableName="meveo_script_parameter">
+			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="referenceDate" />
+			<column name="description_i18n" value='{"FRA":"Date à tester","ENG":"Date to test"}'/>
+			<column name="class_name" value="java.lang.String" />
+			<column name="mandatory" valueNumeric="1" />
+			<column name="default_value" value="Subscription date" />
+			<column name="allowed_values" value="Subscription creation|Subscription date" />
+			<column name="values_separator" value="\|" />
+			<column name="collection" valueNumeric="0" />
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateSubscriptionAge')" />
+		</insert>
+	
+		<insert tableName="meveo_script_parameter">
+			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="operator" />
+			<column name="description_i18n" value='{"FRA":"Operateur de comparaison","ENG":"Comparison operator"}'/>
+			<column name="class_name" value="java.lang.String" />
+			<column name="default_value" value=">" />
+			<column name="mandatory" valueNumeric="1" />
+			<column name="allowed_values" value="&lt;|≤|=|≠|&gt;|≥" />
+			<column name="values_separator" value="\|" />
+			<column name="collection" valueNumeric="0" />
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateSubscriptionAge')" />
+		</insert>
+
+		<insert tableName="meveo_script_parameter">
+			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="age" />
+			<column name="description_i18n" value='{"FRA":"Âge en jour","ENG":"Age in days"}'/>
+			<column name="class_name" value="java.lang.Integer" />
+			<column name="default_value" value="30" />
+			<column name="mandatory" valueNumeric="1" />
+			<column name="values_separator" value="\|" />
+			<column name="collection" valueNumeric="0" />
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateSubscriptionAge')" />
+		</insert>
+    </changeSet> 
     
     <changeSet id="#INTRD-12677_20221230_rebuild" author="aeljaouhari">
 		<insert tableName="crm_provider_order_line_type">
@@ -11120,6 +11480,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.accountingscheme.NoAccountingEntryScript')"/>
 		</insert>	
 	</changeSet>
+    <changeSet id="#INTRD-14433_20230306" author="hichamELHALOUI" />
 
 	<changeSet id="#INTRD-14555_20230303" author="aeljaouhari" />
 	<changeSet id="#INTRD-13267_20230220" author="AbdellatifBARI" />
@@ -11154,7 +11515,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
         </insert>
     </changeSet>
 	<changeSet author="HichamHANINE" id="#INTRD-14562_20230308" />
-	
+	<changeSet id="#INTRD-14122_20230221" author="hichamELHALOUI" />
+
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
