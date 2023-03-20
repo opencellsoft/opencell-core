@@ -244,7 +244,7 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
 			entity.setPriority(dto.getPriority());
 		}
 
-        if(dto.getFilters() == null || dto.getFilters().isEmpty()) {
+        if ((dto.getFilters() == null || dto.getFilters().isEmpty()) && (dto.getType() != null)) {
             Map filters = new LinkedHashMap();
             switch (dto.getType()){
                 case BILLINGACCOUNT: filters.put("billingAccount.billingCycle.code", dto.getCode()); entity.setFilters(filters);break;
