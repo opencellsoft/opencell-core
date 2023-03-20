@@ -18,9 +18,14 @@
 
 package org.meveo.model.admin;
 
-import static javax.persistence.FetchType.LAZY;
-
-import javax.persistence.*;
+import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -63,7 +68,7 @@ public class CustomGenericEntityCode extends AuditableEntity {
     @Size(max = 2000)
     private String formatEL;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "sequence_id")
     private Sequence sequence;
 
