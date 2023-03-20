@@ -3314,7 +3314,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return;
         }        
         if ((billingRun.getComputeDatesAtValidation() != null && billingRun.getComputeDatesAtValidation()) 
-                || (billingRun.getComputeDatesAtValidation() == null && billingCycle.getComputeDatesAtValidation())) {
+                || billingRun.getComputeDatesAtValidation() == null) {
             recalculateDateByBR(invoice, billingRun, billingAccount, billingCycle, true);
         }
     }
