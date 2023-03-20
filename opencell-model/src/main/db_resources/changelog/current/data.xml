@@ -20080,6 +20080,15 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         <column name="description" value="Featured"/>
         <column name="tag_type_id" value="-1" />
     </insert>
+	
+	<update tableName="crm_customer">
+		<column name="customer_category_id" valueComputed="(SELECT id FROM crm_customer_category WHERE code = 'CLIENT')" />
+		<where>customer_category_id = (SELECT id FROM crm_customer_category WHERE code = 'PROSPECT')</where>
+	</update>
+    <delete tableName="crm_customer_category">
+        <where>code='PROSPECT'</where>
+    </delete>
+	
     <insert tableName="crm_customer_category">
             <column name="id" valueNumeric="-3" />
             <column name="version" valueNumeric="0" />
@@ -20149,6 +20158,15 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="symbol" value="$"  />
             <where> currency_code = 'USD'</where>
         </update>
+		
+		<update tableName="billing_billing_account">
+			<column name="legal_entity_type_id" valueComputed="(SELECT id FROM adm_title WHERE code = 'CIE')" />
+			<where>legal_entity_type_id = (SELECT id FROM adm_title WHERE code = 'ASSOC')</where>
+		</update>
+		
+        <delete tableName="adm_title">
+            <where>code = 'ASSOC'</where>
+        </delete>
 
         <update tableName="adm_title">
             <column name="code" value="Company" />
@@ -20209,7 +20227,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="PLC" />
+            <column name="code" value="LTD" />
             <column name="description" value="Private company limited by shares" />
             <column name="is_company" valueNumeric="1" />
             <column name="description_i18n" value='{"FRA":"Société privée limité par actions","ENG":"Private company limited by shares"}' />
