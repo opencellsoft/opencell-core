@@ -267,7 +267,7 @@ public class AccountOperationApi extends BaseApi {
             ExchangeRate exchangeRate = getExchangeRate(tradingCurrency,transactionalcurrency,exchangeDate);
 
             if (!functionalCurrency.equals(tradingCurrency)) {
-                functionalAmount = convertedAmount.divide(exchangeRate.getExchangeRate(), 2, RoundingMode.HALF_UP);
+                functionalAmount = convertedAmount.divide(exchangeRate.getExchangeRate(),appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode());
                 functionalMatchingAmount = convertedMatchingAmount.divide(exchangeRate.getExchangeRate(), 2, RoundingMode.HALF_UP);
                 functionalUnMatchingAmount = convertedUnMatchingAmount.divide(exchangeRate.getExchangeRate(), 2, RoundingMode.HALF_UP);
                 accountOperation.setAppliedRate(exchangeRate.getExchangeRate());
