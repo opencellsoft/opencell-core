@@ -372,6 +372,42 @@ public class InvoiceLine extends AuditableCFEntity {
     private boolean conversionFromBillingCurrency = false;
     
 	/**
+	 * Functional unit price
+	 */
+	@Column(name = "functional_unit_price", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal functionalUnitPrice;
+
+	/**
+	 * Functional amount without tax
+	 */
+	@Column(name = "functional_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal functionalAmountWithoutTax;
+
+	/**
+	 * Functional amount with tax
+	 */
+	@Column(name = "functional_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal functionalAmountWithTax;
+
+	/**
+	 * Functional amount tax
+	 */
+	@Column(name = "functional_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal functionalAmountTax;
+
+	/**
+	 * Functional discount amount
+	 */
+	@Column(name = "functional_discount_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal functionalDiscountAmount = BigDecimal.ZERO;
+
+	/**
+	 * Functional raw amount
+	 */
+	@Column(name = "functional_raw_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal functionalRawAmount = BigDecimal.ZERO;
+    
+	/**
 	 * Open Order Number
 	 */
 	@Column(name = "open_order_number")
@@ -845,8 +881,6 @@ public class InvoiceLine extends AuditableCFEntity {
 	public void setOpenOrderNumber(String openOrderNumber) {
 		this.openOrderNumber = openOrderNumber;
 	}
-	
-	
 
 	public Integer getSequence() {
 		return sequence;
@@ -862,6 +896,70 @@ public class InvoiceLine extends AuditableCFEntity {
 
 	public void setAdjustmentStatus(AdjustmentStatusEnum adjustmentStatus) {
 		this.adjustmentStatus = adjustmentStatus;
+	}
+
+    public boolean isUseSpecificPriceConversion() {
+        return useSpecificPriceConversion;
+    }
+
+    public void setUseSpecificPriceConversion(boolean useSpecificPriceConversion) {
+        this.useSpecificPriceConversion = useSpecificPriceConversion;
+    }
+
+	public boolean isConversionFromBillingCurrency() {
+		return conversionFromBillingCurrency;
+	}
+
+	public void setConversionFromBillingCurrency(boolean conversionFromBillingCurrency) {
+		this.conversionFromBillingCurrency = conversionFromBillingCurrency;
+	}   
+    
+	public BigDecimal getFunctionalUnitPrice() {
+		return functionalUnitPrice;
+	}
+
+	public void setFunctionalUnitPrice(BigDecimal functionalUnitPrice) {
+		this.functionalUnitPrice = functionalUnitPrice;
+	}
+
+	public BigDecimal getFunctionalAmountWithoutTax() {
+		return functionalAmountWithoutTax;
+	}
+
+	public void setFunctionalAmountWithoutTax(BigDecimal functionalAmountWithoutTax) {
+		this.functionalAmountWithoutTax = functionalAmountWithoutTax;
+	}
+
+	public BigDecimal getFunctionalAmountWithTax() {
+		return functionalAmountWithTax;
+	}
+
+	public void setFunctionalAmountWithTax(BigDecimal functionalAmountWithTax) {
+		this.functionalAmountWithTax = functionalAmountWithTax;
+	}
+
+	public BigDecimal getFunctionalAmountTax() {
+		return functionalAmountTax;
+	}
+
+	public void setFunctionalAmountTax(BigDecimal functionalAmountTax) {
+		this.functionalAmountTax = functionalAmountTax;
+	}
+
+	public BigDecimal getFunctionalDiscountAmount() {
+		return functionalDiscountAmount;
+	}
+
+	public void setFunctionalDiscountAmount(BigDecimal functionalDiscountAmount) {
+		this.functionalDiscountAmount = functionalDiscountAmount;
+	}
+
+	public BigDecimal getFunctionalRawAmount() {
+		return functionalRawAmount;
+	}
+
+	public void setFunctionalRawAmount(BigDecimal functionalRawAmount) {
+		this.functionalRawAmount = functionalRawAmount;
 	}
 
 	@PrePersist
@@ -897,26 +995,10 @@ public class InvoiceLine extends AuditableCFEntity {
 		InvoiceLine other = (InvoiceLine) obj;
 		return getId() != null && other.getId() != null && getId().equals(other.getId());
 	}
-
+	
 	@Override
 	public int hashCode() {
 		return 961 + ("InvoiceLine" + getId()).hashCode();
 	}
 
-    public boolean isUseSpecificPriceConversion() {
-        return useSpecificPriceConversion;
-    }
-
-    public void setUseSpecificPriceConversion(boolean useSpecificPriceConversion) {
-        this.useSpecificPriceConversion = useSpecificPriceConversion;
-    }
-
-	public boolean isConversionFromBillingCurrency() {
-		return conversionFromBillingCurrency;
-	}
-
-	public void setConversionFromBillingCurrency(boolean conversionFromBillingCurrency) {
-		this.conversionFromBillingCurrency = conversionFromBillingCurrency;
-	}    
-    
 }

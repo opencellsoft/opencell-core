@@ -16130,6 +16130,53 @@ public class AgedBalanceReporting extends ReportExtractScript {
     		<where>applicable_on_discounted_price is null</where>
     	</update>
     </changeSet>
+    
+  	<changeSet id="#INTRD-15043_20230317" author="AdilElJaouhari">
+        <addColumn tableName="billing_invoice">
+            <column name="functional_amount_without_tax" type="numeric(23, 12)" />
+            <column name="functional_amount_with_tax" type="numeric(23, 12)" />
+            <column name="functional_amount_tax" type="numeric(23, 12)" />
+            <column name="functional_net_to_pay" type="numeric(23, 12)" />
+            <column name="functional_raw_amount" type="numeric(23, 12)" />
+            <column name="functional_discount_amount" type="numeric(23, 12)" />
+            <column name="functional_amount_without_tax_before_discount" type="numeric(23, 12)" />
+        </addColumn>
+        
+       	<addColumn tableName="billing_invoice_line">
+            <column name="functional_unit_price" type="numeric(23, 12)" />
+            <column name="functional_amount_without_tax" type="numeric(23, 12)" />
+            <column name="functional_amount_with_tax" type="numeric(23, 12)" />
+            <column name="functional_amount_tax" type="numeric(23, 12)" />
+            <column name="functional_discount_amount" type="numeric(23, 12)" />
+            <column name="functional_raw_amount" type="numeric(23, 12)" />
+        </addColumn>
+        
+     	<addColumn tableName="billing_invoice_agregate">
+            <column name="functional_amount_without_tax" type="numeric(23, 12)"/>
+            <column name="functional_amount_with_tax" type="numeric(23, 12)"/>
+            <column name="functional_amount_tax" type="numeric(23, 12)"/>
+        </addColumn>
+        
+		<sql>UPDATE billing_invoice SET functional_amount_without_tax = amount_without_tax WHERE functional_amount_without_tax IS NULL</sql>
+		<sql>UPDATE billing_invoice SET functional_amount_with_tax = amount_with_tax WHERE functional_amount_with_tax IS NULL</sql>
+		<sql>UPDATE billing_invoice SET functional_amount_tax = amount_tax WHERE functional_amount_tax IS NULL</sql>
+		<sql>UPDATE billing_invoice SET functional_net_to_pay = net_to_pay WHERE functional_net_to_pay IS NULL</sql>
+		<sql>UPDATE billing_invoice SET functional_raw_amount = raw_amount WHERE functional_raw_amount IS NULL</sql>
+		<sql>UPDATE billing_invoice SET functional_discount_amount = discount_amount WHERE functional_discount_amount IS NULL</sql>
+		<sql>UPDATE billing_invoice SET functional_amount_without_tax_before_discount = amount_without_tax_before_discount WHERE functional_amount_without_tax_before_discount IS NULL</sql>
+
+		<sql>UPDATE billing_invoice_line SET functional_unit_price = unit_price WHERE functional_unit_price IS NULL</sql>
+		<sql>UPDATE billing_invoice_line SET functional_amount_without_tax = amount_without_tax WHERE functional_amount_without_tax IS NULL</sql>
+		<sql>UPDATE billing_invoice_line SET functional_amount_with_tax = amount_with_tax WHERE functional_amount_with_tax IS NULL</sql>
+		<sql>UPDATE billing_invoice_line SET functional_amount_tax = amount_tax WHERE functional_amount_tax IS NULL</sql>
+		<sql>UPDATE billing_invoice_line SET functional_discount_amount = discount_amount WHERE functional_discount_amount IS NULL</sql>
+		<sql>UPDATE billing_invoice_line SET functional_raw_amount = raw_amount WHERE functional_raw_amount IS NULL</sql>
+		
+		<sql>UPDATE billing_invoice_agregate SET functional_amount_without_tax = amount_without_tax WHERE functional_amount_without_tax IS NULL</sql>
+		<sql>UPDATE billing_invoice_agregate SET functional_amount_with_tax = amount_with_tax WHERE functional_amount_with_tax IS NULL</sql>
+		<sql>UPDATE billing_invoice_agregate SET functional_amount_tax = amount_tax WHERE functional_amount_tax IS NULL</sql>
+  	
+    </changeSet>
 
 
 </databaseChangeLog>

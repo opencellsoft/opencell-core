@@ -853,6 +853,13 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             }
         }
         
+        if (StringUtils.isBlank(resource.getUnitPriceCurrency()) || "USD".equals(resource.getUnitPriceCurrency())) {
+            invoiceLine.setConversionFromBillingCurrency(false);
+        } else {
+        	invoiceLine.setConversionFromBillingCurrency(true);
+        	invoiceLine.getInvoice().setConversionFromBillingCurrency(true);
+        }
+        
         return invoiceLine;
     }
 
