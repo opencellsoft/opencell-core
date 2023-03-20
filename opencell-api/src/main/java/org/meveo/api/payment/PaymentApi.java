@@ -177,7 +177,7 @@ public class PaymentApi extends BaseApi {
 			convertedAmount = paymentDto.getAmount();
 
 			if (functionalCurrency != null && !functionalCurrency.equals(transactionalCurrency) && !Objects.equals(exchangeRate.getExchangeRate(), BigDecimal.ZERO)) {
-				functionalAmount = convertedAmount.divide(exchangeRate.getExchangeRate(), 2, RoundingMode.HALF_UP);
+				functionalAmount = convertedAmount.divide(exchangeRate.getExchangeRate(), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode());
 				lastApliedRate = exchangeRate.getExchangeRate();
 			}
 
