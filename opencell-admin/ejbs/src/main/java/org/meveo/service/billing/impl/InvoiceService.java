@@ -7138,7 +7138,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     .map(LinkedInvoice::getConvertedAmount)
                     .reduce(BigDecimal::add).orElse(ZERO);
             //if balance is well calculated and balance=0, we don't need to recalculate
-            if ((sum.add(invoiceBalance)).compareTo(invoice.getConvertedAmountWithoutTax()) == 0) {
+            if ((sum.add(invoiceBalance)).compareTo(invoice.getTransactionalAmountWithoutTax()) == 0) {
                 CommercialOrder commercialOrder = CollectionUtils.isNotEmpty(advInvoices) ? advInvoices.get(0).getCommercialOrder() : null;
                 if (BigDecimal.ZERO.compareTo(invoiceBalance) == 0 && !(commercialOrder != null && commercialOrder.equals(invoice.getCommercialOrder()))) {
                     return;
