@@ -72,6 +72,7 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.OrderAttribute;
+import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
@@ -296,6 +297,8 @@ public class ValueExpressionWrapper {
 	
 	private static final String VAR_INVOICE_LINE = "invoiceLine";
 
+	private static final String VAR_CONTRACT = "contract";
+
     /**
      * Variables in EL expression
      * 
@@ -348,6 +351,7 @@ public class ValueExpressionWrapper {
         elVariablesByClass.put(QuoteOffer.class.getName(), new String[] { VAR_QUOTE_OFFER });
         elVariablesByClass.put(QuoteProduct.class.getName(), new String[] { VAR_QUOTE_PRODUCT });
         elVariablesByClass.put(InvoiceLine.class.getName(), new String[] { VAR_INVOICE_LINE });
+        elVariablesByClass.put(Contract.class.getName(), new String[] { VAR_CONTRACT });
     }
 
     /**
@@ -653,6 +657,7 @@ public class ValueExpressionWrapper {
         CommercialOrder order=null;
         List<Access> accessPoints = null;
         InvoiceLine invoiceLine = null;
+        Contract contract = null;
 
         // Recognize passed parameters
         for (Object parameter : parameters) {
@@ -744,6 +749,10 @@ public class ValueExpressionWrapper {
 
             if (parameter instanceof InvoiceLine) {
             	invoiceLine = (InvoiceLine) parameter;
+            }
+
+            if (parameter instanceof Contract) {
+            	contract = (Contract) parameter;
             }
         }
 
@@ -966,6 +975,10 @@ public class ValueExpressionWrapper {
         
         if(el.contains(VAR_INVOICE_LINE) && !contextMap.containsKey(VAR_INVOICE_LINE) && invoiceLine != null) {
             contextMap.put(VAR_INVOICE_LINE, invoiceLine);
+        }
+
+        if(el.contains(VAR_CONTRACT) && !contextMap.containsKey(VAR_CONTRACT) && contract != null) {
+        	contextMap.put(VAR_CONTRACT, contract);
         }
         
         
