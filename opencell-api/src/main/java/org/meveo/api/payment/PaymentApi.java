@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -164,6 +165,7 @@ public class PaymentApi extends BaseApi {
 		BigDecimal convertedAmount = functionalAmount;
 		TradingCurrency functionalCurrency = appProvider.getCurrency() != null && appProvider.getCurrency().getCurrencyCode() != null ? tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode()) : null;
 		TradingCurrency transactionalCurrency = null;
+		BigDecimal lastApliedRate = null;
 
 		String transactionalcurrencyCode = paymentDto.getTransactionalcurrency();
 		if (transactionalcurrencyCode != null && !StringUtils.isBlank(transactionalcurrencyCode)) {
@@ -173,7 +175,12 @@ public class PaymentApi extends BaseApi {
 
 			ExchangeRate exchangeRate = getExchangeRate(transactionalCurrency, transactionalCurrency, paymentDto.getTransactionDate());
 			convertedAmount = paymentDto.getAmount();
-			functionalAmount = calculateFunctionalAmount(convertedAmount, functionalAmount, transactionalCurrency, functionalCurrency, exchangeRate);
+
+			if (functionalCurrency != null && !functionalCurrency.equals(transactionalCurrency) && !Objects.equals(exchangeRate.getExchangeRate(), BigDecimal.ZERO)) {
+				functionalAmount = convertedAmount.divide(exchangeRate.getExchangeRate(), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode());
+				lastApliedRate = exchangeRate.getExchangeRate();
+			}
+
 		}
 
         Payment payment = new Payment();
@@ -211,7 +218,8 @@ public class PaymentApi extends BaseApi {
         payment.setPaymentInfo6(paymentDto.getPaymentInfo6());
         payment.setBankCollectionDate(paymentDto.getBankCollectionDate());
 		payment.setCollectionDate(paymentDto.getCollectionDate() == null ? paymentDto.getBankCollectionDate() : paymentDto.getCollectionDate());
-		payment.setTransactionalCurrency(transactionalCurrency != null ? transactionalCurrency : null);
+		payment.setTransactionalCurrency(transactionalCurrency);
+		payment.setAppliedRate(lastApliedRate);
 
         // populate customFields
         try {
@@ -247,17 +255,10 @@ public class PaymentApi extends BaseApi {
 		Date exchangeDate = transactionDate != null ? transactionDate : new Date();
 		ExchangeRate exchangeRate = tradingCurrency.getExchangeRate(exchangeDate);
 		if (exchangeRate == null || exchangeRate.getExchangeRate() == null) {
-			throw new NotFoundException(new ActionStatus(ActionStatusEnum.FAIL, "No valid exchange rate found for currency " + tradingCurrency.getCurrencyCode()
-					+ " on " + exchangeDate));
+			throw new EntityDoesNotExistsException("No valid exchange rate found for currency " + tradingCurrency.getCurrencyCode()
+					+ " on " + exchangeDate);
 		}
 		return exchangeRate;
-	}
-
-	private BigDecimal calculateFunctionalAmount(BigDecimal convertedAmount, BigDecimal functionalAmount, TradingCurrency tradingCurrency, TradingCurrency functionalCurrency, ExchangeRate exchangeRate) {
-		if (!functionalCurrency.equals(tradingCurrency) && exchangeRate != null && exchangeRate.getExchangeRate() != BigDecimal.ZERO) {
-			functionalAmount = convertedAmount.divide(exchangeRate.getExchangeRate(), 2, RoundingMode.HALF_UP);
-		}
-		return functionalAmount;
 	}
 
 	private void checkTransactionalCurrency(String transactionalcurrency, TradingCurrency tradingCurrency) {
