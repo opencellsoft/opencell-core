@@ -55,8 +55,6 @@ public class Sequence extends BusinessEntity {
     @Size(max = 2000)
     private String sequencePattern;
 
-    @OneToMany(mappedBy = "sequence")
-    private List<CustomGenericEntityCode> genericEntityCodes = new ArrayList<>();
 
     public Sequence() { }
 
@@ -104,11 +102,4 @@ public class Sequence extends BusinessEntity {
         this.sequencePattern = sequencePattern;
     }
 
-    public List<CustomGenericEntityCode> getGenericEntityCodes() {
-        return genericEntityCodes;
-    }
-
-    public void setGenericEntityCodes(List<CustomGenericEntityCode> genericEntityCodes) {
-        this.genericEntityCodes = genericEntityCodes;
-    }
 }
