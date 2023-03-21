@@ -23,6 +23,7 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -42,6 +43,9 @@ import org.meveo.service.securityDeposit.impl.SecurityDepositTransactionService;
 
 public class AccountOperationApiService implements ApiService<AccountOperation> {
 
+    @Inject
+    protected ResourceBundle resourceMessages;
+    
 	@Inject
 	private org.meveo.service.payments.impl.AccountOperationService accountOperationService;
 
@@ -217,7 +221,7 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 			    TradingCurrency theFirstTradingCurrency = aos.get(0).getTransactionalCurrency();
 			    for (AccountOperation accountOperation : aos) {
 			        if(theFirstTradingCurrency != accountOperation.getTransactionalCurrency()) {
-                        throw new BusinessApiException("AOs must have the same transactional currency");
+	                    throw new BusinessApiException(resourceMessages.getString("accountOperation.error.sameCurrency"));
                     }
 	                Long aoId = accountOperation.getId();
 	                if (aoId.equals(creditAoId)) {
@@ -257,7 +261,7 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 			return matchingResult;
 
 		} catch (Exception e) {
-			throw new BusinessApiException("Matching action is failed : " + e.getMessage());
+			throw new BusinessApiException(e.getMessage());
 		}
 	}
 
