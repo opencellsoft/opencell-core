@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -108,9 +109,12 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 	 * @param param2 the param2
 	 * @param param3 the param3
 	 * @param paramExtra the param extra
+	 * @param usageDate usage date
 	 */
-	public void update(RatedTransaction ratedTransaction, String description, BigDecimal unitAmountWithoutTax,  BigDecimal quantity, String param1, String param2, String param3, String paramExtra) {
-		ratedTransactionService.updateRatedTransaction(ratedTransaction, description, unitAmountWithoutTax, quantity, param1, param2, param3, paramExtra);
+	public void update(RatedTransaction ratedTransaction, String description, BigDecimal unitAmountWithoutTax,
+					   BigDecimal quantity, String param1, String param2, String param3, String paramExtra, Date usageDate) {
+		ratedTransactionService.updateRatedTransaction(ratedTransaction,
+				description, unitAmountWithoutTax, quantity, param1, param2, param3, paramExtra, usageDate);
 	}
 
 	public DuplicateRTResult duplication(Map<String, Object> filters, ProcessingModeEnum mode, boolean negateAmount,
