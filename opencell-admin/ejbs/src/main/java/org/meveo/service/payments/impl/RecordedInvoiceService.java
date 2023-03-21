@@ -276,7 +276,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             
             //            
             BigDecimal remainingConvertedAmountWithoutTaxForRecordedIncoice = (invoice.getTransactionalAmountWithoutTax() == null)?BigDecimal.ZERO:invoice.getTransactionalAmountWithoutTax();
-            BigDecimal remainingConvertedAmountWithTaxForRecordedIncoice = useInvoiceBalance?invoice.getConvertedInvoiceBalance() : invoice.getTransactionalAmountWithTax();
+            BigDecimal remainingConvertedAmountWithTaxForRecordedIncoice = useInvoiceBalance?invoice.getTransactionalInvoiceBalance() : invoice.getTransactionalAmountWithTax();
             if (remainingConvertedAmountWithTaxForRecordedIncoice == null) {
                 remainingConvertedAmountWithTaxForRecordedIncoice = BigDecimal.ZERO;
             }                

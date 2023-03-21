@@ -179,24 +179,6 @@ public abstract class InvoiceAgregate extends AuditableEntity {
     @Column(name = "transactional_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     protected BigDecimal transactionalAmountWithTax = ZERO;
     
-    /**
-     * Aggregate functional amount without tax
-     */
-    @Column(name = "functional_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    protected BigDecimal functionalAmountWithoutTax = ZERO;
-
-    /**
-     * Aggregate functional tax amount
-     */
-    @Column(name = "functional_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    protected BigDecimal functionalAmountTax = ZERO;
-
-    /**
-     * Aggregate functional amount with tax
-     */
-    @Column(name = "functional_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    protected BigDecimal functionalAmountWithTax = ZERO;
-
     public TradingCurrency getTradingCurrency() {
         return tradingCurrency;
     }
@@ -376,30 +358,6 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 		this.transactionalAmountWithTax = transactionalAmountWithTax;
 	}
 	
-	public BigDecimal getFunctionalAmountWithoutTax() {
-		return functionalAmountWithoutTax;
-	}
-
-	public void setFunctionalAmountWithoutTax(BigDecimal functionalAmountWithoutTax) {
-		this.functionalAmountWithoutTax = functionalAmountWithoutTax;
-	}
-
-	public BigDecimal getFunctionalAmountTax() {
-		return functionalAmountTax;
-	}
-
-	public void setFunctionalAmountTax(BigDecimal functionalAmountTax) {
-		this.functionalAmountTax = functionalAmountTax;
-	}
-
-	public BigDecimal getFunctionalAmountWithTax() {
-		return functionalAmountWithTax;
-	}
-
-	public void setFunctionalAmountWithTax(BigDecimal functionalAmountWithTax) {
-		this.functionalAmountWithTax = functionalAmountWithTax;
-	}
-
 	public void addAmount(BigDecimal amountToAdd) {
         if (amount == null) {
             amount = new BigDecimal("0");

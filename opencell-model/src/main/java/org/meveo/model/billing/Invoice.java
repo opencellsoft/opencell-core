@@ -757,8 +757,8 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @JoinColumn(name = "invoice_validation_rule_id")
     private InvoiceValidationRule rejectedByRule;
 
-    @Column(name = "converted_invoice_balance", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedInvoiceBalance;
+    @Column(name = "transactional_invoice_balance", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalInvoiceBalance;
 
     @Column(name = "use_specific_price_conversion")
     @Type(type = "numeric_boolean")
@@ -768,52 +768,8 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Type(type = "numeric_boolean")
     private boolean conversionFromBillingCurrency = false;
     
-    /**
-     * Functional amount without tax
-     */
-    @Column(name = "functional_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal functionalAmountWithoutTax;
-
-    /**
-     * Functional amount with tax
-     */
-    @Column(name = "functional_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal functionalAmountWithTax;
-
-    /**
-     * Functional amount tax
-     */
-    @Column(name = "functional_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal functionalAmountTax;
-
-    /**
-     * Functional total amount to pay
-     */
-    @Column(name = "functional_net_to_pay", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal functionalNetToPay;
-
-    /**
-     * Functional raw amount
-     */
-    @Column(name = "functional_raw_amount", nullable = false, precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal functionalRawAmount= ZERO;
-
-    /**
-     * Functional discount amount
-     */
-    @Column(name = "functional_discount_amount", nullable = false, precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal functionalDiscountAmount = ZERO;
-
-    /**
-     * Functional amount without tax before discount
-     */
-    @Column(name = "functional_amount_without_tax_before_discount", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal functionalAmountWithoutTaxBeforeDiscount;
-
-
     public Invoice() {
 	}
-
 
     public Invoice(Invoice copy) {
 		this.billingAccount = copy.billingAccount;
@@ -923,8 +879,8 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
             this.transactionalAmountWithoutTaxBeforeDiscount =
                     this.amountWithoutTaxBeforeDiscount != null
                             ? this.amountWithoutTaxBeforeDiscount.multiply(appliedRate) : ZERO;
-            if (this.convertedInvoiceBalance != null) {
-                this.invoiceBalance = this.convertedInvoiceBalance.divide(appliedRate,2, RoundingMode.HALF_UP);
+            if (this.transactionalInvoiceBalance != null) {
+                this.invoiceBalance = this.transactionalInvoiceBalance.divide(appliedRate,2, RoundingMode.HALF_UP);
             }
         }
     }
@@ -1995,11 +1951,11 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 		this.rejectedByRule = rejectedByRule;
 	}
 
-    public BigDecimal getConvertedInvoiceBalance() {
-        return convertedInvoiceBalance;
+    public BigDecimal getTransactionalInvoiceBalance() {
+        return transactionalInvoiceBalance;
     }
-    public void setConvertedInvoiceBalance(BigDecimal convertedInvoiceBalance) {
-        this.convertedInvoiceBalance = convertedInvoiceBalance;
+    public void setTransactionalInvoiceBalance(BigDecimal transactionalInvoiceBalance) {
+        this.transactionalInvoiceBalance = transactionalInvoiceBalance;
     }
 
 
@@ -2024,62 +1980,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
 	public void setConversionFromBillingCurrency(boolean conversionFromBillingCurrency) {
 		this.conversionFromBillingCurrency = conversionFromBillingCurrency;
-	}
-
-	public BigDecimal getFunctionalAmountWithoutTax() {
-		return functionalAmountWithoutTax;
-	}
-
-	public void setFunctionalAmountWithoutTax(BigDecimal functionalAmountWithoutTax) {
-		this.functionalAmountWithoutTax = functionalAmountWithoutTax;
-	}
-
-	public BigDecimal getFunctionalAmountWithTax() {
-		return functionalAmountWithTax;
-	}
-
-	public void setFunctionalAmountWithTax(BigDecimal functionalAmountWithTax) {
-		this.functionalAmountWithTax = functionalAmountWithTax;
-	}
-
-	public BigDecimal getFunctionalAmountTax() {
-		return functionalAmountTax;
-	}
-
-	public void setFunctionalAmountTax(BigDecimal functionalAmountTax) {
-		this.functionalAmountTax = functionalAmountTax;
-	}
-
-	public BigDecimal getFunctionalNetToPay() {
-		return functionalNetToPay;
-	}
-
-	public void setFunctionalNetToPay(BigDecimal functionalNetToPay) {
-		this.functionalNetToPay = functionalNetToPay;
-	}
-
-	public BigDecimal getFunctionalRawAmount() {
-		return functionalRawAmount;
-	}
-
-	public void setFunctionalRawAmount(BigDecimal functionalRawAmount) {
-		this.functionalRawAmount = functionalRawAmount;
-	}
-
-	public BigDecimal getFunctionalDiscountAmount() {
-		return functionalDiscountAmount;
-	}
-
-	public void setFunctionalDiscountAmount(BigDecimal functionalDiscountAmount) {
-		this.functionalDiscountAmount = functionalDiscountAmount;
-	}
-
-	public BigDecimal getFunctionalAmountWithoutTaxBeforeDiscount() {
-		return functionalAmountWithoutTaxBeforeDiscount;
-	}
-
-	public void setFunctionalAmountWithoutTaxBeforeDiscount(BigDecimal functionalAmountWithoutTaxBeforeDiscount) {
-		this.functionalAmountWithoutTaxBeforeDiscount = functionalAmountWithoutTaxBeforeDiscount;
 	}
 
 }

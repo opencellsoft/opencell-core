@@ -1,6 +1,7 @@
 package org.meveo.service.billing.impl;
 
 import static java.lang.Boolean.FALSE;
+import static java.math.BigDecimal.ONE;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
@@ -853,13 +854,17 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             }
         }
         
-        if (StringUtils.isBlank(resource.getUnitPriceCurrency()) || "USD".equals(resource.getUnitPriceCurrency())) {
-            invoiceLine.setConversionFromBillingCurrency(false);
-        } else {
-        	invoiceLine.setConversionFromBillingCurrency(true);
-        	invoiceLine.getInvoice().setConversionFromBillingCurrency(true);
+        String tradingCurrency = invoiceLine.getInvoice().getTradingCurrency()!= null ? invoiceLine.getInvoice().getTradingCurrency().getCurrencyCode() : null;
+        String functionalCurrency = appProvider.getCurrency() != null ? appProvider.getCurrency().getCurrencyCode() : null;
+        		
+        if (StringUtils.isNotBlank(resource.getUnitPriceCurrency()) && !(resource.getUnitPriceCurrency().equals(tradingCurrency) ||  resource.getUnitPriceCurrency().equals(functionalCurrency))) {
+        	throw new BusinessException("currency should be equals to billing currency or functional currency");
         }
-        
+
+		BigDecimal appliedRate = invoiceLine.getInvoice() != null ? invoiceLine.getInvoice().getAppliedRate() : ONE;
+		invoiceLine.setTransactionalUnitPrice(resource.getUnitPrice());
+		invoiceLine.setUnitPrice(resource.getUnitPrice().divide(appliedRate));
+
         return invoiceLine;
     }
 
