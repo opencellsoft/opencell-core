@@ -13,7 +13,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.FlushModeType;
 import javax.persistence.Query;
-import javax.persistence.criteria.JoinType;
 import javax.ws.rs.NotFoundException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -67,9 +66,9 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 		if(parameter3 != null) {
 			queryBuilder.addCriterionEntity("am.parameter3", parameter3);
 		}
-		Query query = queryBuilder.getQuery(getEntityManager());
-		return query.setFlushMode(FlushModeType.COMMIT).getResultList();
-	}
+        Query query = queryBuilder.getQuery(getEntityManager());
+        return query.setFlushMode(FlushModeType.COMMIT).setHint("org.hibernate.cacheable", Boolean.TRUE).setHint("org.hibernate.readOnly", Boolean.TRUE).getResultList();
+    }
 
 	@SuppressWarnings("unchecked")
 	public void deleteByProductCode(Product product) {

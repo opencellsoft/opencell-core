@@ -60,16 +60,19 @@ import org.slf4j.LoggerFactory;
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class MEVEOCdrReader implements ICdrCsvReader {
 
-    static MessageDigest messageDigest = null;
-    static {
-        try {
-            messageDigest = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            Logger log = LoggerFactory.getLogger(MEVEOCdrReader.class);
-            log.error("No message digest of type MD5", e);
-        }
-    }
-
+    private static final ThreadLocal<MessageDigest> messageDigest = new ThreadLocal<MessageDigest>() {
+        @Override
+        protected MessageDigest initialValue() {
+            try {
+                return MessageDigest.getInstance("MD5");
+            } catch (NoSuchAlgorithmException e) {
+                Logger log = LoggerFactory.getLogger(MEVEOCdrReader.class);
+                log.error("No message digest of type MD5", e);
+                return null;
+            }
+        }        
+    };
+    
     private String batchName;
     private String username;
     private CDR_ORIGIN_ENUM origin;
@@ -171,17 +174,16 @@ public class MEVEOCdrReader implements ICdrCsvReader {
      */
     private String getOriginRecord(String cdr) {
 
-        if (messageDigest != null) {
-            synchronized (messageDigest) {
-                messageDigest.reset();
-                messageDigest.update(cdr.getBytes(Charset.forName("UTF8")));
-                final byte[] resultByte = messageDigest.digest();
-                StringBuffer sb = new StringBuffer();
-                for (int i = 0; i < resultByte.length; ++i) {
-                    sb.append(Integer.toHexString((resultByte[i] & 0xFF) | 0x100).substring(1, 3));
-                }
-                return sb.toString();
+        MessageDigest md = messageDigest.get();
+        if (md != null) {
+            md.reset();
+            md.update(cdr.getBytes(Charset.forName("UTF8")));
+            final byte[] resultByte = md.digest();
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < resultByte.length; ++i) {
+                sb.append(Integer.toHexString((resultByte[i] & 0xFF) | 0x100).substring(1, 3));
             }
+            return sb.toString();
         }
 
         return null;
