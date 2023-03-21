@@ -53,8 +53,4 @@ public interface DunningSettings extends Resource {
     @Schema(description = "accounting artile attached to this dunning", defaultValue = "true")
     @Nullable
 	Resource getAccountingArticle();
-    
-    @Schema(description = "customer balance attached to this dunning", defaultValue = "true")
-    @Nullable
-	Resource getCustomerBalance();
 }

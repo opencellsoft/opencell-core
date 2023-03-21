@@ -9,11 +9,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-
-import javax.ws.rs.BadRequestException;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,15 +16,14 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.apiv2.dunning.service.DunningSettingsApiService;
 import org.meveo.apiv2.dunning.service.GlobalSettingsVerifier;
 import org.meveo.model.dunning.DunningModeEnum;
-import org.meveo.service.payments.impl.CustomerBalanceService;
-import org.meveo.service.payments.impl.DunningCollectionPlanService;
 import org.meveo.service.payments.impl.DunningSettingsService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.stripe.model.Charge.PaymentMethodDetails.CustomerBalance;
+import javax.ws.rs.BadRequestException;
+import java.math.BigDecimal;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DunningSettingsApiServiceTest {
@@ -39,10 +33,6 @@ public class DunningSettingsApiServiceTest {
 	private DunningSettingsApiService dunningSettingsApiService;
 	@Mock
 	private DunningSettingsService dunningSettingsService;
-	@Mock
-	private DunningCollectionPlanService dunningCollectionPlanService;
-	@Mock
-	private CustomerBalanceService customerBalanceService;
 
 	org.meveo.model.dunning.DunningSettings dunningSettings;
 	
@@ -84,8 +74,6 @@ public class DunningSettingsApiServiceTest {
     	when(dunningSettingsService.findById(anyLong())).thenReturn(dunningSettings);
     	var updateDunning = new org.meveo.model.dunning.DunningSettings(DunningModeEnum.INVOICE_LEVEL, 20, 18, false, BigDecimal.ONE, false, true, null);
     	when(dunningSettingsService.update(any())).thenReturn(updateDunning);
-    	when(dunningCollectionPlanService.getActiveDunningCollectionPlan(any())).thenReturn(new ArrayList<>());
-    	when(customerBalanceService.getDefaultOne()).thenReturn(customerBalance);
     	
     	dunningSettingsApiService.update(1L, dunningSettings);
     	

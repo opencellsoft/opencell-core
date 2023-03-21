@@ -11,36 +11,21 @@ import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 import java.io.File;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import com.paypal.api.payments.Billing;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.communication.email.EmailTemplate;
-import org.meveo.model.dunning.DunningAction;
-import org.meveo.model.dunning.DunningActionInstance;
-import org.meveo.model.dunning.DunningActionInstanceStatusEnum;
-import org.meveo.model.dunning.DunningCollectionPlan;
-import org.meveo.model.dunning.DunningCollectionPlanStatus;
-import org.meveo.model.dunning.DunningLevel;
-import org.meveo.model.dunning.DunningLevelInstance;
-import org.meveo.model.dunning.DunningLevelInstanceStatusEnum;
-import org.meveo.model.dunning.DunningPauseReason;
-import org.meveo.model.dunning.DunningPolicy;
-import org.meveo.model.dunning.DunningPolicyLevel;
-import org.meveo.model.dunning.DunningStopReason;
+import org.meveo.model.dunning.*;
 import org.meveo.model.payments.ActionModeEnum;
 import org.meveo.model.payments.DunningCollectionPlanStatusEnum;
 import org.meveo.model.shared.DateUtils;
@@ -438,29 +423,5 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
         } else {
             log.error("Email template not found");
         }
-    }
-    
-    /**
-     * Get Active or Paused DunningCollectionPlan by Dunning Settings id
-     * @param id DunningSettings id
-     * @return A list of {@link DunningCollectionPlan}
-     */
-    public List<DunningCollectionPlan> getActiveDunningCollectionPlan(Long id){
-    	return getEntityManager()
-                .createNamedQuery("DunningCollectionPlan.findActive", DunningCollectionPlan.class)
-                .setParameter("id", id)
-                .getResultList();
-    }
-    
-    /**
-     * Get Active or Paused DunningCollectionPlan by Dunning Settings id
-     * @param id DunningSettings id
-     * @return A list of {@link DunningCollectionPlan}
-     */
-    public List<DunningCollectionPlan> getPausedDunningCollectionPlan(Long id){
-    	return getEntityManager()
-                .createNamedQuery("DunningCollectionPlan.findPaused", DunningCollectionPlan.class)
-                .setParameter("id", id)
-                .getResultList();
     }
 }
