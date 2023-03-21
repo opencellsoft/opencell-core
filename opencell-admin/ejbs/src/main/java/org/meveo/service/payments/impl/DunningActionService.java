@@ -58,12 +58,6 @@ public class DunningActionService  extends BusinessService<DunningAction> {
             throw new BusinessApiException("the action channel is required, when ActionType is of type Send Notification.");
         }
         
-        DunningSettings dunningSettings = dunningSettingsService.findLastOne();
-        
-        if(dunningSettings != null) {
-        	dunningAction.setType(dunningSettings.getDunningMode());
-        } 
-        
         super.create(dunningAction);
     }
 
