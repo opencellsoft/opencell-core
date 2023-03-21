@@ -16,7 +16,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -138,7 +137,6 @@ public class DunningSettings extends BusinessEntity {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_balance_id")
-    @NotNull
     private CustomerBalance customerBalance;
 
     public DunningModeEnum getDunningMode() {

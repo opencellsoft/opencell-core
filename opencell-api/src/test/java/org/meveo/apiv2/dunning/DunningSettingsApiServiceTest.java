@@ -1,13 +1,13 @@
 package org.meveo.apiv2.dunning;
 
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,8 +22,8 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import javax.ws.rs.BadRequestException;
 import java.math.BigDecimal;
+import javax.ws.rs.BadRequestException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DunningSettingsApiServiceTest {
@@ -35,8 +35,6 @@ public class DunningSettingsApiServiceTest {
 	private DunningSettingsService dunningSettingsService;
 
 	org.meveo.model.dunning.DunningSettings dunningSettings;
-	
-	org.meveo.model.dunning.CustomerBalance customerBalance;
 
 	@Mock
 	private GlobalSettingsVerifier globalSettingsVerifier;
@@ -49,10 +47,6 @@ public class DunningSettingsApiServiceTest {
     	dunningSettings.setApplyDunningChargeFxExchangeRate(true);
     	dunningSettings.setCode("CODD");
     	dunningSettings.setDunningMode(DunningModeEnum.CUSTOMER_LEVEL);
-    	customerBalance = new org.meveo.model.dunning.CustomerBalance();
-    	customerBalance.setId(1L);
-    	customerBalance.setCode("CUSTOMER_BALANCE_1");
-    	customerBalance.setDefaultBalance(true);
 		doNothing().when(globalSettingsVerifier).checkActivateDunning();
 	}
     
