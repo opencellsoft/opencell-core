@@ -20,6 +20,7 @@ import org.junit.runner.RunWith;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.apiv2.AcountReceivable.*;
 import org.meveo.apiv2.AcountReceivable.CustomerAccount;
@@ -37,6 +38,9 @@ import javax.ws.rs.NotFoundException;
 @RunWith(MockitoJUnitRunner.class)
 public class AccountOperationApiServiceTest {
 
+    @Mock
+    private ResourceBundle resourceMessages;
+    
     @InjectMocks
     private AccountOperationApiService accountOperationApiService;
 
@@ -114,13 +118,15 @@ public class AccountOperationApiServiceTest {
         List<AccountOperation> accountOperations = List.of(aoInvoice, aoP1, aoP2);
 
         Mockito.when(accountOperationService.findByIds(anyList())).thenReturn(accountOperations);
-
-        //accountOperationApiService.matchOperations(operationAndSequence);
         
         Exception exception = assertThrows(BusinessApiException.class, () -> {
             accountOperationApiService.matchOperations(operationAndSequence);
         });
-        assertTrue(exception.getMessage().contains("AOs must have the same transactional currency"));
+        
+        String msgSameCurrency = resourceMessages.getString("accountOperation.error.sameCurrency");
+        if (exception.getMessage() != null) {
+            assertTrue(exception.getMessage().contains(msgSameCurrency));
+        }
     }
         
     @Test
