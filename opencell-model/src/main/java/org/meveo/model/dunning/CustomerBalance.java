@@ -29,7 +29,7 @@ public class CustomerBalance extends BusinessEntity {
     @JoinTable(name = "ar_customer_balance_templates",
             joinColumns = @JoinColumn(name = "customer_balance_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "template_id", referencedColumnName = "id"))
-    private List<OCCTemplate> occTemplates;
+    private List<OCCTemplate> templates;
 
     public boolean isDefaultBalance() {
         return defaultBalance;
@@ -39,11 +39,11 @@ public class CustomerBalance extends BusinessEntity {
         this.defaultBalance = defaultBalance;
     }
 
-    public List<OCCTemplate> getOccTemplates() {
-        return occTemplates;
+    public List<OCCTemplate> getTemplates() {
+        return templates;
     }
 
-    public void setOccTemplates(List<OCCTemplate> templates) {
-        this.occTemplates = templates;
+    public void setTemplates(List<OCCTemplate> templates) {
+        this.templates = templates;
     }
 }
