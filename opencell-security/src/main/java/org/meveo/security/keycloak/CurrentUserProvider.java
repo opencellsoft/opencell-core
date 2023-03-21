@@ -163,68 +163,12 @@ public class CurrentUserProvider {
     }
 
     /**
-     * Get a current provider code. If value is currently not initialized, obtain it from a current user's security context
-     * 
-     * @return Current provider's code
-     */
-    @SuppressWarnings("rawtypes")
-    public String getCurrentUserProviderCode() {
-
-        OidcPrincipal oidcPrincipal = null;
-        try {
-            HttpServletRequest request = null;
-            request = requestInst.get();
-            if (request != null && request.getUserPrincipal() instanceof OidcPrincipal) {
-                oidcPrincipal = (OidcPrincipal) request.getUserPrincipal();
-            }
-        } catch (Exception e) {
-            // Ignore. Its the only way to inject request outside the http code trace
-        }
-
-        String providerCode = null;
-
-        // Currently authenticated user via OIDC, get provider code from user properties
-        if (oidcPrincipal != null) {
-            providerCode = MeveoUserKeyCloakImpl.extractProviderCode(oidcPrincipal.getOidcSecurityContext().getToken());
-
-            if (providerCode == null) {
-                MDC.remove("providerCode");
-            } else {
-                MDC.put("providerCode", providerCode);
-            }
-
-            // log.trace("Will setting current provider to extracted value from KC token: {}", providerCode);
-            setCurrentTenant(providerCode);
-
-        } else if (isCurrentTenantSet()) {
-            providerCode = getCurrentTenant();
-
-            if (providerCode == null) {
-                MDC.remove("providerCode");
-            } else {
-                MDC.put("providerCode", providerCode);
-            }
-
-            // log.trace("Current provider is {}", providerCode);
-
-            // } else {
-            // log.trace("Current provider is not set");
-        }
-
-        return providerCode;
-
-    }
-
-    /**
      * Return a current user from JAAS security context
-     * 
-     * @param providerCode Provider code. Passed here, so not to look it up again
-     * @param em Entity manager to use to retrieve user info
      * 
      * @return Current user implementation
      */
     @SuppressWarnings({ "rawtypes", "unused" })
-    public MeveoUser getCurrentUser(String providerCode, EntityManager em) {
+    public MeveoUser getCurrentUser() {
 
         OidcPrincipal oidcPrincipal = null;
         try {
@@ -245,6 +189,7 @@ public class CurrentUserProvider {
 
             user = new MeveoUserKeyCloakImpl(oidcPrincipal.getOidcSecurityContext().getToken());
             username = user.getUserName();
+            setCurrentTenant(user.getProviderCode());
 
             // User was forced authenticated, so need to lookup the rest of user information
         } else if (forcedUserUsername.get() != null) {
@@ -404,7 +349,7 @@ public class CurrentUserProvider {
      * 
      * @return Current provider code
      */
-    private static String getCurrentTenant() {
+    public static String getCurrentTenant() {
         return currentTenant.get();
     }
 
