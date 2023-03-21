@@ -328,7 +328,7 @@ public class MEVEOCdrParser implements ICdrParser {
      * @throws DuplicateException CDR was processed already
      */
     public void deduplicate(CDR cdr) throws DuplicateException {
-        if (edrService.isDuplicateFound(cdr.getOriginBatch(), cdr.getOriginRecord())) {
+        if (edrService.isDuplicateFound(cdr.getOriginRecord())) {
             throw new DuplicateException(cdr);
         }
     }

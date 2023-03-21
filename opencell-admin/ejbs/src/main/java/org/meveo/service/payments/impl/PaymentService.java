@@ -719,10 +719,10 @@ public class PaymentService extends PersistenceService<Payment> {
         if (paymentMethodType == PaymentMethodEnum.DIRECTDEBIT) {
             occTemplateCode = paramBean.getProperty("occ.payment.dd", "PAY_DDT");
         }
-        if (paymentMethodType == PaymentMethodEnum.STRIPE) {
+        if (paymentMethodType == PaymentMethodEnum.STRIPEDIRECTLINK) {
             occTemplateCode = paramBean.getProperty("occ.payment.stp", "PAY_STP");
         }
-        if (paymentMethodType == PaymentMethodEnum.PAYPAL) {
+        if (paymentMethodType == PaymentMethodEnum.PAYPALPAYMENTLINK) {
             occTemplateCode = paramBean.getProperty("occ.payment.pal", "PAY_PAL");
         }
 

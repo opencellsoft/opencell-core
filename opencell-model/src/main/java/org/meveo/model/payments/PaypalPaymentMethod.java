@@ -34,13 +34,13 @@ public class PaypalPaymentMethod extends PaymentMethod {
     private static final long serialVersionUID = 8726571611074346199L;
     
     public PaypalPaymentMethod() {
-        this.paymentType = PaymentMethodEnum.PAYPAL;
+        this.paymentType = PaymentMethodEnum.PAYPALPAYMENTLINK;
     }
 
     public PaypalPaymentMethod(boolean isDisabled, String alias, boolean preferred, CustomerAccount customerAccount,String userId) {
         super();
         setDisabled(isDisabled);
-        this.paymentType = PaymentMethodEnum.PAYPAL;
+        this.paymentType = PaymentMethodEnum.PAYPALPAYMENTLINK;
         this.alias = alias;
         this.preferred = preferred;
         this.customerAccount = customerAccount;
@@ -53,7 +53,7 @@ public class PaypalPaymentMethod extends PaymentMethod {
 
     public PaypalPaymentMethod(String alias, boolean preferred) {
         super();
-        this.paymentType = PaymentMethodEnum.PAYPAL;
+        this.paymentType = PaymentMethodEnum.PAYPALPAYMENTLINK;
         this.alias = alias;
         this.preferred = preferred;
     }
