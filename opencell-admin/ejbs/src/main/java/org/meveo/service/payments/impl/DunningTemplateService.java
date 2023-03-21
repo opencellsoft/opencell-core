@@ -4,7 +4,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.dunning.DunningModeEnum;
 import org.meveo.model.dunning.DunningTemplate;
 import org.meveo.model.payments.ActionChannelEnum;
 import org.meveo.service.base.BusinessService;
@@ -13,7 +12,6 @@ import org.meveo.service.billing.impl.TradingLanguageService;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.Query;
-import java.util.Date;
 import java.util.List;
 
 @Stateless
@@ -81,26 +79,5 @@ public class DunningTemplateService extends BusinessService<DunningTemplate> {
             }
         }
         return super.update(template);
-    }
-
-    /**
-     * Update DunningTemplate after creating a new DunningSettings
-     * Set true in active field if the DunningTemplates have the same DunningMode as DunningSettings else false in the active field
-     * @param dunningModeEnum {@link DunningModeEnum}
-     * @throws BusinessException {@link BusinessException}
-     */
-    public void updateDunningTemplateByDunningMode(DunningModeEnum dunningModeEnum) throws BusinessException {
-        final List<DunningTemplate> dunningTemplates = super.list();
-        dunningTemplates.forEach((dunningTemplate -> {
-            if(dunningTemplate.getTypeDunningMode().equals(dunningModeEnum)) {
-                dunningTemplate.setActive(true);
-                dunningTemplate.getAuditable().setUpdated(new Date());
-                super.update(dunningTemplate);
-            } else {
-                dunningTemplate.setActive(false);
-                dunningTemplate.getAuditable().setUpdated(new Date());
-                super.update(dunningTemplate);
-            }
-        }));
     }
 }
