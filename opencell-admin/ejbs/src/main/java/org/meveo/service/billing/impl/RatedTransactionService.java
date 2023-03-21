@@ -1532,10 +1532,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param param2 the param2
      * @param param3 the param3
      * @param paramExtra the param extra
+     * @param usageDate RT usage date
      */
     public void updateRatedTransaction(RatedTransaction ratedTransaction, String description,
                                        BigDecimal unitAmountWithoutTax, BigDecimal quantity, String param1,
-                                       String param2, String param3, String paramExtra) {
+                                       String param2, String param3, String paramExtra, Date usageDate) {
         ratedTransaction.setDescription(description);
         BigDecimal[] unitAmounts = computeDerivedAmounts(unitAmountWithoutTax, unitAmountWithoutTax,
                 ratedTransaction.getTaxPercent(), appProvider.isEntreprise(), NB_DECIMALS, HALF_UP);
@@ -1557,6 +1558,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         ratedTransaction.setParameter3(param3);
         ratedTransaction.setParameterExtra(paramExtra);
+        ratedTransaction.setUsageDate(usageDate);
 
         update(ratedTransaction);
     }
