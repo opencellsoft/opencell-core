@@ -302,36 +302,43 @@ public class MediationApiService {
 
         counterInstanceService.reestablishCounterTracking(virtualCounters, counterUpdates);
 
-        for (int k = 0; k < nbThreads; k++) {
+        // No need to launch a separate thread if only one thread is used
+        if (nbThreads > 1) {
+            for (int k = 0; k < nbThreads; k++) {
 
-            int finalK = k;
-            tasks.add(() -> {
+                int finalK = k;
+                tasks.add(() -> {
 
-                Thread.currentThread().setName("MediationApi" + "-" + finalK);
+                    Thread.currentThread().setName("MediationApi" + "-" + finalK);
 
-                currentUserProvider.reestablishAuthentication(lastCurrentUser);
-                thisNewTX.processCDRs(cdrLineIterator, cdrReader, cdrParser, isDuplicateCheckOn, isVirtual, rate, reserve, rateTriggeredEdr, maxDepth, returnWalletOperations, returnWalletOperationDetails, returnEDRs,
-                    cdrListResult, virtualCounters, counterUpdates, generateRTs);
+                    currentUserProvider.reestablishAuthentication(lastCurrentUser);
+                    thisNewTX.processCDRs(cdrLineIterator, cdrReader, cdrParser, isDuplicateCheckOn, isVirtual, rate, reserve, rateTriggeredEdr, maxDepth, returnWalletOperations, returnWalletOperationDetails, returnEDRs,
+                        cdrListResult, virtualCounters, counterUpdates, generateRTs);
 
-            });
-        }
-
-        for (Runnable task : tasks) {
-            futures.add(executor.submit(task));
-        }
-
-        // Wait for all async methods to finish
-        for (Future future : futures) {
-            try {
-                future.get();
-
-            } catch (InterruptedException | CancellationException e) {
-//                wasKilled = true;
-
-            } catch (ExecutionException e) {
-                Throwable cause = e.getCause();
-                log.error("Failed to execute Mediation API async method", cause);
+                });
             }
+
+            for (Runnable task : tasks) {
+                futures.add(executor.submit(task));
+            }
+
+            // Wait for all async methods to finish
+            for (Future future : futures) {
+                try {
+                    future.get();
+
+                } catch (InterruptedException | CancellationException e) {
+                    // wasKilled = true;
+
+                } catch (ExecutionException e) {
+                    Throwable cause = e.getCause();
+                    log.error("Failed to execute Mediation API async method", cause);
+                }
+            }
+
+        } else {
+            thisNewTX.processCDRs(cdrLineIterator, cdrReader, cdrParser, isDuplicateCheckOn, isVirtual, rate, reserve, rateTriggeredEdr, maxDepth, returnWalletOperations, returnWalletOperationDetails, returnEDRs,
+                cdrListResult, virtualCounters, counterUpdates, generateRTs);
         }
 
         // Gather counter update summary information
