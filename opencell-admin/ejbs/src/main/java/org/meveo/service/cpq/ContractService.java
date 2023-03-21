@@ -176,7 +176,8 @@ public class ContractService extends BusinessService<Contract>  {
 		try {
 			List<Contract> contracts = getEntityManager().createNamedQuery("Contract.findByAccounts")
 					.setParameter("customerId", customersID).setParameter("billingAccountId", billingAccount.getId())
-					.setParameter("customerAccountId",customerAccount.getId()).getResultList();
+					.setParameter("customerAccountId",customerAccount.getId())
+					.setParameter("operationDate", bareWalletOperation.getOperationDate()).getResultList();
 			
 			
 			return contracts.stream()

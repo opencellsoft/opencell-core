@@ -37,10 +37,13 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.TransferAccountOperationDto;
 import org.meveo.api.dto.account.TransferCustomerAccountDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
@@ -57,6 +60,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.rest.exception.NotFoundException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.config.annotation.FilterProperty;
 import org.meveo.api.security.config.annotation.FilterResults;
@@ -254,15 +258,19 @@ public class AccountOperationApi extends BaseApi {
             TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(transactionalcurrency);
             TradingCurrency functionalCurrency = tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode());
 
-            checkTransactionalCurrency(tradingCurrency);
+            if (tradingCurrency == null || StringUtils.isBlank(tradingCurrency)) {
+                throw new InvalidParameterException("Currency " + transactionalcurrency +
+                        " is not recorded a trading currency in Opencell. Only currencies declared as trading currencies can be used to record account operations.");
+            }
 
             Date exchangeDate = postData.getTransactionDate() != null ? postData.getTransactionDate() : new Date();
-            ExchangeRate exchangeRate = getExchangeRate(transactionalcurrency, tradingCurrency, functionalCurrency, exchangeDate);
+            ExchangeRate exchangeRate = getExchangeRate(tradingCurrency,transactionalcurrency,exchangeDate);
 
-            if (appProvider.getCurrency() != null && !functionalCurrency.equals(tradingCurrency)) {
-                functionalAmount = convertedAmount.divide(exchangeRate.getExchangeRate(), 2, RoundingMode.HALF_UP);
+            if (!functionalCurrency.equals(tradingCurrency)) {
+                functionalAmount = convertedAmount.divide(exchangeRate.getExchangeRate(),appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode());
                 functionalMatchingAmount = convertedMatchingAmount.divide(exchangeRate.getExchangeRate(), 2, RoundingMode.HALF_UP);
                 functionalUnMatchingAmount = convertedUnMatchingAmount.divide(exchangeRate.getExchangeRate(), 2, RoundingMode.HALF_UP);
+                accountOperation.setAppliedRate(exchangeRate.getExchangeRate());
             }
         }
 
@@ -373,21 +381,14 @@ public class AccountOperationApi extends BaseApi {
         return accountOperation.getId();
     }
 
-    private static ExchangeRate getExchangeRate(String transactionalcurrency, TradingCurrency tradingCurrency, TradingCurrency functionalCurrency, Date exchangeDate) {
+    private static ExchangeRate getExchangeRate(TradingCurrency tradingCurrency, String transactionalCurrency, Date exchangeDate) {
         ExchangeRate exchangeRate = tradingCurrency.getExchangeRate(exchangeDate);
 
-        if (exchangeRate == null && !functionalCurrency.equals(tradingCurrency)) {
-            throw new BusinessException("No valid exchange rate found for currency " + transactionalcurrency
+        if (exchangeRate == null || exchangeRate.getExchangeRate() == null) {
+            throw new EntityDoesNotExistsException("No valid exchange rate found for currency " + transactionalCurrency
                     + " on " + exchangeDate);
         }
         return exchangeRate;
-    }
-
-    private void checkTransactionalCurrency(TradingCurrency tradingCurrency) {
-        if (tradingCurrency == null || StringUtils.isBlank(tradingCurrency)) {
-            throw new BusinessException("Currency " + tradingCurrency.getCurrencyCode() +
-                    " is not recorded a trading currency in Opencell. Only currencies declared as trading currencies can be used to record account operations.");
-        }
     }
 
     /**

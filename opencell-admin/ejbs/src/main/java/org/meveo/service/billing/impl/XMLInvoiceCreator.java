@@ -110,6 +110,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
             if (file != null) {
                 invoice.setXmlFilename(xmlFileName);
+                invoiceService.update(invoice);
             }
             return file;
 

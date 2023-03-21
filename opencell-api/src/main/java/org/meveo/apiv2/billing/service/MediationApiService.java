@@ -184,9 +184,8 @@ public class MediationApiService {
                 try {
                     List<Access> accessPoints = cdrParsingService.accessPointLookup(cdr);
                     List<EDR> edrs = cdrParsingService.convertCdrToEdr(cdr, accessPoints);
-
-                    if (EdrService.isDuplicateCheckOn() && edrService.isDuplicateFound(cdr.getOriginBatch(), cdr.getOriginRecord())) {
-                        throw new DuplicateException(cdr);
+                    if (EdrService.isDuplicateCheckOn() && edrService.isDuplicateFound(cdr.getOriginRecord())) {
+                         throw new DuplicateException(cdr);
                     }
 
                     for (EDR edr : edrs) {

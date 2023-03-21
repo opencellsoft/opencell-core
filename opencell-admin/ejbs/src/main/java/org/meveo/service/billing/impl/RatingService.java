@@ -1636,7 +1636,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     				isDiscountPlanInstanceUpdated = true;
     			}
     			
-    			if(isDiscountPlanInstanceUpdated) {
+    			if(isDiscountPlanInstanceUpdated && !isVirtual) {
 	   				 discountPlanInstanceService.update(discountPlanInstance);
     			}
     			
