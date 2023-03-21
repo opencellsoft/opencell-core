@@ -596,9 +596,9 @@ public class CustomTableCreatorService implements Serializable {
 
     private void liquibaseUpdate(DatabaseChangeLog dbLog, Connection connection) throws DatabaseException, LiquibaseException {
         Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
-        String currentproviderCode = currentUserProvider.getCurrentUserProviderCode();
+        String currentproviderCode = CurrentUserProvider.getCurrentTenant();
         if (currentproviderCode != null) {
-            database.setDefaultSchemaName(entityManagerProvider.convertToSchemaName(currentproviderCode));
+            database.setDefaultSchemaName(EntityManagerProvider.convertToSchemaName(currentproviderCode));
         }
 
         Liquibase liquibase = new liquibase.Liquibase(dbLog, new ClassLoaderResourceAccessor(), database);
