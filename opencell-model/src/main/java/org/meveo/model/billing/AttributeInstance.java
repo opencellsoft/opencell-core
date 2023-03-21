@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -27,10 +28,11 @@ import org.meveo.security.MeveoUser;
         @Parameter(name = "sequence_name", value = "cpq_quote_attribute_seq")})
 public class AttributeInstance extends AttributeValue<AttributeInstance> {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_instance_id")
     private ServiceInstance serviceInstance;
-    @ManyToOne
+    
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
 

@@ -2,15 +2,7 @@ package org.meveo.model.cpq.tags;
 
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -38,6 +30,7 @@ import org.meveo.model.ordering.OpenOrder;
 		@NamedQuery(name = "Tag.findByRequestedTagType", query = "select tag.code from Tag tag where tag.tagType.code IN (:requestedTagType)") 
 
 })
+@Cacheable
 public class Tag extends BusinessEntity {
 
 	/**
