@@ -5,7 +5,6 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.dunning.DunningModeEnum;
-import org.meveo.model.dunning.DunningSettings;
 import org.meveo.model.dunning.DunningTemplate;
 import org.meveo.model.payments.ActionChannelEnum;
 import org.meveo.service.base.BusinessService;
