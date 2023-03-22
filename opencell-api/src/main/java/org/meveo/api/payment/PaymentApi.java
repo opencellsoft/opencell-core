@@ -162,10 +162,10 @@ public class PaymentApi extends BaseApi {
         }
 
 		BigDecimal functionalAmount = paymentDto.getAmount();
-		BigDecimal convertedAmount = functionalAmount;
+		BigDecimal convertedAmount = paymentDto.getAmount();
 		TradingCurrency functionalCurrency = appProvider.getCurrency() != null && appProvider.getCurrency().getCurrencyCode() != null ? tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode()) : null;
 		TradingCurrency transactionalCurrency = null;
-		BigDecimal lastApliedRate = null;
+		BigDecimal lastApliedRate = BigDecimal.ONE;
 
 		String transactionalcurrencyCode = paymentDto.getTransactionalcurrency();
 		if (transactionalcurrencyCode != null && !StringUtils.isBlank(transactionalcurrencyCode)) {
@@ -218,7 +218,7 @@ public class PaymentApi extends BaseApi {
         payment.setPaymentInfo6(paymentDto.getPaymentInfo6());
         payment.setBankCollectionDate(paymentDto.getBankCollectionDate());
 		payment.setCollectionDate(paymentDto.getCollectionDate() == null ? paymentDto.getBankCollectionDate() : paymentDto.getCollectionDate());
-		payment.setTransactionalCurrency(transactionalCurrency);
+		payment.setTransactionalCurrency(transactionalCurrency != null ? transactionalCurrency : functionalCurrency);
 		payment.setAppliedRate(lastApliedRate);
 
         // populate customFields
