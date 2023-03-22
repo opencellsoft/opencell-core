@@ -3,7 +3,17 @@ package org.meveo.model.cpq;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -23,8 +33,7 @@ import org.meveo.model.cpq.trade.CommercialRuleHeader;
 @CustomFieldEntity(cftCodePrefix = "GroupedAttributes")
 @Table(name = "cpq_grouped_attributes", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cpq_grouped_attributes_seq"), })
-@Cacheable
+        @Parameter(name = "sequence_name", value = "cpq_grouped_attributes_seq"), }) 
 public class GroupedAttributes extends EnableBusinessCFEntity {
 
 	public GroupedAttributes() {

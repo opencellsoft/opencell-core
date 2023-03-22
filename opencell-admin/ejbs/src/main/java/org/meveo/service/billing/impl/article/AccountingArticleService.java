@@ -28,7 +28,6 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvalidELException;
-import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.ParamBean;
@@ -175,7 +174,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			
 		});
 		if (attributeMappingLineMatch.getFullMatchsArticle().size() > 1) {
-			throw new RatingException("More than one accounting article found for product " + product.getId() + " and charge template " + chargeTemplate.getId());
+			throw new ValidationException("More than one accounting article found for product " + product.getId() + " and charge template " + chargeTemplate.getId());
 		}
 		AccountingArticle result = null;
 		if(attributeMappingLineMatch.getFullMatchsArticle().size() == 1) {
@@ -277,6 +276,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 	}
 
 	@SuppressWarnings("rawtypes")
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public AccountingArticle getAccountingArticleByChargeInstance(ChargeInstance chargeInstance, WalletOperation walletOperation) throws InvalidELException, ValidationException {
         if (chargeInstance == null) {
             return null;

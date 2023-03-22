@@ -3,7 +3,13 @@ package org.meveo.model.mediation;
 import java.util.Date;
 import java.util.Objects;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -20,7 +26,6 @@ import org.meveo.model.AuditableEntity;
 @Entity
 @Table(name = "edr_versioning_rule")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "edr_versioning_rule_seq")})
-@Cacheable
 @SuppressWarnings("serial")
 public class EdrVersioningRule extends AuditableEntity {
 

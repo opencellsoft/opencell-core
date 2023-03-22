@@ -25,7 +25,14 @@ import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "accounting_accountingcode_mapping")
@@ -35,7 +42,6 @@ import javax.persistence.*;
         @NamedQuery(name = "AccountingCodeMapping.findByAccountingArticle",
                 query = "SELECT accMap FROM AccountingCodeMapping accMap WHERE accMap.accountingArticle.id =:ACCOUNTING_ARTICLE_ID")
 })
-@Cacheable
 public class AccountingCodeMapping extends AuditableEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
