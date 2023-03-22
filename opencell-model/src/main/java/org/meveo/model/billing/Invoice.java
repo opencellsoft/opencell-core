@@ -685,46 +685,46 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     private Date lastAppliedRateDate = new Date();
 
     /**
-     * Converted amount without tax
+     * Transactional amount without tax
      */
-    @Column(name = "converted_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedAmountWithoutTax;
+    @Column(name = "transactional_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalAmountWithoutTax;
 
     /**
-     * Converted amount with tax
+     * Transactional amount with tax
      */
-    @Column(name = "converted_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedAmountWithTax;
+    @Column(name = "transactional_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalAmountWithTax;
 
     /**
-     * Converted amount tax
+     * Transactional amount tax
      */
-    @Column(name = "converted_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedAmountTax;
+    @Column(name = "transactional_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalAmountTax;
 
     /**
-     * converted total amount to pay
+     * Transactional total amount to pay
      */
-    @Column(name = "converted_net_to_pay", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedNetToPay;
+    @Column(name = "transactional_net_to_pay", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalNetToPay;
 
     /**
-     * Converted raw amount
+     * Transactional raw amount
      */
-    @Column(name = "converted_raw_amount", nullable = false, precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedRawAmount= ZERO;
+    @Column(name = "transactional_raw_amount", nullable = false, precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalRawAmount= ZERO;
 
     /**
-     * Converted discount amount
+     * Transactional discount amount
      */
-    @Column(name = "converted_discount_amount", nullable = false, precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedDiscountAmount = ZERO;
+    @Column(name = "transactional_discount_amount", nullable = false, precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalDiscountAmount = ZERO;
 
     /**
-     * Converted amount without tax before discount
+     * Transactional amount without tax before discount
      */
-    @Column(name = "converted_amount_without_tax_before_discount", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedAmountWithoutTaxBeforeDiscount;
+    @Column(name = "transactional_amount_without_tax_before_discount", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalAmountWithoutTaxBeforeDiscount;
 
     /**
      * Payment plan
@@ -757,8 +757,8 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @JoinColumn(name = "invoice_validation_rule_id")
     private InvoiceValidationRule rejectedByRule;
 
-    @Column(name = "converted_invoice_balance", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedInvoiceBalance;
+    @Column(name = "transactional_invoice_balance", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalInvoiceBalance;
 
     @Column(name = "use_specific_price_conversion")
     @Type(type = "numeric_boolean")
@@ -767,10 +767,9 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Column(name = "conversion_from_billing_currency")
     @Type(type = "numeric_boolean")
     private boolean conversionFromBillingCurrency = false;
-
+    
     public Invoice() {
 	}
-
 
     public Invoice(Invoice copy) {
 		this.billingAccount = copy.billingAccount;
@@ -863,27 +862,18 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
             }
         }
 
-        if (!this.useSpecificPriceConversion && !this.conversionFromBillingCurrency) {
-        	BigDecimal appliedRate = getAppliedRate();
-            this.convertedAmountTax = this.amountTax != null
-                    ? this.amountTax.multiply(appliedRate) : ZERO;
-            this.convertedAmountWithoutTax = this.amountWithoutTax != null
-                    ? this.amountWithoutTax.multiply(appliedRate) : ZERO;
-            this.convertedAmountWithTax = this.amountWithTax != null
-                    ? this.amountWithTax.multiply(appliedRate) : ZERO;
-            this.convertedDiscountAmount = this.discountAmount != null
-                    ? this.discountAmount.multiply(appliedRate) : ZERO;
-            this.convertedNetToPay = this.netToPay != null
-                    ? this.netToPay.multiply(appliedRate) : ZERO;
-            this.convertedRawAmount = this.rawAmount != null
-                    ? this.rawAmount.multiply(appliedRate) : ZERO;
-            this.convertedAmountWithoutTaxBeforeDiscount =
-                    this.amountWithoutTaxBeforeDiscount != null
-                            ? this.amountWithoutTaxBeforeDiscount.multiply(appliedRate) : ZERO;
-            if (this.convertedInvoiceBalance != null) {
-                this.invoiceBalance = this.convertedInvoiceBalance.divide(appliedRate,2, RoundingMode.HALF_UP);
-            }
-        }
+		if (!this.useSpecificPriceConversion) {
+			BigDecimal appliedRate = getAppliedRate();
+			setTransactionalAmountTax(toTransactional(amountTax, appliedRate));
+			setTransactionalAmountWithoutTax(toTransactional(amountWithoutTax, appliedRate));
+			setTransactionalAmountWithTax(toTransactional(amountWithTax, appliedRate));
+			setTransactionalDiscountAmount(toTransactional(discountAmount, appliedRate));
+			setTransactionalNetToPay(toTransactional(netToPay, appliedRate));
+			setTransactionalRawAmount(toTransactional(rawAmount, appliedRate));
+			setTransactionalAmountWithoutTaxBeforeDiscount(toTransactional(amountWithoutTaxBeforeDiscount, appliedRate));
+			setTransactionalInvoiceBalance(toTransactional(invoiceBalance, appliedRate));
+		}
+        
     }
 
     public String getInvoiceNumber() {
@@ -1835,60 +1825,60 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         this.lastAppliedRateDate = lastAppliedRateDate;
     }
 
-    public BigDecimal getConvertedAmountWithoutTax() {
-        return convertedAmountWithoutTax;
+    public BigDecimal getTransactionalAmountWithoutTax() {
+        return transactionalAmountWithoutTax;
     }
 
-    public void setConvertedAmountWithoutTax(BigDecimal convertedAmountWithoutTax) {
-        this.convertedAmountWithoutTax = convertedAmountWithoutTax;
+    public void setTransactionalAmountWithoutTax(BigDecimal transactionalAmountWithoutTax) {
+        this.transactionalAmountWithoutTax = transactionalAmountWithoutTax;
     }
 
-    public BigDecimal getConvertedAmountWithTax() {
-        return convertedAmountWithTax;
+    public BigDecimal getTransactionalAmountWithTax() {
+        return transactionalAmountWithTax;
     }
 
-    public void setConvertedAmountWithTax(BigDecimal convertedAmountWithTax) {
-        this.convertedAmountWithTax = convertedAmountWithTax;
+    public void setTransactionalAmountWithTax(BigDecimal transactionalAmountWithTax) {
+        this.transactionalAmountWithTax = transactionalAmountWithTax;
     }
 
-    public BigDecimal getConvertedAmountTax() {
-        return convertedAmountTax;
+    public BigDecimal getTransactionalAmountTax() {
+        return transactionalAmountTax;
     }
 
-    public void setConvertedAmountTax(BigDecimal convertedAmountTax) {
-        this.convertedAmountTax = convertedAmountTax;
+    public void setTransactionalAmountTax(BigDecimal transactionalAmountTax) {
+        this.transactionalAmountTax = transactionalAmountTax;
     }
 
-    public BigDecimal getConvertedNetToPay() {
-        return convertedNetToPay;
+    public BigDecimal getTransactionalNetToPay() {
+        return transactionalNetToPay;
     }
 
-    public void setConvertedNetToPay(BigDecimal convertedNetToPay) {
-        this.convertedNetToPay = convertedNetToPay;
+    public void setTransactionalNetToPay(BigDecimal transactionalNetToPay) {
+        this.transactionalNetToPay = transactionalNetToPay;
     }
 
-    public BigDecimal getConvertedRawAmount() {
-        return convertedRawAmount;
+    public BigDecimal getTransactionalRawAmount() {
+        return transactionalRawAmount;
     }
 
-    public void setConvertedRawAmount(BigDecimal convertedRawAmount) {
-        this.convertedRawAmount = convertedRawAmount;
+    public void setTransactionalRawAmount(BigDecimal transactionalRawAmount) {
+        this.transactionalRawAmount = transactionalRawAmount;
     }
 
-    public BigDecimal getConvertedDiscountAmount() {
-        return convertedDiscountAmount;
+    public BigDecimal getTransactionalDiscountAmount() {
+        return transactionalDiscountAmount;
     }
 
-    public void setConvertedDiscountAmount(BigDecimal convertedDiscountAmount) {
-        this.convertedDiscountAmount = convertedDiscountAmount;
+    public void setTransactionalDiscountAmount(BigDecimal transactionalDiscountAmount) {
+        this.transactionalDiscountAmount = transactionalDiscountAmount;
     }
 
-    public BigDecimal getConvertedAmountWithoutTaxBeforeDiscount() {
-        return convertedAmountWithoutTaxBeforeDiscount;
+    public BigDecimal getTransactionalAmountWithoutTaxBeforeDiscount() {
+        return transactionalAmountWithoutTaxBeforeDiscount;
     }
 
-    public void setConvertedAmountWithoutTaxBeforeDiscount(BigDecimal convertedAmountWithoutTaxBeforeDiscount) {
-        this.convertedAmountWithoutTaxBeforeDiscount = convertedAmountWithoutTaxBeforeDiscount;
+    public void setTransactionalAmountWithoutTaxBeforeDiscount(BigDecimal transactionalAmountWithoutTaxBeforeDiscount) {
+        this.transactionalAmountWithoutTaxBeforeDiscount = transactionalAmountWithoutTaxBeforeDiscount;
     }
 
     public PaymentPlan getPaymentPlan() {
@@ -1952,11 +1942,11 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 		this.rejectedByRule = rejectedByRule;
 	}
 
-    public BigDecimal getConvertedInvoiceBalance() {
-        return convertedInvoiceBalance;
+    public BigDecimal getTransactionalInvoiceBalance() {
+        return transactionalInvoiceBalance;
     }
-    public void setConvertedInvoiceBalance(BigDecimal convertedInvoiceBalance) {
-        this.convertedInvoiceBalance = convertedInvoiceBalance;
+    public void setTransactionalInvoiceBalance(BigDecimal transactionalInvoiceBalance) {
+        this.transactionalInvoiceBalance = transactionalInvoiceBalance;
     }
 
 
@@ -1981,6 +1971,10 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
 	public void setConversionFromBillingCurrency(boolean conversionFromBillingCurrency) {
 		this.conversionFromBillingCurrency = conversionFromBillingCurrency;
+	}
+	
+	private BigDecimal toTransactional(BigDecimal amount, BigDecimal rate) {
+		return amount != null ? amount.multiply(rate) : ZERO;
 	}
 
 }

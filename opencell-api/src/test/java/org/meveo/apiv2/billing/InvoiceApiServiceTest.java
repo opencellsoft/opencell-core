@@ -63,7 +63,7 @@ public class InvoiceApiServiceTest {
         inv.setNetToPay(netToPay);
         inv.setAmountWithoutTaxBeforeDiscount(netToPay);
         inv.setTradingCurrency(tradingCurrency);
-        inv.setConvertedAmountWithTax(inv.getAmountWithTax().divide(rate, 12, HALF_UP));
+        inv.setTransactionalAmountWithTax(inv.getAmountWithTax().divide(rate, 12, HALF_UP));
         inv.setNetToPay(inv.getNetToPay().divide(rate, 12, HALF_UP));
         when(invoiceService.refreshConvertedAmounts(any(), any(), any())).thenReturn(inv);
     }
@@ -90,7 +90,7 @@ public class InvoiceApiServiceTest {
         Invoice result = invoiceApiService.refreshRate(invoiceId).get();
 
         BigDecimal convertedNetToPay = netToPay.divide(rate, 12, HALF_UP);
-        assertEquals(convertedNetToPay, result.getConvertedAmountWithTax());
+        assertEquals(convertedNetToPay, result.getTransactionalAmountWithTax());
     }
 
     @Test

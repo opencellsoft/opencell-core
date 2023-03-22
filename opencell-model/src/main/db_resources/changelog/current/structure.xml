@@ -16130,6 +16130,28 @@ public class AgedBalanceReporting extends ReportExtractScript {
     		<where>applicable_on_discounted_price is null</where>
     	</update>
     </changeSet>
+    
+  	<changeSet id="#INTRD-15043_20230317" author="AdilElJaouhari">
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_amount_without_tax" newColumnName="transactional_amount_without_tax"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_amount_with_tax" newColumnName="transactional_amount_with_tax"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_amount_tax" newColumnName="transactional_amount_tax"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_net_to_pay" newColumnName="transactional_net_to_pay"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_raw_amount" newColumnName="transactional_raw_amount"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_discount_amount" newColumnName="transactional_discount_amount"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_amount_without_tax_before_discount" newColumnName="transactional_amount_without_tax_before_discount"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_invoice_balance" newColumnName="transactional_invoice_balance"/>
+		
+		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_unit_price" newColumnName="transactional_unit_price"/>
+		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_amount_without_tax" newColumnName="transactional_amount_without_tax"/>
+		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_amount_with_tax" newColumnName="transactional_amount_with_tax"/>
+		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_amount_tax" newColumnName="transactional_amount_tax"/>
+		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_discount_amount" newColumnName="transactional_discount_amount"/>
+		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_raw_amount" newColumnName="transactional_raw_amount"/>
+		
+		<renameColumn tableName="billing_invoice_agregate" oldColumnName="converted_amount_without_tax" newColumnName="transactional_amount_without_tax"/>
+		<renameColumn tableName="billing_invoice_agregate" oldColumnName="converted_amount_with_tax" newColumnName="transactional_amount_with_tax"/>
+		<renameColumn tableName="billing_invoice_agregate" oldColumnName="converted_amount_tax" newColumnName="transactional_amount_tax"/>
+    </changeSet>
 
     <changeSet id="#INTRD-14811_20200310" author="TarikFA.">
         <preConditions onFail="MARK_RAN" >

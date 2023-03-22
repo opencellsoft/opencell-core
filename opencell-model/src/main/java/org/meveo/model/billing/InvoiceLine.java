@@ -328,40 +328,40 @@ public class InvoiceLine extends AuditableCFEntity {
     private InvoiceLineTaxModeEnum taxMode = InvoiceLineTaxModeEnum.ARTICLE;
 
 	/**
-	 * Converted unit price
+	 * Transactional unit price
 	 */
-	@Column(name = "converted_unit_price", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal convertedUnitPrice;
+	@Column(name = "transactional_unit_price", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal transactionalUnitPrice;
 
 	/**
-	 * Converted amount without tax
+	 * Transactional amount without tax
 	 */
-	@Column(name = "converted_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal convertedAmountWithoutTax;
+	@Column(name = "transactional_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal transactionalAmountWithoutTax;
 
 	/**
-	 * Converted amount with tax
+	 * Transactional amount with tax
 	 */
-	@Column(name = "converted_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal convertedAmountWithTax;
+	@Column(name = "transactional_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal transactionalAmountWithTax;
 
 	/**
-	 * Converted amount tax
+	 * Transactional amount tax
 	 */
-	@Column(name = "converted_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal convertedAmountTax;
+	@Column(name = "transactional_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal transactionalAmountTax;
 
 	/**
-	 * Converted discount amount
+	 * Transactional discount amount
 	 */
-	@Column(name = "converted_discount_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal convertedDiscountAmount = BigDecimal.ZERO;
+	@Column(name = "transactional_discount_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal transactionalDiscountAmount = BigDecimal.ZERO;
 
 	/**
-	 * Converted raw amount
+	 * Transactional raw amount
 	 */
-	@Column(name = "converted_raw_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal convertedRawAmount = BigDecimal.ZERO;
+	@Column(name = "transactional_raw_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal transactionalRawAmount = BigDecimal.ZERO;
 
     @Type(type = "numeric_boolean")
     @Column(name = "use_specific_price_conversion")
@@ -790,52 +790,52 @@ public class InvoiceLine extends AuditableCFEntity {
         this.taxMode = taxMode;
     }
 
-	public BigDecimal getConvertedUnitPrice() {
-		return convertedUnitPrice;
+	public BigDecimal getTransactionalUnitPrice() {
+		return transactionalUnitPrice;
 	}
 
-	public void setConvertedUnitPrice(BigDecimal convertedUnitPrice) {
-		this.convertedUnitPrice = convertedUnitPrice;
+	public void setTransactionalUnitPrice(BigDecimal transactionalUnitPrice) {
+		this.transactionalUnitPrice = transactionalUnitPrice;
 	}
 
-	public BigDecimal getConvertedAmountWithoutTax() {
-		return convertedAmountWithoutTax;
+	public BigDecimal getTransactionalAmountWithoutTax() {
+		return transactionalAmountWithoutTax;
 	}
 
-	public void setConvertedAmountWithoutTax(BigDecimal convertedAmountWithoutTax) {
-		this.convertedAmountWithoutTax = convertedAmountWithoutTax;
+	public void setTransactionalAmountWithoutTax(BigDecimal transactionalAmountWithoutTax) {
+		this.transactionalAmountWithoutTax = transactionalAmountWithoutTax;
 	}
 
-	public BigDecimal getConvertedAmountWithTax() {
-		return convertedAmountWithTax;
+	public BigDecimal getTransactionalAmountWithTax() {
+		return transactionalAmountWithTax;
 	}
 
-	public void setConvertedAmountWithTax(BigDecimal convertedAmountWithTax) {
-		this.convertedAmountWithTax = convertedAmountWithTax;
+	public void setTransactionalAmountWithTax(BigDecimal transactionalAmountWithTax) {
+		this.transactionalAmountWithTax = transactionalAmountWithTax;
 	}
 
-	public BigDecimal getConvertedAmountTax() {
-		return convertedAmountTax;
+	public BigDecimal getTransactionalAmountTax() {
+		return transactionalAmountTax;
 	}
 
-	public void setConvertedAmountTax(BigDecimal convertedAmountTax) {
-		this.convertedAmountTax = convertedAmountTax;
+	public void setTransactionalAmountTax(BigDecimal transactionalAmountTax) {
+		this.transactionalAmountTax = transactionalAmountTax;
 	}
 
-	public BigDecimal getConvertedDiscountAmount() {
-		return convertedDiscountAmount;
+	public BigDecimal getTransactionalDiscountAmount() {
+		return transactionalDiscountAmount;
 	}
 
-	public void setConvertedDiscountAmount(BigDecimal convertedDiscountAmount) {
-		this.convertedDiscountAmount = convertedDiscountAmount;
+	public void setTransactionalDiscountAmount(BigDecimal transactionalDiscountAmount) {
+		this.transactionalDiscountAmount = transactionalDiscountAmount;
 	}
 
-	public BigDecimal getConvertedRawAmount() {
-		return convertedRawAmount;
+	public BigDecimal getTransactionalRawAmount() {
+		return transactionalRawAmount;
 	}
 
-	public void setConvertedRawAmount(BigDecimal convertedRawAmount) {
-		this.convertedRawAmount = convertedRawAmount;
+	public void setTransactionalRawAmount(BigDecimal transactionalRawAmount) {
+		this.transactionalRawAmount = transactionalRawAmount;
 	}
 
 	public String getOpenOrderNumber() {
@@ -845,8 +845,6 @@ public class InvoiceLine extends AuditableCFEntity {
 	public void setOpenOrderNumber(String openOrderNumber) {
 		this.openOrderNumber = openOrderNumber;
 	}
-	
-	
 
 	public Integer getSequence() {
 		return sequence;
@@ -864,23 +862,35 @@ public class InvoiceLine extends AuditableCFEntity {
 		this.adjustmentStatus = adjustmentStatus;
 	}
 
+    public boolean isUseSpecificPriceConversion() {
+        return useSpecificPriceConversion;
+    }
+
+    public void setUseSpecificPriceConversion(boolean useSpecificPriceConversion) {
+        this.useSpecificPriceConversion = useSpecificPriceConversion;
+    }
+
+	public boolean isConversionFromBillingCurrency() {
+		return conversionFromBillingCurrency;
+	}
+
+	public void setConversionFromBillingCurrency(boolean conversionFromBillingCurrency) {
+		this.conversionFromBillingCurrency = conversionFromBillingCurrency;
+	}   
+    
 	@PrePersist
 	@PreUpdate
 	public void prePersistOrUpdate() {
-		if (!this.useSpecificPriceConversion && !this.conversionFromBillingCurrency) {
+		if (!this.useSpecificPriceConversion) {
 			BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
-			this.convertedAmountWithoutTax = this.amountWithoutTax != null ?
-					this.amountWithoutTax.multiply(appliedRate) : ZERO;
-			this.convertedAmountWithTax = this.amountWithTax != null ?
-					this.amountWithTax.multiply(appliedRate) : ZERO;
-			this.convertedAmountTax = this.amountTax !=null ?
-					this.amountTax.multiply(appliedRate) : ZERO;
-			this.convertedDiscountAmount = this.discountAmount != null ?
-					this.discountAmount.multiply(appliedRate) : ZERO;
-			this.convertedRawAmount = this.rawAmount != null ?
-					this.rawAmount.multiply(appliedRate) : ZERO;
-			this.convertedUnitPrice = this.unitPrice != null ?
-					this.unitPrice.multiply(appliedRate) : ZERO;
+			setTransactionalAmountWithoutTax(toTransactional(amountWithoutTax, appliedRate));
+			setTransactionalAmountWithTax(toTransactional(amountWithTax, appliedRate));
+			setTransactionalAmountTax(toTransactional(amountTax, appliedRate));
+			setTransactionalDiscountAmount(toTransactional(discountAmount, appliedRate));
+			setTransactionalRawAmount(toTransactional(rawAmount, appliedRate));
+			if (getTransactionalUnitPrice() == null || !isConversionFromBillingCurrency()) {
+				setTransactionalUnitPrice(toTransactional(unitPrice, appliedRate));
+			}
 		}
 	}
 
@@ -897,26 +907,14 @@ public class InvoiceLine extends AuditableCFEntity {
 		InvoiceLine other = (InvoiceLine) obj;
 		return getId() != null && other.getId() != null && getId().equals(other.getId());
 	}
-
+	
 	@Override
 	public int hashCode() {
 		return 961 + ("InvoiceLine" + getId()).hashCode();
 	}
-
-    public boolean isUseSpecificPriceConversion() {
-        return useSpecificPriceConversion;
-    }
-
-    public void setUseSpecificPriceConversion(boolean useSpecificPriceConversion) {
-        this.useSpecificPriceConversion = useSpecificPriceConversion;
-    }
-
-	public boolean isConversionFromBillingCurrency() {
-		return conversionFromBillingCurrency;
+	
+	private BigDecimal toTransactional(BigDecimal amount, BigDecimal rate) {
+		return amount != null ? amount.multiply(rate) : ZERO;
 	}
 
-	public void setConversionFromBillingCurrency(boolean conversionFromBillingCurrency) {
-		this.conversionFromBillingCurrency = conversionFromBillingCurrency;
-	}    
-    
 }

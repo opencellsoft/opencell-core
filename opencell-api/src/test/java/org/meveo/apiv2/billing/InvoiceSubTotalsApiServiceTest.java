@@ -81,16 +81,16 @@ public class InvoiceSubTotalsApiServiceTest {
     
     private void initInvoiceLines() {
     	InvoiceLine iv1 = new InvoiceLine(null, new BigDecimal(10), new BigDecimal(20), new BigDecimal(25), null, null, null, null, null, null, null);
-    	iv1.setConvertedAmountWithoutTax(new BigDecimal(21));
-    	iv1.setConvertedAmountWithTax(new BigDecimal(26));
+    	iv1.setTransactionalAmountWithoutTax(new BigDecimal(21));
+    	iv1.setTransactionalAmountWithTax(new BigDecimal(26));
     	
 
     	InvoiceLine iv2 = new InvoiceLine(null, new BigDecimal(20), new BigDecimal(20), new BigDecimal(25), null, null, null, null, null, null, null);
-    	iv2.setConvertedAmountWithTax(new BigDecimal(26));
+    	iv2.setTransactionalAmountWithTax(new BigDecimal(26));
     	
 
     	InvoiceLine iv3 = new InvoiceLine(null, new BigDecimal(5), new BigDecimal(20), new BigDecimal(25), null, null, null, null, null, null, null);
-    	iv3.setConvertedAmountWithoutTax(new BigDecimal(21));
+    	iv3.setTransactionalAmountWithoutTax(new BigDecimal(21));
 
     	InvoiceLine iv4 = new InvoiceLine(null, new BigDecimal(15), new BigDecimal(20), new BigDecimal(25), null, null, null, null, null, null, null);
     	

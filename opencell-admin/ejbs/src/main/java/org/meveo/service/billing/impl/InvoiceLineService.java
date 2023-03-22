@@ -1,6 +1,7 @@
 package org.meveo.service.billing.impl;
 
 import static java.lang.Boolean.FALSE;
+import static java.math.BigDecimal.ONE;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
@@ -738,6 +739,23 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		if(invoiceLine.getQuantity() == null) {
             invoiceLine.setQuantity(new BigDecimal(1));
         }
+		
+		invoiceLine.setConversionFromBillingCurrency(false);
+        if (StringUtils.isNotBlank(resource.getUnitPriceCurrency())) {
+            String tradingCurrency = invoiceLine.getInvoice().getTradingCurrency()!= null ? invoiceLine.getInvoice().getTradingCurrency().getCurrencyCode() : null;
+            String functionalCurrency = appProvider.getCurrency() != null ? appProvider.getCurrency().getCurrencyCode() : null;
+        	
+            if (!(resource.getUnitPriceCurrency().equals(tradingCurrency) || resource.getUnitPriceCurrency().equals(functionalCurrency))) {
+        		throw new BusinessException("currency should be equals to billing currency or functional currency");
+        	}
+			
+            if (resource.getUnitPriceCurrency().equals(tradingCurrency)) {
+				BigDecimal appliedRate = invoiceLine.getInvoice() != null ? invoiceLine.getInvoice().getAppliedRate() : ONE;
+				invoiceLine.setUnitPrice(resource.getUnitPrice().divide(appliedRate, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+				invoiceLine.setTransactionalUnitPrice(resource.getUnitPrice());
+				invoiceLine.setConversionFromBillingCurrency(true);
+			}
+        }
 
         if(invoiceLine.getUnitPrice() == null) {
             if (accountingArticle != null && accountingArticle.getUnitPrice() != null) {
@@ -852,7 +870,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 throw new BusinessException("accountingArticleCode should be 'ART_SECURITY_DEPOSIT'");
             }
         }
-        
+
         return invoiceLine;
     }
 
