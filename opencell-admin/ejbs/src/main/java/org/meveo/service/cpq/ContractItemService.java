@@ -157,16 +157,4 @@ public class ContractItemService extends BusinessService<ContractItem> {
 		}
 	}
     
-    @SuppressWarnings("unchecked")
-    public Contract getApplicableContract(List<Contract> contracts, OfferTemplate offer, String productCode,
-										  ChargeTemplate chargeTemplate, WalletOperation walletOperation) {
-        for (Contract contract : contracts) {
-            ContractItem contractItem =
-					getApplicableContractItem(contract, offer, productCode, chargeTemplate, walletOperation);
-            if (contractItem != null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
-                return contract;
-            }
-        }
-        return null;
-    }
 }
