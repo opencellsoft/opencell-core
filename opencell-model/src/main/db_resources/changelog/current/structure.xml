@@ -16211,7 +16211,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
     
     <changeSet id="#INTRD-14743_20230316" author="TarikFA.">
         <sql>CREATE INDEX cpq_price_plan_matrix_value__ppml_id__idx ON cpq_price_plan_matrix_value(ppml_id)</sql>
-        <sql>CREATE INDEX CREATE INDEX cpq_price_plan_matrix_line__ppm_version_id__idx ON cpq_price_plan_matrix_line(ppm_version_id)</sql>
+        <sql>CREATE INDEX cpq_price_plan_matrix_line__ppm_version_id__idx ON cpq_price_plan_matrix_line(ppm_version_id)</sql>
     </changeSet>
 
 </databaseChangeLog>
