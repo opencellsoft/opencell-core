@@ -740,6 +740,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             invoiceLine.setQuantity(new BigDecimal(1));
         }
 		
+		invoiceLine.setConversionFromBillingCurrency(false);
         if (StringUtils.isNotBlank(resource.getUnitPriceCurrency())) {
             String tradingCurrency = invoiceLine.getInvoice().getTradingCurrency()!= null ? invoiceLine.getInvoice().getTradingCurrency().getCurrencyCode() : null;
             String functionalCurrency = appProvider.getCurrency() != null ? appProvider.getCurrency().getCurrencyCode() : null;

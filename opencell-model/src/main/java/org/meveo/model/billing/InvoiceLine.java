@@ -881,14 +881,16 @@ public class InvoiceLine extends AuditableCFEntity {
 	@PrePersist
 	@PreUpdate
 	public void prePersistOrUpdate() {
-		BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
-		setTransactionalAmountWithoutTax(toTransactional(amountWithoutTax, appliedRate));
-		setTransactionalAmountWithTax(toTransactional(amountWithTax, appliedRate));
-		setTransactionalAmountTax(toTransactional(amountTax, appliedRate));
-		setTransactionalDiscountAmount(toTransactional(discountAmount, appliedRate));
-		setTransactionalRawAmount(toTransactional(rawAmount, appliedRate));
-		if (getTransactionalUnitPrice() == null || isConversionFromBillingCurrency()) {
-			setTransactionalUnitPrice(toTransactional(unitPrice, appliedRate));
+		if (!this.useSpecificPriceConversion) {
+			BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
+			setTransactionalAmountWithoutTax(toTransactional(amountWithoutTax, appliedRate));
+			setTransactionalAmountWithTax(toTransactional(amountWithTax, appliedRate));
+			setTransactionalAmountTax(toTransactional(amountTax, appliedRate));
+			setTransactionalDiscountAmount(toTransactional(discountAmount, appliedRate));
+			setTransactionalRawAmount(toTransactional(rawAmount, appliedRate));
+			if (getTransactionalUnitPrice() == null || !isConversionFromBillingCurrency()) {
+				setTransactionalUnitPrice(toTransactional(unitPrice, appliedRate));
+			}
 		}
 	}
 
