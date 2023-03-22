@@ -175,6 +175,8 @@ public class AuthenticationProvider {
      * @return instance of Keycloak administration client
      */
     public static Keycloak getKeycloakClient(KeycloakAdminClientConfig keycloakAdminClientConfig, String accessToken) {
+
+        log.error("getKC client");
         
         if (keycloakAdminClientConfig == null) {
             keycloakAdminClientConfig = getKeycloakConfig();

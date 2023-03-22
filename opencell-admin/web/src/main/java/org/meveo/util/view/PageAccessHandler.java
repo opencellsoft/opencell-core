@@ -66,10 +66,7 @@ public class PageAccessHandler implements Serializable {
                 if (navCase == null) {
                     continue;
                 }
-                
-                // Replace .xhtml with .jsf and remove any url parameters
                 String targetUrl = navCase.getToViewId(context);
-                targetUrl = targetUrl.substring(0, targetUrl.indexOf(".xhtml")) + ".jsf";
 
                 outcomesToCheck.add(outcome);
                 urlsToCheck.add(targetUrl);
@@ -106,11 +103,6 @@ public class PageAccessHandler implements Serializable {
      * @return True if it is accessible
      */
     public boolean isURLAccesible(String scope, String url) {
-        
-        // Omit checking access for JSF resources
-        if (url.startsWith("/javax.faces.resource/")) {
-            return true;
-        }
 
         Boolean isAccessible = pageAccess.get(url + "-" + scope);
         if (isAccessible == null) {
@@ -138,14 +130,5 @@ public class PageAccessHandler implements Serializable {
         requestURI = requestURI.substring(requestURI.substring(1).indexOf("/") + 1);
 
         return isURLAccesible(scope, requestURI);
-    }
-
-    /**
-     * Check if current request URL with a current scope (HTTP method) is allowed for a current user in Keycloak authorization rules.
-     * 
-     * @return True if it is accessible
-     */
-    public boolean isCurrentURLAccesible() {
-        return isCurrentURLAccesible(httpRequest.getMethod());
     }
 }
