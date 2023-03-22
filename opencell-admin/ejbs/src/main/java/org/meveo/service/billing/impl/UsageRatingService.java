@@ -111,6 +111,9 @@ public class UsageRatingService extends RatingService implements Serializable {
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
 
+    @Inject
+    private UserAccountService userAccountService;
+
     /**
      * Decrease a usage charge counter by EDR quantity. A new counter period matching EDR event date will be instantiated if does not exist yet.
      *
@@ -385,6 +388,12 @@ public class UsageRatingService extends RatingService implements Serializable {
                 if (usageChargeInstances == null || usageChargeInstances.isEmpty()) {
                     throw new NoChargeException("No active usage charges are associated with subscription " + subscriptionId);
                 }
+                
+                // Just to load all subscription service instances with their attributes to avoid querying service instances and their attributes one by one 
+                EntityManager em = getEntityManager();
+                List<ServiceInstance> subscriptionServices = em.createNamedQuery("ServiceInstance.findBySubscriptionIdLoadAttributes", ServiceInstance.class).setParameter("subscriptionId", subscriptionId)
+                    .getResultList();
+                // UserAccount userAccount = userAccountService.findById(edr.getSubscription().getUserAccount().getId(), Arrays.asList("wallet"));
 
                 // This covers a virtual rating case when estimating usage from a quote. Subscription in that case was not persisted.
             } else if (edr.getSubscription().getServiceInstances() != null) {
@@ -531,11 +540,13 @@ public class UsageRatingService extends RatingService implements Serializable {
         } else {
             chargeTemplate = getEntityManager().find(UsageChargeTemplate.class, chargeInstance.getChargeTemplate().getId());
         }
-        if(chargeInstance.getServiceInstance()!=null) {
-    		  boolean anyFalseAttribute = chargeInstance.getServiceInstance().getAttributeInstances().stream().filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
-        	 .filter(attributeInstance -> attributeInstance.getAttribute().getChargeTemplates().contains(chargeInstance.getChargeTemplate()))
-                .anyMatch(attributeInstance ->  attributeInstance.getStringValue()==null  || "false".equals(attributeInstance.getStringValue()));
-    	        if(anyFalseAttribute) return false;
+        if (chargeInstance.getServiceInstance() != null) {
+            boolean anyFalseAttribute = chargeInstance.getServiceInstance().getAttributeInstances().stream().filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
+                .filter(attributeInstance -> chargeInstance.getChargeTemplate().getAttributes().contains(attributeInstance.getAttribute()))
+                .anyMatch(attributeInstance -> attributeInstance.getStringValue() == null || "false".equals(attributeInstance.getStringValue()));
+            if (anyFalseAttribute) {
+                return false;
+            }
         }
         String filter1 = chargeTemplate.getFilterParam1();
 

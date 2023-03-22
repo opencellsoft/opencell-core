@@ -43,13 +43,27 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
      * @return A single entity matching code
      */
     public P findByCode(String code) {
-
+        return findByCode(code, false);
+    }
+    
+    /**
+     * Find entity by code - strict match. Optionally cache query results.
+     * 
+     * @param code Code to match
+     * @param cacheQueryResults Should query results be cached
+     * @return A single entity matching code
+     */
+    public P findByCode(String code, boolean cacheQueryResults) {
+  
         if (code == null) {
             return null;
         }
 
         TypedQuery<P> query = getEntityManager().createQuery("select be from " + entityClass.getSimpleName() + " be where lower(code)=:code", entityClass)
             .setParameter("code", code.toLowerCase()).setMaxResults(1);
+        if (cacheQueryResults) {
+            query.setHint("org.hibernate.cacheable", "TRUE");
+        }
 
         try {
             return query.getSingleResult();

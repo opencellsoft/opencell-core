@@ -1463,11 +1463,9 @@ public class QueryBuilder {
     }
     
 	public String addCurrentSchema(String query) {
-		CurrentUserProvider currentUserProvider = (CurrentUserProvider) EjbUtils.getServiceInterface("CurrentUserProvider");
-		String currentproviderCode = currentUserProvider.getCurrentUserProviderCode();
+		String currentproviderCode = CurrentUserProvider.getCurrentTenant();
 		if (currentproviderCode != null) {
-			EntityManagerProvider entityManagerProvider = (EntityManagerProvider) EjbUtils.getServiceInterface("EntityManagerProvider");
-			String schema = entityManagerProvider.convertToSchemaName(currentproviderCode) + ".";
+			String schema = EntityManagerProvider.convertToSchemaName(currentproviderCode) + ".";
 			if (!query.startsWith(FROM + schema)) {
 				return query.replace(FROM, FROM+schema);
 			}

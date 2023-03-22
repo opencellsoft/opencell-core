@@ -82,6 +82,11 @@ public class ParamBean {
      * Is multitenancy enabled
      */
     private static Boolean multiTenancyEnabled;
+    
+    /**
+     * Just a static object for synchronized method
+     */
+    private static final Integer synchronizeObj = 1;
 
     /**
      * Application configuration settings by a provider/tenant
@@ -128,7 +133,9 @@ public class ParamBean {
      */
     public static ParamBean getInstance(String propertiesName) {
         if (reload || instance == null) {
-            instance = new ParamBean(propertiesName);
+            synchronized (synchronizeObj) {
+                instance = new ParamBean(propertiesName);
+            }
         }
 
         return instance;
@@ -139,7 +146,7 @@ public class ParamBean {
      * 
      * @return Application configuration instance
      */
-    public static synchronized ParamBean getInstance() {
+    public static ParamBean getInstance() {
         try {
             return getInstance("opencell-admin.properties");
         } catch (Exception e) {

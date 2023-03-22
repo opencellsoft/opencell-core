@@ -17,7 +17,6 @@ import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -163,6 +162,13 @@ public class MediationApiService {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * Accepts a list of CDR line. This CDR is parsed and created as EDR. CDR is same format use in mediation job
+     * 
+     * @param postData A list of CDR csv lines
+     * @param ipAddress IP address initiating api call
+     * @return CDR processing information
+     */
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public ProcessCdrListResult registerCdrList(CdrListInput postData, String ipAddress) {
 
@@ -170,6 +176,13 @@ public class MediationApiService {
         return processCdrList(postData.getCdrs(), postData.getMode(), false, false, false, false, null, false, false, true, false, ipAddress, false);
     }
 
+    /**
+     * Process existing CDRs in DB to create EDRs
+     *
+     * @param cdrIds A list of CDR ids to process
+     * @return A list of processed CDRs
+     * @throws CDRAlreadyProcessedException
+     */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<CDR> processCdrList(List<Long> cdrIds) throws CDRAlreadyProcessedException {
@@ -214,6 +227,13 @@ public class MediationApiService {
         return cdrs;
     }
 
+    /**
+     * Allows the user to reserve a CDR, this will create a new reservation entity attached to a wallet operation. A reservation has expiration limit save in the provider entity (PREPAID_RESRV_DELAY_MS)
+     * 
+     * @param postData A list of CDR csv lines
+     * @param ipAddress IP address initiating api call
+     * @return Available quantity and reservationID is returned
+     */
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public ProcessCdrListResult reserveCdrList(CdrListInput postData, String ipAddress) {
 
@@ -221,6 +241,13 @@ public class MediationApiService {
         return processCdrList(postData.getCdrs(), postData.getMode(), false, false, true, false, null, false, false, true, false, ipAddress, false);
     }
 
+    /**
+     * Parse CDR, convert to EDR and rate it
+     * 
+     * @param postData A list of CDR csv lines
+     * @param ipAddress IP address initiating api call
+     * @return CDR processing information
+     */
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public ProcessCdrListResult chargeCdrList(ChargeCdrListInput postData, String ipAddress) {
 
@@ -275,36 +302,43 @@ public class MediationApiService {
 
         counterInstanceService.reestablishCounterTracking(virtualCounters, counterUpdates);
 
-        for (int k = 0; k < nbThreads; k++) {
+        // No need to launch a separate thread if only one thread is used
+        if (nbThreads > 1) {
+            for (int k = 0; k < nbThreads; k++) {
 
-            int finalK = k;
-            tasks.add(() -> {
+                int finalK = k;
+                tasks.add(() -> {
 
-                Thread.currentThread().setName("MediationApi" + "-" + finalK);
+                    Thread.currentThread().setName("MediationApi" + "-" + finalK);
 
-                currentUserProvider.reestablishAuthentication(lastCurrentUser);
-                thisNewTX.processCDRs(cdrLineIterator, cdrReader, cdrParser, isDuplicateCheckOn, isVirtual, rate, reserve, rateTriggeredEdr, maxDepth, returnWalletOperations, returnWalletOperationDetails, returnEDRs,
-                    cdrListResult, virtualCounters, counterUpdates, generateRTs);
+                    currentUserProvider.reestablishAuthentication(lastCurrentUser);
+                    thisNewTX.processCDRs(cdrLineIterator, cdrReader, cdrParser, isDuplicateCheckOn, isVirtual, rate, reserve, rateTriggeredEdr, maxDepth, returnWalletOperations, returnWalletOperationDetails, returnEDRs,
+                        cdrListResult, virtualCounters, counterUpdates, generateRTs);
 
-            });
-        }
-
-        for (Runnable task : tasks) {
-            futures.add(executor.submit(task));
-        }
-
-        // Wait for all async methods to finish
-        for (Future future : futures) {
-            try {
-                future.get();
-
-            } catch (InterruptedException | CancellationException e) {
-//                wasKilled = true;
-
-            } catch (ExecutionException e) {
-                Throwable cause = e.getCause();
-                log.error("Failed to execute Mediation API async method", cause);
+                });
             }
+
+            for (Runnable task : tasks) {
+                futures.add(executor.submit(task));
+            }
+
+            // Wait for all async methods to finish
+            for (Future future : futures) {
+                try {
+                    future.get();
+
+                } catch (InterruptedException | CancellationException e) {
+                    // wasKilled = true;
+
+                } catch (ExecutionException e) {
+                    Throwable cause = e.getCause();
+                    log.error("Failed to execute Mediation API async method", cause);
+                }
+            }
+
+        } else {
+            thisNewTX.processCDRs(cdrLineIterator, cdrReader, cdrParser, isDuplicateCheckOn, isVirtual, rate, reserve, rateTriggeredEdr, maxDepth, returnWalletOperations, returnWalletOperationDetails, returnEDRs,
+                cdrListResult, virtualCounters, counterUpdates, generateRTs);
         }
 
         // Gather counter update summary information
@@ -379,7 +413,7 @@ public class MediationApiService {
                         }
                         cdrParsingService.createEdrs(edrs, cdr);
                     }
-                   final boolean isVirtualTemp = mediationsettingService.applyEdrVersioningRule(edrs, cdr, isVirtual);
+                    mediationsettingService.applyEdrVersioningRule(edrs, cdr, false);
                     // Convert CDR to EDR and create a reservation
                     if (reserve) {
 
@@ -414,12 +448,11 @@ public class MediationApiService {
 
                         // Convert CDR to EDR and rate them
                     } else if (rate) {
-                        log.debug("usageRatingService : " + usageRatingService + ", isVirtual : " + isVirtual + ", rateTriggeredEdrs : " + rateTriggeredEdrs + ", maxDepth : " + maxDepth);
                         for (EDR edr : edrs) {
                             RatingResult ratingResult = null;
                             // For ROLLBACK_ON_ERROR mode, processing is called within TX, so when error is thrown up, everything will rollback
                             if (cdrProcessingResult.getMode() == ROLLBACK_ON_ERROR) {
-                                ratingResult = usageRatingService.rateUsage(edr, isVirtualTemp, rateTriggeredEdrs, maxDepth, 0, null, true);
+                                ratingResult = usageRatingService.rateUsage(edr, isVirtual, rateTriggeredEdrs, maxDepth, 0, null, true);
                                 if (ratingResult.getRatingException() != null) {
                                     throw ratingResult.getRatingException();
                                 }
@@ -429,7 +462,7 @@ public class MediationApiService {
                                 // For STOP_ON_FIRST_FAIL or PROCESS_ALL model if no rollback is needed (no additional unforeseen data can be created/updated during rating)
                                 // when rating fails, error is not thrown but is simply handled
                             } else if (noNeedToRollback) {
-                                ratingResult = usageRatingService.rateUsage(edr, isVirtualTemp, rateTriggeredEdrs, maxDepth, 0, null, noNeedToRollback);
+                                ratingResult = usageRatingService.rateUsage(edr, isVirtual, rateTriggeredEdrs, maxDepth, 0, null, noNeedToRollback);
                                 if (ratingResult.getRatingException() != null) {
                                     throw ratingResult.getRatingException();
                                 }
@@ -439,7 +472,7 @@ public class MediationApiService {
 
                                 // For STOP_ON_FIRST_FAIL or PROCESS_ALL model if rollback is needed, rating is called in a new TX and will rollback
                             } else {
-                                ratingResult = methodCallingUtils.callCallableInNewTx(() -> usageRatingService.rateUsage(edr, isVirtualTemp, rateTriggeredEdrs, maxDepth, 0, null, false));
+                                ratingResult = methodCallingUtils.callCallableInNewTx(() -> usageRatingService.rateUsage(edr, isVirtual, rateTriggeredEdrs, maxDepth, 0, null, false));
 
                                 if (ratingResult.getWalletOperations() != null) {
                                     walletOperations.addAll(ratingResult.getWalletOperations());
@@ -523,7 +556,8 @@ public class MediationApiService {
             if (generateRTs && !walletOperations.isEmpty()) {
                 for (WalletOperation walletOperation : walletOperations) {
                     //cdrParsingService.getEntityManager().persist(walletOperation.getEdr());
-                	if(walletOperation.getId() == null || walletOperation.getStatus() != WalletOperationStatusEnum.OPEN) continue;
+                    if (walletOperation.getId() == null || walletOperation.getStatus() != WalletOperationStatusEnum.OPEN)
+                        continue;
                     ratedTransactionService.createRatedTransaction(walletOperation, false);
                 }
             }
@@ -533,14 +567,10 @@ public class MediationApiService {
             cdrProcessingResult.setWalletOperationCount(0);
             Arrays.stream(cdrProcessingResult.getChargedCDRs()).forEach( cdrCharge -> {
                 if (cdrCharge != null) {
-                    cdrProcessingResult.setAmountWithTax(cdrProcessingResult.getAmountWithTax().add(cdrCharge.getAmountWithTax() != null
-                            ? cdrCharge.getAmountWithTax() : BigDecimal.ZERO));
-                    cdrProcessingResult.setAmountWithoutTax(cdrProcessingResult.getAmountWithoutTax().add(cdrCharge.getAmountWithoutTax() != null
-                            ? cdrCharge.getAmountWithoutTax() : BigDecimal.ZERO));
-                    cdrProcessingResult.setAmountTax(cdrProcessingResult.getAmountTax().add(cdrCharge.getAmountTax() != null
-                            ? cdrCharge.getAmountTax() : BigDecimal.ZERO));
-                    cdrProcessingResult.setWalletOperationCount(cdrProcessingResult.getWalletOperationCount() + (cdrCharge.getWalletOperationCount() != null
-                            ? cdrCharge.getWalletOperationCount() : 0));
+                    cdrProcessingResult.setAmountWithTax(cdrProcessingResult.getAmountWithTax().add(cdrCharge.getAmountWithTax() != null ? cdrCharge.getAmountWithTax() : BigDecimal.ZERO));
+                    cdrProcessingResult.setAmountWithoutTax(cdrProcessingResult.getAmountWithoutTax().add(cdrCharge.getAmountWithoutTax() != null ? cdrCharge.getAmountWithoutTax() : BigDecimal.ZERO));
+                    cdrProcessingResult.setAmountTax(cdrProcessingResult.getAmountTax().add(cdrCharge.getAmountTax() != null ? cdrCharge.getAmountTax() : BigDecimal.ZERO));
+                    cdrProcessingResult.setWalletOperationCount(cdrProcessingResult.getWalletOperationCount() + (cdrCharge.getWalletOperationCount() != null ? cdrCharge.getWalletOperationCount() : 0));
                 } else {
                     log.warn("cdrProcessingResult amouts and WOCount will have default 0 value, due to cdrCharge null");
                 }
@@ -627,7 +657,6 @@ public class MediationApiService {
         }
     }
 
-    
     public CdrDtoResponse createCdr(List<CDR> cdrs, ProcessingModeEnum mode, boolean returnCDRs, boolean returnError) {
         Builder cdrDtoResponse = ImmutableCdrDtoResponse.builder();
         List<org.meveo.apiv2.models.Resource> ids = new ArrayList<>();
@@ -699,7 +728,6 @@ public class MediationApiService {
 
                 cdrErrorDtos.add(new CdrErrorDto(cdr.toCsv(), cdr.getRejectReason()));
             }
-            
             
             if(cdr.getRejectReason() != null) {
                 if(mode == STOP_ON_FIRST_FAIL) {
@@ -788,7 +816,6 @@ public class MediationApiService {
         cdrService.update(cdr);
     }
     
-
     public CdrDtoResponse updateCDRs(List<CDR> cdrs, ProcessingModeEnum mode, boolean returnCDRs, boolean returnError) {
         List<CdrErrorDto> cdrErrorDtos = new ArrayList<CdrErrorDto>();
         List<String> errorParamters = new ArrayList<String>();

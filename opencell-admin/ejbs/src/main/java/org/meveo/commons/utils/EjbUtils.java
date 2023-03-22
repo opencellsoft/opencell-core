@@ -17,13 +17,14 @@
  */
 package org.meveo.commons.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import java.util.Properties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Util class for remote ejb lookups.
@@ -39,6 +40,15 @@ public class EjbUtils {
 
     private static final String JBOSSHOST = "JBOSS_HOST";
 
+    private static final ThreadLocal<InitialContext> initialContext = ThreadLocal.withInitial(() -> {
+        try {
+            return new InitialContext();
+        } catch (NamingException e) {
+            logger.error("Failed to initialize initial Conetxt for service lookup");
+            return null;
+        }
+    });
+    
     /**
      * Non instantiable class.
      */
@@ -99,8 +109,13 @@ public class EjbUtils {
      */
     public static Object getServiceInterface(String serviceInterfaceName) {
         try {
-            InitialContext ic = new InitialContext();
-            return ic.lookup("java:global/" + ParamBean.getInstance().getProperty("opencell.moduleName", "opencell") + "/" + serviceInterfaceName);
+            InitialContext ic = initialContext.get();
+            if (ic != null) {
+                return ic.lookup("java:global/" + ParamBean.getInstance().getProperty("opencell.moduleName", "opencell") + "/" + serviceInterfaceName);
+            } else {
+                return null;
+            }
+
         } catch (Exception e) {
             Logger log = LoggerFactory.getLogger(EjbUtils.class);
             log.debug("Failed to obtain service interface for {} {}", serviceInterfaceName, e.getMessage());

@@ -36,6 +36,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InsufficientBalanceException;
 import org.meveo.admin.exception.RatingException;
+import org.meveo.admin.parse.csv.MEVEOCdrReader;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.billing.CdrDto;
@@ -69,6 +70,8 @@ import org.meveo.service.medina.impl.CDRAlreadyProcessedException;
 import org.meveo.service.medina.impl.CDRService;
 import org.meveo.service.medina.impl.DuplicateException;
 import org.meveo.service.notification.DefaultObserver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * API for CDR processing and mediation handling in general
@@ -100,16 +103,20 @@ public class MediationApi extends BaseApi {
     private CDRService cdrService;
     @Inject
     private EdrService edrService;
-
-
-    static MessageDigest messageDigest = null;
-    static {
-        try {
-            messageDigest = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            log.error("No message digest of type MD5", e);
-        }
-    }
+    
+    private static final ThreadLocal<MessageDigest> messageDigest = new ThreadLocal<MessageDigest>() {
+        @Override
+        protected MessageDigest initialValue() {
+            try {
+                return MessageDigest.getInstance("SHA-256");
+            } catch (NoSuchAlgorithmException e) {
+                Logger log = LoggerFactory.getLogger(MEVEOCdrReader.class);
+                log.error("No message digest of type SHA-256", e);
+                return null;
+            }
+        }        
+    };
+    
     /**
      * Register EDRS
      * 
@@ -143,7 +150,8 @@ public class MediationApi extends BaseApi {
     /**
      * Process CDRs to create EDRs
      *
-     * @param cdrIds
+     * @param cdrIds A list of CDR ids to process
+     * @return A list of processed CDR information
      * @throws MeveoApiException
      * @throws BusinessException
      * @throws CDRAlreadyProcessedException 
@@ -435,20 +443,17 @@ public class MediationApi extends BaseApi {
             cdr.setExtraParameter(dto.getExtraParam());
     }
     
-
     private String getOriginRecordFromApi(String cdr) {
-
-        if (messageDigest != null) {
-            synchronized (messageDigest) {
-                messageDigest.reset();
-                messageDigest.update(cdr.getBytes(StandardCharsets.UTF_8));
-                final byte[] resultByte = messageDigest.digest();
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < resultByte.length; ++i) {
-                    sb.append(Integer.toHexString((resultByte[i] & 0xFF) | 0x100).substring(1, 3));
-                }
-                return sb.toString();
+        MessageDigest md = messageDigest.get();
+        if (md != null) {
+            md.reset();
+            md.update(cdr.getBytes(StandardCharsets.UTF_8));
+            final byte[] resultByte = md.digest();
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < resultByte.length; ++i) {
+                sb.append(Integer.toHexString((resultByte[i] & 0xFF) | 0x100).substring(1, 3));
             }
+            return sb.toString();
         }
 
         return null;
