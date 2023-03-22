@@ -9315,6 +9315,9 @@ public class OrderAdvancement extends ModuleScript {
     </changeSet>
 
     <changeSet id="#INTRD-2322-20211018" author="khalidHORRI" failOnError="true">
+        <dropForeignKeyConstraint baseTableName="dunning_policy_level" constraintName="fk_dunning_policy_level_dunning_level"/>
+        <dropForeignKeyConstraint baseTableName="dunning_level_dunning_action" constraintName="dunning_level_dunning_action_pkey_const"/>
+        <dropForeignKeyConstraint baseTableName="dunning_level_instance" constraintName="fk_dunning_level_instance_dunning_level"/>
 		<dropTable tableName="dunning_level" />
         <createSequence sequenceName="dunning_level_seq" startValue="1" />
         <createTable tableName="dunning_level">
@@ -9901,7 +9904,8 @@ public class OrderAdvancement extends ModuleScript {
         <dropForeignKeyConstraint baseTableName="ar_customer_account" constraintName="fk_9i811xvc40e19t613cmpvwmu9" />
         <dropForeignKeyConstraint baseTableName="billing_billing_account" constraintName="fk_fky4ah96o9fohkx7u569phxxr" />
         <dropForeignKeyConstraint baseTableName="billing_user_account" constraintName="fk_alpl7r5p2nm43w0ro26ckcqnb" />
-
+        <dropForeignKeyConstraint baseTableName="com_contact" constraintName="fk9im60lcguu9v09p3dds2f4a3h" />
+        <dropForeignKeyConstraint baseTableName="crm_seller" constraintName="fkjscoerhfwoc4i65w3pxpls10o" />
         <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_rt_ua"/>
         <dropForeignKeyConstraint baseTableName="document" constraintName="document_account_entity_id_fk"/>
 
