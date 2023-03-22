@@ -20369,5 +20369,16 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
         </insert>
     </changeSet>
+    
+    <changeSet author="houdad" id="#INTRD-15126_20230322">
+		<update tableName="ar_payment_token">
+			<column name="token_type" value="PAYPALPAYMENTLINK"/>
+			<where> token_type ='PAYPAL'</where>
+		</update>
+		<update tableName="ar_payment_token">
+			<column name="token_type" value="STRIPEDIRECTLINK"/>
+			<where> token_type ='STRIPE'</where>
+		</update>
+	</changeSet>
 	
 </databaseChangeLog>

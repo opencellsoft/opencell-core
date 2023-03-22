@@ -28,7 +28,7 @@ import org.meveo.commons.utils.StringUtils;
  * @author anasseh
  */
 @Entity
-@DiscriminatorValue(value = "PAYPAL")
+@DiscriminatorValue(value = "PAYPALPAYMENTLINK")
 public class PaypalPaymentMethod extends PaymentMethod {
 
     private static final long serialVersionUID = 8726571611074346199L;
