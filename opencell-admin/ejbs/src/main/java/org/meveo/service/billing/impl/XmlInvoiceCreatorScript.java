@@ -2654,7 +2654,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
         if (invoiceConfiguration.isDisplayTaxDetails()) {
             Optional<TaxDetails> oTaxDetails = invoiceLineService.getTaxDetails(invoiceLine.getTax(),
-                    invoiceLine.getAmountTax(), invoiceLine.getConvertedAmountTax());
+                    invoiceLine.getAmountTax(), invoiceLine.getTransactionalAmountTax());
             if (oTaxDetails.isPresent()) {
                 TaxDetails taxDetails = oTaxDetails.get();
                 Element taxDetailsTag = doc.createElement("taxDetails");
