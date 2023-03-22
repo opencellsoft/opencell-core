@@ -19723,5 +19723,16 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>transactional_currency is null</where>
 		</update>
 	</changeSet>
+	
+	<changeSet author="houdad" id="#INTRD-15126_20230322">
+		<update tableName="ar_payment_token">
+			<column name="token_type" value="PAYPALPAYMENTLINK"/>
+			<where> token_type ='PAYPAL'</where>
+		</update>
+		<update tableName="ar_payment_token">
+			<column name="token_type" value="STRIPEDIRECTLINK"/>
+			<where> token_type ='STRIPE'</where>
+		</update>
+	</changeSet>
 
 </databaseChangeLog>
