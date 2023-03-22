@@ -39,7 +39,6 @@ import javax.interceptor.Interceptors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.assertj.core.util.Arrays;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -65,7 +64,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.rest.exception.NotFoundException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.config.annotation.FilterProperty;
 import org.meveo.api.security.config.annotation.FilterResults;
@@ -260,12 +258,13 @@ public class AccountOperationApi extends BaseApi {
         BigDecimal convertedMatchingAmount = postData.getMatchingAmount() != null ? postData.getMatchingAmount() : BigDecimal.ZERO;
         BigDecimal convertedUnMatchingAmount = postData.getUnMatchingAmount();
         String transactionalcurrency = postData.getTransactionalCurrency();
+        BigDecimal lastAppliedRate = BigDecimal.ONE;
+        TradingCurrency tradingCurrency = null;
+        TradingCurrency functionalCurrency = tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode());
 
         if(transactionalcurrency != null && !StringUtils.isBlank(transactionalcurrency)){
 
-            TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(transactionalcurrency);
-            TradingCurrency functionalCurrency = tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode());
-
+            tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(transactionalcurrency);
             if (tradingCurrency == null || StringUtils.isBlank(tradingCurrency)) {
                 throw new InvalidParameterException("Currency " + transactionalcurrency +
                         " is not recorded a trading currency in Opencell. Only currencies declared as trading currencies can be used to record account operations.");
@@ -278,19 +277,21 @@ public class AccountOperationApi extends BaseApi {
                 functionalAmount = convertedAmount.divide(exchangeRate.getExchangeRate(),appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode());
                 functionalMatchingAmount = convertedMatchingAmount.divide(exchangeRate.getExchangeRate(), 2, RoundingMode.HALF_UP);
                 functionalUnMatchingAmount = convertedUnMatchingAmount.divide(exchangeRate.getExchangeRate(), 2, RoundingMode.HALF_UP);
-                accountOperation.setAppliedRate(exchangeRate.getExchangeRate());
+                lastAppliedRate = exchangeRate.getExchangeRate();
+
             }
         }
 
         accountOperation.setAmount(functionalAmount);
+        accountOperation.setAppliedRate(lastAppliedRate);
         accountOperation.setMatchingAmount(functionalMatchingAmount != null ? functionalMatchingAmount : BigDecimal.ZERO);
         accountOperation.setUnMatchingAmount(functionalUnMatchingAmount);
         accountOperation.setConvertedAmount(convertedAmount);
         accountOperation.setConvertedMatchingAmount(convertedMatchingAmount);
         accountOperation.setConvertedUnMatchingAmount(convertedUnMatchingAmount);
-
         accountOperation.setAmountWithoutTax(postData.getAmountWithoutTax());
-
+        accountOperation.setConvertedTaxAmount(postData.getTaxAmount() != null ? postData.getTaxAmount().multiply(lastAppliedRate) : null);
+        accountOperation.setTransactionalCurrency(tradingCurrency != null ? tradingCurrency : functionalCurrency);
         accountOperation.setAccountCodeClientSide(postData.getAccountCodeClientSide());
         accountOperation.setCustomerAccount(customerAccount);
         accountOperation.setBankLot(postData.getBankLot());
