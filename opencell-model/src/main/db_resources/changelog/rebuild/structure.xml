@@ -3125,19 +3125,19 @@
             <column name="dunning_collection_plan_triggered" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="last_applied_rate" type="numeric(23, 12)" />
             <column name="last_applied_rate_date" type="datetime" />
-            <column name="converted_amount_without_tax" type="numeric(23, 12)" />
-            <column name="converted_amount_with_tax" type="numeric(23, 12)" />
-            <column name="converted_amount_tax" type="numeric(23, 12)" />
-            <column name="converted_net_to_pay" type="numeric(23, 12)" />
-            <column name="converted_raw_amount" type="numeric(23, 12)" />
-            <column name="converted_discount_amount" type="numeric(23, 12)" />
-            <column name="converted_amount_without_tax_before_discount" type="numeric(23, 12)" />
+            <column name="transactional_amount_without_tax" type="numeric(23, 12)" />
+            <column name="transactional_amount_with_tax" type="numeric(23, 12)" />
+            <column name="transactional_amount_tax" type="numeric(23, 12)" />
+            <column name="transactional_net_to_pay" type="numeric(23, 12)" />
+            <column name="transactional_raw_amount" type="numeric(23, 12)" />
+            <column name="transactional_discount_amount" type="numeric(23, 12)" />
+            <column name="transactional_amount_without_tax_before_discount" type="numeric(23, 12)" />
             <column name="payment_plan_id" type="bigint" />
             <column name="open_order_number" type="varchar(255)" />
             <column name= "invoice_balance" type="numeric(23, 12)" />
             <column name="use_current_rate" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="invoice_validation_rule_id" type="bigint"/>
-            <column name="converted_invoice_balance" type="numeric(23, 12)"/>
+            <column name="transactional_invoice_balance" type="numeric(23, 12)"/>
     		<column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0" />
     		<column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
@@ -3191,9 +3191,9 @@
             <column name="discount_plan_code" type="varchar(50)" />
             <column name="discount_plan_item_code" type="varchar(50)" />
             <column name="discount_plan_item_id" type="bigint" />
-            <column name="converted_amount_without_tax" type="numeric(23, 12)"/>
-            <column name="converted_amount_with_tax" type="numeric(23, 12)"/>
-            <column name="converted_amount_tax" type="numeric(23, 12)"/>
+            <column name="transactional_amount_without_tax" type="numeric(23, 12)"/>
+            <column name="transactional_amount_with_tax" type="numeric(23, 12)"/>
+            <column name="transactional_amount_tax" type="numeric(23, 12)"/>
     		<column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0" />
     		<column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
@@ -10827,12 +10827,12 @@
             <column name="discount_plan_item_id" type="bigint"/>
             <column name="aggregate_id_f" type="bigint" />
             <column name="tax_mode" type="varchar(50)" />
-            <column name="converted_unit_price" type="numeric(23, 12)" />
-            <column name="converted_amount_without_tax" type="numeric(23, 12)" />
-            <column name="converted_amount_with_tax" type="numeric(23, 12)" />
-            <column name="converted_amount_tax" type="numeric(23, 12)" />
-            <column name="converted_discount_amount" type="numeric(23, 12)" />
-            <column name="converted_raw_amount" type="numeric(23, 12)" />
+            <column name="transactional_unit_price" type="numeric(23, 12)" />
+            <column name="transactional_amount_without_tax" type="numeric(23, 12)" />
+            <column name="transactional_amount_with_tax" type="numeric(23, 12)" />
+            <column name="transactional_amount_tax" type="numeric(23, 12)" />
+            <column name="transactional_discount_amount" type="numeric(23, 12)" />
+            <column name="transactional_raw_amount" type="numeric(23, 12)" />
             <column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="open_order_number" type="varchar(255)" />
             <column name="sequence" type="int4"/>
@@ -19636,6 +19636,8 @@
     <changeSet id="#INTRD-14381-202303202" author="bourras" />
     <changeSet id="#INTR-14747_20230308" author="TarikFA." />
     <changeSet id="#INTRD-14811_20200310" author="TarikFA." />
+    <changeSet id="#INTRD-15043_20230317" author="AdilElJaouhari" />
+    
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
