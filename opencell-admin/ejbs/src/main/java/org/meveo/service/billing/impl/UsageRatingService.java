@@ -531,13 +531,11 @@ public class UsageRatingService extends RatingService implements Serializable {
         } else {
             chargeTemplate = getEntityManager().find(UsageChargeTemplate.class, chargeInstance.getChargeTemplate().getId());
         }
-        if (chargeInstance.getServiceInstance() != null) {
-            boolean anyFalseAttribute = chargeInstance.getServiceInstance().getAttributeInstances().stream().filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
-                .filter(attributeInstance -> chargeInstance.getChargeTemplate().getAttributes().contains(attributeInstance.getAttribute()))
-                .anyMatch(attributeInstance -> attributeInstance.getStringValue() == null || "false".equals(attributeInstance.getStringValue()));
-            if (anyFalseAttribute) {
-                return false;
-            }
+        if(chargeInstance.getServiceInstance()!=null) {
+    		  boolean anyFalseAttribute = chargeInstance.getServiceInstance().getAttributeInstances().stream().filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
+        	 .filter(attributeInstance -> attributeInstance.getAttribute().getChargeTemplates().contains(chargeInstance.getChargeTemplate()))
+                .anyMatch(attributeInstance ->  attributeInstance.getStringValue()==null  || "false".equals(attributeInstance.getStringValue()));
+    	        if(anyFalseAttribute) return false;
         }
         String filter1 = chargeTemplate.getFilterParam1();
 
