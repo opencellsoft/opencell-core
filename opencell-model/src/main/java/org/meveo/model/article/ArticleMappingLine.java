@@ -63,7 +63,7 @@ public class ArticleMappingLine extends BusinessEntity {
 
     @OneToMany(mappedBy = "articleMappingLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    private List<AttributeMapping> attributesMapping = new ArrayList<AttributeMapping>();
+    private List<AttributeMapping> attributesMapping = new ArrayList<>();
 
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "offer_template_id")

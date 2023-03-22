@@ -3,7 +3,6 @@ package org.meveo.model.cpq;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,11 +13,10 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
-import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableCFEntity;
-import org.meveo.model.billing.AttributeInstance;
-import org.meveo.model.billing.ServiceInstance;
 
 @MappedSuperclass
 public class AttributeValue<T extends AttributeValue> extends AuditableCFEntity {
@@ -27,14 +25,17 @@ public class AttributeValue<T extends AttributeValue> extends AuditableCFEntity 
 
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cpq_attribute_id", nullable = false)
+	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     protected Attribute attribute;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
+	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	protected T parentAttributeValue;
 
     @OneToMany(mappedBy = "parentAttributeValue", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @OrderBy("id")
+	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	protected List<T> assignedAttributeValue;
 
 
