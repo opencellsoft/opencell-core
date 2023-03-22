@@ -739,6 +739,22 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		if(invoiceLine.getQuantity() == null) {
             invoiceLine.setQuantity(new BigDecimal(1));
         }
+		
+        if (StringUtils.isNotBlank(resource.getUnitPriceCurrency())) {
+            String tradingCurrency = invoiceLine.getInvoice().getTradingCurrency()!= null ? invoiceLine.getInvoice().getTradingCurrency().getCurrencyCode() : null;
+            String functionalCurrency = appProvider.getCurrency() != null ? appProvider.getCurrency().getCurrencyCode() : null;
+        	
+            if (!(resource.getUnitPriceCurrency().equals(tradingCurrency) || resource.getUnitPriceCurrency().equals(functionalCurrency))) {
+        		throw new BusinessException("currency should be equals to billing currency or functional currency");
+        	}
+			
+            if (resource.getUnitPriceCurrency().equals(tradingCurrency)) {
+				BigDecimal appliedRate = invoiceLine.getInvoice() != null ? invoiceLine.getInvoice().getAppliedRate() : ONE;
+				invoiceLine.setUnitPrice(resource.getUnitPrice().divide(appliedRate, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+				invoiceLine.setTransactionalUnitPrice(resource.getUnitPrice());
+				invoiceLine.setConversionFromBillingCurrency(true);
+			}
+        }
 
         if(invoiceLine.getUnitPrice() == null) {
             if (accountingArticle != null && accountingArticle.getUnitPrice() != null) {
@@ -853,17 +869,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 throw new BusinessException("accountingArticleCode should be 'ART_SECURITY_DEPOSIT'");
             }
         }
-        
-        String tradingCurrency = invoiceLine.getInvoice().getTradingCurrency()!= null ? invoiceLine.getInvoice().getTradingCurrency().getCurrencyCode() : null;
-        String functionalCurrency = appProvider.getCurrency() != null ? appProvider.getCurrency().getCurrencyCode() : null;
-        		
-        if (StringUtils.isNotBlank(resource.getUnitPriceCurrency()) && !(resource.getUnitPriceCurrency().equals(tradingCurrency) ||  resource.getUnitPriceCurrency().equals(functionalCurrency))) {
-        	throw new BusinessException("currency should be equals to billing currency or functional currency");
-        }
-
-		BigDecimal appliedRate = invoiceLine.getInvoice() != null ? invoiceLine.getInvoice().getAppliedRate() : ONE;
-		invoiceLine.setTransactionalUnitPrice(resource.getUnitPrice());
-		invoiceLine.setUnitPrice(resource.getUnitPrice().divide(appliedRate));
 
         return invoiceLine;
     }

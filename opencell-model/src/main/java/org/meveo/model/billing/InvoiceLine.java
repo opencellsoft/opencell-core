@@ -881,20 +881,14 @@ public class InvoiceLine extends AuditableCFEntity {
 	@PrePersist
 	@PreUpdate
 	public void prePersistOrUpdate() {
-		if (!this.useSpecificPriceConversion && !this.conversionFromBillingCurrency) {
-			BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
-			this.transactionalAmountWithoutTax = this.amountWithoutTax != null ?
-					this.amountWithoutTax.multiply(appliedRate) : ZERO;
-			this.transactionalAmountWithTax = this.amountWithTax != null ?
-					this.amountWithTax.multiply(appliedRate) : ZERO;
-			this.transactionalAmountTax = this.amountTax !=null ?
-					this.amountTax.multiply(appliedRate) : ZERO;
-			this.transactionalDiscountAmount = this.discountAmount != null ?
-					this.discountAmount.multiply(appliedRate) : ZERO;
-			this.transactionalRawAmount = this.rawAmount != null ?
-					this.rawAmount.multiply(appliedRate) : ZERO;
-			this.transactionalUnitPrice = this.unitPrice != null ?
-					this.unitPrice.multiply(appliedRate) : ZERO;
+		BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
+		setTransactionalAmountWithoutTax(toTransactional(amountWithoutTax, appliedRate));
+		setTransactionalAmountWithTax(toTransactional(amountWithTax, appliedRate));
+		setTransactionalAmountTax(toTransactional(amountTax, appliedRate));
+		setTransactionalDiscountAmount(toTransactional(discountAmount, appliedRate));
+		setTransactionalRawAmount(toTransactional(rawAmount, appliedRate));
+		if (getTransactionalUnitPrice() == null || isConversionFromBillingCurrency()) {
+			setTransactionalUnitPrice(toTransactional(unitPrice, appliedRate));
 		}
 	}
 
@@ -915,6 +909,10 @@ public class InvoiceLine extends AuditableCFEntity {
 	@Override
 	public int hashCode() {
 		return 961 + ("InvoiceLine" + getId()).hashCode();
+	}
+	
+	private BigDecimal toTransactional(BigDecimal amount, BigDecimal rate) {
+		return amount != null ? amount.multiply(rate) : ZERO;
 	}
 
 }

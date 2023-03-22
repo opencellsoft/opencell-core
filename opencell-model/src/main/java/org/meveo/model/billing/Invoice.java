@@ -862,27 +862,18 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
             }
         }
 
-        if (!this.useSpecificPriceConversion && !this.conversionFromBillingCurrency) {
-        	BigDecimal appliedRate = getAppliedRate();
-            this.transactionalAmountTax = this.amountTax != null
-                    ? this.amountTax.multiply(appliedRate) : ZERO;
-            this.transactionalAmountWithoutTax = this.amountWithoutTax != null
-                    ? this.amountWithoutTax.multiply(appliedRate) : ZERO;
-            this.transactionalAmountWithTax = this.amountWithTax != null
-                    ? this.amountWithTax.multiply(appliedRate) : ZERO;
-            this.transactionalDiscountAmount = this.discountAmount != null
-                    ? this.discountAmount.multiply(appliedRate) : ZERO;
-            this.transactionalNetToPay = this.netToPay != null
-                    ? this.netToPay.multiply(appliedRate) : ZERO;
-            this.transactionalRawAmount = this.rawAmount != null
-                    ? this.rawAmount.multiply(appliedRate) : ZERO;
-            this.transactionalAmountWithoutTaxBeforeDiscount =
-                    this.amountWithoutTaxBeforeDiscount != null
-                            ? this.amountWithoutTaxBeforeDiscount.multiply(appliedRate) : ZERO;
-            if (this.transactionalInvoiceBalance != null) {
-                this.invoiceBalance = this.transactionalInvoiceBalance.divide(appliedRate,2, RoundingMode.HALF_UP);
-            }
-        }
+		if (!this.useSpecificPriceConversion) {
+			BigDecimal appliedRate = getAppliedRate();
+			setTransactionalAmountTax(toTransactional(amountTax, appliedRate));
+			setTransactionalAmountWithoutTax(toTransactional(amountWithoutTax, appliedRate));
+			setTransactionalAmountWithTax(toTransactional(amountWithTax, appliedRate));
+			setTransactionalDiscountAmount(toTransactional(discountAmount, appliedRate));
+			setTransactionalNetToPay(toTransactional(netToPay, appliedRate));
+			setTransactionalRawAmount(toTransactional(rawAmount, appliedRate));
+			setTransactionalAmountWithoutTaxBeforeDiscount(toTransactional(amountWithoutTaxBeforeDiscount, appliedRate));
+			setTransactionalInvoiceBalance(toTransactional(invoiceBalance, appliedRate));
+		}
+        
     }
 
     public String getInvoiceNumber() {
@@ -1980,6 +1971,10 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
 	public void setConversionFromBillingCurrency(boolean conversionFromBillingCurrency) {
 		this.conversionFromBillingCurrency = conversionFromBillingCurrency;
+	}
+	
+	private BigDecimal toTransactional(BigDecimal amount, BigDecimal rate) {
+		return amount != null ? amount.multiply(rate) : ZERO;
 	}
 
 }

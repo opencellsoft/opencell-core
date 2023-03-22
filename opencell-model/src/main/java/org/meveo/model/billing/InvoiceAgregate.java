@@ -434,14 +434,11 @@ public abstract class InvoiceAgregate extends AuditableEntity {
     @PrePersist
     @PreUpdate
     public void prePersistOrUpdate() {
-        if (!this.useSpecificPriceConversion && !this.conversionFromBillingCurrency) {
+        if (!this.useSpecificPriceConversion) {
             BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
-            this.transactionalAmountWithoutTax = this.amountWithoutTax != null
-                    ? this.amountWithoutTax.multiply(appliedRate) : ZERO;
-            this.transactionalAmountTax = this.amountTax != null
-                    ? this.amountTax.multiply(appliedRate) : ZERO;
-            this.transactionalAmountWithTax = this.amountWithTax != null
-                    ? this.amountWithTax.multiply(appliedRate) : ZERO;
+            this.transactionalAmountWithoutTax = this.amountWithoutTax != null ? this.amountWithoutTax.multiply(appliedRate) : ZERO;
+            this.transactionalAmountTax = this.amountTax != null ? this.amountTax.multiply(appliedRate) : ZERO;
+            this.transactionalAmountWithTax = this.amountWithTax != null ? this.amountWithTax.multiply(appliedRate) : ZERO;
         }
     }
 }
