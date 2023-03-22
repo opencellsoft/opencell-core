@@ -272,7 +272,7 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     @Size(max = 2000)
     private String sortIndexEl;
 
-    @ManyToMany(mappedBy = "chargeTemplates", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "chargeTemplates", cascade = CascadeType.ALL)
     private Set<Attribute> attributes = new HashSet<>();
 
     // Calculated values

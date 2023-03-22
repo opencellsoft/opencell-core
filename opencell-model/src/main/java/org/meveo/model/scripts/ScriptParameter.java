@@ -3,7 +3,6 @@ package org.meveo.model.scripts;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -22,7 +21,6 @@ import org.meveo.model.BaseEntity;
 @Table(name = "meveo_script_parameter")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "meveo_script_parameter_seq"), })
-@Cacheable
 public class ScriptParameter extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;

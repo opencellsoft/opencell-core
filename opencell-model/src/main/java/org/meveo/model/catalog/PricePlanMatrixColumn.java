@@ -3,7 +3,19 @@ package org.meveo.model.catalog;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -26,7 +38,6 @@ import org.meveo.model.cpq.Product;
         @NamedQuery(name = "PricePlanMatrixColumn.findByCodeAndVersion", query = "select p from PricePlanMatrixColumn p LEFT JOIN p.pricePlanMatrixVersion pv where p.code=:code and pv.id=:pricePlanMatrixVersionId"),
         @NamedQuery(name = "PricePlanMatrixColumn.findByVersion", query = "select p from PricePlanMatrixColumn p where p.pricePlanMatrixVersion.id=:pricePlanMatrixVersionId"),
 })
-@Cacheable
 public class PricePlanMatrixColumn extends BusinessEntity {
 
 	public PricePlanMatrixColumn() {

@@ -118,6 +118,9 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     private PricePlanMatrixService pricePlanMatrixService;
     
     @Inject
+    private ConvertedPricePlanVersionService convertedPricePlanVersionService;
+    
+    @Inject
     private TradingCurrencyService tradingCurrencyService;
     
 	@Inject
@@ -434,7 +437,8 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 	 * @param operationDate
 	 * @return PricePlanMatrixVersion
 	 */
-	public PricePlanMatrixVersion getPublishedVersionValideForDate(Long ppmId, ServiceInstance serviceInstance, Date operationDate) {
+
+	public PricePlanMatrixVersion getPublishedVersionValideForDate(String ppmCode, ServiceInstance serviceInstance, Date operationDate) {
 		Date operationDateParam = new Date();
 		if(serviceInstance==null || PriceVersionDateSettingEnum.EVENT.equals(serviceInstance.getPriceVersionDateSetting())) {
 			operationDateParam = operationDate;
@@ -444,24 +448,14 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 			|| PriceVersionDateSettingEnum.MANUAL.equals(serviceInstance.getPriceVersionDateSetting())) {
 				operationDateParam = serviceInstance.getPriceVersionDate();
 		}
-        if(operationDateParam != null) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(operationDate);
-            calendar.set(Calendar.HOUR_OF_DAY, 0);
-            calendar.set(Calendar.MINUTE, 0);
-            calendar.set(Calendar.SECOND, 0);
-            calendar.set(Calendar.MILLISECOND, 0);
-            operationDateParam = calendar.getTime();
-        }
-        List<PricePlanMatrixVersion> result= this.getEntityManager()
-                .createNamedQuery("PricePlanMatrixVersion.getPublishedVersionValideForDate", PricePlanMatrixVersion.class)
-                .setParameter("pricePlanMatrixId", ppmId).setParameter("operationDate", operationDateParam)
-                .getResultList();
+
+        List<PricePlanMatrixVersion> result=(List<PricePlanMatrixVersion>) this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.getPublishedVersionValideForDate")
+                .setParameter("pricePlanMatrixCode", ppmCode).setParameter("operationDate", operationDateParam).getResultList();
         if(CollectionUtils.isEmpty(result)) {
         	return null;
         }
         if(result.size()>1) {
-        	throw new BusinessException("More than one pricePlaneVersion for pricePlan '"+ppmId+"' matching date: "+ operationDate);
+        	throw new BusinessException("More than one pricePlaneVersion for pricePlan '"+ppmCode+"' matching date: "+ operationDate);
         }
 		return result.get(0);
 	}

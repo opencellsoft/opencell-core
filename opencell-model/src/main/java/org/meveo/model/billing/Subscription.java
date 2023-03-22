@@ -467,7 +467,7 @@ public class Subscription extends BusinessCFEntity implements IInvoicingMinimumA
     private OrderOffer orderOffer;
     
     
-    @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, orphanRemoval = true, fetch = LAZY)
+    @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AttributeInstance> attributeInstances = new ArrayList<>();
 
     /**

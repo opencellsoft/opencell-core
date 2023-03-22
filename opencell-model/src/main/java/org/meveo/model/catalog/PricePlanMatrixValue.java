@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,13 +22,17 @@ import org.meveo.model.cpq.AttributeValue;
 
 @Entity
 @Table(name = "cpq_price_plan_matrix_value")
-
-@Cacheable
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_price_plan_matrix_value_sq"), })
 @NamedQuery(name="PricePlanMatrixValue.findByPricePlanMatrixLine", query = "select p from PricePlanMatrixValue p where p.pricePlanMatrixLine=:pricePlanMatrixLine")
 public class PricePlanMatrixValue extends BaseEntity {
 
+
+	
+
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = -2339904876547686701L;
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH )
