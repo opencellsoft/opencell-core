@@ -21,6 +21,7 @@ import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixColumnService;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.ProductService;
@@ -38,6 +39,9 @@ public class PricePlanMatrixColumnApi extends BaseApi {
     private OfferTemplateService offerTemplateService;
     @Inject
     private AttributeService attributeService;
+
+    @Inject
+    private PricePlanMatrixService pricePlanMatrixService;
 
     public PricePlanMatrixColumn create(String pricePlanMatrixCode, int version, PricePlanMatrixColumnDto dtoData) throws MeveoApiException, BusinessException {
 
@@ -82,8 +86,9 @@ public class PricePlanMatrixColumnApi extends BaseApi {
         populatePricePlanMatrixColumn(dtoData, pricePlanMatrixColumn,pricePlanMatrixVersion);
         Attribute attribute = loadEntityByCode(attributeService, dtoData.getAttributeCode(), Attribute.class);
         pricePlanMatrixColumn.setAttribute(attribute);
-
-        return pricePlanMatrixColumnService.update(pricePlanMatrixColumn);
+        pricePlanMatrixColumnService.update(pricePlanMatrixColumn);
+        pricePlanMatrixColumn.getPricePlanMatrixVersion().setPricePlanMatrix(pricePlanMatrixService.findByCode(pricePlanMatrixCode));
+        return pricePlanMatrixColumn;
     }
 
     public void removePricePlanColumn(String pricePlanMatrixCode, int version, String code){
