@@ -29,7 +29,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -90,7 +89,7 @@ import org.meveo.model.billing.WalletOperation;
         @NamedQuery(name = "EDR.updateEdrsToReprocess", query = "update EDR e  set e.status='OPEN',e.rejectReason = NULL, e.timesTried=(case when e.timesTried is null then 1 else (e.timesTried+1) end) where e.id in :ids"),
         @NamedQuery(name = "EDR.reopenByIds", query = "update EDR e  set e.status='OPEN',rejectReason = NULL where e.status='REJECTED' and e.id in :ids"),
         @NamedQuery(name = "EDR.countNbrEdrByOriginRecord", query = "SELECT count(e) from EDR e where e.originRecord =:originRecord"),
-        @NamedQuery(name = "EDR.findEDREventVersioning", query = "SELECT e from EDR e where e.status in ('OPEN', 'REJECTED', 'RATED', 'CANCELLED') and e.eventKey=:eventKey and e.eventVersion != null order by e.eventVersion DESC", hints = {@QueryHint(name = "org.hibernate.cacheable", value = "TRUE")}),
+        @NamedQuery(name = "EDR.findEDREventVersioning", query = "SELECT e from EDR e where e.status in ('OPEN', 'REJECTED', 'RATED', 'CANCELLED') and e.eventKey=:eventKey and e.eventVersion != null order by e.eventVersion DESC"),
         @NamedQuery(name = "EDR.getByWO", query = "SELECT edr FROM EDR edr WHERE edr.walletOperation.id IN (:WO_IDS)")
     })
 public class EDR extends BaseEntity {

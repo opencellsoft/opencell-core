@@ -49,8 +49,6 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -233,7 +231,6 @@ public abstract class ChargeInstance extends BusinessCFEntity {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_instance_id")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private ServiceInstance serviceInstance;
 
     /**

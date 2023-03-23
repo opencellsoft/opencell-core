@@ -49,8 +49,6 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -248,7 +246,6 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "charge_instance_id", nullable = false)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private ChargeInstance chargeInstance;
 
     /**

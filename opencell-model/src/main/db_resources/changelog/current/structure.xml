@@ -15738,5 +15738,18 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>CREATE INDEX cpq_price_plan_matrix_value__ppml_id__idx ON cpq_price_plan_matrix_value(ppml_id)</sql>
         <sql>CREATE INDEX cpq_price_plan_matrix_line__ppm_version_id__idx ON cpq_price_plan_matrix_line(ppm_version_id)</sql>
     </changeSet>
+	
+	<changeSet author="aelmalki" id="#INTRD-14882_20230323">
+		<sql>CREATE INDEX ct_referentiel_pays_cod_pays_iso_idx ON ct_referentiel_pays(cod_pays_iso)</sql>
+		<sql>CREATE INDEX ct_referentiel_pays_dom_tom_idx ON ct_referentiel_pays(dom_tom)</sql>
+		<sql>CREATE INDEX ct_trafic_decoup_typ_trafic_idx ON ct_trafic_decoup(typ_trafic)</sql>
+		<sql>CREATE INDEX ct_decoup_cod_decoup_idx ON ct_decoup(cod_decoup)</sql>
+		<sql>CREATE INDEX ct_decoup_cod_pays_idx ON ct_decoup(cod_pays)</sql>
+		<sql>CREATE INDEX ct_decoup_dpt_idx ON ct_decoup(dpt)</sql>
+		<sql>CREATE INDEX ct_decoup_insee_idx ON ct_decoup(insee)</sql>
+		<sql>CREATE INDEX CT_ACTIVITE_TVA_CODECOMPTABLE_cod_acti_idx ON CT_ACTIVITE_TVA_CODECOMPTABLE(cod_acti)</sql>
+		<sql>CREATE INDEX CT_TRAFIC_ACTIVITE_typ_trafic_idx ON CT_TRAFIC_ACTIVITE(typ_trafic)</sql>
+		<sql>CREATE INDEX ct_codecomptable_focale_cpt_elit_idx ON ct_codecomptable_focale(cpt_elit)</sql>
+	</changeSet>
 
 </databaseChangeLog>

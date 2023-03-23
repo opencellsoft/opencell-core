@@ -18,15 +18,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -54,7 +51,7 @@ import org.meveo.model.payments.CustomerAccount;
 	@NamedQuery(name = "Contract.findCustomer", query = "select c from Contract c left join c.customer cc where cc.code=:codeCustomer"),
     @NamedQuery(name = "Contract.findByAccounts", query = "select c from Contract c where c.status='ACTIVE' and (c.beginDate<=current_date and c.endDate>current_date) "
     		+ " and (c.customer.id is null or c.customer.id=:customerId) "
-				+ " and (c.billingAccount.id is null or c.billingAccount.id=:billingAccountId) and (c.customerAccount.id is null or c.customerAccount.id=:customerAccountId)", hints = {@QueryHint(name = "org.hibernate.cacheable", value = "TRUE")})
+				+ " and (c.billingAccount.id is null or c.billingAccount.id=:billingAccountId) and (c.customerAccount.id is null or c.customerAccount.id=:customerAccountId)")
 })
 public class Contract extends EnableBusinessCFEntity {
 
@@ -149,7 +146,6 @@ public class Contract extends EnableBusinessCFEntity {
 	private int contractDuration;
 	
 	@OneToMany(mappedBy = "contract", fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)
-	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	private List<ContractItem> contractItems;
 	
     @OneToMany(mappedBy = "contract", fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)

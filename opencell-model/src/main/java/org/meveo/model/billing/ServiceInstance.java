@@ -52,8 +52,6 @@ import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -324,7 +322,6 @@ public class ServiceInstance extends BusinessCFEntity implements IInvoicingMinim
     private String initialServiceRenewal;
 
     @OneToMany(mappedBy = "serviceInstance", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true, fetch = FetchType.LAZY)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private List<AttributeInstance> attributeInstances = new ArrayList<>();
 
     /**
