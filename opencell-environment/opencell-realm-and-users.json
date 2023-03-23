@@ -4939,7 +4939,11 @@
               "/api/rest/v2/generic/eDR",
               "/api/rest/v2/generic/cDR",
               "/api/rest/v2/generic/cDR/",
-              "/api/rest/v2/generic/eDR/"
+              "/api/rest/v2/generic/eDR/",
+              "/api/rest/v2/generic/EDR",
+              "/api/rest/v2/generic/CDR",
+              "/api/rest/v2/generic/CDR/",
+              "/api/rest/v2/generic/EDR/"
             ],
             "scopes": [
               {
@@ -4956,7 +4960,11 @@
               "/api/rest/v2/generic/eDR/*",
               "/api/rest/v2/generic/export/cDR/*",
               "/api/rest/v2/generic/cDR/*",
-              "/api/rest/v2/generic/export/eDR/*"
+              "/api/rest/v2/generic/export/eDR/*",
+              "/api/rest/v2/generic/EDR/*",
+              "/api/rest/v2/generic/export/CDR/*",
+              "/api/rest/v2/generic/CDR/*",
+              "/api/rest/v2/generic/export/EDR/*"
             ],
             "scopes": [
               {
