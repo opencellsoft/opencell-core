@@ -15785,7 +15785,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="converted_matching_amount_debit" type="numeric(23, 12)" />
         </addColumn>
         <addColumn tableName="ar_matching_amount">
-            <column name="converted_matching_amount" type="numeric(23, 12)" />
+            <column name="matching_amount" type="numeric(23, 12)" />
         </addColumn>        
         <addColumn tableName="ar_account_operation">
             <column name="converted_net_to_pay" type="numeric(23, 12)" />
@@ -16163,5 +16163,26 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_origin_ratedtransaction_id" />
     </changeSet>
 
+	<changeSet id="#INTRD-15043_20230317" author="AdilElJaouhari">
+		<renameColumn tableName="ar_account_operation" oldColumnName="converted_net_to_pay" newColumnName="converted_net_to_pay"/>
+		<renameColumn tableName="ar_account_operation" oldColumnName="converted_amount" newColumnName="converted_amount"/>
+		<renameColumn tableName="ar_account_operation" oldColumnName="converted_amount_without_tax" newColumnName="converted_amount_without_tax"/>
+		<renameColumn tableName="ar_account_operation" oldColumnName="converted_tax_amount" newColumnName="converted_tax_amount"/>
+		<renameColumn tableName="ar_account_operation" oldColumnName="converted_matching_amount" newColumnName="converted_matching_amount"/>
+		<renameColumn tableName="ar_account_operation" oldColumnName="converted_un_matching_amount" newColumnName="converted_un_matching_amount"/>
+		
+		<renameColumn tableName="billing_linked_invoices" oldColumnName="converted_amount" newColumnName="converted_amount"/>
+		
+		<renameColumn tableName="ar_matching_amount" oldColumnName="converted_matching_amount" newColumnName="converted_matching_amount"/>
+		
+		<renameColumn tableName="ar_matching_code" oldColumnName="converted_matching_amount_credit" newColumnName="converted_matching_amount_credit"/>
+		<renameColumn tableName="ar_matching_code" oldColumnName="converted_matching_amount_debit" newColumnName="converted_matching_amount_debit"/>
+		
+        <renameColumn tableName="accounting_journal_entry" oldColumnName="converted_amount" newColumnName="converted_amount"/>
+        
+        <addColumn tableName="ar_account_operation">
+            <column name="transactional_payment_fees" type="numeric(23, 12)"/>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>
