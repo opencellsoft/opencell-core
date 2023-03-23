@@ -2137,15 +2137,16 @@
                 <constraints nullable="true"/>
             </column>
             <column name="operation_number" type="bigint" />
-            <column name="converted_net_to_pay" type="numeric(23, 12)" />
-            <column name="converted_amount" type="numeric(23, 12)" />
-            <column name="converted_amount_without_tax" type="numeric(23, 12)" />
-            <column name="converted_tax_amount" type="numeric(23, 12)" />
-            <column name="converted_matching_amount" type="numeric(23, 12)" />
-            <column name="converted_un_matching_amount" type="numeric(23, 12)" />
+            <column name="transactional_net_to_pay" type="numeric(23, 12)" />
+            <column name="transactional_amount" type="numeric(23, 12)" />
+            <column name="transactional_amount_without_tax" type="numeric(23, 12)" />
+            <column name="transactional_tax_amount" type="numeric(23, 12)" />
+            <column name="transactional_matching_amount" type="numeric(23, 12)" />
+            <column name="transactional_un_matching_amount" type="numeric(23, 12)" />
             <column name="transactional_currency" type="bigint" />
             <column name="applied_rate" type="numeric(23, 12)" />
             <column name="applied_rate_date" type="datetime" />
+            <column name="transactional_payment_fees" type="numeric(23, 12)" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-146">
@@ -2417,7 +2418,7 @@
             </column>
             <column name="updated" type="datetime" />
             <column name="matching_amount" type="numeric(23, 12)" />
-            <column name="converted_matching_amount" type="numeric(23, 12)" />
+            <column name="transactional_matching_amount" type="numeric(23, 12)" />
 
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
@@ -2438,8 +2439,8 @@
             <column name="code" type="varchar(255)" />
             <column name="matching_amount_credit" type="numeric(23, 12)" />
             <column name="matching_amount_debit" type="numeric(23, 12)" />
-			<column name="converted_matching_amount_credit" type="numeric(23, 12)" />
-            <column name="converted_matching_amount_debit" type="numeric(23, 12)" />
+			<column name="transactional_matching_amount_credit" type="numeric(23, 12)" />
+            <column name="transactional_matching_amount_debit" type="numeric(23, 12)" />
             <column name="matching_date" type="date" />
             <column name="matching_type" type="varchar(255)" />
             <column name="creator" type="varchar(100)" />
@@ -17336,7 +17337,7 @@
             </column>
             <column name="supporting_document_ref" type="bigint" />
             <column name="supporting_document_type" type="varchar(255)" />
-            <column name="converted_amount" type="numeric(23, 12)" />
+            <column name="transactional_amount" type="numeric(23, 12)" />
             <column name="trading_currency" type="varchar(3)" />
             <column name="auxiliary_account_code" type="varchar(255)" />
             <column name="auxiliary_account_label" type="varchar(255)" />
@@ -17813,7 +17814,7 @@
             </column>
             <column name="amount" type="numeric(23, 12)" />
             <column name="type" type="varchar(50)" />
-            <column name="converted_amount" type="numeric(23, 12)"/>
+            <column name="transactional_amount" type="numeric(23, 12)"/>
     	</createTable>
     	
         <addPrimaryKey columnNames="id, linked_invoice_id" constraintName="billing_linked_invoices_pkey" tableName="billing_linked_invoices" />
@@ -19637,6 +19638,7 @@
     <changeSet id="#INTR-14747_20230308" author="TarikFA." />
     <changeSet id="#INTRD-14811_20200310" author="TarikFA." />
     <changeSet id="#INTRD-15043_20230317" author="AdilElJaouhari" />
+    <changeSet id="#INTRD-15114_20230323" author="AdilElJaouhari" />
     
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->

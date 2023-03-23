@@ -165,13 +165,13 @@ public class AccountOperationServiceMatchingTest {
         accountOperation.setAmount(new BigDecimal(10));
         accountOperation.setMatchingAmount(new BigDecimal(5));
         accountOperation.setUnMatchingAmount(new BigDecimal(6));
-        accountOperation.setConvertedMatchingAmount(null);
-        accountOperation.setConvertedUnMatchingAmount(null);
-        accountOperation.setConvertedAmount(null);
+        accountOperation.setTransactionalMatchingAmount(null);
+        accountOperation.setTransactionalUnMatchingAmount(null);
+        accountOperation.setTransactionalAmount(null);
 
-        Assert.assertEquals(accountOperation.getConvertedMatchingAmount(),accountOperation.getMatchingAmount());
-        Assert.assertEquals(accountOperation.getConvertedAmount(),accountOperation.getConvertedAmount());
-        Assert.assertEquals(accountOperation.getConvertedUnMatchingAmount(),accountOperation.getUnMatchingAmount());
+        Assert.assertEquals(accountOperation.getTransactionalMatchingAmount(),accountOperation.getMatchingAmount());
+        Assert.assertEquals(accountOperation.getTransactionalAmount(),accountOperation.getTransactionalAmount());
+        Assert.assertEquals(accountOperation.getTransactionalUnMatchingAmount(),accountOperation.getUnMatchingAmount());
 
     }
 }

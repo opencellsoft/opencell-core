@@ -158,10 +158,10 @@ public class JournalEntry extends AuditableEntity {
     private String tradingCurrency; 
     
 	/**
-	 * trading amount
+	 * transactional amount
 	 */
-	@Column(name = "converted_amount")
-	private BigDecimal convertedAmount;
+	@Column(name = "transactional_amount")
+	private BigDecimal transactionalAmount;
 
     /**
      * Auxiliary account code
@@ -369,12 +369,12 @@ public class JournalEntry extends AuditableEntity {
 		this.tradingCurrency = tradingCurrency;
 	}
 
-	public BigDecimal getConvertedAmount() {
-		return convertedAmount;
+	public BigDecimal getTransactionalAmount() {
+		return transactionalAmount;
 	}
 
-	public void setConvertedAmount(BigDecimal tradingAmount) {
-		this.convertedAmount = tradingAmount;
+	public void setTransactionalAmount(BigDecimal transactionalAmount) {
+		this.transactionalAmount = transactionalAmount;
 	}
 
     public String getAuxiliaryAccountCode() {
