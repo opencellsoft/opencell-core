@@ -15785,7 +15785,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="converted_matching_amount_debit" type="numeric(23, 12)" />
         </addColumn>
         <addColumn tableName="ar_matching_amount">
-            <column name="matching_amount" type="numeric(23, 12)" />
+            <column name="converted_matching_amount" type="numeric(23, 12)" />
         </addColumn>        
         <addColumn tableName="ar_account_operation">
             <column name="converted_net_to_pay" type="numeric(23, 12)" />
