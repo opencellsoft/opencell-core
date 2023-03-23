@@ -6696,7 +6696,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(linkedInvoice.getType())
                                 && linkedInvoice.getLinkedInvoiceValue() != null &&
                                 linkedInvoice.getLinkedInvoiceValue().getStatus().equals(InvoiceStatusEnum.VALIDATED))
-                .forEach(linkedInvoice -> linkedInvoice.setConvertedAmount(linkedInvoice.getAmount() != null ? linkedInvoice.getAmount().multiply(lastAppliedRate) : null));
+                .forEach(linkedInvoice -> linkedInvoice.setTransactionalAmount(linkedInvoice.getAmount() != null ? linkedInvoice.getAmount().multiply(lastAppliedRate) : null));
     }
 
     /**
@@ -7168,7 +7168,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             BigDecimal sum = invoice.getLinkedInvoices().stream()
                     .filter(i -> InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(i.getType()))
                     .filter(li -> (orderInvoice != null && orderInvoice.equals(li.getLinkedInvoiceValue().getCommercialOrder())) || (orderInvoice == null && li.getLinkedInvoiceValue().getCommercialOrder() == null))
-                    .map(LinkedInvoice::getConvertedAmount)
+                    .map(LinkedInvoice::getTransactionalAmount)
                     .reduce(BigDecimal::add).orElse(ZERO);
             //if balance is well calculated and balance=0, we don't need to recalculate
             if ((sum.add(invoiceBalance)).compareTo(invoice.getTransactionalAmountWithoutTax()) == 0) {
@@ -7234,7 +7234,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 }
                 if (amount.intValue() == ZERO.intValue()) continue;
                 if (toUpdate.isPresent()) {
-                    toUpdate.get().setConvertedAmount(toUpdate.get().getConvertedAmount().add(amount));
+                    toUpdate.get().setTransactionalAmount(toUpdate.get().getTransactionalAmount().add(amount));
                 } else {
                     createNewLinkedInvoice(invoice, amount, adv);
                 }
@@ -7243,7 +7243,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 }
             }
             invoice.setTransactionalInvoiceBalance(remainingAmount);
-            invoice.getLinkedInvoices().removeIf(il -> ZERO.compareTo(il.getConvertedAmount()) == 0 && InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(il.getType()));
+            invoice.getLinkedInvoices().removeIf(il -> ZERO.compareTo(il.getTransactionalAmount()) == 0 && InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(il.getType()));
         }
     }
 
@@ -7265,22 +7265,22 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		if (invoice.getLinkedInvoices() != null) {
 			Predicate<LinkedInvoice> advFilter = i -> InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(i.getType());
 			if (delete) {
-				invoice.getLinkedInvoices().stream().filter(advFilter).forEach(li -> li.getLinkedInvoiceValue().setTransactionalInvoiceBalance(li.getLinkedInvoiceValue().getTransactionalInvoiceBalance().add(li.getConvertedAmount())));
+				invoice.getLinkedInvoices().stream().filter(advFilter).forEach(li -> li.getLinkedInvoiceValue().setTransactionalInvoiceBalance(li.getLinkedInvoiceValue().getTransactionalInvoiceBalance().add(li.getTransactionalAmount())));
 				linkedInvoiceService.deleteByInvoiceIdAndType(invoice.getId(), InvoiceTypeEnum.ADVANCEMENT_PAYMENT);
 				invoice.getLinkedInvoices().removeIf(advFilter);
 			} else {
 				for (Invoice advInvoice : advInvoices) {
 					invoice.getLinkedInvoices().stream().filter(advFilter).filter(linkedInvoice -> linkedInvoice.getLinkedInvoiceValue().getId() == advInvoice.getId()).findAny().ifPresent(li -> {
-                        advInvoice.setTransactionalInvoiceBalance(advInvoice.getTransactionalInvoiceBalance().add(li.getConvertedAmount()));
-                        li.setConvertedAmount(ZERO);
+                        advInvoice.setTransactionalInvoiceBalance(advInvoice.getTransactionalInvoiceBalance().add(li.getTransactionalAmount()));
+                        li.setTransactionalAmount(ZERO);
 					});
 				}
-				List<LinkedInvoice> lis = invoice.getLinkedInvoices().stream().filter(advFilter).filter(li -> ZERO.compareTo(li.getConvertedAmount()) < 0).collect(Collectors.toList());
+				List<LinkedInvoice> lis = invoice.getLinkedInvoices().stream().filter(advFilter).filter(li -> ZERO.compareTo(li.getTransactionalAmount()) < 0).collect(Collectors.toList());
 					for(LinkedInvoice li : lis) {
 						Invoice oldAdvanceInvoice = li.getLinkedInvoiceValue();
-                        oldAdvanceInvoice.setTransactionalInvoiceBalance(oldAdvanceInvoice.getTransactionalInvoiceBalance().add(li.getConvertedAmount()));
+                        oldAdvanceInvoice.setTransactionalInvoiceBalance(oldAdvanceInvoice.getTransactionalInvoiceBalance().add(li.getTransactionalAmount()));
 						advInvoices.add(oldAdvanceInvoice);
-                        li.setConvertedAmount(ZERO);
+                        li.setTransactionalAmount(ZERO);
 					};
 			}
 		}

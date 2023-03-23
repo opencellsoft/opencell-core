@@ -94,16 +94,16 @@ public class MatchingCode extends AuditableEntity {
     private BigDecimal matchingAmountDebit;
 
     /**
-     * Total converted matched amount credit
+     * Total transactional matched amount credit
      */
-    @Column(name = "converted_matching_amount_credit", precision = 23, scale = 12)
-    private BigDecimal convertedMatchingAmountCredit;
+    @Column(name = "transactional_matching_amount_credit", precision = 23, scale = 12)
+    private BigDecimal transactionalMatchingAmountCredit;
 
     /**
-     * Total converted matched amount debit
+     * Total transactional matched amount debit
      */
-    @Column(name = "converted_matching_amount_debit", precision = 23, scale = 12)
-    private BigDecimal convertedMatchingAmountDebit;
+    @Column(name = "transactional_matching_amount_debit", precision = 23, scale = 12)
+    private BigDecimal transactionalMatchingAmountDebit;
     
     public String getCode() {
         return code;
@@ -153,20 +153,20 @@ public class MatchingCode extends AuditableEntity {
         return matchingAmounts;
     }
     
-    public BigDecimal getConvertedMatchingAmountCredit() {
-        return convertedMatchingAmountCredit;
+    public BigDecimal getTransactionalMatchingAmountCredit() {
+        return transactionalMatchingAmountCredit;
     }
 
-    public void setConvertedMatchingAmountCredit(BigDecimal convertedMatchingAmountCredit) {
-        this.convertedMatchingAmountCredit = convertedMatchingAmountCredit;
+    public void setTransactionalMatchingAmountCredit(BigDecimal transactionalMatchingAmountCredit) {
+        this.transactionalMatchingAmountCredit = transactionalMatchingAmountCredit;
     }
 
-    public BigDecimal getConvertedMatchingAmountDebit() {
-        return convertedMatchingAmountDebit;
+    public BigDecimal getTransactionalMatchingAmountDebit() {
+        return transactionalMatchingAmountDebit;
     }
 
-    public void setConvertedMatchingAmountDebit(BigDecimal convertedMatchingAmountDebit) {
-        this.convertedMatchingAmountDebit = convertedMatchingAmountDebit;
+    public void setTransactionalMatchingAmountDebit(BigDecimal transactionalMatchingAmountDebit) {
+        this.transactionalMatchingAmountDebit = transactionalMatchingAmountDebit;
     }
 
     @Override
