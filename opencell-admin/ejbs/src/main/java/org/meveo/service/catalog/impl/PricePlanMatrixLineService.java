@@ -222,7 +222,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         if (matchedPrices.isEmpty()) {
             throw new NoPricePlanException("No price match with price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ") using attribute : " + attributeValues.stream().map(AttributeValue::getValue));
         
-        } else if (matchedPrices.size() >= 2 && matchedPrices.get(0).getPriority().equals(matchedPrices.get(1).getPriority())) {
+        } else if (matchedPrices.size() >= 2 && matchedPrices.get(0).getEffectifPriority() == matchedPrices.get(1).getEffectifPriority()) {
             throw new NoPricePlanException("Many prices lines with the same priority match with price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ") using attribute : " + attributeValues.stream().map(AttributeValue::getValue));
         }
         return matchedPrices.get(0);
@@ -247,7 +247,6 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         else {
             List<PricePlanMatrixLine> results = priceLines.stream()
                     .filter(line -> line.match(attributeValues))
-                    .sorted(Comparator.comparing(PricePlanMatrixLine::getId))
                     .collect(Collectors.toList());
 
             if (CollectionUtils.isNotEmpty(results) && results.size() > 1) {
