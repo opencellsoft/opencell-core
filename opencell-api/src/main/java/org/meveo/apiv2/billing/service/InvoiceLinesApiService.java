@@ -91,7 +91,7 @@ public class InvoiceLinesApiService implements ApiService<InvoiceLine>  {
                         .orElseThrow(() -> new NotFoundException("Invoice line not found"));
         Optional<org.meveo.service.billing.impl.TaxDetails> taxDetails =
                 invoiceLinesService.getTaxDetails(invoiceLine.getTax(),
-                        invoiceLine.getAmountTax(), invoiceLine.getConvertedAmountTax());
+                        invoiceLine.getAmountTax(), invoiceLine.getTransactionalAmountTax());
         if(taxDetails.isEmpty()) {
             throw new NotFoundException("No tax details found for invoice line id : " + invoiceLineId);
         }

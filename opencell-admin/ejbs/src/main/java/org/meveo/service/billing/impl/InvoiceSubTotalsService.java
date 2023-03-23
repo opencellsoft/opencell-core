@@ -123,8 +123,8 @@ public class InvoiceSubTotalsService extends BusinessService<InvoiceSubTotals> {
 					if(isValid) {
 						amountWithTax = amountWithTax.add(invl.getAmountWithTax() != null ? invl.getAmountWithTax() : BigDecimal.ZERO);
 						amountWithoutTax = amountWithoutTax.add(invl.getAmountWithoutTax() != null ? invl.getAmountWithoutTax() : BigDecimal.ZERO);
-						convertedAmountWithTax = convertedAmountWithTax.add(invl.getConvertedAmountWithTax() != null ? invl.getConvertedAmountWithTax() : BigDecimal.ZERO);
-						convertedAmountWithoutTax = convertedAmountWithoutTax.add(invl.getConvertedAmountWithoutTax() != null ? invl.getConvertedAmountWithoutTax() : BigDecimal.ZERO);
+						convertedAmountWithTax = convertedAmountWithTax.add(invl.getTransactionalAmountWithTax() != null ? invl.getTransactionalAmountWithTax() : BigDecimal.ZERO);
+						convertedAmountWithoutTax = convertedAmountWithoutTax.add(invl.getTransactionalAmountWithoutTax() != null ? invl.getTransactionalAmountWithoutTax() : BigDecimal.ZERO);
 					}
 				}
 				ist.setAmountWithTax(amountWithTax);

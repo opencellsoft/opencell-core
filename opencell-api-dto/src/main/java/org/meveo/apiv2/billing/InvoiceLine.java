@@ -279,4 +279,8 @@ public interface InvoiceLine extends Resource {
 	@Nullable
 	@Schema(description = "custom field associated to accounting article")
 	CustomFieldsDto getCustomFields();
+	
+	@Schema(description = "The unit price currency")
+	@Nullable
+	String getUnitPriceCurrency();
 }

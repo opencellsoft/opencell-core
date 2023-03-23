@@ -275,12 +275,12 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             BigDecimal remainingAmountTaxForRecordedIncoice = invoice.getAmountTax();
             
             //            
-            BigDecimal remainingConvertedAmountWithoutTaxForRecordedIncoice = (invoice.getConvertedAmountWithoutTax() == null)?BigDecimal.ZERO:invoice.getConvertedAmountWithoutTax();
-            BigDecimal remainingConvertedAmountWithTaxForRecordedIncoice = useInvoiceBalance?invoice.getConvertedInvoiceBalance() : invoice.getConvertedAmountWithTax();
+            BigDecimal remainingConvertedAmountWithoutTaxForRecordedIncoice = (invoice.getTransactionalAmountWithoutTax() == null)?BigDecimal.ZERO:invoice.getTransactionalAmountWithoutTax();
+            BigDecimal remainingConvertedAmountWithTaxForRecordedIncoice = useInvoiceBalance?invoice.getTransactionalInvoiceBalance() : invoice.getTransactionalAmountWithTax();
             if (remainingConvertedAmountWithTaxForRecordedIncoice == null) {
                 remainingConvertedAmountWithTaxForRecordedIncoice = BigDecimal.ZERO;
             }                
-            BigDecimal remainingConvertedAmountTaxForRecordedIncoice = (invoice.getConvertedAmountTax() == null)?BigDecimal.ZERO:invoice.getConvertedAmountTax();
+            BigDecimal remainingConvertedAmountTaxForRecordedIncoice = (invoice.getTransactionalAmountTax() == null)?BigDecimal.ZERO:invoice.getTransactionalAmountTax();
             
             boolean allowMultipleAOperInvoice = "true".equalsIgnoreCase(ParamBean.getInstance().getProperty("ao.generateMultipleAOperInvoice", "true"));
             //cannot dispatch invoiceBalance between categories, if this is needed by a client, we will have to decide how to change all amounts according to invoiceBalance.
@@ -296,9 +296,9 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                     BigDecimal remainingConvertedAmountWithTaxForCat = BigDecimal.ZERO;
                     BigDecimal remainingConvertedAmountTaxForCat = BigDecimal.ZERO;
                     for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : catAgregate.getSubCategoryInvoiceAgregates()) {
-                        BigDecimal subCatInvAgrConvAmountWithoutTax = (subCategoryInvoiceAgregate.getConvertedAmountWithoutTax() == null)?BigDecimal.ZERO : subCategoryInvoiceAgregate.getConvertedAmountWithoutTax();
-                        BigDecimal subCatInvAgrConvAmountWithTax = (subCategoryInvoiceAgregate.getConvertedAmountWithTax() == null)?BigDecimal.ZERO : subCategoryInvoiceAgregate.getConvertedAmountWithTax();
-                        BigDecimal subCatInvAgrConvAmountTax = (subCategoryInvoiceAgregate.getConvertedAmountTax() == null)?BigDecimal.ZERO : subCategoryInvoiceAgregate.getConvertedAmountTax();
+                        BigDecimal subCatInvAgrConvAmountWithoutTax = (subCategoryInvoiceAgregate.getTransactionalAmountWithoutTax() == null)?BigDecimal.ZERO : subCategoryInvoiceAgregate.getTransactionalAmountWithoutTax();
+                        BigDecimal subCatInvAgrConvAmountWithTax = (subCategoryInvoiceAgregate.getTransactionalAmountWithTax() == null)?BigDecimal.ZERO : subCategoryInvoiceAgregate.getTransactionalAmountWithTax();
+                        BigDecimal subCatInvAgrConvAmountTax = (subCategoryInvoiceAgregate.getTransactionalAmountTax() == null)?BigDecimal.ZERO : subCategoryInvoiceAgregate.getTransactionalAmountTax();
                         
                         if ((subCategoryInvoiceAgregate.getInvoiceSubCategory().getOccTemplate() != null
                                 && subCategoryInvoiceAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0)
@@ -344,7 +344,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                                 remainingAmountTaxForCat, remainingConvertedAmountTaxForCat, null, null, invoice,
                                 catAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0 ? catAgregate.getInvoiceCategory().getOccTemplate()
                                         : catAgregate.getInvoiceCategory().getOccTemplateNegative(),
-                                catAgregate.getConvertedAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0 ? catAgregate.getInvoiceCategory().getOccTemplate()
+                                catAgregate.getTransactionalAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0 ? catAgregate.getInvoiceCategory().getOccTemplate()
                                                 : catAgregate.getInvoiceCategory().getOccTemplateNegative(),
                                 false);
                         recordedInvoiceCatAgregate.setCategoryInvoiceAgregate(catAgregate);
@@ -426,7 +426,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                 createRecordedInvoice(remainingAmountWithoutTaxForRecordedIncoice, remainingConvertedAmountWithoutTaxForRecordedIncoice, 
                     remainingAmountWithTaxForRecordedIncoice, remainingConvertedAmountWithTaxForRecordedIncoice,
                     remainingAmountTaxForRecordedIncoice, remainingConvertedAmountTaxForRecordedIncoice, 
-                    invoice.getNetToPay(), invoice.getConvertedNetToPay(), invoice, occTemplate, occConvertedTemplate, true);
+                    invoice.getNetToPay(), invoice.getTransactionalNetToPay(), invoice, occTemplate, occConvertedTemplate, true);
 
             // Link the recorded invoice to subscription
             recordedInvoice.setSubscription(invoice.getSubscription());
