@@ -173,9 +173,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             MatchingAmount matchingAmount = new MatchingAmount();
             if (accountOperation.getTransactionCategory() == OperationCategoryEnum.CREDIT) {
                 // Transactional Amounts
-                if (amountCredit.compareTo(accountOperation.getConvertedUnMatchingAmount()) >= 0) {
+                if (amountCredit.compareTo(accountOperation.getTransactionalUnMatchingAmount()) >= 0) {
                     fullMatch = true;
-                    amountToMatch = accountOperation.getConvertedUnMatchingAmount();
+                    amountToMatch = accountOperation.getTransactionalUnMatchingAmount();
                     amountCredit = amountCredit.subtract(amountToMatch);
                 } else {
                     fullMatch = false;
@@ -204,9 +204,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
             } else {
                 // Transactional Amounts
-                if (amountDebit.compareTo(accountOperation.getConvertedUnMatchingAmount()) >= 0) {
+                if (amountDebit.compareTo(accountOperation.getTransactionalUnMatchingAmount()) >= 0) {
                     fullMatch = true;
-                    amountToMatch = accountOperation.getConvertedUnMatchingAmount();
+                    amountToMatch = accountOperation.getTransactionalUnMatchingAmount();
                     amountDebit = amountDebit.subtract(amountToMatch);
                 } else {
                     fullMatch = false;
@@ -265,9 +265,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
             if (0 != amountToMatch.longValue()) {
                 accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(functionalAmountToMatch));
-                accountOperation.setConvertedMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
+                accountOperation.setTransactionalMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
                 accountOperation.setUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(functionalAmountToMatch));
-                accountOperation.setConvertedUnMatchingAmount(accountOperation.getConvertedUnMatchingAmount().subtract(amountToMatch));
+                accountOperation.setTransactionalUnMatchingAmount(accountOperation.getTransactionalUnMatchingAmount().subtract(amountToMatch));
                 accountOperation.setMatchingStatus(fullMatch ? MatchingStatusEnum.L : MatchingStatusEnum.P);
                 matchingAmount.setMatchingAmount(amountToMatch);
                 matchingAmount.updateAudit(currentUser);
@@ -293,9 +293,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             if (accountOperation.getTransactionCategory() == OperationCategoryEnum.CREDIT) {
 
                 // Transactional Amounts
-                if (amountCredit.compareTo(accountOperation.getConvertedUnMatchingAmount()) >= 0) {
+                if (amountCredit.compareTo(accountOperation.getTransactionalUnMatchingAmount()) >= 0) {
                     fullMatch = true;
-                    amountToMatch = accountOperation.getConvertedUnMatchingAmount();
+                    amountToMatch = accountOperation.getTransactionalUnMatchingAmount();
                     amountCredit = amountCredit.subtract(amountToMatch);
                 } else {
                     amountToMatch = amountCredit;
@@ -304,7 +304,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
                 // Functional Amounts
                 if (functionalCreditAmount.compareTo(accountOperation.getUnMatchingAmount()) >= 0) {
-                    functionalAmountToMatch = accountOperation.getConvertedUnMatchingAmount();
+                    functionalAmountToMatch = accountOperation.getTransactionalUnMatchingAmount();
                     functionalCreditAmount = amountCredit.subtract(amountToMatch);
                 } else {
                     functionalAmountToMatch = functionalCreditAmount;
@@ -318,9 +318,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
             } else {
                 // Transactional Amounts
-                if (amountDebit.compareTo(accountOperation.getConvertedUnMatchingAmount()) >= 0) {
+                if (amountDebit.compareTo(accountOperation.getTransactionalUnMatchingAmount()) >= 0) {
                     fullMatch = true;
-                    amountToMatch = accountOperation.getConvertedUnMatchingAmount();
+                    amountToMatch = accountOperation.getTransactionalUnMatchingAmount();
                     amountDebit = amountDebit.subtract(amountToMatch);
                 } else {
                     fullMatch = false;
@@ -374,10 +374,10 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
             if(0 != amountToMatch.longValue()) {
                 accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(functionalAmountToMatch));
-                accountOperation.setConvertedMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
+                accountOperation.setTransactionalMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
 
                 accountOperation.setUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(functionalAmountToMatch));
-                accountOperation.setConvertedUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(amountToMatch));
+                accountOperation.setTransactionalUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(amountToMatch));
 
                 matchingAmount.setMatchingAmount(amountToMatch);
                 accountOperation.setMatchingStatus(fullMatch ? MatchingStatusEnum.L : MatchingStatusEnum.P);
@@ -454,10 +454,10 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 exchangeDeltaAccountOperation.setAmount(exchangeLoss);
                 exchangeDeltaAccountOperation.setMatchingAmount(exchangeLoss);
             }
-            exchangeDeltaAccountOperation.setConvertedMatchingAmount(ZERO);
-            exchangeDeltaAccountOperation.setConvertedAmount(ZERO);
-            exchangeDeltaAccountOperation.setConvertedUnMatchingAmount(ZERO);
-            exchangeDeltaAccountOperation.setConvertedAmountWithoutTax(ZERO);
+            exchangeDeltaAccountOperation.setTransactionalMatchingAmount(ZERO);
+            exchangeDeltaAccountOperation.setTransactionalAmount(ZERO);
+            exchangeDeltaAccountOperation.setTransactionalUnMatchingAmount(ZERO);
+            exchangeDeltaAccountOperation.setTransactionalAmountWithoutTax(ZERO);
 
             accountOperationService.create(exchangeDeltaAccountOperation);
         }
@@ -653,11 +653,11 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             }
             if (accountOperation.getTransactionCategory() == OperationCategoryEnum.DEBIT) {
                 cptOccDebit++;
-                amoutDebit = amoutDebit.add(accountOperation.getConvertedUnMatchingAmount());
+                amoutDebit = amoutDebit.add(accountOperation.getTransactionalUnMatchingAmount());
             }
             if (accountOperation.getTransactionCategory() == OperationCategoryEnum.CREDIT) {
                 cptOccCredit++;
-                amoutCredit = amoutCredit.add(accountOperation.getConvertedMatchingAmount());
+                amoutCredit = amoutCredit.add(accountOperation.getTransactionalMatchingAmount());
             }
         }
         if (cptOccCredit == 0) {
@@ -697,7 +697,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             p.setPartialMatchingAllowed(false);
             if (amoutCredit.compareTo(amoutDebit) > 0) {
                 if (OperationCategoryEnum.CREDIT.name().equals(accountOperation.getTransactionCategory().name())) {
-                    if (balance.compareTo(accountOperation.getConvertedUnMatchingAmount()) <= 0) {
+                    if (balance.compareTo(accountOperation.getTransactionalUnMatchingAmount()) <= 0) {
                         p.setPartialMatchingAllowed(true);
                         cptPartialAllowed++;
                         accountOperationForPartialMatching = accountOperation;
@@ -705,7 +705,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 }
             } else {
                 if (accountOperation.getTransactionCategory() == OperationCategoryEnum.DEBIT) {
-                    if (balance.compareTo(accountOperation.getConvertedUnMatchingAmount()) <= 0) {
+                    if (balance.compareTo(accountOperation.getTransactionalUnMatchingAmount()) <= 0) {
                         p.setPartialMatchingAllowed(true);
                         cptPartialAllowed++;
                         accountOperationForPartialMatching = accountOperation;

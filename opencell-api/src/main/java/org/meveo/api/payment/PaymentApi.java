@@ -190,11 +190,11 @@ public class PaymentApi extends BaseApi {
         payment.setAmount(functionalAmount);
         payment.setUnMatchingAmount(functionalAmount);
         payment.setMatchingAmount(BigDecimal.ZERO);
-		payment.setConvertedAmount(convertedAmount);
-		payment.setConvertedAmountWithoutTax(convertedAmount);
+		payment.setTransactionalAmount(convertedAmount);
+		payment.setTransactionalAmountWithoutTax(convertedAmount);
 		payment.setAmountWithoutTax(functionalAmount);
-		payment.setConvertedUnMatchingAmount(convertedAmount);
-		payment.setConvertedMatchingAmount(convertedAmount);
+		payment.setTransactionalUnMatchingAmount(convertedAmount);
+		payment.setTransactionalMatchingAmount(convertedAmount);
         payment.setAccountingCode(occTemplate.getAccountingCode());
         payment.setCode(occTemplate.getCode());
         payment.setDescription(StringUtils.isBlank(paymentDto.getDescription()) ? occTemplate.getDescription() : paymentDto.getDescription());

@@ -276,11 +276,11 @@ public class AccountOperationApi extends BaseApi {
         accountOperation.setAppliedRate(lastAppliedRate);
         accountOperation.setMatchingAmount(functionalMatchingAmount != null ? functionalMatchingAmount : BigDecimal.ZERO);
         accountOperation.setUnMatchingAmount(functionalUnMatchingAmount);
-        accountOperation.setConvertedAmount(convertedAmount);
-        accountOperation.setConvertedMatchingAmount(convertedMatchingAmount);
-        accountOperation.setConvertedUnMatchingAmount(convertedUnMatchingAmount);
+        accountOperation.setTransactionalAmount(convertedAmount);
+        accountOperation.setTransactionalMatchingAmount(convertedMatchingAmount);
+        accountOperation.setTransactionalUnMatchingAmount(convertedUnMatchingAmount);
         accountOperation.setAmountWithoutTax(postData.getAmountWithoutTax());
-        accountOperation.setConvertedTaxAmount(postData.getTaxAmount() != null ? postData.getTaxAmount().multiply(lastAppliedRate) : null);
+        accountOperation.setTransactionalTaxAmount(postData.getTaxAmount() != null ? postData.getTaxAmount().multiply(lastAppliedRate) : null);
         accountOperation.setTransactionalCurrency(tradingCurrency != null ? tradingCurrency : functionalCurrency);
         accountOperation.setAccountCodeClientSide(postData.getAccountCodeClientSide());
         accountOperation.setCustomerAccount(customerAccount);

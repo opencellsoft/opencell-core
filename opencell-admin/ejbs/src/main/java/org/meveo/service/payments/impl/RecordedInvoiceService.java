@@ -481,7 +481,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         if (isRecordedInvoice) {
             recordedInvoice = (T) new RecordedInvoice();
             recordedInvoice.setNetToPay(netToPay);
-            recordedInvoice.setConvertedNetToPay(netConvertedToPay);
+            recordedInvoice.setTransactionalNetToPay(netConvertedToPay);
             
             List<String> orderNums = new ArrayList<>();
             if (invoice.getOrders() != null) {
@@ -535,11 +535,11 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         recordedInvoice.setAmountWithoutTax(amountWithoutTax);
         recordedInvoice.setTaxAmount(amountTax);
         
-        recordedInvoice.setConvertedAmount(amountConvertedWithTax);
-        recordedInvoice.setConvertedAmountWithoutTax(amountConvertedWithoutTax);
-        recordedInvoice.setConvertedTaxAmount(amountConvertedTax);        
-        recordedInvoice.setConvertedUnMatchingAmount(amountConvertedWithTax);
-        recordedInvoice.setConvertedMatchingAmount(BigDecimal.ZERO);
+        recordedInvoice.setTransactionalAmount(amountConvertedWithTax);
+        recordedInvoice.setTransactionalAmountWithoutTax(amountConvertedWithoutTax);
+        recordedInvoice.setTransactionalTaxAmount(amountConvertedTax);        
+        recordedInvoice.setTransactionalUnMatchingAmount(amountConvertedWithTax);
+        recordedInvoice.setTransactionalMatchingAmount(BigDecimal.ZERO);
         
         recordedInvoice.setSeller(invoice.getSeller());
         recordedInvoice.setCollectionDate(invoice.getInitialCollectionDate());
