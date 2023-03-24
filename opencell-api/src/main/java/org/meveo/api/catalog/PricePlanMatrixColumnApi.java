@@ -43,7 +43,7 @@ public class PricePlanMatrixColumnApi extends BaseApi {
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
 
-    public PricePlanMatrixColumn create(String pricePlanMatrixCode, int version, PricePlanMatrixColumnDto dtoData) throws MeveoApiException, BusinessException {
+    public PricePlanMatrixColumnDto create(String pricePlanMatrixCode, int version, PricePlanMatrixColumnDto dtoData) throws MeveoApiException, BusinessException {
 
         checkMissingParameters(pricePlanMatrixCode, version, dtoData);
 
@@ -65,7 +65,7 @@ public class PricePlanMatrixColumnApi extends BaseApi {
         populatePricePlanMatrixColumn(dtoData, pricePlanMatrixColumn, pricePlanMatrixVersion);
 
         pricePlanMatrixColumnService.create(pricePlanMatrixColumn);
-        return pricePlanMatrixColumn;
+        return new PricePlanMatrixColumnDto(pricePlanMatrixColumn);
     }
 
     public PricePlanMatrixColumn update(String pricePlanMatrixCode, int version, PricePlanMatrixColumnDto dtoData) throws MeveoApiException, BusinessException {
