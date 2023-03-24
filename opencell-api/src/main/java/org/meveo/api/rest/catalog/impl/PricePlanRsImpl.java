@@ -21,6 +21,7 @@ package org.meveo.api.rest.catalog.impl;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.transaction.Transactional;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.catalog.PricePlanMatrixApi;
@@ -287,7 +288,7 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
             return errorResponse(e, result.getActionStatus());
         }
     }
-
+    @Transactional
     @Override
     public Response create(String pricePlanMatrixCode, int pricePlanMatrixVersion, PricePlanMatrixColumnDto postData) {
         GetPricePlanMatrixColumnResponseDto response = new GetPricePlanMatrixColumnResponseDto();
