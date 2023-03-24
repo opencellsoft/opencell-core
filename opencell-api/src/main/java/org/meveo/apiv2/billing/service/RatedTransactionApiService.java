@@ -124,9 +124,6 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 			throw new InvalidParameterException("filters is required");
 		}
 		Map<String, Object> modifiableFilters = new HashMap<>(filters);
-		if(filters.get("status") == null) {
-			modifiableFilters.put("status", RatedTransactionStatusEnum.BILLED.toString());
-		}
 		List<RatedTransaction> rtToDuplicate = ratedTransactionService.findByFilter(modifiableFilters);
 		if(CollectionUtils.isEmpty(rtToDuplicate)) {
 			log.warn("list of rated transaction to duplicate is empty for filters : {}", filters);
