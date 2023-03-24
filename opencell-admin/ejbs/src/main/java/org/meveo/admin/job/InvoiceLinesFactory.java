@@ -106,7 +106,8 @@ public class InvoiceLinesFactory {
         ofNullable(data.get("article_id")).ifPresent(id -> invoiceLine.setAccountingArticle(accountingArticleService.getEntityManager().getReference(AccountingArticle.class, (Number)id)));
         log.debug("discounted_Ratedtransaction_id={},{}",data.get("discounted_ratedtransaction_id"),iLIdsRtIdsCorrespondence.size());
         if(data.get("discounted_ratedtransaction_id")!=null) {
-        	Long discountedILId=iLIdsRtIdsCorrespondence.get((Long) data.get("discounted_ratedtransaction_id"));
+        	Long discountedILId =
+                    iLIdsRtIdsCorrespondence.get(((Number)data.get("discounted_ratedtransaction_id")).longValue());
         		log.debug("discountedRatedTransaction discountedILId={}",discountedILId);
         		if(discountedILId!=null) {
         			InvoiceLine discountedIL = invoiceLineService.findById(discountedILId);
@@ -120,9 +121,9 @@ public class InvoiceLinesFactory {
                             invoiceLine.setDiscountPlanType(discountRatedTransaction.getDiscountPlanType());
                             invoiceLine.setDiscountValue(discountRatedTransaction.getDiscountValue());
                             invoiceLine.setSequence(discountRatedTransaction.getSequence());
-                            invoiceLine.setDiscountAmount(invoiceLine.getDiscountAmount().add(discountRatedTransaction.getDiscountValue()));
+                            invoiceLine.setDiscountAmount(invoiceLine.getDiscountAmount()
+                                    .add(discountRatedTransaction.getDiscountValue()));
                             break;
-                            
                         }
                     }
             		
@@ -247,7 +248,7 @@ public class InvoiceLinesFactory {
         if (serviceInstance == null) {
             return Collections.emptyList();
         }
-        return serviceInstance.getAttributeInstances().stream().map(attributeInstance -> (AttributeValue) attributeInstance).collect(toList());
+        return serviceInstance.getAttributeInstances().stream().map(AttributeValue.class::cast).collect(toList());
     }
 
     private Map<String, Object> fromAttributeValue(List<AttributeValue> attributeValues) {
