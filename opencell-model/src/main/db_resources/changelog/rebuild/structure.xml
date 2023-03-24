@@ -2142,7 +2142,7 @@
             <column name="transactional_amount_without_tax" type="numeric(23, 12)" />
             <column name="transactional_tax_amount" type="numeric(23, 12)" />
             <column name="transactional_matching_amount" type="numeric(23, 12)" />
-            <column name="converted_un_matching_amount" type="numeric(23, 12)" />
+            <column name="transactional_un_matching_amount" type="numeric(23, 12)" />
             <column name="transactional_currency" type="bigint" />
             <column name="applied_rate" type="numeric(23, 12)" />
             <column name="applied_rate_date" type="datetime" />
