@@ -470,6 +470,15 @@ public class Subscription extends BusinessCFEntity implements IInvoicingMinimumA
     @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, orphanRemoval = true, fetch = LAZY)
     private List<AttributeInstance> attributeInstances = new ArrayList<>();
 
+    
+
+    /**
+     * Usage charge instances related to subscription
+     */
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
+    @OrderBy("priority")
+    private List<UsageChargeInstance> usageChargeInstances;
+    
     /**
      * This method is called implicitly by hibernate, used to enable
 	 * encryption for custom fields of this entity
@@ -1286,4 +1295,17 @@ public class Subscription extends BusinessCFEntity implements IInvoicingMinimumA
 		this.contract = contract;
 	}
 	
+}
+	/**
+	 * @return Usage charge instances related to subscription
+	 */
+	public List<UsageChargeInstance> getUsageChargeInstances() {
+        return usageChargeInstances;
+    }
+	/**
+	 * @param usageChargeInstances Usage charge instances related to subscription
+	 */
+	public void setUsageChargeInstances(List<UsageChargeInstance> usageChargeInstances) {
+        this.usageChargeInstances = usageChargeInstances;
+    }
 }
