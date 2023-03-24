@@ -16105,5 +16105,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="transactional_payment_fees" type="numeric(23, 12)"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD-14597_20230324" author="TarikFA.">
+        <addColumn tableName="billing_rated_transaction">
+            <column name="pending_duplicates" type="int4" defaultValueNumeric="0"/>
+            <column name="pending_duplicates_to_negate" type="int4" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>
