@@ -3414,6 +3414,8 @@
             <column name="origin_billing_account" type="bigint" />
             <column name="rules_contract_id" type="bigint" />
     		<column name="origin_ratedtransaction_id" type="bigint" />
+            <column name="pending_duplicates" type="int4" defaultValueNumeric="0"/>
+            <column name="pending_duplicates_to_negate" type="int4" defaultValueNumeric="0"/>
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -19575,6 +19577,7 @@
     <changeSet id="#INTRD-14743_20230316" author="TarikFA." />
     <changeSet id="#INTRD-15043_20230317" author="AdilElJaouhari"/>
     <changeSet id="#INTRD-15114_20230323" author="AdilElJaouhari" />
+    <changeSet id="#INTRD-14597_20230324" author="TarikFA." />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

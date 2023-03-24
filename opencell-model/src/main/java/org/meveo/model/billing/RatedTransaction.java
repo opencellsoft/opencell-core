@@ -642,6 +642,12 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
   	 */
   	@Column(name = "sequence")
   	private Integer sequence;
+
+    @Column(name = "pending_duplicates")
+    private Integer pendingDuplicates;
+
+    @Column(name = "pending_duplicates_to_negate")
+    private Integer pendingDuplicatesToNegate;
     
     public RatedTransaction() {
         super();
@@ -1667,5 +1673,20 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
 	public void setOriginRatedTransaction(RatedTransaction originRatedTransaction) {
 		this.originRatedTransaction = originRatedTransaction;
 	}
-	
+
+    public Integer getPendingDuplicates() {
+        return pendingDuplicates;
+    }
+
+    public void setPendingDuplicates(Integer pendingDuplicates) {
+        this.pendingDuplicates = pendingDuplicates;
+    }
+
+    public Integer getPendingDuplicatesToNegate() {
+        return pendingDuplicatesToNegate;
+    }
+
+    public void setPendingDuplicatesToNegate(Integer pendingDuplicatesToNegate) {
+        this.pendingDuplicatesToNegate = pendingDuplicatesToNegate;
+    }
 }
