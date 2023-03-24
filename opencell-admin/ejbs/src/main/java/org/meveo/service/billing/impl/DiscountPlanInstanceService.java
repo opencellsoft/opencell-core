@@ -30,6 +30,7 @@ import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.BusinessEntity;
@@ -61,14 +62,16 @@ public class DiscountPlanInstanceService extends PersistenceService<DiscountPlan
 		qb.addCriterionEntity("billingAccount", ba);
 		qb.addCriterion("discountPlan.code", "=", code, true);
 
-		return (DiscountPlanInstance) qb.getQuery(getEntityManager()).getSingleResult();
+		List<DiscountPlanInstance> result = qb.getQuery(getEntityManager()).getResultList();
+		return CollectionUtils.isNotEmpty(result) ? result.get(0) : null;
 	}
 
 	public DiscountPlanInstance findBySubscriptionAndCode(Subscription subscription, String code) {
 		QueryBuilder qb = new QueryBuilder(DiscountPlanInstance.class, "dpi");
 		qb.addCriterionEntity("subscription", subscription);
 		qb.addCriterion("discountPlan.code", "=", code, true);
-		return (DiscountPlanInstance) qb.getQuery(getEntityManager()).getSingleResult();
+		List<DiscountPlanInstance> result = qb.getQuery(getEntityManager()).getResultList();
+		return CollectionUtils.isNotEmpty(result) ? result.get(0) : null;
 	}
 
 	/**
