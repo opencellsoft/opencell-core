@@ -3424,6 +3424,8 @@
 			<column name="converted_unit_amount_with_tax" type="numeric(23, 12)" />
 			<column name="converted_unit_amount_tax" type="numeric(23, 12)" />
 			<column name="trading_currency_id" type="bigint" />
+            <column name="pending_duplicates" type="int4" defaultValueNumeric="0"/>
+            <column name="pending_duplicates_to_negate" type="int4" defaultValueNumeric="0"/>
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -19610,6 +19612,7 @@
     <changeSet id="#INTRD-14332_20230226_contract_application_el" author="a.rouaguebe" />
     <changeSet id="#INTRD-14522_20230301" author="TarikFA." />
     <changeSet author="ZBariki" id="#INTRD-14208_20230224" dbms="oracle" />
+    <changeSet id="#INTRD-14597_20230324" author="TarikFA." />
     
     <changeSet id="#INTRD-13326_20230227_FK" author="zelmeliani">
 		<addForeignKeyConstraint
