@@ -387,14 +387,17 @@ public class UsageRatingService extends RatingService implements Serializable {
             // Charges should be already ordered by priority and id (why id??)
             Long subscriptionId = edr.getSubscription().getId();
             if (subscriptionId != null) {
-                usageChargeInstances = usageChargeInstanceService.getUsageChargeInstancesValidForDateBySubscriptionId(subscriptionId, edr.getEventDate());
+                
+                boolean isSubscriptionInitialized = Hibernate.isInitialized(edr.getSubscription());
+                
+                usageChargeInstances = usageChargeInstanceService.getUsageChargeInstancesValidForDateBySubscriptionId(edr.getSubscription(), edr.getEventDate());
                 if (usageChargeInstances == null || usageChargeInstances.isEmpty()) {
                     throw new NoChargeException("No active usage charges are associated with subscription " + subscriptionId);
                 }
                 
                 // Just to load all subscription service instances with their attributes to avoid querying service instances and their attributes one by one. 
                 // Done once per subscription (in same tx) - a fix when EDR batch to rate is based on same subscription, or when EDR triggers other EDRs 
-                if (!Hibernate.isInitialized(edr.getSubscription())) {
+                if (!isSubscriptionInitialized) {
                     List<ServiceInstance> subscriptionServices = getEntityManager().createNamedQuery("ServiceInstance.findBySubscriptionIdLoadAttributes", ServiceInstance.class).setParameter("subscriptionId", subscriptionId)
                         .getResultList();
                     UserAccount userAccount = userAccountService.findById(edr.getSubscription().getUserAccount().getId(), Arrays.asList("wallet"));
