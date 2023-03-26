@@ -189,7 +189,7 @@
                                                     rendered="#{entity.paymentType == PaymentMethodEnum.CARD}" />
                                                 <h:outputText value="#{entity.bankCoordinates.bankName} " rendered="#{entity.paymentType == PaymentMethodEnum.DIRECTDEBIT}" />
                                                 <h:outputText value="#{entity.userId} "
-                                                    rendered="#{entity.paymentType == PaymentMethodEnum.PAYPAL or entity.paymentType == PaymentMethodEnum.STRIPE}" />
+                                                    rendered="#{entity.paymentType == PaymentMethodEnum.PAYPALPAYMENTLINK or entity.paymentType == PaymentMethodEnum.STRIPEDIRECTLINK}" />
                                                 <h:outputText value="#{entity.bankCoordinates.iban}" rendered="#{entity.paymentType == PaymentMethodEnum.DIRECTDEBIT}"
                                                     converter="ibanConverter" />
                                             </p:column>
@@ -236,8 +236,8 @@
                                                     <f:selectItem itemLabel="#{messages[PaymentMethodEnum.CHECK.label]}" itemValue="#{PaymentMethodEnum.CHECK}" />
                                                     <f:selectItem itemLabel="#{messages[PaymentMethodEnum.DIRECTDEBIT.label]}" itemValue="#{PaymentMethodEnum.DIRECTDEBIT}" />
                                                     <f:selectItem itemLabel="#{messages[PaymentMethodEnum.WIRETRANSFER.label]}" itemValue="#{PaymentMethodEnum.WIRETRANSFER}" />
-                                                    <f:selectItem itemLabel="#{messages[PaymentMethodEnum.PAYPAL.label]}" itemValue="#{PaymentMethodEnum.PAYPAL}" />
-                                                    <f:selectItem itemLabel="#{messages[PaymentMethodEnum.STRIPE.label]}" itemValue="#{PaymentMethodEnum.STRIPE}" />
+                                                    <f:selectItem itemLabel="#{messages[PaymentMethodEnum.PAYPALPAYMENTLINK.label]}" itemValue="#{PaymentMethodEnum.PAYPALPAYMENTLINK}" />
+                                                    <f:selectItem itemLabel="#{messages[PaymentMethodEnum.STRIPEDIRECTLINK.label]}" itemValue="#{PaymentMethodEnum.STRIPEDIRECTLINK}" />
                                                     <f:selectItem itemLabel="#{messages[PaymentMethodEnum.CARD.label]}" itemValue="#{PaymentMethodEnum.CARD}" />
                                                     <f:selectItem itemLabel="#{messages[PaymentMethodEnum.CASH.label]}" itemValue="#{PaymentMethodEnum.CASH}" />
                                                     <f:converter converterId="enumConverter" />
@@ -308,7 +308,7 @@
                                                         </h:panelGroup>
                                                     </c:if>
                                                     <c:if
-                                                        test="#{customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.PAYPAL or customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.STRIPE  }">
+                                                        test="#{customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.PAYPALPAYMENTLINK or customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.STRIPEDIRECTLINK  }">
                                                         <hftl:decorateFormField label="#{messages['paymentMethod.userId']}" fieldId="userId">
                                                             <p:inputText id="userId" value="#{customerAccountBean.selectedPaymentMethod.userId}" required="false" />
                                                         </hftl:decorateFormField>

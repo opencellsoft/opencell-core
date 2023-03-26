@@ -2654,7 +2654,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
         if (invoiceConfiguration.isDisplayTaxDetails()) {
             Optional<TaxDetails> oTaxDetails = invoiceLineService.getTaxDetails(invoiceLine.getTax(),
-                    invoiceLine.getAmountTax(), invoiceLine.getConvertedAmountTax());
+                    invoiceLine.getAmountTax(), invoiceLine.getTransactionalAmountTax());
             if (oTaxDetails.isPresent()) {
                 TaxDetails taxDetails = oTaxDetails.get();
                 Element taxDetailsTag = doc.createElement("taxDetails");
@@ -2705,8 +2705,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
     private void buildExtraParamterNode(Document doc, RatedTransaction ratedItem, Element ratedItemNode) {
         Element parameterExtraNode = doc.createElement("parameterExtra");
-        Text parameterExtraText = this.createTextNode(doc, ratedItem.getParameterExtra());
-        parameterExtraNode.appendChild(parameterExtraText);
+        parameterExtraNode.appendChild(doc.createCDATASection(getDefaultIfNull(ratedItem.getParameterExtra(), " ")));
         ratedItemNode.appendChild(parameterExtraNode);
     }
 

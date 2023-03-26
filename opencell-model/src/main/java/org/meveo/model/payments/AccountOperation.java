@@ -217,34 +217,34 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     private BigDecimal unMatchingAmount = BigDecimal.ZERO;
 
     /**
-     * Converted Amount with tax
+     * Transactional Amount with tax
      */
-    @Column(name = "converted_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedAmount;
+    @Column(name = "transactional_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalAmount;
 
     /**
-     * Converted Amount without tax
+     * Transactional Amount without tax
      */
-    @Column(name = "converted_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedAmountWithoutTax;
+    @Column(name = "transactional_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalAmountWithoutTax;
 
     /**
-     * Converted Tax Amount
+     * Transactional Tax Amount
      */
-    @Column(name = "converted_tax_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedTaxAmount;
+    @Column(name = "transactional_tax_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalTaxAmount;
 
     /**
-     * Converted Matched Amount
+     * Transactional Matched Amount
      */
-    @Column(name = "converted_matching_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedMatchingAmount = BigDecimal.ZERO;
+    @Column(name = "transactional_matching_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalMatchingAmount = BigDecimal.ZERO;
 
     /**
-     * Converted Unmatched Amount
+     * Transactional Unmatched Amount
      */
-    @Column(name = "converted_un_matching_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedUnMatchingAmount = BigDecimal.ZERO;
+    @Column(name = "transactional_un_matching_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalUnMatchingAmount = BigDecimal.ZERO;
     
     /**
      * Transactional currency
@@ -1102,51 +1102,51 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
         this.amountForUnmatching = amountForUnmatching;
     }
 
-    public BigDecimal getConvertedAmount() {
-        return convertedAmount;
+    public BigDecimal getTransactionalAmount() {
+        return transactionalAmount != null ? amount : transactionalAmount;
     }
 
-    public void setConvertedAmount(BigDecimal convertedAmount) {
-        this.convertedAmount = convertedAmount;
+    public void setTransactionalAmount(BigDecimal transactionalAmount) {
+        this.transactionalAmount = transactionalAmount;
     }
 
-    public BigDecimal getConvertedAmountWithoutTax() {
-        return convertedAmountWithoutTax;
+    public BigDecimal getTransactionalAmountWithoutTax() {
+        return transactionalAmountWithoutTax;
     }
 
-    public void setConvertedAmountWithoutTax(BigDecimal convertedAmountWithoutTax) {
-        this.convertedAmountWithoutTax = convertedAmountWithoutTax;
+    public void setTransactionalAmountWithoutTax(BigDecimal transactionalAmountWithoutTax) {
+        this.transactionalAmountWithoutTax = transactionalAmountWithoutTax;
     }
 
-    public BigDecimal getConvertedTaxAmount() {
-        return convertedTaxAmount;
+    public BigDecimal getTransactionalTaxAmount() {
+        return transactionalTaxAmount;
     }
 
-    public void setConvertedTaxAmount(BigDecimal convertedTaxAmount) {
-        this.convertedTaxAmount = convertedTaxAmount;
+    public void setTransactionalTaxAmount(BigDecimal transactionalTaxAmount) {
+        this.transactionalTaxAmount = transactionalTaxAmount;
     }
 
-    public BigDecimal getConvertedMatchingAmount() {
-        return convertedMatchingAmount;
+    public BigDecimal getTransactionalMatchingAmount() {
+        return transactionalMatchingAmount != null ? transactionalMatchingAmount : matchingAmount;
     }
 
-    public void setConvertedMatchingAmount(BigDecimal convertedMatchingAmount) {
-        if(convertedMatchingAmount == null) {
-            this.convertedMatchingAmount =BigDecimal.ZERO;
+    public void setTransactionalMatchingAmount(BigDecimal transactionalMatchingAmount) {
+        if(transactionalMatchingAmount == null) {
+            this.transactionalMatchingAmount = matchingAmount;
         }else {
-            this.convertedMatchingAmount = convertedMatchingAmount;
+            this.transactionalMatchingAmount = transactionalMatchingAmount;
         }
     }
 
-    public BigDecimal getConvertedUnMatchingAmount() {
-        return convertedUnMatchingAmount;
+    public BigDecimal getTransactionalUnMatchingAmount() {
+        return transactionalUnMatchingAmount != null ? transactionalUnMatchingAmount : unMatchingAmount;
     }
 
-    public void setConvertedUnMatchingAmount(BigDecimal convertedUnMatchingAmount) {      
-        if(convertedUnMatchingAmount == null) {
-            this.convertedUnMatchingAmount =BigDecimal.ZERO;
+    public void setTransactionalUnMatchingAmount(BigDecimal transactionalUnMatchingAmount) {      
+        if(transactionalUnMatchingAmount == null) {
+            this.transactionalUnMatchingAmount = unMatchingAmount;
         }else {
-            this.convertedUnMatchingAmount = convertedUnMatchingAmount;
+            this.transactionalUnMatchingAmount = transactionalUnMatchingAmount;
         }
     }
 

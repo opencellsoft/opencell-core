@@ -182,7 +182,6 @@ public class OrderValidationScript extends Script {
         for (RecurringChargeInstance recurringChargeInstance : recurringChargeInstances) {
             recurringChargeInstance.setSubscriptionDate(serviceInstance.getSubscriptionDate());
             recurringChargeInstance.setQuantity(serviceInstance.getQuantity());
-            recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
         }
         subscription.addServiceInstance(serviceInstance);
         return serviceInstance;

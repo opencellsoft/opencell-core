@@ -36,12 +36,14 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
@@ -50,6 +52,7 @@ import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.OfferTemplateAttribute;
+import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
@@ -62,6 +65,7 @@ import org.meveo.service.cpq.CommercialRuleHeaderService;
 import org.meveo.service.cpq.CommercialRuleItemService;
 import org.meveo.service.cpq.CommercialRuleLineService;
 import org.meveo.service.cpq.MediaService;
+import org.meveo.service.cpq.ProductService;
 
 /**
  * Offer Template service implementation.
@@ -89,6 +93,8 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
     @Inject
     private CommercialRuleLineService commercialRuleLineService;
+    @Inject
+    private ProductService productService;
 
     @SuppressWarnings("unchecked")
     public List<OfferTemplate> findByServiceTemplate(ServiceTemplate serviceTemplate) {
@@ -230,6 +236,10 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         offerToDuplicate.getCommercialRules()
                 .forEach(commercialRuleHeader -> commercialRuleHeader.getCommercialRuleItems()
                         .forEach(commercialRuleItem -> commercialRuleItem.getCommercialRuleLines().size()));
+        offerToDuplicate.getAllowedDiscountPlans().size();
+        offerToDuplicate.getAllowedOffersChange().size();
+        offerToDuplicate.getTags().size();
+
 
         if (offerToDuplicate.getOfferServiceTemplates() != null) {
             for (OfferServiceTemplate offerServiceTemplate : offerToDuplicate.getOfferServiceTemplates()) {
@@ -289,7 +299,16 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         
         List<Media> medias = offer.getMedias();
         offer.setMedias(new ArrayList<>());
-        
+
+        List<DiscountPlan> allowedDiscountPlans = offer.getAllowedDiscountPlans();
+        offer.setAllowedDiscountPlans(new ArrayList<>());
+
+        List<OfferTemplate> allowedOffersChange = offer.getAllowedOffersChange();
+        offer.setAllowedOffersChange(new ArrayList<>());
+
+        List<Tag> tags = offer.getTags();
+        offer.setTags(new ArrayList<>());
+
         List<OfferComponent> offerComponents = offer.getOfferComponents();
         offer.setOfferComponents(new ArrayList<>());
 
@@ -365,13 +384,38 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
     				offer.getMedias().add(newMedia);
     			}
             }
-            if(offerComponents != null) {
-            	for (OfferComponent offerComponent : offerComponents) {
-            			offerComponent.setId(null);
-            			offerComponent.setOfferTemplate(offer);
-            			offer.getOfferComponents().add(offerComponent);
-            			
-				}
+
+            if (allowedDiscountPlans != null) {
+                for (DiscountPlan discountPlan : allowedDiscountPlans) {
+                    discountPlan.setId(null);
+                    offer.getAllowedDiscountPlans().add(discountPlan);
+                }
+            }
+
+            if (allowedOffersChange != null) {
+                for (OfferTemplate offerTemplate : allowedOffersChange) {
+                    offerTemplate.setId(null);
+                    offer.getAllowedOffersChange().add(offerTemplate);
+                }
+            }
+
+            if (tags != null) {
+                for (Tag tag : tags) {
+                    tag.setId(null);
+                    offer.getTags().add(tag);
+                }
+            }
+
+            if (offerComponents != null) {
+                for (OfferComponent offerComponent : offerComponents) {
+                    offerComponent.setId(null);
+                    offerComponent.setOfferTemplate(offer);
+                    offer.getOfferComponents().add(offerComponent);
+
+                    Product product = PersistenceUtils.initializeAndUnproxy(offerComponent.getProduct());
+                    offerComponent.setProduct(productService.duplicateProduct(product, duplicateHierarchy, preserveCode));
+
+                }
             }
             if(commercialRulesHeader != null) {
                 offer.setCommercialRules(duplicateCommercialRules(offer, commercialRulesHeader));

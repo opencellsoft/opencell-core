@@ -1,5 +1,7 @@
 package org.meveo.service.cpq;
 
+import static java.lang.String.format;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
@@ -71,7 +73,7 @@ public class ContractItemService extends BusinessService<ContractItem> {
 			LOGGER.info("Updating item contract ({}) successfuly", contractItem.getCode());
 			return;
 		}
-		throw new BusinessApiException(String.format(CONTRACT_ITEM_STATUS_NOT_DRAFT_CAN_NOT_REMOVED_OR_UPDATE, contractItem.getCode(), contract.getStatus().toString()));
+		throw new BusinessApiException(format(CONTRACT_ITEM_STATUS_NOT_DRAFT_CAN_NOT_REMOVED_OR_UPDATE, contractItem.getCode(), contract.getStatus().toString()));
 	}
 
 	/**
@@ -85,7 +87,7 @@ public class ContractItemService extends BusinessService<ContractItem> {
 			throw new EntityDoesNotExistsException(ContractItem.class, contractItemCode);
 		}
 		if(item.getContract() != null && !ContractStatusEnum.DRAFT.toString().equals(item.getContract().getStatus())) {
-			throw new BusinessException(String.format(CONTRACT_ITEM_STATUS_NOT_DRAFT_CAN_NOT_REMOVED_OR_UPDATE, contractItemCode, item.getContract().getStatus().toString()));
+			throw new BusinessException(format(CONTRACT_ITEM_STATUS_NOT_DRAFT_CAN_NOT_REMOVED_OR_UPDATE, contractItemCode, item.getContract().getStatus().toString()));
 		}
 		LOGGER.info("contract item ({}) successfully deleted", contractItemCode);
 		remove(item);
@@ -124,7 +126,6 @@ public class ContractItemService extends BusinessService<ContractItem> {
     @SuppressWarnings("unchecked")
     public ContractItem getApplicableContractItem(Contract contract, OfferTemplate offer, String productCode,
 												  ChargeTemplate chargeTemplate, WalletOperation walletOperation) {
-        ContractItem contractItem = null;
         Query query = getEntityManager().createNamedQuery("ContractItem.getApplicableContracts")
 				.setParameter("contractId", contract.getId())
 				.setParameter("offerId", offer.getId())
@@ -133,34 +134,27 @@ public class ContractItemService extends BusinessService<ContractItem> {
         List<ContractItem> applicableContractItems = query.getResultList();
 
         if (!applicableContractItems.isEmpty()) {
-            if (applicableContractItems.size() > 1) {
-                log.error("Contract " + contract.getCode() + "has more than one item ");
-            } else {
-				ContractItem contractLineToEvaluate = applicableContractItems.get(0);
-				if(!isBlank(contractLineToEvaluate.getApplicationEl())) {
-					Map<Object, Object> contextVariables = new HashMap<>();
-					contextVariables.put("wo", walletOperation);
-					contextVariables.put("contract", contract);
-					contextVariables.put("contractLine", contractLineToEvaluate);
-					if(evaluateExpression(contractLineToEvaluate.getApplicationEl(), contextVariables, Boolean.class)) {
-						contractItem = contractLineToEvaluate;
-					}
-				}
-            }
+			Map<Object, Object> contextVariables = new HashMap<>();
+			contextVariables.put("op", walletOperation);
+			contextVariables.put("contract", contract);
+			applicableContractItems =
+					applicableContractItems
+							.stream()
+							.filter(contractLine -> isBlank(contractLine.getApplicationEl())
+									|| evaluateApplicationEl(contractLine, contextVariables))
+							.collect(toList());
         }
-        return contractItem;
+        return !applicableContractItems.isEmpty() ? applicableContractItems.get(0) : null;
     }
+
+	private boolean evaluateApplicationEl(ContractItem contractLine, Map<Object, Object> context) {
+		try {
+			context.put("contractLine", contractLine);
+			return evaluateExpression(contractLine.getApplicationEl(), context, Boolean.class);
+		} catch (Exception exception) {
+			throw new BusinessException(format("Error occurred while evaluation contract line EL, contract line code : %s",
+					contractLine.getCode()));
+		}
+	}
     
-    @SuppressWarnings("unchecked")
-    public Contract getApplicableContract(List<Contract> contracts, OfferTemplate offer, String productCode,
-										  ChargeTemplate chargeTemplate, WalletOperation walletOperation) {
-        for (Contract contract : contracts) {
-            ContractItem contractItem =
-					getApplicableContractItem(contract, offer, productCode, chargeTemplate, walletOperation);
-            if (contractItem != null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
-                return contract;
-            }
-        }
-        return null;
-    }
 }

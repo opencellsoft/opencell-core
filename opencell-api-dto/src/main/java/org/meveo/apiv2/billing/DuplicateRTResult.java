@@ -12,6 +12,8 @@ public class DuplicateRTResult {
 	private Statistics statistics;
 	private ActionStatus actionStatus;
 	private List<Long> failIds = new ArrayList<>();
+	private List<Long> createdRts = new ArrayList<>();
+
 	
 	
 	public DuplicateRTResult(Statistics statistics, ActionStatus actionStatus) {
@@ -63,6 +65,20 @@ public class DuplicateRTResult {
 	 */
 	public void setFailIds(List<Long> failIds) {
 		this.failIds = failIds;
+	}
+
+	/**
+	 * @return the createdRts
+	 */
+	public List<Long> getCreatedRts() {
+		return createdRts;
+	}
+
+	/**
+	 * @param createdRts the createdRts to set
+	 */
+	public void setCreatedRts(List<Long> createdRts) {
+		this.createdRts = createdRts;
 	}
 	
 	
