@@ -172,18 +172,18 @@ public class InvoiceLinesFactory {
         	
         	BigDecimal convertedAmountWithTax = (BigDecimal) data.getOrDefault("sum_converted_amount_with_tax", ZERO);
         	BigDecimal convertedAmountWithoutTax = (BigDecimal) data.getOrDefault("sum_converted_amount_without_tax", ZERO);
-        	invoiceLine.setConvertedAmountWithTax(convertedAmountWithTax);
-			invoiceLine.setConvertedAmountWithoutTax(convertedAmountWithoutTax);
-        	invoiceLine.setConvertedAmountTax((BigDecimal) data.get("sum_converted_amount_tax"));
+        	invoiceLine.setTransactionalAmountWithTax (convertedAmountWithTax);
+			invoiceLine.setTransactionalAmountWithoutTax(convertedAmountWithoutTax);
+        	invoiceLine.setTransactionalAmountTax((BigDecimal) data.get("sum_converted_amount_tax"));
 
         	MathContext mc = new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
 
         	BigDecimal unitAmount = isEnterprise ? (BigDecimal) data.getOrDefault("converted_unit_amount_without_tax", ZERO) : (BigDecimal) data.getOrDefault("converted_unit_amount_with_tax", ZERO);
             BigDecimal quantity = (BigDecimal) data.getOrDefault("quantity", ZERO);
             BigDecimal unitPrice = quantity.compareTo(ZERO) == 0 ? unitAmount : unitAmount.divide(quantity, mc);
-			invoiceLine.setConvertedUnitPrice(unitPrice);
+			invoiceLine.setTransactionalUnitPrice(unitPrice);
 
-        	invoiceLine.setConvertedRawAmount(isEnterprise ? convertedAmountWithoutTax : amountWithTax);
+        	invoiceLine.setTransactionalRawAmount(isEnterprise ? convertedAmountWithoutTax : amountWithTax);
         }
         
         DatePeriod validity = new DatePeriod();

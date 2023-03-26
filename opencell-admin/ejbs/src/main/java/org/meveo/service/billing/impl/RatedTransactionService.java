@@ -1799,7 +1799,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     "tax.id as tax_id", "infoOrder.order.id as order_id", "infoOrder.productVersion.id as product_version_id",
                     "infoOrder.orderLot.id as order_lot_id", "chargeInstance.id as charge_instance_id",
                     "accountingArticle.id as article_id", "discountedRatedTransaction as discounted_ratedtransaction_id",
-                    "convertedAmountWithoutTax as sum_converted_amount_without_tax", "convertedAmountWithTax as sum_converted_amount_with_tax"));
+                    "useSpecificPriceConversion as use_specific_price_conversion",
+                    "convertedUnitAmountWithoutTax as converted_unit_amount_without_tax",
+                    "convertedUnitAmountTax as converted_unit_amount_tax",
+                    "convertedUnitAmountWithTax as converted_unit_amount_with_tax",
+                    "convertedAmountWithoutTax as sum_converted_amount_without_tax", 
+                    "convertedAmountTax as sum_converted_amount_tax",
+                    "convertedAmountWithTax as sum_converted_amount_with_tax"));
         }
         if(BILLINGACCOUNT != type || (BILLINGACCOUNT == type && !ignoreSubscription)) {
             fieldToFetch.add("subscription.id as subscription_id");
