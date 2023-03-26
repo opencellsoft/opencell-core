@@ -669,7 +669,6 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
         this.itemNumber++;
         this.invoiceLinesToAssociate.add(invoiceLine);
 
-        BigDecimal amount = isEnterprise? invoiceLine.getAmountWithoutTax(): invoiceLine.getAmountWithTax();
         if(addAmounts) {
             if (isEnterprise) {
                 addAmountWithoutTax(invoiceLine.getAmountWithoutTax());

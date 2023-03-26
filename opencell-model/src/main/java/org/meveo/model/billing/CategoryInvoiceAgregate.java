@@ -163,6 +163,12 @@ public class CategoryInvoiceAgregate extends InvoiceAgregate {
                 amountWithoutTax = amountWithoutTax.add(subCategoryInvoiceAgregate.getAmountWithoutTax());
                 amountWithTax = amountWithTax.add(subCategoryInvoiceAgregate.getAmountWithTax());
                 amountTax = amountTax.add(subCategoryInvoiceAgregate.getAmountTax());
+                if(subCategoryInvoiceAgregate.isUseSpecificPriceConversion()) {
+                	transactionalAmountWithoutTax = transactionalAmountWithoutTax.add(subCategoryInvoiceAgregate.getTransactionalAmountWithoutTax());
+                	transactionalAmountWithTax = transactionalAmountWithTax.add(subCategoryInvoiceAgregate.getTransactionalAmountWithTax());
+                	transactionalAmountTax = transactionalAmountTax.add(subCategoryInvoiceAgregate.getTransactionalAmountTax());
+                	setUseSpecificPriceConversion(true);
+                }
             }
         }
     }

@@ -21,7 +21,6 @@ import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -1023,6 +1022,33 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         }
         if (amountToAdd != null) {
             amountTax = amountTax.add(amountToAdd);
+        }
+    }
+
+    public void addTransactionalAmountWithTax(BigDecimal amountToAdd) {
+        if (transactionalAmountWithTax == null) {
+        	transactionalAmountWithTax = ZERO;
+        }
+        if (amountToAdd != null) {
+        	transactionalAmountWithTax = transactionalAmountWithTax.add(amountToAdd);
+        }
+    }
+
+    public void addTransactionalAmountWithoutTax(BigDecimal amountToAdd) {
+        if (transactionalAmountWithoutTax == null) {
+        	transactionalAmountWithoutTax = ZERO;
+        }
+        if (amountToAdd != null) {
+        	transactionalAmountWithoutTax = transactionalAmountWithoutTax.add(amountToAdd);
+        }
+    }
+
+    public void addTransactionalAmountTax(BigDecimal amountToAdd) {
+        if (transactionalAmountTax == null) {
+        	transactionalAmountTax = ZERO;
+        }
+        if (amountToAdd != null) {
+        	transactionalAmountTax = transactionalAmountTax.add(amountToAdd);
         }
     }
 
