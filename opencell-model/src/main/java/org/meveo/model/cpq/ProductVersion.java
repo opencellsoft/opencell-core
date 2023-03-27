@@ -153,6 +153,7 @@ public class ProductVersion extends AuditableEntity{
 				joinColumns = @JoinColumn(name = "product_version_id", referencedColumnName = "id"),
 				inverseJoinColumns = @JoinColumn(name = "grouped_attributes_id", referencedColumnName = "id")				
 			)
+	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private List<GroupedAttributes> groupedAttributes = new ArrayList<GroupedAttributes>();
     
     
