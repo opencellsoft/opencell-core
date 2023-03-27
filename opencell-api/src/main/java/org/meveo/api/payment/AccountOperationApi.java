@@ -243,9 +243,9 @@ public class AccountOperationApi extends BaseApi {
 
         BigDecimal functionalAmount = postData.getAmount();
         BigDecimal functionalMatchingAmount = postData.getMatchingAmount();
-        BigDecimal functionalUnMatchingAmount = postData.getUnMatchingAmount();
         BigDecimal convertedAmount = postData.getAmount();
         BigDecimal convertedMatchingAmount = postData.getMatchingAmount() != null ? postData.getMatchingAmount() : BigDecimal.ZERO;
+        BigDecimal functionalUnMatchingAmount = getFunctionalUnMatchingAmount(postData);
         BigDecimal convertedUnMatchingAmount = postData.getUnMatchingAmount();
         String transactionalcurrency = postData.getTransactionalCurrency();
         BigDecimal lastAppliedRate = BigDecimal.ONE;
@@ -265,8 +265,9 @@ public class AccountOperationApi extends BaseApi {
 
             if (!functionalCurrency.equals(tradingCurrency)) {
                 functionalAmount = convertedAmount.divide(exchangeRate.getExchangeRate(),appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode());
-                functionalMatchingAmount = convertedMatchingAmount.divide(exchangeRate.getExchangeRate(), 2, RoundingMode.HALF_UP);
-                functionalUnMatchingAmount = convertedUnMatchingAmount.divide(exchangeRate.getExchangeRate(), 2, RoundingMode.HALF_UP);
+                functionalMatchingAmount = convertedMatchingAmount.divide(exchangeRate.getExchangeRate(), 2,  appProvider.getInvoiceRoundingMode().getRoundingMode());
+                convertedUnMatchingAmount = postData.getUnMatchingAmount() != null ? postData.getUnMatchingAmount() : postData.getAmount();
+                functionalUnMatchingAmount = convertedUnMatchingAmount.divide(exchangeRate.getExchangeRate(), 2,  appProvider.getInvoiceRoundingMode().getRoundingMode());
                 lastAppliedRate = exchangeRate.getExchangeRate();
 
             }
@@ -378,6 +379,18 @@ public class AccountOperationApi extends BaseApi {
             }
         }
         return accountOperation.getId();
+    }
+
+    private static BigDecimal getFunctionalUnMatchingAmount(AccountOperationDto postData) {
+        BigDecimal functionalUnMatchingAmount;
+        if (postData.getUnMatchingAmount() != null) {
+            functionalUnMatchingAmount = postData.getUnMatchingAmount();
+        } else if (postData.getAmount() != null) {
+            functionalUnMatchingAmount = postData.getAmount();
+        } else {
+            functionalUnMatchingAmount = BigDecimal.ZERO;
+        }
+        return functionalUnMatchingAmount;
     }
 
     private static ExchangeRate getExchangeRate(TradingCurrency tradingCurrency, String transactionalCurrency, Date exchangeDate) {
