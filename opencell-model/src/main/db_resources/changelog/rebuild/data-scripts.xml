@@ -109,11 +109,11 @@
         </insert>
         <insert tableName="crm_provider_pay_methods">
             <column name="provider_id" valueNumeric="1" />
-            <column name="payment_method" value="PAYPAL" />
+            <column name="payment_method" value="PAYPALPAYMENTLINK" />
         </insert>
         <insert tableName="crm_provider_pay_methods">
             <column name="provider_id" valueNumeric="1" />
-            <column name="payment_method" value="STRIPE" />
+            <column name="payment_method" value="STRIPEDIRECTLINK" />
         </insert>
         <insert tableName="crm_provider_pay_methods">
             <column name="provider_id" valueNumeric="1" />
