@@ -16191,5 +16191,13 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="pending_duplicates_to_negate" type="int4" defaultValueNumeric="0"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD-14663_20230327" author="HatimO.">
+        <addColumn tableName="document">
+            <column name="document_version" type="int4" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>
