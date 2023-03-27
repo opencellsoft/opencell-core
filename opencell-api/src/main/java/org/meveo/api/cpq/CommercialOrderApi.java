@@ -1,5 +1,8 @@
 package org.meveo.api.cpq;
 
+import static java.lang.String.format;
+import static org.meveo.model.cpq.enums.ProductStatusEnum.CLOSED;
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -10,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -58,7 +62,6 @@ import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.commercial.*;
-import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.scripts.ScriptInstance;
@@ -475,6 +478,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 		}
 		handleMissingParameters();
 		CommercialOrder order = commercialOrderService.findById(commercialOrderId);
+		validateProducts(order.getOffers());
 		if(order == null)
 			throw new EntityDoesNotExistsException(CommercialOrder.class, commercialOrderId);
 		if(order.getStatus().equalsIgnoreCase(statusTarget))
@@ -511,6 +515,26 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 		commercialOrderStatusUpdatedEvent.fire(order);
 		if(shouldFireAdvancementRateIncreasedEvent){
 			entityAdvancementRateIncreasedEventProducer.fire(order);
+		}
+	}
+
+	private void validateProducts(List<OrderOffer> orderOffers) {
+		for (OrderOffer orderOffer : orderOffers) {
+			if (orderOffer.getProducts() != null) {
+				orderOffer.getProducts()
+						.stream()
+						.filter(Objects::nonNull)
+						.map(OrderProduct::getProductVersion)
+						.filter(Objects::nonNull)
+						.map(ProductVersion::getProduct)
+						.filter(product -> CLOSED.equals(product.getStatus()))
+						.findAny()
+						.ifPresent(product -> {
+							throw new BusinessApiException(
+									format("Can not perform action product status is CLOSED, product code : %s",
+											product.getCode()));
+						});
+			}
 		}
 	}
 	
@@ -839,7 +863,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 			}
         	List<OrderOffer> orderOffers = orderOfferService.findBySubscriptionAndStatus(orderOfferDto.getSubscriptionCode(), OfferLineTypeEnum.AMEND);
         	if(!orderOffers.isEmpty()) {
-        		throw new BusinessApiException(String.format("Amendment order line already exists on subscription %s",orderOfferDto.getSubscriptionCode()));
+        		throw new BusinessApiException(format("Amendment order line already exists on subscription %s",orderOfferDto.getSubscriptionCode()));
         	}
         	orderOffer.setOrderLineType(OfferLineTypeEnum.AMEND);
         	
@@ -1046,6 +1070,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
     	CommercialOrder commercialOrder=null;
     	if(commercialOrderId!=null) {
     	 commercialOrder = commercialOrderService.findById(commercialOrderId);
+		 validateProducts(commercialOrder.getOffers());
     	if ( commercialOrder== null)
     		throw new EntityDoesNotExistsException(CommercialOrder.class, commercialOrderId);
     	} 
@@ -1307,7 +1332,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
         if (productVersionAttributes != null) {
             List<Attribute> productAttributes = productVersionAttributes.stream().map(ProductVersionAttribute::getAttribute).collect(Collectors.toList());
             if(productAttributes != null && !productAttributes.contains(attribute) && orderProduct!=null){
-                throw new BusinessApiException(String.format("Product version (code: %s, version: %d), doesn't contain attribute code: %s", orderProduct.getProductVersion().getProduct().getCode() , orderProduct.getProductVersion().getCurrentVersion(), attribute.getCode()));
+                throw new BusinessApiException(format("Product version (code: %s, version: %d), doesn't contain attribute code: %s", orderProduct.getProductVersion().getProduct().getCode() , orderProduct.getProductVersion().getCurrentVersion(), attribute.getCode()));
             }
         }
         
