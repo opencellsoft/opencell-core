@@ -63,6 +63,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Email;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -477,6 +478,7 @@ public class Subscription extends BusinessCFEntity implements IInvoicingMinimumA
      */
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
     @OrderBy("priority")
+    @Where(clause = "charge_type = 'U'")
     private List<UsageChargeInstance> usageChargeInstances;
     
     /**
