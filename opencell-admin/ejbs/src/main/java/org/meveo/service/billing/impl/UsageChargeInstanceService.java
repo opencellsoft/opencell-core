@@ -19,7 +19,6 @@ package org.meveo.service.billing.impl;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -31,7 +30,6 @@ import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.CounterTemplate;
@@ -159,10 +157,11 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
      * @param date Date to check usage charge validity
      * @return An ordered list by priority (ascended) of usage charge instances
      */
-    public List<UsageChargeInstance> getUsageChargeInstancesValidForDateBySubscriptionId(Subscription subscription, Date date) {
+    public List<UsageChargeInstance> getUsageChargeInstancesValidForDateBySubscriptionId(Long subscriptionId, Object consumptionDate) {
 
-        return subscription.getUsageChargeInstances().stream()
-            .filter(ci -> ci.getStatus() == InstanceStatusEnum.ACTIVE || ((ci.getStatus() == InstanceStatusEnum.TERMINATED || ci.getStatus() == InstanceStatusEnum.SUSPENDED) && ci.getTerminationDate().after(date)))
-            .collect(Collectors.toList());
+
+        return getEntityManager().createNamedQuery("UsageChargeInstance.getUsageChargesValidesForDateBySubscription", UsageChargeInstance.class)
+                .setParameter("terminationDate", consumptionDate).setParameter("subscriptionId", subscriptionId)
+                .getResultList();
     }
 }
