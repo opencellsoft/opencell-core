@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
@@ -41,8 +42,8 @@ import org.meveo.model.cpq.Product;
 @NamedQueries({
 	@NamedQuery(name = "ContractItem.getApplicableContracts", query = "select c from ContractItem c where  c.contract.id=:contractId "
 			+ " and (c.offerTemplate is null or c.offerTemplate.id=:offerId) "
-			+ " and (c.product is null or c.product.code=:productCode) and (c.chargeTemplate is null or c.chargeTemplate.id=:chargeTemplateId)  order by c.auditable.created asc " )})
-	
+			+ " and (c.product is null or c.product.id=:productId) and (c.chargeTemplate is null or c.chargeTemplate.id=:chargeTemplateId)  order by c.auditable.created asc ",
+			hints = {@QueryHint(name = "org.hibernate.cacheable", value = "true")}) })
 public class ContractItem extends EnableBusinessCFEntity {
 
 	/**
