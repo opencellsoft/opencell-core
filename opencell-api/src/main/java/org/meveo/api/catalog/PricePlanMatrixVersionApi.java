@@ -531,4 +531,22 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
 		}
 		convertedPricePlanVersion.setUseForBillingAccounts(enable);
 	}
+
+    public void calculateConvertedPricePlanMatrixLine(ConvertedPricePlanVersionDto dtoData) throws MeveoApiException, BusinessException {
+        checkMandatoryFields(dtoData);
+
+        PricePlanMatrixVersion ppmv = pricePlanMatrixVersionService.findById(dtoData.getPricePlanMatrixVersionId());
+        if(ppmv == null) {
+            throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, dtoData.getPricePlanMatrixVersionId());
+        }
+
+        ppmv.getConvertedPricePlanMatrixLines()
+                .stream()
+                .filter(cppml -> cppml.getTradingCurrency().getCurrencyCode().equals(dtoData.getTradingCurrency().getCode()) || cppml.getTradingCurrency().getId().equals(dtoData.getTradingCurrency().getId()))
+                .forEach(cppml -> {
+                    cppml.setRate(dtoData.getRate());
+                    cppml.setUseForBillingAccounts(dtoData.isUseForBillingAccounts());
+                    cppml.setConvertedPrice(dtoData.getRate().multiply(ppmv.getPrice()));
+                });
+    }
 }

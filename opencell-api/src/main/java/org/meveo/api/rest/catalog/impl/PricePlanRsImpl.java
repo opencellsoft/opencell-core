@@ -520,4 +520,15 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 		return Response.ok(result).build();
 	}
 
+    @Override
+    public Response calculateConvertedPricePlanMatrixLine(ConvertedPricePlanVersionDto postData) {
+        ActionStatus result = new ActionStatus();
+        try {
+            pricePlanMatrixVersionApi.calculateConvertedPricePlanMatrixLine(postData);
+            return Response.ok(result).build();
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return Response.ok(result).build();
+    }
 }
