@@ -84,8 +84,10 @@ import org.meveo.util.ApplicationProvider;
 public class ReportQueryService extends BusinessService<ReportQuery> {
 
     private static final String SEPARATOR_SELECTED_FIELDS = "\\.";
+    
     @Inject
     private QueryExecutionResultService queryExecutionResultService;
+    
     @Inject
     private QuerySchedulerService querySchedulerService;
 
@@ -159,7 +161,8 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
 			if(reportQuery.getAdvancedQuery() != null && !reportQuery.getAdvancedQuery().isEmpty()) {
 				fields = (List<String>) reportQuery.getAdvancedQuery().getOrDefault("genericFields", new ArrayList<String>());
 			}
-			var line = fields.stream().map(f -> aliases.getOrDefault(f, f)).map(e -> entries.getOrDefault((String) e, "").toString()).collect(Collectors.joining(";"));
+			
+			var line = fields.stream().map(f -> aliases.getOrDefault(f, f)).map(e -> entries.getOrDefault((String) e, "") != null ? entries.getOrDefault((String) e, "").toString() : "").collect(Collectors.joining(";"));
     		response.add(line);
 		}
     	return response;
@@ -298,7 +301,11 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
 
     private Set<String> findColumnHeaderForReportQuery(ReportQuery reportQuery) {
         Map<String, String> aliases = reportQuery.getAliases() != null ? reportQuery.getAliases() : new HashMap<>();
-		return mappingColumn(reportQuery.getGeneratedQuery(), reportQuery.getFields(), aliases).keySet();
+        List<String> fields = new ArrayList<>();
+        for (Entry<String, String> entry : aliases.entrySet()) {
+        	fields.add(entry.getKey());
+        }
+		return mappingColumn(reportQuery.getGeneratedQuery(), fields, aliases).keySet();
     }
 
     private Map<String, Integer> mappingColumn(String query, List<String> fields, Map<String, String> aliases) {
