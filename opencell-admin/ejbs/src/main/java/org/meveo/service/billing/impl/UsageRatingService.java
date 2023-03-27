@@ -390,7 +390,7 @@ public class UsageRatingService extends RatingService implements Serializable {
                 
                 boolean isSubscriptionInitialized = Hibernate.isInitialized(edr.getSubscription());
                 
-                usageChargeInstances = usageChargeInstanceService.getUsageChargeInstancesValidForDateBySubscriptionId(edr.getSubscription(), edr.getEventDate());
+                usageChargeInstances = usageChargeInstanceService.getUsageChargeInstancesValidForDateBySubscriptionId(subscriptionId, edr.getEventDate());
                 if (usageChargeInstances == null || usageChargeInstances.isEmpty()) {
                     throw new NoChargeException("No active usage charges are associated with subscription " + subscriptionId);
                 }
