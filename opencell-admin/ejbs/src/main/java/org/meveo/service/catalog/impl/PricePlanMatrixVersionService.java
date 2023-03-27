@@ -54,6 +54,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoPricePlanException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
 import org.meveo.api.exception.BusinessApiException;
@@ -283,6 +284,9 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         if (newFrom == null) {
             throw new BusinessApiException("The start date name is mandatory");
         }
+        if (newFrom != null && newFrom.before(DateUtils.truncateTime(new Date()))) {
+            throw new BusinessApiException("Uploaded PV cannot start before today");
+        }
         if (newFrom != null && newTo != null && newTo.before(newFrom)) {
             throw new BusinessApiException("Invalid validity period, the end date must be greather than the start date");
         }
@@ -322,6 +326,9 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     }
 
     public PricePlanMatrixVersion updatePublishedPricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion, Date endingDate) {
+        if (endingDate != null && endingDate.before(org.meveo.model.shared.DateUtils.setDateToEndOfDay(new Date()))) {
+            throw new ValidationException("ending date must be greater than today");
+        }
         if( pricePlanMatrixVersion.getValidity() == null) {
         	 pricePlanMatrixVersion.setValidity( new DatePeriod() );
         }
