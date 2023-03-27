@@ -2014,6 +2014,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Date periodEndDateRT = ratedTransaction.getEndDate();
         line.setAttribute("periodEndDate", DateUtils.formatDateWithPattern(periodEndDateRT, invoiceDateFormat));
         line.setAttribute("periodStartDate", DateUtils.formatDateWithPattern(periodStartDateRT, invoiceDateFormat));
+        if(ratedTransaction.getTaxPercent() != null)
         line.setAttribute("taxPercent", ratedTransaction.getTaxPercent().toPlainString());
         line.setAttribute("sortIndex", ratedTransaction.getSortIndex() != null ? ratedTransaction.getSortIndex() + "" : "");
         line.setAttribute("code", ratedTransaction.getCode());
@@ -2138,10 +2139,12 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         subCategory.setAttribute("sortIndex", (invoiceSubCat.getSortIndex() != null) ? invoiceSubCat.getSortIndex() + "" : "");
         Collections.sort(ratedTransactions, InvoiceCategoryComparatorUtils.getRatedTransactionComparator());
         for (RatedTransaction ratedTransaction : ratedTransactions) {
-            if ((ratedTransaction.getInvoiceAgregateF().getId() != null && !ratedTransaction.getInvoiceAgregateF().getId().equals(subCatInvoiceAgregate.getId()))
-                    || (ratedTransaction.getInvoiceAgregateF().getId() == null && !ratedTransaction.getInvoiceSubCategory().getId().equals(invoiceSubCat.getId())
-                    && !((ratedTransaction.getWallet() == null && walletId == null) || (walletId != null && walletId.equals(ratedTransaction.getWallet().getId()))))) {
-                continue;
+            if(ratedTransaction.getInvoiceAgregateF() != null){
+                if ((ratedTransaction.getInvoiceAgregateF().getId() != null && !ratedTransaction.getInvoiceAgregateF().getId().equals(subCatInvoiceAgregate.getId()))
+                        || (ratedTransaction.getInvoiceAgregateF().getId() == null && !ratedTransaction.getInvoiceSubCategory().getId().equals(invoiceSubCat.getId())
+                        && !((ratedTransaction.getWallet() == null && walletId == null) || (walletId != null && walletId.equals(ratedTransaction.getWallet().getId()))))) {
+                    continue;
+                }
             }
             Element rtTag = createRTSection(doc, ratedTransaction, invoiceDateFormat, invoiceDateTimeFormat, invoiceConfiguration, invoiceLanguageCode);
             if (rtTag != null) {

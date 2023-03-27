@@ -6099,8 +6099,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (isExonerated == null) {
             isExonerated = billingAccountService.isExonerated(billingAccount);
         }
-        int rtRounding = appProvider.getInvoiceRounding();
-        RoundingModeEnum rtRoundingMode = appProvider.getInvoiceRoundingMode();
+        int rtRounding = appProvider.getRounding();
+        RoundingModeEnum rtRoundingMode = appProvider.getRoundingMode();
         Tax defaultTax = isExonerated ? taxService.getZeroTax() : null;
 
         // InvoiceType.taxScript will calculate all tax aggregates at once.

@@ -142,8 +142,8 @@ public class InvoiceLinesFactory {
         invoiceLine.setTaxRate(taxPercent);
         BigDecimal amountWithoutTax = ofNullable((BigDecimal) record.get("sum_without_tax")).orElse(ZERO);
         BigDecimal amountWithTax = ofNullable((BigDecimal) record.get("sum_with_tax")).orElse(ZERO);
-        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(amountWithoutTax, amountWithTax, taxPercent, appProvider.isEntreprise(), appProvider.getInvoiceRounding(),
-                appProvider.getInvoiceRoundingMode().getRoundingMode());
+        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(amountWithoutTax, amountWithTax, taxPercent, appProvider.isEntreprise(), appProvider.getRounding(),
+                appProvider.getRoundingMode().getRoundingMode());
         invoiceLine.setAmountWithoutTax(amounts[0]);
         invoiceLine.setAmountWithTax(amounts[1]);
         invoiceLine.setAmountTax(amounts[2]);

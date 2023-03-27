@@ -204,8 +204,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             securityDepositInput.getBillingAccount().getCustomerAccount().getCustomer().getSeller(), 
             securityDepositInput.getBillingAccount(), null, new Date(), null, isExonerated, false, invoiceLine.getTax());
         BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(securityDepositInput.getAmount(), securityDepositInput.getAmount(), 
-            recalculatedTaxInfo.tax.getPercent(), appProvider.isEntreprise(), appProvider.getInvoiceRounding(),
-            appProvider.getInvoiceRoundingMode().getRoundingMode());
+            recalculatedTaxInfo.tax.getPercent(), appProvider.isEntreprise(), appProvider.getRounding(),
+            appProvider.getRoundingMode().getRoundingMode());
         invoiceLine.setAmountWithoutTax(amounts[0]);
         invoiceLine.setAmountWithTax(amounts[1]);
         invoiceLine.setAmountTax(amounts[2]);
