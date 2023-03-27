@@ -124,12 +124,12 @@ public class ContractItemService extends BusinessService<ContractItem> {
 	}
 
     @SuppressWarnings("unchecked")
-    public ContractItem getApplicableContractItem(Contract contract, OfferTemplate offer, String productCode,
+    public ContractItem getApplicableContractItem(Contract contract, OfferTemplate offer, Long productId,
 												  ChargeTemplate chargeTemplate, WalletOperation walletOperation) {
         Query query = getEntityManager().createNamedQuery("ContractItem.getApplicableContracts")
 				.setParameter("contractId", contract.getId())
 				.setParameter("offerId", offer.getId())
-				.setParameter("productCode", productCode)
+				.setParameter("productId", productId)
 				.setParameter("chargeTemplateId", chargeTemplate.getId());
         List<ContractItem> applicableContractItems = query.getResultList();
 
