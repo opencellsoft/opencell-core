@@ -4,7 +4,7 @@
     <groupId>info.opencell.tests</groupId>
     <artifactId>opencelltests</artifactId>
     <name>Opencell tests</name>
-    <version>13.2.1-600-8f3a7e7</version>
+    <version>13.2.1-600-8ae522e</version>
     
     <pluginRepositories>
         <pluginRepository>
