@@ -342,14 +342,16 @@ public class CustomerApi extends AccountEntityApi {
             customer.setIsCompany(postData.getIsCompany());
         }
         
-        if (postData.getParentCustomerCode() != null) {
+        if (!StringUtils.isBlank(postData.getParentCustomerCode())) {
 			customer.setParentCustomer(ofNullable(customerService.findByCode(postData.getParentCustomerCode()))
 					.orElseThrow(() -> new BusinessException("No customer parent found with the given code : " + postData.getParentCustomerCode())));
 			if(!canBeLinked(customer.getParentCustomer(), customer)) {
                 throw new BusinessException(String.format("A customer’s ascendant cannot be one of its descendants. Customer %s is %s of %s", 
                 		customer.getParentCustomer().getCode(), childOrDescendant(customer.getParentCustomer(), customer), customer.getCode()));
 			}
-        }
+		} else if ("".equals(postData.getParentCustomerCode())) {
+			customer.setParentCustomer(null);
+		}
         
         if (postData.getChildrenCustomersCodes() != null) {
         	customer.setChildrenCustomers(postData.getChildrenCustomersCodes().stream().map(code -> ofNullable(customerService.findByCode(code))
