@@ -2,6 +2,7 @@ package org.meveo.model.cpq;
 
 import static javax.persistence.EnumType.STRING;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
@@ -20,6 +21,7 @@ import org.meveo.model.BaseEntity;
 @Table(name = "cpq_product_version_attributes")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_product_version_attribute_seq"), })
+@Cacheable
 public class ProductVersionAttribute extends BaseEntity {    
 
 	/**

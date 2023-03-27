@@ -6,6 +6,8 @@ import java.util.List;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -82,6 +84,7 @@ public class GroupedAttributes extends EnableBusinessCFEntity {
 				joinColumns = @JoinColumn(name = "grouped_attributes", referencedColumnName = "id"),
 				inverseJoinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id")				
 			)
+	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private List<Attribute> attributes = new ArrayList<Attribute>();
 
 	/**
