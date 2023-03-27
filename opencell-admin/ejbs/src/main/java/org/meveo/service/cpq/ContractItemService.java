@@ -130,11 +130,11 @@ public class ContractItemService extends BusinessService<ContractItem> {
 	}
 
     @SuppressWarnings("unchecked")
-    public ContractItem getApplicableContractItem(Contract contract, OfferTemplate offer, String productCode, ChargeTemplate chargeTemplate) {
+    public ContractItem getApplicableContractItem(Contract contract, OfferTemplate offer, Long productId, ChargeTemplate chargeTemplate) {
         ContractItem contractItem = null;
 
         Query query = getEntityManager().createNamedQuery("ContractItem.getApplicableContracts").setParameter("contractId", contract.getId()).setParameter("offerId", offer.getId())
-            .setParameter("productCode", productCode).setParameter("chargeTemplateId", chargeTemplate.getId());
+            .setParameter("productId", productId).setParameter("chargeTemplateId", chargeTemplate.getId());
         List<ContractItem> applicableContractItems = query.getResultList();
 
         if (!applicableContractItems.isEmpty()) {
@@ -149,9 +149,9 @@ public class ContractItemService extends BusinessService<ContractItem> {
     }
     
     @SuppressWarnings("unchecked")
-    public Contract getApplicableContract(List<Contract> contracts, OfferTemplate offer, String productCode, ChargeTemplate chargeTemplate) {
+    public Contract getApplicableContract(List<Contract> contracts, OfferTemplate offer, Long productId, ChargeTemplate chargeTemplate) {
         for (Contract contract : contracts) {
-            ContractItem contractItem = getApplicableContractItem(contract, offer, productCode, chargeTemplate);
+            ContractItem contractItem = getApplicableContractItem(contract, offer, productId, chargeTemplate);
             if (contractItem != null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
                 return contract;
             };
