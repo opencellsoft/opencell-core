@@ -6025,6 +6025,12 @@
     <changeSet id="#4082_20190404" author="SaidRamli"/>
     <changeSet id="#5308_20200618 - Add script" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-12906_20230112" author="hichamELHALOUI"/>
+    <changeSet id="#INTRD-15189_20230327" author="hichamELHALOUI">
+        <update tableName="cat_offer_template_category">
+                <column name="order_level" valueNumeric="0" />
+                <where> id in (-1, -2)</where>
+        </update>
+    </changeSet>
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
