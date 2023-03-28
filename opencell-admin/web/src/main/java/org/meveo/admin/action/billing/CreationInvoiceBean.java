@@ -1439,12 +1439,12 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     
     public String cancelInvoice() throws BusinessException {
         invoiceService.cancelInvoice(entity, false);
-        return saveOrUpdate(false);
+        return getListViewName();
     }
 
     public String validateInvoice() throws BusinessException {
         invoiceService.validateInvoice(entity, true);
-        return saveOrUpdate(false);
+        return getListViewName();
     }
     
     public String rebuildInvoice() throws BusinessException {
