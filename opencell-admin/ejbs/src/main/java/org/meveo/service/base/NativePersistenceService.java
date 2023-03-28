@@ -68,7 +68,6 @@ import org.meveo.api.generics.PersistenceServiceHelper;
 import org.meveo.apiv2.generic.GenericPagingAndFiltering;
 import org.meveo.apiv2.generic.ImmutableGenericPagingAndFiltering;
 import org.meveo.apiv2.generic.ImmutableGenericPagingAndFiltering.Builder;
-import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
@@ -124,6 +123,11 @@ public class NativePersistenceService extends BaseService {
      */
     public static final String FIELD_DISABLED = "disabled";
 
+    /**
+     * Field name to field data type mapping to be used when native query caching is enabled. Format <db tablename:<field name,data type>>
+     */
+    private static Map<String, Map<String, CustomFieldTypeEnum>> fieldDataTypeMappings;
+
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
@@ -148,17 +152,19 @@ public class NativePersistenceService extends BaseService {
      * Find record by its identifier
      *
      * @param tableName Table name
-     * @param id        Identifier
+     * @param id Identifier
      * @return A map of values with field name as a map key and field value as a map value. Or null if no record was found with such identifier.
      */
     public Map<String, Object> findById(String tableName, Long id) {
         return findByIdWithouCheckCodeAndDescription(tableName, id, true);
     }
+
     /**
      * Find record by its identifier
      *
      * @param tableName Table name
-     * @param id        Identifier
+     * @param id Identifier
+     * @param canCheck When True it will get id, and the code of the customer table
      * @return A map of values with field name as a map key and field value as a map value. Or null if no record was found with such identifier.
      */
     @SuppressWarnings({ "rawtypes", "deprecation" })
@@ -169,7 +175,7 @@ public class NativePersistenceService extends BaseService {
             StringBuilder selectQuery = new StringBuilder("select * from ").append(tableName).append(" e where id=:id");
             SQLQuery query = session.createSQLQuery(selectQuery.toString());
             query.setParameter("id", id);
-            if(canCheck) {
+            if (canCheck) {
                 query.addScalar("id", new LongType());
                 query.setFlushMode(FlushMode.COMMIT);
                 query.addScalar("code", new StringType());
@@ -202,7 +208,7 @@ public class NativePersistenceService extends BaseService {
      * Insert values into table
      *
      * @param tableName Table name to insert values to
-     * @param values    Values to insert
+     * @param values Values to insert
      * @throws BusinessException General exception
      */
     public Long create(String tableName, Map<String, Object> values) throws BusinessException {
@@ -216,9 +222,9 @@ public class NativePersistenceService extends BaseService {
      * NOTE: The sql statement is determined by the fields passed in the first value, so its important that either all values have the same fields (order does not matter), or first
      * value has the maximum number of fields
      *
-     * @param tableName                Table name to insert values to
+     * @param tableName Table name to insert values to
      * @param customEntityTemplateCode Custom entity template, corresponding to a custom table, code
-     * @param values                   A list of values to insert
+     * @param values A list of values to insert
      * @throws BusinessException General exception
      */
     public void create(String tableName, String customEntityTemplateCode, List<Map<String, Object>> values) throws BusinessException {
@@ -318,7 +324,7 @@ public class NativePersistenceService extends BaseService {
      * @param tableName the table name
      * @return
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private Map<String, Object> getFields(String tableName) {
         tableName = addCurrentSchema(tableName);
         Map<String, Object> fields = new HashedMap();
@@ -356,9 +362,9 @@ public class NativePersistenceService extends BaseService {
     /**
      * Insert a new record into a table. If returnId=True values parameter will be updated with 'id' field value.
      *
-     * @param tableName         Table name to update
-     * @param values            Values
-     * @param returnId          Should identifier be returned - does a lookup in DB by matching same values. If True values will be updated with 'id' field value.
+     * @param tableName Table name to update
+     * @param values Values
+     * @param returnId Should identifier be returned - does a lookup in DB by matching same values. If True values will be updated with 'id' field value.
      * @param fireNotifications Should notifications be fired upon record creation
      * @throws BusinessException General exception
      */
@@ -473,8 +479,8 @@ public class NativePersistenceService extends BaseService {
     /**
      * Update a record in a table. Record is identified by an "id" field value.
      *
-     * @param tableName         Table name to update
-     * @param value             Values. Values must contain an "id" (FIELD_ID) field.
+     * @param tableName Table name to update
+     * @param value Values. Values must contain an "id" (FIELD_ID) field.
      * @param fireNotifications Should notifications be fired upon record update
      * @throws BusinessException General exception
      */
@@ -528,9 +534,9 @@ public class NativePersistenceService extends BaseService {
      * Update field value in a table
      *
      * @param tableName Table name to update
-     * @param id        Record identifier
+     * @param id Record identifier
      * @param fieldName Field to update
-     * @param value     New value
+     * @param value New value
      * @throws BusinessException General exception
      */
     public void updateValue(String tableName, Long id, String fieldName, Object value) throws BusinessException {
@@ -553,7 +559,7 @@ public class NativePersistenceService extends BaseService {
      * Disable a record. Note: There is no check done that record exists.
      *
      * @param tableName Table name to update
-     * @param id        Record identifier
+     * @param id Record identifier
      * @throws BusinessException General exception
      */
     public void disable(String tableName, Long id) throws BusinessException {
@@ -566,7 +572,7 @@ public class NativePersistenceService extends BaseService {
      * Disable multiple records. Note: There is no check done that records exists.
      *
      * @param tableName Table name to update
-     * @param ids       A list of record identifiers
+     * @param ids A list of record identifiers
      * @throws BusinessException General exception
      */
     public void disable(String tableName, Set<Long> ids) throws BusinessException {
@@ -578,7 +584,7 @@ public class NativePersistenceService extends BaseService {
      * Enable a record. Note: There is no check done that record exists.
      *
      * @param tableName Table name to update
-     * @param id        Record identifier
+     * @param id Record identifier
      * @throws BusinessException General exception
      */
     public void enable(String tableName, Long id) throws BusinessException {
@@ -591,7 +597,7 @@ public class NativePersistenceService extends BaseService {
      * Enable multiple records. Note: There is no check done that records exists.
      *
      * @param tableName Table name to update
-     * @param ids       A list of record identifiers
+     * @param ids A list of record identifiers
      * @throws BusinessException General exception
      */
     public void enable(String tableName, Set<Long> ids) throws BusinessException {
@@ -604,7 +610,7 @@ public class NativePersistenceService extends BaseService {
      * Delete a record. Note: There is no check done that record exists.
      *
      * @param tableName Table name to update
-     * @param id        Record identifier
+     * @param id Record identifier
      * @return Number of records deleted
      * @throws BusinessException General exception
      */
@@ -628,7 +634,7 @@ public class NativePersistenceService extends BaseService {
      * excpetion
      *
      * @param tableName Table name to delete from
-     * @param ids       A set of record identifiers
+     * @param ids A set of record identifiers
      * @return Number of records deleted
      * @throws BusinessException General exception
      */
@@ -644,14 +650,13 @@ public class NativePersistenceService extends BaseService {
 //        ids.stream().forEach(id -> deletionService.checkTableNotreferenced(tableName, id));
 //        return getEntityManager().createNativeQuery("delete from " + tableName + " where id in :ids").setParameter("ids", ids).executeUpdate();
     }
-    
 
     /**
      * Delete multiple records. Note: There is no check done that records exists.
      * Will not check Code or description field, it will find the table by id and then delete
      *
      * @param tableName Table name to delete from
-     * @param ids       A set of record identifiers
+     * @param ids A set of record identifiers
      * @return Number of records deleted
      * @throws BusinessException General exception
      */
@@ -795,39 +800,39 @@ public class NativePersistenceService extends BaseService {
      * </ul>
      *
      * @param tableName A name of a table to query
-     * @param config    Data filtering, sorting and pagination criteria
-     * @param id Id field value to explicitly extract data by ID 
+     * @param config Data filtering, sorting and pagination criteria
+     * @param id Id field value to explicitly extract data by ID
      * @return Query builder to filter entities according to pagination configuration data.
      */
     public QueryBuilder getQuery(String tableName, PaginationConfiguration config, Long id) {
         tableName = addCurrentSchema(tableName);
         Predicate<String> predicate = field -> this.checkAggFunctions(field.toUpperCase().trim());
         String aggFields = (config != null && config.getFetchFields() != null) ? aggregationFields(config.getFetchFields(), predicate) : "";
-        if(!aggFields.isEmpty()) {
+        if (!aggFields.isEmpty()) {
             config.getFetchFields().remove("id");
         }
 
         List<String> fetch = (config != null && config.getFetchFields() != null) ? config.getFetchFields().stream().filter(s -> s.contains(".")).map(s -> s.substring(0, s.lastIndexOf("."))).distinct().collect(Collectors.toList()) : Collections.emptyList();
         Map<String, String> fetchAlias = fetch.stream().collect(Collectors.toMap(Function.identity(), s -> QueryBuilder.getJoinAlias("a", s, false)));
 
-         String fieldsToRetrieve = (config != null && config.getFetchFields() != null) ? retrieveFields(config.getFetchFields(), predicate.negate()) : "";
-        if(fieldsToRetrieve.isEmpty() && aggFields.isEmpty()) {
+        String fieldsToRetrieve = (config != null && config.getFetchFields() != null) ? retrieveFields(config.getFetchFields(), predicate.negate()) : "";
+        if (fieldsToRetrieve.isEmpty() && aggFields.isEmpty()) {
             fieldsToRetrieve = "*";
         }
         StringBuilder fetchSql = new StringBuilder();
         if (!ListUtils.isEmtyCollection(fetch)) {
-        	for (String fetchField : fetch) {
-				String joinAlias = fetchField.contains(QueryBuilder.JOIN_AS) ? "" : QueryBuilder.JOIN_AS + fetchAlias.get(fetchField);
-				fetchSql.append(" left join " + "a" + "." + fetchField + joinAlias);
+            for (String fetchField : fetch) {
+                String joinAlias = fetchField.contains(QueryBuilder.JOIN_AS) ? "" : QueryBuilder.JOIN_AS + fetchAlias.get(fetchField);
+                fetchSql.append(" left join " + "a" + "." + fetchField + joinAlias);
             }
         }
         StringBuilder sql = new StringBuilder("select " + buildFields(fieldsToRetrieve, aggFields) + " from " + tableName + " a ");
         sql.append(fetchSql);
         sql.append(" ");
-		QueryBuilder queryBuilder = new QueryBuilder(sql.toString(), "a");
-        
-        if(id != null) {
-        	queryBuilder.addSql(" a.id ='"+id+"'");
+        QueryBuilder queryBuilder = new QueryBuilder(sql.toString(), "a");
+
+        if (id != null) {
+            queryBuilder.addSql(" a.id ='" + id + "'");
         }
 
         if (config == null) {
@@ -840,11 +845,11 @@ public class NativePersistenceService extends BaseService {
             filters.keySet().stream()
             		.sorted((k1, k2) -> org.apache.commons.lang3.StringUtils.countMatches(k2, ".") - org.apache.commons.lang3.StringUtils.countMatches(k1, "."))
                     .filter(key -> filters.get(key) != null)
-                    .forEach(key -> nativeExpressionFactory.addFilters(key, filters.get(key)));
+                .forEach(key -> nativeExpressionFactory.addFilters(key, filters.get(key)));
 
         }
 
-        if(aggFields.isEmpty()) {
+        if (aggFields.isEmpty()) {
             queryBuilder.addPaginationConfiguration(config, "a");
         }
         if (!aggFields.isEmpty() && !fieldsToRetrieve.isEmpty()) {
@@ -860,6 +865,7 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * Get Query without adding dependencies left join
+     * 
      * @param tableName Table name
      * @param config {@link PaginationConfiguration}
      * @param id Id
@@ -869,12 +875,12 @@ public class NativePersistenceService extends BaseService {
         tableName = addCurrentSchema(tableName);
         Predicate<String> predicate = field -> this.checkAggFunctions(field.toUpperCase().trim());
         String aggFields = (config != null && config.getFetchFields() != null) ? aggregationFields(config.getFetchFields(), predicate) : "";
-        if(!aggFields.isEmpty()) {
+        if (!aggFields.isEmpty()) {
             config.getFetchFields().remove("id");
         }
 
         String fieldsToRetrieve = (config != null && config.getFetchFields() != null) ? retrieveFields(config.getFetchFields(), predicate.negate()) : "";
-        if(fieldsToRetrieve.isEmpty() && aggFields.isEmpty()) {
+        if (fieldsToRetrieve.isEmpty() && aggFields.isEmpty()) {
             fieldsToRetrieve = "*";
         }
 
@@ -882,8 +888,8 @@ public class NativePersistenceService extends BaseService {
         sql.append(" ");
         QueryBuilder queryBuilder = new QueryBuilder(sql.toString(), "a");
 
-        if(id != null) {
-            queryBuilder.addSql(" a.id ='"+id+"'");
+        if (id != null) {
+            queryBuilder.addSql(" a.id ='" + id + "'");
         }
 
         if (config == null) {
@@ -899,7 +905,7 @@ public class NativePersistenceService extends BaseService {
 
         }
 
-        if(aggFields.isEmpty()) {
+        if (aggFields.isEmpty()) {
             queryBuilder.addPaginationConfiguration(config, "a");
         }
         if (!aggFields.isEmpty() && !fieldsToRetrieve.isEmpty()) {
@@ -950,7 +956,7 @@ public class NativePersistenceService extends BaseService {
             filters.keySet().stream()
             		.sorted((k1, k2) -> org.apache.commons.lang3.StringUtils.countMatches(k2, ".") - org.apache.commons.lang3.StringUtils.countMatches(k1, "."))
                     .filter(key -> filters.get(key) != null)
-                    .forEach(key -> nativeExpressionFactory.addFilters(key, filters.get(key)));
+                .forEach(key -> nativeExpressionFactory.addFilters(key, filters.get(key)));
 
         }
 
@@ -989,13 +995,13 @@ public class NativePersistenceService extends BaseService {
             filters.keySet().stream()
             		.sorted((k1, k2) -> org.apache.commons.lang3.StringUtils.countMatches(k2, ".") - org.apache.commons.lang3.StringUtils.countMatches(k1, "."))
                     .filter(key -> filters.get(key) != null)
-                    .forEach(key -> nativeExpressionFactory.addFilters(key, filters.get(key)));
+                .forEach(key -> nativeExpressionFactory.addFilters(key, filters.get(key)));
         }
 
         if (config.getOrderings() != null && config.getOrderings().length == 2) {
             if (config.getOrderings()[0].equals("id")
                     && config.getOrderings()[1].equals(PagingAndFiltering.SortOrder.ASCENDING)) {
-                config.setOrderings(new Object[]{});
+                config.setOrderings(new Object[] {});
             }
         }
 
@@ -1022,8 +1028,8 @@ public class NativePersistenceService extends BaseService {
 
     private String buildFields(String fieldsToRetrieve, String aggFields) {
         if (!fieldsToRetrieve.isEmpty() && !aggFields.isEmpty()) {
-            return String.join("," , fieldsToRetrieve, aggFields);
-        } else if(!fieldsToRetrieve.isEmpty()) {
+            return String.join(",", fieldsToRetrieve, aggFields);
+        } else if (!fieldsToRetrieve.isEmpty()) {
             return fieldsToRetrieve;
         } else {
             return aggFields;
@@ -1035,22 +1041,22 @@ public class NativePersistenceService extends BaseService {
             return fields
                     .stream()
                     .map(x -> {
-                        if (x.toLowerCase().trim().contains("->>string"))
-                            return "varcharFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
-                        else if (x.toLowerCase().trim().contains("->>double"))
-                            return "numericFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
-                        else if (x.toLowerCase().trim().contains("->>long"))
-                            return "bigIntFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
-                        else if (x.toLowerCase().trim().contains("->>date"))
-                            return "timestampFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
-                        else if (x.toLowerCase().trim().contains("->>boolean"))
-                            return "booleanFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
-                        else if (x.toLowerCase().trim().contains("->>entity"))
-                            return "entityFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
-                        else if (checkAggFunctions(x.toUpperCase().trim()))
-                            return x;
-                        else
-                            return "a." + x;
+                if (x.toLowerCase().trim().contains("->>string"))
+                    return "varcharFromJson(a.cfValues," + x.split("->>")[0] + "," + x.split("->>")[1] + ")";
+                else if (x.toLowerCase().trim().contains("->>double"))
+                    return "numericFromJson(a.cfValues," + x.split("->>")[0] + "," + x.split("->>")[1] + ")";
+                else if (x.toLowerCase().trim().contains("->>long"))
+                    return "bigIntFromJson(a.cfValues," + x.split("->>")[0] + "," + x.split("->>")[1] + ")";
+                else if (x.toLowerCase().trim().contains("->>date"))
+                    return "timestampFromJson(a.cfValues," + x.split("->>")[0] + "," + x.split("->>")[1] + ")";
+                else if (x.toLowerCase().trim().contains("->>boolean"))
+                    return "booleanFromJson(a.cfValues," + x.split("->>")[0] + "," + x.split("->>")[1] + ")";
+                else if (x.toLowerCase().trim().contains("->>entity"))
+                    return "entityFromJson(a.cfValues," + x.split("->>")[0] + "," + x.split("->>")[1] + ")";
+                else if (checkAggFunctions(x.toUpperCase().trim()))
+                    return x;
+                else
+                    return "a." + x;
                     })
                     .collect(joining(","));
         }
@@ -1059,20 +1065,20 @@ public class NativePersistenceService extends BaseService {
                     .stream()
                     .filter(predicate)
                     .map(x -> {
-                        if (x.toLowerCase().trim().contains("->>string"))
-                            return "varcharFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
-                        else if(x.toLowerCase().trim().contains("->>double"))
-                            return "numericFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
-                        else if(x.toLowerCase().trim().contains("->>long"))
-                            return "bigIntFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
-                        else if(x.toLowerCase().trim().contains("->>date"))
-                            return "timestampFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
-                        else if(x.toLowerCase().trim().contains("->>boolean"))
-                            return "booleanFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
-                        else if(x.toLowerCase().trim().contains("->>entity"))
-                            return "entityFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
-                        else
-                            return "a." + x;
+                if (x.toLowerCase().trim().contains("->>string"))
+                    return "varcharFromJson(a.cfValues," + x.split("->>")[0] + "," + x.split("->>")[1] + ")";
+                else if (x.toLowerCase().trim().contains("->>double"))
+                    return "numericFromJson(a.cfValues," + x.split("->>")[0] + "," + x.split("->>")[1] + ")";
+                else if (x.toLowerCase().trim().contains("->>long"))
+                    return "bigIntFromJson(a.cfValues," + x.split("->>")[0] + "," + x.split("->>")[1] + ")";
+                else if (x.toLowerCase().trim().contains("->>date"))
+                    return "timestampFromJson(a.cfValues," + x.split("->>")[0] + "," + x.split("->>")[1] + ")";
+                else if (x.toLowerCase().trim().contains("->>boolean"))
+                    return "booleanFromJson(a.cfValues," + x.split("->>")[0] + "," + x.split("->>")[1] + ")";
+                else if (x.toLowerCase().trim().contains("->>entity"))
+                    return "entityFromJson(a.cfValues," + x.split("->>")[0] + "," + x.split("->>")[1] + ")";
+                else
+                    return "a." + x;
                     })
                     .collect(joining(","));
         }
@@ -1098,14 +1104,37 @@ public class NativePersistenceService extends BaseService {
      * Load and return the list of the records IN A MAP format from database according to sorting and paging information in {@link PaginationConfiguration} object.
      *
      * @param tableName A name of a table to query
-     * @param config    Data filtering, sorting and pagination criteria
+     * @param config Data filtering, sorting and pagination criteria
      * @return A list of map of values for each record
      */
     @SuppressWarnings("unchecked")
     public List<Map<String, Object>> list(String tableName, PaginationConfiguration config) {
+        
+        tableName = tableName.toLowerCase();
+        
         tableName = addCurrentSchema(tableName);
         QueryBuilder queryBuilder = getQuery(tableName, config, null);
         SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), true);
+
+        if (config.isCacheable()) {
+
+            Map<String, CustomFieldTypeEnum> tableFieldTypes = fieldDataTypeMappings.get(tableName);
+
+            if (tableFieldTypes != null) {
+                query.setCacheable(true);
+
+                // Define a data type for all or only requested fields to fetch
+                for (String fieldName : (config.getFetchFields() != null && !config.getFetchFields().isEmpty()) ? config.getFetchFields() : tableFieldTypes.keySet()) {
+
+                    CustomFieldTypeEnum fieldType = tableFieldTypes.get(fieldName);
+                    if (fieldType != null) {
+                        query.addScalar(fieldName, fieldType.getHibernateType());
+                    } else {
+                        query.addScalar(fieldName, new StringType());
+                    }
+                }
+            }
+        }
         return query.setFlushMode(FlushMode.COMMIT).list();
     }
 
@@ -1114,14 +1143,34 @@ public class NativePersistenceService extends BaseService {
      * In case a list of fields is provided in search and paging configuration, only that list of fields will be retrieved. Otherwise all fields will be retrieved.
      *
      * @param tableName A name of a table to query
-     * @param config    Data filtering, sorting and pagination criteria
+     * @param config Data filtering, sorting and pagination criteria
      * @return A list of Object[] values for each record. A full list of fields or only the ones specified in a list of fields in search and paging configuration
      */
-    @SuppressWarnings({"deprecation", "rawtypes"})
+    @SuppressWarnings({ "deprecation", "rawtypes" })
     public List listAsObjects(String tableName, PaginationConfiguration config) {
         tableName = addCurrentSchema(tableName);
         QueryBuilder queryBuilder = getQuery(tableName, config, null);
         SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), false);
+
+        if (config.isCacheable()) {
+
+            Map<String, CustomFieldTypeEnum> tableFieldTypes = fieldDataTypeMappings.get(tableName);
+
+            if (tableFieldTypes != null) {
+                query.setCacheable(true);
+
+                // Define a data type for all or only requested fields to fetch
+                for (String fieldName : (config.getFetchFields() != null && !config.getFetchFields().isEmpty()) ? config.getFetchFields() : tableFieldTypes.keySet()) {
+
+                    CustomFieldTypeEnum fieldType = tableFieldTypes.get(fieldName);
+                    if (fieldType != null) {
+                        query.addScalar(fieldName, fieldType.getHibernateType());
+                    } else {
+                        query.addScalar(fieldName, new StringType());
+                    }
+                }
+            }
+        }
         return query.setFlushMode(FlushMode.COMMIT).list();
     }
 
@@ -1155,7 +1204,7 @@ public class NativePersistenceService extends BaseService {
      * Count number of records in a database table
      *
      * @param tableName A name of a table to query
-     * @param config    Data filtering, sorting and pagination criteria
+     * @param config Data filtering, sorting and pagination criteria
      * @return Number of entities.
      */
     public long count(String tableName, PaginationConfiguration config) {
@@ -1178,7 +1227,7 @@ public class NativePersistenceService extends BaseService {
      * Create new or update existing custom table record value
      *
      * @param tableName A name of a table to query
-     * @param values    Values to save
+     * @param values Values to save
      * @throws BusinessException General exception
      */
     public void createOrUpdate(String tableName, List<Map<String, Object>> values) throws BusinessException {
@@ -1211,8 +1260,8 @@ public class NativePersistenceService extends BaseService {
     /**
      * Convert value of unknown data type to a target data type. A value of type list is considered as already converted value, as would come only from WS.
      *
-     * @param value        Value to convert
-     * @param targetClass  Target data type class to convert to
+     * @param value Value to convert
+     * @param targetClass Target data type class to convert to
      * @param expectedList Is return value expected to be a list. If value is not a list and is a string a value will be parsed as comma separated string and each value will be
      *                     converted accordingly. If a single value is passed, it will be added to a list.
      * @param datePatterns Optional. Date patterns to apply to a date type field. Conversion is attempted in that order until a valid date is matched.If no values are provided, a
@@ -1222,7 +1271,7 @@ public class NativePersistenceService extends BaseService {
      * @return A converted data type
      * @throws ValidationException Value can not be cast to a target class
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected Object castValue(Object value, Class targetClass, boolean expectedList, String[] datePatterns, CustomFieldTemplate cft) throws ValidationException {
 
         // log.debug("Casting {} of class {} target class {} expected list {} is array {}", value, value != null ? value.getClass() : null, targetClass, expectedList,
@@ -1527,59 +1576,59 @@ public class NativePersistenceService extends BaseService {
     }
 
     public QueryBuilder generatedAdvancedQuery(ReportQuery reportQuery) {
-    	
-    	Class<?> entityClass = GenericHelper.getEntityClass(reportQuery.getTargetEntity());
+
+        Class<?> entityClass = GenericHelper.getEntityClass(reportQuery.getTargetEntity());
         GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
         GenericPagingAndFiltering genericPagingAndFilter = buildGenericPagingAndFiltering(reportQuery);
         PaginationConfiguration searchConfig = genericRequestMapper.mapTo(genericPagingAndFilter);
         QueryBuilder qb;
-    	List<String> genericFields = (List<String>) reportQuery.getAdvancedQuery().getOrDefault("fields", new ArrayList<>());
-		if(isAggregationQueries(genericPagingAndFilter.getGenericFields())){
-    		searchConfig.setFetchFields(genericFields);
-    		qb = this.getAggregateQuery(entityClass.getCanonicalName(), searchConfig, null);
-    	} else if(isCustomFieldQuery(genericPagingAndFilter.getGenericFields())){
-    		searchConfig.setFetchFields(genericFields);
-    		qb = this.getQuery(entityClass.getCanonicalName(), searchConfig, null);
-    	} else {
-    		qb = PersistenceServiceHelper.getPersistenceService(entityClass, searchConfig).listQueryBuilder(searchConfig);
-    		String fieldsToRetrieve = !genericFields.isEmpty() ? retrieveFields(genericFields, null) : "";
-    		if(!fieldsToRetrieve.isBlank()) {
-    			qb.setQ(new StringBuilder("select " + buildFields(fieldsToRetrieve, "") + " ").append(qb.getSqlStringBuffer()));
-    		}
-    	}
+        List<String> genericFields = (List<String>) reportQuery.getAdvancedQuery().getOrDefault("fields", new ArrayList<>());
+        if (isAggregationQueries(genericPagingAndFilter.getGenericFields())) {
+            searchConfig.setFetchFields(genericFields);
+            qb = this.getAggregateQuery(entityClass.getCanonicalName(), searchConfig, null);
+        } else if (isCustomFieldQuery(genericPagingAndFilter.getGenericFields())) {
+            searchConfig.setFetchFields(genericFields);
+            qb = this.getQuery(entityClass.getCanonicalName(), searchConfig, null);
+        } else {
+            qb = PersistenceServiceHelper.getPersistenceService(entityClass, searchConfig).listQueryBuilder(searchConfig);
+            String fieldsToRetrieve = !genericFields.isEmpty() ? retrieveFields(genericFields, null) : "";
+            if (!fieldsToRetrieve.isBlank()) {
+                qb.setQ(new StringBuilder("select " + buildFields(fieldsToRetrieve, "") + " ").append(qb.getSqlStringBuffer()));
+            }
+        }
 
-    	return qb;
+        return qb;
     }
 
     private GenericPagingAndFiltering buildGenericPagingAndFiltering(ReportQuery reportQuery) {
 		Builder builder = ImmutableGenericPagingAndFiltering.builder()
 				.filters((Map<String, Object>) reportQuery.getAdvancedQuery().getOrDefault("filters", new HashMap<>()))
-				.groupBy((List<String>) reportQuery.getAdvancedQuery().getOrDefault("groupBy", new ArrayList<>()))
-				.nestedEntities((List<String>) reportQuery.getAdvancedQuery().getOrDefault("nestedEntities", new ArrayList<>()))
+            .groupBy((List<String>) reportQuery.getAdvancedQuery().getOrDefault("groupBy", new ArrayList<>()))
+            .nestedEntities((List<String>) reportQuery.getAdvancedQuery().getOrDefault("nestedEntities", new ArrayList<>()))
 				.genericFields((List<String>) reportQuery.getAdvancedQuery().getOrDefault("fields", new ArrayList<>()))
 				.having((List<String>) reportQuery.getAdvancedQuery().getOrDefault("having", new ArrayList<>()));
-    	String sortBy = (String) reportQuery.getAdvancedQuery().get("sortBy");
-    	if(org.meveo.commons.utils.StringUtils.isNotBlank(sortBy)) {
-    		builder.sortBy(sortBy);
-    	}
-    	String sortOrder = (String) reportQuery.getAdvancedQuery().get("sortOrder");
-    	if(org.meveo.commons.utils.StringUtils.isNotBlank(sortOrder)) {
-    		builder.sortOrder(sortOrder);
-    	}
-    	
-		return builder.build();
-    	
+        String sortBy = (String) reportQuery.getAdvancedQuery().get("sortBy");
+        if (org.meveo.commons.utils.StringUtils.isNotBlank(sortBy)) {
+            builder.sortBy(sortBy);
+        }
+        String sortOrder = (String) reportQuery.getAdvancedQuery().get("sortOrder");
+        if (org.meveo.commons.utils.StringUtils.isNotBlank(sortOrder)) {
+            builder.sortOrder(sortOrder);
+        }
+
+        return builder.build();
+
     }
 
     private boolean isAggregationField(String field) {
         return field.startsWith("SUM(") || field.startsWith("COUNT(") || field.startsWith("AVG(")
                 || field.startsWith("MAX(") || field.startsWith("MIN(") || field.startsWith("COALESCE(SUM(");
     }
-    
+
     private boolean isCustomField(String field) {
         return field.contains("->>");
     }
-    
+
     public boolean isCustomFieldQuery(Set<String> genericFields) {
         return genericFields.stream()
                 .filter(genericField -> isCustomField(genericField))
@@ -1592,5 +1641,48 @@ public class NativePersistenceService extends BaseService {
                 .filter(genericField -> isAggregationField(genericField))
                 .findFirst()
                 .isPresent();
+    }
+
+    /**
+     * Refresh native table field to data type mapping. Used in NativePersistenceService to determine a field data type when caching is enabled.
+     * 
+     * @param tableName Table name to refresh mapping for. Optional. If not provided, mapping for all tables will be refreshed.
+     */
+    public void refreshTableFieldMapping(String tableName) {
+
+        Map<String, Map<String, CustomFieldTypeEnum>> fieldMappings = new HashMap<String, Map<String, CustomFieldTypeEnum>>();
+
+        if (tableName == null) {
+            List<CustomEntityTemplate> cets = customEntityTemplateService.listNoCache();
+
+            for (CustomEntityTemplate cet : cets) {
+                Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesToNoCache(cet.getAppliesTo());
+
+                if (cfts != null) {
+
+                    Map<String, CustomFieldTypeEnum> fieldTypeMap = new HashMap<String, CustomFieldTypeEnum>();
+                    fieldMappings.put(cet.getDbTablename(), fieldTypeMap);
+
+                    fieldTypeMap.put("id", CustomFieldTypeEnum.LONG);
+
+                    for (CustomFieldTemplate cft : cfts.values()) {
+                        fieldTypeMap.put(cft.getDbFieldname(), cft.getFieldType());
+                    }
+                }
+            }
+        } else {
+            Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesToNoCache(CustomEntityTemplate.getAppliesTo(tableName));
+
+            Map<String, CustomFieldTypeEnum> fieldTypeMap = new HashMap<String, CustomFieldTypeEnum>();
+            fieldMappings.put(tableName, fieldTypeMap);
+
+            fieldTypeMap.put("id", CustomFieldTypeEnum.LONG);
+
+            for (CustomFieldTemplate cft : cfts.values()) {
+                fieldTypeMap.put(cft.getDbFieldname(), cft.getFieldType());
+            }
+        }
+
+        fieldDataTypeMappings = fieldMappings;
     }
 }

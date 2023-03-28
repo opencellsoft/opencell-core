@@ -73,6 +73,11 @@ public class PaginationConfiguration implements Serializable {
     private JoinType joinType;
 
     /**
+     * Shall query results be cached - see Hibernate query cache behavior
+     */
+    private boolean cacheable = false;
+    
+    /**
      * Operator to use when building where statement
      */
     private FilterOperatorEnum filterOperator = FilterOperatorEnum.AND;
@@ -312,4 +317,18 @@ public class PaginationConfiguration implements Serializable {
 	public void setFilterOperator(FilterOperatorEnum filterOperator) {
 		this.filterOperator = filterOperator;
 	}
+
+	/**
+	 * @param cacheable Shall query results be cached - see Hibernate query cache behavior
+	 */
+    public void setCacheable(boolean cacheable) {
+        this.cacheable = cacheable;
+    }
+
+    /**
+     * @return Shall query results be cached - see Hibernate query cache behavior
+     */
+    public boolean isCacheable() {
+        return cacheable;
+    }	
 }
