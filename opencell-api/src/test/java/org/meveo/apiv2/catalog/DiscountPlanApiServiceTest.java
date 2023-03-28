@@ -87,7 +87,7 @@ public class DiscountPlanApiServiceTest {
                 return result;
             }
         });
-        when(persistenceDelegate.find(any(), any(), any())).thenAnswer(new Answer<IEntity>() {
+        when(persistenceDelegate.findAndRefresh(any(), any(), any())).thenAnswer(new Answer<IEntity>() {
 
             @Override
             public IEntity answer(InvocationOnMock invocation) throws Throwable {

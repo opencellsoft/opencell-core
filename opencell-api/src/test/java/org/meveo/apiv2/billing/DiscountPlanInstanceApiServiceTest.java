@@ -104,7 +104,7 @@ public class DiscountPlanInstanceApiServiceTest {
                 return result;
             }
         });
-        when(persistenceDelegate.find(any(), any(), any())).thenAnswer(new Answer<IEntity>() {
+        when(persistenceDelegate.findAndRefresh(any(), any(), any())).thenAnswer(new Answer<IEntity>() {
 
             @Override
             public IEntity answer(InvocationOnMock invocation) throws Throwable {
@@ -147,6 +147,7 @@ public class DiscountPlanInstanceApiServiceTest {
             }
         });
         when(discountPlanService.findById(any())).thenReturn(getDiscountPlan(DiscountPlanTypeEnum.PROMO_CODE, DiscountPlanStatusEnum.ACTIVE, false));
+
     }
 
     private DiscountPlan getDiscountPlan(DiscountPlanTypeEnum type, DiscountPlanStatusEnum status, boolean nullDates) {
