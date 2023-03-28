@@ -85,6 +85,7 @@ public class CDRReprocessingReader implements ICdrReader, Serializable {
             CDR newCdr = cdrParser.parse(cdr.getLine());
             cdr.fillFrom(newCdr);
             cdr.setTimesTried(timesTried);
+            cdr.setOriginBatch(cdr.getOriginBatch() + "_" + batchName);
             cdr.setRejectReasonException(null);
             cdr.setRejectReason(null);
             cdr.setStatus(CDRStatusEnum.OPEN);

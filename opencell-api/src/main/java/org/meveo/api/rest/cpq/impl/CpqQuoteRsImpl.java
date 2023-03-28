@@ -29,6 +29,7 @@ import javax.ws.rs.core.UriInfo;
 import org.meveo.api.billing.CpqQuoteApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.cpq.OverrideChargedPricesDto;
 import org.meveo.api.dto.cpq.QuoteDTO;
 import org.meveo.api.dto.cpq.QuoteOfferDTO;
 import org.meveo.api.dto.cpq.QuoteVersionDto;
@@ -300,6 +301,16 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
         } catch (MeveoApiException e) {
 		       return errorResponse(e, result.getActionStatus());
         }
+	}
+	
+	@Override
+	public Response overridePrices(OverrideChargedPricesDto overrodPricesDto) {
+		try {
+			cpqQuoteApi.overridePrices(overrodPricesDto);
+			return Response.ok(new GetQuoteOfferDtoResponse()).build();
+		} catch (MeveoApiException e) {
+			return errorResponse(e);
+		}
 	}
    
 }

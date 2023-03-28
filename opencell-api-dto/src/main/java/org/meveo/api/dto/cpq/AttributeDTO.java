@@ -121,6 +121,10 @@ public class AttributeDTO extends EnableBusinessDto {
 	@XmlElementWrapper(name = "groupedAttributes")
 	@XmlElement(name ="groupedAttributes")
 	private List<GroupedAttributeDto> groupedAttributes;
+	
+	
+	@Schema(description = "replaced value")
+	private Object assignedValue;
 
     
     public AttributeDTO() {
@@ -372,5 +376,15 @@ public class AttributeDTO extends EnableBusinessDto {
 
 	public void setGroupedAttributes(List<GroupedAttributeDto> groupedAttributes) {
 		this.groupedAttributes = groupedAttributes;
+	}
+	
+	public Object getAssignedValue() {
+		return assignedValue;
+	}
+
+
+
+	public void setAssignedValue(Object assignedValue) {
+		this.assignedValue = assignedValue;
 	}
 }

@@ -49,6 +49,7 @@ import javax.ejb.EJB;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.FlushModeType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.NoResultException;
@@ -63,6 +64,7 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import org.apache.commons.collections.MapUtils;
@@ -122,8 +124,6 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.notification.GenericNotificationService;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
@@ -748,7 +748,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         }
 
         Query query = listQueryBuilder(config).getQuery(getEntityManager());
-        return query.getResultList();
+        return query.setFlushMode(FlushModeType.AUTO).getResultList();
     }
 
     public QueryBuilder listQueryBuilder(PaginationConfiguration config) {

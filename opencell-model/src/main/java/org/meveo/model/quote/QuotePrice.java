@@ -52,6 +52,7 @@ public class QuotePrice extends AuditableEntity {
 	public QuotePrice(QuotePrice copy) {
 		this.quoteArticleLine = copy.quoteArticleLine;
 		this.quoteVersion = copy.quoteVersion;
+		this.quoteOffer = copy.quoteOffer;
 		this.priceLevelEnum = copy.priceLevelEnum;
 		this.priceTypeEnum = copy.priceTypeEnum;
 		this.amountWithTax = copy.amountWithTax;

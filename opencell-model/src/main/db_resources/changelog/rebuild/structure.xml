@@ -19613,6 +19613,7 @@
     <changeSet id="#INTRD-14522_20230301" author="TarikFA." />
     <changeSet author="ZBariki" id="#INTRD-14208_20230224" dbms="oracle" />
     <changeSet id="#INTRD-14597_20230324" author="TarikFA." />
+     <changeSet id="#INTRD-6364_20220519" author="aelmalki" />
     
     <changeSet id="#INTRD-13326_20230227_FK" author="zelmeliani">
 		<addForeignKeyConstraint
