@@ -27,6 +27,7 @@ import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.storage.StorageFactory;
@@ -44,6 +45,7 @@ import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.model.crm.Provider;
 import org.meveo.security.keycloak.CurrentUserProvider;
+import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.script.ScriptCompilerService;
@@ -110,6 +112,10 @@ public class ApplicationInitializer {
     @Inject
     private CommercialRulesContainerProvider commercialRulesContainerProvider;
 
+    @Inject
+    @Named
+    private NativePersistenceService nativePersistenceService;
+    
     public void init() {
 
         final List<Provider> providers = providerService.list(new PaginationConfiguration("id", SortOrder.ASCENDING));
@@ -170,6 +176,9 @@ public class ApplicationInitializer {
         // Register jobs
         jobInstanceService.registerJobs();
 
+        // Load Custom table field data type mappings 
+        nativePersistenceService.refreshTableFieldMapping(null);
+        
         // Initialize scripts
         scriptCompilerService.compileAndInitializeAll();
 
