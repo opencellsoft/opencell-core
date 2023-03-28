@@ -350,7 +350,10 @@ public class CurrentUserProvider {
      * @return Current provider code
      */
     public static String getCurrentTenant() {
-        return currentTenant.get();
+    	if(isCurrentTenantSet()) {
+    		return currentTenant.get();
+    	}
+    	return null;
     }
 
     /**
