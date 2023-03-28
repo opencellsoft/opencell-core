@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -237,10 +238,16 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 			matchingResult.setPartialMatchingOcc(partialMatchingOcc);
 			if(aos.size()>0) {
 			    TradingCurrency theFirstTradingCurrency = aos.get(0).getTransactionalCurrency();
-			    for (AccountOperation accountOperation : aos) {              
-	                if(theFirstTradingCurrency != accountOperation.getTransactionalCurrency()) {
-	                    throw new BusinessApiException(resourceMessages.getString("accountOperation.error.sameCurrency"));
-	                }
+			    for (AccountOperation accountOperation : aos) {
+			        if(theFirstTradingCurrency != accountOperation.getTransactionalCurrency()) {
+			            String errorSameCurrencyEng= "Cannot match operations with different currencies";
+			            String errorSameCurrencyFra= "Impossible de lettrer des op�rations dans des devises diff�rentes";
+			            
+                        Map<String, String> values = new HashMap<>();
+                        values.put("ENG", errorSameCurrencyEng);
+                        values.put("FRA", errorSameCurrencyFra);
+                        throw new BusinessApiException(values.toString());
+                    }
 	                Long aoId = accountOperation.getId();
 	                if (aoId.equals(creditAoId)) {
 	                    // process only DEBIT AO
