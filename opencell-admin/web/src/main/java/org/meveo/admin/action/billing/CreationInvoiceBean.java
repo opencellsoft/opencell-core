@@ -756,7 +756,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         if (preferedPaymentMethod != null) {
             entity.setPaymentMethodType(preferedPaymentMethod.getPaymentType());
         }
-    	if(entity.getInvoiceNumber() == null) {
+    	if(entity.getStatus() == InvoiceStatusEnum.DRAFT && entity.getInvoiceNumber() == null) {
 	        entity = serviceSingleton.assignInvoiceNumberVirtual(entity);
 	        try {
 	            entity = invoiceService.generateXmlAndPdfInvoice(entity, true);
