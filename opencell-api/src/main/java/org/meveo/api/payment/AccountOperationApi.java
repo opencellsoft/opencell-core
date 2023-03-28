@@ -299,6 +299,7 @@ public class AccountOperationApi extends BaseApi {
         accountOperation.setBankReference(postData.getBankReference());
         accountOperation.setDepositDate(postData.getDepositDate());
         accountOperation.setBankCollectionDate(postData.getBankCollectionDate());
+        accountOperation.setTransactionDate(postData.getTransactionDate() != null ? postData.getTransactionDate() : null);
 
         accountOperation.setMatchingStatus(postData.getMatchingStatus());
         if (postData.getMatchingStatus() == null) {
