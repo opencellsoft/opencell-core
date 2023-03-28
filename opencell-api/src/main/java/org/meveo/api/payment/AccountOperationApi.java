@@ -250,7 +250,6 @@ public class AccountOperationApi extends BaseApi {
         BigDecimal functionalUnMatchingAmount = getFunctionalUnMatchingAmount(postData);
         BigDecimal transactionalUnMatchingAmount = postData.getUnMatchingAmount();
 
-
         String transactionalcurrency = postData.getTransactionalCurrency();
         BigDecimal functionalTaxAmount = postData.getTaxAmount();
         BigDecimal transactionalTaxAmount = postData.getTaxAmount();
@@ -274,20 +273,29 @@ public class AccountOperationApi extends BaseApi {
             ExchangeRate exchangeRate = getExchangeRate(tradingCurrency,transactionalcurrency,exchangeDate);
 
             if (!functionalCurrency.equals(tradingCurrency)) {
-                functionalAmount = transactionalAmount.divide(exchangeRate.getExchangeRate(),appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode());
-                functionalMatchingAmount = transactionalMatchingAmount.divide(exchangeRate.getExchangeRate(), 2,  appProvider.getInvoiceRoundingMode().getRoundingMode());
+
+                if (transactionalAmount != null && transactionalAmount.intValue() != 0) {
+                    functionalAmount = transactionalAmount.divide(exchangeRate.getExchangeRate(), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode());
+                }
+
+                if (transactionalMatchingAmount != null && transactionalMatchingAmount.intValue() != 0) {
+                    functionalMatchingAmount = transactionalMatchingAmount.divide(exchangeRate.getExchangeRate(), 2, appProvider.getInvoiceRoundingMode().getRoundingMode());
+                }
 
                 transactionalUnMatchingAmount = postData.getUnMatchingAmount() != null ? postData.getUnMatchingAmount() : postData.getAmount();
-                functionalUnMatchingAmount = transactionalUnMatchingAmount.divide(exchangeRate.getExchangeRate(), 2,  appProvider.getInvoiceRoundingMode().getRoundingMode());
+
+                if (transactionalUnMatchingAmount != null && transactionalUnMatchingAmount.intValue() != 0) {
+                    functionalUnMatchingAmount = transactionalUnMatchingAmount.divide(exchangeRate.getExchangeRate(), 2, appProvider.getInvoiceRoundingMode().getRoundingMode());
+                }
+
+                if (transactionalTaxAmount != null && transactionalTaxAmount.intValue() != 0) {
+                    functionalTaxAmount = transactionalTaxAmount.divide(exchangeRate.getExchangeRate(), 2, appProvider.getInvoiceRoundingMode().getRoundingMode());
+                }
+
+                if (functionalAmountWithoutTax != null && functionalAmountWithoutTax.intValue() != 0) {
+                    functionalAmountWithoutTax = transactionalAmountWithoutTax.divide(exchangeRate.getExchangeRate(), 2, appProvider.getInvoiceRoundingMode().getRoundingMode());
+                }
                 lastAppliedRate = exchangeRate.getExchangeRate();
-
-                if(transactionalTaxAmount != null){
-                    functionalTaxAmount = transactionalTaxAmount.divide(exchangeRate.getExchangeRate(), 2,  appProvider.getInvoiceRoundingMode().getRoundingMode());
-                }
-
-                if(functionalAmountWithoutTax != null){
-                    functionalAmountWithoutTax = transactionalAmountWithoutTax.divide(exchangeRate.getExchangeRate(), 2,  appProvider.getInvoiceRoundingMode().getRoundingMode());
-                }
             }
         }
 
