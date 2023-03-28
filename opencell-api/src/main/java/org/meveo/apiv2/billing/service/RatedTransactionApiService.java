@@ -4,14 +4,17 @@ import static java.util.Optional.ofNullable;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.rest.exception.BadRequestException;
 import org.meveo.apiv2.billing.DuplicateRTResult;
 import org.meveo.apiv2.billing.ProcessCdrListResult.Statistics;
 import org.meveo.apiv2.billing.ProcessingModeEnum;
 import org.meveo.apiv2.ordering.services.ApiService;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
+import org.meveo.service.bi.impl.JobService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class RatedTransactionApiService implements ApiService<RatedTransaction> {
 
@@ -33,6 +37,9 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 	
 	@Inject
 	private RatedTransactionService ratedTransactionService;
+
+	@Inject
+	private JobService jobService;
 
 	@Override
 	public Optional<RatedTransaction> findById(Long id) {
@@ -118,13 +125,26 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 	}
 
 	public DuplicateRTResult duplication(Map<String, Object> filters, ProcessingModeEnum mode, boolean negateAmount,
-			boolean returnRts) {
+			boolean returnRts, boolean startJob) {
 		DuplicateRTResult result = new DuplicateRTResult();
+		int maxLimit = ParamBean.getInstance().getPropertyAsInteger("api.ratedTransaction.massAction.limit", 5);
+
 		if(MapUtils.isEmpty(filters)) {
 			throw new InvalidParameterException("filters is required");
 		}
-		Map<String, Object> modifiableFilters = new HashMap<>(filters);
-		List<RatedTransaction> rtToDuplicate = ratedTransactionService.findByFilter(modifiableFilters);
+		Long countRatedTransaction = ratedTransactionService.count(filters);
+		List<RatedTransaction> rtToDuplicate = new ArrayList<>();
+		if(countRatedTransaction.intValue() > maxLimit) {
+			rtToDuplicate = ratedTransactionService.findByFilter(filters);
+			log.info("filter for duplication has more than : " + maxLimit + ", current rated transaction from filters are : " + countRatedTransaction + ". will job be lunched ? : " + startJob);
+			ratedTransactionService.incrementPendingDuplicate(rtToDuplicate.stream().map(RatedTransaction::getId).collect(Collectors.toList()), negateAmount);
+			if(!startJob){
+				result.setActionStatus(new ActionStatus(ActionStatusEnum.WARNING, "The filter reach the max limit to duplicate, to duplicate these rated transaction please run the job 'DuplicationRatedTransactionJob'"));
+				return result;
+			}else{
+				log.info("run job DuplicationRatedTransactionJob");
+			}
+		}
 		if(CollectionUtils.isEmpty(rtToDuplicate)) {
 			log.warn("list of rated transaction to duplicate is empty for filters : {}", filters);
 			result.getActionStatus().setMessage("list of rated transaction to duplicate is empty.");
