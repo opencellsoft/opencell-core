@@ -20381,4 +20381,11 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
 	</changeSet>
 	
+	<changeSet id="#INTRD-15191_20230328" author="aelmalki">
+		<update tableName="billing_trading_currency">
+			<column name="symbol" value="$" />
+			<where>currency_id=49</where>
+		</update>
+	</changeSet>
+	
 </databaseChangeLog>
