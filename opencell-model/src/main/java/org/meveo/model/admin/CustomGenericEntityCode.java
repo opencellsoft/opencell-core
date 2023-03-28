@@ -63,7 +63,7 @@ public class CustomGenericEntityCode extends AuditableEntity {
     @Size(max = 2000)
     private String formatEL;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "sequence_id")
     private Sequence sequence;
 

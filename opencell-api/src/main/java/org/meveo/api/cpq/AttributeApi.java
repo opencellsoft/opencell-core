@@ -279,8 +279,8 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 			throw new EntityDoesNotExistsException(ProductVersion.class, productCode, "productCode", "" + currentProductVersion, "currentVersion");
 		}
 		GetProductVersionResponse getProductVersionResponse = new GetProductVersionResponse(productVersion, true, true);
-		getProductVersionResponse.getAttributes().stream().forEach(att -> {
-			List<Long> sourceRules = commercialRuleLineService.getSourceProductAttributeRules(att.getCode(), productCode);
+		getProductVersionResponse.getProductAttributes().stream().forEach(att -> {
+			List<Long> sourceRules = commercialRuleLineService.getSourceProductAttributeRules(att.getAttributeCode(), productCode);
 			if (sourceRules != null && !sourceRules.isEmpty()) {
 				att.setRuled(true);
 			}

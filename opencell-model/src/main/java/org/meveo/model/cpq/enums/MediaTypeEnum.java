@@ -14,8 +14,8 @@ import java.util.stream.Stream;
 public enum MediaTypeEnum {
 
 	IMAGE(0),
-	VIDEO(1);
-	
+	VIDEO(1),
+	PDF(2);
 	private int value;
 	
 	private MediaTypeEnum(int value) {

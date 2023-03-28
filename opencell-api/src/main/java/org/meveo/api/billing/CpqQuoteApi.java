@@ -1991,9 +1991,9 @@ public class CpqQuoteApi extends BaseApi {
             offerEligibleFixedDiscountItems.addAll(productEligibleFixedDiscountItems);
         }
         
-
+        if(subscription.getOffer() != null && subscription.getOffer().isGenerateQuoteEdrPerProduct()) {
         createEDR(edrQuantity, subscription, attributes, walletOperations);
-
+            }
 
         var offerFixedDiscountWalletOperation = discountPlanService.calculateDiscountplanItems(new ArrayList<>(offerEligibleFixedDiscountItems), subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), new BigDecimal(1d), null,
         		subscription.getOffer().getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), null, subscription, subscription.getOffer().getDescription(), true, null, null, DiscountPlanTypeEnum.OFFER);

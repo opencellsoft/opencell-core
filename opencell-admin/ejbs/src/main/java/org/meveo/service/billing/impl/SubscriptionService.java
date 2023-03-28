@@ -768,6 +768,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         }
         subscription.setSubscriptionRenewal(subscriptionRenewal);
         subscription.setSubscribedTillDate(subscribedTillDate);
+        subscription.setToValidity(null);
         update(subscription);
     }
 

@@ -16,7 +16,8 @@ public enum RuleOperatorEnum {
 	LESS_THAN_OR_EQUAL("<="),
 	NOT_EQUAL("!="),
 	EXISTS("EXISTS"),
-	CONTAINS("CONTAINS");
+	CONTAINS("CONTAINS"),
+	NOT_CONTAINS("NOT_CONTAINS");
 	
 	
 	

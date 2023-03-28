@@ -304,6 +304,8 @@ public class MeveoFunctionMapper extends FunctionMapper {
             addFunction("mv", "getLocalizedDescription", MeveoFunctionMapper.class.getMethod("getLocalizedDescription", IEntity.class, String.class));
             addFunction("mv", "getAttributeValue", MeveoFunctionMapper.class.getMethod("getAttributeValue", Long.class, String.class,String.class,String.class));
             addFunction("mv", "getProductAttributeValue", MeveoFunctionMapper.class.getMethod("getProductAttributeValue", ServiceInstance.class, String.class));
+            addFunction("mv", "getSubscriptionProductAttributeValue", MeveoFunctionMapper.class.getMethod("getSubscriptionProductAttributeValue", Subscription.class, String.class, String.class));
+            addFunction("mv", "getProductElAttributeValue", MeveoFunctionMapper.class.getMethod("getProductElAttributeValue", ServiceInstance.class,String.class, WalletOperation.class));
             
             addFunction("mv", "parseJSON", MeveoFunctionMapper.class.getMethod("parseJSON", String.class, String.class));
 
