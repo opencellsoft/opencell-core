@@ -605,6 +605,14 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             BigDecimal unitPriceWithoutTax = unitPriceWithoutTaxOverridden;
             BigDecimal unitPriceWithTax = unitPriceWithTaxOverridden;
             
+            BigDecimal unitPrice = appProvider.isEntreprise() ? unitPriceWithoutTax : unitPriceWithTax;
+            if (unitPrice == null) {
+                throw new BusinessException("No unit price found");
+            }
+            BigDecimal amount = bareWalletOperation.getQuantity().multiply(unitPrice);
+            bareWalletOperation.setAmountWithoutTax(amount);
+            bareWalletOperation.setAmountWithTax(amount);
+
             RecurringChargeTemplate recurringChargeTemplate = getRecurringChargeTemplateFromChargeInstance(chargeInstance);
 
             PricePlanMatrix pricePlan = null;
