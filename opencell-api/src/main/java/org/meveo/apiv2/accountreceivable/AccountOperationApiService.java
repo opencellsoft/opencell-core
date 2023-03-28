@@ -241,7 +241,7 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 			    for (AccountOperation accountOperation : aos) {
 			        if(theFirstTradingCurrency != accountOperation.getTransactionalCurrency()) {
 			            String errorSameCurrencyEng= "Cannot match operations with different currencies";
-			            String errorSameCurrencyFra= "Impossible de lettrer des op�rations dans des devises diff�rentes";
+			            String errorSameCurrencyFra= "Impossible de lettrer des opérations dans des devises différentes";
 			            
                         Map<String, String> values = new HashMap<>();
                         values.put("ENG", errorSameCurrencyEng);
