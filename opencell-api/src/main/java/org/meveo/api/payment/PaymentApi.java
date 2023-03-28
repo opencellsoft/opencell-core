@@ -162,7 +162,7 @@ public class PaymentApi extends BaseApi {
         }
 
 		BigDecimal functionalAmount = paymentDto.getAmount();
-		BigDecimal convertedAmount = paymentDto.getAmount();
+		BigDecimal transactionalAmount = paymentDto.getAmount();
 		TradingCurrency functionalCurrency = appProvider.getCurrency() != null && appProvider.getCurrency().getCurrencyCode() != null ? tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode()) : null;
 		TradingCurrency transactionalCurrency = null;
 		BigDecimal lastApliedRate = BigDecimal.ONE;
@@ -174,10 +174,10 @@ public class PaymentApi extends BaseApi {
 			checkTransactionalCurrency(transactionalcurrencyCode, transactionalCurrency);
 
 			ExchangeRate exchangeRate = getExchangeRate(transactionalCurrency, transactionalCurrency, paymentDto.getTransactionDate());
-			convertedAmount = paymentDto.getAmount();
+			transactionalAmount = paymentDto.getAmount();
 
 			if (functionalCurrency != null && !functionalCurrency.equals(transactionalCurrency) && !Objects.equals(exchangeRate.getExchangeRate(), BigDecimal.ZERO)) {
-				functionalAmount = convertedAmount.divide(exchangeRate.getExchangeRate(), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode());
+				functionalAmount = transactionalAmount.divide(exchangeRate.getExchangeRate(), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode());
 				lastApliedRate = exchangeRate.getExchangeRate();
 			}
 
@@ -190,11 +190,11 @@ public class PaymentApi extends BaseApi {
         payment.setAmount(functionalAmount);
         payment.setUnMatchingAmount(functionalAmount);
         payment.setMatchingAmount(BigDecimal.ZERO);
-		payment.setTransactionalAmount(convertedAmount);
-		payment.setTransactionalAmountWithoutTax(convertedAmount);
+		payment.setTransactionalMatchingAmount(BigDecimal.ZERO);
+		payment.setTransactionalAmount(transactionalAmount);
+		payment.setTransactionalAmountWithoutTax(transactionalAmount);
 		payment.setAmountWithoutTax(functionalAmount);
-		payment.setTransactionalUnMatchingAmount(convertedAmount);
-		payment.setTransactionalMatchingAmount(convertedAmount);
+		payment.setTransactionalUnMatchingAmount(transactionalAmount);
         payment.setAccountingCode(occTemplate.getAccountingCode());
         payment.setCode(occTemplate.getCode());
         payment.setDescription(StringUtils.isBlank(paymentDto.getDescription()) ? occTemplate.getDescription() : paymentDto.getDescription());
