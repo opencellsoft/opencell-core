@@ -67,9 +67,11 @@ public class InvoiceValidationRulesResourceImpl implements InvoiceValidationRule
 
         InvoiceValidationRule invoiceValidationRule = ofNullable(invoiceValidationRulesService.findById(invoiceValidationRuleId))
                 .orElseThrow(() -> new EntityDoesNotExistsException(InvoiceValidationRule.class, invoiceValidationRuleId));
+        
+        invoiceValidationRule = invoiceValidationRuleMapper.toEntity(invoiceValidationRuleDto, invoiceValidationRule, invoiceType, scriptInstance);
+        postValidationRuleMapper(invoiceValidationRuleDto, invoiceValidationRule);
 
-        invoiceValidationRulesApiService.update(invoiceValidationRule.getId(),
-                invoiceValidationRuleMapper.toEntity(invoiceValidationRuleDto, invoiceValidationRule, invoiceType, scriptInstance));
+        invoiceValidationRulesApiService.update(invoiceValidationRule.getId(), invoiceValidationRule);
 
         return Response.ok(buildSucessResponse(invoiceValidationRule.getId())).build();
     }

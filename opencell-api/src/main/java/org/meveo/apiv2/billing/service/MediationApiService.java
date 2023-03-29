@@ -72,6 +72,7 @@ import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.model.rating.EDR;
+import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
@@ -415,6 +416,7 @@ public class MediationApiService {
 
                         mediationsettingService.applyEdrVersioningRule(edrs, cdr, false);
                     }
+                    }
                     // Convert CDR to EDR and create a reservation
                     if (reserve) {
 
@@ -450,6 +452,9 @@ public class MediationApiService {
                         // Convert CDR to EDR and rate them
                     } else if (rate) {
                         for (EDR edr : edrs) {
+                            if(edr.getStatus() == EDRStatusEnum.RATED) {
+                                continue;
+                            }
                             RatingResult ratingResult = null;
                             // For ROLLBACK_ON_ERROR mode, processing is called within TX, so when error is thrown up, everything will rollback
                             if (cdrProcessingResult.getMode() == ROLLBACK_ON_ERROR) {
