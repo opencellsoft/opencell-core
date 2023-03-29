@@ -8906,6 +8906,8 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+    	<addUniqueConstraint columnNames="code, document_version" constraintName="document_code_version_key" tableName="document" />
+    		
     </changeSet>    
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-416">           
         <createTable tableName="document_category" >

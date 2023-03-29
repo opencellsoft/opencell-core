@@ -16221,5 +16221,9 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>CREATE INDEX cpq_price_plan_matrix_value__ppml_id__idx ON cpq_price_plan_matrix_value(ppml_id)</sql>
         <sql>CREATE INDEX cpq_price_plan_matrix_line__ppm_version_id__idx ON cpq_price_plan_matrix_line(ppm_version_id)</sql>
     </changeSet>
+    
+    <changeSet id="#INTRD-14966_20230329" author="HatimO.">
+        <addUniqueConstraint columnNames="code, document_version" constraintName="document_code_version_key" tableName="document" />
+    </changeSet>
 
 </databaseChangeLog>
