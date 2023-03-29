@@ -31,6 +31,7 @@ public class MediationSetting extends AuditableEntity {
 	private boolean enableEdrVersioning = Boolean.FALSE;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "mediationSetting", orphanRemoval = true)
+    @OrderBy("priority")
     @Cache(usage =  CacheConcurrencyStrategy.READ_WRITE)
 	private Set<EdrVersioningRule> rules = new HashSet<>();
 

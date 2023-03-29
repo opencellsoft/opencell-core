@@ -413,8 +413,7 @@ public class MediationApiService {
                             cdrParser.deduplicate(cdr);
                         }
                         cdrParsingService.createEdrs(edrs, cdr);
-                    }
-                    if(!isVirtual){
+
                         mediationsettingService.applyEdrVersioningRule(edrs, cdr, false);
                     }
                     // Convert CDR to EDR and create a reservation
@@ -443,7 +442,7 @@ public class MediationApiService {
                             Object[] objs = { reservation.getId(), currentUser };
                             timerConfig.setInfo(objs);
                             Timer timer = timerService.createSingleActionTimer(appProvider.getPrepaidReservationExpirationDelayinMillisec(), timerConfig);
-//                            timers.put(reservation.getId(), timer);
+                            // timers.put(reservation.getId(), timer);
 
                         }
 
@@ -452,7 +451,7 @@ public class MediationApiService {
                         // Convert CDR to EDR and rate them
                     } else if (rate) {
                         for (EDR edr : edrs) {
-                            if(edr.getStatus() == EDRStatusEnum.RATED) {
+                            if (edr.getStatus() == EDRStatusEnum.RATED) {
                                 continue;
                             }
                             RatingResult ratingResult = null;
@@ -562,27 +561,28 @@ public class MediationApiService {
             if (generateRTs && !walletOperations.isEmpty()) {
                 for (WalletOperation walletOperation : walletOperations) {
                     // cdrParsingService.getEntityManager().persist(walletOperation.getEdr());
-                    if (walletOperation.getId() == null || walletOperation.getStatus() != WalletOperationStatusEnum.OPEN)
+                    if (walletOperation.getId() == null || walletOperation.getStatus() != WalletOperationStatusEnum.OPEN) {
                         continue;
+                    }
                     ratedTransactionService.createRatedTransaction(walletOperation, false);
                 }
             }
-            cdrProcessingResult.setAmountWithTax(BigDecimal.ZERO);
-            cdrProcessingResult.setAmountWithoutTax(BigDecimal.ZERO);
-            cdrProcessingResult.setAmountTax(BigDecimal.ZERO);
-            cdrProcessingResult.setWalletOperationCount(0);
-            Arrays.stream(cdrProcessingResult.getChargedCDRs()).forEach(cdrCharge -> {
-                if (cdrCharge != null) {
-                    cdrProcessingResult.setAmountWithTax(cdrProcessingResult.getAmountWithTax().add(cdrCharge.getAmountWithTax() != null ? cdrCharge.getAmountWithTax() : BigDecimal.ZERO));
-                    cdrProcessingResult.setAmountWithoutTax(cdrProcessingResult.getAmountWithoutTax().add(cdrCharge.getAmountWithoutTax() != null ? cdrCharge.getAmountWithoutTax() : BigDecimal.ZERO));
-                    cdrProcessingResult.setAmountTax(cdrProcessingResult.getAmountTax().add(cdrCharge.getAmountTax() != null ? cdrCharge.getAmountTax() : BigDecimal.ZERO));
-                    cdrProcessingResult.setWalletOperationCount(cdrProcessingResult.getWalletOperationCount() + (cdrCharge.getWalletOperationCount() != null ? cdrCharge.getWalletOperationCount() : 0));
-                } else {
-                    log.warn("cdrProcessingResult amouts and WOCount will have default 0 value, due to cdrCharge null");
-                }
-            });
         }
+        cdrProcessingResult.setAmountWithTax(BigDecimal.ZERO);
+        cdrProcessingResult.setAmountWithoutTax(BigDecimal.ZERO);
+        cdrProcessingResult.setAmountTax(BigDecimal.ZERO);
+        cdrProcessingResult.setWalletOperationCount(0);
 
+        Arrays.stream(cdrProcessingResult.getChargedCDRs()).forEach(cdrCharge -> {
+            if (cdrCharge != null) {
+                cdrProcessingResult.setAmountWithTax(cdrProcessingResult.getAmountWithTax().add(cdrCharge.getAmountWithTax() != null ? cdrCharge.getAmountWithTax() : BigDecimal.ZERO));
+                cdrProcessingResult.setAmountWithoutTax(cdrProcessingResult.getAmountWithoutTax().add(cdrCharge.getAmountWithoutTax() != null ? cdrCharge.getAmountWithoutTax() : BigDecimal.ZERO));
+                cdrProcessingResult.setAmountTax(cdrProcessingResult.getAmountTax().add(cdrCharge.getAmountTax() != null ? cdrCharge.getAmountTax() : BigDecimal.ZERO));
+                cdrProcessingResult.setWalletOperationCount(cdrProcessingResult.getWalletOperationCount() + (cdrCharge.getWalletOperationCount() != null ? cdrCharge.getWalletOperationCount() : 0));
+            } else {
+                log.warn("cdrProcessingResult amouts and WOCount will have default 0 value, due to cdrCharge null");
+            }
+        });
     }
 
     private void validate(CdrListInput postData) {
