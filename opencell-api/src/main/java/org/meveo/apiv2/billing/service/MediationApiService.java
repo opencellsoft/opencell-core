@@ -416,7 +416,7 @@ public class MediationApiService {
 
                         mediationsettingService.applyEdrVersioningRule(edrs, cdr, false);
                     }
-                    }
+
                     // Convert CDR to EDR and create a reservation
                     if (reserve) {
 
