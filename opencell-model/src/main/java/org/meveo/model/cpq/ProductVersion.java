@@ -134,16 +134,11 @@ public class ProductVersion extends AuditableEntity{
     @JoinTable(name = "cpq_product_version_tags", joinColumns = @JoinColumn(name = "product_version_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
 	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Tag> tags = new HashSet<Tag>();
-    
 
-	
-    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "productVersion", orphanRemoval = true)
 	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private List<ProductVersionAttribute> attributes = new ArrayList<ProductVersionAttribute>();
 	
-	
-
 	/**
 	 * list of grouped attribute attached to this product version
 	 */
@@ -164,10 +159,11 @@ public class ProductVersion extends AuditableEntity{
 		this.setStatus(VersionStatusEnum.DRAFT);
 		this.setCurrentVersion(1);
 		this.setStatusDate(Calendar.getInstance().getTime());
-		if(product != null)
+		if(product != null) {
 			this.setProduct(product);
-		else
+		} else {
 			this.setProduct(copy.getProduct());
+		}
 		this.setTags(new HashSet<>());
 		this.setAttributes(new ArrayList<>());
 		this.setShortDescription(copy.getShortDescription());

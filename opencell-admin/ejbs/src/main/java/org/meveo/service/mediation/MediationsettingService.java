@@ -1,6 +1,5 @@
 package org.meveo.service.mediation;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -49,6 +48,9 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 
     @Inject
     private UsageChargeTemplateService usageChargeTemplateService;
+
+    @Inject
+    private EdrService edrService;
 
     // Use MEDIATION_SETTING_ID to remember the mediation setting and look it up by ID next time.
     private static Long MEDIATION_SETTING_ID = null;
@@ -281,8 +283,6 @@ public class MediationsettingService extends PersistenceService<MediationSetting
         return evaluted;
     }
 
-    @Inject
-    private EdrService edrService;
 
     private Object evaluateEdrVersion(Long idEdrVersion, String expression, EDR edr, CDR cdr, String msg, Class<?> result, Iterator<EDR> edrIterate) {
         return evaluateEdrVersion(idEdrVersion, expression, edr, cdr, msg, result, null, edrIterate);

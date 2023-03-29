@@ -1297,7 +1297,6 @@ public class Subscription extends BusinessCFEntity implements IInvoicingMinimumA
 		this.contract = contract;
 	}
 	
-}
 	/**
 	 * @return Usage charge instances related to subscription
 	 */
