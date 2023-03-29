@@ -8902,6 +8902,9 @@
             </column>
             <column name="cf_values" type="${type.json}"></column>
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}"/>
+            <column name="document_version" type="int4" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>    
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-416">           
