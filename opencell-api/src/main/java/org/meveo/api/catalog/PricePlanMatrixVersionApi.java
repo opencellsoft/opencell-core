@@ -108,7 +108,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             AtomicReference<PricePlanMatrixVersion> parameter = new AtomicReference<>(pricePlanMatrixVersion);
             pricePlanMatrixVersion.getPricePlanMatrix().getVersions().stream().filter(ppmv -> ppmv.getId() != null)
             .forEach(ppmv -> {
-                if(ppmv.getValidity() != null && ppmv.getValidity().isCorrespondsToPeriod(parameter.get().getValidity(), false)) {
+                if(ppmv.getValidity() != null && ppmv.getStatus().equals(VersionStatusEnum.PUBLISHED) && ppmv.getValidity().isCorrespondsToPeriod(parameter.get().getValidity(), false)) {
                     var formatter = new SimpleDateFormat("dd/MM/yyyy");
                     String eFrom = ppmv.getValidity().getFrom() != null ? formatter.format(ppmv.getValidity().getFrom()) : "";
                     String eTo = ppmv.getValidity().getTo() != null ? formatter.format(ppmv.getValidity().getTo()) : "";
@@ -137,7 +137,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             
             pricePlanMatrixVersion.getPricePlanMatrix().getVersions().stream().filter(ppmv -> pricePlanMatrixVersion.getId() != ppmv.getId())
             .forEach(ppmv -> {
-                if(ppmv.getValidity() != null && ppmv.getValidity().isCorrespondsToPeriod(pricePlanMatrixVersion.getValidity(), false)) {
+                if(ppmv.getValidity() != null && ppmv.getStatus().equals(VersionStatusEnum.PUBLISHED) && ppmv.getValidity().isCorrespondsToPeriod(pricePlanMatrixVersion.getValidity(), false)) {
                     var formatter = new SimpleDateFormat("dd/MM/yyyy");
                     String eFrom = ppmv.getValidity().getFrom() != null ? formatter.format(ppmv.getValidity().getFrom()) : "";
                     String eTo = ppmv.getValidity().getTo() != null ? formatter.format(ppmv.getValidity().getTo()) : "";
