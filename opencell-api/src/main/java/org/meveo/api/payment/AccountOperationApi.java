@@ -261,11 +261,11 @@ public class AccountOperationApi extends BaseApi {
         BigDecimal transactionalUnMatchingAmount = postData.getUnMatchingAmount();
 
         String transactionalcurrency = postData.getTransactionalCurrency();
-        BigDecimal functionalTaxAmount = postData.getTaxAmount();
-        BigDecimal transactionalTaxAmount = postData.getTaxAmount();
+        BigDecimal functionalTaxAmount = getTaxAmount(postData);
+        BigDecimal transactionalTaxAmount = getTaxAmount(postData);
 
-        BigDecimal functionalAmountWithoutTax = postData.getAmountWithoutTax();
-        BigDecimal transactionalAmountWithoutTax = postData.getAmountWithoutTax();
+        BigDecimal functionalAmountWithoutTax = getAmountWithoutTax(postData);
+        BigDecimal transactionalAmountWithoutTax = getAmountWithoutTax(postData);
 
         BigDecimal lastAppliedRate = BigDecimal.ONE;
         TradingCurrency tradingCurrency = null;
@@ -302,7 +302,7 @@ public class AccountOperationApi extends BaseApi {
                     functionalTaxAmount = transactionalTaxAmount.divide(exchangeRate.getExchangeRate(), 2, appProvider.getInvoiceRoundingMode().getRoundingMode());
                 }
 
-                if (functionalAmountWithoutTax != null && functionalAmountWithoutTax.intValue() != 0) {
+                if (transactionalAmountWithoutTax != null && transactionalAmountWithoutTax.intValue() != 0) {
                     functionalAmountWithoutTax = transactionalAmountWithoutTax.divide(exchangeRate.getExchangeRate(), 2, appProvider.getInvoiceRoundingMode().getRoundingMode());
                 }
                 lastAppliedRate = exchangeRate.getExchangeRate();
@@ -327,7 +327,7 @@ public class AccountOperationApi extends BaseApi {
         accountOperation.setBankReference(postData.getBankReference());
         accountOperation.setDepositDate(postData.getDepositDate());
         accountOperation.setBankCollectionDate(postData.getBankCollectionDate());
-        accountOperation.setTransactionDate(postData.getTransactionDate() != null ? postData.getTransactionDate() : null);
+        accountOperation.setTransactionDate(postData.getTransactionDate() != null ? postData.getTransactionDate() : new Date());
 
         accountOperation.setMatchingStatus(postData.getMatchingStatus());
         if (postData.getMatchingStatus() == null) {
@@ -417,6 +417,26 @@ public class AccountOperationApi extends BaseApi {
             }
         }
         return accountOperation.getId();
+    }
+
+    private BigDecimal getTaxAmount(AccountOperationDto postData) {
+        BigDecimal taxAmount = null;
+        if (postData.getAmountWithoutTax() != null && postData.getAmount() != null) {
+            taxAmount = postData.getAmount().subtract(postData.getAmountWithoutTax());
+        } else if (postData.getTaxAmount() != null) {
+            taxAmount = postData.getTaxAmount();
+        }
+        return taxAmount;
+    }
+
+    private BigDecimal getAmountWithoutTax(AccountOperationDto postData) {
+        BigDecimal amountWithoutTax = null;
+        if (postData.getAmount() != null && postData.getTaxAmount() != null) {
+            amountWithoutTax = postData.getAmount().subtract(postData.getTaxAmount());
+        } else if (postData.getAmountWithoutTax() != null) {
+            amountWithoutTax = postData.getAmountWithoutTax();
+        }
+        return amountWithoutTax;
     }
 
     private static BigDecimal getFunctionalUnMatchingAmount(AccountOperationDto postData) {
