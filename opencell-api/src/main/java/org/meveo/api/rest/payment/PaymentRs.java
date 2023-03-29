@@ -39,6 +39,7 @@ import org.meveo.api.dto.payment.DDRequestBuilderDto;
 import org.meveo.api.dto.payment.DDRequestBuilderResponseDto;
 import org.meveo.api.dto.payment.HostedCheckoutStatusResponseDto;
 import org.meveo.api.dto.payment.MandatInfoDto;
+import org.meveo.api.dto.payment.PayByCardOrSepaDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentGatewayDto;
 import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
@@ -48,6 +49,7 @@ import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
+import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceItemsDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceResponseDto;
@@ -1593,4 +1595,52 @@ public interface PaymentRs extends IBaseRs {
 				)}
 	)
     ActionStatus replacePaymentScheduleInstanceItem(@PathParam("id") Long paymentScheduleInstanceId, PaymentScheduleInstanceItemsDto paymentScheduleInstanceItemsDto);
+
+   /**
+    * Make a real  card payment through gateways like Ingenico or Stripe, and then create the account Operation that can be matched with other accounts Operations
+    * 
+    * @param payByCardDto
+    * @return PaymentResponseDto
+    */
+    @POST
+    @Path("/payByCard")
+	@Operation(
+			summary=" Make a real payment through gateways like Ingenico or Stripe",
+			description=" Make a real payment through gateways like Ingenico or Stripe. ",
+			operationId="POST_Payment_payByCard",
+			responses= {
+				@ApiResponse(description=" payByCard ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PaymentResponseDto.class
+											)
+								)
+				)}
+	)
+	PaymentResponseDto payByCard(PayByCardOrSepaDto payByCardDto);
+    
+    /**
+     * Make a real  Sepa payment through gateways like Ingenico or Stripe, and then create the account Operation that can be matched with other accounts Operations
+     * 
+     * @param payBySepaDto
+     * @return PaymentResponseDto
+     */
+     @POST
+     @Path("/payBySepa")
+ 	@Operation(
+ 			summary=" Make a real payment through gateways like Ingenico or Stripe",
+ 			description=" Make a real payment through gateways like Ingenico or Stripe. ",
+ 			operationId="POST_Payment_payBySepa",
+ 			responses= {
+ 				@ApiResponse(description=" payBySepa ",
+ 						content=@Content(
+ 									schema=@Schema(
+ 											implementation= PaymentResponseDto.class
+ 											)
+ 								)
+ 				)}
+ 	)
+ 	PaymentResponseDto payBySepa(PayByCardOrSepaDto payBySepaDto);
+    
+    
 }
