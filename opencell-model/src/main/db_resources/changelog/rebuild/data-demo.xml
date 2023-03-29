@@ -1201,7 +1201,7 @@
             <column name="pr_description" value="US Dollar" />
 
             <column name="currency_id" valueNumeric="49" />
-            <column name="symbol" value="$US"  />
+            <column name="symbol" value="$"  />
             <column name="decimal_places" valueNumeric="2" />
         </insert>
         <insert tableName="billing_trading_currency">
@@ -5999,7 +5999,7 @@
             <column name="version" valueNumeric="0" />
             <column name="src_type" value="JAVA_CLASS" />
         </insert>
-    </changeSet>            
+    </changeSet>
 
     <changeSet id="INTRD-2698-20211028" author="AbdelkaderBouazza" />    
     <changeSet id="#INTRD-4950-20220208-script" author="MohammedSTITANE"/>
