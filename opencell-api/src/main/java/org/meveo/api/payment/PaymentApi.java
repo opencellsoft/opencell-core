@@ -37,7 +37,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.AccountOperationsDto;
-import org.meveo.api.dto.payment.PayByCardDto;
+import org.meveo.api.dto.payment.PayByCardOrSepaDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentHistoriesDto;
 import org.meveo.api.dto.payment.PaymentHistoryDto;
@@ -72,7 +72,6 @@ import org.meveo.model.payments.PaymentHistory;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.payments.RecordedInvoice;
-import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.billing.impl.JournalService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -351,6 +350,9 @@ public class PaymentApi extends BaseApi {
 		return customerAccountService.customerAccountBalanceDue(customerAccount, new Date()).doubleValue();
 	}
 
+	
+	
+	
 	/**
 	 * @param cardPaymentRequestDto card payment request
 	 * @return payment by card response
@@ -359,7 +361,51 @@ public class PaymentApi extends BaseApi {
 	 * @throws UnbalanceAmountException         balance exception
 	 * @throws MeveoApiException                opencell's api exception
 	 */
-	public PaymentResponseDto payByCard(PayByCardDto cardPaymentRequestDto)
+	public PaymentResponseDto payBySepa(PayByCardOrSepaDto cardPaymentRequestDto)
+			throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, MeveoApiException {
+
+		if (StringUtils.isBlank(cardPaymentRequestDto.getCtsAmount())) {
+			missingParameters.add("ctsAmount");
+		}
+
+		if (StringUtils.isBlank(cardPaymentRequestDto.getCustomerAccountCode())) {
+			missingParameters.add("customerAccountCode");
+		}
+
+		if (cardPaymentRequestDto.isToMatch() && cardPaymentRequestDto.getAoToPay() == null
+				|| cardPaymentRequestDto.getAoToPay().isEmpty()) {
+			missingParameters.add("aoToPay");
+		}
+
+		handleMissingParameters();
+
+		CustomerAccount customerAccount = customerAccountService
+				.findByCode(cardPaymentRequestDto.getCustomerAccountCode());
+		if (customerAccount == null) {
+			throw new EntityDoesNotExistsException(CustomerAccount.class,
+					cardPaymentRequestDto.getCustomerAccountCode());
+		}
+
+		PaymentMethodEnum preferedMethod = customerAccount.getPreferredPaymentMethodType();
+		if (preferedMethod != null && PaymentMethodEnum.DIRECTDEBIT != preferedMethod) {
+			throw new BusinessApiException("Can not process payment as prefered payment method is " + preferedMethod);
+		}
+
+		return paymentService.payByMandat(customerAccount, cardPaymentRequestDto.getCtsAmount(),
+				cardPaymentRequestDto.getAoToPay(), cardPaymentRequestDto.isCreateAO(),
+				cardPaymentRequestDto.isToMatch(), null);
+	}
+
+	
+	/**
+	 * @param cardPaymentRequestDto card payment request
+	 * @return payment by card response
+	 * @throws BusinessException                business exception
+	 * @throws NoAllOperationUnmatchedException no all operation matched exception
+	 * @throws UnbalanceAmountException         balance exception
+	 * @throws MeveoApiException                opencell's api exception
+	 */
+	public PaymentResponseDto payByCard(PayByCardOrSepaDto cardPaymentRequestDto)
 			throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, MeveoApiException {
 
 		if (StringUtils.isBlank(cardPaymentRequestDto.getCtsAmount())) {
@@ -389,10 +435,8 @@ public class PaymentApi extends BaseApi {
 				missingParameters.add("cardType");
 			}
 		}
-		if (cardPaymentRequestDto.isToMatch()) {
-			if (cardPaymentRequestDto.getAoToPay() == null || cardPaymentRequestDto.getAoToPay().isEmpty()) {
-				missingParameters.add("aoToPay");
-			}
+		if (cardPaymentRequestDto.isToMatch() && cardPaymentRequestDto.getAoToPay() == null || cardPaymentRequestDto.getAoToPay().isEmpty()) {			
+				missingParameters.add("aoToPay");			
 		}
 
 		handleMissingParameters();

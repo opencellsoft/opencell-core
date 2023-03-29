@@ -33,7 +33,7 @@ import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
 import org.meveo.api.dto.payment.DDRequestBuilderDto;
 import org.meveo.api.dto.payment.DDRequestBuilderResponseDto;
 import org.meveo.api.dto.payment.DDRequestLotOpDto;
-import org.meveo.api.dto.payment.PayByCardDto;
+import org.meveo.api.dto.payment.PayByCardOrSepaDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentGatewayDto;
 import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
@@ -118,7 +118,7 @@ public interface PaymentWs extends IBaseWs {
      * @return Payment by card information
      */
     @WebMethod
-    public PaymentResponseDto payByCard(@WebParam(name = "payByCard") PayByCardDto payByCardDto);
+    public PaymentResponseDto payByCard(@WebParam(name = "payByCard") PayByCardOrSepaDto payByCardDto);
 
     /************************************************************************************************/
     /**** Card Payment Method ****/

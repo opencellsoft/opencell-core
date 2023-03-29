@@ -33,7 +33,7 @@ import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
 import org.meveo.api.dto.payment.DDRequestBuilderDto;
 import org.meveo.api.dto.payment.DDRequestBuilderResponseDto;
 import org.meveo.api.dto.payment.DDRequestLotOpDto;
-import org.meveo.api.dto.payment.PayByCardDto;
+import org.meveo.api.dto.payment.PayByCardOrSepaDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentGatewayDto;
 import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
@@ -160,7 +160,7 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
     }
 
     @Override
-    public PaymentResponseDto payByCard(PayByCardDto doPaymentRequestDto) {
+    public PaymentResponseDto payByCard(PayByCardOrSepaDto doPaymentRequestDto) {
         PaymentResponseDto response = new PaymentResponseDto();
         response.setActionStatus(new ActionStatus(ActionStatusEnum.FAIL, ""));
         try {
