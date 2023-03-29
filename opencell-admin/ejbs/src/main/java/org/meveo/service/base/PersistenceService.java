@@ -1091,11 +1091,15 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public QueryBuilder getQuery(PaginationConfiguration config) {
+    	return getQuery(config,"a");
+    }
+    	
+    public QueryBuilder getQuery(PaginationConfiguration config, String alias) {
         Map<String, Object> filters = config.getFilters();
 
         adaptOrdering(config, filters);
         
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.isDoFetch(), config.getFetchFields(), config.getJoinType(), config.getFilterOperator());
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, alias, config.isDoFetch(), config.getFetchFields(), config.getJoinType(), config.getFilterOperator());
         if (filters != null && !filters.isEmpty()) {
             if (filters.containsKey(SEARCH_FILTER)) {
                 Filter filter = (Filter) filters.get(SEARCH_FILTER);
@@ -1106,7 +1110,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                 Map<String, Object> cfFilters = extractCustomFieldsFilters(filters);
                 filters.putAll(cfFilters);
 
-                ExpressionFactory expressionFactory = new ExpressionFactory(queryBuilder, "a");
+                ExpressionFactory expressionFactory = new ExpressionFactory(queryBuilder, alias);
                 filters.keySet().stream().sorted((k1, k2) -> org.apache.commons.lang3.StringUtils.countMatches(k2, ".") - org.apache.commons.lang3.StringUtils.countMatches(k1, "."))
                 						 .filter(key -> filters.get(key) != null && !"$OPERATOR".equalsIgnoreCase(key))
                 						 .forEach(key -> expressionFactory.addFilters(key, filters.get(key)));
@@ -1120,7 +1124,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             Filter filter = (Filter) filters.get("$FILTER");
             queryBuilder.addPaginationConfiguration(config, filter.getPrimarySelector().getAlias());
         } else {
-            queryBuilder.addPaginationConfiguration(config, "a");
+            queryBuilder.addPaginationConfiguration(config, alias);
         }
 
         // log.trace("Filters is {}", filters);
