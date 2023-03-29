@@ -1676,7 +1676,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
         if (fieldName5 != null) {
             queryValues.put(fieldName5, fieldValue5);
         }
-        return getCustomTableService().getValue(customTableCode, fieldToReturn, queryValues);
+        return getCustomTableService().getValue(customTableCode, fieldToReturn, queryValues, true);
     }
 
     /**
@@ -1720,7 +1720,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
             queryValues.put(fieldName5, fieldValue5);
         }
 
-        return getCustomTableService().getValue(customTableCode, fieldToReturn, date, queryValues);
+        return getCustomTableService().getValue(customTableCode, fieldToReturn, date, queryValues, true);
     }
 
     /**
@@ -1761,7 +1761,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
         if (fieldName5 != null) {
             queryValues.put(fieldName5, fieldValue5);
         }
-        return getCustomTableService().getValues(customTableCode, null, queryValues);
+        return getCustomTableService().getValues(customTableCode, null, queryValues, true);
     }
 
     /**
@@ -1803,7 +1803,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
         if (fieldName5 != null) {
             queryValues.put(fieldName5, fieldValue5);
         }
-        return getCustomTableService().getValues(customTableCode, null, date, queryValues);
+        return getCustomTableService().getValues(customTableCode, null, date, queryValues, true);
     }
 
     /**

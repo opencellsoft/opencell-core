@@ -53,10 +53,7 @@ public class CurrentUserProducer {
     @Named("currentUser")
     @CurrentUser
     public MeveoUser getCurrentUser() {
-        // String providerCode = currentUserProvider.getCurrentUserProviderCode();
-        // EntityManager em = entityManagerProvider.getEntityManager(providerCode);
-        // MeveoUser meveoUser = currentUserProvider.getCurrentUser(providerCode, em);
-        MeveoUser meveoUser = currentUserProvider.getCurrentUser(null, null);
+        MeveoUser meveoUser = currentUserProvider.getCurrentUser();
 
         return meveoUser;
     }

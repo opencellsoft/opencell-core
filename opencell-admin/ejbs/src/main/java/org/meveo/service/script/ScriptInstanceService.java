@@ -311,7 +311,7 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
      */
     public Map<String, Object> execute(String scriptCode, Map<String, Object> context) throws InvalidPermissionException, ElementNotFoundException, BusinessException {
 
-        ScriptInstance scriptInstance = findByCode(scriptCode);
+        ScriptInstance scriptInstance = findByCode(scriptCode, true);
         // Check access to the script
         isUserHasExecutionRole(scriptInstance);
 
@@ -643,24 +643,43 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
      * @throws InvalidScriptException Were not able to instantiate or compile a script
      * @throws ElementNotFoundException Script not found
      */
+    @SuppressWarnings("unchecked")
     public ScriptInterface getScriptInstance(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
 
         // First check if it is a deployed script
         ScriptInterface script = (ScriptInterface) EjbUtils.getServiceInterface(scriptCode.lastIndexOf('.') > 0 ? scriptCode.substring(scriptCode.lastIndexOf('.') + 1) : scriptCode);
+        if (script != null) {
+            return script;
+        }
+
+        try {
+            // Then check if its a deployed class
+            Class clazz = Class.forName(scriptCode);
+            if (clazz != null) {
+                script = (ScriptInterface) clazz.getDeclaredConstructor().newInstance();
+                return script;
+            }
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+            log.error("Failed to instantiate script {}", scriptCode, e);
+            throw new InvalidScriptException(scriptCode, getEntityClass().getName());
+        
+        } catch(ClassNotFoundException e) {
+            // Ignore error -  its not deployed class
+        }
 
         // Otherwise get it from the compiled source code
-        if (script == null) {
+
+        try {
             Class<ScriptInterface> scriptClass = getScriptInterface(scriptCode);
 
-            try {
-                script = scriptClass.getDeclaredConstructor().newInstance();
+            script = scriptClass.getDeclaredConstructor().newInstance();
+            return script;
 
-            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-                log.error("Failed to instantiate script {}", scriptCode, e);
-                throw new InvalidScriptException(scriptCode, getEntityClass().getName());
-            }
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+            log.error("Failed to instantiate script {}", scriptCode, e);
+            throw new InvalidScriptException(scriptCode, getEntityClass().getName());
         }
-        return script;
+
     }
 
     /**

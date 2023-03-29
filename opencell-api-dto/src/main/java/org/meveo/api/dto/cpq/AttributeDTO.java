@@ -140,7 +140,9 @@ public class AttributeDTO extends EnableBusinessDto {
     public AttributeDTO(Attribute attribute) {
         super(attribute);
         priority=attribute.getPriority();
-        allowedValues=attribute.getAllowedValues();
+        if (attribute.getAllowedValues() != null) {
+            allowedValues = new HashSet<String>(attribute.getAllowedValues());
+        }
         attributeType=attribute.getAttributeType();
         unitNbDecimal = attribute.getUnitNbDecimal(); 
         this.setDisabled(attribute.isDisabled());

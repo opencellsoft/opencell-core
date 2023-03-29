@@ -35,6 +35,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -69,7 +70,6 @@ import org.meveo.api.dto.custom.CustomTableRecordDto;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.apiv2.generic.GenericFieldDetails;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
@@ -650,9 +650,26 @@ public class CustomTableService extends NativePersistenceService {
      * @throws BusinessException General exception
      */
     public Object getValue(String cetCodeOrTablename, String fieldToReturn, Map<String, Object> queryValues) throws BusinessException {
+        return getValue(cetCodeOrTablename, fieldToReturn, queryValues, false);
+    }
+
+    /**
+     * Get field value of the first record matching search criteria
+     *
+     * @param cetCodeOrTablename Custom entity template code, or custom table name to query
+     * @param fieldToReturn Field value to return
+     * @param queryValues Search criteria with condition/field name as a key and field value as a value. See ElasticClient.search() for a query format.
+     * @param isCacheable Should query results be cached and consulted next time same query is run
+     * @return A field value
+     * @throws BusinessException General exception
+     */
+    public Object getValue(String cetCodeOrTablename, String fieldToReturn, Map<String, Object> queryValues, boolean isCacheable) throws BusinessException {
+
         removeEmptyKeys(queryValues);
 
         PaginationConfiguration pagination = new PaginationConfiguration(null, 1, queryValues, null, null, FIELD_ID, SortOrder.DESCENDING);
+        pagination.setCacheable(isCacheable);
+        pagination.setFetchFields(Arrays.asList(fieldToReturn));
         List<Map<String, Object>> results = super.list(cetCodeOrTablename, pagination);
 
         if (results == null || results.isEmpty()) {
@@ -677,12 +694,29 @@ public class CustomTableService extends NativePersistenceService {
      * @throws BusinessException General exception
      */
     public Object getValue(String cetCodeOrTablename, String fieldToReturn, Date date, Map<String, Object> queryValues) throws BusinessException {
+        return getValue(cetCodeOrTablename, fieldToReturn, date, queryValues, false);
+    }
+
+    /**
+     * Get field value of the first record matching search criteria for a given date. Applicable to custom tables that contain 'valid_from' and 'valid_to' fields
+     *
+     * @param cetCodeOrTablename Custom entity template code, or custom table name to query
+     * @param fieldToReturn Field value to return
+     * @param date Record validity date, as expressed by 'valid_from' and 'valid_to' fields, to match
+     * @param queryValues Search criteria with condition/field name as a key and field value as a value. See ElasticClient.search() for a query format.
+     * @param isCacheable Should query results be cached and consulted next time same query is run
+     * @return A field value
+     * @throws BusinessException General exception
+     */
+    public Object getValue(String cetCodeOrTablename, String fieldToReturn, Date date, Map<String, Object> queryValues, boolean isCacheable) throws BusinessException {
 
         queryValues.put("minmaxRange valid_from valid_to", date);
         removeEmptyKeys(queryValues);
 
         PaginationConfiguration pagination = new PaginationConfiguration(null, 1, queryValues, null, null, FIELD_VALID_PRIORITY, SortOrder.DESCENDING, FIELD_VALID_FROM, SortOrder.DESCENDING, FIELD_ID,
             SortOrder.DESCENDING);
+        pagination.setFetchFields(Arrays.asList(fieldToReturn));
+        pagination.setCacheable(isCacheable);
         List<Map<String, Object>> results = super.list(cetCodeOrTablename, pagination);
 
         if (results == null || results.isEmpty()) {
@@ -702,10 +736,28 @@ public class CustomTableService extends NativePersistenceService {
      * @throws BusinessException General exception
      */
     public Map<String, Object> getValues(String cetCodeOrTablename, String[] fieldsToReturn, Map<String, Object> queryValues) throws BusinessException {
+        return getValues(cetCodeOrTablename, fieldsToReturn, queryValues, false);
+    }
+
+    /**
+     * Get field values of the first record matching search criteria
+     *
+     * @param cetCodeOrTablename Custom entity template code, or custom table name to query
+     * @param fieldsToReturn Field values to return. Optional. If not provided all fields will be returned.
+     * @param queryValues Search criteria with condition/field name as a key and field value as a value. See ElasticClient.search() for a query format.
+     * @param isCacheable Should query results be cached and consulted next time same query is run
+     * @return A map of values with field name as a key and field value as a value. Note field value is always of String data type.
+     * @throws BusinessException General exception
+     */
+    public Map<String, Object> getValues(String cetCodeOrTablename, String[] fieldsToReturn, Map<String, Object> queryValues, boolean isCacheable) throws BusinessException {
 
         removeEmptyKeys(queryValues);
 
         PaginationConfiguration pagination = new PaginationConfiguration(null, 1, queryValues, null, null, FIELD_ID, SortOrder.DESCENDING);
+        if (fieldsToReturn != null) {
+            pagination.setFetchFields(Arrays.asList(fieldsToReturn));
+        }
+        pagination.setCacheable(isCacheable);
         List<Map<String, Object>> results = super.list(cetCodeOrTablename, pagination);
 
         if (results == null || results.isEmpty()) {
@@ -735,12 +787,31 @@ public class CustomTableService extends NativePersistenceService {
      * @throws BusinessException General exception
      */
     public Map<String, Object> getValues(String cetCodeOrTablename, String[] fieldsToReturn, Date date, Map<String, Object> queryValues) throws BusinessException {
+        return getValues(cetCodeOrTablename, fieldsToReturn, date, queryValues, false);
+    }
+
+    /**
+     * Get field values of the first record matching search criteria for a given date. Applicable to custom tables that contain 'valid_from' and 'valid_to' fields
+     *
+     * @param cetCodeOrTablename Custom entity template code, or custom table name to query
+     * @param fieldsToReturn Field values to return. Optional. If not provided all fields will be returned.
+     * @param date Record validity date, as expressed by 'valid_from' and 'valid_to' fields, to match
+     * @param queryValues Search criteria with condition/field name as a key and field value as a value. See ElasticClient.search() for a query format.
+     * @param isCacheable Should query results be cached and consulted next time same query is run
+     * @return A map of values with field name as a key and field value as a value. Note field value is always of String data type.
+     * @throws BusinessException General exception
+     */
+    public Map<String, Object> getValues(String cetCodeOrTablename, String[] fieldsToReturn, Date date, Map<String, Object> queryValues, boolean isCacheable) throws BusinessException {
 
         queryValues.put("minmaxRange valid_from valid_to", date);
         removeEmptyKeys(queryValues);
 
         PaginationConfiguration pagination = new PaginationConfiguration(null, 1, queryValues, null, null, FIELD_VALID_PRIORITY, SortOrder.DESCENDING, FIELD_VALID_FROM, SortOrder.DESCENDING, FIELD_ID,
             SortOrder.DESCENDING);
+        if (fieldsToReturn != null) {
+            pagination.setFetchFields(Arrays.asList(fieldsToReturn));
+        }
+        pagination.setCacheable(isCacheable);
         List<Map<String, Object>> results = super.list(cetCodeOrTablename, pagination);
 
         if (results == null || results.isEmpty()) {
@@ -1136,24 +1207,23 @@ public class CustomTableService extends NativePersistenceService {
         throw new InvalidParameterException("Invalid id value found: " + id);
     }
 
-	public List<Map<String, Object>> exportCustomTable(CustomEntityTemplate customEntityTemplate) throws BusinessException {
-		PaginationConfiguration pagination = new PaginationConfiguration(null, 0, null, null, null, FIELD_ID, SortOrder.ASCENDING);
-		QueryBuilder queryBuilder = getQuery(customEntityTemplate.getDbTablename(), pagination, null);
-		SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), true);
-		List<Map<String, Object>> data = query.list();
-		return (data.isEmpty()? null : data);
-	}
-	
-	public List<CustomFieldTemplate> getCFTs(CustomEntityTemplate cet) {
-		Map<String, CustomFieldTemplate> map = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo());
-		if (map == null || map.isEmpty()) {
-			throw new ValidationException("No fields are defined for custom table", "customTable.noFields");
-		}
-		List<CustomFieldTemplate> cfts = new ArrayList<>();
-		cfts.add(new CustomFieldTemplate(FIELD_ID, FIELD_ID, CustomFieldTypeEnum.LONG));
-		cfts.addAll(map.values());
+    public List<Map<String, Object>> exportCustomTable(CustomEntityTemplate customEntityTemplate) throws BusinessException {
+        PaginationConfiguration pagination = new PaginationConfiguration(null, 0, null, null, null, FIELD_ID, SortOrder.ASCENDING);
+        QueryBuilder queryBuilder = getQuery(customEntityTemplate.getDbTablename(), pagination, null);
+        SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), true);
+        List<Map<String, Object>> data = query.list();
+        return (data.isEmpty() ? null : data);
+    }
 
-		return cfts;
-	}
+    public List<CustomFieldTemplate> getCFTs(CustomEntityTemplate cet) {
+        Map<String, CustomFieldTemplate> map = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo());
+        if (map == null || map.isEmpty()) {
+            throw new ValidationException("No fields are defined for custom table", "customTable.noFields");
+        }
+        List<CustomFieldTemplate> cfts = new ArrayList<>();
+        cfts.add(new CustomFieldTemplate(FIELD_ID, FIELD_ID, CustomFieldTypeEnum.LONG));
+        cfts.addAll(map.values());
 
+        return cfts;
+    }
 }

@@ -27,6 +27,7 @@ import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.storage.StorageFactory;
@@ -44,6 +45,7 @@ import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.model.crm.Provider;
 import org.meveo.security.keycloak.CurrentUserProvider;
+import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.script.ScriptCompilerService;
@@ -110,50 +112,59 @@ public class ApplicationInitializer {
     @Inject
     private CommercialRulesContainerProvider commercialRulesContainerProvider;
 
+    @Inject
+    @Named
+    private NativePersistenceService nativePersistenceService;
+    
     public void init() {
 
         final List<Provider> providers = providerService.list(new PaginationConfiguration("id", SortOrder.ASCENDING));
 
         int i = 0;
 
+        try {
+            // Initialize storage factory
+            storageFactory.init();
+        } catch (Exception e) {
+            if (e instanceof ExecutionException && e.getMessage().contains("S3Exception")) {
+                throw S3Exception.builder().message(e.getMessage()).build();
+            }
+        }
+
         // Wait for each provider to initialize.
         for (Provider provider : providers) {
 
-            Future<Boolean> initProvider;
+            // Register a new EM factory for secondary providers
+            if (i > 0) {
+                entityManagerProvider.registerEntityManagerFactory(provider.getCode());
+            }
 
             try {
-                initProvider = multitenantAppInitializer.initializeTenant(provider, i == 0);
-
+                // Is run as Async, so a different provider can be setup for data loading
+                Future<Boolean> initProvider = multitenantAppInitializer.initializeTenant(provider, i == 0);
                 initProvider.get();
 
             } catch (InterruptedException | ExecutionException | BusinessException e) {
                 log.error("Failed to initialize a provider {}", provider.getCode(), e);
-
-                if (e instanceof ExecutionException && e.getMessage().contains("S3Exception")) {
-                    throw S3Exception.builder().message(e.getMessage()).build();
                 }
-            }
             i++;
         }
+
     }
 
     /**
-     * Initialize tenant information: establish EMF for secondary tenants/providers, schedule jobs, compile scripts, preload caches
+     * Initialize tenant information: establish EMF for secondary tenants/providers, schedule jobs, compile scripts, preload caches.<br/>
+     * Is run as Async, so a different provider can be setup for data loading.
      * 
      * @param provider Tenant/provider to initialize
      * @param isMainProvider Is it a main tenant/provider.
      * @param createESIndex boolean that determines whether to create or not the index
      * @return A future with value of True
-     * @throws BusinessException Business exception
      */
     @Asynchronous
-    public Future<Boolean> initializeTenant(Provider provider, boolean isMainProvider) throws BusinessException {
+    public Future<Boolean> initializeTenant(Provider provider, boolean isMainProvider) {
 
         log.debug("Will initialize application for provider {}", provider.getCode());
-
-        if (!isMainProvider) {
-            entityManagerProvider.registerEntityManagerFactory(provider.getCode());
-        }
 
         currentUserProvider.forceAuthentication("applicationInitializer", isMainProvider ? null : provider.getCode());
 
@@ -165,28 +176,26 @@ public class ApplicationInitializer {
         // Register jobs
         jobInstanceService.registerJobs();
 
+        // Load Custom table field data type mappings 
+        nativePersistenceService.refreshTableFieldMapping(null);
+        
         // Initialize scripts
         scriptCompilerService.compileAndInitializeAll();
 
         // Initialize caches
-        walletCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
-        cdrEdrCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
-        notifCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
         cftCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
+        notifCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
         jobCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
+        walletCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
         tenantCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
         metricsConfigurationCacheContainerProvider.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
+        cdrEdrCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
         commercialRulesContainerProvider.populateCache();
         
-
-        // Initialize storage factory
-        storageFactory.init();
-
         // cfValueAcumulator.loadCfAccumulationRules();
 
         log.info("Initialized application for provider {}", provider.getCode());
 
         return new AsyncResult<Boolean>(Boolean.TRUE);
     }
-
 }
