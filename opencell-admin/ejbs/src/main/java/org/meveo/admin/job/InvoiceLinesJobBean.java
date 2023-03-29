@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -61,7 +62,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
     private BillingRunExtensionService billingRunExtensionService;
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-        log.debug("Running for with parameter={}", jobInstance.getParametres());
+        log.debug(" Running for with parameter={}", jobInstance.getParametres());
         try {
             List<EntityReferenceWrapper> billingRunWrappers = (List<EntityReferenceWrapper>) this.getParamOrCFValue(jobInstance, "InvoiceLinesJob_billingRun");
             boolean aggregationPerUnitPrice = (Boolean) getParamOrCFValue(jobInstance, InvoiceLinesJob.INVOICE_LINES_AGGREGATION_PER_UNIT_PRICE, false);
@@ -95,6 +96,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
 						if (nbRuns == -1) {
 							nbRuns = (long) Runtime.getRuntime().availableProcessors();
 						}
+						log.info(" ============ CREATING_INVOICE_LINES, DISPATCHING nbRuns/billableEntities: "+nbRuns+"/"+(billableEntities!=null?billableEntities.size():0));
                         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
                         Long maxInvoiceLinesPerTransaction = (Long) this.getParamOrCFValue(jobInstance, "maxInvoiceLinesPerTransaction", 10000L);
                         BasicStatistics basicStatistics = new BasicStatistics();
@@ -149,11 +151,12 @@ public class InvoiceLinesJobBean extends BaseJobBean {
     	}
 
     private void addExceptionalBillingRunData(BillingRun billingRun) {
-        QueryBuilder queryBuilder = invoiceLinesService.fromFilters(billingRun.getFilters());
-        List<RatedTransaction> ratedTransactions = queryBuilder.getQuery(ratedTransactionService.getEntityManager()).getResultList();
-        billingRun.setExceptionalRTIds(ratedTransactions
-                .stream().filter(rt -> (rt.getStatus() == RatedTransactionStatusEnum.OPEN && rt.getBillingRun() == null))
-                .map(rt -> rt.getId()).collect(toList()));
+        Map<String, Object> filters = billingRun.getFilters();
+        filters.put("status", RatedTransactionStatusEnum.OPEN.toString());
+		QueryBuilder queryBuilder = invoiceLinesService.fromFilters(filters, true);
+        List<Object[]> resultList = queryBuilder.getQuery(ratedTransactionService.getEntityManager()).getResultList();
+		billingRun.setExceptionalRTIds(resultList.stream().map(x->((Long)x[0])).collect(Collectors.toList()));
+		billingRun.setExceptionalBAIds(resultList.stream().map(x->((Long)x[1])).distinct().collect(Collectors.toList()));
     }
 
     private long validateBRList(List<BillingRun> billingRuns, JobExecutionResultImpl result) {

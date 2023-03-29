@@ -52,6 +52,7 @@ import org.meveo.admin.util.pagination.FilterOperatorEnum;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.jpa.EntityManagerProvider;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.security.keycloak.CurrentUserProvider;
@@ -357,11 +358,32 @@ public class QueryBuilder {
      * @return SQL query.
      */
     private static String getInitQuery(Class<?> clazz, String alias, boolean doFetch, List<String> fetchFields) {
+    	List<String> select = new ArrayList<>();
+    	boolean useSelectColumns = false;
         StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
         if (fetchFields != null && !fetchFields.isEmpty()) {
             for (String fetchField : fetchFields) {
-				String joinAlias = fetchField.contains(JOIN_AS) ? "" : JOIN_AS + getJoinAlias(alias, fetchField, false);
+				if(!fetchField.contains(".") && !fetchField.contains(" ")) {
+					Field field = ReflectionUtils.getField(clazz, fetchField, false);
+		            if(field != null && !BaseEntity.class.isAssignableFrom(field.getType())){
+						useSelectColumns = true;
+						select.add(alias+"."+fetchField);
+						continue;
+		            }
+				}
+				if((fetchField.endsWith(".id") && fetchField.split("\\.").length==2) && !fetchField.contains(" ")) {
+						useSelectColumns = true;
+						select.add(alias+"."+fetchField);
+						continue;
+				} 
+				String current_alias = getJoinAlias(alias, fetchField, false);
+				String joinAlias = fetchField.contains(JOIN_AS) ? "" : JOIN_AS + current_alias;
 				query.append(" left join " + (doFetch ? "fetch " : "") + alias + "." + fetchField + joinAlias);
+				select.add(current_alias);
+				
+            }
+            if(useSelectColumns) {
+            	query.replace(0, 0, "select "+String.join(", ", select)+" ");
             }
         }
 

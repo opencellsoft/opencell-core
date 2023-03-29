@@ -1075,6 +1075,16 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
      * Return : QueryBuilder
      */
     public QueryBuilder fromFilters(Map<String, Object> filters) {
+    	return fromFilters(filters, false);
+    }
+    	
+    	
+        /**
+         * Create Query builder from a map of filters
+         * filters : Map of filters
+         * Return : QueryBuilder
+         */
+        public QueryBuilder fromFilters(Map<String, Object> filters, boolean idsOnly) {
         QueryBuilder queryBuilder;
         String filterValue = QueryBuilder.getFilterByKey(filters, "SQL");
         if (!StringUtils.isBlank(filterValue)) {
@@ -1082,6 +1092,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         } else {
             FilterConverter converter = new FilterConverter(RatedTransaction.class);
             PaginationConfiguration configuration = new PaginationConfiguration(converter.convertFilters(filters));
+			if (idsOnly) {
+				configuration.setFetchFields(Arrays.asList("id","billingAccount.id"));
+			}
             queryBuilder = ratedTransactionService.getQuery(configuration);
         }
         return queryBuilder;
@@ -1139,7 +1152,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             commit();
             associatedRtIds = stream(((String) groupedRT.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
             basicStatistics.setCount(associatedRtIds.size());
-            ratedTransactionService.linkRTsToIL(associatedRtIds, invoiceLine.getId());
+            ratedTransactionService.linkRTsToIL(associatedRtIds, invoiceLine.getId(), billingRun.getId());
             if(groupedRT.get("rated_transaction_ids") != null) {
             	var ratedTransIds = Arrays.asList( ((String) groupedRT.get("rated_transaction_ids")).split(","));
             	for(String id: ratedTransIds) {

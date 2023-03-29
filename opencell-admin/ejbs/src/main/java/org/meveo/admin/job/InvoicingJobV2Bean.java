@@ -6,7 +6,14 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.meveo.model.billing.BillingProcessTypesEnum.AUTOMATIC;
 import static org.meveo.model.billing.BillingProcessTypesEnum.FULL_AUTOMATIC;
-import static org.meveo.model.billing.BillingRunStatusEnum.*;
+import static org.meveo.model.billing.BillingRunStatusEnum.DRAFT_INVOICES;
+import static org.meveo.model.billing.BillingRunStatusEnum.INVOICES_CREATED;
+import static org.meveo.model.billing.BillingRunStatusEnum.INVOICE_LINES_CREATED;
+import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
+import static org.meveo.model.billing.BillingRunStatusEnum.POSTVALIDATED;
+import static org.meveo.model.billing.BillingRunStatusEnum.PREVALIDATED;
+import static org.meveo.model.billing.BillingRunStatusEnum.REJECTED;
+import static org.meveo.model.billing.BillingRunStatusEnum.VALIDATED;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -34,18 +41,23 @@ import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunAutomaticActionEnum;
 import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceSequence;
-import org.meveo.model.billing.InvoiceValidationStatusEnum;
-import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.InvoiceLine;
+import org.meveo.model.billing.InvoiceLineStatusEnum;
+import org.meveo.model.billing.InvoiceSequence;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.JobSpeedEnum;
 import org.meveo.model.scripts.ScriptInstance;
-import org.meveo.service.billing.impl.*;
+import org.meveo.service.billing.impl.BillingRunExtensionService;
+import org.meveo.service.billing.impl.BillingRunService;
+import org.meveo.service.billing.impl.InvoiceLineService;
+import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.InvoicesToNumberInfo;
+import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.ServiceSingleton;
 
 @Stateless
 public class InvoicingJobV2Bean extends BaseJobBean {
@@ -81,7 +93,6 @@ public class InvoicingJobV2Bean extends BaseJobBean {
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("Running InvoiceSplitJob with parameter={}", jobInstance.getParametres());
-        try {
             List<EntityReferenceWrapper> billingRunWrappers =
                     (List<EntityReferenceWrapper>) this.getParamOrCFValue(jobInstance, "InvoicingJobV2_billingRun");
             List<Long> billingRunIds = billingRunWrappers != null ? extractBRIds(billingRunWrappers) : emptyList();
@@ -108,10 +119,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                     initAmounts();
                 }
             }
-        } catch (Exception exception) {
-            result.registerError(exception.getMessage());
-            log.error(format("Failed to run invoice lines job: %s", exception));
-        }
+        
     }
 
     private List<Long> extractBRIds(List<EntityReferenceWrapper> billingRunWrappers) {
@@ -131,13 +139,15 @@ public class InvoicingJobV2Bean extends BaseJobBean {
     }
 
     private int addExceptionalInvoiceLineIds(BillingRun billingRun) {
+    	//ALL THIS MUST BE REVIEWEd. INVOICELINES ARE ALREADY CREATED USING EXCEPTIONAL FILTER!
         Map<String, Object> filters = billingRun.getFilters();
         QueryBuilder queryBuilder = invoiceLineService.fromFilters(filters);
         List<RatedTransaction> ratedTransactions = queryBuilder.getQuery(ratedTransactionService.getEntityManager()).getResultList();
         billingRun.setExceptionalILIds(ratedTransactions
                 .stream()
-                .filter(rt -> (rt.getStatus() == RatedTransactionStatusEnum.PROCESSED && rt.getBillingRun() == null))
+                .filter(rt -> (rt.getStatus() == RatedTransactionStatusEnum.BILLED))
                 .map(RatedTransaction::getInvoiceLine)
+                .filter(il -> (il.getStatus() == InvoiceLineStatusEnum.OPEN))
                 .map(InvoiceLine::getId)
                 .collect(toList()));
         return billingRun.getExceptionalILIds().size();
