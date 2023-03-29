@@ -2754,15 +2754,7 @@ public class SubscriptionApi extends BaseApi {
         Subscription lastSubscription = subscriptions.stream().filter(s -> actualSubscription.getValidity().getFrom().equals(s.getValidity().getTo())).findFirst().get();
 
         actualSubscription.setToValidity(actualSubscription.getValidity().getFrom());
-        // if current Sub is still CREATED it means offer change never activated,
-        // so we can terminate it immediately if its validFrom date is not yet reached
-        Date currentSubTerminationDate = actualSubscription.getValidity().getFrom();
-        Date today = new Date();
-        if (actualSubscription.getStatus() == SubscriptionStatusEnum.CREATED
-                && actualSubscription.getValidity().getFrom().after(today)) {
-            currentSubTerminationDate = DateUtils.setDateToStartOfDay(today);
-        }
-        subscriptionService.terminateSubscription(actualSubscription, currentSubTerminationDate, subscriptionTerminationReason, actualSubscription.getOrderNumber());
+        subscriptionService.terminateSubscription(actualSubscription, actualSubscription.getValidity().getFrom(), subscriptionTerminationReason, actualSubscription.getOrderNumber());
 
         lastSubscription.setToValidity(null);
         // do not reactivate previous sub only if it has already terminated (means offer change already activated)
