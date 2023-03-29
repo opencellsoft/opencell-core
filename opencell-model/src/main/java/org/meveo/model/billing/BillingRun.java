@@ -379,6 +379,9 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @Transient
     private List<Long> exceptionalILIds;
     
+    @Transient
+    private List<Long> exceptionalBAIds;
+    
     /**
      * Invoice type
      */
@@ -917,6 +920,14 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 
     public void setExceptionalRTIds(List<Long> exceptionalRTIds) {
         this.exceptionalRTIds = exceptionalRTIds;
+    }
+    
+    public List<Long> getExceptionalBAIds() {
+        return exceptionalBAIds;
+    }
+
+    public void setExceptionalBAIds(List<Long> exceptionalBAIds) {
+        this.exceptionalBAIds = exceptionalBAIds;
     }
 
     public boolean isExceptionalBR() {
