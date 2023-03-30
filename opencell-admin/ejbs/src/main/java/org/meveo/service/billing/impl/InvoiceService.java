@@ -29,7 +29,7 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
-import static org.meveo.model.shared.DateUtils.setTimeToZero;
+import static org.meveo.commons.utils.StringUtils.isBlank;
 import static org.meveo.service.base.ValueExpressionWrapper.*;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
@@ -5898,6 +5898,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     if (invoiceAggregateProcessingInfo.invoice == null) {
                         if (existingInvoice != null) {
                             cleanInvoiceAggregates(existingInvoice.getId());
+                            initAmounts(existingInvoice.getId());
                             invoiceAggregateProcessingInfo.invoice = existingInvoice;
                         } else {
                             // TODO check instantiateInvoice(entityToInvoice
@@ -7155,9 +7156,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoicesWithAdv.get(key).add(adv);
             }
         });
-       invoicesWithAdv.keySet().forEach(inv -> {
-           applyAdvanceInvoice(inv, invoicesWithAdv.get(inv));
-       });
+       invoicesWithAdv.keySet().forEach(inv -> applyAdvanceInvoice(inv, invoicesWithAdv.get(inv)));
        return null;
    }
 
