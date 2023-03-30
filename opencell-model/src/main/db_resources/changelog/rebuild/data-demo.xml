@@ -4874,7 +4874,7 @@
                 <column name="created" valueDate="${db.current.time}" />
                 <column name="code" value="new" />
                 <column name="name" value="New" />
-                <column name="order_level" value="0" />
+                <column name="order_level" valueNumeric="0" />
         </insert>
         <insert tableName="cat_offer_template_category">
                 <column name="id" valueNumeric="-2" />
@@ -4882,7 +4882,7 @@
                 <column name="created" valueDate="${db.current.time}" />
                 <column name="code" value="standard" />
                 <column name="name" value="Standard" />
-               	<column name="order_level" value="0" />
+               	<column name="order_level" valueNumeric="0" />
         </insert>
 
         <insert tableName="cat_channel">
