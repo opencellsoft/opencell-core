@@ -11591,6 +11591,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
     <changeSet id="#INTRD-14555_20230303" author="aeljaouhari" />
     <changeSet id="#INTRD-14433_20230306" author="hichamELHALOUI" />
     <changeSet author="HichamHANINE" id="#INTRD-14562_20230308" />
+    <changeSet id="#INTRD-15228_20230327" author="hichamELHALOUI" />
 
     <changeSet id="#INTRD-14786_20230309" author="bourras">
         <insert tableName="ar_occ_template">
