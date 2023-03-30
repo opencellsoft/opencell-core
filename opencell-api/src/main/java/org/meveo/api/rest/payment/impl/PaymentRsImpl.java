@@ -23,7 +23,6 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.QueryParam;
 
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.PaymentActionStatus;
@@ -36,6 +35,7 @@ import org.meveo.api.dto.payment.GatewayPaymentNamesEnum;
 import org.meveo.api.dto.payment.HostedCheckoutInput;
 import org.meveo.api.dto.payment.HostedCheckoutStatusResponseDto;
 import org.meveo.api.dto.payment.MandatInfoDto;
+import org.meveo.api.dto.payment.PayByCardOrSepaDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentGatewayDto;
 import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
@@ -45,6 +45,7 @@ import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
+import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceItemsDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceResponseDto;
@@ -134,6 +135,35 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
             result.setPaymentId(id);
         } catch (Exception e) {
             processException(e, result);
+        }
+
+        return result;
+    }
+    
+
+    
+    @Override
+    public PaymentResponseDto payByCard(PayByCardOrSepaDto postData) {
+    	PaymentResponseDto result = new PaymentResponseDto();
+
+        try {
+        	result = paymentApi.payByCard(postData);
+            
+        } catch (Exception e) {
+           processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+    @Override
+    public PaymentResponseDto payBySepa(PayByCardOrSepaDto postData) {
+    	PaymentResponseDto result = new PaymentResponseDto();
+
+        try {
+        	result = paymentApi.payBySepa(postData);
+            
+        } catch (Exception e) {
+        	processException(e, result.getActionStatus());
         }
 
         return result;

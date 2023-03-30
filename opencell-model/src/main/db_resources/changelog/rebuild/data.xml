@@ -11516,6 +11516,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
     </changeSet>
 	<changeSet author="HichamHANINE" id="#INTRD-14562_20230308" />
 	<changeSet id="#INTRD-14122_20230221" author="hichamELHALOUI" />
+	<changeSet id="#INTRD-15191_20230328" author="aelmalki" />
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

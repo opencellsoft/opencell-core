@@ -69,6 +69,10 @@ public class GenericApiPersistenceDelegate {
         return getPersistenceService(entityClass).findById(id, fetchFields);
     }
 
+    public IEntity findAndRefresh(Class<?> entityClass, Long id, List<String> fetchFields) {
+        return getPersistenceService(entityClass).findById(id, fetchFields, true);
+    }
+
     /**
      * Find an entity by its id
      *
