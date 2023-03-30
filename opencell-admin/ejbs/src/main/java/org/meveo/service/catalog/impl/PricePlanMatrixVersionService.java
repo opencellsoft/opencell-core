@@ -455,10 +455,10 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
 	/**
 	 * get pricePlanVersion Valid for the given operationDate
-	 * @param ppmCode
-	 * @param serviceInstance
-	 * @param operationDate
-	 * @return PricePlanMatrixVersion
+	 * @param ppmId Price plan ID
+	 * @param serviceInstance Service instance
+	 * @param operationDate Operation date
+	 * @return PricePlanMatrixVersion Matched Price plan version
 	 */
 	public PricePlanMatrixVersion getPublishedVersionValideForDate(Long ppmId, ServiceInstance serviceInstance, Date operationDate) {
 		Date operationDateParam = new Date();
@@ -494,6 +494,47 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 		return result.get(0);
 	}
 
+    /**
+     * Get a valid Price plan version for the given operationDate.
+     * 
+     * @param ppmCode Price plan code
+     * @param serviceInstance Service instance
+     * @param operationDate Operation date
+     * @return PricePlanMatrixVersion Matched Price plan version
+     */
+    public PricePlanMatrixVersion getPublishedVersionValideForDate(String ppmCode, ServiceInstance serviceInstance, Date operationDate) {
+        Date operationDateParam = new Date();
+        if(serviceInstance==null || PriceVersionDateSettingEnum.EVENT.equals(serviceInstance.getPriceVersionDateSetting())) {
+            operationDateParam = operationDate;
+        } else if(PriceVersionDateSettingEnum.DELIVERY.equals(serviceInstance.getPriceVersionDateSetting())
+            || PriceVersionDateSettingEnum.RENEWAL.equals(serviceInstance.getPriceVersionDateSetting())
+            || PriceVersionDateSettingEnum.QUOTE.equals(serviceInstance.getPriceVersionDateSetting())) {
+                operationDateParam = serviceInstance.getPriceVersionDate();
+        }
+
+        if(operationDateParam != null) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(operationDate);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            operationDateParam = calendar.getTime();
+        }
+
+        List<PricePlanMatrixVersion> result= this.getEntityManager()
+                .createNamedQuery("PricePlanMatrixVersion.getPublishedVersionValideForDateByPpmCode", PricePlanMatrixVersion.class)
+                .setParameter("pricePlanMatrixCode", ppmCode).setParameter("operationDate", operationDateParam)
+                .getResultList();
+        if(CollectionUtils.isEmpty(result)) {
+            return null;
+        }
+        if(result.size()>1) {
+            throw new BusinessException("More than one pricePlaneVersion for pricePlan '"+ppmCode+"' matching date: "+ operationDate);
+        }
+        return result.get(0);
+    }
+    
     public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, WalletOperation walletOperation) throws NoPricePlanException {
         ChargeInstance chargeInstance = walletOperation.getChargeInstance();
         if (chargeInstance.getServiceInstance() != null) {
