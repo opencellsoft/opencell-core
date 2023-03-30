@@ -19,7 +19,6 @@
 package org.meveo.api.payment;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,16 +32,13 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
-import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.AccountOperationsDto;
-import org.meveo.api.dto.payment.PayByCardDto;
+import org.meveo.api.dto.payment.PayByCardOrSepaDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentHistoriesDto;
 import org.meveo.api.dto.payment.PaymentHistoryDto;
@@ -55,7 +51,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.rest.exception.NotFoundException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.config.annotation.FilterProperty;
 import org.meveo.api.security.config.annotation.FilterResults;
@@ -411,15 +406,57 @@ public class PaymentApi extends BaseApi {
 		return customerAccountService.customerAccountBalanceDue(customerAccount, new Date()).doubleValue();
 	}
 
+	
+	
+	
+	/**
+	 * 
+	 * @param sepaPaymentRequestDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PaymentResponseDto payBySepa(PayByCardOrSepaDto sepaPaymentRequestDto)
+			throws Exception {
+
+		if (StringUtils.isBlank(sepaPaymentRequestDto.getCtsAmount())) {
+			missingParameters.add("ctsAmount");
+		}
+
+		if (StringUtils.isBlank(sepaPaymentRequestDto.getCustomerAccountCode())) {
+			missingParameters.add("customerAccountCode");
+		}
+
+		if (sepaPaymentRequestDto.isToMatch() && sepaPaymentRequestDto.getAoToPay() == null
+				|| sepaPaymentRequestDto.getAoToPay().isEmpty()) {
+			missingParameters.add("aoToPay");
+		}
+
+		handleMissingParameters();
+
+		CustomerAccount customerAccount = customerAccountService
+				.findByCode(sepaPaymentRequestDto.getCustomerAccountCode());
+		if (customerAccount == null) {
+			throw new EntityDoesNotExistsException(CustomerAccount.class,
+					sepaPaymentRequestDto.getCustomerAccountCode());
+		}
+
+		PaymentMethodEnum preferedMethod = customerAccount.getPreferredPaymentMethodType();
+		if (preferedMethod != null && PaymentMethodEnum.DIRECTDEBIT != preferedMethod) {
+			throw new BusinessApiException("Can not process payment as prefered payment method is " + preferedMethod);
+		}
+
+		return paymentService.payByMandat(customerAccount, sepaPaymentRequestDto.getCtsAmount(),
+				sepaPaymentRequestDto.getAoToPay(), sepaPaymentRequestDto.isCreateAO(),
+				sepaPaymentRequestDto.isToMatch(), null);
+	}
+
+	
 	/**
 	 * @param cardPaymentRequestDto card payment request
 	 * @return payment by card response
-	 * @throws Exception exception
-	 * @throws NoAllOperationUnmatchedException no all operation matched exception
-	 * @throws UnbalanceAmountException         balance exception
-	 * @throws MeveoApiException                opencell's api exception
+	 * @throws Exception 
 	 */
-	public PaymentResponseDto payByCard(PayByCardDto cardPaymentRequestDto)
+	public PaymentResponseDto payByCard(PayByCardOrSepaDto cardPaymentRequestDto)
 			throws Exception {
 
 		if (StringUtils.isBlank(cardPaymentRequestDto.getCtsAmount())) {
@@ -449,10 +486,8 @@ public class PaymentApi extends BaseApi {
 				missingParameters.add("cardType");
 			}
 		}
-		if (cardPaymentRequestDto.isToMatch()) {
-			if (cardPaymentRequestDto.getAoToPay() == null || cardPaymentRequestDto.getAoToPay().isEmpty()) {
-				missingParameters.add("aoToPay");
-			}
+		if (cardPaymentRequestDto.isToMatch() && cardPaymentRequestDto.getAoToPay() == null || cardPaymentRequestDto.getAoToPay().isEmpty()) {			
+				missingParameters.add("aoToPay");			
 		}
 
 		handleMissingParameters();
