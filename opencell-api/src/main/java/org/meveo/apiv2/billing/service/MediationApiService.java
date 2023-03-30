@@ -20,7 +20,6 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
-import javax.ejb.EJB;
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
 import javax.ejb.Timeout;
@@ -148,9 +147,6 @@ public class MediationApiService {
 
     @Resource
     private TimerService timerService;
-
-    @EJB
-    private MediationApiService thisNewTX;
 
     @Inject
     private MediationsettingService mediationsettingService;
@@ -313,8 +309,8 @@ public class MediationApiService {
                     Thread.currentThread().setName("MediationApi" + "-" + finalK);
 
                     currentUserProvider.reestablishAuthentication(lastCurrentUser);
-                    thisNewTX.processCDRs(cdrLineIterator, cdrReader, cdrParser, isDuplicateCheckOn, isVirtual, rate, reserve, rateTriggeredEdr, maxDepth, returnWalletOperations, returnWalletOperationDetails, returnEDRs,
-                        cdrListResult, virtualCounters, counterUpdates, generateRTs);
+                    methodCallingUtils.callMethodInNewTx(() -> processCDRs(cdrLineIterator, cdrReader, cdrParser, isDuplicateCheckOn, isVirtual, rate, reserve, rateTriggeredEdr, maxDepth, returnWalletOperations,
+                        returnWalletOperationDetails, returnEDRs, cdrListResult, virtualCounters, counterUpdates, generateRTs));
 
                 });
             }
@@ -338,8 +334,8 @@ public class MediationApiService {
             }
 
         } else {
-            thisNewTX.processCDRs(cdrLineIterator, cdrReader, cdrParser, isDuplicateCheckOn, isVirtual, rate, reserve, rateTriggeredEdr, maxDepth, returnWalletOperations, returnWalletOperationDetails, returnEDRs,
-                cdrListResult, virtualCounters, counterUpdates, generateRTs);
+            methodCallingUtils.callMethodInNewTx(() -> processCDRs(cdrLineIterator, cdrReader, cdrParser, isDuplicateCheckOn, isVirtual, rate, reserve, rateTriggeredEdr, maxDepth, returnWalletOperations,
+                returnWalletOperationDetails, returnEDRs, cdrListResult, virtualCounters, counterUpdates, generateRTs));
         }
 
         // Gather counter update summary information
@@ -372,9 +368,7 @@ public class MediationApiService {
      * @param counterUpdates Counter update tracking
      * @param generateRTs generate automatically RTs
      */
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void processCDRs(SynchronizedIterator<String> cdrLineIterator, ICdrReader cdrReader, ICdrParser cdrParser, boolean isDuplicateCheckOn, boolean isVirtual, boolean rate, boolean reserve,
+    private void processCDRs(SynchronizedIterator<String> cdrLineIterator, ICdrReader cdrReader, ICdrParser cdrParser, boolean isDuplicateCheckOn, boolean isVirtual, boolean rate, boolean reserve,
             boolean rateTriggeredEdrs, Integer maxDepth, boolean returnWalletOperations, boolean returnWalletOperationDetails, boolean returnEDRs, ProcessCdrListResult cdrProcessingResult,
             Map<String, List<CounterPeriod>> virtualCounters, Map<String, List<CounterPeriod>> counterUpdates, boolean generateRTs) {
 
