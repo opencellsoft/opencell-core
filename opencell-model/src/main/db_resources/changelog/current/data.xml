@@ -19749,4 +19749,11 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         </update>
     </changeSet>
 
+    <changeSet id="#INTRD-15228_20230327" author="hichamELHALOUI">
+		<update tableName="adm_currency">
+			<column name="symbol" value="$" />
+			<where> currency_code = 'USD'</where>
+		</update>
+	</changeSet>
+
 </databaseChangeLog>

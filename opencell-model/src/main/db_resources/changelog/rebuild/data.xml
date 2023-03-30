@@ -774,7 +774,7 @@
             <column name="created" valueDate="2015-03-19 00:04:00.955" />
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="USD" />
-            <column name="symbol" value="$"  />
+            <column name="symbol" value="$" />
             <column name="description_en" value="Dollar des Etats-unis" />
             <column name="system_currency" valueNumeric="1" />
         </insert>
