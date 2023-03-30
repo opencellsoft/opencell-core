@@ -6013,33 +6013,8 @@
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateSubscriptionAgeScript')" />
 		</insert>
     </changeSet> 
-
-
-    <changeSet id="INTRD-2698-20211028" author="AbdelkaderBouazza" />    
-    <changeSet id="#INTRD-4950-20220208-script" author="MohammedSTITANE"/>
-    <changeSet id="#INTRD-12546_20221230_rebuild" author="aeljaouhari"/>
-    <changeSet id="#INTRD-12891_20230105" author="aeljaouhari"/>
-    <changeSet id="#INTRD-6283_20220404" author="AbdelmounaimAkadid"/>
-    <changeSet id="#INTRD-6291_20220406" author="AbdelmounaimAkadid"/>
-    <changeSet id="INTRD-6162_20220407" author="TarikRabeh" />
-    <changeSet id="#INTRD-6283_20220422" author="HichamELHALOUI" />
-    <changeSet id="INTRD-6908_20220503" author="HichamELHALOUI"/>
-    <changeSet id="#INTRD-8004_210622" author="AbdelkaderBouazza"/>
-	<changeSet id="#INTRD-10199_20221010" author="TarikFA." />
-	<changeSet id="#INTRD-10592_20221014" author="TarikFA." />
-    <changeSet id="INTRD-11122_20221104" author="HichamELHALOUI" />
-    <changeSet id="INTRD-13237_20230119" author="HichamELHALOUI" />
-    <changeSet id="INTRD-13608_20230130" author="HichamELHALOUI" />
-    <changeSet id="INTRD-13629_20230203" author="HichamELHALOUI" />
-    <changeSet id="#INTRD-4267_20220108" author="AmineBENAICHA" />
-    <changeSet id="#OUTRD-3_20221006-custom-field" author="MohamedChaouki"/>
-    <changeSet id="#OUTRD-63-SUB_20220926-scripts" author="Ilham-Chafik"/>
-    <changeSet id="#OUTRD-56-SUB_20220926-scripts" author="Ilham-Chafik"/>
-    <changeSet id="#INTRD-6075_20220330" author="aelmalki"/>
-    <changeSet id="#INTRD-8420_20220708" author="hichamHANINE"/>
-    <changeSet id="#4082_20190404" author="SaidRamli"/>
-    <changeSet id="#5308_20200618 - Add script" author="AndriusKarpavicius"/>
-    <changeSet id="#INTRD-12906_20230112" author="hichamELHALOUI"/>
+    
+    
     <changeSet id="#INTRD-14122_20230221" author="hichamELHALOUI">
 		<insert tableName="cpq_tag_type">
 			<column name="id" value="-1"/>
@@ -6082,6 +6057,7 @@
                 <column name="created" valueDate="${db.current.time}" />
                 <column name="code" value="new" />
                 <column name="name" value="New" />
+                <column name="order_level" valueNumeric="0" />
         </insert>
         <insert tableName="cat_offer_template_category">
                 <column name="id" valueNumeric="-2" />
@@ -6089,6 +6065,7 @@
                 <column name="created" valueDate="${db.current.time}" />
                 <column name="code" value="standard" />
                 <column name="name" value="Standard" />
+                <column name="order_level" valueNumeric="0" />
         </insert>
 
         <insert tableName="cat_channel">
@@ -6166,9 +6143,6 @@
         </insert>
 
 	</changeSet>
-
-
-
 
     <changeSet id="#INTRD-13074_20230214" author="zelmeliani">
     	<insert tableName="ar_customer_balance">
@@ -6341,6 +6315,35 @@
 		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
 		</insert>
     </changeSet>
+
+
+    <changeSet id="INTRD-2698-20211028" author="AbdelkaderBouazza" />    
+    <changeSet id="#INTRD-4950-20220208-script" author="MohammedSTITANE"/>
+    <changeSet id="#INTRD-12546_20221230_rebuild" author="aeljaouhari"/>
+    <changeSet id="#INTRD-12891_20230105" author="aeljaouhari"/>
+    <changeSet id="#INTRD-6283_20220404" author="AbdelmounaimAkadid"/>
+    <changeSet id="#INTRD-6291_20220406" author="AbdelmounaimAkadid"/>
+    <changeSet id="INTRD-6162_20220407" author="TarikRabeh" />
+    <changeSet id="#INTRD-6283_20220422" author="HichamELHALOUI" />
+    <changeSet id="INTRD-6908_20220503" author="HichamELHALOUI"/>
+    <changeSet id="#INTRD-8004_210622" author="AbdelkaderBouazza"/>
+	<changeSet id="#INTRD-10199_20221010" author="TarikFA." />
+	<changeSet id="#INTRD-10592_20221014" author="TarikFA." />
+    <changeSet id="INTRD-11122_20221104" author="HichamELHALOUI" />
+    <changeSet id="INTRD-13237_20230119" author="HichamELHALOUI" />
+    <changeSet id="INTRD-13608_20230130" author="HichamELHALOUI" />
+    <changeSet id="INTRD-13629_20230203" author="HichamELHALOUI" />
+    <changeSet id="#INTRD-4267_20220108" author="AmineBENAICHA" />
+    <changeSet id="#OUTRD-3_20221006-custom-field" author="MohamedChaouki"/>
+    <changeSet id="#OUTRD-63-SUB_20220926-scripts" author="Ilham-Chafik"/>
+    <changeSet id="#OUTRD-56-SUB_20220926-scripts" author="Ilham-Chafik"/>
+    <changeSet id="#INTRD-6075_20220330" author="aelmalki"/>
+    <changeSet id="#INTRD-8420_20220708" author="hichamHANINE"/>
+    <changeSet id="#4082_20190404" author="SaidRamli"/>
+    <changeSet id="#5308_20200618 - Add script" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-12906_20230112" author="hichamELHALOUI"/>
+   	<changeSet id="#INTRD-15189_20230327" author="hichamELHALOUI"/>
+    
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
