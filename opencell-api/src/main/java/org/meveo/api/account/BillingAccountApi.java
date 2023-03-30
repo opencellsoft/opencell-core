@@ -446,6 +446,10 @@ public class BillingAccountApi extends AccountEntityApi {
             if (tradingCurrency == null) {
                 throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getTradingCurrency());
             }
+            if(tradingCurrency.isDisabled())
+            {
+                throw new BusinessApiException("The billing account should not have a disabled trading currency");
+            }
             billingAccount.setTradingCurrency(tradingCurrency);
         }else if(billingAccount.getCustomerAccount().getTradingCurrency() != null) {
             billingAccount.setTradingCurrency(billingAccount.getCustomerAccount().getTradingCurrency());
