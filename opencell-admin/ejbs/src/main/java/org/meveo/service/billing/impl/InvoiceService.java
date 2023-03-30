@@ -26,10 +26,8 @@ import static java.util.Comparator.comparingInt;
 import static java.util.Optional.ofNullable;
 import static java.util.Set.of;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
-import static org.meveo.model.shared.DateUtils.setTimeToZero;
 import static org.meveo.service.base.ValueExpressionWrapper.*;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
@@ -5894,6 +5892,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     if (invoiceAggregateProcessingInfo.invoice == null) {
                         if (existingInvoice != null) {
                             cleanInvoiceAggregates(existingInvoice.getId());
+                            initAmounts(existingInvoice.getId());
                             invoiceAggregateProcessingInfo.invoice = existingInvoice;
                         } else {
                             // TODO check instantiateInvoice(entityToInvoice
@@ -6890,7 +6889,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         updateInvoiceLinesAmountFromRatedTransactions(invoiceLineRTs, invoiceLines);
 
-        List<Object[]> maxIlAmountAdjList = new ArrayList<Object[]>();
+        List<Object[]> maxIlAmountAdjList = new ArrayList<>();
         maxIlAmountAdjList = invoiceLinesService.getMaxIlAmountAdj(invoice.getId());           
         
         for (InvoiceLine invoiceLine : invoiceLines) {
@@ -7151,9 +7150,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoicesWithAdv.get(key).add(adv);
             }
         });
-       invoicesWithAdv.keySet().forEach(inv -> {
-           applyAdvanceInvoice(inv, invoicesWithAdv.get(inv));
-       });
+       invoicesWithAdv.keySet().forEach(inv -> applyAdvanceInvoice(inv, invoicesWithAdv.get(inv)));
        return null;
    }
 
@@ -7277,7 +7274,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         oldAdvanceInvoice.setTransactionalInvoiceBalance(oldAdvanceInvoice.getTransactionalInvoiceBalance().add(li.getTransactionalAmount()));
 						advInvoices.add(oldAdvanceInvoice);
                         li.setTransactionalAmount(ZERO);
-					};
+					}
 			}
 		}
 	}
