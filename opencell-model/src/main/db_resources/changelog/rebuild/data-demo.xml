@@ -1201,7 +1201,7 @@
             <column name="pr_description" value="US Dollar" />
 
             <column name="currency_id" valueNumeric="49" />
-            <column name="symbol" value="$"  />
+            <column name="symbol" value="$" />
             <column name="decimal_places" valueNumeric="2" />
         </insert>
         <insert tableName="billing_trading_currency">
