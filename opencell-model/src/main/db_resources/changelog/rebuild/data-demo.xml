@@ -4874,6 +4874,7 @@
                 <column name="created" valueDate="${db.current.time}" />
                 <column name="code" value="new" />
                 <column name="name" value="New" />
+                <column name="order_level" value="0" />
         </insert>
         <insert tableName="cat_offer_template_category">
                 <column name="id" valueNumeric="-2" />
@@ -4881,6 +4882,7 @@
                 <column name="created" valueDate="${db.current.time}" />
                 <column name="code" value="standard" />
                 <column name="name" value="Standard" />
+               	<column name="order_level" value="0" />
         </insert>
 
         <insert tableName="cat_channel">
@@ -6025,12 +6027,7 @@
     <changeSet id="#4082_20190404" author="SaidRamli"/>
     <changeSet id="#5308_20200618 - Add script" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-12906_20230112" author="hichamELHALOUI"/>
-    <changeSet id="#INTRD-15189_20230327" author="hichamELHALOUI">
-        <update tableName="cat_offer_template_category">
-                <column name="order_level" valueNumeric="0" />
-                <where> id in (-1, -2)</where>
-        </update>
-    </changeSet>
+    <changeSet id="#INTRD-15189_20230327" author="hichamELHALOUI" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
