@@ -87,13 +87,23 @@ public class LinkedInvoice implements IEntity, Serializable {
         this.type = type;
     }
 
+    public LinkedInvoice(Invoice id, Invoice linkedInvoiceValue, BigDecimal amount, BigDecimal transactionalAmount, InvoiceTypeEnum type) {
+        super();
+        this.id = id;
+        this.linkedInvoiceValue = linkedInvoiceValue;
+        this.transactionalAmount = transactionalAmount;
+        this.amount = amount;
+        this.type = type;
+    }
     
     public LinkedInvoice() {
         
     }
+    
     public Long getId() {
-        return this.id!=null? this.id.getId() : null;
-  }
+        return this.id!=null? this.id.getId() : null;  
+    }
+    
     public Invoice getInvoice() {
         return  this.id;
     }

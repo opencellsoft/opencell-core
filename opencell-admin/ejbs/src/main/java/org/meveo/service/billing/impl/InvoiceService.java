@@ -6956,7 +6956,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         duplicatedInvoice.setInvoiceDate(new Date());
         duplicatedInvoice.setInvoiceType(invoiceTypeService.getDefaultAdjustement());
         duplicatedInvoice.setStatus(InvoiceStatusEnum.DRAFT);
-        LinkedInvoice linkedInvoice = new LinkedInvoice(duplicatedInvoice, invoice);
+        LinkedInvoice linkedInvoice = new LinkedInvoice(duplicatedInvoice, invoice, duplicatedInvoice.getAmountWithTax(), duplicatedInvoice.getTransactionalAmountWithTax(), InvoiceTypeEnum.ADJUSTMENT);
         duplicatedInvoice.setLinkedInvoices(of(linkedInvoice));
         duplicatedInvoice.setOpenOrderNumber(StringUtils.EMPTY);
         getEntityManager().flush();
