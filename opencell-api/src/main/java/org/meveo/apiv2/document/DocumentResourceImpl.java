@@ -20,9 +20,9 @@ public class DocumentResourceImpl implements DocumentResource {
     private DocumentFileService documentFileService;
 
     @Override
-    public Response getDocument(@NotNull Long id) {
-        final org.meveo.model.document.Document documentEntity = Optional.ofNullable(documentService.findById(id, Arrays.asList("fileType", "category", "linkedAccountEntity")))
-                .orElseThrow(() -> new NotFoundException("document with id " + id + " does not exist."));
+    public Response getDocument(@NotNull String  code) {
+        final org.meveo.model.document.Document documentEntity = Optional.ofNullable(documentService.findByCodeAndLastVersion(code))
+                .orElseThrow(() -> new NotFoundException("document with code " + code + " does not exist."));
         if(documentFileService.hasFile(documentEntity)){
             final byte[] fileContent = documentFileService.readFileContent(documentEntity);
             return Response.ok().entity(Document.from(documentEntity, Base64.getEncoder().encodeToString(fileContent)))

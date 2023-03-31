@@ -18,8 +18,7 @@ import javax.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 public interface DocumentResource {
     @GET
-    @Hidden
-    @Path("/{id}")
+    @Path("/{code}")
     @Operation(summary = "This endpoint allows to retrieve a document information by id document",
             tags = { "Document" },
             description ="retrieve and return an existing document",
@@ -28,11 +27,10 @@ public interface DocumentResource {
                             content = @Content(schema = @Schema(implementation = Document.class))),
                     @ApiResponse(responseCode = "404", description = "the document with id in param does not exist")
             })
-    Response getDocument(@Parameter(description = "The id here is the database primary key of the document to fetch", required = true)
-                         @PathParam("id") @NotNull Long id);
+    Response getDocument(@Parameter(description = "Get object using code for the last version of the Document", required = true)
+                         @PathParam("code") @NotNull String code);
 
     @POST
-    @Hidden
     @Path("/")
     @Operation(summary = "This endpoint allows to create a document and store the associated physical file in disk",
             tags = { "Document" },
