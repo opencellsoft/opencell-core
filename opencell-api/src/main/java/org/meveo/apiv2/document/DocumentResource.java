@@ -18,8 +18,7 @@ import javax.ws.rs.core.Response;
 public interface DocumentResource {
     
     @GET
-    @Hidden
-    @Path("/{id}")
+    @Path("/{code}")
     @Operation(summary = "This endpoint allows to retrieve a document information by id document",
             tags = { "Document" },
             description ="retrieve and return an existing document",
@@ -46,7 +45,6 @@ public interface DocumentResource {
                          @Parameter(description = "The version of the document to delete") @PathParam("version") Integer version);
 
     @POST
-    @Hidden
     @Path("/")
     @Operation(summary = "This endpoint allows to create a document and store the associated physical file in disk",
             tags = { "Document" },
