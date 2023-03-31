@@ -38,4 +38,10 @@ public interface DuplicateRTDto {
 	default boolean getReturnRts() {
 		return false;
 	}
+
+	@Default
+	@Schema(description = "start job ")
+	default boolean getstartJob() {
+		return false;
+	}
 }
