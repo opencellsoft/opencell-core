@@ -2706,6 +2706,9 @@ public class SubscriptionApi extends BaseApi {
             reactivateServices(lastSubscription);
             if(lastSubscription.getInitialSubscriptionRenewal() != null)
                 subscriptionService.cancelSubscriptionTermination(lastSubscription);
+        } else {
+            // previous sub is still active, but maybe was planed for termination
+            subscriptionService.cancelSubscriptionTermination(lastSubscription);
         }
         versionRemovedEvent.fire(lastSubscription);
     }
