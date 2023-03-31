@@ -1205,7 +1205,10 @@ public class NativePersistenceService extends BaseService {
      * @return Entity manager
      */
     public EntityManager getEntityManager() {
-        return entityManagerProvider.getEntityManager().getEntityManager();
+        return emWrapper.getEntityManager();
+        
+        // Original comment: RE #5414 SQL request to create a new CT on second tenant issue
+        //return entityManagerProvider.getEntityManager().getEntityManager();
     }
 
     /**
