@@ -74,6 +74,8 @@ public class InvoiceConfigurationDto implements Serializable {
     
     /** The display orders. */
     private Boolean displayOrders;
+
+    private Boolean displayRatedItems;
     
     private Long currentInvoiceNb;
     
@@ -133,6 +135,7 @@ public class InvoiceConfigurationDto implements Serializable {
         defaultInvoiceMinimumArticleCode = invoiceConfiguration.getDefaultInvoiceMinimumAccountingArticle() != null ? invoiceConfiguration.getDefaultInvoiceMinimumAccountingArticle().getCode() : null;
         displayUserAccountHierarchy = invoiceConfiguration.isDisplayUserAccountHierarchy();
         displayTaxDetails = invoiceConfiguration.isDisplayTaxDetails();
+        displayRatedItems = invoiceConfiguration.isDisplayRatedItems();
     }
 
     /**
@@ -486,5 +489,14 @@ public class InvoiceConfigurationDto implements Serializable {
 	public void setDisplayUserAccountHierarchy(Boolean displayUserAccountHierarchy) {
 		this.displayUserAccountHierarchy = displayUserAccountHierarchy;
 	}
-	
+
+    public Boolean getDisplayRatedItems() {
+        return displayRatedItems;
+    }
+
+    public void setDisplayRatedItems(Boolean displayRatedItems) {
+        this.displayRatedItems = displayRatedItems;
+    }
+
+
 }
