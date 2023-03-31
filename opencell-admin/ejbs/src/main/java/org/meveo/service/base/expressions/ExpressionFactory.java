@@ -36,7 +36,7 @@ public class ExpressionFactory extends NativeExpressionFactory {
                     try {
                         classes.add(Class.forName((String) classNameOrClass));
                     } catch (ClassNotFoundException e) {
-                        log.error("Search by a type will be ignored - unknown class {}", (String) classNameOrClass);
+                        //log.error("Search by a type will be ignored - unknown class {}", (String) classNameOrClass);
                     }
                 }
             }
@@ -62,7 +62,7 @@ public class ExpressionFactory extends NativeExpressionFactory {
                     queryBuilder.addSqlCriterion("type(a) != :typeClass", "typeClass", Class.forName((String) value));
                 }
             } catch (ClassNotFoundException e) {
-                log.error("Search by a type will be ignored - unknown class {}", value);
+                //log.error("Search by a type will be ignored - unknown class {}", value);
             }
         }
     }
