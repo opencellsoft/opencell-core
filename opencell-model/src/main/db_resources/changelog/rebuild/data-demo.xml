@@ -2146,7 +2146,7 @@
             <column name="description_i18n" value='{"FR":"Schéma comptable","EN":"Accounting schemes"}'/>
         </insert>
     </changeSet>
-<!-- 
+    
     
     
     
@@ -2229,13 +2229,14 @@
             <column name="status_date" valueDate="${db.current.time}"/>
             <column name="allowance_code_id" valueComputed="(SELECT id FROM untdid_5189_allowance_code Where code = '95')"></column>
         </insert> 
-    </changeSet>    -->
+    </changeSet>    
     
 
     <changeSet id="#INTRD-13957_20230213" author="houdad">
-    	 
+        
         <sql>
         DELETE FROM ${db.schema.adapted}CAT_UNIT_OF_MEASURE;
+        
         INSERT INTO ${db.schema.adapted}CAT_UNIT_OF_MEASURE (id,version,creator,updater,code,created,updated,symbol,description,description_i18n,multiplicator,parent_id) VALUES (-1, 0, 'opencell.admin', NULL, '10', now(), NULL, 'group', 'group', NULL, 1, NULL);
 		INSERT INTO ${db.schema.adapted}CAT_UNIT_OF_MEASURE (id,version,creator,updater,code,created,updated,symbol,description,description_i18n,multiplicator,parent_id) VALUES (-2, 0, 'opencell.admin', NULL, '11', now(), NULL, 'outfit', 'outfit', NULL, 1, NULL);
 		INSERT INTO ${db.schema.adapted}CAT_UNIT_OF_MEASURE (id,version,creator,updater,code,created,updated,symbol,description,description_i18n,multiplicator,parent_id) VALUES (-3, 0, 'opencell.admin', NULL, '13', now(), NULL, 'ration', 'ration', NULL, 1, NULL);
@@ -4398,7 +4399,6 @@
 		INSERT INTO ${db.schema.adapted}CAT_UNIT_OF_MEASURE (id,version,creator,updater,code,created,updated,symbol,description,description_i18n,multiplicator,parent_id) VALUES (-2160, 0, 'opencell.admin', NULL, 'XZX', now(), NULL, 'Intermediate bulk container, plywood', 'Intermediate bulk container, plywood', NULL, 1, NULL);
 		INSERT INTO ${db.schema.adapted}CAT_UNIT_OF_MEASURE (id,version,creator,updater,code,created,updated,symbol,description,description_i18n,multiplicator,parent_id) VALUES (-2161, 0, 'opencell.admin', NULL, 'XZY', now(), NULL, 'Intermediate bulk container, reconstituted wood', 'Intermediate bulk container, reconstituted wood', NULL, 1, NULL);
 		INSERT INTO ${db.schema.adapted}CAT_UNIT_OF_MEASURE (id,version,creator,updater,code,created,updated,symbol,description,description_i18n,multiplicator,parent_id) VALUES (-2162, 0, 'opencell.admin', NULL, 'XZZ', now(), NULL, 'Mutually defined ', 'Mutually defined ', NULL, 1, NULL);   
-		        
         </sql>
     </changeSet>
     
@@ -4659,7 +4659,7 @@
 			<column name="vat_payment_option_id" value="1" />
 		</insert>	
 	</changeSet>
-
+    
     
     <changeSet id="#OUTRD-49_20220913" author="HamzaBiadi">
         <insert tableName="crm_custom_field_tmpl">
@@ -4783,7 +4783,6 @@
                 ]]>
             </column>
         </insert>
-
         <!-- Email templates -->
         <insert tableName="com_message_template">
             <column name="media" value="EMAIL" />
@@ -4832,6 +4831,132 @@
         </insert>
         
     </changeSet>
+    <changeSet id="#INTRD-14122_20230221" author="hichamELHALOUI">
+		<insert tableName="cpq_tag_type">
+			<column name="id" value="-1"/>
+			<column name="created" valueDate="${db.current.time}"/>
+			<column name="code" value="tunnel"/>
+			<column name="description" value="Tunnel"/>
+		</insert>
+	<insert tableName="cpq_tag">
+        <column name="id" value="-1"/>
+        <column name="created" valueDate="${db.current.time}" />
+        <column name="code" value="featured"/>
+        <column name="description" value="Featured"/>
+         <column name="tag_type_id" value="-1" />
+    </insert>
+
+     <insert tableName="crm_customer_category">
+            <column name="id" valueNumeric="-3" />
+            <column name="version" valueNumeric="0" />
+            <column name="uuid" value="CCC_B2B" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2B" />
+            <column name="description" value="B2B" />
+            <column name="accounting_code_id" valueComputed="(select id from billing_accounting_code where code = '410000000')" />
+            <column name="tax_category_id" valueNumeric="-3" />
+    </insert>
+    <insert tableName="crm_customer_category">
+                <column name="id" valueNumeric="-4" />
+                <column name="version" valueNumeric="0" />
+                <column name="uuid" value="CCC_regular_account" />
+                <column name="created" valueDate="${db.current.time}" />
+                <column name="code" value="regular account" />
+                <column name="description" value="regular account" />
+                <column name="accounting_code_id" valueComputed="(select id from billing_accounting_code where code = '410000000')" />
+                <column name="tax_category_id" valueNumeric="-3" />
+    </insert>
+
+        <insert tableName="cat_offer_template_category">
+                <column name="id" valueNumeric="-1" />
+                <column name="version" valueNumeric="0" />
+                <column name="created" valueDate="${db.current.time}" />
+                <column name="code" value="new" />
+                <column name="name" value="New" />
+        </insert>
+        <insert tableName="cat_offer_template_category">
+                <column name="id" valueNumeric="-2" />
+                <column name="version" valueNumeric="0" />
+                <column name="created" valueDate="${db.current.time}" />
+                <column name="code" value="standard" />
+                <column name="name" value="Standard" />
+        </insert>
+
+        <insert tableName="cat_channel">
+                <column name="id" valueNumeric="-1" />
+                <column name="version" valueNumeric="0" />
+                <column name="created" valueDate="${db.current.time}" />
+                <column name="code" value="backoffice" />
+                <column name="description" value="Backoffice" />
+        </insert>
+        <insert tableName="cat_channel">
+                <column name="id" valueNumeric="-2" />
+                <column name="version" valueNumeric="0" />
+                <column name="created" valueDate="${db.current.time}" />
+                <column name="code" value="web" />
+                <column name="description" value="Web" />
+        </insert>
+
+                <insert tableName="adm_title">
+            <column name="id" valueNumeric="-8" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="SA" />
+            <column name="description" value="French joint-stock company" />
+            <column name="is_company" valueNumeric="1" />
+            <column name="description_i18n" value='{"FRA":"Société Anonyme","ENG":"French joint-stock company"}' />
+        </insert>
+
+         <insert tableName="adm_title">
+            <column name="id" valueNumeric="-9" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="SARL" />
+            <column name="description" value="French limited liability company" />
+            <column name="is_company" valueNumeric="1" />
+            <column name="description_i18n" value='{"FRA":"Société a responsabilité limitée","ENG":"French limited liability company"}' />
+        </insert>
+
+        <insert tableName="adm_title">
+            <column name="id" valueNumeric="-10" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="SAS" />
+            <column name="description" value="Simplified joint-stock corporation" />
+            <column name="is_company" valueNumeric="1" />
+            <column name="description_i18n" value='{"FRA":"Société par actions simplifiée","ENG":"Simplified joint-stock corporation"}' />
+        </insert>
+        <insert tableName="adm_title">
+            <column name="id" valueNumeric="-11" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="PLC" />
+            <column name="description" value="Public limited company" />
+            <column name="is_company" valueNumeric="1" />
+            <column name="description_i18n" value='{"FRA":"société ouverte à responsabilité limitée","ENG":"Public limited company"}' />
+        </insert>
+
+        <insert tableName="adm_title">
+            <column name="id" valueNumeric="-12" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="LTD" />
+            <column name="description" value="Private company limited by shares" />
+            <column name="is_company" valueNumeric="1" />
+            <column name="description_i18n" value='{"FRA":"Société privée limité par actions","ENG":"Private company limited by shares"}' />
+        </insert>
+
+	</changeSet>
     <changeSet id="#OUTRD-49-SUB_20220914" author="HamzaBiadi">
         <!-- Subscription Job -->
         <insert tableName="meveo_job_instance">
@@ -5319,7 +5444,136 @@
             <column name="description" value="Payment Accounting Scheme"/>
             <column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.accountingscheme.PaymentAccountingSchemeScript')"/>
         </insert>
-    </changeSet>   
+    </changeSet>
+    
+    
+    <changeSet id="INTRD_11783_20221201_compate_invoice_amount" author="a.rouaguebe">
+    
+         <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
+            <column name="code" value="org.meveo.service.script.CompareInvoiceAmountScript" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="src_type" value="JAVA_CLASS" />
+            <column name="description" value="Invoice amount will be compared to provided amount using the selected operator."/>
+            <column name="description_i18n" value='{"FRA":"Le montant de la facture sera comparé au montant indiqué en utilisant l’opérateur sélectionné.","ENG":"Invoice amount will be compared to provided amount using the selected operator."}'/>
+            <column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='INVOICE_VALIDATION')" />
+        </insert>
+
+        <insert tableName="meveo_script_parameter">
+            <column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="withOrWithoutTax" />
+            <column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareInvoiceAmountScript')" />
+            <column name="description_i18n" value='{"FRA":"Montant à tester","ENG":"Amount to test"}'/>
+            <column name="class_name" value="java.lang.String" />
+            <column name="default_value" value="without tax" />
+            <column name="mandatory" valueNumeric="1" />
+            <column name="allowed_values" value="without tax|with tax" />
+            <column name="values_separator" value="\|" />
+            <column name="collection" valueNumeric="0" />
+        </insert>
+
+        <insert tableName="meveo_script_parameter">
+            <column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="operator" />
+            <column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareInvoiceAmountScript')" />
+            <column name="description_i18n" value='{"FRA":"Operateur de comparaison","ENG":"Comparison operator"}'/>
+            <column name="class_name" value="java.lang.String" />
+            <column name="default_value" value=">" />
+            <column name="mandatory" valueNumeric="1" />
+            <column name="allowed_values" value="&lt;|≤|=|≠|&gt;|≥" />
+            <column name="values_separator" value="\|" />
+            <column name="collection" valueNumeric="0" />
+        </insert>
+
+        <insert tableName="meveo_script_parameter">
+            <column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="value" />
+            <column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareInvoiceAmountScript')" />
+            <column name="description_i18n" value='{"FRA":"Valeur","ENG":"Value"}'/>
+            <column name="class_name" value="java.math.BigDecimal" />
+            <column name="default_value" value="0" />
+            <column name="mandatory" valueNumeric="1" />
+            <column name="values_separator" value="\|" />
+            <column name="collection" valueNumeric="0" />
+        </insert>
+    </changeSet>
+    
+    
+    
+    <changeSet id="INTRD_12001_20221205_rebuild" author="TarikFA.">
+    
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
+            <column name="code" value="org.meveo.service.script.CompareOfferAmountScript" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="src_type" value="JAVA_CLASS" />
+            <column name="description" value="Amount invoiced for each offer in the list will be compared to the provided value using the selected operator If offer list is empty, then rule will be ignored. Only offer actually present on invoice will be tested."/>
+            <column name="description_i18n">
+                <![CDATA[{"FRA":"<p>Le montant facturé pour chacune des offres dans la liste sera comparé à la valeur indiquée, en utilisant l’opérateur sélectionné.</p><p>Si la liste des offres est vide, alors la règle sera ignorée.</p><p>Seules les offres effectivement présentes sur la facture seront testées.</p>","ENG":"<p>Amount invoiced for each offer in the list will be compared to the provided value using the selected operator</p><p>If offer list is empty, then rule will be ignored.</p><p>Only offer actually present on invoice will be tested.</p>"}]]>
+            </column>
+            <column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='INVOICE_VALIDATION')" />
+        </insert>
+
+        <insert tableName="meveo_script_parameter">
+            <column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="offers" />
+            <column name="description_i18n" value='{"FRA":"Offres à vérifier","ENG":"Offers to check"}'/>
+            <column name="class_name" value="org.meveo.model.catalog.OfferTemplate" />
+            <column name="mandatory" valueNumeric="1" />
+            <column name="values_separator" value="\|" />
+            <column name="collection" valueNumeric="1" />
+            <column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferAmountScript')" />
+        </insert>
+        
+        <insert tableName="meveo_script_parameter">
+            <column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="withOrWithoutTax" />
+            <column name="description_i18n" value='{"FRA":"Montant à tester","ENG":"Amount to test"}'/>
+            <column name="class_name" value="java.lang.String" />
+            <column name="default_value" value="without tax" />
+            <column name="mandatory" valueNumeric="1" />
+            <column name="allowed_values" value="without tax|with tax" />
+            <column name="values_separator" value="\|" />
+            <column name="collection" valueNumeric="0" />
+            <column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferAmountScript')" />
+        </insert>
+
+        <insert tableName="meveo_script_parameter">
+            <column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="operator" />
+            <column name="description_i18n" value='{"FRA":"Operateur de comparaison","ENG":"Comparison operator"}'/>
+            <column name="class_name" value="java.lang.String" />
+            <column name="default_value" value=">" />
+            <column name="mandatory" valueNumeric="1" />
+            <column name="allowed_values" value="&lt;|≤|=|≠|&gt;|≥" />
+            <column name="values_separator" value="\|" />
+            <column name="collection" valueNumeric="0" />
+            <column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferAmountScript')" />
+        </insert>
+
+        <insert tableName="meveo_script_parameter">
+            <column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="value" />
+            <column name="description_i18n" value='{"FRA":"Valeur","ENG":"Value"}'/>
+            <column name="class_name" value="java.math.BigDecimal" />
+            <column name="default_value" value="0" />
+            <column name="mandatory" valueNumeric="1" />
+            <column name="values_separator" value="\|" />
+            <column name="collection" valueNumeric="0" />
+            <column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferAmountScript')" />
+        </insert>
+    </changeSet>
     
     <changeSet id="INTRD-12266_20221214_rebuild" author="aeljaouhari">
         <insert tableName="meveo_script_instance">
@@ -5346,6 +5600,73 @@
             <column name="values_separator" value="\|" />
             <column name="collection" valueNumeric="1" />
             <column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateCreditCategoryScript')" />
+        </insert>
+    </changeSet>
+    
+    <changeSet id="INTRD-12103_20221215_rebuild" author="HichamHANINE">    
+      <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
+            <column name="code" value="org.meveo.service.script.CompareOfferLinesAmountScript" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="src_type" value="JAVA_CLASS" />
+            <column name="description" value="Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator. Only offer from the list actually present on invoice will be tested. If offer list is empty, then all invoice lines will be tested regardless of their offer. For the test to pass, all tested invoice lines must pass the test."/>
+            <column name="description_i18n">
+                <![CDATA[{"ENG":"<p>Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator.</p><p>Only offer from the list actually present on invoice will be tested</p><p>If offer list is empty, then all invoice lines will be tested regardless of their offer.</p><p>For the test to pass, all tested invoice lines must pass the test.</p>",
+                "FRA":"<p>Le montant de chaque ligne de facture provenant d’une offre de la liste sera comparé à la valeur indiquée, en utilisant l’opérateur sélectionné.</p><p>Seule les offres de la liste effectivement présentes sur la facture seront testées.</p><p>Si la liste des offres est vide, alors toutes les lignes de facture seront testées, quelle que soit leur offre.</p><p>Pour que le teste passe, toutes les lignes de facture testées doivent passer le test.</p>"}]]>
+            </column>
+            <column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='INVOICE_VALIDATION')" />
+        </insert>
+        <insert tableName="meveo_script_parameter">
+            <column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="offers" />
+            <column name="description_i18n" value='{"FRA":"Offres à vérifier","ENG":"Offers to check"}'/>
+            <column name="class_name" value="org.meveo.model.catalog.OfferTemplate" />
+            <column name="mandatory" valueNumeric="0" />
+            <column name="values_separator" value="\|" />
+            <column name="collection" valueNumeric="1" />
+            <column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmountScript')" />
+        </insert>
+
+        <insert tableName="meveo_script_parameter">
+            <column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="withOrWithoutTax" />
+            <column name="description_i18n" value='{"FRA":"Montant à tester","ENG":"Amount to test"}'/>
+            <column name="class_name" value="java.lang.String" />
+            <column name="default_value" value="without tax" />
+            <column name="mandatory" valueNumeric="1" />
+            <column name="allowed_values" value="without tax|with tax" />
+            <column name="values_separator" value="\|" />
+            <column name="collection" valueNumeric="0" />
+            <column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmountScript')" />
+        </insert>
+        <insert tableName="meveo_script_parameter">
+            <column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="operator" />
+            <column name="description_i18n" value='{"FRA":"Operateur de comparaison","ENG":"Comparison operator"}'/>
+            <column name="class_name" value="java.lang.String" />
+            <column name="default_value" value=">" />
+            <column name="mandatory" valueNumeric="1" />
+            <column name="allowed_values" value="&lt;|≤|=|≠|&gt;|≥" />
+            <column name="values_separator" value="\|" />
+            <column name="collection" valueNumeric="0" />
+            <column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmountScript')" />
+        </insert>
+        <insert tableName="meveo_script_parameter">
+            <column name="id" valueSequenceNext="meveo_script_parameter_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="value" />
+            <column name="description_i18n" value='{"FRA":"Valeur","ENG":"Value"}'/>
+            <column name="class_name" value="java.math.BigDecimal" />
+            <column name="default_value" value="0" />
+            <column name="mandatory" valueNumeric="1" />
+            <column name="values_separator" value="\|" />
+            <column name="collection" valueNumeric="0" />
+            <column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmountScript')" />
         </insert>
     </changeSet>
     
@@ -5677,645 +5998,7 @@
             <column name="version" valueNumeric="0" />
             <column name="src_type" value="JAVA_CLASS" />
         </insert>
-    </changeSet>            
-
-	<changeSet id="INTRD_11783_20221201_compate_invoice_amount" author="a.rouaguebe">
-    
-         <insert tableName="meveo_script_instance">
-        	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
-        	<column name="code" value="org.meveo.service.script.CompareInvoiceAmountScript" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="version" valueNumeric="1" />
-            <column name="src_type" value="JAVA_CLASS" />
-			<column name="description" value="Invoice amount will be compared to provided amount using the selected operator."/>
-			<column name="description_i18n" value='{"FRA":"Le montant de la facture sera comparé au montant indiqué en utilisant l’opérateur sélectionné.", "EN": "Invoice amount will be compared to provided amount using the selected operator."}'/>
-			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='INVOICE_VALIDATION')" />
-        </insert>
-
-		<insert tableName="meveo_script_parameter">
-			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
-			<column name="version" valueNumeric="0" />
-			<column name="code" value="withOrWithoutTax" />
-			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareInvoiceAmountScript')" />
-			<column name="description_i18n" value='{"FRA":"Montant à tester","ENG":"Amount to test"}'/>
-			<column name="class_name" value="java.lang.String" />
-			<column name="default_value" value="without tax" />
-			<column name="mandatory" valueNumeric="1" />
-			<column name="allowed_values" value="without tax|with tax" />
-			<column name="values_separator" value="\|" />
-			<column name="collection" valueNumeric="0" />
-		</insert>
-
-		<insert tableName="meveo_script_parameter">
-			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
-			<column name="version" valueNumeric="0" />
-			<column name="code" value="operator" />
-			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareInvoiceAmountScript')" />
-			<column name="description_i18n" value='{"FRA":"Operateur de comparaison","ENG":"Comparison operator"}'/>
-			<column name="class_name" value="java.lang.String" />
-			<column name="default_value" value=">" />
-			<column name="mandatory" valueNumeric="1" />
-			<column name="allowed_values" value="&lt;|≤|=|≠|&gt;|≥" />
-			<column name="values_separator" value="\|" />
-			<column name="collection" valueNumeric="0" />
-		</insert>
-
-		<insert tableName="meveo_script_parameter">
-			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
-			<column name="version" valueNumeric="0" />
-			<column name="code" value="value" />
-			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareInvoiceAmountScript')" />
-			<column name="description_i18n" value='{"FRA":"Valeur","ENG":"Value"}'/>
-			<column name="class_name" value="java.math.BigDecimal" />
-			<column name="default_value" value="0" />
-			<column name="mandatory" valueNumeric="1" />
-			<column name="values_separator" value="\|" />
-			<column name="collection" valueNumeric="0" />
-		</insert>
     </changeSet>
-	
-	<changeSet id="INTRD_12001_20221205_rebuild" author="TarikFA.">
-    
-        <insert tableName="meveo_script_instance">
-        	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
-        	<column name="code" value="org.meveo.service.script.CompareOfferAmountScript" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="version" valueNumeric="1" />
-            <column name="src_type" value="JAVA_CLASS" />
-			<column name="description" value="Amount invoiced for each offer in the list will be compared to the provided value using the selected operator If offer list is empty, then rule will be ignored. Only offer actually present on invoice will be tested."/>
-			<column name="description_i18n">
-				<![CDATA[{"FRA":"<p>Le montant facturé pour chacune des offres dans la liste sera comparé à la valeur indiquée, en utilisant l’opérateur sélectionné.</p><p>Si la liste des offres est vide, alors la règle sera ignorée.</p><p>Seules les offres effectivement présentes sur la facture seront testées.</p>","ENG":"<p>Amount invoiced for each offer in the list will be compared to the provided value using the selected operator</p><p>If offer list is empty, then rule will be ignored.</p><p>Only offer actually present on invoice will be tested.</p>"}]]>
-			</column>
-			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='INVOICE_VALIDATION')" />
-        </insert>
-
-		<insert tableName="meveo_script_parameter">
-			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
-			<column name="version" valueNumeric="0" />
-			<column name="code" value="offers" />
-			<column name="description_i18n" value='{"FRA":"Offres à vérifier","ENG":"Offers to check"}'/>
-			<column name="class_name" value="org.meveo.model.catalog.OfferTemplate" />
-			<column name="mandatory" valueNumeric="0" />
-			<column name="values_separator" value="\|" />
-			<column name="collection" valueNumeric="1" />
-			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferAmountScript')" />
-		</insert>
-		
-		<insert tableName="meveo_script_parameter">
-			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
-			<column name="version" valueNumeric="0" />
-			<column name="code" value="withOrWithoutTax" />
-			<column name="description_i18n" value='{"FRA":"Montant à tester","ENG":"Amount to test"}'/>
-			<column name="class_name" value="java.lang.String" />
-			<column name="default_value" value="without tax" />
-			<column name="mandatory" valueNumeric="1" />
-			<column name="allowed_values" value="without tax|with tax" />
-			<column name="values_separator" value="\|" />
-			<column name="collection" valueNumeric="0" />
-			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferAmountScript')" />
-		</insert>
-
-		<insert tableName="meveo_script_parameter">
-			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
-			<column name="version" valueNumeric="0" />
-			<column name="code" value="operator" />
-			<column name="description_i18n" value='{"FRA":"Operateur de comparaison","ENG":"Comparison operator"}'/>
-			<column name="class_name" value="java.lang.String" />
-			<column name="default_value" value=">" />
-			<column name="mandatory" valueNumeric="1" />
-			<column name="allowed_values" value="&lt;|≤|=|≠|&gt;|≥" />
-			<column name="values_separator" value="\|" />
-			<column name="collection" valueNumeric="0" />
-			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferAmountScript')" />
-		</insert>
-
-		<insert tableName="meveo_script_parameter">
-			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
-			<column name="version" valueNumeric="0" />
-			<column name="code" value="value" />
-			<column name="description_i18n" value='{"FRA":"Valeur","ENG":"Value"}'/>
-			<column name="class_name" value="java.math.BigDecimal" />
-			<column name="default_value" value="0" />
-			<column name="mandatory" valueNumeric="1" />
-			<column name="values_separator" value="\|" />
-			<column name="collection" valueNumeric="0" />
-			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferAmountScript')" />
-		</insert>
-    </changeSet>
-    
-    <changeSet id="INTRD-12266_20221214_rebuild" author="aeljaouhari">
-        <insert tableName="meveo_script_instance">
-        	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
-        	<column name="code" value="org.meveo.service.script.validation.ValidateCreditCategoryScript" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="version" valueNumeric="1" />
-            <column name="src_type" value="JAVA_CLASS" />
-            <column name="description" value="The customer's (customer account actually) credit category must not be in the provided list for the rule to pass. If customer's credit category is in the list, the rule will fail. If credit category list is empty, then rule will be ignored."/>
-            <column name="description_i18n">
-				<![CDATA[{"ENG":"<p>The customer's (customer account actually) credit category must not be in the provided list for the rule to pass.</p><p>If customer's credit category is in the list, the rule will fail.</p><p>If credit category list is empty, then rule will be ignored.</p>","FRA":"<p>Le catégorie de crédit du client (customer account) ne doit pas être dans la liste fournie pour que la règle passe.</p><p>Si la catégorie de crédit du client est dans la liste, la règle va échouer.</p><p>Si la liste de catégories de crédit est vide, la règle sera ignorée.</p>"}]]>
-			</column>
-			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='INVOICE_VALIDATION')" />
-        </insert>
-
-		<insert tableName="meveo_script_parameter">
-			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
-			<column name="version" valueNumeric="0" />
-			<column name="code" value="CheckCreditCategory" />
-			<column name="description_i18n" value='{"FRA":"Catégories de crédit interdites","ENG":"Forbidden credit categories"}'/>
-			<column name="class_name" value="org.meveo.model.payments.CreditCategory" />
-			<column name="mandatory" valueNumeric="0" />
-			<column name="values_separator" value="\|" />
-			<column name="collection" valueNumeric="1" />
-			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateCreditCategoryScript')" />
-		</insert>
-    </changeSet>
-    
-    <changeSet id="INTRD-12103_20221215_rebuild" author="HichamHANINE">    
-      <insert tableName="meveo_script_instance">
-        	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
-        	<column name="code" value="org.meveo.service.script.CompareOfferLinesAmountScript" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="version" valueNumeric="1" />
-            <column name="src_type" value="JAVA_CLASS" />
-			<column name="description" value="Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator. Only offer from the list actually present on invoice will be tested. If offer list is empty, then all invoice lines will be tested regardless of their offer. For the test to pass, all tested invoice lines must pass the test."/>
-			<column name="description_i18n">
-				<![CDATA[{"ENG":"<p>Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator.</p><p>Only offer from the list actually present on invoice will be tested</p><p>If offer list is empty, then all invoice lines will be tested regardless of their offer.</p><p>For the test to pass, all tested invoice lines must pass the test.</p>",
-				"FRA":"<p>Le montant de chaque ligne de facture provenant d’une offre de la liste sera comparé à la valeur indiquée, en utilisant l’opérateur sélectionné.</p><p>Seule les offres de la liste effectivement présentes sur la facture seront testées.</p><p>Si la liste des offres est vide, alors toutes les lignes de facture seront testées, quelle que soit leur offre.</p><p>Pour que le teste passe, toutes les lignes de facture testées doivent passer le test.</p>"}]]>
-			</column>
-			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='INVOICE_VALIDATION')" />
-        </insert>
-		<insert tableName="meveo_script_parameter">
-			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
-			<column name="version" valueNumeric="0" />
-			<column name="code" value="offers" />
-			<column name="description_i18n" value='{"FRA":"Offres à vérifier","ENG":"Offers to check"}'/>
-			<column name="class_name" value="org.meveo.model.catalog.OfferTemplate" />
-			<column name="mandatory" valueNumeric="0" />
-			<column name="values_separator" value="\|" />
-			<column name="collection" valueNumeric="1" />
-			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmountScript')" />
-		</insert>
-
-		<insert tableName="meveo_script_parameter">
-			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
-			<column name="version" valueNumeric="0" />
-			<column name="code" value="withOrWithoutTax" />
-			<column name="description_i18n" value='{"FRA":"Montant à tester","ENG":"Amount to test"}'/>
-			<column name="class_name" value="java.lang.String" />
-			<column name="default_value" value="without tax" />
-			<column name="mandatory" valueNumeric="1" />
-			<column name="allowed_values" value="without tax|with tax" />
-			<column name="values_separator" value="\|" />
-			<column name="collection" valueNumeric="0" />
-			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmountScript')" />
-		</insert>
-		<insert tableName="meveo_script_parameter">
-			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
-			<column name="version" valueNumeric="0" />
-			<column name="code" value="operator" />
-			<column name="description_i18n" value='{"FRA":"Operateur de comparaison","ENG":"Comparison operator"}'/>
-			<column name="class_name" value="java.lang.String" />
-			<column name="default_value" value=">" />
-			<column name="mandatory" valueNumeric="1" />
-			<column name="allowed_values" value="&lt;|≤|=|≠|&gt;|≥" />
-			<column name="values_separator" value="\|" />
-			<column name="collection" valueNumeric="0" />
-			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmountScript')" />
-		</insert>
-		<insert tableName="meveo_script_parameter">
-			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
-			<column name="version" valueNumeric="0" />
-			<column name="code" value="value" />
-			<column name="description_i18n" value='{"FRA":"Valeur","ENG":"Value"}'/>
-			<column name="class_name" value="java.math.BigDecimal" />
-			<column name="default_value" value="0" />
-			<column name="mandatory" valueNumeric="1" />
-			<column name="values_separator" value="\|" />
-			<column name="collection" valueNumeric="0" />
-			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmountScript')" />
-		</insert>
-    </changeSet>
-    
-    <changeSet id="INTRD-12267_20221219_rebuild" author="aeljaouhari">
-         <insert tableName="meveo_script_instance">
-        	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
-        	<column name="code" value="org.meveo.service.script.validation.ValidateCustomerAgeScript" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="version" valueNumeric="1" />
-            <column name="src_type" value="JAVA_CLASS" />
-            <column name="description" value="The invoice’s customer (Customer/Group, Customer Account/Payer, Billing account) age is compared to a provided number of days. Age is computed at invoice date."/>
-            <column name="description_i18n">
-				<![CDATA[{"ENG":"<p>The invoice’s customer (Customer/Group, Customer Account/Payer, Billing account) age is compared to a provided number of days.</p><p>Age is computed at invoice date.</p>","FRA":"<p>L’âge du client (Customer/Groupe, Customer Account/Compte payeur, Billing account/Compte de facturation) est comparé au nombre de jours indiqué.</p><p>L'âge est calculé à la date de facture.</p>"}]]>
-			</column>
-			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='INVOICE_VALIDATION')" />
-        </insert>
-
-		<insert tableName="meveo_script_parameter">
-			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
-			<column name="version" valueNumeric="0" />
-			<column name="code" value="referenceDate" />
-			<column name="description_i18n" value='{"FRA":"Date à tester","ENG":"Date to test"}'/>
-			<column name="class_name" value="java.lang.String" />
-			<column name="mandatory" valueNumeric="1" />
-			<column name="default_value" value="Billling Account subscription" />
-			<column name="allowed_values" value="Customer creation|Customer Account creation|Billing Account creation|Billing Account subscription" />
-			<column name="values_separator" value="\|" />
-			<column name="collection" valueNumeric="0" />
-			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateCustomerAgeScript')" />
-		</insert>
-
-		<insert tableName="meveo_script_parameter">
-			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
-			<column name="version" valueNumeric="0" />
-			<column name="code" value="operator" />
-			<column name="description_i18n" value='{"FRA":"Operateur de comparaison","ENG":"Comparison operator"}'/>
-			<column name="class_name" value="java.lang.String" />
-			<column name="default_value" value=">" />
-			<column name="mandatory" valueNumeric="1" />
-			<column name="allowed_values" value="&lt;|≤|=|≠|&gt;|≥" />
-			<column name="values_separator" value="\|" />
-			<column name="collection" valueNumeric="0" />
-			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateCustomerAgeScript')" />
-		</insert>
-
-		<insert tableName="meveo_script_parameter">
-			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
-			<column name="version" valueNumeric="0" />
-			<column name="code" value="age" />
-			<column name="description_i18n" value='{"FRA":"Âge en jour","ENG":"Age in days"}'/>
-			<column name="class_name" value="java.lang.Integer" />
-			<column name="default_value" value="30" />
-			<column name="mandatory" valueNumeric="1" />
-			<column name="values_separator" value="\|" />
-			<column name="collection" valueNumeric="0" />
-			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateCustomerAgeScript')" />
-		</insert>
-    </changeSet>
-    
-    <changeSet id="INTRD-12268_20221221_rebuild" author="aeljaouhari">
-        <insert tableName="meveo_script_instance">
-        	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
-        	<column name="code" value="org.meveo.service.script.validation.ValidateSubscriptionAgeScript" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="version" valueNumeric="1" />
-            <column name="src_type" value="JAVA_CLASS" />
-            <column name="description" value="The invoice’s subscriptions age is compared to a provided number of days. Age is computed at invoice date."/>
-            <column name="description_i18n">
-				<![CDATA[{"ENG":"<p>The invoice’s subscriptions age is compared to a provided number of days.</p><p>Age is computed at invoice date.</p>","FRA":"<p>L’âge de la souscription est comparé au nombre de jours indiqué.</p><p>L'âge est calculé à la date de facture.</p>"}]]>
-			</column>
-			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='INVOICE_VALIDATION')" />
-        </insert>
-
-		<insert tableName="meveo_script_parameter">
-			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
-			<column name="version" valueNumeric="0" />
-			<column name="code" value="referenceDate" />
-			<column name="description_i18n" value='{"FRA":"Date à tester","ENG":"Date to test"}'/>
-			<column name="class_name" value="java.lang.String" />
-			<column name="mandatory" valueNumeric="1" />
-			<column name="default_value" value="Subscription date" />
-			<column name="allowed_values" value="Subscription creation|Subscription date" />
-			<column name="values_separator" value="\|" />
-			<column name="collection" valueNumeric="0" />
-			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateSubscriptionAgeScript')" />
-		</insert>
-	
-		<insert tableName="meveo_script_parameter">
-			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
-			<column name="version" valueNumeric="0" />
-			<column name="code" value="operator" />
-			<column name="description_i18n" value='{"FRA":"Operateur de comparaison","ENG":"Comparison operator"}'/>
-			<column name="class_name" value="java.lang.String" />
-			<column name="default_value" value=">" />
-			<column name="mandatory" valueNumeric="1" />
-			<column name="allowed_values" value="&lt;|≤|=|≠|&gt;|≥" />
-			<column name="values_separator" value="\|" />
-			<column name="collection" valueNumeric="0" />
-			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateSubscriptionAgeScript')" />
-		</insert>
-
-		<insert tableName="meveo_script_parameter">
-			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
-			<column name="version" valueNumeric="0" />
-			<column name="code" value="age" />
-			<column name="description_i18n" value='{"FRA":"Âge en jour","ENG":"Age in days"}'/>
-			<column name="class_name" value="java.lang.Integer" />
-			<column name="default_value" value="30" />
-			<column name="mandatory" valueNumeric="1" />
-			<column name="values_separator" value="\|" />
-			<column name="collection" valueNumeric="0" />
-			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateSubscriptionAgeScript')" />
-		</insert>
-    </changeSet> 
-    
-    
-    <changeSet id="#INTRD-14122_20230221" author="hichamELHALOUI">
-		<insert tableName="cpq_tag_type">
-			<column name="id" value="-1"/>
-			<column name="created" valueDate="${db.current.time}"/>
-			<column name="code" value="tunnel"/>
-			<column name="description" value="Tunnel"/>
-		</insert>
-	<insert tableName="cpq_tag">
-        <column name="id" value="-1"/>
-        <column name="created" valueDate="${db.current.time}" />
-        <column name="code" value="featured"/>
-        <column name="description" value="Featured"/>
-         <column name="tag_type_id" value="-1" />
-    </insert>
-
-     <insert tableName="crm_customer_category">
-            <column name="id" valueNumeric="-3" />
-            <column name="version" valueNumeric="0" />
-            <column name="uuid" value="CCC_B2B" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2B" />
-            <column name="description" value="B2B" />
-            <column name="accounting_code_id" valueComputed="(select id from billing_accounting_code where code = '410000000')" />
-            <column name="tax_category_id" valueNumeric="-3" />
-    </insert>
-    <insert tableName="crm_customer_category">
-                <column name="id" valueNumeric="-4" />
-                <column name="version" valueNumeric="0" />
-                <column name="uuid" value="CCC_regular_account" />
-                <column name="created" valueDate="${db.current.time}" />
-                <column name="code" value="regular account" />
-                <column name="description" value="regular account" />
-                <column name="accounting_code_id" valueComputed="(select id from billing_accounting_code where code = '410000000')" />
-                <column name="tax_category_id" valueNumeric="-3" />
-    </insert>
-
-        <insert tableName="cat_offer_template_category">
-                <column name="id" valueNumeric="-1" />
-                <column name="version" valueNumeric="0" />
-                <column name="created" valueDate="${db.current.time}" />
-                <column name="code" value="new" />
-                <column name="name" value="New" />
-                <column name="order_level" valueNumeric="0" />
-        </insert>
-        <insert tableName="cat_offer_template_category">
-                <column name="id" valueNumeric="-2" />
-                <column name="version" valueNumeric="0" />
-                <column name="created" valueDate="${db.current.time}" />
-                <column name="code" value="standard" />
-                <column name="name" value="Standard" />
-                <column name="order_level" valueNumeric="0" />
-        </insert>
-
-        <insert tableName="cat_channel">
-                <column name="id" valueNumeric="-1" />
-                <column name="version" valueNumeric="0" />
-                <column name="created" valueDate="${db.current.time}" />
-                <column name="code" value="backoffice" />
-                <column name="description" value="Backoffice" />
-        </insert>
-        <insert tableName="cat_channel">
-                <column name="id" valueNumeric="-2" />
-                <column name="version" valueNumeric="0" />
-                <column name="created" valueDate="${db.current.time}" />
-                <column name="code" value="web" />
-                <column name="description" value="Web" />
-        </insert>
-
-                <insert tableName="adm_title">
-            <column name="id" valueNumeric="-8" />
-            <column name="version" valueNumeric="0" />
-
-            <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="SA" />
-            <column name="description" value="French joint-stock company" />
-            <column name="is_company" valueNumeric="1" />
-            <column name="description_i18n" value='{"FRA":"Société Anonyme","ENG":"French joint-stock company"}' />
-        </insert>
-
-         <insert tableName="adm_title">
-            <column name="id" valueNumeric="-9" />
-            <column name="version" valueNumeric="0" />
-
-            <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="SARL" />
-            <column name="description" value="French limited liability company" />
-            <column name="is_company" valueNumeric="1" />
-            <column name="description_i18n" value='{"FRA":"Société a responsabilité limitée","ENG":"French limited liability company"}' />
-        </insert>
-
-        <insert tableName="adm_title">
-            <column name="id" valueNumeric="-10" />
-            <column name="version" valueNumeric="0" />
-
-            <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="SAS" />
-            <column name="description" value="Simplified joint-stock corporation" />
-            <column name="is_company" valueNumeric="1" />
-            <column name="description_i18n" value='{"FRA":"Société par actions simplifiée","ENG":"Simplified joint-stock corporation"}' />
-        </insert>
-        <insert tableName="adm_title">
-            <column name="id" valueNumeric="-11" />
-            <column name="version" valueNumeric="0" />
-
-            <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="PLC" />
-            <column name="description" value="Public limited company" />
-            <column name="is_company" valueNumeric="1" />
-            <column name="description_i18n" value='{"FRA":"société ouverte à responsabilité limitée","ENG":"Public limited company"}' />
-        </insert>
-
-        <insert tableName="adm_title">
-            <column name="id" valueNumeric="-12" />
-            <column name="version" valueNumeric="0" />
-
-            <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="LTD" />
-            <column name="description" value="Private company limited by shares" />
-            <column name="is_company" valueNumeric="1" />
-            <column name="description_i18n" value='{"FRA":"Société privée limité par actions","ENG":"Private company limited by shares"}' />
-        </insert>
-
-	</changeSet>
-
-    <changeSet id="#INTRD-13074_20230214" author="zelmeliani">
-    	<insert tableName="ar_customer_balance">
-    		<column name="id" value="-1"/>
-		    <column name="version" value="0" />
-		    <column name="created" valueDate="${db.current.time}" />
-		    <column name="creator" value="applicationInitializer" />
-		    <column name="code" value="default_customer_balance" />
-		    <column name="description" value="Default Customer Balance" />
-		    <column name="default_balance" value="1" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'INV_ADV')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_WIRE')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_CASH')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_BATCH')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_STP')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_PAL')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'CRD_TRS')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'DBT_TRS')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_CRD')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'EXP_WRT')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REF_TIP')" /> 
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'INV_CRN')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'INV_DIS')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'INV_REB')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REJ_RDD')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REJ_RCR')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REJ_CRD')" /> 
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'TAX_VAT_10')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'TAX_VAT_20')" /> 
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'TAX_VAT_05')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'TAX_VAT_00')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REF_CRD')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'ADJ_INV')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'ADJ_REF')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'INV_STD')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'INV_FEE')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_DEP')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'RND_INC')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'RND_EXP')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REF_DDT')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REF_CHK')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_REC')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_NID')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REJ_TIP')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REJ_DDT')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REJ_CHK')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_DDT')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_TIP')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_CHK')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_SD')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-    </changeSet>
-
 
     <changeSet id="INTRD-2698-20211028" author="AbdelkaderBouazza" />    
     <changeSet id="#INTRD-4950-20220208-script" author="MohammedSTITANE"/>
@@ -6331,7 +6014,6 @@
 	<changeSet id="#INTRD-10592_20221014" author="TarikFA." />
     <changeSet id="INTRD-11122_20221104" author="HichamELHALOUI" />
     <changeSet id="INTRD-13237_20230119" author="HichamELHALOUI" />
-    <changeSet id="INTRD-13608_20230130" author="HichamELHALOUI" />
     <changeSet id="INTRD-13629_20230203" author="HichamELHALOUI" />
     <changeSet id="#INTRD-4267_20220108" author="AmineBENAICHA" />
     <changeSet id="#OUTRD-3_20221006-custom-field" author="MohamedChaouki"/>
@@ -6342,8 +6024,9 @@
     <changeSet id="#4082_20190404" author="SaidRamli"/>
     <changeSet id="#5308_20200618 - Add script" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-12906_20230112" author="hichamELHALOUI"/>
+    <changeSet id="#INTRD-14750_20230331" author="TarikFA." />
    	<changeSet id="#INTRD-15189_20230327" author="hichamELHALOUI"/>
-    
+
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
