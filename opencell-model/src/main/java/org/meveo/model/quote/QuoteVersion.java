@@ -60,7 +60,7 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 	@NamedQuery(name = "QuoteVersion.countCode", query = "select count(*) from QuoteVersion qv left join qv.quote qq where qq.code=:code"),
 	@NamedQuery(name = "QuoteVersion.findByQuoteIdAndStatusActive", query = "select qv from QuoteVersion qv left join qv.quote qq where qq.id=:id and qv.status=org.meveo.model.cpq.enums.VersionStatusEnum.PUBLISHED"),
 	@NamedQuery(name = "QuoteVersion.findByQuoteId", query = "select qv from QuoteVersion qv left join qv.quote qq where qq.id=:id"),
-	@NamedQuery(name = "QuoteVersion.findByQuoteAndVersion", query = "select qv from QuoteVersion qv left join qv.quote qq left join fetch qv.quoteArticleLines qal where qq.code=:code and qv.quoteVersion=:quoteVersion")
+	@NamedQuery(name = "QuoteVersion.findByQuoteAndVersion", query = "select qv from QuoteVersion qv left join qv.quote qq where qq.code=:code and qv.quoteVersion=:quoteVersion")
 })
 public class QuoteVersion extends AuditableCFEntity implements IReferenceEntity{
 
