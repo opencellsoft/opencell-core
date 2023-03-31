@@ -261,11 +261,12 @@ public class AccountOperationApi extends BaseApi {
         BigDecimal transactionalUnMatchingAmount = postData.getUnMatchingAmount();
 
         String transactionalcurrency = postData.getTransactionalCurrency();
-        BigDecimal functionalTaxAmount = getTaxAmount(postData);
-        BigDecimal transactionalTaxAmount = getTaxAmount(postData);
 
         BigDecimal functionalAmountWithoutTax = getAmountWithoutTax(postData);
         BigDecimal transactionalAmountWithoutTax = getAmountWithoutTax(postData);
+
+        BigDecimal functionalTaxAmount = getTaxAmount(postData);
+        BigDecimal transactionalTaxAmount = getTaxAmount(postData);
 
         BigDecimal lastAppliedRate = BigDecimal.ONE;
         TradingCurrency tradingCurrency = null;
@@ -430,11 +431,25 @@ public class AccountOperationApi extends BaseApi {
     }
 
     private BigDecimal getAmountWithoutTax(AccountOperationDto postData) {
+
         BigDecimal amountWithoutTax = null;
-        if (postData.getAmount() != null && postData.getTaxAmount() != null) {
-            amountWithoutTax = postData.getAmount().subtract(postData.getTaxAmount());
-        } else if (postData.getAmountWithoutTax() != null) {
-            amountWithoutTax = postData.getAmountWithoutTax();
+        BigDecimal amount = postData.getAmount();
+        BigDecimal taxAmount = postData.getTaxAmount();
+        BigDecimal amountWithoutTaxInput = postData.getAmountWithoutTax();
+
+        if (amount != null && taxAmount != null && amountWithoutTaxInput != null) {
+            BigDecimal total = amountWithoutTaxInput.add(taxAmount);
+            if (total.compareTo(amount) == 0) {
+                amountWithoutTax = amountWithoutTaxInput;
+            } else {
+                throw new BusinessException("The amount without tax or tax amount is not correct");
+            }
+        } else if (amount != null && taxAmount != null) {
+            amountWithoutTax = amount.subtract(taxAmount);
+        } else if (amountWithoutTaxInput != null && amount != null && amountWithoutTaxInput.compareTo(amount) > 0) {
+            throw new BusinessException("The amount without tax or tax amount is not correct");
+        } else {
+            amountWithoutTax = amountWithoutTaxInput;
         }
         return amountWithoutTax;
     }
