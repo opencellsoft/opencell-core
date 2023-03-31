@@ -87,7 +87,8 @@ import org.meveo.model.tax.TaxClass;
 @Entity
 @CustomFieldEntity(cftCodePrefix = "WalletOperation")
 @Table(name = "billing_wallet_operation")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_wallet_operation_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_wallet_operation_seq"),
+        @Parameter(name = "increment_size", value = "500") })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "operation_type", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("W")

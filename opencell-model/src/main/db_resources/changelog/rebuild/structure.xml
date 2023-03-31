@@ -248,7 +248,7 @@
         <createSequence sequenceName="billing_trading_country_seq" startValue="3" />
         <createSequence sequenceName="billing_trading_currency_seq" startValue="3" />
         <createSequence sequenceName="billing_trading_language_seq" startValue="3" />
-        <createSequence sequenceName="billing_wallet_operation_seq" />
+        <createSequence sequenceName="billing_wallet_operation_seq" incrementBy="500" />
         <createSequence sequenceName="billing_wallet_seq" />
         <createSequence sequenceName="cat_calendar_interval_seq" />
         <createSequence sequenceName="cat_calendar_seq" startValue="4" />
