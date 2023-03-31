@@ -19742,4 +19742,19 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
 	</changeSet>
 
+    <changeSet id="#INTRD-14750_20230331" author="TarikFA.">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-65" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="1" />
+            <column name="created" valueDate="2023-03-31 15:51:00.000" />
+            <column name="job_category" value="INVOICING" />
+            <column name="job_template" value="DuplicateRatedTransactionJob" />
+            <column name="code" value="DuplicateRatedTransactionJob" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="timerentity_id" valueNumeric="-1" />
+            <column name="uuid" value="DuplicateRatedTransactionJob-UUID" />
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>
