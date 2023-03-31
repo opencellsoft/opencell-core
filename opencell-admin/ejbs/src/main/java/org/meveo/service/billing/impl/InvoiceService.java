@@ -5882,6 +5882,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         && (existingInvoice.getInvoiceLines() == null || existingInvoice.getInvoiceLines().isEmpty())) {
                     cleanInvoiceAggregates(existingInvoice.getId());
                     initAmounts(existingInvoice.getId());
+                    existingInvoice = refreshOrRetrieve(existingInvoice);
                 }
                 return new ArrayList<>();
             } else if (!invoiceLinesGroupsPaged.isEmpty()) {
@@ -5912,7 +5913,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         if (existingInvoice != null) {
                             cleanInvoiceAggregates(existingInvoice.getId());
                             initAmounts(existingInvoice.getId());
-                            invoiceAggregateProcessingInfo.invoice = existingInvoice;
+                            invoiceAggregateProcessingInfo.invoice = refreshOrRetrieve(existingInvoice);
                         } else {
                             // TODO check instantiateInvoice(entityToInvoice
                             invoiceAggregateProcessingInfo.invoice = instantiateInvoice(entityToInvoice, invoiceLinesGroup.getBillingAccount(), invoiceLinesGroup.getSeller().getId(), billingRun, invoiceDate, isDraft,
