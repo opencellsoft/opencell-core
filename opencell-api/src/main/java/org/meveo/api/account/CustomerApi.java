@@ -342,20 +342,22 @@ public class CustomerApi extends AccountEntityApi {
             customer.setIsCompany(postData.getIsCompany());
         }
         
-        if (postData.getParentCustomerCode() != null) {
+        if (!StringUtils.isBlank(postData.getParentCustomerCode())) {
 			customer.setParentCustomer(ofNullable(customerService.findByCode(postData.getParentCustomerCode()))
 					.orElseThrow(() -> new BusinessException("No customer parent found with the given code : " + postData.getParentCustomerCode())));
 			if(!canBeLinked(customer.getParentCustomer(), customer)) {
                 throw new BusinessException(String.format("A customer’s ascendant cannot be one of its descendants. Customer %s is %s of %s", 
                 		customer.getParentCustomer().getCode(), childOrDescendant(customer.getParentCustomer(), customer), customer.getCode()));
 			}
-        }
+		} else if ("".equals(postData.getParentCustomerCode())) {
+			customer.setParentCustomer(null);
+		}
         
-        if (postData.getCustomerChildsCodes() != null) {
-        	customer.setCustomerChilds(postData.getCustomerChildsCodes().stream().map(code -> ofNullable(customerService.findByCode(code))
+        if (postData.getChildrenCustomersCodes() != null) {
+        	customer.setChildrenCustomers(postData.getChildrenCustomersCodes().stream().map(code -> ofNullable(customerService.findByCode(code))
 					.orElseThrow(() -> new BusinessException("No customer child found with the given code : " + code))).collect(Collectors.toList()));
         	
-        	customer.getCustomerChilds().stream().filter(child -> !canBeLinked(customer, child)).findAny().ifPresent(child -> {
+        	customer.getChildrenCustomers().stream().filter(child -> !canBeLinked(customer, child)).findAny().ifPresent(child -> {
                 throw new BusinessException(String.format("A customer’s ascendant cannot be one of its descendants. Customer %s is %s of %s", 
                 		customer.getCode(), childOrDescendant(customer, child), child.getCode()));
         	});
@@ -367,15 +369,19 @@ public class CustomerApi extends AccountEntityApi {
                 throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
             }
             customer.setSeller(seller);
-        } else if (postData.getParentCustomerCode() != null) {
-        	customer.setSeller(customer.getParentCustomer().getSeller());
+        } else if (isNew) {
+			customer.setSeller((customer.getParentCustomer() != null && customer.getParentCustomer().getSeller() != null)? 
+							customer.getParentCustomer().getSeller() : customer.getCustomerCategory().getDefaultSeller());
+        }
+        else{
+            customer.setSeller(null);
         }
 
     }
     
 	private void updateCustomerChilds(CustomerDto postData, Customer customer) {
-		if (postData.getCustomerChildsCodes() != null) {
-			customer.getCustomerChilds().forEach(customerChild -> {
+		if (postData.getChildrenCustomersCodes() != null) {
+			customer.getChildrenCustomers().forEach(customerChild -> {
 				customerChild.setParentCustomer(customer);
 				customerService.update(customerChild);
 			});
@@ -574,6 +580,10 @@ public class CustomerApi extends AccountEntityApi {
         if ((postData.isExoneratedFromTaxes() == null || !postData.isExoneratedFromTaxes()) && postData.getTaxCategoryCode() == null) {
             missingParameters.add("Exonerated from taxes or tax category code");
         }
+        
+        if (StringUtils.isBlank(postData.getDefaultSellerCode())) {
+            missingParameters.add("defaultSellerCode");
+        }
 
         handleMissingParametersAndValidate(postData);
 
@@ -604,6 +614,13 @@ public class CustomerApi extends AccountEntityApi {
                 throw new EntityDoesNotExistsException(TaxCategory.class, postData.getTaxCategoryCode());
             }
             customerCategory.setTaxCategory(taxCategory);
+        }
+        if (!StringUtils.isBlank(postData.getDefaultSellerCode())) {
+            Seller defaultSeller = sellerService.findByCode(postData.getDefaultSellerCode());
+            if (defaultSeller == null) {
+                throw new EntityDoesNotExistsException(Seller.class, postData.getDefaultSellerCode());
+            }
+            customerCategory.setDefaultSeller(defaultSeller);
         }
 
         customerCategory.setTaxCategoryEl(postData.getTaxCategoryEl());
@@ -673,6 +690,15 @@ public class CustomerApi extends AccountEntityApi {
         }
         if (postData.getLanguageDescriptions() != null) {
             customerCategory.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
+            toUpdate = true;
+        }
+        
+        if (!StringUtils.isBlank(postData.getDefaultSellerCode())) {
+            Seller defaultSeller = sellerService.findByCode(postData.getDefaultSellerCode());
+            if (defaultSeller == null) {
+                throw new EntityDoesNotExistsException(Seller.class, postData.getDefaultSellerCode());
+            }
+            customerCategory.setDefaultSeller(defaultSeller);
             toUpdate = true;
         }
 

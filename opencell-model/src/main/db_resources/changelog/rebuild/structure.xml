@@ -2137,13 +2137,16 @@
                 <constraints nullable="true"/>
             </column>
             <column name="operation_number" type="bigint" />
-            <column name="converted_net_to_pay" type="numeric(23, 12)" />
-            <column name="converted_amount" type="numeric(23, 12)" />
-            <column name="converted_amount_without_tax" type="numeric(23, 12)" />
-            <column name="converted_tax_amount" type="numeric(23, 12)" />
-            <column name="converted_matching_amount" type="numeric(23, 12)" />
-            <column name="converted_un_matching_amount" type="numeric(23, 12)" />
+            <column name="transactional_net_to_pay" type="numeric(23, 12)" />
+            <column name="transactional_amount" type="numeric(23, 12)" />
+            <column name="transactional_amount_without_tax" type="numeric(23, 12)" />
+            <column name="transactional_tax_amount" type="numeric(23, 12)" />
+            <column name="transactional_matching_amount" type="numeric(23, 12)" />
+            <column name="transactional_un_matching_amount" type="numeric(23, 12)" />
             <column name="transactional_currency" type="bigint" />
+            <column name="applied_rate" type="numeric(23, 12)" />
+            <column name="applied_rate_date" type="datetime" />
+            <column name="transactional_payment_fees" type="numeric(23, 12)"/>
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-146">
@@ -2415,7 +2418,7 @@
             </column>
             <column name="updated" type="datetime" />
             <column name="matching_amount" type="numeric(23, 12)" />
-            <column name="converted_matching_amount" type="numeric(23, 12)" />
+            <column name="transactional_matching_amount" type="numeric(23, 12)" />
 
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
@@ -2436,8 +2439,8 @@
             <column name="code" type="varchar(255)" />
             <column name="matching_amount_credit" type="numeric(23, 12)" />
             <column name="matching_amount_debit" type="numeric(23, 12)" />
-			<column name="converted_matching_amount_credit" type="numeric(23, 12)" />
-            <column name="converted_matching_amount_debit" type="numeric(23, 12)" />
+			<column name="transactional_matching_amount_credit" type="numeric(23, 12)" />
+            <column name="transactional_matching_amount_debit" type="numeric(23, 12)" />
             <column name="matching_date" type="date" />
             <column name="matching_type" type="varchar(255)" />
             <column name="creator" type="varchar(100)" />
@@ -3123,19 +3126,21 @@
             <column name="dunning_collection_plan_triggered" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="last_applied_rate" type="numeric(23, 12)" />
             <column name="last_applied_rate_date" type="datetime" />
-            <column name="converted_amount_without_tax" type="numeric(23, 12)" />
-            <column name="converted_amount_with_tax" type="numeric(23, 12)" />
-            <column name="converted_amount_tax" type="numeric(23, 12)" />
-            <column name="converted_net_to_pay" type="numeric(23, 12)" />
-            <column name="converted_raw_amount" type="numeric(23, 12)" />
-            <column name="converted_discount_amount" type="numeric(23, 12)" />
-            <column name="converted_amount_without_tax_before_discount" type="numeric(23, 12)" />
+            <column name="transactional_amount_without_tax" type="numeric(23, 12)" />
+            <column name="transactional_amount_with_tax" type="numeric(23, 12)" />
+            <column name="transactional_amount_tax" type="numeric(23, 12)" />
+            <column name="transactional_net_to_pay" type="numeric(23, 12)" />
+            <column name="transactional_raw_amount" type="numeric(23, 12)" />
+            <column name="transactional_discount_amount" type="numeric(23, 12)" />
+            <column name="transactional_amount_without_tax_before_discount" type="numeric(23, 12)" />
             <column name="payment_plan_id" type="bigint" />
             <column name="open_order_number" type="varchar(255)" />
             <column name= "invoice_balance" type="numeric(23, 12)" />
             <column name="use_current_rate" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="invoice_validation_rule_id" type="bigint"/>
-            <column name="converted_invoice_balance" type="numeric(23, 12)"/>
+            <column name="transactional_invoice_balance" type="numeric(23, 12)"/>
+            <column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -3187,9 +3192,11 @@
             <column name="discount_plan_code" type="varchar(50)" />
             <column name="discount_plan_item_code" type="varchar(50)" />
             <column name="discount_plan_item_id" type="bigint" />
-            <column name="converted_amount_without_tax" type="numeric(23, 12)"/>
-            <column name="converted_amount_with_tax" type="numeric(23, 12)"/>
-            <column name="converted_amount_tax" type="numeric(23, 12)"/>
+            <column name="transactional_amount_without_tax" type="numeric(23, 12)"/>
+            <column name="transactional_amount_with_tax" type="numeric(23, 12)"/>
+            <column name="transactional_amount_tax" type="numeric(23, 12)"/>
+            <column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-178">
@@ -3407,6 +3414,8 @@
             <column name="origin_billing_account" type="bigint" />
             <column name="rules_contract_id" type="bigint" />
     		<column name="origin_ratedtransaction_id" type="bigint" />
+            <column name="pending_duplicates" type="int4" defaultValueNumeric="0"/>
+            <column name="pending_duplicates_to_negate" type="int4" defaultValueNumeric="0"/>
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -4321,8 +4330,8 @@
             <column name="application_filter_el" type="varchar(2000)"/>
             <column name="discount_plan_id" type="bigint"/>
             <column name="expression_el" type="varchar(2000)" />
-            <column name="applicable_on_overridden_price" type="${type.boolean}" defaultValueNumeric="0"/>
-            <column name="applicable_on_discounted_price" type="${type.boolean}"/>
+            <column name="applicable_on_overridden_price" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="applicable_on_discounted_price" type="${type.boolean}" defaultValueNumeric="1"/>
             <column name="sequence" type="int4"/>
             <column name="automatic_application" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="allowance_code_id" type="bigint">
@@ -5293,6 +5302,7 @@
             <column name="description_i18n" type="${type.json}">
                 <constraints nullable="true" />
             </column>
+            <column name="default_seller_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-247">
@@ -6010,6 +6020,7 @@
             <column name="default_invoice_minimum_article_id" type="bigint"/>
             <column name="discount_plan_id" type="bigint"/>
             <column name="display_tax_details" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="display_rated_items" type="${type.boolean}" defaultValueNumeric="0"/>
         </createTable>
     </changeSet>
 
@@ -10528,6 +10539,7 @@
             <column name="subscription_id" type="bigint" />
             <column name="termination_date" type="datetime" />
             <column name="sub_termin_reason_id" type="bigint" />
+            <column name="contract_id" type="bigint" />
         </createTable>
         <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_order_offer" constraintName="fk_cpq_order_offer_user_account" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
@@ -10799,12 +10811,12 @@
             <column name="discount_plan_item_id" type="bigint"/>
             <column name="aggregate_id_f" type="bigint" />
             <column name="tax_mode" type="varchar(50)" />
-            <column name="converted_unit_price" type="numeric(23, 12)" />
-            <column name="converted_amount_without_tax" type="numeric(23, 12)" />
-            <column name="converted_amount_with_tax" type="numeric(23, 12)" />
-            <column name="converted_amount_tax" type="numeric(23, 12)" />
-            <column name="converted_discount_amount" type="numeric(23, 12)" />
-            <column name="converted_raw_amount" type="numeric(23, 12)" />
+            <column name="transactional_unit_price" type="numeric(23, 12)" />
+            <column name="transactional_amount_without_tax" type="numeric(23, 12)" />
+            <column name="transactional_amount_with_tax" type="numeric(23, 12)" />
+            <column name="transactional_amount_tax" type="numeric(23, 12)" />
+            <column name="transactional_discount_amount" type="numeric(23, 12)" />
+            <column name="transactional_raw_amount" type="numeric(23, 12)" />
             <column name="specific_converted_unit_price" type="numeric(23, 12)" />
             <column name="specific_converted_amount_without_tax" type="numeric(23, 12)" />
             <column name="specific_converted_amount_with_tax" type="numeric(23, 12)" />
@@ -10819,6 +10831,7 @@
             </column>
             <column name="cf_values" type="${type.json}" />
             <column name="adjustment_status" type="varchar(50)"/>
+            <column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -16834,15 +16847,6 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="document"/>
     </changeSet>
-       
-    <changeSet id="#INTRD-14264_20230222_fk" author="TarikFA.">
-        <addForeignKeyConstraint baseTableName="billing_rated_transaction" baseColumnNames="origin_ratedtransaction_id,status"
-                                 constraintName="fk_origin_ratedtransaction_id"
-                                 referencedTableName="billing_rated_transaction"
-                                 referencedColumnNames="id,status"
-                                 deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
-    </changeSet>      
     
     <changeSet id="#INTRD-14522_20230301_fk" author="TarikFA.">
         <addForeignKeyConstraint baseTableName="billing_subscription" baseColumnNames="contract_id"
@@ -17155,7 +17159,12 @@
         <sql>CREATE INDEX edr_header_edr_id ON ${db.schema.adapted}rating_edr (header_edr_id)</sql>
         <sql>CREATE INDEX rt_adjusted_rated_tx ON ${db.schema.adapted}billing_rated_transaction (adjusted_rated_tx) </sql>
         <sql>CREATE INDEX wo_rt_id ON ${db.schema.adapted}billing_wallet_operation (rated_transaction_id) </sql>
-        <sql>CREATE INDEX wo_rerated_wo ON ${db.schema.adapted}billing_wallet_operation (reratedwalletoperation_id) </sql></changeSet>
+        <sql>CREATE INDEX wo_rerated_wo ON ${db.schema.adapted}billing_wallet_operation (reratedwalletoperation_id) </sql>
+        <sql>CREATE INDEX rt_customer_id_contract_index ON ${db.schema.adapted}cpq_contract (customer_id) where status='ACTIVE'</sql>
+        <sql>CREATE INDEX rt_billing_account_id_contract_index ON ${db.schema.adapted}cpq_contract (billing_account_id) where status='ACTIVE'</sql>
+        <sql>CREATE INDEX rt_customer_account_contract_index ON ${db.schema.adapted}cpq_contract (customer_account_id) where status='ACTIVE'</sql>
+        <sql>CREATE INDEX cpq_price_plan_matrix_value__ppml_id__idx ON cpq_price_plan_matrix_value(ppml_id)</sql>
+        <sql>CREATE INDEX CREATE INDEX cpq_price_plan_matrix_line__ppm_version_id__idx ON cpq_price_plan_matrix_line(ppm_version_id)</sql></changeSet>
         
         
     <changeSet id="#INTRD-12047-20230112-rebuild" author="AbdelmounaimAkadid">
@@ -17174,7 +17183,11 @@
 	  	<createIndex indexName="idx__billing_rated_transaction__service_instance_id" tableName="billing_rated_transaction">
 	      	<column name="service_instance_id"/>
 	  	</createIndex>
+        <createIndex tableName="rating_edr" indexName="rating_edr_eventKey_index_idx">
+            <column name="event_key"/>
+        </createIndex>
     </changeSet>
+
 
     <!-- end index -->
 
@@ -17321,7 +17334,7 @@
             </column>
             <column name="supporting_document_ref" type="bigint" />
             <column name="supporting_document_type" type="varchar(255)" />
-            <column name="converted_amount" type="numeric(23, 12)" />
+            <column name="transactional_amount" type="numeric(23, 12)" />
             <column name="trading_currency" type="varchar(3)" />
             <column name="auxiliary_account_code" type="varchar(255)" />
             <column name="auxiliary_account_label" type="varchar(255)" />
@@ -17798,7 +17811,7 @@
             </column>
             <column name="amount" type="numeric(23, 12)" />
             <column name="type" type="varchar(50)" />
-            <column name="converted_amount" type="numeric(23, 12)"/>
+            <column name="transactional_amount" type="numeric(23, 12)"/>
     	</createTable>
     	
         <addPrimaryKey columnNames="id, linked_invoice_id" constraintName="billing_linked_invoices_pkey" tableName="billing_linked_invoices" />
@@ -18226,6 +18239,23 @@
                                  referencedTableName="crm_customer"
                                  referencedColumnNames="id"/>
     </changeSet>
+    
+    <changeSet id="#INTRD-14555_20230303" author="AdilElJaouhari">
+        <addForeignKeyConstraint baseTableName="crm_customer_category" baseColumnNames="default_seller_id"
+                                 constraintName="fk_crm_customer_category_default_seller_id"
+                                 referencedTableName="crm_seller"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-14632_20230306" author="AdilElJaouhari">
+        <addForeignKeyConstraint baseTableName="cpq_order_offer" baseColumnNames="contract_id"
+                                 constraintName="fk_cpq_order_offer_contract_id"
+                                 referencedTableName="cpq_contract"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
+    
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
@@ -19099,7 +19129,6 @@
     <changeSet id="#222_20210219" author="Mbarek-Ay"></changeSet>
     <changeSet id="#270_20210222" author="Mbarek-Ay"></changeSet>
     <changeSet id="#20210222_540_269" author="TarikFA."></changeSet>
-    <changeSet id="#20210222_540_269" author="TarikFA."></changeSet>
     <changeSet id="#20210123_540_280" author="TarikFA."></changeSet>
     <changeSet   id="#20210123_540_281" author="TarikFA."></changeSet>
     <changeSet id="#20210224_5868" author="Mbarek-Ay"></changeSet>
@@ -19116,7 +19145,6 @@
     <changeSet id="#2020317-342" author="Mbarek-Ay"></changeSet>
     <changeSet id="#20210322_377" author="TarikFA."></changeSet>
     <changeSet id="#20210323_380" author="TarikFA."></changeSet>
-    <changeSet id="#20210323-382" author="Mbarek-Ay"></changeSet>
     <changeSet id="#20210323-382" author="Mbarek-Ay"></changeSet>
     <changeSet id="#20220325_360" author="TarikFA."></changeSet>
     <changeSet id="#20210329_399" author="TarikFA."></changeSet>
@@ -19535,7 +19563,22 @@
     <changeSet author="ZBariki" id="#INTRD-14208_20230224" dbms="oracle" />
     <changeSet id="#INTRD-14336_20230227" author="ZBariki" />
     <changeSet id="#INTRD-14598_20230303" author="zelmeliani" />
-
+    <changeSet id="#INTR-14747_20230308" author="TarikFA." />
+	<changeSet id="#INTRD-14340_20230228" author="HichamHANINE" />
+    <changeSet id="#INTRD-14811_20200310" author="TarikFA." />
+	<changeSet id="#INTRD-14243_invoice_conversion" author="a.rouaguebe" />
+	<changeSet id="#INTRD-14402_20230301" author="AdilElJaouhari" />
+	<changeSet id="#INTRD-14381-202303202" author="bourras" />
+	<changeSet id="#20210623-INTRD-277-orderAdvacementScript" author="TarikFA." />
+	<changeSet id="#20210623-INTRD-277-quoteValidationScript" author="TarikFA." />
+	
+    <changeSet id="#INTRD-14743_20230313" author="TarikFA." />
+    <changeSet id="#INTRD-14743_20230315" author="TarikFA." />
+    <changeSet id="#INTRD-14743_20230316" author="TarikFA." />
+    <changeSet id="#INTRD-15043_20230317" author="AdilElJaouhari"/>
+    <changeSet id="#INTRD-15114_20230323" author="AdilElJaouhari" />
+    <changeSet id="#INTRD-14597_20230324" author="TarikFA." />
+    
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

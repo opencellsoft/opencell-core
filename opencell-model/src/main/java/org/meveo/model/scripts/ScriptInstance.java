@@ -42,6 +42,8 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -117,6 +119,7 @@ public class ScriptInstance extends EnableBusinessEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     @Column(name = "role")
     @CollectionTable(name = "adm_script_exec_role", joinColumns = @JoinColumn(name = "script_instance_id", referencedColumnName = "id"))
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<String> executionRoles = new HashSet<String>();
 
     /**
@@ -125,6 +128,7 @@ public class ScriptInstance extends EnableBusinessEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     @Column(name = "role")
     @CollectionTable(name = "adm_script_sourc_role", joinColumns = @JoinColumn(name = "script_instance_id", referencedColumnName = "id"))   
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<String> sourcingRoles = new HashSet<String>();
     
     @Type(type = "json")
@@ -135,6 +139,7 @@ public class ScriptInstance extends EnableBusinessEntity {
      * A list of script parameters that can use the script
      */
     @OneToMany(mappedBy = "scriptInstance", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private List<ScriptParameter> scriptParameters=new ArrayList<>();
 
     public ScriptInstance() {

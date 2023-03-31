@@ -61,7 +61,6 @@ import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.communication.email.EmailTemplate;
-import org.meveo.model.cpq.ProductLine;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.report.query.QueryExecutionModeEnum;
 import org.meveo.model.report.query.QueryExecutionResult;
@@ -85,8 +84,10 @@ import org.meveo.util.ApplicationProvider;
 public class ReportQueryService extends BusinessService<ReportQuery> {
 
     private static final String SEPARATOR_SELECTED_FIELDS = "\\.";
+    
     @Inject
     private QueryExecutionResultService queryExecutionResultService;
+    
     @Inject
     private QuerySchedulerService querySchedulerService;
 
@@ -156,7 +157,12 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
     	Map<String, String> aliases = reportQuery.getAliases() != null ? reportQuery.getAliases() : new HashMap<>();
 		for(Object object : result) {
 			Map<String, Object> entries = (Map<String, Object>)object;
-			var line = reportQuery.getFields().stream().map(f -> aliases.getOrDefault(f, f)).map(e -> entries.getOrDefault((String) e, "").toString()).collect(Collectors.joining(";"));
+			List<String> fields = reportQuery.getFields();
+			if(reportQuery.getAdvancedQuery() != null && !reportQuery.getAdvancedQuery().isEmpty()) {
+				fields = (List<String>) reportQuery.getAdvancedQuery().getOrDefault("genericFields", new ArrayList<String>());
+			}
+			
+			var line = fields.stream().map(f -> aliases.getOrDefault(f, f)).map(e -> entries.getOrDefault((String) e, "") != null ? entries.getOrDefault((String) e, "").toString() : "").collect(Collectors.joining(";"));
     		response.add(line);
 		}
     	return response;
@@ -295,7 +301,11 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
 
     private Set<String> findColumnHeaderForReportQuery(ReportQuery reportQuery) {
         Map<String, String> aliases = reportQuery.getAliases() != null ? reportQuery.getAliases() : new HashMap<>();
-		return mappingColumn(reportQuery.getGeneratedQuery(), reportQuery.getFields(), aliases).keySet();
+        List<String> fields = new ArrayList<>();
+        for (Entry<String, String> entry : aliases.entrySet()) {
+        	fields.add(entry.getKey());
+        }
+		return mappingColumn(reportQuery.getGeneratedQuery(), fields, aliases).keySet();
     }
 
     private Map<String, Integer> mappingColumn(String query, List<String> fields, Map<String, String> aliases) {
@@ -453,13 +463,17 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
     public Future<QueryExecutionResult> executeReportQueryAndSaveResult(ReportQuery reportQuery,
                                                                              Class<?> targetEntity, Date startDate) {
     	Map<String, String> aliases = reportQuery.getAliases() != null ? reportQuery.getAliases() : new HashMap<>();
-        List<String> genericFields =
-                (List<String>) reportQuery.getAdvancedQuery().getOrDefault("genericFields", new ArrayList<>());
-        List<String> fields =
-                (genericFields != null && !genericFields.isEmpty()) ? genericFields : joinEntityFields(targetEntity);
-        List<Object> reportResult =
-                toExecutionResult(fields,
-                        prepareQueryToExecute(reportQuery, targetEntity).getResultList(), targetEntity, aliases);
+        List<String> fields = null;
+        List<Object> result = null;
+        if(reportQuery.getAdvancedQuery() != null && !reportQuery.getAdvancedQuery().isEmpty()) {
+        	QueryBuilder qb = nativePersistenceService.generatedAdvancedQuery(reportQuery);
+    		result = qb.getQuery(PersistenceServiceHelper.getPersistenceService(targetEntity).getEntityManager()).getResultList();
+    		fields = (List<String>) reportQuery.getAdvancedQuery().getOrDefault("genericFields", new ArrayList<>());
+        } else {
+        	result = prepareQueryToExecute(reportQuery, targetEntity).getResultList();
+        	fields = reportQuery.getFields();
+        }
+		List<Object> reportResult = toExecutionResult(fields, result, targetEntity, aliases);
         if (!reportResult.isEmpty()) {
             SimpleDateFormat dateFormat = new SimpleDateFormat(REPORT_EXECUTION_FILE_SUFFIX);
             StringBuilder fileName = new StringBuilder(dateFormat.format(startDate))

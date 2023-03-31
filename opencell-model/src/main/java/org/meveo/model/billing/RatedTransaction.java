@@ -642,6 +642,12 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
   	 */
   	@Column(name = "sequence")
   	private Integer sequence;
+
+    @Column(name = "pending_duplicates")
+    private Integer pendingDuplicates;
+
+    @Column(name = "pending_duplicates_to_negate")
+    private Integer pendingDuplicatesToNegate;
     
     public RatedTransaction() {
         super();
@@ -824,7 +830,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.userAccount = rateTransactionToDuplicate.getUserAccount();
         this.billingAccount = rateTransactionToDuplicate.getBillingAccount();
         this.seller = rateTransactionToDuplicate.getSeller();
-        this.invoiceSubCategory = rateTransactionToDuplicate.getInvoiceSubCategory();
         this.parameter1 = rateTransactionToDuplicate.getParameter1();
         this.parameter2 = rateTransactionToDuplicate.getParameter2();
         this.parameter3 = rateTransactionToDuplicate.getParameter3();
@@ -833,7 +838,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.subscription = rateTransactionToDuplicate.getSubscription();
         this.priceplan = rateTransactionToDuplicate.getPriceplan();
         this.offerTemplate = rateTransactionToDuplicate.getOfferTemplate();
-//        this.edr = rateTransactionToDuplicate.getEdr();
         this.startDate = rateTransactionToDuplicate.getStartDate();
         this.endDate = rateTransactionToDuplicate.getEndDate();
         this.tax = rateTransactionToDuplicate.getTax();
@@ -1669,5 +1673,20 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
 	public void setOriginRatedTransaction(RatedTransaction originRatedTransaction) {
 		this.originRatedTransaction = originRatedTransaction;
 	}
-	
+
+    public Integer getPendingDuplicates() {
+        return pendingDuplicates;
+    }
+
+    public void setPendingDuplicates(Integer pendingDuplicates) {
+        this.pendingDuplicates = pendingDuplicates;
+    }
+
+    public Integer getPendingDuplicatesToNegate() {
+        return pendingDuplicatesToNegate;
+    }
+
+    public void setPendingDuplicatesToNegate(Integer pendingDuplicatesToNegate) {
+        this.pendingDuplicatesToNegate = pendingDuplicatesToNegate;
+    }
 }

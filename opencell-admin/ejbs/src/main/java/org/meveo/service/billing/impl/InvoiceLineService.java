@@ -1,6 +1,7 @@
 package org.meveo.service.billing.impl;
 
 import static java.lang.Boolean.FALSE;
+import static java.math.BigDecimal.ONE;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
@@ -167,6 +168,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     @Inject
     private OpenOrderService openOrderService;
 
+    @Inject
+    private InvoiceTypeService invoiceTypeService;
+    
     public List<InvoiceLine> findByQuote(CpqQuote quote) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByQuote", InvoiceLine.class)
                 .setParameter("quote", quote)
@@ -734,6 +738,23 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		
 		if(invoiceLine.getQuantity() == null) {
             invoiceLine.setQuantity(new BigDecimal(1));
+        }
+		
+		invoiceLine.setConversionFromBillingCurrency(false);
+        if (StringUtils.isNotBlank(resource.getUnitPriceCurrency())) {
+            String tradingCurrency = invoiceLine.getInvoice().getTradingCurrency()!= null ? invoiceLine.getInvoice().getTradingCurrency().getCurrencyCode() : null;
+            String functionalCurrency = appProvider.getCurrency() != null ? appProvider.getCurrency().getCurrencyCode() : null;
+        	
+            if (!(resource.getUnitPriceCurrency().equals(tradingCurrency) || resource.getUnitPriceCurrency().equals(functionalCurrency))) {
+        		throw new BusinessException("currency should be equals to billing currency or functional currency");
+        	}
+			
+            if (resource.getUnitPriceCurrency().equals(tradingCurrency)) {
+				BigDecimal appliedRate = invoiceLine.getInvoice() != null ? invoiceLine.getInvoice().getAppliedRate() : ONE;
+				invoiceLine.setUnitPrice(resource.getUnitPrice().divide(appliedRate, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+				invoiceLine.setTransactionalUnitPrice(resource.getUnitPrice());
+				invoiceLine.setConversionFromBillingCurrency(true);
+			}
         }
 
         if(invoiceLine.getUnitPrice() == null) {
@@ -1412,5 +1433,15 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 .createNamedQuery("InvoiceLine.BillingAccountByILIds")
                 .setParameter("ids", invoiceLinesIds)
                 .getResultList();
+    }
+    
+    public InvoiceLine adjustment(InvoiceLine invoiceLine) {
+        InvoiceType defaultAdjustement = invoiceTypeService.getDefaultAdjustement();
+        InvoiceType invoiceTypeOfInvoice = invoiceLine.getInvoice().getInvoiceType();
+        if(invoiceTypeOfInvoice.equals(defaultAdjustement)) {
+            List<Object[]> maxIlAmountAdjList = getMaxIlAmountAdj(invoiceLine.getInvoice().getId());
+            invoiceLine = checkAmountIL(invoiceLine, maxIlAmountAdjList); 
+        }
+        return invoiceLine;
     }
 }

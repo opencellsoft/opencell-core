@@ -67,9 +67,11 @@ public class InvoiceValidationRulesResourceImpl implements InvoiceValidationRule
 
         InvoiceValidationRule invoiceValidationRule = ofNullable(invoiceValidationRulesService.findById(invoiceValidationRuleId))
                 .orElseThrow(() -> new EntityDoesNotExistsException(InvoiceValidationRule.class, invoiceValidationRuleId));
+        
+        invoiceValidationRule = invoiceValidationRuleMapper.toEntity(invoiceValidationRuleDto, invoiceValidationRule, invoiceType, scriptInstance);
+        postValidationRuleMapper(invoiceValidationRuleDto, invoiceValidationRule);
 
-        invoiceValidationRulesApiService.update(invoiceValidationRule.getId(),
-                invoiceValidationRuleMapper.toEntity(invoiceValidationRuleDto, invoiceValidationRule, invoiceType, scriptInstance));
+        invoiceValidationRulesApiService.update(invoiceValidationRule.getId(), invoiceValidationRule);
 
         return Response.ok(buildSucessResponse(invoiceValidationRule.getId())).build();
     }
@@ -215,7 +217,7 @@ public class InvoiceValidationRulesResourceImpl implements InvoiceValidationRule
         }
         
         if (ValidationRuleTypeEnum.RULE_SET.equals(ValidationRuleTypeEnum.valueOf(invoiceValidationRuleDto.getType()))) {
-        	if (invoiceValidationRuleDto.getSubRules().size() < 2) {
+        	if (invoiceValidationRuleDto.getSubRules() == null || invoiceValidationRuleDto.getSubRules().size() < 2) {
         		throw new InvalidParameterException("Invoice validation rule type RULE_SET must have more than 1 sub-rules");
         	}
         	invoiceValidationRuleDto.getSubRules().forEach(this::checkValidationRuleDto);

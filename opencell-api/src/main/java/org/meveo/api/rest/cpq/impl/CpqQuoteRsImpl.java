@@ -145,12 +145,12 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 	@Override
 	public Response placeOrder(String quoteCode, int quoteVersion, UriInfo info) {
 		ActionStatus status = new ActionStatus();
-		 try {
-			 cpqQuoteApi.placeOrder(quoteCode, quoteVersion);
-	            return Response.ok(status).build();
-	        } catch (MeveoApiException e) {
-			       return errorResponse(e, status);
-	        }
+		try {
+			cpqQuoteApi.placeOrder(quoteCode, quoteVersion);
+			return Response.ok(status).build();
+		} catch (MeveoApiException e) {
+			return errorResponse(e, status);
+		}
 	}
 
 
@@ -230,23 +230,23 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 	@Override
 	public Response updateQuoteStatus(String quoteCode, String status) {
 		ActionStatus result = new ActionStatus();
-		 try {
-			 cpqQuoteApi.updateQuoteStatus(quoteCode, status);
-	            return Response.ok(result).build();
-	        } catch (MeveoApiException e) {
-			       return errorResponse(e, result);
-	        }
+		try {
+			cpqQuoteApi.updateQuoteStatus(quoteCode, status);
+			return Response.ok(result).build();
+		} catch (MeveoApiException e) {
+			return errorResponse(e, result);
+		}
 	}
 
 	@Override
-    public Response updateQuoteVersionStatus(String quoteCode, int currentVersion,  VersionStatusEnum status) {
-    	ActionStatus result = new ActionStatus();
-		 try {
-			 cpqQuoteApi.updateQuoteVersionStatus(quoteCode, currentVersion, status);
-	            return Response.ok(result).build();
-	        } catch (MeveoApiException e) {
-			       return errorResponse(e, result);
-	        }
+    public Response updateQuoteVersionStatus(String quoteCode, int currentVersion, VersionStatusEnum status) {
+		ActionStatus result = new ActionStatus();
+		try {
+			cpqQuoteApi.updateQuoteVersionStatus(quoteCode, currentVersion, status);
+			return Response.ok(result).build();
+		} catch (MeveoApiException e) {
+			return errorResponse(e, result);
+		}
     }
 
 	@Override

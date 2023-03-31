@@ -2,36 +2,29 @@ package org.meveo.apiv2.billing.service;
 
 import static java.util.Optional.ofNullable;
 
-import javax.inject.Inject;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.rest.exception.BadRequestException;
 import org.meveo.apiv2.billing.DuplicateRTResult;
 import org.meveo.apiv2.billing.ProcessCdrListResult.Statistics;
 import org.meveo.apiv2.billing.ProcessingModeEnum;
 import org.meveo.apiv2.ordering.services.ApiService;
-import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import liquibase.pro.packaged.mo;
-
+import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 
 public class RatedTransactionApiService implements ApiService<RatedTransaction> {
@@ -116,9 +109,12 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 	 * @param param2 the param2
 	 * @param param3 the param3
 	 * @param paramExtra the param extra
+	 * @param usageDate usage date
 	 */
-	public void update(RatedTransaction ratedTransaction, String description, BigDecimal unitAmountWithoutTax,  BigDecimal quantity, String param1, String param2, String param3, String paramExtra) {
-		ratedTransactionService.updateRatedTransaction(ratedTransaction, description, unitAmountWithoutTax, quantity, param1, param2, param3, paramExtra);
+	public void update(RatedTransaction ratedTransaction, String description, BigDecimal unitAmountWithoutTax,
+					   BigDecimal quantity, String param1, String param2, String param3, String paramExtra, Date usageDate) {
+		ratedTransactionService.updateRatedTransaction(ratedTransaction,
+				description, unitAmountWithoutTax, quantity, param1, param2, param3, paramExtra, usageDate);
 	}
 
 	public DuplicateRTResult duplication(Map<String, Object> filters, ProcessingModeEnum mode, boolean negateAmount,
@@ -128,12 +124,9 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 			throw new InvalidParameterException("filters is required");
 		}
 		Map<String, Object> modifiableFilters = new HashMap<>(filters);
-		if(filters.get("status") == null) {
-			modifiableFilters.put("status", RatedTransactionStatusEnum.BILLED.toString());
-		}
 		List<RatedTransaction> rtToDuplicate = ratedTransactionService.findByFilter(modifiableFilters);
 		if(CollectionUtils.isEmpty(rtToDuplicate)) {
-			log.warn("list of rated transaction to duplicate is empty for filters : " + filters);
+			log.warn("list of rated transaction to duplicate is empty for filters : {}", filters);
 			result.getActionStatus().setMessage("list of rated transaction to duplicate is empty.");
 			return result;
 		}
@@ -176,8 +169,9 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 			
 		}
 		if(returnRts) {
-			result.getActionStatus().setMessage(String.format("%d RTs created with ids, %s", successList.size(), successList));
+			   result.getCreatedRts().addAll(successList);
 		}
+		result.getActionStatus().setMessage(String.format("Created %d rated items, %d failed", successList.size(), result.getFailIds().size()));
 		
 		return result;
 	}

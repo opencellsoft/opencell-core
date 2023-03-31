@@ -159,7 +159,7 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
      * @return the list of adjustement codes
      */
     public List<String> getListAdjustementCode() {
-        String listAdjustmentCode = paramBeanFactory.getInstance().getProperty("invoiceType.adjustement.code", "ADJ");
+        String listAdjustmentCode = paramBeanFactory.getInstance().getProperty("invoiceType.adjustement.code", "ADJ, ADJ_INV, ADJ_REF");
         return Arrays.asList(listAdjustmentCode.split("\\s*,\\s*"));
     }
 
