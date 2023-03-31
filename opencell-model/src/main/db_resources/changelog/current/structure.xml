@@ -16226,4 +16226,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <addUniqueConstraint columnNames="code, document_version" constraintName="document_code_version_key" tableName="document" />
     </changeSet>
 
+    <changeSet id="#INTRD-14743_20230331" author="AndriusKarpavicius">
+        <alterSequence sequenceName="billing_wallet_operation_seq" incrementBy="500"/>
+    </changeSet>
 </databaseChangeLog>
