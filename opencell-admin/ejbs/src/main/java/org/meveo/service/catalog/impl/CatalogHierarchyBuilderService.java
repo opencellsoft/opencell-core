@@ -716,7 +716,7 @@ public class CatalogHierarchyBuilderService {
         return newOfferServiceTemplate;
 
     }
-    public void duplicateCharges(ServiceTemplate entity) {
+    private void duplicateCharges(ServiceTemplate entity) {
         entity.setServiceRecurringCharges(new ArrayList<>(entity.getServiceRecurringCharges()));
         entity.getServiceRecurringCharges().forEach(sctRecurring -> {
             serviceChargeTemplateRecurringService.detach(sctRecurring);
