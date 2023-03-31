@@ -142,6 +142,7 @@ public class DiscountPlanApiServiceTest {
 
     private DiscountPlan getDiscountPlan(Integer index, DiscountPlanTypeEnum type, DiscountPlanStatusEnum status, boolean nullDates) {
         DiscountPlan discountPlan = new DiscountPlan();
+        discountPlan.setId(Long.valueOf(index));
         discountPlan.setCode("DP_" + index);
         discountPlan.setDiscountPlanType(type);
         discountPlan.setStatus(status);
