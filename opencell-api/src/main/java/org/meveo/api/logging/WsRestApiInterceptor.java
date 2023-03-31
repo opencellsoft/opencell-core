@@ -18,6 +18,10 @@
 
 package org.meveo.api.logging;
 
+import javax.inject.Inject;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.InvocationContext;
+
 import org.meveo.model.audit.ChangeOriginEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
@@ -25,10 +29,6 @@ import org.meveo.service.audit.AuditOrigin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-
-import javax.inject.Inject;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
 
 /**
  * Logs the calls to the REST and WS interfaces. Sets up logging MDC context.
@@ -49,7 +49,7 @@ public class WsRestApiInterceptor {
     @Inject
     private AuditUtils auditUtils;
 
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger log = LoggerFactory.getLogger(WsRestApiInterceptor.class);
 
     @AroundInvoke
     public Object aroundInvoke(InvocationContext invocationContext) throws Exception {
