@@ -283,23 +283,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         return contactTag;
     }
 
-    protected Element toPaymentGateway(Document doc, List<PaymentGateway> paymentGateways) {
-        Element paymentGatewayTag = doc.createElement("paymentGateway");
-        if (CollectionUtils.isNotEmpty(paymentGateways)) {
-            PaymentGateway firstGateway = paymentGateways.get(0);
-            paymentGatewayTag.setAttribute("IBAN", firstGateway.getBankCoordinates() != null
-                    && firstGateway.getBankCoordinates().getIban() != null
-                    ? firstGateway.getBankCoordinates().getIban() : "");
-            paymentGatewayTag.setAttribute("bankCode", firstGateway.getBankCoordinates() != null
-                    && firstGateway.getBankCoordinates().getBankCode() != null
-                    ? firstGateway.getBankCoordinates().getBankCode() : "");
-            paymentGatewayTag.setAttribute("bankName", firstGateway.getBankCoordinates() != null
-                    && firstGateway.getBankCoordinates().getBankName() != null
-                    ? firstGateway.getBankCoordinates().getBankName() : "");
-        }
-        return paymentGatewayTag;
-    }
-
     /**
      * Get user accounts
      *
@@ -928,7 +911,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                 Element accountNumber = doc.createElement("accountNumber");
                 Element accountOwner = doc.createElement("accountOwner");
                 Element key = doc.createElement("key");
-                Element iban = doc.createElement("IBAN");
+                Element iban = doc.createElement("iban");
                 Element bic = doc.createElement("bic");
                 Element mandateIdentification = doc.createElement("mandateIdentification");
                 Element mandateDate = doc.createElement("mandateDate");
@@ -1679,7 +1662,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             sellerTag.appendChild(addressTag);
         }
         sellerTag.appendChild(toContactTag(doc, seller.getContactInformation()));
-        sellerTag.appendChild(toPaymentGateway(doc, seller.getPaymentGateways()));
         return sellerTag;
     }
 
@@ -1823,7 +1805,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
         Element currency = doc.createElement("currency");
         Element currencySymbol = doc.createElement("currencySymbol");
-        Element currencyLabel = doc.createElement("currencyLabel");
         Element currencyRate = doc.createElement("currencyRate");
         Text currencyCodeValue = this.createTextNode(doc, invoice.getBillingAccount().getTradingCurrency().getCurrencyCode());
         Text currencySymbolValue = this.createTextNode(doc, StringUtils.isNotBlank(invoice.getBillingAccount().getTradingCurrency().getSymbol())
@@ -1833,7 +1814,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         currencySymbol.appendChild(currencySymbolValue);
         amount.appendChild(currency);
         amount.appendChild(currencySymbol);
-        amount.appendChild(currencyLabel);
         amount.appendChild(currencyRate);
 
         Element amountWithoutTax = doc.createElement("amountWithoutTax");
