@@ -31,6 +31,19 @@ public class DocumentResourceImpl implements DocumentResource {
         return Response.ok().entity(Document.from(documentEntity, null))
                 .build();
     }
+    
+    @Override
+    public Response getDocument(@NotNull String  code, Integer version) {
+        final org.meveo.model.document.Document documentEntity = Optional.ofNullable(documentService.findByCodeAndVersion(code,  version))
+                .orElseThrow(() -> new NotFoundException("document with code " + code + " and version "+version+" does not exist."));
+        if(documentFileService.hasFile(documentEntity)){
+            final byte[] fileContent = documentFileService.readFileContent(documentEntity);
+            return Response.ok().entity(Document.from(documentEntity, Base64.getEncoder().encodeToString(fileContent)))
+                    .build();
+        }
+        return Response.ok().entity(Document.from(documentEntity, null))
+                .build();
+    }
 
     private void validateDocument(Document document) {
         if(Objects.isNull(document.getCode())){
@@ -64,38 +77,53 @@ public class DocumentResourceImpl implements DocumentResource {
     }
 
     @Override
-    public Response deleteDocument(Long id) {
-        Optional.ofNullable(documentService.findById(id, Collections.singletonList("category"))).ifPresentOrElse(document -> {
+    public Response deleteDocument(String code, Integer version) {
+        Optional.ofNullable(documentService.findByCodeAndVersion(code, version)).ifPresentOrElse(document -> {
                 documentService.remove(document);
                 documentFileService.deleteFile(document);
-            }, () -> new NotFoundException("document with id "+id+" does not exist."));
+            }, () -> new NotFoundException("document with code "+code+" and version "+version+" does not exist."));
         return Response.noContent().build();
     }
 
     @Override
-    public Response getDocumentFile(Long id) {
-        final org.meveo.model.document.Document documentEntity = Optional.ofNullable(documentService.findById(id, Arrays.asList("fileType", "category")))
-                .orElseThrow(() -> new NotFoundException("document with id " + id + " does not exist."));
+    public Response getDocumentFile(String code) {
+        final org.meveo.model.document.Document documentEntity = Optional.ofNullable(documentService.findByCodeAndLastVersion(code))
+                .orElseThrow(() -> new NotFoundException("document with code " + code + " does not exist."));
         return Response.ok().entity(Base64.getEncoder().encodeToString(documentFileService.readFileContent(documentEntity)))
                 .build();
     }
-
+    
     @Override
-    public Response updateDocumentFile(Long id, String encodedDocumentFile) {
-        Optional.ofNullable(documentService.findById(id, Collections.singletonList("category"))).ifPresentOrElse(document ->
-                documentFileService.updateFile(document, Base64.getDecoder().decode(encodedDocumentFile)), () -> new NotFoundException("document with id "+id+" does not exist."));
+    public Response getDocumentFile(String code, Integer version) {
+        final org.meveo.model.document.Document documentEntity = Optional.ofNullable(documentService.findByCodeAndVersion(code, version))
+                .orElseThrow(() -> new NotFoundException("document with code " + code + " and version "+version+" does not exist."));
+        return Response.ok().entity(Base64.getEncoder().encodeToString(documentFileService.readFileContent(documentEntity)))
+                .build();
+    }
+    
+    @Override
+    public Response updateDocumentFile(String code, String encodedDocumentFile) {
+        Optional.ofNullable(documentService.findByCodeAndLastVersion(code)).ifPresentOrElse(document ->
+                documentFileService.updateFile(document, Base64.getDecoder().decode(encodedDocumentFile)), () -> new NotFoundException("document with code "+code+" does not exist."));
         return Response.noContent().build();
     }
 
     @Override
-    public Response deleteDocumentFile(Long id, boolean includingDocument) {
-        Optional.ofNullable(documentService.findById(id, Collections.singletonList("category")))
+    public Response updateDocumentFile(String code, Integer version, String encodedDocumentFile) {
+        Optional.ofNullable(documentService.findByCodeAndVersion(code, version)).ifPresentOrElse(document ->
+                documentFileService.updateFile(document, Base64.getDecoder().decode(encodedDocumentFile)), () -> new NotFoundException("document with code "+code+" and version "+version+" does not exist."));
+        return Response.noContent().build();
+    }
+
+    @Override
+    public Response deleteDocumentFile(String code, Integer version, boolean includingDocument) {
+        Optional.ofNullable(documentService.findByCodeAndVersion(code, version))
                 .ifPresentOrElse(document -> {
                     if(includingDocument){
                         documentService.remove(document);
                     }
                     documentFileService.deleteFile(document);
-                }, () -> new NotFoundException("document with id "+id+" does not exist."));
+                }, () -> new NotFoundException("document with code "+code+" and version "+version+" does not exist."));
         return Response.noContent().build();
     }
 

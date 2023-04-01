@@ -111,4 +111,18 @@ public class DocumentService extends BusinessService<Document> {
         
 		return fetchedCategory;
 	}
+    public Document findByCodeAndLastVersion(String code) {
+
+        return getEntityManager().createNamedQuery("Document.findByCodeAndLastVersion", Document.class)
+                .setParameter("code", code)
+                .getSingleResult();
+    }
+    
+    public Document findByCodeAndVersion(String code, Integer version) {
+
+        return getEntityManager().createNamedQuery("Document.findByCodeAndVersion", Document.class)
+                .setParameter("code", code)
+                .setParameter("version", version)
+                .getSingleResult();
+    }
 }
