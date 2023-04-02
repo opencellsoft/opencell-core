@@ -10,10 +10,12 @@ import org.meveo.admin.exception.PaymentException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.apiv2.securityDeposit.SecurityDepositCancelInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositCreditInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositPaymentInput;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoicePaymentStatusEnum;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.crm.Provider;
@@ -22,6 +24,7 @@ import org.meveo.model.securityDeposit.*;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.crm.impl.ProviderService;
@@ -39,7 +42,7 @@ import static org.meveo.model.payments.PaymentMethodEnum.DIRECTDEBIT;
 public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
     private static final String OCC_TEMPLATE_ADJ_SD_CODE = "ADJ_SD";
-
+    private static final String OCC_TEMPLATE_CANCEL_SD_COSE = "CAN_SD";
     private static final String OCC_PAY_SD_TEMPLATE = "PAY_SD";
 
     @Inject
@@ -87,6 +90,9 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
     @Inject
     private OCCTemplateService occTemplateService;
 
+    @Inject
+    private InvoiceService invoiceService;
+
     protected List<String> missingParameters = new ArrayList<>();
 
 
@@ -119,15 +125,17 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
     }
 
     public void refund(SecurityDeposit securityDepositToUpdate, String reason, SecurityDepositOperationEnum securityDepositOperationEnum, SecurityDepositStatusEnum securityDepositStatusEnum, String operationType, Invoice adjInvoice) {
-        if (securityDepositToUpdate.getCurrentBalance() != null && BigDecimal.ZERO.compareTo(securityDepositToUpdate.getCurrentBalance()) != 0) {
-            Refund refund = createRefund(securityDepositToUpdate, adjInvoice);
-            if (refund == null) {
-                throw new BusinessException("Cannot create Refund.");
-            } else {
-                createSecurityDepositTransaction(securityDepositToUpdate, securityDepositToUpdate.getCurrentBalance(),
-                        securityDepositOperationEnum, OperationCategoryEnum.DEBIT, refund);
+        if(adjInvoice != null) {
+            if (securityDepositToUpdate.getCurrentBalance() != null && BigDecimal.ZERO.compareTo(securityDepositToUpdate.getCurrentBalance()) != 0) {
+                Refund refund = createRefund(securityDepositToUpdate, adjInvoice);
+                if (refund == null) {
+                    throw new BusinessException("Cannot create Refund.");
+                } else {
+                    createSecurityDepositTransaction(securityDepositToUpdate, securityDepositToUpdate.getCurrentBalance(),
+                            securityDepositOperationEnum, OperationCategoryEnum.DEBIT, refund);
+                }
             }
-        }
+        }        
 
         if (SecurityDepositStatusEnum.CANCELED.equals(securityDepositStatusEnum)) {
             securityDepositToUpdate.setCancelReason(reason);
@@ -139,6 +147,44 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         update(securityDepositToUpdate);
         String nameSDandExplanation = securityDepositToUpdate.getCode() + ", explanation: " + reason;
         auditLogService.trackOperation(operationType, new Date(), securityDepositToUpdate, nameSDandExplanation);
+    }
+
+    public SecurityDeposit cancel(Long id, SecurityDepositCancelInput securityDepositInput) {
+        SecurityDeposit securityDeposit = findById(id);
+        if (securityDeposit == null) {
+            throw new EntityDoesNotExistsException("Security Deposit with id " + id + " does not exist.");
+        }
+
+        if (SecurityDepositStatusEnum.VALIDATED != securityDeposit.getStatus()) {
+            throw new BusinessException("Only Security Deposit with VALIDATED status can be canceled");
+        }
+
+        if (securityDeposit.getSecurityDepositInvoice() != null) {
+            AccountOperation canceledAO = buildAccountOperationOCC(securityDeposit.getAmount(),
+                    securityDeposit.getCustomerAccount(), occTemplateService.findByCode(OCC_TEMPLATE_CANCEL_SD_COSE));
+
+            accountOperationService.create(canceledAO);
+
+            try {
+                matchingCodeService.matchOperations(canceledAO.getCustomerAccount().getId(), canceledAO.getCustomerAccount().getCode(),
+                        Arrays.asList(securityDeposit.getSecurityDepositInvoice().getRecordedInvoice().getId(), canceledAO.getId()), canceledAO.getId(), MatchingTypeEnum.A);
+            } catch (NoAllOperationUnmatchedException | UnbalanceAmountException e) {
+                throw new BusinessException(e);
+            }
+
+            securityDeposit.getSecurityDepositInvoice().setPaymentStatus(InvoicePaymentStatusEnum.ABANDONED);
+            invoiceService.update(securityDeposit.getSecurityDepositInvoice());
+
+        }
+
+        securityDeposit.setCancelReason(securityDepositInput.getCancelReason());
+        securityDeposit.setStatus(SecurityDepositStatusEnum.CANCELED);
+        securityDeposit.setCurrentBalance(new BigDecimal(0));
+        update(securityDeposit);
+        String cancelSDDetails = securityDeposit.getCode() + ", explanation: " + securityDepositInput.getCancelReason();
+        auditLogService.trackOperation("CANCEL", new Date(), securityDeposit, cancelSDDetails);
+
+        return securityDeposit;
     }
 
     private Refund createRefund(SecurityDeposit securityDepositToUpdate, Invoice adjInvoice) {
@@ -188,8 +234,6 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         } catch (InvoiceExistException | ImportInvoiceException e) {
             throw new BusinessException(e);
         }
-
-
     }
 
     private Long doPayment(long amountToPay, List<Long> accountOperationsToPayIds, CustomerAccount customerAccount, PaymentMethod preferredPaymentMethod, Long refundId,
@@ -478,6 +522,23 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         }
         securityDeposit.setSecurityDepositInvoice(invoice);
         create(securityDeposit);
+    }
+
+    private OtherCreditAndCharge buildAccountOperationOCC(BigDecimal amount, CustomerAccount customerAccount, OCCTemplate occTemplate) {
+        OtherCreditAndCharge newAccountOperation = new OtherCreditAndCharge();
+        newAccountOperation.setMatchingAmount(BigDecimal.ZERO);
+        newAccountOperation.setMatchingStatus(MatchingStatusEnum.O);
+        newAccountOperation.setUnMatchingAmount(amount);
+        newAccountOperation.setAmount(amount);
+        newAccountOperation.setCustomerAccount(customerAccount);
+        newAccountOperation.setAccountingCode(occTemplate.getAccountingCode());
+        newAccountOperation.setCode(occTemplate.getCode());
+        newAccountOperation.setDescription(occTemplate.getDescription());
+        newAccountOperation.setTransactionCategory(occTemplate.getOccCategory());
+        newAccountOperation.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
+        newAccountOperation.setTransactionDate(new Date());
+        newAccountOperation.setDueDate(new Date());
+        return newAccountOperation;
     }
 
 }

@@ -189,7 +189,7 @@ public class BillingCycleDto extends BusinessEntityDto {
     @XmlElement
     private String billingRunValidationScriptCode;
     
-    private Map<String, String> filters;
+    private Map<String, Object> filters;
     
     @XmlElement
     private Integer priority;
@@ -693,11 +693,11 @@ public class BillingCycleDto extends BusinessEntityDto {
         this.computeDatesAtValidation = computeDatesAtValidation;
     }
 
-	public Map<String, String> getFilters() {
+	public Map<String, Object> getFilters() {
 		return filters;
 	}
 
-	public void setFilters(Map<String, String> filters) {
+	public void setFilters(Map<String, Object> filters) {
 		this.filters = filters;
 	}
 

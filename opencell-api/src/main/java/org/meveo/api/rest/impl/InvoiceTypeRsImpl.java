@@ -31,6 +31,7 @@ import org.meveo.api.dto.response.GetInvoiceTypesResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.InvoiceTypeRs;
+import org.meveo.model.billing.InvoiceType;
 
 /**
  * @author Edward P. Legaspi
@@ -91,7 +92,9 @@ public class InvoiceTypeRsImpl extends BaseRs implements InvoiceTypeRs {
     public ActionStatus createOrUpdate(InvoiceTypeDto invoiceTypeDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            invoiceTypeApi.createOrUpdate(invoiceTypeDto);
+            InvoiceType invoiceType = invoiceTypeApi.createOrUpdate(invoiceTypeDto);
+            result.setEntityId(invoiceType.getId());
+            result.setEntityCode(invoiceType.getCode());
         } catch (Exception e) {
             processException(e, result);
         }

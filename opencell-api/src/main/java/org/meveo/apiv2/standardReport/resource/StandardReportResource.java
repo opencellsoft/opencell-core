@@ -10,6 +10,7 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
 import io.swagger.v3.oas.annotations.Parameter;
+import org.meveo.apiv2.generic.GenericPagingAndFiltering;
 import org.meveo.apiv2.models.ApiException;
 import org.meveo.apiv2.ordering.resource.order.Orders;
 
@@ -18,7 +19,6 @@ import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.meveo.apiv2.standardReport.AgedReceivablesDto;
 
 @Path("/standardReports")
 @Consumes(APPLICATION_JSON)
@@ -70,6 +70,6 @@ public interface StandardReportResource {
     Response exportAgedReceivables(
             @Parameter(description = "file format", required = true) @PathParam("fileFormat") String fileFormat,
             @Parameter(description = "Locale") @QueryParam("locale") String locale,
-            @Parameter(description = "the AgedReceivables input object", required = true) AgedReceivablesDto input,
+            @Parameter(description = "the AgedReceivables input object", required = true) GenericPagingAndFiltering input,
             @Context Request request);
 }

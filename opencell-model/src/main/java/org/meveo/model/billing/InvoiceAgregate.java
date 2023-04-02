@@ -17,6 +17,9 @@
  */
 package org.meveo.model.billing;
 
+import static java.math.BigDecimal.ZERO;
+import static java.math.BigDecimal.ONE;
+
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
@@ -30,12 +33,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 
 /**
@@ -147,6 +153,32 @@ public abstract class InvoiceAgregate extends AuditableEntity {
     @Size(max = 255)
     protected String prDescription;
 
+    @Column(name = "use_specific_price_conversion")
+    @Type(type = "numeric_boolean")
+    private boolean useSpecificPriceConversion;
+    
+    @Column(name = "conversion_from_billing_currency")
+    @Type(type = "numeric_boolean")
+    private boolean conversionFromBillingCurrency = false;
+
+    /**
+     * Aggregate transactional amount without tax
+     */
+    @Column(name = "transactional_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    protected BigDecimal transactionalAmountWithoutTax = ZERO;
+
+    /**
+     * Aggregate transactional tax amount
+     */
+    @Column(name = "transactional_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    protected BigDecimal transactionalAmountTax = ZERO;
+
+    /**
+     * Aggregate transactional amount with tax
+     */
+    @Column(name = "transactional_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    protected BigDecimal transactionalAmountWithTax = ZERO;
+    
     public TradingCurrency getTradingCurrency() {
         return tradingCurrency;
     }
@@ -262,7 +294,71 @@ public abstract class InvoiceAgregate extends AuditableEntity {
         }
     }
 
-    public void addAmount(BigDecimal amountToAdd) {
+    /**
+	 * @return the useSpecificPriceConversion
+	 */
+	public boolean isUseSpecificPriceConversion() {
+		return useSpecificPriceConversion;
+	}
+
+	/**
+	 * @param useSpecificPriceConversion the useSpecificPriceConversion to set
+	 */
+	public void setUseSpecificPriceConversion(boolean useSpecificPriceConversion) {
+		this.useSpecificPriceConversion = useSpecificPriceConversion;
+	}
+	
+	public boolean isConversionFromBillingCurrency() {
+		return conversionFromBillingCurrency;
+	}
+
+	public void setConversionFromBillingCurrency(boolean conversionFromBillingCurrency) {
+		this.conversionFromBillingCurrency = conversionFromBillingCurrency;
+	}
+
+	/**
+	 * @return the transactionalAmountWithoutTax
+	 */
+	public BigDecimal getTransactionalAmountWithoutTax() {
+		return transactionalAmountWithoutTax;
+	}
+
+	/**
+	 * @param transactionalAmountWithoutTax the transactionalAmountWithoutTax to set
+	 */
+	public void setTransactionalAmountWithoutTax(BigDecimal transactionalAmountWithoutTax) {
+		this.transactionalAmountWithoutTax = transactionalAmountWithoutTax;
+	}
+
+	/**
+	 * @return the transactionalAmountTax
+	 */
+	public BigDecimal getTransactionalAmountTax() {
+		return transactionalAmountTax;
+	}
+
+	/**
+	 * @param transactionalAmountTax the transactionalAmountTax to set
+	 */
+	public void setTransactionalAmountTax(BigDecimal transactionalAmountTax) {
+		this.transactionalAmountTax = transactionalAmountTax;
+	}
+
+	/**
+	 * @return the transactionalAmountWithTax
+	 */
+	public BigDecimal getTransactionalAmountWithTax() {
+		return transactionalAmountWithTax;
+	}
+
+	/**
+	 * @param transactionalAmountWithTax the transactionalAmountWithTax to set
+	 */
+	public void setTransactionalAmountWithTax(BigDecimal transactionalAmountWithTax) {
+		this.transactionalAmountWithTax = transactionalAmountWithTax;
+	}
+	
+	public void addAmount(BigDecimal amountToAdd) {
         if (amount == null) {
             amount = new BigDecimal("0");
         }
@@ -333,5 +429,16 @@ public abstract class InvoiceAgregate extends AuditableEntity {
     @Transient
     public String getDescriminatorValue() {
     	return this.getClass().getAnnotation(DiscriminatorValue.class).value();
+    }
+
+    @PrePersist
+    @PreUpdate
+    public void prePersistOrUpdate() {
+        if (!this.useSpecificPriceConversion) {
+            BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
+            this.transactionalAmountWithoutTax = this.amountWithoutTax != null ? this.amountWithoutTax.multiply(appliedRate) : ZERO;
+            this.transactionalAmountTax = this.amountTax != null ? this.amountTax.multiply(appliedRate) : ZERO;
+            this.transactionalAmountWithTax = this.amountWithTax != null ? this.amountWithTax.multiply(appliedRate) : ZERO;
+        }
     }
 }

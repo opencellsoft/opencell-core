@@ -29,6 +29,7 @@ import org.meveo.apiv2.billing.ImmutableInvoiceLine;
 import org.meveo.apiv2.billing.ImmutableInvoiceLinesInput;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
 import org.meveo.apiv2.ordering.services.ApiService;
+import org.meveo.apiv2.securityDeposit.SecurityDepositCancelInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositCreditInput;
 import org.meveo.commons.utils.ListUtils;
 import org.meveo.model.BaseEntity;
@@ -401,6 +402,11 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
 		
 		securityDepositService.refund(securityDepositToUpdate, reason, securityDepositOperationEnum, securityDepositStatusEnum, operationType, adjustmentInvoice);
 	}
+
+    @Transactional
+    public SecurityDeposit cancel(Long id, SecurityDepositCancelInput securityDepositInput) {
+        return securityDepositService.cancel(id, securityDepositInput);
+    }
 
 	private Invoice createAdjustmentInvoice(SecurityDeposit securityDepositToUpdate) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException, IOException {
 		// Create adjustment invoice

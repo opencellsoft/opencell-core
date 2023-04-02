@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
-import  io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
@@ -41,23 +41,21 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
  * @author Edward P. Legaspi
  **/
 @ApplicationPath("/api/rest")
-@OpenAPIDefinition(
-          security = @SecurityRequirement(name = "auth"))
-@SecurityScheme(type=SecuritySchemeType.HTTP,scheme="basic",paramName="auth")
+@OpenAPIDefinition(security = @SecurityRequirement(name = "auth"))
+@SecurityScheme(type = SecuritySchemeType.HTTP, scheme = "basic", paramName = "auth")
 public class JaxRsActivator extends Application {
-
-    private Logger log = LoggerFactory.getLogger(JaxRsActivator.class);
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public Set<Class<?>> getClasses() {
-        Set<Class<?>> resources = new HashSet();
 
         Reflections reflections = new Reflections("org.meveo.api.rest");
         Set<Class<? extends BaseRs>> allClasses = reflections.getSubTypesOf(BaseRs.class);
 
-        log.debug("Documenting {} rest services...", allClasses.size());
+        Logger log = LoggerFactory.getLogger(JaxRsActivator.class);
+        log.debug("Documenting {} rest services for path /api/rest/", allClasses.size());
 
+        Set<Class<?>> resources = new HashSet();
         resources.addAll(allClasses);
 
         resources.add(RESTCorsRequestFilter.class);
@@ -65,8 +63,7 @@ public class JaxRsActivator extends Application {
         resources.add(JaxRsExceptionMapper.class);
         resources.add(JacksonProvider.class);
         resources.add(OpenApiResource.class);
-        
+
         return resources;
     }
-
 }

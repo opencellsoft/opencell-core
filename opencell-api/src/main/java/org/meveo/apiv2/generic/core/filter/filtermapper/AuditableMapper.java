@@ -1,10 +1,11 @@
 package org.meveo.apiv2.generic.core.filter.filtermapper;
 
 
-import org.meveo.apiv2.generic.core.filter.FilterMapper;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.meveo.api.generics.filter.FilterMapper;
+import org.meveo.api.generics.filter.filtermapper.DateMapper;
 
 public class AuditableMapper extends FilterMapper {
     public AuditableMapper(String property, Object value, Class clazz) {

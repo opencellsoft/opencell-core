@@ -39,6 +39,7 @@ import org.meveo.api.dto.payment.DDRequestBuilderDto;
 import org.meveo.api.dto.payment.DDRequestBuilderResponseDto;
 import org.meveo.api.dto.payment.HostedCheckoutStatusResponseDto;
 import org.meveo.api.dto.payment.MandatInfoDto;
+import org.meveo.api.dto.payment.PayByCardOrSepaDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentGatewayDto;
 import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
@@ -48,6 +49,7 @@ import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
+import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceItemsDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceResponseDto;
@@ -61,6 +63,7 @@ import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.payment.PaymentGatewayRumSequenceResponseDto;
 import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.rest.IBaseRs;
+import org.meveo.model.payments.PaymentMethodEnum;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -1130,8 +1133,11 @@ public interface PaymentRs extends IBaseRs {
      * @param automaticReturnUrl the automatic return URL (currently only for ATOS Wallet)
      * @param allowedActions the allowed actions (currently only for ATOS Wallet)
      * @param returnContext the return context (currently only for ATOS Wallet)
-    * @param authenticationAmount Allows you to send in an authentication amount which can be greater or equal to the order amount. The currency code of the authentication amount should be the same as the currency code of the order amount. In case you don't provide an authentication amount we will use the order amount for the authentication automatically.
+     * @param isOneShotPayment if true Accept one-time payments for cards else Save payment details to charge your customers later.
+     * @param cancelUrl If set, Checkout displays a back button and customers will be directed to this URL if they decide to cancel payment and return to your website.
+     * @param authenticationAmount Allows you to send in an authentication amount which can be greater or equal to the order amount. The currency code of the authentication amount should be the same as the currency code of the order amount. In case you don't provide an authentication amount we will use the order amount for the authentication automatically.
      * @param advancedOptions the advanced options (currently only for ATOS Wallet)
+     * @param paymentMethodType CARD or DIRECTDEBIT
      * @return the PaymentHostedCheckoutResponseDto
      */
     @GET
@@ -1165,7 +1171,9 @@ public interface PaymentRs extends IBaseRs {
                                                                  @QueryParam("returnContext") String returnContext,
                                                                  @QueryParam("authenticationAmount") String authenticationAmount,
                                                                  @DefaultValue("") @QueryParam("advancedOptions") String advancedOptions,
-                                                                 @DefaultValue("false") @QueryParam("isOneShotPayment") Boolean isOneShotPayment
+                                                                 @DefaultValue("false") @QueryParam("isOneShotPayment") Boolean isOneShotPayment,
+                                                                 @QueryParam("cancelUrl") String cancelUrl,
+                                                                 @DefaultValue("CARD")@QueryParam("paymentMethodType")PaymentMethodEnum paymentMethodType
     );
     
     /**
@@ -1587,4 +1595,52 @@ public interface PaymentRs extends IBaseRs {
 				)}
 	)
     ActionStatus replacePaymentScheduleInstanceItem(@PathParam("id") Long paymentScheduleInstanceId, PaymentScheduleInstanceItemsDto paymentScheduleInstanceItemsDto);
+
+   /**
+    * Make a real  card payment through gateways like Ingenico or Stripe, and then create the account Operation that can be matched with other accounts Operations
+    * 
+    * @param payByCardDto
+    * @return PaymentResponseDto
+    */
+    @POST
+    @Path("/payByCard")
+	@Operation(
+			summary=" Make a real payment through gateways like Ingenico or Stripe",
+			description=" Make a real payment through gateways like Ingenico or Stripe. ",
+			operationId="POST_Payment_payByCard",
+			responses= {
+				@ApiResponse(description=" payByCard ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PaymentResponseDto.class
+											)
+								)
+				)}
+	)
+	PaymentResponseDto payByCard(PayByCardOrSepaDto payByCardDto);
+    
+    /**
+     * Make a real  Sepa payment through gateways like Ingenico or Stripe, and then create the account Operation that can be matched with other accounts Operations
+     * 
+     * @param payBySepaDto
+     * @return PaymentResponseDto
+     */
+     @POST
+     @Path("/payBySepa")
+ 	@Operation(
+ 			summary=" Make a real payment through gateways like Ingenico or Stripe",
+ 			description=" Make a real payment through gateways like Ingenico or Stripe. ",
+ 			operationId="POST_Payment_payBySepa",
+ 			responses= {
+ 				@ApiResponse(description=" payBySepa ",
+ 						content=@Content(
+ 									schema=@Schema(
+ 											implementation= PaymentResponseDto.class
+ 											)
+ 								)
+ 				)}
+ 	)
+ 	PaymentResponseDto payBySepa(PayByCardOrSepaDto payBySepaDto);
+    
+    
 }

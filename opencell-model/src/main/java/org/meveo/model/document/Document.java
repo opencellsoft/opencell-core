@@ -85,6 +85,12 @@ public class Document extends BusinessCFEntity {
     @Column(name = "document_status", length = 25, nullable = false)
     @NotNull
     private DocumentStatus documentStatus = DocumentStatus.ACTIVE;
+    
+    /**
+     * document version
+     */
+    @Column(name = "document_version")
+    private Integer documentVersion;
 
     public Map<String, String> getDescriptionI18n() {
         return descriptionI18n;
@@ -149,4 +155,13 @@ public class Document extends BusinessCFEntity {
     public void setDocumentStatus(DocumentStatus documentStatus) {
         this.documentStatus = documentStatus;
     }
+
+	public Integer getDocumentVersion() {
+		return documentVersion;
+	}
+
+	public void setDocumentVersion(Integer documentVersion) {
+		this.documentVersion = documentVersion;
+	}
+  
 }

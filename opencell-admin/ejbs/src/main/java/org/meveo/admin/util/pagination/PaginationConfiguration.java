@@ -72,6 +72,14 @@ public class PaginationConfiguration implements Serializable {
     
     private JoinType joinType;
 
+
+    private Integer limit;
+
+    /**
+     * Shall query results be cached - see Hibernate query cache behavior
+     */
+    private boolean cacheable = false;
+    
     /**
      * Operator to use when building where statement
      */
@@ -108,6 +116,7 @@ public class PaginationConfiguration implements Serializable {
         this.fullTextFilter = fullTextFilter;
         this.doFetch = doFetch;
         this.fetchFields = fetchFields;
+        this.limit = numberOfRows;
 
         List<Object> sortValues = new ArrayList<Object>();
         for (int i = 0; i < sortFieldsAndOrder.length; i = i + 2) {
@@ -153,6 +162,12 @@ public class PaginationConfiguration implements Serializable {
      */
     public PaginationConfiguration(Map<String, Object> filters) {
         this.filters = filters;
+    }
+
+    public PaginationConfiguration(Map<String, Object> filters, List<String> fetchFields, Set<String> groupBy) {
+        this.filters = filters;
+        this.setGroupBy(groupBy);
+        this.setFetchFields(fetchFields);
     }
 
     /**
@@ -306,4 +321,27 @@ public class PaginationConfiguration implements Serializable {
 	public void setFilterOperator(FilterOperatorEnum filterOperator) {
 		this.filterOperator = filterOperator;
 	}
+
+
+    public Integer getLimit() {
+        return limit;
+    }
+
+    public void setLimit(Integer limit) {
+        this.limit = limit;
+    }
+
+	/**
+	 * @param cacheable Shall query results be cached - see Hibernate query cache behavior
+	 */
+    public void setCacheable(boolean cacheable) {
+        this.cacheable = cacheable;
+    }
+
+    /**
+     * @return Shall query results be cached - see Hibernate query cache behavior
+     */
+    public boolean isCacheable() {
+        return cacheable;
+    }	
 }

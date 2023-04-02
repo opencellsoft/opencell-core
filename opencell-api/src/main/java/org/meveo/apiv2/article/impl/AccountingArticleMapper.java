@@ -1,8 +1,10 @@
 package org.meveo.apiv2.article.impl;
 
+import static java.util.Optional.ofNullable;
+import static org.meveo.apiv2.models.ImmutableResource.builder;
+
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.apiv2.article.ImmutableAccountingArticle;
-import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.apiv2.ordering.ResourceMapper;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.model.article.AccountingArticle;
@@ -10,31 +12,37 @@ import org.meveo.model.article.ArticleFamily;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.UntdidAllowanceCode;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.api.EntityToDtoConverter;
 
 public class AccountingArticleMapper extends ResourceMapper<org.meveo.apiv2.article.AccountingArticle, AccountingArticle> {
 
-    private EntityToDtoConverter entityToDtoConverter = (EntityToDtoConverter) EjbUtils.getServiceInterface(EntityToDtoConverter.class.getSimpleName());
+    private EntityToDtoConverter entityToDtoConverter =
+            (EntityToDtoConverter) EjbUtils.getServiceInterface(EntityToDtoConverter.class.getSimpleName());
 
     @Override
     protected org.meveo.apiv2.article.AccountingArticle toResource(AccountingArticle entity) {
+        String allowanceCode = ofNullable(entity.getAllowanceCode())
+                .map(UntdidAllowanceCode::getCode)
+                .orElse(null);
         return ImmutableAccountingArticle.builder()
                 .id(entity.getId())
                 .code(entity.getCode())
                 .description(entity.getDescription())
-                .taxClass(ImmutableResource.builder().id(entity.getTaxClass().getId()).code(entity.getTaxClass().getCode()).build())
-                .invoiceSubCategory(ImmutableResource.builder().id(entity.getInvoiceSubCategory().getId()).code(entity.getInvoiceSubCategory().getCode()).build())
-                .accountingCode(entity.getAccountingCode() != null ? ImmutableResource.builder().id(entity.getAccountingCode().getId()).code(entity.getAccountingCode().getCode()).build() : null)
-                .articleFamily(entity.getArticleFamily() != null ? ImmutableResource.builder().id(entity.getArticleFamily().getId()).code(entity.getArticleFamily().getCode()).build() : null)
+                .taxClass(builder().id(entity.getTaxClass().getId()).code(entity.getTaxClass().getCode()).build())
+                .invoiceSubCategory(builder().id(entity.getInvoiceSubCategory().getId()).code(entity.getInvoiceSubCategory().getCode()).build())
+                .accountingCode(entity.getAccountingCode() != null ? builder().id(entity.getAccountingCode().getId()).code(entity.getAccountingCode().getCode()).build() : null)
+                .articleFamily(entity.getArticleFamily() != null ? builder().id(entity.getArticleFamily().getId()).code(entity.getArticleFamily().getCode()).build() : null)
                 .analyticCode1(entity.getAnalyticCode1()).analyticCode2(entity.getAnalyticCode2()).analyticCode3(entity.getAnalyticCode3()).unitPrice(entity.getUnitPrice())
                 .languageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(entity.getDescriptionI18n()))
                 .customFields(entityToDtoConverter.getCustomFieldsDTO(entity))
-                .invoiceType(entity.getInvoiceType() != null ? ImmutableResource.builder().id(entity.getInvoiceType().getId()).code(entity.getInvoiceType().getCode()).build(): null)
+                .invoiceType(entity.getInvoiceType() != null ? builder().id(entity.getInvoiceType().getId()).code(entity.getInvoiceType().getCode()).build(): null)
                 .invoiceTypeEl(entity.getInvoiceTypeEl())
                 .accountingCodeEl(entity.getAccountingCodeEl())
                 .columCriteriaEL(entity.getColumnCriteriaEL())
                 .ignoreAggregation(entity.isIgnoreAggregation())
+                .allowanceCode(allowanceCode)
                 .build();
     }
 

@@ -24,6 +24,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 
+import org.meveo.api.dto.payment.DDRequestLotOpDto;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
@@ -60,6 +61,52 @@ public class DDRequestLotOpService extends PersistenceService<DDRequestLotOp> {
 		return ddrequestOps;
 	}
 
+	/**
+	 * 
+	 * @param ddRequestLotOpDto
+	 * @return
+	 */
+	public List<DDRequestLotOp> findByParams(DDRequestLotOpDto ddRequestLotOpDto) {
+		List<DDRequestLotOp> ddrequestOps = new ArrayList<>();
+
+		StringBuilder selectQuery = new StringBuilder("from ").append(DDRequestLotOp.class.getSimpleName())
+				.append(" as ddOp   where ddOp.status=:statusIN and ")
+				.append(" ddOp.ddRequestBuilder.code=:builderIN and ").append(" ddOp.ddrequestOp=:ddrequestOpIN and ")
+				.append(" ddOp.paymentOrRefundEnum=:paymentOrRefundEnumIN and ")
+				.append(" ddOp.fromDueDate =:fromDueDateIN and ").append(" ddOp.toDueDate =:toDueDateIN  ");
+		if (!StringUtils.isBlank(ddRequestLotOpDto.getFilterCode())) {
+			selectQuery.append(" and ddOp.filter.code =:filterIN  ");
+		}
+		if (!StringUtils.isBlank(ddRequestLotOpDto.getDueDateRageScriptCode())) {
+			selectQuery.append(" and ddOp.scriptInstance.code =:scriptCodeIN  ");
+		}
+		if (!StringUtils.isBlank(ddRequestLotOpDto.getSellerCode())) {
+			selectQuery.append(" and ddOp.seller.code =:sellerIN  ");
+		}
+		try {
+			Query query = getEntityManager().createQuery(selectQuery.toString())
+					.setParameter("statusIN", ddRequestLotOpDto.getStatus()).setParameter("ddrequestOpIN", ddRequestLotOpDto.getDdrequestOp())
+					.setParameter("builderIN", ddRequestLotOpDto.getDdRequestBuilderCode())
+					.setParameter("paymentOrRefundEnumIN", ddRequestLotOpDto.getPaymentOrRefundEnum())
+					.setParameter("fromDueDateIN", ddRequestLotOpDto.getFromDueDate())
+					.setParameter("toDueDateIN", ddRequestLotOpDto.getToDueDate());
+			if (!StringUtils.isBlank(ddRequestLotOpDto.getFilterCode())) {
+				query.setParameter("filterIN", ddRequestLotOpDto.getFilterCode());
+			}
+			if (!StringUtils.isBlank(ddRequestLotOpDto.getDueDateRageScriptCode())) {
+				query.setParameter("scriptCodeIN", ddRequestLotOpDto.getDueDateRageScriptCode());
+			}
+			if (!StringUtils.isBlank(ddRequestLotOpDto.getSellerCode())) {
+				query.setParameter("sellerIN", ddRequestLotOpDto.getSellerCode());
+			}
+
+			ddrequestOps = (List<DDRequestLotOp>) query.getResultList();
+		} catch (Exception e) {
+			log.error("failed to findByParams", e);
+		}
+		return ddrequestOps;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<DDRequestLotOp> findByDateStatus(Date fromDueDate, Date toDueDate, DDRequestOpStatusEnum status) {
 		QueryBuilder query = new QueryBuilder(DDRequestLotOp.class, "o");

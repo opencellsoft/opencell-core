@@ -13,8 +13,10 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -134,6 +136,11 @@ public class DunningSettings extends BusinessEntity {
     @OneToMany(mappedBy = "dunningSettings", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DunningStopReason> dunningStopReasons = new ArrayList<>();
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_balance_id")
+    @NotNull
+    private CustomerBalance customerBalance;
+
     public DunningModeEnum getDunningMode() {
         return dunningMode;
     }
@@ -235,5 +242,13 @@ public class DunningSettings extends BusinessEntity {
 
     public void setDunningStopReasons(List<DunningStopReason> dunningStopReasons) {
         this.dunningStopReasons = dunningStopReasons;
+    }
+
+    public CustomerBalance getCustomerBalance() {
+        return customerBalance;
+    }
+
+    public void setCustomerBalance(CustomerBalance customerBalance) {
+        this.customerBalance = customerBalance;
     }
 }

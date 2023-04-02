@@ -21,6 +21,7 @@ package org.meveo.api.dto.billing;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -30,6 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.IEntityDto;
+import org.meveo.api.dto.catalog.DiscountPlanDto;
 
 /**
  * The Class ServiceToUpdateDto.
@@ -85,6 +87,9 @@ public class ServiceToUpdateDto implements Serializable, IEntityDto {
     /** Custom fields. */
     private CustomFieldsDto customFields;
 
+    private List<DiscountPlanDto> discountPlansForInstantiation;
+    
+    private List<String> discountPlanForTermination;
     /**
      * Gets the id.
      *
@@ -286,5 +291,21 @@ public class ServiceToUpdateDto implements Serializable, IEntityDto {
     @Override
     public String toString() {
         return "ServiceToSuspendDto [code=" + code + ", actionDate=" + actionDate + "]";
+    }
+
+    public List<DiscountPlanDto> getDiscountPlansForInstantiation() {
+        return discountPlansForInstantiation;
+    }
+
+    public List<String> getDiscountPlanForTermination() {
+        return discountPlanForTermination;
+    }
+
+    public void setDiscountPlansForInstantiation(List<DiscountPlanDto> discountPlansForInstantiation) {
+        this.discountPlansForInstantiation = discountPlansForInstantiation;
+    }
+
+    public void setDiscountPlanForTermination(List<String> discountPlanForTermination) {
+        this.discountPlanForTermination = discountPlanForTermination;
     }
 }

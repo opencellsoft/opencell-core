@@ -3,9 +3,13 @@ package org.meveo.service.catalog.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -68,25 +72,16 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
     @Inject
     private TradingCurrencyService tradingCurrencyService;
 
-
     public List<PricePlanMatrixLine> findByPricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion) {
-        try {
-            return getEntityManager().createNamedQuery("PricePlanMatrixLine.findByPricePlanMatrixVersion", entityClass)
-                    .setParameter("pricePlanMatrixVersion", pricePlanMatrixVersion)
-                    .getResultList();
-        } catch (NoResultException exp) {
-            return new ArrayList<>();
-        }
+         return getEntityManager().createNamedQuery("PricePlanMatrixLine.findByPricePlanMatrixVersion", entityClass)
+                .setParameter("pricePlanMatrixVersionId", pricePlanMatrixVersion.getId())
+                .getResultList();
     }
     
     public List<PricePlanMatrixLine> findByPricePlanMatrixVersionIds(List<Long> ppmvIds) {
-        try {
-            return getEntityManager().createNamedQuery("PricePlanMatrixLine.findByPricePlanMatrixVersionIds", entityClass)
-                    .setParameter("ppmvIds", ppmvIds)
-                    .getResultList();
-        } catch (NoResultException exp) {
-            return new ArrayList<>();
-        }
+        return getEntityManager().createNamedQuery("PricePlanMatrixLine.findByPricePlanMatrixVersionIds", entityClass)
+                .setParameter("ppmvIds", ppmvIds)
+                .getResultList();
     }
 
     @JpaAmpNewTx
@@ -221,6 +216,27 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
                 }).collect(Collectors.toSet());
     }
 
+    public Set<ConvertedPricePlanMatrixLine> getCppmlFromDto(PricePlanMatrixLineDto dtoData, PricePlanMatrixLine pricePlanMatrixLine) {
+        Set<ConvertedPricePlanMatrixLine> listCppml = new HashSet<ConvertedPricePlanMatrixLine>();
+        List<ConvertedPricePlanMatrixLineDto> listCppmlDto = dtoData.getConvertedPricePlanMatrixLines();
+        for (ConvertedPricePlanMatrixLineDto cppmlDto : listCppmlDto) {
+            ConvertedPricePlanMatrixLine cppml = new ConvertedPricePlanMatrixLine();
+            cppml.setConvertedValue(cppmlDto.getConvertedValue());
+            cppml.setRate(cppmlDto.getRate());            
+            TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(cppmlDto.getTradingCurrency().getCode()); 
+            if(tradingCurrency == null) {
+                throw new MeveoApiException("Trading currency doesn't exist for  ( code : " +  cppmlDto.getTradingCurrency().getCode());
+            }            
+            cppml.setTradingCurrency(tradingCurrency);
+            cppml.setConvertedValue(cppmlDto.getConvertedValue());
+            cppml.setUseForBillingAccounts(cppmlDto.getUseForBillingAccounts());
+            cppml.setPricePlanMatrixLine(pricePlanMatrixLine);
+            convertedPricePlanMatrixLineService.create(cppml);
+            listCppml.add(cppml);
+        }        
+        return listCppml;
+    }
+
     public PricePlanMatrixLineDto load(Long ppmLineId) {
         PricePlanMatrixLine ppmLine = findById(ppmLineId);
         if (ppmLine == null) {
@@ -233,7 +249,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         List<PricePlanMatrixLine> matchedPrices = getMatchedPriceLines(pricePlanMatrixVersion, attributeValues, null);
         if (matchedPrices.isEmpty()) {
             throw new BusinessApiException("No price match with quote product id: " + productQuoteId + " using price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ")");
-        }else if(matchedPrices.size() >= 2 && matchedPrices.get(0).getPriority() == matchedPrices.get(1).getPriority())
+        }else if(matchedPrices.size() >= 2 && matchedPrices.get(0).getEffectifPriority() == matchedPrices.get(1).getEffectifPriority())
             throw new BusinessException("Many prices lines with the same priority match with quote product id: "+ productQuoteId + " using price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ")");
         return List.of(matchedPrices.get(0));
     }
@@ -245,7 +261,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         if (matchedPrices.isEmpty()) {
             throw new NoPricePlanException("No price match with price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ") using attribute : " + attributeValues.stream().map(AttributeValue::getValue));
         
-        } else if (matchedPrices.size() >= 2 && matchedPrices.get(0).getPriority() == matchedPrices.get(1).getPriority()) {
+        } else if (matchedPrices.size() >= 2 && matchedPrices.get(0).getEffectifPriority() == matchedPrices.get(1).getEffectifPriority()) {
             throw new NoPricePlanException("Many prices lines with the same priority match with price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ") using attribute : " + attributeValues.stream().map(AttributeValue::getValue));
         }
         return matchedPrices.get(0);
@@ -253,13 +269,13 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
 
     private List<PricePlanMatrixLine> getMatchedPriceLines(PricePlanMatrixVersion pricePlanMatrixVersion, Set<AttributeValue> attributeValues, WalletOperation walletOperation) {
         List<PricePlanMatrixLine> priceLines = findByPricePlanMatrixVersion(pricePlanMatrixVersion);
-        List<PricePlanMatrixLine> priceLinesSorted = priceLines.stream()
-                .sorted(Comparator.comparing(PricePlanMatrixLine::getId))
-                .collect(Collectors.toList());
-        int i = 0;
-        for (PricePlanMatrixLine ppml : priceLinesSorted) {
-            ppml.setPriority(i++);
-        }
+//        List<PricePlanMatrixLine> priceLinesSorted = priceLines.stream()
+//                .sorted(Comparator.comparing(PricePlanMatrixLine::getId))
+//                .collect(Collectors.toList());
+//        int i = 0;
+//        for (PricePlanMatrixLine ppml : priceLinesSorted) {
+//            ppml.setPriority(i++);
+//        }
             
         addBusinessAttributeValues(pricePlanMatrixVersion.getColumns().stream().filter(column->AttributeCategoryEnum.BUSINESS.equals(column.getAttribute().getAttributeCategory())).map(column->column.getAttribute()).collect(Collectors.toList()),attributeValues, walletOperation);
         if(attributeValues.isEmpty()) {
@@ -268,10 +284,22 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
                     .collect(Collectors.toList());
         }
         else {
-            return priceLines.stream()
+            List<PricePlanMatrixLine> results = priceLines.stream()
                     .filter(line -> line.match(attributeValues))
-                    .sorted(Comparator.comparing(PricePlanMatrixLine::getPriority))
                     .collect(Collectors.toList());
+
+            if (CollectionUtils.isNotEmpty(results) && results.size() > 1) {
+                // in case we have more than one result, remove the default one (without values)
+                results.removeIf(pricePlanMatrixLine -> CollectionUtils.isEmpty(pricePlanMatrixLine.getPricePlanMatrixValues()));
+
+                // if we still have more than one value, get the one with biggest values : values are the number of matched values with passed attributes
+                if (results.size() > 1) {
+                    return filterByMostMatchedResultValues(results);
+                    // if we have more than result, the called method shall be use priority as already developped
+                }
+            }
+
+            return results;
         }
     }
 
@@ -334,8 +362,11 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
             pricePlanMatrixLine.setDescription(pricePlanMatrixLineDto.getDescription());
             BigDecimal value = pricePlanMatrixLineDto.getValue() != null? pricePlanMatrixLineDto.getValue():pricePlanMatrixLineDto.getPriceWithoutTax();
             pricePlanMatrixLine.setValue(value);
-            create(pricePlanMatrixLine);
-            
+            create(pricePlanMatrixLine); 
+            Set<ConvertedPricePlanMatrixLine> convertedPricePlanMatrixLines = getCppmlFromDto(pricePlanMatrixLineDto, pricePlanMatrixLine);
+            pricePlanMatrixLine.getConvertedPricePlanMatrixLines().clear();
+            pricePlanMatrixLine.getConvertedPricePlanMatrixLines().addAll(convertedPricePlanMatrixLines);            
+            update(pricePlanMatrixLine);            
             Set<PricePlanMatrixValue> pricePlanMatrixValues = getPricePlanMatrixValues(pricePlanMatrixLineDto, pricePlanMatrixLine);
             pricePlanMatrixValues.stream().forEach(ppmv -> pricePlanMatrixValueService.create(ppmv));
             pricePlanMatrixLine.getPricePlanMatrixValues().addAll(pricePlanMatrixValues);
@@ -448,6 +479,41 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
                     throw new MeveoApiException("A line having similar values already exists!.");
             }
         }
+    }
+
+
+    private List<PricePlanMatrixLine> filterByMostMatchedResultValues(List<PricePlanMatrixLine> ppmls) {
+        if (CollectionUtils.isEmpty(ppmls)) {
+            return Collections.emptyList();
+        }
+
+        // Create a map with COUNT of value, List on PricePlanMatrixLines
+        Map<Integer, List<PricePlanMatrixLine>> groupByCountValue = new HashMap<>();
+        // Put the result in map
+        ppmls.forEach(p -> {
+            if (CollectionUtils.isEmpty(p.getPricePlanMatrixValues())) {
+                return;
+            }
+            List<PricePlanMatrixLine> list = groupByCountValue.get(p.getPricePlanMatrixValues().size());
+            if (list == null) {
+                List<PricePlanMatrixLine> newList = new ArrayList<>();
+                newList.add(p);
+                groupByCountValue.put(p.getPricePlanMatrixValues().size(), newList);
+            } else {
+                list.add(p);
+            }
+        });
+
+        // Reverse order to get the result with the most matched values
+        Map<Integer, List<PricePlanMatrixLine>> reverdeOrderResults = groupByCountValue.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey(Comparator.reverseOrder()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+
+        // return list with the most values : 1 or more
+        return reverdeOrderResults.get(Collections.max(reverdeOrderResults.entrySet(),
+                Comparator.comparingInt(Map.Entry::getKey)).getKey());
+
     }
 
 }

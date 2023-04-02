@@ -4,9 +4,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -18,6 +21,9 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.model.accounting.*;
 import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
@@ -25,6 +31,8 @@ import org.meveo.service.crm.impl.ProviderService;
 @Stateless
 public class AccountingPeriodService extends PersistenceService<AccountingPeriod> {
 	
+    private static final String API_FINANCE_MANAGEMENT = "apiFinanceManagement";
+
     @Inject
     private SubAccountingPeriodService subAccountingPeriodService;
 
@@ -34,6 +42,13 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 	@Inject
 	private AuditLogService auditLogService;
 
+    @Inject
+    private CurrentUserProvider currentUserProvider;
+    
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
+    
 	public AccountingPeriod create(AccountingPeriod entity, Boolean isUseSubAccountingPeriods) {
 		return createAccountingPeriod(entity, isUseSubAccountingPeriods);
 	}
@@ -50,15 +65,53 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 	 * @return {@link AccountingPeriod}
 	 */
 	public AccountingPeriod updateStatus(AccountingPeriod entity, String status, String fiscalYear) {
-		if(entity.isUseSubAccountingCycles()) {
+	    AccountingPeriodStatusEnum accountingPeriodStatus = AccountingPeriodStatusEnum.valueOf(status);
+        if(entity.isUseSubAccountingCycles() && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.OPEN)) {
 			throw new ValidationException("the accounting period " + fiscalYear + " has sub-accounting periods option activated");
-		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.CLOSED) && AccountingPeriodStatusEnum.valueOf(status).equals(AccountingPeriodStatusEnum.CLOSED)){
+		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.CLOSED) && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.CLOSED)){
 			throw new ValidationException("the accounting period " + fiscalYear + " is already closed");
-		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.OPEN) && AccountingPeriodStatusEnum.valueOf(status).equals(AccountingPeriodStatusEnum.OPEN)) {
+		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.OPEN) && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.OPEN)) {
 			throw new ValidationException("the accounting period " + fiscalYear + " is already opened");
-		} else {
+		} else {		    
+	        if (accountingPeriodStatus.equals(AccountingPeriodStatusEnum.CLOSED)) {
+	            boolean isUserHaveThisRole = currentUser.hasRole(API_FINANCE_MANAGEMENT);
+	            subAccountingPeriodService.updateSubPeriodsWithStatus(entity, fiscalYear, status, isUserHaveThisRole);                
+            }
+		    
 			AuditLog auditLog = createAuditLog(entity, status);
-			entity.setAccountingPeriodStatus(AccountingPeriodStatusEnum.valueOf(status));
+			entity.setAccountingPeriodStatus(accountingPeriodStatus);
+			update(entity);
+
+			if(auditLog.getEntity() != null) {
+				auditLogService.create(auditLog);
+			}
+		}
+
+		return entity;
+	}
+	
+	/**
+	 * Update the status of a fiscal year after checking the subAccountingCycles and also status
+	 * @param entity {@link AccountingPeriod}
+	 * @param status Status
+	 * @param fiscalYear Fiscal Year
+	 * @return {@link AccountingPeriod}
+	 */
+	public AccountingPeriod updateStatus(AccountingPeriod entity, String status, String fiscalYear, AccountingPeriodActionLevelEnum level) {
+	    AccountingPeriodStatusEnum accountingPeriodStatus = AccountingPeriodStatusEnum.valueOf(status);
+        if(entity.isUseSubAccountingCycles() && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.OPEN)) {
+			throw new ValidationException("the accounting period " + fiscalYear + " has sub-accounting periods option activated");
+		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.CLOSED) && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.CLOSED)){
+			throw new ValidationException("the accounting period " + fiscalYear + " is already closed");
+		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.OPEN) && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.OPEN)) {
+			throw new ValidationException("the accounting period " + fiscalYear + " is already opened");
+		} else {	
+	        if (accountingPeriodStatus.equals(AccountingPeriodStatusEnum.CLOSED)) {
+	            subAccountingPeriodService.updateSubPeriodsWithStatus(entity, fiscalYear, status, level);                
+            }
+		    
+			AuditLog auditLog = createAuditLog(entity, status);
+			entity.setAccountingPeriodStatus(accountingPeriodStatus);
 			update(entity);
 
 			if(auditLog.getEntity() != null) {
@@ -80,16 +133,16 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		auditLog.setActor(currentUser.getUserName());
 		auditLog.setCreated(new Date());
 		auditLog.setEntity("AccountingPeriod");
-		auditLog.setOrigin(entity.getAccountingPeriodStatus().name());
+		auditLog.setOrigin(entity.getAccountingPeriodYear());
 		auditLog.setAction("update status");
 		auditLog.setParameters("user " + currentUser.getUserName() + " update status from " + entity.getAccountingPeriodStatus().name() + " to " + status);
 		return auditLog;
 	}
 	
 	public AccountingPeriod createAccountingPeriod(AccountingPeriod entity, Boolean isUseSubAccountingPeriods) {
-		validateInputs(entity, isUseSubAccountingPeriods, entity.getSubAccountingPeriodType());
+		validateInputs(entity, isUseSubAccountingPeriods, entity.getSubAccountingPeriodType(), false);
 		if(entity.getAccountingPeriodYear() == null) {
-			entity.setAccountingPeriodYear(getAccountingPeriodYear(entity.getStartDate(), entity.getEndDate()));
+			entity.setAccountingPeriodYear(getAPYearForNewAccountingPeriodYear(entity.getStartDate(), entity.getEndDate()));
 		}
 
 		if(entity.getStartDate() == null) {
@@ -115,25 +168,23 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		}
 		if (entity.isUseSubAccountingCycles() && Boolean.FALSE.equals(newValue.isUseSubAccountingCycles())) {
 			throw new ValidationException("Use sub-accounting cycles CANNOT be modified");
-		} else
+		} else {
 			Optional.ofNullable(newValue.isUseSubAccountingCycles()).ifPresent(b -> entity.setUseSubAccountingCycles(Boolean.TRUE.equals(newValue.isUseSubAccountingCycles())));
-
-
+		}
 		if (entity.getSubAccountingPeriodType() != null  && !entity.getSubAccountingPeriodType().equals(newValue.getSubAccountingPeriodType()) && isUsedOnAccountingOperations(entity)) {
 			throw new ValidationException("sub-accounting cycles type CANNOT be modified because the sub dates is used in the account operations");
-		} else
+		} else {
 			Optional.ofNullable(newValue.getSubAccountingPeriodType()).ifPresent(subAP -> entity.setSubAccountingPeriodType(newValue.getSubAccountingPeriodType()));
+		}
+    	entity.setAccountingOperationAction(newValue.getAccountingOperationAction());
+    	entity.setCustomLockNumberDays(newValue.getCustomLockNumberDays());
+    	entity.setCustomLockOption(newValue.getCustomLockOption());
+    	entity.setForceCustomDay(newValue.getForceCustomDay());
+    	entity.setForceOption(newValue.getForceOption());
+    	entity.setRegularUserLockOption(newValue.getRegularUserLockOption());
+    	entity.setSubAccountingPeriodType(newValue.getSubAccountingPeriodType());
 
-	entity.setAccountingOperationAction(newValue.getAccountingOperationAction());
-	entity.setCustomLockNumberDays(newValue.getCustomLockNumberDays());
-	entity.setCustomLockOption(newValue.getCustomLockOption());
-	entity.setForceCustomDay(newValue.getForceCustomDay());
-	entity.setForceOption(newValue.getForceOption());
-	entity.setRegularUserLockOption(newValue.getRegularUserLockOption());
-	entity.setSubAccountingPeriodType(newValue.getSubAccountingPeriodType());
-
-
-	validateInputs(entity, newValue.isUseSubAccountingCycles(), newValue.getSubAccountingPeriodType());
+	    validateInputs(entity, newValue.isUseSubAccountingCycles(), newValue.getSubAccountingPeriodType(), true);
 		update(entity);
 		if (entity.getSubAccountingPeriodType() != null) {
 			subAccountingPeriodService.updateSubAccountingPeriods(entity, entity.getSubAccountingPeriodType());
@@ -146,11 +197,11 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 			subAccountingPeriodService.createSubAccountingPeriods(entity, entity.getSubAccountingPeriodType());
 	}
 
-	private void validateEndDate(Date endDate) {
+	private void validateEndDate(Date endDate, boolean isUpdate) {
 		if (endDate == null) {
 			throw new ValidationException("endDate is mandatory to create AccountingPeriod");
 		}
-		if (endDate.before(new Date())) {
+		if (endDate.before(new Date()) && isUpdate) {
 			throw new ValidationException("the given endDate " + DateUtils.formatAsDate(endDate) + " is incorrect , the endDate must be greater than today");
 		}
 	}
@@ -187,7 +238,7 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		final Date endDate = Date.from(openAccountingPeriod.getEndDate().toInstant().atZone(ZoneId.systemDefault()).plusYears(1).toInstant());
 		nextAP.setEndDate(endDate);
 
-		final Date startDate = Date.from(openAccountingPeriod.getStartDate().toInstant().atZone(ZoneId.systemDefault()).plusYears(1).toInstant());
+		final Date startDate = Date.from(openAccountingPeriod.getStartDate().toInstant().atZone(ZoneId.systemDefault()).plusYears(1).plusDays(1).toInstant());
 		nextAP.setStartDate(startDate);
 
 		nextAP.setAccountingPeriodYear(getAccountingPeriodYear(startDate,endDate));
@@ -215,19 +266,33 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 	 * @return a fiscal year. Ex. 2021-2022
 	 */
 	private String getAccountingPeriodYear(Date startDate, Date endDate) {
+        if (startDate == null) {
+            AccountingPeriod lastAccountingPeriod = findLastAccountingPeriod();
+            startDate = Optional.ofNullable(lastAccountingPeriod).map(AccountingPeriod::getEndDate).orElse(null);
+            if (startDate != null &&
+                    (startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().equals(endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
+                            || startDate.after(endDate))) {
+                throw new ValidationException("the given end date " + DateUtils.formatAsDate(endDate) + " already exists");
+            }
+        }
+        return extractedAccountingPeriodYearToStr(startDate, endDate);
+    }
+
+    private String extractedAccountingPeriodYearToStr(Date startDate, Date endDate) {
+        startDate = startDate != null ? startDate : new Date();
+        final int startYear = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear();
+        final int endYear = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear();
+        return (startYear == endYear) ? "" + endYear : "" + startYear + "-" + endYear;
+    }
+	
+	private String getAPYearForNewAccountingPeriodYear(Date startDate, Date endDate) {
 		if (startDate == null) {
-			AccountingPeriod lastAccountingPeriod = findLastAccountingPeriod();
-			startDate = Optional.ofNullable(lastAccountingPeriod).map(AccountingPeriod::getEndDate).orElse(null);
-			if (startDate != null &&
-					(startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().equals(endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
-							|| startDate.after(endDate))) {
-				throw new ValidationException("the given end date " + DateUtils.formatAsDate(endDate) + " already exists");
-			}
+		    Calendar cal = Calendar.getInstance();
+	        cal.setTime(endDate);
+	        cal.set(Calendar.DAY_OF_YEAR, 1);
+	        startDate = cal.getTime();
 		}
-		startDate = startDate != null ? startDate : new Date();
-		final int startYear = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear();
-		final int endYear = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear();
-		return (startYear == endYear) ? "" + endYear : "" + startYear + "-" + endYear;
+		return extractedAccountingPeriodYearToStr(startDate, endDate);
 	}
 
 	private void validateCustLockNumDaysAndCustLockOpt(Integer customLockNumberDays, CustomLockOption customLockOption) {
@@ -249,8 +314,8 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 			throw new BusinessApiException("When accountingOperationAction is set to FORCE and forceOption is set to CUSTOM_DAY then the forceCustomDay is mandatory");
 	}
 
-	private void validateInputs(AccountingPeriod entity, Boolean isUseSubAccountingPeriods, Object subAccountingPeriodType) {
-		validateEndDate(entity.getEndDate());
+	private void validateInputs(AccountingPeriod entity, Boolean isUseSubAccountingPeriods, Object subAccountingPeriodType, boolean isUpdate) {
+		validateEndDate(entity.getEndDate(), isUpdate);
 		if (AccountingOperationAction.FORCE.equals(entity.getAccountingOperationAction())) {
 			validateForceOptionAndForceCustDay(entity.getForceOption(), entity.getForceCustomDay());
 		}

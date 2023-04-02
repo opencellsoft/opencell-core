@@ -75,6 +75,12 @@ public class CustomerCategoryDto extends BusinessEntityDto {
     private String taxCategoryEl;
 
     private List<LanguageDescriptionDto> languageDescriptions;
+    
+    /**
+     * Account tax category - code
+     **/
+    @Schema(description = "Default seller code")
+    private String defaultSellerCode;
 
     /**
      * Instantiates a new customer category dto.
@@ -99,6 +105,9 @@ public class CustomerCategoryDto extends BusinessEntityDto {
         }
         if (customerCategory.getTaxCategory() != null) {
             taxCategoryCode = customerCategory.getTaxCategory().getCode();
+        }
+        if (customerCategory.getDefaultSeller() != null) {
+        	defaultSellerCode = customerCategory.getDefaultSeller().getCode();
         }
         taxCategoryEl = customerCategory.getTaxCategoryEl();
     }
@@ -200,4 +209,12 @@ public class CustomerCategoryDto extends BusinessEntityDto {
     public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
         this.languageDescriptions = languageDescriptions;
     }
+
+	public String getDefaultSellerCode() {
+		return defaultSellerCode;
+	}
+
+	public void setDefaultSellerCode(String defaultSellerCode) {
+		this.defaultSellerCode = defaultSellerCode;
+	}
 }

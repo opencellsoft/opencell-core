@@ -29,7 +29,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.BaseApi;
-import org.meveo.api.dto.payment.PayByCardDto;
+import org.meveo.api.dto.payment.PayByCardOrSepaDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.api.dto.payment.RefundDto;
 import org.meveo.api.exception.BusinessApiException;
@@ -211,9 +211,8 @@ public class RefundApi extends BaseApi {
         return result;
     }
 
-    public PaymentResponseDto refundByCard(PayByCardDto cardPaymentRequestDto)
-            throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, MeveoApiException {
-
+    public PaymentResponseDto refundByCard(PayByCardOrSepaDto cardPaymentRequestDto)
+            throws Exception {
         if (StringUtils.isBlank(cardPaymentRequestDto.getCtsAmount())) {
             missingParameters.add("ctsAmount");
         }

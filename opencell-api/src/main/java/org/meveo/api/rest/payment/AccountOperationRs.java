@@ -29,6 +29,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.TransferAccountOperationDto;
+import org.meveo.api.dto.account.TransferOperationsDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
@@ -362,4 +363,21 @@ public interface AccountOperationRs extends IBaseRs {
 					)}
 	)
 	ActionStatus updateStatus(@PathParam("id") Long id, @PathParam("newStatus") String newStatus);
+	
+	@POST
+	@Path("/transferOperations")
+	@Operation(
+			summary=" transfer an AO from one account to another",
+			description=" transfer an AO from one account to another",
+			operationId="    POST_AccountOperation_updateStatus",
+			responses= {
+					@ApiResponse(description=" Request processing status ",
+							content = @Content(
+									schema = @Schema(
+											implementation= ActionStatus.class
+									)
+							)
+					)}
+	)
+	ActionStatus transferOperations(TransferOperationsDto transferOperationsDto);
 }

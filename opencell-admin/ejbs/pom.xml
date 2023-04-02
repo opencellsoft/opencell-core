@@ -237,6 +237,7 @@
         <dependency>
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -332,10 +333,24 @@
                     <artifactId>servlet-api</artifactId>
                 </exclusion>
                 <exclusion>
+                    <groupId>javax.activation</groupId>
+                    <artifactId>javax.activation-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.xml.bind</groupId>
+                    <artifactId>jaxb-api</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>org.yaml</groupId>
                     <artifactId>snakeyaml</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.wildfly.security</groupId>
+            <artifactId>wildfly-elytron-http-oidc</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <!-- End of libraries included in Jboss -->
@@ -390,7 +405,7 @@
             <groupId>net.sf.jasperreports</groupId>
             <artifactId>jasperreports-fonts</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>net.sf.jasperreports</groupId>
             <artifactId>jasperreports</artifactId>
@@ -554,8 +569,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy</artifactId>
             <scope>runtime</scope>
         </dependency>
 
@@ -612,7 +627,6 @@
         <dependency>
             <groupId>com.esotericsoftware.yamlbeans</groupId>
             <artifactId>yamlbeans</artifactId>
-            <version>1.15</version>
         </dependency>
 
         <dependency>
@@ -725,13 +739,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-authz-client</artifactId>
-            <version>${version.keycloak}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>com.slimpay</groupId>
             <artifactId>hapiclient</artifactId>
             <version>1.0.3</version>
@@ -745,6 +752,7 @@
         <dependency>
             <groupId>jakarta.json</groupId>
             <artifactId>jakarta.json-api</artifactId>
+            <optional>true</optional>
             <scope>provided</scope>
         </dependency>
 
@@ -763,7 +771,6 @@
         <dependency>
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
-            <version>5.6</version>
         </dependency>
 
         <dependency>
@@ -813,11 +820,14 @@
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>s3</artifactId>
-            <version>2.18.34</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.httpcomponents</groupId>
                     <artifactId>httpclient</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>software.amazon.awssdk</groupId>
+                    <artifactId>annotations</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -825,7 +835,6 @@
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>
             <artifactId>json-path</artifactId>
-            <version>2.4.0</version>
         </dependency>
 
         <!-- For testing -->

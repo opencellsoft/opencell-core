@@ -24,7 +24,7 @@ public class GenericHelper {
      * Initialize entitiesByName map
      */
     static {
-        entitiesByName = populateEntitiesToHandleByGenericApi();
+    	entitiesByName = populateEntitiesToHandleByGenericApi();
         entitiesDtoByName = populateEntitiesDtoToHandleByGenericApi();
     }
 

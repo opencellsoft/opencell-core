@@ -14,6 +14,7 @@ import org.meveo.admin.exception.*;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.article.*;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.EntityManagerWrapper;
@@ -70,7 +71,7 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
     @PostConstruct
     public void initService() {
         fetchFields = asList("taxClass", "invoiceSubCategory",
-                "articleFamily", "accountingCode", "accountingCodeMappings", "invoiceType");
+                "articleFamily", "accountingCode", "accountingCodeMappings", "invoiceType", "allowanceCode");
     }
 
     @Override
@@ -151,11 +152,25 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
                 throw new BadRequestException("No taxClass found for id : " + baseEntity.getTaxClass().getId());
             accountingArticle.setTaxClass(taxClass);
         }
+        
+        if (baseEntity.getTaxClass() != null && baseEntity.getTaxClass().getCode() != null) {
+            TaxClass taxClass = taxClassService.findByCode(baseEntity.getTaxClass().getCode());
+            if (taxClass == null)
+                throw new BadRequestException("No taxClass found for code : " + baseEntity.getTaxClass().getCode());
+            accountingArticle.setTaxClass(taxClass);
+        }
 
         if (baseEntity.getInvoiceSubCategory() != null && baseEntity.getInvoiceSubCategory().getId() != null) {
             InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findById(baseEntity.getInvoiceSubCategory().getId());
             if (invoiceSubCategory == null)
                 throw new BadRequestException("No invoiceSubCategory found for id : " + baseEntity.getInvoiceSubCategory().getId());
+            accountingArticle.setInvoiceSubCategory(invoiceSubCategory);
+        }
+        
+        if (baseEntity.getInvoiceSubCategory() != null && baseEntity.getInvoiceSubCategory().getCode() != null) {
+            InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(baseEntity.getInvoiceSubCategory().getCode());
+            if (invoiceSubCategory == null)
+                throw new BadRequestException("No invoiceSubCategory found for code : " + baseEntity.getInvoiceSubCategory().getCode());
             accountingArticle.setInvoiceSubCategory(invoiceSubCategory);
         }
 

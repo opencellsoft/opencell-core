@@ -11,6 +11,7 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.cpq.Media;
+import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.cpq.MediaService;
 
 @Stateless
@@ -19,11 +20,13 @@ public class MediaApi extends BaseApi {
 	private static final String MEDIA_DOESNT_EXIT = "No Media found for the key (%s, %s)"; 
  
 	@Inject 
-	private MediaService mediaService;  
+	private MediaService mediaService;
+
+	@Inject
+	CustomGenericEntityCodeService customGenericEntityCodeService;
 	
 	public MediaDto createMedia(MediaDto mediaDto) {
-		if(StringUtils.isBlank(mediaDto.getCode()))
-			missingParameters.add("code");
+
 		if(StringUtils.isBlank(mediaDto.getMediaName()))
 			missingParameters.add("mediaName");
 		if(StringUtils.isBlank(mediaDto.getLabel()))
@@ -36,8 +39,8 @@ public class MediaApi extends BaseApi {
 		if (mediaService.findByCode(mediaDto.getCode()) != null) {
 			throw new EntityAlreadyExistsException(Media.class, mediaDto.getCode());
 		}
-		final Media media = new Media(); 
-		media.setCode(mediaDto.getCode());
+		final Media media = new Media();
+		media.setCode(StringUtils.isBlank(mediaDto.getCode()) ? customGenericEntityCodeService.getGenericEntityCode(media) : mediaDto.getCode());
 		media.setDescription(mediaDto.getDescription());
 		media.setMediaName(mediaDto.getMediaName());
 		media.setLabel(mediaDto.getLabel());

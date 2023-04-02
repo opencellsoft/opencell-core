@@ -18,7 +18,6 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.rest.cpq.ContractRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.cpq.enums.ContractAccountLevel;
-import org.meveo.model.cpq.enums.ContractStatusEnum;
 
 public class ContractRsImpl  extends BaseRs implements ContractRs {
 
@@ -27,19 +26,19 @@ public class ContractRsImpl  extends BaseRs implements ContractRs {
 	
 	@Override
 	public Response createContract(ContractDto contractDto) {
-		 try {
-	            Long id = contractApi.CreateContract(contractDto);
-	            return Response.ok(Collections.singletonMap("id", id)).build();
-	        } catch (MeveoApiException e) {
-			       return errorResponse(e);
-	        }
+		try {
+			Long id = contractApi.createContract(contractDto);
+			return Response.ok(Collections.singletonMap("id", id)).build();
+		} catch (MeveoApiException e) {
+			return errorResponse(e);
+		}
 	}
 
 	@Override
 	public Response updateContract(ContractDto contractDto) {
 		ActionStatus result = new ActionStatus();
 		 try {
-			 contractApi.updateContract(contractDto);;
+			 contractApi.updateContract(contractDto);
 	            return Response.ok(result).build();
 	        } catch (MeveoApiException e) {
 			       return errorResponse(e, result);
@@ -80,7 +79,7 @@ public class ContractRsImpl  extends BaseRs implements ContractRs {
 	}
 
 	@Override
-	public Response updateStatus(String contractCode, ContractStatusEnum status) {
+	public Response updateStatus(String contractCode, String status) {
 		ActionStatus result = new ActionStatus();
 		try {
 			contractApi.updateStatus(contractCode, status);
@@ -116,12 +115,12 @@ public class ContractRsImpl  extends BaseRs implements ContractRs {
 	@Override
 	public Response updateContractLine(ContractItemDto contractItemDto) {
 		ActionStatus result = new ActionStatus();
-		 try {
-			 contractApi.updateContractLine(contractItemDto);;
-	            return Response.ok(result).build();
-	        } catch (MeveoApiException e) {
-			       return errorResponse(e, result);
-	        }
+		try {
+			contractApi.updateContractLine(contractItemDto);
+			return Response.ok(result).build();
+		} catch (MeveoApiException e) {
+			return errorResponse(e, result);
+		}
 	}
 
 	@Override

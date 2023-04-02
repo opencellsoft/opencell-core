@@ -33,6 +33,7 @@ public class ReportQueryMapper extends ResourceMapper<org.meveo.apiv2.report.Rep
             ofNullable(entity.getFields()).ifPresent(fields -> builder.fields(fields));
             ofNullable(entity.getFilters()).ifPresent(filters -> builder.filters(filters));
             ofNullable(entity.getAliases()).ifPresent(aliases -> builder.aliases(aliases));
+            ofNullable(entity.getAdvancedQuery()).ifPresent(aq -> builder.advancedQuery(aq));
             return builder()
                     .from(builder.build())
                     .id(entity.getId())
@@ -53,11 +54,12 @@ public class ReportQueryMapper extends ResourceMapper<org.meveo.apiv2.report.Rep
         reportQuery.setDescription(resource.getQueryDescription());
         reportQuery.setVisibility(resource.getVisibility());
         reportQuery.setTargetEntity(resource.getTargetEntity());
-        reportQuery.setFields(resource.getFields());
+        reportQuery.setFields(resource.getGenericFields());
         reportQuery.setFilters(resource.getFilters());
         reportQuery.setSortBy(resource.getSortBy());
         reportQuery.setSortOrder(resource.getSortOrder());
         reportQuery.setAliases(resource.getAliases());
+        reportQuery.setAdvancedQuery(resource.getAdvancedQuery());
         return reportQuery;
     }
 

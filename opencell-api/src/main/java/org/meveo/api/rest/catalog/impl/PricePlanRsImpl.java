@@ -294,8 +294,8 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
     public Response create(String pricePlanMatrixCode, int pricePlanMatrixVersion, PricePlanMatrixColumnDto postData) {
         GetPricePlanMatrixColumnResponseDto response = new GetPricePlanMatrixColumnResponseDto();
         try {
-            PricePlanMatrixColumn pricePlanMatrixColumn = pricePlanMatrixColumnApi.create(pricePlanMatrixCode, pricePlanMatrixVersion, postData);
-            response.setPricePlanMatrixColumnDto(new PricePlanMatrixColumnDto(pricePlanMatrixColumn));
+            PricePlanMatrixColumnDto pricePlanMatrixColumn = pricePlanMatrixColumnApi.create(pricePlanMatrixCode, pricePlanMatrixVersion, postData);
+            response.setPricePlanMatrixColumnDto(pricePlanMatrixColumn);
             return Response.created(LinkGenerator.getUriBuilderFromResource(PricePlanRs.class, pricePlanMatrixColumn.getId()).build())
                     .entity(response)
                     .build();

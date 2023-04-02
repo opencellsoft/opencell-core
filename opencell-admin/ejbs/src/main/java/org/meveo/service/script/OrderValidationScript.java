@@ -99,6 +99,8 @@ public class OrderValidationScript extends Script {
             subscription.setPaymentMethod(order.getBillingAccount().getCustomerAccount().getPaymentMethods().get(0));
             subscription.setCode(subscription.getSeller().getCode() + "_" + subscription.getUserAccount().getCode() + "_" + offer.getId());
             subscription.setOrder(order);
+            subscription.setContract((offer.getContract() != null)? offer.getContract() : order.getContract());
+
             commercialOrderService.processSubscriptionAttributes(subscription, offer.getOfferTemplate(), offer.getOrderAttributes());
             subscriptionService.create(subscription);
 
@@ -180,7 +182,6 @@ public class OrderValidationScript extends Script {
         for (RecurringChargeInstance recurringChargeInstance : recurringChargeInstances) {
             recurringChargeInstance.setSubscriptionDate(serviceInstance.getSubscriptionDate());
             recurringChargeInstance.setQuantity(serviceInstance.getQuantity());
-            recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
         }
         subscription.addServiceInstance(serviceInstance);
         return serviceInstance;
@@ -200,6 +201,7 @@ public class OrderValidationScript extends Script {
 			dpi.setCfValues(discountPlan.getCfValues());
 			dpi.setServiceInstance(serviceInstance);
 			discountPlanInstanceService.create(dpi, discountPlan);
+            serviceInstance.getDiscountPlanInstances().add(dpi);
 		}
 	}
 }

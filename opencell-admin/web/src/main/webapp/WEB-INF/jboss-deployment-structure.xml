@@ -15,6 +15,7 @@
 <!--         </exclusions> -->
 		<exclusions>
 			<module name="org.apache.logging.log4j.api" />
+			<module name="com.google.code.gson" />
 		</exclusions>
         <dependencies>
 <!--           <module name="org.jboss.resteasy.resteasy-jackson2-provider" services="import" /> -->
@@ -25,7 +26,7 @@
           <module name="com.fasterxml.jackson.core.jackson-annotations"/> 
           <module name="com.fasterxml.jackson.dataformat.jackson-dataformat-yaml" />   
           <module name="com.google.guava" />     
-<!--           <module name="org.apache.commons.io"/> -->
+          <module name="org.apache.commons.io"/>
           <module name="org.apache.commons.collections"/>
           <module name="org.apache.commons.codec"/>
           <module name="org.apache.commons.beanutils"/>       
@@ -37,10 +38,6 @@
           <module name="org.joda.time" />
           <module name="org.jboss.as.controller" />
           <module name="org.jboss.as.server" />
-          <module name="org.eclipse.microprofile.metrics.api" />
-          <module name="org.keycloak.keycloak-core" />        
-          <module name="org.keycloak.keycloak-authz-client" services="import"/>   
-          <module name="com.google.code.gson" />
           <module name="org.jaxen" />
         </dependencies>          
 	</deployment>

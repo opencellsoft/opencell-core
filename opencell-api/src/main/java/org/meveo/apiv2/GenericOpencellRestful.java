@@ -54,6 +54,7 @@ import org.meveo.apiv2.customtable.CustomTableResourceImpl;
 import org.meveo.apiv2.document.DocumentResourceImpl;
 import org.meveo.apiv2.dunning.action.DunningActionImpl;
 import org.meveo.apiv2.dunning.impl.CollectionPlanStatusResourceImpl;
+import org.meveo.apiv2.dunning.impl.CustomerBalanceResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningAgentResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningCollectionPlanResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningLevelResourceImpl;
@@ -62,6 +63,7 @@ import org.meveo.apiv2.dunning.impl.DunningPaymentRetryResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningPolicyResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningSettingsResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningStopReasonsResourceImpl;
+import org.meveo.apiv2.dunning.resource.CustomerBalanceResource;
 import org.meveo.apiv2.dunning.template.DunningTemplateResourceImpl;
 import org.meveo.apiv2.export.ImportExportResourceImpl;
 import org.meveo.apiv2.finance.impl.ReportingResourceImpl;
@@ -112,15 +114,13 @@ public class GenericOpencellRestful extends Application {
     private static String GENERIC_API_REQUEST_LOGGING_CONFIG;
     private static boolean GENERIC_API_REQUEST_EXTRACT_LIST;
     public static List<Map<String, String>> VERSION_INFO = new ArrayList<>();
-    public static Map<String, List<String>> ENTITIES_MAP = new HashMap<>();
+    public static List<Class> ENTITIES_LIST = new ArrayList<>();
     public static long API_LIST_DEFAULT_LIMIT;
 
     @Inject
     protected Logger log;
     @Inject
     private ParamBeanFactory paramBeanFactory;
-
-    public static OpenAPI openAPIv2;
 
     @PostConstruct
     public void init() {
@@ -129,7 +129,6 @@ public class GenericOpencellRestful extends Application {
         GENERIC_API_REQUEST_EXTRACT_LIST = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty(GENERIC_API_REQUEST_EXTRACT_LIST_CONFIG_KEY, "true"));
         loadVersionInformation();
         loadEntitiesList();
-        loadOpenAPI();
     }
 
     @Override
@@ -158,7 +157,7 @@ public class GenericOpencellRestful extends Application {
                 OpenOrderQuoteResourceImpl.class, CpqQuoteResourceImpl.class, CommercialOrderResourceImpl.class,
                 SearchPriceLineByAttributeResourceImpl.class, InvoiceLinesResourceImpl.class, CpqContractResourceImpl.class, OpenOrderResourceImpl.class,
                 ContactCategoryResourceImpl.class, WalletOperationResourceImpl.class, InvoiceValidationRulesResourceImpl.class, InternationalSettingsResourceImpl.class, 
-                CustomTableResourceImpl.class).collect(Collectors.toSet());
+                CustomTableResourceImpl.class, CustomerBalanceResourceImpl.class).collect(Collectors.toSet());
         if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
             resources.add(GenericApiLoggingFilter.class);
             log.info(
@@ -193,30 +192,16 @@ public class GenericOpencellRestful extends Application {
                 }
             });
         } catch (IOException e) {
-            log.warn("There was a problem loading version information");
-            log.error("error = {}", e.getMessage(), e);
+            log.error("There was a problem loading version information", e);
         }
     }
 
     private void loadEntitiesList() {
-        List<String> listEntities = new ArrayList<>();
+        List<Class> listEntities = new ArrayList<>();
         for (Map.Entry<String, Class> entry : GenericHelper.entitiesByName.entrySet()) {
-            listEntities.add(entry.getValue().getSimpleName());
+            ENTITIES_LIST.add(entry.getValue());
         }
-        ENTITIES_MAP.put("entities", listEntities);
-    }
 
-    private void loadOpenAPI() {
-        try {
-            OpenApiContext ctx = new JaxrsOpenApiContextBuilder<>()
-                    .ctxId("apiv2")
-                    .configLocation("/openapi-configuration-apiv2.json")
-                    .buildContext(true);
-
-            openAPIv2 = ctx.read();
-        } catch (OpenApiConfigurationException e) {
-            log.error("OpenApiConfigurationException : {}", e.getMessage());
-        }
     }
 
     public boolean shouldExtractList() {

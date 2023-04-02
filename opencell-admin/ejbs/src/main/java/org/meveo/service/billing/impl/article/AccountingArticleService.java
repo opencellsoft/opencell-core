@@ -28,6 +28,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvalidELException;
+import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.ParamBean;
@@ -174,14 +175,16 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			
 		});
 		if (attributeMappingLineMatch.getFullMatchsArticle().size() > 1) {
-			throw new ValidationException("More than one accounting article found for product " + product.getId() + " and charge template " + chargeTemplate.getId());
+			throw new RatingException("More than one accounting article found for product " + product.getId() + " and charge template " + chargeTemplate.getId());
 		}
 		AccountingArticle result = null;
 		if(attributeMappingLineMatch.getFullMatchsArticle().size() == 1) {
 			result = attributeMappingLineMatch.getFullMatchsArticle().iterator().next();
 		} else {
+			ParamBean paramBean = ParamBean.getInstance();
+			String defaultArticle = paramBean.getProperty("default.article", "ART-STD");
 			ArticleMappingLine bestMatch = attributeMappingLineMatch.getBestMatch();
-			result = bestMatch != null ? bestMatch.getAccountingArticle() : findByCode("ART-STD", Arrays.asList("taxClass"));
+			result = bestMatch != null ? bestMatch.getAccountingArticle() : findByCode(defaultArticle, Arrays.asList("taxClass"));
 		}
 		if(result != null) {
 			Hibernate.initialize(result);
@@ -274,7 +277,6 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 	}
 
 	@SuppressWarnings("rawtypes")
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public AccountingArticle getAccountingArticleByChargeInstance(ChargeInstance chargeInstance, WalletOperation walletOperation) throws InvalidELException, ValidationException {
         if (chargeInstance == null) {
             return null;

@@ -25,17 +25,16 @@ public enum MeveoJobCategoryEnum implements JobCategoryEnum {
     RATING(1, "jobCategoryEnum.rating"),
     INVOICING(2, "jobCategoryEnum.invoicing"),
     IMPORT_HIERARCHY(3, "jobCategoryEnum.importHierarchy"),
-    DWH(4, "jobCategoryEnum.dwh"),
-    ACCOUNT_RECEIVABLES(5, "jobCategoryEnum.accountReceivables"),
-    WALLET(6, "jobCategoryEnum.wallet"),
-    UTILS(7, "jobCategoryEnum.utils"),
-    MEDIATION(8, "jobCategoryEnum.mediation"),
-    PAYMENT(9, "jobCategoryEnum.payment"),
-    REPORTING_QUERY(10, "jobCategoryEnum.reporting_query"),
-    ACCOUNTING(11, "jobCategoryEnum.accounting"),
-    DUNNING(12, "jobCategoryEnum.dunning"),
-    ORDERING(13, "jobCategoryEnum.ordering"),
-    MASSADJUSTMENT(14, "jobCategoryEnum.Mass_Adjustment");
+    ACCOUNT_RECEIVABLES(4, "jobCategoryEnum.accountReceivables"),
+    WALLET(5, "jobCategoryEnum.wallet"),
+    UTILS(6, "jobCategoryEnum.utils"),
+    MEDIATION(7, "jobCategoryEnum.mediation"),
+    PAYMENT(8, "jobCategoryEnum.payment"),
+    REPORTING_QUERY(9, "jobCategoryEnum.reporting_query"),
+    ACCOUNTING(10, "jobCategoryEnum.accounting"),
+    DUNNING(11, "jobCategoryEnum.dunning"),
+    ORDERING(12, "jobCategoryEnum.ordering"),
+    MASSADJUSTMENT(13, "jobCategoryEnum.Mass_Adjustment");
 
     private Integer id;
     private String label;

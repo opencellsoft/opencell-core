@@ -19,7 +19,7 @@ public class QuoteOfferMapper extends ResourceMapper<org.meveo.apiv2.quote.Quote
 				.billableAccount(createResource(entity.getBillableAccount()))
 				.quoteVersion(createResource(entity.getQuoteVersion()))
 				.quoteLot(createResource(entity.getQuoteLot()))
-				.contractCode(entity.getContractCode())
+				.contractCode(entity.getContract() != null ? entity.getContract().getCode() : null)
 				.position(entity.getPosition())
 				.sequence(entity.getSequence())
 				.quoteProduct(entity.getQuoteProduct().stream().map(qp -> new QuoteProductDTO(qp, true)).collect(Collectors.toList()))

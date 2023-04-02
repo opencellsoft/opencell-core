@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -92,7 +93,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             PricePlanMatrix ppm = pricePlanMatrixService.findByCode(pricePlanMatrixCode);
             if (ppm != null && ppm.getContractItems()!=null && ppm.getContractItems().size() > 0) {
                 Contract contract = ppm.getContractItems().get(0).getContract();
-                if (ContractStatusEnum.DRAFT.equals(contract.getStatus())) {
+                if (ContractStatusEnum.DRAFT.toString().equals(contract.getStatus())) {
                     pricePlanMatrixVersionService.removePriceMatrixVersionOnlyNotClosed(pricePlanMatrixVersion);
                 }
                 else {
@@ -113,7 +114,25 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         String pricePlanMatrixCode = checkPricePlanMatrixVersion(pricePlanMatrixVersionDto);
         PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionDto.getVersion()==null ? null: pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixCode, pricePlanMatrixVersionDto.getVersion());
         if (pricePlanMatrixVersion == null) {
+            final DatePeriod validity = pricePlanMatrixVersionDto.getValidity();
+        	if(validity!=null) {
+                Date from = validity.getFrom();
+                Date to = validity.getTo();
+                if(from!=null && to!=null && !to.after(from)) {
+                    throw new InvalidParameterException("Invalid validity period, the end date must be greather than the start date");
+                }
+            }
             pricePlanMatrixVersion = populatePricePlanMatrixVersion(new PricePlanMatrixVersion(), pricePlanMatrixVersionDto, VersionStatusEnum.DRAFT, Calendar.getInstance().getTime());
+            AtomicReference<PricePlanMatrixVersion> parameter = new AtomicReference<>(pricePlanMatrixVersion);
+            pricePlanMatrixVersion.getPricePlanMatrix().getVersions().stream().filter(ppmv -> ppmv.getId() != null)
+            .forEach(ppmv -> {
+                if(ppmv.getValidity() != null && ppmv.getStatus().equals(VersionStatusEnum.PUBLISHED) && ppmv.getValidity().isCorrespondsToPeriod(parameter.get().getValidity(), false)) {
+                    var formatter = new SimpleDateFormat("dd/MM/yyyy");
+                    String eFrom = ppmv.getValidity().getFrom() != null ? formatter.format(ppmv.getValidity().getFrom()) : "";
+                    String eTo = ppmv.getValidity().getTo() != null ? formatter.format(ppmv.getValidity().getTo()) : "";
+                    throw new MeveoApiException("The current period is overlapping date with [" + eFrom + " - "+ eTo +"]");
+                }
+            });
             pricePlanMatrixVersionService.create(pricePlanMatrixVersion);
         } else {
             throw new MeveoApiException("PricePlanMatrixVersion[code=" + pricePlanMatrixVersionDto.getLabel() + ",version=" + pricePlanMatrixVersionDto.getVersion() + "] already exists");
@@ -126,19 +145,26 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
     public PricePlanMatrixVersion updatePricePlanMatrixVersion(PricePlanMatrixVersionDto pricePlanMatrixVersionDto) throws MeveoApiException {
         String pricePlanMatrixCode = checkPricePlanMatrixVersion(pricePlanMatrixVersionDto);
         final DatePeriod validity = pricePlanMatrixVersionDto.getValidity();
+        PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixCode, pricePlanMatrixVersionDto.getVersion());
         if(validity!=null) {
             Date from = validity.getFrom();
             Date to = validity.getTo();
-            if(from!=null && to!=null && to.before(from)) {
+            if(from!=null && to!=null && !to.after(from)) {
                 throw new InvalidParameterException("Invalid validity period, the end date must be greather than the start date");
             }
+            
+            pricePlanMatrixVersion.getPricePlanMatrix().getVersions().stream().filter(ppmv -> pricePlanMatrixVersion.getId() != ppmv.getId())
+            .forEach(ppmv -> {
+                if(ppmv.getValidity() != null && ppmv.getStatus().equals(VersionStatusEnum.PUBLISHED) && ppmv.getValidity().isCorrespondsToPeriod(pricePlanMatrixVersion.getValidity(), false)) {
+                    var formatter = new SimpleDateFormat("dd/MM/yyyy");
+                    String eFrom = ppmv.getValidity().getFrom() != null ? formatter.format(ppmv.getValidity().getFrom()) : "";
+                    String eTo = ppmv.getValidity().getTo() != null ? formatter.format(ppmv.getValidity().getTo()) : "";
+                    throw new MeveoApiException("The current period is overlapping date with [" + eFrom + " - "+ eTo +"]");
+                }
+            });
         }
-        PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixCode, pricePlanMatrixVersionDto.getVersion());
         if(VersionStatusEnum.PUBLISHED.equals(pricePlanMatrixVersion.getStatus())){
         	if(validity != null && validity.getTo() != null) {
-        		if(validity.getTo().before(org.meveo.model.shared.DateUtils.setDateToEndOfDay(new Date()))) {
-        			throw new InvalidParameterException("ending date must be greater than today");
-        		}
         		pricePlanMatrixVersionService.updatePublishedPricePlanMatrixVersion(pricePlanMatrixVersion, validity.getTo());
         	}
         } else {
@@ -398,7 +424,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             throw new BusinessException("Converted price plan version already exist for Price Plan " + ppmv.getId() + " and currency " + tradingCurrency.getCurrencyCode());
         }
 
-        if(ppmv.getPrice()!= null && dtoData.getRate() != null && dtoData.getConvertedPrice() != null && !dtoData.getRate().multiply(ppmv.getPrice()).equals(dtoData.getConvertedPrice())) {
+        if(ppmv.getPrice()!= null && dtoData.getRate() != null && dtoData.getConvertedPrice() != null && dtoData.getRate().multiply(ppmv.getPrice()).compareTo(dtoData.getConvertedPrice()) != 0) {
         	throw new BusinessException("The converted price is inconsistent with the price plan version price and the rate");
         }
 
@@ -436,6 +462,10 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             throw new BusinessApiException("Converted price plan cannot be update for published price plan matrix version");
         }
 
+        if(ppmv.getPrice()!= null && dtoData.getRate() != null && dtoData.getConvertedPrice() != null && dtoData.getRate().multiply(ppmv.getPrice()).compareTo(dtoData.getConvertedPrice()) != 0) {
+        	throw new BusinessException("The converted price is inconsistent with the price plan version price and the rate");
+        }
+
         ConvertedPricePlanVersion cppv = ppmv.getConvertedPricePlanMatrixLines()
                 .stream()
                 .filter(e -> e.getId().equals(cppvId))
@@ -443,8 +473,9 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
                 .orElseThrow(() -> new EntityDoesNotExistsException("Converted PPV " + cppvId + " not found for price plan version " + ppmv.getId()));
 
         // Check if another cppv exists for the new currency
-        if(!cppv.getTradingCurrency().getCurrencyCode().equals(tradingCurrency.getCurrencyCode())
-                && convertedPricePlanVersionService.findByPricePlanVersionAndCurrency(ppmv, tradingCurrency) != null) {
+        ConvertedPricePlanVersion existingCPPV = convertedPricePlanVersionService.findByPricePlanVersionAndCurrency(ppmv, tradingCurrency);
+		if(!cppv.getTradingCurrency().getCurrencyCode().equals(tradingCurrency.getCurrencyCode())
+                && existingCPPV != null && existingCPPV.getId().equals(cppv.getId())) {
             throw new BusinessException("Converted price plan version already exist for Price Plan " + ppmv.getId() + " and currecy " + tradingCurrency.getCurrencyCode());
         }
 

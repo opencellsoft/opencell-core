@@ -2,6 +2,7 @@ package org.meveo.model.billing;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -59,15 +60,15 @@ public class LinkedInvoice implements IEntity, Serializable {
     @Enumerated(EnumType.STRING)
     private InvoiceTypeEnum type;
 
-    @Column(name = "converted_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedAmount;
+    @Column(name = "transactional_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalAmount;
 
     @PrePersist
     @PreUpdate
     public void prePersistOrUpdate() {
-        if (this.convertedAmount == null) {
+        if (this.transactionalAmount != null) {
             BigDecimal appliedRate = getInvoice().getLastAppliedRate();
-            this.convertedAmount = appliedRate != null ? this.amount.multiply(appliedRate) : ZERO;
+            this.amount = this.transactionalAmount.divide(appliedRate, 2, RoundingMode.HALF_UP);
         }
     }
 
@@ -78,21 +79,31 @@ public class LinkedInvoice implements IEntity, Serializable {
     }
 
 
-    public LinkedInvoice(Invoice id, Invoice linkedInvoiceValue, BigDecimal amount, InvoiceTypeEnum type) {
+    public LinkedInvoice(Invoice id, Invoice linkedInvoiceValue, BigDecimal transactionalAmount, InvoiceTypeEnum type) {
         super();
         this.id = id;
         this.linkedInvoiceValue = linkedInvoiceValue;
-        this.amount = amount;
+        this.transactionalAmount = transactionalAmount;
         this.type = type;
     }
 
+    public LinkedInvoice(Invoice id, Invoice linkedInvoiceValue, BigDecimal amount, BigDecimal transactionalAmount, InvoiceTypeEnum type) {
+        super();
+        this.id = id;
+        this.linkedInvoiceValue = linkedInvoiceValue;
+        this.transactionalAmount = transactionalAmount;
+        this.amount = amount;
+        this.type = type;
+    }
     
     public LinkedInvoice() {
         
     }
+    
     public Long getId() {
-        return this.id!=null? this.id.getId() : null;
-  }
+        return this.id!=null? this.id.getId() : null;  
+    }
+    
     public Invoice getInvoice() {
         return  this.id;
     }
@@ -125,12 +136,12 @@ public class LinkedInvoice implements IEntity, Serializable {
         this.type = type;
     }
 
-    public BigDecimal getConvertedAmount() {
-        return convertedAmount;
+    public BigDecimal getTransactionalAmount() {
+        return transactionalAmount;
     }
 
-    public void setConvertedAmount(BigDecimal convertedAmount) {
-        this.convertedAmount = convertedAmount;
+    public void setTransactionalAmount(BigDecimal transactionalAmount) {
+        this.transactionalAmount = transactionalAmount;
     }
 
 

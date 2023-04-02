@@ -1,5 +1,6 @@
 package org.meveo.api.dto.payment;
 
+import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
  * The Class HostedCheckoutInput.
@@ -55,6 +56,11 @@ public class HostedCheckoutInput {
      * The return url.
      */
     String returnUrl;
+    
+    /**
+     * The cancel url.
+     */
+    String cancelUrl;
 
     /**
      * The automaticReturnUrl (currently only for ATOS Wallet).
@@ -95,6 +101,9 @@ public class HostedCheckoutInput {
      * Default value is false.
      */
     boolean isOneShotPayment = false;
+    
+    
+    PaymentMethodEnum paymentMethodType = PaymentMethodEnum.CARD;
 
     /**
      * Gets the gateway payment name.
@@ -399,4 +408,23 @@ public class HostedCheckoutInput {
 	public void setOneShotPayment(boolean isOneShotPayment) {
 		this.isOneShotPayment = isOneShotPayment;
 	}
+	
+	public String getCancelUrl() {
+		return cancelUrl;
+	}
+
+	public void setCancelUrl(String cancelUrl) {
+		this.cancelUrl = cancelUrl;
+	}
+
+	public PaymentMethodEnum getPaymentMethodType() {
+		return paymentMethodType;
+	}
+
+	public void setPaymentMethodType(PaymentMethodEnum paymentMethodType) {
+		this.paymentMethodType = paymentMethodType;
+	}
+	
+	
+	
 }

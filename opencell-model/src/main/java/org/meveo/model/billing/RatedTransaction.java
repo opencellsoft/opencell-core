@@ -175,7 +175,8 @@ import org.meveo.model.tax.TaxClass;
 
         @NamedQuery(name = "RatedTransaction.sumPositiveRTByBillingRun", query = "select sum(r.amountWithoutTax), sum(r.amountWithTax), r.subscription.id, r.infoOrder.order.id,  r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id "
                 + "FROM RatedTransaction r where r.billingRun.id=:billingRunId and r.amountWithoutTax > 0 and r.status='BILLED' group by r.subscription.id, r.infoOrder.order.id, r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id"),
-        @NamedQuery(name = "RatedTransaction.unInvoiceByInvoiceIds", query = "update RatedTransaction r set r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.invoice.id IN (:invoiceIds)"),
+        @NamedQuery(name = "RatedTransaction.unInvoiceByInvoiceIds", query = "update RatedTransaction r set r.status='OPEN', r.updated = :now , r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null where r.invoice.id IN (:invoiceIds)"),
+        
         @NamedQuery(name = "RatedTransaction.deleteSupplementalRTByInvoiceIds", query = "DELETE from RatedTransaction r WHERE r.type='MINIMUM' and r.invoice.id IN (:invoicesIds)"),
         @NamedQuery(name = "RatedTransaction.detachRTsFromSubscription", query = "UPDATE RatedTransaction set serviceInstance = null where serviceInstance.id IN (SELECT id from ServiceInstance where subscription=:subscription)"),
         @NamedQuery(name = "RatedTransaction.detachRTsFromInvoice", query = "UPDATE RatedTransaction set invoice = null, invoiceAgregateF = null where invoiceAgregateF.id IN (SELECT id from SubCategoryInvoiceAgregate where invoice=:invoice)"),
@@ -187,7 +188,9 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.linkRTWithInvoice", query = "UPDATE RatedTransaction rt set rt.invoice = :invoice, rt.billingRun = :billingRun, rt.status = 'BILLED', rt.updated = :now WHERE rt.invoiceLine.id in :ids"),
         @NamedQuery(name = "RatedTransaction.detachFromInvoiceLines", query = "UPDATE RatedTransaction rt set rt.invoiceLine = null, rt.status = 'OPEN' WHERE rt.invoiceLine.id in :ids"),
         @NamedQuery(name = "RatedTransaction.detachFromInvoices", query = "UPDATE RatedTransaction r SET r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null WHERE r.invoice.id IN :ids"),
-        @NamedQuery(name = "RatedTransaction.reopenRatedTransactions", query = "update RatedTransaction r set r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null, r.invoiceLine=null where r.id IN (:rtIds)")})
+        @NamedQuery(name = "RatedTransaction.reopenRatedTransactions", query = "update RatedTransaction r set r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null, r.invoiceLine=null where r.id IN (:rtIds)"),
+        @NamedQuery(name = "RatedTransaction.updatePendingDuplicate", query = "update RatedTransaction r set r.pendingDuplicates= r.pendingDuplicates + 1, r.pendingDuplicatesToNegate= r.pendingDuplicatesToNegate + :pendingDuplicatesToNegate where r.id in (:rtI)")
+        })
 
 @NamedNativeQueries({
         @NamedNativeQuery(name = "RatedTransaction.massUpdateWithDiscountedRT", query = "update {h-schema}billing_rated_transaction rt set discounted_ratedtransaction_id=discountedWO.rated_transaction_id , updated=now() from {h-schema}billing_wallet_operation discountWO, {h-schema}billing_wallet_operation discountedWO where discountWO.rated_transaction_id=rt.id and discountWO.discounted_wallet_operation_id=discountedWO.id and rt.status='OPEN' and rt.discounted_ratedtransaction_id is null and discountWO.id>=:minId and discountWO.id<=:maxId"),
@@ -200,6 +203,10 @@ import org.meveo.model.tax.TaxClass;
 public class RatedTransaction extends BaseEntity implements ISearchable, ICustomFieldEntity, IInvoiceable {
 
     private static final long serialVersionUID = 1L;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created")
+    private Date created;
 
     /**
      * Wallet instance associated to rated transaction
@@ -628,12 +635,48 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     @JoinColumn(name = "rules_contract_id")
     private Contract rulesContract;
     
+    @ManyToOne
+    @JoinColumn(name = "origin_ratedtransaction_id")
+    private RatedTransaction originRatedTransaction;
+    
+    @Column(name = "use_specific_price_conversion")
+    @Type(type = "numeric_boolean")
+    private boolean useSpecificPriceConversion;
+    
+    @Column(name = "converted_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedAmountWithoutTax;
+    
+    @Column(name = "converted_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedAmountWithTax;
+    
+    @Column(name = "converted_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedAmountTax;
+    
+    @Column(name = "converted_unit_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedUnitAmountWithoutTax;
+    
+    @Column(name = "converted_unit_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedUnitAmountWithTax;
+    
+    @Column(name = "converted_unit_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedUnitAmountTax;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trading_currency_id")
+    private TradingCurrency tradingCurrency;
+    
     /**
   	 * 
   	 *filled only for price lines related to applied discounts, and contains the application sequence composed by the concatenation of the DP sequence and DPI sequence
   	 */
   	@Column(name = "sequence")
   	private Integer sequence;
+
+    @Column(name = "pending_duplicates")
+    private Integer pendingDuplicates;
+
+    @Column(name = "pending_duplicates_to_negate")
+    private Integer pendingDuplicatesToNegate;
     
     public RatedTransaction() {
         super();
@@ -794,6 +837,62 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.rulesContract = walletOperation.getRulesContract();
     }
 
+
+    public RatedTransaction(RatedTransaction rateTransactionToDuplicate) {
+
+        super();
+        this.code = rateTransactionToDuplicate.getCode();
+        this.description = rateTransactionToDuplicate.getDescription();
+        this.chargeInstance = rateTransactionToDuplicate.getChargeInstance();
+        this.usageDate = rateTransactionToDuplicate.getUsageDate();
+        this.unitAmountWithoutTax = rateTransactionToDuplicate.getUnitAmountWithoutTax();
+        this.unitAmountWithTax = rateTransactionToDuplicate.getUnitAmountWithTax();
+        this.unitAmountTax = rateTransactionToDuplicate.getUnitAmountTax();
+        this.quantity = rateTransactionToDuplicate.getQuantity();
+        this.amountWithoutTax = rateTransactionToDuplicate.getAmountWithoutTax();
+        this.amountWithTax = rateTransactionToDuplicate.getAmountWithTax();
+        this.inputQuantity = rateTransactionToDuplicate.getInputQuantity();
+        this.rawAmountWithTax = rateTransactionToDuplicate.getRawAmountWithTax();
+        this.rawAmountWithoutTax = rateTransactionToDuplicate.getRawAmountWithoutTax();
+        this.amountTax = rateTransactionToDuplicate.getAmountTax();
+        this.wallet = rateTransactionToDuplicate.getWallet();
+        this.userAccount = rateTransactionToDuplicate.getUserAccount();
+        this.billingAccount = rateTransactionToDuplicate.getBillingAccount();
+        this.seller = rateTransactionToDuplicate.getSeller();
+        this.parameter1 = rateTransactionToDuplicate.getParameter1();
+        this.parameter2 = rateTransactionToDuplicate.getParameter2();
+        this.parameter3 = rateTransactionToDuplicate.getParameter3();
+        this.parameterExtra = rateTransactionToDuplicate.getParameterExtra();
+        this.orderNumber = rateTransactionToDuplicate.getOrderNumber();
+        this.subscription = rateTransactionToDuplicate.getSubscription();
+        this.priceplan = rateTransactionToDuplicate.getPriceplan();
+        this.offerTemplate = rateTransactionToDuplicate.getOfferTemplate();
+        this.startDate = rateTransactionToDuplicate.getStartDate();
+        this.endDate = rateTransactionToDuplicate.getEndDate();
+        this.tax = rateTransactionToDuplicate.getTax();
+        this.taxPercent = rateTransactionToDuplicate.getTaxPercent();
+        this.serviceInstance = rateTransactionToDuplicate.getServiceInstance();
+        this.status = RatedTransactionStatusEnum.OPEN;
+        this.updated = new Date();
+        this.taxClass = rateTransactionToDuplicate.getTaxClass();
+        this.inputUnitOfMeasure = rateTransactionToDuplicate.getInputUnitOfMeasure();
+        this.ratingUnitOfMeasure = rateTransactionToDuplicate.getRatingUnitOfMeasure();
+        this.accountingCode = rateTransactionToDuplicate.getAccountingCode();
+        this.accountingArticle = rateTransactionToDuplicate.getAccountingArticle();
+        this.infoOrder = rateTransactionToDuplicate.getOrderInfo();
+        this.invoicingDate = rateTransactionToDuplicate.getInvoicingDate();
+        this.unityDescription = rateTransactionToDuplicate.getUnityDescription();
+        this.ratingUnitDescription = rateTransactionToDuplicate.getRatingUnitDescription();
+        this.sortIndex = rateTransactionToDuplicate.getSortIndex();
+        this.cfValues = rateTransactionToDuplicate.getCfValues();
+        this.discountPlan = rateTransactionToDuplicate.getDiscountPlan();
+        this.discountPlanItem = rateTransactionToDuplicate.getDiscountPlanItem();
+        this.discountPlanType = rateTransactionToDuplicate.getDiscountPlanType();
+        this.discountValue = rateTransactionToDuplicate.getDiscountValue();
+        this.sequence = rateTransactionToDuplicate.getSequence();
+        this.rulesContract = rateTransactionToDuplicate.getRulesContract();
+    }
+    
     public WalletInstance getWallet() {
         return wallet;
     }
@@ -1581,6 +1680,154 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
 
     public void setRulesContract(Contract rulesContract) {
         this.rulesContract = rulesContract;
-    }	
-	
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+	/**
+	 * @return the originRatedTransaction
+	 */
+	public RatedTransaction getOriginRatedTransaction() {
+		return originRatedTransaction;
+	}
+
+	/**
+	 * @param originRatedTransaction the originRatedTransaction to set
+	 */
+	public void setOriginRatedTransaction(RatedTransaction originRatedTransaction) {
+		this.originRatedTransaction = originRatedTransaction;
+	}
+
+    /**
+	 * @return the useSpecificPriceConversion
+	 */
+	public boolean isUseSpecificPriceConversion() {
+		return useSpecificPriceConversion;
+	}
+
+    /**
+	 * @param useSpecificPriceConversion the useSpecificPriceConversion to set
+	 */
+	public void setUseSpecificPriceConversion(boolean useSpecificPriceConversion) {
+		this.useSpecificPriceConversion = useSpecificPriceConversion;
+	}
+
+    /**
+	 * @return the convertedAmountWithoutTax
+	 */
+	public BigDecimal getConvertedAmountWithoutTax() {
+		return convertedAmountWithoutTax != null ? convertedAmountWithoutTax : amountWithoutTax;
+	}
+
+    /**
+	 * @param convertedAmountWithoutTax the convertedAmountWithoutTax to set
+	 */
+	public void setConvertedAmountWithoutTax(BigDecimal convertedAmountWithoutTax) {
+		this.convertedAmountWithoutTax = convertedAmountWithoutTax;
+	}
+
+    /**
+	 * @return the convertedAmountWithTax
+	 */
+	public BigDecimal getConvertedAmountWithTax() {
+		return convertedAmountWithTax != null ? convertedAmountWithTax : amountWithTax;
+	}
+
+    /**
+	 * @param convertedAmountWithTax the convertedAmountWithTax to set
+	 */
+	public void setConvertedAmountWithTax(BigDecimal convertedAmountWithTax) {
+		this.convertedAmountWithTax = convertedAmountWithTax;
+	}
+
+    /**
+	 * @return the convertedAmountTax
+	 */
+	public BigDecimal getConvertedAmountTax() {
+		return convertedAmountTax != null ? convertedAmountTax : amountTax;
+	}
+
+    /**
+	 * @param convertedAmountTax the convertedAmountTax to set
+	 */
+	public void setConvertedAmountTax(BigDecimal convertedAmountTax) {
+		this.convertedAmountTax = convertedAmountTax;
+	}
+
+    /**
+	 * @return the convertedUnitAmountWithoutTax
+	 */
+	public BigDecimal getConvertedUnitAmountWithoutTax() {
+		return convertedUnitAmountWithoutTax != null ? convertedUnitAmountWithoutTax : unitAmountWithoutTax;
+	}
+
+    /**
+	 * @param convertedUnitAmountWithoutTax the convertedUnitAmountWithoutTax to set
+	 */
+	public void setConvertedUnitAmountWithoutTax(BigDecimal convertedUnitAmountWithoutTax) {
+		this.convertedUnitAmountWithoutTax = convertedUnitAmountWithoutTax;
+	}
+
+    /**
+	 * @return the convertedUnitAmountWithTax
+	 */
+	public BigDecimal getConvertedUnitAmountWithTax() {
+		return convertedUnitAmountWithTax != null ? convertedUnitAmountWithTax : unitAmountWithTax;
+	}
+
+    /**
+	 * @param convertedUnitAmountWithTax the convertedUnitAmountWithTax to set
+	 */
+	public void setConvertedUnitAmountWithTax(BigDecimal convertedUnitAmountWithTax) {
+		this.convertedUnitAmountWithTax = convertedUnitAmountWithTax;
+	}
+
+    /**
+	 * @return the convertedUnitAmountTax
+	 */
+	public BigDecimal getConvertedUnitAmountTax() {
+		return convertedUnitAmountTax != null ? convertedUnitAmountTax : unitAmountTax;
+	}
+
+    /**
+	 * @param convertedUnitAmountTax the convertedUnitAmountTax to set
+	 */
+	public void setConvertedUnitAmountTax(BigDecimal convertedUnitAmountTax) {
+		this.convertedUnitAmountTax = convertedUnitAmountTax;
+	}
+
+    /**
+	 * @return the tradingCurrency
+	 */
+	public TradingCurrency getTradingCurrency() {
+		return tradingCurrency;
+	}
+
+    /**
+	 * @param tradingCurrency the tradingCurrency to set
+	 */
+	public void setTradingCurrency(TradingCurrency tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
+	}
+
+    public Integer getPendingDuplicates() {
+        return pendingDuplicates;
+    }
+
+    public void setPendingDuplicates(Integer pendingDuplicates) {
+        this.pendingDuplicates = pendingDuplicates;
+    }
+
+    public Integer getPendingDuplicatesToNegate() {
+        return pendingDuplicatesToNegate;
+    }
+
+    public void setPendingDuplicatesToNegate(Integer pendingDuplicatesToNegate) {
+        this.pendingDuplicatesToNegate = pendingDuplicatesToNegate;
+    }
 }

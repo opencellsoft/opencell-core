@@ -129,10 +129,10 @@ public class SubscriptionStatusJobBean extends IteratorBasedJobBean<Long> {
                         calendarDate = calendarRenew.nextCalendarDate(subscription.getSubscribedTillDate());
                     } else {
 						if (subscription.getSubscriptionRenewal().getRenewForUnit() == null ||
-								subscription.getSubscriptionRenewal().getRenewFor() == null) {
+								subscription.getSubscriptionRenewal().getRenewFor() == null || subscription.getSubscriptionRenewal().getRenewFor() == 0) {
 							log.error("Subscription is autoRenew with RenewalTermType equal to RECURRING, " +
-									"but has fields RenewForUnit and/or RenewFor set to NULL!");
-							throw new BusinessException("Subscription fields RenewForUnit and RenewFor shouldn't be set to NULL");
+									"but has fields RenewForUnit and/or RenewFor set to NULL or RenewFor equal to 0!");
+							throw new BusinessException("Subscription fields RenewForUnit and RenewFor shouldn't be set to NULL and RenewFor must be superior to 0");
 						}
                         calendar.setTime(subscription.getSubscribedTillDate());
                         calendar.add(subscription.getSubscriptionRenewal().getRenewForUnit().getCalendarField(), subscription.getSubscriptionRenewal().getRenewFor());

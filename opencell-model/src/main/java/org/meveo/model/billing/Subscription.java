@@ -63,6 +63,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Email;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -87,6 +88,7 @@ import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.OrderOffer;
+import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.crm.IInvoicingMinimumApplicable;
 import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.mediation.Access;
@@ -392,6 +394,9 @@ public class Subscription extends BusinessCFEntity implements IInvoicingMinimumA
     @MapKey(name = "code")
     Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contract_id")
+    private Contract contract;
     /**
      * Extra Rated transactions to reach minimum invoice amount per subscription
      */
@@ -463,9 +468,19 @@ public class Subscription extends BusinessCFEntity implements IInvoicingMinimumA
     private OrderOffer orderOffer;
     
     
-    @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, orphanRemoval = true, fetch = LAZY)
     private List<AttributeInstance> attributeInstances = new ArrayList<>();
 
+    
+
+    /**
+     * Usage charge instances related to subscription
+     */
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
+    @OrderBy("priority")
+    @Where(clause = "charge_type='U'")
+    private List<UsageChargeInstance> usageChargeInstances;
+    
     /**
      * This method is called implicitly by hibernate, used to enable
 	 * encryption for custom fields of this entity
@@ -1267,5 +1282,31 @@ public class Subscription extends BusinessCFEntity implements IInvoicingMinimumA
 	    YearMonth m2 = YearMonth.from(now.toInstant().atZone(ZoneOffset.UTC));
 		return Math.toIntExact(m1.until(m2, unit));
 	}
+
+	/**
+	 * @return the contract
+	 */
+	public Contract getContract() {
+		return contract;
+	}
+
+	/**
+	 * @param contract the contract to set
+	 */
+	public void setContract(Contract contract) {
+		this.contract = contract;
+	}
 	
+	/**
+	 * @return Usage charge instances related to subscription
+	 */
+	public List<UsageChargeInstance> getUsageChargeInstances() {
+        return usageChargeInstances;
+    }
+	/**
+	 * @param usageChargeInstances Usage charge instances related to subscription
+	 */
+	public void setUsageChargeInstances(List<UsageChargeInstance> usageChargeInstances) {
+        this.usageChargeInstances = usageChargeInstances;
+    }
 }

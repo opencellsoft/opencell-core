@@ -48,7 +48,7 @@ public class GDPRJob extends Job {
 
     @Override
     public JobCategoryEnum getJobCategory() {
-        return MeveoJobCategoryEnum.DWH;
+        return MeveoJobCategoryEnum.UTILS;
     }
 
 }

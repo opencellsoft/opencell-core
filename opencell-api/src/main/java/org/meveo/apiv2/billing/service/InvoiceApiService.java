@@ -31,6 +31,7 @@ import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.billing.*;
 import org.meveo.apiv2.billing.impl.InvoiceMapper;
 import org.meveo.apiv2.ordering.services.ApiService;
@@ -50,6 +51,7 @@ import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.LinkedInvoiceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.filter.FilterService;
+import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 
 public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 	
@@ -75,6 +77,9 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 
 	@Inject
 	private LinkedInvoiceService linkedInvoiceService;
+
+	@Inject
+	private FinanceSettingsService financeSettingsService;
 	
 	private List<String> fieldToFetch = asList("invoiceLines");
 
@@ -254,9 +259,14 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 		org.meveo.model.billing.InvoiceLine invoiceLine = invoiceLinesService.getInvoiceLineForUpdate(invoice, invoiceLineInput.getInvoiceLine(), lineId);
 		// Populate Custom fields
 		invoiceBaseApi.populateCustomFieldsForGenericApi(invoiceLineInput.getInvoiceLine().getCustomFields(), invoiceLine, false);
-		// Update Invoice Line
+		// for adjustment
+		invoiceLine = invoiceLinesService.adjustment(invoiceLine);
+        // Update Invoice Line
 		invoiceLinesService.update(invoiceLine);
+		invoiceService.getEntityManager().flush();
 		invoiceService.calculateInvoice(invoice);
+		BigDecimal lastApliedRate = invoiceService.getCurrentRate(invoice,invoice.getInvoiceDate());
+		invoiceService.refreshAdvanceInvoicesConvertedAmount(invoice,lastApliedRate);
 		invoiceService.updateBillingRunStatistics(invoice);
 	}
 
@@ -383,7 +393,9 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
             Date firstTransactionDate = invoice.getFirstTransactionDate() == null ? new Date(0) : invoice.getFirstTransactionDate();
             Date lastTransactionDate = invoice.getLastTransactionDate() == null ? invoice.getInvoicingDate() : invoice.getLastTransactionDate();
             List<RatedTransaction> RTs = ratedTransactionService.listRTsToInvoice(entity, firstTransactionDate, lastTransactionDate, invoice.getInvoicingDate(), ratedTransactionFilter, null);
-            billingAccountsAfter = ratedTransactionService.applyInvoicingRules(RTs);
+			if (financeSettingsService.isBillingRedirectionRulesEnabled()) {
+				billingAccountsAfter = ratedTransactionService.applyInvoicingRules(RTs);
+			}
         }
         
         List<Invoice> invoices = new ArrayList<>();
@@ -461,9 +473,6 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
     	    else {
     	        invoice.setLinkedInvoices(new HashSet<>());
     	    }
-    	    LinkedInvoice linkedInvoice = new LinkedInvoice(invoice, adjInvoice);
-			linkedInvoiceService.create(linkedInvoice);
-    	    invoice.getLinkedInvoices().add(linkedInvoice);
     	    invoiceService.update(invoice);
 	    }
 	    catch (Exception e) {

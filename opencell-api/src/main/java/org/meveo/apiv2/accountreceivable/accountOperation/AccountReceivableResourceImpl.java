@@ -1,6 +1,8 @@
 package org.meveo.apiv2.accountreceivable.accountOperation;
 
 import static javax.ws.rs.core.Response.Status.PRECONDITION_FAILED;
+import static org.meveo.api.dto.ActionStatusEnum.FAIL;
+import static org.meveo.api.MeveoApiErrorCodeEnum.DIFFERENT_CURRENCIES;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -13,6 +15,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
@@ -37,6 +40,9 @@ import org.meveo.service.payments.impl.AccountOperationService;
 
 public class AccountReceivableResourceImpl implements AccountReceivableResource {
 
+    @Inject
+    protected ResourceBundle resourceMessages;
+    
     @Inject
     private AccountOperationService accountOperationService;
 
@@ -171,7 +177,19 @@ public class AccountReceivableResourceImpl implements AccountReceivableResource 
                 matchingAO.getAccountOperations() == null || matchingAO.getAccountOperations().isEmpty()) {
             return Response.status(Response.Status.BAD_REQUEST).entity("No accountOperations with sequence passed for matching").build();
         }
-        MatchingReturnObject result = accountOperationServiceApi.matchOperations(matchingAO.getAccountOperations());
+        MatchingReturnObject result;
+        try{
+            result = accountOperationServiceApi.matchOperations(matchingAO.getAccountOperations());
+        }
+        catch(BusinessApiException e) {
+            ActionStatus resultActionStatus = new ActionStatus();
+            resultActionStatus.setStatus(FAIL);
+            resultActionStatus.setMessage(e.getMessage());
+            if (resourceMessages.getString("accountOperation.error.sameCurrency").equals(e.getMessage())) {
+                resultActionStatus.setErrorCode(DIFFERENT_CURRENCIES);
+            }
+            return Response.status(Response.Status.BAD_REQUEST).entity(resultActionStatus).build();
+        }
         return Response.status(Response.Status.OK).entity(result).build();
     }
 

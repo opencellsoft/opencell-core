@@ -72,6 +72,7 @@ import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.model.cpq.commercial.OrderInfo;
 import org.meveo.model.cpq.contract.Contract;
+import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
@@ -327,21 +328,21 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     /**
      * Additional rating parameter
      */
-    @Column(name = "parameter_1", length = 255)
+    @Column(name = "parameter_1")
     @Size(max = 255)
     private String parameter1;
 
     /**
      * Additional rating parameter
      */
-    @Column(name = "parameter_2", length = 255)
+    @Column(name = "parameter_2")
     @Size(max = 255)
     private String parameter2;
 
     /**
      * Additional rating parameter
      */
-    @Column(name = "parameter_3", length = 255)
+    @Column(name = "parameter_3")
     @Size(max = 255)
     private String parameter3;
 
@@ -376,7 +377,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     /**
      * Offer code
      */
-    @Column(name = "offer_code", length = 255)
+    @Column(name = "offer_code")
     @Size(max = 255, min = 1)
     protected String offerCode;
 
@@ -636,6 +637,39 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contract_id")
     private Contract contract;
+    
+    @Transient
+    private WalletOperation discountedWO;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contract_line_id")
+    private ContractItem contractLine;
+    
+    @Column(name = "use_specific_price_conversion")
+    @Type(type = "numeric_boolean")
+    private boolean useSpecificPriceConversion;
+    
+    @Column(name = "converted_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedAmountWithoutTax;
+    
+    @Column(name = "converted_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedAmountWithTax;
+    
+    @Column(name = "converted_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedAmountTax;
+    
+    @Column(name = "converted_unit_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedUnitAmountWithoutTax;
+    
+    @Column(name = "converted_unit_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedUnitAmountWithTax;
+    
+    @Column(name = "converted_unit_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedUnitAmountTax;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trading_currency_id")
+    private TradingCurrency tradingCurrency;
     
     /**
      * Constructor
@@ -1707,4 +1741,130 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 		this.contract = contract;
 	}
 
+	public WalletOperation getDiscountedWO() {
+		return discountedWO;
+	}
+
+	public void setDiscountedWO(WalletOperation discountedWO) {
+		this.discountedWO = discountedWO;
+	}
+
+    /**
+	 * @return the useSpecificPriceConversion
+	 */
+	public boolean isUseSpecificPriceConversion() {
+		return useSpecificPriceConversion;
+	}
+
+    /**
+	 * @param useSpecificPriceConversion the useSpecificPriceConversion to set
+	 */
+	public void setUseSpecificPriceConversion(boolean useSpecificPriceConversion) {
+		this.useSpecificPriceConversion = useSpecificPriceConversion;
+	}
+
+    /**
+	 * @return the convertedAmountWithoutTax
+	 */
+	public BigDecimal getConvertedAmountWithoutTax() {
+		return convertedAmountWithoutTax != null ? convertedAmountWithoutTax : amountWithoutTax;
+	}
+
+    /**
+	 * @param convertedAmountWithoutTax the convertedAmountWithoutTax to set
+	 */
+	public void setConvertedAmountWithoutTax(BigDecimal convertedAmountWithoutTax) {
+		this.convertedAmountWithoutTax = convertedAmountWithoutTax;
+	}
+
+    /**
+	 * @return the convertedAmountWithTax
+	 */
+	public BigDecimal getConvertedAmountWithTax() {
+		return convertedAmountWithTax != null ? convertedAmountWithTax : amountWithTax;
+	}
+
+    /**
+	 * @param convertedAmountWithTax the convertedAmountWithTax to set
+	 */
+	public void setConvertedAmountWithTax(BigDecimal convertedAmountWithTax) {
+		this.convertedAmountWithTax = convertedAmountWithTax;
+	}
+
+    /**
+	 * @return the convertedAmountTax
+	 */
+	public BigDecimal getConvertedAmountTax() {
+		return convertedAmountTax != null ? convertedAmountTax : amountTax;
+	}
+
+    /**
+	 * @param convertedAmountTax the convertedAmountTax to set
+	 */
+	public void setConvertedAmountTax(BigDecimal convertedAmountTax) {
+		this.convertedAmountTax = convertedAmountTax;
+	}
+
+    /**
+	 * @return the convertedUnitAmountWithoutTax
+	 */
+	public BigDecimal getConvertedUnitAmountWithoutTax() {
+		return convertedUnitAmountWithoutTax != null ? convertedUnitAmountWithoutTax : unitAmountWithoutTax;
+	}
+
+    /**
+	 * @param convertedUnitAmountWithoutTax the convertedUnitAmountWithoutTax to set
+	 */
+	public void setConvertedUnitAmountWithoutTax(BigDecimal convertedUnitAmountWithoutTax) {
+		this.convertedUnitAmountWithoutTax = convertedUnitAmountWithoutTax;
+	}
+
+    /**
+	 * @return the convertedUnitAmountWithTax
+	 */
+	public BigDecimal getConvertedUnitAmountWithTax() {
+		return convertedUnitAmountWithTax != null ? convertedUnitAmountWithTax : unitAmountWithTax;
+	}
+
+    /**
+	 * @param convertedUnitAmountWithTax the convertedUnitAmountWithTax to set
+	 */
+	public void setConvertedUnitAmountWithTax(BigDecimal convertedUnitAmountWithTax) {
+		this.convertedUnitAmountWithTax = convertedUnitAmountWithTax;
+	}
+
+    /**
+	 * @return the convertedUnitAmountTax
+	 */
+	public BigDecimal getConvertedUnitAmountTax() {
+		return convertedUnitAmountTax != null ? convertedUnitAmountTax : unitAmountTax;
+	}
+
+    /**
+	 * @param convertedUnitAmountTax the convertedUnitAmountTax to set
+	 */
+	public void setConvertedUnitAmountTax(BigDecimal convertedUnitAmountTax) {
+		this.convertedUnitAmountTax = convertedUnitAmountTax;
+	}
+
+    /**
+	 * @return the tradingCurrency
+	 */
+	public TradingCurrency getTradingCurrency() {
+		return tradingCurrency;
+	}
+
+    /**
+	 * @param tradingCurrency the tradingCurrency to set
+	 */
+	public void setTradingCurrency(TradingCurrency tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
+	}
+    public ContractItem getContractLine() {
+        return contractLine;
+    }
+
+    public void setContractLine(ContractItem contractLine) {
+        this.contractLine = contractLine;
+    }
 }

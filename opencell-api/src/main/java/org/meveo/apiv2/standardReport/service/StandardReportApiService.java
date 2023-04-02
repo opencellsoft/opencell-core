@@ -14,17 +14,12 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.billing.impl.*;
-import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 
 public class StandardReportApiService implements ApiService<RecordedInvoice> {
 
-
 	@Inject
     private RecordedInvoiceService recordedInvoiceService;
-    
-    @Inject
-    private CustomerAccountService customerAccountService;
 
     @Inject
 	private InvoiceService invoiceService;
@@ -33,9 +28,10 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
 
     public List<Object[]> list(Long offset, Long limit, String sort, String orderBy, String customerAccountCode,
 							   Date startDate, Date startDueDate, Date endDueDate, String customerAccountDescription,
-							   String sellerDescription, String sellerCode,
-							   String invoiceNumber, Integer stepInDays, Integer numberOfPeriods, String tradingCurrency, String functionalCurrency) {
-        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset != null ? offset.intValue() : null, limit != null ? limit.intValue() : null, null, null, fetchFields, orderBy, sort);
+							   String sellerDescription, String sellerCode, String invoiceNumber, Integer stepInDays,
+							   Integer numberOfPeriods, String tradingCurrency, String functionalCurrency) {
+        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset != null
+				? offset.intValue() : null, limit.intValue() , null, null, fetchFields, orderBy, sort);
         if(invoiceNumber != null && invoiceService.findByInvoiceNumber(invoiceNumber) == null) {
 			throw new NotFoundException("Invoice number : " + invoiceNumber + " does not exits");
 		}
@@ -55,17 +51,21 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
 		}
 
 		try {
-			return recordedInvoiceService.getAgedReceivables(customerAccountCode, sellerCode, startDate, startDueDate, endDueDate,
-					paginationConfiguration, stepInDays, numberOfPeriods, invoiceNumber, customerAccountDescription, sellerDescription, tradingCurrency, functionalCurrency);
+			return recordedInvoiceService.getAgedReceivables(customerAccountCode, sellerCode, startDate, startDueDate,
+					endDueDate, paginationConfiguration, stepInDays, numberOfPeriods, invoiceNumber,
+					customerAccountDescription, sellerDescription, tradingCurrency, functionalCurrency);
 		} catch (Exception exception) {
 			throw new BusinessApiException("Error occurred when listing aged balance report : " + exception.getMessage());
-
 		}
     }
 
-	public List<Object[]> getAll() {
+	/**
+	 * Get all aged receivables
+	 * @return List of object
+	 */
+	public List<Object[]> getAll(Date startDate) {
 		try {
-			return recordedInvoiceService.getAgedReceivables(null, null, new Date(), null, null,
+			return recordedInvoiceService.getAgedReceivables(null, null, startDate, null, null,
 					null, null, null, null, null, null, null, null);
 		} catch (Exception exception) {
 			throw new BusinessApiException("Error occurred when listing aged balance report : " + exception.getMessage());

@@ -23,6 +23,7 @@ import javax.persistence.TypedQuery;
 
 import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.AdvancementRateIncreased;
@@ -54,10 +55,12 @@ import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.DiscountPlanInstanceService;
+import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
+import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.ProductService;
 
 /**
@@ -82,9 +85,15 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
     private DiscountPlanService discountPlanService;
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;
+    @Inject
+    private OneShotChargeInstanceService oneShotChargeInstanceService;
+	@Inject
+	private AttributeService attributeService;
 
 	@Inject
 	private ProductService productService;
+	@Inject
+	private OrderProductService orderProductService;
 
 	@Override
 	public void create(CommercialOrder entity) throws BusinessException {
@@ -137,7 +146,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
     @SuppressWarnings("rawtypes")
 	public List<OrderOffer> validateOffers(List<OrderOffer> validOffers) {
     	return validOffers.stream().filter(o -> {
-    		if(o.getOrderLineType() == OfferLineTypeEnum.AMEND  || o.getOrderLineType() == OfferLineTypeEnum.TERMINATE) return true;
+    		if(o.getOrderLineType() == OfferLineTypeEnum.AMEND  || o.getOrderLineType() == OfferLineTypeEnum.TERMINATE || o.getOrderLineType() == OfferLineTypeEnum.APPLY_ONE_SHOT) return true;
 			if(o.getProducts().isEmpty()) return false;
 			for(OrderProduct quoteProduct: o.getProducts()) {
 				if(quoteProduct.getProductVersion() != null) {
@@ -171,12 +180,14 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		
 		List<OrderOffer> validOffers = validateOffers(order.getOffers());
 		
-		Set<DiscountPlan> discountPlans=new HashSet<DiscountPlan>();
+		Set<DiscountPlan> discountPlans=new HashSet<>();
 		if(order.getDiscountPlan()!=null) {
 			discountPlans.add(order.getDiscountPlan());
 		}
 		if(order.getOrderNumber() == null)
 			order = serviceSingleton.assignCommercialOrderNumber(order);
+
+		CommercialOrderEnum orderStatus = orderCompleted ? CommercialOrderEnum.COMPLETED : CommercialOrderEnum.VALIDATED;
 
 		for(OrderOffer offer : validOffers){
 			if(offer.getOrderLineType() == OfferLineTypeEnum.CREATE) {
@@ -201,6 +212,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				subscription.setPaymentMethod(order.getBillingAccount().getCustomerAccount().getPaymentMethods().get(0));
 				subscription.setOrder(order);
 				subscription.setOrderOffer(offer);
+				subscription.setContract((offer.getContract() != null)? offer.getContract() : order.getContract());
 				subscription.setSubscriptionRenewal(offer.getOfferTemplate() != null ? offer.getOfferTemplate().getSubscriptionRenewal() : null);
 				subscription.setSalesPersonName(order.getSalesPersonName());
 				subscriptionService.create(subscription);
@@ -233,51 +245,76 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 					//Activate Action type
 					if(product.getProductActionType() == ProductActionTypeEnum.ACTIVATE) {
 						serviceInstanceService.getEntityManager().flush();
-						List<ServiceInstance> existingServices = serviceInstanceService.findByCodeSubscriptionAndStatus(product.getProductVersion().getProduct().getCode(), offer.getSubscription());
-						if (existingServices.stream().filter(si -> si.getStatus() != InstanceStatusEnum.TERMINATED).count() == 0) {
+						ServiceInstance serviceInstance = product.getServiceInstance();
+						if (serviceInstance == null || serviceInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
 							ServiceInstance si = processProduct(offer.getSubscription(), product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null);
-							if(si != null) {
+							if (si != null) {
 								serviceInstanceService.serviceActivation(si);
 							}
-						} else {
-							List<ServiceInstance> services = serviceInstanceService.findByCodeSubscriptionAndStatus(product.getProductVersion().getProduct().getCode(), offer.getSubscription(), InstanceStatusEnum.INACTIVE, InstanceStatusEnum.PENDING, InstanceStatusEnum.SUSPENDED);
-				            if (services.size() > 0) {
-				            	updateProduct(offer, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null, product.getProductVersion().getProduct().getCode());	
-				            	ServiceInstance serviceInstanceToActivate = services.get(0);
-								if (serviceInstanceToActivate.getStatus() == InstanceStatusEnum.SUSPENDED) {
-									serviceInstanceService.serviceReactivation(serviceInstanceToActivate, product.getDeliveryDate(), true, false);					
-								}else {
-									serviceInstanceService.serviceActivation(serviceInstanceToActivate);
-								}
-				            }
+						} else if (serviceInstance != null && (serviceInstance.getStatus() == InstanceStatusEnum.INACTIVE
+								|| serviceInstance.getStatus() == InstanceStatusEnum.PENDING
+								|| serviceInstance.getStatus() == InstanceStatusEnum.SUSPENDED)) {
+							updateProduct(offer, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null, product.getProductVersion().getProduct().getCode());
+							if (serviceInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
+								serviceInstanceService.serviceReactivation(serviceInstance, product.getDeliveryDate(), true, false);
+							} else {
+								serviceInstanceService.serviceActivation(serviceInstance);
+							}
 						}
 					}
 					//Suspend Action type
 					if(product.getProductActionType() == ProductActionTypeEnum.SUSPEND) {
-						List<ServiceInstance> services = serviceInstanceService.findByCodeSubscriptionAndStatus(product.getProductVersion().getProduct().getCode(), offer.getSubscription(), InstanceStatusEnum.ACTIVE);
-			            if (services.size() > 0) {
+						ServiceInstance serviceInstance = product.getServiceInstance();
+						if (serviceInstance != null) {
 			            	updateProduct(offer, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null, product.getProductVersion().getProduct().getCode());	
-			            	ServiceInstance serviceInstanceToSuspend = services.get(0);
-							serviceInstanceService.serviceSuspension(serviceInstanceToSuspend, product.getDeliveryDate());	
+			            	serviceInstanceService.serviceSuspension(serviceInstance, product.getDeliveryDate());
 			            }
 					}
 					//Terminate Action type
 					if(product.getProductActionType() == ProductActionTypeEnum.TERMINATE) {
-						List<ServiceInstance> services = serviceInstanceService.findByCodeSubscriptionAndStatus(product.getProductVersion().getProduct().getCode(), offer.getSubscription(), InstanceStatusEnum.ACTIVE, InstanceStatusEnum.SUSPENDED);
-			            if (services.size() > 0) {
+						ServiceInstance serviceInstance = product.getServiceInstance();
+						if (serviceInstance != null) {
 			            	updateProduct(offer, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null, product.getProductVersion().getProduct().getCode());	
-			            	ServiceInstance serviceInstanceToTerminate = services.get(0);
-							serviceInstanceService.terminateService(serviceInstanceToTerminate, product.getTerminationDate(), product.getTerminationReason(), order.getOrderNumber());	
-				            }
-			            }
+			            	serviceInstanceService.terminateService(serviceInstance, product.getTerminationDate(), product.getTerminationReason(), order.getOrderNumber());
+						}
+					}
 				}
 			}else if (offer.getOrderLineType() == OfferLineTypeEnum.TERMINATE) {
 				Subscription subscription = offer.getSubscription();
 				subscriptionService.terminateSubscription(subscription, offer.getTerminationDate(), offer.getTerminationReason(), order.getOrderNumber());
+			}else if (offer.getOrderLineType() == OfferLineTypeEnum.APPLY_ONE_SHOT) {
+				Subscription subscription = offer.getSubscription();
+				subscription.setOrder(order);
+				for(OrderProduct quoteProduct: offer.getProducts()) {
+					if(quoteProduct.getProductVersion() != null) {
+						Product product = quoteProduct.getProductVersion().getProduct();
+						for(ProductChargeTemplateMapping charge: product.getProductCharges()) {
+							if(charge.getChargeTemplate() != null) {
+								ChargeTemplate templateCharge = (ChargeTemplate) Hibernate.unproxy(charge.getChargeTemplate());
+								if(templateCharge instanceof OneShotChargeTemplate) {
+									OneShotChargeTemplate oneShotCharge = (OneShotChargeTemplate) templateCharge;
+									if (oneShotCharge.getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.OTHER) {
+										// Build ServiceInstance
+										ServiceInstance serviceInstance = buildServiceInstanceForOSO(quoteProduct.getProductVersion().getProduct().getCode(),
+												quoteProduct.getOrderAttributes(), subscription);
+
+										// field to add : serviceInstance, operationDate & quantity = from orderProduct,
+										oneShotChargeInstanceService.instantiateAndApplyOneShotCharge(subscription, serviceInstance,
+												oneShotCharge, null, quoteProduct.getDeliveryDate() == null ? new Date() : quoteProduct.getDeliveryDate(),
+                                                null, null, quoteProduct.getQuantity(),
+												null, null, null, null,
+												order.getOrderNumber(), null, true, ChargeApplicationModeEnum.SUBSCRIPTION);
+									}
+								}
+							}
+						}
+					}   
+				}
+				
 			}
 
 		}
-		order.setStatus(orderCompleted ? CommercialOrderEnum.COMPLETED.toString() : CommercialOrderEnum.VALIDATED.toString());
+		order.setStatus(orderStatus.toString());
 		order.setStatusDate(new Date());
 
 
@@ -292,6 +329,60 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		updateWithoutProgressCheck(order);
 
 		return order;
+	}
+
+	/**
+	 * Build ServiceInstance from OrderProduct
+	 *
+	 * @param productCode  productCode
+	 * @param attributes list of attributes from orderProducts
+	 * @param subscription subscription
+	 * @return Virtual or Real ServiceInstance
+	 */
+	private ServiceInstance buildServiceInstanceForOSO(String productCode, List<OrderAttribute> attributes, Subscription subscription) {
+		ServiceInstance serviceInstance = null;
+		if (attributes != null) {
+			serviceInstance = new ServiceInstance(); // Create a virtual ServiceInstance
+			serviceInstance.setSubscription(subscription);
+			// Product data
+			Product product = productService.findByCode(productCode);
+			ProductVersion pVersion = new ProductVersion();
+			pVersion.setProduct(product);
+			serviceInstance.setCode(product.getCode());
+			serviceInstance.setProductVersion(pVersion);
+			// add attributes
+			for (OrderAttribute orderAttribute : attributes) {
+				AttributeInstance attributeInstance = new AttributeInstance();
+				attributeInstance.setAttribute(attributeService.findByCode(orderAttribute.getAttribute().getCode()));
+				attributeInstance.setServiceInstance(serviceInstance);
+				attributeInstance.setSubscription(subscription);
+				attributeInstance.setDoubleValue(orderAttribute.getDoubleValue());
+				attributeInstance.setStringValue(orderAttribute.getStringValue());
+				attributeInstance.setBooleanValue(orderAttribute.getBooleanValue());
+				attributeInstance.setDateValue(orderAttribute.getDateValue());
+				serviceInstance.addAttributeInstance(attributeInstance);
+			}
+		} else { // no attributs provided in payload (OSO case for example)
+			List<ServiceInstance> alreadyInstantiatedServices = null;
+			if (StringUtils.isNotBlank(productCode)) {
+				alreadyInstantiatedServices = serviceInstanceService.findByCodeSubscriptionAndStatus(productCode, subscription,
+						InstanceStatusEnum.ACTIVE);
+				if (alreadyInstantiatedServices == null || alreadyInstantiatedServices.isEmpty()) {
+					throw new BusinessException("The product instance " + productCode + " doest not exist for this subscription or is not active");
+				}
+			} else {
+				alreadyInstantiatedServices = subscription.getServiceInstances().stream()
+						.filter(si -> si.getStatus() == InstanceStatusEnum.ACTIVE)
+						.collect(Collectors.toList());
+			}
+			if (alreadyInstantiatedServices.size() > 1) {
+					throw new BusinessException("More than one Product Instance found for Product '" + productCode
+							+ "' and Subscription '" + subscription.getCode() + "'. Please provide productInstanceId field");
+			} else {
+				serviceInstance = alreadyInstantiatedServices.get(0);
+			}
+		}
+		return serviceInstance;
 	}
 	
 	private Seller getSelectedSeller(CommercialOrder order) {
@@ -367,7 +458,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			}
 		}
 		
-		Map<String,AttributeInstance> instantiatedAttributes = new HashMap<String, AttributeInstance>();
+		Map<String,AttributeInstance> instantiatedAttributes = new HashMap<>();
 		
 		if(orderAttributes != null && orderAttributes.size() > 0) {
 			for (OrderAttribute orderAttribute : orderAttributes) {
@@ -422,7 +513,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			serviceInstance.addAttributeInstance(attributeInstance);
 			
 		}
-		
+
 		serviceInstanceService.cpqServiceInstanciation(serviceInstance, product,null, null, false);
 
 			List<SubscriptionChargeInstance> oneShotCharges = serviceInstance.getSubscriptionChargeInstances()
@@ -445,21 +536,18 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			for (RecurringChargeInstance recurringChargeInstance : recurringChargeInstances) {
 				recurringChargeInstance.setSubscriptionDate(serviceInstance.getSubscriptionDate());
 				recurringChargeInstance.setQuantity(serviceInstance.getQuantity());
-				recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
 			}
 			if (serviceInstance.getDeliveryDate().after(new Date())) {
 				serviceInstance.setStatus(InstanceStatusEnum.PENDING);
 			}
-			//subscription.addServiceInstance(serviceInstance);
 			return serviceInstance;
 	}
 	
 	public void updateProduct(OrderOffer offer, Product product, BigDecimal quantity, List<OrderAttribute> orderAttributes, OrderProduct orderProduct, Date deliveryDate, String subscriptionCode) {
 
-		List<ServiceInstance> services = serviceInstanceService.findByCodeSubscriptionAndStatus(subscriptionCode, offer.getSubscription());
-        if (services.size() > 0) {
-	        ServiceInstance serviceInstance = services.get(0);
-			serviceInstance.setCode(product.getCode());
+		ServiceInstance serviceInstance = orderProduct.getServiceInstance();
+		if (serviceInstance != null) {
+	        serviceInstance.setCode(product.getCode());
 			serviceInstance.setQuantity(quantity);
 			serviceInstance.setSubscriptionDate(offer.getSubscription().getSubscriptionDate());
 			if(AgreementDateSettingEnum.INHERIT.equals(orderProduct.getProductVersion().getProduct().getAgreementDateSetting())) {
@@ -474,13 +562,11 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			} else {
 				serviceInstance.setDeliveryDate(getServiceDeliveryDate(offer.getSubscription().getOrder(), offer.getSubscription().getOrderOffer(), orderProduct));
 			}
-	
+
 			serviceInstance.setSubscription(offer.getSubscription());
-			
+
 			serviceInstance.getAttributeInstances().clear();
-			
-		Map<String,AttributeInstance> instantiatedAttributes=new HashMap<String, AttributeInstance>();
-			
+			Map<String,AttributeInstance> instantiatedAttributes=new HashMap<>();
 			for (OrderAttribute orderAttribute : orderAttributes) {
 				if(orderAttribute.getAttribute()!=null  && !AttributeTypeEnum.EXPRESSION_LANGUAGE.equals(orderAttribute.getAttribute().getAttributeType())) {
 				AttributeInstance attributeInstance = new AttributeInstance(orderAttribute, currentUser);
@@ -498,7 +584,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 					attributeInstance.setAttribute(attribute);
 					attributeInstance.setServiceInstance(serviceInstance);
 					attributeInstance.setSubscription(offer.getSubscription());
-				
+
 				}else {
 					attributeInstance=instantiatedAttributes.get(attribute.getCode());
 				}
@@ -518,7 +604,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 						break;
 					}
 				}
-				serviceInstance.addAttributeInstance(attributeInstance);	
+				serviceInstance.addAttributeInstance(attributeInstance);
 			}
 		}
 	}
@@ -557,7 +643,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 	}
 	
 	public void processSubscriptionAttributes(Subscription subscription,OfferTemplate offer,List<OrderAttribute> orderAttributes) {
-		Map<String,AttributeInstance> instantiatedAttributes=new HashMap<String, AttributeInstance>();
+		Map<String,AttributeInstance> instantiatedAttributes=new HashMap<>();
 		
 		for (OrderAttribute orderAttribute : orderAttributes) {
 			if(orderAttribute.getAttribute()!=null && !AttributeTypeEnum.EXPRESSION_LANGUAGE.equals(orderAttribute.getAttribute().getAttributeType()) ) {
@@ -612,10 +698,15 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		 
 	}
 
-	    public List<CommercialOrder> findCommercialOrders(BillingCycle billingCycle, Date startdate, Date endDate) {
+	    public List<CommercialOrder> findCommercialOrders(BillingCycle billingCycle) {
         try {
             QueryBuilder qb = new QueryBuilder(CommercialOrder.class, "co", null);
-            qb.addCriterionEntity("co.billingCycle.id", billingCycle.getId());
+			if(billingCycle.getFilters() != null && !billingCycle.getFilters().isEmpty()) {
+				qb.addPaginationConfiguration(new PaginationConfiguration(billingCycle.getFilters()));
+
+			} else {
+				qb.addCriterionEntity("co.billingCycle.id", billingCycle.getId());
+			}
             return (List<CommercialOrder>) qb.getQuery(getEntityManager()).getResultList();
 
         } catch (Exception ex) {
@@ -646,4 +737,9 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
             return null;
         }
     }
+
+	public List<CommercialOrder> findWithInvoicingPlanNotNull() {
+		TypedQuery<CommercialOrder> query = getEntityManager().createNamedQuery("CommercialOrder.findWithInvoicingPlan", CommercialOrder.class);
+		return query.getResultList();
+	}
 }

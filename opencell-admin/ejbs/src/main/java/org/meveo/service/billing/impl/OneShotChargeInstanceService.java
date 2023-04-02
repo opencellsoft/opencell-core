@@ -53,6 +53,7 @@ import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 
@@ -207,6 +208,37 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
     public OneShotChargeInstance instantiateAndApplyOneShotCharge(Subscription subscription, ServiceInstance serviceInstance, OneShotChargeTemplate chargeTemplate, String walletCode, Date chargeDate,
             BigDecimal amoutWithoutTax, BigDecimal amoutWithTax, BigDecimal quantity, String criteria1, String criteria2, String criteria3, String description, String orderNumberOverride, CustomFieldValues cfValues,
             boolean applyCharge, ChargeApplicationModeEnum chargeMode) throws BusinessException, RatingException {
+		return this.instantiateAndApplyOneShotCharge(subscription, serviceInstance, chargeTemplate, walletCode, chargeDate,
+				amoutWithoutTax, amoutWithTax, quantity, criteria1, criteria2, criteria3, description,
+				orderNumberOverride, cfValues, applyCharge, chargeMode, false);
+    }
+    
+    /**
+     * Instantiate and apply/rate a one shot charge
+     * 
+     * @param subscription Subscription, to instantiate a charge against
+     * @param serviceInstance Service instance to instantiate a charge against. Optional.
+     * @param chargeTemplate Charge to instantiate
+     * @param walletCode Wallet code for charge against a specific wallet. Optional. A primary User account wallet will be used if not provided.
+     * @param chargeDate Charge date
+     * @param amoutWithoutTax Amount without tax to override
+     * @param amoutWithTax Amount with tax to override
+     * @param quantity Quantity to charge
+     * @param criteria1 Criteria parameter value
+     * @param criteria2 Criteria parameter value
+     * @param criteria3 Criteria parameter value
+     * @param description Description to override. Optional
+     * @param orderNumberOverride Order number to override. If not provided, a value from serviceInstance or subscription will be used. A value of ChargeInstance.NO_ORDER_NUMBER will set a value to null.
+     * @param cfValues Custom field values
+     * @param applyCharge True if wallet operation should be created
+     * @param chargeMode Charge mode. Optional. Defaults to SUBSCRIPTION.
+     * @return One shot charge instance
+     * @throws BusinessException General business exception
+     * @throws RatingException Rating related exception
+     */
+    public OneShotChargeInstance instantiateAndApplyOneShotCharge(Subscription subscription, ServiceInstance serviceInstance, OneShotChargeTemplate chargeTemplate, String walletCode, Date chargeDate,
+            BigDecimal amoutWithoutTax, BigDecimal amoutWithTax, BigDecimal quantity, String criteria1, String criteria2, String criteria3, String description, String orderNumberOverride, CustomFieldValues cfValues,
+            boolean applyCharge, ChargeApplicationModeEnum chargeMode, boolean isVirtual) throws BusinessException, RatingException {
 
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
             final Date terminationDate = subscription.getTerminationDate();
@@ -215,7 +247,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
             }
         }
 
-        if (chargeDate.before(subscription.getSubscriptionDate())) {
+        if (DateUtils.setTimeToZero(chargeDate).before(DateUtils.setTimeToZero(subscription.getSubscriptionDate()))) {
             throw new ValidationException("Operation date is before subscription date for subscription: " + subscription.getCode());
         }
 
@@ -271,14 +303,29 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
             }
         }
 
-        create(oneShotChargeInstance);
+        if(!isVirtual) {
+            // OSO EPIC : if SI doesn't have id, that means that it is a Virtual one : we clear it to avoid cascade persist
+            if (oneShotChargeInstance.getServiceInstance().getId() == null) {
+                oneShotChargeInstance.setServiceInstance(null);
+            }
+        	create(oneShotChargeInstance);
+        }
 
         if (chargeMode == null) {
             chargeMode = ChargeApplicationModeEnum.SUBSCRIPTION;
         }
 
         if (applyCharge) {
-            oneShotRatingService.rateOneShotCharge(oneShotChargeInstance, quantity, null, chargeDate, orderNumberOverride, chargeMode, false, false);
+            if (!isVirtual) {
+                // OSO EPIC : set "Virtual" ServiceInstance to charge instance, to perform rating
+                oneShotChargeInstance.setServiceInstance(serviceInstance);
+            }
+            oneShotRatingService.rateOneShotCharge(oneShotChargeInstance, quantity, null, chargeDate, orderNumberOverride, chargeMode, isVirtual, false);
+
+            if (!isVirtual) {
+                // OSO EPIC : for save oneShotCharge for Order, set serviceInstance to null to avoid creating Virtual ServiceInstance (used only for rating)
+                oneShotChargeInstance.setServiceInstance(null);
+            }
         }
         return oneShotChargeInstance;
     }
@@ -286,7 +333,6 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
     /**
      * Apply/rate one shot charge to a user account.
      * 
-     * @param subscription subscription
      * @param oneShotChargeInstance Recurring charge instance
      * @param quantity Quantity as calculated
      * @param effectiveDate Recurring charge application start
@@ -310,7 +356,6 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
     /**
      * Apply one shot charge to a user account for a Virtual operation. Does not create/update/persist any entity.
      * 
-     * @param subscription subscription
      * @param oneShotChargeInstance Recurring charge instance
      * @param quantity Quantity as calculated
      * @param effectiveDate Recurring charge application start

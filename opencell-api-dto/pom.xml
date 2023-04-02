@@ -1,56 +1,56 @@
 <?xml version="1.0"?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>com.opencellsoft</groupId>
-		<artifactId>opencell</artifactId>
-		<relativePath>../pom.xml</relativePath>
+    <parent>
+        <groupId>com.opencellsoft</groupId>
+        <artifactId>opencell</artifactId>
+        <relativePath>../pom.xml</relativePath>
 		<version>14.2.0-SNAPSHOT</version>
-	</parent>
-	<artifactId>opencell-api-dto</artifactId>
-	<name>Opencell API DTO</name>
+    </parent>
+    <artifactId>opencell-api-dto</artifactId>
+    <name>Opencell API DTO</name>
 
-	<dependencies>
+    <dependencies>
 
-		<dependency>
-			<groupId>com.opencellsoft</groupId>
-			<artifactId>opencell-model</artifactId>
-		</dependency>
-        
+        <dependency>
+            <groupId>com.opencellsoft</groupId>
+            <artifactId>opencell-model</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.opencellsoft</groupId>
             <artifactId>opencell-security</artifactId>
         </dependency>
 
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-annotations</artifactId>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
             <scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
             <scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
             <scope>provided</scope>
-		</dependency>
-		<dependency>
+        </dependency>
+        <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
             <scope>provided</scope>
-		</dependency>
-        
+        </dependency>
+
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-client</artifactId>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
@@ -58,69 +58,77 @@
         </dependency>
 
         <dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-		</dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>org.immutables</groupId>
-			<artifactId>value</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.immutables</groupId>
+            <artifactId>value</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>io.swagger.core.v3</groupId>
-			<artifactId>swagger-annotations</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-multipart-provider</artifactId>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-multipart-provider</artifactId>
             <scope>provided</scope>
-		</dependency>
+        </dependency>
 
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>annotations</artifactId>
             <version>2.0.1</version>
+            <scope>provided</scope>
         </dependency>
-	</dependencies>
 
-	<build>
-		<plugins>
-		<plugin>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <useIncrementalCompilation>false</useIncrementalCompilation>
+        <!-- Import hibernate for boolean mapping to Char - compatibility between postgress and mysql - use provided scope as is included in JBoss -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <useIncrementalCompilation>false</useIncrementalCompilation>
                     <forceJavacCompilerUse>true</forceJavacCompilerUse>
-                    	<release>11</release>
-                    </configuration>
-                </plugin>         
-                
+                    <release>11</release>
+                </configuration>
+            </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- <plugin> -->
-			<!-- <groupId>org.apache.maven.plugins</groupId> -->
-			<!-- <artifactId>maven-javadoc-plugin</artifactId> -->
-			<!-- <executions> -->
-			<!-- <execution> -->
-			<!-- <id>attach-javadocs</id> -->
-			<!-- <goals> -->
-			<!-- <goal>jar</goal> -->
-			<!-- </goals> -->
-			<!-- </execution> -->
-			<!-- </executions> -->
-			<!-- </plugin> -->
-		</plugins>
-	</build>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- <plugin> -->
+            <!-- <groupId>org.apache.maven.plugins</groupId> -->
+            <!-- <artifactId>maven-javadoc-plugin</artifactId> -->
+            <!-- <executions> -->
+            <!-- <execution> -->
+            <!-- <id>attach-javadocs</id> -->
+            <!-- <goals> -->
+            <!-- <goal>jar</goal> -->
+            <!-- </goals> -->
+            <!-- </execution> -->
+            <!-- </executions> -->
+            <!-- </plugin> -->
+        </plugins>
+    </build>
 
 </project>

@@ -22,6 +22,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +38,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.CommunicateToRemoteInstanceException;
 import org.meveo.admin.exception.CounterInstantiationException;
@@ -54,6 +56,7 @@ import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.UsageChargeInstance;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.UsageChargeTemplate;
@@ -110,6 +113,9 @@ public class UsageRatingService extends RatingService implements Serializable {
     
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
+
+    @Inject
+    private UserAccountService userAccountService;
 
     /**
      * Decrease a usage charge counter by EDR quantity. A new counter period matching EDR event date will be instantiated if does not exist yet.
@@ -381,11 +387,22 @@ public class UsageRatingService extends RatingService implements Serializable {
             // Charges should be already ordered by priority and id (why id??)
             Long subscriptionId = edr.getSubscription().getId();
             if (subscriptionId != null) {
-                usageChargeInstances = usageChargeInstanceService.getUsageChargeInstancesValidForDateBySubscriptionId(subscriptionId, edr.getEventDate());
+                
+                boolean isSubscriptionInitialized = Hibernate.isInitialized(edr.getSubscription());
+                
+                usageChargeInstances = usageChargeInstanceService.getUsageChargeInstancesValidForDateBySubscriptionId(edr.getSubscription(), edr.getEventDate());
                 if (usageChargeInstances == null || usageChargeInstances.isEmpty()) {
                     throw new NoChargeException("No active usage charges are associated with subscription " + subscriptionId);
                 }
-
+                
+                // Just to load all subscription service instances with their attributes to avoid querying service instances and their attributes one by one. 
+                // Done once per subscription (in same tx) - a fix when EDR batch to rate is based on same subscription, or when EDR triggers other EDRs 
+                if (!isSubscriptionInitialized) {
+                    List<ServiceInstance> subscriptionServices = getEntityManager().createNamedQuery("ServiceInstance.findBySubscriptionIdLoadAttributes", ServiceInstance.class).setParameter("subscriptionId", subscriptionId)
+                        .getResultList();
+                    UserAccount userAccount = userAccountService.findById(edr.getSubscription().getUserAccount().getId(), Arrays.asList("wallet"));
+                }
+                
                 // This covers a virtual rating case when estimating usage from a quote. Subscription in that case was not persisted.
             } else if (edr.getSubscription().getServiceInstances() != null) {
                 usageChargeInstances = edr.getSubscription().getServiceInstances().stream().flatMap(si -> si.getUsageChargeInstances().stream()).collect(toList());
@@ -531,11 +548,13 @@ public class UsageRatingService extends RatingService implements Serializable {
         } else {
             chargeTemplate = getEntityManager().find(UsageChargeTemplate.class, chargeInstance.getChargeTemplate().getId());
         }
-        if(chargeInstance.getServiceInstance()!=null) {
-    		  boolean anyFalseAttribute = chargeInstance.getServiceInstance().getAttributeInstances().stream().filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
-        	 .filter(attributeInstance -> attributeInstance.getAttribute().getChargeTemplates().contains(chargeInstance.getChargeTemplate()))
-                .anyMatch(attributeInstance ->  attributeInstance.getStringValue()==null  || "false".equals(attributeInstance.getStringValue()));
-    	        if(anyFalseAttribute) return false;
+        if (chargeInstance.getServiceInstance() != null) {
+            boolean anyFalseAttribute = chargeInstance.getServiceInstance().getAttributeInstances().stream().filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
+                .filter(attributeInstance -> chargeInstance.getChargeTemplate().getAttributes().contains(attributeInstance.getAttribute()))
+                .anyMatch(attributeInstance -> attributeInstance.getStringValue() == null || "false".equals(attributeInstance.getStringValue()));
+            if (anyFalseAttribute) {
+                return false;
+            }
         }
         String filter1 = chargeTemplate.getFilterParam1();
 
@@ -610,7 +629,7 @@ public class UsageRatingService extends RatingService implements Serializable {
         return ValueExpressionWrapper.evaluateToBoolean(expression, userMap);
     }
 
-    private boolean evaluateBooleanExpression(String expression, EDR edr, WalletOperation walletOperation) throws InvalidELException {
+    public boolean evaluateBooleanExpression(String expression, EDR edr, WalletOperation walletOperation) throws InvalidELException {
         boolean result = true;
         if (StringUtils.isBlank(expression)) {
             return result;

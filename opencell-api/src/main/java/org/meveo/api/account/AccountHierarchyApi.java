@@ -320,6 +320,8 @@ public class AccountHierarchyApi extends BaseApi {
             }
         }
 
+        createParentCustomer(postData, customerDto);
+        
         customerApi.create(customerDto);
         customerService.getEntityManager().flush();
 
@@ -585,6 +587,8 @@ public class AccountHierarchyApi extends BaseApi {
         }
         name.setFirstName(postData.getFirstName());
         name.setLastName(postData.getLastName());
+        
+        createParentCustomer(postData, customerDto);
 
         customerApi.update(customerDto);
 
@@ -721,6 +725,14 @@ public class AccountHierarchyApi extends BaseApi {
         userAccountDto.setJobTitle(postData.getJobTitle());
         userAccountApi.createOrUpdate(userAccountDto);
     }
+
+	private void createParentCustomer(AccountHierarchyDto postData, CustomerDto customerDto) {
+		if (postData.getParentCustomer() != null) {
+        	Customer parent = customerApi.create(postData.getParentCustomer());
+        	customerService.getEntityManager().flush();
+        	customerDto.setParentCustomerCode(parent.getCode());
+        }
+	}
 
     /**
      * @param postData posted data
@@ -1070,6 +1082,7 @@ public class AccountHierarchyApi extends BaseApi {
 
             CustomerDto customerDto = createCustomerDto(postData, accountHierarchyTypeEnum);
             customerDto.setIsCompany(postData.getCompany());
+            customerDto.setParentCustomerCode(postData.getParentCustomerCode());
             accountEntity = customerApi.create(customerDto, true, businessAccountModel, seller);
         }
 
@@ -1553,6 +1566,7 @@ public class AccountHierarchyApi extends BaseApi {
 
             CustomerDto customerDto = createCustomerDto(postData, accountHierarchyTypeEnum);
             customerDto.setIsCompany(postData.getCompany());
+            customerDto.setParentCustomerCode(postData.getParentCustomerCode());
             accountEntity = customerApi.update(customerDto, true, businessAccountModel);
         }
 

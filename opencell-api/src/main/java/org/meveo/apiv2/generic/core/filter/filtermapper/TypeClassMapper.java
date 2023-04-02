@@ -1,8 +1,8 @@
 package org.meveo.apiv2.generic.core.filter.filtermapper;
 
 
+import org.meveo.api.generics.filter.FilterMapper;
 import org.meveo.apiv2.generic.core.GenericHelper;
-import org.meveo.apiv2.generic.core.filter.FilterMapper;
 
 public class TypeClassMapper extends FilterMapper {
 

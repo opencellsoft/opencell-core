@@ -107,7 +107,6 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
         DunningCollectionPlan collectionPlan = collectionPlanService.findById(collectionPlanId);
         Date dateToCompare;
         Date today = new Date();
-        Date dueDate = new Date();
         int index = 0;
         int nextLevel = 0;
         String lastAction = "";
@@ -120,9 +119,6 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
             collectionPlan.setStatus(collectionPlanStatusService.findByStatus(SUCCESS));
             updateCollectionPlan = true;
         } else {
-            if(collectionPlan.getRelatedInvoice() != null && collectionPlan.getRelatedInvoice().getDueDate() != null) {
-                dueDate = collectionPlan.getRelatedInvoice().getDueDate();
-            }
             collectionPlan.getDunningLevelInstances().sort(Comparator.comparing(DunningLevelInstance::getSequence));
             int nbLevelDone = 0;
             for (DunningLevelInstance levelInstance : collectionPlan.getDunningLevelInstances()) {
@@ -135,6 +131,7 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                         && !collectionPlan.getRelatedInvoice().getPaymentStatus().equals(PAID)
                         && dateToCompare.before(today)) {
                     nextLevel = index + 1;
+                    boolean registerKO = false;
                     for (int i = 0; i < levelInstance.getActions().size(); i++) {
                         DunningActionInstance actionInstance = levelInstance.getActions().get(i);
                         if (actionInstance.getActionMode().equals(AUTOMATIC)
@@ -151,7 +148,11 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                                     nextAction = levelInstance.getActions().get(i + 1).getCode();
                                 }
                             } catch (Exception exception) {
-                                jobExecutionResult.addErrorReport(exception.getMessage());
+                                registerKO = true;
+                                jobExecutionResult.addReport("Collection plan ID : "
+                                        + collectionPlan.getId() + "/Level instance ID : "
+                                        + levelInstance.getId() + "/Action instance ID : " + actionInstance.getId()
+                                        + " : " + exception.getMessage());
                             }
                         }
                         actionInstanceService.update(actionInstance);
@@ -160,6 +161,9 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                     collectionPlan.setLastAction(lastAction);
                     collectionPlan.setNextAction(nextAction);
                     updateCollectionPlan = true;
+                    if(registerKO) {
+                        jobExecutionResult.addNbItemsProcessedWithError(1L);
+                    }
                     levelInstance = levelInstanceService.refreshOrRetrieve(levelInstance);
                     if (nextLevel < collectionPlan.getDunningLevelInstances().size()) {
                         collectionPlan.setCurrentDunningLevelSequence(collectionPlan.getDunningLevelInstances().get(nextLevel).getSequence());
@@ -195,17 +199,14 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
     }
 
     private void triggerAction(DunningActionInstance actionInstance, DunningCollectionPlan collectionPlan) {
-        if (actionInstance.getActionType().equals(SCRIPT)) {
-            if (actionInstance.getDunningAction() != null) {
-                scriptInstanceService.execute(actionInstance.getDunningAction().getScriptInstance().getCode(), new HashMap<>());
-            }
+        if (actionInstance.getActionType().equals(SCRIPT) && actionInstance.getDunningAction() != null) {
+            scriptInstanceService.execute(actionInstance.getDunningAction().getScriptInstance().getCode(), new HashMap<>());
         }
-        if (actionInstance.getActionType().equals(SEND_NOTIFICATION)) {
-            if (actionInstance.getDunningAction().getActionChannel().equals(EMAIL)
-                    || actionInstance.getDunningAction().getActionChannel().equals(LETTER)) {
+        if (actionInstance.getActionType().equals(SEND_NOTIFICATION)
+                && (actionInstance.getDunningAction().getActionChannel().equals(EMAIL)
+                || actionInstance.getDunningAction().getActionChannel().equals(LETTER))) {
                 sendEmail(actionInstance.getDunningAction().getActionNotificationTemplate(),
                         collectionPlan.getRelatedInvoice(), collectionPlan.getLastActionDate());
-            }
         }
         if (actionInstance.getActionType().equals(RETRY_PAYMENT)) {
             BillingAccount billingAccount = collectionPlan.getBillingAccount();
@@ -224,7 +225,7 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                 Invoice invoice = collectionPlan.getRelatedInvoice();
                 if (invoice.getRecordedInvoice() == null) {
                     throw new BusinessException("No getRecordedInvoice for the invoice "
-                            + invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber());
+                            + (invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber()));
                 }
                 PaymentGateway paymentGateway =
                         paymentGatewayService.getPaymentGateway(customerAccount, preferredPaymentMethod, null);
@@ -287,7 +288,7 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                 attachments.add(attachment);
             } else {
                 log.warn("No Pdf file exists for the invoice : {}",
-                        ofNullable(invoice.getInvoiceNumber()).orElse(invoice.getTemporaryInvoiceNumber()));
+                        invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber());
             }
             if (billingAccount.getContactInformation() != null && billingAccount.getContactInformation().getEmail() != null) {
                 try {
@@ -297,10 +298,10 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                     throw new BusinessException(exception.getMessage());
                 }
             } else {
-                throw new BusinessException("Billing account email is missing");
+                throw new BusinessException("The email is missing for the billing account : " + billingAccount.getCode());
             }
         } else {
-            throw new BusinessException("From email is missing, email sending skipped");
+            throw new BusinessException("The email sending skipped because the from email is missing for the seller : " + invoice.getSeller().getCode());
         }
     }
 

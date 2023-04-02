@@ -153,8 +153,8 @@ public abstract class Script implements Serializable, ScriptInterface {
      * @param serviceInterfaceName A simple name of a service class (NOT a full classname). E.g. WorkflowService
      * @return Service instance
      */
-    protected Object getServiceInterface(String serviceInterfaceName) {
-        return EjbUtils.getServiceInterface(serviceInterfaceName);
+    protected <T> T getServiceInterface(String serviceInterfaceName) {
+        return (T) EjbUtils.getServiceInterface(serviceInterfaceName);
     }
 
     /**

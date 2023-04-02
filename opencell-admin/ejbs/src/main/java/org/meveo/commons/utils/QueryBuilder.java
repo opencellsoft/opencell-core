@@ -537,6 +537,24 @@ public class QueryBuilder {
         if (multiParams.length == 0) {
             return this;
         }
+        
+        if(!nestedClauses.empty()) {
+        	NestedQuery currentNF = nestedClauses.pop();
+        	if(currentNF.hasOneOrMoreCriteria) {
+        		if (FilterOperatorEnum.OR.equals(currentNF.operator)) {
+	                q.append(" or ");
+	            } else {
+	                q.append(" and ");
+	            }
+        	}
+        	q.append(sql);
+        	for (int i = 0; i < multiParams.length - 1; i = i + 2) {
+                params.put((String) multiParams[i], multiParams[i + 1]);
+            }
+        	currentNF.hasOneOrMoreCriteria = true;
+        	nestedClauses.add(currentNF);
+        	return this;
+        }
 
         if (hasOneOrMoreCriteria) {
             if (FilterOperatorEnum.OR.equals(this.filterOperator) || (inOrClause && nbCriteriaInOrClause != 0)) {
@@ -1344,7 +1362,7 @@ public class QueryBuilder {
     }
 
     public QueryBuilder startNestedFilter(FilterOperatorEnum operator) {
-    	if(!nestedClauses.empty()) {
+    	if(nestedClauses != null && !nestedClauses.empty()) {
     		NestedQuery parentNF = nestedClauses.peek();
     		if(parentNF.hasOneOrMoreCriteria) {
     			q.append(" " + parentNF.operator + " ");
@@ -1445,11 +1463,9 @@ public class QueryBuilder {
     }
     
 	public String addCurrentSchema(String query) {
-		CurrentUserProvider currentUserProvider = (CurrentUserProvider) EjbUtils.getServiceInterface("CurrentUserProvider");
-		String currentproviderCode = currentUserProvider.getCurrentUserProviderCode();
+		String currentproviderCode = CurrentUserProvider.getCurrentTenant();
 		if (currentproviderCode != null) {
-			EntityManagerProvider entityManagerProvider = (EntityManagerProvider) EjbUtils.getServiceInterface("EntityManagerProvider");
-			String schema = entityManagerProvider.convertToSchemaName(currentproviderCode) + ".";
+			String schema = EntityManagerProvider.convertToSchemaName(currentproviderCode) + ".";
 			if (!query.startsWith(FROM + schema)) {
 				return query.replace(FROM, FROM+schema);
 			}
@@ -1645,7 +1661,7 @@ public class QueryBuilder {
         if (firstRow != null) {
             query.setFirstResult(firstRow);
         }
-        if (numberOfRows != null) {
+        if (numberOfRows != null && numberOfRows != 0) {
             query.setMaxResults(numberOfRows);
         }
     }
@@ -1673,7 +1689,7 @@ public class QueryBuilder {
         if (firstRow != null) {
             query.setFirstResult(firstRow);
         }
-        if (numberOfRows != null) {
+        if (numberOfRows != null && numberOfRows != 0) {
             query.setMaxResults(numberOfRows);
         }
     }

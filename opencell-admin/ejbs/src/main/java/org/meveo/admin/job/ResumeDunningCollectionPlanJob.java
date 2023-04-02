@@ -17,20 +17,20 @@
  */
 package org.meveo.admin.job;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
-import org.meveo.model.settings.GlobalSettings;
+import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.service.job.Job;
-import org.meveo.service.settings.impl.GlobalSettingsService;
+import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 
 @Stateless
 public class ResumeDunningCollectionPlanJob extends Job {
@@ -39,7 +39,7 @@ public class ResumeDunningCollectionPlanJob extends Job {
     private ResumeDunningCollectionPlanJobBean ResumeDunningCollectionPlanJobBean;
 
     @Inject
-    private GlobalSettingsService globalSettingsService;
+    private FinanceSettingsService financeSettingsService;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
@@ -50,8 +50,8 @@ public class ResumeDunningCollectionPlanJob extends Job {
     }
 
     public void checkActivateDunning(JobExecutionResultImpl result) {
-        GlobalSettings lastOne = globalSettingsService.findLastOne();
-        if(lastOne != null && !lastOne.getActivateDunning()) {
+        FinanceSettings lastOne = financeSettingsService.findLastOne();
+        if (lastOne != null && !lastOne.isActivateDunning()) {
             result.registerError("The action is not possible, GlobalSettings.activateDunning is disabled");
             throw new BusinessApiException("The action is not possible, GlobalSettings.activateDunning is disabled");
         }

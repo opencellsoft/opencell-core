@@ -547,7 +547,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 
 	@Override
 	public String createSepaDirectDebitToken(CustomerAccount customerAccount, String alias, String accountHolderName, String iban) throws BusinessException {
-		throw new UnsupportedOperationException();
+		return null;
 	}
 
 	@Override

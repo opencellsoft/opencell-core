@@ -42,28 +42,49 @@ import org.meveo.model.shared.Name;
  * @lastModifiedVersion 5.0
  */
 public abstract class AccountService<P extends AccountEntity> extends BusinessService<P> {
-
-    /**
+	
+	/**
      * Return entity.
      * 
      * @param externalRef1 external ref1
      * @return account
+     */    
+    public P findByExternalRef1(String externalRef1) {
+    	return findByExternalRefX(externalRef1, "externalRef1");
+    }
+    
+    /**
+     * Return entity.
+     * 
+     * @param externalRef2 external ref2
+     * @return account
+     */
+    public P findByExternalRef2(String externalRef2) {
+        return findByExternalRefX(externalRef2, "externalRef2");
+    }
+    
+    /**
+     * Find account Entity by externalRef1 or externalRef2
+     * @param externalRefX value
+     * @param externalRef1or2  field name externalRef1 or externalRef2
+     * @return
      */
     @SuppressWarnings("unchecked")
-    public P findByExternalRef1(String externalRef1) {
-        log.debug("start of find {} by externalRef1 (externalRef1={}) ..", getEntityClass().getSimpleName(), externalRef1);
+    private P findByExternalRefX(String externalRefX,String externalRef1or2) {
+        log.debug("start of find {} by {}  ({}={}) ..", getEntityClass().getSimpleName(),externalRef1or2,externalRef1or2, externalRefX);
         final Class<? extends P> productClass = getEntityClass();
         StringBuilder queryString = new StringBuilder("from " + productClass.getName() + " a");
-        queryString.append(" where a.externalRef1 = :externalRef1");
+        queryString.append(" where a."+externalRef1or2+" = :"+externalRef1or2);
         Query query = getEntityManager().createQuery(queryString.toString());
-        query.setParameter("externalRef1", externalRef1);
-        if (query.getResultList().size() == 0) {
+        query.setParameter(externalRef1or2, externalRefX);
+        if (query.getResultList().isEmpty()) {
             return null;
         }
         P e = (P) query.getResultList().get(0);
-        log.debug("end of find {} by externalRef1 (externalRef1={}). Result found={}.", new Object[] {getEntityClass().getSimpleName(), externalRef1, e != null });
+        log.debug("end of find {} by {} ({}={}). Result found={}.", getEntityClass().getSimpleName(),externalRef1or2,externalRef1or2, externalRefX, e != null );
         return e;
     }
+
 
     /**
      * @param name name

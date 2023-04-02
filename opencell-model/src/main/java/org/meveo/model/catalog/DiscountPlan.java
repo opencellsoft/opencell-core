@@ -23,25 +23,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -55,7 +37,8 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
 import org.hibernate.annotations.Type;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.meveo.model.billing.UntdidAllowanceCode;
+
 /**
  * Discount plan
  * 
@@ -218,14 +201,14 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 
 	@Type(type = "numeric_boolean")
 	@Column(name = "applicable_on_overridden_price")
-	private Boolean applicableOnOverriddenPrice;
+	private boolean applicableOnOverriddenPrice;
 	
 	/**
 	 *determines whether the discount plan is applicable on the gross or discounted amount
 	 */
 	@Type(type = "numeric_boolean")
 	@Column(name = "applicable_on_discounted_price")
-	private Boolean applicableOnDiscountedPrice;
+	private boolean applicableOnDiscountedPrice;
 	
 	/**
 	 *determines whether the discount plan is applicable on the gross or discounted amount
@@ -274,8 +257,15 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
     @Type(type = "numeric_boolean")
     @Column(name = "automatic_application")
     private boolean automaticApplication = false;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "allowance_code_id")
+    private UntdidAllowanceCode allowanceCode;
 	
-	public DiscountPlan() {}
+	public DiscountPlan() {
+		this.applicableOnDiscountedPrice = true;
+		this.applicableOnOverriddenPrice = true;
+	}
 	
 	public DiscountPlan(DiscountPlan dp) {
 
@@ -294,6 +284,7 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 		this.setDiscountPlanItems(new ArrayList<>(dp.getDiscountPlanItems()));
 		this.sequence=dp.getSequence();
 		this.applicableOnDiscountedPrice=dp.getApplicableOnDiscountedPrice();
+		this.allowanceCode=dp.getAllowanceCode();
 	}
 	
 	public boolean isValid() {
@@ -472,20 +463,20 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 		this.expressionEl = expressionEl;
 	}
 	
-    public Boolean getApplicableOnOverriddenPrice() {
+    public boolean getApplicableOnOverriddenPrice() {
 		return applicableOnOverriddenPrice;
 	}
 
-	public void setApplicableOnOverriddenPrice(Boolean applicableOnOverriddenPrice) {
+	public void setApplicableOnOverriddenPrice(boolean applicableOnOverriddenPrice) {
 		this.applicableOnOverriddenPrice = applicableOnOverriddenPrice;
 	}
 	
 
-	public Boolean getApplicableOnDiscountedPrice() {
+	public boolean getApplicableOnDiscountedPrice() {
 		return applicableOnDiscountedPrice;
 	}
 
-	public void setApplicableOnDiscountedPrice(Boolean applicableOnDiscountedPrice) {
+	public void setApplicableOnDiscountedPrice(boolean applicableOnDiscountedPrice) {
 		this.applicableOnDiscountedPrice = applicableOnDiscountedPrice;
 	}
 
@@ -528,7 +519,12 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
         return (date.compareTo(startDate) >= 0) && (date.before(endDate));
     }
 
-    
 
+	public UntdidAllowanceCode getAllowanceCode() {
+		return allowanceCode;
+	}
 
+	public void setAllowanceCode(UntdidAllowanceCode allowanceCode) {
+		this.allowanceCode = allowanceCode;
+	}
 }

@@ -1,14 +1,19 @@
 package org.meveo.api.cpq;
 
+import static java.lang.String.format;
+import static org.meveo.model.cpq.enums.ProductStatusEnum.CLOSED;
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -22,8 +27,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.billing.ContractHierarchyHelper;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.cpq.OrderAttributeDto;
 import org.meveo.api.dto.cpq.OrderProductDto;
@@ -37,20 +44,24 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.AdvancementRateIncreased;
 import org.meveo.event.qualifier.StatusUpdated;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.*;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
+import org.meveo.model.catalog.ProductChargeTemplateMapping;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.commercial.*;
-import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.scripts.ScriptInstance;
@@ -133,6 +144,15 @@ public class CommercialOrderApi extends BaseApi {
 	@Inject
 	@AdvancementRateIncreased
 	protected Event<CommercialOrder> entityAdvancementRateIncreasedEventProducer;
+	
+    @Inject
+    private ResourceBundle resourceMessages;
+
+	@Inject
+	private ServiceInstanceService serviceInstanceService;
+	
+	@Inject
+	private ContractHierarchyHelper contractHierarchyHelper;
 
 	private static final String ADMINISTRATION_VISUALIZATION = "administrationVisualization";
     private static final String ADMINISTRATION_MANAGEMENT = "administrationManagement";
@@ -175,7 +195,7 @@ public class CommercialOrderApi extends BaseApi {
 			order.setQuote(loadEntityByCode(cpqQuoteService, orderDto.getQuoteCode(), CpqQuote.class));
 		}
 		if(!Strings.isEmpty(orderDto.getContractCode())) {
-			order.setContract(loadEntityByCode(contractService, orderDto.getContractCode(), Contract.class));
+			order.setContract(contractHierarchyHelper.checkContractHierarchy(billingAccount, orderDto.getContractCode()));
 		}
 		if(!Strings.isEmpty(orderDto.getInvoicingPlanCode())) {
 			order.setInvoicingPlan(loadEntityByCode(invoicingPlanService, orderDto.getInvoicingPlanCode(), InvoicingPlan.class));
@@ -366,11 +386,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 			order.setQuote(quote);
 		}
 		if(!Strings.isEmpty(orderDto.getContractCode())) {
-			final Contract contract = contractService.findByCode(orderDto.getContractCode());
-			if(contract == null)
-				throw new EntityDoesNotExistsException(Contract.class, orderDto.getContractCode());
-			order.setContract(contract);
-				
+			order.setContract(contractHierarchyHelper.checkContractHierarchy(order.getBillingAccount(), orderDto.getContractCode()));
 		}
 		if(!Strings.isEmpty(orderDto.getInvoicingPlanCode())) {
 			final InvoicingPlan billingPlan = invoicingPlanService.findByCode(orderDto.getInvoicingPlanCode());
@@ -462,6 +478,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 		}
 		handleMissingParameters();
 		CommercialOrder order = commercialOrderService.findById(commercialOrderId);
+		validateProducts(order.getOffers());
 		if(order == null)
 			throw new EntityDoesNotExistsException(CommercialOrder.class, commercialOrderId);
 		if(order.getStatus().equalsIgnoreCase(statusTarget))
@@ -498,6 +515,26 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 		commercialOrderStatusUpdatedEvent.fire(order);
 		if(shouldFireAdvancementRateIncreasedEvent){
 			entityAdvancementRateIncreasedEventProducer.fire(order);
+		}
+	}
+
+	private void validateProducts(List<OrderOffer> orderOffers) {
+		for (OrderOffer orderOffer : orderOffers) {
+			if (orderOffer.getProducts() != null) {
+				orderOffer.getProducts()
+						.stream()
+						.filter(Objects::nonNull)
+						.map(OrderProduct::getProductVersion)
+						.filter(Objects::nonNull)
+						.map(ProductVersion::getProduct)
+						.filter(product -> CLOSED.equals(product.getStatus()))
+						.findAny()
+						.ifPresent(product -> {
+							throw new BusinessApiException(
+									format("Can not perform action product status is CLOSED, product code : %s",
+											product.getCode()));
+						});
+			}
 		}
 	}
 	
@@ -656,13 +693,6 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 		 result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
 		 if(totalCount > 0) {
 			 commercialOrderService.list(paginationConfiguration).stream().forEach(co -> {
-			 	/*if(co.getId() == 1){
-					OrderAdvancementScript temp = new OrderAdvancementScript();
-					Map<String, Object> methodContext = new HashMap<String, Object>();
-					co.setOrderProgress(100);
-					methodContext.put("commercialOrder", co);
-					temp.execute(methodContext );
-				}*/
 				 result.getCommercialOrderDtos().add(new CommercialOrderDto(co));
 			 });
 		 }
@@ -719,7 +749,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 			if (scriptInstance != null) {
 				String orderValidationProcess = scriptInstance.getCode();
 				ScriptInterface script = scriptInstanceService.getScriptInstance(orderValidationProcess);
-				Map<String, Object> methodContext = new HashMap<String, Object>();
+				Map<String, Object> methodContext = new HashMap<>();
 				methodContext.put("commercialOrder", order);
 				methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
 				methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
@@ -755,7 +785,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 	
 	private void processOrderLot(CommercialOrderDto postData, CommercialOrder commercialOrder) {
 		Set<String> orderLots = postData.getOrderLotCodes(); 
-		List<OrderLot> orderLotList=new ArrayList<OrderLot>();
+		List<OrderLot> orderLotList=new ArrayList<>();
 		if(orderLots != null && !orderLots.isEmpty()){
 			for(String code:orderLots) {
 				OrderLot orderLot=orderLotService.findByCode(code);
@@ -805,6 +835,10 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 		} else {
 			userAccount = commercialOrder.getUserAccount();
 		}
+		
+		if (!StringUtils.isBlank(orderOfferDto.getContractCode())) {
+			orderOffer.setContract(contractHierarchyHelper.checkContractHierarchy(userAccount.getBillingAccount(), orderOfferDto.getContractCode()));
+		}
 
 		orderOffer.setUserAccount(userAccount);
 		DiscountPlan discountPlan=null;
@@ -829,7 +863,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 			}
         	List<OrderOffer> orderOffers = orderOfferService.findBySubscriptionAndStatus(orderOfferDto.getSubscriptionCode(), OfferLineTypeEnum.AMEND);
         	if(!orderOffers.isEmpty()) {
-        		throw new BusinessApiException(String.format("Amendment order line already exists on subscription %s",orderOfferDto.getSubscriptionCode()));
+        		throw new BusinessApiException(format("Amendment order line already exists on subscription %s",orderOfferDto.getSubscriptionCode()));
         	}
         	orderOffer.setOrderLineType(OfferLineTypeEnum.AMEND);
         	
@@ -864,6 +898,39 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
     		}
         	orderOffer.setTerminationReason(terminationReason);
     		orderOffer.setTerminationDate(orderOfferDto.getTerminationDate());
+        }else if(orderOfferDto.getOrderLineType() == OfferLineTypeEnum.APPLY_ONE_SHOT) {
+        	for (OrderProductDto orderProductDto : orderOfferDto.getOrderProducts()) { 
+        		if(!StringUtils.isBlank(orderProductDto.getProductCode()) && !StringUtils.isBlank(orderProductDto.getProductVersion())) {
+        			ProductVersion productVersion = productVersionService.findByProductAndVersion(orderProductDto.getProductCode(), orderProductDto.getProductVersion());
+        			if(productVersion == null) {
+        				throw new EntityDoesNotExistsException(ProductVersion.class, orderProductDto.getProductCode() +","+ orderProductDto.getProductVersion());
+        			}
+    				boolean haveOneShotChargeOther = false;
+        			for(ProductChargeTemplateMapping charge : productVersion.getProduct().getProductCharges()) {
+        				if(charge.getChargeTemplate() != null) {
+        					ChargeTemplate templateCharge = (ChargeTemplate) PersistenceUtils.initializeAndUnproxy(charge.getChargeTemplate());
+        					if(templateCharge instanceof OneShotChargeTemplate) {
+        						OneShotChargeTemplate oneShotCharge = (OneShotChargeTemplate) templateCharge;
+        						if(oneShotCharge.getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.OTHER) {
+        							haveOneShotChargeOther = true;
+        							break;
+        						}
+        					}
+        				}
+        			}
+        			if (!haveOneShotChargeOther) {
+            			throw new MeveoApiException(resourceMessages.getString("order.line.type.one.shot.other.error", orderProductDto.getProductCode()));
+        			}
+        			
+        		}
+
+			}
+        	orderOffer.setOrderLineType(OfferLineTypeEnum.APPLY_ONE_SHOT);
+        	Subscription subscription = subscriptionService.findByCode(orderOfferDto.getSubscriptionCode());
+        	if(subscription == null) {
+        		throw new EntityDoesNotExistsException("Subscription with code "+orderOfferDto.getSubscriptionCode()+" does not exist");
+        	}
+        	orderOffer.setSubscription(subscription);
         }else {
         	orderOffer.setOrderLineType(OfferLineTypeEnum.CREATE);
         }
@@ -871,6 +938,10 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 		orderOfferService.create(orderOffer);
 		orderOfferDto.setOrderOfferId(orderOffer.getId());
 		createOrderProduct(orderOfferDto.getOrderProducts(),orderOffer);
+		Optional.ofNullable(orderOffer.getProducts()).orElse(Collections.emptyList())
+				.forEach(orderProduct -> attributeService.validateAttributes(
+						orderOffer.getProducts().get(0).getProductVersion().getAttributes(),
+						orderProduct.getOrderAttributes()));
 		createOrderAttribute(orderOfferDto.getOrderAttributes(),null,orderOffer);
 		return orderOfferDto;
 	}
@@ -883,6 +954,10 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
     	OrderOffer orderOffer = orderOfferService.findById(orderOfferDto.getOrderOfferId());
     	if (orderOffer == null) {
     		throw new EntityDoesNotExistsException(OrderOffer.class, orderOfferDto.getOrderOfferId());
+    	}
+    	
+    	if(orderOffer.getOrder() != null && CommercialOrderEnum.VALIDATED.toString().equalsIgnoreCase(orderOffer.getOrder().getStatus())) {
+    		throw new BusinessApiException("A validated order cannot be update");
     	}
     	
 		if (orderOfferDto.getCommercialOrderId() != null) {
@@ -922,6 +997,10 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 	        }
 	        orderOffer.setUserAccount(userAccount);
 		} 
+		
+		if (!StringUtils.isBlank(orderOfferDto.getContractCode())) {
+			orderOffer.setContract(contractHierarchyHelper.checkContractHierarchy(orderOffer.getUserAccount().getBillingAccount(), orderOfferDto.getContractCode()));
+		}
     	
     	if(orderOfferDto.getDeliveryDate()!=null && orderOfferDto.getDeliveryDate().before(new Date())) {
     		throw new MeveoApiException("Delivery date should be in the future");	
@@ -969,9 +1048,13 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
     		orderOffer.setTerminationDate(orderOfferDto.getTerminationDate());
         }
         
-    	processOrderProductFromOffer(orderOfferDto, orderOffer); 
+    	processOrderProductFromOffer(orderOfferDto, orderOffer);
+		Optional.ofNullable(orderOffer.getProducts()).orElse(Collections.emptyList())
+				.forEach(orderProduct -> attributeService.validateAttributes(
+						orderOffer.getProducts().get(0).getProductVersion().getAttributes(),
+						orderProduct.getOrderAttributes()));
         processOrderAttribute(orderOfferDto,  orderOffer);
-    	orderOfferService.update(orderOffer); 
+    	orderOfferService.update(orderOffer);
     	return orderOfferDto;
     }
 	
@@ -987,6 +1070,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
     	CommercialOrder commercialOrder=null;
     	if(commercialOrderId!=null) {
     	 commercialOrder = commercialOrderService.findById(commercialOrderId);
+		 validateProducts(commercialOrder.getOffers());
     	if ( commercialOrder== null)
     		throw new EntityDoesNotExistsException(CommercialOrder.class, commercialOrderId);
     	} 
@@ -1190,8 +1274,16 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
     		throw new MeveoApiException("Delivery date should be in the future");	
     	}
     	orderProduct.setDeliveryDate(orderProductDto.getDeliveryDate());
-        
-		orderProduct.updateAudit(currentUser); 
+
+		if (orderProductDto.getServiceInstanceId() != null) {
+			ServiceInstance serviceInstance = serviceInstanceService.findById(orderProductDto.getServiceInstanceId());
+			if (serviceInstance == null) {
+				throw new EntityDoesNotExistsException(ServiceInstance.class, orderProductDto.getServiceInstanceId());
+			}
+			orderProduct.setServiceInstance(serviceInstance);
+		}
+
+		orderProduct.updateAudit(currentUser);
 		return orderProduct;
     }
     
@@ -1238,9 +1330,9 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 	        }
         }
         if (productVersionAttributes != null) {
-            List<Attribute> productAttributes = productVersionAttributes.stream().map(pva -> pva.getAttribute()).collect(Collectors.toList());
+            List<Attribute> productAttributes = productVersionAttributes.stream().map(ProductVersionAttribute::getAttribute).collect(Collectors.toList());
             if(productAttributes != null && !productAttributes.contains(attribute) && orderProduct!=null){
-                throw new BusinessApiException(String.format("Product version (code: %s, version: %d), doesn't contain attribute code: %s", orderProduct.getProductVersion().getProduct().getCode() , orderProduct.getProductVersion().getCurrentVersion(), attribute.getCode()));
+                throw new BusinessApiException(format("Product version (code: %s, version: %d), doesn't contain attribute code: %s", orderProduct.getProductVersion().getProduct().getCode() , orderProduct.getProductVersion().getCurrentVersion(), attribute.getCode()));
             }
         }
         
@@ -1299,6 +1391,15 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
                 throw new MeveoApiException("Cannot delete offers associated to an order in status : " + commercialOrder.getStatus());
             } 
         }
+		if(orderOffer.getProducts() != null) {
+			orderOffer.getProducts()
+					.stream()
+					.filter(orderProduct -> orderProduct.getOrderArticleLine() != null)
+					.forEach(orderProduct -> {
+						orderProduct.getOrderArticleLine().setOrderProduct(null);
+						orderProduct.setOrderArticleLine(null);
+					});
+		}
     	orderOfferService.remove(orderOffer);
     }
     

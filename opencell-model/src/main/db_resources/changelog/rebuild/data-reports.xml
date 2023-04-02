@@ -8,12 +8,9 @@
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="ACCOUNT_OPS" />
+            <column name="code" value="org.meveo.service.script.export.ExportAccountOperationScript" />
             <column name="description" value="Export account operations" />
-            <column name="src_type" value="JAVA" />
-            <column name="script">
-<![CDATA[package org.meveo.service.script.export; import java.io.File; import java.io.FileWriter; import java.text.DateFormat; import java.text.SimpleDateFormat; import java.util.List; import java.util.Map; import org.meveo.admin.exception.BusinessException; import org.meveo.model.payments.AccountOperation; import org.meveo.model.payments.CustomerAccount; import org.meveo.model.payments.RecordedInvoice; import org.meveo.service.payments.impl.AccountOperationService; import org.meveo.service.script.Script; import org.meveo.service.script.finance.ReportExtractScript; import org.slf4j.Logger; import org.slf4j.LoggerFactory; import java.util.Date; public class ExportAccountOperationScript extends ReportExtractScript { private static final Logger LOGGER = LoggerFactory.getLogger(ExportAccountOperationScript.class); private AccountOperationService accountOperationService = (AccountOperationService) getServiceInterface(AccountOperationService.class.getSimpleName()); @Override public void execute(Map<String, Object> initContext) throws BusinessException { try { LOGGER.debug("#####################Starting of script ExportAccountOperationScript"); Date startDate = (Date) initContext.get(ReportExtractScript.START_DATE); Date endDate = (Date) initContext.get(ReportExtractScript.END_DATE); DateFormat df = new SimpleDateFormat("yyyy-MM-dd"); List<AccountOperation> accountOperations = accountOperationService.list(); initContext.put(ReportExtractScript.LINE_COUNT, accountOperations.size()); String exportDir = String.valueOf(initContext.get(ReportExtractScript.DIR)); File dir = new File(exportDir); if (!dir.exists()) { dir.mkdirs(); } CustomerAccount customerAccount = null; StringBuilder sb =new StringBuilder(); sb.append("Transaction Date;Transaction Type;Amount;Due Date;Reference;Transaction Category;Invoice Date;" + "Customer Account Code;Customer Account Description\n"); for (AccountOperation accountOperation : accountOperations) { if(accountOperation.getTransactionDate().equals(startDate) || accountOperation.getTransactionDate().equals(endDate) || (accountOperation.getTransactionDate().after(startDate) && accountOperation.getTransactionDate().before(endDate))) { customerAccount = accountOperation.getCustomerAccount(); sb.append(nil(accountOperation.getTransactionDate().toString())+ ";"); sb.append(nil(accountOperation.getType()) + ";"); sb.append(nil(accountOperation.getAmount().toString()) + ";"); sb.append(isNull(accountOperation.getDueDate()) + ";"); sb.append(nil(accountOperation.getReference()) + ";"); sb.append(nil(accountOperation.getTransactionCategory().toString()) + ";"); if(accountOperation instanceof RecordedInvoice) { RecordedInvoice invoice = (RecordedInvoice) accountOperation; sb.append(invoice.getInvoiceDate().toString() + ";"); } else { sb.append(";"); } sb.append(nil(customerAccount.getCode()) + ";"); sb.append(nil(customerAccount.getDescriptionOrCode()) + ";\n"); } } String strFilename = String.valueOf(initContext.get(ReportExtractScript.FILENAME)); LOGGER.debug("output={}", strFilename); File file = new File(dir + File.separator + strFilename); file.createNewFile(); FileWriter fileWriter = new FileWriter(file); fileWriter.write(sb.toString()); fileWriter.close(); LOGGER.debug("#####################Ending of script ExportAccountOperationScript"); } catch (Exception e) { initContext.put(ReportExtractScript.ERROR_MESSAGE, e.getMessage()); LOGGER.error("Exception:", e); throw new BusinessException(e.getMessage()); } } private String isNull(Object obj) { if(obj == null) { return ""; } else { return obj.toString(); } } private String nil(String word) { if (word == null || "null".equalsIgnoreCase(word)) { return ""; } else { return word; } } }]]>
-            </column>
+            <column name="src_type" value="JAVA_CLASS" />
         </insert>
 
         <insert tableName="dwh_report_extract">
@@ -1373,10 +1370,7 @@ order by edr.STATUS, edr.id DESC]]>
             <column name="created" valueDate="${db.current.time}" />
             <column name="code" value="org.meveo.service.script.presale.AgedBalanceReporting" />
             <column name="description" value="Aged Balance Reporting Script" />
-            <column name="src_type" value="JAVA" />
-            <column name="script">
-                <![CDATA[package org.meveo.service.script.presale; import java.io.File; import java.math.BigDecimal; import java.math.RoundingMode; import java.util.Date; import java.util.HashMap; import java.util.List; import java.util.Map; import org.apache.commons.lang3.time.DateUtils; import org.meveo.admin.exception.BusinessException; import org.meveo.commons.utils.CsvBuilder; import org.meveo.model.payments.CustomerAccount; import org.meveo.service.payments.impl.CustomerAccountService; import org.meveo.service.script.finance.ReportExtractScript; import org.slf4j.Logger; import org.slf4j.LoggerFactory; /** * @author anasseh * @corrector jpviegas */ public class AgedBalanceReporting extends ReportExtractScript { private static final Logger log = LoggerFactory.getLogger(AgedBalanceReporting.class); private CustomerAccountService customerAccountService = (CustomerAccountService) getServiceInterface(CustomerAccountService.class.getSimpleName()); @Override public void execute(Map<String, Object> executeContext) throws BusinessException { try { log.debug("execute executeContext:{}", executeContext); Map<String, Object> params = new HashMap<String, Object>(); params.put("sysdate30", DateUtils.addDays(new Date(), -30)); params.put("sysdate60", DateUtils.addDays(new Date(), -60)); params.put("sysdate90", DateUtils.addDays(new Date(), -90)); String query = "Select ao.customerAccount.id , " + "sum (case when ao.dueDate <= current_date() and ao.dueDate >:sysdate30 then  ao.amount else 0 end ) as sum_0_30, " + "sum (case when ao.dueDate <=:sysdate30 and ao.dueDate >:sysdate60 then  ao.amount else 0 end ) as sum_30_60, " + "sum (case when ao.dueDate <=:sysdate60 and ao.dueDate >:sysdate90 then  ao.amount else 0 end ) as sum_60_90, " + "sum (case when ao.dueDate <=:sysdate90  then  ao.amount else 0 end ) as sum_90_up " + "from AccountOperation ao where ao.transactionCategory = 'DEBIT'  group by ao.customerAccount"; List<Object[]> rows = (List<Object[]>)  customerAccountService.executeSelectQuery(query,params); log.debug("execute rows size:{}", rows == null ? null : rows.size()); String dirOutput = String.valueOf(executeContext.get(ReportExtractScript.DIR)); String filename = String.valueOf(executeContext.get(ReportExtractScript.FILENAME)); CsvBuilder csvBuilder = new CsvBuilder(";", false); String[] header = { "CA_DESC", "C_DESC","DEBT_TIER_0_30_DAYS","DEBT_TIER_30_60_DAYS","DEBT_TIER_60_90_DAYS","DEBT_TIER_90_DAYS" }; csvBuilder.appendValues(header); csvBuilder.startNewLine(); for (Object[] row : rows) { CustomerAccount ca = customerAccountService.findById(((Long)row[0])); csvBuilder.appendValue(ca.getDescription()); csvBuilder.appendValue(ca.getCustomer().getDescription()); csvBuilder.appendValue(round((BigDecimal)row[1])); csvBuilder.appendValue(round((BigDecimal)row[2])); csvBuilder.appendValue(round((BigDecimal)row[3])); csvBuilder.appendValue(round((BigDecimal)row[4])); csvBuilder.startNewLine(); } csvBuilder.toFile(dirOutput + File.separator + filename); log.debug("execute file generated:{}", dirOutput + File.separator + filename); } catch (Exception e) { log.error("Error on AgedBalanceReporting:", e); throw new BusinessException(e.getMessage()); } } private String round(BigDecimal amount) { if(amount == null) { return ""; } if (amount.scale() > 4) { String amountAsString = "" + amount; amount = new BigDecimal(amount.longValue() + "." + amountAsString.substring(amountAsString.indexOf(".") + 1).substring(0, 4)); } amount = amount.setScale(2, RoundingMode.UP); return amount.toPlainString(); } }]]>
-            </column>
+            <column name="src_type" value="JAVA_CLASS" />
         </insert>
 
         <insert tableName="dwh_report_extract">
@@ -1400,10 +1394,7 @@ order by edr.STATUS, edr.id DESC]]>
             <column name="created" valueDate="${db.current.time}" />
             <column name="code" value="org.meveo.service.script.presale.CustomerRevenuReporting" />
             <column name="description" value="Customer Revenu Reporting Script" />
-            <column name="src_type" value="JAVA" />
-            <column name="script">
-                <![CDATA[package org.meveo.service.script.presale; import java.io.File; import java.math.BigDecimal; import java.math.RoundingMode; import java.util.Date; import java.util.HashMap; import java.util.List; import java.util.Map; import org.meveo.admin.exception.BusinessException; import org.meveo.commons.utils.CsvBuilder; import org.meveo.model.payments.CustomerAccount; import org.meveo.service.payments.impl.AccountOperationService; import org.meveo.service.payments.impl.CustomerAccountService; import org.meveo.service.script.finance.ReportExtractScript; import org.slf4j.Logger; import org.slf4j.LoggerFactory; /** * @author anasseh * */ public class CustomerRevenuReporting extends ReportExtractScript { private static final Logger log = LoggerFactory.getLogger(CustomerRevenuReporting.class); private CustomerAccountService customerAccountService = (CustomerAccountService) getServiceInterface(CustomerAccountService.class.getSimpleName()); @Override public void execute(Map<String, Object> executeContext) throws BusinessException { try { log.debug("execute executeContext:{}", executeContext); Date startDate = (Date) executeContext.get(ReportExtractScript.START_DATE); Date endDate = (Date) executeContext.get(ReportExtractScript.END_DATE); Map<String, Object> params = new HashMap<String, Object>(); params.put("startDateIN", startDate); params.put("endDateIN", endDate); String query = "Select ao.customerAccount.id , sum (ao.amount) as sum_amount from AccountOperation ao where ao.transactionCategory = 'DEBIT' and ao.dueDate >=:startDateIN " + "and ao.dueDate <:endDateIN  group by ao.customerAccount order by sum_amount desc"; List<Object[]> aos = (List<Object[]>)  customerAccountService.executeSelectQuery(query,params); log.debug("execute aos size:{}", aos == null ? null : aos.size()); String dirOutput = String.valueOf(executeContext.get(ReportExtractScript.DIR)); String filename = String.valueOf(executeContext.get(CustomerRevenuReporting.FILENAME)); CsvBuilder csvBuilder = new CsvBuilder(";", false); String[] header = { "CA_DESC", "C_DESC","SUM_REVENUE" }; csvBuilder.appendValues(header); csvBuilder.startNewLine(); for (Object[] ao : aos) { CustomerAccount ca = customerAccountService.findById(((Long)ao[0])); csvBuilder.appendValue(ca.getDescription()); csvBuilder.appendValue(ca.getCustomer().getDescription()); csvBuilder.appendValue(round((BigDecimal)ao[1])); csvBuilder.startNewLine(); } csvBuilder.toFile(dirOutput + File.separator + filename); log.debug("execute file generated:{}", dirOutput + File.separator + filename); } catch (Exception e) { log.error("Error on CustomerRevenuReporting:", e); throw new BusinessException(e.getMessage()); } } private String round(BigDecimal amount) { if(amount == null) { return ""; } if (amount.scale() > 4) { String amountAsString = "" + amount; amount = new BigDecimal(amount.longValue() + "." + amountAsString.substring(amountAsString.indexOf(".") + 1).substring(0, 4)); } amount = amount.setScale(2, RoundingMode.UP); return amount.toPlainString(); } }]]>
-            </column>
+            <column name="src_type" value="JAVA_CLASS" />
         </insert>
         <insert tableName="dwh_report_extract">
             <column name="id" valueNumeric="-28" />
@@ -1435,12 +1426,7 @@ order by edr.STATUS, edr.id DESC]]>
             <column name="created" valueDate="${db.current.time}" />
             <column name="code" value="org.meveo.service.script.presale.CustomerPerOfferReporting" />
             <column name="description" value="Customer Per Offer Reporting Script" />
-            <column name="src_type" value="JAVA" />
-            <column name="script">
-                <![CDATA[
-                package org.meveo.service.script.presale; import java.io.File; import java.util.Date; import java.util.HashMap; import java.util.List; import java.util.Map; import org.meveo.admin.exception.BusinessException; import org.meveo.commons.utils.CsvBuilder; import org.meveo.commons.utils.StringUtils; import org.meveo.model.billing.UserAccount; import org.meveo.model.catalog.OfferTemplate; import org.meveo.service.billing.impl.SubscriptionService; import org.meveo.service.script.finance.ReportExtractScript; import org.slf4j.Logger; import org.slf4j.LoggerFactory; /** * @author anasseh * */ public class CustomerPerOfferReporting extends ReportExtractScript { private static final Logger log = LoggerFactory.getLogger(CustomerPerOfferReporting.class); private SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface(SubscriptionService.class.getSimpleName()); @Override public void execute(Map<String, Object> executeContext) throws BusinessException { try { log.debug("execute executeContext:{}", executeContext); Date startDate = (Date) executeContext.get(ReportExtractScript.START_DATE); String offerCode = (String) executeContext.get("OFFER_CODE"); Map<String, Object> params = new HashMap<String, Object>(); params.put("subDateIN", startDate); String query = "Select distinct sub.offer, sub.userAccount from Subscription sub where sub.subscriptionDate >:subDateIN "; if (!StringUtils.isBlank(offerCode)) { query += " and sub.offer.code =:offCodeIN "; params.put("offCodeIN", offerCode); } List<Object[]> rows = (List<Object[]>) subscriptionService.executeSelectQuery(query  + "order by sub.offer.code",params); log.debug("execute rows size:{}", rows == null ? null : rows.size()); String dirOutput = String.valueOf(executeContext.get(ReportExtractScript.DIR)); String filename = String.valueOf(executeContext.get(CustomerPerOfferReporting.FILENAME)); CsvBuilder csvBuilder = new CsvBuilder(";", false); String[] header = { "OFF_CODE", "OFF_DESC", "UA_DESC",  "BA_DESC",  "CA_DESC", "C_DESC" }; csvBuilder.appendValues(header); csvBuilder.startNewLine(); for (Object[] row : rows) { csvBuilder.appendValue(((OfferTemplate)row[0]).getCode()); csvBuilder.appendValue(((OfferTemplate)row[0]).getDescription()); csvBuilder.appendValue(((UserAccount)row[1]).getDescription()); csvBuilder.appendValue(((UserAccount)row[1]).getBillingAccount().getDescription()); csvBuilder.appendValue(((UserAccount)row[1]).getBillingAccount().getCustomerAccount().getDescription()); csvBuilder.appendValue(((UserAccount)row[1]).getBillingAccount().getCustomerAccount().getCustomer().getDescription()); csvBuilder.startNewLine(); } csvBuilder.toFile(dirOutput + File.separator + filename); log.debug("execute file generated:{}", dirOutput + File.separator + filename); } catch (Exception e) { log.error("Error on CustomerPerOfferReporting:", e); throw new BusinessException(e.getMessage()); } } }
-                ]]>
-            </column>
+            <column name="src_type" value="JAVA_CLASS" />
         </insert>
         <insert tableName="dwh_report_extract">
             <column name="id" valueNumeric="-30" />
@@ -1563,6 +1549,65 @@ order by edr.STATUS, edr.id DESC]]>
             <column name="version" valueNumeric="1" />
             <column name="entity_class" value="Seller" />
             <column name="sequence_id" valueNumeric="-2" />
+        </insert>
+    </changeSet>
+    
+    
+    <changeSet id="INTRD-263_20210716" author="ZBariki">
+        <insert tableName="com_message_template">
+            <column name="media" value="EMAIL" />
+            <column name="id" valueSequenceNext="com_msg_tmpl_seq" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="REPORT_QUERY_RESULT_SUCCESS" />
+            <column name="type" value="OTHER"/>
+            <column name="tag_start" value="#{"/>
+            <column name="tag_end" value="}" />
+            <column name="description" value="Report query result" />
+            <column name="subject" value="[opencell] Query result #{reportQueryName} #{startDate}" />
+            <column name="htmlcontent">
+                <![CDATA[Dear #{userName},<br>
+<br>
+The result for your query is ready.<br>
+Check the result on <a href="#{portalResultLink}">Opencell Portal</a><br>
+Query : #{reportQueryName}<br>
+Started : #{startDate}<br>
+Duration : #{duration}<br>
+Line count : #{lineCount}<br>
+<br>
+Best regards,<br>
+Opencell team.
+                ]]>
+            </column>
+        </insert>
+        <insert tableName="com_message_template">
+            <column name="media" value="EMAIL" />
+            <column name="id" valueSequenceNext="com_msg_tmpl_seq"/>
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="REPORT_QUERY_RESULT_FAILURE" />
+            <column name="type" value="OTHER" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="description" value="Report query failure notification" />
+            <column name="subject" value="[opencell] Query failed #{reportQueryName} #{startDate}" />
+            <column name="textcontent">
+                <![CDATA[Dear #{userName},
+
+Query execution failed with error :
+#{error}
+
+Contact your administrator or support.
+
+Query : #{reportQueryName}
+Started : #{startDate}
+Duration : #{duration}
+
+Best regards,
+
+Opencell team.
+                ]]>
+            </column>
         </insert>
     </changeSet>
     

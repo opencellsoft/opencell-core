@@ -32,6 +32,7 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.tags.Tag;
+import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.CommercialRuleLineService;
@@ -67,15 +68,14 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 
     @Inject
     private CommercialRuleLineService commercialRuleLineService;
-	
 
+	@Inject
+	CustomGenericEntityCodeService customGenericEntityCodeService;
+	
 	@Override
 	public Attribute create(AttributeDTO postData) throws MeveoApiException, BusinessException {
 
-		if (StringUtils.isBlank(postData.getCode())) {
-			missingParameters.add("code");
-		}
-		if (attributeService.findByCode(postData.getCode()) != null) {
+		if (!StringUtils.isBlank(postData.getCode()) && postData.getCode() != null && attributeService.findByCode(postData.getCode()) != null) {
 			throw new EntityAlreadyExistsException(Attribute.class, postData.getCode());
 		}
 
@@ -83,7 +83,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 
 		// check if groupedAttributes  exists
 		Attribute attribute = new Attribute();
-		attribute.setCode(postData.getCode());
+		attribute.setCode(StringUtils.isBlank(postData.getCode()) ? customGenericEntityCodeService.getGenericEntityCode(attribute) : postData.getCode());
 		attribute.setDescription(postData.getDescription());
 		attribute.setPriority(postData.getPriority());
 		attribute.setAttributeType(postData.getAttributeType());
@@ -279,8 +279,8 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 			throw new EntityDoesNotExistsException(ProductVersion.class, productCode, "productCode", "" + currentProductVersion, "currentVersion");
 		}
 		GetProductVersionResponse getProductVersionResponse = new GetProductVersionResponse(productVersion, true, true);
-		getProductVersionResponse.getAttributes().stream().forEach(att -> {
-			List<Long> sourceRules = commercialRuleLineService.getSourceProductAttributeRules(att.getCode(), productCode);
+		getProductVersionResponse.getProductAttributes().stream().forEach(att -> {
+			List<Long> sourceRules = commercialRuleLineService.getSourceProductAttributeRules(att.getAttributeCode(), productCode);
 			if (sourceRules != null && !sourceRules.isEmpty()) {
 				att.setRuled(true);
 			}

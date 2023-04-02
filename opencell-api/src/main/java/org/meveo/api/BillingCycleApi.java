@@ -141,12 +141,14 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
             entity.setCalendar(calendar);
         }
 
-        if (dto.getInvoiceTypeCode() != null) {
+        if (!StringUtils.isBlank(dto.getInvoiceTypeCode())) {
             InvoiceType invoiceType = invoiceTypeService.findByCode(dto.getInvoiceTypeCode());
             if (invoiceType == null) {
                 throw new EntityDoesNotExistsException(InvoiceType.class, dto.getInvoiceTypeCode());
             }
             entity.setInvoiceType(invoiceType);
+        } else if ("".equals(dto.getInvoiceTypeCode())) {
+        	entity.setInvoiceType(null);
         }
 
         if (!StringUtils.isBlank(dto.getScriptInstanceCode())) {
@@ -155,6 +157,8 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
                 throw new EntityDoesNotExistsException(ScriptInstance.class, dto.getScriptInstanceCode());
             }
             entity.setScriptInstance(scriptInstance);
+        } else if ("".equals(dto.getScriptInstanceCode())) {
+        	entity.setScriptInstance(null);
         }
         
         if (!StringUtils.isBlank(dto.getBillingRunValidationScriptCode())) {
@@ -163,6 +167,8 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
                 throw new EntityDoesNotExistsException(ScriptInstance.class, dto.getBillingRunValidationScriptCode());
             }
             entity.setBillingRunValidationScript(scriptInstance);
+        } else if ("".equals(dto.getBillingRunValidationScriptCode())) {
+        	entity.setBillingRunValidationScript(null);
         }
 
         entity.setCode(StringUtils.isBlank(dto.getUpdatedCode()) ? dto.getCode() : dto.getUpdatedCode());
@@ -214,7 +220,7 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         	entity.setThresholdPerEntity(dto.getThresholdPerEntity());
         }
 
-            entity.setInvoicingThreshold(dto.getInvoicingThreshold());
+        entity.setInvoicingThreshold(dto.getInvoicingThreshold());
 
         if (dto.getReferenceDate() != null) {
             entity.setReferenceDate(dto.getReferenceDate());
@@ -223,7 +229,7 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
             entity.setType(dto.getType());
         }
 
-            entity.setCheckThreshold(dto.getCheckThreshold());
+        entity.setCheckThreshold(dto.getCheckThreshold());
 
         if (dto.getSplitPerPaymentMethod() != null) {
             entity.setSplitPerPaymentMethod(dto.getSplitPerPaymentMethod());
@@ -238,16 +244,17 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
 			entity.setPriority(dto.getPriority());
 		}
 
-        if(dto.getFilters() == null || dto.getFilters().isEmpty())
-        {
-            Map filters = new LinkedHashMap();
-            switch (dto.getType()){
-                case BILLINGACCOUNT: filters.put("billingAccount.billingCycle.code", "{{billingCycle.code}}"); entity.setFilters(filters);break;
-                case SUBSCRIPTION: filters.put("subscription.billingCycle.code", "{{billingCycle.code}}"); entity.setFilters(filters); break;
-                case ORDER: filters.put("infoOrder.order.billingCycle.code", "{{billingCycle.code}}"); entity.setFilters(filters); break;
-            }
+        if (dto.getFilters() == null || dto.getFilters().isEmpty()) {
+        	if (dto.getType() != null) {
+	            Map filters = new LinkedHashMap();
+	            switch (dto.getType()){
+	                case BILLINGACCOUNT: filters.put("billingAccount.billingCycle.code", dto.getCode()); entity.setFilters(filters);break;
+	                case SUBSCRIPTION: filters.put("subscription.billingCycle.code", dto.getCode()); entity.setFilters(filters); break;
+	                case ORDER: filters.put("infoOrder.order.billingCycle.code", dto.getCode()); entity.setFilters(filters); break;
+	            }
+        	}
 
-        }else {
+        } else {
             entity.setFilters(dto.getFilters());
         }
         
@@ -257,9 +264,9 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         if (dto.getUseAccountingArticleLabel() != null) {
             entity.setUseAccountingArticleLabel(dto.getUseAccountingArticleLabel());
         }
-        if (dto.getDateAggregation() != null) {
-            entity.setDateAggregation(dto.getDateAggregation());
-        }
+        
+        entity.setDateAggregation(dto.getDateAggregation());
+        
         if (dto.getAggregateUnitAmounts() != null) {
             entity.setAggregateUnitAmounts(dto.getAggregateUnitAmounts());
         }

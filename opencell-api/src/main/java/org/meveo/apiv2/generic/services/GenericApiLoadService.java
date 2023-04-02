@@ -23,15 +23,16 @@ import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.Query;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.GenericOpencellRestful;
 import org.meveo.apiv2.generic.GenericFieldDetails;
 import org.meveo.apiv2.generic.ImmutableGenericPaginatedResource;
 import org.meveo.apiv2.generic.core.mapper.JsonGenericMapper;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.IEntity;
 import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -41,6 +42,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Stateless
 public class GenericApiLoadService {
+
     @Inject
     GenericOpencellRestful genericOpencellRestful;
 
@@ -54,7 +56,14 @@ public class GenericApiLoadService {
     @Inject
     private GenericFileExportManager genericExportManager;
 
+    @Inject
+    protected ParamBeanFactory paramBeanFactory;
+
+    @Inject
+    private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
+
     public String findPaginatedRecords(Boolean extractList, Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> fetchFields, Long nestedDepth, Long id, Set<String> excludedFields) {
+
         if(genericFields != null && isAggregationQueries(genericFields)){
             searchConfig.setFetchFields(new ArrayList<>(genericFields));
             List<List<Object>> list = (List<List<Object>>) nativePersistenceService.getAggregateQuery(entityClass.getCanonicalName(), searchConfig, id)
@@ -67,7 +76,7 @@ public class GenericApiLoadService {
                     .collect(toList());
             Map<String, Object> results = new LinkedHashMap<>();
             results.put("total", list.size());
-            results.put("limit", Long.valueOf(searchConfig.getNumberOfRows()));
+            results.put("limit", genericPagingAndFilteringUtils.getLimit(searchConfig.getLimit()));
             results.put("offset", Long.valueOf(searchConfig.getFirstRow()));
             results.put("data", mapResult);
 
@@ -85,7 +94,7 @@ public class GenericApiLoadService {
             .collect(toList());
             Map<String, Object> results = new LinkedHashMap<String, Object>();
             results.put("total", searchResult.getCount());
-            results.put("limit", Long.valueOf(searchConfig.getNumberOfRows()));
+            results.put("limit", genericPagingAndFilteringUtils.getLimit(searchConfig.getLimit()));
             results.put("offset", Long.valueOf(searchConfig.getFirstRow()));
             results.put("data", mapResult);
             return serializeResults(results);
@@ -93,7 +102,7 @@ public class GenericApiLoadService {
             SearchResult searchResult = persistenceDelegate.list(entityClass, searchConfig);
             ImmutableGenericPaginatedResource genericPaginatedResource = ImmutableGenericPaginatedResource.builder()
                     .data(searchResult.getEntityList())
-                    .limit(Long.valueOf(searchConfig.getNumberOfRows()))
+                    .limit(genericPagingAndFilteringUtils.getLimit(searchConfig.getLimit()))
                     .offset(Long.valueOf(searchConfig.getFirstRow()))
                     .total(searchResult.getCount())
                     .filters(searchConfig.getFilters())
@@ -107,7 +116,8 @@ public class GenericApiLoadService {
         }
     }
 
-	public List<Map<String, Object>> findAggregatedPaginatedRecords(Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFieldsAlias) {
+
+    public List<Map<String, Object>> findAggregatedPaginatedRecords(Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFieldsAlias) {
 		List<List<Object>> list = (List<List<Object>>) nativePersistenceService.getQueryWithoutDependencies(entityClass.getCanonicalName(), searchConfig, null)
 				.addPaginationConfiguration(searchConfig, "a").find(nativePersistenceService.getEntityManager()).stream().map(ObjectArrays -> Arrays.asList(ObjectArrays)).collect(toList());
 		return list.stream().map(line -> addResultLine(line, genericFieldsAlias != null ? genericFieldsAlias.iterator() : searchConfig.getFetchFields().iterator())).collect(toList());
