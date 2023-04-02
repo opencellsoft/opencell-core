@@ -11518,7 +11518,18 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="#INTRD-14122_20230221" author="hichamELHALOUI" />
 	<changeSet id="#INTRD-15191_20230328" author="aelmalki" />
 
-	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
+    <changeSet id="#INTRD-15186_20230328" author="zelmeliani">  
+        <sql>SELECT setval('iso_icd_seq', 208, true)</sql> 
+        <sql>SELECT setval('untdid_5189_allowance_code_seq', 19, true)</sql> 
+        <sql>SELECT setval('untdid_1001_invoice_code_type_seq', 43, true)</sql> 
+        <sql>SELECT setval('untdid_4451_invoice_subject_code_seq', 383, true)</sql> 
+        <sql>SELECT setval('untdid_4461_payment_means_seq', 83, true)</sql> 
+        <sql>SELECT setval('untdid_5305_taxation_category_seq', 9, true)</sql> 
+        <sql>SELECT setval('untdid_vatex_seq', 57, true)</sql> 
+        <sql>SELECT setval('untdid_2475_vat_payment_option_seq', 3, true)</sql> 
+    </changeSet>
+
+    <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
     </changeSet>
