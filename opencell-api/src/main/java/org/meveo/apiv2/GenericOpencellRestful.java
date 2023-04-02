@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,15 +15,10 @@ import javax.inject.Inject;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
-import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
-import io.swagger.v3.oas.integration.OpenApiConfigurationException;
-import io.swagger.v3.oas.integration.api.OpenApiContext;
-import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.commons.collections.map.HashedMap;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.meveo.apiv2.billing.impl.InvoiceValidationRulesResourceImpl;
 import org.meveo.apiv2.accounting.resource.impl.AccountingPeriodResourceImpl;
 import org.meveo.apiv2.accounting.resource.impl.AccountingResourceImpl;
 import org.meveo.apiv2.accountreceivable.accountOperation.AccountReceivableResourceImpl;
@@ -38,6 +32,7 @@ import org.meveo.apiv2.article.impl.ArticleMappingResourceImpl;
 import org.meveo.apiv2.billing.impl.DiscountPlanInstanceResourceImpl;
 import org.meveo.apiv2.billing.impl.InvoiceLinesResourceImpl;
 import org.meveo.apiv2.billing.impl.InvoiceResourceImpl;
+import org.meveo.apiv2.billing.impl.InvoiceValidationRulesResourceImpl;
 import org.meveo.apiv2.billing.impl.InvoicingResourceImpl;
 import org.meveo.apiv2.billing.impl.MediationResourceImpl;
 import org.meveo.apiv2.billing.impl.RatedTransactionResourceImpl;
@@ -63,8 +58,8 @@ import org.meveo.apiv2.dunning.impl.DunningPaymentRetryResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningPolicyResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningSettingsResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningStopReasonsResourceImpl;
-import org.meveo.apiv2.dunning.resource.CustomerBalanceResource;
 import org.meveo.apiv2.dunning.template.DunningTemplateResourceImpl;
+import org.meveo.apiv2.electronicInvoicing.resource.impl.ElectronicInvoicingResourceImpl;
 import org.meveo.apiv2.export.ImportExportResourceImpl;
 import org.meveo.apiv2.finance.impl.ReportingResourceImpl;
 import org.meveo.apiv2.generic.GenericResourceImpl;
@@ -86,8 +81,8 @@ import org.meveo.apiv2.generic.services.GenericApiLoggingFilter;
 import org.meveo.apiv2.media.file.upload.FileUploadResourceImpl;
 import org.meveo.apiv2.mediation.impl.MediationSettingResourceImpl;
 import org.meveo.apiv2.ordering.resource.ooq.OpenOrderQuoteResourceImpl;
-import org.meveo.apiv2.ordering.resource.openorder.OpenOrderResourceImpl;
 import org.meveo.apiv2.ordering.resource.openOrderTemplate.OpenOrderTemplateResourceImpl;
+import org.meveo.apiv2.ordering.resource.openorder.OpenOrderResourceImpl;
 import org.meveo.apiv2.ordering.resource.order.OrderResourceImpl;
 import org.meveo.apiv2.ordering.resource.orderitem.OrderItemResourceImpl;
 import org.meveo.apiv2.ordering.resource.product.ProductResourceImpl;
@@ -157,7 +152,7 @@ public class GenericOpencellRestful extends Application {
                 OpenOrderQuoteResourceImpl.class, CpqQuoteResourceImpl.class, CommercialOrderResourceImpl.class,
                 SearchPriceLineByAttributeResourceImpl.class, InvoiceLinesResourceImpl.class, CpqContractResourceImpl.class, OpenOrderResourceImpl.class,
                 ContactCategoryResourceImpl.class, WalletOperationResourceImpl.class, InvoiceValidationRulesResourceImpl.class, InternationalSettingsResourceImpl.class, 
-                CustomTableResourceImpl.class, CustomerBalanceResourceImpl.class).collect(Collectors.toSet());
+                CustomTableResourceImpl.class, CustomerBalanceResourceImpl.class, ElectronicInvoicingResourceImpl.class).collect(Collectors.toSet());
         if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
             resources.add(GenericApiLoggingFilter.class);
             log.info(
