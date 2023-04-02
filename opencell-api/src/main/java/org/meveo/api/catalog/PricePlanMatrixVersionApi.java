@@ -1,5 +1,6 @@
 package org.meveo.api.catalog;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -564,6 +565,9 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
 	}
 
     public void calculateConvertedPricePlanMatrixLine(ConvertedPricePlanVersionDto dtoData) throws MeveoApiException, BusinessException {
+        if(dtoData.getRate() == null || BigDecimal.ZERO.equals(dtoData.getRate())) {
+            missingParameters.add("rate");
+        }
         checkMandatoryFields(dtoData);
 
         PricePlanMatrixVersion ppmv = pricePlanMatrixVersionService.findById(dtoData.getPricePlanMatrixVersionId());
