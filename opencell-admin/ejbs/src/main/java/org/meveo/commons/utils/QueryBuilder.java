@@ -46,13 +46,13 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.JoinType;
 
+import org.apache.commons.lang3.ClassUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.meveo.admin.util.pagination.FilterOperatorEnum;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.jpa.EntityManagerProvider;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.security.keycloak.CurrentUserProvider;
@@ -365,7 +365,7 @@ public class QueryBuilder {
             for (String fetchField : fetchFields) {
 				if(!fetchField.contains(".") && !fetchField.contains(" ")) {
 					Field field = ReflectionUtils.getField(clazz, fetchField, false);
-		            if(field != null && !BaseEntity.class.isAssignableFrom(field.getType())){
+		            if(field != null && ClassUtils.isPrimitiveOrWrapper(field.getType())){
 						useSelectColumns = true;
 						select.add(alias+"."+fetchField);
 						continue;
