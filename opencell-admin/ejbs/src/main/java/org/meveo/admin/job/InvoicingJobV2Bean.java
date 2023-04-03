@@ -147,7 +147,6 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                 .stream()
                 .filter(rt -> (rt.getStatus() == RatedTransactionStatusEnum.BILLED))
                 .map(RatedTransaction::getInvoiceLine)
-                .filter(il -> (il.getStatus() == InvoiceLineStatusEnum.OPEN))
                 .map(InvoiceLine::getId)
                 .collect(toList()));
         return billingRun.getExceptionalILIds().size();
