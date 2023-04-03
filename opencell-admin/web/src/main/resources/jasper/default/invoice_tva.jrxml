@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="EPE-20230328"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="EPE-20230330"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="0.0" lineColor="#000000"/>
@@ -174,6 +174,12 @@
 		<queryString language="xPath">
 			<![CDATA[/invoice/amount/taxes/tax]]>
 		</queryString>
+		<field name="taxCode" class="java.lang.String">
+			<fieldDescription><![CDATA[@code]]></fieldDescription>
+		</field>
+		<field name="taxIndex" class="java.lang.String">
+			<fieldDescription><![CDATA[@index]]></fieldDescription>
+		</field>
 		<field name="name" class="java.lang.String">
 			<fieldDescription><![CDATA[name]]></fieldDescription>
 		</field>
@@ -588,10 +594,10 @@
 								</box>
 								<textField pattern="#,##0.00" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="55" height="15" uuid="fbaa7a32-3773-4a3d-8f35-c3bbea990e8e"/>
-									<textElement textAlignment="Right" verticalAlignment="Middle">
+									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[$F{taxIndex}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
