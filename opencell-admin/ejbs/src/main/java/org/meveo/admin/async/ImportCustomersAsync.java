@@ -27,10 +27,8 @@ import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 
 import org.meveo.admin.job.importexport.ImportCustomersJobBean;
-import org.meveo.admin.job.logging.JobMultithreadingHistoryInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
@@ -58,7 +56,6 @@ public class ImportCustomersAsync {
      * @return Future String
      */
     @Asynchronous
-//    @Interceptors({ JobMultithreadingHistoryInterceptor.class })
     public Future<String> launchAndForget(JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
