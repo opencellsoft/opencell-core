@@ -115,7 +115,7 @@ public class MediationJob extends Job {
             recordName = fileFormat.getRecordName();
         } else {
             meteringDir = meteringDir + parambean.getProperty("metering.imports.rootdir","imports/metering/");
-            if(meteringDir.lastIndexOf("/") != -1){
+            if(!meteringDir.substring(meteringDir.length() - 1 ).contentEquals(File.separator)){
                 meteringDir = meteringDir + File.separator;
             }
             inputDir = meteringDir + "input";
