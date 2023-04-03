@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.job.JobExecutionResultDto;
+import org.meveo.api.dto.response.job.JobExecutionResultResponseDto;
 import org.meveo.apiv2.billing.ProcessCdrListResult.Statistics;
 
 public class DuplicateRTResult {
@@ -14,7 +16,6 @@ public class DuplicateRTResult {
 	private List<Long> failIds = new ArrayList<>();
 	private List<Long> createdRts = new ArrayList<>();
 
-	
 	
 	public DuplicateRTResult(Statistics statistics, ActionStatus actionStatus) {
 		super();
@@ -80,7 +81,5 @@ public class DuplicateRTResult {
 	public void setCreatedRts(List<Long> createdRts) {
 		this.createdRts = createdRts;
 	}
-	
-	
-	
+
 }
