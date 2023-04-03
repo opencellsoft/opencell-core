@@ -207,6 +207,8 @@ public class CatalogHierarchyBuilderService {
     @Inject private ProductVersionAttributeService productVersionAttributeService;
     @Inject
     private CpqQuoteService cpqQuoteService;
+    @Inject
+    private ChargeTemplateServiceAll chargeTemplateServiceAll;
 
 
     public void duplicateProductVersion(ProductVersion entity, List<ProductVersionAttribute> attributes, List<Tag> tags, List<GroupedAttributes> groupedAttributes, String prefix) throws BusinessException {
@@ -320,7 +322,7 @@ public class CatalogHierarchyBuilderService {
     		productCharge.forEach(pct -> { 
     			ProductChargeTemplateMapping duplicat = new ProductChargeTemplateMapping();
     			duplicat.setCounterTemplate(pct.getCounterTemplate());
-    			duplicat.setChargeTemplate(pct.getChargeTemplate()); 
+                duplicat.setChargeTemplate(chargeTemplateServiceAll.duplicateCharge(pct.getChargeTemplate()));
     			duplicat.setProduct(entity);
     			duplicat.setAccumulatorCounterTemplates(new ArrayList<>());
     			duplicat.setWalletTemplates(new ArrayList<>());

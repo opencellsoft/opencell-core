@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Rabie-Invoice-08032023"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="EPE-ManyTaxes"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -153,6 +153,9 @@
 	<field name="invoiceDate" class="java.lang.String">
 		<fieldDescription><![CDATA[/invoice/header/invoiceDate]]></fieldDescription>
 	</field>
+	<field name="country" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::invoice/@country]]></fieldDescription>
+	</field>
 	<field name="baQuality" class="java.lang.String">
 		<fieldDescription><![CDATA[/invoice/header/billingAccount/name/quality]]></fieldDescription>
 	</field>
@@ -187,6 +190,10 @@
 	<field name="invoiceCodeType" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/@invoiceCodeType"/>
 		<fieldDescription><![CDATA[/invoice/@invoiceCodeType]]></fieldDescription>
+	</field>
+	<field name="invoiceCodeTypeLabel" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/@invoiceCodeTypeLabel"/>
+		<fieldDescription><![CDATA[/invoice/@invoiceCodeTypeLabel]]></fieldDescription>
 	</field>
 	<field name="invoiceStatus" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/@status"/>
@@ -311,6 +318,10 @@
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/seller/address/countryName"/>
 		<fieldDescription><![CDATA[/invoice/header/seller/address/countryName]]></fieldDescription>
 	</field>
+	<field name="customerLanguageCode" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/customerAccount/@languageCode"/>
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/@languageCode]]></fieldDescription>
+	</field>
 	<group name="1">
 		<groupHeader>
 			<band height="292" splitType="Immediate">
@@ -330,12 +341,12 @@
 							</graphicElement>
 						</rectangle>
 						<staticText>
-							<reportElement mode="Opaque" x="20" y="7" width="159" height="23" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="33273ffd-d898-4044-89d9-fdafc14d9d26">
+							<reportElement mode="Opaque" x="20" y="7" width="199" height="23" forecolor="#030303" backcolor="#F2F4F5" uuid="33273ffd-d898-4044-89d9-fdafc14d9d26">
 								<property name="com.jaspersoft.studio.unit.x" value="px"/>
 								<property name="com.jaspersoft.studio.unit.y" value="px"/>
 								<property name="com.jaspersoft.studio.unit.height" value="px"/>
 							</reportElement>
-							<box topPadding="0" leftPadding="20" bottomPadding="0" rightPadding="0">
+							<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
 								<pen lineWidth="5.0" lineColor="#FF8C00"/>
 								<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
@@ -354,12 +365,12 @@
 							</graphicElement>
 						</rectangle>
 						<staticText>
-							<reportElement mode="Opaque" x="20" y="209" width="159" height="22" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="72e88def-ea91-49d3-a5ef-bb4ee290a66f">
+							<reportElement mode="Opaque" x="20" y="209" width="159" height="22" forecolor="#000000" backcolor="#F2F4F5" uuid="72e88def-ea91-49d3-a5ef-bb4ee290a66f">
 								<property name="com.jaspersoft.studio.unit.x" value="px"/>
 								<property name="com.jaspersoft.studio.unit.y" value="px"/>
 								<property name="com.jaspersoft.studio.unit.height" value="px"/>
 							</reportElement>
-							<box topPadding="0" leftPadding="20" bottomPadding="0" rightPadding="0">
+							<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
 								<pen lineWidth="5.0" lineColor="#FF8C00"/>
 								<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
@@ -389,7 +400,7 @@
 (($F{subCode}!=null && !String.valueOf($F{subCode}).isEmpty() && !String.valueOf($F{subCode}).equals("null")) ? "<style isBold='true'>Subscription: </style>" + $F{subCode}+ "\n" : "")]]></textFieldExpression>
 						</textField>
 						<textField>
-							<reportElement x="24" y="33" width="201" height="97" uuid="37417c6f-aeec-4768-8e5e-5aedbb77505a"/>
+							<reportElement x="24" y="31" width="201" height="97" uuid="37417c6f-aeec-4768-8e5e-5aedbb77505a"/>
 							<textElement textAlignment="Left" verticalAlignment="Top" markup="styled">
 								<font fontName="Vista Sans OT Bold" size="10" isBold="false"/>
 							</textElement>
@@ -408,12 +419,12 @@
 + (($F{baVatNo}!=null && !String.valueOf($F{baVatNo}).isEmpty() && !String.valueOf($F{baVatNo}).equals("null")) ? "<style isBold='true'>VAT: </style>" + $F{baVatNo}+ "\n" : "")]]></textFieldExpression>
 						</textField>
 						<staticText>
-							<reportElement mode="Opaque" x="20" y="123" width="159" height="23" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="041d8407-dc27-421c-8369-535a303ef668">
+							<reportElement mode="Opaque" x="20" y="123" width="205" height="23" forecolor="#000000" backcolor="#F2F4F5" uuid="041d8407-dc27-421c-8369-535a303ef668">
 								<property name="com.jaspersoft.studio.unit.x" value="px"/>
 								<property name="com.jaspersoft.studio.unit.y" value="px"/>
 								<property name="com.jaspersoft.studio.unit.height" value="px"/>
 							</reportElement>
-							<box topPadding="0" leftPadding="20" bottomPadding="0" rightPadding="0">
+							<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
 								<pen lineWidth="5.0" lineColor="#FF8C00"/>
 								<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
@@ -426,7 +437,7 @@
 							<text><![CDATA[Delivery address]]></text>
 						</staticText>
 						<textField>
-							<reportElement x="24" y="147" width="202" height="73" uuid="f5ff75b6-07d3-4380-a507-85c8544fcf35"/>
+							<reportElement x="24" y="146" width="202" height="73" uuid="f5ff75b6-07d3-4380-a507-85c8544fcf35"/>
 							<textElement textAlignment="Left" verticalAlignment="Top">
 								<font fontName="Vista Sans OT Bold" size="10" isBold="false"/>
 							</textElement>
@@ -443,7 +454,7 @@
 + "\n"]]></textFieldExpression>
 						</textField>
 						<staticText>
-							<reportElement mode="Opaque" x="14" y="-71" width="217" height="54" forecolor="#F0F7FA" backcolor="rgba(169, 173, 176, 0.0)" uuid="6ec6b279-7d84-4be1-b2d2-eec6845ed69b">
+							<reportElement mode="Opaque" x="15" y="-71" width="217" height="54" forecolor="#F0F7FA" backcolor="rgba(169, 173, 176, 0.0)" uuid="6ec6b279-7d84-4be1-b2d2-eec6845ed69b">
 								<property name="com.jaspersoft.studio.unit.x" value="px"/>
 								<property name="com.jaspersoft.studio.unit.y" value="px"/>
 								<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -503,7 +514,7 @@
 		<groupHeader>
 			<band height="70" splitType="Immediate">
 				<subreport>
-					<reportElement x="0" y="-343" width="594" height="400" uuid="47798d30-7f84-4a23-90aa-1f1e129f231b"/>
+					<reportElement x="0" y="-343" width="594" height="399" uuid="47798d30-7f84-4a23-90aa-1f1e129f231b"/>
 					<subreportParameter name="logoPath">
 						<subreportParameterExpression><![CDATA[$P{logoPath}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -549,26 +560,29 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{invoiceStatus}=="VALIDATED" ? ($F{invoiceCodeType} != null ? $F{invoiceCodeType} : "Invoice") + ": "+ $F{invoiceNumber} : "Draft " + ($F{invoiceCodeType} != null ? $F{invoiceCodeType} : "Invoice")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{invoiceStatus}=="VALIDATED" ? ($F{invoiceCodeTypeLabel} != null ? $F{invoiceCodeTypeLabel} : "Invoice") + ": "+ $F{invoiceNumber} : "Draft " + ($F{invoiceCodeTypeLabel} != null ? $F{invoiceCodeTypeLabel} : "Invoice")]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="18" y="86" width="190" height="20" uuid="f9f73956-b4a2-41c9-9fea-f0e4e3956d22"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Date: " + $F{invoiceDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Date: " + ($F{country}=="US" ? java.time.LocalDate.parse($F{invoiceDate}, java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")).format(java.time.format.DateTimeFormatter.ofPattern("MM/dd/yyyy")) : java.time.LocalDate.parse($F{invoiceDate}, java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")).format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")))]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="18" y="101" width="190" height="20" uuid="f03bb93f-44f7-4b09-a3f9-e78c4d7ecb22"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Due Date: " + $F{dueDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Due Date: " + ($F{country}=="US" ? java.time.LocalDate.parse($F{dueDate}, java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")).format(java.time.format.DateTimeFormatter.ofPattern("MM/dd/yyyy")) : java.time.LocalDate.parse($F{dueDate}, java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")).format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")))]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="242" y="70" width="338" height="70" uuid="ec6e4a89-edc8-445f-a3cb-8827a5725e9b"/>
-				<textElement textAlignment="Left" verticalAlignment="Top">
+				<reportElement x="249" y="70" width="345" height="70" uuid="ec6e4a89-edc8-445f-a3cb-8827a5725e9b">
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font fontName="Vista Sans OT Bold" size="10" isBold="false"/>
+					<paragraph rightIndent="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[(($F{baQuality}!=null && !String.valueOf($F{baQuality}).isEmpty() && !String.valueOf($F{baQuality}).equals("null")) ? $F{baQuality} + " " : "")
 + (($F{baFirstName}!=null && !String.valueOf($F{baFirstName}).isEmpty() && !String.valueOf($F{baFirstName}).equals("null")) ? $F{baFirstName} + " " : "") 

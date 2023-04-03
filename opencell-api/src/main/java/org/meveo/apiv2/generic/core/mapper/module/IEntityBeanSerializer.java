@@ -28,10 +28,11 @@ class IEntityBeanSerializer extends StdSerializer<IEntity> implements GenericSer
     public void serialize(IEntity value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         JsonStreamContext outputContext = gen.getOutputContext();
 
-        if(sharedEntityToSerialize.contains(value)
+        boolean exists = sharedEntityToSerialize.stream().anyMatch(e -> e.getClass().equals(value.getClass()) && e.getId().equals(value.getId()));
+		if(exists
                 || DATA_ROOT_ELEMENT.equals(outputContext.getCurrentName())
                 || isNestedEntityCandidate(getPathToRoot(gen), outputContext.getCurrentName())){
-            sharedEntityToSerialize.remove(value);
+            sharedEntityToSerialize.removeIf(e -> e.getClass().equals(value.getClass()) && e.getId().equals(value.getId()));
             this.defaultSerializer.serialize(value, gen, serializers);
         } else {
             gen.writeStartObject();

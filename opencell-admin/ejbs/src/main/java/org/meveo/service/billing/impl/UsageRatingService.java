@@ -629,7 +629,7 @@ public class UsageRatingService extends RatingService implements Serializable {
         return ValueExpressionWrapper.evaluateToBoolean(expression, userMap);
     }
 
-    private boolean evaluateBooleanExpression(String expression, EDR edr, WalletOperation walletOperation) throws InvalidELException {
+    public boolean evaluateBooleanExpression(String expression, EDR edr, WalletOperation walletOperation) throws InvalidELException {
         boolean result = true;
         if (StringUtils.isBlank(expression)) {
             return result;

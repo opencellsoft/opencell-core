@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Wafa-Invoice-08032023"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="EPE-20230330"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="0.0" lineColor="#000000"/>
@@ -174,6 +174,12 @@
 		<queryString language="xPath">
 			<![CDATA[/invoice/amount/taxes/tax]]>
 		</queryString>
+		<field name="taxCode" class="java.lang.String">
+			<fieldDescription><![CDATA[@code]]></fieldDescription>
+		</field>
+		<field name="taxIndex" class="java.lang.String">
+			<fieldDescription><![CDATA[@index]]></fieldDescription>
+		</field>
 		<field name="name" class="java.lang.String">
 			<fieldDescription><![CDATA[name]]></fieldDescription>
 		</field>
@@ -198,6 +204,9 @@
 		<field name="currencySymbol" class="java.lang.String">
 			<fieldDescription><![CDATA[ancestor::invoice/amount/currencySymbol]]></fieldDescription>
 		</field>
+		<field name="country" class="java.lang.String">
+			<fieldDescription><![CDATA[ancestor::invoice/@country]]></fieldDescription>
+		</field>
 		<sortField name="percent"/>
 	</subDataset>
 	<parameter name="logoPath" class="java.lang.String" isForPrompting="false">
@@ -213,6 +222,10 @@
 	<queryString language="xPath">
 		<![CDATA[/invoice]]>
 	</queryString>
+	<field name="country" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/@country"/>
+		<fieldDescription><![CDATA[/invoice/@country]]></fieldDescription>
+	</field>
 	<field name="amountWithTax" class="java.lang.String">
 		<fieldDescription><![CDATA[/invoice/amount/amountWithTax]]></fieldDescription>
 	</field>
@@ -276,7 +289,7 @@
 	<group name="1"/>
 	<group name="2">
 		<groupHeader>
-			<band height="340">
+			<band height="354">
 				<rectangle radius="10">
 					<reportElement x="254" y="196" width="327" height="43" forecolor="#F2F4F5" backcolor="#F2F4F5" uuid="cea08215-b38e-46aa-bd62-e0051c5b3821">
 						<property name="com.jaspersoft.studio.element.name" value="coordonnees_container"/>
@@ -303,12 +316,12 @@
 					<textFieldExpression><![CDATA[(($F{previousInvoices}!=null && !String.valueOf($F{previousInvoices}).isEmpty() && !String.valueOf($F{previousInvoices}).equals("null")) ? "<style isBold='true'>Previous invoice: </style>" : "")]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement mode="Opaque" x="20" y="11" width="159" height="23" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="5f5419f5-5826-4eb1-87eb-6e0026cf10d4">
+					<reportElement mode="Opaque" x="20" y="11" width="200" height="23" forecolor="#030303" backcolor="#F2F4F5" uuid="5f5419f5-5826-4eb1-87eb-6e0026cf10d4">
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
-					<box topPadding="0" leftPadding="20" bottomPadding="0" rightPadding="0">
+					<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
 						<pen lineWidth="5.0" lineColor="#FF8C00"/>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
@@ -325,14 +338,14 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="16"/>
 					</textElement>
-					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithTax}))]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{amountWithTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{amountWithTax})))]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="260" y="165" width="100" height="27" forecolor="#0D0101" uuid="a53473ae-1837-4e50-97d0-bae7f3e55ea7"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="10"/>
 					</textElement>
-					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithoutTax}))]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{amountWithoutTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{amountWithoutTax})))]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="530" y="201" width="48" height="28" forecolor="#0D0101" uuid="302ed8a5-2d59-4d2d-97e6-a20a009b885d">
@@ -398,7 +411,7 @@
 					<reportElement x="16" y="270" width="564" height="60" backcolor="#F2F2F2" uuid="5891029e-09c5-4a9e-b520-da38f1595c7e"/>
 				</rectangle>
 				<staticText>
-					<reportElement x="18" y="274" width="112" height="20" uuid="c9aaec53-65b2-40b7-8e9e-63dbea0515aa"/>
+					<reportElement x="18" y="274" width="532" height="20" uuid="c9aaec53-65b2-40b7-8e9e-63dbea0515aa"/>
 					<textElement>
 						<font fontName="SansSerif" size="11" isBold="true"/>
 					</textElement>
@@ -421,11 +434,10 @@
 				<staticText>
 					<reportElement x="28" y="39" width="72" height="20" uuid="e6ff4f08-4119-40fe-a94b-0e8c5e45629e">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<printWhenExpression><![CDATA[$F{paymentMethod}=="CHECK"]]></printWhenExpression>
 					</reportElement>
 					<box padding="1"/>
 					<textElement markup="none">
-						<font fontName="Arial" size="10" isBold="true"/>
+						<font fontName="Arial" size="10" isBold="false"/>
 					</textElement>
 					<text><![CDATA[Customer PO:]]></text>
 				</staticText>
@@ -450,12 +462,12 @@
 					</graphicElement>
 				</rectangle>
 				<staticText>
-					<reportElement mode="Opaque" x="20" y="160" width="159" height="23" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="e5035963-fcb9-4287-b536-75b699b4fcc3">
+					<reportElement mode="Opaque" x="20" y="160" width="209" height="23" forecolor="#030303" backcolor="#F2F4F5" uuid="e5035963-fcb9-4287-b536-75b699b4fcc3">
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
-					<box topPadding="0" leftPadding="20" bottomPadding="0" rightPadding="0">
+					<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
 						<pen lineWidth="5.0" lineColor="#FF8C00"/>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
@@ -468,18 +480,17 @@
 					<text><![CDATA[Beneficiary payment]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="28" y="190" width="87" height="20" uuid="c09284ef-6416-452b-99f5-d02f3d9020bb">
+					<reportElement x="28" y="190" width="102" height="20" uuid="c09284ef-6416-452b-99f5-d02f3d9020bb">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<printWhenExpression><![CDATA[$F{paymentMethod}=="CHECK"]]></printWhenExpression>
 					</reportElement>
 					<box padding="1"/>
 					<textElement markup="none">
-						<font fontName="Arial" size="10" isBold="true"/>
+						<font fontName="Arial" size="10" isBold="false"/>
 					</textElement>
 					<text><![CDATA[Payment method:]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement x="115" y="191" width="117" height="20" uuid="7fb9a2aa-4144-4430-9a93-c9c26dd17baf"/>
+					<reportElement x="130" y="191" width="102" height="20" uuid="7fb9a2aa-4144-4430-9a93-c9c26dd17baf"/>
 					<textElement verticalAlignment="Top">
 						<font fontName="Arial" size="10" isBold="false"/>
 					</textElement>
@@ -540,14 +551,14 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="10"/>
 					</textElement>
-					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithTax}))]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{amountWithTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{amountWithTax})))]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="360" y="165" width="99" height="27" forecolor="#0D0101" uuid="89c8939a-e199-40dc-a708-52484264ee5b"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="10"/>
 					</textElement>
-					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(new java.math.BigDecimal(Double.valueOf($F{amountWithTax})).subtract(new java.math.BigDecimal(Double.valueOf($F{amountWithoutTax}))))]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new java.math.BigDecimal(Double.valueOf($F{amountWithTax})).subtract(new java.math.BigDecimal(Double.valueOf($F{amountWithoutTax}))))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new java.math.BigDecimal(Double.valueOf($F{amountWithTax})).subtract(new java.math.BigDecimal(Double.valueOf($F{amountWithoutTax})))))]]></textFieldExpression>
 				</textField>
 				<componentElement>
 					<reportElement key="" positionType="Float" stretchType="ElementGroupHeight" isPrintRepeatedValues="false" x="242" y="11" width="343" height="30" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="9bc14f0d-7b5b-43bb-8663-066a35ba3cd2"/>
@@ -583,10 +594,10 @@
 								</box>
 								<textField pattern="#,##0.00" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="55" height="15" uuid="fbaa7a32-3773-4a3d-8f35-c3bbea990e8e"/>
-									<textElement textAlignment="Right" verticalAlignment="Middle">
+									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[$F{taxIndex}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -621,8 +632,7 @@
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$F{percent} && $F{percent}.matches("-?\\d+(\\.\\d+)?")?
-new Double($F{percent}) + "%":0.00 + "%"]]></textFieldExpression>
+									<textFieldExpression><![CDATA[$F{country}=="FR" ? new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{percent})) : new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{percent}))]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -658,7 +668,7 @@ new Double($F{percent}) + "%":0.00 + "%"]]></textFieldExpression>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$F{amountWithoutTax} && $F{amountWithoutTax}.matches("-?\\d+(\\.\\d+)?")?new Double($F{amountWithoutTax}):0.00]]></textFieldExpression>
+									<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{amountWithoutTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{amountWithoutTax})))]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -698,8 +708,7 @@ new Double($F{percent}) > 1)]]></printWhenExpression>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$F{amount} && $F{amount}.matches("-?\\d+(\\.\\d+)?")?
-new Double($F{amount}):0.00]]></textFieldExpression>
+									<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{amount}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{amount})))]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -707,7 +716,7 @@ new Double($F{amount}):0.00]]></textFieldExpression>
 				</componentElement>
 				<staticText>
 					<reportElement x="250" y="41" width="309" height="20" forecolor="#878787" uuid="f20d1945-420e-452f-a5d0-aeaa0cd1c74e">
-						<printWhenExpression><![CDATA[!$F{total} || Double.valueOf($F{total}) == 0]]></printWhenExpression>
+						<printWhenExpression><![CDATA[$F{total}!=null && Double.valueOf($F{total}) == 0]]></printWhenExpression>
 					</reportElement>
 					<textElement>
 						<font fontName="Arial" size="11"/>

@@ -100,7 +100,7 @@ public class DiscountPlanApiServiceTest {
                 return result;
             }
         });
-        when(persistenceDelegate.findAndRefresh(any(), any(), any())).thenAnswer(new Answer<IEntity>() {
+        when(persistenceDelegate.findByIdIgnoringCache(any(), any(), any())).thenAnswer(new Answer<IEntity>() {
 
             @Override
             public IEntity answer(InvocationOnMock invocation) throws Throwable {
@@ -155,6 +155,7 @@ public class DiscountPlanApiServiceTest {
 
     private DiscountPlan getDiscountPlan(Integer index, DiscountPlanTypeEnum type, DiscountPlanStatusEnum status, boolean nullDates) {
         DiscountPlan discountPlan = new DiscountPlan();
+        discountPlan.setId(Long.valueOf(index));
         discountPlan.setCode("DP_" + index);
         discountPlan.setDiscountPlanType(type);
         discountPlan.setStatus(status);
