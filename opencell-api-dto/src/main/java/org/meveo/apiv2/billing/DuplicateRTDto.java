@@ -41,7 +41,7 @@ public interface DuplicateRTDto {
 
 	@Default
 	@Schema(description = "start job ")
-	default boolean getstartJob() {
+	default boolean getStartJob() {
 		return false;
 	}
 }

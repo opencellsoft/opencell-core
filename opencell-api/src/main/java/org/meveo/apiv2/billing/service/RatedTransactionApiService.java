@@ -6,6 +6,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.job.JobExecutionResultDto;
+import org.meveo.api.dto.job.JobInstanceInfoDto;
+import org.meveo.api.dto.response.job.JobExecutionResultResponseDto;
+import org.meveo.api.job.JobApi;
 import org.meveo.api.rest.exception.BadRequestException;
 import org.meveo.apiv2.billing.DuplicateRTResult;
 import org.meveo.apiv2.billing.ProcessCdrListResult.Statistics;
@@ -14,8 +18,10 @@ import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.bi.impl.JobService;
 import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.job.JobInstanceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +46,10 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 
 	@Inject
 	private JobService jobService;
+	@Inject
+	private JobApi jobApi;
+	@Inject
+	private JobInstanceService jobInstanceService;
 
 	@Override
 	public Optional<RatedTransaction> findById(Long id) {
@@ -124,7 +134,7 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 				description, unitAmountWithoutTax, quantity, param1, param2, param3, paramExtra, usageDate);
 	}
 
-	public DuplicateRTResult duplication(Map<String, Object> filters, ProcessingModeEnum mode, boolean negateAmount,
+	public Object duplication(Map<String, Object> filters, ProcessingModeEnum mode, boolean negateAmount,
 			boolean returnRts, boolean startJob) {
 		DuplicateRTResult result = new DuplicateRTResult();
 		int maxLimit = ParamBean.getInstance().getPropertyAsInteger("api.ratedTransaction.massAction.limit", 5);
@@ -142,7 +152,7 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 				result.setActionStatus(new ActionStatus(ActionStatusEnum.WARNING, "The filter reach the max limit to duplicate, to duplicate these rated transaction please run the job 'DuplicationRatedTransactionJob'"));
 				return result;
 			}else{
-				log.info("run job DuplicationRatedTransactionJob");
+				return duplicateRatedTransactionWithJob();
 			}
 		}
 		if(CollectionUtils.isEmpty(rtToDuplicate)) {
@@ -193,6 +203,21 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 		}
 		result.getActionStatus().setMessage(String.format("Created %d rated items, %d failed", successList.size(), result.getFailIds().size()));
 		
+		return result;
+	}
+
+	public JobExecutionResultResponseDto duplicateRatedTransactionWithJob(){
+		JobExecutionResultResponseDto result = new JobExecutionResultResponseDto();
+		JobInstanceInfoDto jobInstanceInfoDto = new JobInstanceInfoDto();
+		List<JobInstance> instances = jobInstanceService.findByJobTemplate("DuplicateRatedTransactionJob");
+		String currentInstance = "DuplicateRatedTransactionJob";
+		if(CollectionUtils.isNotEmpty(instances)){
+			currentInstance = instances.get(0).getCode();
+		}
+		jobInstanceInfoDto.setCode(currentInstance);
+		JobExecutionResultDto jobExecution = jobApi.executeJob(jobInstanceInfoDto);
+		result.setJobExecutionResultDto(jobExecution);
+		result.getActionStatus().setMessage(jobExecution.getId() == null ? "NOTHING_TO_DO" : jobExecution.getId().toString());
 		return result;
 	}
 

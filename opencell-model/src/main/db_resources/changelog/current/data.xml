@@ -20412,7 +20412,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="job_template" value="DuplicateRatedTransactionJob" />
             <column name="code" value="DuplicateRatedTransactionJob" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="timerentity_id" valueNumeric="-1" />
             <column name="uuid" value="DuplicateRatedTransactionJob-UUID" />
         </insert>
     </changeSet>
