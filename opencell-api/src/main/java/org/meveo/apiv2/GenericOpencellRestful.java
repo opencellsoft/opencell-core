@@ -48,6 +48,7 @@ import org.meveo.apiv2.cpq.impl.CpqQuoteResourceImpl;
 import org.meveo.apiv2.crm.impl.ContactCategoryResourceImpl;
 import org.meveo.apiv2.customtable.CustomTableResourceImpl;
 import org.meveo.apiv2.document.DocumentResourceImpl;
+import org.meveo.apiv2.documentCategory.impl.DocumentCategoryResourceImpl;
 import org.meveo.apiv2.dunning.action.DunningActionImpl;
 import org.meveo.apiv2.dunning.impl.CollectionPlanStatusResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningAgentResourceImpl;
@@ -61,6 +62,7 @@ import org.meveo.apiv2.dunning.impl.DunningStopReasonsResourceImpl;
 import org.meveo.apiv2.dunning.template.DunningTemplateResourceImpl;
 import org.meveo.apiv2.electronicInvoicing.resource.impl.ElectronicInvoicingResourceImpl;
 import org.meveo.apiv2.export.ImportExportResourceImpl;
+import org.meveo.apiv2.fileType.impl.FileTypeResourceImpl;
 import org.meveo.apiv2.finance.impl.ReportingResourceImpl;
 import org.meveo.apiv2.generic.GenericResourceImpl;
 import org.meveo.apiv2.generic.NotYetImplementedResource;
@@ -151,7 +153,7 @@ public class GenericOpencellRestful extends Application {
                 OpenOrderQuoteResourceImpl.class, CpqQuoteResourceImpl.class, CommercialOrderResourceImpl.class,
                 InvoiceLinesResourceImpl.class, CpqContractResourceImpl.class, OpenOrderResourceImpl.class,
                 ContactCategoryResourceImpl.class, WalletOperationResourceImpl.class, InvoiceValidationRulesResourceImpl.class, InternationalSettingsResourceImpl.class, 
-                CustomTableResourceImpl.class, ElectronicInvoicingResourceImpl.class).collect(Collectors.toSet());
+                CustomTableResourceImpl.class, ElectronicInvoicingResourceImpl.class, CustomerBalanceResourceImpl.class, FileTypeResourceImpl.class, DocumentCategoryResourceImpl.class).collect(Collectors.toSet());
         if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
             resources.add(GenericApiLoggingFilter.class);
             log.info(

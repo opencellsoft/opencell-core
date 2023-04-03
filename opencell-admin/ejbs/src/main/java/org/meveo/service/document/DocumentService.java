@@ -32,7 +32,21 @@ public class DocumentService extends BusinessService<Document> {
     public void create(Document entity) throws BusinessException {    	
         entity.setFileType(getFileTypeByIdOrCode(entity));
         entity.setCategory(getDocumentCateory(entity));
-        
+
+        if(Objects.isNull(entity.getDocumentVersion())){
+        	Integer documentVersion = 0 ;
+        	
+            try {
+	        	Document document = findByCodeAndLastVersion(entity.getCode());
+	        	documentVersion = document.getDocumentVersion()+1;
+        	} catch (NoResultException e) {
+        		documentVersion = 0;
+        	}
+
+        	entity.setDocumentVersion(documentVersion);
+        	entity.setFileName(entity.getCode() + "_" + entity.getDocumentVersion() + "_" + entity.getFileName());
+        }
+
         if(Objects.nonNull(entity.getLinkedAccountEntity())){
             AccountEntity accountEntity = accountEntitySearchService.findById(entity.getLinkedAccountEntity().getId());
             
