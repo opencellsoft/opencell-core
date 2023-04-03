@@ -4,16 +4,24 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Wafa-Invoice-08032023"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="EPE-20230330"/>
 	<queryString language="xPath">
 		<![CDATA[/invoice/detail/userAccounts/userAccount/categories/category/subCategories/subCategory/line]]>
 	</queryString>
 	<field name="useraccount_code" class="java.lang.String">
 		<fieldDescription><![CDATA[ancestor::userAccount/@code]]></fieldDescription>
 	</field>
+	<field name="country" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/@country"/>
+		<fieldDescription><![CDATA[/invoice/@country]]></fieldDescription>
+	</field>
 	<field name="taxCode_line" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="@taxCode"/>
 		<fieldDescription><![CDATA[@taxCode]]></fieldDescription>
+	</field>
+	<field name="taxIndex_line" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="@taxIndex"/>
+		<fieldDescription><![CDATA[@taxIndex]]></fieldDescription>
 	</field>
 	<field name="label_line" class="java.lang.String">
 		<fieldDescription><![CDATA[label]]></fieldDescription>
@@ -210,14 +218,23 @@
 	<field name="currencySymbol" class="java.lang.String">
 		<fieldDescription><![CDATA[/invoice/amount/currencySymbol]]></fieldDescription>
 	</field>
-	<field name="amountWithTax" class="java.lang.String">
+	<field name="amountWithTax" class="java.lang.Double">
 		<fieldDescription><![CDATA[amountWithTax]]></fieldDescription>
 	</field>
-	<field name="amountTax" class="java.lang.String">
+	<field name="amountTax" class="java.lang.Double">
 		<fieldDescription><![CDATA[amountTax]]></fieldDescription>
 	</field>
 	<variable name="quantity" class="java.lang.Double" resetType="Group" resetGroup="2" calculation="Sum">
 		<variableExpression><![CDATA[$F{quantity}]]></variableExpression>
+	</variable>
+	<variable name="totalAmountWithTax" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{amountWithTax}]]></variableExpression>
+	</variable>
+	<variable name="totalAmountWithoutTax" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{amountWithoutTax}]]></variableExpression>
+	</variable>
+	<variable name="totalAmountTax" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{amountTax}]]></variableExpression>
 	</variable>
 	<variable name="sortIndex" class="java.lang.Integer">
 		<variableExpression><![CDATA["".equals($F{sortIndex})?Integer.MAX_VALUE:Integer.valueOf($F{sortIndex})]]></variableExpression>
@@ -235,7 +252,8 @@
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{articleLabelLine}.substring(0, 1).toUpperCase() + $F{articleLabelLine}.substring(1) + "\n" +
-$F{periodStartDate} + ($F{periodEndDate}.isEmpty() ? "" : " - " + $F{periodEndDate}) + "\n" +
+($F{country}=="US" ? java.time.LocalDate.parse($F{periodStartDate}, java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")).format(java.time.format.DateTimeFormatter.ofPattern("MM/dd/yyyy")) : java.time.LocalDate.parse($F{periodStartDate}, java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")).format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+ + ($F{periodEndDate}.isEmpty() ? "" : " - " + $F{periodEndDate}) + "\n" +
 $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></textFieldExpression>
 				</textField>
 				<textField pattern="MMM-yy" isBlankWhenNull="true">
@@ -250,7 +268,7 @@ $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></t
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($V{quantity}))]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(Double.valueOf($V{quantity}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(Double.valueOf($V{quantity})))]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="2" pattern="" isBlankWhenNull="true">
 					<reportElement mode="Transparent" x="350" y="-39" width="85" height="37" uuid="0ca42a84-59db-46b9-a4d3-227e7163639c">
@@ -260,7 +278,7 @@ $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></t
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Vista Sans OT Bold" size="9" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{unitAmountWithoutTax}))]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{unitAmountWithoutTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{unitAmountWithoutTax})))]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="2" pattern="" isBlankWhenNull="true">
 					<reportElement mode="Transparent" x="440" y="-39" width="85" height="37" uuid="0ca42a84-59db-46b9-a4d3-227e7163639c">
@@ -270,7 +288,7 @@ $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></t
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Vista Sans OT Bold" size="9" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithoutTax}))]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{amountWithoutTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{amountWithoutTax})))]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="2" pattern="" isBlankWhenNull="true">
 					<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="528" y="-39" width="45" height="37" uuid="0ca42a84-59db-46b9-a4d3-227e7163639c">
@@ -280,7 +298,7 @@ $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></t
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Vista Sans OT Bold" size="9" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{taxCode_line}.replaceAll(',', '\n')]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{taxIndex_line}.replaceAll(',', '\n')]]></textFieldExpression>
 				</textField>
 				<line>
 					<reportElement x="11" y="-1" width="565" height="1" forecolor="#999999" uuid="3b4bb476-6f45-44a1-9025-a797860912ec"/>
@@ -302,14 +320,14 @@ $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></t
 					<pen lineWidth="0.5" lineStyle="Dotted" lineColor="#999999"/>
 				</graphicElement>
 			</line>
-			<rectangle radius="10">
+			<rectangle radius="0">
 				<reportElement x="8" y="5" width="567" height="19" forecolor="#FFFFFF" backcolor="#F2F4F5" uuid="1f23291e-f854-4b53-8326-5562746d2015"/>
 				<graphicElement>
 					<pen lineWidth="0.0" lineColor="rgba(0, 0, 0, 0.0)"/>
 				</graphicElement>
 			</rectangle>
 			<staticText>
-				<reportElement mode="Opaque" x="67" y="7" width="220" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="a6e092f0-f4a9-4674-acc9-66c444e25cda">
+				<reportElement mode="Opaque" x="67" y="7" width="220" height="16" forecolor="#030303" backcolor="#F2F4F5" uuid="a6e092f0-f4a9-4674-acc9-66c444e25cda">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -327,7 +345,7 @@ $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></t
 				<text><![CDATA[Details]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="11" y="7" width="55" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="5b637f66-8a7f-46c5-a73d-e751a229b349">
+				<reportElement mode="Opaque" x="11" y="7" width="55" height="16" forecolor="#030303" backcolor="#F2F4F5" uuid="5b637f66-8a7f-46c5-a73d-e751a229b349">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -345,7 +363,7 @@ $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></t
 				<text><![CDATA[#]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="288" y="7" width="62" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="d267e7f4-148f-495f-9cb6-78eff02fdf09">
+				<reportElement mode="Opaque" x="288" y="7" width="62" height="16" forecolor="#030303" backcolor="#F2F4F5" uuid="d267e7f4-148f-495f-9cb6-78eff02fdf09">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -363,7 +381,7 @@ $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></t
 				<text><![CDATA[Quantity]]></text>
 			</staticText>
 			<textField>
-				<reportElement mode="Opaque" x="350" y="7" width="90" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="dcd6fd15-92b2-41db-91d2-266dea66f220">
+				<reportElement mode="Opaque" x="350" y="7" width="90" height="16" forecolor="#030303" backcolor="#F2F4F5" uuid="dcd6fd15-92b2-41db-91d2-266dea66f220">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -381,7 +399,7 @@ $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></t
 				<textFieldExpression><![CDATA["Unite price"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement mode="Opaque" x="440" y="7" width="88" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="6faa18df-c9c4-41b9-9679-3586cdd1561f">
+				<reportElement mode="Opaque" x="440" y="7" width="88" height="16" forecolor="#030303" backcolor="#F2F4F5" uuid="6faa18df-c9c4-41b9-9679-3586cdd1561f">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -399,7 +417,7 @@ $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></t
 				<textFieldExpression><![CDATA["Total w.o tax"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement mode="Opaque" x="528" y="7" width="45" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="6faa18df-c9c4-41b9-9679-3586cdd1561f">
+				<reportElement mode="Opaque" x="528" y="7" width="45" height="16" forecolor="#030303" backcolor="#F2F4F5" uuid="6faa18df-c9c4-41b9-9679-3586cdd1561f">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -443,14 +461,14 @@ $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></t
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Arial" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithoutTax}))]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($V{totalAmountWithoutTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($V{totalAmountWithoutTax})))]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="367" y="10" width="99" height="27" forecolor="#0D0101" uuid="70c1495f-5376-431a-b519-0dcecb971ad9"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Arial" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(new java.math.BigDecimal(Double.valueOf($F{amountWithTax})).subtract(new java.math.BigDecimal(Double.valueOf($F{amountWithoutTax}))))]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new java.math.BigDecimal(Double.valueOf($V{totalAmountWithTax})).subtract(new java.math.BigDecimal(Double.valueOf($V{totalAmountWithoutTax}))))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new java.math.BigDecimal(Double.valueOf($F{amountWithTax})).subtract(new java.math.BigDecimal(Double.valueOf($V{totalAmountWithoutTax})))))]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="393" y="-2" width="73" height="12" forecolor="#0D0101" uuid="c4ea0e2d-750c-4986-b371-b16eda7970bd">
@@ -493,7 +511,7 @@ $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></t
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Arial" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithTax}))]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($V{totalAmountWithTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($V{totalAmountWithTax})))]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement x="267" y="10" width="309" height="1" forecolor="#999999" uuid="7e75e123-780a-4280-b85c-7ed1cdb4a857"/>
