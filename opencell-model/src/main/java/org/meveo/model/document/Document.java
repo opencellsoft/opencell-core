@@ -23,7 +23,9 @@ import java.util.Map;
 @CustomFieldEntity(cftCodePrefix = "Document")
 @Table(name = "document", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @NamedQueries({
-        @NamedQuery(name = "Document.findByFileNameAndType", query = "FROM Document document where document.fileName=:fileName AND document.fileType.id=:fileTypeId")
+	@NamedQuery(name = "Document.findByFileNameAndType", query = "FROM Document document where document.fileName=:fileName AND document.fileType.id=:fileTypeId"),
+    @NamedQuery(name = "Document.findByCodeAndLastVersion", query = "FROM Document d WHERE d.code = :code AND d.documentVersion = (SELECT MAX(d2.documentVersion) FROM Document d2 WHERE d2.code = :code)"),
+	@NamedQuery(name = "Document.findByCodeAndVersion", query = "FROM Document d WHERE d.code = :code AND d.documentVersion = :version")
 })
 public class Document extends BusinessCFEntity {
     /**

@@ -11,6 +11,7 @@ import org.meveo.service.crm.impl.AccountEntitySearchService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import javax.ws.rs.BadRequestException;
 import java.util.Date;
 import java.util.Objects;
@@ -27,6 +28,16 @@ public class DocumentService extends BusinessService<Document> {
     @Override
     public void create(Document entity) throws BusinessException {
         final FileType fetchedFileType = fileTypeService.findByCode(entity.getFileType().getCode());
+        if(Objects.isNull(entity.getDocumentVersion())){
+        	Integer documentVersion = 0 ;
+        	try {
+	        	Document document = findByCodeAndLastVersion(entity.getCode());
+	        	documentVersion = document.getDocumentVersion()+1;
+        	} catch (NoResultException e) {
+        		documentVersion = 0;
+        	}
+        	entity.setDocumentVersion(documentVersion);
+        }
         if(Objects.isNull(fetchedFileType)){
             throw new BadRequestException("file type with code "+entity.getFileType().getCode()+" not found");
         }
@@ -54,6 +65,21 @@ public class DocumentService extends BusinessService<Document> {
         return getEntityManager().createNamedQuery("Document.findByFileNameAndType", Document.class)
                 .setParameter("fileName", fileName)
                 .setParameter("fileTypeId", fileTypeId)
+                .getSingleResult();
+    }
+    
+    public Document findByCodeAndLastVersion(String code) {
+
+        return getEntityManager().createNamedQuery("Document.findByCodeAndLastVersion", Document.class)
+                .setParameter("code", code)
+                .getSingleResult();
+    }
+    
+    public Document findByCodeAndVersion(String code, Integer version) {
+
+        return getEntityManager().createNamedQuery("Document.findByCodeAndVersion", Document.class)
+                .setParameter("code", code)
+                .setParameter("version", version)
                 .getSingleResult();
     }
 }
