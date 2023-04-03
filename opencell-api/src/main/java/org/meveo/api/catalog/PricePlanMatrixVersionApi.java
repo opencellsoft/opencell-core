@@ -1,5 +1,6 @@
 package org.meveo.api.catalog;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -562,4 +563,25 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
 		}
 		convertedPricePlanVersion.setUseForBillingAccounts(enable);
 	}
+
+    public void calculateConvertedPricePlanMatrixLine(ConvertedPricePlanVersionDto dtoData) throws MeveoApiException, BusinessException {
+        if(dtoData.getRate() == null || BigDecimal.ZERO.equals(dtoData.getRate())) {
+            missingParameters.add("rate");
+        }
+        checkMandatoryFields(dtoData);
+
+        PricePlanMatrixVersion ppmv = pricePlanMatrixVersionService.findById(dtoData.getPricePlanMatrixVersionId());
+        if(ppmv == null) {
+            throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, dtoData.getPricePlanMatrixVersionId());
+        }
+
+        ppmv.getConvertedPricePlanMatrixLines()
+                .stream()
+                .filter(cppml -> cppml.getTradingCurrency().getCurrencyCode().equals(dtoData.getTradingCurrency().getCode()) || cppml.getTradingCurrency().getId().equals(dtoData.getTradingCurrency().getId()))
+                .forEach(cppml -> {
+                    cppml.setRate(dtoData.getRate());
+                    cppml.setUseForBillingAccounts(dtoData.isUseForBillingAccounts());
+                    cppml.setConvertedPrice(dtoData.getRate().multiply(ppmv.getPrice()));
+                });
+    }
 }

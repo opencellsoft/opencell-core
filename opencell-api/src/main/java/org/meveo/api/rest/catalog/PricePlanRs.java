@@ -565,8 +565,7 @@ public interface PricePlanRs extends IBaseRs {
                     @ApiResponse(responseCode = "412", description = "the price plan version is mandatory to create price plan version ")
             })
     Response deleteConvertedPricePlanVersion(@Parameter(description = "ID of converted price plan to delete") @PathParam("id") Long ccpvId);
-    
-    
+
     @POST
     @Path("/convertedPricePlanMatrixLines/disable")
     Response disableAllConvertedPricePlan(@Parameter(description = "contain information about all converted price that will be disabled") ConvertedPricePlanInputDto convertedPricePlanInputDto);
@@ -583,5 +582,9 @@ public interface PricePlanRs extends IBaseRs {
     @POST
     @Path("convertedPricePlanVersion/{id}/disable")
     Response disableConvertedVersionPricePlan(@PathParam("id") Long id );
+
+    @POST
+    @Path("convertedPricePlanMatrixLines/calculate")
+    Response calculateConvertedPricePlanMatrixLine(ConvertedPricePlanVersionDto postData);
 
 }
